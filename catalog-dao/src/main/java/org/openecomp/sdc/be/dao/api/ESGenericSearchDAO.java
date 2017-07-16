@@ -31,7 +31,6 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.openecomp.sdc.be.dao.es.ElasticSearchClient;
-import org.openecomp.sdc.be.dao.utils.Exceptions;
 
 /**
  * Elastic search dao that manages search operations.
@@ -83,7 +82,7 @@ public class ESGenericSearchDAO extends ESGenericIdDAO implements IGenericSearch
 			try {
 				result.add(getJsonMapper().readValue(searchResponse.getHits().getAt(i).getSourceAsString(), clazz));
 			} catch (IOException e) {
-				Exceptions.convertToRuntimeEx(e);
+				throw new RuntimeException(e);
 			}
 		}
 
@@ -114,7 +113,7 @@ public class ESGenericSearchDAO extends ESGenericIdDAO implements IGenericSearch
 					val = getJsonMapper().readValue(hit, clazz);
 					result.add(val);
 				} catch (IOException e) {
-					Exceptions.convertToRuntimeEx(e);
+					throw new RuntimeException(e);
 				}
 			}
 			return result;
