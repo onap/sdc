@@ -120,7 +120,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "creates a resource", httpMethod = "POST", notes = "Creates a resource")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "ECOMP component is authenticated and Asset created", response = Resource.class),
-			@ApiResponse(code = 400, message = "Missing  X-ECOMP-InstanceID  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
@@ -269,7 +269,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "Change Resource lifecycle State", httpMethod = "POST")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Resource state changed", response = AssetMetadata.class),
-			@ApiResponse(code = 400, message = "Missing  X-ECOMP-InstanceID  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),

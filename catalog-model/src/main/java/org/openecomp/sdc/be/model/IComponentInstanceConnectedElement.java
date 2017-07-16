@@ -26,4 +26,9 @@ public interface IComponentInstanceConnectedElement {
 	String getValueUniqueUid();
 
 	void setValueUniqueUid(String value);
+	
+	String getComponentInstanceName();
+	void setComponentInstanceName(String componentInstanceName);
+	String getComponentInstanceId();
+	void setComponentInstanceId(String componentInstanceId);
 }
