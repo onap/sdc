@@ -383,14 +383,14 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		StorageOperationStatus artStatus = toscaOperationFacade.addDeploymentArtifactsToInstance(containerComponent.getUniqueId(), componentInstance, finalDeploymentArtifacts);
 		if ( artStatus != StorageOperationStatus.OK){
 			log.debug("Failed to add instance deployment artifacts for instance {} in conatiner {} error {}", componentInstance.getUniqueId(), containerComponent.getUniqueId(), artStatus);
-			return Either.left(componentsUtils.convertFromStorageResponseForResourceInstance(artStatus, false));
+			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponseForResourceInstance(artStatus, false)));
 			
 		}
 		StorageOperationStatus result =	toscaOperationFacade
 				.addGroupInstancesToComponentInstance(containerComponent, componentInstance, filteredGroups, groupInstancesArtifacts);
 		if (result != StorageOperationStatus.OK) {
 			log.debug("failed to update group instance for component instance {}", componentInstance.getUniqueId());
-			return Either.left(componentsUtils.convertFromStorageResponse(result));
+			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(result)));
 		}
 		componentInstance.setDeploymentArtifacts(finalDeploymentArtifacts);
 		return Either.left(ActionStatus.OK);

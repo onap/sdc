@@ -56,21 +56,21 @@ export class PropertiesUtils {
                     if (newFEProp.getInputValues && newFEProp.getInputValues.length) { //if this prop (or any children) are declared, set isDeclared and disable checkbox on parents/children
                         newFEProp.getInputValues.forEach(propInputDetail => {
                             let inputPath = propInputDetail.inputPath;
-                            if (!isVF && !inputPath) { //TODO: this is a workaround until Marina adds inputPath
+                            if (!inputPath) { //TODO: this is a workaround until Marina adds inputPath
                                 let input = inputs.find(input => input.uniqueId == propInputDetail.inputId);
                                 if (!input) { console.log("CANNOT FIND INPUT FOR " + propInputDetail.inputId); return; }
                                 else inputPath = input.inputPath;
                             }
-                            if (isVF || inputPath == newFEProp.name) inputPath = undefined;
+                            if (inputPath == newFEProp.name) inputPath = undefined; // if not complex we need to remove the inputPath from FEModel so we not look for a child
                             newFEProp.setAsDeclared(inputPath); //if a path is sent, its a child prop. this param is optional
                             this.propertiesService.disableRelatedProperties(newFEProp, inputPath);
                         });
-                    }                   
+                    }
                     this.initValueObjectRef(newFEProp); //initialize valueObj.
                     propertyFeArray.push(newFEProp);
                     newFEProp.updateExpandedChildPropertyId(newFEProp.name); //display only the first level of children
                     this.dataTypeService.checkForCustomBehavior(newFEProp);
-                }    
+                }
             });
             instanceFePropertiesMap[instanceId] = propertyFeArray;
 
@@ -101,8 +101,8 @@ export class PropertiesUtils {
         this.dataTypeService.getDerivedDataTypeProperties(dataTypeObj, tempProps, parentName);
         return tempProps;
     }
-    
-    /* Sets the valueObj of parent property and its children. 
+
+    /* Sets the valueObj of parent property and its children.
     * Note: This logic is different than assignflattenedchildrenvalues - here we merge values, there we pick either the parents value, props value, or default value - without merging.
     */
     public initValueObjectRef = (property: PropertyFEModel): void => {
@@ -138,7 +138,7 @@ export class PropertiesUtils {
 
             let propNameInObj = prop.propertiesName.substring(prop.propertiesName.indexOf(parentName) + parentName.length + 1).split('#').join('.'); //extract everything after parent name
             prop.valueObj = _.get(parentValueJSON, propNameInObj, prop.value || prop.defaultValue); //assign value -first value of parent if exists. If not, prop.value if not, prop.defaultvalue
-            
+
             if ((prop.derivedDataType == DerivedPropertyType.SIMPLE || prop.isDeclared) && typeof prop.valueObj == 'object') { //Stringify objects that should be strings
                 prop.valueObj = JSON.stringify(prop.valueObj);
             } else { //parse strings that should be objects
@@ -148,7 +148,7 @@ export class PropertiesUtils {
                     prop.valueObj = JSON.parse(prop.valueObj || '[]');
                 } else if (prop.derivedDataType == DerivedPropertyType.MAP && typeof prop.valueObj != 'object' && (!prop.isChildOfListOrMap || !prop.schema.property.isSimpleType)) { //dont parse values for children of map of simple
                     prop.valueObj = JSON.parse(prop.valueObj || '{}');
-                } 
+                }
                 if ((prop.derivedDataType == DerivedPropertyType.LIST || prop.derivedDataType == DerivedPropertyType.MAP) && typeof prop.valueObj == 'object' && Object.keys(prop.valueObj).length) {
                     let newProps: Array<DerivedFEProperty> = [];
                     Object.keys(prop.valueObj).forEach((key) => {

@@ -50,6 +50,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -316,9 +317,9 @@ public class ExportToscaTest extends ComponentBaseTest {
 		//6 add instance inputs in service
 		RestResponse getComponentInstanceInputsResponse = InputsRestUtils.getComponentInstanceInputs(service, vfi);
 		BaseValidationUtils.checkSuccess(getComponentInstanceInputsResponse);
-		List<InputDefinition> instanceInputs = new Gson().fromJson(getComponentInstanceInputsResponse.getResponse(), new TypeToken<ArrayList<InputDefinition>>(){}.getType());
+		List<ComponentInstancePropInput> instanceInputs = new Gson().fromJson(getComponentInstanceInputsResponse.getResponse(), new TypeToken<ArrayList<ComponentInstancePropInput>>(){}.getType());
 		// Take only the 2 first inputs
-		List<InputDefinition> inputsToAdd = instanceInputs.stream().limit(2).collect(Collectors.toList());
+		List<ComponentInstancePropInput> inputsToAdd = instanceInputs.stream().limit(2).collect(Collectors.toList());
 
 		//7 Build component instances input map to add to server
 		ComponentInstInputsMap buildComponentInstInputsMap = buildComponentInstInputsMap(vfi.getUniqueId(), inputsToAdd);
@@ -447,8 +448,8 @@ public class ExportToscaTest extends ComponentBaseTest {
 		}
 		return masterArtifact;
 	}
-	private ComponentInstInputsMap buildComponentInstInputsMap (String addToInput, List<InputDefinition> inputs) {
-		Map<String, List<InputDefinition>> map = new HashMap<>();
+	private ComponentInstInputsMap buildComponentInstInputsMap (String addToInput, List<ComponentInstancePropInput> inputs) {
+		Map<String, List<ComponentInstancePropInput>> map = new HashMap<>();
 		map.put(addToInput, inputs);
 		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
 		componentInstInputsMap.setComponentInstanceInputsMap(map);		
