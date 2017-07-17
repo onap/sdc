@@ -710,6 +710,13 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			case VL:
 				componentInstanceData.getComponentInstDataDefinition().setOriginType(OriginTypeEnum.VL);
 				break;
+			case CVFC:
+				componentInstanceData.getComponentInstDataDefinition().setOriginType(OriginTypeEnum.CVFC);
+				break;
+			case PNF:
+				componentInstanceData.getComponentInstDataDefinition().setOriginType(OriginTypeEnum.PNF);
+				break;
+				
 			}
 			break;
 		default:

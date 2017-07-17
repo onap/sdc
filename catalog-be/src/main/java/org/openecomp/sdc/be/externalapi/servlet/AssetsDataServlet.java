@@ -126,10 +126,11 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 		Response response = null;
 		ResponseFormat responseFormat = null;
 		String query = request.getQueryString();
-		String requestURI = request.getRequestURI();
+		String requestURI = request.getRequestURI().endsWith("/")?
+				removeDuplicateSlashSeparator(request.getRequestURI()): request.getRequestURI();
 		String url = request.getMethod() + " " + requestURI;
 		log.debug("Start handle request of {}", url);
-		
+
 		AuditingActionEnum auditingActionEnum = query == null ? AuditingActionEnum.GET_ASSET_LIST : AuditingActionEnum.GET_FILTERED_ASSET_LIST;
 
 		EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
@@ -162,7 +163,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 			}
 			if (resourceType != null) {
 				ResourceTypeEnum resourceTypeEnum = ResourceTypeEnum.getTypeIgnoreCase(resourceType);
-				if( resourceTypeEnum == null ){
+				if (resourceTypeEnum == null) {
 					log.debug("getAssetList: Asset Fetching Failed. Invalid resource type was received");
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
 					getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
@@ -370,4 +371,11 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 			return response;
 		}
 	}
+
+
+	private String removeDuplicateSlashSeparator(String requestUri) {
+		return requestUri.substring(0, requestUri.length()-1);
+	}
+
+
 }

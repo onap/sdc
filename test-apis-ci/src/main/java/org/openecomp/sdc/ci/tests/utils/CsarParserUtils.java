@@ -30,11 +30,13 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.openecomp.sdc.ci.tests.datatypes.GroupHeatMetaDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.PropertyHeatMetaDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.TypeHeatMetaDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaParameterConstants;
 import org.openecomp.sdc.ci.tests.utils.validation.CsarValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,39 +44,33 @@ import org.slf4j.LoggerFactory;
 public class CsarParserUtils {
 	private static Logger log = LoggerFactory.getLogger(CsarValidationUtils.class.getName());
 
-	public static List<TypeHeatMetaDefinition> getListTypeHeatMetaDefinition(File csarUUID) throws Exception {
+	public static List<TypeHeatMetaDefinition> getListTypeHeatMetaDefinition(File csarFileLocation) throws Exception {
 
-		String artifactHeatMetaLocation = "Artifacts/HEAT.meta";
+		String artifactHeatMetaLocation = ToscaParameterConstants.HEAT_META_PATH;
+		String csarPayload = ToscaParserUtils.getYamlPayloadFromCsar(csarFileLocation, artifactHeatMetaLocation);
+		return getListTypeHeatMetaDefinitionByPayload(csarPayload);
+	}
+
+	public static List<TypeHeatMetaDefinition> getListTypeHeatMetaDefinition(String csarUUID) throws Exception {
+		
+		String artifactHeatMetaLocation = ToscaParameterConstants.HEAT_META_PATH;
+		String csarPayload = ToscaParserUtils.getCsarPayload(csarUUID, artifactHeatMetaLocation);
+		return getListTypeHeatMetaDefinitionByPayload(csarPayload);
+	}
+
+	public static List<TypeHeatMetaDefinition> getListTypeHeatMetaDefinitionByPayload(String csarPayload) throws ParseException {
 		JSONParser parser = new JSONParser();
-		String csarPayload = CsarValidationUtils.getCsarPayload(csarUUID, artifactHeatMetaLocation);
 		if (csarPayload != null) {
 			Object parse = parser.parse(csarPayload);
 			JSONObject jsonObject = (JSONObject) parse;
-			JSONObject jsonObjectImportStructure = (JSONObject) jsonObject.get("importStructure");
+			JSONObject jsonObjectImportStructure = (JSONObject) jsonObject.get(ToscaParameterConstants.IMPORT_STRUCTURE);
 			List<TypeHeatMetaDefinition> listHeatMetaDefenition = new ArrayList<TypeHeatMetaDefinition>();
 			listHeatMetaDefenition = getArtifactsByGroup(jsonObjectImportStructure, listHeatMetaDefenition);
 			return listHeatMetaDefenition;
 		}
 		return null;
-
 	}
 	
-	public static List<TypeHeatMetaDefinition> getListTypeHeatMetaDefinition(String csarUUID) throws Exception {
-
-		String artifactHeatMetaLocation = "Artifacts/HEAT.meta";
-		JSONParser parser = new JSONParser();
-		String csarPayload = CsarValidationUtils.getCsarPayload(csarUUID, artifactHeatMetaLocation);
-		if (csarPayload != null) {
-			Object parse = parser.parse(csarPayload);
-			JSONObject jsonObject = (JSONObject) parse;
-			JSONObject jsonObjectImportStructure = (JSONObject) jsonObject.get("importStructure");
-			List<TypeHeatMetaDefinition> listHeatMetaDefenition = new ArrayList<TypeHeatMetaDefinition>();
-			listHeatMetaDefenition = getArtifactsByGroup(jsonObjectImportStructure, listHeatMetaDefenition);
-			return listHeatMetaDefenition;
-		}
-		return null;
-
-	}
 	
 	protected static List<TypeHeatMetaDefinition> getArtifactsByGroup(JSONObject jsonObjectImportStructure, List<TypeHeatMetaDefinition> listHeatMetaDefenition) {
 

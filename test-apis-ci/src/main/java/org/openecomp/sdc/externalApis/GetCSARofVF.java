@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.externalApis;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -34,58 +33,27 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Rule;
 import org.junit.rules.TestName;
-import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactUiDownloadData;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
-import org.openecomp.sdc.ci.tests.api.Urls;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceAssetStructure;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceAssetStructure;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedExternalAudit;
-import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
-import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.openecomp.sdc.ci.tests.utils.cassandra.CassandraUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.AssetRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
-import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import static org.testng.AssertJUnit.assertTrue;
-
-import com.google.gson.Gson;
-
-import fj.data.Either;
 
 public class GetCSARofVF extends ComponentBaseTest {
 
@@ -224,22 +192,42 @@ public class GetCSARofVF extends ComponentBaseTest {
 		
 	}
 	
-	
 
-	
-	
-
+	/**
+	 * all files in list(expectedDefinitionFolderFileList) must be found in csar file 
+	 * @param resource
+	 * @param toscaModelCsarFile
+	 * @throws ZipException
+	 * @throws IOException
+	 */
 	public void validateCsarContent(Component resource, File toscaModelCsarFile) throws ZipException, IOException {
 		ZipFile zipFile = new ZipFile(toscaModelCsarFile);
+		List<String> expectedDefinitionFolderFileList = new ArrayList<String>();
+		expectedDefinitionFolderFileList.add("Definitions/"+ resource.getComponentType().getValue().toLowerCase()+"-"+ resource.getSystemName()+"-template.yml");
+		expectedDefinitionFolderFileList.add("Definitions/"+ resource.getComponentType().getValue().toLowerCase()+"-"+ resource.getSystemName()+"-template-interface.yml");
+		expectedDefinitionFolderFileList.add("Definitions/relationships.yml");
+		expectedDefinitionFolderFileList.add("Definitions/policies.yml");
+		expectedDefinitionFolderFileList.add("Definitions/nodes.yml");
+		expectedDefinitionFolderFileList.add("Definitions/interfaces.yml");
+		expectedDefinitionFolderFileList.add("Definitions/groups.yml");
+		expectedDefinitionFolderFileList.add("Definitions/data.yml");
+		expectedDefinitionFolderFileList.add("Definitions/capabilities.yml");
+		expectedDefinitionFolderFileList.add("Definitions/artifacts.yml");
+		
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 		while(entries.hasMoreElements()){
 			ZipEntry nextElement = entries.nextElement();
 			if (!(nextElement.getName().contains("Artifacts")||nextElement.getName().contains("csar.meta"))){
-				assertTrue("missing file in csar template", (nextElement.getName().equals("TOSCA-Metadata/TOSCA.meta") || 
-						nextElement.getName().equals("Definitions/"+ resource.getComponentType().getValue().toLowerCase()+"-"+ resource.getSystemName()+"-template.yml")) ||
-						nextElement.getName().equals("Definitions/"+ resource.getComponentType().getValue().toLowerCase()+"-"+ resource.getSystemName()+"-template-interface.yml"));
+//				assertTrue("missing file in csar template", (nextElement.getName().equals("TOSCA-Metadata/TOSCA.meta") || 
+//						nextElement.getName().equals("Definitions/"+ resource.getComponentType().getValue().toLowerCase()+"-"+ resource.getSystemName()+"-template.yml")) ||
+//						nextElement.getName().equals("Definitions/"+ resource.getComponentType().getValue().toLowerCase()+"-"+ resource.getSystemName()+"-template-interface.yml"));
+				if(expectedDefinitionFolderFileList.contains(nextElement.getName())){
+					expectedDefinitionFolderFileList.remove(nextElement.getName());
 				}
 			}
+		}
+		zipFile.close();
+		assertTrue("missing files in csar template definitions folder", expectedDefinitionFolderFileList.size() == 0);
 	}
 	
 	public void validateAudit(Component resource) throws Exception {

@@ -100,7 +100,7 @@ public class PropertyConvertor {
 			eschema.setDescription(schema.getProperty().getDescription());
 			prop.setEntry_schema(eschema);
 		}
-		log.debug("try to convert property {} from type {} with default value {}", property.getName(), property.getType(), property.getDefaultValue());
+		log.trace("try to convert property {} from type {} with default value [{}]", property.getName(), property.getType(), property.getDefaultValue());
 		prop.setDefaultp(convertToToscaObject(property.getType(), property.getName(), property.getDefaultValue(), innerType, dataTypes));
 		prop.setType(property.getType());
 		prop.setDescription(property.getDescription());
@@ -112,45 +112,46 @@ public class PropertyConvertor {
 	}
 
 	public Object convertToToscaObject(String propertyType, String propertyName, String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		log.debug("try to convert propertyType {} , value {}, innerType {}", propertyType, value, innerType);
+		log.trace("try to convert propertyType {} , value [{}], innerType {}", propertyType, value, innerType);
 		if (value == null) {
 			value = getDataTypeDefaultValue(propertyName, dataTypes.get(propertyType));
 			if(StringUtils.isEmpty(value)){
 				return null;
 			}
+
 		}
-
-		ToscaMapValueConverter mapConverterInst = ToscaMapValueConverter.getInstance();
-		ToscaValueConverter innerConverter = null;
-		Boolean isScalar = true;
-
-		ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
-		if (type == null) {
-			log.debug("isn't prederfined type, get from all data types");
-			DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
-			if (innerType == null) {
-				innerType = propertyType;
-			}
-
-			if ((type = mapConverterInst.isScalarType(dataTypeDefinition)) != null) {
-				log.debug("This is scalar type. get suitable converter for type {}", type);
-				innerConverter = type.getValueConverter();
-			} else {
-				isScalar = false;
-			}
-		} else {
-			ToscaPropertyType typeIfScalar = ToscaPropertyType.getTypeIfScalar(type.getType());
-			if (typeIfScalar == null) {
-				isScalar = false;
-			}
-
-			innerConverter = type.getValueConverter();
-			if (ToscaPropertyType.STRING.equals(type) && value.startsWith("/")) {
-				return innerConverter.convertToToscaValue(value, innerType, dataTypes);
-			}
-		}
-		JsonElement jsonElement = null;
 		try {
+			ToscaMapValueConverter mapConverterInst = ToscaMapValueConverter.getInstance();
+			ToscaValueConverter innerConverter = null;
+			Boolean isScalar = true;
+	
+			ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
+			if (type == null) {
+				log.trace("isn't prederfined type, get from all data types");
+				DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
+				if (innerType == null) {
+					innerType = propertyType;
+				}
+	
+				if ((type = mapConverterInst.isScalarType(dataTypeDefinition)) != null) {
+					log.trace("This is scalar type. get suitable converter for type {}", type);
+					innerConverter = type.getValueConverter();
+				} else {
+					isScalar = false;
+				}
+			} else {
+				ToscaPropertyType typeIfScalar = ToscaPropertyType.getTypeIfScalar(type.getType());
+				if (typeIfScalar == null) {
+					isScalar = false;
+				}
+	
+				innerConverter = type.getValueConverter();
+				if (ToscaPropertyType.STRING.equals(type) && value.startsWith("/")) {
+					return innerConverter.convertToToscaValue(value, innerType, dataTypes);
+				}
+			}
+			JsonElement jsonElement = null;
+		
 			StringReader reader = new StringReader(value);
 			JsonReader jsonReader = new JsonReader(reader);
 			jsonReader.setLenient(true);
@@ -162,11 +163,11 @@ public class PropertyConvertor {
 			}
 
 			if (jsonElement.isJsonPrimitive() && isScalar) {
-				log.debug("It's well defined type. convert it");
+				log.trace("It's well defined type. convert it");
 				ToscaValueConverter converter = type.getValueConverter();
 				return converter.convertToToscaValue(value, innerType, dataTypes);
 			} else {
-				log.debug("It's data type or inputs in primitive type. convert as map");
+				log.trace("It's data type or inputs in primitive type. convert as map");
 				Object convertedValue;
 				if (innerConverter != null && (ToscaPropertyType.MAP.equals(type) || ToscaPropertyType.LIST.equals(type))) {
 					convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);
@@ -185,7 +186,7 @@ public class PropertyConvertor {
 				return convertedValue;
 			}
 
-		} catch (JsonSyntaxException e) {
+		} catch (Exception e) {
 			log.debug("convertToToscaValue failed to parse json value :", e);
 			return null;
 		}

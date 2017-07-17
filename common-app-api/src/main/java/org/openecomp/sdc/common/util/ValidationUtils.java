@@ -66,14 +66,18 @@ public class ValidationUtils {
 
 	public final static Pattern ENGLISH_PATTERN = Pattern.compile("^[\\p{Graph}\\x20]+$");
 	public final static Integer COMPONENT_DESCRIPTION_MAX_LENGTH = 1024;
+	public final static Integer SERVICE_TYPE_MAX_LENGTH = 400;
+	public final static Integer SERVICE_ROLE_MAX_LENGTH = 400;
+
 	public final static Integer TAG_MAX_LENGTH = 1024;
 	public final static Integer TAG_LIST_MAX_LENGTH = 1024;
-	public final static Integer VENDOR_NAME_MAX_LENGTH = 25;
+	public final static Integer VENDOR_NAME_MAX_LENGTH = 60;
 	public final static Pattern VENDOR_NAME_PATTERN = Pattern
 			.compile("^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]+$");
 	public final static Integer VENDOR_RELEASE_MAX_LENGTH = 25;
 	public final static Pattern VENDOR_RELEASE_PATTERN = Pattern
 			.compile("^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]+$");
+	public final static Integer RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH = 65;
 
 	public final static Pattern CLEAN_FILENAME_PATTERN = Pattern.compile("[\\x00-\\x1f\\x80-\\x9f\\x5c/<?>\\*:|\"/]+");
 
@@ -318,14 +322,18 @@ public class ValidationUtils {
 		return true;
 	}
 
-	public static boolean validateVendorName(String ventorName) {
-		return VENDOR_NAME_PATTERN.matcher(ventorName).matches();
+	public static boolean validateVendorName(String vendorName) {
+		return VENDOR_NAME_PATTERN.matcher(vendorName).matches();
 	}
 
-	public static boolean validateVendorNameLength(String ventorName) {
-		return ventorName.length() <= VENDOR_NAME_MAX_LENGTH;
+	public static boolean validateVendorNameLength(String vendorName) {
+		return vendorName.length() <= VENDOR_NAME_MAX_LENGTH;
 	}
 
+	public static boolean validateResourceVendorModelNumberLength(String resourceVendorModelNumber) {
+		return resourceVendorModelNumber.length() <= RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH;
+	}
+	
 	public static boolean validateVendorRelease(String vendorRelease) {
 		return VENDOR_RELEASE_PATTERN.matcher(vendorRelease).matches();
 	}
@@ -333,6 +341,16 @@ public class ValidationUtils {
 	public static boolean validateVendorReleaseLength(String vendorRelease) {
 		return vendorRelease.length() <= VENDOR_RELEASE_MAX_LENGTH;
 	}
+	
+	public static boolean validateServiceTypeLength(String serviceType) {
+		return serviceType.length() <= SERVICE_TYPE_MAX_LENGTH;
+	}
+	
+	public static boolean validateServiceRoleLength(String serviceRole) {
+		return serviceRole.length() <= SERVICE_ROLE_MAX_LENGTH;
+	}
+
+
 
 	public static boolean hasBeenCertified(String version) {
 		return NumberUtils.toDouble(version) >= 1;
@@ -509,5 +527,5 @@ public class ValidationUtils {
 		String stripped = HtmlCleaner.stripHtml(htmlText, false);
 		return stripped;
 	}
-
+	
 }

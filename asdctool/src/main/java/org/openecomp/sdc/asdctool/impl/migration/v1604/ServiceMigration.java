@@ -706,7 +706,7 @@ public class ServiceMigration {
 		Either<ImmutablePair<ComponentInstanceData, GraphEdge>, TitanOperationStatus> reqInst = titanGenericDao.getParentNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.RelationshipInst), rel.getUniqueId(), GraphEdgeLabels.RELATIONSHIP_INST,
 				NodeTypeEnum.ResourceInstance, ComponentInstanceData.class);
 		if (reqInst.isRight()) {
-			log.debug("updateRelations : failed to fetch capabilty component instance for relation {}, error {}", rel.getUniqueId(), reqInst.right().value());
+			log.debug("updateRelations : failed to fetch capability component instance for relation {}, error {}", rel.getUniqueId(), reqInst.right().value());
 			return false;
 		}
 		ComponentInstanceData requirementInstanceData = reqInst.left().value().getLeft();
@@ -916,6 +916,9 @@ public class ServiceMigration {
 				break;
 			case CP:
 				originType = OriginTypeEnum.CP;
+				break;
+			case CVFC:
+				originType = OriginTypeEnum.CVFC;
 				break;
 			default:
 				log.debug("updateComponentInstanceType failed, no supported resource type {} for origin resource with id {}", resourceType, originId);

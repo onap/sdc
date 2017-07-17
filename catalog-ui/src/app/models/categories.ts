@@ -25,6 +25,5 @@ import {IMainCategory} from "./category";
 export class Categories {
 
     resourceCategories:Array<IMainCategory>;
-    productCategories:Array<IMainCategory>;
     serviceCategories:Array<IMainCategory>;
 }

@@ -125,5 +125,6 @@ public interface Constants {
 	public static final String VF_LICENSE_DESCRIPTION = "VF license file";
 	public static final String GET_INPUT = "get_input";
 	public static final String SERVICE_TEMPLATE_FILE_POSTFIX = "ServiceTemplate.yaml";
+	public static final String SERVICE_TEMPLATES_CONTAINING_FOLDER = "Definitions/";
 	public static final String UNBOUNDED = "unbounded";
 }

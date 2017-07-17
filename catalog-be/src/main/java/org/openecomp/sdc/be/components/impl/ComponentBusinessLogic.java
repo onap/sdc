@@ -183,11 +183,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 			return Either.right(errorResponse);
 		}
 
-		description = ValidationUtils.removeNoneUtf8Chars(description);
-		description = ValidationUtils.normaliseWhitespace(description);
-		description = ValidationUtils.stripOctets(description);
-		description = ValidationUtils.removeHtmlTagsOnly(description);
-
+		description = cleanUpText(description);
 		Either<Boolean, ResponseFormat> validatDescription = validateComponentDescription(description, type);
 		if (validatDescription.isRight()) {
 			ResponseFormat responseFormat = validatDescription.right().value();
@@ -666,17 +662,23 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 			}
 			toscaArtifact = generateToscaRes.left().value().left().value();
 			component.getToscaArtifacts().put(toscaArtifact.getArtifactLabel(), toscaArtifact);
-			toscaArtifact = component.getToscaArtifacts().values().stream()
-					.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType()))
-					.findAny().get();
-			generateToscaRes = saveToscaArtifactPayload(toscaArtifact, component, user, isInCertificationRequest, shouldLock, inTransaction, true);
+			if(!isAbstractResource(component)){
+				toscaArtifact = component.getToscaArtifacts().values().stream()
+						.filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType()))
+						.findAny().get();
+				generateToscaRes = saveToscaArtifactPayload(toscaArtifact, component, user, isInCertificationRequest, shouldLock, inTransaction, true);
+				if (generateToscaRes.isRight()) {
+					return generateToscaRes;
+				}
+				toscaArtifact = generateToscaRes.left().value().left().value();
+				component.getToscaArtifacts().put(toscaArtifact.getArtifactLabel(), toscaArtifact);
+			}
 		}
-		if (generateToscaRes.isRight()) {
-			return generateToscaRes;
-		}
-		ArtifactDefinition toscaArtifact = generateToscaRes.left().value().left().value();
-		component.getToscaArtifacts().put(toscaArtifact.getArtifactLabel(), toscaArtifact);
 		return generateToscaRes;
+	}
+
+	private boolean isAbstractResource(Component component) {
+		return component.getComponentType() == ComponentTypeEnum.RESOURCE && ((Resource)component).isAbstract();
 	}
 
 	public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> saveToscaArtifactPayload(ArtifactDefinition artifactDefinition, org.openecomp.sdc.be.model.Component component, User user, boolean isInCertificationRequest, boolean shouldLock,
@@ -735,11 +737,11 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 		}
 	}
 
-	public Either<Boolean, ResponseFormat> validateAndUpdateDescription(User user, Component currentComponent, Component updatedComponent, AuditingActionEnum audatingAction) {
+	public Either<Boolean, ResponseFormat> validateAndUpdateDescription(User user, Component currentComponent, Component updatedComponent, AuditingActionEnum auditingAction) {
 		String descriptionUpdated = updatedComponent.getDescription();
 		String descriptionCurrent = currentComponent.getDescription();
 		if (descriptionUpdated != null && !descriptionCurrent.equals(descriptionUpdated)) {
-			Either<Boolean, ResponseFormat> validateDescriptionResponse = validateDescriptionAndCleanup(user, updatedComponent, audatingAction);
+			Either<Boolean, ResponseFormat> validateDescriptionResponse = validateDescriptionAndCleanup(user, updatedComponent, auditingAction);
 			if (validateDescriptionResponse.isRight()) {
 				ResponseFormat errorRespons = validateDescriptionResponse.right().value();
 				return Either.right(errorRespons);
@@ -977,8 +979,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 	}
 	
 	protected <T extends Component> Either<Resource, ResponseFormat> fetchAndSetDerivedFromGenericType(T component){
-		
-		String genericTypeToscaName = component.fetchGenericTypeToscaNameFromConfig();
+		String genericTypeToscaName = null;
+		if(component.getComponentType() == ComponentTypeEnum.RESOURCE && ((Resource)component).getResourceType() == ResourceTypeEnum.CVFC){
+			genericTypeToscaName = ((Resource)component).getDerivedFrom().get(0);
+		} else {
+			genericTypeToscaName = component.fetchGenericTypeToscaNameFromConfig();
+		}
 		if(null == genericTypeToscaName)
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
 		Either<Resource, StorageOperationStatus> findLatestGeneric = toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(genericTypeToscaName);
@@ -1236,6 +1242,14 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 			}
 		}
 		return isMatchingType;
+	}
+	
+	protected String cleanUpText(String text){
+		text = ValidationUtils.removeNoneUtf8Chars(text);
+		text = ValidationUtils.normaliseWhitespace(text);
+		text = ValidationUtils.stripOctets(text);
+		text = ValidationUtils.removeHtmlTagsOnly(text);
+		return text;
 	}
 
 }

@@ -23,7 +23,9 @@
  */
 import {Component, Input, Output, EventEmitter, ViewChild} from "@angular/core";
 import {InputFEModel} from "app/models";
-import {ConfirmationDeleteInputComponent} from "./confirmation-delete-input/confirmation-delete-input.component";
+import { ModalService } from 'app/ng2/services/modal.service';
+
+
 
 @Component({
     selector: 'inputs-table',
@@ -38,11 +40,10 @@ export class InputsTableComponent {
     @Input() isLoading:boolean;
     @Output() inputValueChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() deleteInput: EventEmitter<any> = new EventEmitter<any>();
-    @ViewChild ('deleteInputConfirmation') deleteInputConfirmation:ConfirmationDeleteInputComponent;
 
     selectedInputToDelete:InputFEModel;
 
-    constructor (){
+    constructor(private modalService: ModalService){
     }
 
     onInputValueChanged = (input) => {
@@ -51,11 +52,12 @@ export class InputsTableComponent {
 
     onDeleteInput = () => {
         this.deleteInput.emit(this.selectedInputToDelete);
+        this.modalService.closeCurrentModal();
     };
 
     openDeleteModal = (input:InputFEModel) => {
         this.selectedInputToDelete = input;
-        this.deleteInputConfirmation.openModal();
+        this.modalService.openActionModal("Delete Input", "Are you sure you want to delete this input?", "Delete", this.onDeleteInput, "Close");
     }
 }
 

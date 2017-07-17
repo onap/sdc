@@ -30,12 +30,16 @@ public class UiServiceMetadata extends UiComponentMetadata {
 	private String distributionStatus;
 	private Boolean ecompGeneratedNaming;
 	private String namingPolicy;
+	private String serviceType;
+	private String serviceRole;
 
 	public UiServiceMetadata(List<CategoryDefinition> categories, ServiceMetadataDataDefinition metadata) {
 		super(categories, metadata);
 		this.distributionStatus = metadata.getDistributionStatus();
 		this.ecompGeneratedNaming = metadata.isEcompGeneratedNaming();
 		this.namingPolicy = metadata.getNamingPolicy();
+		this.serviceType = metadata.getServiceType();
+		this.serviceRole = metadata.getServiceRole();
 	}	
 	
 	public String getDistributionStatus() {
@@ -60,6 +64,22 @@ public class UiServiceMetadata extends UiComponentMetadata {
 
 	public void setNamingPolicy(String namingPolicy) {
 		this.namingPolicy = namingPolicy;
+	}
+	
+	public String getServiceType() {
+		return serviceType;
+	}
+
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
+	}
+	
+	public String getServiceRole() {
+		return serviceRole;
+	}
+
+	public void setServiceRole(String serviceRole) {
+		this.serviceRole = serviceRole;
 	}
 
 }

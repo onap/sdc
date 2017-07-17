@@ -75,8 +75,10 @@ import org.openecomp.sdc.be.model.operations.impl.LifecycleOperation;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
+import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
@@ -146,9 +148,14 @@ public class CsarUtils {
 			"([\\w\\_\\-\\.\\s]+)(/)" +
 			// Artifact Type
 			"([\\w\\_\\-\\.\\s]+)(/)" +
-			// Artifact File Name
-			"([\\w\\_\\-\\.\\s]+)";
-	public static final String ARTIFACT_CREATED_FROM_CSAR = "Artifact created from csar";
+			// Artifact Any File Name
+			".+";
+	public static final String VALID_ENGLISH_ARTIFACT_NAME = "([\\w\\_\\-\\.\\s]+)";
+    public static final String SERVICE_TEMPLATE_PATH_PATTERN = Constants.SERVICE_TEMPLATES_CONTAINING_FOLDER +
+            // Service Template File Name
+            "([\\w\\_\\-\\.\\s]+)";
+
+    public static final String ARTIFACT_CREATED_FROM_CSAR = "Artifact created from csar";
 
 	public CsarUtils() {
 		if(SDC_VERSION != null && !SDC_VERSION.isEmpty()){
@@ -281,8 +288,8 @@ public class CsarUtils {
 			dependencies = dependenciesRes.left().value().getDependencies();
 		}
 			
-			//UID <cassandraId,filename,component>
-			Map<String, ImmutableTriple<String,String, Component>> innerComponentsCache = new HashMap<>();
+		//UID <cassandraId,filename,component>
+		Map<String, ImmutableTriple<String,String, Component>> innerComponentsCache = new HashMap<>();
 			
 		if (dependencies != null && !dependencies.isEmpty()) {
 			for (Triple<String, String, Component> d : dependencies) {
@@ -295,18 +302,16 @@ public class CsarUtils {
 					return Either.right(responseFormat);
 				}
 
-					//fill innerComponentsCache
-					fileName = d.getLeft();
-					innerComponentsCache.put(childComponent.getUniqueId(), 
-							new ImmutableTriple<String, String, Component>(cassandraId, fileName, childComponent));
-					insertInnerComponentsToCache(innerComponentsCache, childComponent);
-					
-					byte[] content = entryData.left().value();
-					generatorInputs.add(new ImmutablePair<Component, byte[]>(childComponent, content));
-				}
+				//fill innerComponentsCache
+				fileName = d.getLeft();
+				addComponentToCache(innerComponentsCache, cassandraId, fileName, childComponent);
+				addInnerComponentsToCache(innerComponentsCache, childComponent);
 				
-				//add inner components to CSAR
-			
+				byte[] content = entryData.left().value();
+				generatorInputs.add(new ImmutablePair<Component, byte[]>(childComponent, content));
+			}
+				
+			//add inner components to CSAR
 			for (Entry<String, ImmutableTriple<String, String, Component>> innerComponentTripleEntry : innerComponentsCache.entrySet()) {
 				
 				ImmutableTriple<String, String, Component> innerComponentTriple = innerComponentTripleEntry.getValue();
@@ -418,7 +423,7 @@ public class CsarUtils {
 	}
 
 	
-	private void insertInnerComponentsToCache(Map<String, ImmutableTriple<String, String, Component>> componentCache,
+	private void addInnerComponentsToCache(Map<String, ImmutableTriple<String, String, Component>> componentCache,
 			Component childComponent) {
 		
 		List<ComponentInstance> instances = childComponent.getComponentInstances();
@@ -438,17 +443,30 @@ public class CsarUtils {
 					ArtifactDefinition childArtifactDefinition = childToscaArtifacts.get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
 					if (childArtifactDefinition != null) {
 						//add to cache
-						componentCache.put(ci.getComponentUid(), 
-							new ImmutableTriple<String, String, Component>(childArtifactDefinition.getEsId(), 
-									childArtifactDefinition.getArtifactName(), componentRI));
+						addComponentToCache(componentCache, childArtifactDefinition.getEsId(), childArtifactDefinition.getArtifactName(), componentRI);
 					}
 
 					//if not atomic - insert inner components as well
 					if(!ToscaUtils.isAtomicType(componentRI)) {
-						insertInnerComponentsToCache(componentCache, componentRI);
+						addInnerComponentsToCache(componentCache, componentRI);
 					}
 				}
 			});
+		}
+	}
+
+	private void addComponentToCache(Map<String, ImmutableTriple<String, String, Component>> componentCache,
+			String id, String fileName, Component component) {
+		
+		ImmutableTriple<String, String, Component> cachedComponent = componentCache.get(component.getInvariantUUID());
+		if (cachedComponent == null || CommonBeUtils.compareAsdcComponentVersions(component.getVersion(), cachedComponent.getRight().getVersion())) {
+			componentCache.put(component.getInvariantUUID(), 
+					new ImmutableTriple<String, String, Component>(id, fileName, component));
+			
+			if(cachedComponent != null) {
+				//overwriting component with newer version
+				log.warn("Overwriting component invariantID {} of version {} with a newer version {}", id, cachedComponent.getRight().getVersion(), component.getVersion());
+			}
 		}
 	}
 	

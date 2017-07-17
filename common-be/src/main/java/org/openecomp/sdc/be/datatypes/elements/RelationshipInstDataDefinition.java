@@ -44,12 +44,12 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition implemen
 		this.setModificationTime(cdt.getModificationTime());
 		this.setCapabilityOwnerId(cdt.getCapabilityOwnerId());
 		this.setRequirementOwnerId(cdt.getRequirementOwnerId());
-		this.setCapabiltyId(cdt.getCapabiltyId());
+		this.setCapabilityId(cdt.getCapabilityId());
 		this.setRequirementId(cdt.getRequirementId());
 		this.setFromId(cdt.getFromId());
 		this.setToId(cdt.getToId());
 		this.setRequirement(cdt.getRequirement());
-		this.setCapability(cdt.getCapabilty());
+		this.setCapability(cdt.getCapability());
 
 	}
 
@@ -60,11 +60,11 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition implemen
 	public String getRequirement() {
 		return (String) getToscaPresentationValue(JsonPresentationFields.REQUIREMENT);
 	}
-	public void setCapability(String capabilty) {
-		setToscaPresentationValue(JsonPresentationFields.CAPAPILITY, capabilty);
+	public void setCapability(String capability) {
+		setToscaPresentationValue(JsonPresentationFields.CAPAPILITY, capability);
 	}
 
-	public String getCapabilty() {
+	public String getCapability() {
 		return (String) getToscaPresentationValue(JsonPresentationFields.CAPAPILITY);
 	}
 	public void setToId(Object toId) {
@@ -87,15 +87,15 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition implemen
 		setToscaPresentationValue(JsonPresentationFields.REQUIREMENT_ID, requirementId);
 	}
 
-	public void setCapabiltyId(Object capabiltyId) {
-		setToscaPresentationValue(JsonPresentationFields.CAPABILITY_ID, capabiltyId);
+	public void setCapabilityId(Object capabilityId) {
+		setToscaPresentationValue(JsonPresentationFields.CAPABILITY_ID, capabilityId);
 	}
 
 	public String getRequirementId() {
 		return (String) getToscaPresentationValue(JsonPresentationFields.REQUIREMENT_ID);
 	}
 
-	public String getCapabiltyId() {
+	public String getCapabilityId() {
 		return (String) getToscaPresentationValue(JsonPresentationFields.CAPABILITY_ID);
 	}
 

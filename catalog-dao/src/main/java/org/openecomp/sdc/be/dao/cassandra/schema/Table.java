@@ -20,24 +20,7 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.ArtifactTableDescription;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.AuthEventTableDescription;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.CategoryEventTableDescription;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.ComponentCacheTableDescription;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.ConsumerEventTableDefinition;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribDeployEventTableDesc;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribDownloadEventTableDesc;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribEngineEventTableDesc;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribNotifEventTableDesc;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribStatusEventTableDesc;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.ExternalApiEventTableDesc;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.GetCatHierEventTableDesc;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.GetUebClusterEventTableDesc;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.GetUsersListEventTableDesc;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.ResAdminEventTableDescription;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.SdcSchemaFilesTableDescription;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.UserAccessEventTableDescription;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.UserAdminEventTableDescription;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.*;
 
 public enum Table {
 
@@ -58,8 +41,8 @@ public enum Table {
 	GET_CATEGORY_HIERARCHY_EVENT(new GetCatHierEventTableDesc()), 
 	EXTERNAL_API_EVENT(new ExternalApiEventTableDesc()), 
 	COMPONENT_CACHE(new ComponentCacheTableDescription()),
-	SDC_SCHEMA_FILES(new SdcSchemaFilesTableDescription());
-
+	SDC_SCHEMA_FILES(new SdcSchemaFilesTableDescription()),
+	SDC_REPO(new MigrationTasksTableDescription());
 	ITableDescription tableDescription;
 
 	Table(ITableDescription tableDescription) {

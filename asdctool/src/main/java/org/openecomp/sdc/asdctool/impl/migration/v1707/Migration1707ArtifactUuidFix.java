@@ -103,10 +103,10 @@ public class Migration1707ArtifactUuidFix {
 		if (runMode.equals("fix") || runMode.equals("fix_only_services")) {
 			log.info("Mode {}. Start fix", runMode);
 			if (fix(vfLst, serviceList) == false) {
-				log.info("Mode {}. Fix finished withh failure", runMode);
+				log.info("Mode {}. Fix finished with failure", runMode);
 				return false;
 			}
-			log.info("Mode {}. Fix finished withh success", runMode);
+			log.info("Mode {}. Fix finished with success", runMode);
 		}
 
 		return true;

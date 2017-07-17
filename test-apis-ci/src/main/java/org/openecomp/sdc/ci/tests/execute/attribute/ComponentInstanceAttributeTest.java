@@ -74,7 +74,7 @@ public class ComponentInstanceAttributeTest extends ComponentBaseTest {
 				.filter(att -> att.getName().equals("private_address")).findAny().get();
 		// update attribute on vfc instance
 		final Resource vfWithInsatncePreUpdate = swallowException(
-				() -> (Resource) AtomicOperationUtils.getCompoenntObject(vf, UserRoleEnum.DESIGNER));
+				() -> (Resource) AtomicOperationUtils.getComponentObject(vf, UserRoleEnum.DESIGNER));
 		ComponentInstanceProperty attributeOfRI = attributeGetter.apply(vfWithInsatncePreUpdate);
 		final String newAttValue = "NewValue";
 		attributeOfRI.setValue(newAttValue);
@@ -86,7 +86,7 @@ public class ComponentInstanceAttributeTest extends ComponentBaseTest {
 				BaseRestUtils.acceptHeaderData));
 		// Retrieve updated vf and verify attribute was updated
 		final Resource vfWithInsatncePostUpdate = swallowException(
-				() -> (Resource) AtomicOperationUtils.getCompoenntObject(vf, UserRoleEnum.DESIGNER));
+				() -> (Resource) AtomicOperationUtils.getComponentObject(vf, UserRoleEnum.DESIGNER));
 		ComponentInstanceProperty updatedAttribute = attributeGetter.apply(vfWithInsatncePostUpdate);
 		assertEquals(updatedAttribute.getValue(), newAttValue);
 

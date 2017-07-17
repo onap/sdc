@@ -22,7 +22,7 @@ beProtocol: http
 beSslPort: <%= @ssl_port %>
 version: 1.0
 released: 2012-11-30
-toscaConformanceLevel: 3.0
+toscaConformanceLevel: 4.0
 minToscaConformanceLevel: 3.0
 
 titanCfgFile: /var/lib/jetty/config/catalog-be/titan.properties
@@ -80,6 +80,7 @@ cassandraConfig:
         - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
         - { name: sdcartifact, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
         - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
+        - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
 
 #Application-specific settings of ES
 elasticSearch:
@@ -525,6 +526,7 @@ onboarding:
     host: <%= @host_ip %>
     port: <%= @catalog_port %>
     downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
+    healthCheckUri: "/onboarding-api/v1.0/healthcheck"
 
 
 # #GSS IDNS

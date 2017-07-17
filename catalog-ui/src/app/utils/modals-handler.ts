@@ -187,6 +187,24 @@ export class ModalsHandler implements IModalsHandler {
         return deferred.promise;
     };
 
+    openUpdateIconModal = (component: Component):ng.IPromise<any> => {
+        let deferred = this.$q.defer();
+        let modalOptions:ng.ui.bootstrap.IModalSettings = {
+            templateUrl: '../view-models/modals/icons-modal/icons-modal-view.html',
+            controller: 'Sdc.ViewModels.IconsModalViewModel',
+            size: 'sdc-auto',
+            backdrop: 'static',
+            resolve: {
+                component: ():Component => {
+                    return component;
+                }
+            }
+        };
+        let modalInstance:ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open(modalOptions);
+        deferred.resolve(modalInstance.result);
+        return deferred.promise;
+    };
+
     openEditEnvParametersModal = (artifactResource:ArtifactModel, component?:Component):ng.IPromise<any> => {
         let deferred = this.$q.defer();
         let modalOptions:ng.ui.bootstrap.IModalSettings = {

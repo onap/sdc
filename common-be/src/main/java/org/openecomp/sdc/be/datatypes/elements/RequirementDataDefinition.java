@@ -191,7 +191,7 @@ public class RequirementDataDefinition extends ToscaDataDefinition implements Se
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		String name = getUniqueId();
+		String name = getName();
 		String uniqueId = getUniqueId();
 		String capability = getCapability();
 		String node = getNode();
@@ -230,7 +230,7 @@ public class RequirementDataDefinition extends ToscaDataDefinition implements Se
 			return false;
 		RequirementDataDefinition other = (RequirementDataDefinition) obj;
 
-		String name = getUniqueId();
+		String name = getName();
 		String uniqueId = getUniqueId();
 		String capability = getCapability();
 		String node = getNode();
@@ -308,7 +308,7 @@ public class RequirementDataDefinition extends ToscaDataDefinition implements Se
 
 	@Override
 	public String toString() {
-		String name = getUniqueId();
+		String name = getName();
 		String uniqueId = getUniqueId();
 		String capability = getCapability();
 		String node = getNode();

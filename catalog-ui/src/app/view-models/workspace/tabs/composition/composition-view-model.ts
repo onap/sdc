@@ -18,12 +18,14 @@
  * ============LICENSE_END=========================================================
  */
 'use strict';
-import {Component, Product, ComponentInstance, IAppMenu} from "app/models";
+import {Component, ComponentInstance, IAppMenu} from "app/models";
 import {SharingService, CacheService, EventListenerService, LeftPaletteLoaderService} from "app/services";
 import {ModalsHandler, GRAPH_EVENTS, ComponentFactory, ChangeLifecycleStateHandler, MenuHandler, EVENTS} from "app/utils";
 import {IWorkspaceViewModelScope} from "../../workspace-view-model";
 import {ComponentServiceNg2} from "app/ng2/services/component-services/component.service";
 import {ComponentGenericResponse} from "app/ng2/services/responses/component-generic-response";
+import {Resource} from "app/models/components/resource";
+import {ResourceType} from "../../../../utils/constants";
 
 export interface ICompositionViewModelScope extends IWorkspaceViewModelScope {
 
@@ -205,9 +207,6 @@ export class CompositionViewModel {
             if (this.$state.current.name === 'workspace.composition.api') {
                 this.$state.go('workspace.composition.details');
             }
-            if (this.$state.current.name === 'workspace.composition.relations' && this.$scope.currentComponent.isProduct()) {
-                this.$state.go('workspace.composition.details');
-            }
         };
 
         this.$scope.onBackgroundClick = ():void => {
@@ -238,7 +237,7 @@ export class CompositionViewModel {
             this.ModalsHandler.openAlertModal(title, message).then(onOk);
         };
 
-        this.$scope.onComponentInstanceVersionChange = (component:Product):void => {
+        this.$scope.onComponentInstanceVersionChange = (component:Component):void => {
             this.$scope.currentComponent = component;
             this.$scope.setComponent(this.$scope.currentComponent);
             this.$scope.updateSelectedComponent();

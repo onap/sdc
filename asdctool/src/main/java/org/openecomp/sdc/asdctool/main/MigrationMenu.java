@@ -33,12 +33,7 @@ import org.openecomp.sdc.asdctool.impl.migration.v1607.CsarMigration;
 import org.openecomp.sdc.asdctool.impl.migration.v1610.TitanFixUtils;
 import org.openecomp.sdc.asdctool.impl.migration.v1610.ToscaArtifactsAlignment;
 import org.openecomp.sdc.asdctool.impl.migration.v1702.Migration1702;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707ArtifactUuidFix;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707Config;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.DistributionStatusUpdate;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707VnfFix;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.VfModulesPropertiesAdding;
+import org.openecomp.sdc.asdctool.impl.migration.v1707.*;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -53,17 +48,17 @@ public class MigrationMenu {
 	private static final String SERVICE_MIGARTION_BEAN = "serviceMigrationBean";
 
 	private static enum MigrationOperationEnum {
-		MIGRATION_1602_1604("migrate-1602-1604", SERVICE_MIGARTION_BEAN), 
-		ALIGN_DERIVED_FROM_1604("align-derived-from-1604", "derivedFromAlignment"), 
-		MIGRATE_1604_1607("migrate-1604-1607", SERVICE_MIGARTION_BEAN), 
-		ALIGN_VFC_NAMES_1604("align-vfc-names-1604", "vfcNamingAlignmentBean"), 
-		TEST_REMOVE_HEAT_PLACEHOLDERS("testremoveheatplaceholders",	SERVICE_MIGARTION_BEAN), 
-		TEST_ADD_GROUP_UUIDS("testaddgroupuuids", SERVICE_MIGARTION_BEAN), 
-		ALIGN_GROUPS("align-groups", "groupsAlignment"), 
-		CLEAN_CSAR("clean-csar", "csarMigration"), 
-		POPULATE_COMPONENT_CACHE("populate-component-cache", "populateComponentCache"), 
-		FIX_PROPERTIES("fix-properties", "titanFixUtils"), 
-		ALIGN_TOSCA_ARTIFACTS("align-tosca-artifacts", "toscaArtifactsAlignment"), 
+		MIGRATION_1602_1604("migrate-1602-1604", SERVICE_MIGARTION_BEAN),
+		ALIGN_DERIVED_FROM_1604("align-derived-from-1604", "derivedFromAlignment"),
+		MIGRATE_1604_1607("migrate-1604-1607", SERVICE_MIGARTION_BEAN),
+		ALIGN_VFC_NAMES_1604("align-vfc-names-1604", "vfcNamingAlignmentBean"),
+		TEST_REMOVE_HEAT_PLACEHOLDERS("testremoveheatplaceholders",	SERVICE_MIGARTION_BEAN),
+		TEST_ADD_GROUP_UUIDS("testaddgroupuuids", SERVICE_MIGARTION_BEAN),
+		ALIGN_GROUPS("align-groups", "groupsAlignment"),
+		CLEAN_CSAR("clean-csar", "csarMigration"),
+		POPULATE_COMPONENT_CACHE("populate-component-cache", "populateComponentCache"),
+		FIX_PROPERTIES("fix-properties", "titanFixUtils"),
+		ALIGN_TOSCA_ARTIFACTS("align-tosca-artifacts", "toscaArtifactsAlignment"),
 		FIX_ICONS("fix-icons", "titanFixUtils"),
 		MIGRATION_1610_1702("migrate-1610-1702", "migration1702"),
 		MIGRATION_1702_1707("migrate-1702-1707", "migration1707"),
@@ -71,7 +66,8 @@ public class MigrationMenu {
 		VFMODULES_PROPERTIES_ADDING("vfModules-properties-adding", "vfModulesPropertiesAdding"),
 		MIGRATION_1707_RELATIONS_FIX("fix-relations-after-migration-1707", "migration1707relationsFix"),
 		MIGRATION_1707_VNF_FIX("fix-vnf-after-migration-1707", "migration1707vnfFix"),
-		MIGRATION_1707_UUID_FIX("fix-UUID-1707", "migration1707UuidFix");
+		MIGRATION_1707_UUID_FIX("fix-UUID-1707", "migration1707UuidFix"),
+		MIGRATION_1707_MISSING_INFO_FIX("fix-missing-info-1707", "migration1707MissingInfoFix");
 		// UPDATE_DATA_TYPES("update_data_types", "updateDataTypes");
 
 		private String value, beanName;
@@ -225,7 +221,7 @@ public class MigrationMenu {
 				ToscaArtifactsAlignment toscaArtifactsAlignment = (ToscaArtifactsAlignment) context.getBean(operationEnum.getBeanName());
 				boolean isSuccessful = toscaArtifactsAlignment.alignToscaArtifacts();
 				if (isSuccessful) {
-					log.info("Tosca Artifacts alignment was finished successfull");
+					log.info("Tosca Artifacts alignment was finished successfully");
 					System.exit(0);
 				} else {
 					log.info("Tosca Artifacts alignment has failed");
@@ -233,20 +229,20 @@ public class MigrationMenu {
 				}
 				break;
 			case MIGRATION_1610_1702:
-				log.info("Start ASDC migration from 1610 to 1702");
+				log.info("Start SDC migration from 1610 to 1702");
 				Migration1702 migration = (Migration1702) context.getBean(operationEnum.getBeanName());
 				isSuccessful = migration.migrate(appConfigDir);
 				if (isSuccessful) {
-					log.info("ASDC migration from 1610 to 1702 was finished successful");
+					log.info("SDC migration from 1610 to 1702 was finished successful");
 					System.exit(0);
 				} else{
-					log.info("ASDC migration from 1610 to 1702 has failed");
+					log.info("SDC migration from 1610 to 1702 has failed");
 					System.exit(2);
 				}
-			
+
 				break;
 			case MIGRATION_1702_1707://this migration is currently not needed, but will be commented out for production env
-				log.info("Start ASDC migration from 1702 to 1707");
+//				log.info("Start SDC migration from 1702 to 1707");
 				Migration1707 migration1707 = (Migration1707) context.getBean(operationEnum.getBeanName());
 				isSuccessful = migration1707.migrate();
 				if (isSuccessful) {
@@ -278,14 +274,28 @@ public class MigrationMenu {
 				}
 				String fixServices = args[3];
 				String runMode = args[4];
-				log.info("Start fixing artifact UUID after 1707 migration with arguments run with configutation [{}] , for [{}] services", runMode, fixServices);
-				
+				log.info("Start fixing artifact UUID after 1707 migration with arguments run with configuration [{}] , for [{}] services", runMode, fixServices);
+
 				Migration1707ArtifactUuidFix migrationFix = (Migration1707ArtifactUuidFix) context.getBean(operationEnum.getBeanName());
 				isSuccessful = migrationFix.migrate(fixServices,  runMode);
 				if (isSuccessful) {
 					log.info("Fixing artifacts UUID for 1707  was finished successfully");
 				} else{
 					log.info("Fixing artifacts UUID for 1707  has failed");
+					System.exit(2);
+				}
+				System.exit(0);
+				break;
+			case MIGRATION_1707_MISSING_INFO_FIX:
+
+				log.info("Start fixing missing group and instance info after 1707 migration");
+
+				Migration1707MissingInfoFix migration1707Fix = (Migration1707MissingInfoFix) context.getBean(operationEnum.getBeanName());
+				isSuccessful = migration1707Fix.migrate();
+				if (isSuccessful) {
+					log.info("Fixing groups and node templates missing info  was finished successfully");
+				} else{
+					log.info("Fixing groups and node templates missing info has failed");
 					System.exit(2);
 				}
 				System.exit(0);
@@ -330,5 +340,6 @@ public class MigrationMenu {
 		System.out.println("Usage: fix-relations-after-migration-1707 <configuration dir>");
 		System.out.println("Usage: fix-vnf-after-migration-1707 <configuration dir>");
 		System.out.println("Usage: fix-UUID-1707 <configuration dir> <all/distributed_only> <services/service_vf/fix/fix_only_services>");
+		System.out.println("Usage: fix-missing-info-1707 <configuration dir>");
 	}
 }

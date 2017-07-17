@@ -37,14 +37,13 @@ import { HierarchyNavService } from './../../services/hierarchy-nav.service';
 import { PropertiesUtils } from './properties.utils';
 import { DynamicElementModule } from 'app/ng2/components/dynamic-element/dynamic-element.module';
 import { DynamicPropertyComponent } from './../../components/properties-table/dynamic-property/dynamic-property.component';
-import {ConfirmationDeleteInputComponent} from "app/ng2/components/inputs-table/confirmation-delete-input/confirmation-delete-input.component"
-import { PopoverModule } from "../../components/popover/popover.module"
+import { PopoverModule } from "../../components/popover/popover.module";
+import { ModalModule } from "../../components/modal/modal.module";
 import { FilterPropertiesAssignmentComponent } from "./../../components/filter-properties-assignment/filter-properties-assignment.component";
 import { GroupByPipe } from 'app/ng2/pipes/groupBy.pipe';
 import { KeysPipe } from 'app/ng2/pipes/keys.pipe';
 import {TooltipModule} from "../../components/tooltip/tooltip.module";
 import { ComponentModeService } from "app/ng2/services/component-mode.service"
-import { ModalComponent } from "app/ng2/components/modal/modal.component"
 import {LoaderComponent} from "app/ng2/components/loader/loader.component"
 import {HttpInterceptor} from "../../services/http.interceptor.service";
 
@@ -63,8 +62,6 @@ import {HttpInterceptor} from "../../services/http.interceptor.service";
         // PopoverContentComponent,
         // PopoverComponent,
         FilterPropertiesAssignmentComponent,
-        ModalComponent,
-        ConfirmationDeleteInputComponent,
         LoaderComponent
     ],
     imports: [
@@ -75,7 +72,8 @@ import {HttpInterceptor} from "../../services/http.interceptor.service";
         CheckboxModule,
         DynamicElementModule,
         PopoverModule,
-        TooltipModule
+        TooltipModule,
+        ModalModule
     ],
     entryComponents: [PropertiesAssignmentComponent],
     exports: [

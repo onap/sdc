@@ -45,26 +45,33 @@ import org.testng.annotations.Test;
 
 public class AndreyTest {
 
+	private static ToscaDefinition parseToscaYamlToJavaObject;
+
+
 	public static void main(String[] args) throws Exception {
 		ToscaDefinition toscaDefinition;
 		System.out.println("start " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
 //        File path = new File("C:/Data/D2.0/TOSCA_Ex/Definitions/tosca_definition_version.yaml");
 //        File path = new File("C:/Data/D2.0/TOSCA_Ex/resource-Vl11Vl10-template.yml");
-        File path = new File("C:/Data/D2.0/TOSCA_Ex/service-Servicepxtc-template US822998.yml");
-        File csarPath = new File("C:/Data/D2.0/TOSCA_Ex/Nested.csar");
+//        File path = new File("C:/Data/D2.0/TOSCA_Ex/service-Servicepxtc-template US822998.yml");
+//        File path = new File("C:/Data/FileToParse/Definitions/service-Ciservice513e6fa67d07-template.yml");
+		toscaDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File("C:/Data/FileToParse/LDSA/LDSA_amdocs.csar"));
+//        File path = new File("C:/Data/FileToParse/Definitions/resource-Civfonboarded2016006VvmVvm301607E2100a9b04-template.yml");
+//        File csarPath = new File("C:/Data/D2.0/TOSCA_Ex/Nested.csar");
 
-        toscaDefinition = ToscaParserUtils.parseToscaYamlToJavaObject(path);
+		
+//        toscaDefinition = ToscaParserUtils.parseToscaYamlToJavaObject(path);
         System.out.println("listTypeHeatMetaDefinition start " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
-        List<TypeHeatMetaDefinition> listTypeHeatMetaDefinition = CsarParserUtils.getListTypeHeatMetaDefinition(csarPath);
+//        List<TypeHeatMetaDefinition> listTypeHeatMetaDefinition = CsarParserUtils.getListTypeHeatMetaDefinition(csarPath);
         System.out.println("get service start " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
-        System.out.println(listTypeHeatMetaDefinition);
-        for(TypeHeatMetaDefinition typeHeatMetaDefinition : listTypeHeatMetaDefinition){
-        	for(GroupHeatMetaDefinition groupHeatMetaDefinition : typeHeatMetaDefinition.getGroupHeatMetaDefinition()){
-        		List<HeatMetaFirstLevelDefinition> artifactList = groupHeatMetaDefinition.getArtifactList();
-        		boolean isBase = groupHeatMetaDefinition.getPropertyHeatMetaDefinition().getValue();
-        	}
-        	
-        }
+//        System.out.println(listTypeHeatMetaDefinition);
+//        for(TypeHeatMetaDefinition typeHeatMetaDefinition : listTypeHeatMetaDefinition){
+//        	for(GroupHeatMetaDefinition groupHeatMetaDefinition : typeHeatMetaDefinition.getGroupHeatMetaDefinition()){
+//        		List<HeatMetaFirstLevelDefinition> artifactList = groupHeatMetaDefinition.getArtifactList();
+//        		boolean isBase = groupHeatMetaDefinition.getPropertyHeatMetaDefinition().getValue();
+//        	}
+//        	
+//        }
         System.out.println("Finished");
         System.out.println("get service start " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
 	}

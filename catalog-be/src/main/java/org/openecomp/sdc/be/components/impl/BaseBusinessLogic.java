@@ -47,6 +47,7 @@ import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
+import org.openecomp.sdc.be.model.IPropertyInputCommon;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
@@ -391,11 +392,10 @@ public abstract class BaseBusinessLogic {
 	}
 
 	protected Either<Boolean, ResponseFormat> validatePropertyDefaultValue(IComplexDefaultValue property, Map<String, DataTypeDefinition> dataTypes) {
-		log.debug("validate property");
 		String type = null;
 		String innerType = null;
 		if (!propertyOperation.isPropertyTypeValid(property)) {
-			log.info("Invalid type for property");
+			log.info("Invalid type for property {} type {}", property.getName(), property.getType());
 			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_TYPE, property.getType(), property.getName());
 			return Either.right(responseFormat);
 		}
@@ -404,13 +404,13 @@ public abstract class BaseBusinessLogic {
 			ImmutablePair<String, Boolean> propertyInnerTypeValid = propertyOperation.isPropertyInnerTypeValid(property, dataTypes);
 			innerType = propertyInnerTypeValid.getLeft();
 			if (!propertyInnerTypeValid.getRight().booleanValue()) {
-				log.info("Invalid inner type for property");
+				log.info("Invalid inner type for property {} type {}", property.getName(), property.getType() );
 				ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE, innerType, property.getName());
 				return Either.right(responseFormat);
 			}
 		}
 		if (!propertyOperation.isPropertyDefaultValueValid(property, dataTypes)) {
-			log.info("Invalid default value for property");
+			log.info("Invalid default value for property {} type {}", property.getName(), property.getType() );
 			ResponseFormat responseFormat;
 			if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
 				responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE, property.getName(), type, innerType, property.getDefaultValue());
@@ -568,7 +568,7 @@ public abstract class BaseBusinessLogic {
 		return Arrays.asList(enumValues).contains(enumFound);
 	}
 	
-	protected Either<String, StorageOperationStatus> validatePropValueBeforeCreate(ComponentInstanceProperty property, String value, boolean isValidate, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
+	protected Either<String, StorageOperationStatus> validatePropValueBeforeCreate(IPropertyInputCommon property, String value, boolean isValidate, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
 		String propertyType = property.getType();
 		ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
 
@@ -603,7 +603,7 @@ public abstract class BaseBusinessLogic {
 		}
 
 		ImmutablePair<String, Boolean> pair = validateAndUpdateRules(propertyType, property.getRules(), innerType, allDataTypes, isValidate);
-		log.debug("After validateAndUpdateRules. pair = {}", pair);
+		log.trace("After validateAndUpdateRules. pair = {}", pair);
 		if (pair.getRight() != null && pair.getRight() == false) {
 			BeEcompErrorManager.getInstance().logBeInvalidValueError("Add property value", pair.getLeft(), property.getName(), propertyType);
 			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ILLEGAL_ARGUMENT));

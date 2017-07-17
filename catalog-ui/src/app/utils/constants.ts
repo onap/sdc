@@ -29,13 +29,11 @@ export let CHANGE_COMPONENT_CSAR_VERSION_FLAG = 'changeComponentCsarVersion';
 export class ComponentType {
     static SERVICE = 'SERVICE';
     static RESOURCE = 'RESOURCE';
-    static PRODUCT = 'PRODUCT';
 }
 
 export class ServerTypeUrl {
     static RESOURCES = 'resources/';
     static SERVICES = 'services/';
-    static PRODUCTS = 'product/';
 }
 
 export class ResourceType {
@@ -45,6 +43,7 @@ export class ResourceType {
     static VFC = 'VFC';
     static VFCMT = 'VFCMT';
     static PNF = 'PNF';
+    static CVFC = 'CVFC';
 }
 
 export class ComponentState {
@@ -129,8 +128,6 @@ export class PROPERTY_VALUE_CONSTRAINTS {
 export class Role {
     public static ADMIN = 'ADMIN';
     public static DESIGNER = 'DESIGNER';
-    public static PRODUCT_STRATEGIST = 'PRODUCT_STRATEGIST';
-    public static PRODUCT_MANAGER = 'PRODUCT_MANAGER';
     public static TESTER = 'TESTER';
     public static OPS = 'OPS';
     public static GOVERNOR = 'GOVERNOR';
@@ -213,14 +210,12 @@ export class GraphUIObjects {
 
 export class States {
     public static WORKSPACE_GENERAL = 'workspace.general';
-    public static WORKSPACE_ICONS = 'workspace.icons';
     public static WORKSPACE_ACTIVITY_LOG = 'workspace.activity_log';
     public static WORKSPACE_DEPLOYMENT_ARTIFACTS = 'workspace.deployment_artifacts';
     public static WORKSPACE_PROPERTIES = 'workspace.properties';
     public static WORKSPACE_SERVICE_INPUTS = 'workspace.service_inputs';
     public static WORKSPACE_RESOURCE_INPUTS = 'workspace.resource_inputs';
     public static WORKSPACE_ATTRIBUTES = 'workspace.attributes';
-    public static WORKSPACE_HIERARCHY = 'workspace.hierarchy';
     public static WORKSPACE_INFORMATION_ARTIFACTS = 'workspace.information_artifacts';
     public static WORKSPACE_TOSCA_ARTIFACTS = 'workspace.tosca_artifacts';
     public static WORKSPACE_COMPOSITION = 'workspace.composition';
@@ -237,7 +232,6 @@ export class EVENTS {
     static RESOURCE_LEFT_PALETTE_UPDATE_EVENT = "resourceLeftPanelUpdateEvent";
     static RESOURCE_PNF_LEFT_PALETTE_UPDATE_EVENT = "resourcePNFLeftPanelUpdateEvent";
     static SERVICE_LEFT_PALETTE_UPDATE_EVENT = "serviceLeftPanelUpdateEvent";
-    static PRODUCT_LEFT_PALETTE_UPDATE_EVENT = "productLeftPanelUdateEvent";
     static VL_LEFT_PALETTE_UPDATE_EVENT = "vlLeftPanelUdateEvent";
     static ON_CSAR_LOADING = "onCsarLoading";
     static DOWNLOAD_ARTIFACT_FINISH_EVENT = "downloadArtifactFinishEvent";

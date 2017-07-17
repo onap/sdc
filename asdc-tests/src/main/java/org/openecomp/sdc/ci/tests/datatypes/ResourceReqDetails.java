@@ -29,6 +29,7 @@ public class ResourceReqDetails extends ComponentReqDetails {
 	List<String> derivedFrom;
 	String vendorName;
 	String vendorRelease;
+	String resourceVendorModelNumber;
 
 	// Unsettable/unupdatable fields
 
@@ -55,6 +56,7 @@ public class ResourceReqDetails extends ComponentReqDetails {
 		this.derivedFrom = resource.getDerivedFrom();
 		this.vendorName = resource.getVendorName();
 		this.vendorRelease = resource.getVendorRelease();
+		this.resourceVendorModelNumber = resource.getResourceVendorModelNumber();
 		this.contactId = resource.getContactId();
 		this.icon = resource.getIcon();
 		this.toscaResourceName = resource.getToscaResourceName();

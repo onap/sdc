@@ -506,6 +506,7 @@ public class OnboardingUtils {
 		jObject.put("description", "new VSP description");
 		jObject.put("category", "resourceNewCategory.generic");
 		jObject.put("subCategory", "resourceNewCategory.generic.database");
+		jObject.put("onboardingMethod", "HEAT");
 		jObject.put("licensingVersion", jlicensingVersionObj);
 		jObject.put("vendorName", vendorName);
 		jObject.put("vendorId", vendorId);
@@ -669,7 +670,7 @@ public class OnboardingUtils {
 		boolean vspFound = HomePage.searchForVSP(vspName);
 
 		if (vspFound){
-			
+
 			List<WebElement> elemenetsFromTable = HomePage.getElemenetsFromTable();
 //			WebDriverWait wait = new WebDriverWait(GeneralUIUtils.getDriver(), 30);
 //			WebElement findElement = wait.until(ExpectedConditions.visibilityOf(elemenetsFromTable.get(1)));
@@ -767,24 +768,36 @@ public class OnboardingUtils {
 		LinkedList<HeatMetaFirstLevelDefinition> deploymentArtifacts = ((LinkedList<HeatMetaFirstLevelDefinition>) combinedMap.get("Deployment"));
 		ArtifactsCorrelationManager.addVNFartifactDetails(vspName, deploymentArtifacts);
 		
-		validateDeploymentArtifactsVersion(deploymentArtifacts);
+		List<String> heatEnvFilesFromCSAR = deploymentArtifacts.stream().filter(e -> e.getType().equals("HEAT_ENV")).
+																		 map(e -> e.getFileName()).
+																		 collect(Collectors.toList());
+
+		validateDeploymentArtifactsVersion(deploymentArtifacts, heatEnvFilesFromCSAR);
+
 		DeploymentArtifactPage.verifyArtifactsExistInTable(filepath, vnfFile);
 		return createVendorSoftwareProduct;
 	}
 
-	public static void validateDeploymentArtifactsVersion(LinkedList<HeatMetaFirstLevelDefinition> deploymentArtifacts) {
-		String artifactVersion = "1";
+	public static void validateDeploymentArtifactsVersion(LinkedList<HeatMetaFirstLevelDefinition> deploymentArtifacts,
+			List<String> heatEnvFilesFromCSAR) {
+		String artifactVersion;
 		String artifactName;
-		
+
 		for(HeatMetaFirstLevelDefinition deploymentArtifact: deploymentArtifacts) {
+			artifactVersion = "1";
+
 			if(deploymentArtifact.getType().equals("HEAT_ENV")) {
 				continue;
 			} else if(deploymentArtifact.getFileName().contains(".")) {
-				artifactName = deploymentArtifact.getFileName().trim().substring(0, deploymentArtifact.getFileName().lastIndexOf("."));				
+				artifactName = deploymentArtifact.getFileName().trim().substring(0, deploymentArtifact.getFileName().lastIndexOf("."));
 			} else {
-				artifactName = deploymentArtifact.getFileName().trim();				
+				artifactName = deploymentArtifact.getFileName().trim();
 			}
-			ArtifactUIUtils.validateArtifactNameVersionType(artifactName, artifactVersion, deploymentArtifact.getType());			
+
+			if (heatEnvFilesFromCSAR.contains(artifactName + ".env")){
+				artifactVersion = "2";
+			}
+			ArtifactUIUtils.validateArtifactNameVersionType(artifactName, artifactVersion, deploymentArtifact.getType());
 		}
 	}
 

@@ -155,7 +155,6 @@ public class GroupTypeOperation extends AbstractOperation implements IGroupTypeO
 	@Override
 	public Either<GroupTypeDefinition, StorageOperationStatus> getGroupType(String uniqueId, boolean inTransaction) {
 		return getElementType(this::getGroupTypeByUid, uniqueId, inTransaction);
-
 	}
 
 	@Override

@@ -94,6 +94,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 	}
 
 	public static RestResponse createService(ServiceReqDetails service, User user) throws Exception {
+
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.CREATE_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort());
 		String serviceBodyJson = gson.toJson(service);
@@ -256,6 +257,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 				config.getCatalogBePort(), serviceName, serviceVersion);
 		RestResponse deleteResponse = http.httpSendDelete(url, headersMap);
 
+		deleteMarkedServices(sdncModifierDetails.getUserId());
 		return deleteResponse;
 	}
 

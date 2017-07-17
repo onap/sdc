@@ -33,6 +33,7 @@ export interface ITypeMapScope extends ng.IScope {
     isSchemaTypeDataType:boolean;
     valueObjRef:any;
     mapKeys:Array<string>;//array of map keys
+    mapKeysStatic:Array<string>;
     MapKeyValidationPattern:RegExp;
     fieldsPrefixName:string;
     readOnly:boolean;
@@ -82,6 +83,8 @@ export class TypeMapDirective implements ng.IDirective {
             scope.isSchemaTypeDataType = this.DataTypesService.isDataTypeForSchemaType(scope.schemaProperty);
             if (scope.valueObjRef) {
                 scope.mapKeys = Object.keys(scope.valueObjRef);
+                //keeping another copy of the keys, as the mapKeys gets overridden sometimes
+                scope.mapKeysStatic = Object.keys(scope.valueObjRef);
             }
         });
 
@@ -91,6 +94,8 @@ export class TypeMapDirective implements ng.IDirective {
                 scope.valueObjRef = {};
             }
             scope.mapKeys = Object.keys(scope.valueObjRef);
+            //keeping another copy of the keys, as the mapKeys gets overridden sometimes
+            scope.mapKeysStatic = Object.keys(scope.valueObjRef);
 
             if ($attr.defaultValue) {
                 scope.mapDefaultValue = JSON.parse($attr.defaultValue);

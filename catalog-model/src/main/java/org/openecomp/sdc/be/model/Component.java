@@ -22,9 +22,12 @@ package org.openecomp.sdc.be.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -286,6 +289,13 @@ public abstract class Component implements Serializable {
 
 	public void setDeploymentArtifacts(Map<String, ArtifactDefinition> deploymentArtifacts) {
 		this.deploymentArtifacts = deploymentArtifacts;
+	}
+
+	public Map<String, ArtifactDefinition> getAllArtifacts() {
+		HashMap<String, ArtifactDefinition> allArtifacts = new HashMap<>();
+		allArtifacts.putAll(Optional.ofNullable(this.deploymentArtifacts).orElse(Collections.emptyMap()));
+		allArtifacts.putAll(Optional.ofNullable(this.artifacts).orElse(Collections.emptyMap()));
+		return allArtifacts;
 	}
 
 	public List<CategoryDefinition> getCategories() {

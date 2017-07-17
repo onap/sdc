@@ -55,7 +55,7 @@ export class PropertyFEModel extends PropertyBEModel {
             } catch (e){}
         }
 
-        return (this.derivedDataType == DerivedPropertyType.SIMPLE) ? this.valueObj : JSON.stringify(this.valueObj);     
+        return (this.derivedDataType == DerivedPropertyType.SIMPLE) ? this.valueObj : JSON.stringify(this.valueObj);
     }
 
     public setNonDeclared = (childPath?: string): void => {
@@ -101,16 +101,16 @@ export class PropertyFEModel extends PropertyBEModel {
     //     this.flattenedChildren.filter(prop => prop.parentName == item.parentName).map(prop => prop.propertiesName).indexOf(item.propertiesName)
     // }
 
-    /* Updates parent valueObj when a child prop's value has changed */    
-    public childPropUpdated = (childProp: DerivedFEProperty): void => {          
+    /* Updates parent valueObj when a child prop's value has changed */
+    public childPropUpdated = (childProp: DerivedFEProperty): void => {
         let parentNames = this.getParentNamesArray(childProp.propertiesName, []);
         if (parentNames.length) {
             _.set(this.valueObj, parentNames.join('.'), childProp.valueObj);
         }
     };
 
-    /* Returns array of individual parents for given prop path, with list/map UUIDs replaced with index/mapkey */    
-    private getParentNamesArray = (parentPropName: string, parentNames?: Array<string>): Array<string> => {
+    /* Returns array of individual parents for given prop path, with list/map UUIDs replaced with index/mapkey */
+    public getParentNamesArray = (parentPropName: string, parentNames?: Array<string>): Array<string> => {
         if (parentPropName.indexOf("#") == -1) { return parentNames; } //finished recursing parents. return
 
         let parentProp: DerivedFEProperty = this.flattenedChildren.find(prop => prop.propertiesName === parentPropName);

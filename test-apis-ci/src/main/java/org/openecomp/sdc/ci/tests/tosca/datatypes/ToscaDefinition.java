@@ -111,7 +111,7 @@ public class ToscaDefinition {
         typeDescription.putMapPropertyType("metadata", String.class, String.class);
 //        TODO Andrey imports format
         typeDescription.putMapPropertyType("imports", String.class, ToscaImportsDefinition.class);
-        typeDescription.putListPropertyType("imports", List.class);
+//        typeDescription.putListPropertyType("imports", List.class);
         typeDescription.putMapPropertyType("node_types", String.class, ToscaNodeTypesDefinition.class);
     	return typeDescription;
 	}

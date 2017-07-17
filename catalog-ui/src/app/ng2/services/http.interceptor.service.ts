@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +21,8 @@
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/Rx';
-import { sdc2Config } from './../../../main';
-import { Interceptor, InterceptedRequest, InterceptedResponse } from 'ng2-interceptors';
+import {sdc2Config} from './../../../main';
+import {Interceptor, InterceptedRequest, InterceptedResponse} from 'ng2-interceptors';
 import {SharingService} from "../../services/sharing-service";
 import {ReflectiveInjector} from '@angular/core';
 import {Cookie2Service} from "./cookie.service";
@@ -31,23 +31,23 @@ import {Dictionary} from "../../utils/dictionary/dictionary";
 import {SEVERITY} from "../../utils/constants";
 import {IServerMessageModalModel} from "../../view-models/modals/message-modal/message-server-modal/server-message-modal-view-model";
 
+
 export class HttpInterceptor implements Interceptor {
 
-    private cookieService: Cookie2Service;
+    private cookieService:Cookie2Service;
     private sharingService:SharingService;
+
     constructor() {
-        let injector = ReflectiveInjector.resolveAndCreate([Cookie2Service,SharingService]);
+        let injector = ReflectiveInjector.resolveAndCreate([Cookie2Service, SharingService]);
         this.cookieService = injector.get(Cookie2Service);
         this.sharingService = injector.get(SharingService);
     }
 
-    public interceptBefore(request: InterceptedRequest): InterceptedRequest {
-
+    public interceptBefore(request:InterceptedRequest):InterceptedRequest {
         /**
          * For every request to the server, that the service id, or resource id is sent in the URL, need to pass UUID in the header.
          * Check if the unique id exists in uuidMap, and if so get the UUID and add it to the header.
          */
-
         request.options.headers.append(this.cookieService.getUserIdSuffix(), this.cookieService.getUserId());
         request.options.withCredentials = true;
         var uuidValue = this.getUuidValue(request.url);
@@ -56,7 +56,6 @@ export class HttpInterceptor implements Interceptor {
         }
         request.options.headers.set('X-ECOMP-RequestID', UUID.UUID());
         return request;
-
     }
 
     public interceptAfter(response:InterceptedResponse):InterceptedResponse {
@@ -66,10 +65,9 @@ export class HttpInterceptor implements Interceptor {
             //console.log("Error from BE:",response);
         }
         return response;
-
     }
 
-    private getUuidValue = (url: string) :string => {
+    private getUuidValue = (url:string):string => {
         let map:Dictionary<string, string> = this.sharingService.getUuidMap();
         if (map && url.indexOf(sdc2Config.api.root) > 0) {
             map.forEach((key:string) => {
@@ -158,9 +156,7 @@ export class HttpInterceptor implements Interceptor {
                 severity: SEVERITY.ERROR
             };
         }
-        // let modalsHandler = this.$injector.get('ModalsHandler');
 
-      //  this.modalsHandler.openServerMessageModal(data);
         console.error('ERROR data',data);
     }
 }

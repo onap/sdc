@@ -199,9 +199,10 @@ public class HealthCheckService {
 		healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.FE, HealthCheckStatus.UP,
 				ExternalConfiguration.getAppVersion(), "OK"));
 		healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.BE, HealthCheckStatus.DOWN, null, null));
-		healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.ES, HealthCheckStatus.UNKNOWN, null, null));
 		healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.TITAN, HealthCheckStatus.UNKNOWN, null, null));
+		healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.CASSANDRA, HealthCheckStatus.UNKNOWN, null, null));
 		healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.UNKNOWN, null, null));
+		healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.ON_BOARDING, HealthCheckStatus.UNKNOWN, null, null));
 		HealthCheckWrapper hcWrapper = new HealthCheckWrapper(healthCheckInfos, "UNKNOWN", "UNKNOWN");
 		return hcWrapper;
 	}

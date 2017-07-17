@@ -216,10 +216,10 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 	// Various failure flows
 	@Test(dataProvider="createVfcmtVariousFailureFlows")
 	public void createVfcmtVariousFailureFlows(String flow) throws Exception {
-		
+		//TODO: check what happens now, test will prbably fail
 		if(flow.equals("resource_type_missing") || flow.equals("resource_type_invalid")) {
 			throw new SkipException("TC require repairs");			
-		}	
+		}
 		
 		User defaultUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 		ResourceExternalReqDetails defaultResource = ElementFactory.getDefaultResourceByType("ci", ResourceCategoryEnum.TEMPLATE_MONITORING_TEMPLATE, defaultUser.getUserId(), ResourceTypeEnum.VFCMT.toString());
@@ -272,21 +272,21 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 		case "description_with_invalid_char":
 			defaultResource.setDescription("\uC2B5");
 			expectedResourceAuditJavaObject.setDesc("t");
-			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_INVALID_DESCRIPTION.name());
+			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.INVALID_RESOURCE_TYPE.name());
 			variables = asList(ComponentTypeEnum.RESOURCE.getValue());
 			break;
 		// TODO: defect on the flow - need to get error instead create VFC
 		case "resource_type_missing":
 			defaultResource.setResourceType("");
 			expectedResourceAuditJavaObject.setResourceType("");
-			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_MISSING_DESCRIPTION.name());
+			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.INVALID_CONTENT.name());
 			variables = asList(ComponentTypeEnum.RESOURCE.getValue());
 			break;
 		// TODO: in audit RESOURCE_NAME is empty
 		case "resource_type_invalid":
 			defaultResource.setResourceType("invalid");
 			expectedResourceAuditJavaObject.setResourceType(ComponentTypeEnum.RESOURCE.getValue());
-			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.INVALID_CONTENT.name());
+			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.INVALID_RESOURCE_TYPE.name());
 			variables = asList(ComponentTypeEnum.RESOURCE.getValue());
 			break;
 		case "category_type_missing":
@@ -377,7 +377,7 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 		// create vfcmt
 		RestResponse restResponse = ResourceRestUtilsExternalAPI.createResource(defaultResource, defaultUser);
 		
-		expectedResourceAuditJavaObject.setStatus("400");
+		expectedResourceAuditJavaObject.setStatus(errorInfo.getCode().toString());
 		expectedResourceAuditJavaObject.setDesc(AuditValidationUtils.buildAuditDescription(errorInfo, variables));
 		AuditValidationUtils.validateAuditExternalCreateResource(expectedResourceAuditJavaObject, action.getName(), body);
 		

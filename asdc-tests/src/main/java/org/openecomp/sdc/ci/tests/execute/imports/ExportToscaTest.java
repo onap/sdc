@@ -156,7 +156,7 @@ public class ExportToscaTest extends ComponentBaseTest {
 			assertNotNull(vfModulesInRes);
 			assertNotNull(groups);
 
-			assertEquals("Validate count of vf module instanses", vfModulesInRes.size(), groups.size());
+			assertEquals("Validate count of vf module instances", vfModulesInRes.size(), groups.size());
 
 			vfModulesInRes.forEach(modInRes -> {
 				validateVfModuleVsInstance(normalizedName, groups, modInRes);

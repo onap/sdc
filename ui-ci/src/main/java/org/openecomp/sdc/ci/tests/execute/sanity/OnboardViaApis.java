@@ -25,6 +25,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import java.awt.AWTException;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
@@ -49,6 +51,8 @@ import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
+import org.openecomp.sdc.tosca.parser.exceptions.SdcToscaParserException;
+import org.openecomp.sdc.toscaparser.api.common.JToscaException;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
@@ -123,6 +127,34 @@ public class OnboardViaApis{
 		System.err.println(timestamp + " Finished download service csar file: " + vnfFile);
 		System.out.println("end");
 		
+	}
+	
+	
+	@Test
+	public void onboardingAndParser() throws Exception {
+		Service service = null;
+		String filepath = getFilePath();
+		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
+		String vnfFile = fileNamesFromFolder[7].toString();
+		System.err.println(timestamp + " Starting test with VNF: " + vnfFile);
+		service = runOnboardViaApisOnly(filepath, vnfFile);
+		
+//		AtomicOperationUtils.getServiceObjectByNameAndVersion(sdncModifierDetails, serviceName, serviceVersion);
+//        RestResponse distributeService = AtomicOperationUtils.distributeService(service, true);
+//        Map<Long, ServiceDistributionStatus> convertServiceDistributionStatusToObject = ResponseParser.convertServiceDistributionStatusToObject(distributeService.getResponse());
+//        convertServiceDistributionStatusToObject.
+	}
+	
+	public static String getFilePath() {
+		String filepath = System.getProperty("filepath");
+		if (filepath == null && System.getProperty("os.name").contains("Windows")) {
+			filepath = FileHandling.getResourcesFilesPath() +"VNFs";
+		}
+		
+		else if(filepath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
+				filepath = FileHandling.getBasePath() + File.separator + "Files" + File.separator +"VNFs";
+		}
+		return filepath;
 	}
 	
 	public static void downloadToscaCsarToDirectory(Service service, File file) {

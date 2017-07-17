@@ -140,7 +140,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 			return result;
 		}
 		StorageOperationStatus associateInstGroups = associateInstGroupsToComponent(topologyTemplateVertex, topologyTemplate);
-		if (associateInstProperties != StorageOperationStatus.OK) {
+		if (associateInstGroups != StorageOperationStatus.OK) {
 			result = Either.right(associateInstInputs);
 			return result;
 		}
@@ -786,12 +786,11 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 		GraphVertex categoryV = childVertex.left().value();
 		Map<GraphPropertyEnum, Object> metadataProperties = categoryV.getMetadataProperties();
 		CategoryDefinition category = new CategoryDefinition();
-		category.setUniqueId((String) metadataProperties.get(GraphPropertyEnum.UNIQUE_ID));
+		category.setUniqueId(categoryV.getUniqueId());
 		category.setNormalizedName((String) metadataProperties.get(GraphPropertyEnum.NORMALIZED_NAME));
 		category.setName((String) metadataProperties.get(GraphPropertyEnum.NAME));
 
-		Type listTypeCat = new TypeToken<List<String>>() {
-		}.getType();
+		Type listTypeCat = new TypeToken<List<String>>() {}.getType();
 		List<String> iconsfromJsonCat = getGson().fromJson((String) metadataProperties.get(GraphPropertyEnum.ICONS.getProperty()), listTypeCat);
 		category.setIcons(iconsfromJsonCat);
 		categories.add(category);

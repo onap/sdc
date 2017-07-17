@@ -6,7 +6,7 @@
     <ul>
         <li  data-ng-repeat="firstLevelResourcesInstances in structureTree.serviceRoot.resourceInstancesList">
             <div class="component-container">
-                <div class="small {{firstLevelResourcesInstances.icon}}" ng-class="{'sprite-resource-icons': !component.isProduct(), 'sprite-services-icons': component.isProduct()}">
+                <div class="small sprite-resource-icons {{firstLevelResourcesInstances.icon}}">
                     <div data-ng-class="{'non-certified':!firstLevelResourcesInstances.certified}"
                          tooltips tooltip-side="top" tooltip-content="Not certified">
                     </div>

@@ -26,7 +26,8 @@ def upgradeHeatTypes1707(beHost, bePort, adminUser, fileDir, updateversion):
 				  "extVl",
 				  "extCp",
 				  "Generic_VFC", 
-				  "Generic_VF", 
+				  "Generic_VF",
+				  "Generic_PNF",
 				  "Generic_Service",
 				  "globalPort",
 				  "globalNetwork",
@@ -37,6 +38,8 @@ def upgradeHeatTypes1707(beHost, bePort, adminUser, fileDir, updateversion):
 				  "contrailVirtualNetwork",
 				  "neutronNet",
 				  "neutronPort",
+				  "multiFlavorVFC",
+				  "vnfConfiguration"
 				  ]
 		
 	responseCodes = [200, 201]

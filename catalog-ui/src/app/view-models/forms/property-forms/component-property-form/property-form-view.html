@@ -142,7 +142,7 @@
                                  schema-property="editPropertyModel.property.schema.property"
                                  parent-form-obj="forms.editForm"
                                  fields-prefix-name="currentPropertyIndex"
-                                 read-only="editPropertyModel.property.readonly && !isPropertyValueOwner"
+                                 read-only="(editPropertyModel.property.readonly && !isPropertyValueOwner) || isVnfConfiguration"
                                  default-value="{{getDefaultValue()}}"
                                  max-length="maxLength"></type-map>
                         </div>

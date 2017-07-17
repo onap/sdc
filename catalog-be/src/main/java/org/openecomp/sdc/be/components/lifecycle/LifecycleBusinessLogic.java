@@ -32,6 +32,7 @@ import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
@@ -46,13 +47,14 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
-import org.openecomp.sdc.be.model.operations.impl.ComponentOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.common.api.Constants;
@@ -204,9 +206,9 @@ public class LifecycleBusinessLogic {
 		String resourceCurrVersion = component.getVersion();
 		LifecycleStateEnum resourceCurrState = component.getLifecycleState();
 
-		log.info("lock component {}", componentId);
 		// lock resource
 		if (inTransaction == false && needLock) {
+			log.info("lock component {}", componentId);
 			Either<Boolean, ResponseFormat> eitherLockResource = lockComponent(componentType, component);
 			if (eitherLockResource.isRight()) {
 				errorResponse = eitherLockResource.right().value();
@@ -214,8 +216,8 @@ public class LifecycleBusinessLogic {
 				log.error("lock component {} failed", componentId);
 				return Either.right(errorResponse);
 			}
+			log.info("after lock component {}", componentId);
 		}
-		log.info("after lock component {}", componentId);
 		try {
 			Either<String, ResponseFormat> commentValidationResult = validateComment(changeInfo, transitionEnum);
 			if (commentValidationResult.isRight()) {
@@ -461,6 +463,53 @@ public class LifecycleBusinessLogic {
 		Component latestComponent = latestVersionEither.left().value();		
 		
 		return Either.left(latestComponent);
+	}
+
+	public Either<Resource, ResponseFormat> forceResourceCertification(Resource resource, User user, LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean inTransaction, boolean needLock) {
+		Either<Resource, ResponseFormat> result = null;
+		Either<ToscaElement, StorageOperationStatus> certifyResourceRes = null;
+		if(lifecycleChangeInfo.getAction() != LifecycleChanceActionEnum.CREATE_FROM_CSAR){
+			log.debug("Force certification is not allowed for the action {}. ", lifecycleChangeInfo.getAction().name());
+			result = Either.right(componentUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
+		}
+		// lock resource
+		if(result == null && !inTransaction && needLock){
+			log.info("lock component {}", resource.getUniqueId());
+			Either<Boolean, ResponseFormat> eitherLockResource = lockComponent(resource.getComponentType(), resource);
+			if (eitherLockResource.isRight()) {
+				log.error("lock component {} failed", resource.getUniqueId());
+				result =  Either.right(eitherLockResource.right().value());
+			}
+			log.info("after lock component {}", resource.getUniqueId());
+		}
+		try{
+			if(result == null){
+				certifyResourceRes = lifecycleOperation.forceCerificationOfToscaElement(resource.getUniqueId(), user.getUserId(), user.getUserId());
+				if (certifyResourceRes.isRight()) {
+					StorageOperationStatus status = certifyResourceRes.right().value();
+					log.debug("Failed to perform a force certification of resource {}. The status is {}. ", resource.getName(), status);
+					result = Either.right(componentUtils.getResponseFormatByResource(componentUtils.convertFromStorageResponse(status), resource));
+				}
+			}
+			if(result == null){
+				result = Either.left(ModelConverter.convertFromToscaElement(certifyResourceRes.left().value()));
+			}
+		} finally {
+			log.info("unlock component {}", resource.getUniqueId());
+			if (!inTransaction) {
+				if(result.isLeft()){
+					titanDao.commit();
+				} else{
+					titanDao.rollback();
+				}
+				if(needLock){
+					NodeTypeEnum nodeType = resource.getComponentType().getNodeType();
+					log.info("During change state, another component {} has been created/updated", resource.getUniqueId());
+					graphLockOperation.unlockComponent(resource.getUniqueId(), nodeType);
+				}
+			}
+		}
+		return result;
 	}
 
 }

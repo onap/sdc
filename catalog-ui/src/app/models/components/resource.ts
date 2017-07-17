@@ -41,6 +41,7 @@ export class Resource extends Component {
     public payloadData:string;
     public payloadName:string;
     public importedFile:FileUploadModel;
+    public resourceVendorModelNumber:string;
 
     // Onboarding parameters
     public csarUUID:string;
@@ -59,6 +60,7 @@ export class Resource extends Component {
             this.resourceType = component.resourceType;
             this.csarUUID = component.csarUUID;
             this.csarVersion = component.csarVersion;
+            this.resourceVendorModelNumber = component.resourceVendorModelNumber;
             this.filterTerm = this.name + ' ' + this.description + ' ' + (this.tags ? this.tags.toString() : '') + ' ' + this.version + ' ' + this.resourceType;
             if (component.categories && component.categories[0] && component.categories[0].subcategories && component.categories[0].subcategories[0]) {
                 component.mainCategory = component.categories[0].name;
@@ -80,6 +82,7 @@ export class Resource extends Component {
         this.csarUUID = componentMetadata.csarUUID;
         this.csarVersion = componentMetadata.csarVersion;
         this.derivedFrom = componentMetadata.derivedFrom;
+        this.resourceVendorModelNumber = componentMetadata.resourceVendorModelNumber;
         this.setComponentDisplayData();
     };
 
@@ -88,7 +91,7 @@ export class Resource extends Component {
     };
 
     public isComplex = ():boolean => {
-        return this.resourceType === ResourceType.VF;
+        return this.resourceType === ResourceType.VF || this.resourceType === ResourceType.PNF || this.resourceType === ResourceType.CVFC;
     };
 
     public isVl = ():boolean => {

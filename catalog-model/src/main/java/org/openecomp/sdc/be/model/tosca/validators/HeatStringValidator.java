@@ -44,8 +44,8 @@ public class HeatStringValidator implements PropertyTypeValidator {
 			return true;
 		}
 
-		String coverted = ValidationUtils.removeNoneUtf8Chars(value);
-		return ValidationUtils.validateIsEnglish(coverted);
+		String converted = ValidationUtils.removeNoneUtf8Chars(value);
+		return ValidationUtils.validateIsEnglish(converted);
 	}
 
 	@Override

@@ -1196,4 +1196,57 @@ org.openecomp.datatypes.Naming:
         type: string
         required: false
 
+# NFoD
+org.openecomp.datatypes.flavors.ComputeFlavor:
+  derived_from: tosca.datatypes.Root
+  properties:
+      num_cpus:
+        type: integer
+      disk_size:
+        type: scalar-unit.size
+      mem_size:
+        type: scalar-unit.size
 
+org.openecomp.datatypes.flavors.LicenseFlavor:
+  derived_from: tosca.datatypes.Root
+  properties:
+      feature_group_uuid:
+        type: string
+
+org.openecomp.datatypes.flavors.VendorInfo:
+  derived_from: tosca.datatypes.Root
+  properties:
+      manufacturer_reference_number:
+        type: string
+      vendor_model:
+        type: string
+
+org.openecomp.datatypes.flavors.DeploymentFlavor:
+  derived_from: tosca.datatypes.Root
+  properties:
+      sp_part_number:
+        type: string
+      vendor_info:
+        type: org.openecomp.datatypes.flavors.VendorInfo
+      compute_flavor:
+        type: org.openecomp.datatypes.flavors.ComputeFlavor
+      license_flavor:
+        type: org.openecomp.datatypes.flavors.LicenseFlavor
+        required: false
+
+
+
+org.openecomp.datatypes.ImageInfo:
+  derived_from: tosca.datatypes.Root
+  properties:
+      software_version:
+        type: string
+      file_name:
+        type: string
+      file_hash:
+        type: string
+        description: checksum/signature
+      file_hash_type:
+        type: string
+        required: false
+        default: md5

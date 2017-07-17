@@ -25,7 +25,7 @@ import java.util.List;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 
-public class ComponentInstanceInput extends InputDefinition implements IComponentInstanceConnectedElement {
+public class ComponentInstanceInput extends InputDefinition implements IComponentInstanceConnectedElement, IPropertyInputCommon {
 
 	/**
 	 * 

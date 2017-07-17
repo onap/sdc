@@ -27,9 +27,11 @@ import java.awt.AWTException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
@@ -94,6 +96,36 @@ public class Onboard extends SetupCDTest {
 		return provideData(fileNamesFromFolder, filepath);
 	}
 
+	
+	@DataProvider(name = "randomVNF_List", parallel = false)
+	private static final Object[][] randomVnfList() throws Exception {
+		int randomElementNumber = 3; //how many VNFs to onboard randomly
+		String filepath = getFilePath();
+		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
+		Object[] newRandomFileNamesFromFolder = getRandomElements(randomElementNumber, fileNamesFromFolder);
+		System.out.println(String.format("There are %s zip file(s) to test", newRandomFileNamesFromFolder.length));
+		return provideData(newRandomFileNamesFromFolder, filepath);
+	}
+	
+	
+	private static Object[] getRandomElements(int randomElementNumber, Object[] fileNamesFromFolder) {
+		if(fileNamesFromFolder.length == 0 || fileNamesFromFolder.length < randomElementNumber){
+			return null;
+		}else{
+			List<Integer> indexList = new ArrayList<>();
+			Object[] newRandomFileNamesFromFolder = new Object[randomElementNumber]; 
+			for(int i = 0; i < fileNamesFromFolder.length; i++){
+				indexList.add(i);
+			}
+			Collections.shuffle(indexList);
+			Integer[] randomArray = indexList.subList(0, randomElementNumber).toArray(new Integer[randomElementNumber]);
+			for(int i = 0; i < randomArray.length; i++){
+				newRandomFileNamesFromFolder[i] = fileNamesFromFolder[randomArray[i]];
+			}
+			return newRandomFileNamesFromFolder;
+		}
+	}
+
 	public static String getFilePath() {
 		String filepath = System.getProperty("filepath");
 		if (filepath == null && System.getProperty("os.name").contains("Windows")) {
@@ -116,6 +148,7 @@ public class Onboard extends SetupCDTest {
 		runOnboardToDistributionFlow(filepath, vnfFile);
 	}
 
+	
 	public void runOnboardToDistributionFlow(String filepath, String vnfFile) throws Exception, AWTException {
 		Pair<String,Map<String,String>> onboardAndValidate = OnboardingUtils.onboardAndValidate(filepath, vnfFile, getUser());
 		String vspName = onboardAndValidate.left;
@@ -193,6 +226,14 @@ public class Onboard extends SetupCDTest {
 		runOnboardToDistributionFlow(filepath, vnfFile);
 	}
 
+	@Test(dataProvider = "randomVNF_List")
+	public void onboardRandomVNFsTest(String filepath, String vnfFile) throws Exception, Throwable {
+		setLog(vnfFile);
+		System.out.println("printttttttttttttt - >" + makeDistributionValue);
+		System.out.println("vnf File name is: " + vnfFile);
+		runOnboardToDistributionFlow(filepath, vnfFile);
+	}
+	
 	
 	@Test
 	public void onboardUpdateVNFTest() throws Exception, Throwable {

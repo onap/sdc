@@ -1,0 +1,10 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  org.openecomp.resource.abstract.nodes.MultiFlavorVFC:
+    derived_from: org.openecomp.resource.abstract.nodes.VFC
+    properties:
+      images:
+         type: map
+         entry_schema:
+           type: org.openecomp.datatypes.ImageInfo 
+         required: false

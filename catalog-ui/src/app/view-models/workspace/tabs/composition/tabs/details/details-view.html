@@ -77,6 +77,27 @@
                       data-tests-id="rightTab_vendorRelease">
                 </span>
             </div>
+            <div class="i-sdc-designer-sidebar-section-content-item" data-ng-if="selectedComponent.isResource()">
+                <span class="i-sdc-designer-sidebar-section-content-item-label" translate="GENERAL_LABEL_RESOURCE_MODEL_NUMBER"></span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value vendor-model-number" data-ng-bind="selectedComponent.resourceVendorModelNumber"
+                      tooltips tooltip-class="tooltip-custom break-word-tooltip" tooltip-content="&#8203;{{selectedComponent.resourceVendorModelNumber}}"
+                      data-tests-id="rightTab_resourceVendorModelNumber">
+                </span>
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item" data-ng-if="selectedComponent.isService()">
+                <span class="i-sdc-designer-sidebar-section-content-item-label" translate="GENERAL_LABEL_SERVICE_TYPE"></span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value" data-ng-bind="selectedComponent.serviceType"
+                      tooltips tooltip-class="tooltip-custom break-word-tooltip" tooltip-content="&#8203;{{selectedComponent.serviceType}}"
+                      data-tests-id="rightTab_serviceType">
+                </span>
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item" data-ng-if="selectedComponent.isService()">
+                <span class="i-sdc-designer-sidebar-section-content-item-label" translate="GENERAL_LABEL_SERVICE_ROLE"></span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value" data-ng-bind="selectedComponent.serviceRole"
+                      tooltips tooltip-class="tooltip-custom break-word-tooltip" tooltip-content="&#8203;{{selectedComponent.serviceRole}}"
+                      data-tests-id="rightTab_serviceRole">
+                </span>
+            </div>
             <div class="i-sdc-designer-sidebar-section-content-item">
                 <span class="i-sdc-designer-sidebar-section-content-item-label" translate="GENERAL_LABEL_CONTACT_ID"></span>
                 <span class="i-sdc-designer-sidebar-section-content-item-value" data-ng-bind="selectedComponent.contactId"

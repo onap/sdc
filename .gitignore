@@ -145,6 +145,7 @@ openecomp-ui/node/*
 sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/SDC-*.zip
 sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/sdctool.tar
 sdc-os-chef/.idea/*
+node/*
 
 # chef
 .delivery

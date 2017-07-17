@@ -153,7 +153,7 @@ public class GroupServlet extends AbstractValidationsServlet {
 			// Update GroupDefinition
 			ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
 			Either<GroupDefinition, ResponseFormat> actionResponse = businessLogic
-					.validateAndUpdateGroupMetadata(componentId, user, componentTypeEnum, updatedGroup, true);
+					.validateAndUpdateGroupMetadata(componentId, user, componentTypeEnum, updatedGroup, true ,true);
 
 			if (actionResponse.isRight()) {
 				log.debug("failed to update GroupDefinition");

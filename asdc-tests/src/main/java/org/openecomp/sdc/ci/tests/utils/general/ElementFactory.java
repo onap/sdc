@@ -689,7 +689,7 @@ public class ElementFactory {
 		ExpectedExternalAudit expectedExternalAudit = new ExpectedExternalAudit();
 		expectedExternalAudit.setACTION(action.getName());
 		expectedExternalAudit.setCONSUMER_ID("ci");
-		expectedExternalAudit.setRESOURCE_URL("/asdc/v1/catalog/" + assetType.getValue() + (query == null ? "" : query));
+		expectedExternalAudit.setRESOURCE_URL("/sdc/v1/catalog/" + assetType.getValue() + (query == null ? "" : query));
 		expectedExternalAudit.setSTATUS("200");
 		expectedExternalAudit.setDESC("OK");
 		return expectedExternalAudit;
@@ -752,7 +752,7 @@ public class ElementFactory {
 		expectedResourceAuditJavaObject.setResourceName(resourceName);
 		expectedResourceAuditJavaObject.setResourceType("Resource");
 		expectedResourceAuditJavaObject.setCONSUMER_ID("ci");
-		expectedResourceAuditJavaObject.setRESOURCE_URL("/asdc/v1/catalog/resources");
+		expectedResourceAuditJavaObject.setRESOURCE_URL("/sdc/v1/catalog/resources");
 		expectedResourceAuditJavaObject.setMODIFIER("");
 		expectedResourceAuditJavaObject.setPrevVersion("");
 		expectedResourceAuditJavaObject.setCurrVersion("0.1");
@@ -769,7 +769,7 @@ public class ElementFactory {
 	public static ExpectedExternalAudit getDefaultExternalArtifactAuditSuccess(AssetTypeEnum assetType, AuditingActionEnum action, ArtifactDefinition artifactDefinition, String componentUUID, String resourceInstanceName) {
 
 		ExpectedExternalAudit expectedExternalArtifactAudit = getDefaultExternalArtifactAuditSuccess(assetType, action, artifactDefinition, componentUUID);
-		expectedExternalArtifactAudit.setRESOURCE_URL("/asdc/v1/catalog/" + assetType.getValue() + "/" + componentUUID + "/resourceInstances/" + resourceInstanceName + "/artifacts");
+		expectedExternalArtifactAudit.setRESOURCE_URL("/sdc/v1/catalog/" + assetType.getValue() + "/" + componentUUID + "/resourceInstances/" + resourceInstanceName + "/artifacts");
 		return expectedExternalArtifactAudit;
 	}
 
@@ -794,7 +794,7 @@ public class ElementFactory {
 			String resourceInstanceName) {
 
 		ExpectedExternalAudit expectedExternalArtifactAudit = getDefaultExternalArtifactAuditFailure(assetType, action, artifactDefinition, componentUUID, errorInfo, variables);
-		expectedExternalArtifactAudit.setRESOURCE_URL("/asdc/v1/catalog/" + assetType.getValue() + "/" + componentUUID + "/resourceInstances/" + resourceInstanceName + "/artifacts");
+		expectedExternalArtifactAudit.setRESOURCE_URL("/sdc/v1/catalog/" + assetType.getValue() + "/" + componentUUID + "/resourceInstances/" + resourceInstanceName + "/artifacts");
 		return expectedExternalArtifactAudit;
 	}
 

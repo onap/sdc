@@ -1,0 +1,10 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  org.openecomp.resource.abstract.nodes.VnfConfiguration:
+    derived_from: tosca.nodes.Root
+    properties:
+      allowed_flavors: 
+         description: a collection of all flavor valuesets available for a given VFC
+         type: map
+         entry_schema:
+           type: org.openecomp.datatypes.flavors.DeploymentFlavor

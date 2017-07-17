@@ -447,14 +447,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 			return componentsFieldsValidation;
 		}
 
-		// validate service name uniqueness
 		log.debug("validate service name uniqueness");
 		Either<Boolean, ResponseFormat> serviceNameUniquenessValidation = validateComponentNameUnique(user, service, actionEnum);
 		if (serviceNameUniquenessValidation.isRight()) {
 			return serviceNameUniquenessValidation;
 		}
 
-		// validate category
 		log.debug("validate category");
 		Either<Boolean, ResponseFormat> categoryValidation = validateServiceCategory(user, service, actionEnum);
 		if (categoryValidation.isRight()) {
@@ -462,11 +460,22 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 		}
 
 		// validate project name (ProjectCode) - mandatory in service
-
 		log.debug("validate projectName");
 		Either<Boolean, ResponseFormat> projectCodeValidation = validateProjectCode(user, service, actionEnum);
 		if (projectCodeValidation.isRight()) {
 			return projectCodeValidation;
+		}
+		
+		log.debug("validate service type");
+		Either<Boolean, ResponseFormat> serviceTypeValidation = validateServiceTypeAndCleanup(user, service, actionEnum);
+		if (serviceTypeValidation.isRight()) {
+			return serviceTypeValidation;
+		}
+		
+		log.debug("validate service role");
+		Either<Boolean, ResponseFormat> serviceRoleValidation = validateServiceRoleAndCleanup(user, service, actionEnum);
+		if (serviceRoleValidation.isRight()) {
+			return serviceRoleValidation;
 		}
 
 		return Either.left(true);
@@ -704,6 +713,18 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 		if (!uuidCurrent.equals(uuidUpdated)) {
 			log.info("update srvice: recived request to update uuid to {} the field is not updatable ignoring.", uuidUpdated);
 		}
+		
+		response = validateAndUpdateServiceType(user, currentService, serviceUpdate, null);
+		if (response.isRight()) {
+			ResponseFormat errorResponse = response.right().value();
+			return Either.right(errorResponse);
+		}
+		
+		response = validateAndUpdateServiceRole(user, currentService, serviceUpdate, null);
+		if (response.isRight()) {
+			ResponseFormat errorResponse = response.right().value();
+			return Either.right(errorResponse);
+		}
 
 		String currentInvariantUuid = currentService.getInvariantUUID();
 		String updatedInvariantUuid = serviceUpdate.getInvariantUUID();
@@ -821,18 +842,18 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 		return Either.left(true);
 	}
 
-	private Either<Boolean, ResponseFormat> validateAndUpdateServiceName(User user, Service currentService, Service serviceUpdate, boolean hasBeenCertified, AuditingActionEnum audatingAction) {
+	private Either<Boolean, ResponseFormat> validateAndUpdateServiceName(User user, Service currentService, Service serviceUpdate, boolean hasBeenCertified, AuditingActionEnum auditingAction) {
 		String serviceNameUpdated = serviceUpdate.getName();
 		String serviceNameCurrent = currentService.getName();
 		if (!serviceNameCurrent.equals(serviceNameUpdated)) {
 			if (!hasBeenCertified) {
-				Either<Boolean, ResponseFormat> validatServiceNameResponse = validateComponentName(user, serviceUpdate, audatingAction);
+				Either<Boolean, ResponseFormat> validatServiceNameResponse = validateComponentName(user, serviceUpdate, auditingAction);
 				if (validatServiceNameResponse.isRight()) {
 					ResponseFormat errorRespons = validatServiceNameResponse.right().value();
 					return Either.right(errorRespons);
 				}
 
-				Either<Boolean, ResponseFormat> serviceNameUniquenessValidation = validateComponentNameUnique(user, serviceUpdate, audatingAction);
+				Either<Boolean, ResponseFormat> serviceNameUniquenessValidation = validateComponentNameUnique(user, serviceUpdate, auditingAction);
 				if (serviceNameUniquenessValidation.isRight()) {
 					return serviceNameUniquenessValidation;
 				}
@@ -848,6 +869,111 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 		}
 		return Either.left(true);
 	}
+	
+	private Either<Boolean, ResponseFormat> validateAndUpdateServiceType(User user, Service currentService, Service updatedService, AuditingActionEnum auditingAction) {
+		String updatedServiceType = updatedService.getServiceType();
+		String currentServiceType = currentService.getServiceType();
+		if (!currentServiceType.equals(updatedServiceType)) {
+			Either<Boolean, ResponseFormat> validateServiceType = validateServiceTypeAndCleanup(user, updatedService , auditingAction);
+			if (validateServiceType.isRight()) {
+				ResponseFormat errorResponse = validateServiceType.right().value();
+				componentsUtils.auditComponentAdmin(errorResponse, user, updatedService, "", "", auditingAction, ComponentTypeEnum.SERVICE);
+				return Either.right(errorResponse);
+			}
+			currentService.setServiceType(updatedServiceType);
+		}
+		return Either.left(true);
+	}
+
+	protected Either<Boolean, ResponseFormat> validateServiceTypeAndCleanup(User user, Component component, AuditingActionEnum actionEnum) {
+		String serviceType = ((Service)component).getServiceType();
+		if (serviceType != null){
+			serviceType = cleanUpText(serviceType);
+			Either<Boolean, ResponseFormat> validateServiceType = validateServiceType(serviceType);
+			if (validateServiceType.isRight()) {
+				ResponseFormat responseFormat = validateServiceType.right().value();
+				componentsUtils.auditComponentAdmin(responseFormat, user, component, "", "", actionEnum, ComponentTypeEnum.SERVICE);
+				return Either.right(responseFormat);
+			}
+			return Either.left(true);
+		} else {
+			return Either.left(false);
+		}
+	}
+
+	
+	private Either<Boolean, ResponseFormat> validateServiceType(String serviceType) {
+		if (serviceType.equals("")){
+			return Either.left(true);
+		} else {
+			if (!ValidationUtils.validateServiceTypeLength(serviceType)) {
+				log.info("service type exceeds limit.");
+				ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.SERVICE_TYPE_EXCEEDS_LIMIT, "" + ValidationUtils.SERVICE_TYPE_MAX_LENGTH);
+				return Either.right(errorResponse);
+			}
+
+			if (!ValidationUtils.validateIsEnglish(serviceType)) {
+				log.info("service type is not valid.");
+				ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_SERVICE_TYPE);
+				return Either.right(errorResponse);
+			}
+			return Either.left(true);
+		}
+	}
+	
+	private Either<Boolean, ResponseFormat> validateAndUpdateServiceRole(User user, Service currentService, Service updatedService, AuditingActionEnum auditingAction) {
+		String updatedServiceRole = updatedService.getServiceRole();
+		String currentServiceRole = currentService.getServiceRole();
+		if (!currentServiceRole.equals(updatedServiceRole)) {
+			Either<Boolean, ResponseFormat> validateServiceRole = validateServiceRoleAndCleanup(user, updatedService , auditingAction);
+			if (validateServiceRole.isRight()) {
+				ResponseFormat errorResponse = validateServiceRole.right().value();
+				componentsUtils.auditComponentAdmin(errorResponse, user, updatedService, "", "", auditingAction, ComponentTypeEnum.SERVICE);
+				return Either.right(errorResponse);
+			}
+			currentService.setServiceRole(updatedServiceRole);
+		}
+		return Either.left(true);
+	}
+
+	protected Either<Boolean, ResponseFormat> validateServiceRoleAndCleanup(User user, Component component, AuditingActionEnum actionEnum) {
+		String serviceRole = ((Service)component).getServiceRole();
+		if (serviceRole != null){
+			serviceRole = cleanUpText(serviceRole);
+	
+			Either<Boolean, ResponseFormat> validateServiceRole = validateServiceRole(serviceRole);
+			if (validateServiceRole.isRight()) {
+				ResponseFormat responseFormat = validateServiceRole.right().value();
+				componentsUtils.auditComponentAdmin(responseFormat, user, component, "", "", actionEnum, ComponentTypeEnum.SERVICE);
+				return Either.right(responseFormat);
+			}
+			return Either.left(true);
+		} else {
+			return Either.left(false);
+		}
+	}
+
+	
+	private Either<Boolean, ResponseFormat> validateServiceRole(String serviceRole) {
+		if (serviceRole.equals("")){
+			return Either.left(true);
+		} else {
+			if (!ValidationUtils.validateServiceRoleLength(serviceRole)) {
+				log.info("service role exceeds limit.");
+				ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.SERVICE_ROLE_EXCEEDS_LIMIT, "" + ValidationUtils.SERVICE_ROLE_MAX_LENGTH);
+				return Either.right(errorResponse);
+			}
+
+			if (!ValidationUtils.validateIsEnglish(serviceRole)) {
+				log.info("service role is not valid.");
+				ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_SERVICE_ROLE);
+				return Either.right(errorResponse);
+			}
+			return Either.left(true);
+		}
+	}
+
+
 
 	private Either<Boolean, ResponseFormat> validateAndUpdateCategory(User user, Service currentService, Service serviceUpdate, boolean hasBeenCertified, AuditingActionEnum audatingAction) {
 		List<CategoryDefinition> categoryUpdated = serviceUpdate.getCategories();
@@ -1225,7 +1351,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 		// DE194021
 
 		ServletContext servletContext = request.getSession().getServletContext();
-		boolean isDistributionEngineUp = getHealthCheckBL(servletContext).isDistributionEngineUp(request.getSession().getServletContext()); // DE
+		boolean isDistributionEngineUp = getHealthCheckBL(servletContext).isDistributionEngineUp(); // DE
 		if (!isDistributionEngineUp) {
 			BeEcompErrorManager.getInstance().logBeSystemError("Distribution Engine is DOWN");
 			log.debug("Distribution Engine is DOWN");

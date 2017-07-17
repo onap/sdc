@@ -22,8 +22,9 @@
  * Created by rc2122 on 6/1/2017.
  */
 import { Component, ElementRef, Input, OnInit, OnDestroy } from '@angular/core';
+//import {ViewContainerRef, ViewChild} from '@angular/core';
 import * as $ from 'jquery';
-import {ButtonsModelMap} from "app/models/button";
+import { ButtonsModelMap, ModalModel } from 'app/models';
 
 @Component({
     selector: 'modal',
@@ -32,22 +33,17 @@ import {ButtonsModelMap} from "app/models/button";
 })
 
 export class ModalComponent implements OnInit, OnDestroy {
-    @Input() size: string; 'xl|l|md|sm|xsm'
-    @Input() title: string;
-    @Input() public buttons:ButtonsModelMap;
+    @Input() input: ModalModel;
     private modalElement: JQuery;
-    private buttonsNames:Array<string>;
+    //@ViewChild('modalBody', { read: ViewContainerRef }) modalContainer: ViewContainerRef; //TODO: allow for custom component as body instead of simple message
+    
 
     constructor( el: ElementRef ) {
         this.modalElement = $(el.nativeElement);
     }
 
     ngOnInit(): void {
-        let modal = this;
         this.modalElement.appendTo('body');
-        if(this.buttons){
-            this.buttonsNames = Object.keys(this.buttons);
-        }
     }
 
     ngOnDestroy(): void {

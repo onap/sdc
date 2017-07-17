@@ -120,7 +120,7 @@ public class ComponentServlet extends BeGenericServlet {
 	@Path("/{componentType}/{componentId}/requirmentsCapabilities")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get Component Requirments And Capabilities", httpMethod = "GET", notes = "Returns Requirments And Capabilities according to componentId", response = Resource.class)
+	@ApiOperation(value = "Get Component Requirments And Capabilities", httpMethod = "GET", notes = "Returns Requirements And Capabilities according to componentId", response = Resource.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
 	public Response getRequirementAndCapabilities(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
 			@HeaderParam(value = Constants.USER_ID_HEADER) String userId) {

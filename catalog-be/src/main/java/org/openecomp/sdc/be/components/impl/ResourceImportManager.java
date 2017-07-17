@@ -124,7 +124,7 @@ public class ResourceImportManager {
 		lifecycleChangeInfo.setUserRemarks("certification on import");
 		Function<Resource, Either<Boolean, ResponseFormat>> validator = (resource) -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
 
-		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null);
+		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null, false);
 	}
 	
 	public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> importNormativeResourceFromCsar(String resourceYml, UploadResourceInfo resourceMetaData, User creator, boolean createNewVersion, boolean needLock) {
@@ -133,18 +133,18 @@ public class ResourceImportManager {
 		lifecycleChangeInfo.setUserRemarks("certification on import");
 		Function<Resource, Either<Boolean, ResponseFormat>> validator = (resource) -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
 
-		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null);
+		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null, false);
 	}
 
 	public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> importCertifiedResource(String resourceYml, UploadResourceInfo resourceMetaData, User creator, Function<Resource, Either<Boolean, ResponseFormat>> validationFunction,
-			LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean isInTransaction, boolean createNewVersion, boolean needLock, Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {
+			LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean isInTransaction, boolean createNewVersion, boolean needLock, Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed) {
 		Resource resource = new Resource();
 		ImmutablePair<Resource, ActionStatus> responsePair = new ImmutablePair<>(resource, ActionStatus.CREATED);
 		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> response = Either.left(responsePair);
 
 		String latestCertifiedResourceId = null;
 		try {
-			boolean shouldBeCertified = nodeTypeArtifactsToHandle == null || nodeTypeArtifactsToHandle.isEmpty() ? true : false;
+			boolean shouldBeCertified = nodeTypeArtifactsToHandle == null || nodeTypeArtifactsToHandle.isEmpty();
 			setConstantMetaData(resource, shouldBeCertified);
 			setMetaDataFromJson(resourceMetaData, resource);
 
@@ -179,7 +179,7 @@ public class ResourceImportManager {
 						}
 					}
 					latestCertifiedResourceId = getLatestCertifiedResourceId(resource);
-					changeStateResponse = resourceBusinessLogic.propagateStateToCertified(creator, resource, lifecycleChangeInfo, isInTransaction, needLock);
+					changeStateResponse = resourceBusinessLogic.propagateStateToCertified(creator, resource, lifecycleChangeInfo, isInTransaction, needLock, forceCertificationAllowed);
 					if (changeStateResponse.isRight()) {
 						response = Either.right(changeStateResponse.right().value());
 					} else {
@@ -270,14 +270,14 @@ public class ResourceImportManager {
 
 	}
 
-	private Either<Boolean, ResponseFormat> populateResourceFromYaml(String resourceYml, Resource resource, boolean inTransaction) {
+	Either<Boolean, ResponseFormat> populateResourceFromYaml(String resourceYml, Resource resource, boolean inTransaction) {
 		@SuppressWarnings("unchecked")
 		Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
 		Map<String, Object> toscaJsonAll = (Map<String, Object>) new Yaml().load(resourceYml);
 		Map<String, Object> toscaJson = toscaJsonAll;
 
 		// Checks if exist and builds the node_types map
-		if (toscaJsonAll.containsKey(ToscaTagNamesEnum.NODE_TYPES.getElementName())) {
+		if (toscaJsonAll.containsKey(ToscaTagNamesEnum.NODE_TYPES.getElementName()) && resource.getResourceType()!=ResourceTypeEnum.CVFC) {
 			toscaJson = new HashMap<String, Object>();
 			toscaJson.put(ToscaTagNamesEnum.NODE_TYPES.getElementName(), toscaJsonAll.get(ToscaTagNamesEnum.NODE_TYPES.getElementName()));
 		}
@@ -721,7 +721,7 @@ public class ResourceImportManager {
 						capabilityDefinition.setProperties(capabilityProperties);
 					}
 				}
-			} else {
+			} else if (!(capabilityJson instanceof List)) {
 
 				result = Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_YAML));
 

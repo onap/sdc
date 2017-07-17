@@ -68,8 +68,8 @@ public class StringValidator implements PropertyTypeValidator {
 			log.debug("parameter String length {} is higher than configured({})", value.length(), STRING_MAXIMUM_LENGTH);
 			return false;
 		}
-		String coverted = ValidationUtils.removeNoneUtf8Chars(value);
-		boolean isValid = ValidationUtils.validateIsAscii(coverted);
+		String converted = ValidationUtils.removeNoneUtf8Chars(value);
+		boolean isValid = ValidationUtils.validateIsAscii(converted);
 
 		if (false == isValid && log.isDebugEnabled()) {
 			log.debug("parameter String value {} is not an ascii string.", value.substring(0, Math.min(value.length(), 20)));

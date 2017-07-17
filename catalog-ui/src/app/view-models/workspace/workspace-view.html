@@ -3,8 +3,11 @@
     <div class="w-sdc-main-container">
 
         <div class="w-sdc-left-sidebar" data-ng-if="!isComposition">
-            <div class="i-sdc-left-sidebar-item">
-                <expand-collapse-menu-box menu-items-group="leftBarTabs" menu-title="{{menuComponentTitle}}" parent-scope="this"> </expand-collapse-menu-box>
+            <div class="menu-header" tooltips tooltip-content="{{menuComponentTitle}}">
+                {{menuComponentTitle}}
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item" ng-class="{'selected': menuItem.state == $state.current.name}" ng-repeat="menuItem in leftBarTabs.menuItems track by $index">
+                <div class="expand-collapse-menu-box-item-text" ng-click="onMenuItemPressed(menuItem.state)" ng-class="{'disabled': menuItem.isDisabled }" data-tests-id="{{menuItem.text}}">{{menuItem.text}}</div>
             </div>
         </div>
 
@@ -54,22 +57,22 @@
 
                     <button ng-if="!isViewMode() && isCreateMode()" data-ng-disabled="!isValidForm || isDisableMode() || isLoading" ng-click="save()" class="tlv-btn outline green" data-tests-id="create/save">Create</button>
 
-                    <span data-ng-if="(isDesigner() || isProductManager()) && !isCreateMode() && component.lifecycleState === 'NOT_CERTIFIED_CHECKOUT'" sdc-smart-tooltip=""
+                    <span data-ng-if="isDesigner() && !isCreateMode() && component.lifecycleState === 'NOT_CERTIFIED_CHECKOUT'" sdc-smart-tooltip=""
                         data-ng-class="{'disabled' : !isValidForm || isDisableMode() || isViewMode()}" ng-click="changeLifecycleState('deleteVersion')"
                         class="sprite-new delete-btn" data-tests-id="delete_version" sdc-smart-tooltip="">Delete</span>
 
                     <span data-ng-if="isDesigner()" data-ng-class="{'disabled' :isDisableMode() || isViewMode()}"  ng-click="revert()" class="sprite-new revert-btn" data-tests-id="revert"
                           data-ng-show="showFullIcons()" sdc-smart-tooltip="">Revert</span>
 
-                    <span  data-ng-if="isComposition && !component.isProduct()" class="sprite-new print-screen-btn" entity="component" print-graph-screen data-tests-id="printScreen"></span>
+                    <span  data-ng-if="isComposition" class="sprite-new print-screen-btn" entity="component" print-graph-screen data-tests-id="printScreen"></span>
                     <span class="delimiter"></span>
                     <span class="sprite-new x-btn" data-ng-click="goToBreadcrumbHome()" sdc-smart-tooltip="">Close</span>
 
                 </div>
             </div>
-
-            <div data-ng-if="component.creationDate && (!isComposition && !isDeployment)" class="sdc-asset-creation-info"><b>Created:</b>&nbsp;{{component.creationDate | date:'MM/dd/yyyy'}},&nbsp;{{component.creatorFullName}}&nbsp;|&nbsp;<b>Modifed:</b>&nbsp;{{component.lastUpdateDate | date:'MM/dd/yyyy'}}&nbsp;|&nbsp;<b>UUID:</b>&nbsp;{{component.uuid}}<b>&nbsp;Invariant UUID:</b>&nbsp;{{component.invariantUUID}}</div>
-
+            <div class="tab-title" data-ng-if="!isComposition && !isDeployment">
+                {{getTabTitle()}}
+            </div>
             <div class="w-sdc-main-container-body-content" data-ng-class="{'third-party':thirdParty}" data-ui-view></div>
         </div>
     </div>

@@ -261,7 +261,7 @@ public final class AtomicOperationUtils {
 		LifeCycleStatesEnum curentCompState = LifeCycleStatesEnum.findByCompState(component.getLifecycleState().toString());
 
 		if (curentCompState == targetState) {
-			component = getCompoenntObject(component, userRole);
+			component = getComponentObject(component, userRole);
 			return Pair.of(component, null);
 		}
 		// List<LifeCycleStatesEnum> lifeCycleStatesEnumOrigList = new
@@ -299,7 +299,7 @@ public final class AtomicOperationUtils {
 			}
 
 		}
-		Component componentJavaObject = getCompoenntObject(component, userRole);
+		Component componentJavaObject = getComponentObject(component, userRole);
 
 		if (validateState == true && isValidationFailed == true) {
 			assertTrue("change state failed" + lifeCycleStatesResponse.getResponse(), false);
@@ -431,6 +431,12 @@ public final class AtomicOperationUtils {
 		Service container = ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse());
 		return container;
 	}
+	
+	public static Service getServiceObject(String uniqueId) throws Exception {
+		RestResponse serviceResponse = ServiceRestUtils.getService(uniqueId);
+		Service container = ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse());
+		return container;
+	}
 
 	public static Product getProductObject(Component containerDetails, UserRoleEnum userRole) throws Exception {
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
@@ -439,7 +445,7 @@ public final class AtomicOperationUtils {
 		return container;
 	}
 
-	public static Component getCompoenntObject(Component containerDetails, UserRoleEnum userRole) throws Exception {
+	public static Component getComponentObject(Component containerDetails, UserRoleEnum userRole) throws Exception {
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
 
 		switch (containerDetails.getComponentType()) {
@@ -521,7 +527,7 @@ public final class AtomicOperationUtils {
 
 		if (changeComponentInstanceVersionResp.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS) {
 
-			Component compoenntObject = AtomicOperationUtils.getCompoenntObject(containerDetails, userRole);
+			Component compoenntObject = AtomicOperationUtils.getComponentObject(containerDetails, userRole);
 			ComponentInstance componentInstanceJavaObject = ResponseParser.convertComponentInstanceResponseToJavaObject(changeComponentInstanceVersionResp.getResponse());
 
 			return Either.left(Pair.of(compoenntObject, componentInstanceJavaObject));

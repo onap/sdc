@@ -163,13 +163,13 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 				ValidationUtils.convertToSystemName(serviceDetails.getName()), serviceDetails.getVersion(),
 				ValidationUtils.convertToSystemName(resourceDetails.getName()), resourceDetails.getVersion(),
 				ValidationUtils.normalizeFileName(deploymentArtifact.getArtifactName()));
-		expectedDownloadResourceUrl = expectedDownloadResourceUrl.substring("/asdc/".length(),
+		expectedDownloadResourceUrl = expectedDownloadResourceUrl.substring("/sdc/".length(),
 				expectedDownloadResourceUrl.length());
 
 		expectedDownloadServiceUrl = String.format(Urls.DISTRIB_DOWNLOAD_SERVICE_ARTIFACT_RELATIVE_URL,
 				ValidationUtils.convertToSystemName(serviceDetails.getName()), serviceDetails.getVersion(),
 				ValidationUtils.normalizeFileName(deploymentArtifact.getArtifactName()));
-		expectedDownloadServiceUrl = expectedDownloadServiceUrl.substring("/asdc/".length(),
+		expectedDownloadServiceUrl = expectedDownloadServiceUrl.substring("/sdc/".length(),
 				expectedDownloadServiceUrl.length());
 
 		sdncAdminUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);

@@ -37,7 +37,8 @@ def importHeatTypes(beHost, bePort, adminUser, fileDir, updateversion):
 				  "eline",
 				  "abstractSubstitute",
 				  "Generic_VFC", 
-				  "Generic_VF", 
+				  "Generic_VF",
+				  "Generic_PNF",
 				  "Generic_Service",
 				  "contrailNetworkRules",
 				  "contrailPort",
@@ -48,7 +49,9 @@ def importHeatTypes(beHost, bePort, adminUser, fileDir, updateversion):
 				  "contrailCompute",
 				  "contrailV2VirtualMachineInterface",
 				  "subInterface",
-				  "contrailV2VLANSubInterface"
+				  "contrailV2VLANSubInterface",
+				  "multiFlavorVFC",
+				  "vnfConfiguration"
 				  ]
 		
 	responseCodes = [200, 201]

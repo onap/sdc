@@ -178,7 +178,7 @@ public class DownloadComponentArt extends ComponentBaseTest {
 		expectedResourceAuditJavaObject.setDesc("OK");
 		
 		expectedResourceAuditJavaObject.setCONSUMER_ID("ci");
-		String resource_url = String.format("/asdc/v1/catalog/resources/%s/artifacts/%s", resourceUUID, artifactUUID);
+		String resource_url = String.format("/sdc/v1/catalog/resources/%s/artifacts/%s", resourceUUID, artifactUUID);
 		expectedResourceAuditJavaObject.setRESOURCE_URL(resource_url);
 		
 		AuditValidationUtils.validateAuditDownloadExternalAPI(expectedResourceAuditJavaObject, auditAction, null, false);
@@ -250,7 +250,7 @@ public class DownloadComponentArt extends ComponentBaseTest {
 		expectedResourceAuditJavaObject.setDesc("OK");
 		
 		expectedResourceAuditJavaObject.setCONSUMER_ID("ci");
-		String resource_url = String.format("/asdc/v1/catalog/services/%s/artifacts/%s", resourceUUID, artifactUUID);
+		String resource_url = String.format("/sdc/v1/catalog/services/%s/artifacts/%s", resourceUUID, artifactUUID);
 		expectedResourceAuditJavaObject.setRESOURCE_URL(resource_url);
 		
 		AuditValidationUtils.validateAuditDownloadExternalAPI(expectedResourceAuditJavaObject, auditAction, null, false);
@@ -313,7 +313,7 @@ public class DownloadComponentArt extends ComponentBaseTest {
 		expectedResourceAuditJavaObject.setDesc("OK");
 			
 		expectedResourceAuditJavaObject.setCONSUMER_ID("ci");
-		String resource_url = String.format("/asdc/v1/catalog/services/%s/resourceInstances/%s/artifacts/%s", resourceUUID, componentNormalizedName, artifactUUID);
+		String resource_url = String.format("/sdc/v1/catalog/services/%s/resourceInstances/%s/artifacts/%s", resourceUUID, componentNormalizedName, artifactUUID);
 		expectedResourceAuditJavaObject.setRESOURCE_URL(resource_url);
 			
 		AuditValidationUtils.validateAuditDownloadExternalAPI(expectedResourceAuditJavaObject, auditAction, null, false);

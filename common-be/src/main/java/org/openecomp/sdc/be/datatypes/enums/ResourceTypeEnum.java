@@ -27,8 +27,14 @@ package org.openecomp.sdc.be.datatypes.enums;
  */
 public enum ResourceTypeEnum {
 
-	VFC("VFC (Virtual Function Component)"), VF("VF"/* (Virtual Function)" */), CP("CP (Connection Point)"), 
-		VL( "VL (Virtual Link)"), VFCMT("VFCMT (VFC Monitoring Template)"), ABSTRACT("Abstract (Generic VFC/VF/Service Type)");
+	VFC("VFC (Virtual Function Component)"), 
+	VF("VF"/* (Virtual Function)" */), 
+	CP("CP (Connection Point)"), 
+	PNF("PNF"/* (Physical Network Function)" */),
+	CVFC("CVFC"/*Complex Virtual Function Component*/),
+	VL( "VL (Virtual Link)"), 
+	VFCMT("VFCMT (VFC Monitoring Template)"), 
+	ABSTRACT("Abstract (Generic VFC/VF/PNF/Service Type)");
 
 	private String value;
 
@@ -85,7 +91,7 @@ public enum ResourceTypeEnum {
 		return false;
 	}
 	/**
-	 * Checks if enum exist with given type ignare case
+	 * Checks if enum exist with given type ignore case
 	 * @param type
 	 * @return
 	 */

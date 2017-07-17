@@ -139,8 +139,11 @@ export class PropertiesUtils {
             let propNameInObj = prop.propertiesName.substring(prop.propertiesName.indexOf(parentName) + parentName.length + 1).split('#').join('.'); //extract everything after parent name
             prop.valueObj = _.get(parentValueJSON, propNameInObj, prop.value || prop.defaultValue); //assign value -first value of parent if exists. If not, prop.value if not, prop.defaultvalue
 
-            if ((prop.derivedDataType == DerivedPropertyType.SIMPLE || prop.isDeclared) && typeof prop.valueObj == 'object') { //Stringify objects that should be strings
+            if ( prop.isDeclared && typeof prop.valueObj == 'object') { //Stringify objects of items that are declared
                 prop.valueObj = JSON.stringify(prop.valueObj);
+            } else if(typeof prop.valueObj == PROPERTY_TYPES.STRING
+                && (prop.type == PROPERTY_TYPES.INTEGER || prop.type == PROPERTY_TYPES.FLOAT || prop.type == PROPERTY_TYPES.BOOLEAN)){ //parse ints and non-string simple types
+                prop.valueObj = JSON.parse(prop.valueObj);
             } else { //parse strings that should be objects
                 if (prop.derivedDataType == DerivedPropertyType.COMPLEX && typeof prop.valueObj != 'object') {
                     prop.valueObj = JSON.parse(prop.valueObj || '{}');

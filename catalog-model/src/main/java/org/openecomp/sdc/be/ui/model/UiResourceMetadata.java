@@ -29,6 +29,7 @@ public class UiResourceMetadata extends UiComponentMetadata {
 	
 	private String vendorName;
 	private String vendorRelease;
+	private String resourceVendorModelNumber;
 	private ResourceTypeEnum resourceType = ResourceTypeEnum.VFC;
 	private Boolean isAbstract;
 	private String cost;
@@ -41,6 +42,7 @@ public class UiResourceMetadata extends UiComponentMetadata {
 		super(categories, metadata);
 		this.vendorName = metadata.getVendorName();
 		this.vendorRelease = metadata.getVendorRelease();
+		this.resourceVendorModelNumber = metadata.getResourceVendorModelNumber();
 		this.resourceType = metadata.getResourceType();
 		this.cost = metadata.getCost();
 		this.licenseType = metadata.getLicenseType();
@@ -74,6 +76,14 @@ public class UiResourceMetadata extends UiComponentMetadata {
 
 	public void setVendorRelease(String vendorRelease) {
 		this.vendorRelease = vendorRelease;
+	}
+	
+	public String getResourceVendorModelNumber() {
+		return resourceVendorModelNumber;
+	}
+
+	public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
+		this.resourceVendorModelNumber = resourceVendorModelNumber;
 	}
 
 	public ResourceTypeEnum getResourceType() {

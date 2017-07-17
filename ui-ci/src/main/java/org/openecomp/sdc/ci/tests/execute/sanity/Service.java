@@ -387,10 +387,6 @@ public class Service extends SetupCDTest {
 	@Test
 	public void deleteDeploymentArtifactFromVFInstanceTest() throws Exception{
 		
-		if(true){
-			throw new SkipException("Open bug 300513");			
-		}
-		
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
 		ArtifactInfo artifact = new ArtifactInfo(filePath, HEAT_FILE_YAML_NAME, DESCRIPTION, ARTIFACT_LABEL,ArtifactTypeEnum.SNMP_POLL.getType());
@@ -404,10 +400,6 @@ public class Service extends SetupCDTest {
 	
 	@Test
 	public void deleteDeploymentArtifactFromVFInstanceNextVersionTest() throws Exception{
-		
-		if(true){
-			throw new SkipException("Open bug 300513");			
-		}
 		
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
@@ -433,10 +425,6 @@ public class Service extends SetupCDTest {
 //	service version V0.1 default artifact, service version V0.2 updated artifact 	
 	@Test
 	public void updateDeploymentArtifactOnVFInstanceNextVersionTest() throws Exception{
-		
-		if(true){
-			throw new SkipException("Open bug 300513");			
-		}
 		
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();

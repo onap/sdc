@@ -456,7 +456,11 @@ public class TitanDao {
 				}
 				if (hasNotProps != null && !hasNotProps.isEmpty()) {
 					for (Map.Entry<GraphPropertyEnum, Object> entry : hasNotProps.entrySet()) {
-						query = query.hasNot(entry.getKey().getProperty(), entry.getValue());
+						if(entry.getValue() instanceof List){
+							buildMultipleNegateQueryFromList(entry, query);
+						}else{
+							query = query.hasNot(entry.getKey().getProperty(), entry.getValue());
+						}
 					}
 				}
 				Iterable<TitanVertex> vertices = query.vertices();
@@ -495,6 +499,15 @@ public class TitanDao {
 				logger.debug("Failed  get by  criteria for type ={} and properties = {} error : {}", type, props, graph.right().value());
 			}
 			return Either.right(graph.right().value());
+		}
+	}
+	
+	
+	
+	private void buildMultipleNegateQueryFromList(Map.Entry<GraphPropertyEnum, Object> entry, TitanGraphQuery query){
+		List<Object> negateList = (List<Object>) entry.getValue();
+		for (Object listItem : negateList) {
+			query.hasNot(entry.getKey().getProperty(), listItem);
 		}
 	}
 	

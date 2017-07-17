@@ -63,7 +63,7 @@ import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 //
  public class DistributionUtils {
 	 
-	 final static String serviceDistributionSuffix = "/asdc/v1/catalog/services/";
+	 final static String serviceDistributionSuffix = "/sdc/v1/catalog/services/";
 
 	 public static ServiceDistributionStatus getLatestServiceDistributionObject(Service service) throws IOException, ParseException {
 			ServiceDistributionStatus serviceDistributionStatus = null;
@@ -124,13 +124,13 @@ import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 	}
 	
 	private static String buildServiceDeploymentUrl(Service service, String artifactName, String artifactUUID) {
-//		format	"/asdc/v1/catalog/services/" + service.getSystemName() + "/" + service.getVersion() + "/artifacts/AAI-" + service.getName() + "-service-1.xml"
+//		format	"/sdc/v1/catalog/services/" + service.getSystemName() + "/" + service.getVersion() + "/artifacts/AAI-" + service.getName() + "-service-1.xml"
 		return serviceDistributionSuffix + service.getSystemName() + "/" + service.getVersion() + "/artifacts/" + artifactName;
 	}
 
 	public static String buildResourceInstanceDeploymentUrl(Service service, String artifactName, String artifactUUID){
 		
-//			/asdc/v1/catalog/services/Servicefordistribution/1.0  /resourceInstances/nestedfrommarina2   /artifacts/FEAdd_On_Module_vProbeLauncher.yaml
+//			/sdc/v1/catalog/services/Servicefordistribution/1.0  /resourceInstances/nestedfrommarina2   /artifacts/FEAdd_On_Module_vProbeLauncher.yaml
 		String resourceInstanceNormalizedName = getResourceInstanceNormalizeName(service, artifactName, artifactUUID );
 		return serviceDistributionSuffix + service.getSystemName() + "/" + service.getVersion() + "/resourceInstances/" + resourceInstanceNormalizedName  +"/artifacts/" + artifactName;
 	}

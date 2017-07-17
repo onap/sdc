@@ -76,5 +76,17 @@ public  class MapDataDefinition <T extends ToscaDataDefinition>  extends ToscaDa
 			mapToscaDataDefinition.entrySet().forEach(e -> e.getValue().setOwnerIdIfEmpty(ownerId));
 		}
 	}
+
+
+	public String findKeyByItemUidMatch(String uid){
+		if(null == mapToscaDataDefinition)
+			return null;
+		Map.Entry<String, T> entry = mapToscaDataDefinition.entrySet().stream().filter(e ->
+				e.getValue().findUidMatch(uid))
+				.findAny().orElse(null);
+		if(null == entry)
+			return null;
+		return entry.getKey();
+	}
 	
 }

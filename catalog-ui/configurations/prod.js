@@ -55,21 +55,13 @@ const SDC_CONFIG = {
 		"POST_change_instance_version": "/v1/catalog/:entityType/:entityId/resourceInstance/:id/changeVersion",
 		"GET_requirements_capabilities": "/v1/catalog/requirmentsCapabilities/:type/:id",
 		"GET_resource_artifact_types": "/v1/artifactTypes",
-		"GET_product_catalog": "/v1/productScreen",
-		"GET_product_category": "/v1/productCategories",
-		"GET_product_category_temp": "/v1/artifactTypes",
-		"POST_product": "/v1/catalog/products/:id/metadata",
-		"GET_product_validate_name": "/v1/catalog/services/validate-name/:name",
-		"GET_product": "/v1/catalog/products/:id",
-		"GET_product_sub_category": "/v1/productSubCategories",
 		"GET_onboarding": "/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/packages",
 		"GET_component_from_csar_uuid": "/v1/catalog/resources/csar/:csar_uuid",
 		"kibana": "/sdc1/kibanaProxy/"
 	},
 	"resourceTypesFilter":{
         "resource":["CP","VFC","VL"],
-        "service":["CP","VF","VL"],
-		"product":[]
+        "service":["CP","VF","VL", "PNF","CVFC"]
 	},
 	"logConfig": {
 		"minLogLevel": "debug",
@@ -104,7 +96,7 @@ const SDC_CONFIG = {
 			"default": "DL-ASDCL1-4ServiceCertificationTeam;DL-ASDCL4-7ServiceCertificationTeam"
 		}
 	},
-	"roles": ["ADMIN", "TESTER", "GOVERNOR", "OPS", "DESIGNER", "PRODUCT_MANAGER", "PRODUCT_STRATEGIST"],
+	"roles": ["ADMIN", "TESTER", "GOVERNOR", "OPS", "DESIGNER"],
 	"tutorial": {
 		"tabs": [
 			{
@@ -426,7 +418,6 @@ const SDC_CONFIG = {
 
 		]
 	}
-
 };
 
 module.exports = SDC_CONFIG;

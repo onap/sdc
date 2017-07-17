@@ -26,6 +26,9 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 
 public class ServiceReqDetails extends ComponentReqDetails {
+	
+	String serviceType;
+	String serviceRole;
 
 	public ServiceReqDetails(String serviceName, String category, ArrayList<String> tags, String description,
 			String contactId, String icon) {
@@ -35,6 +38,8 @@ public class ServiceReqDetails extends ComponentReqDetails {
 		this.description = description;
 		this.contactId = contactId;
 		this.icon = icon;
+		this.serviceType = "";
+		this.serviceRole = "";
 		projectCode = "12345";
 		CategoryDefinition categoryDefinition = new CategoryDefinition();
 		categoryDefinition.setName(category);
@@ -56,6 +61,8 @@ public class ServiceReqDetails extends ComponentReqDetails {
 		this.uniqueId = service.getUniqueId();
 		this.UUID = service.getUUID();
 		this.version = service.getVersion();
+		this.serviceType = service.getServiceType();
+		this.serviceRole = service.getServiceRole();
 
 	}
 

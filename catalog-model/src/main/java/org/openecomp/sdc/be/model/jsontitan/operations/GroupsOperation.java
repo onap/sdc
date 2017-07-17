@@ -139,7 +139,7 @@ public class GroupsOperation extends BaseOperation {
 		} 
 		if (result == null) {
 			List<String> groupName = groups.stream().map(g -> g.getName()).collect(Collectors.toList());
-			status = deleteToscaDataElements(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, groupName, JsonPresentationFields.NAME);
+			status = deleteToscaDataElements(component.getUniqueId(), EdgeLabelEnum.GROUPS, groupName);
 						
 			if (status != StorageOperationStatus.OK) {
 				result = Either.right(status);

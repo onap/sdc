@@ -1,6 +1,6 @@
 outputFolder: target
 reportName: index.html
-catalogBeHost: behost
+catalogBeHost: localhost
 catalogFeHost: fehost
 esHost: eshost
 disributionClientHost: disClient

@@ -1,0 +1,21 @@
+{
+  "payloadName": "Generic_PNF.yml",
+  "contactId": "jh0003",
+  "name": "Generic_PNF",
+  "description": "Represents a generic PNF.",
+  "resourceIconPath": "defaulticon",
+  "resourceType": "ABSTRACT",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Abstract"
+      }
+    ]
+  }
+],
+  "tags": [
+    "Generic_PNF"
+  ]
+}

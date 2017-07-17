@@ -85,9 +85,25 @@ public class Service extends Component {
 	public void setNamingPolicy(String namingPolicy) {
 		getServiceMetadataDefinition().setNamingPolicy(namingPolicy);
 	}
-
+	
 	public String getNamingPolicy() {
 		return getServiceMetadataDefinition().getNamingPolicy();
+	}
+	
+	public void setServiceType(String serviceType){
+		getServiceMetadataDefinition().setServiceType(serviceType);
+	}
+	
+	public String getServiceType(){
+		return getServiceMetadataDefinition().getServiceType();
+	}
+	
+	public void setServiceRole(String serviceRole){
+		getServiceMetadataDefinition().setServiceRole(serviceRole);
+	}
+	
+	public String getServiceRole(){
+		return getServiceMetadataDefinition().getServiceRole();
 	}
 
 	private ServiceMetadataDataDefinition getServiceMetadataDefinition() {

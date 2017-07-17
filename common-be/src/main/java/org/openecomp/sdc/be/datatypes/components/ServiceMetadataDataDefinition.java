@@ -33,6 +33,8 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 	public static final String EMPTY_STR = "";
 
 	private String distributionStatus;
+	private String serviceType;
+	private String serviceRole;
 
 	private Boolean ecompGeneratedNaming = true;
 
@@ -40,10 +42,14 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 
 	public ServiceMetadataDataDefinition() {
 		super();
+		serviceType = "";
+		serviceRole = "";
 	}
 
 	public ServiceMetadataDataDefinition(ServiceMetadataDataDefinition other) {
 		super(other);
+		serviceType = other.getServiceType();
+		serviceRole = other.getServiceRole();
 	}
 
 	public String getDistributionStatus() {
@@ -52,6 +58,22 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 
 	public void setDistributionStatus(String distributionStatus) {
 		this.distributionStatus = distributionStatus;
+	}
+	
+	public String getServiceType(){
+		return serviceType;
+	}
+	
+	public void setServiceType(String serviceType){
+		this.serviceType = serviceType;
+	}
+
+	public String getServiceRole(){
+		return serviceRole;
+	}
+
+	public void setServiceRole(String serviceRole){
+		this.serviceRole = serviceRole;
 	}
 
 	public Boolean isEcompGeneratedNaming() {
@@ -73,8 +95,8 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 	@Override
 	public String toString() {
 		return "ServiceMetadataDataDefinition [ distributionStatus=" + distributionStatus
-				 + ", ecompGeneratedNaming=" + ecompGeneratedNaming + ", namingPolicy=" + namingPolicy
-				 + ", parent=" + super.toString() + "]";
+				+ ", serviceType=" + serviceType + ", serviceRole=" + serviceRole + ", ecompGeneratedNaming="
+				+ ecompGeneratedNaming + ", namingPolicy=" + namingPolicy + ", parent=" + super.toString() + "]";
 	}
 
 	@Override
@@ -84,6 +106,8 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 		result = prime * result + ((distributionStatus == null) ? 0 : distributionStatus.hashCode());
 		result = prime * result + ((ecompGeneratedNaming == null) ? 0 : ecompGeneratedNaming.hashCode());
 		result = prime * result + ((namingPolicy == null) ? 0 : namingPolicy.hashCode());
+		result = prime * result + ((serviceType == null) ? 0 : serviceType.hashCode());
+		result = prime * result + ((serviceRole == null) ? 0 : serviceRole.hashCode());
 		return result;
 	}
 
@@ -116,6 +140,16 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 			if (other.namingPolicy != null)
 				return false;
 		} else if (!namingPolicy.equals(other.namingPolicy))
+			return false;
+		if (serviceType == null){
+			if (other.serviceType != null)
+				return false;
+		} else if (!serviceType.equals(other.serviceType))
+			return false;
+		if (serviceRole == null){
+			if (other.serviceRole != null)
+				return false;
+		} else if (!serviceRole.equals(other.serviceRole))
 			return false;
 		return super.equals(obj);
 	}

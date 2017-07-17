@@ -188,6 +188,9 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
 	private Object convertDataTypeToToscaMap(String innerType, Map<String, DataTypeDefinition> dataTypes,
 			final boolean isScalarF, JsonElement entryValue) {
 		Object convertedValue;
+		if (entryValue.isJsonPrimitive()) {
+			return json2JavaPrimitive(entryValue.getAsJsonPrimitive());
+		} 
 		JsonObject asJsonObjectIn = entryValue.getAsJsonObject();
 
 		DataTypeDefinition dataTypeDefinition = dataTypes.get(innerType);

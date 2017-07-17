@@ -76,10 +76,10 @@ public class AssetRestUtils extends BaseRestUtils {
 	static final String contentTypeHeaderData = "application/json";
 	static final String acceptHeaderDate = "application/json";
 	static final String basicAuthentication = "Basic Y2k6MTIzNDU2";
-	// /asdc/v1/catalog/{services/resources}/{componentUUID}/artifacts/{artifactUUID}
-	static final String COMPONENT_ARTIFACT_URL = "/asdc/v1/catalog/%s/%s/artifacts/%s";
-	// /asdc/v1/catalog/{services/resources}/{componentUUID}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}
-	static final String RESOURCE_INSTANCE_ARTIFACT_URL = "/asdc/v1/catalog/%s/%s/resourceInstances/%s/artifacts/%s";
+	// /sdc/v1/catalog/{services/resources}/{componentUUID}/artifacts/{artifactUUID}
+	static final String COMPONENT_ARTIFACT_URL = "/sdc/v1/catalog/%s/%s/artifacts/%s";
+	// /sdc/v1/catalog/{services/resources}/{componentUUID}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}
+	static final String RESOURCE_INSTANCE_ARTIFACT_URL = "/sdc/v1/catalog/%s/%s/resourceInstances/%s/artifacts/%s";
 
 	public static HttpResponse getComponentToscaModel(AssetTypeEnum assetType, String uuid) throws IOException {
 		Config config = Utils.getConfig();
@@ -338,7 +338,7 @@ public class AssetRestUtils extends BaseRestUtils {
 				// assertNotNull("Expected artifact asset resourceInvariantUUID
 				// is null",
 				// resourceInstanceAssetStructure.getResourceInvariantUUID());
-				// String expectedArtifactUrl = "/asdc/v1/catalog/" +
+				// String expectedArtifactUrl = "/sdc/v1/catalog/" +
 				// assetType.getValue() + "/" + componentUuid + "/artifacts/" +
 				// componentDeploymentArtifactValue.getArtifactUUID();
 				String expectedArtifactUrl = "";

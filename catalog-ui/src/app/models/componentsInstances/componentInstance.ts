@@ -52,6 +52,7 @@ export class ComponentInstance {
     public inputs:Array<InputModel>;
     public properties:Array<PropertyModel>;
     public groupInstances:Array<Module>;
+    public invariantName:string;
 
     constructor(componentInstance?:ComponentInstance) {
 
@@ -77,6 +78,7 @@ export class ComponentInstance {
             this.customizationUUID = componentInstance.customizationUUID;
             this.updatePosition(componentInstance.posX, componentInstance.posY);
             this.groupInstances = componentInstance.groupInstances;
+            this.invariantName = componentInstance.invariantName;
         }
     }
 
@@ -92,7 +94,7 @@ export class ComponentInstance {
     };
 
     public isComplex = () : boolean => {
-        return this.originType === ResourceType.VF;
+        return this.originType === ResourceType.VF || this.originType === ResourceType.PNF || this.originType === ResourceType.CVFC  ;
     }
 
     public setInstanceRC = ():void=> {

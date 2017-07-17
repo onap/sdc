@@ -1,8 +1,8 @@
 .sdc-workspace-general-step {
-
+    display: flex;
     .w-sdc-form {
         padding: 0;
-
+        flex-grow: 10;
         .i-sdc-form-file-upload{
             input[type="button"] {
                 cursor: pointer;
@@ -33,6 +33,14 @@
             }
         }
 
+        .description{
+            height: 300px;
+        }
+
+        .i-sdc-form-item.description-field{
+            margin-bottom: 0;
+        }
+
         .w-sdc-form-section-container {
             text-align: center;
         }
@@ -43,6 +51,7 @@
                 width: auto;
                 padding: 10px;
             }
+            margin-bottom: 15px;
         }
 
         .i-sdc-form-label {
@@ -62,6 +71,73 @@
         }
 
     }
+
+    .w-sdc-form-column {
+        position: relative;
+    }
+
+    .meta-data{
+        padding: 8px 0 2px 20px;
+        text-align: left;
+        background-color: @tlv_color_t;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        .meta-data-item-value{
+            padding-bottom: 6px;
+        }
+    }
+
+    .upper-general-fields{
+        display: flex;
+    }
+
+    .selected-icon-container{
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        .selected-icon-inner-container{
+            height: 64px;
+            width: 64px;
+            margin: 0 auto;
+        }
+        .update-component-icon{
+            position: relative;
+            float: right;
+            cursor: pointer;
+        }
+        .selected-icon{
+            position: relative;
+            top: -20px;
+            z-index: -1;
+            &.disable{
+                position: inherit;
+            }
+        }
+        &.show-only-on-over{
+            .update-component-icon{
+                display: none;
+            }
+            .selected-icon{
+                position: inherit;
+            }
+            &:hover{
+                .update-component-icon{
+                    display: inline-block;
+                }
+                .selected-icon{
+                    position: relative;
+                }
+            }
+        }
+    }
+
+    .name-and-category-fields{
+        flex-grow: 5;
+    }
+
+
+
 
 }
 

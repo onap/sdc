@@ -57,7 +57,8 @@
             <button class="i-sdc-designer-sidebar-tab" data-ui-sref-active="active"
                     data-ui-sref="workspace.composition.deployment"
                     tooltips tooltip-class="tooltip-custom tab-tooltip" tooltip-content="Deployment Artifacts"
-                    data-tests-id="deployment-artifact-tab">
+                    data-tests-id="deployment-artifact-tab"
+                    data-ng-if="!isPNF()">
                 <div class="i-sdc-designer-sidebar-tab-icon sprite-new deployment-artifacts"></div>
             </button>
             <button tooltips tooltip-class="tooltip-custom tab-tooltip"

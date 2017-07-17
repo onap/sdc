@@ -20,8 +20,8 @@
 
 'use strict';
 import {DEFAULT_ICON, ResourceType, ComponentType} from "./constants";
-import {ServiceService, CacheService, ResourceService, ProductService} from "app/services";
-import {IMainCategory, ISubCategory, ICsarComponent, Component, Resource, Service, Product} from "app/models";
+import {ServiceService, CacheService, ResourceService} from "app/services";
+import {IMainCategory, ISubCategory, ICsarComponent, Component, Resource, Service} from "app/models";
 import {ComponentMetadata} from "../models/component-metadata";
 import {ComponentServiceNg2} from "../ng2/services/component-services/component.service";
 import {ComponentGenericResponse} from "../ng2/services/responses/component-generic-response";
@@ -32,7 +32,6 @@ export class ComponentFactory {
     static '$inject' = [
         'Sdc.Services.Components.ResourceService',
         'Sdc.Services.Components.ServiceService',
-        'Sdc.Services.Components.ProductService',
         'Sdc.Services.CacheService',
         '$q',
         'ComponentServiceNg2'
@@ -40,7 +39,6 @@ export class ComponentFactory {
 
     constructor(private ResourceService:ResourceService,
                 private ServiceService:ServiceService,
-                private ProductService:ProductService,
                 private cacheService:CacheService,
                 private $q:ng.IQService,
                 private ComponentServiceNg2: ComponentServiceNg2) {
@@ -58,16 +56,8 @@ export class ComponentFactory {
                 newComponent = new Resource(this.ResourceService, this.$q, <Resource> component);
                 break;
 
-            case 'PRODUCT':
-                newComponent = new Product(this.ProductService, this.$q, <Product> component);
-                break;
         }
         return newComponent;
-    };
-
-    public createProduct = (product:Product):Product => {
-        let newProduct:Product = new Product(this.ProductService, this.$q, <Product> product);
-        return newProduct;
     };
 
     public createService = (service:Service):Service => {
@@ -144,11 +134,9 @@ export class ComponentFactory {
             case ResourceType.VL:
             case ResourceType.VFC:
             case ResourceType.CP:
+            case ResourceType.PNF:
+            case ResourceType.CVFC:
                 newComponent = new Resource(this.ResourceService, this.$q);
-                break;
-
-            case ComponentType.PRODUCT:
-                newComponent = new Product(this.ProductService, this.$q);
                 break;
         }
         newComponent.componentType = componentType;

@@ -1081,12 +1081,10 @@ public abstract class BaseOperation {
 	 * 
 	 * @param toscaElementUid
 	 * @param edgeLabel
-	 * @param vertexLabel
 	 * @param uniqueKeys
-	 * @param mapKeyField
 	 * @return
 	 */
-	public StorageOperationStatus deleteToscaDataElements(String toscaElementUid, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel, List<String> uniqueKeys, JsonPresentationFields mapKeyField) {
+	public StorageOperationStatus deleteToscaDataElements(String toscaElementUid, EdgeLabelEnum edgeLabel, List<String> uniqueKeys) {
 
 		StorageOperationStatus statusRes = StorageOperationStatus.OK;
 		Either<GraphVertex, TitanOperationStatus> getToscaElementRes;
@@ -1098,7 +1096,7 @@ public abstract class BaseOperation {
 			statusRes = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
 		}
 		if (statusRes == StorageOperationStatus.OK) {
-			statusRes = deleteToscaDataElements(getToscaElementRes.left().value(), edgeLabel, vertexLabel, uniqueKeys, mapKeyField);
+			statusRes = deleteToscaDataElements(getToscaElementRes.left().value(), edgeLabel, uniqueKeys);
 		}
 		return statusRes;
 	}
@@ -1219,25 +1217,22 @@ public abstract class BaseOperation {
 
 		List<String> uniqueKeys = new ArrayList<>();
 		uniqueKeys.add(uniqueKey);
-		return deleteToscaDataElements(toscaElement, edgeLabel, vertexLabel, uniqueKeys, mapKeyField);
+		return deleteToscaDataElements(toscaElement, edgeLabel, uniqueKeys);
 	}
 
 	@SuppressWarnings("unchecked")
-	/**
-	 * Deletes tosca data elements belonging to tosca element according label
-	 * 
-	 * @param toscaElement
-	 * @param edgeLabel
-	 * @param vertexLabel
-	 * @param uniqueKeys
-	 * @param mapKeyField
-	 * @return
-	 */
-	public StorageOperationStatus deleteToscaDataElements(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel, List<String> uniqueKeys, JsonPresentationFields mapKeyField) {
+/**
+ * Deletes tosca data elements belonging to tosca element according label
+ * @param toscaElement
+ * @param edgeLabel
+ * @param uniqueKeys
+ * @return
+ */
+	public StorageOperationStatus deleteToscaDataElements(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, List<String> uniqueKeys) {
 
 		StorageOperationStatus result = null;
 		GraphVertex toscaDataVertex;
-		Map<String, ToscaDataDefinition> existingToscaDataMap = null;
+		Map<String, ToscaDataDefinition> existingToscaDataMap;
 		Either<GraphVertex, TitanOperationStatus> toscaDataVertexRes = titanDao.getChildVertex(toscaElement, edgeLabel, JsonParseFlagEnum.ParseJson);
 		if (toscaDataVertexRes.isRight()) {
 			TitanOperationStatus status = toscaDataVertexRes.right().value();

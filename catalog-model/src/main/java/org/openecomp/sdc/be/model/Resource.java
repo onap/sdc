@@ -255,6 +255,11 @@ public class Resource extends Component implements Serializable {
 		((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
 				.setVendorRelease(vendorRelease);
 	}
+	
+	public void setResourceVendorModelNumber(String resourceVendorModelNumber){
+		((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).
+		setResourceVendorModelNumber(resourceVendorModelNumber);
+	}
 
 	public String getVendorName() {
 		return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
@@ -264,6 +269,11 @@ public class Resource extends Component implements Serializable {
 	public String getVendorRelease() {
 		return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
 				.getVendorRelease();
+	}
+	
+	public String getResourceVendorModelNumber(){
+		return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+				.getResourceVendorModelNumber();
 	}
 	
 	@Override
@@ -282,7 +292,7 @@ public class Resource extends Component implements Serializable {
 	@Override
 	public boolean shouldGenerateInputs(){
 		//TODO add complex VFC condition when supported
-		return ResourceTypeEnum.VF == this.getResourceType();
+		return ResourceTypeEnum.VF == this.getResourceType() || ResourceTypeEnum.CVFC == this.getResourceType() || ResourceTypeEnum.PNF == this.getResourceType();
 	}
 	
 	@Override

@@ -132,7 +132,8 @@ export class DataTypesService implements IDataTypesService {
 
     public isDataTypeForDataTypePropertyType = (property:DataTypePropertyModel):boolean=> {
         property.simpleType = "";
-        if (property.type && PROPERTY_DATA.TYPES.indexOf(property.type) > -1) {
+        let isScalarForNFoD:boolean = property.type === 'scalar-unit.size';
+        if (property.type && PROPERTY_DATA.TYPES.indexOf(property.type) > -1 || isScalarForNFoD) {
             return false;
         }
         let simpleType = this.getTypeForDataTypeDerivedFromSimple(property.type);

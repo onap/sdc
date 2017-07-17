@@ -77,7 +77,6 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     changeLifecycleState(state:string):void;
     enabledTabs():void
     isDesigner():boolean;
-    isProductManager():boolean;
     isViewMode():boolean;
     isEditMode():boolean;
     isCreateMode():boolean;
@@ -91,6 +90,7 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     updateSelectedMenuItem():void;
     uploadFileChangedInGeneralTab():void;
     updateMenuComponentName(ComponentName:string):void;
+    getTabTitle():string;
     reload(component:Component):void;
 }
 
@@ -149,9 +149,6 @@ export class WorkspaceViewModel {
         } else {
             if (this.$scope.component.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT &&
                 this.$scope.component.lastUpdaterUserId === this.cacheService.get("user").userId) {
-                if (this.$scope.component.isProduct() && this.role == Role.PRODUCT_MANAGER) {
-                    mode = WorkspaceMode.EDIT;
-                }
                 if ((this.$scope.component.isService() || this.$scope.component.isResource()) && this.role == Role.DESIGNER) {
                     mode = WorkspaceMode.EDIT;
                 }
@@ -171,7 +168,7 @@ export class WorkspaceViewModel {
     };
 
     private initLeftPalette = ():void => {
-        this.LeftPaletteLoaderService.loadLeftPanel(this.$scope.component.componentType);
+        this.LeftPaletteLoaderService.loadLeftPanel(this.$scope.component);
     };
 
     private initScope = ():void => {
@@ -192,7 +189,7 @@ export class WorkspaceViewModel {
         this.$scope.$state = this.$state;
         this.$scope.isLoading = false;
         this.$scope.isComposition = (this.$state.current.name.indexOf(States.WORKSPACE_COMPOSITION) > -1);
-        this.$scope.isDeployment = (this.$state.current.name.indexOf(States.WORKSPACE_DEPLOYMENT) > -1);
+        this.$scope.isDeployment = this.$state.current.name == States.WORKSPACE_DEPLOYMENT;
         this.$scope.progressService = this.progressService;
 
         this.$scope.getComponent = ():Component => {
@@ -269,7 +266,7 @@ export class WorkspaceViewModel {
                 type: this.$scope.componentType.toLowerCase(),
                 mode: WorkspaceMode.VIEW,
                 components: this.$state.params['components']
-            },{reload: true});
+            }, {reload: true});
 
         };
 
@@ -431,7 +428,7 @@ export class WorkspaceViewModel {
                 switch (url) {
                     case 'lifecycleState/CHECKOUT':
                         // only checkOut get the full component from server
-                     //   this.$scope.component = component;
+                        //   this.$scope.component = component;
                         // Work around to change the csar version
                         if (this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG)) {
                             (<Resource>this.$scope.component).csarVersion = this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
@@ -565,18 +562,13 @@ export class WorkspaceViewModel {
             return this.role == Role.DESIGNER;
         };
 
-        this.$scope.isProductManager = ():boolean => {
-            return this.role == Role.PRODUCT_MANAGER;
-        };
-
         this.$scope.isDisableMode = ():boolean => {
             return this.$scope.mode === WorkspaceMode.VIEW && this.$scope.component.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKIN;
         };
 
         this.$scope.showFullIcons = ():boolean => {
-            //we show revert and save icons only in general\icon view
-            return this.$state.current.name === States.WORKSPACE_GENERAL ||
-                this.$state.current.name === States.WORKSPACE_ICONS;
+            //we show revert and save icons only in general view
+            return this.$state.current.name === States.WORKSPACE_GENERAL;
         };
 
         this.$scope.isCreateMode = ():boolean => {
@@ -593,8 +585,7 @@ export class WorkspaceViewModel {
         };
 
         this.$scope.showLifecycleIcon = ():boolean => {
-            return this.role == Role.DESIGNER ||
-                this.role == Role.PRODUCT_MANAGER;
+            return this.role == Role.DESIGNER;
         };
 
         this.$scope.getStatus = ():string => {
@@ -610,13 +601,6 @@ export class WorkspaceViewModel {
         this.$scope.showChangeStateButton = ():boolean => {
             let result:boolean = true;
             if (!this.$scope.component.isLatestVersion() && Role.OPS != this.role && Role.GOVERNOR != this.role) {
-                result = false;
-            }
-            if (this.role === Role.PRODUCT_MANAGER && !this.$scope.component.isProduct()) {
-                result = false;
-            }
-            if ((this.role === Role.DESIGNER || this.role === Role.TESTER)
-                && this.$scope.component.isProduct()) {
                 result = false;
             }
             if (ComponentState.NOT_CERTIFIED_CHECKOUT === this.$scope.component.lifecycleState && this.$scope.isViewMode()) {
@@ -639,9 +623,15 @@ export class WorkspaceViewModel {
         this.$scope.$watch('$state.current.name', (newVal:string):void => {
             if (newVal) {
                 this.$scope.isComposition = (newVal.indexOf(States.WORKSPACE_COMPOSITION) > -1);
-                this.$scope.isDeployment = (newVal.indexOf(States.WORKSPACE_DEPLOYMENT) > -1);
+                this.$scope.isDeployment = newVal == States.WORKSPACE_DEPLOYMENT;
             }
         });
+
+        this.$scope.getTabTitle = ():string => {
+            return this.$scope.leftBarTabs.menuItems.find((menuItem:MenuItem)=>{
+                return menuItem.state == this.$scope.$state.current.name;
+            }).text;
+        };
 
         this.$scope.reload = (component:Component):void => {
             this.$state.go(this.$state.current.name,{id:component.uniqueId},{reload:true});
@@ -658,7 +648,11 @@ export class WorkspaceViewModel {
 
     private initVersionObject = ():void => {
         this.$scope.versionsList = (this.$scope.component.getAllVersionsAsSortedArray()).reverse();
-        this.$scope.changeVersion = {selectedVersion: _.find(this.$scope.versionsList, {versionId: this.$scope.component.uniqueId})};
+        this.$scope.changeVersion = {
+            selectedVersion: _.find(this.$scope.versionsList, (versionObj)=> {
+                return versionObj.versionId === this.$scope.component.uniqueId;
+            })
+        };
     };
 
     private getNewComponentBreadcrumbItem = ():MenuItem => {

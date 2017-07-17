@@ -97,9 +97,6 @@ export class LeftPaletteComponent {
             case ComponentType.SERVICE:
                 this.iconClass = "sprite-services-icons " + icon;
                 break;
-            case ComponentType.PRODUCT:
-                this.iconClass = "sprite-product-icons " + icon;
-                break;
             default:
                 this.iconClass = "sprite-resource-icons " + icon;
         }

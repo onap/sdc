@@ -91,6 +91,7 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 	protected ResourceReqDetails resourceDetailsVFC_02;
 	protected ResourceReqDetails resourceDetailsVF_01;
 	protected ResourceReqDetails resourceDetailsVF_02;
+	protected ResourceReqDetails resourceDetailsPNF_01;
 	protected ResourceReqDetails resourceDetailsCP_01;
 	protected ResourceReqDetails resourceDetailsCP_02;
 	protected ResourceReqDetails resourceDetailsVL_01;
@@ -119,6 +120,7 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 		resourceDetailsVFC_02 = ElementFactory.getDefaultResourceByType("ciVFC200", NormativeTypesEnum.COMPUTE, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, sdncDesignerDetails.getUserId(), ResourceTypeEnum.VFC.toString());
 		resourceDetailsVF_01 = ElementFactory.getDefaultResourceByType("ciVF100", NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, sdncDesignerDetails.getUserId(), ResourceTypeEnum.VF.toString());
 		resourceDetailsVF_02 = ElementFactory.getDefaultResourceByType("ciVF200", NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, sdncDesignerDetails.getUserId(), ResourceTypeEnum.VF.toString());
+		resourceDetailsPNF_01 = ElementFactory.getDefaultResourceByType("ciPNF100", NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, sdncDesignerDetails.getUserId(), ResourceTypeEnum.PNF.toString());
 		resourceDetailsCP_01 = ElementFactory.getDefaultResourceByType("ciCP100", NormativeTypesEnum.PORT, ResourceCategoryEnum.GENERIC_NETWORK_ELEMENTS, sdncDesignerDetails.getUserId(), ResourceTypeEnum.CP.toString());
 		resourceDetailsCP_02 = ElementFactory.getDefaultResourceByType("ciCP200", NormativeTypesEnum.PORT, ResourceCategoryEnum.GENERIC_DATABASE, sdncDesignerDetails.getUserId(), ResourceTypeEnum.CP.toString());
 		resourceDetailsVL_01 = ElementFactory.getDefaultResourceByType("ciVL100", NormativeTypesEnum.NETWORK, ResourceCategoryEnum.GENERIC_NETWORK_ELEMENTS, sdncDesignerDetails.getUserId(), ResourceTypeEnum.VL.toString());
@@ -338,9 +340,9 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 		Function<? super Entry<String, List<CapabilityDefinition>>, List<CapabilityDefinition>> capabilityDefinitionMapper = e -> new ArrayList<>(e.getValue().stream().map(item -> new CapabilityDefinition(item)).collect(Collectors.toList()));
 		Map<String, List<CapabilityDefinition>> capCopy = resourceCapabilities.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), capabilityDefinitionMapper));
 
-		setupContainerExpectedReqCap(uniqueId, name, resourceRequirements, resourceCapabilities);
+		setupContainerExpectedReqCap(uniqueId, name, originComponentId, resourceRequirements, resourceCapabilities);
 		if (component.getComponentType().equals(ComponentTypeEnum.RESOURCE) && ((Resource) component).getResourceType() != ResourceTypeEnum.VF) {
-			setupConstInstExpectedReqCap(uniqueId, name, reqCopy, capCopy);
+			setupConstInstExpectedReqCap(uniqueId, name, originComponentId, reqCopy, capCopy);
 		}
 
 		// adding entry for expected componentInstance
@@ -348,12 +350,15 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 		expectedContInstReqCap.put(uniqueId, compInstReqCapPair);
 	}
 
-	private void setupContainerExpectedReqCap(String uniqueId, String name, Map<String, List<RequirementDefinition>> componentRequirements, Map<String, List<CapabilityDefinition>> componentCapabilities) {
+	private void setupContainerExpectedReqCap(String uniqueId, String name, String componentId, Map<String, List<RequirementDefinition>> componentRequirements, Map<String, List<CapabilityDefinition>> componentCapabilities) {
 		for (Entry<String, List<RequirementDefinition>> resReq : componentRequirements.entrySet()) {
 			List<RequirementDefinition> reqListToAdd = resReq.getValue();
 			for (RequirementDefinition requirementDefinition : reqListToAdd) {
 				requirementDefinition.setOwnerId(uniqueId);
 				requirementDefinition.setOwnerName(name);
+				requirementDefinition.addToPath(uniqueId);
+				requirementDefinition.setSource(componentId);
+				requirementDefinition.setLeftOccurrences(requirementDefinition.getMaxOccurrences());
 			}
 			List<RequirementDefinition> expectedReqList = expectedContainerRequirements.get(resReq.getKey());
 			if (expectedReqList == null) {
@@ -369,6 +374,9 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 			for (CapabilityDefinition capDefinition : capListToAdd) {
 				capDefinition.setOwnerId(uniqueId);
 				capDefinition.setOwnerName(name);
+				capDefinition.addToPath(uniqueId);
+				capDefinition.setSource(componentId);
+				capDefinition.setLeftOccurrences(capDefinition.getMaxOccurrences());
 			}
 			List<CapabilityDefinition> expectedCapList = expectedContainerCapabilities.get(resCap.getKey());
 			if (expectedCapList == null) {
@@ -380,12 +388,15 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 		}
 	}
 
-	private void setupConstInstExpectedReqCap(String uniqueId, String name, Map<String, List<RequirementDefinition>> componentRequirements, Map<String, List<CapabilityDefinition>> componentCapabilities) {
+	private void setupConstInstExpectedReqCap(String uniqueId, String name, String componentId, Map<String, List<RequirementDefinition>> componentRequirements, Map<String, List<CapabilityDefinition>> componentCapabilities) {
 		for (Entry<String, List<RequirementDefinition>> resReq : componentRequirements.entrySet()) {
 			List<RequirementDefinition> reqListToAdd = resReq.getValue();
 			for (RequirementDefinition requirementDefinition : reqListToAdd) {
 				requirementDefinition.setOwnerId(uniqueId);
 				requirementDefinition.setOwnerName(name);
+				requirementDefinition.addToPath(uniqueId);
+				requirementDefinition.setSource(componentId);
+				requirementDefinition.setLeftOccurrences(requirementDefinition.getMaxOccurrences());
 			}
 		}
 
@@ -394,6 +405,8 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 			for (CapabilityDefinition capDefinition : capListToAdd) {
 				capDefinition.setOwnerId(uniqueId);
 				capDefinition.setOwnerName(name);
+				capDefinition.addToPath(uniqueId);
+				capDefinition.setSource(componentId);
 			}
 		}
 	}
@@ -570,6 +583,31 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 		return component;
 	}
 
+	protected Component getComponentAndValidateRIsOnly(ComponentReqDetails componentDetails, int numberOfRIs, int numberOfRelations) throws IOException, Exception {
+
+		RestResponse getResponse = null;
+		Component component = null;
+		if (componentDetails instanceof ResourceReqDetails) {
+			getResponse = ResourceRestUtils.getResource(sdncAdminDetails, componentDetails.getUniqueId());
+			component = ResponseParser.parseToObjectUsingMapper(getResponse.getResponse(), Resource.class);
+		} else if (componentDetails instanceof ServiceReqDetails) {
+			getResponse = ServiceRestUtils.getService((ServiceReqDetails) componentDetails, sdncAdminDetails);
+			component = ResponseParser.parseToObjectUsingMapper(getResponse.getResponse(), Service.class);
+		} else if (componentDetails instanceof ProductReqDetails) {
+			getResponse = ProductRestUtils.getProduct(componentDetails.getUniqueId(), sdncAdminDetails.getUserId());
+			component = ResponseParser.parseToObjectUsingMapper(getResponse.getResponse(), Product.class);
+		} else {
+			Assert.fail("Unsupported type of componentDetails - " + componentDetails.getClass().getSimpleName());
+		}
+		ResourceRestUtils.checkSuccess(getResponse);
+		int numberOfActualRIs = component.getComponentInstances() != null ? component.getComponentInstances().size() : 0;
+		int numberOfActualRelations = component.getComponentInstancesRelations() != null ? component.getComponentInstancesRelations().size() : 0;
+		assertEquals("Check number of RIs meet the expected number", numberOfRIs, numberOfActualRIs);
+		assertEquals("Check number of RI relations meet the expected number", numberOfRelations, numberOfActualRelations);
+
+		return component;
+	}
+
 	protected void getComponentAndValidateRIsAfterChangeLifecycleState(String oldComponentUniqueIdToReplace, ComponentReqDetails componentDetails, int numOfRIs, int numOfRelations) throws IOException, Exception {
 		updateExpectedReqCapAfterChangeLifecycleState(oldComponentUniqueIdToReplace, componentDetails.getUniqueId());
 		getComponentAndValidateRIs(componentDetails, numOfRIs, numOfRelations);
@@ -610,6 +648,10 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 	protected void createVF(ResourceReqDetails resourceDetails, User sdncModifier) throws Exception {
 		RestResponse createVfResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifier);
 		ResourceRestUtils.checkCreateResponse(createVfResponse);
+	}
+
+	protected void createPNF(ResourceReqDetails resourceDetails) throws Exception {
+		createVF(resourceDetails, sdncDesignerDetails);
 	}
 
 	protected void createService(ServiceReqDetails serviceDetails) throws Exception {

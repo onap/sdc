@@ -35,11 +35,9 @@ export * from './models/category';
 export * from './models/comments';
 export * from './models/components/component';
 export * from './models/components/displayComponent';
-export * from './models/components/product';
 export * from './models/components/resource';
 export * from './models/components/service';
 export * from './models/componentsInstances/componentInstance';
-export * from './models/componentsInstances/productInstance';
 export * from './models/componentsInstances/resourceInstance';
 export * from './models/componentsInstances/serviceInstance';
 export * from './models/csar-component';
@@ -102,7 +100,7 @@ export * from './models/tooltip-data';
 export * from './models/user';
 export * from './models/validate';
 export * from './models/component-metadata';
-
+export * from './models/modal';
 export * from './models/button';
 export * from './models/filter-properties-assignment-data'
 export * from './models/properties-inputs/input-be-model'

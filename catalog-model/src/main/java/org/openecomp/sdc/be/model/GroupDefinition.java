@@ -80,4 +80,12 @@ public class GroupDefinition extends GroupDataDefinition implements Serializable
 		
 	}
 
+	//returns true iff groupName has the same prefix has the resource
+	public boolean isSamePrefix(String resourceName){
+		String name = this.getName();
+		if ( name != null  && name.toLowerCase().trim().startsWith(resourceName.toLowerCase()))
+			return true;
+		return false;
+	}
+
 }

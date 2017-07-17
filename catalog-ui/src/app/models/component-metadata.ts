@@ -56,12 +56,15 @@ export class ComponentMetadata {
     public vendorName:string;
     public vendorRelease:string;
     public derivedFrom: Array<string>;
+    public resourceVendorModelNumber:string;
 
     //Service only
     public projectCode:string;
     public distributionStatus:string;
     public ecompGeneratedNaming: boolean;
     public namingPolicy: string;
+    public serviceType:string;
+    public serviceRole:string;
 
 
     //backend lifecycleState
@@ -103,6 +106,9 @@ export class ComponentMetadata {
         this.ecompGeneratedNaming = response.ecompGeneratedNaming;
         this.namingPolicy = response.namingPolicy;
         this.derivedFrom = response.derivedFrom;
+        this.resourceVendorModelNumber = response.resourceVendorModelNumber;
+        this.serviceType = response.serviceType;
+        this.serviceRole = response.serviceRole;
         return this;
     }
 

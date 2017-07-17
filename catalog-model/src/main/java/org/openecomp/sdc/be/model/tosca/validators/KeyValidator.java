@@ -49,8 +49,8 @@ public class KeyValidator implements PropertyTypeValidator {
 		if (value.length() > STRING_MAXIMUM_LENGTH) {
 			return false;
 		}
-		String coverted = ValidationUtils.removeNoneUtf8Chars(value);
-		return ValidationUtils.validateIsEnglish(coverted);
+		String converted = ValidationUtils.removeNoneUtf8Chars(value);
+		return ValidationUtils.validateIsEnglish(converted);
 	}
 
 	@Override

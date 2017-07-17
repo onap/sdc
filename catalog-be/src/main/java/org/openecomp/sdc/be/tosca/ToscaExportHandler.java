@@ -333,10 +333,13 @@ public class ToscaExportHandler {
 			toscaMetadata.setSubcategory(categoryDefinition.getSubcategories().get(0).getName());
 			toscaMetadata.setResourceVendor(resource.getVendorName());
 			toscaMetadata.setResourceVendorRelease(resource.getVendorRelease());
-			
+			toscaMetadata.setResourceVendorModelNumber(resource.getResourceVendorModelNumber());
 			break;
 		case SERVICE:
+			Service service = (Service) component;
 			toscaMetadata.setType(component.getComponentType().getValue());
+			toscaMetadata.setServiceType(service.getServiceType());
+			toscaMetadata.setServiceRole(service.getServiceRole());
 			if (!isInstance) {
 				// DE268546
 				toscaMetadata.setServiceEcompNaming(((Service)component).isEcompGeneratedNaming());
@@ -747,8 +750,9 @@ public class ToscaExportHandler {
 			toscaMetadata = new VfModuleToscaMetadata();
 
 			Map<String, Object> properties = fillGroupProperties(props.get());
-
-			properties.put(VF_MODULE_DESC_KEY, description.get());
+			if(!properties.containsKey(VF_MODULE_DESC_KEY) || StringUtils.isEmpty((String) properties.get(VF_MODULE_DESC_KEY))){
+				properties.put(VF_MODULE_DESC_KEY, description.get());
+			}
 			toscaGroup.setProperties(properties);
 		}
 		toscaMetadata.setName(groupName.get());

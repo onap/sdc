@@ -34,13 +34,7 @@ import org.json.JSONArray;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.CapReqDef;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.ci.tests.api.ComponentInstanceBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
@@ -93,10 +87,13 @@ public class ServiceComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
 		createAtomicResource(resourceDetailsVFC_01);
 		createAtomicResource(resourceDetailsVFC_02);
 		createAtomicResource(resourceDetailsCP_01);
+		LifecycleRestUtils.changeResourceState(resourceDetailsCP_01, sdncAdminDetails, "0.1",
+				LifeCycleStatesEnum.CHECKIN);
 		createAtomicResource(resourceDetailsVL_01);
 		createAtomicResource(resourceDetailsVL_02);
 		createVF(resourceDetailsVF_01);
 		createVF(resourceDetailsVF_02);
+		createPNF(resourceDetailsPNF_01);
 		createService(serviceDetails_01);
 		certifyResource(resourceDetailsVFC_01);
 		certifyResource(resourceDetailsVFC_02);
@@ -173,6 +170,10 @@ public class ServiceComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
 		return createVFInstance(containerDetails, compInstOriginDetails, modifier);
 	}
 
+	private RestResponse createCheckedinPNFInstance(ServiceReqDetails containerDetails, ResourceReqDetails compInstOriginDetails, User modifier) throws Exception {
+		return createCheckedinVFInstance(containerDetails, compInstOriginDetails, modifier);
+	}
+
 	private RestResponse createCheckedinAtomicInstanceForService(ServiceReqDetails containerDetails, ResourceReqDetails compInstOriginDetails, User modifier) throws Exception {
 		changeResourceLifecycleState(compInstOriginDetails, compInstOriginDetails.getCreatorUserId(), LifeCycleStatesEnum.CHECKIN);
 		return createAtomicInstanceForService(containerDetails, compInstOriginDetails, modifier);
@@ -205,6 +206,16 @@ public class ServiceComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
 	}
 
 	@Test
+	public void createPNFInstanceSuccessfullyTest() throws Exception {
+		RestResponse createPNFInstResp = createCheckedinPNFInstance(serviceDetails_01, resourceDetailsPNF_01, sdncDesignerDetails);
+		ResourceRestUtils.checkCreateResponse(createPNFInstResp);
+		getComponentAndValidateRIs(serviceDetails_01, 1, 0);
+//		createVFInstResp = createCheckedinVFInstance(serviceDetails_01, resourceDetailsVF_02, sdncDesignerDetails);
+//		ResourceRestUtils.checkCreateResponse(createVFInstResp);
+//		getComponentAndValidateRIs(serviceDetails_01, 2, 0);
+	}
+
+	@Test
 	public void createVFAndAtomicInstanceTest() throws Exception {
 		RestResponse createVFInstResp = createCheckedinVFInstance(serviceDetails_01, resourceDetailsVF_01, sdncDesignerDetails);
 		ResourceRestUtils.checkCreateResponse(createVFInstResp);
@@ -215,6 +226,56 @@ public class ServiceComponentInstanceCRUDTest extends ComponentInstanceBaseTest 
 		createVFInstResp = createCheckedinAtomicInstanceForService(serviceDetails_01, resourceDetailsVL_02, sdncDesignerDetails);
 		ResourceRestUtils.checkCreateResponse(createVFInstResp);
 		getComponentAndValidateRIs(serviceDetails_01, 4, 0);
+	}
+
+	@Test
+	public void createPNFAndAtomicInstanceTest() throws Exception {
+		RestResponse createPNFInstResp = createCheckedinPNFInstance(serviceDetails_01, resourceDetailsPNF_01, sdncDesignerDetails);
+		ResourceRestUtils.checkCreateResponse(createPNFInstResp);
+		RestResponse createVLInstResp = createCheckedinAtomicInstanceForService(serviceDetails_01, resourceDetailsVL_01, sdncDesignerDetails);
+		ResourceRestUtils.checkCreateResponse(createVLInstResp);
+		getComponentAndValidateRIs(serviceDetails_01, 2, 0);
+
+
+	}
+
+	private String createCpInstance() throws Exception {
+		// Create CP instance
+		RestResponse createAtomicResourceInstance = createAtomicInstanceForVF(resourceDetailsPNF_01,
+				resourceDetailsCP_01, sdncDesignerDetails);
+		ResourceRestUtils.checkCreateResponse(createAtomicResourceInstance);
+		getComponentAndValidateRIs(resourceDetailsPNF_01, 1, 0);
+		return ResponseParser.getUniqueIdFromResponse(createAtomicResourceInstance);
+	}
+
+	@Test
+	public void createPNFAndAtomicInstanceAssociatedTest() throws Exception {
+		reqOwnerId = createCpInstance();
+		RestResponse createPNFInstResp = createCheckedinPNFInstance(serviceDetails_01, resourceDetailsPNF_01, sdncDesignerDetails);
+		ResourceRestUtils.checkCreateResponse(createPNFInstResp);
+		String fromCompInstId = ResponseParser.getUniqueIdFromResponse(createPNFInstResp);
+		RestResponse createVLInstResp = createCheckedinAtomicInstanceForService(serviceDetails_01, resourceDetailsVL_01, sdncDesignerDetails);
+		ResourceRestUtils.checkCreateResponse(createVLInstResp);
+		capOwnerId = ResponseParser.getUniqueIdFromResponse(createVLInstResp);
+		String toCompInstId = ResponseParser.getUniqueIdFromResponse(createVLInstResp);
+
+		String capType = "tosca.capabilities.network.Linkable";
+		String reqName = "link";
+
+		RestResponse getResourceResponse = ComponentRestUtils.getComponentRequirmentsCapabilities(sdncDesignerDetails, serviceDetails_01);
+		ResourceRestUtils.checkSuccess(getResourceResponse);
+		CapReqDef capReqDef = ResponseParser.parseToObjectUsingMapper(getResourceResponse.getResponse(), CapReqDef.class);
+		List<CapabilityDefinition> capList = capReqDef.getCapabilities().get(capType);
+		List<RequirementDefinition> reqList = capReqDef.getRequirements().get(capType);
+
+		RequirementCapabilityRelDef requirementDef = getReqCapRelation(fromCompInstId, toCompInstId, capType, reqName, capList, reqList);
+
+		associateComponentInstancesForService(requirementDef, serviceDetails_01, sdncDesignerDetails);
+		getResourceResponse = ComponentRestUtils.getComponentRequirmentsCapabilities(sdncDesignerDetails, serviceDetails_01);
+		capReqDef = ResponseParser.parseToObjectUsingMapper(getResourceResponse.getResponse(), CapReqDef.class);
+		List<RequirementDefinition> list = capReqDef.getRequirements().get(capType);
+//		AssertJUnit.assertEquals("Check requirement", null, list);
+		getComponentAndValidateRIsOnly(serviceDetails_01, 2, 1);
 	}
 
 	@Test

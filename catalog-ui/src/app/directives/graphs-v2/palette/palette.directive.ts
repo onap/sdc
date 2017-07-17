@@ -17,21 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
-import {
-    Component,
-    IAppMenu,
-    LeftPanelModel,
-    NodesFactory,
-    LeftPaletteComponent,
-    CompositionCiNodeBase,
-    ComponentInstance
-} from "app/models";
+import {Component, IAppMenu, LeftPanelModel, NodesFactory, LeftPaletteComponent, CompositionCiNodeBase, ComponentInstance} from "app/models";
 import {CompositionGraphGeneralUtils} from "../composition-graph/utils/composition-graph-general-utils";
 import {EventListenerService} from "app/services";
 import {ResourceType, GRAPH_EVENTS, EVENTS, ComponentInstanceFactory, ModalsHandler} from "app/utils";
 import 'sdc-angular-dragdrop';
 import {LeftPaletteLoaderService} from "../../../services/components/utils/composition-left-palette-service";
+import {Resource} from "app/models/components/resource";
+import {ComponentType} from "app/utils/constants";
 
 interface IPaletteScope {
     components:Array<LeftPaletteComponent>;
@@ -92,7 +85,7 @@ export class Palette implements ng.IDirective {
         el.append(this.nodeHtmlSubstitute);
         this.registerEventListenerForLeftPalette(scope);
         // this.LeftPaletteLoaderService.loadLeftPanel(scope.currentComponent.componentType);
-                   
+
         this.initComponents(scope);
         this.initEvents(scope);
         this.initDragEvents(scope);
@@ -103,34 +96,31 @@ export class Palette implements ng.IDirective {
         });
     };
 
-    private registerEventListenerForLeftPalette = (scope:IPaletteScope):void => {
-        if (scope.currentComponent.isResource()) {
-            this.EventListenerService.registerObserverCallback(EVENTS.RESOURCE_LEFT_PALETTE_UPDATE_EVENT, () => {
-                this.updateLeftPanelDisplay(scope);
-            });
-        }
-        if (scope.currentComponent.isService()) {
-            this.EventListenerService.registerObserverCallback(EVENTS.SERVICE_LEFT_PALETTE_UPDATE_EVENT, () => {
-                this.updateLeftPanelDisplay(scope);
-            });
-        }
-        if (scope.currentComponent.isProduct()) {
-            this.EventListenerService.registerObserverCallback(EVENTS.PRODUCT_LEFT_PALETTE_UPDATE_EVENT, () => {
-                this.updateLeftPanelDisplay(scope);
-            });
+    private getUpdateLeftPaletteEventName = (component:Component):string => {
+        switch (component.componentType) {
+            case ComponentType.SERVICE:
+                return EVENTS.SERVICE_LEFT_PALETTE_UPDATE_EVENT;
+            case ComponentType.RESOURCE:
+                if((<Resource>component).resourceType == ResourceType.PNF){
+                    return EVENTS.RESOURCE_PNF_LEFT_PALETTE_UPDATE_EVENT;
+                }else{
+                    return EVENTS.RESOURCE_LEFT_PALETTE_UPDATE_EVENT;
+                }
+            default:
+                console.log('ERROR: Component type '+ component.componentType + ' is not exists');
         }
     };
 
+    private registerEventListenerForLeftPalette = (scope:IPaletteScope):void => {
+        let updateEventName:string = this.getUpdateLeftPaletteEventName(scope.currentComponent);
+        this.EventListenerService.registerObserverCallback(updateEventName, () => {
+            this.updateLeftPanelDisplay(scope);
+        });
+    };
+
     private unRegisterEventListenerForLeftPalette = (scope:IPaletteScope):void => {
-        if (scope.currentComponent.isResource()) {
-            this.EventListenerService.unRegisterObserver(EVENTS.RESOURCE_LEFT_PALETTE_UPDATE_EVENT);
-        }
-        if (scope.currentComponent.isService()) {
-            this.EventListenerService.unRegisterObserver(EVENTS.SERVICE_LEFT_PALETTE_UPDATE_EVENT);
-        }
-        if (scope.currentComponent.isProduct()) {
-            this.EventListenerService.unRegisterObserver(EVENTS.PRODUCT_LEFT_PALETTE_UPDATE_EVENT);
-        }
+        let updateEventName:string = this.getUpdateLeftPaletteEventName(scope.currentComponent);
+        this.EventListenerService.unRegisterObserver(updateEventName);
     };
 
     private leftPanelResourceFilter(resourcesNotAbstract:Array<LeftPaletteComponent>, resourceFilterTypes:Array<string>):Array<LeftPaletteComponent> {
@@ -236,7 +226,7 @@ export class Palette implements ng.IDirective {
     private updateLeftPanelDisplay(scope:IPaletteScope) {
         let entityType:string = scope.currentComponent.componentType.toLowerCase();
         let resourceFilterTypes:Array<string> = this.sdcConfig.resourceTypesFilter[entityType];
-        scope.components = this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent.componentType);
+        scope.components = this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent);
         scope.model = this.initLeftPanel(scope.components, resourceFilterTypes);
         scope.displaySortedCategories = angular.copy(scope.model.sortedCategories);
     };
@@ -267,7 +257,7 @@ export class Palette implements ng.IDirective {
                 return;
             }
 
-            let component = _.find(this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent.componentType), (componentFullData:LeftPaletteComponent) => {
+            let component = _.find(this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent), (componentFullData:LeftPaletteComponent) => {
                 return displayComponent.uniqueId === componentFullData.uniqueId;
             });
             this.EventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_DRAG_START, scope.dragElement, component);
@@ -287,7 +277,7 @@ export class Palette implements ng.IDirective {
             this.EventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_DRAG_ACTION, event);
         };
         scope.setElementTemplate = (e) => {
-            let dragComponent:LeftPaletteComponent = _.find(this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent.componentType),
+            let dragComponent:LeftPaletteComponent = _.find(this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent),
                 (fullComponent:LeftPaletteComponent) => {
                     return (<any>angular.element(e.currentTarget).scope()).component.uniqueId === fullComponent.uniqueId;
                 });

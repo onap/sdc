@@ -262,19 +262,14 @@ public class LifecycleRestUtils extends BaseRestUtils {
 			LifeCycleStatesEnum LifeCycleStatesEnum) throws Exception {
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.CHANGE_COMPONENT_LIFECYCLE_STATE, config.getCatalogBeHost(),
-				config.getCatalogBePort(), ComponentTypeEnum.findParamByType(component.getComponentType()),
-				component.getUniqueId(), LifeCycleStatesEnum);
-		RestResponse LifeCycleStatesEnumServiceResponse = sendPost(url, createLifecycleCommentJson(COMMENT),
-				sdncModifierDetails.getUserId(), acceptHeaderData);
+				config.getCatalogBePort(), ComponentTypeEnum.findParamByType(component.getComponentType()), component.getUniqueId(), LifeCycleStatesEnum);
+		RestResponse LifeCycleStatesEnumServiceResponse = sendPost(url, createLifecycleCommentJson(COMMENT), sdncModifierDetails.getUserId(), acceptHeaderData);
 		if (LifeCycleStatesEnumServiceResponse.getErrorCode() == STATUS_CODE_SUCCESS) {
-			String productUniqueId = ResponseParser
-					.getValueFromJsonResponse(LifeCycleStatesEnumServiceResponse.getResponse(), "uniqueId");
+			String productUniqueId = ResponseParser.getValueFromJsonResponse(LifeCycleStatesEnumServiceResponse.getResponse(), "uniqueId");
 			component.setUniqueId(productUniqueId);
-			String productVersion = ResponseParser
-					.getValueFromJsonResponse(LifeCycleStatesEnumServiceResponse.getResponse(), "version");
+			String productVersion = ResponseParser.getValueFromJsonResponse(LifeCycleStatesEnumServiceResponse.getResponse(), "version");
 			component.setVersion(productVersion);
-			String newLifecycleState = ResponseParser
-					.getValueFromJsonResponse(LifeCycleStatesEnumServiceResponse.getResponse(), "lifecycleState");
+			String newLifecycleState = ResponseParser.getValueFromJsonResponse(LifeCycleStatesEnumServiceResponse.getResponse(), "lifecycleState");
 			component.setLifecycleState(LifecycleStateEnum.valueOf(newLifecycleState));
 		}
 		return LifeCycleStatesEnumServiceResponse;

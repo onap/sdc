@@ -39,7 +39,6 @@ import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.PropertyConstraint;
@@ -50,8 +49,6 @@ import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
 import org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter;
 import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
-import org.openecomp.sdc.be.resources.data.CapabilityInstData;
-import org.openecomp.sdc.be.resources.data.PropertyValueData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.slf4j.Logger;
@@ -118,6 +115,7 @@ public abstract class AbstractOperation {
 
 		log.debug("Before adding {} to graph. data = {}", defName, someData);
 
+		@SuppressWarnings("unchecked")
 		Either<TitanVertex, TitanOperationStatus> eitherSomeData = titanGenericDao.createNode(someData);
 
 		log.debug("After adding {} to graph. status is = {}", defName, eitherSomeData);
@@ -329,7 +327,7 @@ public abstract class AbstractOperation {
 			value = jsonElement.toString();
 		}
 
-		return value;
+		return value; 
 	}
 
 	protected Either<String, TitanOperationStatus> getInnerType(ToscaPropertyType type, Supplier<SchemaDefinition> schemeGen) {
@@ -368,7 +366,7 @@ public abstract class AbstractOperation {
 
 	public List<PropertyConstraint> convertConstraints(List<String> constraints) {
 
-		if (constraints == null || constraints.size() == 0) {
+		if (constraints == null || constraints.isEmpty()) {
 			return null;
 		}
 
@@ -378,7 +376,6 @@ public abstract class AbstractOperation {
 		Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser()).create();
 
 		return constraints.stream().map(c -> gson.fromJson(c, PropertyConstraint.class)).collect(Collectors.toList());
-
 	}
 
 }

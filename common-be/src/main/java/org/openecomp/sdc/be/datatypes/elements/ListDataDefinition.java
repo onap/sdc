@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.codehaus.jackson.annotate.JsonCreator;
@@ -86,6 +87,11 @@ public class ListDataDefinition<T extends ToscaDataDefinition> extends ToscaData
 		((ListDataDefinition)other).listToscaDataDefinition = mapByName.values().stream().collect(Collectors.toList());
 		return other;	
 	}
-		
+
+	@Override
+	public boolean findUidMatch(String uid){
+		return listToscaDataDefinition.stream()
+				.anyMatch(p -> p.findUidMatch(uid));
+	}
 
 }

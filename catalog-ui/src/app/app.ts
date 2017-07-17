@@ -245,17 +245,6 @@ ng1appModule.config([
                 data: {unsavedChanges: false, bodyClass: 'general'}
             }
         );
-        //
-        $stateProvider.state(
-            States.WORKSPACE_ICONS, {
-                url: 'icons',
-                parent: 'workspace',
-                controller: viewModelsModuleName + '.IconsViewModel',
-                templateUrl: './view-models/workspace/tabs/icons/icons-view.html',
-                data: {unsavedChanges: false, bodyClass: 'icons'}
-
-            }
-        );
 
         $stateProvider.state(
             States.WORKSPACE_ACTIVITY_LOG, {
@@ -276,17 +265,6 @@ ng1appModule.config([
                 data: {
                     bodyClass: 'deployment_artifacts'
                 }
-            }
-        );
-
-        $stateProvider.state(
-            States.WORKSPACE_HIERARCHY, {
-                url: 'hierarchy',
-                parent: 'workspace',
-                controller: viewModelsModuleName + '.ProductHierarchyViewModel',
-                templateUrl: './view-models/workspace/tabs/product-hierarchy/product-hierarchy-view.html',
-                data: {unsavedChanges: false}
-
             }
         );
 
@@ -602,7 +580,7 @@ ng1appModule.value('ValidationPattern', /^[\s\w\&_.:-]{1,1024}$/);
 ng1appModule.value('ComponentNameValidationPattern', /^(?=.*[^. ])[\s\w\&_.:-]{1,1024}$/); //DE250513 - same as ValidationPattern above, plus requirement that name not consist of dots and/or spaces alone.
 ng1appModule.value('PropertyNameValidationPattern', /^[a-zA-Z0-9_:-]{1,50}$/);// DE210977
 ng1appModule.value('TagValidationPattern', /^[\s\w_.-]{1,50}$/);
-ng1appModule.value('VendorValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,25}$/);
+ng1appModule.value('VendorReleaseValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,25}$/);
 ng1appModule.value('VendorNameValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,60}$/);
 ng1appModule.value('VendorModelNumberValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,65}$/);
 ng1appModule.value('ContactIdValidationPattern', /^[\s\w-]{1,50}$/);
@@ -696,7 +674,6 @@ ng1appModule.run([
             categoryResourceService.getAllCategories((categories: Categories):void => {
                 cacheService.set('serviceCategories', categories.serviceCategories);
                 cacheService.set('resourceCategories', categories.resourceCategories);
-                cacheService.set('productCategories', categories.productCategories);
             }, onError);
         };
 

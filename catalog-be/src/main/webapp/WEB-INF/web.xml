@@ -77,7 +77,6 @@
 	<servlet-mapping>
 		<servlet-name>jerseyDistribution</servlet-name>
 		<url-pattern>/sdc/*</url-pattern>
-		<url-pattern>/asdc/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

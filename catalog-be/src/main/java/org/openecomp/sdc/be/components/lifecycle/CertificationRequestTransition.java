@@ -55,6 +55,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
@@ -66,6 +67,7 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.tosca.ToscaRepresentation;
+import org.openecomp.sdc.be.tosca.ToscaUtils;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.util.ValidationUtils;
@@ -196,7 +198,7 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 		ResponseFormat responseFormat;
 		Either<? extends Component, ResponseFormat> result = null;
 		try{
-			if (componentType == ComponentTypeEnum.SERVICE || (componentType == ComponentTypeEnum.RESOURCE && ((Resource) component).getResourceType() == ResourceTypeEnum.VF)) {
+			if (component.getToscaType().equals(ToscaElementTypeEnum.TopologyTemplate.getValue())) {
 	
 				Either<Boolean, ResponseFormat> statusCert = validateAllResourceInstanceCertified(component);
 				if (statusCert.isRight()) {
@@ -270,7 +272,10 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 			// occurrences in the future
 			Map<String, List<String>> reqName2Ids = new HashMap<>();
 			Map<String, List<String>> capName2Ids = new HashMap<>();
-			parseRelationsForReqCapVerification(component, reqName2Ids, capName2Ids);
+//			Either<Boolean, ResponseFormat>  parseRelationsForReqCapVerificationRes = parseRelationsForReqCapVerification(component, reqName2Ids, capName2Ids);
+//			if(parseRelationsForReqCapVerificationRes.isRight()){
+//				return parseRelationsForReqCapVerificationRes;
+//			}
 			Map<String, Set<String>> requirementsToFulfillBeforeCert = configurationManager.getConfiguration().getRequirementsToFulfillBeforeCert();
 			Map<String, Set<String>> capabilitiesToConsumeBeforeCert = configurationManager.getConfiguration().getCapabilitiesToConsumeBeforeCert();
 			for (ComponentInstance compInst : componentInstances) {

@@ -27,7 +27,6 @@ export * from './services/cache-service';
 export * from './services/configuration-ui-service';
 export * from './services/category-resource-service';
 export * from './services/components/component-service';
-export * from './services/components/product-service';
 export * from './services/components/resource-service';
 export * from './services/components/service-service';
 export * from './services/components/resource-service';

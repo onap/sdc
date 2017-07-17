@@ -254,6 +254,20 @@ public class ResourceRestUtils extends BaseRestUtils {
 		return sendGet(url, sdncModifierDetails.getUserId());
 	}
 
+	public static RestResponse getResourceLatestVersionListMetadata(User sdncModifierDetails, String internalComponentType) throws IOException {
+
+		Config config = Utils.getConfig();
+		StringBuilder sb = new StringBuilder();
+		String url = String.format(Urls.GET_RESOURCE_METADATA_lATEST_VERSION, config.getCatalogBeHost(),
+				config.getCatalogBePort());
+		sb.append(url);
+		if (internalComponentType != null && !internalComponentType.isEmpty()) {
+			sb.append("?internalComponentType="+internalComponentType);
+		}
+		return sendGet(sb.toString(), sdncModifierDetails.getUserId());
+
+	}
+
 	public static RestResponse getResourceByNameAndVersion(String userId, String resourceName, String resourceVersion)
 			throws IOException {
 

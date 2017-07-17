@@ -54,10 +54,7 @@ export interface IApi {
     GET_activity_log:string;
     GET_configuration_ui:string;
     GET_service:string;
-    PUT_product:string;
-    GET_product:string;
     GET_ecomp_menu_items:string;
-    GET_product_validate_name:string;
     GET_service_validate_name:string;
     GET_service_distributions:string;
     GET_service_distributions_components:string;
@@ -85,13 +82,6 @@ export interface IApi {
     GET_onboarding:string;
     GET_component_from_csar_uuid:string;
     kibana:string;
-
-    //Added by Ikram -- starts
-    GET_product_category:string;
-    GET_product_category_temp:string;
-    GET_product_sub_category:string;
-    //Added by Ikram -- ends
-
 }
 
 export interface ILogConfig {
@@ -132,8 +122,6 @@ export interface IConfigRoles {
     TESTER:IConfigRole;
     OPS:IConfigRole;
     GOVERNOR:IConfigRole;
-    PRODUCT_MANAGER:IConfigRole;
-    PRODUCT_STRATEGIST:IConfigRole;
 }
 
 export interface IConfigRole {

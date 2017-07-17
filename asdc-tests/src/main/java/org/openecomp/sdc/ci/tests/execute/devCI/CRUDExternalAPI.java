@@ -435,7 +435,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		AssetTypeEnum assetTypeEnum = AssetTypeEnum.valueOf((resourceDetails.getComponentType().getValue() + "s").toUpperCase());
 		ExpectedExternalAudit expectedExternalAudit = ElementFactory.getDefaultExternalArtifactAuditSuccess(assetTypeEnum, action, responseArtifact, resourceDetails);
 		expectedExternalAudit.setRESOURCE_NAME(componentInstance.getNormalizedName());
-		expectedExternalAudit.setRESOURCE_URL("/asdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + componentInstance.getNormalizedName() + "/artifacts");
+		expectedExternalAudit.setRESOURCE_URL("/sdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + componentInstance.getNormalizedName() + "/artifacts");
 		AuditValidationUtils.validateExternalAudit(expectedExternalAudit, AuditingActionEnum.ARTIFACT_UPLOAD_BY_API.getName(), body);
 		
 		return restResponse;
@@ -584,13 +584,13 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 //		
 //		if(componentTypeEnum == ComponentTypeEnum.RESOURCE_INSTANCE) {
 //			expectedResourceAuditJavaObject.setResourceName(resourceDetails.getComponentInstances().get(0).getName());
-//			String resource_url = String.format("/asdc/v1/catalog/services/%s/resourceInstances/%s/artifacts/%s", resourceDetails.getUUID(), resourceDetails.getComponentInstances().get(0).getNormalizedName(), artifactDefinition.getArtifactUUID());
+//			String resource_url = String.format("/sdc/v1/catalog/services/%s/resourceInstances/%s/artifacts/%s", resourceDetails.getUUID(), resourceDetails.getComponentInstances().get(0).getNormalizedName(), artifactDefinition.getArtifactUUID());
 //			expectedResourceAuditJavaObject.setRESOURCE_URL(resource_url);
 //				
 //			AuditValidationUtils.validateAuditDownloadExternalAPI(expectedResourceAuditJavaObject, auditAction, null, false);
 //		} else {
 //			expectedResourceAuditJavaObject.setResourceName(resourceDetails.getName());
-//			String resource_url = String.format("/asdc/v1/catalog/services/%s/artifacts/%s", resourceDetails.getUUID(), artifactDefinition.getArtifactUUID());
+//			String resource_url = String.format("/sdc/v1/catalog/services/%s/artifacts/%s", resourceDetails.getUUID(), artifactDefinition.getArtifactUUID());
 //			expectedResourceAuditJavaObject.setRESOURCE_URL(resource_url);
 //		}
 //		
@@ -1092,7 +1092,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		body.put(AuditingFieldsKeysEnum.AUDIT_STATUS, responseCode.toString());
 		if(componentResourceInstanceDetails != null) {
 			body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getComponentInstances().get(0).getNormalizedName());
-			expectedExternalAudit.setRESOURCE_URL("/asdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + resourceDetails.getComponentInstances().get(0).getNormalizedName() + "/artifacts");
+			expectedExternalAudit.setRESOURCE_URL("/sdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + resourceDetails.getComponentInstances().get(0).getNormalizedName() + "/artifacts");
 			expectedExternalAudit.setRESOURCE_NAME(resourceDetails.getComponentInstances().get(0).getNormalizedName());
 		} else {
 				expectedExternalAudit.setRESOURCE_NAME(resourceDetails.getName());
@@ -1148,7 +1148,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		body.put(AuditingFieldsKeysEnum.AUDIT_STATUS, responseCode.toString());
 		if(componentResourceInstanceDetails != null) {
 			body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getComponentInstances().get(0).getNormalizedName());
-			expectedExternalAudit.setRESOURCE_URL("/asdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + resourceDetails.getComponentInstances().get(0).getNormalizedName() + "/artifacts");
+			expectedExternalAudit.setRESOURCE_URL("/sdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + resourceDetails.getComponentInstances().get(0).getNormalizedName() + "/artifacts");
 			expectedExternalAudit.setRESOURCE_NAME(resourceDetails.getComponentInstances().get(0).getNormalizedName());
 		} else {
 			body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getName());
@@ -2354,7 +2354,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		body.put(AuditingFieldsKeysEnum.AUDIT_STATUS, responseCode.toString());
 		if(componentInstance != null) {
 			body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getComponentInstances().get(0).getNormalizedName());
-			expectedExternalAudit.setRESOURCE_URL("/asdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + resourceDetails.getComponentInstances().get(0).getNormalizedName() + "/artifacts/" + artifactUUID);
+			expectedExternalAudit.setRESOURCE_URL("/sdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + resourceDetails.getComponentInstances().get(0).getNormalizedName() + "/artifacts/" + artifactUUID);
 			expectedExternalAudit.setRESOURCE_NAME(resourceDetails.getComponentInstances().get(0).getNormalizedName());
 		} else {
 			expectedExternalAudit.setRESOURCE_URL(expectedExternalAudit.getRESOURCE_URL() + "/" + artifactUUID);
@@ -2511,7 +2511,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		ExpectedExternalAudit expectedExternalAudit = ElementFactory.getDefaultExternalArtifactAuditSuccess(assetTypeEnum, action, responseArtifact, resourceDetails);
 //		expectedExternalAudit.setRESOURCE_URL(expectedExternalAudit.getRESOURCE_URL()+ "/" + artifactUUID);
 		expectedExternalAudit.setRESOURCE_NAME(componentInstance.getNormalizedName());
-		expectedExternalAudit.setRESOURCE_URL("/asdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + componentInstance.getNormalizedName() + "/artifacts/" + artifactUUID);
+		expectedExternalAudit.setRESOURCE_URL("/sdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + componentInstance.getNormalizedName() + "/artifacts/" + artifactUUID);
 		AuditValidationUtils.validateExternalAudit(expectedExternalAudit, AuditingActionEnum.ARTIFACT_UPDATE_BY_API.getName(), body);
 		
 		return restResponse;
@@ -3151,7 +3151,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		body.put(AuditingFieldsKeysEnum.AUDIT_STATUS, responseCode.toString());
 		if(componentInstance != null) {
 			body.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceDetails.getComponentInstances().get(0).getNormalizedName());
-			expectedExternalAudit.setRESOURCE_URL("/asdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + resourceDetails.getComponentInstances().get(0).getNormalizedName() + "/artifacts/" + artifactUUID);
+			expectedExternalAudit.setRESOURCE_URL("/sdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + resourceDetails.getComponentInstances().get(0).getNormalizedName() + "/artifacts/" + artifactUUID);
 			expectedExternalAudit.setRESOURCE_NAME(resourceDetails.getComponentInstances().get(0).getNormalizedName());
 		} else {
 			expectedExternalAudit.setRESOURCE_URL(expectedExternalAudit.getRESOURCE_URL() + "/" + artifactUUID);
@@ -3248,7 +3248,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		ExpectedExternalAudit expectedExternalAudit = ElementFactory.getDefaultExternalArtifactAuditSuccess(assetTypeEnum, action, responseArtifact, resourceDetails);
 //		expectedExternalAudit.setRESOURCE_URL(expectedExternalAudit.getRESOURCE_URL()+ "/" + artifactUUID);
 		expectedExternalAudit.setRESOURCE_NAME(componentInstance.getNormalizedName());
-		expectedExternalAudit.setRESOURCE_URL("/asdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + componentInstance.getNormalizedName() + "/artifacts/" + artifactUUID);
+		expectedExternalAudit.setRESOURCE_URL("/sdc/v1/catalog/" + assetTypeEnum.getValue() + "/" + resourceDetails.getUUID() + "/resourceInstances/" + componentInstance.getNormalizedName() + "/artifacts/" + artifactUUID);
 		AuditValidationUtils.validateExternalAudit(expectedExternalAudit, AuditingActionEnum.ARTIFACT_DELETE_BY_API.getName(), body);
 		
 		return restResponse;
@@ -3314,13 +3314,13 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 //			
 //			if(componentTypeEnum == ComponentTypeEnum.RESOURCE_INSTANCE) {
 //				expectedResourceAuditJavaObject.setResourceName(resourceDetails.getComponentInstances().get(0).getName());
-//				String resource_url = String.format("/asdc/v1/catalog/services/%s/resourceInstances/%s/artifacts/%s", resourceDetails.getUUID(), resourceDetails.getComponentInstances().get(0).getNormalizedName(), artifactDefinition.getArtifactUUID());
+//				String resource_url = String.format("/sdc/v1/catalog/services/%s/resourceInstances/%s/artifacts/%s", resourceDetails.getUUID(), resourceDetails.getComponentInstances().get(0).getNormalizedName(), artifactDefinition.getArtifactUUID());
 //				expectedResourceAuditJavaObject.setRESOURCE_URL(resource_url);
 //					
 //				AuditValidationUtils.validateAuditDownloadExternalAPI(expectedResourceAuditJavaObject, auditAction, null, false);
 //			} else {
 //				expectedResourceAuditJavaObject.setResourceName(resourceDetails.getName());
-//				String resource_url = String.format("/asdc/v1/catalog/services/%s/artifacts/%s", resourceDetails.getUUID(), artifactDefinition.getArtifactUUID());
+//				String resource_url = String.format("/sdc/v1/catalog/services/%s/artifacts/%s", resourceDetails.getUUID(), artifactDefinition.getArtifactUUID());
 //				expectedResourceAuditJavaObject.setRESOURCE_URL(resource_url);
 //			}
 //			

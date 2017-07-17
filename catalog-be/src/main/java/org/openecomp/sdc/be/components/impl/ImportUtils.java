@@ -107,6 +107,7 @@ public final class ImportUtils {
 		public static final List<String> TOSCA_DEFINITION_VERSIONS = Arrays.asList(new String[] { "tosca_simple_yaml_1_0_0", "tosca_simple_profile_for_nfv_1_0_0", "tosca_simple_yaml_1_0" });
 		public static final List<String> TOSCA_YML_CSAR_VALID_SUFFIX = Arrays.asList(new String[] { ".yml", ".yaml", ".csar" });
 		public static final String UI_JSON_PAYLOAD_NAME = "payloadName";
+		public static final String CVFC_DESCRIPTION = "Complex node type that is used as nested type in VF";
 	}
 
 	public enum ResultStatusEnum {
@@ -133,6 +134,7 @@ public final class ImportUtils {
 		PARAMETERS("parameters"),
 		// Import Validations
 		TOSCA_VERSION("tosca_definitions_version"), TOPOLOGY_TEMPLATE("topology_template"), NODE_TYPES("node_types"), OCCURRENCES("occurrences"), NODE_TEMPLATES("node_templates"), GROUPS("groups"), INPUTS("inputs"),
+		SUBSTITUTION_MAPPINGS("substitution_mappings"),  NODE_TYPE("node_type"),
 		// Attributes
 		ATTRIBUTES("attributes"), LABEL("label"), HIDDEN("hidden"), IMMUTABLE("immutable"), GET_INPUT("get_input");
 

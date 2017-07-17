@@ -49,9 +49,7 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -67,6 +65,7 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
+import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeTypeOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
@@ -110,6 +109,7 @@ public class ResourceBusinessLogicTest {
 	public static final String RESOURCE_NAME = "My-Resource_Name with   space";
     private static final String GENERIC_VF_NAME = "org.openecomp.resource.abstract.nodes.VF";
     private static final String GENERIC_VFC_NAME = "org.openecomp.resource.abstract.nodes.VFC";
+    private static final String GENERIC_PNF_NAME = "org.openecomp.resource.abstract.nodes.PNF";
     
 	final ServletContext servletContext = Mockito.mock(ServletContext.class);
 	IAuditingManager iAuditingManager = null;
@@ -118,6 +118,7 @@ public class ResourceBusinessLogicTest {
 	UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
 	ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
 	NodeTypeOperation nodeTypeOperation = Mockito.mock(NodeTypeOperation.class);
+	NodeTemplateOperation nodeTemplateOperation = Mockito.mock(NodeTemplateOperation.class);
 	TopologyTemplateOperation topologyTemplateOperation = Mockito.mock(TopologyTemplateOperation.class);
 	final LifecycleBusinessLogic lifecycleBl = Mockito.mock(LifecycleBusinessLogic.class);
 	final ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
@@ -135,8 +136,9 @@ public class ResourceBusinessLogicTest {
 	Resource resourceResponse = null;
 	Resource genericVF = null;
 	Resource genericVFC = null;
+	Resource genericPNF = null;
 	ComponentsUtils componentsUtils = new ComponentsUtils();
-	ArtifactsBusinessLogic artifactManager = Mockito.mock(ArtifactsBusinessLogic.class);
+	ArtifactsBusinessLogic artifactManager = new ArtifactsBusinessLogic();
 	CsarOperation csarOperation = Mockito.mock(CsarOperation.class);
 	Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<String, DataTypeDefinition>();
 
@@ -187,6 +189,7 @@ public class ResourceBusinessLogicTest {
 		Either<Boolean, StorageOperationStatus> eitherCount = Either.left(false);
 		when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
 		when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.VF, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
+		when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.PNF, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
 		
 		Either<Boolean, StorageOperationStatus> validateDerivedExists = Either.left(true);
 		when(toscaOperationFacade.validateToscaResourceNameExists("Root")).thenReturn(validateDerivedExists);
@@ -195,14 +198,7 @@ public class ResourceBusinessLogicTest {
 		when(toscaOperationFacade.validateToscaResourceNameExists("kuku")).thenReturn(validateDerivedNotExists);
 		when(graphLockOperation.lockComponent(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Resource))).thenReturn(StorageOperationStatus.OK);
 		when(graphLockOperation.lockComponentByName(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Resource))).thenReturn(StorageOperationStatus.OK);
-
-		ArtifactDefinition artifactDef = new ArtifactDefinition();
-		artifactDef.setUniqueId("123.123");
-		Either<ArtifactDefinition, StorageOperationStatus> returnEither = Either.left(artifactDef);
-		when(artifactManager.createArtifactPlaceHolderInfo(Mockito.anyString(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class), Mockito.any(ArtifactGroupTypeEnum.class))).thenReturn(artifactDef);
-
-		when(artifactManager.addHeatEnvArtifact(Mockito.any(ArtifactDefinition.class), Mockito.any(ArtifactDefinition.class), Mockito.anyString(), Mockito.any(NodeTypeEnum.class), Mockito.anyString())).thenReturn(returnEither);
-
+		
 		// createResource
 		resourceResponse = createResourceObject(true);
 		Either<Resource, StorageOperationStatus> eitherCreate = Either.left(resourceResponse);
@@ -213,6 +209,7 @@ public class ResourceBusinessLogicTest {
 		when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
 
 		// BL object
+		artifactManager.nodeTemplateOperation = nodeTemplateOperation;
 		bl = new ResourceBusinessLogic();
 		bl.setElementDao(mockElementDao);
 		bl.setUserAdmin(mockUserAdmin);
@@ -281,6 +278,7 @@ public class ResourceBusinessLogicTest {
 		resource.setDerivedFrom(template);
 		resource.setVendorName("Motorola");
 		resource.setVendorRelease("1.0.0");
+		resource.setResourceVendorModelNumber("");
 		resource.setContactId("ya5467");
 		resource.setIcon("MyIcon");
 		resource.setCsarUUID("valid_vf.csar");
@@ -364,6 +362,7 @@ public class ResourceBusinessLogicTest {
 		testVendorNameWrongFormatCreate();
 		testVendorReleaseWrongFormat();
 		testVendorReleaseExceedsLimitCreate();
+		testResourceVendorModelNumberExceedsLimit();
 		testResourceVendorNameMissing();
 		testResourceVendorReleaseMissing();
 		testResourceCategoryExist();
@@ -667,12 +666,22 @@ public class ResourceBusinessLogicTest {
 
 	private void testVendorNameExceedsLimit() {
 		Resource resourceExccedsVendorNameLimit = createResourceObject(false);
-		String tooLongVendorName = "h1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9E";
+		String tooLongVendorName = "h1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9E";
 		resourceExccedsVendorNameLimit.setVendorName(tooLongVendorName);
 
 		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsVendorNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
+	}
+	
+	private void testResourceVendorModelNumberExceedsLimit() {
+		Resource resourceExccedsVendorModelNumberLimit = createResourceObject(false);
+		String tooLongVendorModelNumber = "h1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9E";
+		resourceExccedsVendorModelNumberLimit.setResourceVendorModelNumber(tooLongVendorModelNumber);
+
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsVendorModelNumberLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		assertTrue(createResponse.isRight());
+		assertResponse(createResponse, ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT, "" + ValidationUtils.RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH);
 	}
 
 	private void testVendorNameWrongFormatCreate() {
@@ -1641,7 +1650,7 @@ public class ResourceBusinessLogicTest {
 	
 	
 	@Test
-	public void testGeneratedInputs() {
+	public void testVFGeneratedInputs() {
 		
 		Resource resource = createVF();
 		List<InputDefinition> inputs = resource.getInputs();
@@ -1654,7 +1663,7 @@ public class ResourceBusinessLogicTest {
 	}
 	
 	@Test
-	public void testUpdateGenericInputsToLatestOnCheckout() {
+	public void testVFUpdateGenericInputsToLatestOnCheckout() {
 		
 		//create a VF that is derived from generic version 1.0
 		Resource resource = createVF();	
@@ -1680,7 +1689,7 @@ public class ResourceBusinessLogicTest {
 	
 	
 	@Test
-	public void testUpdateGenericInputsToLatestOnCheckoutNotPerformed() {
+	public void testVFUpdateGenericInputsToLatestOnCheckoutNotPerformed() {
 		
 		//create a VF that is derived from generic version 1.0
 		Resource resource = createVF();
@@ -1713,6 +1722,21 @@ public class ResourceBusinessLogicTest {
 		assertTrue(resource.getInputs().stream().filter(p -> null == p.getOwnerId()).findAny().get().getType().equals("integer"));		
 	}
 	
+	@Test
+	public void testPNFGeneratedInputsNoGeneratedInformationalArtifacts() {
+		
+		Resource resource = createPNF();
+		List<InputDefinition> inputs = resource.getInputs();
+		assertTrue(8 == inputs.size());
+		for(InputDefinition input : inputs){
+			assertNotNull(input.getOwnerId());
+		}
+		assertTrue(resource.getDerivedFromGenericType().equals(genericPNF.getToscaResourceName()));
+		assertTrue(resource.getDerivedFromGenericVersion().equals(genericPNF.getVersion()));
+		assertTrue(0 == resource.getArtifacts().size());
+	}
+	
+	
 	private Resource createVF() {
 		
 		genericVF = setupGenericTypeMock(GENERIC_VF_NAME);
@@ -1720,6 +1744,19 @@ public class ResourceBusinessLogicTest {
 		Resource resource = createResourceObject(true);
 		resource.setDerivedFrom(null);
 		resource.setResourceType(ResourceTypeEnum.VF);
+		when(toscaOperationFacade.createToscaComponent(resource)).thenReturn(Either.left(resource));
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		assertTrue(createResponse.isLeft());
+		return createResponse.left().value();
+	}
+	
+     private Resource createPNF() {
+		
+		genericPNF = setupGenericTypeMock(GENERIC_PNF_NAME);
+		when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_PNF_NAME)).thenReturn(Either.left(genericPNF));
+		Resource resource = createResourceObject(true);
+		resource.setDerivedFrom(null);
+		resource.setResourceType(ResourceTypeEnum.PNF);
 		when(toscaOperationFacade.createToscaComponent(resource)).thenReturn(Either.left(resource));
 		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isLeft());
@@ -1746,4 +1783,6 @@ public class ResourceBusinessLogicTest {
 		return genericType;
 	}
 
+	 
+    
 }

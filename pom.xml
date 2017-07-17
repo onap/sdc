@@ -15,7 +15,7 @@
 		<!-- ==================== -->
 		<build.type>-SNAPSHOT</build.type>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sprint.number>73</sprint.number>
+		<sprint.number>74</sprint.number>
 
 		<!-- 3rd parties versions -->
 		<lang3.version>3.3.2</lang3.version>

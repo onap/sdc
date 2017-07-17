@@ -167,7 +167,6 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
 	@Override
 	public Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyType(String uniqueId, boolean inTransaction) {
 		return getElementType(this::getPolicyTypeByUid, uniqueId, inTransaction);
-
 	}
 
 	private Either<PolicyTypeDefinition, TitanOperationStatus> getPolicyTypeByUid(String uniqueId) {

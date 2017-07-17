@@ -27,10 +27,46 @@
 
     }
     .w-sdc-left-sidebar {
-        padding: 3px 3px 0px 0px;
-        background-color: @main_color_p;
-        box-shadow: 7px -3px 6px -8px @main_color_n;
+        padding: 0px;
+        background-color: @tlv_color_t;
+        box-shadow: none;
         z-index: 2;
+        border-right: 1px solid @main_color_o;
+        .menu-header{
+            border-bottom: 1px solid @main_color_o;
+            height: 53px;
+            .f-type._16_m;
+            font-weight: 700;
+            line-height: 53px;
+            padding-left: 40px;
+            padding-right: 10px;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .i-sdc-designer-sidebar-section-content-item{
+            .f-type._13_m;
+            color: @main_color_m;
+            margin-left: 20px;
+            padding-left: 20px;
+            margin-top: 20px;
+            height: 17px;
+            .hand;
+            &:hover{
+                color: @func_color_s;
+                font-weight: 600;
+            }
+            &.selected{
+                border-left: 4px solid @main_color_a;
+                color: @main_color_a;
+                margin-left: 18px;
+                padding-left: 18px;
+                font-weight: 600;
+
+            }
+        }
     }
 
     .sdc-asset-creation-info {
@@ -128,17 +164,21 @@
                 margin-top: 6px;
             }
         }
+        .tab-title{
+            height: 110px;
+            padding-left: 100px;
+            line-height: 110px;
+            .f-type ._28;
+        }
         .w-sdc-main-container-body-content {
-            height:calc(~'100% - @{action_nav_height}');
-
-            text-align: center;
+            height:calc(~'100% - @{action_nav_height} - @{tab_title}');
             align-items: center;
-            padding: 40px 14% 20px 14%;
+            padding: 0 100px 20px 100px;
             &.third-party {
                 text-align: left;
                 padding: 0;
                 position: absolute;
-                top: @action_nav_height;
+                top: @action_nav_height + @tab_title;
                 left: 0;
                 right: 0;
                 bottom: 0;
@@ -147,7 +187,3 @@
     }
 }
 
-
-.properties-assignment  .sdc-workspace-container  .w-sdc-main-right-container  .w-sdc-main-container-body-content{
-    padding: 80px 2% 40px 2%;
-}

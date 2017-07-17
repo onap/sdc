@@ -21,19 +21,30 @@
 package org.openecomp.sdc.ci.tests.utils;
 
 import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 
 import org.openecomp.sdc.ci.tests.datatypes.enums.ToscaKeysEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaGroupsTopologyTemplateDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaNodeTemplatesTopologyTemplateDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaParameterConstants;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaSubstitutionMappingsDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaTopologyTemplateDefinition;
+import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ImportRestUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.CsarValidationUtils;
+import org.openecomp.sdc.common.rest.api.RestResponseAsByteArray;
+import org.openecomp.sdc.common.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.TypeDescription;
@@ -45,20 +56,56 @@ public class ToscaParserUtils {
 
 	private static Logger log = LoggerFactory.getLogger(ToscaParserUtils.class.getName());
 
-	public static ToscaDefinition parseToscaYamlToJavaObject(String csarUUID) throws Exception {
+	
+	/**method get csarUUID and send GET API request toward BE 
+	 * @param csarUUID
+	 * @return
+	 * @throws Exception
+	 */
+	public static ToscaDefinition parseToscaYamlToJavaObjectByCsarUuid(String csarUUID) throws Exception {
 		
 		ToscaDefinition toscaDefinition = null;
-		String TOSCAMetaLocation = "TOSCA-Metadata/TOSCA.meta";
+		String TOSCAMetaLocation = ToscaParameterConstants.TOSCA_META_PATH;
 		Map<?, ?> map = getToscaYamlMap(csarUUID, TOSCAMetaLocation);
 		assertNotNull("Tosca Entry-Definitions is null", map);
 		if (map != null) {
-			File definitionYamlLocation = (File) map.get("Entry-Definitions");
+			File definitionYamlLocation = (File) map.get(ToscaParameterConstants.ENTRY_DEFINITION);
 			toscaDefinition = parseToscaYamlToJavaObject(definitionYamlLocation);
 		}
 		return toscaDefinition;
 
 	}
 
+	/**method read csar from location
+	 * @param csarNameLocation - full path with csar name 
+	 * @return
+	 * @throws Exception
+	 */
+	public static ToscaDefinition parseToscaMainYamlToJavaObjectByCsarLocation(File csarNameLocation) throws Exception {
+		
+		ToscaDefinition toscaDefinition = null;
+		String TOSCAMetaLocation = ToscaParameterConstants.TOSCA_META_PATH;
+//		read file location of main yaml file(location+name) from TOSCA.meta file by 
+		Map<?, ?> map = getToscaYamlMap(csarNameLocation, TOSCAMetaLocation);
+		
+		assertNotNull("Tosca Entry-Definitions is null", map);
+
+		String definitionYamlLocation = (String) map.get(ToscaParameterConstants.ENTRY_DEFINITION);
+		String csarPayload = getYamlPayloadFromCsar(csarNameLocation, definitionYamlLocation);
+		toscaDefinition = parseToscaYamlPayloadToJavaObject(csarPayload);
+		return toscaDefinition;
+
+	}
+	
+	public static ToscaDefinition parseToscaAnyYamlToJavaObjectByCsarLocation(File csarNameLocation, String yamlLocation) throws Exception {
+		
+		ToscaDefinition toscaDefinition = null;
+		String csarPayload = getYamlPayloadFromCsar(csarNameLocation, yamlLocation);
+		toscaDefinition = parseToscaYamlPayloadToJavaObject(csarPayload);
+		return toscaDefinition;
+
+	}
+	
 	public static ToscaDefinition parseToscaYamlToJavaObject(File path) throws Exception {
 
 		ToscaDefinition toscaDefinition = null;
@@ -72,7 +119,7 @@ public class ToscaParserUtils {
 			System.out.println("Exception: " + e);
 		}
         
-        Constructor constructor = getConstructor();
+        Constructor constructor = initToscaDefinitionObject();
     	
         Yaml yaml = new Yaml(constructor);
         try {
@@ -90,7 +137,7 @@ public class ToscaParserUtils {
 	public static ToscaDefinition parseToscaYamlPayloadToJavaObject(String payload){
 
 		ToscaDefinition toscaDefinition = null;
-        Constructor constructor = getConstructor();
+        Constructor constructor = initToscaDefinitionObject();
     	
         Yaml yaml = new Yaml(constructor);
         try {
@@ -104,23 +151,23 @@ public class ToscaParserUtils {
 	}
 	
 	
-	public static Constructor getConstructor() {
-		Constructor constructor = new Constructor(ToscaDefinition.class);
-        constructor.addTypeDescription(ToscaDefinition.getTypeDescription());
-        constructor.addTypeDescription(ToscaTopologyTemplateDefinition.getTypeDescription());
-    	constructor.addTypeDescription(ToscaNodeTemplatesTopologyTemplateDefinition.getTypeDescription());
-    	constructor.addTypeDescription(ToscaGroupsTopologyTemplateDefinition.getTypeDescription());
-    	constructor.addTypeDescription(ToscaSubstitutionMappingsDefinition.getTypeDescription());
+	public static Constructor initToscaDefinitionObject() {
+		Constructor toscaStructure = new Constructor(ToscaDefinition.class);
+        toscaStructure.addTypeDescription(ToscaDefinition.getTypeDescription());
+        toscaStructure.addTypeDescription(ToscaTopologyTemplateDefinition.getTypeDescription());
+    	toscaStructure.addTypeDescription(ToscaNodeTemplatesTopologyTemplateDefinition.getTypeDescription());
+    	toscaStructure.addTypeDescription(ToscaGroupsTopologyTemplateDefinition.getTypeDescription());
+    	toscaStructure.addTypeDescription(ToscaSubstitutionMappingsDefinition.getTypeDescription());
     	
 //    	Skip properties which are found in YAML, but not found in POJO
     	PropertyUtils propertyUtils = new PropertyUtils();
     	propertyUtils.setSkipMissingProperties(true);
-    	constructor.setPropertyUtils(propertyUtils);
-		return constructor;
+    	toscaStructure.setPropertyUtils(propertyUtils);
+		return toscaStructure;
 	}
 
-	public static Map<?, ?> getToscaYamlMap(String csarUUID, String fileLocation) throws Exception {
-		String csarPayload = CsarValidationUtils.getCsarPayload(csarUUID, fileLocation);
+	public static Map<?, ?> getToscaYamlMap(String csarUUID, String yamlFileLocation) throws Exception {
+		String csarPayload = getCsarPayload(csarUUID, yamlFileLocation);
 		if (csarPayload != null) {
 			Yaml yaml = new Yaml();
 			Map<?, ?> map = (Map<?, ?>) yaml.load(csarPayload);
@@ -129,6 +176,49 @@ public class ToscaParserUtils {
 		return null;
 	}
 	
+	public static Map<?, ?> getToscaYamlMap(File csarPath, String yamlFileLocation) throws Exception {
+		String csarPayload = getYamlPayloadFromCsar(csarPath, yamlFileLocation);
+		if (csarPayload != null) {
+			Yaml yaml = new Yaml();
+			Map<?, ?> map = (Map<?, ?>) yaml.load(csarPayload);
+			return map;
+		}
+		return null;
+	}
+	
+	
+	public static String getCsarPayload(String csarName, String yamlFileLocation) throws Exception {
+
+		RestResponseAsByteArray csar = ImportRestUtils.getCsar(csarName, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		assertTrue("Return response code different from 200", csar.getHttpStatusCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
+		byte[] data = csar.getResponse();
+		return getDataFromZipFileByBytes(yamlFileLocation, data);
+
+	}
+
+	public static String getYamlPayloadFromCsar(File csarName, String fileLocation) throws Exception {
+		
+		Path path = csarName.toPath();
+		byte[] data = Files.readAllBytes(path);
+		return getDataFromZipFileByBytes(fileLocation, data);
+		
+	}
+
+	/** method get file data from zip data by file location in the zip structure 
+	 * @param fileLocation
+	 * @param data
+	 * @return
+	 */
+	public static String getDataFromZipFileByBytes(String fileLocation, byte[] data) {
+		Map<String, byte[]> readZip = null;
+		if (data != null && data.length > 0) {
+			readZip = ZipUtil.readZip(data);
+
+		}
+		byte[] artifactsBs = readZip.get(fileLocation);
+		String str = new String(artifactsBs, StandardCharsets.UTF_8);
+		return str;
+	}
 /*	public static Map<?, ?> getToscaYamlMap(String csarUUID, String fileLocation) throws Exception {
 		String csarPayload = CsarValidationUtils.getCsarPayload(csarUUID, fileLocation);
 		if (csarPayload != null) {

@@ -43,6 +43,8 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
@@ -51,7 +53,9 @@ import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
+import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.Yaml;
@@ -94,13 +98,18 @@ public class CsarUtilsTest extends ComponentBaseTest {
 	public void createResourceCsarBasicTest() throws Exception {
 
 		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+				
 		resourceVF = (Resource) AtomicOperationUtils
 				.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 		
 		byte[] downloadCSAR = downloadCSAR(sdncModifierDetails, resourceVF);
 		
 		csarBasicValidation(resourceVF, downloadCSAR);
+		
+		validateVFCsar(resourceVF, downloadCSAR, 1, 0, 0, 0, 0, 0, 0);
+
+		
 	}
 	
 	@Test(enabled = true)
@@ -138,6 +147,7 @@ public class CsarUtilsTest extends ComponentBaseTest {
 
 		Resource resourceVF1 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
 		
+		
 		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.YANG_XML, resourceVF1, UserRoleEnum.DESIGNER, true, true);
 		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT_ARTIFACT, resourceVF1, UserRoleEnum.DESIGNER, true, true);
 		
@@ -157,7 +167,7 @@ public class CsarUtilsTest extends ComponentBaseTest {
 	public void createResourceCsarInclInformationalArtTest() throws Exception {
 
 		Resource resourceVF1 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		
+
 		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.YANG_XML, resourceVF1, UserRoleEnum.DESIGNER, false, true);
 		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceVF1, UserRoleEnum.DESIGNER, false, true);
 		
@@ -172,6 +182,59 @@ public class CsarUtilsTest extends ComponentBaseTest {
 		
 		validateVFCsar(resourceVF1, downloadCSAR, 1, 0, 0, 0, 1, 1, 0);
 	}
+	
+	@Test(enabled = true)
+	public void createServiceCsarNotMandatoryMetadataFieldsTest() throws Exception {
+		
+		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+
+		service.setServiceType("serviceTypeTest");
+		service.setServiceRole("serviceRoleTest");
+		ServiceRestUtils.updateService(new ServiceReqDetails(service), sdncModifierDetails);
+
+		Resource resourceVF1 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resourceVF2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		
+		resourceVF1 = (Resource) AtomicOperationUtils
+				.changeComponentState(resourceVF1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		
+		resourceVF2 = (Resource) AtomicOperationUtils
+				.changeComponentState(resourceVF2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		
+		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF1, service, UserRoleEnum.DESIGNER, true);
+		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF2, service, UserRoleEnum.DESIGNER, true);
+				
+		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+				
+		byte[] downloadCSAR = downloadCSAR(sdncModifierDetails, service);
+		
+		csarBasicValidation(service, downloadCSAR);
+		
+		validateServiceCsar(resourceVF1, resourceVF2, service, downloadCSAR, 3, 3, 0, 0);
+	}
+
+	@Test(enabled = true)
+	public void createResourceCsarNotMandatoryMetadataFieldsTest() throws Exception {
+
+		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		
+		resourceVF.setResourceVendorModelNumber("modelNumberTest");
+		ResourceRestUtils.updateResourceMetadata(new ResourceReqDetails(resourceVF), sdncModifierDetails, resourceVF.getUniqueId());
+		
+		resourceVF = (Resource) AtomicOperationUtils
+				.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		
+		byte[] downloadCSAR = downloadCSAR(sdncModifierDetails, resourceVF);
+		
+		csarBasicValidation(resourceVF, downloadCSAR);
+		
+		validateVFCsar(resourceVF, downloadCSAR, 1, 0, 0, 0, 0, 0, 0);
+
+		
+	}
+
 	
 	private void csarBasicValidation(Component mainComponent, byte[] downloadCSAR) {
 		try (ByteArrayInputStream ins = new ByteArrayInputStream(downloadCSAR);
@@ -234,11 +297,12 @@ public class CsarUtilsTest extends ComponentBaseTest {
 			while ((len = zip.read(buffer)) > 0) {
 				sb.append(new String(buffer, 0, len));
 			}
-			assertTrue(nextEntry.getName().equals("csar.meta"));
-
+			assertTrue(nextEntry.getName().equals("csar.meta"));	
 			readNextEntry(sb, len, buffer, zip);
 			nextEntry = zip.getNextEntry();
 			assertTrue(nextEntry.getName().equals("TOSCA-Metadata/TOSCA.meta"));
+			readNextEntry(sb, len, buffer, zip);
+
 
 			YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
 
@@ -483,15 +547,24 @@ public class CsarUtilsTest extends ComponentBaseTest {
 
 		String UUID = (String) metadata.get("UUID");
 		assertNotNull(UUID);
-		assertEquals("Validate component invariantUUID", component.getUUID(), UUID);
+		assertEquals("Validate component UUID", component.getUUID(), UUID);
 
 		String type = (String) metadata.get("type");
 		assertNotNull(type);
 		if (component.getComponentType().equals(ComponentTypeEnum.SERVICE)) {
 			assertEquals("Validate component type", component.getComponentType().getValue(), type);
+			String serviceType = (String) metadata.get("serviceType");
+			assertNotNull(serviceType);
+			assertEquals("Validate service type", ((Service )component).getServiceType(), serviceType);
+			String serviceRole = (String) metadata.get("serviceRole");
+			assertNotNull(serviceRole);
+			assertEquals("Validate service role", ((Service )component).getServiceRole(), serviceRole);
 		} else {
 			assertEquals("Validate component type", ((Resource) component).getResourceType(),
 					ResourceTypeEnum.valueOf(type));
+			String resourceVendorModelNumber = (String) metadata.get("resourceVendorModelNumber");
+			assertNotNull(resourceVendorModelNumber);
+			assertEquals("Validate resource vendor model number", ((Resource )component).getResourceVendorModelNumber(), resourceVendorModelNumber);
 		}
 	}
 	

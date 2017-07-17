@@ -25,6 +25,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.tosca.ToscaUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,17 +37,6 @@ import fj.data.Either;
 public class VFComponentInstanceBusinessLogic extends ComponentInstanceBusinessLogic {
 
 	private static Logger log = LoggerFactory.getLogger(VFComponentInstanceBusinessLogic.class.getName());
-
-	@Override
-	protected Either<Boolean, ResponseFormat> validateAllowedToContainCompInstances(org.openecomp.sdc.be.model.Component containerComponent) {
-		Resource resource = (Resource) containerComponent;
-		ResourceTypeEnum resourceType = resource.getResourceType();
-		if (ResourceTypeEnum.VF != resourceType) {
-			log.debug("Cannot attach resource instances to container resource of type {}", resourceType);
-			return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_CANNOT_CONTAIN_RESOURCE_INSTANCES, resourceType.getValue()));
-		}
-		return Either.left(true);
-	}
 
 	@Override
 	protected NodeTypeEnum getNodeTypeOfComponentInstanceOrigin() {

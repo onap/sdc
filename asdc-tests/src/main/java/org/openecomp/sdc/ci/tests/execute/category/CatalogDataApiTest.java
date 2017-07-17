@@ -20,26 +20,21 @@
 
 package org.openecomp.sdc.ci.tests.execute.category;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import org.apache.log4j.lf5.util.ResourceUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
@@ -49,9 +44,8 @@ import org.openecomp.sdc.ci.tests.utils.rest.CatalogRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.testng.AssertJUnit;
-import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -62,6 +56,7 @@ public class CatalogDataApiTest extends ComponentBaseTest {
 	protected Config config = Config.instance();
 	protected String contentTypeHeaderData = "application/json";
 	protected String acceptHeaderDate = "application/json";
+	protected boolean isInitialized = false;
 
 	@Rule
 	public static TestName name = new TestName();
@@ -79,28 +74,36 @@ public class CatalogDataApiTest extends ComponentBaseTest {
 
 	@BeforeMethod
 	public void setUp() throws Exception {
+		if (isInitialized)
+			return;
 		user = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
 		resourceDetails1 = buildResourceDetails(user, "TestResource1");
+		resourceDetails1.setResourceType(ResourceTypeEnum.VFCMT.name());
 		resourceDetails2 = buildResourceDetails(user, "TestResource2");
 		svcDetails1 = buildServiceDetails("TestService1");
 
+		// VFCMT
 		res1 = createResource(user, resourceDetails1);
 		AssertJUnit.assertEquals("create resorce failed", 201, res1.getErrorCode().intValue());
 		resourceDetails1.setUniqueId(ResponseParser.getUniqueIdFromResponse(res1));
+
 		resourceDetails2.setVersion(ResponseParser.getVersionFromResponse(res1));
 
+		// VFC
 		res2 = createResource(user, resourceDetails2);
 		AssertJUnit.assertEquals("create resorce failed", 201, res2.getErrorCode().intValue());
 		resourceDetails2.setUniqueId(ResponseParser.getUniqueIdFromResponse(res2));
 		resourceDetails2.setVersion(ResponseParser.getVersionFromResponse(res2));
 
+		// SERVICE
 		svc1 = createService(user, svcDetails1);
 		AssertJUnit.assertEquals("create resorce failed", 201, svc1.getErrorCode().intValue());
 		svcDetails1.setUniqueId(ResponseParser.convertServiceResponseToJavaObject(svc1.getResponse()).getUniqueId());
 		svcDetails1.setVersion(ResponseParser.convertServiceResponseToJavaObject(svc1.getResponse()).getVersion());
+		isInitialized = true;
 	}
 
-	@AfterMethod
+	@AfterClass
 	public void tearDown() throws Exception {
 		deleteResource(resourceDetails1.getUniqueId(), user.getUserId());
 		deleteResource(resourceDetails2.getUniqueId(), user.getUserId());
@@ -127,6 +130,66 @@ public class CatalogDataApiTest extends ComponentBaseTest {
 		AssertJUnit.assertTrue("check resource2 is in response",
 				isComponentInArray(resourceDetails2.getUniqueId(), resources));
 		AssertJUnit.assertTrue("check service1 is in response",
+				isComponentInArray(svcDetails1.getUniqueId(), services));
+
+	}
+
+	@Test
+	public void getCatalogDataNoVFCMT() throws Exception {
+
+		List<String> excludeTyps = Arrays.asList(OriginTypeEnum.VFCMT.name());
+		RestResponse res = CatalogRestUtils.getCatalog(user.getUserId(), excludeTyps);
+		String json = res.getResponse();
+		JSONObject jsonResp = (JSONObject) JSONValue.parse(json);
+		JSONArray resources = (JSONArray) jsonResp.get("resources");
+		JSONArray services = (JSONArray) jsonResp.get("services");
+
+		// Verify all the expected resources received except of resource1 which is VFCMT
+		AssertJUnit.assertFalse("check resource1 is in response",
+				isComponentInArray(resourceDetails1.getUniqueId(), resources));
+		AssertJUnit.assertTrue("check resource2 is in response",
+				isComponentInArray(resourceDetails2.getUniqueId(), resources));
+		AssertJUnit.assertTrue("check service1 is in response",
+				isComponentInArray(svcDetails1.getUniqueId(), services));
+
+	}
+
+	@Test
+	public void getCatalogDataNoVFCandVFCMT() throws Exception {
+
+		List<String> excludeTyps = Arrays.asList(OriginTypeEnum.VFCMT.name(), OriginTypeEnum.VFC.name());
+		RestResponse res = CatalogRestUtils.getCatalog(user.getUserId(), excludeTyps);
+		String json = res.getResponse();
+		JSONObject jsonResp = (JSONObject) JSONValue.parse(json);
+		JSONArray resources = (JSONArray) jsonResp.get("resources");
+		JSONArray services = (JSONArray) jsonResp.get("services");
+
+		// Verify all the expected resources received except of VFCMT & VFC
+		AssertJUnit.assertFalse("check resource1 is in response",
+				isComponentInArray(resourceDetails1.getUniqueId(), resources));
+		AssertJUnit.assertFalse("check resource2 is in response",
+				isComponentInArray(resourceDetails2.getUniqueId(), resources));
+		AssertJUnit.assertTrue("check service1 is in response",
+				isComponentInArray(svcDetails1.getUniqueId(), services));
+
+	}
+
+	@Test
+	public void getCatalogDataNoServiceAndVFC() throws Exception {
+
+		List<String> excludeTyps = Arrays.asList(OriginTypeEnum.SERVICE.name(), OriginTypeEnum.VFC.name());
+		RestResponse res = CatalogRestUtils.getCatalog(user.getUserId(), excludeTyps);
+		String json = res.getResponse();
+		JSONObject jsonResp = (JSONObject) JSONValue.parse(json);
+		JSONArray resources = (JSONArray) jsonResp.get("resources");
+		JSONArray services = (JSONArray) jsonResp.get("services");
+
+		// Verify all the expected resources received except of VFC & SERVICE
+		AssertJUnit.assertTrue("check resource1 is in response",
+				isComponentInArray(resourceDetails1.getUniqueId(), resources));
+		AssertJUnit.assertFalse("check resource2 is in response",
+				isComponentInArray(resourceDetails2.getUniqueId(), resources));
+		AssertJUnit.assertFalse("check service1 is in response",
 				isComponentInArray(svcDetails1.getUniqueId(), services));
 
 	}
@@ -171,6 +234,7 @@ public class CatalogDataApiTest extends ComponentBaseTest {
 
 	protected RestResponse createService(User user, ServiceReqDetails svcDetails) throws Exception {
 
+		deleteService(svcDetails1.getUniqueId(), user);
 		Config config = Utils.getConfig();
 
 		Map<String, String> headersMap = getHeadersMap(user);
@@ -189,7 +253,7 @@ public class CatalogDataApiTest extends ComponentBaseTest {
 		Map<String, String> headersMap = new HashMap<String, String>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
-		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), user.getUserId());
+		headersMap.put("USER_ID", user.getUserId());
 		return headersMap;
 	}
 
@@ -210,15 +274,8 @@ public class CatalogDataApiTest extends ComponentBaseTest {
 	}
 
 	public RestResponse deleteService(String serviceId, User user) throws Exception {
-		HttpRequest httpRequest = new HttpRequest();
-		String url = String.format(Urls.DELETE_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort(),
-				serviceId);
-
-		Map<String, String> headersMap = getHeadersMap(user);
-		RestResponse res = httpRequest.httpSendDelete(url, headersMap);
-		// System.out.println("Delete service was finished with response:
-		// "+res.getErrorCode());
-		return res;
+		RestResponse deleteServiceResponse = ResourceRestUtils.deleteResource(serviceId, user.getUserId());
+		return deleteServiceResponse;
 	}
 
 	public class NewObject {

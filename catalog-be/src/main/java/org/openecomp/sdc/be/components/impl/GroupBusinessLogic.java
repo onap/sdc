@@ -359,7 +359,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 	 * @param inTransaction
 	 * @return
 	 */
-	public Either<GroupDefinition, ResponseFormat> validateAndUpdateGroupMetadata(String componentId, User user, ComponentTypeEnum componentType, GroupDefinition updatedGroup, boolean inTransaction) {
+	public Either<GroupDefinition, ResponseFormat> validateAndUpdateGroupMetadata(String componentId, User user, ComponentTypeEnum componentType, GroupDefinition updatedGroup, boolean inTransaction , boolean shouldLock) {
 
 		Either<GroupDefinition, ResponseFormat> result = null;
 		try {
@@ -396,10 +396,12 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 				return result;
 			}
 			GroupDefinition currentGroup = currentGroupOpt.get();
-			Either<Boolean, ResponseFormat> lockResult = lockComponent(componentId, component, "Update GroupDefinition Metadata");
-			if (lockResult.isRight()) {
-				result = Either.right(lockResult.right().value());
-				return result;
+			if ( shouldLock ){
+				Either<Boolean, ResponseFormat> lockResult = lockComponent(componentId, component, "Update GroupDefinition Metadata");
+				if (lockResult.isRight()) {
+					result = Either.right(lockResult.right().value());
+					return result;
+				}
 			}
 			// Validate group type is vfModule
 			if (!currentGroup.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE)) {
@@ -417,7 +419,8 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 			} else {
 				titanDao.rollback();
 			}
-			graphLockOperation.unlockComponent(componentId, componentType.getNodeType());
+			if( shouldLock )
+				graphLockOperation.unlockComponent(componentId, componentType.getNodeType());
 		}
 	}
 
@@ -734,7 +737,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 		String nameUpdated = groupUpdate.getName();
 		String nameCurrent = currentGroup.getName();
 		if (!nameCurrent.equals(nameUpdated)) {
-			Either<Boolean, ResponseFormat> validatNameResponse = validateGroupName(currentGroup.getName(), groupUpdate.getName());
+			Either<Boolean, ResponseFormat> validatNameResponse = validateGroupName(currentGroup.getName(), groupUpdate.getName() ,true);
 			if (validatNameResponse.isRight()) {
 				ResponseFormat errorRespons = validatNameResponse.right().value();
 				return Either.right(errorRespons);
@@ -752,7 +755,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 	 * @param groupUpdateName
 	 * @return
 	 */
-	private Either<Boolean, ResponseFormat> validateGroupName(String currentGroupName, String groupUpdateName) {
+	private Either<Boolean, ResponseFormat> validateGroupName(String currentGroupName, String groupUpdateName , boolean isforceNameModification) {
 		try {
 			// Check if the group name is in old format.
 			if (Pattern.compile(Constants.MODULE_OLD_NAME_PATTERN).matcher(groupUpdateName).matches()) {
@@ -771,14 +774,16 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
 				String[] split2 = groupUpdateName.split("\\.\\.");
 				String groupUpdateResourceName = split2[0];
 				String groupUpdateCounter = split2[2];
+				if (!isforceNameModification){			//if not forced ,allow name prefix&suffix validation [no changes]
+					if (!currentResourceName.equals(groupUpdateResourceName)) {
+						return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_VF_MODULE_NAME_MODIFICATION, currentResourceName));
+					}
 
-				if (!currentResourceName.equals(groupUpdateResourceName)) {
-					return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_VF_MODULE_NAME_MODIFICATION, currentResourceName));
+					if (!currentCounter.equals(groupUpdateCounter)) {
+						return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_VF_MODULE_NAME_MODIFICATION, currentCounter));
+					}
 				}
 
-				if (!currentCounter.equals(groupUpdateCounter)) {
-					return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_VF_MODULE_NAME_MODIFICATION, currentCounter));
-				}
 			}
 
 			return Either.left(true);

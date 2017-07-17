@@ -23,6 +23,7 @@ import {
     PROPERTY_TYPES, ModalsHandler, ValidationUtils, PROPERTY_VALUE_CONSTRAINTS, FormState, PROPERTY_DATA} from "app/utils";
 import {DataTypesService} from "app/services";
 import {PropertyModel, DataTypesMap, Component} from "app/models";
+import {ComponentInstance} from "../../../../models/componentsInstances/componentInstance";
 
 export interface IEditPropertyModel {
     property:PropertyModel;
@@ -50,6 +51,7 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     isTypeDataType:boolean;
     maxLength:number;
     isPropertyValueOwner:boolean;
+    isVnfConfiguration:boolean;
 
     validateJson(json:string):boolean;
     save(doNotCloseModal?:boolean):void;
@@ -191,6 +193,17 @@ export class PropertyFormViewModel {
         this.$scope.dataTypes = this.DataTypesService.getAllDataTypes();
         this.$scope.isPropertyValueOwner = this.isPropertyValueOwner;
         this.initEditPropertyModel();
+
+        //check if property of VnfConfiguration
+        this.$scope.isVnfConfiguration = false;
+        if(angular.isArray(this.component.componentInstances)) {
+            var componentPropertyOwner:ComponentInstance = this.component.componentInstances.find((ci:ComponentInstance) => {
+                return ci.uniqueId === this.property.resourceInstanceUniqueId;
+            });
+            if (componentPropertyOwner.componentName === 'vnfConfiguration') {
+                this.$scope.isVnfConfiguration = true;
+            }
+        }
 
         this.$scope.nonPrimitiveTypes = _.filter(Object.keys(this.$scope.dataTypes), (type:string)=> {
             return this.$scope.editPropertyModel.types.indexOf(type) == -1;

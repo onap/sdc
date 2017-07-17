@@ -20,20 +20,20 @@
 
 package org.openecomp.sdc.common.transaction.mngr;
 
-import org.openecomp.sdc.common.transaction.api.RollbackHandler;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
-import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBTypeEnum;
-import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
-
 import fj.P;
 import fj.data.Either;
 import fj.data.HashMap;
 import fj.data.List;
 
+import org.openecomp.sdc.common.transaction.api.RollbackHandler;
+import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;
+import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBTypeEnum;
+import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
+
 public class RollbackManager {
 	private final HashMap<DBTypeEnum, RollbackHandler> rollbackHandlersMap;
 	private final Integer transactionId;
-	private final String userId;
+	private final String userId; 
 	private final String actionType;
 
 	RollbackManager(Integer transactionId, String userId, String actionType, Iterable<RollbackHandler> rollbackHandlers) {
@@ -83,5 +83,4 @@ public class RollbackManager {
 		// by convention left is failure; in SDC right is failure
 		return rollbackHandlersMap.get(dbType).toEither(MethodActivationStatusEnum.NOT_FOUND).swap();
 	}
-
 }

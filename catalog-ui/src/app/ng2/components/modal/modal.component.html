@@ -1,17 +1,15 @@
-<div class="custom-modal {{size}}">
+<div class="custom-modal {{input.size}}">
     <div class="ng2-modal-content">
         <div class="ng2-modal-header">
-            <span class="title">{{ title }}</span>
+            <span class="title">{{ input.title }}</span>
             <span class="close-button" (click)="close()"></span>
         </div>
-        <div class="ng2-modal-body">
-            <ng-content></ng-content>
-        </div>
+        <div class="ng2-modal-body" >{{input.content}}</div>
         <div class="ng2-modal-footer">
-            <button *ngFor="let buttonName of buttonsNames"
-                    class="tlv-btn {{buttons[buttonName].cssClass}}"
-                    [disabled] = "buttons[buttonName].getDisabled && buttons[buttonName].getDisabled()"
-                    (click) = "buttons[buttonName].callback()">{{buttons[buttonName].text}}</button>
+            <button *ngFor="let button of input.buttons"
+                    class="tlv-btn {{button.cssClass}}"
+                    [disabled] = "button.getDisabled && button.getDisabled()"
+                    (click) = "button.callback()">{{button.text}}</button>
         </div>
     </div>
 </div>

@@ -1963,6 +1963,7 @@ public abstract class ComponentOperation {
 					case "service":
 						properties.add(new ImmutableTriple<>(QueryType.HAS_NOT, GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.VFC.name()));
 						properties.add(new ImmutableTriple<>(QueryType.HAS_NOT, GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.VFCMT.name()));
+						properties.add(new ImmutableTriple<>(QueryType.HAS_NOT, GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.CVFC.name()));
 //						properties.add(new ImmutableTriple<>(QueryType.HAS_NOT, GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.VL.name()));
 						// hasNotPpropertiesToMatch.put(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(),
 						// ResourceTypeEnum.VFC.name());

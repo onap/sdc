@@ -32,6 +32,9 @@ public class ToscaMetadata implements IToscaMetadata {
 	private String subcategory;
 	private String resourceVendor;
 	private String resourceVendorRelease;
+	private String resourceVendorModelNumber;
+	private String serviceType;
+	private String serviceRole;
 	private Boolean serviceEcompNaming;
 	private Boolean ecompGeneratedNaming;
 	private String namingPolicy;
@@ -109,6 +112,30 @@ public class ToscaMetadata implements IToscaMetadata {
 
 	public void setResourceVendorRelease(String resourceVendorRelease) {
 		this.resourceVendorRelease = resourceVendorRelease;
+	}
+	
+	public String getResourceVendorModelNumber() {
+		return resourceVendorModelNumber;
+	}
+	
+	public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
+		this.resourceVendorModelNumber = resourceVendorModelNumber;
+	}
+	
+	public String getServiceType() {
+		return serviceType;
+	}
+	
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
+	}
+	
+	public String getServiceRole() {
+		return serviceRole;
+	}
+	
+	public void setServiceRole(String serviceRole) {
+		this.serviceRole = serviceRole;
 	}
 
 	public Boolean isEcompGeneratedNaming() {

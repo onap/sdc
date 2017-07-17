@@ -1,0 +1,18 @@
+<sdc-modal modal="modalIcons" type="classic" class="w-sdc-modal-icons" buttons="footerButtons" header="Choose Icon" show-close-button="true">
+
+    <div class="suggested-icons-container">
+        <div class ="suggested-icon-wrapper" data-ng-class="{'selected': selectedIcon == iconSrc}"  data-ng-repeat="iconSrc in icons track by $index">
+            <div class="i-sdc-form-item-suggested-icon large hand {{iconSprite}} {{iconSrc}}"
+                 data-tests-id="{{iconSrc}} iconBox"
+                 data-ng-click="changeIcon(iconSrc)"
+                 tooltips tooltip-content='{{iconSrc | translate}}'
+            >
+            </div>
+        </div>
+    </div>
+
+    <div class="w-sdc-modal-footer classic">
+        <button class="tlv-btn blue" data-tests-id="OK" data-ng-click="updateIcon()">OK</button>
+        <button class="tlv-btn grey" data-tests-id="Cancel" data-ng-click="cancel()" >Cancel</button>
+    </div>
+</sdc-modal>

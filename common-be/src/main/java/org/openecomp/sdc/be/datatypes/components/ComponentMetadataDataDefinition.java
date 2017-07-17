@@ -28,6 +28,8 @@ import java.util.Map;
 
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinition implements Serializable {
 
@@ -35,7 +37,8 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
 	 * 
 	 */
 	private static final long serialVersionUID = -9114770126086263552L;
-
+	private static final Logger log = LoggerFactory.getLogger(ComponentMetadataDataDefinition.class.getName());
+	
 	private String uniqueId;
 
 	private String name; // archiveName
@@ -156,13 +159,13 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
 		this.lastUpdateDate = other.getLastUpdateDate();
 		this.description = other.getDescription();
 		this.state = other.getState();
-		this.tags = new ArrayList<String>(other.getTags());
+		this.tags = new ArrayList<>(other.getTags());
 		this.icon = other.getIcon();
 		this.contactId = other.getContactId();
 		this.UUID = other.getUUID();
 		this.normalizedName = other.getNormalizedName();
 		this.systemName = other.getSystemName();
-		this.allVersions = new HashMap<String, String>(other.getAllVersions());
+		this.allVersions = new HashMap<>(other.getAllVersions());
 		this.isDeleted = other.isDeleted();
 		this.projectCode = other.getProjectCode();
 		this.csarUUID = other.getCsarUUID();
@@ -177,6 +180,8 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
 	}
 
 	public void setUniqueId(String uniqueId) {
+		if ( this.uniqueId != null && !this.uniqueId.equals( uniqueId ) )
+			log.warn("uniqueId changed more then once -> OLD : {} , NEW: {} ", this.uniqueId ,uniqueId );
 		this.uniqueId = uniqueId;
 	}
 
@@ -264,8 +269,10 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
 		return UUID;
 	}
 
-	public void setUUID(String uUID) {
-		UUID = uUID;
+	public void setUUID(String UUID) {
+		if ( this.UUID != null && !this.UUID.equals( UUID ) )
+			log.warn("UUID changed more then once -> OLD : {} , NEW: {} ", this.UUID, UUID );
+		this.UUID = UUID;
 	}
 
 	public String getNormalizedName() {
@@ -297,6 +304,8 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
 	}
 
 	public void setInvariantUUID(String invariantUUID) {
+		if ( this.invariantUUID != null && !this.invariantUUID.equals( invariantUUID ) )
+			log.warn("InvariantUUID changed more then once -> OLD : {} , NEW: {} ", this.invariantUUID ,invariantUUID );
 		this.invariantUUID = invariantUUID;
 	}
 

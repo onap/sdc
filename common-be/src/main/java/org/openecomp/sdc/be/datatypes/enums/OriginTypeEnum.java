@@ -27,7 +27,9 @@ public enum OriginTypeEnum {
 	VFC("VFC", "VFC (Virtual Function Component)", "resource instance", ComponentTypeEnum.RESOURCE),
 	CP("CP", "CP (Connection Point)", "resource instance", ComponentTypeEnum.RESOURCE), 
 	VL("VL", "VL (Virtual Link)", "resource instance", ComponentTypeEnum.RESOURCE),
-	VFCMT("VFCMT", "VFCMT (VFC Monitoring Template)", "resource instance", ComponentTypeEnum.RESOURCE);
+	VFCMT("VFCMT", "VFCMT (VFC Monitoring Template)", "resource instance", ComponentTypeEnum.RESOURCE),
+	CVFC("CVFC", "CVFC (Complex Virtual Function Component)", "resource instance", ComponentTypeEnum.RESOURCE),
+	PNF("PNF", "PNF (Physical Network Function)", "resource instance", ComponentTypeEnum.RESOURCE);
 
 	private String value;
 	private String displayValue;

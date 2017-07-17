@@ -117,7 +117,7 @@ export class CatalogViewModel {
         let onSuccess = (followedResponse:Array<Component>):void => {
             this.$scope.catalogFilterdItems = followedResponse;
             this.$scope.isAllItemDisplay = this.$scope.numberOfItemToDisplay >= this.$scope.catalogFilterdItems.length;
-            this.$scope.categories = this.cacheService.get('serviceCategories').concat(this.cacheService.get('resourceCategories')).concat(this.cacheService.get('productCategories'));
+            this.$scope.categories = this.cacheService.get('serviceCategories').concat(this.cacheService.get('resourceCategories'));
             this.$scope.gui.isLoading = false;
         };
 
@@ -137,7 +137,7 @@ export class CatalogViewModel {
         //this.$scope.categories = this.cacheService.get('categoriesMap');
         this.$scope.sdcMenu = this.sdcMenu;
         this.$scope.confStatus = this.sdcMenu.statuses;
-        this.$scope.expandedSection = ["type", "category", "product-category", "status"];
+        this.$scope.expandedSection = ["type", "category", "status"];
         this.$scope.user = this.userResourceService.getLoggedinUser();
         this.$scope.catalogMenuItem = this.sdcMenu.catalogMenuItem;
         this.$scope.version = this.cacheService.get('version');
@@ -147,8 +147,8 @@ export class CatalogViewModel {
 
         // Checklist init
         this.$scope.checkboxes = <Checkboxes>{};
-        this.$scope.checkboxes.componentTypes = ['Resource', 'Service', 'Product'];
-        this.$scope.checkboxes.resourceSubTypes = ['VF', 'VFC', 'CP', 'VL'];
+        this.$scope.checkboxes.componentTypes = ['Resource', 'Service'];
+        this.$scope.checkboxes.resourceSubTypes = ['VF', 'VFC', 'PNF', 'CP', 'VL'];
 
         // Checkboxes filter init
         this.$scope.checkboxesFilter = <CheckboxesFilter>{};

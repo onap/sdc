@@ -257,7 +257,7 @@ public class CommonUtilsTest {
 	@Test
 	public void validateVendorNameLengthTest() {
 		assertTrue(ValidationUtils.validateVendorNameLength("fsdlfsdlk.sdsd;"));
-		assertFalse(ValidationUtils.validateVendorNameLength("ddddddddddddddddddddddsdfs"));
+		assertFalse(ValidationUtils.validateVendorNameLength("ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddsdfs"));
 	}
 
 	@Test
@@ -271,8 +271,8 @@ public class CommonUtilsTest {
 
 	@Test
 	public void validateVendorReleaseLengthTest() {
-		assertTrue(ValidationUtils.validateVendorNameLength("fsdlfsdlk.sdsd;"));
-		assertFalse(ValidationUtils.validateVendorNameLength("ddddddddddddddddddddddsdfs"));
+		assertTrue(ValidationUtils.validateVendorReleaseLength("fsdlfsdlk.sdsd;"));
+		assertFalse(ValidationUtils.validateVendorReleaseLength("ddddddddddddddddddddddsdfs"));
 	}
 
 	@Test

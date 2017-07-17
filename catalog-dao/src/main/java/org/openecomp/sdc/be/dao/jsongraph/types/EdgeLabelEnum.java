@@ -67,4 +67,8 @@ public enum EdgeLabelEnum {
 		}
 		return null;
 	}
+
+	public boolean isInstanceArtifactsLabel() {
+		return this.equals(INSTANCE_ARTIFACTS) || this.equals(INST_DEPLOYMENT_ARTIFACTS);
+	}
 }

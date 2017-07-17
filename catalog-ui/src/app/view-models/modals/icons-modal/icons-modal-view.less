@@ -1,0 +1,33 @@
+.suggested-icons-container {
+    text-align: left;
+    width: 370px;
+    margin-bottom: 20px;
+    position: relative;
+
+    .suggested-icon-wrapper {
+        padding: 5px;
+        margin: 14px 0 14px 28px;
+        display: inline-block;
+        height: 71px;
+        width: 71px;
+
+        &.selected {
+            border: 2px solid @main_color_a;
+            border-radius: 35px;
+            display: inline-block;
+            line-height: 0px;
+            padding: 3px;
+        }
+
+    }
+    .i-sdc-form-item-suggested-icon {
+        opacity: 0.8;
+        &:hover{
+            opacity: 1;
+        }
+    }
+    .suggested-icon-wrapper:nth-child(4n+1) {
+        margin-left: 0;
+    }
+}
+

@@ -44,39 +44,6 @@ import org.openecomp.sdc.common.util.ZipUtil;
 
 public class CsarValidationUtils {
 
-	public static String getCsarPayload(String csarName, String fileLocation) throws Exception {
-
-		RestResponseAsByteArray csar = ImportRestUtils.getCsar(csarName, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
-		assertTrue("Return response code different from 200", csar.getHttpStatusCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
-		Map<String, byte[]> readZip = null;
-		byte[] data = csar.getResponse();
-		if (data != null && data.length > 0) {
-			readZip = ZipUtil.readZip(data);
-
-		}
-		byte[] artifactsBs = readZip.get(fileLocation);
-		String str = new String(artifactsBs, StandardCharsets.UTF_8);
-		return str;
-
-	}
-	
-	public static String getCsarPayload(File csarName, String fileLocation) throws Exception {
-
-//		RestResponseAsByteArray csar = ImportRestUtils.getCsar(csarName, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
-//		assertTrue("Return response code different from 200", csar.getHttpStatusCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
-		Map<String, byte[]> readZip = null;
-		Path path = csarName.toPath();
-		
-		byte[] data = Files.readAllBytes(path);
-		if (data != null && data.length > 0) {
-			readZip = ZipUtil.readZip(data);
-		}
-		byte[] artifactsBs = readZip.get(fileLocation);
-		String str = new String(artifactsBs, StandardCharsets.UTF_8);
-		return str;
-
-	}
-
 	public static void validateCsarVfArtifact(String csarUUID, Resource resource) throws Exception {
 
 		List<TypeHeatMetaDefinition> listTypeHeatMetaDefinition = CsarParserUtils.getListTypeHeatMetaDefinition(csarUUID);

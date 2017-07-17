@@ -82,6 +82,7 @@ public class Configuration extends BasicConfiguration {
 	
 	private List<String> resourceTypes;
 	private List<String> excludeResourceCategory;
+	private List<String> excludeResourceType;
 	private Map<String, Object> deploymentResourceArtifacts;
 	private Map<String, Object> deploymentResourceInstanceArtifacts;
 	private Map<String, Object> toscaArtifacts;
@@ -361,6 +362,15 @@ public class Configuration extends BasicConfiguration {
 	public void setExcludeResourceCategory(List<String> excludeResourceCategory) {
 		this.excludeResourceCategory = excludeResourceCategory;
 	}
+	
+	public List<String> getExcludeResourceType() {
+		return excludeResourceType;
+	}
+
+	public void setExcludeResourceType(List<String> excludeResourceType) {
+		this.excludeResourceType = excludeResourceType;
+	}
+
 
 	public Map<String, Object> getToscaArtifacts() {
 		return toscaArtifacts;
@@ -842,6 +852,7 @@ public class Configuration extends BasicConfiguration {
 		String host;
 		Integer port;
 		String downloadCsarUri;
+		String healthCheckUri;
 
 		public String getProtocol() {
 			return protocol;
@@ -873,6 +884,14 @@ public class Configuration extends BasicConfiguration {
 
 		public void setDownloadCsarUri(String downloadCsarUri) {
 			this.downloadCsarUri = downloadCsarUri;
+		}
+
+		public String getHealthCheckUri() {
+			return healthCheckUri;
+		}
+
+		public void setHealthCheckUri(String healthCheckUri) {
+			this.healthCheckUri = healthCheckUri;
 		}
 
 		@Override

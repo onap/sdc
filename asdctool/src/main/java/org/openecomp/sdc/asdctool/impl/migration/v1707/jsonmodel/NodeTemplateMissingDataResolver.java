@@ -17,23 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel;
-
-
+import fj.data.Either;
+import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import fj.data.Either;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -45,6 +40,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -59,32 +56,98 @@ public class NodeTemplateMissingDataResolver <T extends Component> {
     private ToscaElementLifecycleOperation lifecycleOperation;
 	
 	@Resource(name = "topology-template-operation")
-    private TopologyTemplateOperation topologyTemplateOperation;
+    public TopologyTemplateOperation topologyTemplateOperation;
 	
 	public void resolveNodeTemplateInfo(ComponentInstanceDataDefinition vfInst, Map<String, ToscaElement> origCompMap, T component) {
 		lifecycleOperation.resolveToscaComponentName(vfInst, origCompMap);
 		if(OriginTypeEnum.VF == vfInst.getOriginType()) {
-			Map<String, List<ComponentInstanceInput>> componentInstancesInputs = Optional.ofNullable(component.getComponentInstancesInputs()).orElse(new HashMap<>());
-			collectVFInstanceInputs(componentInstancesInputs, origCompMap, vfInst);
+			collectVFInstanceInputs(component, origCompMap, vfInst);
 		}
 	}
+
+
+
+
+	public void updateServiceComposition(Component component, Map<String, ToscaElement> origCompMap, Component oldModelService, Map<String, Boolean> updateMap){
+
+		boolean composition = false;
+		boolean instInputs = false;
+		boolean instGroups = false;
+		List<ComponentInstance> instances = component.getComponentInstances();
+		if(null != instances) {
+			for (ComponentInstance instance : instances) {
+				composition = composition || lifecycleOperation.resolveToscaComponentName(instance, origCompMap);
+				if(OriginTypeEnum.VF == instance.getOriginType()) {
+					instInputs = instInputs || collectVFInstanceInputs(component, origCompMap, instance);
+					instGroups = instGroups || resolveInstGroupsFromOldTitanGraphAndApplyFix(component, instance, oldModelService);
+				}
+			}
+		}
+		updateMap.put(JsonConstantKeysEnum.COMPOSITION.name(), composition);
+		updateMap.put(EdgeLabelEnum.INST_INPUTS.name(), instInputs);
+		updateMap.put(EdgeLabelEnum.INST_GROUPS.name(), instGroups);
+	}
+
+
+	public void updateVFComposition(Component component, Map<String, ToscaElement> origCompMap, Map<String, Boolean> updateMap) {
+
+		boolean composition = false;
+		boolean groups = fixVFGroups(component);
+		List<ComponentInstance> instances = component.getComponentInstances();
+		if(null != instances) {
+			for (ComponentInstance instance : instances) {
+				composition = composition || lifecycleOperation.resolveToscaComponentName(instance, origCompMap);
+			}
+		}
+		updateMap.put(JsonConstantKeysEnum.COMPOSITION.name(), composition);
+		updateMap.put(EdgeLabelEnum.GROUPS.name(), groups);
+	}
+
+
+
+	private boolean resolveInstGroupsFromOldTitanGraphAndApplyFix(Component component, ComponentInstance instance, Component oldService){
+
+		boolean res = false;
+		//info already exists, apply fix if needed
+		if(null != instance.getGroupInstances() && !instance.getGroupInstances().isEmpty()) {
+			res = fixVFGroupInstances(component, instance);
+		//get group instances from old model
+		}else if(null != oldService){
+			ComponentInstance origInstance = oldService.getComponentInstances().stream()
+					.filter(p -> instance.getUniqueId().equals(p.getUniqueId()))
+					.findAny().orElse(null);
+			if(null != origInstance && null != origInstance.getGroupInstances()) {
+				fixVFGroupInstances(oldService, origInstance);
+				instance.setGroupInstances(origInstance.getGroupInstances());
+				res = true;
+			}
+		}
+		return res;
+	}
 	
-	private void collectVFInstanceInputs(Map<String, List<ComponentInstanceInput>> instInputs, Map<String, ToscaElement> origCompMap, ComponentInstanceDataDefinition vfInst) {
+	private boolean collectVFInstanceInputs(Component component, Map<String, ToscaElement> origCompMap, ComponentInstanceDataDefinition vfInst) {
+		boolean res = false;
 		String ciUid = vfInst.getUniqueId();
 		String origCompUid = vfInst.getComponentUid();
+		if(null == component.getComponentInstancesInputs())
+			component.setComponentInstancesInputs(new HashMap<>());
+		Map<String, List<ComponentInstanceInput>> componentInstInputs = component.getComponentInstancesInputs();
 		Either<ToscaElement, StorageOperationStatus> origComp = fetchToscaElement(origCompMap, vfInst, origCompUid);
         if(origComp.isRight())
-        	return;
+        	return false;
 		Map<String, PropertyDataDefinition> origVFInputs = ((TopologyTemplate)origComp.left().value()).getInputs();
 		if (origVFInputs != null && !origVFInputs.isEmpty()) {
+			res = true;
 			Map<String, ComponentInstanceInput> collectedVFInputs = origVFInputs.values().stream()
 					                                                                       .collect(Collectors.toMap(PropertyDataDefinition::getName, ComponentInstanceInput::new));
-			List<ComponentInstanceInput> instInputList = instInputs.get(ciUid);
+
+			List<ComponentInstanceInput> instInputList = componentInstInputs.get(ciUid);
 			Map<String, ComponentInstanceInput> existingInstInputs = ToscaDataDefinition.listToMapByName(instInputList);
 			collectedVFInputs.putAll(existingInstInputs);
 			List<ComponentInstanceInput> mergedList = new ArrayList<>(collectedVFInputs.values());
-			instInputs.put(ciUid, mergedList);	
+			componentInstInputs.put(ciUid, mergedList);
 		}
+		return res;
 	}
 
 	private Either<ToscaElement, StorageOperationStatus> fetchToscaElement(Map<String, ToscaElement> origCompMap, ComponentInstanceDataDefinition vfInst, String origCompUid) {
@@ -201,22 +264,23 @@ public class NodeTemplateMissingDataResolver <T extends Component> {
 		return artifactLabel;
 	}
 	
-	protected boolean fixVFGroups(Component component){
-		boolean res = true;
-		
+	public boolean fixVFGroups(Component component){
+		boolean res = false;
+
 		Map<String, ArtifactDefinition> deploymentArtifacts = component.getDeploymentArtifacts();
 		List<GroupDefinition> groups = component.getGroups();
 		if (groups == null || groups.isEmpty()) {
-			LOGGER.debug("No  groups  in component {} id {} ",  component.getName(), component.getUniqueId());
+			LOGGER.debug("No groups in component {} id {} ",  component.getName(), component.getUniqueId());
 			return res;
 		}	
 				
 		for (GroupDefinition group : groups) {
 			if (group.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE) && deploymentArtifacts != null) {
 				if (isProblematicGroup(group, component.getName(), deploymentArtifacts)) {
-					List<String> groupArtifacts = new ArrayList<String>(group.getArtifacts());
-					group.getArtifacts().clear();
-					group.getArtifactsUuid().clear();
+					res = true;
+					List<String> groupArtifacts = null == group.getArtifacts()? new ArrayList<>() : new ArrayList<>(group.getArtifacts());
+					group.setArtifacts(new ArrayList<>());
+					group.setArtifactsUuid(new ArrayList<>());
 					for (String artifactId : groupArtifacts) {
 						String artifactlabel = findArtifactLabelFromArtifactId(artifactId);
 						LOGGER.debug("fix group:  group name {} artifactId for fix {} artifactlabel {} ", group.getName(), artifactId, artifactlabel);
@@ -229,19 +293,16 @@ public class NodeTemplateMissingDataResolver <T extends Component> {
 							if (correctArtifactUUID != null && !correctArtifactUUID.isEmpty()) {
 								group.getArtifactsUuid().add(correctArtifactUUID);
 							}
-
 						}
 					}
 				}
 			}
-			
-		}		
-		
+		}
 		return res;
 	}
 	
-	protected boolean fixVFGroupInstances(Component component, ComponentInstance instance){
-		boolean res = true;
+	public boolean fixVFGroupInstances(Component component, ComponentInstance instance){
+		boolean res = false;
 		
 		Map<String, ArtifactDefinition> deploymentArtifacts = instance.getDeploymentArtifacts();
 		List<GroupInstance> groupInstances = instance.getGroupInstances();
@@ -252,10 +313,9 @@ public class NodeTemplateMissingDataResolver <T extends Component> {
 		for (GroupInstance group : groupInstances) {
 			if (group.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE)) {
 				if (isProblematicGroupInstance(group, instance.getName(), component.getName(), deploymentArtifacts)) {
-
-					LOGGER.debug("Migration1707ArtifactUuidFix  fix group:  resource id {}, group name {} ", component.getUniqueId(), group.getName());
-					List<String> groupArtifacts = Optional.ofNullable(group.getArtifacts()).orElse(new ArrayList<>());
-
+					res = true;
+					LOGGER.debug("Migration1707ArtifactUuidFix fix group: resource id {}, group name {} ", component.getUniqueId(), group.getName());
+					List<String> groupArtifacts = null == group.getArtifacts()? new ArrayList<>() : new ArrayList<>(group.getArtifacts());
 					group.setArtifacts(new ArrayList<>());
 					group.setArtifactsUuid(new ArrayList<>());
 					group.setGroupInstanceArtifacts(new ArrayList<>());
@@ -285,12 +345,9 @@ public class NodeTemplateMissingDataResolver <T extends Component> {
 							}
 						}
 					}
-
 				}
 			}
 		}
-		
 		return res;
 	}
-
 }

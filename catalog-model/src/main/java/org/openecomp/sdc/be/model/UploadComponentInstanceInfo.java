@@ -29,6 +29,8 @@ public class UploadComponentInstanceInfo {
 	private Map<String, List<UploadCapInfo>> capabilities;
 	private Map<String, List<UploadReqInfo>> requirements;
 	private Map<String, List<UploadPropInfo>> properties;
+	private Map<String, String> capabilitiesNamesToUpdate;
+	private Map<String, String> requirementsNamesToUpdate;
 
 	public Map<String, List<UploadPropInfo>> getProperties() {
 		return properties;
@@ -68,6 +70,22 @@ public class UploadComponentInstanceInfo {
 
 	public void setRequirements(Map<String, List<UploadReqInfo>> requirements) {
 		this.requirements = requirements;
+	}
+
+	public Map<String, String> getCapabilitiesNamesToUpdate() {
+		return capabilitiesNamesToUpdate;
+	}
+
+	public void setCapabilitiesNamesToUpdate(Map<String, String> capabilitiesNamesToUpdate) {
+		this.capabilitiesNamesToUpdate = capabilitiesNamesToUpdate;
+	}
+
+	public Map<String, String> getRequirementsNamesToUpdate() {
+		return requirementsNamesToUpdate;
+	}
+
+	public void setRequirementsNamesToUpdate(Map<String, String> requirementsNamesToUpdate) {
+		this.requirementsNamesToUpdate = requirementsNamesToUpdate;
 	}
 
 }

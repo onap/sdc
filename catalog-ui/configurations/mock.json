@@ -77,20 +77,6 @@
                 "firstName": "op",
                 "lastName": "ss",
                 "xEcompRequestId": "ccccc"
-            },
-            "product_strategist": {
-				"userId": "ps0001",
-				"email": "product_strategist@sdc.com",
-				"firstName": "Orit",
-				"lastName": "Barda",
-				"xEcompRequestId": "ccccc"
-			},
-            "product_manager": {
-                "userId": "pm0001",
-                "email": "product_manager@sdc.com",
-                "firstName": "Orit",
-                "lastName": "Barda",
-                "xEcompRequestId": "ccccc"
             }
         },
         "statuses": {

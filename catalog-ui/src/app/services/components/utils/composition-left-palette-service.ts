@@ -28,6 +28,7 @@ import {ComponentFactory} from "../../../utils/component-factory";
 import {IAppConfigurtaion} from "../../../models/app-config";
 import {ResourceType, ComponentType, EVENTS} from "../../../utils/constants";
 import {ComponentMetadata} from "../../../models/component-metadata";
+import {Resource} from "app/models/components/resource";
 
 export class LeftPaletteDataObject {
     displayLeftPanelComponents:Array<LeftPaletteComponent>;
@@ -58,24 +59,27 @@ export class LeftPaletteLoaderService {
                 protected EventListenerService:EventListenerService) {
 
         this.restangular.setBaseUrl(sdcConfig.api.root + sdcConfig.api.component_api_root);
-      
+
     }
 
     private serviceLeftPaletteData:LeftPaletteDataObject;
     private resourceLeftPaletteData:LeftPaletteDataObject;
-    private productLeftPaletteData:LeftPaletteDataObject;
+    private resourcePNFLeftPaletteData:LeftPaletteDataObject;
     private vlData:LeftPaletteDataObject;
 
-    public loadLeftPanel = (componentType: string):void => {
+    public loadLeftPanel = (component:Component):void => {
         this.serviceLeftPaletteData = new LeftPaletteDataObject(EVENTS.SERVICE_LEFT_PALETTE_UPDATE_EVENT);
         this.resourceLeftPaletteData = new LeftPaletteDataObject(EVENTS.RESOURCE_LEFT_PALETTE_UPDATE_EVENT);
-        this.updateComponentLeftPalette(componentType);
+        this.resourcePNFLeftPaletteData = new LeftPaletteDataObject(EVENTS.RESOURCE_PNF_LEFT_PALETTE_UPDATE_EVENT);
+        this.updateComponentLeftPalette(component);
     }
 
-
-    private getTypeUrl = (componentType:string):string => {
-        return ComponentType.PRODUCT === componentType ? "services" : "resources";
-    };
+    private getResourceLeftPaletteDataByResourceType = (resourceType:string):LeftPaletteDataObject => {
+        if(resourceType == ResourceType.PNF) {
+            return this.resourcePNFLeftPaletteData;
+        }
+        return this.resourceLeftPaletteData;
+    }
 
     private onFinishLoading = (componentType:string, leftPaletteData:LeftPaletteDataObject):void => {
         this.EventListenerService.notifyObservers(leftPaletteData.onFinishLoadingEvent);
@@ -83,7 +87,7 @@ export class LeftPaletteLoaderService {
 
     private updateLeftPalette = (componentType, componentInternalType:string, leftPaletteData:LeftPaletteDataObject):void => {
 
-        this.restangular.one(this.getTypeUrl(componentType)).one('/latestversion/notabstract/metadata').get({'internalComponentType': componentInternalType}).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {
+        this.restangular.one("resources").one('/latestversion/notabstract/metadata').get({'internalComponentType': componentInternalType}).then((leftPaletteComponentMetadata:Array<ComponentMetadata>) => {
             _.forEach(leftPaletteComponentMetadata, (componentMetadata:ComponentMetadata) => {
                 leftPaletteData.displayLeftPanelComponents.push(new LeftPaletteComponent(componentMetadata));
             });
@@ -91,30 +95,25 @@ export class LeftPaletteLoaderService {
         });
     };
 
-    public getLeftPanelComponentsForDisplay = (componentType:string):Array<LeftPaletteComponent> => {
-        switch (componentType) {
+    public getLeftPanelComponentsForDisplay = (component:Component):Array<LeftPaletteComponent> => {
+        switch (component.componentType) {
             case ComponentType.SERVICE:
                 return this.serviceLeftPaletteData.displayLeftPanelComponents;
-            case ComponentType.PRODUCT:
-                return this.productLeftPaletteData.displayLeftPanelComponents;
-            default:
-                return this.resourceLeftPaletteData.displayLeftPanelComponents;
+            default://resource
+                return this.getResourceLeftPaletteDataByResourceType((<Resource>component).resourceType).displayLeftPanelComponents;
         }
     };
 
-    public updateComponentLeftPalette = (componentType):void => {
-        switch (componentType) {
-            case ResourceType.VL:
-                this.updateLeftPalette(ComponentType.RESOURCE, ResourceType.VL, this.vlData);
-                break;
+    public updateComponentLeftPalette = (component:Component):void => {
+        switch (component.componentType) {
             case ComponentType.SERVICE:
                 this.updateLeftPalette(ComponentType.SERVICE, ComponentType.SERVICE, this.serviceLeftPaletteData);
                 break;
-            case ComponentType.PRODUCT:
-                this.updateLeftPalette(ComponentType.PRODUCT, ComponentType.SERVICE, this.productLeftPaletteData);
+            case ComponentType.RESOURCE:
+                this.updateLeftPalette(ComponentType.RESOURCE, (<Resource>component).resourceType, this.getResourceLeftPaletteDataByResourceType((<Resource>component).resourceType));
                 break;
             default:
-                this.updateLeftPalette(ComponentType.RESOURCE, ResourceType.VF, this.resourceLeftPaletteData);
+                console.log('ERROR: Component type '+ component.componentType + ' is not exists');
         }
     };
 }

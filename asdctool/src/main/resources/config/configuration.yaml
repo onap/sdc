@@ -507,6 +507,7 @@ cassandraConfig:
         - { name: sdcaudit, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
         - { name: sdcartifact, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
         - { name: sdccomponent, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+        - { name: sdcrepository, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
         
        
 switchoverDetector:

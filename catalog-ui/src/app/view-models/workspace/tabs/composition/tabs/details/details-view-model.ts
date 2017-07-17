@@ -82,7 +82,7 @@ export class DetailsViewModel {
         let highestVersion = _.last(Object.keys(this.$scope.selectedComponent.allVersions));
 
         if (parseFloat(highestVersion) % 1) { //if highest is minor, make sure it is the latest checked in -
-            let latestVersionComponent:LeftPaletteComponent = _.maxBy(_.filter(this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(this.$scope.currentComponent.componentType), (component:LeftPaletteComponent) => { //latest checked in
+            let latestVersionComponent:LeftPaletteComponent = _.maxBy(_.filter(this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(this.$scope.currentComponent), (component:LeftPaletteComponent) => { //latest checked in
                 return (component.systemName === this.$scope.selectedComponent.systemName
                 || component.uuid === this.$scope.selectedComponent.uuid);
             }),(component)=>{return component.version});

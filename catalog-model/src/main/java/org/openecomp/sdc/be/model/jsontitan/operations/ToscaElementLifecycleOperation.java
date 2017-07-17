@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -37,9 +36,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
@@ -55,20 +52,16 @@ import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
@@ -78,10 +71,8 @@ import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
-import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1014,8 +1005,8 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 	}
 	
 	//TODO remove after jsonModelMigration
-	public void resolveToscaComponentName(ComponentInstanceDataDefinition vfInst, Map<String, ToscaElement> origCompMap) {
-		fixToscaComponentName(vfInst, origCompMap);
+	public boolean resolveToscaComponentName(ComponentInstanceDataDefinition vfInst, Map<String, ToscaElement> origCompMap) {
+		return fixToscaComponentName(vfInst, origCompMap);
 	}
 
 	private boolean fixToscaComponentName(ComponentInstanceDataDefinition vfInst, Map<String, ToscaElement> origCompMap) {
@@ -1035,7 +1026,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 					CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to find orig component {} . Status is {}. ", origCompEither.right().value());
 					return false;
 				}
-				origComp =  origCompEither.left().value();
+				origComp = origCompEither.left().value();
 				origCompMap.put(origCompUid, origComp);
 			} else {
 				origComp = origCompMap.get(origCompUid);
@@ -1459,5 +1450,73 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 			return true;
 		}
 		return false;
+	}
+
+	public Either<ToscaElement,StorageOperationStatus> forceCerificationOfToscaElement(String toscaElementId, String modifierId, String ownerId) {
+		Either<GraphVertex, StorageOperationStatus> resultUpdate = null;
+		Either<ToscaElement, StorageOperationStatus> result = null;
+		GraphVertex toscaElement = null;
+		GraphVertex modifier = null;
+		GraphVertex owner;
+		try {
+			Either<Map<String, GraphVertex>, TitanOperationStatus> getVerticesRes = titanDao.getVerticesByUniqueIdAndParseFlag(prepareParametersToGetVerticesForRequestCertification(toscaElementId, modifierId, ownerId));
+			if (getVerticesRes.isRight()) {
+				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
+				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getVerticesRes.right().value()));
+			}
+			if (result == null) {
+				toscaElement = getVerticesRes.left().value().get(toscaElementId);
+				modifier = getVerticesRes.left().value().get(modifierId);
+				owner = getVerticesRes.left().value().get(ownerId);
+
+				StorageOperationStatus status = handleRelationsUponForceCertification(toscaElement, modifier, owner);
+				if (status != StorageOperationStatus.OK) {
+					CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to handle relations on certification request for tosca element {}. Status is {}. ", toscaElement.getUniqueId(), status);
+				}
+			}
+			if (result == null) {
+				LifecycleStateEnum nextState = LifecycleStateEnum.CERTIFIED;
+
+				toscaElement.addMetadataProperty(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+				toscaElement.addMetadataProperty(GraphPropertyEnum.VERSION, "1.0");
+
+				resultUpdate = updateToscaElementVertexMetadataPropertiesAndJson(toscaElement);
+				if (resultUpdate.isRight()) {
+					CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to set lifecycle for tosca elememt {} to state {}, error: {}", toscaElement.getUniqueId(), nextState, resultUpdate.right().value());
+					result = Either.right(resultUpdate.right().value());
+				}
+			}
+			if (result == null) {
+				ToscaElementOperation operation = getToscaElementOperation(toscaElement.getLabel());
+				result = operation.getToscaElement(toscaElement.getUniqueId());
+			}
+			return result;
+
+		} catch (Exception e) {
+			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Exception occured during request certification tosca element {}. {}", toscaElementId, e.getMessage());
+		}
+		return result;
+	}
+
+	private StorageOperationStatus handleRelationsUponForceCertification(GraphVertex toscaElement, GraphVertex modifier, GraphVertex owner) {
+
+			StorageOperationStatus result = null;
+			TitanOperationStatus status = titanDao.replaceEdgeLabel(owner.getVertex(), toscaElement.getVertex(), EdgeLabelEnum.STATE, EdgeLabelEnum.LAST_STATE);
+			if (status != TitanOperationStatus.OK) {
+				result = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
+			}
+			if (result == null) {
+				Map<EdgePropertyEnum, Object> properties = new EnumMap<>(EdgePropertyEnum.class);
+				properties.put(EdgePropertyEnum.STATE, LifecycleStateEnum.CERTIFIED);
+				status = titanDao.createEdge(modifier, toscaElement, EdgeLabelEnum.STATE, properties);
+				if (status != TitanOperationStatus.OK) {
+					CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "failed to create edge. Status is {}", status);
+					result = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
+				}
+			}
+			if (result == null) {
+				result = StorageOperationStatus.OK;
+			}
+			return result;
 	}
 }

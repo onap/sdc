@@ -4,7 +4,16 @@
 	<property scope="system" name="ECOMP-subcomponent-name" value="SDC-TOOL" />
 	<property name="default-log-pattern"
 		value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{uuid}|%X{serviceInstanceID}|%thread||${ECOMP-subcomponent-name}|%X{userId}|%level|%X{alarmSeverity}|%X{localAddr}|${beFqdn}|%X{remoteAddr}|%logger{35}|%X{timer}|ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
-	
+
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<encoder>
+				<pattern>${default-log-pattern}</pattern>
+			</encoder>
+		</layout>
+	</appender>
+
 	<appender name="DEBUG_ROLLING"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${HOME}/asdctool/logs/${ECOMP-component-name}/${ECOMP-subcomponent-name}/debug.log</file>
@@ -63,6 +72,10 @@
 	<logger name="org.openecomp.sdc" level="INFO" />
 	<logger name="org.openecomp.sdc.be.model.operations.migration" level="ERROR" >
 		<appender-ref ref="MALFORMED_DATA"/>
+	</logger>
+
+	<logger name="org.openecomp.sdc.asdctool.migration" level="INFO" >
+		<appender-ref ref="STDOUT"/>
 	</logger>
 
 </configuration>

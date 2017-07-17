@@ -231,10 +231,6 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void addPropertiesToVfcInstanceInVfTest() throws Exception {
 		
-		if(true){
-			throw new SkipException("Open bug 292047");			
-		}
-		
 		String fileName = "vFW_VFC.yml";
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 		

@@ -26,9 +26,7 @@ export enum UserRole {
     DESIGNER,
     TESTER,
     GOVERNOR,
-    OPS,
-    PRODUCT_MANAGER,
-    PRODUCT_STRATEGIST
+    OPS
 }
 
 export interface IUserManager {
@@ -98,12 +96,6 @@ export class User implements IUser {
                 break;
             case UserRole.OPS:
                 role = UserRole.OPS;
-                break;
-            case UserRole.PRODUCT_MANAGER:
-                role = UserRole.PRODUCT_MANAGER;
-                break;
-            case UserRole.PRODUCT_STRATEGIST:
-                role = UserRole.PRODUCT_STRATEGIST;
                 break;
         }
         return role;

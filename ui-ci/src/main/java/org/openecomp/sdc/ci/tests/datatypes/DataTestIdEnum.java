@@ -433,19 +433,19 @@ public final class DataTestIdEnum {
 	}
 
 	public enum StepsEnum {
-		GENERAL("Generalstep"), 
+		GENERAL("General"), 
 		ICON("Iconstep"), 
-		DEPLOYMENT_ARTIFACT("Deployment Artifactstep"), 
-		INFORMATION_ARTIFACT("Information Artifactstep"), 
-		PROPERTIES("Propertiesstep"), 
-		COMPOSITION("Compositionstep"), 
-		ACTIVITY_LOG("Activity Logstep"), 
-		DEPLOYMENT_VIEW("Deploymentstep"), 
-		TOSCA_ARTIFACTS("TOSCA Artifactsstep"), 
+		DEPLOYMENT_ARTIFACT("Deployment Artifact"), 
+		INFORMATION_ARTIFACT("Information Artifact"), 
+		PROPERTIES("Properties"), 
+		COMPOSITION("Composition"), 
+		ACTIVITY_LOG("Activity Log"), 
+		DEPLOYMENT_VIEW("Deployment"), 
+		TOSCA_ARTIFACTS("TOSCA Artifacts"), 
 		MONITOR("Monitor step"), 
-		MANAGEMENT_WORKFLOW("Management Workflowstep"), 
-		INPUTS("Inputsstep"), 
-		HIERARCHY("Hierarchystep");
+		MANAGEMENT_WORKFLOW("Management Workflow"), 
+		INPUTS("Inputs"), 
+		HIERARCHY("Hierarchy");
 
 		private String value;
 

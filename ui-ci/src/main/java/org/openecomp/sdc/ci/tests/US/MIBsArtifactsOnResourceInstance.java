@@ -78,10 +78,6 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
 		setLog("mibsArtifactCRUDUi");
 		String filePath = FileHandling.getFilePath(folder);
 		
-		if(true){
-			throw new SkipException("Open bug 197101");			
-		}
-		
 		// import Resource
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(resourceTypeEnum, getUser());
 		ResourceUIUtils.importVfc(resourceMetaData, filePath, fileName, getUser());

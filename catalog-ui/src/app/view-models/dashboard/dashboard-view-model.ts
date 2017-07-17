@@ -310,6 +310,13 @@ export class DashboardViewModel {
 
         };
 
+        this.$scope.createPNF = ():void => {
+            this.$state.go('workspace.general', {
+                type: ComponentType.RESOURCE.toLowerCase(),
+                resourceType: ResourceType.PNF
+            });
+        };
+
         this.$scope.entitiesCount = (folderItem:FoldersItemsMenu):any => {
             let self = this;
             let total:number = 0;

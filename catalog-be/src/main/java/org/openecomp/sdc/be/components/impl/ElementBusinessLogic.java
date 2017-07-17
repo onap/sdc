@@ -20,19 +20,10 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import com.thinkaurelius.titan.core.TitanGraph;
+import fj.data.Either;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -47,24 +38,10 @@ import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
 import org.openecomp.sdc.be.datamodel.utils.NodeTypeConvertUtils;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
+import org.openecomp.sdc.be.datatypes.enums.*;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactType;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Product;
-import org.openecomp.sdc.be.model.PropertyScope;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.ResourceMetadataDefinition;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.Tag;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
@@ -87,9 +64,10 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-
-import fj.data.Either;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("elementsBusinessLogic")
 public class ElementBusinessLogic extends BaseBusinessLogic {
@@ -1003,16 +981,16 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		return elementOperation.getDefaultHeatTimeout();
 	}
 
-	public Either<Map<String, List<? extends Component>>, ResponseFormat> getCatalogComponents(String userId) {
+	public Either<Map<String, List<? extends Component>>, ResponseFormat> getCatalogComponents(String userId, List<OriginTypeEnum> excludeTypes) {
 		Either<User, ResponseFormat> resp = validateUserExists(userId, "get Catalog Components", false);
 		if (resp.isRight()) {
 			return Either.right(resp.right().value());
 		}
 		Map<String, List<? extends Component>> resMap = new HashMap<>();
 
-		Either<List<Resource>, StorageOperationStatus> resResources = toscaOperationFacade.getCatalogComponents(ComponentTypeEnum.RESOURCE, true);
+		Either<List<Resource>, StorageOperationStatus> resResources = toscaOperationFacade.getCatalogComponents(ComponentTypeEnum.RESOURCE,excludeTypes, true);
 		if (resResources.isLeft()) {
-			Either<List<Service>, StorageOperationStatus> resServices = toscaOperationFacade.getCatalogComponents(ComponentTypeEnum.SERVICE, true);
+			Either<List<Service>, StorageOperationStatus> resServices = toscaOperationFacade.getCatalogComponents(ComponentTypeEnum.SERVICE,excludeTypes, true);
 			if (resServices.isLeft()) {
 				// Either<List<Product>, StorageOperationStatus> resProducts = productOperation.getProductCatalogData(false);
 				// if (resProducts.isLeft()) {
@@ -1041,7 +1019,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		}
 
 		if (filters == null || filters.isEmpty()) {
-			Either<List<Component>, StorageOperationStatus> componentsList = toscaOperationFacade.getCatalogComponents(assetTypeEnum, false);
+			Either<List<Component>, StorageOperationStatus> componentsList = toscaOperationFacade.getCatalogComponents(assetTypeEnum,null, false);
 			if(componentsList.isRight()) {
 				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(componentsList.right().value())));
 			}
@@ -1134,15 +1112,15 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 			log.debug("getCatalogComponentsByUuidAndAssetType: Corresponding ComponentTypeEnum not allowed for this API");
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
 		}
-		
+
 		Either<List<Component>, StorageOperationStatus> componentsListByUuid = toscaOperationFacade.getComponentListByUuid(uuid, additionalPropertiesToMatch);
 		if(componentsListByUuid.isRight()) {
-			log.debug("getCatalogComponentsByUuidAndAssetType: Service fetching failed");
-			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(componentsListByUuid.right().value(), ComponentTypeEnum.SERVICE);
+			log.debug("getCatalogComponentsByUuidAndAssetType: " + assetTypeEnum.getValue()+ " fetching failed");
+			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(componentsListByUuid.right().value(), assetTypeEnum);
 			return Either.right(componentsUtils.getResponseFormat(actionStatus, uuid));
 		}
-		
-		log.debug("getCatalogComponentsByUuidAndAssetType: " + assetTypeEnum.getValue() + "Service fetching successful");
+
+		log.debug("getCatalogComponentsByUuidAndAssetType: " + assetTypeEnum.getValue() + assetTypeEnum.getValue() + "fetching successful");
 		return Either.left(componentsListByUuid.left().value());
 	}
 

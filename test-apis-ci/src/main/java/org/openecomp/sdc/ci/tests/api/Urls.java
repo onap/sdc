@@ -117,19 +117,19 @@ public interface Urls {
 
 	// *****************************************ECOMP User
 	// URL's*****************************************************
-	final String ECOMP_PUSH_USER = "http://%s:%s/api/user";
+	final String ECOMP_PUSH_USER = "http://%s:%s/api/v2/user";
 
-	final String ECOMP_EDIT_USER = "http://%s:%s/api/user/%s";
+	final String ECOMP_EDIT_USER = "http://%s:%s/api/v2/user/%s";
 
-	final String ECOMP_GET_USER = "http://%s:%s/api/user/%s";
+	final String ECOMP_GET_USER = "http://%s:%s/api/v2/user/%s";
 
-	final String ECOMP_GET_ALL_USERS = "http://%s:%s/api/users";
+	final String ECOMP_GET_ALL_USERS = "http://%s:%s/api/v2/users";
 
-	final String ECOMP_GET_ALL_AVAILABLE_ROLES = "http://%s:%s/api/roles";
+	final String ECOMP_GET_ALL_AVAILABLE_ROLES = "http://%s:%s/api/v2/roles";
 
-	final String ECOMP_PUSH_USER_ROLES = "http://%s:%s/api/user/%s/roles";
+	final String ECOMP_PUSH_USER_ROLES = "http://%s:%s/api/v2/user/%s/roles";
 
-	final String ECOMP_GET_USER_ROLES = "http://%s:%s/api/user/%s/roles";
+	final String ECOMP_GET_USER_ROLES = "http://%s:%s/api/v2/user/%s/roles";
 
 	// *****************************************Elements*************************************************************
 	final String GET_TAGS_LIST = "http://%s:%s/sdc2/rest/v1/tags";

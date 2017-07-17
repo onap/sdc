@@ -56,13 +56,12 @@ import {OnboardingModalViewModel} from "../view-models/modals/onboarding-modal/o
 import {DistributionStatusModalViewModel} from "../view-models/workspace/tabs/distribution/disribution-status-modal/disribution-status-modal-view-model";
 import {DcaeAppViewModel} from "../view-models/dcae-app/dcae-app-view-model";
 import {GeneralViewModel} from "../view-models/workspace/tabs/general/general-view-model";
-import {IconsViewModel} from "../view-models/workspace/tabs/icons/icons-view-model";
+import {IconsModalViewModel} from "../view-models/modals/icons-modal/icons-modal-view";
 import {DeploymentArtifactsViewModel} from "../view-models/workspace/tabs/deployment-artifacts/deployment-artifacts-view-model";
 import {InformationArtifactsViewModel} from "../view-models/workspace/tabs/information-artifacts/information-artifacts-view-model";
 import {ToscaArtifactsViewModel} from "../view-models/workspace/tabs/tosca-artifacts/tosca-artifacts-view-model";
 import {PropertiesViewModel} from "../view-models/workspace/tabs/properties/properties-view-model";
 import {AttributesViewModel} from "../view-models/workspace/tabs/attributes/attributes-view-model";
-import {ProductHierarchyViewModel} from "../view-models/workspace/tabs/product-hierarchy/product-hierarchy-view-model";
 import {ActivityLogViewModel} from "../view-models/workspace/tabs/activity-log/activity-log";
 import {ManagementWorkflowViewModel} from "../view-models/workspace/tabs/management-workflow/management-workflow-view-model";
 import {NetworkCallFlowViewModel} from "../view-models/workspace/tabs/network-call-flow/network-call-flow-view-model";
@@ -114,6 +113,7 @@ viewModelModule
   .controller(moduleName + '.UserManagementViewModel', UserManagementViewModel)
   .controller(moduleName + '.CategoryManagementViewModel', CategoryManagementViewModel)
   .controller(moduleName + '.OnboardingModalViewModel', OnboardingModalViewModel)
+  .controller(moduleName + '.IconsModalViewModel', IconsModalViewModel)
   .controller(moduleName + '.DistributionStatusModalViewModel', DistributionStatusModalViewModel)
   .controller(moduleName + '.DcaeAppViewModel', DcaeAppViewModel)
   //
@@ -122,13 +122,11 @@ viewModelModule
   .controller(moduleName + '.ConformanceLevelModalViewModel', ConformanceLevelModalViewModel)
   .controller(moduleName + '.CompositionViewModel', CompositionViewModel)
   .controller(moduleName + '.GeneralViewModel', GeneralViewModel)
-  .controller(moduleName + '.IconsViewModel', IconsViewModel)
   .controller(moduleName + '.DeploymentArtifactsViewModel', DeploymentArtifactsViewModel)
   .controller(moduleName + '.InformationArtifactsViewModel', InformationArtifactsViewModel)
   .controller(moduleName + '.ToscaArtifactsViewModel', ToscaArtifactsViewModel)
   .controller(moduleName + '.PropertiesViewModel', PropertiesViewModel)
   .controller(moduleName + '.AttributesViewModel', AttributesViewModel)
-  .controller(moduleName + '.ProductHierarchyViewModel', ProductHierarchyViewModel)
   .controller(moduleName + '.ActivityLogViewModel', ActivityLogViewModel)
   .controller(moduleName + '.ManagementWorkflowViewModel', ManagementWorkflowViewModel)
   .controller(moduleName + '.NetworkCallFlowViewModel', NetworkCallFlowViewModel)

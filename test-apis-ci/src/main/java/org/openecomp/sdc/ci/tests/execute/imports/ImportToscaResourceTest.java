@@ -1816,8 +1816,8 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		importReqDetailsFather.compareRequirementsOrCapabilities(capabilities, capabilitiesFromResponse);
 	}
 
-	// DE202329
-	@Test(enabled = false)
+	// DE202329 - TDP -154379 
+	@Test(enabled = true)
 	public void requirementWithMissingTypeTest() throws Exception {
 		String fatherName = "father";
 		String fatherFileName = "DerivedFromWebApplication_HasNoReqType.yml";

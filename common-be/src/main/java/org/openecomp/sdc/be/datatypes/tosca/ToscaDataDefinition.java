@@ -100,4 +100,8 @@ public abstract class ToscaDataDefinition {
 		return null == dataList? new HashMap<>() : dataList.stream()
 		.collect(Collectors.toMap(p -> (String)p.getToscaPresentationValue(JsonPresentationFields.NAME), p -> p));
 	}
+
+	public boolean findUidMatch(String uid){
+		return uid.equals(getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID));
+	}
 }

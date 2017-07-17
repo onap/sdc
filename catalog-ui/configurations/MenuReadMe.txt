@@ -8,8 +8,6 @@ Supported roles:
 -----------------------------
 ADMIN
 DESIGNER
-PRODUCT_STRATEGIST
-PRODUCT_MANAGER
 TESTER
 OPS
 GOVERNOR

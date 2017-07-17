@@ -181,6 +181,27 @@ public class ArtifactsOperations extends BaseOperation {
 		return Either.left(resMap);
 	}
 
+	/**
+	 *
+	 * @param parentId the id of the instance container
+	 * @param instanceId the id of the instance of which to return its artifacts
+	 * @return instance and instance deployment artifacts mapped by artifact label name
+	 */
+	public Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getAllInstanceArtifacts(String parentId, String instanceId) {
+		Map<String, ArtifactDataDefinition> resMap = new HashMap<>();
+		Either<Map<String, ArtifactDataDefinition>, TitanOperationStatus> instArtifacts = getInstanceArtifactsByLabel(parentId, instanceId, EdgeLabelEnum.INSTANCE_ARTIFACTS);
+		if (instArtifacts.isRight()) {
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(instArtifacts.right().value()));
+		}
+		Either<Map<String, ArtifactDataDefinition>, TitanOperationStatus> deployInstArtifacts = getInstanceArtifactsByLabel(parentId, instanceId, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS);
+		if (deployInstArtifacts.isRight()) {
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(deployInstArtifacts.right().value()));
+		}
+		resMap.putAll(instArtifacts.left().value());
+		resMap.putAll(deployInstArtifacts.left().value());
+		return Either.left(convertArtifactMapToArtifactDefinitionMap(resMap));
+	}
+
 	public Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getArtifacts(String parentId) {
 
 		Either<Map<String, ArtifactDefinition>, TitanOperationStatus> foundArtifact = null;
@@ -384,36 +405,36 @@ public class ArtifactsOperations extends BaseOperation {
 	}
 
 	private Either<Map<String, ArtifactDefinition>, TitanOperationStatus> getArtifactByLabel(String parentId, String instanceId, EdgeLabelEnum edgeLabelEnum) {
-
-		Map<String, ArtifactDefinition> artMap = null;
-		Map<String, ArtifactDataDefinition> artifactDataMap = null;
-
-		if (edgeLabelEnum != EdgeLabelEnum.INSTANCE_ARTIFACTS) {
-			Either<Map<String, ArtifactDataDefinition>, TitanOperationStatus> resultEither = getDataFromGraph(parentId, edgeLabelEnum);
-			if (resultEither.isRight()) {
-				log.debug("failed to fetch {} for tosca element with id {}, error {}", edgeLabelEnum, parentId, resultEither.right().value());
-				return Either.right(resultEither.right().value());
-			}
-			artifactDataMap = resultEither.left().value();
-		} else {
-			Either<Map<String, MapArtifactDataDefinition>, TitanOperationStatus> resultEither = getDataFromGraph(parentId, edgeLabelEnum);
-			if (resultEither.isRight()) {
-				log.debug("failed to fetch {} for tosca element with id {}, error {}", edgeLabelEnum, parentId, resultEither.right().value());
-				return Either.right(resultEither.right().value());
-			}
-			Map<String, MapArtifactDataDefinition> mapArtifacts = resultEither.left().value();
-			MapArtifactDataDefinition artifactPerInstance = mapArtifacts.get(instanceId);
-			if (artifactPerInstance != null) {
-				artifactDataMap = artifactPerInstance.getMapToscaDataDefinition();
-			}
+		Either<Map<String, ArtifactDataDefinition>, TitanOperationStatus> artifactsEither = getArtifactsDataByLabel(parentId, instanceId, edgeLabelEnum);
+		if (artifactsEither.isRight()) {
+			log.debug("failed to fetch {} for tosca element with id {}, error {}", edgeLabelEnum, parentId, artifactsEither.right().value());
+			return Either.right(artifactsEither.right().value());
 		}
+		Map<String, ArtifactDataDefinition> artifactDataMap = artifactsEither.left().value();
+		return Either.left(convertArtifactMapToArtifactDefinitionMap(artifactDataMap));
+	}
+
+	private Either<Map<String, ArtifactDataDefinition>, TitanOperationStatus> getArtifactsDataByLabel(String parentId, String instanceId, EdgeLabelEnum edgeLabelEnum) {
+		return edgeLabelEnum.isInstanceArtifactsLabel() ? getInstanceArtifactsByLabel(parentId, instanceId, edgeLabelEnum) : getDataFromGraph(parentId, edgeLabelEnum);
+	}
+
+	private Map<String, ArtifactDefinition> convertArtifactMapToArtifactDefinitionMap(Map<String, ArtifactDataDefinition> artifactDataMap) {
+		Map<String, ArtifactDefinition> artMap = new HashMap<>();
 		if (artifactDataMap != null && !artifactDataMap.isEmpty()) {
-			artMap = artifactDataMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> convertArtifactDataToArtifactDefinition(null, e.getValue())));
-		} else {
-			artMap = new HashMap<>();
+			artMap = artifactDataMap.entrySet().stream().collect(Collectors.toMap(Entry::getKey, e -> convertArtifactDataToArtifactDefinition(null, e.getValue())));
 		}
-		return Either.left(artMap);
+		return artMap;
+	}
 
+	private Either<Map<String, ArtifactDataDefinition>, TitanOperationStatus>  getInstanceArtifactsByLabel(String parentId, String instanceId, EdgeLabelEnum edgeLabelEnum) {
+		Either<Map<String, MapArtifactDataDefinition>, TitanOperationStatus> resultEither = getDataFromGraph(parentId, edgeLabelEnum);
+		if (resultEither.isRight()) {
+			log.debug("failed to fetch {} for tosca element with id {}, error {}", edgeLabelEnum, parentId, resultEither.right().value());
+			return Either.right(resultEither.right().value());
+		}
+		Map<String, MapArtifactDataDefinition> mapArtifacts = resultEither.left().value();
+		MapArtifactDataDefinition artifactPerInstance = mapArtifacts.get(instanceId);
+		return artifactPerInstance != null ? Either.left(artifactPerInstance.getMapToscaDataDefinition()) : Either.left(new HashMap<>());
 	}
 
 	private Triple<EdgeLabelEnum, Boolean, VertexTypeEnum> getEdgeLabelEnumFromArtifactGroupType(ArtifactGroupTypeEnum groupType, NodeTypeEnum nodeType) {

@@ -22,7 +22,7 @@ beProtocol: http
 beSslPort: <%= @ssl_port %>
 version: 1.0
 released: 2012-11-30
-toscaConformanceLevel: 3.0
+toscaConformanceLevel: 4.0
 minToscaConformanceLevel: 3.0
 
 titanCfgFile: <%= @titan_Path %>/titan.properties
@@ -67,7 +67,7 @@ users:
 
 cassandraConfig:
     cassandraHosts: [<%= @cassandra_ip %>]
-    localDataCenter:
+    localDataCenter: <%= @dc1 %>
     reconnectTimeout : 30000
     authenticate: true
     username: asdc_user
@@ -80,6 +80,8 @@ cassandraConfig:
         - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
         - { name: sdcartifact, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
         - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
+        - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @dc1 %>', '<%= @rep_factor %>']}
+        - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @dc1 %>', '<%= @rep_factor %>', '<%= @dc2 %>', '<%= @rep_factor %>']}
 
 #Application-specific settings of ES
 elasticSearch:
@@ -140,6 +142,7 @@ resourceTypes: &allResourceTypes
   - VF
   - VFCMT
   - Abstract
+  - CVFC
 
 # validForResourceTypes usage
 #     validForResourceTypes:
@@ -176,6 +179,8 @@ toscaArtifacts:
 #Informational artifacts placeHolder
 excludeResourceCategory:
   - Generic
+excludeResourceType:
+  - PNF
 informationalResourceArtifacts:
   features:
       displayName: Features
@@ -484,7 +489,15 @@ resourceInformationalArtifacts:
         validForResourceTypes: *allResourceTypes
     OTHER:
         acceptedTypes:
-        validForResourceTypes: *allResourceTypes
+        validForResourceTypes: 
+            - VFC
+            - CVFC
+            - CP
+            - VL
+            - VF
+            - VFCMT
+            - Abstract
+            - PNF
     SNMP_POLL:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
@@ -496,6 +509,7 @@ resourceInformationalArtifacts:
         validForResourceTypes:
             - VF
             - VFC
+            - CVFC
 
 resourceInformationalDeployedArtifacts:
 
@@ -525,6 +539,7 @@ onboarding:
     host: <%= @host_ip %>
     port: <%= @catalog_port %>
     downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
+    healthCheckUri: "/onboarding-api/v1.0/healthcheck"
 
 
 # #GSS IDNS
@@ -584,6 +599,8 @@ vfModuleProperties:
 
 genericAssetNodeTypes:
   VFC: org.openecomp.resource.abstract.nodes.VFC
+  CVFC: org.openecomp.resource.abstract.nodes.VFC
   VF : org.openecomp.resource.abstract.nodes.VF
+  PNF: org.openecomp.resource.abstract.nodes.PNF
   Service: org.openecomp.resource.abstract.nodes.service
 

@@ -60,6 +60,7 @@ import org.openecomp.sdc.ci.tests.datatypes.ResourceRespJavaObject;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.google.gson.Gson;

@@ -117,8 +117,8 @@ public class ModelConverter {
 		return vertexType;
 	}
 
-	private static boolean isAtomicComponent(ResourceTypeEnum resourceType) {
-		if (resourceType == null || resourceType == ResourceTypeEnum.VF)
+	public static boolean isAtomicComponent(ResourceTypeEnum resourceType) {
+		if (resourceType == null || resourceType == ResourceTypeEnum.VF || resourceType == ResourceTypeEnum.PNF || resourceType == ResourceTypeEnum.CVFC)
 			return false;
 		return true;
 	}
@@ -302,7 +302,7 @@ public class ModelConverter {
 		relationshipPair.setId(relation.getUniqueId());
 
 		relationshipPair.setCapabilityOwnerId(relation.getCapabilityOwnerId());
-		relationshipPair.setCapabilityUid(relation.getCapabiltyId());
+		relationshipPair.setCapabilityUid(relation.getCapabilityId());
 		relationshipPair.setRequirementOwnerId(relation.getRequirementOwnerId());
 		relationshipPair.setRequirementUid(relation.getRequirementId());
 		relationshipPair.setRequirement(relation.getRequirement());
@@ -326,7 +326,7 @@ public class ModelConverter {
 			requirementCapabilityRelDef.setToId(relation.getToNode());
 			requirementCapabilityRelDef.setUniqueId(p.getId());
 			requirementCapabilityRelDef.setCapabilityOwnerId(p.getCapabilityOwnerId());
-			requirementCapabilityRelDef.setCapabiltyId(p.getCapabilityUid());
+			requirementCapabilityRelDef.setCapabilityId(p.getCapabilityUid());
 			requirementCapabilityRelDef.setRequirementOwnerId(p.getRequirementOwnerId());
 			requirementCapabilityRelDef.setRequirementId(p.getRequirementUid());
 			requirementCapabilityRelDef.setRequirement(p.getRequirement());
@@ -518,6 +518,24 @@ public class ModelConverter {
 			resource.setToscaResourceName((String) toscaElement.getMetadataValue(JsonPresentationFields.TOSCA_RESOURCE_NAME));
 			resource.setVendorName((String) toscaElement.getMetadataValue(JsonPresentationFields.VENDOR_NAME));
 			resource.setVendorRelease((String) toscaElement.getMetadataValue(JsonPresentationFields.VENDOR_RELEASE));
+			// field isn't mandatory , but shouldn't be null(should be an empty string instead)
+			if (((String) toscaElement.getMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER)) != null){
+				resource.setResourceVendorModelNumber(((String) toscaElement.getMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER)));
+			} else {
+				resource.setResourceVendorModelNumber("");
+			}
+		} else if (component.getComponentType() == ComponentTypeEnum.SERVICE) {
+			Service service = (Service) component;
+			if (((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_TYPE)) != null){
+				service.setServiceType(((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_TYPE)));
+			} else {
+				service.setServiceType("");
+			}
+			if (((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_ROLE)) != null){
+				service.setServiceRole(((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_ROLE)));
+			} else {
+				service.setServiceRole("");
+			}
 		}
 		component.setConformanceLevel((String) toscaElement.getMetadataValue(JsonPresentationFields.CONFORMANCE_LEVEL));
 		component.setIcon((String) toscaElement.getMetadataValue(JsonPresentationFields.ICON));
@@ -945,6 +963,24 @@ public class ModelConverter {
 			toscaElement.setMetadataValue(JsonPresentationFields.TOSCA_RESOURCE_NAME, ((Resource) component).getToscaResourceName());
 			toscaElement.setMetadataValue(JsonPresentationFields.VENDOR_NAME, ((Resource) component).getVendorName());
 			toscaElement.setMetadataValue(JsonPresentationFields.VENDOR_RELEASE, ((Resource) component).getVendorRelease());
+			// field isn't mandatory , but shouldn't be null(should be an empty string instead)
+			if (((Resource) component).getResourceVendorModelNumber() != null){
+				toscaElement.setMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER, ((Resource) component).getResourceVendorModelNumber());
+			} else {
+				toscaElement.setMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER, "");
+			}
+		} else if (component.getComponentType() == ComponentTypeEnum.SERVICE) {
+			// field isn't mandatory , but shouldn't be null(should be an empty string instead)
+			if (((Service) component).getServiceType() != null){
+				toscaElement.setMetadataValue(JsonPresentationFields.SERVICE_TYPE, ((Service) component).getServiceType());
+			} else {
+				toscaElement.setMetadataValue(JsonPresentationFields.SERVICE_TYPE, "");
+			}
+			if (((Service) component).getServiceRole() != null){
+				toscaElement.setMetadataValue(JsonPresentationFields.SERVICE_ROLE, ((Service) component).getServiceRole());
+			} else {
+				toscaElement.setMetadataValue(JsonPresentationFields.SERVICE_ROLE, "");
+			}
 		}
 		toscaElement.setMetadataValue(JsonPresentationFields.CONFORMANCE_LEVEL, component.getConformanceLevel());
 		toscaElement.setMetadataValue(JsonPresentationFields.IS_DELETED, component.getIsDeleted());
@@ -955,7 +991,7 @@ public class ModelConverter {
 		toscaElement.setMetadataValue(JsonPresentationFields.CONTACT_ID, component.getContactId());
 	}
 
-	private static boolean isAtomicComponent(Component component) {
+	public static boolean isAtomicComponent(Component component) {
 		ComponentTypeEnum componentType = component.getComponentType();
 		if (!componentType.equals(ComponentTypeEnum.RESOURCE)) {
 			return false;

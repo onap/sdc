@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewContainerRef } from '@angular/core';
 import { AuthenticationService } from './services/authentication.service';
 
 @Component({
@@ -28,7 +28,7 @@ import { AuthenticationService } from './services/authentication.service';
 })
 export class AppComponent {
 
-  constructor(auth:AuthenticationService){
+  constructor(auth:AuthenticationService, public viewContainerRef:ViewContainerRef){
 
   }
 

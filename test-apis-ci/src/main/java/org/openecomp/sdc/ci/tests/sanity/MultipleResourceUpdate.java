@@ -86,7 +86,7 @@ public class MultipleResourceUpdate extends ComponentBaseTest {
 		ComponentInstance instanceCP2 = AtomicOperationUtils
 				.addComponentInstanceToComponentContainer(cp2, vf, UserRoleEnum.DESIGNER, true).left().value();
 
-		vf = (Resource) AtomicOperationUtils.getCompoenntObject(vf, UserRoleEnum.DESIGNER);
+		vf = (Resource) AtomicOperationUtils.getComponentObject(vf, UserRoleEnum.DESIGNER);
 
 		// Create Vertex(Link/Associate 2 Resource Instances on Canvas)
 		AtomicOperationUtils.associate2ResourceInstances(vf, instanceCP1, instanceVL, AssocType.LINKABLE.getAssocType(),

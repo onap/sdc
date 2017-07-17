@@ -271,4 +271,9 @@ public class Migration1707Config {
     	return new NodeTemplateMissingDataResolver<>();
     }
 
+    @Bean(name = "migration1707MissingInfoFix")
+    public Migration1707MissingInfoFix migration1707MissingInfoFix() {
+        return new Migration1707MissingInfoFix();
+    }
+
 }

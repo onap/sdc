@@ -21,8 +21,7 @@
 package org.openecomp.sdc.ci.tests.utils.rest;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
@@ -50,6 +49,15 @@ public class CatalogRestUtils extends BaseRestUtils {
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.GET_CATALOG_DATA, config.getCatalogBeHost(), config.getCatalogBePort());
 		return sendGet(url, userId);
+	}
+
+	public static RestResponse getCatalog(String userId, List<String> excludeList) throws IOException {
+		Config config = Utils.getConfig();
+		String url = String.format(Urls.GET_CATALOG_DATA, config.getCatalogBeHost(), config.getCatalogBePort());
+		StringBuilder sb = new StringBuilder();
+		sb.append(url).append("?");
+		Optional.ofNullable(excludeList).orElse(Collections.emptyList()).forEach(type -> sb.append("excludeTypes="+type+"&"));
+		return sendGet(sb.toString(), userId);
 	}
 
 	public static RestResponse getAllCategoriesTowardsCatalogBe() throws IOException {

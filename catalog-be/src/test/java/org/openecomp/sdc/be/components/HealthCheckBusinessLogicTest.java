@@ -23,11 +23,22 @@ package org.openecomp.sdc.be.components;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.HealthCheckBusinessLogic;
+import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils;
+import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
+import org.openecomp.sdc.be.resources.data.UserData;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckComponent;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
+
+import com.datastax.driver.core.Cluster;
+
+import fj.data.Either;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -35,7 +46,7 @@ import static org.junit.Assert.assertFalse;
 public class HealthCheckBusinessLogicTest {
 
 	HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic();
-
+	
 	@Test
 	public void checkStausUpdated() {
 
@@ -51,18 +62,13 @@ public class HealthCheckBusinessLogicTest {
 		HealthCheckInfo checkInfoTitanUp = new HealthCheckInfo(HealthCheckComponent.TITAN, HealthCheckStatus.UP, null, null);
 		HealthCheckInfo checkInfoTitanDown = new HealthCheckInfo(HealthCheckComponent.TITAN, HealthCheckStatus.DOWN, null, null);
 
-		HealthCheckInfo checkInfoEsUp = new HealthCheckInfo(HealthCheckComponent.ES, HealthCheckStatus.UP, null, null);
-		HealthCheckInfo checkInfoEsDown = new HealthCheckInfo(HealthCheckComponent.ES, HealthCheckStatus.DOWN, null, null);
-
 		/*
 		 * HealthCheckInfo checkInfoUebUp = new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.UP, null, null); HealthCheckInfo checkInfoUebDown = new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.DOWN, null, null);
 		 */
 
 		checkInfosLeft.add(checkInfoTitanUp);
-		checkInfosLeft.add(checkInfoEsUp);
 
 		checkInfosRight.add(checkInfoTitanUp);
-		checkInfosRight.add(checkInfoEsUp);
 
 		statusChanged = healthCheckBusinessLogic.anyStatusChanged(checkInfosLeft, checkInfosRight);
 		assertFalse("check false", statusChanged);

@@ -1776,3 +1776,9 @@ errors:
         message: "Creation of %1 failed. Generic type %2 was not found",
         messageId: "SVC4660"
     }
+    #---------SVC4669-----------------------------
+    INVALID_RESOURCE_TYPE: {
+        code: 400,
+        message: "Error: Invalid resource type.",
+        messageId: "SVC4669"
+    }

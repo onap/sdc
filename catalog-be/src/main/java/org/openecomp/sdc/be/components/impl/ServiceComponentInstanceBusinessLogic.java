@@ -31,10 +31,6 @@ import fj.data.Either;
 @Component("serviceComponentInstanceBusinessLogic")
 public class ServiceComponentInstanceBusinessLogic extends ComponentInstanceBusinessLogic {
 
-	@Override
-	protected Either<Boolean, ResponseFormat> validateAllowedToContainCompInstances(org.openecomp.sdc.be.model.Component containerComponent) {
-		return Either.left(true);
-	}
 
 	@Override
 	protected NodeTypeEnum getNodeTypeOfComponentInstanceOrigin() {

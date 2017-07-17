@@ -170,6 +170,10 @@ export class PropertiesAssignmentComponent {
                 });
         }
 
+        if(resourceInstance.componentName === "vnfConfiguration") {
+            this.isReadonly = true;
+        }
+
         if( this.searchPropertyName ){
             this.clearSearch();
         }
@@ -298,7 +302,7 @@ export class PropertiesAssignmentComponent {
 
         angular.forEach(instancesIds, (instanceId: string): void => {
             let selectedInstanceData: ResourceInstance = this.instances.find(instance => instance.uniqueId == instanceId);
-            let originType: string = (selectedInstanceData) ? selectedInstanceData.originType : this.selectedInstanceType; 
+            let originType: string = (selectedInstanceData) ? selectedInstanceData.originType : this.selectedInstanceType;
             if (!this.isInput(originType)) {
                 selectedProperties[instanceId] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
             } else {
@@ -408,7 +412,7 @@ export class PropertiesAssignmentComponent {
     };
 
     private isInput = (instanceType:string):boolean =>{
-        return instanceType === ResourceType.VF || instanceType === ResourceType.PNF;
+        return instanceType === ResourceType.VF || instanceType === ResourceType.PNF || instanceType === ResourceType.CVFC;
     }
 
 }

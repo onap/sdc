@@ -19,7 +19,7 @@
  */
 
 'use strict';
-import {Product, Service, IApi, IAppConfigurtaion, Resource, Component} from "../models";
+import { Service, IApi, IAppConfigurtaion, Resource, Component} from "../models";
 import {SharingService} from "./sharing-service";
 import {ComponentFactory} from "../utils/component-factory";
 import {CacheService} from "./cache-service";
@@ -31,7 +31,6 @@ interface IEntityService {
 interface IComponentsArray {
     services:Array<Service>;
     resources:Array<Resource>;
-    products:Array<Product>;
 }
 
 export class EntityService implements IEntityService {
@@ -66,13 +65,6 @@ export class EntityService implements IEntityService {
                     this.sharingService.addUuidValue(component.uniqueId, component.uuid);
                 });
 
-                followedResponse.products.forEach((productResponse:Product) => {
-
-                    let component:Product = this.ComponentFactory.createProduct(productResponse);
-                    componentsList.push(component);
-                    this.sharingService.addUuidValue(component.uniqueId, component.uuid);
-                });
-
                 this.cacheService.set('breadcrumbsComponents', componentsList);
                 defer.resolve(componentsList);
             },(responce) => {
@@ -99,12 +91,7 @@ export class EntityService implements IEntityService {
                     componentsList.push(component);
                     this.sharingService.addUuidValue(component.uniqueId, component.uuid);
                 });
-
-                componentResponse.products && componentResponse.products.forEach((productsResponse:Product) => {
-                    let component:Product = this.ComponentFactory.createProduct(productsResponse);
-                    componentsList.push(component);
-                    this.sharingService.addUuidValue(component.uniqueId, component.uuid);
-                });
+                
                 this.cacheService.set('breadcrumbsComponents', componentsList);
                 defer.resolve(componentsList);
             });

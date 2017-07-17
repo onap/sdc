@@ -130,7 +130,7 @@ public class ResourceImportManagerTest {
 		testSetDerivedFrom(resource);
 		testSetProperties(resource);
 
-		Mockito.verify(resourceBusinessLogic, Mockito.times(1)).propagateStateToCertified(Mockito.eq(user), Mockito.eq(resource), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true));
+		Mockito.verify(resourceBusinessLogic, Mockito.times(1)).propagateStateToCertified(Mockito.eq(user), Mockito.eq(resource), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false));
 	}
 
 	@Test
@@ -159,7 +159,7 @@ public class ResourceImportManagerTest {
 
 		Mockito.verify(resourceBusinessLogic, Mockito.times(0)).createOrUpdateResourceByImport(Mockito.any(Resource.class), Mockito.eq(user), Mockito.eq(true), Mockito.eq(false), Mockito.eq(true));
 
-		Mockito.verify(resourceBusinessLogic, Mockito.times(0)).propagateStateToCertified(Mockito.eq(user), Mockito.any(Resource.class), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true));
+		Mockito.verify(resourceBusinessLogic, Mockito.times(0)).propagateStateToCertified(Mockito.eq(user), Mockito.any(Resource.class), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false));
 
 	}
 
@@ -181,7 +181,7 @@ public class ResourceImportManagerTest {
 		Resource resource = createResource.left().value().left;
 		testSetCapabilities(resource);
 
-		Mockito.verify(resourceBusinessLogic, Mockito.times(1)).propagateStateToCertified(Mockito.eq(user), Mockito.eq(resource), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true));
+		Mockito.verify(resourceBusinessLogic, Mockito.times(1)).propagateStateToCertified(Mockito.eq(user), Mockito.eq(resource), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false));
 		Mockito.verify(resourceBusinessLogic, Mockito.times(1)).createOrUpdateResourceByImport(resource, user, true, false, true);
 
 	}
@@ -215,7 +215,7 @@ public class ResourceImportManagerTest {
 
 					}
 				});
-		when(resourceBusinessLogic.propagateStateToCertified(Mockito.any(User.class), Mockito.any(Resource.class), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true)))
+		when(resourceBusinessLogic.propagateStateToCertified(Mockito.any(User.class), Mockito.any(Resource.class), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false)))
 				.thenAnswer(new Answer<Either<Resource, ResponseFormat>>() {
 					public Either<Resource, ResponseFormat> answer(InvocationOnMock invocation) throws Throwable {
 						Object[] args = invocation.getArguments();

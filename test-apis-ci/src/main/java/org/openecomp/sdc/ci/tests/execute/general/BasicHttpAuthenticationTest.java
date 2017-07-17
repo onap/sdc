@@ -238,7 +238,7 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 		assertTrue(restResponse.getHeaderFields().containsKey(WWW_AUTHENTICATE));
 		List<String> getAuthenticateHeader = restResponse.getHeaderFields().get(WWW_AUTHENTICATE);
 		assertEquals("www-authenticate header contains more then one value", 1, getAuthenticateHeader.size());
-		assertTrue(getAuthenticateHeader.get(0).equals("Basic realm=" + "\"ASDC\""));
+		assertTrue(getAuthenticateHeader.get(0).equals("Basic realm=" + "\"SDC\""));
 
 		validateAuditAuthentication("", AUTH_REQUIRED, ComponentTypeEnum.SERVICE);
 	}

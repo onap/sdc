@@ -22,14 +22,16 @@
 import {ModalsHandler, ValidationUtils, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, DEFAULT_ICON,
     ResourceType} from "app/utils";
 import {CacheService, EventListenerService, ProgressService} from "app/services";
-import {IAppConfigurtaion, Product, IValidate, IMainCategory, Resource, ISubCategory,Service} from "app/models";
+import {IAppConfigurtaion, IValidate, IMainCategory, Resource, ISubCategory,Service} from "app/models";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 
 export class Validation {
     componentNameValidationPattern:RegExp;
     contactIdValidationPattern:RegExp;
     tagValidationPattern:RegExp;
-    vendorValidationPattern:RegExp;
+    VendorReleaseValidationPattern:RegExp;
+    VendorNameValidationPattern:RegExp;
+    VendorModelNumberValidationPattern:RegExp;
     commentValidationPattern:RegExp;
     projectCodeValidationPattern:RegExp;
 }
@@ -63,6 +65,8 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     onEcompGeneratedNamingChange():void;
     openOnBoardingModal():void;
     initCategoreis():void;
+    updateIcon():void;
+    possibleToUpdateIcon():boolean;
 }
 
 export class GeneralViewModel {
@@ -73,7 +77,9 @@ export class GeneralViewModel {
         'ComponentNameValidationPattern',
         'ContactIdValidationPattern',
         'TagValidationPattern',
-        'VendorValidationPattern',
+        'VendorReleaseValidationPattern',
+        'VendorNameValidationPattern',
+        'VendorModelNumberValidationPattern',
         'CommentValidationPattern',
         'ValidationUtils',
         'sdcConfig',
@@ -93,7 +99,9 @@ export class GeneralViewModel {
                 private ComponentNameValidationPattern:RegExp,
                 private ContactIdValidationPattern:RegExp,
                 private TagValidationPattern:RegExp,
-                private VendorValidationPattern:RegExp,
+                private VendorReleaseValidationPattern:RegExp,
+                private VendorNameValidationPattern:RegExp,
+                private VendorModelNumberValidationPattern:RegExp,
                 private CommentValidationPattern:RegExp,
                 private ValidationUtils:ValidationUtils,
                 private sdcConfig:IAppConfigurtaion,
@@ -121,7 +129,9 @@ export class GeneralViewModel {
         this.$scope.validation.componentNameValidationPattern = this.ComponentNameValidationPattern;
         this.$scope.validation.contactIdValidationPattern = this.ContactIdValidationPattern;
         this.$scope.validation.tagValidationPattern = this.TagValidationPattern;
-        this.$scope.validation.vendorValidationPattern = this.VendorValidationPattern;
+        this.$scope.validation.VendorReleaseValidationPattern = this.VendorReleaseValidationPattern;
+        this.$scope.validation.VendorNameValidationPattern = this.VendorNameValidationPattern;
+        this.$scope.validation.VendorModelNumberValidationPattern = this.VendorModelNumberValidationPattern;
         this.$scope.validation.commentValidationPattern = this.CommentValidationPattern;
         this.$scope.validation.projectCodeValidationPattern = this.ProjectCodeValidationPattern;
     };
@@ -139,12 +149,6 @@ export class GeneralViewModel {
         this.$scope.progressService = this.progressService;
         this.$scope.componentCategories = new componentCategories();
         this.$scope.componentCategories.selectedCategory = this.$scope.component.selectedCategory;
-
-        // Workaround to short vendor name to 25 chars
-        // Amdocs send 27 chars, and the validation pattern is 25 chars.
-        if (this.$scope.component.vendorName) {
-            this.$scope.component.vendorName = this.$scope.component.vendorName.substr(0, 25);
-        }
 
         // Init UIModel
         this.$scope.component.tags = _.without(this.$scope.component.tags, this.$scope.component.name);
@@ -202,10 +206,7 @@ export class GeneralViewModel {
         };
 
         //TODO remove this after handling contact in UI
-        if (this.$scope.component.isProduct() && this.$scope.isCreateMode()) {
-            (<Product>this.$scope.component).contacts = [];
-            (<Product>this.$scope.component).contacts.push(this.cacheService.get("user").userId);
-        } else if (this.$scope.isCreateMode()) {
+        if (this.$scope.isCreateMode()) {
             this.$scope.component.contactId = this.cacheService.get("user").userId;
         }
 
@@ -272,6 +273,24 @@ export class GeneralViewModel {
                 // ERROR
             });
         };
+
+        this.$scope.updateIcon = ():void => {
+            this.ModalsHandler.openUpdateIconModal(this.$scope.component).then((isDirty:boolean)=> {
+                if(!this.$scope.isCreateMode()){
+                    this.$state.current.data.unsavedChanges = this.$state.current.data.unsavedChanges || isDirty;
+                }
+            }, ()=> {
+                // ERROR
+            });
+        };
+
+        this.$scope.possibleToUpdateIcon = ():boolean => {
+            if(this.$scope.componentCategories.selectedCategory && (!this.$scope.component.isResource() || this.$scope.component.vendorName)){
+                return true;
+            }else{
+                return false;
+            }
+        }
 
         this.$scope.validateName = (isInit:boolean):void => {
             if (isInit === undefined) {

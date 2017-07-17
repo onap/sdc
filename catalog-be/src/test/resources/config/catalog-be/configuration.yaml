@@ -5,8 +5,6 @@ identificationHeaderFields:
    - HTTP_IV_REMOTE_ADDRESS
    - HTTP_CSP_WSTYPE
 
-
-
 # catalog backend hostname
 beFqdn: sdccatalog.att.com
 
@@ -24,33 +22,71 @@ beSslPort: 8443
 
 version: 1.0
 released: 2012-11-30
-toscaConformanceLevel: 3.0
+toscaConformanceLevel: 4.0
+minToscaConformanceLevel: 3.0
 
 titanCfgFile: /home/vagrant/catalog-be/config/catalog-be/titan.properties
 titanInMemoryGraph: true
 titanLockTimeout: 600
+
+# The interval to try and reconnect to titan DB when it is down during ASDC startup:
 titanReconnectIntervalInSeconds: 3
+
+# The read timeout towards Titan DB when health check is invoked:
 titanHealthCheckReadTimeout: 1
+
+# The interval to try and reconnect to Elasticsearch when it is down during ASDC startup:
 esReconnectIntervalInSeconds: 3
 uebHealthCheckReconnectIntervalInSeconds: 15
 uebHealthCheckReadTimeout: 4
+
 
 # Protocols
 protocols:
    - http
    - https
 
+# Default imports
+defaultImports:
+   - nodes:
+        file: nodes.yml
+   - datatypes:
+        file: data.yml
+   - capabilities:
+        file: capabilities.yml
+   - relationships:
+        file: relationships.yml
+   - groups:
+        file: groups.yml
+   - policies:
+        file: policies.yml
+
 # Users
 users:
     tom: passwd
     bob: passwd
-    
+
 neo4j:
     host: neo4jhost
     port: 7474
     user: neo4j
     password: "12345"
-    
+
+cassandraConfig:
+    cassandraHosts: ['localhost']
+    localDataCenter:
+    reconnectTimeout : 30000
+    authenticate: false
+    username: koko
+    password: bobo
+    ssl: false
+    truststorePath : /path/path
+    truststorePassword : 123123
+    keySpaces:
+        - { name: sdcaudit, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+        - { name: sdcartifact, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+        - { name: sdccomponent, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+        - { name: sdcrepository, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
 
 #Application-specific settings of ES
 elasticSearch:
@@ -68,7 +104,7 @@ elasticSearch:
     # Legal values for creationPeriod - year, month, day, hour, minute, none (meaning no time-based behaviour).
     #
     # If no creationPeriod is configured for indexPrefix, default behavour is creationPeriod: month.
-
+    
     indicesTimeFrequency:
       - indexPrefix: auditingevents
         creationPeriod: month
@@ -110,7 +146,8 @@ resourceTypes: &allResourceTypes
   - VL
   - VF
   - VFCMT
- 
+  - Abstract
+
 # validForResourceTypes usage
 #     validForResourceTypes:
 #        - VF
@@ -128,14 +165,19 @@ deploymentResourceArtifacts:
 #      displayName: "Network HEAT Template"
 #      type: HEAT_NET
 #      validForResourceTypes: *allResourceTypes
-  
+
 deploymentResourceInstanceArtifacts:
   heatEnv:
       displayName: "HEAT ENV"
       type: HEAT_ENV
       description: "Auto-generated HEAT Environment deployment artifact"
       fileExtension: "env"
-      
+  VfHeatEnv:
+      displayName: "VF HEAT ENV"
+      type: HEAT_ENV
+      description: "VF Auto-generated HEAT Environment deployment artifact"
+      fileExtension: "env"
+
 #tosca artifacts placeholders
 toscaArtifacts:
   assetToscaTemplate:
@@ -149,9 +191,12 @@ toscaArtifacts:
       type: TOSCA_CSAR
       description: TOSCA definition package of the asset
 
+
 #Informational artifacts placeHolder
 excludeResourceCategory:
   - Generic
+excludeResourceType:
+  - PNF  
 informationalResourceArtifacts:
   features:
       displayName: Features
@@ -174,7 +219,7 @@ informationalResourceArtifacts:
   resourceSecurityTemplate:
       displayName: Resource Security Template
       type: OTHER
-            
+
 excludeServiceCategory:
 
 informationalServiceArtifacts:
@@ -217,7 +262,7 @@ informationalServiceArtifacts:
   serviceSecurityTemplate:
       displayName: Service Security Template
       type: OTHER
-      
+
 serviceApiArtifacts:
   configuration:
       displayName: Configuration
@@ -237,7 +282,6 @@ serviceApiArtifacts:
   testing:
       displayName: Testing
       type: OTHER
-
 
 additionalInformationMaxNumberOfKeys: 50
 
@@ -261,6 +305,7 @@ serviceDeploymentArtifacts:
     MODEL_QUERY_SPEC:
         acceptedTypes:
             - xml
+#AAI Artifacts
     AAI_SERVICE_MODEL:
         acceptedTypes:
             - xml
@@ -284,6 +329,11 @@ resourceDeploymentArtifacts:
             - yaml
             - yml
         validForResourceTypes: *allResourceTypes
+    HEAT_NET:
+        acceptedTypes:
+            - yaml
+            - yml
+        validForResourceTypes: *allResourceTypes
     HEAT_NESTED:
         acceptedTypes:
             - yaml
@@ -291,11 +341,6 @@ resourceDeploymentArtifacts:
         validForResourceTypes: *allResourceTypes
     HEAT_ARTIFACT:
         acceptedTypes:
-        validForResourceTypes: *allResourceTypes
-    HEAT_NET:
-        acceptedTypes:
-            - yaml
-            - yml
         validForResourceTypes: *allResourceTypes
     YANG_XML:
         acceptedTypes:
@@ -321,10 +366,55 @@ resourceDeploymentArtifacts:
         acceptedTypes:
             - xml
         validForResourceTypes: *allResourceTypes
+    LIFECYCLE_OPERATIONS:
+        acceptedTypes:
+            - yaml
+            - yml
+        validForResourceTypes:
+            - VF
+            - VFC
+    VES_EVENTS:
+        acceptedTypes:
+            - yaml
+            - yml
+        validForResourceTypes: *allResourceTypes
+    PERFORMANCE_COUNTER:
+        acceptedTypes:
+            - csv
+        validForResourceTypes: *allResourceTypes
     APPC_CONFIG:
         acceptedTypes:
         validForResourceTypes:
             - VF
+    DCAE_TOSCA:
+        acceptedTypes:
+            - yml
+            - yaml
+        validForResourceTypes:
+            - VF
+            - VFCMT
+    DCAE_JSON:
+        acceptedTypes:
+            - json
+        validForResourceTypes:
+            - VF
+            - VFCMT
+    DCAE_POLICY:
+        acceptedTypes:
+            - emf
+        validForResourceTypes:
+            - VF
+            - VFCMT
+    DCAE_DOC:
+        acceptedTypes:
+        validForResourceTypes:
+            - VF 
+            - VFCMT       
+    DCAE_EVENT:
+        acceptedTypes:
+        validForResourceTypes:
+            - VF
+            - VFCMT
     AAI_VF_MODEL:
         acceptedTypes:
             - xml
@@ -344,7 +434,7 @@ resourceDeploymentArtifacts:
     SNMP_TRAP:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
-        
+
 resourceInstanceDeploymentArtifacts:
     HEAT_ENV:
         acceptedTypes:
@@ -352,6 +442,29 @@ resourceInstanceDeploymentArtifacts:
     VF_MODULES_METADATA:
         acceptedTypes:
             - json
+    VES_EVENTS:
+        acceptedTypes:
+            - yaml
+            - yml
+    PERFORMANCE_COUNTER:
+        acceptedTypes:
+            - csv
+    DCAE_INVENTORY_TOSCA:
+        acceptedTypes:
+            - yml
+            - yaml
+    DCAE_INVENTORY_JSON:
+        acceptedTypes:
+            - json
+    DCAE_INVENTORY_POLICY:
+      acceptedTypes:
+            - emf
+    DCAE_INVENTORY_DOC:
+      acceptedTypes:
+    DCAE_INVENTORY_BLUEPRINT:
+      acceptedTypes:
+    DCAE_INVENTORY_EVENT:
+      acceptedTypes:
     SNMP_POLL:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
@@ -389,7 +502,14 @@ resourceInformationalArtifacts:
         validForResourceTypes: *allResourceTypes
     OTHER:
         acceptedTypes:
-        validForResourceTypes: *allResourceTypes
+        validForResourceTypes: 
+            - VFC
+            - CP
+            - VL
+            - VF
+            - VFCMT
+            - Abstract
+            - PNF
     SNMP_POLL:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
@@ -404,13 +524,10 @@ resourceInformationalArtifacts:
 
 resourceInformationalDeployedArtifacts:
 
-
 requirementsToFulfillBeforeCert:
-     CP:
-       - tosca.capabilities.network.Bindable
 
 capabilitiesToConsumeBeforeCert:
-            
+
 unLoggedUrls:
    - /sdc2/rest/healthCheck
 
@@ -422,23 +539,20 @@ cleanComponentsConfiguration:
 
 artifactsIndex: resources
 
-cassandraConfig:
-    cassandraHosts: ['localhost']
-    localDataCenter:
-    reconnectTimeout : 30000
-    authenticate: false
-    username: koko
-    password: bobo
-    ssl: false
-    truststorePath : /path/path
-    truststorePassword : 123123
-    keySpaces:
-        - { name: sdcaudit, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
-        - { name: sdcartifact, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
-       
+heatEnvArtifactHeader: ""
+heatEnvArtifactFooter: ""
+
+onboarding:
+    protocol: http
+    host: localhost
+    port: 8080
+    downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
+    healthCheckUri: "/onboarding-api/v1.0/healthcheck"
+
+
 switchoverDetector:
-    gBeFqdn: AIO-BE.ecomp.idns.com
-    gFeFqdn: AIO-FE.ecomp.idns.com
+    gBeFqdn: AIO-BE.ecomp.idns.cip.com
+    gFeFqdn: AIO-FE.ecomp.idns.cip.com
     beVip: 0.0.0.0
     feVip: 0.0.0.0
     beResolveAttempts: 3
@@ -454,25 +568,15 @@ switchoverDetector:
                changePriorityBody: '{"name":"AIO-BE.ecomp.idns.com","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.com","no_ad_redirection":false,"v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_be","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_be"],"failover_policy":["FAILALL"]},"comment":"AIO BE G-fqdn","intended_app_proto":"DNS"}'}
       feSet: { changePriorityUrl: "http://xxx.com/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.com?user=root",
                changePriorityBody: '{"comment":"AIO G-fqdn","name":"AIO-FE.ecomp.idns.com","v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_fe","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_fe"],"failover_policy":["FAILALL"]},"no_ad_redirection":false,"intended_app_proto":"DNS","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.com"}'}
-    
-       
-heatEnvArtifactHeader: ""
-heatEnvArtifactFooter: ""
-
-onboarding:
-    protocol: http
-    host: localhost
-    port: 8080
-    downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
 
 applicationL1Cache:
     datatypes:
-        enabled: true
+        enabled: false
         firstRunDelay: 10
         pollIntervalInSec: 60
 
 applicationL2Cache:
-    enabled: false
+    enabled: true
     catalogL1Cache:
         enabled: true
         resourcesSizeInCache: 300
@@ -482,8 +586,28 @@ applicationL2Cache:
         syncIntervalInSecondes: 60
         waitOnShutDownInMinutes: 30
         numberOfCacheWorkers: 4
+
+toscaValidators:
+    stringMaxLength: 2500
+
+disableAudit: false
+
+vfModuleProperties:
+    min_vf_module_instances:
+        forBaseModule: 1
+        forNonBaseModule: 0
+    max_vf_module_instances:
+        forBaseModule: 1
+        forNonBaseModule:
+    initial_count:
+        forBaseModule: 1
+        forNonBaseModule: 0
+    vf_module_type:
+        forBaseModule: Base
+        forNonBaseModule: Expansion
+
 genericAssetNodeTypes:
   VFC: org.openecomp.resource.abstract.nodes.VFC
   VF : org.openecomp.resource.abstract.nodes.VF
+  PNF: org.openecomp.resource.abstract.nodes.PNF
   Service: org.openecomp.resource.abstract.nodes.service
-        

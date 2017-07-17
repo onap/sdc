@@ -200,10 +200,8 @@
 
     "=========== NEW RESOURCE SERVICE ===========": "",
     "NEW_SERVICE_RESOURCE_WRAPPER_TAB_GENERAL_INFORMATION": "General Information",
-    "NEW_SERVICE_RESOURCE_WRAPPER_TAB_ASSIGN_PRODUCT_HIERARCHY": "Assign Product Hierarchy",
     "NEW_SERVICE_RESOURCE_WRAPPER_TAB_ADDITIONAL_INFO": "Additional Information",
     "NEW_SERVICE_RESOURCE_WRAPPER_TAB_BILLING_AND_ORDERING": "Order Attributes & Rules",
-    "NEW_SERVICE_RESOURCE_WRAPPER_TAB_PRODUCT_COMPOSITION": "Bill Attributes & Rules",
     "NEW_SERVICE_RESOURCE_SAVE_BUTTON": "Save",
     "NEW_SERVICE_RESOURCE_DONE_BUTTON": "Done",
 
@@ -226,9 +224,7 @@
     "NEW_SERVICE_RESOURCE_ERROR_SERVICE_ICON": "Icon required.",
     "NEW_SERVICE_RESOURCE_ERROR_RESOURCE_ICON": "Icon required.",
     "NEW_SERVICE_RESOURCE_ERROR_RESOURCE_NAME_REQUIRED": "Name is required.",
-    "NEW_SERVICE_RESOURCE_ERROR_PRODUCT_NAME_REQUIRED": "Name is required.",
     "NEW_SERVICE_RESOURCE_ERROR_RESOURCE_DESCRIPTION_REQUIRED": "Description is required.",
-    "NEW_SERVICE_RESOURCE_ERROR_PRODUCT_DESCRIPTION_REQUIRED": "Description is required.",
     "NEW_SERVICE_RESOURCE_ERROR_VENDOR_NAME_REQUIRED": "Vendor name is required.",
     "NEW_SERVICE_RESOURCE_ERROR_VENDOR_RELEASE_REQUIRED": "Vendor Release is required.",
     "NEW_SERVICE_RESOURCE_ERROR_TEMPLATE_REQUIRED": "Template is required.",
@@ -238,7 +234,6 @@
     "NEW_SERVICE_RESOURCE_ERROR_TOSCA_FILE_REQUIRED": "Tosca file is required.",
     "NEW_SERVICE_RESOURCE_ERROR_VALID_CSAR_EXTENSIONS_TITLE": "Invalid csar file",
     "NEW_SERVICE_RESOURCE_ERROR_VALID_CSAR_EXTENSIONS": "File extension should be {{extensions}}.",
-    "NEW_PRODUCT_NO_CATEGORIES_TO_DISPLAY": "Your product is not assigned to any group yet. <br> To select/find a group, begin typing above and select group to add",
 
     "=========== SUGGESTED ICONS TOOLTIP ===========": "",
     "call_controll": "Call Control",

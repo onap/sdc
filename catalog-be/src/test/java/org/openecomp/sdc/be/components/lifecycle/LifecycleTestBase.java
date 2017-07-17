@@ -50,6 +50,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
@@ -168,7 +169,8 @@ public class LifecycleTestBase {
 		resource.setVendorRelease("1.0.0");
 		resource.setContactId("yavivi");
 		resource.setIcon("MyIcon.jpg");
-
+		resource.setToscaType(ToscaElementTypeEnum.NodeType.getValue());
+		
 		return resource;
 	}
 	
@@ -191,6 +193,7 @@ public class LifecycleTestBase {
 		resource.setVendorRelease("1.0.0");
 		resource.setContactId("yavivi");
 		resource.setIcon("MyIcon.jpg");
+		resource.setToscaType(ToscaElementTypeEnum.NodeType.getValue());
 				
 		return resource;
 	}

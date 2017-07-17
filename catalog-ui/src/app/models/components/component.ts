@@ -22,7 +22,7 @@
 
 import {AsdcComment, ArtifactModel, ArtifactGroupModel, IFileDownload, PropertyModel, PropertiesGroup, AttributeModel, AttributesGroup, ComponentInstance,
     InputModel, DisplayModule, Module, IValidate, RelationshipModel, IMainCategory, RequirementsGroup, CapabilitiesGroup, AdditionalInformationModel,
-    Resource, IAppMenu, Product, Service} from "../../models";
+    Resource, IAppMenu, Service} from "../../models";
 
 import {IComponentService} from "../../services/components/component-service";
 import {CommonUtils} from "../../utils/common-utils";
@@ -92,7 +92,6 @@ export interface IComponent {
 
     getComponentSubType():string;
     isAlreadyCertified():boolean;
-    isProduct():boolean;
     isService():boolean;
     isResource():boolean;
     isComplex():boolean;
@@ -796,10 +795,6 @@ export abstract class Component implements IComponent {
     };
 
     //------------------------------------------ Help Functions ----------------------------------------------------------------//
-
-    public isProduct = ():boolean => {
-        return this instanceof Product;
-    };
 
     public isService = ():boolean => {
         return this instanceof Service;

@@ -1,0 +1,21 @@
+{
+  "payloadName": "multiFlavorVFC.yml",
+  "contactId": "jh0003",
+  "name": "multiFlavorVFC",
+  "description": "Represents a generic multi flavor VFC.",
+  "resourceIconPath": "defaulticon",
+  "resourceType": "VFC",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Abstract"
+      }
+    ]
+  }
+],
+  "tags": [
+    "multiFlavorVFC"
+  ]
+}

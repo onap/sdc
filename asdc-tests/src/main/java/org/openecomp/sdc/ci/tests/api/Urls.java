@@ -45,6 +45,8 @@ public interface Urls {
 
 	final String GET_SERVICE_lATEST_VERSION = "http://%s:%s/sdc2/rest/v1/catalog/services/latestversion/notabstract";
 
+	final String GET_RESOURCE_METADATA_lATEST_VERSION = "http://%s:%s/sdc2/rest/v1/catalog/resources/latestversion/notabstract/metadata";
+
 	// Get resource artifact list:
 	// http://172.20.43.124:8080/sdc2/rest/v1/catalog/resources/alien.nodes.Apache/2.0.0-SNAPSHOT/artifacts
 	final String GET_RESOURCE_ARTIFACTS_LIST = "http://%s:%s/sdc2/rest/v1/catalog/resources/%s/%s/artifacts";
@@ -186,35 +188,35 @@ public interface Urls {
 	// ***********************************External API's
 	// (AssetData)****************************************
 	
-	final String DELETE_EXTRNAL_API_DELETE_ARTIFACT_OF_ASSET = "http://%s:%s/asdc/v1/catalog/%s/%s/artifacts/%s";
-	final String DELETE_EXTRNAL_API_DELETE_ARTIFACT_OF_COMPONENTINSTANCE_ON_ASSET = "http://%s:%s/asdc/v1/catalog/%s/%s/resourceInstances/%s/artifacts/%s";
+	final String DELETE_EXTRNAL_API_DELETE_ARTIFACT_OF_ASSET = "http://%s:%s/sdc/v1/catalog/%s/%s/artifacts/%s";
+	final String DELETE_EXTRNAL_API_DELETE_ARTIFACT_OF_COMPONENTINSTANCE_ON_ASSET = "http://%s:%s/sdc/v1/catalog/%s/%s/resourceInstances/%s/artifacts/%s";
 
-	final String POST_EXTERNAL_API_UPDATE_ARTIFACT_OF_ASSET = "http://%s:%s/asdc/v1/catalog/%s/%s/artifacts/%s";
-	final String POST_EXTERNAL_API_UPDATE_ARTIFACT_OF_COMPONENTINSTANCE_ON_ASSET = "http://%s:%s/asdc/v1/catalog/%s/%s/resourceInstances/%s/artifacts/%s";
+	final String POST_EXTERNAL_API_UPDATE_ARTIFACT_OF_ASSET = "http://%s:%s/sdc/v1/catalog/%s/%s/artifacts/%s";
+	final String POST_EXTERNAL_API_UPDATE_ARTIFACT_OF_COMPONENTINSTANCE_ON_ASSET = "http://%s:%s/sdc/v1/catalog/%s/%s/resourceInstances/%s/artifacts/%s";
 	
-	final String POST_EXTERNAL_API_UPLOAD_ARTIFACT_OF_ASSET = "http://%s:%s/asdc/v1/catalog/%s/%s/artifacts";
-	final String POST_EXTERNAL_API_UPLOAD_ARTIFACT_OF_COMPONENTINSTANCE_ON_ASSET  = "http://%s:%s/asdc/v1/catalog/%s/%s/resourceInstances/%s/artifacts";
+	final String POST_EXTERNAL_API_UPLOAD_ARTIFACT_OF_ASSET = "http://%s:%s/sdc/v1/catalog/%s/%s/artifacts";
+	final String POST_EXTERNAL_API_UPLOAD_ARTIFACT_OF_COMPONENTINSTANCE_ON_ASSET  = "http://%s:%s/sdc/v1/catalog/%s/%s/resourceInstances/%s/artifacts";
 
-	final String GET_DOWNLOAD_RESOURCE_ARTIFACT_OF_ASSET = "http://%s:%s/asdc/v1/catalog/resources/%s/artifacts/%s";
-	final String GET_DOWNLOAD_SERVICE_ARTIFACT_OF_ASSET = "http://%s:%s/asdc/v1/catalog/services/%s/artifacts/%s";
+	final String GET_DOWNLOAD_RESOURCE_ARTIFACT_OF_ASSET = "http://%s:%s/sdc/v1/catalog/resources/%s/artifacts/%s";
+	final String GET_DOWNLOAD_SERVICE_ARTIFACT_OF_ASSET = "http://%s:%s/sdc/v1/catalog/services/%s/artifacts/%s";
 
-	final String GET_DOWNLOAD_RESOURCE_ARTIFACT_OF_COMPONENT_INSTANCE = "http://%s:%s/asdc/v1/catalog/resources/%s/resourceInstances/%s/artifacts/%s";
-	final String GET_DOWNLOAD_SERVICE_ARTIFACT_OF_COMPONENT_INSTANCE = "http://%s:%s/asdc/v1/catalog/services/%s/resourceInstances/%s/artifacts/%s";
+	final String GET_DOWNLOAD_RESOURCE_ARTIFACT_OF_COMPONENT_INSTANCE = "http://%s:%s/sdc/v1/catalog/resources/%s/resourceInstances/%s/artifacts/%s";
+	final String GET_DOWNLOAD_SERVICE_ARTIFACT_OF_COMPONENT_INSTANCE = "http://%s:%s/sdc/v1/catalog/services/%s/resourceInstances/%s/artifacts/%s";
 
-	final String GET_ASSET_LIST = "http://%s:%s/asdc/v1/catalog/%s";
-	final String GET_FILTERED_ASSET_LIST = "http://%s:%s/asdc/v1/catalog/%s?%s";
-	final String GET_TOSCA_MODEL = "http://%s:%s/asdc/v1/catalog/%s/%s/toscaModel";
-	// https://{serverRoot}/asdc/v1/catalog/{assetType}/{uuid}/metadata, where
+	final String GET_ASSET_LIST = "http://%s:%s/sdc/v1/catalog/%s";
+	final String GET_FILTERED_ASSET_LIST = "http://%s:%s/sdc/v1/catalog/%s?%s";
+	final String GET_TOSCA_MODEL = "http://%s:%s/sdc/v1/catalog/%s/%s/toscaModel";
+	// https://{serverRoot}/sdc/v1/catalog/{assetType}/{uuid}/metadata, where
 	// assetType in {resources, services}
-	final String GET_ASSET_METADATA = "http://%s:%s/asdc/v1/catalog/%s/%s/metadata";
+	final String GET_ASSET_METADATA = "http://%s:%s/sdc/v1/catalog/%s/%s/metadata";
 	final String POST_AUTHORIZATION = "http://%s:%s/sdc2/rest/v1/consumers";
-	final String GET_DOWNLOAD_SERVICE_RI_ARTIFACT = "http://%s:%s/asdc/v1/catalog/services/%s/resourceInstances/%s/artifacts/%s";
-	final String GET_DOWNLOAD_SERVICE_ARTIFACT = "http://%s:%s/asdc/v1/catalog/services/%s/artifacts/%s";
+	final String GET_DOWNLOAD_SERVICE_RI_ARTIFACT = "http://%s:%s/sdc/v1/catalog/services/%s/resourceInstances/%s/artifacts/%s";
+	final String GET_DOWNLOAD_SERVICE_ARTIFACT = "http://%s:%s/sdc/v1/catalog/services/%s/artifacts/%s";
 	
-	final String POST_EXTERNAL_API_CREATE_RESOURCE = "http://%s:%s/asdc/v1/catalog/resources";
+	final String POST_EXTERNAL_API_CREATE_RESOURCE = "http://%s:%s/sdc/v1/catalog/resources";
 	
-	final String CHANGE_RESOURCE_LIFECYCLE_STATE_EXTERNAL_API = "http://%s:%s/asdc/v1/catalog/resources/%s/lifecycleState/%s";
-	final String CHANGE_SERVICE_LIFECYCLE_STATE_EXTERNAL_API = "http://%s:%s/asdc/v1/catalog/services/%s/lifecycleState/%s";
+	final String CHANGE_RESOURCE_LIFECYCLE_STATE_EXTERNAL_API = "http://%s:%s/sdc/v1/catalog/resources/%s/lifecycleState/%s";
+	final String CHANGE_SERVICE_LIFECYCLE_STATE_EXTERNAL_API = "http://%s:%s/sdc/v1/catalog/services/%s/lifecycleState/%s";
 
 	// *****************************************************************************************************
 
@@ -238,8 +240,8 @@ public interface Urls {
 	final String DISTRIB_DOWNLOAD_SERVICE_ARTIFACT = "/sdc2/rest/v1/catalog/services/%s/%s/artifacts/%s";
 	// "/sdc2/v1/services/<serviceName>/<0.1>/resources/{resourceName}/{resourceVersion}/artifacts/<opeartion_name>_aaa.hh"
 	final String DISTRIB_DOWNLOAD_RESOURCE_ARTIFACT = "/sdc2/rest/v1/catalog/services/%s/%s/resources/%s/%s/artifacts/%s";
-	final String DISTRIB_DOWNLOAD_SERVICE_ARTIFACT_RELATIVE_URL = "/asdc/v1/catalog/services/%s/%s/artifacts/%s";
-	final String DISTRIB_DOWNLOAD_RESOURCE_ARTIFACT_RELATIVE_URL = "/asdc/v1/catalog/services/%s/%s/resources/%s/%s/artifacts/%s";
+	final String DISTRIB_DOWNLOAD_SERVICE_ARTIFACT_RELATIVE_URL = "/sdc/v1/catalog/services/%s/%s/artifacts/%s";
+	final String DISTRIB_DOWNLOAD_RESOURCE_ARTIFACT_RELATIVE_URL = "/sdc/v1/catalog/services/%s/%s/resources/%s/%s/artifacts/%s";
 	final String DOWNLOAD_SERVICE_ARTIFACT_FULL_URL = "http://%s:%s%s";
 	final String DOWNLOAD_RESOURCE_ARTIFACT_FULL_URL = "http://%s:%s%s";
 	// **********************************************************************************

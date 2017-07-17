@@ -21,7 +21,7 @@
  * Created by obarda on 3/7/2016.
  */
 'use strict';
-import {ComponentInstance, ServiceInstance, ProductInstance, ResourceInstance, Component} from "../models";
+import {ComponentInstance, ServiceInstance, ResourceInstance, Component} from "../models";
 import {LeftPaletteComponent} from "../models/components/displayComponent";
 
 export class ComponentInstanceFactory {
@@ -31,10 +31,6 @@ export class ComponentInstanceFactory {
         switch (componentInstance.originType) {
             case 'SERVICE':
                 newComponentInstance = new ServiceInstance(componentInstance);
-                break;
-
-            case 'PRODUCT':
-                newComponentInstance = new ProductInstance(componentInstance);
                 break;
 
             default :
@@ -49,10 +45,6 @@ export class ComponentInstanceFactory {
         switch (componentInstanceType) {
             case 'SERVICE':
                 newComponentInstance = new ServiceInstance();
-                break;
-
-            case 'PRODUCT':
-                newComponentInstance = new ProductInstance();
                 break;
 
             default :

@@ -109,8 +109,8 @@ public abstract class ComponentMigration <T extends Component> extends JsonModel
     protected void setMissingTemplateInfo(List<T> components) {
     	Map<String, ToscaElement> origCompMap = new HashMap<>();
     	for (T component : components) {
-    	    List<ComponentInstance> instances = component.getComponentInstances();
-    	    if(null != instances) {
+            List<ComponentInstance> instances = component.getComponentInstances();
+            if(null != instances) {
                 for (ComponentInstance instance : instances) {
                     nodeTemplateMissingDataResolver.resolveNodeTemplateInfo(instance, origCompMap, component);
                     nodeTemplateMissingDataResolver.fixVFGroupInstances(component, instance);

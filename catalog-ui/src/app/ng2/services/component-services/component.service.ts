@@ -59,8 +59,6 @@ export class ComponentServiceNg2 {
 
     private getServerTypeUrl = (componentType:string):string => {
         switch (componentType) {
-            case ComponentType.PRODUCT:
-                return ServerTypeUrl.PRODUCTS;
             case ComponentType.SERVICE:
                 return ServerTypeUrl.SERVICES;
             default:

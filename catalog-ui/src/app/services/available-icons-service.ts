@@ -81,23 +81,6 @@ export class AvailableIconsService implements IAvailableIconsService {
                     'firewall'
                 ];
                 break;
-
-            case ComponentType.PRODUCT:
-                icons = [
-                    'vfw',
-                    'network',
-                    'security',
-                    'cloud',
-                    'setting',
-                    'orphan',
-                    'wanx',
-                    'vrouter',
-                    'ucpe',
-                    'mobility'
-
-                ];
-                break;
-
         }
         return icons;
     }

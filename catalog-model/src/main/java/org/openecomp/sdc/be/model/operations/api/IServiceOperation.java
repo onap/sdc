@@ -24,10 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 
 import fj.data.Either;
 
@@ -40,6 +37,8 @@ public interface IServiceOperation extends IComponentOperation {
 	public Either<Service, StorageOperationStatus> getService(String uniqueId);
 
 	public Either<Service, StorageOperationStatus> getService(String uniqueId, boolean inTransaction);
+
+	public Either<Service, StorageOperationStatus> getService(String uniqueId, ComponentParametersView componentParametersView, boolean inTransaction);
 
 	public Either<Service, StorageOperationStatus> deleteService(String uniqueId);
 

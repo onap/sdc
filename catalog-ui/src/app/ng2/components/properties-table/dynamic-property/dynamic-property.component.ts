@@ -88,7 +88,7 @@ export class DynamicPropertyComponent {
     }
 
     createNewChildProperty = (): void => {
-        
+
         let newProps: Array<DerivedFEProperty> = this.propertiesUtils.createListOrMapChildren(this.property, "", undefined);
         if (this.property instanceof PropertyFEModel) {
             this.addChildProps(newProps, this.property.name);
@@ -98,11 +98,22 @@ export class DynamicPropertyComponent {
     }
 
     addChildProps = (newProps: Array<DerivedFEProperty>, childPropName: string) => {
-        
+
         if (this.property instanceof PropertyFEModel) {
-            let insertIndex: number = this.property.getIndexOfChild(childPropName) + this.property.getCountOfChildren(childPropName); //insert after parent prop and existing children 
-            this.property.flattenedChildren.splice(insertIndex, 0, ...newProps); //using ES6 spread operator 
+            let insertIndex: number = this.property.getIndexOfChild(childPropName) + this.property.getCountOfChildren(childPropName); //insert after parent prop and existing children
+            this.property.flattenedChildren.splice(insertIndex, 0, ...newProps); //using ES6 spread operator
             this.expandChildById(newProps[0].propertiesName);
+
+
+            if(!newProps[0].schema.property.isSimpleType){
+                angular.forEach(newProps, (prop:DerivedFEProperty):void => { //Update parent PropertyFEModel with value for each child, including nested props
+                    (<PropertyFEModel>this.property).childPropUpdated(prop);
+                },this);
+                //grab the cumulative value for the new item from parent PropertyFEModel and assign that value to DerivedFEProp[0] (which is the list or map parent with UUID of the set we just added)
+                let parentNames = (<PropertyFEModel>this.property).getParentNamesArray(newProps[0].propertiesName, []);
+                newProps[0].valueObj = _.get(this.property.valueObj, parentNames.join('.'));
+                this.valueChanged.emit(this.property.name);
+            }
         }
     }
 
@@ -113,7 +124,7 @@ export class DynamicPropertyComponent {
             this.dataTypeService.checkForCustomBehavior(this.property);
             this.valueChanged.emit(this.property.name);
         }
-    }    
+    }
 
     deleteListOrMapItem = (item: DerivedFEProperty) => {
         if (this.property instanceof PropertyFEModel) {
@@ -123,15 +134,22 @@ export class DynamicPropertyComponent {
         }
     }
 
-    removeValueFromParent = (item: DerivedFEProperty, replaceKey?: string) => {
+    removeValueFromParent = (item: DerivedFEProperty, target?: any) => {
         if (this.property instanceof PropertyFEModel) {
             let itemParent = (item.parentName == this.property.name) ? this.property : this.property.flattenedChildren.find(prop => prop.propertiesName == item.parentName);
 
             if (item.derivedDataType == DerivedPropertyType.MAP) {
                 let oldKey = item.mapKey;
-                if (typeof replaceKey == 'string') { //allow saving empty string
-                    _.set(itemParent.valueObj, replaceKey, itemParent.valueObj[oldKey]);
-                    item.mapKey = replaceKey;
+                if (target && typeof target.value == 'string') { //allow saving empty string
+                    let replaceKey:string = target.value;
+                    if(Object.keys(itemParent.valueObj).indexOf(replaceKey) > -1){//the key is exists
+                        target.setCustomValidity('This key is already exists.');
+                        return;
+                    }else {
+                        target.setCustomValidity('');
+                        _.set(itemParent.valueObj, replaceKey, itemParent.valueObj[oldKey]);
+                        item.mapKey = replaceKey;
+                    }
                 }
                 delete itemParent.valueObj[oldKey];
             } else {
@@ -145,6 +163,13 @@ export class DynamicPropertyComponent {
                 this.childValueChanged(itemParent);
             }
         }
+    }
+
+    preventInsertItem = (property:DerivedFEProperty):boolean => {
+        if(property.type == PROPERTY_TYPES.MAP && Object.keys(property.valueObj).indexOf('') > -1 ){
+            return true;
+        }
+        return false;
     }
 
 }

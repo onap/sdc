@@ -1,3 +1,4 @@
+@import '../../../../../assets/styles/variables.less';
 .flat-children-container {
     .dynamic-property-row {
         /*create nested left border classes for up to 10 levels of nesting*/
@@ -64,4 +65,10 @@
     overflow: hidden;
     display: inline;
     padding-left: 8px;
+}
+.error {
+    border: solid 1px @func_color_q;
+    color: @func_color_q;
+    outline: none;
+    box-sizing: border-box;
 }

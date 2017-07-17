@@ -34,6 +34,7 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
 
 	private String vendorName;
 	private String vendorRelease;
+	private String resourceVendorModelNumber;
 	private ResourceTypeEnum resourceType = ResourceTypeEnum.VFC; // ResourceType.VFC
 																	// is
 																	// default
@@ -44,12 +45,14 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
 
 	public ResourceMetadataDataDefinition() {
 		super();
+		resourceVendorModelNumber = "";
 	}
 
 	public ResourceMetadataDataDefinition(ResourceMetadataDataDefinition other) {
 		super(other);
 		this.vendorName = other.getVendorName();
 		this.vendorRelease = other.getVendorRelease();
+		this.resourceVendorModelNumber = other.getResourceVendorModelNumber();
 		this.isAbstract = other.isHighestVersion();
 		this.resourceType = other.getResourceType();
 		this.toscaResourceName = other.getToscaResourceName();
@@ -70,6 +73,15 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
 	public void setVendorRelease(String vendorRelease) {
 		this.vendorRelease = vendorRelease;
 	}
+	
+	public String getResourceVendorModelNumber() {
+		return resourceVendorModelNumber;
+	}
+
+	public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
+		this.resourceVendorModelNumber = resourceVendorModelNumber;
+	}
+
 
 	public ResourceTypeEnum getResourceType() {
 		return resourceType;
@@ -114,7 +126,8 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
 	@Override
 	public String toString() {
 		return "ResourceMetadataDataDefinition [vendorName=" + vendorName + ", vendorRelease=" + vendorRelease
-				+ ", resourceType=" + resourceType + ", isAbstract=" + isAbstract + super.toString() + "]";
+				+ ", resourceVendorModelNumber=" + resourceVendorModelNumber + ", resourceType=" + resourceType +
+				", isAbstract=" + isAbstract + super.toString() + "]";
 	}
 
 	@Override
@@ -127,6 +140,7 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
 		result = prime * result + ((resourceType == null) ? 0 : resourceType.hashCode());
 		result = prime * result + ((vendorName == null) ? 0 : vendorName.hashCode());
 		result = prime * result + ((vendorRelease == null) ? 0 : vendorRelease.hashCode());
+		result = prime * result + ((resourceVendorModelNumber == null)? 0 : resourceVendorModelNumber.hashCode());
 		return result;
 	}
 
@@ -169,6 +183,11 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
 			if (other.toscaResourceName != null)
 				return false;
 		} else if (!vendorRelease.equals(other.vendorRelease))
+			return false;
+		if (resourceVendorModelNumber == null) {
+			if (other.resourceVendorModelNumber != null)
+				return false;
+		} else if (!resourceVendorModelNumber.equals(other.resourceVendorModelNumber))
 			return false;
 
 		return super.equals(obj);

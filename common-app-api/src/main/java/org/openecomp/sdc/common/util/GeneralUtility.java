@@ -153,4 +153,14 @@ public class GeneralUtility {
 		byte[] encodeBase64 = Base64.encodeBase64(calculatedMd5.getBytes());
 		return new String(encodeBase64);
 	}
+	
+	
+	/**
+	 * 
+	 * @param String
+	 * @return String is null or Empty
+	 */
+	public static boolean isEmptyString(String str) {
+        return str == null || str.trim().isEmpty();
+    }
 }

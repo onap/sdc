@@ -32,8 +32,7 @@ const SDC_MENU_CONFIG = {
             "title": "Designer's Workspace",
             "pages":[],
             "dashboard": {
-                "showCreateNew": true,
-                "showCreateNewProduct": false
+                "showCreateNew": true
             },
             "changeLifecycleStateButtons":{
                 "NOT_CERTIFIED_CHECKOUT":{  "submitForTesting": {"text":"Submit for Testing", "url":"lifecycleState/certificationRequest", "emailModal": "lifecycleState/CERTIFICATIONREQUEST"},
@@ -81,99 +80,11 @@ const SDC_MENU_CONFIG = {
             ]
 
         },
-        "PRODUCT_STRATEGIST":{
-            "title": "Product Strategist's Workspace",
-            "pages":[],
-            "dashboard": {
-                "showCreateNew": false,
-                "showCreateNewProduct": false
-            },
-            "changeLifecycleStateButtons":{},
-
-            "states":{
-                "NOT_CERTIFIED_CHECKOUT":{
-                    "ANY":[
-                    ]
-                },
-                "NOT_CERTIFIED_CHECKIN": {
-                    "ANY": [
-                    ]
-                },
-                "READY_FOR_CERTIFICATION": {
-                    "ANY":[
-                    ]
-                },
-                "CERTIFICATION_IN_PROGRESS":{
-                    "ANY":[
-                    ]
-                },
-                "CERTIFIED":{
-                    "ANY":[
-                    ]
-                }
-            },
-            "folder":[
-                {"text": "Active Projects",     "groupname": "IN_PROGRESS" },
-                {"text": "Check Out",         "group": "IN_PROGRESS", "state": "NOT_CERTIFIED_CHECKOUT"},
-                {"text": "Check In",          "group": "IN_PROGRESS", "state": "NOT_CERTIFIED_CHECKIN"},
-                {"text": "Followed Projects",   "groupname": "FOLLOWING" },
-                {"text": "Ready For Testing",   "group": "FOLLOWING", "state": "READY_FOR_CERTIFICATION"},
-                {"text": "In Testing", "group": "FOLLOWING", "state": "CERTIFICATION_IN_PROGRESS"},
-                {"text": "Certified",           "group": "FOLLOWING", "state": "CERTIFIED"}
-            ]
-        },
-        "PRODUCT_MANAGER":{
-            "title": "Product Manager Workspace",
-            "pages":[],
-            "dashboard": {
-                "showCreateNew": false,
-                "showCreateNewProduct": true
-            },
-            "changeLifecycleStateButtons":{
-                "NOT_CERTIFIED_CHECKOUT":{  "checkIn":      {"text":"Check in",  "url":"lifecycleState/CHECKIN", "confirmationModal": "lifecycleState/CHECKIN"},
-                                            "deleteVersion":{"text":"Delete Version", "url":"lifecycleState/UNDOCHECKOUT", "alertModal": "lifecycleState/UNDOCHECKOUT"}
-                },
-                "NOT_CERTIFIED_CHECKIN":{   "checkOut":     {"text":"Check Out",  "url":"lifecycleState/CHECKOUT"}
-                }
-            },
-            "states":{
-                "NOT_CERTIFIED_CHECKOUT":{
-                    "ANY":[
-                    ]
-                },
-                "NOT_CERTIFIED_CHECKIN": {
-                    "ANY": [
-                    ]
-                },
-                "READY_FOR_CERTIFICATION": {
-                    "ANY":[
-                    ]
-                },
-                "CERTIFICATION_IN_PROGRESS":{
-                    "ANY":[
-                    ]
-                },
-                "CERTIFIED":{
-                    "ANY":[
-                    ]
-                }
-            },
-            "folder":[
-                {"text": "Active Projects",     "groupname": "IN_PROGRESS" },
-                {"text": "Check Out",         "group": "IN_PROGRESS", "state": "NOT_CERTIFIED_CHECKOUT"},
-                {"text": "Check In",          "group": "IN_PROGRESS", "state": "NOT_CERTIFIED_CHECKIN"},
-                {"text": "Followed Projects",   "groupname": "FOLLOWING" },
-                {"text": "Ready For Testing",   "group": "FOLLOWING", "state": "READY_FOR_CERTIFICATION"},
-                {"text": "In Testing", "group": "FOLLOWING", "state": "CERTIFICATION_IN_PROGRESS"},
-                {"text": "Certified",           "group": "FOLLOWING", "state": "CERTIFIED"}
-            ]
-        },
         "TESTER":{
             "title": "Tester's Workspace",
             "pages":[],
             "dashboard": {
-                "showCreateNew": false,
-                "showCreateNewProduct": false
+                "showCreateNew": false
             },
             "changeLifecycleStateButtons":{
                 "READY_FOR_CERTIFICATION":{     "startTesting": {"text":"Start Testing",  "url":"lifecycleState/startCertification"}
@@ -208,8 +119,7 @@ const SDC_MENU_CONFIG = {
             "title": "Operations Workspace",
             "pages":[],
             "dashboard": {
-                "showCreateNew": false,
-                "showCreateNewProduct": false
+                "showCreateNew": false
             },
             "changeLifecycleStateButtons":{
                 "DISTRIBUTION_APPROVED":{   "distribute":   {"text":"Distribute",  "url":"distribution/PROD/activate", "conformanceLevelModal": { "url":"distribution-state/reject", "confirmationModal": "distribution-state/reject" }},
@@ -240,8 +150,7 @@ const SDC_MENU_CONFIG = {
             "title": "Governance Rep's Workspace",
             "pages":[],
             "dashboard": {
-                "showCreateNew": false,
-                "showCreateNewProduct": false
+                "showCreateNew": false
             },
             "changeLifecycleStateButtons":{
                 "DISTRIBUTION_NOT_APPROVED":{   "approve":  {"text":"Approve", "url":"distribution-state/approve", "confirmationModal": "distribution-state/approve", "conformanceLevelModal": { "url":"distribution-state/reject", "confirmationModal": "distribution-state/reject" }},
@@ -358,82 +267,6 @@ const SDC_MENU_CONFIG = {
 
             }
         },
-        "PRODUCT_MANAGER":{
-            "states":{
-                "NOT_CERTIFIED_CHECKOUT":{
-                    "ANY":[
-                    ],
-                    "NOT_OWNER":[
-                    ]
-                },
-                "NOT_CERTIFIED_CHECKIN": {
-                    "ANY": [
-                    ]
-                },
-                "READY_FOR_CERTIFICATION": {
-                    "ANY":[
-                    ]
-                },
-                "CERTIFICATION_IN_PROGRESS":{
-                    "ANY":[
-                    ]
-                },
-                "CERTIFIED":{
-                    "ANY":[
-                    ]
-                }
-            },
-            "folder":[
-                {"text": "Active Projects",     "groupname": "IN_PROGRESS" },
-                {"text": "Check Out",         "group": "IN_PROGRESS", "state": "NOT_CERTIFIED_CHECKOUT"},
-                {"text": "Check In",          "group": "IN_PROGRESS", "state": "NOT_CERTIFIED_CHECKIN"},
-                {"text": "Followed Projects",   "groupname": "FOLLOWING" },
-                {"text": "Ready For Testing",   "group": "FOLLOWING", "state": "READY_FOR_CERTIFICATION"},
-                {"text": "In Testing", "group": "FOLLOWING", "state": "CERTIFICATION_IN_PROGRESS"},
-                {"text": "Certified",           "group": "FOLLOWING", "state": "CERTIFIED"}
-            ]
-        },
-        "PRODUCT_STRATEGIST":{
-            "title": "Product Strategist's Workspace",
-            "pages":[],
-            "dashboard": {
-                "showCreateNew": false,
-                "showCreateNewProduct": true
-            },
-            "states":{
-                "NOT_CERTIFIED_CHECKOUT":{
-                    "ANY":[
-                    ],
-                    "NOT_OWNER":[
-                    ]
-                },
-                "NOT_CERTIFIED_CHECKIN": {
-                    "ANY": [
-                    ]
-                },
-                "READY_FOR_CERTIFICATION": {
-                    "ANY":[
-                    ]
-                },
-                "CERTIFICATION_IN_PROGRESS":{
-                    "ANY":[
-                    ]
-                },
-                "CERTIFIED":{
-                    "ANY":[
-                    ]
-                }
-            },
-            "folder":[
-                {"text": "Active Projects",     "groupname": "IN_PROGRESS" },
-                {"text": "Check Out",         "group": "IN_PROGRESS", "state": "NOT_CERTIFIED_CHECKOUT"},
-                {"text": "Check In",          "group": "IN_PROGRESS", "state": "NOT_CERTIFIED_CHECKIN"},
-                {"text": "Followed Projects",   "groupname": "FOLLOWING" },
-                {"text": "Ready For Testing",   "group": "FOLLOWING", "state": "READY_FOR_CERTIFICATION"},
-                {"text": "In Testing", "group": "FOLLOWING", "state": "CERTIFICATION_IN_PROGRESS"},
-                {"text": "Certified",           "group": "FOLLOWING", "state": "CERTIFIED"}
-            ]
-        },
         "OTHER":{
             "states":{
                 "ANY":{
@@ -465,7 +298,6 @@ const SDC_MENU_CONFIG = {
     "component_workspace_menu_option": {
         "VFC":[
             {"text":"General", "action":"onMenuItemPressed", "state": "workspace.general"},
-            {"text":"Icon",  "action":"onMenuItemPressed", "state": "workspace.icons"},
             {"text":"Deployment Artifact", "action":"onMenuItemPressed", "state": "workspace.deployment_artifacts"},
             {"text":"Information Artifact", "action":"onMenuItemPressed", "state": "workspace.information_artifacts"},
             {"text":"TOSCA Artifacts", "action":"onMenuItemPressed", "state": "workspace.tosca_artifacts"},
@@ -476,7 +308,6 @@ const SDC_MENU_CONFIG = {
         ],
         "VL":[
             {"text":"General", "action":"onMenuItemPressed", "state": "workspace.general"},
-            {"text":"Icon",  "action":"onMenuItemPressed", "state": "workspace.icons"},
             {"text":"Deployment Artifact", "action":"onMenuItemPressed", "state": "workspace.deployment_artifacts"},
             {"text":"Information Artifact", "action":"onMenuItemPressed", "state": "workspace.information_artifacts"},
             {"text":"TOSCA Artifacts", "action":"onMenuItemPressed", "state": "workspace.tosca_artifacts"},
@@ -487,7 +318,6 @@ const SDC_MENU_CONFIG = {
         ],
         "CP":[
             {"text":"General", "action":"onMenuItemPressed", "state": "workspace.general"},
-            {"text":"Icon",  "action":"onMenuItemPressed", "state": "workspace.icons"},
             {"text":"Deployment Artifact", "action":"onMenuItemPressed", "state": "workspace.deployment_artifacts"},
             {"text":"Information Artifact", "action":"onMenuItemPressed", "state": "workspace.information_artifacts"},
             {"text":"TOSCA Artifacts", "action":"onMenuItemPressed", "state": "workspace.tosca_artifacts"},
@@ -498,7 +328,6 @@ const SDC_MENU_CONFIG = {
         ],
         "VF":[
             {"text":"General", "action":"onMenuItemPressed", "state": "workspace.general"},
-            {"text":"Icon",  "action":"onMenuItemPressed", "state": "workspace.icons"},
             {"text":"Deployment Artifact", "action":"onMenuItemPressed", "state": "workspace.deployment_artifacts"},
             {"text":"Information Artifact", "action":"onMenuItemPressed", "state": "workspace.information_artifacts"},
             {"text":"TOSCA Artifacts", "action":"onMenuItemPressed", "state": "workspace.tosca_artifacts"},
@@ -509,24 +338,25 @@ const SDC_MENU_CONFIG = {
             // {"text":"Inputs", "action":"onMenuItemPressed", "state": "workspace.resource_inputs"},
             {"text":"Properties Assignment", "action":"onMenuItemPressed", "state": "workspace.properties_assignment"}
         ],
+        "PNF":[
+            {"text":"General", "action":"onMenuItemPressed", "state": "workspace.general"},
+            {"text":"Information Artifact", "action":"onMenuItemPressed", "state": "workspace.information_artifacts"},
+            {"text":"TOSCA Artifacts", "action":"onMenuItemPressed", "state": "workspace.tosca_artifacts"},
+            {"text":"Composition", "action":"onMenuItemPressed", "state": "workspace.composition.details"},
+            {"text":"Activity Log", "action":"onMenuItemPressed", "state": "workspace.activity_log"},
+            {"text":"Properties Assignment", "action":"onMenuItemPressed", "state": "workspace.properties_assignment"}
+        ],
         "SERVICE":[
             {"text":"General", "action":"onMenuItemPressed", "state": "workspace.general"},
-            {"text":"Icon",  "action":"onMenuItemPressed", "state": "workspace.icons"},
             {"text":"TOSCA Artifacts", "action":"onMenuItemPressed", "state": "workspace.tosca_artifacts"},
             {"text":"Composition", "action":"onMenuItemPressed", "state": "workspace.composition.details"},
             {"text":"Activity Log", "action":"onMenuItemPressed", "state": "workspace.activity_log"},
             {"text":"Management Workflow", "action":"onMenuItemPressed", "state": "workspace.management_workflow"},
             {"text":"Network Call Flow ", "action":"onMenuItemPressed", "state": "workspace.network_call_flow"},
-            {"text":"Monitor ", "action":"onMenuItemPressed", "state": "workspace.distribution", "disabledRoles": ["ADMIN", "TESTER", "GOVERNOR", "DESIGNER", "PRODUCT_MANAGER", "PRODUCT_STRATEGIST"]},
+            {"text":"Monitor ", "action":"onMenuItemPressed", "state": "workspace.distribution", "disabledRoles": ["ADMIN", "TESTER", "GOVERNOR", "DESIGNER"]},
             {"text":"Deployment", "action":"onMenuItemPressed", "state": "workspace.deployment"},
             // {"text":"Inputs", "action":"onMenuItemPressed", "state": "workspace.service_inputs"},
             {"text":"Properties Assignment", "action":"onMenuItemPressed", "state": "workspace.properties_assignment"}
-        ],
-        "PRODUCT":[
-            {"text":"General", "action":"onMenuItemPressed", "state": "workspace.general"},
-            {"text":"Hierarchy", "action":"onMenuItemPressed", "state": "workspace.hierarchy"},
-            {"text":"Icon",  "action":"onMenuItemPressed", "state": "workspace.icons"},
-            {"text":"Composition", "action":"onMenuItemPressed", "state": "workspace.composition.details"}
         ]
     }
 

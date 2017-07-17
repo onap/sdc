@@ -58,10 +58,12 @@ import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
@@ -72,6 +74,7 @@ import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.resources.data.PropertyValueData;
+import org.openecomp.sdc.be.tosca.ToscaUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
@@ -142,9 +145,9 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 				containerComponent = validateComponentExists.left().value();
 			}
 	
-			Either<Boolean, ResponseFormat> validateAllowedToContainCompInstances = validateAllowedToContainCompInstances(containerComponent);
-			if (validateAllowedToContainCompInstances.isRight()) {
-				return Either.right(validateAllowedToContainCompInstances.right().value());
+			if (ToscaUtils.isAtomicType(containerComponent)) {
+				log.debug("Cannot attach resource instances to container resource of type {}", containerComponent.assetType());
+				return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_CANNOT_CONTAIN_RESOURCE_INSTANCES, containerComponent.assetType()));
 			}
 	
 			Either<Boolean, ResponseFormat> validateCanWorkOnComponent = validateCanWorkOnComponent(containerComponent, userId);
@@ -201,9 +204,9 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		}
 		org.openecomp.sdc.be.model.Component containerComponent = validateComponentExists.left().value();
 
-		Either<Boolean, ResponseFormat> validateAllowedToContainCompInstances = validateAllowedToContainCompInstances(containerComponent);
-		if (validateAllowedToContainCompInstances.isRight()) {
-			return Either.right(validateAllowedToContainCompInstances.right().value());
+		if (ToscaUtils.isAtomicType(containerComponent)) {
+			log.debug("Cannot attach resource instances to container resource of type {}", containerComponent.assetType());
+			return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_CANNOT_CONTAIN_RESOURCE_INSTANCES, containerComponent.assetType()));
 		}
 
 		Either<Boolean, ResponseFormat> validateCanWorkOnComponent = validateCanWorkOnComponent(containerComponent, userId);
@@ -620,6 +623,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		Optional<ComponentInstance> componentInstanceOptional = null;
 		Either<ImmutablePair<Component, String>, StorageOperationStatus> updateRes = null;
 		ComponentInstance oldComponentInstance = null;
+		boolean isNameChanged = false;
 
 		if (resultOp == null) {
 			componentInstanceOptional = containerComponent.getComponentInstances().stream().filter(ci -> ci.getUniqueId().equals(componentInstance.getUniqueId())).findFirst();
@@ -631,6 +635,9 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		if (resultOp == null) {
 			oldComponentInstance = componentInstanceOptional.get();
 			String newInstanceName = componentInstance.getName();
+			if ( oldComponentInstance!=null && oldComponentInstance.getName() != null
+								&& !oldComponentInstance.getName().equals( newInstanceName ) )
+				isNameChanged = true;
 			Boolean isUniqueName = validateInstanceNameUniquenessUponUpdate(containerComponent, oldComponentInstance, newInstanceName);
 			if (!isUniqueName) {
 				CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update the name of the component instance {} to {}. A component instance with the same name already exists. ", oldComponentInstance.getName(), newInstanceName);
@@ -643,6 +650,14 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 				CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update metadata of component instance {} belonging to container component {}. Status is {}. ", componentInstance.getName(), containerComponent.getName(),
 						updateRes.right().value());
 				resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstance(componentsUtils.convertFromStorageResponseForResourceInstance(updateRes.right().value(), true), "", null));
+			}else{
+				//region - Update instance Groups
+				if ( isNameChanged ){
+					Either result = toscaOperationFacade.cleanAndAddGroupInstancesToComponentInstance( containerComponent ,oldComponentInstance ,componentInstanceId );
+					if ( result.isRight() )
+						CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to rename group instances for container {}. error {} ", componentInstanceId ,result.right().value() );
+				}
+				//endregion
 			}
 		}
 		if (resultOp == null) {
@@ -662,11 +677,29 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		}
 		return resultOp;
 	}
+	/**
+	 * @param oldPrefix-  The normalized old vf name
+	 * @param newNormailzedPrefix-  The normalized new vf name
+	 * @param qualifiedGroupInstanceName-  old Group Instance Name
+	 **/
+	//modify group names
+	private String getNewGroupName( String oldPrefix ,String newNormailzedPrefix , String qualifiedGroupInstanceName){
+		if (qualifiedGroupInstanceName == null){
+			log.info("CANNOT change group name ");
+			return null;
+		}
+		if (qualifiedGroupInstanceName.startsWith(oldPrefix) || qualifiedGroupInstanceName.startsWith(ValidationUtils.normalizeComponentInstanceName(oldPrefix)))
+			return qualifiedGroupInstanceName.replaceFirst(oldPrefix, newNormailzedPrefix);
+		return qualifiedGroupInstanceName;
+	}
 
 	private ComponentInstance updateComponentInstanceMetadata(ComponentInstance oldComponentInstance, ComponentInstance newComponentInstance) {
 		oldComponentInstance.setName(newComponentInstance.getName());
 		oldComponentInstance.setModificationTime(System.currentTimeMillis());
 		oldComponentInstance.setCustomizationUUID(UUID.randomUUID().toString());
+		if ( oldComponentInstance.getGroupInstances() != null )
+			oldComponentInstance.getGroupInstances().forEach( group ->
+					group.setName( getNewGroupName( oldComponentInstance.getNormalizedName() , ValidationUtils.normalizeComponentInstanceName( newComponentInstance.getName() ) , group.getName() ) ) );
 		return oldComponentInstance;
 	}
 
@@ -746,6 +779,17 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 				log.debug("Failed to delete component instance {} from group members. ", componentInstanceId);
 				ActionStatus status = componentsUtils.convertFromStorageResponse(updateGroupsRes.right().value(), containerComponentType);
 				resultOp = Either.right(componentsUtils.getResponseFormat(status, componentInstanceId));
+			}
+		}
+		if(resultOp.isLeft() && CollectionUtils.isNotEmpty(containerComponent.getInputs())){
+			List<InputDefinition> inputsToDelete = containerComponent.getInputs().stream().filter(i -> i.getInstanceUniqueId() != null && i.getInstanceUniqueId().equals(componentInstanceId)).collect(Collectors.toList());
+			if(CollectionUtils.isNotEmpty(inputsToDelete)){
+				StorageOperationStatus deleteInputsRes =
+						toscaOperationFacade.deleteComponentInstanceInputsFromTopologyTemplate(containerComponent, containerComponent.getComponentType(), inputsToDelete);
+				if(deleteInputsRes != StorageOperationStatus.OK){
+					log.debug("Failed to delete inputs of the component instance {} from container component. ", componentInstanceId);
+					resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteInputsRes, containerComponentType), componentInstanceId));
+				}
 			}
 		}
 		return resultOp;
@@ -1695,8 +1739,6 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			unlockComponent(resultOp, containerComponent);
 		}
 	}
-
-	protected abstract Either<Boolean, ResponseFormat> validateAllowedToContainCompInstances(org.openecomp.sdc.be.model.Component containerComponent);
 
 	protected abstract NodeTypeEnum getNodeTypeOfComponentInstanceOrigin();
 
