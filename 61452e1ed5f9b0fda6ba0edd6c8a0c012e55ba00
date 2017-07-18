@@ -34,6 +34,42 @@
       "revId": "61452e1ed5f9b0fda6ba0edd6c8a0c012e55ba00",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a202591_95c46460",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 35
+      },
+      "writtenOn": "2017-07-18T16:57:14Z",
+      "side": 1,
+      "message": "Regarding the new dependency: This is a judgement call.  Personally I think it\u0027s better to avoid re-implementing a preexisting method that is well-tested elsewhere even if it means pulling in a new dependency.",
+      "parentUuid": "5a202591_d5abfcd4",
+      "revId": "61452e1ed5f9b0fda6ba0edd6c8a0c012e55ba00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a202591_b5c76064",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 35
+      },
+      "writtenOn": "2017-07-18T16:57:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a202591_f595d888",
+      "revId": "61452e1ed5f9b0fda6ba0edd6c8a0c012e55ba00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
