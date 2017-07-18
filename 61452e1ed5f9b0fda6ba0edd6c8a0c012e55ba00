@@ -16,6 +16,24 @@
       "revId": "61452e1ed5f9b0fda6ba0edd6c8a0c012e55ba00",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a202591_f595d888",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-07-18T12:14:41Z",
+      "side": 1,
+      "message": "3. Also, if there are no special reasons to use 2.2 for the version, please use ${commons.io.version}",
+      "parentUuid": "5a202591_d5abfcd4",
+      "revId": "61452e1ed5f9b0fda6ba0edd6c8a0c012e55ba00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
