@@ -28,7 +28,7 @@ public enum ActivityType implements Serializable {
     CHECKOUT("Check Out"),
     CHECKIN("Check In"),
     UPLOAD_HEAT("Upload Heat"),
-    UPLOAD_ARTIFACT("Upload Artifact"),
+  UPLOAD_MONITORING_FILE("Upload Monitoring File"),
     SUBMIT("Submit");
 
     // after collaboration will be added - this will be added:

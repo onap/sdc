@@ -154,8 +154,104 @@ topology_template:
       description: OAM network name
       default: oam_protected_net_0
   node_templates:
-    abstract_pcm_server_1:
-      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
+    server_pcm_002:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      directives:
+      - substitutable
+      properties:
+        pcm_flavor_name:
+          get_input: pcm_flavor_name
+        p1: jsa_security_group1
+        service_template_filter:
+          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
+        p2: jsa_security_group2
+        port_pcm_port_1_network_role_tag: oam
+        port_pcm_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        pcm_image_name:
+          get_input: pcm_image_name
+        port_pcm_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pcm_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pcm_port_0_network_role_tag: cps
+        port_pcm_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        pcm_server_name:
+          get_input:
+          - pcm_server_names
+          - 0
+    server_oam_001:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-oam_v0.1
+      directives:
+      - substitutable
+      properties:
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        oam_net_gw:
+          get_input: oam_net_gw
+        port_oam_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        oam_flavor_name:
+          get_input: oam_flavor_name
+        cps_net_ip:
+          get_input:
+          - cps_net_ips
+          - 0
+        port_oam_port_1_network_role_tag: oam
+        oam_server_name:
+          get_input:
+          - oam_server_names
+          - 0
+        service_template_filter:
+          substitute_service_template: nested-oam_v0.1ServiceTemplate.yaml
+        port_oam_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_oam_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        pcm_vol:
+          get_input:
+          - pcm_volumes
+          - 0
+        port_oam_port_0_network_role_tag: cps
+        oam_image_name:
+          get_input: oam_image_name
+        cps_net_name:
+          get_input: cps_net_name
+        cps_net_mask:
+          get_input: cps_net_mask
+        oam_net_ip:
+          get_input:
+          - oam_net_ips
+          - 0
+        oam_net_mask:
+          get_input: oam_net_mask
+        port_oam_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        oam_net_name:
+          get_input: oam_net_name
+    server_pcm_001:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
       directives:
       - substitutable
       properties:
@@ -215,43 +311,6 @@ topology_template:
           get_input: oam_net_mask
         oam_net_name:
           get_input: oam_net_name
-    abstract_pcm_server_0:
-      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
-      directives:
-      - substitutable
-      properties:
-        pcm_flavor_name:
-          get_input: pcm_flavor_name
-        p1: jsa_security_group1
-        service_template_filter:
-          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
-        p2: jsa_security_group2
-        port_pcm_port_1_network_role_tag: oam
-        port_pcm_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        pcm_image_name:
-          get_input: pcm_image_name
-        port_pcm_port_1_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_pcm_port_1_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_pcm_port_0_network_role_tag: cps
-        port_pcm_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
-        pcm_server_name:
-          get_input:
-          - pcm_server_names
-          - 0
     packet_mirror_network:
       type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
       properties:
@@ -260,71 +319,12 @@ topology_template:
       requirements:
       - dependency:
           capability: tosca.capabilities.Node
-          node: abstract_pcm_server_1
+          node: server_pcm_001
           relationship: tosca.relationships.DependsOn
       - dependency:
           capability: feature_compute
           node: abstract_compute
           relationship: tosca.relationships.DependsOn
-    abstract_oam_server_0:
-      type: org.openecomp.resource.abstract.nodes.heat.oam_server
-      directives:
-      - substitutable
-      properties:
-        availabilityzone_name:
-          get_input: availabilityzone_name
-        oam_net_gw:
-          get_input: oam_net_gw
-        port_oam_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
-        oam_flavor_name:
-          get_input: oam_flavor_name
-        cps_net_ip:
-          get_input:
-          - cps_net_ips
-          - 0
-        port_oam_port_1_network_role_tag: oam
-        oam_server_name:
-          get_input:
-          - oam_server_names
-          - 0
-        service_template_filter:
-          substitute_service_template: nested-oam_v0.1ServiceTemplate.yaml
-        port_oam_port_1_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_oam_port_1_mac_requirements:
-          mac_count_required:
-            is_required: false
-        pcm_vol:
-          get_input:
-          - pcm_volumes
-          - 0
-        port_oam_port_0_network_role_tag: cps
-        oam_image_name:
-          get_input: oam_image_name
-        cps_net_name:
-          get_input: cps_net_name
-        cps_net_mask:
-          get_input: cps_net_mask
-        oam_net_ip:
-          get_input:
-          - oam_net_ips
-          - 0
-        oam_net_mask:
-          get_input: oam_net_mask
-        port_oam_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        oam_net_name:
-          get_input: oam_net_name
     compute_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
@@ -339,8 +339,52 @@ topology_template:
             is_required: false
         network:
           get_input: net_name
-    abstract_oam_server_1:
-      type: org.openecomp.resource.abstract.nodes.heat.oam_server
+    jsa_security_group1:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name: jsa_security_group1_name
+        description: ems security group
+        rules:
+        - protocol: icmp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          direction: ingress
+      requirements:
+      - port:
+          capability: attachment_pcm_port_0
+          node: server_pcm_002
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_pcm_port_1
+          node: server_pcm_002
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_oam_port_1
+          node: test_shared_node_connected_in_nested
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_oam_port_0
+          node: test_shared_node_connected_in_nested
+          relationship: org.openecomp.relationships.AttachesTo
+    jsa_security_group2:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name: jsa_security_group2_name
+        description: ems security group
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+      requirements:
+      - port:
+          capability: attachment_pcm_port_0
+          node: server_pcm_002
+          relationship: org.openecomp.relationships.AttachesTo
+    test_shared_node_connected_in_nested:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-oam_v0.1
       directives:
       - substitutable
       properties:
@@ -370,50 +414,6 @@ topology_template:
             is_required: false
         shared_security_group_id1:
           get_input: shared_security_group_id1
-    jsa_security_group1:
-      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
-      properties:
-        name: jsa_security_group1_name
-        description: ems security group
-        rules:
-        - protocol: icmp
-          ethertype: IPv6
-          remote_ip_prefix: ::/0
-          direction: ingress
-      requirements:
-      - port:
-          capability: attachment_pcm_port_0
-          node: abstract_pcm_server_0
-          relationship: org.openecomp.relationships.AttachesTo
-      - port:
-          capability: attachment_pcm_port_1
-          node: abstract_pcm_server_0
-          relationship: org.openecomp.relationships.AttachesTo
-      - port:
-          capability: attachment_oam_port_1
-          node: abstract_oam_server_1
-          relationship: org.openecomp.relationships.AttachesTo
-      - port:
-          capability: attachment_oam_port_0
-          node: abstract_oam_server_1
-          relationship: org.openecomp.relationships.AttachesTo
-    jsa_security_group2:
-      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
-      properties:
-        name: jsa_security_group2_name
-        description: ems security group
-        rules:
-        - protocol: tcp
-          ethertype: IPv4
-          port_range_max: 65535
-          remote_ip_prefix: 0.0.0.0/0
-          direction: egress
-          port_range_min: 1
-      requirements:
-      - port:
-          capability: attachment_pcm_port_0
-          node: abstract_pcm_server_0
-          relationship: org.openecomp.relationships.AttachesTo
     abstract_compute:
       type: org.openecomp.resource.abstract.nodes.compute
       directives:
@@ -421,13 +421,13 @@ topology_template:
       properties:
         compute_compute_user_data_format:
         - get_attribute:
-          - abstract_pcm_server_1
+          - server_pcm_001
           - oam_net_gw
         vm_image_name:
           get_input: compute_image_name
         compute_compute_metadata:
         - get_attribute:
-          - abstract_pcm_server_1
+          - server_pcm_001
           - server_pcm_id
         compute_compute_name:
         - compute_name: null
@@ -466,14 +466,14 @@ topology_template:
         heat_file: ../Artifacts/hot-nimbus-pcm_v0.4.yaml
         description: heat template that creates PCRF Cluman stack
       members:
+      - server_pcm_002
+      - server_oam_001
+      - server_pcm_001
       - packet_mirror_network
       - compute_port_0
       - jsa_security_group1
       - jsa_security_group2
       - abstract_compute
-      - abstract_pcm_server_0
-      - abstract_oam_server_0
-      - abstract_pcm_server_1
     addOn_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
@@ -481,4 +481,4 @@ topology_template:
         description: |
           Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
       members:
-      - abstract_oam_server_1
+      - test_shared_node_connected_in_nested

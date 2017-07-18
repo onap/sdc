@@ -1,0 +1,317 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_osm_server_1c2
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.osm_server_1c2:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_osm_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_osm_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_osm_port_subnetpoolid:
+      type: string
+      required: true
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_osm_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_osm_server_1c2_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_osm_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    vm_flavor_name:
+      type: string
+      required: true
+    port_osm_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_osm_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_osm_port_network_role_tag:
+      type: string
+      required: true
+    port_osm_port_network_role:
+      type: string
+      required: true
+    vm_image_name:
+      type: string
+      required: true
+    port_osm_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_osm_port_order:
+      type: integer
+      required: true
+    compute_osm_server_1c2_metadata:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_osm_server_1c2_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    osm_server_1c2_osm_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        exCP_naming:
+          get_input: port_osm_port_exCP_naming
+        replacement_policy:
+          get_input:
+          - port_osm_port_replacement_policy
+          - index_value
+        vlan_requirements:
+          get_input: port_osm_port_vlan_requirements
+        ip_requirements:
+          get_input: port_osm_port_ip_requirements
+        network_role_tag:
+          get_input: port_osm_port_network_role_tag
+        mac_requirements:
+          get_input: port_osm_port_mac_requirements
+        order:
+          get_input: port_osm_port_order
+        network_role:
+          get_input: port_osm_port_network_role
+        subnetpoolid:
+          get_input: port_osm_port_subnetpoolid
+        fixed_ips:
+          get_input: port_osm_port_fixed_ips
+        network:
+          get_input:
+          - port_osm_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: osm_server_1c2
+          relationship: tosca.relationships.network.BindsTo
+    osm_server_1c2:
+      type: org.openecomp.resource.vfc.nodes.heat.osm_server_1c2
+      properties:
+        availability_zone:
+          get_input:
+          - compute_osm_server_1c2_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        metadata:
+          get_input:
+          - compute_osm_server_1c2_metadata
+          - index_value
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_osm_server_1c2_name
+          - index_value
+  outputs:
+    osm_server_1c2_accessIPv4:
+      type: string
+      value:
+        get_attribute:
+        - osm_server_1c2
+        - accessIPv4
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.osm_server_1c2
+    capabilities:
+      endpoint_osm_server_1c2:
+      - osm_server_1c2
+      - endpoint
+      feature_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - feature
+      os_osm_server_1c2:
+      - osm_server_1c2
+      - os
+      disk.device.read.bytes.rate_osm_server_1c2:
+      - osm_server_1c2
+      - disk.device.read.bytes.rate
+      disk.write.requests.rate_osm_server_1c2:
+      - osm_server_1c2
+      - disk.write.requests.rate
+      disk.device.read.requests.rate_osm_server_1c2:
+      - osm_server_1c2
+      - disk.device.read.requests.rate
+      disk.device.read.requests_osm_server_1c2:
+      - osm_server_1c2
+      - disk.device.read.requests
+      disk.device.iops_osm_server_1c2:
+      - osm_server_1c2
+      - disk.device.iops
+      disk.read.bytes.rate_osm_server_1c2:
+      - osm_server_1c2
+      - disk.read.bytes.rate
+      host_osm_server_1c2:
+      - osm_server_1c2
+      - host
+      memory_osm_server_1c2:
+      - osm_server_1c2
+      - memory
+      cpu_util_osm_server_1c2:
+      - osm_server_1c2
+      - cpu_util
+      cpu_osm_server_1c2:
+      - osm_server_1c2
+      - cpu
+      disk.device.write.bytes.rate_osm_server_1c2:
+      - osm_server_1c2
+      - disk.device.write.bytes.rate
+      disk.latency_osm_server_1c2:
+      - osm_server_1c2
+      - disk.latency
+      disk.read.requests_osm_server_1c2:
+      - osm_server_1c2
+      - disk.read.requests
+      memory.resident_osm_server_1c2:
+      - osm_server_1c2
+      - memory.resident
+      attachment_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - attachment
+      feature_osm_server_1c2:
+      - osm_server_1c2
+      - feature
+      disk.device.latency_osm_server_1c2:
+      - osm_server_1c2
+      - disk.device.latency
+      disk.device.write.requests_osm_server_1c2:
+      - osm_server_1c2
+      - disk.device.write.requests
+      network.outgoing.bytes_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - network.outgoing.bytes
+      disk.ephemeral.size_osm_server_1c2:
+      - osm_server_1c2
+      - disk.ephemeral.size
+      disk.allocation_osm_server_1c2:
+      - osm_server_1c2
+      - disk.allocation
+      binding_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - binding
+      disk.write.bytes_osm_server_1c2:
+      - osm_server_1c2
+      - disk.write.bytes
+      disk.capacity_osm_server_1c2:
+      - osm_server_1c2
+      - disk.capacity
+      network.incoming.bytes_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - network.incoming.bytes
+      disk.write.requests_osm_server_1c2:
+      - osm_server_1c2
+      - disk.write.requests
+      disk.iops_osm_server_1c2:
+      - osm_server_1c2
+      - disk.iops
+      binding_osm_server_1c2:
+      - osm_server_1c2
+      - binding
+      network.incoming.packets.rate_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - network.incoming.packets.rate
+      scalable_osm_server_1c2:
+      - osm_server_1c2
+      - scalable
+      cpu.delta_osm_server_1c2:
+      - osm_server_1c2
+      - cpu.delta
+      vcpus_osm_server_1c2:
+      - osm_server_1c2
+      - vcpus
+      disk.read.bytes_osm_server_1c2:
+      - osm_server_1c2
+      - disk.read.bytes
+      disk.root.size_osm_server_1c2:
+      - osm_server_1c2
+      - disk.root.size
+      disk.usage_osm_server_1c2:
+      - osm_server_1c2
+      - disk.usage
+      memory.usage_osm_server_1c2:
+      - osm_server_1c2
+      - memory.usage
+      network.outpoing.packets_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - network.outpoing.packets
+      disk.write.bytes.rate_osm_server_1c2:
+      - osm_server_1c2
+      - disk.write.bytes.rate
+      disk.device.allocation_osm_server_1c2:
+      - osm_server_1c2
+      - disk.device.allocation
+      disk.device.usage_osm_server_1c2:
+      - osm_server_1c2
+      - disk.device.usage
+      network.outgoing.packets.rate_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - network.outgoing.packets.rate
+      disk.device.read.bytes_osm_server_1c2:
+      - osm_server_1c2
+      - disk.device.read.bytes
+      disk.device.capacity_osm_server_1c2:
+      - osm_server_1c2
+      - disk.device.capacity
+      network.outgoing.bytes.rate_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - network.outgoing.bytes.rate
+      disk.device.write.bytes_osm_server_1c2:
+      - osm_server_1c2
+      - disk.device.write.bytes
+      disk.device.write.requests.rate_osm_server_1c2:
+      - osm_server_1c2
+      - disk.device.write.requests.rate
+      network.incoming.bytes.rate_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - network.incoming.bytes.rate
+      instance_osm_server_1c2:
+      - osm_server_1c2
+      - instance
+      network.incoming.packets_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - network.incoming.packets
+    requirements:
+      link_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - link
+      dependency_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - dependency
+      local_storage_osm_server_1c2:
+      - osm_server_1c2
+      - local_storage
+      dependency_osm_server_1c2:
+      - osm_server_1c2
+      - dependency

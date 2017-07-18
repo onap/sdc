@@ -22,14 +22,16 @@
  */
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import Button from 'react-bootstrap/lib/Button.js';
-import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import Button from 'sdc-ui/lib/react/Button.js';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 
 class ValidationButtons extends React.Component {
 
 	static propTypes = {
 		labledButtons: React.PropTypes.bool.isRequired,
-		isReadOnlyMode: React.PropTypes.bool
+		isReadOnlyMode: React.PropTypes.bool,
+		submitButtonText: React.PropTypes.string,
+		cancelButtonText: React.PropTypes.string
 	};
 
 	state = {
@@ -37,16 +39,16 @@ class ValidationButtons extends React.Component {
 	};
 
 	render() {
-		var submitBtn = this.props.labledButtons ? i18n('Save') : <SVGIcon className='check' name='check'/>;
-		var closeBtn = this.props.labledButtons ? i18n('Cancel') : <SVGIcon className='close' name='close'/>;
+		let submitBtn = this.props.labledButtons ? this.props.submitButtonText ? this.props.submitButtonText : i18n('Save') : <SVGIcon className='check' name='check'/>;
+		let closeBtn = this.props.labledButtons ? this.props.cancelButtonText ? this.props.cancelButtonText : i18n('Cancel') : <SVGIcon className='close' name='close'/>;
 		return (
 			<div className='validation-buttons'>
 				{!this.props.isReadOnlyMode ?
 					<div>
-						<Button  bsStyle='primary' ref='submitbutton' type='submit' disabled={!this.state.isValid}>{submitBtn}</Button>
-						<Button  type='reset'>{closeBtn}</Button>
+						<Button type='submit' disabled={!this.state.isValid}>{submitBtn}</Button>
+						<Button btnType='outline' type='reset'>{closeBtn}</Button>
 					</div>
-					: <Button  type='reset'>{i18n('Close')}</Button>
+					: <Button btnType='outline' type='reset'>{i18n('Close')}</Button>
 				}
 			</div>
 		);

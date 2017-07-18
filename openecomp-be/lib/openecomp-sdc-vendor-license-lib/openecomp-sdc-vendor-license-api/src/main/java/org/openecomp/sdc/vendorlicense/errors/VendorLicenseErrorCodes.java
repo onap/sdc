@@ -26,4 +26,12 @@ public class VendorLicenseErrorCodes {
   public static final String VENDOR_LICENSE_MODEL_NOT_FOUND = "VENDOR_LICENSE_MODEL_NOT_FOUND";
   public static final String SUBMIT_UNCOMPLETED_LICENSE_MODEL = "SUBMIT_UNCOMPLETED_LICENSE_MODEL";
   public static final String LICENSING_DATA_INVALID = "LICENSING_DATA_INVALID";
+
+  public static final String LIMIT_INVALID_TYPE = "LIMIT_INVALID_TYPE";
+  public static final String LIMIT_INVALID_METRIC = "LIMIT_INVALID_METRIC";
+  public static final String LIMIT_INVALID_AGGREGATIONFUNCTION = "LIMIT_INVALID_AGGREGATIONFUNCTION";
+  public static final String LIMIT_INVALID_TIME = "LIMIT_INVALID_TIME";
+  public static final String DUPLICATE_LIMIT_NAME_NOT_ALLOWED =
+      "DUPLICATE_LIMIT_NAME_NOT_ALLOWED";
+  public static final String DATE_RANGE_INVALID = "DATE_RANGE_INVALID";
 }

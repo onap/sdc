@@ -23,7 +23,7 @@ import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
-import {optionsInputValues as  EntitlementPoolsOptionsInputValues, thresholdUnitType, SP_ENTITLEMENT_POOL_FORM}  from  './EntitlementPoolsConstants.js';
+import {optionsInputValues as  EntitlementPoolsOptionsInputValues, thresholdUnitType, SP_ENTITLEMENT_POOL_FORM, EP_TIME_FORMAT}  from  './EntitlementPoolsConstants.js';
 import {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
 
 const EntitlementPoolPropType = React.PropTypes.shape({
@@ -50,10 +50,11 @@ const EntitlementPoolPropType = React.PropTypes.shape({
 	})
 });
 
-const EntitlementPoolsFormContent = ({data, genericFieldInfo, onDataChanged, validateName, validateChoiceWithOther, validateTimeOtherValue, thresholdValueValidation}) => {
+const EntitlementPoolsFormContent = ({data, genericFieldInfo, onDataChanged, validateName, validateChoiceWithOther, validateTimeOtherValue,
+	 thresholdValueValidation, validateStartDate}) => {
 	let {
 		name, description, manufacturerReferenceNumber, operationalScope , aggregationFunction,  thresholdUnits, thresholdValue,
-		increments, time, entitlementMetric} = data;
+		increments, time, entitlementMetric, startDate, expiryDate} = data;
 
 	return (
 		<GridSection>
@@ -175,6 +176,8 @@ const EntitlementPoolsFormContent = ({data, genericFieldInfo, onDataChanged, val
 					onChange={manufacturerReferenceNumber => onDataChanged({manufacturerReferenceNumber}, SP_ENTITLEMENT_POOL_FORM)}
 					label={i18n('Manufacturer Reference Number')}
 					value={manufacturerReferenceNumber}
+					isValid={genericFieldInfo.manufacturerReferenceNumber.isValid}
+					errorText={genericFieldInfo.manufacturerReferenceNumber.errorText}
 					isRequired={true}
 					data-test-id='create-ep-reference-number'
 					type='text'/>
@@ -205,6 +208,40 @@ const EntitlementPoolsFormContent = ({data, genericFieldInfo, onDataChanged, val
 					value={increments}
 					data-test-id='create-ep-increments'
 					type='text'/>
+			</GridItem>
+			<GridItem colSpan={2} />
+			<GridItem colSpan={2}>
+				<Input
+					type='date'
+					label={i18n('Start Date')} 
+					value={startDate}
+					dateFormat={EP_TIME_FORMAT}
+					startDate={startDate}
+					endDate={expiryDate}
+					onChange={startDate => onDataChanged(
+						{startDate: startDate ? startDate.format(EP_TIME_FORMAT) : ''}, 
+						SP_ENTITLEMENT_POOL_FORM,
+						{startDate: validateStartDate}
+					)}
+					isValid={genericFieldInfo.startDate.isValid}
+					errorText={genericFieldInfo.startDate.errorText}
+					selectsStart/>
+			</GridItem>
+			<GridItem colSpan={2}>
+				<Input
+					type='date' 
+					label={i18n('Expiry Date')} 
+					value={expiryDate}
+					dateFormat={EP_TIME_FORMAT}
+					startDate={startDate}
+					endDate={expiryDate}
+					onChange={expiryDate => {
+						onDataChanged({expiryDate: expiryDate ? expiryDate.format(EP_TIME_FORMAT) : ''}, SP_ENTITLEMENT_POOL_FORM);
+						onDataChanged({startDate}, SP_ENTITLEMENT_POOL_FORM, {startDate: validateStartDate});
+					}}
+					isValid={genericFieldInfo.expiryDate.isValid}
+					errorText={genericFieldInfo.expiryDate.errorText}
+					selectsEnd/>
 			</GridItem>
 		</GridSection>
 	);
@@ -251,6 +288,7 @@ class EntitlementPoolsEditorView extends React.Component {
 							validateName={(value)=> this.validateName(value)}
 							validateTimeOtherValue ={(value)=> this.validateTimeOtherValue(value)}
 							validateChoiceWithOther={(value)=> this.validateChoiceWithOther(value)}
+							validateStartDate={(value, state)=> this.validateStartDate(value, state)}
 							thresholdValueValidation={(value, state)=> this.thresholdValueValidation(value, state)}/>
 					</Form>
 				}
@@ -269,6 +307,15 @@ class EntitlementPoolsEditorView extends React.Component {
 
 		return !isExists ?  {isValid: true, errorText: ''} :
 		{isValid: false, errorText: i18n('Entitlement pool by the name \'' + value + '\' already exists. Entitlement pool name must be unique')};
+	}
+
+	validateStartDate(value, state) {
+		if (state.data.expiryDate) {
+			if (!value) {
+				return {isValid: false, errorText: i18n('Start date has to be specified if expiry date is specified')};
+			}
+		}
+		return {isValid: true, errorText: ''};
 	}
 
 	validateTimeOtherValue(value) {

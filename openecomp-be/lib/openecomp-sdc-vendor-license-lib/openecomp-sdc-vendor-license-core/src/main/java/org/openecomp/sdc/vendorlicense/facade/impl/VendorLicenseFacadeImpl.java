@@ -20,6 +20,11 @@
 
 package org.openecomp.sdc.vendorlicense.facade.impl;
 
+import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE;
+import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_FG_MISSING_EP;
+import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_LA_MISSING_FG;
+import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_MISSING_LA;
+
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -40,6 +45,8 @@ import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao;
 import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
 import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.LimitDao;
+import org.openecomp.sdc.vendorlicense.dao.LimitDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDao;
 import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
@@ -48,6 +55,7 @@ import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementModel;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.vendorlicense.errors.SubmitUncompletedLicenseModelErrorBuilder;
 import org.openecomp.sdc.vendorlicense.errors.VendorLicenseModelNotFoundErrorBuilder;
@@ -67,11 +75,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE;
-import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_FG_MISSING_EP;
-import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_LA_MISSING_FG;
-import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_MISSING_LA;
-
 public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
 
   private static final VersioningManager versioningManager =
@@ -87,6 +90,7 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
       entitlementPoolDao = EntitlementPoolDaoFactory.getInstance().createInterface();
   private static final LicenseKeyGroupDao
       licenseKeyGroupDao = LicenseKeyGroupDaoFactory.getInstance().createInterface();
+  private static final LimitDao limitDao = LimitDaoFactory.getInstance().createInterface();
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
   /**
@@ -98,6 +102,7 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
     featureGroupDao.registerVersioning(VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE);
     entitlementPoolDao.registerVersioning(VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE);
     licenseKeyGroupDao.registerVersioning(VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE);
+    limitDao.registerVersioning(VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE);
   }
 
   @Override
@@ -123,6 +128,8 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
         getVersionInfo(featureGroup.getVendorLicenseModelId(), VersionableEntityAction.Read,
             user), user);
     featureGroup.setVersion(version);
+
+
     return getFeatureGroup(featureGroup);
   }
 
@@ -130,6 +137,19 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
     FeatureGroupEntity retrieved = featureGroupDao.get(featureGroup);
     VersioningUtil
         .validateEntityExistence(retrieved, featureGroup, VendorLicenseModelEntity.ENTITY_TYPE);
+    if(retrieved.getManufacturerReferenceNumber() == null){
+      Object[] entitlementPoolIdsList = retrieved.getEntitlementPoolIds().toArray();
+      if(entitlementPoolIdsList != null && entitlementPoolIdsList.length > 0){
+        String entitlementPoolId = entitlementPoolIdsList[0].toString();
+        EntitlementPoolEntity entitlementPoolEntity = new EntitlementPoolEntity(retrieved.getVendorLicenseModelId(),
+                retrieved.getVersion(), entitlementPoolId);
+        entitlementPoolEntity = entitlementPoolDao.get(entitlementPoolEntity);
+        retrieved.setManufacturerReferenceNumber(entitlementPoolDao.getManufacturerReferenceNumber(
+                entitlementPoolEntity));
+        featureGroupDao.update(retrieved);
+      }
+    }
+
     return retrieved;
   }
 
@@ -441,6 +461,38 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
                                                     String licenseAgreementId, String user) {
     return getLicenseAgreement(vlmId, licenseAgreementId, VersioningUtil
         .resolveVersion(version, getVersionInfo(vlmId, VersionableEntityAction.Read, user), user));
+  }
+
+  @Override
+  public LimitEntity createLimit(LimitEntity limit, String user) {
+    limit.setVersion(VersioningUtil.resolveVersion(limit.getVersion(),
+        getVersionInfo(limit.getVendorLicenseModelId(), VersionableEntityAction.Write,
+            user), user));
+    //limit.setVersionUuId(CommonMethods.nextUuId());
+    limitDao.create(limit);
+    updateVlmLastModificationTime(limit.getVendorLicenseModelId(),
+        limit.getVersion());
+    return limit;
+  }
+
+  @Override
+  public Collection<LimitEntity> listLimits(String vlmId, Version version, String epLkgId,
+                                                      String user) {
+    return limitDao.list(new LimitEntity(vlmId, VersioningUtil
+        .resolveVersion(version, getVersionInfo(vlmId, VersionableEntityAction.Read, user), user),
+        epLkgId, null));
+
+  }
+
+  @Override
+  public void updateLimit(LimitEntity limit, String user) {
+    limit.setVersion(VersioningUtil.resolveVersion(limit.getVersion(),
+        getVersionInfo(limit.getVendorLicenseModelId(), VersionableEntityAction.Write,
+            user), user));
+    //limit.setVersionUuId(CommonMethods.nextUuId());
+    limitDao.update(limit);
+    updateVlmLastModificationTime(limit.getVendorLicenseModelId(),
+        limit.getVersion());
   }
 
   private LicenseAgreementEntity getLicenseAgreement(String vlmId, String licenseAgreementId,

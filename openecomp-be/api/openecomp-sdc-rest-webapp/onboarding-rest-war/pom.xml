@@ -35,6 +35,11 @@
             <artifactId>validation-rest-services</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>healthcheck-rest-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!--dependency>
             <groupId>org.openecomp.sdc.onboarding</groupId>
             <artifactId>application-config-rest-services</artifactId>

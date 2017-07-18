@@ -1,8 +1,8 @@
 .catalog-tile {
-		&:hover {
-		box-shadow: 0.3px 5px 12.8px 1.3px rgba(24, 24, 25, 0.15);
-		border: 1px solid $light-gray;
-	}
+  &:hover {
+	box-shadow: 0.3px 5px 12.8px 1.3px rgba(24, 24, 25, 0.15);
+	border: 1px solid $light-gray;
+  }
   .catalog-tile-top {
 	position: relative;
 	flex: 1;
@@ -11,48 +11,54 @@
 	padding-left: 10px;
 	align-items: flex-start;
 	flex-direction: column;
-		.catalog-tile-content {
-			margin-top: auto;
-			width: 180px;
-		}
-
+	.catalog-tile-content {
+	  margin-top: auto;
+	  width: 180px;
+	}
 
 	.catalog-tile-type {
-		display: block;
-    margin-top: -25px;
-		font-size: $heading-font-5;
-		&.license-model-type {
-			color: $purple;
-		}
-		&.software-product-type {
-			color: $blue;
-		}
+	  display: block;
+	  margin-top: -25px;
+	  font-size: $heading-font-5;
+	  &.license-model-type {
+		color: $purple;
+	  }
+	  &.software-product-type {
+		color: $blue;
+	  }
 	}
 	.catalog-tile-entity-details {
-		margin-top:23px;
-		.catalog-tile-version-info{
-			display: flex;
-			justify-content: space-between;
+	  margin-top: 20px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		flex: 0.8;
+	  .catalog-tile-version-info {
+		display: flex;
+		justify-content: space-between;
 
-			.catalog-tile-item-version {
-				@extend .body-2;
-				line-height: 6px;
-			}
+		.catalog-tile-item-version {
+		  @extend .body-2;
+		  line-height: 6px;
 		}
-		.catalog-tile-vendor-name {
-			@extend .body-3-medium;
-			color: $gray;
-			line-height: 12px;
-			@include ellipsis(auto,inline-block,178px);
-		}
+	  }
+	  .catalog-tile-vendor-name {
+		@extend .body-3;
+		flex: 0.4;
+		align-self: baseline;
+		color: $gray;
+		line-height: 10px;
+		@include ellipsis(auto, inline-block, 178px);
+	  }
 
-  }
-		.catalog-tile-item-name {
-			@extend .heading-5-medium;
-			color: $black;
-			@include ellipsis(auto,inline-block,175px);
-		}
 	}
+	.catalog-tile-item-name {
+	  @extend .heading-5-semibold;
+	  color: $black;
+	  @include ellipsis(auto, inline-block, 175px);
+	  line-height: inherit;
+	}
+  }
   .catalog-tile-icon {
 
 	width: 58px;
@@ -65,32 +71,39 @@
 	  align-self: center;
 	  height: 58px;
 	  width: 58px;
-		margin-left: 122px;
+	  margin-left: 122px;
 	  background-repeat: no-repeat;
-	  .svg-icon {
+	  .svg-icon-wrapper {
 		&.vendor {
-		  fill: $dark-gray;
-		  margin-top: 22px;
-		  width: 53px;
-		  height: 47px;
-		  &:hover {
+		  .svg-icon {
 			fill: $dark-gray;
+			width: 53px;
+			height: 47px;
+			&:hover {
+			  fill: $dark-gray;
+			}
 		  }
+		  margin-top: 22px;
+
 		}
 		&.vsp {
-		  fill: $light-blue;
+		  .svg-icon {
+			fill: $light-blue;
+			width: 60px;
+			height: 40px;
+		  }
 		  margin-top: 18px;
 		  margin-left: 3px;
-		  width: 60px;
-		  height: 40px;
 		}
 		&.vlm {
-		  fill: $purple;
 		  margin-top: 18px;
-		  width: 45px;
-		  height: 53px;
-		}
+		  .svg-icon {
+			fill: $purple;
 
+			width: 45px;
+			height: 53px;
+		  }
+		}
 	  }
 	}
   }
@@ -99,13 +112,17 @@
 	padding-top: 5px;
 	display: flex;
 	justify-content: space-between;
-	margin-top:2px;
+	margin-top: 2px;
 	padding-bottom: 3px;
-	@extend .body-2-medium;
-	.svg-icon.plus {
-	  height: 9px;
-	  width: 9px;
-	  fill: $blue;
+	@extend .body-2-semibold;
+	.svg-icon-wrapper {
+	  &.plus {
+		.svg-icon {
+		  height: 9px;
+		  width: 9px;
+		  fill: $blue;
+		}
+	  }
 	}
 	.catalog-tile-item-details {
 	  overflow: hidden;
@@ -113,27 +130,27 @@
 
 	.catalog-tile-add-new-vsp {
 	  color: $blue;
-	  margin-left:40px;
+	  margin-left: 40px;
 	}
 	.catalog-tile-locking-user-name {
 	  @extend .body-2;
-	  @include ellipsis(auto,inline-block,180px);
+	  @include ellipsis(auto, inline-block, 180px);
 	}
-		.catalog-tile-check-in-status {
-			.svg-icon-wrapper {
-				.svg-icon {
-					&.locked {
-					margin-left: 7px;
-					width: 11px;
-					fill: $gray;
-					}
-					&.unlocked {
-					margin-left: 7px;
-					width: 11px;
-					fill: $gray;
-					}
-				}
-			}
+	.catalog-tile-check-in-status {
+	  .svg-icon-wrapper {
+		&.locked {
+		  .svg-icon {
+			width: 11px;
+			fill: $gray;
+		  }
 		}
+		&.unlocked {
+		  .svg-icon {
+			width: 11px;
+			fill: $gray;
+		  }
+		}
+	  }
+	}
   }
 }

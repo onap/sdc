@@ -1,9 +1,5 @@
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * The type Consolidation data.
  */
@@ -14,11 +10,6 @@ public class ConsolidationData {
 
   //Port Consolidation data
   private PortConsolidationData portConsolidationData;
-
-  //Key - Service Template file name
-  //value - List of the abstract/substitute node template id
-  private Map<String, List<String>> substituteNodeTemplates; // todo - remove this one and use
-  // nestedConsolidationData instead
 
   //Nested Consolidation data
   private NestedConsolidationData nestedConsolidationData;
@@ -31,7 +22,6 @@ public class ConsolidationData {
     computeConsolidationData = new ComputeConsolidationData();
     portConsolidationData = new PortConsolidationData();
     nestedConsolidationData = new NestedConsolidationData();
-    substituteNodeTemplates = new HashMap<>();
   }
 
   /**
@@ -69,24 +59,6 @@ public class ConsolidationData {
   public void setPortConsolidationData(
       PortConsolidationData portConsolidationData) {
     this.portConsolidationData = portConsolidationData;
-  }
-
-  /**
-   * Gets substitute node templates.
-   *
-   * @return the substitute node templates
-   */
-  public Map<String, List<String>> getSubstituteNodeTemplates() {
-    return substituteNodeTemplates;
-  }
-
-  /**
-   * Sets substitute node templates.
-   *
-   * @param substituteNodeTemplates the substitute node templates
-   */
-  public void setSubstituteNodeTemplates(Map<String, List<String>> substituteNodeTemplates) {
-    this.substituteNodeTemplates = substituteNodeTemplates;
   }
 
   /**

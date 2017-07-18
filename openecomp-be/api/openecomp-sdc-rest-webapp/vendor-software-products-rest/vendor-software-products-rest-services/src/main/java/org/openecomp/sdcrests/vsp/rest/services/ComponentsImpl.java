@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,6 +32,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentCreationDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityResponseDto;
@@ -39,6 +40,7 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityVali
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
 import org.openecomp.sdcrests.vsp.rest.Components;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapComponentDataToComponentDto;
+import org.openecomp.sdcrests.vsp.rest.mapping.MapComponentEntityToComponentCreationDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapComponentEntityToComponentDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapComponentRequestDtoToComponentEntity;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapCompositionEntityResponseToDto;
@@ -93,8 +95,12 @@ public class ComponentsImpl implements Components {
     component.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
 
     ComponentEntity createdComponent = componentManager.createComponent(component, user);
+    MapComponentEntityToComponentCreationDto mapping =
+        new MapComponentEntityToComponentCreationDto();
+    ComponentCreationDto createdComponentDto = mapping.applyMapping(createdComponent,
+        ComponentCreationDto.class);
     return Response
-        .ok(createdComponent != null ? new StringWrapperResponse(createdComponent.getId()) : null)
+        .ok(createdComponent != null ? createdComponentDto : null)
         .build();
   }
 

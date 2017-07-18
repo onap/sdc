@@ -31,14 +31,14 @@
         <dependency>
             <groupId>com.amdocs.zusammen</groupId>
             <artifactId>zusammen-adaptor-inbound-api</artifactId>
-            <version>0.0.1</version>
+              <version>${zusammen.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-datatypes-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
+          <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>

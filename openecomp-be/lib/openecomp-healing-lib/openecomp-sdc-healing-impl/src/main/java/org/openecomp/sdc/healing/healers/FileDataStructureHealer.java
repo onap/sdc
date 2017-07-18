@@ -94,7 +94,7 @@ public class FileDataStructureHealer implements Healer {
     byte[] byteContentData = uploadData.getContentData().array();
     FileContentHandler fileContentHandler;
     try{
-      fileContentHandler = CommonUtil.loadUploadFileContent(byteContentData);
+      fileContentHandler = CommonUtil.validateAndUploadFileContent(byteContentData);
       Map<String, List<ErrorMessage>> errors = new HashMap<>();
       OrchestrationTemplateCandidateData candidateDataEntity =
         new CandidateEntityBuilder(candidateService)

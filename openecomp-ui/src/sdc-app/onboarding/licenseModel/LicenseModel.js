@@ -18,7 +18,7 @@ import {connect} from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import TabulatedEditor from 'src/nfvo-components/editor/TabulatedEditor.jsx';
-import ActivityLogActionHelper from 'nfvo-components/activity-log/ActivityLogActionHelper.js';
+import ActivityLogActionHelper from 'sdc-app/common/activity-log/ActivityLogActionHelper.js';
 import {enums} from 'sdc-app/onboarding/OnboardingConstants.js';
 import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
 

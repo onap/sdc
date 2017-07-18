@@ -37,7 +37,7 @@
 
     <!-- aspect beans -->
     <bean id = "debugAspect" class="org.openecomp.sdc.logging.aspects.DebugAspect"/>
-
+    <bean id = "healthCheck" class="org.openecomp.sdcrests.health.rest.services.HealthCheckImpl"/>
     <!--aop:config>
         < aspect pointcuts>
         <aop:pointcut id="loggingDebugPointcut" expression="execution(* org.openecomp.sdc.*.*.*(..))"/>
@@ -60,20 +60,26 @@
             <ref bean="licenseAgreements"/>
             <ref bean="featureGroups"/>
             <ref bean="entitlementPools"/>
+            <ref bean="entitlementPoolLimits"/>
             <ref bean="licenseKeyGroups"/>
+            <ref bean="licenseKeyGroupLimits"/>
             <ref bean="vendorSoftwareProducts"/>
             <ref bean="networks"/>
             <ref bean="components"/>
             <ref bean="nics"/>
+            <ref bean="computes"/>
             <ref bean="processes"/>
             <ref bean="componentProcesses"/>
             <ref bean="validation"/>
             <ref bean="actions"/>
             <ref bean="applicationConfiguration"/>
-            <ref bean="componentUploads"/>
+            <ref bean="componentMonitoringUploads"/>
+            <ref bean="deploymentFlavors"/>
+	        <ref bean="images"/>
             <ref bean="orchestrationTemplateCandidate"/>
             <ref bean="componentDependencyModel"/>
             <ref bean="activityLog"/>
+            <ref bean="healthCheck"/>
         </jaxrs:serviceBeans>
 
         <jaxrs:providers>

@@ -3,6 +3,7 @@ package org.openecomp.core.zusammen.db;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
+import com.amdocs.zusammen.commons.health.data.HealthInfo;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
@@ -48,4 +49,8 @@ public interface ZusammenConnector {
 
   Optional<Element> saveElement(SessionContext context, ElementContext elementContext,
                                 ZusammenElement element, String message);
+
+  Collection<HealthInfo> checkHealth(SessionContext sessionContext);
+
+  String getVersion(SessionContext sessionContext);
 }

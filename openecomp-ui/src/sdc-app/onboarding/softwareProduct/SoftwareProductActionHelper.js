@@ -27,6 +27,7 @@ import {actionsEnum as VersionControllerActionsEnum} from 'nfvo-components/panel
 import {actionTypes as HeatSetupActions} from 'sdc-app/onboarding/softwareProduct/attachments/setup/HeatSetupConstants.js';
 import {actionTypes as featureGroupsActionConstants} from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupsConstants.js';
 import {actionTypes as licenseAgreementActionTypes} from 'sdc-app/onboarding/licenseModel/licenseAgreement/LicenseAgreementConstants.js';
+import {actionTypes as componentActionTypes} from './components/SoftwareProductComponentsConstants.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import {PRODUCT_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
@@ -57,7 +58,8 @@ function putSoftwareProduct(softwareProduct) {
 		vendorName: softwareProduct.vendorName,
 		licensingVersion: softwareProduct.licensingVersion && softwareProduct.licensingVersion.id ? softwareProduct.licensingVersion : {} ,
 		icon: softwareProduct.icon,
-		licensingData: softwareProduct.licensingData
+		licensingData: softwareProduct.licensingData,
+		onboardingMethod: softwareProduct.onboardingMethod
 	});
 }
 
@@ -249,7 +251,8 @@ const SoftwareProductActionHelper = {
 	processAndValidateHeatCandidate(dispatch, {softwareProductId, version}){
 		return validateHeatCandidate(softwareProductId, version).then(response => {
 			if (response.status === 'Success') {
-				SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version});
+				let isFetchImageDetails = true;
+				SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version, isFetchImageDetails});
 				SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {softwareProductId, version});
 			}
 		});
@@ -459,8 +462,20 @@ const SoftwareProductActionHelper = {
 	},
 
 	/** for the next verision */
-	addComponent(dispatch) {
-		return dispatch;
+	addComponent(dispatch, {softwareProductId, modalClassName}) {
+		SoftwareProductComponentsActionHelper.clearComponentCreationData(dispatch);
+		dispatch({
+			type: componentActionTypes.COMPONENT_CREATE_OPEN
+		});
+		dispatch({
+			type: modalActionTypes.GLOBAL_MODAL_SHOW,
+			data: {
+				modalComponentName: modalContentMapper.COMPONENT_CREATION,
+				modalComponentProps: {softwareProductId},
+				modalClassName,
+				title: 'Create Virtual Function Component'
+			}
+		});
 	},
 
 	migrateSoftwareProduct(dispatch, {softwareProduct}) {

@@ -22,7 +22,7 @@ import TabulatedEditor from 'src/nfvo-components/editor/TabulatedEditor.jsx';
 import {enums} from 'sdc-app/onboarding/OnboardingConstants.js';
 import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
 
-import {navigationItems, mapScreenToNavigationItem} from './SoftwareProductConstants.js';
+import {navigationItems, mapScreenToNavigationItem, onboardingMethod as onboardingMethodTypes} from './SoftwareProductConstants.js';
 import SoftwareProductActionHelper from './SoftwareProductActionHelper.js';
 import SoftwareProductComponentsActionHelper from './components/SoftwareProductComponentsActionHelper.js';
 import SoftwareProductDependenciesActionHelper from './dependencies/SoftwareProductDependenciesActionHelper.js';
@@ -36,7 +36,7 @@ function getActiveNavigationId(screen, componentId) {
 	return activeItemId;
 }
 
-const buildComponentNavigationBarGroups = ({componentId, meta}) => {
+const buildComponentNavigationBarGroups = ({componentId, meta, hasImages}) => {
 	const groups = ([
 		{
 			id: navigationItems.GENERAL + '|' + componentId,
@@ -64,6 +64,12 @@ const buildComponentNavigationBarGroups = ({componentId, meta}) => {
 			disabled: false,
 			meta
 		}, {
+			id: navigationItems.IMAGES + '|' + componentId,
+			name: i18n('Images'),
+			disabled: false,
+			hidden: (!hasImages),
+			meta
+		}, {
 			id: navigationItems.PROCESS_DETAILS + '|' + componentId,
 			name: i18n('Process Details'),
 			disabled: false,
@@ -79,9 +85,9 @@ const buildComponentNavigationBarGroups = ({componentId, meta}) => {
 	return groups;
 };
 
-const buildNavigationBarProps = ({softwareProduct, meta, screen, componentId, componentsList, mapOfExpandedIds}) => {
+const buildNavigationBarProps = ({softwareProduct, meta, screen, componentId, componentsList, mapOfExpandedIds, imagesNavigationList}) => {
 	const {softwareProductEditor: {data: currentSoftwareProduct = {}}} = softwareProduct;
-	const {id, name} = currentSoftwareProduct;
+	const {id, name, onboardingMethod} = currentSoftwareProduct;
 	const groups = [{
 		id: id,
 		name: name,
@@ -95,6 +101,13 @@ const buildNavigationBarProps = ({softwareProduct, meta, screen, componentId, co
 				id: navigationItems.GENERAL,
 				name: i18n('General'),
 				disabled: false,
+				meta
+			},
+			{
+				id: navigationItems.DEPLOYMENT_FLAVORS,
+				name: i18n('Deployment Flavors'),
+				disabled: false,
+				hidden: onboardingMethod !== onboardingMethodTypes.MANUAL,
 				meta
 			}, {
 				id: navigationItems.PROCESS_DETAILS,
@@ -135,7 +148,8 @@ const buildNavigationBarProps = ({softwareProduct, meta, screen, componentId, co
 						name: displayName,
 						meta,
 						expanded: mapOfExpandedIds[navigationItems.COMPONENTS + '|' + id] === true  && screen !== enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE,
-						items: buildComponentNavigationBarGroups({componentId: id, meta})
+						items: buildComponentNavigationBarGroups({componentId: id, meta,
+							hasImages : (onboardingMethod === onboardingMethodTypes.MANUAL || imagesNavigationList[id] === true)})
 					}))
 				]
 			}
@@ -179,17 +193,18 @@ function buildMeta({softwareProduct, componentId, softwareProductDependencies}) 
 const mapStateToProps = ({softwareProduct}, {currentScreen: {screen, props: {componentId}}}) => {
 	const {softwareProductEditor, softwareProductComponents, softwareProductDependencies} = softwareProduct;
 	const {mapOfExpandedIds = []} = softwareProductEditor;
-	const {componentsList = []} = softwareProductComponents;
+	const {componentsList = [], images: {imagesNavigationList}} = softwareProductComponents;
+
 	const meta = buildMeta({softwareProduct, componentId, softwareProductDependencies});
 	return {
 		versionControllerProps: buildVersionControllerProps(softwareProduct),
-		navigationBarProps: buildNavigationBarProps({softwareProduct, meta, screen, componentId, componentsList, mapOfExpandedIds}),
+		navigationBarProps: buildNavigationBarProps({softwareProduct, meta, screen, componentId, componentsList, mapOfExpandedIds, imagesNavigationList}),
 		meta
 	};
 };
 
-const autoSaveBeforeNavigate = ({dispatch, screen, softwareProductId, componentId, 
-		meta: {isReadOnlyMode, softwareProduct, version, qdata, softwareProductDependencies, 
+const autoSaveBeforeNavigate = ({dispatch, screen, softwareProductId, componentId,
+		meta: {isReadOnlyMode, softwareProduct, version, qdata, softwareProductDependencies,
 		currentComponentMeta: {componentData, componentQdata}}}) => {
 	let promise;
 	if (isReadOnlyMode) {
@@ -208,6 +223,7 @@ const autoSaveBeforeNavigate = ({dispatch, screen, softwareProductId, componentI
 			case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_COMPUTE:
 			case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_STORAGE:
 			case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_NETWORK:
+			case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES:
 			case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_LOAD_BALANCING:
 				promise = SoftwareProductComponentsActionHelper.updateSoftwareProductComponentQuestionnaire(dispatch, {softwareProductId, version, vspComponentId: componentId, qdata: componentQdata});
 				break;
@@ -242,6 +258,9 @@ const onComponentNavigate = (dispatch, {id, softwareProductId, version, currentC
 		case navigationItems.NETWORKS:
 			OnboardingActionHelper.navigateToComponentNetwork(dispatch, {softwareProductId, componentId: nextComponentId, version});
 			break;
+		case navigationItems.IMAGES:
+			OnboardingActionHelper.navigateToComponentImages(dispatch, {softwareProductId, componentId: nextComponentId, version});
+			break;
 		case navigationItems.STORAGE:
 			OnboardingActionHelper.navigateToComponentStorage(dispatch, {softwareProductId, componentId: nextComponentId, version});
 			break;
@@ -266,7 +285,7 @@ const mapActionsToProps = (dispatch, {currentScreen: {screen, props: {softwarePr
 			let {heatSetup, heatSetupCache} = meta;
 			let heatSetupPopupPromise = screen === enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS ?
 								HeatSetupActionHelper.heatSetupLeaveConfirmation(dispatch, {softwareProductId, heatSetup, heatSetupCache}) :
-								Promise.resolve();						
+								Promise.resolve();
 			let preNavigate = meta ? autoSaveBeforeNavigate({dispatch, screen, meta, softwareProductId, componentId: currentComponentId}) : Promise.resolve();
 			version = version || (meta ? meta.version : undefined);
 			Promise.all([preNavigate, heatSetupPopupPromise]).then(() => {
@@ -276,6 +295,9 @@ const mapActionsToProps = (dispatch, {currentScreen: {screen, props: {softwarePr
 						break;
 					case navigationItems.GENERAL:
 						OnboardingActionHelper.navigateToSoftwareProductDetails(dispatch, {softwareProductId, version});
+						break;
+					case navigationItems.DEPLOYMENT_FLAVORS:
+						OnboardingActionHelper.navigateToSoftwareProductDeployment(dispatch, {softwareProductId, version});
 						break;
 					case navigationItems.PROCESS_DETAILS:
 						OnboardingActionHelper.navigateToSoftwareProductProcesses(dispatch, {softwareProductId, version});
@@ -299,7 +321,7 @@ const mapActionsToProps = (dispatch, {currentScreen: {screen, props: {softwarePr
 						onComponentNavigate(dispatch, {id, softwareProductId, version, screen, currentComponentId});
 						break;
 				}
-			}).catch(() => {});
+			}).catch((e) => {console.error(e);});
 		}
 	};
 
@@ -311,6 +333,7 @@ const mapActionsToProps = (dispatch, {currentScreen: {screen, props: {softwarePr
 		case enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES:
 		case enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG:
 		case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS:
+		case enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT:
 		case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_PROCESSES:
 		case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING:
 			props.onSave = () => {
@@ -335,7 +358,7 @@ const mapActionsToProps = (dispatch, {currentScreen: {screen, props: {softwarePr
 					OnboardingActionHelper.navigateToSoftwareProductActivityLog(dispatch, {softwareProductId, version: newVersion});
 				}
 			});
-		}).catch(() => {});
+		}).catch((e) => {console.error(e);});
 	};
 	return props;
 };

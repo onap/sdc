@@ -19,7 +19,13 @@
     "vfcCode": {
       "type": "string"
     },
-    "description": {
+"nfcCode": {
+"type": "string"
+},
+"nfcFunction": {
+"type": "string"
+},
+"description": {
       "type": "string"
     }
   },

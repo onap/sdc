@@ -16,16 +16,34 @@
 
 import SoftwareProductCreation from 'sdc-app/onboarding/softwareProduct/creation/SoftwareProductCreation.js';
 import LicenseModelCreation from 'sdc-app/onboarding/licenseModel/creation/LicenseModelCreation.js';
+import SoftwareProductComponentImageEditor from 'sdc-app/onboarding/softwareProduct/components/images/SoftwareProductComponentsImageEditor.js';
 import SubmitErrorResponse from 'nfvo-components/SubmitErrorResponse.jsx';
+import ComputeFlavorEditor from 'sdc-app/onboarding/softwareProduct/components/compute/computeComponents/computeFlavor/ComputeFlavorEditor.js';
+import NICCreation from 'sdc-app/onboarding/softwareProduct/components/network/NICCreation/NICCreation.js';
+import SoftwareProductComponentsNICEditor from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNICEditor.js';
+import ComponentCreation from 'sdc-app/onboarding/softwareProduct/components/creation/SoftwareProductComponentCreation.js';
+import SoftwareProductDeploymentEditor from 'sdc-app/onboarding/softwareProduct/deployment/editor/SoftwareProductDeploymentEditor.js';
 
-export const modalContentMapper = {	
+export const modalContentMapper = {
 	SOFTWARE_PRODUCT_CREATION: 'SOFTWARE_PRODUCT_CREATION',
 	LICENSE_MODEL_CREATION: 'LICENSE_MODEL_CREATION',
-	SUMBIT_ERROR_RESPONSE: 'SUMBIT_ERROR_RESPONSE'
+	SUMBIT_ERROR_RESPONSE: 'SUMBIT_ERROR_RESPONSE',
+	COMPONENT_COMPUTE_FLAVOR_EDITOR: 'COMPONENT_COMPUTE_FLAVOR_EDITOR',
+	NIC_EDITOR: 'NIC_EDITOR',
+	NIC_CREATION: 'NIC_CREATION',
+	COMPONENT_CREATION: 'COMPONENT_CREATION',
+	SOFTWARE_PRODUCT_COMPONENT_IMAGE_EDITOR : 'SOFTWARE_PRODUCT_COMPONENT_IMAGE_EDITOR',
+	DEPLOYMENT_FLAVOR_EDITOR: 'DEPLOYMENT_FLAVOR_EDITOR'
 };
 
 export const modalContentComponents = {
 	SUMBIT_ERROR_RESPONSE: SubmitErrorResponse,
 	SOFTWARE_PRODUCT_CREATION: SoftwareProductCreation,
 	LICENSE_MODEL_CREATION: LicenseModelCreation,
+	COMPONENT_COMPUTE_FLAVOR_EDITOR: ComputeFlavorEditor,
+	NIC_EDITOR: SoftwareProductComponentsNICEditor,
+	NIC_CREATION: NICCreation,
+	COMPONENT_CREATION: ComponentCreation,
+	SOFTWARE_PRODUCT_COMPONENT_IMAGE_EDITOR : SoftwareProductComponentImageEditor,
+	DEPLOYMENT_FLAVOR_EDITOR: SoftwareProductDeploymentEditor
 };

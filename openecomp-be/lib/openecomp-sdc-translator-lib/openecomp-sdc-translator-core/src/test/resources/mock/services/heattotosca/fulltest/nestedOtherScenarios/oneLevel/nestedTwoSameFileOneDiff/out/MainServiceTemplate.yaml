@@ -1,0 +1,76 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    same_file_param_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+    same_file_param_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+    same_file_param_3:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+    diff_file_param_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+    jsa_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+  node_templates:
+    test_nested_diff_file:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-other-file-1B
+      directives:
+      - substitutable
+      properties:
+        p1:
+          get_input: diff_file_param_1
+        service_template_filter:
+          substitute_service_template: nested-other-file-1BServiceTemplate.yaml
+    test_nested_same_file_1:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-same-file-1B
+      directives:
+      - substitutable
+      properties:
+        p1:
+          get_input: same_file_param_1
+        service_template_filter:
+          substitute_service_template: nested-same-file-1BServiceTemplate.yaml
+        p2:
+          get_input: same_file_param_2
+    test_nested_same_file_2:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-same-file-1B
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: nested-same-file-1BServiceTemplate.yaml
+        p2:
+          get_input: same_file_param_3
+  groups:
+    main_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - test_nested_diff_file
+      - test_nested_same_file_1
+      - test_nested_same_file_2

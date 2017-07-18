@@ -15,11 +15,11 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import Input from 'nfvo-components/input/validation/InputWrapper.jsx';
 
 const ExpandableInputClosed = ({iconType, onClick}) => (
-	<SVGIcon className='expandable-input-wrapper closed' name={iconType} onClick={onClick} />
+	<SVGIcon className='expandable-input-wrapper closed'  data-test-id='expandable-input-closed' name={iconType} onClick={onClick} />
 );
 
 class ExpandableInputOpened extends React.Component {
@@ -58,6 +58,7 @@ class ExpandableInputOpened extends React.Component {
 				<div className='expandable-input-wrapper opened' key='expandable'>
 					<Input
 						type='text'
+						data-test-id='expandable-input-opened'
 						value={value}
 						ref={(input) => this.searchInputNode = input}
 						className='expandable-active'
@@ -65,7 +66,7 @@ class ExpandableInputOpened extends React.Component {
 						onChange={e => onChange(e)}
 						onKeyDown={e => this.handleKeyDown(e)}
 						onBlur={handleBlur}/>
-					{value && <SVGIcon onClick={() => this.handleClose()} name='close' />}
+					{value && <SVGIcon data-test-id='expandable-input-close-btn' onClick={() => this.handleClose()} name='close' />}
 					{!value && <SVGIcon name={iconType} onClick={handleBlur}/>}
 				</div>
 		);

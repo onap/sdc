@@ -23,6 +23,7 @@ package org.openecomp.sdc.tosca.datatypes;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.datatypes.model.AsdcModel;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.services.DataModelUtil;
 
 import java.util.Collections;
 import java.util.Map;
@@ -34,6 +35,9 @@ public class ToscaServiceModel implements AsdcModel {
   private FileContentHandler artifactFiles;
   private Map<String, ServiceTemplate> serviceTemplates;
   private String entryDefinitionServiceTemplate;
+
+  public ToscaServiceModel() {
+  }
 
   /**
    * Instantiates a new Tosca service model.
@@ -60,6 +64,9 @@ public class ToscaServiceModel implements AsdcModel {
     return artifactFiles;
   }
 
+  public void setArtifactFiles(FileContentHandler artifactFiles) {
+    this.artifactFiles = artifactFiles;
+  }
 
   /**
    * Gets service templates.
@@ -95,5 +102,15 @@ public class ToscaServiceModel implements AsdcModel {
    */
   public void setEntryDefinitionServiceTemplate(String entryDefinitionServiceTemplate) {
     this.entryDefinitionServiceTemplate = entryDefinitionServiceTemplate;
+  }
+
+  /**
+   * Gets cloned service model.
+   *
+   * @param toscaServiceModel the tosca service model
+   * @return the cloned service model
+   */
+  public static ToscaServiceModel getClonedServiceModel(ToscaServiceModel toscaServiceModel) {
+    return ToscaServiceModel.class.cast(DataModelUtil.getClonedObject(toscaServiceModel));
   }
 }

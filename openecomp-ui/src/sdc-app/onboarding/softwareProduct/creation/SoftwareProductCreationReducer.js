@@ -15,6 +15,7 @@
  */
 import {actionTypes, SP_CREATION_FORM_NAME} from './SoftwareProductCreationConstants.js';
 
+
 export default (state = {}, action) => {
 	switch (action.type) {
 		case actionTypes.OPEN:
@@ -50,6 +51,11 @@ export default (state = {}, action) => {
 						isValid: true,
 						errorText: '',
 						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 25}, {type: 'validateName', data: true}]
+					},
+					'onboardingMethod' : {
+						isValid: true,
+						errorText: '',
+						validations: [{type: 'requiredChooseOption', data: true}]
 					}
 				},
 				showModal: true

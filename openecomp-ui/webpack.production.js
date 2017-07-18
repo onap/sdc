@@ -3,9 +3,14 @@
 let path = require('path');
 let webpack = require('webpack');
 
+let cloneDeep = require('lodash/cloneDeep');
+let assign = require('lodash/assign');
 let webpackCommon = require('./webpack.common');
 
-let webpackDevConfig = Object.assign({}, webpackCommon, {
+// copying the common config
+let webpackProdConfig = cloneDeep(webpackCommon);
+// setting production settings
+assign( webpackProdConfig, {
 	devtool: undefined,
 	cache: true,
 	output: {
@@ -42,4 +47,11 @@ let webpackDevConfig = Object.assign({}, webpackCommon, {
 	]
 });
 
-module.exports = webpackDevConfig;
+webpackProdConfig.module.rules = webpackProdConfig.module.rules.filter(rule => ((rule.enforce !== 'pre') || (rule.enforce === 'pre' && rule.loader !== 'source-map-loader')));
+webpackProdConfig.module.rules.forEach(loader => {
+	if (loader.use && loader.use[0].loader === 'style-loader') {
+		loader.use = loader.use.map(loaderObj => loaderObj.loader.replace('?sourceMap', ''));
+	}
+});
+webpackProdConfig.module.rules.push({test: /config.json$/, use: [{loader:'config-json-loader'}]});
+module.exports = webpackProdConfig;

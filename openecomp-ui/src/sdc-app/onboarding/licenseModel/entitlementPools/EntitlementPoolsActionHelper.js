@@ -39,7 +39,9 @@ function postEntitlementPool(licenseModelId, entitlementPool, version) {
 		aggregationFunction: entitlementPool.aggregationFunction,
 		operationalScope: entitlementPool.operationalScope,
 		time: entitlementPool.time,
-		manufacturerReferenceNumber: entitlementPool.manufacturerReferenceNumber
+		manufacturerReferenceNumber: entitlementPool.manufacturerReferenceNumber,
+		startDate: entitlementPool.startDate,
+		expiryDate: entitlementPool.expiryDate
 	});
 }
 
@@ -55,7 +57,9 @@ function putEntitlementPool(licenseModelId, previousEntitlementPool, entitlement
 		aggregationFunction: entitlementPool.aggregationFunction,
 		operationalScope: entitlementPool.operationalScope,
 		time: entitlementPool.time,
-		manufacturerReferenceNumber: entitlementPool.manufacturerReferenceNumber
+		manufacturerReferenceNumber: entitlementPool.manufacturerReferenceNumber,
+		startDate: entitlementPool.startDate,
+		expiryDate: entitlementPool.expiryDate
 	});
 }
 

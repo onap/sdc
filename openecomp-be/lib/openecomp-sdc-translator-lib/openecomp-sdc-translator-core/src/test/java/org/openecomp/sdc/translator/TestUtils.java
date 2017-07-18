@@ -22,6 +22,7 @@ package org.openecomp.sdc.translator;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.utilities.file.FileUtils;
@@ -32,7 +33,7 @@ import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
-import org.openecomp.sdc.tosca.services.yamlutil.ToscaExtensionYamlUtil;
+import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.*;
 
 import java.io.File;
@@ -499,6 +500,28 @@ public class TestUtils {
       }
     }
     return requirementAssignmentDataMap;
+  }
+
+  public static Map<String, List<GetAttrFuncData>> getNodesGetAttrIn(NodeTemplate nodeTemplate,
+                                                                     String nodeTemplateId) {
+    Map<String, List<GetAttrFuncData>> nodesGetAttrIn = new HashMap<>();
+    List<GetAttrFuncData> getAttrList = new ArrayList<>();
+    ObjectMapper mapper = new ObjectMapper();
+    Map<String, Object> nodeTemplateProperties = nodeTemplate.getProperties();
+    for (Map.Entry<String, Object> propertyEntry : nodeTemplateProperties.entrySet()) {
+      Map<String, List> propertyValue = mapper.convertValue(propertyEntry.getValue(), Map.class);
+      for (Map.Entry<String, List> entry : propertyValue.entrySet()) {
+        if (entry.getKey().equals("get_attribute")) {
+          GetAttrFuncData data = new GetAttrFuncData();
+          data.setFieldName(propertyEntry.getKey());
+          data.setAttributeName(entry.getValue().get(1).toString());
+          getAttrList.add(data);
+        }
+      }
+      System.out.println();
+    }
+    nodesGetAttrIn.put(nodeTemplateId, getAttrList);
+    return nodesGetAttrIn;
   }
 
   public static void updatePortsInComputeTemplateConsolidationData(

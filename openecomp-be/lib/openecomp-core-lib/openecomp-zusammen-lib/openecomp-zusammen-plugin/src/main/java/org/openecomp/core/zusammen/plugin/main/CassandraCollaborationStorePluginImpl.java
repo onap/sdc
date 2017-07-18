@@ -17,6 +17,7 @@
 package org.openecomp.core.zusammen.plugin.main;
 
 import com.amdocs.zusammen.commons.health.data.HealthInfo;
+import com.amdocs.zusammen.commons.health.data.HealthStatus;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.Namespace;
 import com.amdocs.zusammen.datatypes.SessionContext;
@@ -155,6 +156,15 @@ public class CassandraCollaborationStorePluginImpl implements CollaborationStore
 
   @Override
   public Response<HealthInfo> checkHealth(SessionContext sessionContext) throws ZusammenException {
-    return null;
+
+    boolean health = elementCollaborationStore.checkHealth(sessionContext);
+    HealthInfo healthInfo ;
+    if (health){
+      healthInfo = new HealthInfo("Collaboration", HealthStatus.UP,"");
+    } else {
+      healthInfo = new HealthInfo("Collaboration", HealthStatus.DOWN,"No Schema Available");
+    }
+    return new Response<HealthInfo>(healthInfo);
+
   }
 }

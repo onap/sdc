@@ -84,7 +84,6 @@ public class EntitlementPoolConvertor {
     info.addProperty("EntitlementTime", entitlementPool.getTime());
     info.addProperty("manufacturerReferenceNumber",
         entitlementPool.getManufacturerReferenceNumber());
-
     return info;
   }
 

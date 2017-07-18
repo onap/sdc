@@ -5,7 +5,7 @@ imports:
 - openecomp_heat_index:
     file: openecomp-heat/_index.yml
 node_types:
-  org.openecomp.resource.abstract.nodes.FSB1_2:
+  org.openecomp.resource.abstract.nodes.FSB1:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_FSB1_Internal_mac_address:

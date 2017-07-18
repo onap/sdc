@@ -1,0 +1,180 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  name:
+    type: string
+    description: nested parameter
+  jsa_name:
+    type: string
+    description: network name of jsa log network
+  security_group_name:
+    type: string
+    description: security_group_name
+  jsa_net_name:
+    type: string
+    description: network name of jsa network
+  contrail_net_name:
+    type: string
+    description: network name of contrail v2 network
+  pd_server_nested2_1b_names:
+    type: comma_delimited_list
+    description: PD server names
+  pd_server_nested2_1b_image:
+    type: string
+    description: PD Image server
+  ps_server_nested2_1b_names:
+    type: comma_delimited_list
+    description: Ps server names
+  ps_server_nested2_1b_image:
+    type: string
+    description: Ps Image server
+  availability_zone_0:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  pd_server_nested2_1b_flavor:
+    type: string
+    description: Flavor for PD server
+  ps_server_nested2_1b_flavor:
+    type: string
+    description: Flavor for PS server
+  pd_server_nested2_1b_ips:
+      type: string
+  ps_server_nested2_1b_ips:
+      type: string
+  cmaui_1c1_nested2_names:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  cmaui_1c1_nested2_image:
+    type: string
+    description: Image for CMAUI server
+  cmaui_oam_ips:
+      type: string
+  cmaui_1c1_nested2_flavor:
+    type: string
+    description: Flavor for CMAUI server
+
+resources:
+  test_nested3Level:
+    type: nested3.yml
+    depends_on:
+      - test_nested_pattern_4_nested2
+      - server_nested2_ps_1b
+    properties:
+      name: { get_param: security_group_name}
+
+  test_resourceGroup:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 9
+      resource_def:
+        type: nested3.yml
+        properties:
+          p1: { get_param: name}
+          indx: "%index%"
+
+  ########### PATTERN 1B ##################
+
+  pd_server_nested2_1b_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: jsa_name }
+      fixed_ips: [{"ip_address": {get_param: [pd_server_nested2_1b_ips, 0]}}]
+      replacement_policy: AUTO
+
+  ps_server_nested2_1b_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: jsa_name }
+      fixed_ips: [{"ip_address": {get_param: [ps_server_nested2_1b_ips, 0]}}]
+      replacement_policy: AUTO
+
+  server_nested2_pd_1b:
+    type: OS::Nova::Server
+    depends_on:
+      - test_nested3Level
+      - test_nested_pattern_4_nested2        
+    properties:
+      name: { get_param: [pd_server_nested2_1b_names, 0]}
+      image: { get_param: pd_server_nested2_1b_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: pd_server_nested2_1b_flavor }
+      networks:
+      - port: { get_resource: pd_server_nested2_1b_port }
+
+  server_nested2_ps_1b:
+    type: OS::Nova::Server
+    depends_on:
+      - server_nested2_1c1_cmaui_1
+      - server_nested2_1c1_cmaui_2
+      - test_nested_pattern_4_nested2       
+    properties:
+      name: { get_param: [ps_server_nested2_1b_names, 1]}
+      image: { get_param: ps_server_nested2_1b_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: ps_server_nested2_1b_flavor }
+      networks:
+      - port: { get_resource: ps_server_nested2_1b_port }
+
+  ########### PATTERN 1C1 #################
+
+  cmaui_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: contrail_net_name}
+      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
+      replacement_policy: AUTO
+
+  cmaui_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: contrail_net_name}
+      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
+      replacement_policy: AUTO
+
+  server_nested2_1c1_cmaui_1:
+    type: OS::Nova::Server
+    depends_on:
+      - server_nested2_pd_1b
+      - server_nested2_ps_1b
+      - test_nested_pattern_4_nested2 
+      - test_nested3Level
+    properties:
+      name: { get_param: [cmaui_1c1_nested2_names, 0]}
+      image: { get_param: cmaui_1c1_nested2_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: cmaui_1c1_nested2_flavor }
+      networks:
+      - port: { get_resource: cmaui_port_1 }
+
+  server_nested2_1c1_cmaui_2:
+    type: OS::Nova::Server
+    depends_on:
+      - server_nested2_pd_1b
+      - server_nested2_ps_1b
+      - test_nested_pattern_4_nested2 
+      - test_nested3Level
+    properties:
+      name: { get_param: [cmaui_1c1_nested2_names, 1]}
+      image: { get_param: cmaui_1c1_nested2_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: cmaui_1c1_nested2_flavor }
+      networks:
+      - port: { get_resource: cmaui_port_2 }
+
+  ########### PATTERN 4 #################
+
+  test_nested_pattern_4_same_type_diff_file:
+    type: nested-pattern-4-same-type.yml
+    properties:
+      p1: { get_param: jsa_name}
+
+  test_nested_pattern_4_nested2:
+    type: nested-pattern-4.yml
+    depends_on:
+      - test_resourceGroup
+    properties:
+      p1: { get_param: jsa_name}

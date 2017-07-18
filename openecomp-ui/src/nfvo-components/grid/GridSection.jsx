@@ -14,10 +14,11 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import classnames from 'classnames';
 
-const GridSection = ({title, children, titleClassName}) => {
+const GridSection = ({title, children, className, titleClassName}) => {
 	return (
-		<div className='grid-section'>
+		<div className={classnames('grid-section', className)}>
 			{title && <div className={`section-title ${titleClassName || ''}`}>{title}</div>}
 			<div className='grid-items'>
 				{children}

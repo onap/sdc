@@ -507,7 +507,7 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
       portProperties.put("order", index);
     }
     portNodeTemplate.setProperties(portProperties);
-    HeatToToscaUtil.addBindingReqFromPortToCompute(computeNodeTemplateId, portNodeTemplate);
+    DataModelUtil.addBindingReqFromPortToCompute(computeNodeTemplateId, portNodeTemplate);
 
     mdcDataDebugMessage.debugExitMessage(null, null);
     return portNodeTemplate;

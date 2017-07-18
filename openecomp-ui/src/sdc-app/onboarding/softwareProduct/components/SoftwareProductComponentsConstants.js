@@ -18,7 +18,13 @@ import keyMirror from 'nfvo-utils/KeyMirror.js';
 export const actionTypes = keyMirror({
 	COMPONENTS_LIST_UPDATE: null,
 	COMPONENTS_LIST_EDIT: null,
-	COMPONENT_LOAD: null
+	COMPONENT_UPDATE: null,
+	COMPONENT_DATA_CHANGED: null,
+	COMPONENT_DATA_CLEAR: null,
+	COMPONENT_QUESTIONNAIRE_UPDATE: null,
+	COMPONENT_DELETE: null,
+	COMPONENT_LOAD: null,
+	COMPONENT_CREATE_OPEN: null
 });
 
 export const storageConstants  = keyMirror({
@@ -30,16 +36,20 @@ export const storageConstants  = keyMirror({
 
 export const forms = keyMirror({
 	ALL_SPC_FORMS: null,
-	NIC_EDIT_FORM: null
+	NIC_EDIT_FORM: null,
+	CREATE_FORM: null,
+	IMAGE_EDIT_FORM: null
 });
 
 export const COMPONENTS_QUESTIONNAIRE = 'component';
+export const COMPONENTS_COMPUTE_QUESTIONNAIRE = 'compute';
 
 export const navigationItems = keyMirror({
 	STORAGE: 'Storage',
 	PROCESS_DETAILS: 'Process Details',
 	MONITORING: 'Monitoring',
 	NETWORK: 'Network',
+	IMAGES: 'Images',
 	COMPUTE: 'Compute',
 	LOAD_BALANCING: 'High Availability & Load Balancing'
 });

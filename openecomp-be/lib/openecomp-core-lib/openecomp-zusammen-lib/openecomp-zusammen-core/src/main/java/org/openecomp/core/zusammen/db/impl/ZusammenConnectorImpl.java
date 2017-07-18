@@ -3,9 +3,11 @@ package org.openecomp.core.zusammen.db.impl;
 import com.amdocs.zusammen.adaptor.inbound.api.item.ElementAdaptorFactory;
 import com.amdocs.zusammen.adaptor.inbound.api.item.ItemAdaptorFactory;
 import com.amdocs.zusammen.adaptor.inbound.api.item.ItemVersionAdaptorFactory;
+import com.amdocs.zusammen.adaptor.inbound.api.health.HealthAdaptorFactory;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
+import com.amdocs.zusammen.commons.health.data.HealthInfo;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.Space;
@@ -33,15 +35,27 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
   private ItemAdaptorFactory itemAdaptorFactory;
   private ItemVersionAdaptorFactory versionAdaptorFactory;
   private ElementAdaptorFactory elementAdaptorFactory;
-
+  private HealthAdaptorFactory healthAdaptorFactory;
   public ZusammenConnectorImpl(
       ItemAdaptorFactory itemAdaptorFactory,
       ItemVersionAdaptorFactory versionAdaptorFactory,
-      ElementAdaptorFactory elementAdaptorFactory) {
+      ElementAdaptorFactory elementAdaptorFactory,
+      HealthAdaptorFactory healthAdaptorFactory) {
     this.itemAdaptorFactory = itemAdaptorFactory;
     this.versionAdaptorFactory = versionAdaptorFactory;
     this.elementAdaptorFactory = elementAdaptorFactory;
+    this.healthAdaptorFactory = healthAdaptorFactory;
     CassandraConnectionInitializer.setCassandraConnectionPropertiesToSystem();
+  }
+
+  @Override
+  public Collection<HealthInfo> checkHealth(SessionContext sessionContext) {
+    return healthAdaptorFactory.createInterface(sessionContext).getHealthStatus(sessionContext);
+  }
+
+  @Override
+  public String getVersion(SessionContext sessionContext) {
+    return healthAdaptorFactory.createInterface(sessionContext).getVersion();
   }
 
   @Override

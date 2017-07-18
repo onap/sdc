@@ -41,6 +41,12 @@
             <param-name>etags</param-name>
             <param-value>true</param-value>
         </init-param>
+        <init-param>
+            <param-name>redirects-list</param-name>
+            <param-value>
+                /v1.0/healthcheck
+            </param-value>
+        </init-param>
     </servlet>
 
     <servlet-mapping>

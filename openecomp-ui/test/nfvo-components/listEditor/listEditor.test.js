@@ -71,7 +71,7 @@ describe('listEditor Module Tests', function () {
 			</ListEditorItemView>
 		);
 		expect(itemView).toBeTruthy();
-		let sliderIcon = TestUtils.findRenderedDOMComponentWithClass(itemView, 'trash-o');
+		let sliderIcon = TestUtils.findRenderedDOMComponentWithClass(itemView, 'trashO');
 		TestUtils.Simulate.click(sliderIcon);
 	});
 

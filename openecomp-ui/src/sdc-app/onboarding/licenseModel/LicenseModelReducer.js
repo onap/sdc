@@ -15,7 +15,7 @@
  */
 import {combineReducers} from 'redux';
 
-import activityLogReducer from 'nfvo-components/activity-log/ActivityLogReducer.js';
+import activityLogReducer from 'sdc-app/common/activity-log/ActivityLogReducer.js';
 
 import licenseModelCreationReducer from './creation/LicenseModelCreationReducer.js';
 import licenseModelEditorReducer from './LicenseModelEditorReducer.js';

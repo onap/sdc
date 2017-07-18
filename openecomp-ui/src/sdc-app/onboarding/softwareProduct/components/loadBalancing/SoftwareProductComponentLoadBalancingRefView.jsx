@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
-import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
 import Form from 'nfvo-components/input/validation/Form.jsx';
@@ -56,7 +56,7 @@ const TextAreaItem = ({item, toggle, expanded, genericFieldInfo, dataMap, onQDat
 			<div className={expanded ? 'title' : 'title add-padding'}
 				 data-test-id={`btn-${item.key}`}
 				 onClick={() => toggle(item.key)}>
-					<SVGIcon name={expanded ? 'chevron-up' : 'chevron-down'}/>
+					<SVGIcon name={expanded ? 'chevronUp' : 'chevronDown'}/>
 					<span className='title-text'>{i18n(item.description)}</span>
 					{item.added && <div className='new-line'>{i18n(item.added)}</div>}
 			</div>

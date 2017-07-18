@@ -35,6 +35,8 @@ public interface EntitlementPoolDao extends VersionableDao, BaseDao<EntitlementP
 
     EntitlementPoolEntity get(EntitlementPoolEntity entitlementPool);
 
+    String getManufacturerReferenceNumber(EntitlementPoolEntity entitlementPoolEntity);
+
     Collection<EntitlementPoolEntity> list(EntitlementPoolEntity entitlementPool);
 
   long count(EntitlementPoolEntity entitlementPool);

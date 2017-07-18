@@ -1,0 +1,38 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  jsa_name:
+    type: string
+    description: network name of jsa log network
+  same_file_param_1:
+    type: string
+    description: network name of jsa log network
+  same_file_param_2:
+    type: string
+    description: network name of jsa log network
+  same_file_param_3:
+    type: string
+    description: network name of jsa log network
+  diff_file_param_1:
+    type: string
+    description: network name of jsa log network
+
+resources:
+  test_nested_same_file_1:
+    type: nested-same-file-1B.yml
+    properties:
+      p1: {get_param: same_file_param_1}
+      p2: {get_param: same_file_param_2}
+
+  test_nested_same_file_2:
+    type: nested-same-file-1B.yml
+    properties:
+      p2: {get_param: same_file_param_3}
+
+  test_nested_diff_file:
+    type: nested-other-file-1B.yml
+    properties:
+      p1: {get_param: diff_file_param_1}

@@ -22,7 +22,6 @@ package org.openecomp.sdc.tosca.datatypes;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openecomp.core.utilities.yaml.YamlUtil;
 import org.openecomp.sdc.tosca.datatypes.model.ArtifactType;
 import org.openecomp.sdc.tosca.datatypes.model.AttributeDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityAssignment;
@@ -44,7 +43,8 @@ import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
-import org.openecomp.sdc.tosca.services.yamlutil.ToscaExtensionYamlUtil;
+import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 
 import java.io.InputStream;
 import java.util.ArrayList;

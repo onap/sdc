@@ -70,8 +70,7 @@ describe('SoftwareProductComponentsGeneral Mapper and View Classes', () => {
 		const versionControllerData = VSPComponentsVersionControllerFactory.build();
 
 		const componentData = {
-			name: '',
-			description: ''
+			name: ''
 		};
 
 		var renderer = TestUtils.createRenderer();

@@ -21,7 +21,7 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.core.utilities.yaml.YamlUtil;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;

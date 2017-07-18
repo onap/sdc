@@ -44,7 +44,7 @@ class SoftwareProductProcessesView extends React.Component {
 		return (
 			<div className='vsp-processes-page'>
 				<div className='software-product-view'>
-					<div className='software-product-landing-view-right-side flex-column'>
+					<div className='software-product-landing-view-right-side vsp-components-processes-page flex-column'>
 						{this.renderEditor()}
 						{this.renderProcessList()}
 					</div>

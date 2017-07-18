@@ -1,6 +1,7 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.fulltest;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.BaseFullTranslationTest;
 
@@ -146,7 +147,7 @@ public class UnifiedCompositionNestedSingleComputeFullTest extends BaseFullTrans
     }
 
     @Test
-    public void testThreeNestedSameTypeTwoPointintToSameNestedFile() throws IOException {
+    public void testThreeNestedSameTypeTwoPointingToSameNestedFile() throws IOException {
         inputFilesPath =
             "/mock/services/heattotosca/fulltest/nestedSingleCompute/threeNestedSameTypeTwoPointingOnSameNestedFile/in";
         outputFilesPath =

@@ -1,5 +1,6 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
+import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
@@ -21,6 +22,7 @@ import org.openecomp.sdc.versioning.types.VersionableEntityStoreType;
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareProductInfoDao {
@@ -148,6 +150,17 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
 
   }
 
+  @Override
+  public boolean isManual(String vspId, Version version) {
+    final VspDetails vspDetails = get(new VspDetails(vspId, version));
+    if (vspDetails != null) {
+      if ("Manual".equals(vspDetails.getOnboardingMethod())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private Info mapVspDetailsToZusammenItemInfo(VspDetails vspDetails) {
     Info info = new Info();
     info.setName(vspDetails.getName());
@@ -186,6 +199,7 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
     info.addProperty(InfoPropertyName.licenseAgreement.name(), vspDetails.getLicenseAgreement());
     info.addProperty(InfoPropertyName.featureGroups.name(), vspDetails.getFeatureGroups());
     info.addProperty(InfoPropertyName.oldVersion.name(), vspDetails.getOldVersion());
+    info.addProperty(InfoPropertyName.onboardingMethod.name(), vspDetails.getOnboardingMethod());
   }
 
   private VspDetails mapInfoToVspDetails(String vspId, Version version, Info info,
@@ -208,6 +222,8 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
 
     //Boolean oldVersion = ind == null || "true".equals( ind.toLowerCase());
     vspDetails.setOldVersion(oldVersion);
+    vspDetails.setOnboardingMethod(info.getProperty(InfoPropertyName.onboardingMethod.name()));
+
     return vspDetails;
   }
 
@@ -222,7 +238,8 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
     vendorVersion,
     licenseAgreement,
     featureGroups,
-    oldVersion
+    oldVersion,
+    onboardingMethod
   }
 
 }

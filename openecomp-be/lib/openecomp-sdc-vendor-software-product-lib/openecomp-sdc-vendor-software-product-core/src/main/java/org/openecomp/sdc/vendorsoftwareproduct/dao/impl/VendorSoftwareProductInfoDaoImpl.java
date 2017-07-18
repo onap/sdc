@@ -98,6 +98,11 @@ public class VendorSoftwareProductInfoDaoImpl extends CassandraBaseDao<VspDetail
 
   }
 
+  @Override
+  public boolean isManual(String vspId, Version version) {
+    return false;
+  }
+
 
   @Accessor
   interface VendorSoftwareProductInfoAccessor {

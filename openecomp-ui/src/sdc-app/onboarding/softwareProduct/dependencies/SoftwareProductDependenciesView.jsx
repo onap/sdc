@@ -60,6 +60,7 @@ export default class SoftwareProductDependenciesView extends React.Component {
 				<div className='software-product-dependencies-title'>{i18n('Dependencies')}</div>
 				<SelectActionTable
 					columns={['Source', 'Relation Type', 'Target']}
+					numOfIcons={2}
 					isReadOnlyMode={isReadOnlyMode}
 					onAdd={canAdd ? onAddDependency : undefined}
 					onAddItem={i18n('Add Rule')}>					
@@ -68,7 +69,8 @@ export default class SoftwareProductDependenciesView extends React.Component {
 							key={dependency.id}
 							onDelete={() => onDataChanged(softwareProductDependencies.filter(currentDependency => currentDependency.id !== dependency.id))}
 							overlayMsg={i18n('There is a loop between selections')}
-							hasError={dependency.hasCycle}>
+							hasError={dependency.hasCycle}
+							hasErrorIndication>
 							<SelectActionTableCell
 								options={this.filterSources({componentsOptions, sourceToTargetMapping, selectedSourceId: dependency.sourceId, selectedTargetId: dependency.targetId})}
 								selected={dependency.sourceId}

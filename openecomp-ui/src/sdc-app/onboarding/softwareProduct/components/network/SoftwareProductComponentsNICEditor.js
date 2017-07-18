@@ -20,6 +20,7 @@ import VersionControllerUtils from 'nfvo-components/panel/versionController/Vers
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import {forms} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
 import {NIC_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNetworkConstants.js';
+import {onboardingMethod as onboardingMethodTypes} from '../../SoftwareProductConstants.js';
 
 export const mapStateToProps = ({softwareProduct}) => {
 
@@ -28,6 +29,7 @@ export const mapStateToProps = ({softwareProduct}) => {
 	let {network: {nicEditor = {}}} = softwareProductComponents;
 	let {data, qdata, genericFieldInfo, qgenericFieldInfo, dataMap, formReady} = nicEditor;
 	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
+	let {onboardingMethod} = currentSoftwareProduct;
 	let protocols = [];
 	if(qdata && qdata.protocols && qdata.protocols.protocols && qdata.protocols.protocols.length){
 		protocols = qdata.protocols.protocols;
@@ -47,7 +49,8 @@ export const mapStateToProps = ({softwareProduct}) => {
 		genericFieldInfo,
 		qgenericFieldInfo,
 		isReadOnlyMode,
-		protocols
+		protocols,
+		isManual: onboardingMethod === onboardingMethodTypes.MANUAL
 	};
 
 };

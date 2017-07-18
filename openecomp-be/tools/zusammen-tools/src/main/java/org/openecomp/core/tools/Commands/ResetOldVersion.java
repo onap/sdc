@@ -18,7 +18,8 @@ public class ResetOldVersion {
 
   public static Map<String, List<String>> itemVersionMap = new HashMap<>();
 
-  public static void reset(SessionContext context, String oldVersion) {
+  public static int count =0;
+  public static void reset(SessionContext context, String oldVersion,String emptyOldVersion) {
 
 
 
@@ -30,7 +31,8 @@ public class ResetOldVersion {
         VspGeneralLoader.load(context,
              itemVersionMap);
 
-    generalElementMap.values().forEach(elementEntity -> updateOldVersionFlag(elementEntity,oldVersion));
+    generalElementMap.values().forEach(elementEntity -> updateOldVersionFlag(elementEntity,
+        oldVersion,"true".equals(emptyOldVersion)));
 
 
     itemVersionMap.entrySet().forEach(entry->entry.getValue().stream().filter
@@ -38,10 +40,24 @@ public class ResetOldVersion {
             +"_"+version)).forEach(version->ElementHandler.update(context,
         entry.getKey(),version,generalElementMap.get(context.getUser().getUserName()+"_"+entry.getKey()
             +"_"+version))));
+
+    System.out.println("nymber of element updated:"+count);
+
   }
 
-  private static void updateOldVersionFlag(ElementEntity elementEntity, String oldVersion) {
-    elementEntity.getInfo().addProperty("oldVersion",oldVersion);
+  private static void updateOldVersionFlag(ElementEntity elementEntity, String oldVersion,
+                                           boolean emptyOldVersion) {
+
+    if(!emptyOldVersion){
+      elementEntity.getInfo().addProperty("oldVersion",oldVersion);
+      count++;
+    }else if(elementEntity.getInfo().getProperty("oldVersion")== null || ""
+        .equals(elementEntity.getInfo().getProperty("oldVersion"))){
+      elementEntity.getInfo().addProperty("oldVersion",oldVersion);
+      count++;
+    }
+
+
   }
 
 

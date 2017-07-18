@@ -140,21 +140,17 @@ topology_template:
           - index_value
   outputs:
     ps_server_accessIPv4:
-      type: list
+      type: string
       value:
         get_attribute:
         - ps_server
         - accessIPv4
-      entry_schema:
-        type: string
     ps_server_pd01_port_device_id:
-      type: list
+      type: string
       value:
         get_attribute:
         - ps_server_pd01_port
         - device_id
-      entry_schema:
-        type: string
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.ps_server
     capabilities:

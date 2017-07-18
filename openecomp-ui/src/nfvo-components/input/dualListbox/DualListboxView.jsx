@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
-import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import Input from 'nfvo-components/input/validation/InputWrapper.jsx';
 
 class DualListboxView extends React.Component {
@@ -118,10 +118,10 @@ class DualListboxView extends React.Component {
 	renderOperationsBar(isReadOnlyMode) {
 		return (
 			<div className={`dual-list-options-bar${isReadOnlyMode ? ' disabled' : ''}`}>
-				{this.renderOperationBarButton(() => this.addToSelectedList(), 'angle-right')}
-				{this.renderOperationBarButton(() => this.removeFromSelectedList(), 'angle-left')}
-				{this.renderOperationBarButton(() => this.addAllToSelectedList(), 'angle-double-right')}
-				{this.renderOperationBarButton(() => this.removeAllFromSelectedList(), 'angle-double-left')}
+				{this.renderOperationBarButton(() => this.addToSelectedList(), 'angleRight')}
+				{this.renderOperationBarButton(() => this.removeFromSelectedList(), 'angleLeft')}
+				{this.renderOperationBarButton(() => this.addAllToSelectedList(), 'angleDoubleRight')}
+				{this.renderOperationBarButton(() => this.removeAllFromSelectedList(), 'angleDoubleLeft')}
 			</div>
 		);
 	}

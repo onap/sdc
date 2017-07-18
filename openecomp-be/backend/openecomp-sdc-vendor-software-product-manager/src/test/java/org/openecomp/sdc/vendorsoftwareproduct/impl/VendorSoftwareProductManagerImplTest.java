@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -29,7 +27,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
-import org.openecomp.core.enrichment.types.ArtifactType;
 import org.openecomp.core.factory.impl.AbstractFactoryBase;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
 import org.openecomp.core.model.dao.ServiceModelDao;
@@ -48,7 +45,8 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.vendorlicense.licenseartifacts.VendorLicenseArtifactsService;
-import org.openecomp.sdc.vendorsoftwareproduct.MibManager;
+import org.openecomp.sdc.vendorsoftwareproduct.ManualVspToscaManager;
+import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManager;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
@@ -105,9 +103,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 
-/**
- * Created by TALIO on 4/23/2016
- */
 public class VendorSoftwareProductManagerImplTest {
   private static final String INVALID_VERSION_MSG = "Invalid requested version.";
 
@@ -147,6 +142,8 @@ public class VendorSoftwareProductManagerImplTest {
   private PackageInfoDao packageInfoDao;
   @Mock
   private VendorSoftwareProductInfoDao vspInfoDaoMock;
+  @Mock
+  private ManualVspToscaManager manualVspToscaManager;
 
 
   @Spy
@@ -154,7 +151,7 @@ public class VendorSoftwareProductManagerImplTest {
   private VendorSoftwareProductManagerImpl vendorSoftwareProductManager;
 
   private OrchestrationTemplateCandidateManager candidateManager;
-  private MibManager mibManager;
+  private MonitoringUploadsManager monitoringUploadsManager;
 
   @Captor
   private ArgumentCaptor<ActivityLogEntity> activityLogEntityArg;
@@ -467,6 +464,7 @@ public class VendorSoftwareProductManagerImplTest {
         VSP_ID, USER1, VersionableEntityAction.Read);
 
     VspDetails vsp = new VspDetails(VSP_ID, VERSION01);
+    vsp.setOnboardingMethod("Manual");
     doReturn(vsp).when(vspInfoDaoMock).get(anyObject());
 
     VspQuestionnaireEntity vspQuestionnaire = new VspQuestionnaireEntity(VSP_ID, VERSION01);
@@ -757,20 +755,21 @@ public class VendorSoftwareProductManagerImplTest {
 
     return fileNames;
   }
-
+  /*
+  //Disabled for sonar null pointer issue for componentEntities
   private Pair<String, String> uploadMib(String vspId, String user, String filePath,
                                          String fileName) {
     List<ComponentEntity> componentEntities = null;
     //(List<ComponentEntity>) vendorSoftwareProductManager.listComponents(vspId, null, user);
-    mibManager.upload(getFileInputStream(filePath),
+    monitoringUploadsManager.upload(getFileInputStream(filePath),
         fileName, vspId,
-        VERSION01, componentEntities.get(0).getId(), ArtifactType.SNMP_POLL, user);
+        VERSION01, componentEntities.get(0).getId(), MonitoringUploadType.SNMP_POLL, user);
     //TODO: add validate of addActionLog() func call
 
     return new ImmutablePair<>(componentEntities.get(0).getId(),
         componentEntities.get(0).getComponentCompositionData()
             .getDisplayName());
-  }
+  }*/
 
   private void createPackageFromUpload(String vspId, String user, String filePath)
       throws IOException {
@@ -901,6 +900,7 @@ public class VendorSoftwareProductManagerImplTest {
     vspDetails.setVlmVersion(new Version(1, 0));
     vspDetails.setLicenseAgreement(licenseAgreement);
     vspDetails.setFeatureGroups(featureGroups);
+    vspDetails.setOnboardingMethod("HEAT");
     return vspDetails;
   }
 

@@ -27,7 +27,7 @@ public enum LoggerErrorCode {
   DATA_ERROR("300"),
   SCHEMA_ERROR("400"),
   BUSINESS_PROCESS_ERROR("500"),
-  UNKNOWN_ERROR("900");
+  UNKNOWN_ERROR("900"), ;
 
   private String errorCode;
 

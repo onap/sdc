@@ -879,211 +879,6 @@ topology_template:
       type: string
       description: Unique name to be issued to the vSON Mediator instance.
   node_templates:
-    abstract_vson_vm_3_0:
-      type: org.openecomp.resource.abstract.nodes.heat.vson_vm_3
-      directives:
-      - substitutable
-      properties:
-        vf_module_id:
-          get_input: vf_module_id
-        vson_cluster_name: ''
-        default_gateway:
-          get_input: default_gateway
-        port_vson_server_oam_net_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        instance_index:
-          get_property:
-          - SELF
-          - service_template_filter
-          - index_value
-        vnf_name:
-          get_input: vnf_name
-        oam_net_subnet_prefix_length:
-          get_input: oam_net_subnet_prefix_length
-        swift_storage_url: ''
-        vf_module_name:
-          get_input: vf_module_name
-        dns_servers:
-          get_input: dns_servers
-        oam_net_security_group_id:
-          get_input: oam_net_security_group_id
-        service_template_filter:
-          substitute_service_template: nested_vson_serverServiceTemplate.yaml
-          count:
-            get_input: number_of_servers
-          mandatory: false
-        vson_vm_image_name:
-          get_input: vson_clm_image_name
-        vnf_id:
-          get_input: vnf_id
-        vson_clm_oam_net_ip:
-          get_input: vson_clm_0_oam_net_ip_0
-        port_vson_server_oam_net_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
-        oam_net_ips:
-        - get_input: vson_clm_oam_net_ip_0
-        swift_son_container_name: ''
-        vfc_role: clm
-        swift_account_auth_token:
-          get_input: swift_account_auth_token
-        vson_server_group_id:
-          get_input: vson_clm_server_group_id
-        vson_vm_flavor_name:
-          get_input: vson_clm_flavor_name
-        port_vson_server_oam_net_port_0_network_role_tag: oam
-        availability_zones:
-        - get_input: availability_zone_0
-        ntp_servers:
-          get_input: ntp_servers
-        oam_net_id:
-          get_input: oam_net_id
-        vson_vm_names:
-        - get_input: vson_clm_name_0
-    abstract_vson_vm_1_0:
-      type: org.openecomp.resource.abstract.nodes.heat.vson_vm_1
-      directives:
-      - substitutable
-      properties:
-        vf_module_id:
-          get_input: vf_module_id
-        default_gateway:
-          get_input: default_gateway
-        port_vson_server_oam_net_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        instance_index:
-          get_property:
-          - SELF
-          - service_template_filter
-          - index_value
-        vnf_name:
-          get_input: vnf_name
-        oam_net_subnet_prefix_length:
-          get_input: oam_net_subnet_prefix_length
-        vf_module_name:
-          get_input: vf_module_name
-        dns_servers:
-          get_input: dns_servers
-        oam_net_security_group_id:
-          get_input: oam_net_security_group_id
-        service_template_filter:
-          substitute_service_template: nested_vson_server_with_volServiceTemplate.yaml
-          count:
-            get_input: number_of_servers
-          mandatory: false
-        vson_vm_image_name:
-          get_input: vson_dcl_image_name
-        vnf_id:
-          get_input: vnf_id
-        vson_clm_oam_net_ip:
-          get_input: vson_clm_0_oam_net_ip_0
-        port_vson_server_oam_net_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
-        vson_dc_unit:
-          get_input: vson_dc_unit
-        oam_net_ips:
-        - get_input: vson_dcl_oam_net_ip_0
-        - get_input: vson_dcl_oam_net_ip_1
-        - get_input: vson_dcl_oam_net_ip_2
-        vfc_role: dcl
-        swift_account_auth_token:
-          get_input: swift_account_auth_token
-        vson_server_group_id:
-          get_input: vson_leader_server_group_id
-        vson_vm_flavor_name:
-          get_input: vson_dcl_flavor_name
-        port_vson_server_oam_net_port_0_network_role_tag: oam
-        availability_zones:
-        - get_input: availability_zone_0
-        - get_input: availability_zone_1
-        - get_input: availability_zone_0
-        volume_ids:
-        - get_input: vson_dcl_volume_id_0
-        - get_input: vson_dcl_volume_id_1
-        - get_input: vson_dcl_volume_id_2
-        ntp_servers:
-          get_input: ntp_servers
-        vson_join_cluster_auth_token:
-          get_input: vson_join_cluster_auth_token
-        oam_net_id:
-          get_input: oam_net_id
-        vson_vm_names:
-        - get_input: vson_dcl_name_0
-        - get_input: vson_dcl_name_1
-        - get_input: vson_dcl_name_2
-    abstract_vson_vm_2_0:
-      type: org.openecomp.resource.abstract.nodes.heat.vson_vm_2
-      directives:
-      - substitutable
-      properties:
-        vf_module_id:
-          get_input: vf_module_id
-        default_gateway:
-          get_input: default_gateway
-        port_vson_server_oam_net_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        instance_index:
-          get_property:
-          - SELF
-          - service_template_filter
-          - index_value
-        vnf_name:
-          get_input: vnf_name
-        oam_net_subnet_prefix_length:
-          get_input: oam_net_subnet_prefix_length
-        vf_module_name:
-          get_input: vf_module_name
-        dns_servers:
-          get_input: dns_servers
-        oam_net_security_group_id:
-          get_input: oam_net_security_group_id
-        service_template_filter:
-          substitute_service_template: nested_vson_server_from_volServiceTemplate.yaml
-          count:
-            get_input: number_of_servers
-          mandatory: false
-        vnf_id:
-          get_input: vnf_id
-        vson_clm_oam_net_ip:
-          get_input: vson_clm_0_oam_net_ip_0
-        port_vson_server_oam_net_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
-        vson_dc_unit:
-          get_input: vson_dc_unit
-        oam_net_ips:
-        - get_input: vson_mon_oam_net_ip_0
-        vfc_role: mon
-        swift_account_auth_token:
-          get_input: swift_account_auth_token
-        vson_server_group_id:
-          get_input: vson_mon_server_group_id
-        vson_vm_flavor_name:
-          get_input: vson_mon_flavor_name
-        port_vson_server_oam_net_port_0_network_role_tag: oam
-        availability_zones:
-        - get_input: availability_zone_0
-        volume_ids:
-        - get_input: vson_mon_volume_id_0
-        ntp_servers:
-          get_input: ntp_servers
-        oam_net_id:
-          get_input: oam_net_id
-        vson_vm_names:
-        - get_input: vson_mon_name_0
     vson_dbc_volume_0:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -1203,6 +998,134 @@ topology_template:
               VNF_NAME:
                 get_input: vnf_name
         description: Cinder volume for the second vSON Cluster leader.
+    vson_clm_0:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        vson_cluster_name:
+          get_input: vson_cluster_name
+        default_gateway:
+          get_input: default_gateway
+        port_vson_server_oam_net_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        instance_index: 0
+        vnf_name:
+          get_input: vnf_name
+        oam_net_subnet_prefix_length:
+          get_input: oam_net_subnet_prefix_length
+        swift_storage_url:
+          get_input: swift_storage_url
+        vf_module_name:
+          get_input: vf_module_name
+        dns_servers:
+          get_input: dns_servers
+        oam_net_security_group_id: oam_net_security_group
+        service_template_filter:
+          substitute_service_template: nested_vson_serverServiceTemplate.yaml
+        vson_vm_image_name:
+          get_input: vson_clm_image_name
+        vnf_id:
+          get_input: vnf_id
+        vson_clm_oam_net_ip:
+          get_input: vson_master_clm_ip
+        port_vson_server_oam_net_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        oam_net_ips:
+        - get_input: vson_clm_oam_net_ip_0
+        swift_son_container_name:
+          get_input: swift_son_container_name
+        vfc_role: clm
+        swift_account_auth_token:
+          get_input: swift_account_auth_token
+        vson_server_group_id: UNSUPPORTED_RESOURCE_vson_clm_server_group
+        vson_vm_flavor_name:
+          get_input: vson_clm_flavor_name
+        port_vson_server_oam_net_port_0_network_role_tag: oam
+        availability_zones:
+        - get_input: availability_zone_0
+        ntp_servers:
+          get_input: ntp_servers
+        oam_net_id:
+          get_input: oam_net_id
+        vson_vm_names:
+        - get_input: vson_clm_name_0
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: oam_net_security_group
+          relationship: tosca.relationships.DependsOn
+    vson_mgt_group:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_from_vol
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        default_gateway:
+          get_input: default_gateway
+        port_vson_server_oam_net_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        instance_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vnf_name:
+          get_input: vnf_name
+        oam_net_subnet_prefix_length:
+          get_input: oam_net_subnet_prefix_length
+        vf_module_name:
+          get_input: vf_module_name
+        dns_servers:
+          get_input: dns_servers
+        oam_net_security_group_id:
+          get_input: oam_net_security_group_id
+        service_template_filter:
+          substitute_service_template: nested_vson_server_from_volServiceTemplate.yaml
+          count:
+            get_input: number_of_servers
+          mandatory: false
+        vnf_id:
+          get_input: vnf_id
+        vson_clm_oam_net_ip:
+          get_input: vson_clm_0_oam_net_ip_0
+        port_vson_server_oam_net_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vson_dc_unit:
+          get_input: vson_dc_unit
+        oam_net_ips:
+        - get_input: vson_mgt_oam_net_ip_0
+        vfc_role: mgt
+        swift_account_auth_token:
+          get_input: swift_account_auth_token
+        vson_server_group_id:
+          get_input: vson_mgt_server_group_id
+        vson_vm_flavor_name:
+          get_input: vson_mgt_flavor_name
+        port_vson_server_oam_net_port_0_network_role_tag: oam
+        availability_zones:
+        - get_input: availability_zone_0
+        volume_ids:
+        - get_input: vson_mgt_volume_id_0
+        ntp_servers:
+          get_input: ntp_servers
+        oam_net_id:
+          get_input: oam_net_id
+        vson_vm_names:
+        - get_input: vson_mgt_name_0
     vson_dbs_volume_1:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -1217,6 +1140,74 @@ topology_template:
         name:
           get_input: vson_dbs_volume_name_1
         description: Cinder volume for the second vSON DBS VM instance.
+    vson_dbc_group:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_with_vol
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        default_gateway:
+          get_input: default_gateway
+        port_vson_server_oam_net_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        instance_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vnf_name:
+          get_input: vnf_name
+        oam_net_subnet_prefix_length:
+          get_input: oam_net_subnet_prefix_length
+        vf_module_name:
+          get_input: vf_module_name
+        dns_servers:
+          get_input: dns_servers
+        oam_net_security_group_id:
+          get_input: oam_net_security_group_id
+        service_template_filter:
+          substitute_service_template: nested_vson_server_with_volServiceTemplate.yaml
+          count:
+            get_input: number_of_servers
+          mandatory: false
+        vson_vm_image_name:
+          get_input: vson_dbc_image_name
+        vnf_id:
+          get_input: vnf_id
+        vson_clm_oam_net_ip:
+          get_input: vson_clm_0_oam_net_ip_0
+        port_vson_server_oam_net_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vson_dc_unit:
+          get_input: vson_dc_unit
+        oam_net_ips:
+        - get_input: vson_dbc_oam_net_ip_0
+        vfc_role: dbc
+        swift_account_auth_token:
+          get_input: swift_account_auth_token
+        vson_server_group_id:
+          get_input: vson_dbc_server_group_id
+        vson_vm_flavor_name:
+          get_input: vson_dbc_flavor_name
+        port_vson_server_oam_net_port_0_network_role_tag: oam
+        availability_zones:
+        - get_input: availability_zone_0
+        volume_ids:
+        - get_input: vson_dbc_volume_id_0
+        ntp_servers:
+          get_input: ntp_servers
+        vson_join_cluster_auth_token:
+          get_input: vson_join_cluster_auth_token
+        oam_net_id:
+          get_input: oam_net_id
+        vson_vm_names:
+        - get_input: vson_dbc_name_0
     vson_dbs_volume_0:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -1231,6 +1222,71 @@ topology_template:
         name:
           get_input: vson_dbs_volume_name_0
         description: Cinder volume for the first vSON DBS VM instance.
+    vson_clm_group:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        vson_cluster_name: ''
+        default_gateway:
+          get_input: default_gateway
+        port_vson_server_oam_net_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        instance_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vnf_name:
+          get_input: vnf_name
+        oam_net_subnet_prefix_length:
+          get_input: oam_net_subnet_prefix_length
+        swift_storage_url: ''
+        vf_module_name:
+          get_input: vf_module_name
+        dns_servers:
+          get_input: dns_servers
+        oam_net_security_group_id:
+          get_input: oam_net_security_group_id
+        service_template_filter:
+          substitute_service_template: nested_vson_serverServiceTemplate.yaml
+          count:
+            get_input: number_of_servers
+          mandatory: false
+        vson_vm_image_name:
+          get_input: vson_clm_image_name
+        vnf_id:
+          get_input: vnf_id
+        vson_clm_oam_net_ip:
+          get_input: vson_clm_0_oam_net_ip_0
+        port_vson_server_oam_net_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        oam_net_ips:
+        - get_input: vson_clm_oam_net_ip_0
+        swift_son_container_name: ''
+        vfc_role: clm
+        swift_account_auth_token:
+          get_input: swift_account_auth_token
+        vson_server_group_id:
+          get_input: vson_clm_server_group_id
+        vson_vm_flavor_name:
+          get_input: vson_clm_flavor_name
+        port_vson_server_oam_net_port_0_network_role_tag: oam
+        availability_zones:
+        - get_input: availability_zone_0
+        ntp_servers:
+          get_input: ntp_servers
+        oam_net_id:
+          get_input: oam_net_id
+        vson_vm_names:
+        - get_input: vson_clm_name_0
     vson_dcl_volume_2:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -1249,8 +1305,180 @@ topology_template:
               VNF_NAME:
                 get_input: vnf_name
         description: Cinder volume for the third vSON DC leader.
-    abstract_vson_vm_0:
-      type: org.openecomp.resource.abstract.nodes.heat.vson_vm
+    vson_dcl_volume_0:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        availability_zone:
+          get_input: availability_zone_0
+        metadata:
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        size: '(get_input : vson_dcl_volume_size_0) * 1024'
+        name:
+          str_replace:
+            template: VNF_NAME_dcl_volume_0
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        description: Cinder volume for the first vSON DC leader.
+    vson_dcl_volume_1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        availability_zone:
+          get_input: availability_zone_1
+        metadata:
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        size: '(get_input : vson_dcl_volume_size_1) * 1024'
+        name:
+          str_replace:
+            template: VNF_NAME_dcl_volume_1
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        description: Cinder volume for the second vSON DC leader.
+    vson_mdr_group:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_from_vol
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        default_gateway:
+          get_input: default_gateway
+        port_vson_server_oam_net_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        instance_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vnf_name:
+          get_input: vnf_name
+        oam_net_subnet_prefix_length:
+          get_input: oam_net_subnet_prefix_length
+        vf_module_name:
+          get_input: vf_module_name
+        dns_servers:
+          get_input: dns_servers
+        oam_net_security_group_id:
+          get_input: oam_net_security_group_id
+        service_template_filter:
+          substitute_service_template: nested_vson_server_from_volServiceTemplate.yaml
+          count:
+            get_input: number_of_servers
+          mandatory: false
+        vnf_id:
+          get_input: vnf_id
+        vson_clm_oam_net_ip:
+          get_input: vson_clm_0_oam_net_ip_0
+        port_vson_server_oam_net_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vson_dc_unit:
+          get_input: vson_dc_unit
+        oam_net_ips:
+        - get_input: vson_mdr_oam_net_ip_0
+        vfc_role: mdr
+        swift_account_auth_token:
+          get_input: swift_account_auth_token
+        vson_server_group_id:
+          get_input: vson_mdr_server_group_id
+        vson_vm_flavor_name:
+          get_input: vson_mdr_flavor_name
+        port_vson_server_oam_net_port_0_network_role_tag: oam
+        availability_zones:
+        - get_input: availability_zone_0
+        volume_ids:
+        - get_input: vson_mdr_volume_id_0
+        ntp_servers:
+          get_input: ntp_servers
+        oam_net_id:
+          get_input: oam_net_id
+        vson_vm_names:
+        - get_input: vson_mdr_name_0
+    vson_dbs_group:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_with_vol
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        default_gateway:
+          get_input: default_gateway
+        port_vson_server_oam_net_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        instance_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vnf_name:
+          get_input: vnf_name
+        oam_net_subnet_prefix_length:
+          get_input: oam_net_subnet_prefix_length
+        vf_module_name:
+          get_input: vf_module_name
+        dns_servers:
+          get_input: dns_servers
+        oam_net_security_group_id:
+          get_input: oam_net_security_group_id
+        service_template_filter:
+          substitute_service_template: nested_vson_server_with_volServiceTemplate.yaml
+          count:
+            get_input: number_of_servers
+          mandatory: false
+        vson_vm_image_name:
+          get_input: vson_dbs_image_name
+        vnf_id:
+          get_input: vnf_id
+        vson_clm_oam_net_ip:
+          get_input: vson_clm_0_oam_net_ip_0
+        port_vson_server_oam_net_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vson_dc_unit:
+          get_input: vson_dc_unit
+        oam_net_ips:
+        - get_input: vson_dbs_oam_net_ip_0
+        - get_input: vson_dbs_oam_net_ip_1
+        vfc_role: dbs
+        swift_account_auth_token:
+          get_input: swift_account_auth_token
+        vson_server_group_id:
+          get_input: vson_dbs_server_group_id
+        vson_vm_flavor_name:
+          get_input: vson_dbs_flavor_name
+        port_vson_server_oam_net_port_0_network_role_tag: oam
+        availability_zones:
+        - get_input: availability_zone_0
+        - get_input: availability_zone_1
+        volume_ids:
+        - get_input: vson_dbs_volume_id_0
+        - get_input: vson_dbs_volume_id_1
+        ntp_servers:
+          get_input: ntp_servers
+        vson_join_cluster_auth_token:
+          get_input: vson_join_cluster_auth_token
+        oam_net_id:
+          get_input: oam_net_id
+        vson_vm_names:
+        - get_input: vson_dbs_name_0
+        - get_input: vson_dbs_name_1
+    vson_app_group:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_with_vol_dual_ip_stack
       directives:
       - substitutable
       properties:
@@ -1323,42 +1551,6 @@ topology_template:
           get_input: oam_net_id
         vson_vm_names:
         - get_input: vson_app_name_0
-    vson_dcl_volume_0:
-      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
-      properties:
-        availability_zone:
-          get_input: availability_zone_0
-        metadata:
-          vnf_name:
-            get_input: vnf_name
-          vf_module_name:
-            get_input: vf_module_name
-        size: '(get_input : vson_dcl_volume_size_0) * 1024'
-        name:
-          str_replace:
-            template: VNF_NAME_dcl_volume_0
-            params:
-              VNF_NAME:
-                get_input: vnf_name
-        description: Cinder volume for the first vSON DC leader.
-    vson_dcl_volume_1:
-      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
-      properties:
-        availability_zone:
-          get_input: availability_zone_1
-        metadata:
-          vnf_name:
-            get_input: vnf_name
-          vf_module_name:
-            get_input: vf_module_name
-        size: '(get_input : vson_dcl_volume_size_1) * 1024'
-        name:
-          str_replace:
-            template: VNF_NAME_dcl_volume_1
-            params:
-              VNF_NAME:
-                get_input: vnf_name
-        description: Cinder volume for the second vSON DC leader.
     oam_net_security_group:
       type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
       properties:
@@ -1461,47 +1653,47 @@ topology_template:
       requirements:
       - port:
           capability: attachment_vson_server_oam_net_port_0
-          node: abstract_vson_vm_3_0
+          node: vson_clm_0
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_vson_server_oam_net_port_0
-          node: abstract_vson_vm_1_0
+          node: vson_dcl_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_vson_server_oam_net_port_0
-          node: abstract_vson_vm_1_0
+          node: vson_dbs_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_vson_server_oam_net_port_0
-          node: abstract_vson_vm_1_0
+          node: vson_dbg_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_vson_server_oam_net_port_0
-          node: abstract_vson_vm_3_0
+          node: vson_clm_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_vson_server_oam_net_port_0
-          node: abstract_vson_vm_2_0
+          node: vson_mdr_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_vson_server_oam_net_port_0
-          node: abstract_vson_vm_1_0
+          node: vson_cll_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_vson_server_oam_net_port_0
-          node: abstract_vson_vm_0
+          node: vson_app_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_vson_server_oam_net_port_0
-          node: abstract_vson_vm_1_0
+          node: vson_dbc_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_vson_server_oam_net_port_0
-          node: abstract_vson_vm_2_0
+          node: vson_mon_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_vson_server_oam_net_port_0
-          node: abstract_vson_vm_2_0
+          node: vson_mgt_group
           relationship: org.openecomp.relationships.AttachesTo
     vson_dbg_volume_0:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
@@ -1517,6 +1709,149 @@ topology_template:
         name:
           get_input: vson_dbg_volume_name_0
         description: vSON DB Global cinder volume.
+    vson_dbg_group:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_with_vol
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        default_gateway:
+          get_input: default_gateway
+        port_vson_server_oam_net_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        instance_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vnf_name:
+          get_input: vnf_name
+        oam_net_subnet_prefix_length:
+          get_input: oam_net_subnet_prefix_length
+        vf_module_name:
+          get_input: vf_module_name
+        dns_servers:
+          get_input: dns_servers
+        oam_net_security_group_id:
+          get_input: oam_net_security_group_id
+        service_template_filter:
+          substitute_service_template: nested_vson_server_with_volServiceTemplate.yaml
+          count:
+            get_input: number_of_servers
+          mandatory: false
+        vson_vm_image_name:
+          get_input: vson_dbg_image_name
+        vnf_id:
+          get_input: vnf_id
+        vson_clm_oam_net_ip:
+          get_input: vson_clm_0_oam_net_ip_0
+        port_vson_server_oam_net_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vson_dc_unit:
+          get_input: vson_dc_unit
+        oam_net_ips:
+        - get_input: vson_dbg_oam_net_ip_0
+        vfc_role: dbg
+        swift_account_auth_token:
+          get_input: swift_account_auth_token
+        vson_server_group_id:
+          get_input: vson_dbg_server_group_id
+        vson_vm_flavor_name:
+          get_input: vson_dbg_flavor_name
+        port_vson_server_oam_net_port_0_network_role_tag: oam
+        availability_zones:
+        - get_input: availability_zone_0
+        volume_ids:
+        - get_input: vson_dbg_volume_id_0
+        ntp_servers:
+          get_input: ntp_servers
+        vson_join_cluster_auth_token:
+          get_input: vson_join_cluster_auth_token
+        oam_net_id:
+          get_input: oam_net_id
+        vson_vm_names:
+        - get_input: vson_dbg_name_0
+    vson_cll_group:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_with_vol
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        default_gateway:
+          get_input: default_gateway
+        port_vson_server_oam_net_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        instance_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vnf_name:
+          get_input: vnf_name
+        oam_net_subnet_prefix_length:
+          get_input: oam_net_subnet_prefix_length
+        vf_module_name:
+          get_input: vf_module_name
+        dns_servers:
+          get_input: dns_servers
+        oam_net_security_group_id:
+          get_input: oam_net_security_group_id
+        service_template_filter:
+          substitute_service_template: nested_vson_server_with_volServiceTemplate.yaml
+          count:
+            get_input: number_of_servers
+          mandatory: false
+        vson_vm_image_name:
+          get_input: vson_cll_image_name
+        vnf_id:
+          get_input: vnf_id
+        vson_clm_oam_net_ip:
+          get_input: vson_clm_0_oam_net_ip_0
+        port_vson_server_oam_net_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vson_dc_unit:
+          get_input: vson_dc_unit
+        oam_net_ips:
+        - get_input: vson_cll_oam_net_ip_0
+        - get_input: vson_cll_oam_net_ip_1
+        - get_input: vson_cll_oam_net_ip_2
+        vfc_role: cll
+        swift_account_auth_token:
+          get_input: swift_account_auth_token
+        vson_server_group_id:
+          get_input: vson_leader_server_group_id
+        vson_vm_flavor_name:
+          get_input: vson_cll_flavor_name
+        port_vson_server_oam_net_port_0_network_role_tag: oam
+        availability_zones:
+        - get_input: availability_zone_0
+        - get_input: availability_zone_1
+        - get_input: availability_zone_0
+        volume_ids:
+        - get_input: vson_cll_volume_id_0
+        - get_input: vson_cll_volume_id_1
+        - get_input: vson_cll_volume_id_2
+        ntp_servers:
+          get_input: ntp_servers
+        vson_join_cluster_auth_token: ''
+        oam_net_id:
+          get_input: oam_net_id
+        vson_vm_names:
+        - get_input: vson_cll_name_0
+        - get_input: vson_cll_name_1
+        - get_input: vson_cll_name_2
     vson_app_volume_0:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -1531,6 +1866,146 @@ topology_template:
         name:
           get_input: vson_app_volume_name_0
         description: vSON APP cinder volume.
+    vson_mon_group:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_from_vol
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        default_gateway:
+          get_input: default_gateway
+        port_vson_server_oam_net_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        instance_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vnf_name:
+          get_input: vnf_name
+        oam_net_subnet_prefix_length:
+          get_input: oam_net_subnet_prefix_length
+        vf_module_name:
+          get_input: vf_module_name
+        dns_servers:
+          get_input: dns_servers
+        oam_net_security_group_id:
+          get_input: oam_net_security_group_id
+        service_template_filter:
+          substitute_service_template: nested_vson_server_from_volServiceTemplate.yaml
+          count:
+            get_input: number_of_servers
+          mandatory: false
+        vnf_id:
+          get_input: vnf_id
+        vson_clm_oam_net_ip:
+          get_input: vson_clm_0_oam_net_ip_0
+        port_vson_server_oam_net_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vson_dc_unit:
+          get_input: vson_dc_unit
+        oam_net_ips:
+        - get_input: vson_mon_oam_net_ip_0
+        vfc_role: mon
+        swift_account_auth_token:
+          get_input: swift_account_auth_token
+        vson_server_group_id:
+          get_input: vson_mon_server_group_id
+        vson_vm_flavor_name:
+          get_input: vson_mon_flavor_name
+        port_vson_server_oam_net_port_0_network_role_tag: oam
+        availability_zones:
+        - get_input: availability_zone_0
+        volume_ids:
+        - get_input: vson_mon_volume_id_0
+        ntp_servers:
+          get_input: ntp_servers
+        oam_net_id:
+          get_input: oam_net_id
+        vson_vm_names:
+        - get_input: vson_mon_name_0
+    vson_dcl_group:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_with_vol
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        default_gateway:
+          get_input: default_gateway
+        port_vson_server_oam_net_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        instance_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vnf_name:
+          get_input: vnf_name
+        oam_net_subnet_prefix_length:
+          get_input: oam_net_subnet_prefix_length
+        vf_module_name:
+          get_input: vf_module_name
+        dns_servers:
+          get_input: dns_servers
+        oam_net_security_group_id:
+          get_input: oam_net_security_group_id
+        service_template_filter:
+          substitute_service_template: nested_vson_server_with_volServiceTemplate.yaml
+          count:
+            get_input: number_of_servers
+          mandatory: false
+        vson_vm_image_name:
+          get_input: vson_dcl_image_name
+        vnf_id:
+          get_input: vnf_id
+        vson_clm_oam_net_ip:
+          get_input: vson_clm_0_oam_net_ip_0
+        port_vson_server_oam_net_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vson_dc_unit:
+          get_input: vson_dc_unit
+        oam_net_ips:
+        - get_input: vson_dcl_oam_net_ip_0
+        - get_input: vson_dcl_oam_net_ip_1
+        - get_input: vson_dcl_oam_net_ip_2
+        vfc_role: dcl
+        swift_account_auth_token:
+          get_input: swift_account_auth_token
+        vson_server_group_id:
+          get_input: vson_leader_server_group_id
+        vson_vm_flavor_name:
+          get_input: vson_dcl_flavor_name
+        port_vson_server_oam_net_port_0_network_role_tag: oam
+        availability_zones:
+        - get_input: availability_zone_0
+        - get_input: availability_zone_1
+        - get_input: availability_zone_0
+        volume_ids:
+        - get_input: vson_dcl_volume_id_0
+        - get_input: vson_dcl_volume_id_1
+        - get_input: vson_dcl_volume_id_2
+        ntp_servers:
+          get_input: ntp_servers
+        vson_join_cluster_auth_token:
+          get_input: vson_join_cluster_auth_token
+        oam_net_id:
+          get_input: oam_net_id
+        vson_vm_names:
+        - get_input: vson_dcl_name_0
+        - get_input: vson_dcl_name_1
+        - get_input: vson_dcl_name_2
   groups:
     module_5_vson_dbg_volume_group:
       type: org.openecomp.groups.heat.HeatStack
@@ -1546,7 +2021,7 @@ topology_template:
         heat_file: ../Artifacts/module_7_vson_app.yaml
         description: The template deploys vSON VFC of type APP.
       members:
-      - abstract_vson_vm_0
+      - vson_app_group
     module_2_vson_mdr_volume_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
@@ -1562,7 +2037,7 @@ topology_template:
         description: |
           The template deploys three instances of vSON Cluster leaders, instantiates cluster and the first Datacenter.
       members:
-      - abstract_vson_vm_1_0
+      - vson_cll_group
     module_6_vson_dbs_volume_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
@@ -1583,7 +2058,7 @@ topology_template:
         heat_file: ../Artifacts/module_0_vson_mgt.yaml
         description: The template deploys vSON VFC of type MGT.
       members:
-      - abstract_vson_vm_2_0
+      - vson_mgt_group
     module_1_vson_mon_volume_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
@@ -1598,7 +2073,7 @@ topology_template:
         heat_file: ../Artifacts/module_2_vson_mdr.yaml
         description: The template deploys vSON VFC of type Mediator (MDR).
       members:
-      - abstract_vson_vm_2_0
+      - vson_mdr_group
     module_0_vson_mgt_volume_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
@@ -1631,7 +2106,7 @@ topology_template:
         heat_file: ../Artifacts/module_4_vson_dbc.yaml
         description: The template deploys vSON VFC of type Database Config (DBC).
       members:
-      - abstract_vson_vm_1_0
+      - vson_dbc_group
     module_3_vson_cll_volume_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
@@ -1648,14 +2123,14 @@ topology_template:
         heat_file: ../Artifacts/module_8_vson_dcl.yaml
         description: The template deploys vSON Datacenter.
       members:
-      - abstract_vson_vm_1_0
+      - vson_dcl_group
     module_9_vson_clm_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/module_9_vson_clm.yaml
         description: The template deploys vSON VFC of type CLM.
       members:
-      - abstract_vson_vm_3_0
+      - vson_clm_group
     module_4_vson_dbc_volume_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
@@ -1672,7 +2147,7 @@ topology_template:
           Creates essential resources: vSON internal network, Security Groups and vSON Cluster Manager instance. Deploys and configure appropriate software on the Cluster Management server. Exposes shared resource as outputs that could be used by add-on templates.
       members:
       - oam_net_security_group
-      - abstract_vson_vm_3_0
+      - vson_clm_0
     module_6_vson_dbs_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
@@ -1680,21 +2155,21 @@ topology_template:
         description: "The template deploys vSON VFC of type Database Shard (DBS) VM\
           \ instances: Primary and Secondary. \n"
       members:
-      - abstract_vson_vm_1_0
+      - vson_dbs_group
     module_5_vson_dbg_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/module_5_vson_dbg.yaml
         description: The template deploys vSON VFC of type Database Global (DBG).
       members:
-      - abstract_vson_vm_1_0
+      - vson_dbg_group
     module_1_vson_mon_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/module_1_vson_mon.yaml
         description: The template deploys vSON VFC of type MON.
       members:
-      - abstract_vson_vm_2_0
+      - vson_mon_group
   outputs:
     vson_dbg_volume_id_0:
       description: vSON DB Global volume ID.

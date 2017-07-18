@@ -24,17 +24,6 @@ const GuestOs = ({qgenericFieldInfo, dataMap, onQDataChanged}) => {
 	return(
 		<div>
 			<GridSection title={i18n('Guest OS')} >
-				<GridItem colSpan={2}>
-					<Input
-						data-test-id='guestOS-name'
-						label={i18n('Guest OS')}
-						type='text'
-						onChange={(tools) => onQDataChanged({'compute/guestOS/name' : tools})}
-						isValid={qgenericFieldInfo['compute/guestOS/name'].isValid}
-						errorText={qgenericFieldInfo['compute/guestOS/name'].errorText}
-						value={dataMap['compute/guestOS/name']} />
-				</GridItem>
-				<GridItem colSpan={2}/>
 				<GridItem>
 					<div className='vertical-flex'>
 						<label key='label' className='control-label'>{i18n('OS Bit Size')}</label>
@@ -56,6 +45,16 @@ const GuestOs = ({qgenericFieldInfo, dataMap, onQDataChanged}) => {
 					</div>
 				</GridItem>
 				<GridItem colSpan={2}/>
+				<GridItem colSpan={2}>
+					<Input
+						data-test-id='guestOS-name'
+						label={i18n('Guest OS')}
+						type='textarea'
+						onChange={(tools) => onQDataChanged({'compute/guestOS/name' : tools})}
+						isValid={qgenericFieldInfo['compute/guestOS/name'].isValid}
+						errorText={qgenericFieldInfo['compute/guestOS/name'].errorText}
+						value={dataMap['compute/guestOS/name']} />
+				</GridItem>
 				<GridItem colSpan={2}>
 					<Input
 						data-test-id='guestOS-tools'

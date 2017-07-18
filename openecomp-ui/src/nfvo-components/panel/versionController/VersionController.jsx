@@ -17,7 +17,7 @@ import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
 import {actionsEnum, statusEnum, statusBarTextMap } from './VersionControllerConstants.js';
-import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
 
@@ -115,8 +115,8 @@ class ActionButtons extends React.Component {
 	render() {
 		const {onSubmit, onRevert, onSave, isLatestVersion, isCheckedIn, isCheckedOut, isFormDataValid, version, status, onCheckinCheckout} = this.props;
 		const [checkinBtnIconSvg, checkinCheckoutBtnTitle] = status === statusEnum.CHECK_OUT_STATUS ?
-			['version-controller-lock-open', i18n('Check In')] :
-			['version-controller-lock-closed', i18n('Check Out')];
+			['versionControllerLockOpen', i18n('Check In')] :
+			['versionControllerLockClosed', i18n('Check Out')];
 		const disabled = (isLatestVersion && onCheckinCheckout && status !== statusEnum.LOCK_STATUS) ? false : true;
 		return (
 			<div className='action-buttons'>
@@ -125,14 +125,14 @@ class ActionButtons extends React.Component {
 				{onSubmit && onRevert &&
 					<div className='version-control-buttons'>
 						<VCButton dataTestId='vc-submit-btn' onClick={onSubmit}  isDisabled={!isCheckedIn || !isLatestVersion}
-							name='version-controller-submit' tooltipText={i18n('Submit')}/>
+							name='versionControllerSubmit' tooltipText={i18n('Submit')}/>
 						<VCButton dataTestId='vc-revert-btn' onClick={onRevert} isDisabled={!isCheckedOut || version.label === '0.1' || !isLatestVersion}
-							name='version-controller-revert' tooltipText={i18n('Revert')}/>
+							name='versionControllerRevert' tooltipText={i18n('Revert')}/>
 					</div>
 				}
 				{onSave &&
 					<VCButton dataTestId='vc-save-btn' onClick={() => onSave()} isDisabled={!isCheckedOut || !isFormDataValid || !isLatestVersion}
-						name='version-controller-save'  tooltipText={i18n('Save')}/>
+						name='versionControllerSave'  tooltipText={i18n('Save')}/>
 				}
 			</div>
 		);

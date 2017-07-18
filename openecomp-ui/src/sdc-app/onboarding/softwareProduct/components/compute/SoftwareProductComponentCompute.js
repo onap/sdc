@@ -19,18 +19,23 @@ import SoftwareProductComponentsActionHelper from 'sdc-app/onboarding/softwarePr
 import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import {COMPONENTS_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
+import {onboardingMethod} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 
 
-const mapStateToProps = ({softwareProduct}) => {
+const mapStateToProps = ({softwareProduct, currentScreen: {props: {softwareProductId, componentId}}}) => {
 	let {softwareProductEditor: {data: currentVSP}, softwareProductComponents} = softwareProduct;
-	let {componentEditor: {qdata, dataMap, qgenericFieldInfo}} = softwareProductComponents;
+	let {componentEditor: {qdata, dataMap, qgenericFieldInfo}, computeFlavor: {computesList: computeFlavorsList}} = softwareProductComponents;
 	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentVSP);
 
 	return {
 		qdata,
 		dataMap,
 		qgenericFieldInfo,
-		isReadOnlyMode
+		isReadOnlyMode,
+		softwareProductId,
+		componentId,
+		computeFlavorsList,
+		isManual: currentVSP.onboardingMethod === onboardingMethod.MANUAL
 	};
 };
 

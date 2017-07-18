@@ -1,0 +1,165 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested1-no-compute
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    ps_server_ips:
+      hidden: false
+      immutable: false
+      type: string
+    name:
+      hidden: false
+      immutable: false
+      type: string
+      description: nested parameter
+    net:
+      hidden: false
+      immutable: false
+      type: string
+    pd_server_ips:
+      hidden: false
+      immutable: false
+      type: string
+  node_templates:
+    ps_server_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - ps_server_ips
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: net
+    pd_server_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - pd_server_ips
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: net
+  groups:
+    nested1-no-compute_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested1-no-compute.yml
+        description: nested1-no-compute
+      members:
+      - ps_server_port
+      - pd_server_port
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested1-no-compute
+    capabilities:
+      feature_ps_server_port:
+      - ps_server_port
+      - feature
+      network.outgoing.bytes_ps_server_port:
+      - ps_server_port
+      - network.outgoing.bytes
+      feature_pd_server_port:
+      - pd_server_port
+      - feature
+      network.outgoing.bytes.rate_ps_server_port:
+      - ps_server_port
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_pd_server_port:
+      - pd_server_port
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes_pd_server_port:
+      - pd_server_port
+      - network.outgoing.bytes
+      network.outgoing.packets.rate_pd_server_port:
+      - pd_server_port
+      - network.outgoing.packets.rate
+      binding_pd_server_port:
+      - pd_server_port
+      - binding
+      network.incoming.packets.rate_ps_server_port:
+      - ps_server_port
+      - network.incoming.packets.rate
+      network.incoming.bytes.rate_ps_server_port:
+      - ps_server_port
+      - network.incoming.bytes.rate
+      network.outgoing.packets.rate_ps_server_port:
+      - ps_server_port
+      - network.outgoing.packets.rate
+      binding_ps_server_port:
+      - ps_server_port
+      - binding
+      network.incoming.packets_pd_server_port:
+      - pd_server_port
+      - network.incoming.packets
+      network.incoming.bytes_pd_server_port:
+      - pd_server_port
+      - network.incoming.bytes
+      network.outpoing.packets_pd_server_port:
+      - pd_server_port
+      - network.outpoing.packets
+      network.outpoing.packets_ps_server_port:
+      - ps_server_port
+      - network.outpoing.packets
+      network.incoming.bytes_ps_server_port:
+      - ps_server_port
+      - network.incoming.bytes
+      attachment_ps_server_port:
+      - ps_server_port
+      - attachment
+      attachment_pd_server_port:
+      - pd_server_port
+      - attachment
+      network.incoming.packets_ps_server_port:
+      - ps_server_port
+      - network.incoming.packets
+      network.incoming.packets.rate_pd_server_port:
+      - pd_server_port
+      - network.incoming.packets.rate
+      network.incoming.bytes.rate_pd_server_port:
+      - pd_server_port
+      - network.incoming.bytes.rate
+    requirements:
+      dependency_ps_server_port:
+      - ps_server_port
+      - dependency
+      dependency_pd_server_port:
+      - pd_server_port
+      - dependency
+      link_pd_server_port:
+      - pd_server_port
+      - link
+      link_ps_server_port:
+      - ps_server_port
+      - link
+      binding_ps_server_port:
+      - ps_server_port
+      - binding
+      binding_pd_server_port:
+      - pd_server_port
+      - binding

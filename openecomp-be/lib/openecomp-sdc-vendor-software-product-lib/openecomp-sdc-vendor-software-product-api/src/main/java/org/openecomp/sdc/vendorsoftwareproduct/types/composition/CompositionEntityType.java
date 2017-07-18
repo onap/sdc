@@ -25,5 +25,8 @@ public enum CompositionEntityType {
   vsp,
   network,
   component,
-  nic
+  deployment,
+  image,
+  nic,
+  compute
 }

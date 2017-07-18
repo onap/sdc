@@ -60,4 +60,21 @@ public class GlobalTypesGenerator {
     globalImports.add(globalImportMap);
     return globalImports;
   }
+
+  /**
+   * Gets global types import list for Manual Vsp onboarding.
+   *
+   * @return the global types import list
+   */
+  public static List<Map<String, Import>> getManualVspGlobalTypesImportList() {
+    List<Map<String, Import>> globalImports = new ArrayList<>();
+    Map<String, Import> globalImportMap = new HashMap<>();
+    Map<String, ServiceTemplate> globalTypesServiceTemplate =
+        GlobalTypesGenerator.getGlobalTypesServiceTemplate();
+    globalImportMap.put("openecomp_index",
+        HeatToToscaUtil.createServiceTemplateImport(globalTypesServiceTemplate.get
+            ("openecomp/_index.yml")));
+    globalImports.add(globalImportMap);
+    return globalImports;
+  }
 }

@@ -25,13 +25,11 @@
 
       align-items: center;
       .upload-btn {
-        padding: 20px;
-        padding-top: 7px;
-        padding-bottom: 3px;
+        padding: 4px 20px;
       }
       .drag-text {
         color: $blue;
-        font-weight: bolder;
+        @extend .body-1-semibold;
       }
       .or-text {
         margin-top: 10px;
@@ -39,11 +37,9 @@
       }
     }
     .vsp-processes-editor-data {
-      padding: 28px 54px;
       transition: border .2s;
       .vsp-process-dropzone-view {
         background-color: transparent;
-        padding: 15px;
         &.active-dragging {
           border: 3px dashed $dark-blue;
           border-radius: 20px;
@@ -53,7 +49,7 @@
         }
         .grid-section {
           .section-title {
-            padding-bottom: 0px;
+            padding-bottom: 0;
           }
         }
       }
@@ -66,7 +62,8 @@
   }
 }
 
-.vsp-processes-page {
+.software-product-landing-view-right-side.vsp-processes-page {
+	overflow-y: initial;
   .processes-list {
     @extend .flex-column;
   }

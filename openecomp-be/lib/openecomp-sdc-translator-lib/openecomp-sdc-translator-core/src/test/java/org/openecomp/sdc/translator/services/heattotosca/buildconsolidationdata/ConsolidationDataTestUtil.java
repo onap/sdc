@@ -31,7 +31,9 @@ import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.FileNestedConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.GetAttrFuncData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.NestedConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.NestedTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.RequirementAssignmentData;
@@ -45,6 +47,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -401,10 +404,10 @@ public class ConsolidationDataTestUtil {
     Assert.assertTrue(groupMembers.contains(computeNodeTemplateId));
   }
 
-  public static void validateSubstituteMappingInConsolidationData(ConsolidationData consolidationData,
-                                                                  Map<String, ServiceTemplate>
+  public static void validateNestedConsolidationDataNodeTemplateIds(ConsolidationData consolidationData,
+                                                                    Map<String, ServiceTemplate>
                                                                       expectedServiceTemplateModels ){
-    Map<String,List<String>> consolidatedMap = consolidationData.getSubstituteNodeTemplates();
+    Map<String,List<String>> consolidatedMap = getSubstituteNodeTemplateIds(consolidationData);
     Map<String,List<String>> expectedMap = getSubstituteMapping(expectedServiceTemplateModels);
     for(String consolidatedKey : consolidatedMap.keySet()){
       List<String> consolidatedList = consolidatedMap.get(consolidatedKey);
@@ -415,6 +418,30 @@ public class ConsolidationDataTestUtil {
         Assert.fail();
       }
     }
+  }
+
+  private static Map<String,List<String>> getSubstituteNodeTemplateIds(ConsolidationData
+                                                                   consolidationData) {
+    Map<String,List<String>> nestedNodeTemplateIdMap = new HashMap<>();
+    NestedConsolidationData nestedConsolidationData =
+        consolidationData.getNestedConsolidationData();
+    Set<String> serviceTemplateFileNames =
+        nestedConsolidationData.getAllServiceTemplateFileNames();
+    for (String fileName : serviceTemplateFileNames) {
+      FileNestedConsolidationData fileNestedConsolidationData =
+          nestedConsolidationData.getFileNestedConsolidationData(fileName);
+      if (Objects.isNull(fileNestedConsolidationData)) {
+        continue;
+      }
+      Set<String> nestedNodeTemplateIds =
+          fileNestedConsolidationData.getAllNestedNodeTemplateIds();
+      if (nestedNodeTemplateIds != null) {
+        List<String> fileNestedNodeTemplateIds = new ArrayList<>();
+        fileNestedNodeTemplateIds.addAll(nestedNodeTemplateIds);
+        nestedNodeTemplateIdMap.put(fileName, fileNestedNodeTemplateIds);
+      }
+    }
+    return nestedNodeTemplateIdMap;
   }
 
   private static Map<String,List<String>> getSubstituteMapping(Map<String, ServiceTemplate>

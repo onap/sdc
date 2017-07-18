@@ -32,6 +32,9 @@ public enum Messages {
   ZIP_NOT_EXIST("Zip file doesn't exist"),
 
   ZIP_SHOULD_NOT_CONTAIN_FOLDERS("Zip file should not contain folders"),
+  VES_ZIP_SHOULD_CONTAIN_YML_ONLY(
+      "Wrong VES EVENT Artifact was uploaded - all files contained in Artifact must be YAML files" +
+          " (using .yaml/.yml extensions)"),
   MANIFEST_NOT_EXIST("Manifest doesn't exist"),
   FILE_TYPE_NOT_LEGAL("File type not legal as data for other file"),
   MODULE_IN_MANIFEST_NO_YAML("Module '%s', has no yaml file reference"),
@@ -46,6 +49,10 @@ public enum Messages {
   CREATE_MANIFEST_FROM_ZIP("cannot create manifest from the attached zip file"),
   CANDIDATE_PROCESS_FAILED("Candidate zip file process failed"),
   FOUND_UNASSIGNED_FILES("cannot process zip since it has unassigned files"),
+
+  /* Monitor uploads related errors*/
+  ILLEGAL_MONITORING_ARTIFACT_TYPE("Illegal monitoring artifact type for component id %s, vsp id " +
+      "%s"),
 
 
   /* manifest errors*/

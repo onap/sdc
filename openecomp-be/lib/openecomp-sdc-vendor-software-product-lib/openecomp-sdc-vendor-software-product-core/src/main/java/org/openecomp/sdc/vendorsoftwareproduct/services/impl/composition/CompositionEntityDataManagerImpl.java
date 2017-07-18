@@ -22,6 +22,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.services.impl.composition;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.json.JsonSchemaDataGenerator;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -31,11 +32,18 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.CompositionEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
@@ -43,12 +51,17 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Component;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityId;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComputeData;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Image;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.NetworkType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateInput;
@@ -82,14 +95,25 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   private ComponentDao componentDao;
   private NicDao nicDao;
   private NetworkDao networkDao;
+  private ImageDao imageDao;
+  private ComputeDao computeDao;
+  private DeploymentFlavorDao deploymentFlavorDao;
+  private VendorSoftwareProductDao vendorSoftwareProductDao;
 
   public CompositionEntityDataManagerImpl(VendorSoftwareProductInfoDao vspInfoDao,
                                           ComponentDao componentDao,
-                                          NicDao nicDao, NetworkDao networkDao) {
+                                          NicDao nicDao, NetworkDao networkDao,
+                                          ImageDao imageDao, ComputeDao computeDao,
+                                          DeploymentFlavorDao deploymentFlavorDao,
+                                          VendorSoftwareProductDao vendorSoftwareProductDao ) {
     this.vspInfoDao = vspInfoDao;
     this.componentDao = componentDao;
     this.nicDao = nicDao;
     this.networkDao = networkDao;
+    this.imageDao = imageDao;
+    this.computeDao = computeDao;
+    this.deploymentFlavorDao = deploymentFlavorDao;
+    this.vendorSoftwareProductDao = vendorSoftwareProductDao;
   }
 
   /**
@@ -200,6 +224,7 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
     Map<String, String> networkIdByName = saveNetworks(vspId, version, compositionData);
     saveComponents(vspId, version, compositionData, networkIdByName);
+    saveDeploymentFlavors(vspId, version, compositionData);
 
     mdcDataDebugMessage.debugExitMessage(null);
   }
@@ -269,6 +294,9 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
         String componentId = createComponent(componentEntity).getId();
 
+        saveImagesByComponent(vspId, version, component, componentId);
+        saveComputesFlavorByComponent(vspId, version, component, componentId);
+
         saveNicsByComponent(vspId, version, networkIdByName, component, componentId);
       }
     }
@@ -285,6 +313,8 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
           nic.setNetworkId(networkIdByName.get(nic.getNetworkName()));
         }
         nic.setNetworkName(null);
+        //For heat flow set network type to be internal by default for NIC
+        nic.setNetworkType(NetworkType.Internal);
 
         NicEntity nicEntity = new NicEntity(vspId, version, componentId, null);
         nicEntity.setNicCompositionData(nic);
@@ -592,4 +622,104 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
     return SchemaGenerator
         .generate(schemaTemplateContext, compositionEntityType, schemaTemplateInput);
   }
+
+  @Override
+  public DeploymentFlavorEntity createDeploymentFlavor(DeploymentFlavorEntity deploymentFlavor) {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    deploymentFlavor.setId(CommonMethods.nextUuId());
+    deploymentFlavorDao.create(deploymentFlavor);
+    return deploymentFlavor;
+  }
+
+  @Override
+  public ImageEntity createImage(ImageEntity image) {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    image.setId(CommonMethods.nextUuId());
+
+    image.setQuestionnaireData(
+        new JsonSchemaDataGenerator(SchemaGenerator
+            .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.image, null))
+            .generateData());
+
+    imageDao.create(image);
+    mdcDataDebugMessage.debugExitMessage(null, null);
+    return image;
+  }
+
+  @Override
+  public ComputeEntity createCompute(ComputeEntity compute) {
+    mdcDataDebugMessage.debugEntryMessage("VSP id, component id", compute.getVspId(),
+        compute.getComponentId());
+
+    compute.setId(CommonMethods.nextUuId());
+    compute.setQuestionnaireData(
+        new JsonSchemaDataGenerator(SchemaGenerator
+            .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.compute,
+                null)).generateData());
+
+    computeDao.create(compute);
+
+    mdcDataDebugMessage.debugExitMessage("VSP id, component id", compute.getVspId(),
+        compute.getComponentId());
+    return compute;
+  }
+
+  public void saveComputesFlavorByComponent(String vspId, Version version, Component component, String
+      componentId) {
+    if (CollectionUtils.isNotEmpty(component.getCompute())) {
+      for (ComputeData flavor : component.getCompute()) {
+        ComputeEntity computeEntity = new ComputeEntity(vspId, version, componentId, null);
+        computeEntity.setComputeCompositionData(flavor);
+        createCompute(computeEntity);
+      }
+    }
+  }
+
+  public void saveImagesByComponent(String vspId, Version version, Component component, String
+      componentId) {
+    if (CollectionUtils.isNotEmpty(component.getImages())) {
+      for (Image img : component.getImages()) {
+        ImageEntity imageEntity = new ImageEntity(vspId, version, componentId, null);
+        imageEntity.setImageCompositionData(img);
+        createImage(imageEntity);
+      }
+    }
+  }
+
+  public void saveDeploymentFlavors(String vspId, Version version,
+                                    CompositionData compositionData) {
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    if (CollectionUtils.isNotEmpty(compositionData.getComponents())) {
+      DeploymentFlavorEntity deploymentFlavorEntity = new DeploymentFlavorEntity(vspId, version,
+          null);
+      DeploymentFlavor deploymentFlavor = new DeploymentFlavor();
+      VspDetails vendorSoftwareProductInfo =
+          vspInfoDao.get(new VspDetails(vspId, version));
+      if (vendorSoftwareProductInfo.getName() != null) {
+        deploymentFlavor.setModel(vendorSoftwareProductInfo.getName());
+        List<ComponentComputeAssociation> componentComputeAssociationList = new ArrayList<>();
+        Collection<ComputeEntity> computes= vendorSoftwareProductDao.listComputesByVsp(vspId,
+            version);
+        for (ComputeEntity compute : computes) {
+          ComponentComputeAssociation componentComputeAssociation = new
+              ComponentComputeAssociation();
+          if (compute.getComponentId() != null && compute.getId() != null){
+            componentComputeAssociation.setComponentId(compute.getComponentId());
+            componentComputeAssociation.setComputeFlavorId(compute.getId());
+            componentComputeAssociationList.add(componentComputeAssociation);
+          }
+        }
+        deploymentFlavor.setComponentComputeAssociations(componentComputeAssociationList);
+      }
+      deploymentFlavorEntity.setDeploymentFlavorCompositionData(deploymentFlavor);
+      createDeploymentFlavor(deploymentFlavorEntity);
+    }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
+  }
+
 }

@@ -22,6 +22,8 @@ export const VSPComponentsFactory =  new Factory()
 	.attr('displayName', ['componentName', 'componentType'], (componentName, componentType) => `${componentName}_${componentType}`)
 	.attr('name', ['displayName'], displayName => `com.ecomp.d2.resource.vfc.nodes.heat.${displayName}`)
 	.attr('id', () => randomstring.generate())
+	.attr('vfcCode', 'code')
+	.attr('nfcFunction', 'function')
 	.attr('description', 'description');
 
 export const VSPComponentsGeneralFactory = new Factory()

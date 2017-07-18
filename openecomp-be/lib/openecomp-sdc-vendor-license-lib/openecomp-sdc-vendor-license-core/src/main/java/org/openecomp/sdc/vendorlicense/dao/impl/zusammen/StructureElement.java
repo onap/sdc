@@ -5,5 +5,6 @@ public enum StructureElement {
     LicenseAgreements,
     FeatureGroups,
     EntitlementPools,
-    LicenseKeyGroups
+    LicenseKeyGroups,
+    Limits
 }

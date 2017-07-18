@@ -1,0 +1,55 @@
+.deployment-flavor-editor {
+	.modal-dialog {
+		width: 780px;
+	}
+	.grid-section {
+		padding-bottom: 25px;
+	}
+	.deployment-feature-groups-section.no-feature-groups {
+		padding-bottom: 0;
+		.form-group {
+			margin-bottom: 5px;
+		}
+	}
+	.deployment-feature-group-warning-section {
+			padding-bottom: 30px;
+			span {
+				@extend .body-2;
+				color: $red;
+			}
+	}
+	.grid-section.vfc-table {
+		.section-title {
+			padding-bottom: 10px;
+		}
+	}
+	.modal-content {
+		.modal-body {
+			padding: 0;
+			.validation-form-content {
+				.grid-col-1 {
+					flex-basis: 35%;
+				}
+
+				.Select-value, .Select-placeholder {
+					font-family: omnes-regular, sans-serif;
+				}
+
+				.grid-section.vfc-table {
+					padding-bottom: 50px;
+					.Select-menu {
+						max-height: 100px;
+					}
+
+				}
+
+				.grid-col-3 {
+					flex-basis: 65%;
+				}
+				padding-left: 54px;
+				padding-right: 33px;
+				overflow-y: visible;
+			}
+		}
+	}
+}

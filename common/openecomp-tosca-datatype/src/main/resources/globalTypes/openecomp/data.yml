@@ -123,7 +123,17 @@ data_types:
       count:
         description: number of assignments required
         type: integer
-        required: false    
+        required: false
+
+  org.openecomp.resource.abstract.nodes.PNF:
+    derived_from: tosca.nodes.Root
+    properties:
+      nf_function:
+        type: string
+      nf_role:
+        type: string
+      nf_type:
+        type: string
 
 
   org.openecomp.datatypes.network.IpRequirements:
@@ -133,22 +143,15 @@ data_types:
         type: integer
         required: true
         constraints:
-        - valid_values:
-          - 4
-          - 6
+          - valid_values:
+            - 4
+            - 6
       ip_count:
         description: identifies the number of ip address to assign to the CP from the plan
         type: integer
         required: false
-      ip_count_required:
-        description: identifies the number of ip address to assign to the CP from the plan
-        type: org.openecomp.datatypes.AssignmentRequirements
-        required: false
       floating_ip_count:
         type: integer
-        required: false
-      floating_ip_count_required:
-        type: org.openecomp.datatypes.AssignmentRequirements
         required: false
       subnet_role:
         type: string
@@ -157,9 +160,25 @@ data_types:
         type: string
         required: true
         constraints:
-        - valid_values:
-          - fixed
-          - dhcp
+          - valid_values:
+            - fixed
+            - dhcp
+      dhcp_enabled:
+        type: boolean
+        required: false
+      ip_count_required:
+        description: identifies the number of ip address to assign to the CP from the plan
+        type: org.openecomp.datatypes.AssignmentRequirements
+        required: false
+      floating_ip_count_required:
+        type: org.openecomp.datatypes.AssignmentRequirements
+        required: false
+      ip_address_plan_name:
+        type: string
+        required: false
+      vrf_name:
+        type: string
+        required: false
 
   org.openecomp.datatypes.network.PhysicalNetwork:
     derived_from: org.openecomp.datatypes.Root
@@ -475,4 +494,64 @@ data_types:
         description: Reference to naming policy that OPENECOMP will use when the name is auto-generated
         type: string
         required: false
+
+  org.openecomp.datatypes.flavors.DeploymentFlavor:
+    properties:
+      sp_part_number:
+        type: string  # under discussion; need confirmation
+        description: Part number of the feature group associated with the deployment flavor
+      vendor_info:
+        type: org.opencomp.datatypes.flavors.VendorInfo
+        description: Vendor information for the deployment flavor
+      compute_flavor:
+        type: org.opencomp.datatypes.flavors.ComputeFlavor
+        description: Compute information for the deployment flavor
+      license_flavor:
+        type: org.opencomp.datatypes.flavors.LicenseFlavor
+        description: License information for the deployment flavor
+        required: false
+
+  org.openecomp.datatypes.flavors.ComputeFlavor:
+    properties:
+      num_cpus:
+        type: integer
+        description: Number of CPUs for the VM
+      disk_size:
+        type: scalar-unit.size
+        description: Disk size of the VM
+      mem_size:
+        type: scalar-unit.size
+        description: Memory size of the VM
+
+  org.openecomp.datatypes.flavors.LicenseFlavor:
+    properties:
+      feature_group_uuid:
+        type: string
+        description: Feature Group Id
+
+  org.openecomp.datatypes.flavors.VendorInfo:
+    properties:
+      manufacturer_reference_number:
+        type: string
+        description: Manufacturer reference number
+      vendor_model:
+        type: string
+        description: Vendor License Model Id
+
+  org.openecomp.datatypes.ImageInfo:
+    properties:
+      software_version:
+        type: string
+        description: Image version
+      file_name:
+        type: string
+        description: Image file name
+      file_hash:
+        type: string
+        description: checksum/signature
+      file_hash_type:
+        type: string
+        description: Hash type
+        required: false
+        default: md5
         

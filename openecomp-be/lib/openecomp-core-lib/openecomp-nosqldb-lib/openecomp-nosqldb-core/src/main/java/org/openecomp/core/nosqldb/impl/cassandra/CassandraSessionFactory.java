@@ -36,6 +36,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Objects;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
@@ -113,8 +114,9 @@ public class CassandraSessionFactory {
     } catch (Exception exception) {
       exception.printStackTrace();
     } finally {
-      tsf.close();
-
+      if (tsf != null) {
+        tsf.close();
+      }
     }
     return ctx;
   }

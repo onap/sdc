@@ -28,6 +28,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.openecomp.sdc.common</groupId>
+            <artifactId>openecomp-tosca-datatype</artifactId>
+            <version>${openecomp.sdc.common.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-nosqldb-api</artifactId>
             <version>${project.version}</version>
@@ -54,7 +59,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-            <version>4.11</version>
+            <version>${junit.version}</version>
         </dependency>
     </dependencies>
 </project>

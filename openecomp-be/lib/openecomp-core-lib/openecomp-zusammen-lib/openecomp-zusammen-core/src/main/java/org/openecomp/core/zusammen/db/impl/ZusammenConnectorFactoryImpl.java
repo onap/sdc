@@ -20,6 +20,7 @@
 
 package org.openecomp.core.zusammen.db.impl;
 
+import com.amdocs.zusammen.adaptor.inbound.api.health.HealthAdaptorFactory;
 import com.amdocs.zusammen.adaptor.inbound.api.item.ElementAdaptorFactory;
 import com.amdocs.zusammen.adaptor.inbound.api.item.ItemAdaptorFactory;
 import com.amdocs.zusammen.adaptor.inbound.api.item.ItemVersionAdaptorFactory;
@@ -30,7 +31,7 @@ public class ZusammenConnectorFactoryImpl extends ZusammenConnectorFactory {
   private static final ZusammenConnector INSTANCE =
       new ZusammenConnectorImpl(ItemAdaptorFactory.getInstance(),
           ItemVersionAdaptorFactory.getInstance(),
-          ElementAdaptorFactory.getInstance());
+          ElementAdaptorFactory.getInstance(), HealthAdaptorFactory.getInstance());
 
   @Override
   public ZusammenConnector createInterface() {

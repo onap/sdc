@@ -1,19 +1,12 @@
 package org.openecomp.sdc.translator.services.heattotosca;
 
-import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isComputeResource;
-import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isPortResource;
-import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isVolumeResource;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.openecomp.core.utilities.yaml.YamlUtil;
-import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isComputeResource;
+import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isPortResource;
+import static org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil.isVolumeResource;
 
 /**
  * The enum Entity type.
@@ -23,6 +16,8 @@ public enum ConsolidationEntityType {
   PORT,
   VOLUME,
   NESTED,
+  //Simple nested VFC (nested file with one compute) or a complex VFC (nested ST with more than
+  //one compute)
   VFC_NESTED,
   SUB_PORT,
   OTHER;
@@ -64,21 +59,11 @@ public enum ConsolidationEntityType {
     } else if (isVolumeResource(resource)) {
       return ConsolidationEntityType.VOLUME;
     } else if (HeatToToscaUtil.isNestedResource(resource)) {
-      Optional<String> nestedHeatFileName = HeatToToscaUtil.getNestedHeatFileName(resource);
-      if (nestedHeatFileName.isPresent()) {
-        HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil()
-            .yamlToObject(context.getFileContent(nestedHeatFileName.get()),
-                HeatOrchestrationTemplate.class);
-        if (Objects.nonNull(nestedHeatOrchestrationTemplate.getResources())) {
-          for (String innerResourceId : nestedHeatOrchestrationTemplate.getResources().keySet()) {
-            if (ConsolidationDataUtil
-                .isComputeResource(nestedHeatOrchestrationTemplate, innerResourceId)) {
-              return ConsolidationEntityType.VFC_NESTED;
-            }
-          }
-        }
+      if (HeatToToscaUtil.isNestedVfcResource(resource, context)) {
+        return ConsolidationEntityType.VFC_NESTED;
+      } else {
+        return ConsolidationEntityType.NESTED;
       }
-      return ConsolidationEntityType.NESTED;
     } else {
       return ConsolidationEntityType.OTHER;
     }

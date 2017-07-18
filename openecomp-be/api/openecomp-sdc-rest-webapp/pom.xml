@@ -23,6 +23,7 @@
 		<module>/action-library-rest</module>
 		<module>/application-config-rest</module>
 		<module>/activity-log-rest</module>
+		<module>/healthcheck-rest</module>
 	</modules>
 
 </project>

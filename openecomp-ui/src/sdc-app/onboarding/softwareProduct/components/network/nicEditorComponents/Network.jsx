@@ -18,15 +18,17 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
+import { networkTypes } from '../SoftwareProductComponentsNetworkConstants.js';
 
-const Network = ({networkValues}) => {
+const Network = ({networkValues, networkType, networkDescription, onDataChanged, isReadOnlyMode}) => {
+	const isExternal = networkType === networkTypes.EXTERNAL;
 	return (
 		<GridSection title={i18n('Network')}>
 				<GridItem>
 					<Input
 						label={i18n('Internal')}
 						disabled
-						checked={true}
+						checked={!isExternal}
 						data-test-id='nic-internal'
 						className='network-radio disabled'
 						type='radio'/>
@@ -35,12 +37,21 @@ const Network = ({networkValues}) => {
 					<Input
 						label={i18n('External')}
 						disabled
-						checked={false}
+						checked={isExternal}
 						data-test-id='nic-external'
 						className='network-radio disabled'
 						type='radio'/>
 				</GridItem>
 				<GridItem colSpan={2}>
+				{isExternal ?
+					<Input
+						label={i18n('Network Description')}
+						value={networkDescription}
+						data-test-id='nic-network-description'
+						onChange={networkDescription => onDataChanged({networkDescription})}
+						disabled={isReadOnlyMode}
+						type='text'/>
+						:
 					<Input
 						label={i18n('Network')}
 						data-test-id='nic-network'
@@ -48,8 +59,8 @@ const Network = ({networkValues}) => {
 						className='input-options-select'
 						groupClassName='bootstrap-input-options'
 						disabled={true} >
-						{networkValues.map(val => <option key={val.enum} value={val.enum}>{val.title}</option>)}
-					</Input>
+							{networkValues.map(val => <option key={val.enum} value={val.enum}>{val.title}</option>)}
+					</Input>}
 				</GridItem>
 		</GridSection>
 	);

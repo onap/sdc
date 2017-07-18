@@ -1,0 +1,524 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of osm network
+    p2:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of osm network
+    rd_server_1b_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for PD server
+    BE_1c1_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: BE1, BE2 server names
+      entry_schema:
+        type: string
+    ps_server_1b_ips:
+      hidden: false
+      immutable: false
+      type: string
+    packet_internal_network_name:
+      hidden: false
+      immutable: false
+      type: string
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: BE1, BE2 server names
+      entry_schema:
+        type: string
+    osm_server_1c2_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: BE1, BE2 server names
+      entry_schema:
+        type: string
+    osm_server_1c2_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for BE server
+    rd_server_1b_ips:
+      hidden: false
+      immutable: false
+      type: string
+    ps_server_1b_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: Ps server names
+      entry_schema:
+        type: string
+    rd_server_1b_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: PD server names
+      entry_schema:
+        type: string
+    jsa_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+    osm_server_1c2_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for BE server
+    BE_osm_ips:
+      hidden: false
+      immutable: false
+      type: string
+    packet_external_network_name:
+      hidden: false
+      immutable: false
+      type: string
+    BE_1c1_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for BE server
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    rd_server_1b_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: PD Image server
+    ps_server_1b_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for PS server
+    ps_server_1b_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Ps Image server
+    net:
+      hidden: false
+      immutable: false
+      type: string
+    BE_1c1_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for BE server
+  node_templates:
+    abstract_rd_server_1b_1:
+      type: org.openecomp.resource.abstract.nodes.rd_server_1b_1
+      directives:
+      - substitutable
+      properties:
+        port_ps_server_b_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_ps_server_b_port_replacement_policy:
+        - AUTO
+        compute_rd_server_1b_availability_zone:
+        - get_input: availability_zone_0
+        port_ps_server_b_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - ps_server_1b_ips
+            - 0
+        vm_flavor_name:
+          get_input: rd_server_1b_flavor
+        port_ps_server_b_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: rd_server_1b_image
+        compute_rd_server_1b_name:
+        - get_input:
+          - rd_server_1b_names
+          - 1
+        port_ps_server_b_port_network:
+        - get_input: net
+        service_template_filter:
+          substitute_service_template: Nested_rd_server_1b_1ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    dependsOn_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: jsa_name
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: test_nested_all_patterns
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: test_nested_no_compute
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: test_nested_pattern_4
+          relationship: tosca.relationships.DependsOn
+    abstract_rd_server_1b:
+      type: org.openecomp.resource.abstract.nodes.rd_server_1b
+      directives:
+      - substitutable
+      properties:
+        compute_rd_server_1b_availability_zone:
+        - get_input: availability_zone_0
+        vm_flavor_name:
+          get_input: rd_server_1b_flavor
+        port_rd_server_b_port_replacement_policy:
+        - AUTO
+        port_rd_server_b_port_network:
+        - get_input: net
+        vm_image_name:
+          get_input: rd_server_1b_image
+        port_rd_server_b_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        compute_rd_server_1b_name:
+        - get_input:
+          - rd_server_1b_names
+          - 0
+        port_rd_server_b_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - rd_server_1b_ips
+            - 0
+        port_rd_server_b_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        service_template_filter:
+          substitute_service_template: Nested_rd_server_1bServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    test_nested_pattern_4:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pattern-4
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: nested-pattern-4ServiceTemplate.yaml
+        p2:
+          get_attribute:
+          - test_nested_no_compute
+          - no_compute_attr_1
+        port_pd_server_port_2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pd_server_port_2_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pd_server_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pd_server_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+    test_nested_no_compute:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-no-compute
+      directives:
+      - substitutable
+      properties:
+        p1:
+          get_attribute:
+          - test_nested_pattern_4
+          - pattern4_attr_1
+        service_template_filter:
+          substitute_service_template: nested-no-computeServiceTemplate.yaml
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: test_nested_all_patterns
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: test_nested_pattern_4
+          relationship: tosca.relationships.DependsOn
+    nested2_pattern_4:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pattern-4
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: nested-pattern-4ServiceTemplate.yaml
+        p2:
+          get_input: p2
+        port_pd_server_port_2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pd_server_port_2_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pd_server_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pd_server_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+    packet_external_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_external_network_name
+    packet_internal_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_internal_network_name
+    abstract_osm_server_1c2_0:
+      type: org.openecomp.resource.abstract.nodes.osm_server_1c2
+      directives:
+      - substitutable
+      properties:
+        port_osm_port_replacement_policy:
+        - AUTO
+        port_osm_port_network:
+        - packet_internal_network
+        compute_osm_server_1c2_name:
+        - get_input:
+          - osm_server_1c2_names
+          - 0
+        vm_flavor_name:
+          get_input: osm_server_1c2_flavor
+        port_osm_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_osm_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - BE_osm_ips
+            - 1
+        vm_image_name:
+          get_input: osm_server_1c2_image
+        port_osm_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_osm_server_1c2_availability_zone:
+        - get_input: availability_zone_0
+        service_template_filter:
+          substitute_service_template: Nested_osm_server_1c2ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_osm_server_1c2_osm_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
+    abstract_osm_server_1c2_1:
+      type: org.openecomp.resource.abstract.nodes.osm_server_1c2
+      directives:
+      - substitutable
+      properties:
+        port_osm_port_replacement_policy:
+        - AUTO
+        port_osm_port_network:
+        - packet_external_network
+        compute_osm_server_1c2_name:
+        - get_input:
+          - osm_server_1c2_names
+          - 1
+        vm_flavor_name:
+          get_input: osm_server_1c2_flavor
+        port_osm_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_osm_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - BE_osm_ips
+            - 1
+        vm_image_name:
+          get_input: osm_server_1c2_image
+        port_osm_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_osm_server_1c2_metadata:
+        - connectivity_to_server_1c1_BE_1:
+            get_attribute:
+            - abstract_BE_1c1
+            - BE_1c1_accessIPv4
+          connectivity_to_pattern_4:
+            get_attribute:
+            - nested2_pattern_4
+            - pattern4_attr_1
+          connectivity_to_server_1c1_BE_2:
+            get_attribute:
+            - abstract_BE_1c1
+            - BE_1c1_accessIPv4
+          connectivity_to_rd_server_1b:
+            get_attribute:
+            - abstract_rd_server_1b
+            - rd_server_1b_accessIPv4
+        compute_osm_server_1c2_availability_zone:
+        - get_input: availability_zone_0
+        service_template_filter:
+          substitute_service_template: Nested_osm_server_1c2ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_osm_server_1c2_osm_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_external_network
+          relationship: tosca.relationships.network.LinksTo
+    abstract_BE_1c1:
+      type: org.openecomp.resource.abstract.nodes.BE_1c1
+      directives:
+      - substitutable
+      properties:
+        vm_flavor_name:
+          get_input: BE_1c1_flavor
+        port_BE_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_BE_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - BE_osm_ips
+            - 0
+        compute_BE_1c1_availability_zone:
+        - get_input: availability_zone_0
+        - get_input: availability_zone_0
+        port_BE_port_network:
+        - packet_internal_network
+        port_BE_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: BE_1c1_image
+        compute_BE_1c1_name:
+        - get_input:
+          - BE_1c1_names
+          - 1
+        - get_input:
+          - BE_1c1_names
+          - 0
+        port_BE_port_replacement_policy:
+        - AUTO
+        service_template_filter:
+          substitute_service_template: Nested_BE_1c1ServiceTemplate.yaml
+          count: 2
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_BE_1c1_BE_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
+    test_nested_all_patterns:
+      type: org.openecomp.resource.abstract.nodes.heat.nested1
+      directives:
+      - substitutable
+      properties:
+        p1:
+          get_attribute:
+          - test_nested_pattern_4
+          - pattern4_attr_1
+        service_template_filter:
+          substitute_service_template: nested1ServiceTemplate.yaml
+        p2:
+          get_attribute:
+          - test_nested_no_compute
+          - no_compute_attr_1
+  groups:
+    main_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - dependsOn_network
+      - test_nested_pattern_4
+      - test_nested_no_compute
+      - test_nested_all_patterns
+    nested2_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested2.yml
+        description: nested1
+      members:
+      - nested2_pattern_4
+      - packet_external_network
+      - packet_internal_network
+      - abstract_rd_server_1b
+      - abstract_rd_server_1b_1
+      - abstract_osm_server_1c2_0
+      - abstract_osm_server_1c2_1
+      - abstract_BE_1c1
+  outputs:
+    all_pattern_attr_1:
+      description: all_pattern_attr_1
+      value:
+        get_attribute:
+        - abstract_osm_server_1c2_1
+        - osm_server_1c2_accessIPv4

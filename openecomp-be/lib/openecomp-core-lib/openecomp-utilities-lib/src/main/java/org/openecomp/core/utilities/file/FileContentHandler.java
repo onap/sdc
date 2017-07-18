@@ -62,6 +62,10 @@ public class FileContentHandler {
     return files;
   }
 
+  public void setFiles(Map<String, byte[]> files) {
+    this.files = files;
+  }
+
   public void setFiles(FileContentHandler extFiles) {
     extFiles.getFileList().stream()
         .forEach(fileName -> this.addFile(fileName, extFiles.getFileContent(fileName)));

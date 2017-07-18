@@ -19,5 +19,11 @@
     padding: 15px;
     border-top: 0;
     background-color: $tlv-gray;
+    .sdc-modal-footer {
+      .sdc-button + .sdc-button {
+        margin-left: 5px;
+      }
+    }
+
   }
 }

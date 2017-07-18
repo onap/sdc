@@ -22,12 +22,11 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.openecomp.core.model.dao.ServiceModelDaoFactory;
 import org.openecomp.sdc.activityLog.ActivityLogManagerFactory;
-import org.openecomp.sdc.activitylog.dao.ActivityLogDaoFactory;
 import org.openecomp.sdc.healing.factory.HealingManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.MibDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.MonitoringUploadDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDaoFactory;
@@ -51,7 +50,7 @@ public class OrchestrationTemplateCandidateManagerFactoryImpl extends
           CompositionEntityDataManagerFactory.getInstance().createInterface(),
           NicDaoFactory.getInstance().createInterface(),
           ComponentDaoFactory.getInstance().createInterface(),
-          MibDaoFactory.getInstance().createInterface(),
+          MonitoringUploadDaoFactory.getInstance().createInterface(),
           ProcessDaoFactory.getInstance().createInterface(),
           ActivityLogManagerFactory.getInstance().createInterface());
 

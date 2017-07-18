@@ -9,6 +9,7 @@ import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
 import com.amdocs.zusammen.datatypes.item.ItemVersion;
+import org.apache.commons.io.IOUtils;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.utilities.file.FileContentHandler;
@@ -18,13 +19,15 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.services.yamlutil.ToscaExtensionYamlUtil;
+import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -89,7 +92,6 @@ public class ServiceModelDaoZusammenImpl
       return elements.stream().collect(Collectors.toMap(
           element -> element.getInfo().getName(),
           this::elementToServiceTemplate));
-
     /*elements.stream().forEach(element ->serviceTemplateMap.put(element.getInfo().getName(),
         elementToServiceTemplate(element)));
     return serviceTemplateMap;*/
@@ -127,8 +129,10 @@ public class ServiceModelDaoZusammenImpl
 
     ZusammenElement artifactsElement =
         buildStructuralElement(StructureElement.Artifacts.name(), Action.UPDATE);
-    serviceModel.getArtifactFiles().getFiles().entrySet().forEach(entry -> artifactsElement
-        .addSubElement(buildArtifactElement(entry.getKey(), entry.getValue(), Action.CREATE)));
+    if (Objects.nonNull(serviceModel.getArtifactFiles())) {
+      serviceModel.getArtifactFiles().getFiles().entrySet().forEach(entry -> artifactsElement
+          .addSubElement(buildArtifactElement(entry.getKey(), entry.getValue(), Action.CREATE)));
+    }
 
     ZusammenElement serviceModelElement = buildStructuralElement(name, Action.UPDATE);
     serviceModelElement.getInfo()
@@ -175,8 +179,15 @@ public class ServiceModelDaoZusammenImpl
     return artifactElement;
   }
 
-  private ServiceTemplate elementToServiceTemplate(Element element) {
-    return new ToscaExtensionYamlUtil().yamlToObject(element.getData(), ServiceTemplate.class);
+  private ServiceTemplate elementToServiceTemplate(Element element){
+
+    try {
+      String yamlContent = IOUtils.toString(element.getData());
+      return new ToscaExtensionYamlUtil().
+          yamlToObject(yamlContent, ServiceTemplate.class);
+    }catch (Exception e){
+      return null;
+    }
   }
 
   private Element buildServiceTemplateElement(String name, ServiceTemplate serviceTemplate,

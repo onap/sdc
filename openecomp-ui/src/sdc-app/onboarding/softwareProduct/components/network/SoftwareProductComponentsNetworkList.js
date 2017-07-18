@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import {connect} from 'react-redux';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 
 import SoftwareProductComponentsActionHelper from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsActionHelper.js';
@@ -21,16 +22,17 @@ import SoftwareProductComponentsNetworkListView from './SoftwareProductComponent
 import SoftwareProductComponentsNetworkActionHelper from './SoftwareProductComponentsNetworkActionHelper.js';
 import {COMPONENTS_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
+import {actionTypes as GlobalModalActions} from 'nfvo-components/modal/GlobalModalConstants.js';
+import NICCreationActionHelper from './NICCreation/NICCreationActionHelper.js';
+import {onboardingMethod as onboardingMethodTypes} from '../../SoftwareProductConstants.js';
 
 
 export const mapStateToProps = ({softwareProduct}) => {
 
 	let {softwareProductEditor: {data: currentSoftwareProduct = {}, isValidityData = true}, softwareProductComponents} = softwareProduct;
-	let {network: {nicEditor = {}, nicList = []}, componentEditor: {data: componentData, qdata, dataMap, qgenericFieldInfo}} = softwareProductComponents;
-	let {data} = nicEditor;
+	let {network: {nicList = []}, componentEditor: {data: componentData, qdata, dataMap, qgenericFieldInfo}} = softwareProductComponents;
 	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
-	let {version} = currentSoftwareProduct;
-	let isModalInEditMode = true;
+	let {version, onboardingMethod} = currentSoftwareProduct;
 
 	return {
 		version,
@@ -40,9 +42,8 @@ export const mapStateToProps = ({softwareProduct}) => {
 		qgenericFieldInfo,
 		isValidityData,
 		nicList,
-		isDisplayModal: Boolean(data),
-		isModalInEditMode,
-		isReadOnlyMode
+		isReadOnlyMode,
+		isManual: onboardingMethod === onboardingMethodTypes.MANUAL
 	};
 
 };
@@ -51,7 +52,16 @@ const mapActionsToProps = (dispatch, {softwareProductId, componentId}) => {
 	return {
 		onQDataChanged: (deltaData) => ValidationHelper.qDataChanged(dispatch, {deltaData,
 			qName: COMPONENTS_QUESTIONNAIRE}),
-		onEditNicClick: (nic, version) => {
+		onAddNic: () => NICCreationActionHelper.open(dispatch, {softwareProductId, componentId, modalClassName: 'network-nic-modal-create'}),
+		onDeleteNic: (nic, version) => dispatch({
+			type: GlobalModalActions.GLOBAL_MODAL_WARNING,
+			data:{
+				msg: i18n(`Are you sure you want to delete "${nic.name}"?`),
+				onConfirmed: () => SoftwareProductComponentsNetworkActionHelper.deleteNIC(dispatch, {softwareProductId,
+					componentId, nicId: nic.id, version})
+			}
+		}),
+		onEditNicClick: (nic, version, isReadOnlyMode) => {
 			Promise.all([
 				SoftwareProductComponentsNetworkActionHelper.loadNICData({
 					softwareProductId,
@@ -66,7 +76,8 @@ const mapActionsToProps = (dispatch, {softwareProductId, componentId}) => {
 					nicId: nic.id
 				})
 			]).then(
-				([{data}]) => SoftwareProductComponentsNetworkActionHelper.openNICEditor(dispatch, {nic, data})
+				([{data}]) => SoftwareProductComponentsNetworkActionHelper.openNICEditor(dispatch, {nic, data,
+					isReadOnlyMode, softwareProductId, componentId, modalClassName: 'network-nic-modal-edit'})
 			);
 		},
 		onSubmit: ({qdata, version}) => { return SoftwareProductComponentsActionHelper.updateSoftwareProductComponentQuestionnaire(dispatch,

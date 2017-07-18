@@ -82,31 +82,35 @@
 					min-width: 0;
 				}
 
-				.svg-icon.trash-o {
+				.svg-icon-wrapper.trashO {
+				  .svg-icon {
 					fill: $dark-gray;
 					height: 18px;
 					width: 18px;
 					&:hover {
-						fill: $black;
+					  fill: $black;
 					}
+				  }
 				}
 				.module-title-by-type {
-					@extend .heading-5-medium;
+					@extend .heading-5-semibold;
 					margin-right: 3px;
 				}
 				.modules-list-item-filename {
 					display: flex;
 					align-items: center;
 
-					.svg-icon.pencil {
-						height: 15px;
-						width: 15px;
+					.svg-icon-wrapper.pencil {
+						.svg-icon {
+						  height: 15px;
+						  width: 15px;
+						}
 						margin-left: 3px;
 						opacity: 0;
 					}
 
 					.filename-text {
-						@extend .heading-5-medium;
+						@extend .heading-5-semibold;
 
 					}
 
@@ -120,7 +124,7 @@
 							padding: 0;
 							.name-edit {
 								padding: 4px;
-								@extend .heading-5-medium;
+								@extend .heading-5-semibold;
 								height: 100%;
 								border: 1px solid $light-gray;
 								width: 400px;
@@ -140,12 +144,14 @@
 								border-color: transparent;
 							}
 						}
-						.svg-icon.pencil {
+						.svg-icon-wrapper.pencil {
 							margin-left: 10px;
 							opacity: 1;
-							stroke: $dark-gray;
-							&:hover {
-								stroke: $black;
+							.svg-icon {
+							  stroke: $dark-gray;
+							  &:hover {
+							   stroke: $black;
+							  }
 							}
 						}
 					}
@@ -158,7 +164,7 @@
 				.Select-option {
 					@extend .body-1;
 					&.is-selected {
-						@extend .body-1-medium;
+						@extend .body-1-semibold;
 						background-color: $white;
 					}
 					&.is-focused {
@@ -220,7 +226,7 @@
 			}
 
 			.artifact-files-header {
-				@extend .heading-5-medium;
+				@extend .heading-5-semibold;
 				display: flex;
 				margin-bottom: 10px;
 				justify-content: space-between;
@@ -248,7 +254,6 @@
 	.unassigned-files {
 		margin-top: 30px;
 		border: 1px solid $light-gray;
-		width: 25%;
 		background-color: $white;
 		height: 250px;
 		width: 250px;
@@ -258,7 +263,7 @@
 		top: 10px;
 
 		.unassigned-files-title {
-			@extend .heading-5-medium;
+			@extend .heading-5-semibold;
 			background-color: $tlv-gray;
 			padding: 11px 0 9px 15px;
 		}
@@ -284,16 +289,20 @@
 					display: flex;
 					align-items: center;
 					margin-bottom: 10px;
-					.svg-icon.angle-right {
+					.svg-icon-wrapper.angleRight {
+					  .svg-icon {
 						height: 10px;
 						width: 10px;
 						margin-left: 7px;
 						fill: $blue;
+					  }
 					}
 					&:hover {
 						color: $dark-blue;
-						.svg-icon.angle-right {
+						.svg-icon-wrapper.angleRight {
+						  .svg-icon {
 							fill: $dark-blue;
+						  }
 						}
 					}
 				}

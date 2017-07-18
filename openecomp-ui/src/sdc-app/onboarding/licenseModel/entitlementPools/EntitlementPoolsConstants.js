@@ -113,3 +113,5 @@ export const extractUnits = (units) => {
 };
 
 export const SP_ENTITLEMENT_POOL_FORM = 'SPENTITLEMENTPOOL';
+
+export const EP_TIME_FORMAT = 'MM/DD/YYYY';

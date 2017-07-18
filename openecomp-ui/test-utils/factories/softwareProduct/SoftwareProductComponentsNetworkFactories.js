@@ -17,6 +17,13 @@ import {Factory} from 'rosie';
 import randomstring from 'randomstring';
 import IdMixin from 'test-utils/factories/mixins/IdMixin.js';
 
+export const VSPComponentsNicPostFactory = new Factory()
+.attrs({
+	name: () => randomstring.generate(),
+	description: () => randomstring.generate(),
+	networkDescription: () => randomstring.generate(),
+	networkType: 'External'
+});
 export const VSPComponentsNicFactory = new Factory()
 	.attrs({
 		name: () => randomstring.generate(),
@@ -32,7 +39,8 @@ export const VSPComponentsNicWithIdFactory = new Factory()
 export const VSPComponentsNetworkFactory = new Factory()
 	.attrs({
 		nicEditor: {},
-		nicList: []
+		nicList: [],
+		nicCreation: {}
 	});
 
 export const VSPComponentsNetworkQDataFactory = new Factory()
@@ -57,13 +65,18 @@ export const VSPComponentsNicFactoryGenericFieldInfo = new Factory()
 	.attrs({
 		'description' : {
 			isValid: true,
-				errorText: '',
-				validations: []
+			errorText: '',
+			validations: []
 		},
 		'name' : {
 			isValid: true,
-				errorText: '',
-				validations: []
+			errorText: '',
+			validations: [{type: 'required', data : true}]
+		},
+		'networkDescription' : {
+			isValid: true,
+			errorText: '',
+			validations: []
 		}
 	});
 

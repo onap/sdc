@@ -194,70 +194,56 @@ topology_template:
           type: tosca.artifacts.Deployment
           file: ../Artifacts/nimbus-ethernet
   outputs:
+    FSB1_FSB2_Internal_tenant_id:
+      type: string
+      value:
+        get_attribute:
+        - FSB1_FSB2_Internal
+        - tenant_id
     FSB1_FSB1_Internal_network_id:
-      type: list
+      type: string
       value:
         get_attribute:
         - FSB1_FSB1_Internal
         - network_id
-      entry_schema:
-        type: string
-    FSB1_FSB1_Internal_addresses:
-      type: list
+    FSB1_user_data_format:
+      type: string
       value:
         get_attribute:
-        - FSB1_FSB1_Internal
-        - addresses
-      entry_schema:
-        type: string
+        - FSB1
+        - user_data_format
     FSB1_accessIPv6:
-      type: list
+      type: string
       value:
         get_attribute:
         - FSB1
         - accessIPv6
-      entry_schema:
-        type: string
     FSB1_addresses:
-      type: list
+      type: map
       value:
         get_attribute:
         - FSB1
         - addresses
       entry_schema:
-        type: string
-    FSB1_oam_index:
-      type: list
-      value:
-        get_attribute:
-        - FSB1
-        - oam_index
-      entry_schema:
-        type: string
+        type: org.openecomp.datatypes.heat.novaServer.network.AddressInfo
     FSB1_FSB2_Internal_network_id:
-      type: list
+      type: string
       value:
         get_attribute:
         - FSB1_FSB2_Internal
         - network_id
-      entry_schema:
-        type: string
-    FSB1_FSB2_Internal_index:
-      type: list
-      value:
-        get_attribute:
-        - FSB1_FSB2_Internal
-        - index
-      entry_schema:
-        type: string
-    FSB1_FSB1_Internal_oam_index:
-      type: list
+    FSB1_FSB1_Internal_status:
+      type: string
       value:
         get_attribute:
         - FSB1_FSB1_Internal
-        - oam_index
-      entry_schema:
-        type: string
+        - status
+    FSB1_FSB1_Internal_device_owner:
+      type: string
+      value:
+        get_attribute:
+        - FSB1_FSB1_Internal
+        - device_owner
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.FSB1
     capabilities:

@@ -1,0 +1,425 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested-pattern-4
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.pd_server_pattern4:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    pd_server_pattern4_ips:
+      hidden: false
+      immutable: false
+      type: string
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    p2:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    port_pd_server_pattern4_port_2_order:
+      type: integer
+      required: true
+    port_pd_server_pattern4_port_2_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_pd_server_pattern4_port_2_network_role_tag:
+      type: string
+      required: true
+    port_pd_server_pattern4_port_2_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    port_pd_server_pattern4_port_2_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_pd_server_pattern4_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    net:
+      hidden: false
+      immutable: false
+      type: string
+    port_pd_server_pattern4_port_1_network_role_tag:
+      type: string
+      required: true
+    pd_server_pattern4_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for PD server
+    port_pd_server_pattern4_port_2_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_pd_server_pattern4_port_1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_pd_server_pattern4_port_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    ps_server_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for PS server
+    port_pd_server_pattern4_port_1_order:
+      type: integer
+      required: true
+    pd_server_pattern4_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for PD server
+    port_pd_server_pattern4_port_1_network_role:
+      type: string
+      required: true
+    port_pd_server_pattern4_port_2_network_role:
+      type: string
+      required: true
+    port_pd_server_pattern4_port_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_pd_server_pattern4_port_1_subnetpoolid:
+      type: string
+      required: true
+    port_pd_server_pattern4_port_2_subnetpoolid:
+      type: string
+      required: true
+    pd_server_pattern4_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: PD server names
+      entry_schema:
+        type: string
+  node_templates:
+    server_pd_pattern4:
+      type: org.openecomp.resource.vfc.nodes.heat.pd_server_pattern4
+      properties:
+        flavor:
+          get_input: pd_server_pattern4_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: pd_server_pattern4_image
+        name:
+          get_input:
+          - pd_server_pattern4_names
+          - 0
+    pd_server_pattern4_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+          get_input: port_pd_server_pattern4_port_1_ip_requirements
+        network_role:
+          get_input: port_pd_server_pattern4_port_1_network_role
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - pd_server_pattern4_ips
+            - 0
+        subnetpoolid:
+          get_input: port_pd_server_pattern4_port_1_subnetpoolid
+        mac_requirements:
+          get_input: port_pd_server_pattern4_port_1_mac_requirements
+        exCP_naming:
+          get_input: port_pd_server_pattern4_port_1_exCP_naming
+        vlan_requirements:
+          get_input: port_pd_server_pattern4_port_1_vlan_requirements
+        network_role_tag:
+          get_input: port_pd_server_pattern4_port_1_network_role_tag
+        network:
+          get_input: net
+        order:
+          get_input: port_pd_server_pattern4_port_1_order
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_pd_pattern4
+          relationship: tosca.relationships.network.BindsTo
+    pd_server_pattern4_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+          get_input: port_pd_server_pattern4_port_2_ip_requirements
+        network_role:
+          get_input: port_pd_server_pattern4_port_2_network_role
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - pd_server_pattern4_ips
+            - 1
+        subnetpoolid:
+          get_input: port_pd_server_pattern4_port_2_subnetpoolid
+        mac_requirements:
+          get_input: port_pd_server_pattern4_port_2_mac_requirements
+        exCP_naming:
+          get_input: port_pd_server_pattern4_port_2_exCP_naming
+        vlan_requirements:
+          get_input: port_pd_server_pattern4_port_2_vlan_requirements
+        network_role_tag:
+          get_input: port_pd_server_pattern4_port_2_network_role_tag
+        network:
+          get_input: net
+        order:
+          get_input: port_pd_server_pattern4_port_2_order
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_pd_pattern4
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    nested-pattern-4_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested-pattern-4.yml
+        description: nested1
+      members:
+      - server_pd_pattern4
+      - pd_server_pattern4_port_1
+      - pd_server_pattern4_port_2
+  outputs:
+    pattern4_attr_1:
+      description: pattern4_attr_1_value
+      value: server_pd_pattern4
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.pd_server_pattern4
+    capabilities:
+      disk.root.size_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.root.size
+      disk.device.write.bytes_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.device.write.bytes
+      network.outgoing.bytes_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - network.outgoing.bytes
+      disk.allocation_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.allocation
+      disk.device.usage_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.device.usage
+      network.outgoing.bytes_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - network.outgoing.bytes
+      disk.write.bytes.rate_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.write.bytes.rate
+      disk.ephemeral.size_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.ephemeral.size
+      cpu.delta_server_pd_pattern4:
+      - server_pd_pattern4
+      - cpu.delta
+      disk.write.bytes_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.write.bytes
+      feature_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - feature
+      feature_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - feature
+      disk.latency_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.latency
+      endpoint_server_pd_pattern4:
+      - server_pd_pattern4
+      - endpoint
+      attachment_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - attachment
+      attachment_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - attachment
+      feature_server_pd_pattern4:
+      - server_pd_pattern4
+      - feature
+      disk.device.read.requests.rate_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.device.read.requests.rate
+      instance_server_pd_pattern4:
+      - server_pd_pattern4
+      - instance
+      cpu_server_pd_pattern4:
+      - server_pd_pattern4
+      - cpu
+      disk.device.read.requests_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.device.read.requests
+      host_server_pd_pattern4:
+      - server_pd_pattern4
+      - host
+      cpu_util_server_pd_pattern4:
+      - server_pd_pattern4
+      - cpu_util
+      memory.resident_server_pd_pattern4:
+      - server_pd_pattern4
+      - memory.resident
+      disk.read.requests_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.read.requests
+      disk.read.bytes.rate_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.read.bytes.rate
+      disk.device.write.bytes.rate_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.device.write.bytes.rate
+      disk.device.read.bytes_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.device.read.bytes
+      disk.write.requests_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.write.requests
+      disk.device.write.requests.rate_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.device.write.requests.rate
+      memory.usage_server_pd_pattern4:
+      - server_pd_pattern4
+      - memory.usage
+      vcpus_server_pd_pattern4:
+      - server_pd_pattern4
+      - vcpus
+      disk.capacity_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.capacity
+      binding_server_pd_pattern4:
+      - server_pd_pattern4
+      - binding
+      network.outpoing.packets_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - network.outpoing.packets
+      network.outpoing.packets_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - network.outpoing.packets
+      network.incoming.packets.rate_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - network.incoming.packets.rate
+      network.incoming.bytes_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - network.incoming.bytes
+      disk.device.iops_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.device.iops
+      network.incoming.packets.rate_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - network.incoming.packets.rate
+      network.incoming.bytes_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - network.incoming.bytes
+      disk.device.read.bytes.rate_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.device.read.bytes.rate
+      disk.device.allocation_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.device.allocation
+      network.outgoing.bytes.rate_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - network.outgoing.bytes.rate
+      disk.usage_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.usage
+      disk.read.bytes_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.read.bytes
+      os_server_pd_pattern4:
+      - server_pd_pattern4
+      - os
+      memory_server_pd_pattern4:
+      - server_pd_pattern4
+      - memory
+      disk.iops_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.iops
+      scalable_server_pd_pattern4:
+      - server_pd_pattern4
+      - scalable
+      binding_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - binding
+      network.incoming.bytes.rate_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - network.incoming.bytes.rate
+      disk.write.requests.rate_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.write.requests.rate
+      disk.device.latency_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.device.latency
+      binding_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - binding
+      network.incoming.bytes.rate_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - network.incoming.bytes.rate
+      network.outgoing.packets.rate_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - network.outgoing.packets.rate
+      disk.device.write.requests_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.device.write.requests
+      network.incoming.packets_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - network.incoming.packets
+      network.outgoing.packets.rate_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - network.outgoing.packets.rate
+      network.incoming.packets_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - network.incoming.packets
+      disk.device.capacity_server_pd_pattern4:
+      - server_pd_pattern4
+      - disk.device.capacity
+    requirements:
+      dependency_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - dependency
+      local_storage_server_pd_pattern4:
+      - server_pd_pattern4
+      - local_storage
+      dependency_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - dependency
+      link_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - link
+      link_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - link
+      dependency_server_pd_pattern4:
+      - server_pd_pattern4
+      - dependency

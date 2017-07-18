@@ -17,6 +17,8 @@ import java.util.Optional;
  */
 public class UnifiedCompositionSingleSubstitution implements UnifiedComposition {
 
+  UnifiedCompositionService unifiedCompositionService = new UnifiedCompositionService();
+
   // There is no consolidation in SingleSubstitution implemetation.
   // In case of single substitution, if there is more than one entry in the
   // unifiedComposotionDataList, they all should contain the same compute type but the
@@ -28,27 +30,35 @@ public class UnifiedCompositionSingleSubstitution implements UnifiedComposition 
                                        ServiceTemplate nestedServiceTemplate,
                                        List<UnifiedCompositionData> unifiedCompositionDataList,
                                        TranslationContext context) {
-    UnifiedCompositionService unifiedCompositionService = new UnifiedCompositionService();
-    if (CollectionUtils.isEmpty(unifiedCompositionDataList)) {
+    if (CollectionUtils.isEmpty(unifiedCompositionDataList)
+        || context.isUnifiedHandledServiceTemplate(serviceTemplate)) {
       return;
     }
+
+    unifiedCompositionService.handleComplexVfcType(serviceTemplate, context);
 
     for (int i = 0; i < unifiedCompositionDataList.size(); i++) {
       List<UnifiedCompositionData> singleSubstitutionUnifiedList = new ArrayList<>();
       singleSubstitutionUnifiedList.add(unifiedCompositionDataList.get(i));
 
       Integer index = unifiedCompositionDataList.size() > 1 ? i : null;
+
+      String substitutionNodeTypeId =
+          unifiedCompositionService.getSubstitutionNodeTypeId(serviceTemplate,
+              singleSubstitutionUnifiedList.get(0), null, context);
+
       Optional<ServiceTemplate> substitutionServiceTemplate =
           unifiedCompositionService.createUnifiedSubstitutionServiceTemplate(serviceTemplate,
-              singleSubstitutionUnifiedList, context, index);
+              singleSubstitutionUnifiedList, context, substitutionNodeTypeId, null);
 
       if (!substitutionServiceTemplate.isPresent()) {
         continue;
       }
 
+
       String abstractNodeTemplateId = unifiedCompositionService
           .createAbstractSubstituteNodeTemplate(serviceTemplate, substitutionServiceTemplate.get(),
-              singleSubstitutionUnifiedList, context, index);
+              singleSubstitutionUnifiedList, substitutionNodeTypeId, context, null);
 
       unifiedCompositionService
           .updateCompositionConnectivity(serviceTemplate, singleSubstitutionUnifiedList, context);
@@ -60,6 +70,5 @@ public class UnifiedCompositionSingleSubstitution implements UnifiedComposition 
 
     unifiedCompositionService
         .cleanNodeTypes(serviceTemplate, unifiedCompositionDataList, context);
-
   }
 }

@@ -54,8 +54,8 @@ topology_template:
       immutable: false
       type: string
   node_templates:
-    abstract_pcm_server_1:
-      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
+    server_pcm_002:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
       directives:
       - substitutable
       properties:
@@ -91,8 +91,8 @@ topology_template:
           get_input:
           - pcm_server_names
           - 0
-    abstract_pcm_server_0:
-      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
+    server_pcm_001:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
       directives:
       - substitutable
       properties:
@@ -149,7 +149,7 @@ topology_template:
       properties:
         compute_compute_user_data_format:
         - get_attribute:
-          - abstract_pcm_server_1
+          - server_pcm_001
           - oam_net_gw
         vm_image_name:
           get_input: compute_image_name
@@ -190,7 +190,7 @@ topology_template:
         heat_file: ../Artifacts/hot-nimbus-pcm_v0.4.yaml
         description: heat template that creates PCRF Cluman stack
       members:
+      - server_pcm_002
+      - server_pcm_001
       - compute_port_0
       - abstract_compute
-      - abstract_pcm_server_0
-      - abstract_pcm_server_1

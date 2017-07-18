@@ -42,6 +42,8 @@ import org.openecomp.sdc.translator.services.heattotosca.NameExtractor;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,8 +70,8 @@ public class TranslationContext {
         config.generateMap(ConfigConstants.MAPPING_NAMESPACE, ConfigConstants.RESOURCE_MAPPING_KEY);
     try {
       globalServiceTemplates = GlobalTypesGenerator.getGlobalTypesServiceTemplate();
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to load GlobalTypes", e);
+    } catch (Exception exc) {
+      throw new RuntimeException("Failed to load GlobalTypes", exc);
     }
     nameExtractorImplMap = config.populateMap(ConfigConstants.TRANSLATOR_NAMESPACE,
         ConfigConstants.NAMING_CONVENTION_EXTRACTOR_IMPL_KEY, ImplementationConfiguration.class);
@@ -85,7 +87,6 @@ public class TranslationContext {
 
   }
 
-  private Map<String, UnifiedSubstitutionData> unifiedSubstitutionData = new HashMap<>();
   private ManifestFile manifest;
 
   public static List getEnrichPortResourceProperties() {
@@ -114,6 +115,8 @@ public class TranslationContext {
   private Map<String, Map<String, String>> usedHeatPseudoParams = new HashMap<>();
   //Consolidation data gathered for Unified TOSCA model
   private ConsolidationData consolidationData = new ConsolidationData();
+  private Map<String, UnifiedSubstitutionData> unifiedSubstitutionData = new HashMap<>();
+  private Set<String> unifiedHandledServiceTemplates = new HashSet<>();
 
   public static Map<String, ImplementationConfiguration>
   getSupportedConsolidationComputeResources() {
@@ -184,20 +187,23 @@ public class TranslationContext {
   public Optional<String> getUnifiedNestedNodeTemplateId(String serviceTemplateName,
                                                          String nestedNodeTemplateId) {
     return this.unifiedSubstitutionData.get(serviceTemplateName) == null ? Optional.empty()
-            :this.unifiedSubstitutionData.get(serviceTemplateName).getUnifiedNestedNodeTemplateId(nestedNodeTemplateId);
+        : this.unifiedSubstitutionData.get(serviceTemplateName)
+            .getUnifiedNestedNodeTemplateId(nestedNodeTemplateId);
   }
 
   public void addUnifiedNestedNodeTypeId(String serviceTemplateName,
-                                             String nestedNodeTypeId,
-                                             String unifiedNestedNodeTypeId){
+                                         String nestedNodeTypeId,
+                                         String unifiedNestedNodeTypeId) {
     this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
-    this.unifiedSubstitutionData.get(serviceTemplateName).addUnifiedNestedNodeTypeId(nestedNodeTypeId, unifiedNestedNodeTypeId);
+    this.unifiedSubstitutionData.get(serviceTemplateName)
+        .addUnifiedNestedNodeTypeId(nestedNodeTypeId, unifiedNestedNodeTypeId);
   }
 
   public Optional<String> getUnifiedNestedNodeTypeId(String serviceTemplateName,
                                                      String nestedNodeTemplateId) {
     return this.unifiedSubstitutionData.get(serviceTemplateName) == null ? Optional.empty()
-            : this.unifiedSubstitutionData.get(serviceTemplateName).getUnifiedNestedNodeTypeId(nestedNodeTemplateId);
+        : this.unifiedSubstitutionData.get(serviceTemplateName)
+            .getUnifiedNestedNodeTypeId(nestedNodeTemplateId);
   }
 
   public ConsolidationData getConsolidationData() {
@@ -323,7 +329,7 @@ public class TranslationContext {
   }
 
   private void addHeatSharedResourcesByParam(String parameterName,
-                                            TranslatedHeatResource translatedHeatResource) {
+                                             TranslatedHeatResource translatedHeatResource) {
     this.heatSharedResourcesByParam.put(parameterName, translatedHeatResource);
   }
 
@@ -385,9 +391,10 @@ public class TranslationContext {
    * @param substitutionServiceTemplateNodeTemplateId the node template id in the substitution
    *                                                  service template
    */
-  public void addSubstitutionServiceTemplateUnifiedSubstitutionData(String serviceTemplateFileName,
-                                                String originalNodeTemplateId,
-                                                String substitutionServiceTemplateNodeTemplateId) {
+  public void addSubstitutionServiceTemplateUnifiedSubstitutionData(
+      String serviceTemplateFileName,
+      String originalNodeTemplateId,
+      String substitutionServiceTemplateNodeTemplateId) {
 
     Map<String, String> nodesRelatedSubstitutionServiceTemplateNodeTemplateIdMap = this
         .getUnifiedSubstitutionData()
@@ -433,22 +440,49 @@ public class TranslationContext {
   }
 
   public int getHandledNestedComputeNodeTemplateIndex(String serviceTemplateName,
-                                                      String computeType){
+                                                      String computeType) {
     return this.unifiedSubstitutionData.get(serviceTemplateName)
         .getHandledNestedComputeNodeTemplateIndex(computeType);
   }
 
   public void updateHandledComputeType(String serviceTemplateName,
-                                       String nestedServiceTemplateFileName,
-                                       String handledComputeType){
+                                       String handledComputeType,
+                                       String nestedServiceTemplateFileName) {
+    String globalSTName =
+        ToscaUtil.getServiceTemplateFileName(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME);
+    this.unifiedSubstitutionData.putIfAbsent(
+        globalSTName, new UnifiedSubstitutionData());
+    this.unifiedSubstitutionData.get(globalSTName)
+        .addHandledComputeType(handledComputeType);
+    this.unifiedSubstitutionData.get(globalSTName).addHandlesNestedServiceTemplate(nestedServiceTemplateFileName);
+
     this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
-    this.unifiedSubstitutionData.get(serviceTemplateName)
-        .addHandledComputeType(nestedServiceTemplateFileName, handledComputeType);
+    this.unifiedSubstitutionData.get(serviceTemplateName).addHandlesNestedServiceTemplate(nestedServiceTemplateFileName);
+  }
+
+  public void addHandledComputeTypeInServiceTemplate(String serviceTemplateName,
+                                                     String handledComputeType){
+    this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
+    this.unifiedSubstitutionData.get(serviceTemplateName).addHandledComputeType(handledComputeType);
+  }
+
+  public boolean isComputeTypeHandledInServiceTemplate(String serviceTemplateName,
+                                                       String computeType) {
+    return !Objects.isNull(this.unifiedSubstitutionData.get(serviceTemplateName))
+        && this.unifiedSubstitutionData.get(serviceTemplateName)
+        .isComputeTypeHandledInServiceTemplate(computeType);
+  }
+
+  public int getHandledNestedComputeNodeTemplateIndex(String serviceTemplateName,
+                                                      String nestedServiceTemplateName,
+                                                      String computeType){
+    return this.unifiedSubstitutionData.get(serviceTemplateName)
+        .getHandledNestedComputeNodeTemplateIndex(computeType);
   }
 
   public boolean isNestedServiceTemplateWasHandled(String serviceTemplateName,
-                                                   String nestedServiceTemplateFileName){
-    if(Objects.isNull(this.unifiedSubstitutionData.get(serviceTemplateName))){
+                                                   String nestedServiceTemplateFileName) {
+    if (Objects.isNull(this.unifiedSubstitutionData.get(serviceTemplateName))) {
       return false;
     }
     return this.unifiedSubstitutionData.get(serviceTemplateName)
@@ -465,18 +499,48 @@ public class TranslationContext {
     return this.unifiedSubstitutionData.get(globalName).getAllRelatedNestedNodeTypeIds();
   }
 
-  public void addNestedFileToUsedNestedComputeType(String serviceTemplateName,
-                                                   String nestedServiceTemplateFileName,
-                                                   String computeType){
+  public boolean isUnifiedHandledServiceTemplate(ServiceTemplate serviceTemplate) {
+    String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
+    if (unifiedHandledServiceTemplates.contains(serviceTemplateFileName)) {
+      return true;
+    }
+    return false;
+  }
+
+
+
+  public void addUnifiedHandledServiceTeamplte(ServiceTemplate serviceTemplate) {
+    String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
+    this.unifiedHandledServiceTemplates.add(serviceTemplateFileName);
+  }
+
+  public boolean isNestedNodeWasHandled(String serviceTemplateName,
+                                        String nestedNodeTemplateId) {
+    if (Objects.isNull(this.unifiedSubstitutionData.get(serviceTemplateName))) {
+      return false;
+    }
+    return this.unifiedSubstitutionData.get(serviceTemplateName)
+        .isNestedNodeWasHandled(nestedNodeTemplateId);
+  }
+
+  public void addNestedNodeAsHandled(String serviceTemplateName,
+                                     String nestedNodeTemplateId) {
+    this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
+    this.unifiedSubstitutionData.get(serviceTemplateName)
+        .addHandledNestedNodes(nestedNodeTemplateId);
+  }
+
+  public void updateUsedTimesForNestedComputeNodeType(String serviceTemplateName,
+                                                      String computeType) {
     this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
 
-    this.unifiedSubstitutionData.get(serviceTemplateName).addNestedFileToUsedNestedComputeType
-        (computeType, nestedServiceTemplateFileName);
+    this.unifiedSubstitutionData.get(serviceTemplateName)
+        .updateUsedTimesForNestedComputeNodeType(computeType);
   }
 
   public int getGlobalNodeTypeIndex(String serviceTemplateName,
-                                    String computeType){
-    if(Objects.isNull(this.unifiedSubstitutionData.get(serviceTemplateName))){
+                                    String computeType) {
+    if (Objects.isNull(this.unifiedSubstitutionData.get(serviceTemplateName))) {
       return 0;
     }
     return this.unifiedSubstitutionData.get(serviceTemplateName).getGlobalNodeTypeIndex

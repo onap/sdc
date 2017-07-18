@@ -26,8 +26,10 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitXml;
 import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins.MixinEntitlementPoolEntityForVendorLicenseArtifact;
 import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins.MixinLicenseKeyGroupEntityForVendorLicenseArtifact;
+import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins.MixinLimitArtifact;
 
 import java.util.Collection;
 
@@ -76,5 +78,6 @@ public class VendorLicenseArtifact extends XmlArtifact {
         MixinEntitlementPoolEntityForVendorLicenseArtifact.class);
     xmlMapper.addMixIn(LicenseKeyGroupEntity.class,
         MixinLicenseKeyGroupEntityForVendorLicenseArtifact.class);
+    xmlMapper.addMixIn(LimitXml.class, MixinLimitArtifact.class);
   }
 }

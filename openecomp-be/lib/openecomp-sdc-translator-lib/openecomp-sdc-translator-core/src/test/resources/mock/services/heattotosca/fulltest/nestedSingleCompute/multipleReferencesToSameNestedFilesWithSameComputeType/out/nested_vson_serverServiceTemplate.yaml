@@ -279,7 +279,7 @@ topology_template:
       - vson_server
       - vson_server_oam_net_port_0
   substitution_mappings:
-    node_type: org.openecomp.resource.abstract.nodes.heat.vson_vm_3
+    node_type: org.openecomp.resource.abstract.nodes.heat.vson_vm_4
     capabilities:
       disk.write.bytes_vson_server:
       - vson_server

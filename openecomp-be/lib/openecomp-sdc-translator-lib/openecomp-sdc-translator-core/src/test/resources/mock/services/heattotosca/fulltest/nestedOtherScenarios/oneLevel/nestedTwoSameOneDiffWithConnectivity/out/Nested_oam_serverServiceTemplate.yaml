@@ -1,0 +1,310 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_oam_server
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.oam_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_oam_server_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_oam_server_port_order:
+      type: integer
+      required: true
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_oam_server_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_oam_server_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_flavor_name:
+      type: string
+      required: true
+    port_oam_server_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_oam_server_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    compute_oam_server_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_image_name:
+      type: string
+      required: true
+    port_oam_server_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_oam_server_port_subnetpoolid:
+      type: string
+      required: true
+    port_oam_server_port_network_role_tag:
+      type: string
+      required: true
+    port_oam_server_port_network_role:
+      type: string
+      required: true
+    port_oam_server_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    compute_oam_server_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_oam_server_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+  node_templates:
+    oam_server:
+      type: org.openecomp.resource.vfc.nodes.heat.oam_server
+      properties:
+        availability_zone:
+          get_input:
+          - compute_oam_server_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_oam_server_name
+          - index_value
+    oam_server_oam_server_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy:
+          get_input:
+          - port_oam_server_port_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_oam_server_port_mac_requirements
+        order:
+          get_input: port_oam_server_port_order
+        security_groups:
+          get_input:
+          - port_oam_server_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_oam_server_port_exCP_naming
+        vlan_requirements:
+          get_input: port_oam_server_port_vlan_requirements
+        ip_requirements:
+          get_input: port_oam_server_port_ip_requirements
+        network_role_tag:
+          get_input: port_oam_server_port_network_role_tag
+        network_role:
+          get_input: port_oam_server_port_network_role
+        fixed_ips:
+          get_input: port_oam_server_port_fixed_ips
+        subnetpoolid:
+          get_input: port_oam_server_port_subnetpoolid
+        network:
+          get_input:
+          - port_oam_server_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: oam_server
+          relationship: tosca.relationships.network.BindsTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.oam_server
+    capabilities:
+      cpu.delta_oam_server:
+      - oam_server
+      - cpu.delta
+      host_oam_server:
+      - oam_server
+      - host
+      disk.usage_oam_server:
+      - oam_server
+      - disk.usage
+      network.incoming.packets.rate_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - network.incoming.packets.rate
+      feature_oam_server:
+      - oam_server
+      - feature
+      disk.device.write.bytes_oam_server:
+      - oam_server
+      - disk.device.write.bytes
+      cpu_util_oam_server:
+      - oam_server
+      - cpu_util
+      network.outpoing.packets_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - network.outpoing.packets
+      disk.capacity_oam_server:
+      - oam_server
+      - disk.capacity
+      memory_oam_server:
+      - oam_server
+      - memory
+      disk.read.bytes.rate_oam_server:
+      - oam_server
+      - disk.read.bytes.rate
+      disk.write.bytes_oam_server:
+      - oam_server
+      - disk.write.bytes
+      disk.write.requests_oam_server:
+      - oam_server
+      - disk.write.requests
+      attachment_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - attachment
+      cpu_oam_server:
+      - oam_server
+      - cpu
+      vcpus_oam_server:
+      - oam_server
+      - vcpus
+      disk.device.read.requests.rate_oam_server:
+      - oam_server
+      - disk.device.read.requests.rate
+      disk.allocation_oam_server:
+      - oam_server
+      - disk.allocation
+      disk.write.bytes.rate_oam_server:
+      - oam_server
+      - disk.write.bytes.rate
+      disk.device.write.requests.rate_oam_server:
+      - oam_server
+      - disk.device.write.requests.rate
+      instance_oam_server:
+      - oam_server
+      - instance
+      memory.resident_oam_server:
+      - oam_server
+      - memory.resident
+      disk.device.read.requests_oam_server:
+      - oam_server
+      - disk.device.read.requests
+      disk.device.allocation_oam_server:
+      - oam_server
+      - disk.device.allocation
+      disk.device.write.requests_oam_server:
+      - oam_server
+      - disk.device.write.requests
+      binding_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - binding
+      disk.iops_oam_server:
+      - oam_server
+      - disk.iops
+      disk.device.capacity_oam_server:
+      - oam_server
+      - disk.device.capacity
+      binding_oam_server:
+      - oam_server
+      - binding
+      disk.device.write.bytes.rate_oam_server:
+      - oam_server
+      - disk.device.write.bytes.rate
+      disk.device.usage_oam_server:
+      - oam_server
+      - disk.device.usage
+      network.incoming.bytes.rate_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - network.incoming.bytes.rate
+      disk.latency_oam_server:
+      - oam_server
+      - disk.latency
+      disk.read.requests_oam_server:
+      - oam_server
+      - disk.read.requests
+      disk.device.iops_oam_server:
+      - oam_server
+      - disk.device.iops
+      disk.root.size_oam_server:
+      - oam_server
+      - disk.root.size
+      network.outgoing.bytes_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - network.outgoing.bytes
+      disk.device.latency_oam_server:
+      - oam_server
+      - disk.device.latency
+      feature_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - feature
+      memory.usage_oam_server:
+      - oam_server
+      - memory.usage
+      endpoint_oam_server:
+      - oam_server
+      - endpoint
+      network.outgoing.bytes.rate_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - network.outgoing.bytes.rate
+      scalable_oam_server:
+      - oam_server
+      - scalable
+      disk.write.requests.rate_oam_server:
+      - oam_server
+      - disk.write.requests.rate
+      network.incoming.bytes_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - network.incoming.bytes
+      disk.device.read.bytes.rate_oam_server:
+      - oam_server
+      - disk.device.read.bytes.rate
+      disk.device.read.bytes_oam_server:
+      - oam_server
+      - disk.device.read.bytes
+      os_oam_server:
+      - oam_server
+      - os
+      disk.read.bytes_oam_server:
+      - oam_server
+      - disk.read.bytes
+      network.incoming.packets_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - network.incoming.packets
+      network.outgoing.packets.rate_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - network.outgoing.packets.rate
+      disk.ephemeral.size_oam_server:
+      - oam_server
+      - disk.ephemeral.size
+    requirements:
+      dependency_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - dependency
+      local_storage_oam_server:
+      - oam_server
+      - local_storage
+      dependency_oam_server:
+      - oam_server
+      - dependency
+      link_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - link

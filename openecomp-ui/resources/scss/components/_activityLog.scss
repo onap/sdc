@@ -29,7 +29,7 @@ $message-info-icon-size: 16px;
 	height: 36px;
 	@extend .body-1;
 	&.header {
-	  @extend .body-1-medium;
+	  @extend .body-1-semibold;
 	  background-color: $tlv-light-gray;
 	  color: $text-black;
 	}
@@ -39,7 +39,7 @@ $message-info-icon-size: 16px;
 	.svg-icon-wrapper {
 	  float: right;
 	}
-	.check-circle {
+	.checkCircle {
 	  fill: $green;
 	  width: 16px;
 	  height: 16px;

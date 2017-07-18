@@ -21,7 +21,7 @@ import Form from 'nfvo-components/input/validation/Form.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
-const GeneralSection = ({onDataChanged, displayName, vfcCode, description, isReadOnlyMode, genericFieldInfo}) => (
+const GeneralSection = ({onDataChanged, displayName, vfcCode, nfcFunction, description, isReadOnlyMode, genericFieldInfo, isManual}) => (
 	<GridSection title={i18n('General')}>
 		{/* disabled until backend will be ready to implement it
 			<div className='validation-input-wrapper'>
@@ -37,15 +37,24 @@ const GeneralSection = ({onDataChanged, displayName, vfcCode, description, isRea
 				data-test-id='name'
 				label={i18n('Name')}
 				value={displayName}
-				disabled={true}
+				disabled={!isManual || isReadOnlyMode}
 				type='text'/>
-			<Input
+			{!isManual  && <Input
 				data-test-id='vfcCode'
 				label={i18n('Naming Code')}
 				value={vfcCode}
 				isValid={genericFieldInfo.vfcCode.isValid}
 				errorText={genericFieldInfo.vfcCode.errorText}
 				onChange={vfcCode => onDataChanged({vfcCode})}
+				disabled={isReadOnlyMode}
+				type='text'/> }
+			<Input
+				data-test-id='nfcFunction'
+				label={i18n('Function')}
+				value={nfcFunction}
+				isValid={genericFieldInfo.nfcFunction.isValid}
+				errorText={genericFieldInfo.nfcFunction.errorText}
+				onChange={nfcFunction => onDataChanged({nfcFunction})}
 				disabled={isReadOnlyMode}
 				type='text'/>
 		</GridItem>
@@ -63,7 +72,7 @@ const GeneralSection = ({onDataChanged, displayName, vfcCode, description, isRea
 		</GridItem>
 		<GridItem />
 	</GridSection>
-		);
+);
 
 const HypervisorSection = ({dataMap, onQDataChanged, qgenericFieldInfo}) => (
 	<GridSection title={i18n('Hypervisor')}>
@@ -110,64 +119,26 @@ const HypervisorSection = ({dataMap, onQDataChanged, qgenericFieldInfo}) => (
 );
 
 const ImageSection = ({dataMap, onQDataChanged, qgenericFieldInfo}) => (
-	<GridSection title={i18n('Image')}>
-		<GridItem>
-			<Input
-				data-test-id='format'
-				label={i18n('Image format')}
-				type='select'
-				className='input-options-select'
-				groupClassName='bootstrap-input-options'
-				isValid={qgenericFieldInfo['general/image/format'].isValid}
-				errorText={qgenericFieldInfo['general/image/format'].errorText}
-				value={dataMap['general/image/format']}
-				onChange={(e) => {
-					const selectedIndex = e.target.selectedIndex;
-					const val = e.target.options[selectedIndex].value;
-					onQDataChanged({'general/image/format' : val});}
-				}>
-				<option key='placeholder' value=''>{i18n('Select...')}</option>
-				{qgenericFieldInfo['general/image/format'].enum.map(hv => <option value={hv.enum} key={hv.enum}>{hv.title}</option>)}
-			</Input>
-		</GridItem>
-		<GridItem>
-			<Input
-				data-test-id='providedBy'
-				label={i18n('Image provided by')}
-				type='select'
-				className='input-options-select'
-				groupClassName='bootstrap-input-options'
-				isValid={qgenericFieldInfo['general/image/providedBy'].isValid}
-				errorText={qgenericFieldInfo['general/image/providedBy'].errorText}
-				value={dataMap['general/image/providedBy']}
-				onChange={(e) => {
-					const selectedIndex = e.target.selectedIndex;
-					const val = e.target.options[selectedIndex].value;
-					onQDataChanged({'general/image/providedBy' : val});}
-				}>
-				<option key='placeholder' value=''>{i18n('Select...')}</option>
-				{qgenericFieldInfo['general/image/providedBy'].enum.map(hv => <option value={hv.enum} key={hv.enum}>{hv.title}</option>)}
-			</Input>
-		</GridItem>
+	<GridSection title={i18n('Disk')}>
 		<GridItem>
 			<Input
 				data-test-id='bootDiskSizePerVM'
-				onChange={(bootDiskSizePerVM) => onQDataChanged({'general/image/bootDiskSizePerVM' : bootDiskSizePerVM})}
+				onChange={(bootDiskSizePerVM) => onQDataChanged({'general/disk/bootDiskSizePerVM' : bootDiskSizePerVM})}
 				label={i18n('Size of boot disk per VM (GB)')}
 				type='number'
-				isValid={qgenericFieldInfo['general/image/bootDiskSizePerVM'].isValid}
-				errorText={qgenericFieldInfo['general/image/bootDiskSizePerVM'].errorText}
-				value={dataMap['general/image/bootDiskSizePerVM']}/>
+				isValid={qgenericFieldInfo['general/disk/bootDiskSizePerVM'].isValid}
+				errorText={qgenericFieldInfo['general/disk/bootDiskSizePerVM'].errorText}
+				value={dataMap['general/disk/bootDiskSizePerVM']}/>
 		</GridItem>
 		<GridItem>
 			<Input
 				data-test-id='ephemeralDiskSizePerVM'
-				onChange={(ephemeralDiskSizePerVM) => onQDataChanged({'general/image/ephemeralDiskSizePerVM' : ephemeralDiskSizePerVM})}
+				onChange={(ephemeralDiskSizePerVM) => onQDataChanged({'general/disk/ephemeralDiskSizePerVM' : ephemeralDiskSizePerVM})}
 				label={i18n('Size of ephemeral disk per VM (GB)')}
 				type='number'
-				isValid={qgenericFieldInfo['general/image/ephemeralDiskSizePerVM'].isValid}
-				errorText={qgenericFieldInfo['general/image/ephemeralDiskSizePerVM'].errorText}
-				value={dataMap['general/image/ephemeralDiskSizePerVM']}/>
+				isValid={qgenericFieldInfo['general/disk/ephemeralDiskSizePerVM'].isValid}
+				errorText={qgenericFieldInfo['general/disk/ephemeralDiskSizePerVM'].errorText}
+				value={dataMap['general/disk/ephemeralDiskSizePerVM']}/>
 		</GridItem>
 	</GridSection>
 );
@@ -257,7 +228,7 @@ const CloneSection = ({dataMap, onQDataChanged, qgenericFieldInfo}) => (
 class SoftwareProductComponentsGeneralView extends React.Component {
 
 	render() {
-		let {onQDataChanged, onDataChanged,	genericFieldInfo, dataMap, qGenericFieldInfo, componentData: {displayName, vfcCode, description}, isReadOnlyMode} =  this.props;
+		let {isManual, onQDataChanged, onDataChanged, genericFieldInfo, dataMap, qGenericFieldInfo, componentData: {displayName, vfcCode, nfcFunction, description}, isReadOnlyMode} =  this.props;
 		return(
 			<div className='vsp-components-general'>
 				<div className='general-data'>
@@ -271,7 +242,9 @@ class SoftwareProductComponentsGeneralView extends React.Component {
 							onDataChanged={onDataChanged}
 							displayName={displayName}
 							vfcCode={vfcCode}
+							nfcFunction={nfcFunction}
 							description={description}
+							isManual={isManual}
 							isReadOnlyMode={isReadOnlyMode}
 							genericFieldInfo={genericFieldInfo}/>
 						<HypervisorSection  onQDataChanged={onQDataChanged} dataMap={dataMap} qgenericFieldInfo={qGenericFieldInfo}/>

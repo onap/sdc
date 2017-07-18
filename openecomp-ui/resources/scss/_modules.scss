@@ -12,7 +12,9 @@
 @import "modules/_softwareProductComponentGeneral";
 @import "modules/_softwareproductComponentLoadBalancing";
 @import "modules/_softwareProductComponentProcessesPage";
+@import "modules/_softwareProductComponentImage";
 @import "modules/softwareProductComponentCompute";
+@import "modules/vspComponentCompute";
 @import "modules/vspComponentMonitoring";
 @import "modules/licenseModel";
 @import "modules/onboardingCatalog";
@@ -20,3 +22,4 @@
 @import "modules/uploadScreen";
 @import "modules/vspHeatSetup";
 @import "modules/softwareProductDependencies";
+@import "modules/softwareProductDeployment";

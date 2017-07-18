@@ -15,65 +15,51 @@
  */
 'use strict';
 
-let gulp, replace, Promise, webpack, webpackProductionConfig;
+let gulp, replace, Promise, webpack, webpackProductionConfig,cloneDeep, tap;
+let langs = [];
 
-const supportedLanguages = ['en'];
-
-function start(options) {
-
-	let promises = [buildIndex(options)];
-	supportedLanguages.forEach(function (lang) {
-		promises.push(bundleJS(options, lang));
-	});
-	return Promise.all(promises);
-}
-
-function bundleJS(options, lang) {
+/*
+Runs the webpack build.
+Will first seach for the resource bundles to see how many languages are supported and then run a build per langauage
+ */
+function buildWebPackForLanguage(prodConfig, lang) {
 	return new Promise(function (resolve, reject) {
-		let prodConfig = webpackProductionConfig;
-		prodConfig.resolve.alias.i18nJson = options.outDir + '/i18n/' + lang + '/locale.json';
-		prodConfig.output.filename = jsFileByLang(options.outFileName, lang);
 		webpack(prodConfig, function (err, stats) {
-			console.log('[webpack:build]', stats.toString());
+			console.log('[webpack:build ' + prodConfig.output.filename + ']', stats.toString());
 			if (err || stats.hasErrors()) {
-				console.log('bundleJS : Failure!!', '\n		-language: ', lang);
+				console.log('webpack:build : Failure!! ' + prodConfig.output.filename + ']');
 				reject(err || stats.toJson().errors);
 			}
 			else {
-				console.log('bundleJS : Done', '\n		-language: ', lang);
+				console.log('webpack:build : Done ' + prodConfig.output.filename + ']');
 				resolve();
 			}
 		});
 	});
 }
-
-function buildIndex(options) {
-
-	return new Promise(function (resolve, reject) {
-
-		// gulp.src returns a stream object
-		gulp.src(options.outDir + '/index.html')
-			.pipe(replace(/\/\/<!--prod:delete-->(.|[\r\n])*?<!--\/prod:delete-->/g, ''))//in script occurrences.
-			.pipe(replace(/<!--prod:delete-->(.|[\r\n])*?<!--\/prod:delete-->/g, ''))//out of script occurrences.
-			.pipe(replace(/<!--prod:add(-->)?/g, ''))
-			.pipe(replace(/\/\/<!--prod:supported-langs-->(.|[\r\n])*?<!--\/prod:supported-langs-->/g, supportedLanguages.map(function (val) {
-				return "'" + val + "'";
-			}).toString()))
+/*
+ // this will check in the src directory which language bundles we have and will
+ // create the array to that we can run a webpack build per language afterwards
+ */
+function getSupportedLanguages(options) {
+	return new Promise((resolve, reject) => {
+		gulp.src(options.i18nBundles)
+			.pipe(tap(function(file) {
+				let languageStartIndex = file.path.lastIndexOf('i18n') + 5;
+				let languageStr =  file.path.indexOf('.json') - languageStartIndex;
+				let currentLang = file.path.substr(languageStartIndex, languageStr);
+				console.log('Found bundle ' +  file.path + ' for [' + currentLang  + ']');
+				langs[currentLang] = file.path;
+			}))
 			.pipe(gulp.dest(options.outDir))
 			.on('end', function () {
-				console.log('buildIndex : Done');
 				resolve();
 			})
 			.on('error', function (e) {
-				console.log('buildIndex : Failure!!');
+				console.log('getLanguages : Failure!!');
 				reject(e);
 			});
 	});
-
-}
-
-function jsFileByLang(fileName, lang) {
-	return fileName.replace(/.js$/, '_' + lang + '.js');
 }
 
 /**
@@ -85,22 +71,27 @@ function prodTask(options) {
 	replace = require('gulp-replace');
 	Promise = require('bluebird');
 	webpack = require('webpack');
+	cloneDeep = require('lodash/cloneDeep');
+	tap = require('gulp-tap');
 
+
+	// updating webpack for the production build. no need for sourcemaps in this case.
 	webpackProductionConfig = require('../../../webpack.production');
-	webpackProductionConfig.module.rules = webpackProductionConfig.module.rules.filter(rule => ((rule.enforce !== 'pre') || (rule.enforce === 'pre' && rule.loader !== 'source-map-loader')));
-	webpackProductionConfig.module.rules.forEach(loader => {
-		if (loader.use && loader.use[0].loader === 'style-loader') {
-			loader.use = loader.use.map(loaderObj => loaderObj.loader.replace('?sourceMap', ''));
+
+	// get the languages so that we can bulid per language with the correct bundle
+	let getLanguages =getSupportedLanguages(options);
+	// this will run a webpack build per language
+	return getLanguages.then(() => {
+		let promises = [];
+		for (var lang in langs) {
+			let prodConfig = cloneDeep(webpackProductionConfig);
+			prodConfig.resolve.alias.i18nJson = langs[lang];
+			prodConfig.output.filename = (options.outFileName || '[name].js').replace(/.js$/, '_' + lang + '.js');
+			promises.push(buildWebPackForLanguage(prodConfig, lang));
 		}
+		return Promise.all(promises);
 	});
 
-
-	webpackProductionConfig.module.rules.push({test: /config.json$/, use: [{loader:'config-json-loader'}]});
-
-	return start({
-		outFileName: options.outFileName || '[name].js',
-		outDir: options.outDir
-	});
 }
 
 module.exports = prodTask;

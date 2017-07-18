@@ -1,17 +1,5 @@
 package org.openecomp.sdc.enrichment.impl.tosca;
 
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VM_TYPE_TAG;
-import static org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType.NATIVE_NODE;
-import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.VFC_ABSTRACT_SUBSTITUTE;
-import static org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType.NATIVE_DEPENDS_ON;
-import static org.openecomp.sdc.tosca.services.ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME;
-import static org.openecomp.sdc.translator.services.heattotosca.Constants.ABSTRACT_NODE_TEMPLATE_ID_PREFIX;
-
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
@@ -28,6 +16,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_CODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_FUNCTION;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VM_TYPE_TAG;
+import static org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType.NATIVE_NODE;
+import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.VFC_ABSTRACT_SUBSTITUTE;
+import static org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType.NATIVE_DEPENDS_ON;
+import static org.openecomp.sdc.tosca.services.ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME;
+import static org.openecomp.sdc.translator.services.heattotosca.Constants.ABSTRACT_NODE_TEMPLATE_ID_PREFIX;
 
 public class AbstractSubstituteToscaEnricher {
   private ToscaAnalyzerService toscaAnalyzerService ;
@@ -108,6 +110,11 @@ public class AbstractSubstituteToscaEnricher {
               setProperty(nodeTemplate, VFC_NAMING_CODE, getValueFromQuestionnaireDetails
                   (componentProperties, componentDisplayName, VFC_NAMING_CODE));
 
+              setProperty(nodeTemplate, VFC_CODE, getValueFromQuestionnaireDetails
+                  (componentProperties, componentDisplayName, VFC_CODE));
+
+              setProperty(nodeTemplate, VFC_FUNCTION, getValueFromQuestionnaireDetails
+                  (componentProperties, componentDisplayName, VFC_FUNCTION));
 
               if(componentProperties.get(componentDisplayName).get(MIN_INSTANCES) != null) {
                 nodeTemplate.getProperties().put(MIN_INSTANCES,

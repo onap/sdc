@@ -48,7 +48,7 @@ import org.openecomp.sdc.tosca.datatypes.model.SubstitutionMapping;
 import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
-import org.openecomp.sdc.tosca.services.yamlutil.ToscaExtensionYamlUtil;
+import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 
 import java.io.IOException;
 import java.io.InputStream;

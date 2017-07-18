@@ -78,6 +78,10 @@ public class ElementCollaborationStore {
         ZusammenPluginUtil.getElementEntity(element));
   }
 
+  public boolean checkHealth(SessionContext sessionContext){
+    return getElementRepository(sessionContext).checkHealth(sessionContext);
+  }
+
   private void deleteElementHierarchy(ElementRepository elementRepository, SessionContext context,
                                       ElementEntityContext elementEntityContext,
                                       ElementEntity elementEntity) {

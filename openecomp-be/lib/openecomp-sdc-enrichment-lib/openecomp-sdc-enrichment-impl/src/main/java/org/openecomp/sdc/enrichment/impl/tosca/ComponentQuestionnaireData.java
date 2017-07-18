@@ -1,12 +1,8 @@
 package org.openecomp.sdc.enrichment.impl.tosca;
 
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
 
 import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDao;
@@ -22,6 +18,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
+
+
 
 public class ComponentQuestionnaireData {
 
@@ -63,6 +67,15 @@ public class ComponentQuestionnaireData {
 
       String vfc_code = componentData != null ? componentData.getVfcCode() : null;
       questionnaireParams.put(VFC_NAMING_CODE, vfc_code);
+
+      String nfcCode = componentData.getNfcCode() != null ? componentData.getNfcCode() : null;
+      questionnaireParams.put(EnrichmentConstants.VFC_CODE, nfcCode);
+
+      String vfcDescription =
+          componentData.getNfcFunction() != null ? componentData.getNfcFunction() :
+              null;
+      questionnaireParams.put(EnrichmentConstants.VFC_FUNCTION, vfcDescription);
+
 
       if (componentQuestionnaire.getHighAvailabilityAndLoadBalancing() != null ) {
         String mandatory = componentQuestionnaire.getHighAvailabilityAndLoadBalancing()

@@ -262,62 +262,50 @@ topology_template:
           type: tosca.artifacts.Deployment
           file: ../Artifacts/nimbus-ethernet
   outputs:
+    FSB1_FSB_OAM_status:
+      type: string
+      value:
+        get_attribute:
+        - FSB1_FSB_OAM
+        - status
+    FSB1_FSB2_Internal_tenant_id:
+      type: string
+      value:
+        get_attribute:
+        - FSB1_FSB2_Internal
+        - tenant_id
     FSB1_FSB1_Internal_network_id:
-      type: list
+      type: string
       value:
         get_attribute:
         - FSB1_FSB1_Internal
         - network_id
-      entry_schema:
-        type: string
-    FSB1_FSB1_Internal_addresses:
-      type: list
-      value:
-        get_attribute:
-        - FSB1_FSB1_Internal
-        - addresses
-      entry_schema:
-        type: string
     FSB1_accessIPv6:
-      type: list
+      type: string
       value:
         get_attribute:
         - FSB1
         - accessIPv6
-      entry_schema:
-        type: string
     FSB1_addresses:
-      type: list
+      type: map
       value:
         get_attribute:
         - FSB1
         - addresses
       entry_schema:
-        type: string
+        type: org.openecomp.datatypes.heat.novaServer.network.AddressInfo
     FSB1_FSB2_Internal_network_id:
-      type: list
+      type: string
       value:
         get_attribute:
         - FSB1_FSB2_Internal
         - network_id
-      entry_schema:
-        type: string
-    FSB1_FSB2_Internal_index:
-      type: list
+    FSB1_FSB1_Internal_device_owner:
+      type: string
       value:
         get_attribute:
-        - FSB1_FSB2_Internal
-        - index
-      entry_schema:
-        type: string
-    FSB1_FSB_OAM_oam_index:
-      type: list
-      value:
-        get_attribute:
-        - FSB1_FSB_OAM
-        - oam_index
-      entry_schema:
-        type: string
+        - FSB1_FSB1_Internal
+        - device_owner
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.FSB1
     capabilities:

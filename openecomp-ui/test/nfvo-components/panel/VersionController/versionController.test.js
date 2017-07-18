@@ -131,8 +131,7 @@ describe('versionController UI Component', () => {
 		let callVCActionProps = { ...props, version: '1.0', callVCAction: function(){} };
 		let versionController = mount(<VersionController isCheckedOut={true} status={statusEnum.CHECK_OUT_STATUS} {...callVCActionProps} />);
 		let elem = versionController.find('[data-test-id="vc-checkout-btn"]');
-		let svgIcon = versionController.find('.version-controller-lock-closed');
-
+		let svgIcon = versionController.find('.versionControllerLockClosed');
 		expect(elem).toBeTruthy();
 		expect(elem.length).toEqual(1);
 		expect(svgIcon.hasClass('disabled')).toBe(true);
@@ -142,7 +141,7 @@ describe('versionController UI Component', () => {
 		let callVCActionProps = { ...props, version: '1.0', callVCAction: function(){} };
 		let versionController = mount(<VersionController isCheckedOut={false} status={statusEnum.CHECK_IN_STATUS} {...callVCActionProps} />);
 		let elem = versionController.find('[data-test-id="vc-checkout-btn"]');
-		let svgIcon = versionController.find('.version-controller-lock-closed');
+		let svgIcon = versionController.find('.versionControllerLockClosed');
 
 		expect(elem).toBeTruthy();
 		expect(elem.length).toBe(1);

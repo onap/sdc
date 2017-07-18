@@ -8,6 +8,7 @@ import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
@@ -24,6 +25,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -47,6 +49,8 @@ public class ComponentManagerImplTest {
   private CompositionEntityDataManager compositionEntityDataManagerMock;
   @Mock
   private NicManager nicManagerMock;
+  @Mock
+  private VendorSoftwareProductInfoDao vspInfoDao;
   @InjectMocks
   @Spy
   private ComponentManagerImpl componentManager;
@@ -95,25 +99,102 @@ public class ComponentManagerImplTest {
 /*    @Test
     public void testCreate() {
         COMP1_ID = testCreate(VSP_ID);
-    }
-
-    private String testCreate(String VSP_ID) {
-        ComponentEntity expected = new ComponentEntity(VSP_ID, null, null);
-        ComponentData compData = new ComponentData();
-        compData.setName("comp1 name");
-        compData.setDescription("comp1 desc");
-        expected.setComponentCompositionData(compData);
-
-        ComponentEntity created = componentManager.createComponent(expected, USER);
-        Assert.assertNotNull(created);
-        expected.setId(created.getId());
-        expected.setVersion(VERSION);
-
-        ComponentEntity actual = componentDaoMock.getComponent(VSP_ID, VERSION, created.getId());
-
-        Assert.assertEquals(actual, expected);
-        return created.getId();
     }*/
+  @Test
+  public void testCreate() {
+    ComponentEntity expected = new ComponentEntity(VSP_ID, null, null);
+    ComponentData compData = new ComponentData();
+    compData.setName("comp1 name");
+    compData.setDescription("comp1 desc");
+    expected.setComponentCompositionData(compData);
+
+    doReturn(true).when(vspInfoDao).isManual(anyObject(),anyObject());
+    Collection<ComponentEntity> vspComponentList = new ArrayList<>();
+    doReturn(vspComponentList).when(componentDaoMock).list(anyObject());
+    doReturn(expected).when(compositionEntityDataManagerMock).createComponent(anyObject());
+
+    ComponentEntity created = componentManager.createComponent(expected, USER);
+    Assert.assertNotNull(created);
+    //expected.setId(created.getId());
+    //expected.setVersion(VERSION);
+
+    //ComponentEntity actual = componentDaoMock.getComponent(VSP_ID, VERSION, created.getId());
+
+    //Assert.assertEquals(actual, expected);
+    //return created.getId();
+  }
+
+  @Test
+  public void testCreateWithVspCompListMoreThanOne() {
+    ComponentEntity expected = new ComponentEntity(VSP_ID, null, null);
+    ComponentData compData = new ComponentData();
+    compData.setName("comp1 name");
+    compData.setDescription("comp1 desc");
+    expected.setComponentCompositionData(compData);
+
+    doReturn(true).when(vspInfoDao).isManual(anyObject(),anyObject());
+    Collection<ComponentEntity> vspComponentList = new ArrayList<>();
+    vspComponentList.add(expected);
+    doReturn(vspComponentList).when(componentDaoMock).list(anyObject());
+
+    try {
+      ComponentEntity created = componentManager.createComponent(expected, USER);
+    }  catch (CoreException exception) {
+      Assert.assertEquals("Creation of only one VFC per VSP allowed.", exception.code().message());
+      Assert.assertEquals(VendorSoftwareProductErrorCodes.VSP_VFC_COUNT_EXCEED,
+          exception.code().id());
+    }
+  }
+
+  @Test
+  public void testUpdateComp() {
+    ComponentEntity expected = new ComponentEntity(VSP_ID, null, COMP1_ID);
+    ComponentData compData = new ComponentData();
+    compData.setName("comp1 name");
+    compData.setDescription("comp1 desc");
+    expected.setComponentCompositionData(compData);
+
+    doReturn(expected).when(componentDaoMock).get(anyObject());
+    doReturn(true).when(vspInfoDao).isManual(anyObject(),anyObject());
+    Collection<ComponentEntity> vspComponentList = new ArrayList<>();
+    vspComponentList.add(expected);
+    doReturn(vspComponentList).when(componentDaoMock).list(anyObject());
+    doReturn(new CompositionEntityValidationData(null,null)).when(compositionEntityDataManagerMock)
+        .validateEntity(anyObject(),anyObject(),anyObject());
+
+    CompositionEntityValidationData created = componentManager.updateComponent(expected, USER);
+    Assert.assertNotNull(created);
+  }
+
+  @Test
+  public void testUpdateCompWithSameVfcDisplayName() {
+    ComponentEntity expected = new ComponentEntity(VSP_ID, null, COMP1_ID);
+    ComponentData compData = new ComponentData();
+    compData.setName("comp1 name");
+    compData.setDescription("comp1 desc");
+    compData.setDisplayName("comp1 displayname");
+    expected.setComponentCompositionData(compData);
+
+    doReturn(expected).when(componentDaoMock).get(anyObject());
+    doReturn(true).when(vspInfoDao).isManual(anyObject(),anyObject());
+    Collection<ComponentEntity> vspComponentList = new ArrayList<>();
+    vspComponentList.add(expected);
+    ComponentEntity expected2 = new ComponentEntity(VSP_ID+"2", null, COMP1_ID+"2");
+    expected2.setComponentCompositionData(compData);
+    vspComponentList.add(expected2);
+    doReturn(vspComponentList).when(componentDaoMock).list(anyObject());
+    doReturn(new CompositionEntityValidationData(null,null)).when(compositionEntityDataManagerMock)
+        .validateEntity(anyObject(),anyObject(),anyObject());
+
+    try {
+      CompositionEntityValidationData created = componentManager.updateComponent(expected, USER);
+    }  catch (CoreException exception) {
+      Assert.assertEquals("VFC with specified name already present in given VSP.",
+          exception.code().message());
+      Assert.assertEquals(VendorSoftwareProductErrorCodes.VSP_VFC_DUPLICATE_NAME,
+          exception.code().id());
+    }
+  }
 
 /*    @Test
     public void testCreateWithExistingName_negative() {
@@ -133,7 +214,7 @@ public class ComponentManagerImplTest {
   @Test
   public void testCreateOnUploadVsp_negative() {
     testCreate_negative(new ComponentEntity(VSP_ID, VERSION, null), USER,
-        VendorSoftwareProductErrorCodes.VSP_COMPOSITION_EDIT_NOT_ALLOWED);
+        VendorSoftwareProductErrorCodes.VFC_ADD_NOT_ALLOWED_IN_HEAT_ONBOARDING);
   }
 
   @Test
@@ -159,6 +240,8 @@ public class ComponentManagerImplTest {
     compData.setName(COMP1_ID + " name");                // no change
     compData.setDisplayName(COMP1_ID + " display name"); // no change
     compData.setVfcCode(COMP1_ID + " display name"); // no change
+    compData.setNfcCode(COMP1_ID + " display name"); // no change
+    compData.setNfcFunction(COMP1_ID + " display name"); // no change
     compData.setDescription(COMP1_ID + " desc updated"); // allowed change
     component.setComponentCompositionData(compData);
 

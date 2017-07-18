@@ -28,6 +28,7 @@ import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
 import org.openecomp.sdc.vendorlicense.healing.HealingService;
@@ -37,6 +38,7 @@ import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.VnfLicenseArt
 import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.util.VendorLicenseArtifactsServiceUtils;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,19 +66,29 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
 
     artifact.setVspId(vspId);
     artifact.setVendorName(vendorName);
-    for (String featureGroupId : featureGroups) {
-      FeatureGroupModel featureGroupModel = vendorLicenseFacade
-          .getFeatureGroupModel(new FeatureGroupEntity(vlmId, vlmVersion, featureGroupId), user);
-      Set<EntitlementPoolEntity> entitlementPoolEntities = featureGroupModel.getEntitlementPools();
-      Set<LicenseKeyGroupEntity> licenseKeyGroupEntities = featureGroupModel.getLicenseKeyGroups();
+    if(featureGroups != null) {
+      for (String featureGroupId : featureGroups) {
+        FeatureGroupModel featureGroupModel = vendorLicenseFacade
+            .getFeatureGroupModel(new FeatureGroupEntity(vlmId, vlmVersion, featureGroupId), user);
+        Set<EntitlementPoolEntity> entitlementPoolEntities = featureGroupModel.getEntitlementPools();
+        for(EntitlementPoolEntity entitlementPoolEntity : entitlementPoolEntities){
+          entitlementPoolEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, vlmVersion,
+              entitlementPoolEntity.getId(), user));
+        }
+        Set<LicenseKeyGroupEntity> licenseKeyGroupEntities = featureGroupModel.getLicenseKeyGroups();
+        for(LicenseKeyGroupEntity licenseKeyGroupEntity : licenseKeyGroupEntities){
+          licenseKeyGroupEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, vlmVersion,
+              licenseKeyGroupEntity.getId(), user));
+        }
 
-      featureGroupModel.setEntitlementPools(entitlementPoolEntities.stream().map(
-          entitlementPoolEntity -> (EntitlementPoolEntity) healingService
-              .heal(entitlementPoolEntity, user)).collect(Collectors.toSet()));
-      featureGroupModel.setLicenseKeyGroups(licenseKeyGroupEntities.stream().map(
-          licenseKeyGroupEntity -> (LicenseKeyGroupEntity) healingService
-              .heal(licenseKeyGroupEntity, user)).collect(Collectors.toSet()));
-      artifact.getFeatureGroups().add(featureGroupModel);
+        featureGroupModel.setEntitlementPools(entitlementPoolEntities.stream().map(
+            entitlementPoolEntity -> (EntitlementPoolEntity) healingService
+                .heal(entitlementPoolEntity, user)).collect(Collectors.toSet()));
+        featureGroupModel.setLicenseKeyGroups(licenseKeyGroupEntities.stream().map(
+            licenseKeyGroupEntity -> (LicenseKeyGroupEntity) healingService
+                .heal(licenseKeyGroupEntity, user)).collect(Collectors.toSet()));
+        artifact.getFeatureGroups().add(featureGroupModel);
+      }
     }
 
     mdcDataDebugMessage.debugExitMessage("VLM name", vendorName);
@@ -95,12 +107,22 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
 
     List<Version> finalVersions = VendorLicenseArtifactsServiceUtils.getFinalVersionsForVlm(vlmId);
     for (Version finalVersion : finalVersions) {
-      entitlementPoolEntities
-          .addAll(vendorLicenseFacade.listEntitlementPools(vlmId, finalVersion, user));
-      licenseKeyGroupEntities
-          .addAll(vendorLicenseFacade.listLicenseKeyGroups(vlmId, finalVersion, user));
-    }
+      Collection<EntitlementPoolEntity> coll = vendorLicenseFacade.listEntitlementPools(vlmId,
+          finalVersion, user);
+      for(EntitlementPoolEntity entitlementPoolEntity : coll){
+        entitlementPoolEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, finalVersion,
+            entitlementPoolEntity.getId(), user));
+      }
+      entitlementPoolEntities.addAll(coll);
 
+      Collection<LicenseKeyGroupEntity> coll2 = vendorLicenseFacade.listLicenseKeyGroups(vlmId,
+          finalVersion, user);
+      for(LicenseKeyGroupEntity licenseKeyGroupEntity : coll2){
+        licenseKeyGroupEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, finalVersion,
+            licenseKeyGroupEntity.getId(), user));
+      }
+      licenseKeyGroupEntities.addAll(coll2);
+    }
 
     entitlementPoolEntities = VendorLicenseArtifactsServiceUtils
         .healEPs(user,

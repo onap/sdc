@@ -20,16 +20,20 @@ import LicenseKeyGroupsActionHelper from './licenseModel/licenseKeyGroups/Licens
 import EntitlementPoolsActionHelper from './licenseModel/entitlementPools/EntitlementPoolsActionHelper.js';
 import SoftwareProductActionHelper from './softwareProduct/SoftwareProductActionHelper.js';
 import SoftwareProductProcessesActionHelper from './softwareProduct/processes/SoftwareProductProcessesActionHelper.js';
+import SoftwareProductDeploymentActionHelper from './softwareProduct/deployment/SoftwareProductDeploymentActionHelper.js';
 import SoftwareProductNetworksActionHelper from './softwareProduct/networks/SoftwareProductNetworksActionHelper.js';
 import SoftwareProductComponentsActionHelper from './softwareProduct/components/SoftwareProductComponentsActionHelper.js';
 import SoftwareProductComponentProcessesActionHelper from './softwareProduct/components/processes/SoftwareProductComponentProcessesActionHelper.js';
 import SoftwareProductComponentsNetworkActionHelper from './softwareProduct/components/network/SoftwareProductComponentsNetworkActionHelper.js';
 import SoftwareProductDependenciesActionHelper from './softwareProduct/dependencies/SoftwareProductDependenciesActionHelper.js';
+import ComputeFlavorActionHelper from './softwareProduct/components/compute/ComputeFlavorActionHelper.js';
 import OnboardActionHelper from './onboard/OnboardActionHelper.js';
 import SoftwareProductComponentsMonitoringAction from './softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringActionHelper.js';
 import {actionTypes, enums} from './OnboardingConstants.js';
-import {navigationItems as SoftwareProductNavigationItems, actionTypes as SoftwareProductActionTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
-import ActivityLogActionHelper from 'nfvo-components/activity-log/ActivityLogActionHelper.js';
+import SoftwareProductComponentsImageActionHelper from './softwareProduct/components/images/SoftwareProductComponentsImageActionHelper.js';
+import {navigationItems as SoftwareProductNavigationItems, actionTypes as SoftwareProductActionTypes,
+    onboardingMethod as onboardingMethodTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
+import ActivityLogActionHelper from 'sdc-app/common/activity-log/ActivityLogActionHelper.js';
 import licenseModelOverviewActionHelper from 'sdc-app/onboarding/licenseModel/overview/licenseModelOverviewActionHelper.js';
 import store from 'sdc-app/AppStore.js';
 import {selectedButton as licenseModelOverviewSelectedButton} from 'sdc-app/onboarding/licenseModel/overview/LicenseModelOverviewConstants.js';
@@ -160,9 +164,18 @@ export default {
 			const newVersion = response[0].version ? response[0].version : version;
 
 			SoftwareProductActionHelper.loadSoftwareProductDetailsData(dispatch, {licenseModelId, licensingVersion});
-			SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version: newVersion});
-			SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version: newVersion});
-			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {softwareProductId, licenseModelId, version: newVersion});
+			let isFetchImageDetails = (response[0].onboardingMethod === onboardingMethodTypes.HEAT);
+			if (isFetchImageDetails) {
+				// will only continue after we can properly build the navigation bar with the images links
+				SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version: newVersion, isFetchImageDetails}).then(() => {
+					SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version: newVersion});
+					setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {softwareProductId, licenseModelId, version: newVersion});
+				});
+			} else {
+				SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version: newVersion, isFetchImageDetails});
+				SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version: newVersion});
+				setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {softwareProductId, licenseModelId, version: newVersion});
+			}
 		});
 	},
 
@@ -199,7 +212,11 @@ export default {
 		SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version});
 		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS, {softwareProductId, version});
 	},
-
+	navigateToSoftwareProductDeployment(dispatch, {softwareProductId, version}) {
+		SoftwareProductDeploymentActionHelper.fetchDeploymentFlavorsList(dispatch, {softwareProductId, version});
+		ComputeFlavorActionHelper.fetchComputesListForVSP(dispatch, {softwareProductId, version});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT, {softwareProductId, version});
+	},
 	navigateToSoftwareProductActivityLog(dispatch, {softwareProductId, version}){
 		ActivityLogActionHelper.fetchActivityLog(dispatch, {itemId: softwareProductId, versionId: version.id});
 		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG, {softwareProductId, version});
@@ -226,6 +243,9 @@ export default {
 
 	navigateToComponentCompute(dispatch, {softwareProductId, componentId, version}) {
 		SoftwareProductComponentsActionHelper.fetchSoftwareProductComponent(dispatch, {softwareProductId, vspComponentId: componentId, version});
+		if (componentId && softwareProductId) {
+			ComputeFlavorActionHelper.fetchComputesList(dispatch, {softwareProductId, componentId, version});
+		}
 		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_COMPUTE, {softwareProductId, version, componentId});
 	},
 
@@ -255,6 +275,15 @@ export default {
 	navigateToComponentLoadBalancing(dispatch, {softwareProductId, componentId, version}) {
 		SoftwareProductComponentsActionHelper.fetchSoftwareProductComponent(dispatch, {softwareProductId, vspComponentId: componentId, version});
 		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_LOAD_BALANCING, {softwareProductId, version, componentId});
+	},
+
+	navigateToComponentImages(dispatch, {softwareProductId, componentId, version}) {
+		SoftwareProductComponentsImageActionHelper.fetchImagesList(dispatch, {
+			softwareProductId,
+			componentId,
+			version
+		});
+		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES, {softwareProductId, version, componentId});
 	}
 
 };

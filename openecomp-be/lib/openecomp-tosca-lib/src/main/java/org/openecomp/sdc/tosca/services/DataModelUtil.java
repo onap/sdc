@@ -23,7 +23,6 @@ package org.openecomp.sdc.tosca.services;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.core.utilities.yaml.YamlUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
@@ -32,7 +31,9 @@ import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
+import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
+import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
 import org.openecomp.sdc.tosca.datatypes.model.AttributeDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityType;
@@ -56,8 +57,13 @@ import org.openecomp.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt
 import org.openecomp.sdc.tosca.errors.InvalidAddActionNullEntityErrorBuilder;
 import org.openecomp.sdc.tosca.errors.InvalidRequirementAssignmentErrorBuilder;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
-import org.openecomp.sdc.tosca.services.yamlutil.ToscaExtensionYamlUtil;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1365,6 +1371,26 @@ public class DataModelUtil {
   }
 
   /**
+   * Gets substitution mappings in a service template.
+   *
+   * @param serviceTemplate the service template
+   * @return the substitution mappings
+   */
+  public static SubstitutionMapping getSubstitutionMappings(ServiceTemplate serviceTemplate) {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    if (serviceTemplate == null
+        || serviceTemplate.getTopology_template() == null
+        || serviceTemplate.getTopology_template().getSubstitution_mappings() == null) {
+      return null;
+    }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
+    return serviceTemplate.getTopology_template().getSubstitution_mappings();
+  }
+
+
+  /**
    * Compare two requirement assignment objects for equality.
    *
    * @param first  the first requirement assignement object
@@ -1379,5 +1405,174 @@ public class DataModelUtil {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Gets a deep copy clone of the input object.
+   *
+   * @param <T>         the type parameter
+   * @param objectValue the object value
+   * @param clazz       the clazz
+   * @return the cloned object
+   */
+  public static <T> Object getClonedObject(Object objectValue, Class<T> clazz) {
+    YamlUtil yamlUtil = new ToscaExtensionYamlUtil();
+    Object clonedObjectValue;
+    String objectToYaml = yamlUtil.objectToYaml(objectValue);
+    clonedObjectValue = yamlUtil.yamlToObject(objectToYaml, clazz);
+    return clonedObjectValue;
+  }
+
+  /**
+   * Gets a deep copy clone of the input object.
+   *
+   * @param obj the object to be cloned
+   * @return the cloned object
+   */
+  public static Object getClonedObject(Object obj) {
+    Object clonedObjectValue;
+    try {
+      //Serialize object
+      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+      ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+      objectOutputStream.writeObject(obj);
+      //Deserialize object
+      ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream
+          .toByteArray());
+      ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+      clonedObjectValue = objectInputStream.readObject();
+    } catch (NotSerializableException ex) {
+      return getClonedObject(obj, obj.getClass());
+    } catch (IOException | ClassNotFoundException ex) {
+      return null;
+    }
+    return clonedObjectValue;
+  }
+
+  /**
+   * Add substitution filtering property.
+   *
+   * @param templateName the substitution service template name
+   * @param nodeTemplate the node template
+   * @param count        the count
+   */
+  public static void addSubstitutionFilteringProperty(String templateName,
+                                                      NodeTemplate nodeTemplate, int count) {
+    Map<String, Object> serviceTemplateFilterPropertyValue = new HashMap<>();
+    Map<String, Object> properties = nodeTemplate.getProperties();
+    serviceTemplateFilterPropertyValue.put(ToscaConstants
+        .SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME, templateName);
+    serviceTemplateFilterPropertyValue.put(ToscaConstants.COUNT_PROPERTY_NAME, count);
+    properties.put(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME,
+        serviceTemplateFilterPropertyValue);
+    nodeTemplate.setProperties(properties);
+  }
+
+  /**
+   * Adding binding requirement from port node template to compute node template.
+   *
+   * @param computeNodeTemplateId compute node template id
+   * @param portNodeTemplate      port node template
+   */
+  public static void addBindingReqFromPortToCompute(String computeNodeTemplateId,
+                                                    NodeTemplate portNodeTemplate) {
+
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+    RequirementAssignment requirementAssignment = new RequirementAssignment();
+    requirementAssignment.setCapability(ToscaCapabilityType.NATIVE_NETWORK_BINDABLE);
+    requirementAssignment.setRelationship(ToscaRelationshipType.NATIVE_NETWORK_BINDS_TO);
+    requirementAssignment.setNode(computeNodeTemplateId);
+    addRequirementAssignment(portNodeTemplate, ToscaConstants.BINDING_REQUIREMENT_ID,
+        requirementAssignment);
+    mdcDataDebugMessage.debugExitMessage(null, null);
+  }
+
+  public static SubstitutionMapping createSubstitutionTemplateSubMapping(
+      String nodeTypeKey,
+      NodeType substitutionNodeType,
+      Map<String, Map<String, List<String>>> mapping) {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+    SubstitutionMapping substitutionMapping = new SubstitutionMapping();
+    substitutionMapping.setNode_type(nodeTypeKey);
+    substitutionMapping.setCapabilities(
+        manageCapabilityMapping(substitutionNodeType.getCapabilities(), mapping.get("capability")));
+    substitutionMapping.setRequirements(
+        manageRequirementMapping(substitutionNodeType.getRequirements(),
+            mapping.get("requirement")));
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
+    return substitutionMapping;
+  }
+
+  private static Map<String, List<String>> manageRequirementMapping(
+      List<Map<String, RequirementDefinition>> requirementList,
+      Map<String, List<String>> requirementSubstitutionMapping) {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    if (requirementList == null) {
+      return null;
+    }
+    Map<String, List<String>> requirementMapping = new HashMap<>();
+    String requirementKey;
+    List<String> requirementMap;
+    for (Map<String, RequirementDefinition> requirementDefMap : requirementList) {
+      for (Map.Entry<String, RequirementDefinition> entry : requirementDefMap.entrySet()) {
+        requirementKey = entry.getKey();
+        requirementMap = requirementSubstitutionMapping.get(requirementKey);
+        requirementMapping.put(requirementKey, requirementMap);
+      }
+    }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
+    return requirementMapping;
+  }
+
+  private static Map<String, List<String>> manageCapabilityMapping(
+      Map<String, CapabilityDefinition> capabilities,
+      Map<String, List<String>> capabilitySubstitutionMapping) {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    if (capabilities == null) {
+      mdcDataDebugMessage.debugExitMessage(null, null);
+      return null;
+    }
+
+    Map<String, List<String>> capabilityMapping = new HashMap<>();
+    String capabilityKey;
+    List<String> capabilityMap;
+    for (Map.Entry<String, CapabilityDefinition> entry : capabilities.entrySet()) {
+      capabilityKey = entry.getKey();
+      capabilityMap = capabilitySubstitutionMapping.get(capabilityKey);
+      capabilityMapping.put(capabilityKey, capabilityMap);
+    }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
+    return capabilityMapping;
+  }
+
+  public static void addSubstitutionNodeTypeRequirements(NodeType substitutionNodeType,
+                                                         List<Map<String, RequirementDefinition>>
+                                                             requirementsList,
+                                                         String templateName) {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    if (requirementsList == null || requirementsList.size() == 0) {
+      return;
+    }
+
+    if (substitutionNodeType.getRequirements() == null) {
+      substitutionNodeType.setRequirements(new ArrayList<>());
+    }
+
+    for (Map<String, RequirementDefinition> requirementDef : requirementsList) {
+      for (Map.Entry<String, RequirementDefinition> entry : requirementDef.entrySet()) {
+        Map<String, RequirementDefinition> requirementMap = new HashMap<>();
+        requirementMap.put(entry.getKey() + "_" + templateName, entry.getValue().clone());
+        substitutionNodeType.getRequirements().add(requirementMap);
+      }
+    }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 }

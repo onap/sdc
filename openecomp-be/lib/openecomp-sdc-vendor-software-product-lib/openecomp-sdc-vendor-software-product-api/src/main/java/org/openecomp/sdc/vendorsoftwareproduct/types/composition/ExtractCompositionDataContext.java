@@ -20,10 +20,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
 
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Component;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +31,8 @@ public class ExtractCompositionDataContext {
   private List<Network> networks = new ArrayList<>();
   private List<Component> components = new ArrayList<>();
   private Map<String, Nic> nics = new HashMap<>();
+  private Map<String, Image> images = new HashMap<>();
+  private Map<String, ComputeData> computes = new HashMap<>();
   private Set<String> handledServiceTemplates = new HashSet<>();
   private Set<String> createdComponents = new HashSet<>();
 
@@ -130,5 +128,29 @@ public class ExtractCompositionDataContext {
     this.nics.put(nicId, nic);
   }
 
+  public Map<String, Image> getImages() {
+    return images;
+  }
 
+  public void setImages(Map<String, Image> images) {
+    this.images = images;
+  }
+
+  public void addImage(String imageId, Image image) {
+    this.images.put(imageId, image);
+  }
+
+
+  public Map<String, ComputeData> getComputes() {
+    return computes;
+  }
+
+  public void setComputes(
+      Map<String, ComputeData> computes) {
+    this.computes = computes;
+  }
+
+  public void addCompute(String computeId, ComputeData computedata ){
+    this.computes.put(computeId,computedata);
+  }
 }

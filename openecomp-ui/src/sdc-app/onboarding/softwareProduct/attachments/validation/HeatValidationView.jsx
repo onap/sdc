@@ -17,7 +17,7 @@ import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 import Collapse from 'react-bootstrap/lib/Collapse.js';
 import Icon from 'nfvo-components/icon/Icon.jsx';
-import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import {mouseActions, errorLevels, nodeFilters} from './HeatValidationConstants.js';
 
@@ -68,7 +68,7 @@ function HeatFileTreeRow(props) {
 					isFolder &&
 						<div onClick={() => toggleExpanded(path)}
 							className='tree-node-expander'>
-							<SVGIcon name={!node.expanded ? 'chevron-up' : 'chevron-down'} data-test-id='validation-tree-block-toggle'/>
+							<SVGIcon name={!node.expanded ? 'chevronUp' : 'chevronDown'} data-test-id='validation-tree-block-toggle'/>
 						</div>
 				}
 				{
@@ -205,23 +205,19 @@ class HeatMessageBoard extends Component {
 				key={error.name + error.errorMessage + error.parentName + rand}
 				className='error-item' data-test-id='validation-error'>
 				{error.level === errorLevels.WARNING ?
-					<SVGIcon name='exclamation-triangle-line' iconClassName='large' /> : <Icon image='error-lg' /> }
+					<SVGIcon name='exclamationTriangleLine' iconClassName='large' /> : <Icon image='error-lg' /> }
 				<span className='error-item-file-type'>
 				{
 					(this.props.selectedNode === nodeFilters.ALL) ?
 						<span>
 							<span className='error-file-name'>
-								{i18n('{errorName}:', {
-									errorName: error.name
-								})}
+								{i18n(`${error.name}`)}
 							</span>
 							<span>
-								{i18n('{message}', {message: error.errorMessage})}
+								{i18n(error.errorMessage)}
 							</span>
 						</span> :
-						i18n('{errorMsg}', {
-							errorMsg: error.errorMessage
-						})
+						i18n(error.errorMesage)
 				}
 				</span>
 			</div>
@@ -249,7 +245,7 @@ class ErrorsAndWarningsCount extends Component {
 				<div className={'error-text ' + (size ? size : '')} data-test-id='validation-error-count'>{errors.errorCount}</div>
 			</div>}
 			{(errors.warningCount > 0) && <div className='counter'>
-				<SVGIcon name='exclamation-triangle-line' iconClassName={size} />
+				<SVGIcon name='exclamationTriangleLine' iconClassName={size} />
 				<div className={'warning-text ' + (size ? size : '')} data-test-id='validation-warning-count'>{errors.warningCount}</div>
 			</div>}
 		</div>);

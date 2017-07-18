@@ -120,8 +120,8 @@ topology_template:
       description: OAM network name
       default: oam_protected_net_0
   node_templates:
-    abstract_pcm_server_0:
-      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
+    server_pcm_001:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
       directives:
       - substitutable
       properties:
@@ -189,7 +189,7 @@ topology_template:
       requirements:
       - dependency:
           capability: tosca.capabilities.Node
-          node: abstract_pcm_server_0
+          node: server_pcm_001
           relationship: tosca.relationships.DependsOn
     compute_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
@@ -212,13 +212,13 @@ topology_template:
       properties:
         compute_compute_user_data_format:
         - get_attribute:
-          - abstract_pcm_server_0
+          - server_pcm_001
           - oam_net_gw
         vm_image_name:
           get_input: compute_image_name
         compute_compute_metadata:
         - get_attribute:
-          - abstract_pcm_server_0
+          - server_pcm_001
           - server_pcm_id
         compute_compute_name:
         - compute_name: null
@@ -257,7 +257,7 @@ topology_template:
         heat_file: ../Artifacts/hot-nimbus-pcm_v0.4.yaml
         description: heat template that creates PCRF Cluman stack
       members:
+      - server_pcm_001
       - packet_mirror_network
       - compute_port_0
       - abstract_compute
-      - abstract_pcm_server_0

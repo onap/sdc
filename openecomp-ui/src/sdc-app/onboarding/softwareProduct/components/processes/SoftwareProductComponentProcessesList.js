@@ -47,7 +47,7 @@ const mapActionsToProps = (dispatch, {componentId, softwareProductId}) => {
 		onDeleteProcessClick: (process, version) => dispatch({
 			type: modalActionTypes.GLOBAL_MODAL_WARNING,
 			data:{
-				msg: i18n('Are you sure you want to delete "{name}"?', {name: process.name}),
+				msg: i18n(`Are you sure you want to delete "${process.name}"?`),
 				onConfirmed: ()=> SoftwareProductComponentProcessesActionHelper.deleteProcess(dispatch,
 					{process, softwareProductId, version, componentId})
 			}

@@ -1,0 +1,85 @@
+heat_template_version: 2013-05-23
+
+description: nested1
+
+parameters:
+  p1:
+    type: string
+    description: UID of OAM network
+  p2:
+    type: string
+    description: UID of OAM network
+  security_group_name:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  sm_server_names:
+    type: comma_delimited_list
+    description: SM server names
+  sm_server_image:
+    type: string
+    description: SM Image server
+  oam_server_names:
+    type: comma_delimited_list
+    description: OAM server names
+  oam_server_image:
+    type: string
+    description: OAM Image server
+  availability_zone_0:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  sm_server_flavor:
+    type: string
+    description: Flavor for SM server
+  oam_server_flavor:
+    type: string
+    description: Flavor for OAM server
+  sm_server_ips:
+      type: string
+  oam_server_ips:
+      type: string
+  net:
+    type: string
+resources:
+
+  sm_server_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net }
+      fixed_ips: [{"ip_address": {get_param: [sm_server_ips, 0]}}]
+      security_groups: [{get_param: p1},{get_param: p2}]
+      replacement_policy: AUTO
+
+  oam_server_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net }
+      fixed_ips: [{"ip_address": {get_param: [oam_server_ips, 0]}}]
+      security_groups: [{get_param: p1}]
+      replacement_policy: AUTO
+
+  server_sm:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [sm_server_names, 0]}
+      image: { get_param: sm_server_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: sm_server_flavor }
+      networks:
+      - port: { get_resource: sm_server_port }
+
+  server_oam:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [oam_server_names, 1]}
+      image: { get_param: oam_server_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: oam_server_flavor }
+      networks:
+      - port: { get_resource: oam_server_port }
+
+outputs:
+  nested_diff_file_attr_1:
+    description: nested_diff_file_attr_1_value
+    value: { get_resource: server_sm }
+

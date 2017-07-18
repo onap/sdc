@@ -83,6 +83,11 @@ public class EntitlementPoolCassandraDaoImpl extends CassandraBaseDao<Entitlemen
   }
 
   @Override
+  public String getManufacturerReferenceNumber(EntitlementPoolEntity entitlementPoolEntity){
+    return null;
+  }
+
+  @Override
   public Collection<EntitlementPoolEntity> list(EntitlementPoolEntity entity) {
     return accessor.listByVlmVersion(entity.getVendorLicenseModelId(),
         versionMapper.toUDT(entity.getVersion())).all();

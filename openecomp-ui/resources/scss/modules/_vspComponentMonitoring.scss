@@ -4,7 +4,7 @@
     .section-title {
       padding-bottom: 20px;
     }
-    &:first-child {
+    &:not(:last-child) {
       padding-bottom: 50px;
     }
     .software-product-landing-view-top-block-col-upl {
@@ -18,13 +18,11 @@
       padding: 25px 0;
       align-items: center;
       .upload-btn {
-        padding: 20px;
-        padding-top: 7px;
-        padding-bottom: 3px;
+        padding: 4px 20px;
       }
       .drag-text {
         color: $blue;
-        font-weight: bolder;
+        @extend .body-1-semibold;
       }
       .or-text {
         margin-top: 10px;

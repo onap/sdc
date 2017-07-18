@@ -22,4 +22,6 @@ public interface ElementRepository {
 
   void createNamespace(SessionContext context, ElementEntityContext elementContext,
                        ElementEntity element);
+
+  boolean checkHealth(SessionContext context);
 }

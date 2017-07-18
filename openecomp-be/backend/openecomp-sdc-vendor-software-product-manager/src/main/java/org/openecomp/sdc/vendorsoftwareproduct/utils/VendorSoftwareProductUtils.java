@@ -22,7 +22,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.utils;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.core.enrichment.types.ArtifactType;
+import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
@@ -35,7 +35,7 @@ import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.MibEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.slf4j.MDC;
 
@@ -47,6 +47,8 @@ import java.util.List;
 import java.util.Map;
 
 public class VendorSoftwareProductUtils {
+
+  private static final String MANUAL = "Manual";
   protected static Logger logger =
       (Logger) LoggerFactory.getLogger(VendorSoftwareProductUtils.class);
 
@@ -92,12 +94,7 @@ public class VendorSoftwareProductUtils {
   public static void validateContentZipData(FileContentHandler contentMap,
                                             Map<String, List<ErrorMessage>> errors) {
     MDC.put(LoggerConstants.ERROR_DESCRIPTION, LoggerErrorDescription.INVALID_ZIP);
-    if (contentMap == null) {
-      ErrorMessage.ErrorMessageUtil.addMessage(SdcCommon.UPLOAD_FILE, errors).add(
-          new ErrorMessage(ErrorLevel.ERROR,
-              Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage()));
-
-    } else if (contentMap.getFileList().size() == 0) {
+    if (contentMap.getFileList().size() == 0) {
       ErrorMessage.ErrorMessageUtil.addMessage(SdcCommon.UPLOAD_FILE, errors)
           .add(new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_ZIP_FILE.getErrorMessage()));
     }
@@ -105,27 +102,26 @@ public class VendorSoftwareProductUtils {
 
 
   /**
-   * Filter non trap or poll artifacts map.
+   * Maps all artifacts by type.
    *
    * @param artifacts the artifacts
    * @return the map
    */
-  public static Map<ArtifactType, String> filterNonTrapOrPollArtifacts(
-      Collection<MibEntity> artifacts) {
-    Map<ArtifactType, String> artifactTypeToFilename = new HashMap<>();
+  public static Map<MonitoringUploadType, String> mapArtifactsByType(
+      Collection<ComponentMonitoringUploadEntity> artifacts) {
+    Map<MonitoringUploadType, String> artifactTypeToFilename = new HashMap<>();
 
-    for (MibEntity entity : artifacts) {
-      if (isTrapOrPoll(entity.getType())) {
-        artifactTypeToFilename.put(entity.getType(), entity.getArtifactName());
-      }
+    for (ComponentMonitoringUploadEntity entity : artifacts) {
+      artifactTypeToFilename.put(entity.getType(), entity.getArtifactName());
     }
 
     return artifactTypeToFilename;
   }
 
 
-  private static boolean isTrapOrPoll(ArtifactType type) {
-    return type.equals(ArtifactType.SNMP_POLL) || type.equals(ArtifactType.SNMP_TRAP);
+  private static boolean isTrapOrPoll(MonitoringUploadType type) {
+    return type.equals(MonitoringUploadType.SNMP_POLL) ||
+        type.equals(MonitoringUploadType.SNMP_TRAP);
   }
 
 
@@ -177,5 +173,14 @@ public class VendorSoftwareProductUtils {
       logger.error(error.message());
     }
   }
+
+  /*public static boolean isManual(String vspId, Version version, VendorSoftwareProductInfoDao
+      vspInfoDao) {
+    String onboardingMethod = vspInfoDao.get(new VspDetails(vspId, version)).getOnboardingMethod();
+    if (MANUAL.equals(onboardingMethod)) {
+      return true;
+    }
+    return false;
+  }*/
 
 }

@@ -1,0 +1,308 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_BE_1c1
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.BE_1c1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_BE_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_BE_port_network_role:
+      type: string
+      required: true
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_BE_port_order:
+      type: integer
+      required: true
+    port_BE_port_subnetpoolid:
+      type: string
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    port_BE_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_BE_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_BE_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    compute_BE_1c1_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_BE_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_BE_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_BE_port_network_role_tag:
+      type: string
+      required: true
+    vm_image_name:
+      type: string
+      required: true
+    compute_BE_1c1_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_BE_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    BE_1c1_BE_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        exCP_naming:
+          get_input: port_BE_port_exCP_naming
+        replacement_policy:
+          get_input:
+          - port_BE_port_replacement_policy
+          - index_value
+        vlan_requirements:
+          get_input: port_BE_port_vlan_requirements
+        ip_requirements:
+          get_input: port_BE_port_ip_requirements
+        network_role_tag:
+          get_input: port_BE_port_network_role_tag
+        mac_requirements:
+          get_input: port_BE_port_mac_requirements
+        order:
+          get_input: port_BE_port_order
+        network_role:
+          get_input: port_BE_port_network_role
+        subnetpoolid:
+          get_input: port_BE_port_subnetpoolid
+        fixed_ips:
+          get_input: port_BE_port_fixed_ips
+        network:
+          get_input:
+          - port_BE_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: BE_1c1
+          relationship: tosca.relationships.network.BindsTo
+    BE_1c1:
+      type: org.openecomp.resource.vfc.nodes.heat.BE_1c1
+      properties:
+        availability_zone:
+          get_input:
+          - compute_BE_1c1_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_BE_1c1_name
+          - index_value
+  outputs:
+    BE_1c1_accessIPv4:
+      type: string
+      value:
+        get_attribute:
+        - BE_1c1
+        - accessIPv4
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.BE_1c1
+    capabilities:
+      disk.ephemeral.size_BE_1c1:
+      - BE_1c1
+      - disk.ephemeral.size
+      disk.device.write.bytes_BE_1c1:
+      - BE_1c1
+      - disk.device.write.bytes
+      os_BE_1c1:
+      - BE_1c1
+      - os
+      endpoint_BE_1c1:
+      - BE_1c1
+      - endpoint
+      network.outpoing.packets_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - network.outpoing.packets
+      disk.device.write.requests_BE_1c1:
+      - BE_1c1
+      - disk.device.write.requests
+      disk.device.write.bytes.rate_BE_1c1:
+      - BE_1c1
+      - disk.device.write.bytes.rate
+      vcpus_BE_1c1:
+      - BE_1c1
+      - vcpus
+      network.incoming.packets.rate_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - network.incoming.packets.rate
+      attachment_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - attachment
+      network.incoming.bytes_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - network.incoming.bytes
+      disk.capacity_BE_1c1:
+      - BE_1c1
+      - disk.capacity
+      disk.read.bytes_BE_1c1:
+      - BE_1c1
+      - disk.read.bytes
+      host_BE_1c1:
+      - BE_1c1
+      - host
+      disk.usage_BE_1c1:
+      - BE_1c1
+      - disk.usage
+      disk.write.bytes_BE_1c1:
+      - BE_1c1
+      - disk.write.bytes
+      network.outgoing.packets.rate_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - network.outgoing.packets.rate
+      binding_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - binding
+      disk.device.usage_BE_1c1:
+      - BE_1c1
+      - disk.device.usage
+      disk.device.read.requests.rate_BE_1c1:
+      - BE_1c1
+      - disk.device.read.requests.rate
+      network.outgoing.bytes.rate_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - network.outgoing.bytes.rate
+      scalable_BE_1c1:
+      - BE_1c1
+      - scalable
+      disk.read.requests_BE_1c1:
+      - BE_1c1
+      - disk.read.requests
+      memory_BE_1c1:
+      - BE_1c1
+      - memory
+      disk.iops_BE_1c1:
+      - BE_1c1
+      - disk.iops
+      memory.usage_BE_1c1:
+      - BE_1c1
+      - memory.usage
+      network.incoming.packets_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - network.incoming.packets
+      disk.device.latency_BE_1c1:
+      - BE_1c1
+      - disk.device.latency
+      disk.device.read.requests_BE_1c1:
+      - BE_1c1
+      - disk.device.read.requests
+      memory.resident_BE_1c1:
+      - BE_1c1
+      - memory.resident
+      disk.allocation_BE_1c1:
+      - BE_1c1
+      - disk.allocation
+      disk.device.allocation_BE_1c1:
+      - BE_1c1
+      - disk.device.allocation
+      disk.device.write.requests.rate_BE_1c1:
+      - BE_1c1
+      - disk.device.write.requests.rate
+      instance_BE_1c1:
+      - BE_1c1
+      - instance
+      disk.read.bytes.rate_BE_1c1:
+      - BE_1c1
+      - disk.read.bytes.rate
+      disk.device.iops_BE_1c1:
+      - BE_1c1
+      - disk.device.iops
+      disk.root.size_BE_1c1:
+      - BE_1c1
+      - disk.root.size
+      network.incoming.bytes.rate_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - network.incoming.bytes.rate
+      cpu_BE_1c1:
+      - BE_1c1
+      - cpu
+      cpu.delta_BE_1c1:
+      - BE_1c1
+      - cpu.delta
+      disk.write.requests.rate_BE_1c1:
+      - BE_1c1
+      - disk.write.requests.rate
+      binding_BE_1c1:
+      - BE_1c1
+      - binding
+      feature_BE_1c1:
+      - BE_1c1
+      - feature
+      disk.write.bytes.rate_BE_1c1:
+      - BE_1c1
+      - disk.write.bytes.rate
+      disk.write.requests_BE_1c1:
+      - BE_1c1
+      - disk.write.requests
+      disk.device.read.bytes_BE_1c1:
+      - BE_1c1
+      - disk.device.read.bytes
+      feature_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - feature
+      disk.device.read.bytes.rate_BE_1c1:
+      - BE_1c1
+      - disk.device.read.bytes.rate
+      disk.device.capacity_BE_1c1:
+      - BE_1c1
+      - disk.device.capacity
+      network.outgoing.bytes_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - network.outgoing.bytes
+      disk.latency_BE_1c1:
+      - BE_1c1
+      - disk.latency
+      cpu_util_BE_1c1:
+      - BE_1c1
+      - cpu_util
+    requirements:
+      link_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - link
+      local_storage_BE_1c1:
+      - BE_1c1
+      - local_storage
+      dependency_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - dependency
+      dependency_BE_1c1:
+      - BE_1c1
+      - dependency

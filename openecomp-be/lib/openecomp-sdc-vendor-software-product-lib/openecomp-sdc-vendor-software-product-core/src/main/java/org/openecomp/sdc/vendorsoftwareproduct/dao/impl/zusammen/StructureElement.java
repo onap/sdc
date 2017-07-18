@@ -15,6 +15,10 @@ public enum StructureElement {
   Mibs,
   SNMP_TRAP,
   SNMP_POLL,
+  VES_EVENTS,
   Questionnaire,
   ComponentDependencies,
+  Computes,
+  Images,
+  DeploymentFlavors
 }

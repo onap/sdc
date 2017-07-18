@@ -1,0 +1,435 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_cmaui
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.cmaui:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_cmaui_port_6_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_cmaui_port_6_network_role_tag:
+      type: string
+      required: true
+    port_cmaui_port_5_order:
+      type: integer
+      required: true
+    port_cmaui_port_5_subnetpoolid:
+      type: string
+      required: true
+    port_cmaui_port_6_subnetpoolid:
+      type: string
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    compute_cmaui_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_cmaui_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_image_name:
+      type: string
+      required: true
+    port_cmaui_port_6_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cmaui_port_6_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_cmaui_port_6_order:
+      type: integer
+      required: true
+    port_cmaui_port_5_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_cmaui_port_5_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_cmaui_port_6_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_cmaui_port_5_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_cmaui_port_6_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_cmaui_port_5_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_cmaui_port_5_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cmaui_port_6_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cmaui_port_5_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_cmaui_port_5_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_cmaui_port_5_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_cmaui_port_6_network_role:
+      type: string
+      required: true
+    port_cmaui_port_5_network_role:
+      type: string
+      required: true
+    port_cmaui_port_6_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_cmaui_port_5_network_role_tag:
+      type: string
+      required: true
+    port_cmaui_port_6_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+  node_templates:
+    cmaui_cmaui_port_5:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy:
+          get_input:
+          - port_cmaui_port_5_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_cmaui_port_5_mac_requirements
+        order:
+          get_input: port_cmaui_port_5_order
+        security_groups:
+          get_input:
+          - port_cmaui_port_5_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_cmaui_port_5_exCP_naming
+        vlan_requirements:
+          get_input: port_cmaui_port_5_vlan_requirements
+        ip_requirements:
+          get_input: port_cmaui_port_5_ip_requirements
+        network_role_tag:
+          get_input: port_cmaui_port_5_network_role_tag
+        network_role:
+          get_input: port_cmaui_port_5_network_role
+        fixed_ips:
+          get_input: port_cmaui_port_5_fixed_ips
+        subnetpoolid:
+          get_input: port_cmaui_port_5_subnetpoolid
+        network:
+          get_input:
+          - port_cmaui_port_5_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cmaui
+          relationship: tosca.relationships.network.BindsTo
+    cmaui_cmaui_port_6:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy:
+          get_input:
+          - port_cmaui_port_6_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_cmaui_port_6_mac_requirements
+        order:
+          get_input: port_cmaui_port_6_order
+        security_groups:
+          get_input:
+          - port_cmaui_port_6_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_cmaui_port_6_exCP_naming
+        vlan_requirements:
+          get_input: port_cmaui_port_6_vlan_requirements
+        ip_requirements:
+          get_input: port_cmaui_port_6_ip_requirements
+        network_role_tag:
+          get_input: port_cmaui_port_6_network_role_tag
+        network_role:
+          get_input: port_cmaui_port_6_network_role
+        fixed_ips:
+          get_input: port_cmaui_port_6_fixed_ips
+        subnetpoolid:
+          get_input: port_cmaui_port_6_subnetpoolid
+        network:
+          get_input:
+          - port_cmaui_port_6_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cmaui
+          relationship: tosca.relationships.network.BindsTo
+    cmaui:
+      type: org.openecomp.resource.vfc.nodes.heat.cmaui
+      properties:
+        availability_zone:
+          get_input:
+          - compute_cmaui_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_cmaui_name
+          - index_value
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.cmaui
+    capabilities:
+      disk.read.bytes.rate_cmaui:
+      - cmaui
+      - disk.read.bytes.rate
+      disk.ephemeral.size_cmaui:
+      - cmaui
+      - disk.ephemeral.size
+      disk.device.write.bytes_cmaui:
+      - cmaui
+      - disk.device.write.bytes
+      disk.device.iops_cmaui:
+      - cmaui
+      - disk.device.iops
+      memory.resident_cmaui:
+      - cmaui
+      - memory.resident
+      disk.write.bytes.rate_cmaui:
+      - cmaui
+      - disk.write.bytes.rate
+      network.incoming.bytes_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - network.incoming.bytes
+      host_cmaui:
+      - cmaui
+      - host
+      disk.device.allocation_cmaui:
+      - cmaui
+      - disk.device.allocation
+      network.incoming.bytes_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - network.incoming.bytes
+      disk.read.bytes_cmaui:
+      - cmaui
+      - disk.read.bytes
+      disk.write.requests_cmaui:
+      - cmaui
+      - disk.write.requests
+      scalable_cmaui:
+      - cmaui
+      - scalable
+      feature_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - feature
+      binding_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - binding
+      feature_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - feature
+      disk.device.write.bytes.rate_cmaui:
+      - cmaui
+      - disk.device.write.bytes.rate
+      binding_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - binding
+      cpu.delta_cmaui:
+      - cmaui
+      - cpu.delta
+      disk.root.size_cmaui:
+      - cmaui
+      - disk.root.size
+      memory.usage_cmaui:
+      - cmaui
+      - memory.usage
+      os_cmaui:
+      - cmaui
+      - os
+      disk.device.read.bytes.rate_cmaui:
+      - cmaui
+      - disk.device.read.bytes.rate
+      attachment_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - attachment
+      network.incoming.packets_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - network.incoming.packets
+      network.incoming.packets_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - network.incoming.packets
+      attachment_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - attachment
+      network.incoming.packets.rate_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - network.incoming.packets.rate
+      disk.device.usage_cmaui:
+      - cmaui
+      - disk.device.usage
+      network.incoming.packets.rate_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - network.incoming.packets.rate
+      disk.iops_cmaui:
+      - cmaui
+      - disk.iops
+      disk.device.latency_cmaui:
+      - cmaui
+      - disk.device.latency
+      disk.device.read.requests_cmaui:
+      - cmaui
+      - disk.device.read.requests
+      disk.capacity_cmaui:
+      - cmaui
+      - disk.capacity
+      network.outgoing.packets.rate_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - network.outgoing.packets.rate
+      cpu_cmaui:
+      - cmaui
+      - cpu
+      disk.read.requests_cmaui:
+      - cmaui
+      - disk.read.requests
+      network.incoming.bytes.rate_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - network.incoming.bytes.rate
+      disk.device.read.bytes_cmaui:
+      - cmaui
+      - disk.device.read.bytes
+      disk.device.write.requests_cmaui:
+      - cmaui
+      - disk.device.write.requests
+      network.incoming.bytes.rate_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - network.incoming.bytes.rate
+      network.outpoing.packets_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - network.outpoing.packets
+      network.outpoing.packets_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - network.outpoing.packets
+      network.outgoing.bytes.rate_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - network.outgoing.bytes.rate
+      vcpus_cmaui:
+      - cmaui
+      - vcpus
+      feature_cmaui:
+      - cmaui
+      - feature
+      binding_cmaui:
+      - cmaui
+      - binding
+      endpoint_cmaui:
+      - cmaui
+      - endpoint
+      disk.device.capacity_cmaui:
+      - cmaui
+      - disk.device.capacity
+      disk.device.read.requests.rate_cmaui:
+      - cmaui
+      - disk.device.read.requests.rate
+      memory_cmaui:
+      - cmaui
+      - memory
+      disk.write.requests.rate_cmaui:
+      - cmaui
+      - disk.write.requests.rate
+      network.outgoing.bytes_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - network.outgoing.bytes
+      disk.usage_cmaui:
+      - cmaui
+      - disk.usage
+      network.outgoing.bytes_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - network.outgoing.bytes
+      disk.latency_cmaui:
+      - cmaui
+      - disk.latency
+      instance_cmaui:
+      - cmaui
+      - instance
+      disk.allocation_cmaui:
+      - cmaui
+      - disk.allocation
+      disk.write.bytes_cmaui:
+      - cmaui
+      - disk.write.bytes
+      cpu_util_cmaui:
+      - cmaui
+      - cpu_util
+      disk.device.write.requests.rate_cmaui:
+      - cmaui
+      - disk.device.write.requests.rate
+    requirements:
+      dependency_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - dependency
+      dependency_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - dependency
+      link_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - link
+      link_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - link
+      dependency_cmaui:
+      - cmaui
+      - dependency
+      local_storage_cmaui:
+      - cmaui
+      - local_storage

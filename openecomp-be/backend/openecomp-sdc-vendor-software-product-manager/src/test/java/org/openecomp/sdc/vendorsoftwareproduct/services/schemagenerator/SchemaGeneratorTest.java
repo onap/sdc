@@ -252,12 +252,16 @@ public class SchemaGeneratorTest {
   }
 
   @Test
-  public void testGenerateNicCompositionManual() {
+  public void testGenerateNicCompositionManual() {Nic nic = new Nic();
+    nic.setName("upload nic1 name");
+    nic.setDescription("upload nic1 desc");
+    nic.setNetworkType(NetworkType.Internal);
     NicCompositionSchemaInput input = new NicCompositionSchemaInput();
+
     input.setManual(true);
     input.setNetworkIds(
         Arrays.asList("manual networkId1", "manual networkId2", "manual networkId3"));
-
+    input.setNic(nic);
     String schema = SchemaGenerator
         .generate(SchemaTemplateContext.composition, CompositionEntityType.nic, input);
     validateSchema(schema);

@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct;
 
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
@@ -30,6 +31,7 @@ import org.openecomp.sdc.versioning.types.VersionInfo;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 public interface  VendorSoftwareProductManager {
@@ -73,6 +75,7 @@ public interface  VendorSoftwareProductManager {
 
   File getInformationArtifact(String vspId, Version version, String user);
 
-
   String fetchValidationVsp(String user);
+
+  Collection<ComputeEntity> getComputeByVsp(String vspId, Version version, String user);
 }

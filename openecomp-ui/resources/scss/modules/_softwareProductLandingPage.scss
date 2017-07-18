@@ -3,11 +3,11 @@
   padding-right: 30px;
   padding-bottom: 10px;
   .title {
-    @extend .body-1-medium;
+    @extend .body-1-semibold;
   }
   .file-name {
     padding-left: 5px;
-    @extend .body-1-medium;
+    @extend .body-1-semibold;
   }
 }
 
@@ -28,7 +28,7 @@
     .missing-license {
       display: flex;
       align-items: baseline;
-      .svg-icon.exclamation-triangle-full {
+      .svg-icon-wrapper.exclamationTriangleFull .svg-icon{
         fill: $orange;
       }
       .warning-text {
@@ -46,7 +46,7 @@
     }
   }
   .name {
-    @extend .body-1-medium;
+    @extend .body-1-semibold;
   }
   .software-product-landing-view-right-side {
     @extend .flex;
@@ -76,7 +76,7 @@
           @extend  .flex-column;
           &.title-section {
             flex: 0.8;
-            @extend .heading-5-medium;
+            @extend .heading-5-semibold;
           }
           &.title-text {
             margin-bottom: 24px;
@@ -125,7 +125,7 @@
           }
         }
         .title {
-          @extend .body-1-medium;
+          @extend .body-1-semibold;
         }
         .software-product-landing-view-heading-title {
           @extend .section-title;
@@ -181,7 +181,7 @@
             }
             .drag-text {
               color: $blue;
-              font-weight: bolder;
+              @extend .body-1-semibold;
             }
             .or-text {
               margin-top: 10px;

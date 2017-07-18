@@ -14,20 +14,31 @@
  * permissions and limitations under the License.
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
+
 
 export const actionTypes = keyMirror({
-
-	SNMP_FILES_DATA_CHANGE: null,
-
-	SNMP_TRAP_UPLOADED: null,
-	SNMP_POLL_UPLOADED: null,
-
-	SNMP_TRAP_DELETED: null,
-	SNMP_POLL_DELETED: null
+	MONITOR_FILES_DATA_CHANGE: null,
+	MONITOR_UPLOADED: null,
+	MONITOR_DELETED: null
 });
 
-export default keyMirror({
-	SNMP_TRAP: null,
-	SNMP_POLL: null
-});
+export const fileTypes = {
+	SNMP_TRAP: 'SNMP_TRAP',
+	SNMP_POLL: 'SNMP_POLL',
+	VES_EVENT: 'VES_EVENTS'
+};
+
+export const type2Name = {
+	SNMP_TRAP: 'snmpTrap',
+	SNMP_POLL: 'snmpPoll',
+	VES_EVENTS: 'vesEvent'
+};
+
+
+export const type2Title = {
+	SNMP_TRAP : i18n('SNMP Trap'),
+	SNMP_POLL : i18n('SNMP Poll'),
+	VES_EVENTS: i18n('VES')
+};
 

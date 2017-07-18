@@ -17,6 +17,24 @@ import {actionTypes, forms} from './SoftwareProductComponentsConstants.js';
 
 export default (state = {}, action) => {
 	switch (action.type) {
+		case actionTypes.COMPONENT_CREATE_OPEN: 
+			return {
+				...state,
+				formName: forms.CREATE_FORM,
+				formReady: null,
+				genericFieldInfo: {
+					'displayName' : {
+						isValid: true,
+						errorText: '',
+						validations: [{type: 'required', data: true}, {type: 'validateName', data: true}, {type: 'maxLength', data: 25}]
+					},
+					'description' : {
+						isValid: true,
+						errorText: '',
+						validations: [{type: 'maxLength', data: 1000}]
+					}
+				}
+			};
 		case actionTypes.COMPONENT_LOAD:
 			return {
 				...state,
@@ -34,6 +52,11 @@ export default (state = {}, action) => {
 						errorText: '',
 						validations: []
 					},
+					'nfcFunction' : {
+						isValid: true,
+						errorText: '',
+						validations: [{type: 'maxLength', data: 30}]
+					},
 					'description' : {
 						isValid: true,
 						errorText: '',
@@ -41,6 +64,27 @@ export default (state = {}, action) => {
 					}
 				}
 			};
+		case actionTypes.COMPONENT_UPDATE:
+			return {
+				...state,
+				data: action.component
+			};
+		case actionTypes.COMPONENT_QUESTIONNAIRE_UPDATE:
+			return {
+				...state,
+				qdata: action.payload.qdata || state.qdata,
+				qschema: action.payload.qschema || state.qschema
+			};
+		case actionTypes.COMPONENT_DATA_CHANGED:
+			return {
+				...state,
+				data: {
+					...state.data,
+					...action.deltaData
+				}
+			};
+		case actionTypes.COMPONENT_DATA_CLEAR:
+			return {};
 		default:
 			return state;
 	}

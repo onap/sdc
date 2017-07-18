@@ -3,14 +3,10 @@ package org.openecomp.core.zusammen.impl;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
+import com.amdocs.zusammen.commons.health.data.HealthInfo;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
-import com.amdocs.zusammen.datatypes.item.Action;
-import com.amdocs.zusammen.datatypes.item.ElementContext;
-import com.amdocs.zusammen.datatypes.item.Info;
-import com.amdocs.zusammen.datatypes.item.Item;
-import com.amdocs.zusammen.datatypes.item.ItemVersion;
-import com.amdocs.zusammen.datatypes.item.ItemVersionData;
+import com.amdocs.zusammen.datatypes.item.*;
 import com.amdocs.zusammen.datatypes.itemversion.Tag;
 import com.amdocs.zusammen.datatypes.response.Response;
 import com.amdocs.zusammen.datatypes.response.ReturnCode;
@@ -219,10 +215,20 @@ public class ZusammenAdaptorImpl implements ZusammenAdaptor {
     connector.updateItem(context, itemId, info);
   }
 
+
+  @Override
+  public Collection<HealthInfo> checkHealth(SessionContext context) {
+    return connector.checkHealth(context);
+  }
+
   private static void sortItemVersionListByModificationTimeDescOrder(
       List<ItemVersion> itemVersions) {
     itemVersions.sort((o1, o2) -> ((Integer)o2.getId().getValue().length())
         .compareTo( (o1.getId().getValue().length())));
   }
 
+  @Override
+  public String getVersion(SessionContext sessionContext) {
+    return connector.getVersion(sessionContext);
+  }
 }

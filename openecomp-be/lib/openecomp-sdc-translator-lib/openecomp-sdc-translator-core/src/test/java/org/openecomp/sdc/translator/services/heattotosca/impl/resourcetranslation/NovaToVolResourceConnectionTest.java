@@ -62,7 +62,7 @@ public class NovaToVolResourceConnectionTest extends BaseResourceTranslationTest
         "/mock/services/heattotosca/novatovolumeconnection/nestednotconnected/expectedoutputfiles";
     initTranslatorAndTranslate();
     testTranslation();
-    validateSubsMappingInConsolidationData();
+    validateNodeTemplateIdInNestedConsolidationData();
   }
 
   @Test
@@ -73,7 +73,7 @@ public class NovaToVolResourceConnectionTest extends BaseResourceTranslationTest
         "/mock/services/heattotosca/novatovolumeconnection/nestedconnection/expectedoutputfiles";
     initTranslatorAndTranslate();
     testTranslation();
-    validateSubsMappingInConsolidationData();
+    validateNodeTemplateIdInNestedConsolidationData();
   }
 
   @Test
@@ -84,7 +84,7 @@ public class NovaToVolResourceConnectionTest extends BaseResourceTranslationTest
         "/mock/services/heattotosca/novatovolumeconnection/sharednestedconnection/expectedoutputfiles";
     initTranslatorAndTranslate();
     testTranslation();
-    validateSubsMappingInConsolidationData();
+    validateNodeTemplateIdInNestedConsolidationData();
   }
 
   @Test
@@ -96,7 +96,7 @@ public class NovaToVolResourceConnectionTest extends BaseResourceTranslationTest
         "/mock/services/heattotosca/novatovolumeconnection/sharednestednotconnected/expectedoutputfiles";
     initTranslatorAndTranslate();
     testTranslation();
-    validateSubsMappingInConsolidationData();
+    validateNodeTemplateIdInNestedConsolidationData();
   }
 
   @Test
@@ -107,7 +107,7 @@ public class NovaToVolResourceConnectionTest extends BaseResourceTranslationTest
         "/mock/services/heattotosca/novatovolumeconnection/innernestedconnection/expectedoutputfiles";
     initTranslatorAndTranslate();
     testTranslation();
-    validateSubsMappingInConsolidationData();
+    validateNodeTemplateIdInNestedConsolidationData();
   }
 
   @Test
@@ -118,7 +118,7 @@ public class NovaToVolResourceConnectionTest extends BaseResourceTranslationTest
         "/mock/services/heattotosca/novatovolumeconnection/nestedMultiLevels/expectedoutputfiles";
     initTranslatorAndTranslate();
     testTranslation();
-    validateSubsMappingInConsolidationData();
+    validateNodeTemplateIdInNestedConsolidationData();
   }
 
   @Test
@@ -129,7 +129,7 @@ public class NovaToVolResourceConnectionTest extends BaseResourceTranslationTest
         "/mock/services/heattotosca/novatovolumeconnection/sharedNestedMultiLevels/expectedoutputfiles";
     initTranslatorAndTranslate();
     testTranslation();
-    validateSubsMappingInConsolidationData();
+    validateNodeTemplateIdInNestedConsolidationData();
   }
 
   @Test
@@ -141,7 +141,7 @@ public class NovaToVolResourceConnectionTest extends BaseResourceTranslationTest
         "/mock/services/heattotosca/novatovolumeconnection/innerHeatVolNestedMultiLevel/expectedoutputfiles";
     initTranslatorAndTranslate();
     testTranslation();
-    validateSubsMappingInConsolidationData();
+    validateNodeTemplateIdInNestedConsolidationData();
   }
 
 

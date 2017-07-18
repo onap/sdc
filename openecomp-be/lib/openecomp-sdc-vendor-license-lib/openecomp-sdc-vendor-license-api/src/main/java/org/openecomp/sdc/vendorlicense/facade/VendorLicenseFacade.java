@@ -27,6 +27,7 @@ import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementModel;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.vendorlicense.types.VersionedVendorLicenseModel;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -86,4 +87,11 @@ public interface VendorLicenseFacade {
                              String user);
 
   void updateVlmLastModificationTime(String vendorLicenseModelId, Version version);
+
+  LimitEntity createLimit(LimitEntity limit, String user);
+
+  Collection<LimitEntity> listLimits(String vlmId, Version version, String epLkgId
+                                               ,String user);
+
+  void updateLimit(LimitEntity limit, String user);
 }

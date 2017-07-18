@@ -51,12 +51,12 @@ class FeatureGroupListEditorView extends React.Component {
 	};
 
 	render() {
-		let {vendorName, licenseModelId, featureGroupsModal, isReadOnlyMode, onAddFeatureGroupClick, version} = this.props;
+		let {licenseModelId, featureGroupsModal, isReadOnlyMode, onAddFeatureGroupClick, version} = this.props;
 		const {localFilter} = this.state;
 		return (
 			<div className='feature-groups-list-editor'>
 				<ListEditorView
-					title={i18n('Feature Groups', {vendorName})}
+					title={i18n('Feature Groups')}
 					plusButtonTitle={i18n('Add Feature Group')}
 					filterValue={localFilter}
 					onFilter={value => this.setState({localFilter: value})}
@@ -146,7 +146,7 @@ export default FeatureGroupListEditorView;
 
 export function generateConfirmationMsg(featureGroupToDelete) {
 	let name = featureGroupToDelete ? featureGroupToDelete.name : '';
-	let msg = i18n('Are you sure you want to delete "{name}"?', {name});
+	let msg = i18n(`Are you sure you want to delete "${name}"?`);
 	let subMsg = featureGroupToDelete.referencingLicenseAgreements
 	&& featureGroupToDelete.referencingLicenseAgreements.length > 0 ?
 		i18n('This feature group is associated with one ore more license agreements') :

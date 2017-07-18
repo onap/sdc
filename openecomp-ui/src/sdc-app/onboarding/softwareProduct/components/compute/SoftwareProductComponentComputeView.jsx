@@ -15,9 +15,9 @@
  */
 import React from 'react';
 import Form from 'nfvo-components/input/validation/Form.jsx';
-import VmSizing from './computeComponents/VmSizing.jsx';
 import NumberOfVms from './computeComponents/NumberOfVms.jsx';
 import GuestOs from './computeComponents/GuestOs.jsx';
+import ComputeFlavors from './computeComponents/ComputeFlavors.js';
 import Validator from 'nfvo-utils/Validator.js';
 
 class SoftwareProductComponentComputeView extends React.Component {
@@ -26,13 +26,15 @@ class SoftwareProductComponentComputeView extends React.Component {
 		dataMap: React.PropTypes.object,
 		qgenericFieldInfo: React.PropTypes.object,
 		isReadOnlyMode: React.PropTypes.bool,
+		isManual: React.PropTypes.bool,
 		onQDataChanged: React.PropTypes.func.isRequired,
 		qValidateData: React.PropTypes.func.isRequired,
 		onSubmit: React.PropTypes.func.isRequired
 	};
 
 	render() {
-		let {qdata, dataMap, qgenericFieldInfo, isReadOnlyMode, onQDataChanged, qValidateData, onSubmit} = this.props;
+		let {softwareProductId, componentId, version, qdata, dataMap, qgenericFieldInfo, isReadOnlyMode, onQDataChanged, qValidateData,
+			onSubmit, computeFlavorsList, isManual} = this.props;
 
 		return (
 			<div className='vsp-component-questionnaire-view'>
@@ -44,11 +46,12 @@ class SoftwareProductComponentComputeView extends React.Component {
 					onSubmit={() => onSubmit({qdata})}
 					className='component-questionnaire-validation-form'
 					isReadOnlyMode={isReadOnlyMode} >
-					<VmSizing onQDataChanged={onQDataChanged} dataMap={dataMap} qgenericFieldInfo={qgenericFieldInfo} />
 					<NumberOfVms onQDataChanged={onQDataChanged} dataMap={dataMap}
 						 qgenericFieldInfo={qgenericFieldInfo} qValidateData={qValidateData}
 						 customValidations={{'compute/numOfVMs/maximum' : this.validateMax, 'compute/numOfVMs/minimum': this.validateMin}} />
 					<GuestOs onQDataChanged={onQDataChanged} dataMap={dataMap} qgenericFieldInfo={qgenericFieldInfo} />
+					<ComputeFlavors computeFlavorsList={computeFlavorsList} softwareProductId={softwareProductId} componentId={componentId}
+						version={version} isReadOnlyMode={isReadOnlyMode} isManual={isManual}/>
 				</Form> }
 			</div>
 		);
@@ -60,12 +63,24 @@ class SoftwareProductComponentComputeView extends React.Component {
 
 	validateMin(value, state) {
 		let maxVal = state.dataMap['compute/numOfVMs/maximum'];
-		return Validator.validateItem(value,maxVal,'maximum');
+		// we are allowed to have an empty maxval, that will allow all minvals.
+		// if we do not have a minval than there is no point to check it either.
+		if (value === undefined || maxVal === undefined) {
+			return { isValid: true, errorText: '' };
+		} else {
+			return Validator.validateItem(value, maxVal,'maximum');
+		}
 	}
 
 	validateMax(value, state) {
 		let minVal = state.dataMap['compute/numOfVMs/minimum'];
-		return Validator.validateItem(value,minVal,'minimum');
+		if (minVal === undefined ) {
+			// having no minimum is the same as 0, maximum value doesn't need to be checked
+			// against it.
+			return { isValid: true, errorText: '' };
+		} else {
+			return Validator.validateItem(value,minVal,'minimum');
+		}
 	}
 }
 

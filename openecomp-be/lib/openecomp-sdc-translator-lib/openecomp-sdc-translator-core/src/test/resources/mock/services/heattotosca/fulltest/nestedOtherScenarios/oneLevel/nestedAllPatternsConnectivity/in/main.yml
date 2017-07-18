@@ -1,0 +1,47 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  jsa_name:
+    type: string
+    description: network name of jsa log network
+
+resources:
+  test_nested_all_patterns:
+    type: nested1.yml
+    #depends_on:
+     # - test_nested_no_compute
+     # - test_nested_pattern_4
+    properties:
+      p1: {get_attr: [test_nested_pattern_4, pattern4_attr_1]}
+      p2: {get_attr: [test_nested_no_compute, no_compute_attr_1]}
+
+  test_nested_pattern_4:
+    type: nested-pattern-4.yml
+    depends_on:
+      - test_nested_all_patterns
+      #- test_nested_no_compute
+    properties:
+      #p1: {get_attr: [test_nested_pattern_4, all_pattern_attr_1]}
+      p2: {get_attr: [test_nested_no_compute, no_compute_attr_1]}
+
+  test_nested_no_compute:
+    type: nested-no-compute.yml
+    depends_on:
+      - test_nested_all_patterns
+      - test_nested_pattern_4
+    properties:
+      p1: {get_attr: [test_nested_pattern_4, pattern4_attr_1]}
+      #p2: {get_attr: [test_nested_no_compute, all_pattern_attr_1]}
+
+  dependsOn_network:
+    type: OS::Neutron::Net
+    depends_on:
+      - test_nested_all_patterns
+      - test_nested_no_compute
+      - test_nested_pattern_4
+    properties:
+      name:
+        get_param: jsa_name

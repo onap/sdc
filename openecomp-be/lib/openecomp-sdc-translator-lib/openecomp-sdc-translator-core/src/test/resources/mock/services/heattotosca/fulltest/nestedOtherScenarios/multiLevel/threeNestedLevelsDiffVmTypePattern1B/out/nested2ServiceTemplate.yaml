@@ -1,0 +1,847 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested2
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    p2:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    cmaui_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+    cmaui_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    oam_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    cmaui_oam_ips:
+      hidden: false
+      immutable: false
+      type: string
+    net:
+      hidden: false
+      immutable: false
+      type: string
+  node_templates:
+    abstract_oam_1:
+      type: org.openecomp.resource.abstract.nodes.oam_1
+      directives:
+      - substitutable
+      properties:
+        port_oam01_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_oam01_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_oam01_port_security_groups:
+        - - get_input: p2
+          - get_input: p1
+        port_oam01_port_network:
+        - get_input: net
+        port_oam01_port_replacement_policy:
+        - AUTO
+        vm_flavor_name:
+          get_input: cmaui_flavor
+        vm_image_name:
+          get_input: cmaui_image
+        port_oam01_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        compute_oam_availability_zone:
+        - get_input: availability_zone_0
+        compute_oam_name:
+        - get_input:
+          - oam_names
+          - 0
+        service_template_filter:
+          substitute_service_template: Nested_oam_1ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    abstract_oam:
+      type: org.openecomp.resource.abstract.nodes.oam
+      directives:
+      - substitutable
+      properties:
+        port_oam02_port_network:
+        - get_input: net
+        port_oam02_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_oam02_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        vm_flavor_name:
+          get_input: cmaui_flavor
+        port_oam02_port_security_groups:
+        - - get_input: p1
+        port_oam02_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: cmaui_image
+        port_oam02_port_replacement_policy:
+        - AUTO
+        compute_oam_availability_zone:
+        - get_input: availability_zone_0
+        compute_oam_name:
+        - get_input:
+          - oam_names
+          - 0
+        service_template_filter:
+          substitute_service_template: Nested_oamServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    test_nested3Level:
+      type: org.openecomp.resource.abstract.nodes.heat.nested3
+      directives:
+      - substitutable
+      properties:
+        p1:
+          get_input: p1
+        service_template_filter:
+          substitute_service_template: nested3ServiceTemplate.yaml
+  groups:
+    nested2_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested2.yml
+        description: nested2
+      members:
+      - test_nested3Level
+      - abstract_oam
+      - abstract_oam_1
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested2
+    capabilities:
+      network.incoming.packets.rate_oam02_port_2:
+      - abstract_oam
+      - network.incoming.packets.rate_oam_oam02_port
+      disk.latency_server_oam_2:
+      - abstract_oam
+      - disk.latency_oam
+      disk.device.write.requests.rate_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.device.write.requests.rate_server_ps_1
+      memory.resident_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - memory.resident_server_ps_2
+      disk.latency_server_oam_1:
+      - abstract_oam_1
+      - disk.latency_oam
+      network.incoming.bytes_oam02_port_2:
+      - abstract_oam
+      - network.incoming.bytes_oam_oam02_port
+      endpoint_server_oam_1:
+      - abstract_oam_1
+      - endpoint_oam
+      endpoint_server_oam_2:
+      - abstract_oam
+      - endpoint_oam
+      binding_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - binding_pd01_port_1
+      disk.device.write.requests.rate_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.device.write.requests.rate_server_ps_2
+      memory.resident_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - memory.resident_server_ps_1
+      cpu.delta_server_oam_2:
+      - abstract_oam
+      - cpu.delta_oam
+      disk.device.read.bytes_server_oam_1:
+      - abstract_oam_1
+      - disk.device.read.bytes_oam
+      disk.device.read.bytes_server_oam_2:
+      - abstract_oam
+      - disk.device.read.bytes_oam
+      cpu.delta_server_oam_1:
+      - abstract_oam_1
+      - cpu.delta_oam
+      attachment_oam01_port_1:
+      - abstract_oam_1
+      - attachment_oam_oam01_port
+      disk.write.bytes_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.write.bytes_server_ps_1
+      disk.write.requests_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.write.requests_server_ps_2
+      scalable_server_oam_2:
+      - abstract_oam
+      - scalable_oam
+      scalable_server_oam_1:
+      - abstract_oam_1
+      - scalable_oam
+      disk.device.write.bytes_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.device.write.bytes_server_ps_1
+      disk.write.requests_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.write.requests_server_ps_1
+      network.outgoing.bytes_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - network.outgoing.bytes_pd02_port_2
+      disk.write.bytes_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.write.bytes_server_ps_2
+      disk.read.bytes.rate_server_oam_2:
+      - abstract_oam
+      - disk.read.bytes.rate_oam
+      disk.read.bytes.rate_server_oam_1:
+      - abstract_oam_1
+      - disk.read.bytes.rate_oam
+      disk.capacity_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.capacity_server_ps_1
+      disk.device.write.requests_server_oam_1:
+      - abstract_oam_1
+      - disk.device.write.requests_oam
+      disk.device.write.requests_server_oam_2:
+      - abstract_oam
+      - disk.device.write.requests_oam
+      network.incoming.packets.rate_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - network.incoming.packets.rate_pd02_port_2
+      disk.device.write.bytes_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.device.write.bytes_server_ps_2
+      disk.device.write.bytes_server_oam_2:
+      - abstract_oam
+      - disk.device.write.bytes_oam
+      disk.usage_server_oam_1:
+      - abstract_oam_1
+      - disk.usage_oam
+      disk.capacity_server_oam_2:
+      - abstract_oam
+      - disk.capacity_oam
+      disk.usage_server_oam_2:
+      - abstract_oam
+      - disk.usage_oam
+      disk.device.write.bytes_server_oam_1:
+      - abstract_oam_1
+      - disk.device.write.bytes_oam
+      disk.capacity_server_oam_1:
+      - abstract_oam_1
+      - disk.capacity_oam
+      network.incoming.packets_oam01_port_1:
+      - abstract_oam_1
+      - network.incoming.packets_oam_oam01_port
+      disk.device.read.requests.rate_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.device.read.requests.rate_server_ps_1
+      disk.latency_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.latency_server_ps_1
+      endpoint_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - endpoint_server_ps_1
+      disk.capacity_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.capacity_server_ps_2
+      network.outgoing.bytes.rate_oam01_port_1:
+      - abstract_oam_1
+      - network.outgoing.bytes.rate_oam_oam01_port
+      disk.iops_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.iops_server_ps_2
+      disk.device.capacity_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.device.capacity_server_ps_2
+      disk.device.usage_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.device.usage_server_ps_1
+      cpu.delta_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - cpu.delta_server_ps_2
+      host_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - host_server_ps_2
+      disk.device.read.bytes_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.device.read.bytes_server_ps_2
+      feature_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - feature_server_ps_1
+      disk.write.requests.rate_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.write.requests.rate_server_ps_1
+      network.outpoing.packets_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - network.outpoing.packets_pd01_port_1
+      disk.device.allocation_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.device.allocation_server_ps_1
+      network.outgoing.bytes.rate_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - network.outgoing.bytes.rate_pd02_port_2
+      disk.allocation_server_oam_2:
+      - abstract_oam
+      - disk.allocation_oam
+      memory.resident_server_oam_2:
+      - abstract_oam
+      - memory.resident_oam
+      memory.resident_server_oam_1:
+      - abstract_oam_1
+      - memory.resident_oam
+      network.outgoing.packets.rate_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - network.outgoing.packets.rate_pd01_port_1
+      memory.usage_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - memory.usage_server_ps_2
+      disk.read.bytes.rate_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.read.bytes.rate_server_ps_1
+      disk.device.read.requests.rate_server_oam_1:
+      - abstract_oam_1
+      - disk.device.read.requests.rate_oam
+      disk.allocation_server_oam_1:
+      - abstract_oam_1
+      - disk.allocation_oam
+      memory_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - memory_server_ps_2
+      disk.device.read.requests.rate_server_oam_2:
+      - abstract_oam
+      - disk.device.read.requests.rate_oam
+      vcpus_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - vcpus_server_ps_1
+      disk.write.requests.rate_server_oam_2:
+      - abstract_oam
+      - disk.write.requests.rate_oam
+      disk.write.requests.rate_server_oam_1:
+      - abstract_oam_1
+      - disk.write.requests.rate_oam
+      network.incoming.bytes_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - network.incoming.bytes_pd01_port_1
+      memory_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - memory_server_ps_1
+      network.outpoing.packets_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - network.outpoing.packets_pd02_port_2
+      network.outgoing.bytes.rate_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - network.outgoing.bytes.rate_pd01_port_1
+      disk.write.bytes_server_oam_2:
+      - abstract_oam
+      - disk.write.bytes_oam
+      disk.write.bytes_server_oam_1:
+      - abstract_oam_1
+      - disk.write.bytes_oam
+      disk.allocation_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.allocation_server_ps_2
+      binding_oam02_port_2:
+      - abstract_oam
+      - binding_oam_oam02_port
+      binding_server_oam_1:
+      - abstract_oam_1
+      - binding_oam
+      binding_server_oam_2:
+      - abstract_oam
+      - binding_oam
+      endpoint_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - endpoint_server_ps_2
+      network.outgoing.bytes_oam02_port_2:
+      - abstract_oam
+      - network.outgoing.bytes_oam_oam02_port
+      network.outpoing.packets_oam01_port_1:
+      - abstract_oam_1
+      - network.outpoing.packets_oam_oam01_port
+      disk.device.read.bytes.rate_server_oam_1:
+      - abstract_oam_1
+      - disk.device.read.bytes.rate_oam
+      disk.device.read.bytes.rate_server_oam_2:
+      - abstract_oam
+      - disk.device.read.bytes.rate_oam
+      os_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - os_server_ps_1
+      disk.ephemeral.size_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.ephemeral.size_server_ps_1
+      network.incoming.bytes.rate_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - network.incoming.bytes.rate_pd01_port_1
+      instance_server_oam_1:
+      - abstract_oam_1
+      - instance_oam
+      disk.usage_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.usage_server_ps_1
+      instance_server_oam_2:
+      - abstract_oam
+      - instance_oam
+      network.incoming.packets_oam02_port_2:
+      - abstract_oam
+      - network.incoming.packets_oam_oam02_port
+      disk.read.bytes_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.read.bytes_server_ps_2
+      disk.root.size_server_oam_1:
+      - abstract_oam_1
+      - disk.root.size_oam
+      disk.root.size_server_oam_2:
+      - abstract_oam
+      - disk.root.size_oam
+      cpu.delta_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - cpu.delta_server_ps_1
+      disk.iops_server_oam_2:
+      - abstract_oam
+      - disk.iops_oam
+      disk.iops_server_oam_1:
+      - abstract_oam_1
+      - disk.iops_oam
+      disk.write.bytes.rate_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.write.bytes.rate_server_ps_1
+      host_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - host_server_ps_1
+      attachment_oam02_port_2:
+      - abstract_oam
+      - attachment_oam_oam02_port
+      disk.device.iops_server_oam_2:
+      - abstract_oam
+      - disk.device.iops_oam
+      disk.device.iops_server_oam_1:
+      - abstract_oam_1
+      - disk.device.iops_oam
+      scalable_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - scalable_server_ps_2
+      disk.root.size_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.root.size_server_ps_2
+      host_server_oam_2:
+      - abstract_oam
+      - host_oam
+      host_server_oam_1:
+      - abstract_oam_1
+      - host_oam
+      disk.device.capacity_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.device.capacity_server_ps_1
+      network.incoming.bytes.rate_oam02_port_2:
+      - abstract_oam
+      - network.incoming.bytes.rate_oam_oam02_port
+      disk.write.requests.rate_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.write.requests.rate_server_ps_2
+      disk.latency_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.latency_server_ps_2
+      network.incoming.packets.rate_oam01_port_1:
+      - abstract_oam_1
+      - network.incoming.packets.rate_oam_oam01_port
+      disk.device.latency_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.device.latency_server_ps_1
+      disk.ephemeral.size_server_oam_2:
+      - abstract_oam
+      - disk.ephemeral.size_oam
+      feature_server_oam_2:
+      - abstract_oam
+      - feature_oam
+      disk.ephemeral.size_server_oam_1:
+      - abstract_oam_1
+      - disk.ephemeral.size_oam
+      feature_server_oam_1:
+      - abstract_oam_1
+      - feature_oam
+      attachment_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - attachment_pd02_port_2
+      network.incoming.bytes_oam01_port_1:
+      - abstract_oam_1
+      - network.incoming.bytes_oam_oam01_port
+      cpu_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - cpu_server_ps_2
+      network.incoming.packets.rate_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - network.incoming.packets.rate_pd01_port_1
+      os_server_oam_1:
+      - abstract_oam_1
+      - os_oam
+      os_server_oam_2:
+      - abstract_oam
+      - os_oam
+      network.outgoing.packets.rate_oam02_port_2:
+      - abstract_oam
+      - network.outgoing.packets.rate_oam_oam02_port
+      disk.device.latency_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.device.latency_server_ps_2
+      feature_oam01_port_1:
+      - abstract_oam_1
+      - feature_oam_oam01_port
+      disk.device.allocation_server_oam_2:
+      - abstract_oam
+      - disk.device.allocation_oam
+      disk.device.allocation_server_oam_1:
+      - abstract_oam_1
+      - disk.device.allocation_oam
+      network.incoming.bytes_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - network.incoming.bytes_pd02_port_2
+      cpu_util_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - cpu_util_server_ps_2
+      network.incoming.bytes.rate_oam01_port_1:
+      - abstract_oam_1
+      - network.incoming.bytes.rate_oam_oam01_port
+      vcpus_server_oam_2:
+      - abstract_oam
+      - vcpus_oam
+      disk.write.requests_server_oam_1:
+      - abstract_oam_1
+      - disk.write.requests_oam
+      cpu_util_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - cpu_util_server_ps_1
+      disk.write.requests_server_oam_2:
+      - abstract_oam
+      - disk.write.requests_oam
+      disk.ephemeral.size_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.ephemeral.size_server_ps_2
+      disk.read.bytes_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.read.bytes_server_ps_1
+      disk.device.read.bytes.rate_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.device.read.bytes.rate_server_ps_2
+      os_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - os_server_ps_2
+      network.incoming.bytes.rate_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - network.incoming.bytes.rate_pd02_port_2
+      network.outgoing.bytes.rate_oam02_port_2:
+      - abstract_oam
+      - network.outgoing.bytes.rate_oam_oam02_port
+      vcpus_server_oam_1:
+      - abstract_oam_1
+      - vcpus_oam
+      network.incoming.packets_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - network.incoming.packets_pd02_port_2
+      disk.usage_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.usage_server_ps_2
+      disk.device.write.requests.rate_server_oam_2:
+      - abstract_oam
+      - disk.device.write.requests.rate_oam
+      disk.device.write.requests.rate_server_oam_1:
+      - abstract_oam_1
+      - disk.device.write.requests.rate_oam
+      cpu_server_oam_1:
+      - abstract_oam_1
+      - cpu_oam
+      cpu_server_oam_2:
+      - abstract_oam
+      - cpu_oam
+      binding_oam01_port_1:
+      - abstract_oam_1
+      - binding_oam_oam01_port
+      disk.device.write.requests_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.device.write.requests_server_ps_2
+      memory.usage_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - memory.usage_server_ps_1
+      disk.device.write.bytes.rate_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.device.write.bytes.rate_server_ps_1
+      cpu_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - cpu_server_ps_1
+      disk.write.bytes.rate_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.write.bytes.rate_server_ps_2
+      instance_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - instance_server_ps_1
+      disk.device.read.requests_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.device.read.requests_server_ps_2
+      feature_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - feature_server_ps_2
+      disk.device.read.requests_server_oam_1:
+      - abstract_oam_1
+      - disk.device.read.requests_oam
+      disk.read.requests_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.read.requests_server_ps_2
+      disk.root.size_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.root.size_server_ps_1
+      disk.read.requests_server_oam_2:
+      - abstract_oam
+      - disk.read.requests_oam
+      disk.device.read.requests_server_oam_2:
+      - abstract_oam
+      - disk.device.read.requests_oam
+      disk.read.requests_server_oam_1:
+      - abstract_oam_1
+      - disk.read.requests_oam
+      memory.usage_server_oam_1:
+      - abstract_oam_1
+      - memory.usage_oam
+      disk.device.iops_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.device.iops_server_ps_1
+      memory.usage_server_oam_2:
+      - abstract_oam
+      - memory.usage_oam
+      scalable_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - scalable_server_ps_1
+      network.outgoing.packets.rate_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - network.outgoing.packets.rate_pd02_port_2
+      disk.read.bytes_server_oam_2:
+      - abstract_oam
+      - disk.read.bytes_oam
+      disk.read.bytes_server_oam_1:
+      - abstract_oam_1
+      - disk.read.bytes_oam
+      network.outgoing.bytes_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - network.outgoing.bytes_pd01_port_1
+      binding_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - binding_server_ps_2
+      feature_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - feature_pd02_port_2
+      disk.device.write.bytes.rate_server_oam_1:
+      - abstract_oam_1
+      - disk.device.write.bytes.rate_oam
+      disk.device.iops_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.device.iops_server_ps_2
+      disk.write.bytes.rate_server_oam_1:
+      - abstract_oam_1
+      - disk.write.bytes.rate_oam
+      binding_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - binding_server_ps_1
+      disk.write.bytes.rate_server_oam_2:
+      - abstract_oam
+      - disk.write.bytes.rate_oam
+      attachment_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - attachment_pd01_port_1
+      disk.device.write.bytes.rate_server_oam_2:
+      - abstract_oam
+      - disk.device.write.bytes.rate_oam
+      memory_server_oam_1:
+      - abstract_oam_1
+      - memory_oam
+      memory_server_oam_2:
+      - abstract_oam
+      - memory_oam
+      disk.device.latency_server_oam_2:
+      - abstract_oam
+      - disk.device.latency_oam
+      disk.device.latency_server_oam_1:
+      - abstract_oam_1
+      - disk.device.latency_oam
+      disk.device.usage_server_oam_2:
+      - abstract_oam
+      - disk.device.usage_oam
+      disk.device.usage_server_oam_1:
+      - abstract_oam_1
+      - disk.device.usage_oam
+      disk.read.requests_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.read.requests_server_ps_1
+      disk.device.read.bytes.rate_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.device.read.bytes.rate_server_ps_1
+      disk.device.read.requests.rate_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.device.read.requests.rate_server_ps_2
+      disk.device.usage_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.device.usage_server_ps_2
+      feature_test_nested3Level:
+      - test_nested3Level
+      - feature
+      instance_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - instance_server_ps_2
+      disk.allocation_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.allocation_server_ps_1
+      disk.device.write.bytes.rate_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.device.write.bytes.rate_server_ps_2
+      disk.device.capacity_server_oam_2:
+      - abstract_oam
+      - disk.device.capacity_oam
+      network.outgoing.packets.rate_oam01_port_1:
+      - abstract_oam_1
+      - network.outgoing.packets.rate_oam_oam01_port
+      disk.device.read.requests_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.device.read.requests_server_ps_1
+      disk.read.bytes.rate_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.read.bytes.rate_server_ps_2
+      feature_oam02_port_2:
+      - abstract_oam
+      - feature_oam_oam02_port
+      network.outgoing.bytes_oam01_port_1:
+      - abstract_oam_1
+      - network.outgoing.bytes_oam_oam01_port
+      network.outpoing.packets_oam02_port_2:
+      - abstract_oam
+      - network.outpoing.packets_oam_oam02_port
+      network.incoming.packets_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - network.incoming.packets_pd01_port_1
+      cpu_util_server_oam_2:
+      - abstract_oam
+      - cpu_util_oam
+      binding_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - binding_pd02_port_2
+      disk.device.allocation_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - disk.device.allocation_server_ps_2
+      feature_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - feature_pd01_port_1
+      disk.iops_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.iops_server_ps_1
+      vcpus_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - vcpus_server_ps_2
+      disk.device.capacity_server_oam_1:
+      - abstract_oam_1
+      - disk.device.capacity_oam
+      cpu_util_server_oam_1:
+      - abstract_oam_1
+      - cpu_util_oam
+      disk.device.read.bytes_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.device.read.bytes_server_ps_1
+      disk.device.write.requests_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - disk.device.write.requests_server_ps_1
+    requirements:
+      link_oam02_port_2:
+      - abstract_oam
+      - link_oam_oam02_port
+      dependency_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - dependency_pd01_port_1
+      link_oam01_port_1:
+      - abstract_oam_1
+      - link_oam_oam01_port
+      dependency_server_oam_1:
+      - abstract_oam_1
+      - dependency_oam
+      dependency_server_oam_2:
+      - abstract_oam
+      - dependency_oam
+      local_storage_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - local_storage_server_ps_2
+      link_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - link_pd02_port_2
+      local_storage_server_oam_1:
+      - abstract_oam_1
+      - local_storage_oam
+      dependency_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - dependency_server_ps_1
+      local_storage_server_oam_2:
+      - abstract_oam
+      - local_storage_oam
+      link_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - link_pd01_port_1
+      dependency_oam01_port_1:
+      - abstract_oam_1
+      - dependency_oam_oam01_port
+      dependency_oam02_port_2:
+      - abstract_oam
+      - dependency_oam_oam02_port
+      dependency_test_nested3Level:
+      - test_nested3Level
+      - dependency
+      dependency_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - dependency_pd02_port_2
+      local_storage_server_ps_1_test_nested3Level:
+      - test_nested3Level
+      - local_storage_server_ps_1
+      dependency_server_ps_2_test_nested3Level:
+      - test_nested3Level
+      - dependency_server_ps_2

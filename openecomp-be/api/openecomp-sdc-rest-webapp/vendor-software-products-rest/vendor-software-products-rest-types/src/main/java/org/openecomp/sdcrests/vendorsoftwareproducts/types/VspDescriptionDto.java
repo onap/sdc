@@ -25,9 +25,6 @@ import org.openecomp.sdcrests.common.types.VersionDto;
 
 import javax.validation.constraints.NotNull;
 
-/**
- * Created by TALIO on 4/20/2016.
- */
 public class VspDescriptionDto {
   @NotNull
   private String name;
@@ -44,6 +41,9 @@ public class VspDescriptionDto {
   private String vendorId;            // this will be populated with vlm id
   private VersionDto licensingVersion;    // this will be populated with vlm version
   private LicensingData licensingData;
+
+  @NotNull
+  private String onboardingMethod;
 
   public String getName() {
     return name;
@@ -115,5 +115,13 @@ public class VspDescriptionDto {
 
   public void setLicensingData(LicensingData licensingData) {
     this.licensingData = licensingData;
+  }
+
+  public String getOnboardingMethod() {
+    return onboardingMethod;
+  }
+
+  public void setOnboardingMethod(String onboardingMethod) {
+    this.onboardingMethod = onboardingMethod;
   }
 }

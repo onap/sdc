@@ -44,14 +44,14 @@ class LicenseAgreementListEditorView extends React.Component {
 	};
 
 	render() {
-		const {licenseModelId, vendorName, isReadOnlyMode, isDisplayModal, isModalInEditMode, version} = this.props;
+		const {licenseModelId, isReadOnlyMode, isDisplayModal, isModalInEditMode, version} = this.props;
 		const {onAddLicenseAgreementClick} = this.props;
 		const {localFilter} = this.state;
 
 		return (
 			<div className='license-agreement-list-editor'>
 				<ListEditorView
-					title={i18n('License Agreements', {vendorName})}
+					title={i18n('License Agreements')}
 					plusButtonTitle={i18n('Add License Agreement')}
 					onAdd={() => onAddLicenseAgreementClick(version)}
 					filterValue={localFilter}

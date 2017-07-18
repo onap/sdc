@@ -5,12 +5,12 @@
     .modal-header {
       padding: 15px 10px 10px;
       .modal-title {
-        @extend .heading-5-medium;
+        @extend .heading-5-semibold;
       }
     }
     .modal-body {
       padding: 30px 15px;
-      @extend .body-1-medium;
+      @extend .body-1-semibold;
     }
   }
 

@@ -5,7 +5,7 @@ imports:
 - openecomp_heat_index:
     file: openecomp-heat/_index.yml
 node_types:
-  org.openecomp.resource.abstract.nodes.pd_server_0:
+  org.openecomp.resource.abstract.nodes.pd_server:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       index_value:

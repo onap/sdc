@@ -72,7 +72,8 @@ public class HeatCleanupOnNewUploadTest {/*
 
     VspDetails vspDetails = vendorSoftwareProductManager.createVsp(VSPCommon
         .createVspDetails(null, null, "VSPTestEmpty", "Test-vsp-empty", "vendorName", "vlm1Id",
-            "icon", "category", "subCategory", "123", null), USER1);
+            "icon", "category", "subCategory", "123", null, VSPCommon.OnboardingMethod.HEAT.name()),
+        USER1);
     vspId = vspDetails.getId();
     vspActiveVersion = vspDetails.getVersion();
   }
@@ -106,7 +107,7 @@ public class HeatCleanupOnNewUploadTest {/*
     String componentId = components.get(0).getId();
 
     vendorSoftwareProductManager
-        .upload(mib, "vDNS.zip", vspId, componentId, ArtifactType.SNMP_TRAP, USER1);
+        .upload(mib, "vDNS.zip", vspId, componentId, MonitoringUploadType.SNMP_TRAP, USER1);
     vendorSoftwareProductManager
         .createProcess(new ProcessEntity(vspId, vspActiveVersion, componentId, null), USER1);
 

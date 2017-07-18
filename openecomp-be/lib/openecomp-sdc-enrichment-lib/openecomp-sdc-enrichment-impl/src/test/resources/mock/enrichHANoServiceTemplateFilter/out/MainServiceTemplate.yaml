@@ -468,6 +468,8 @@ topology_template:
         service_template_filter:
           mandatory: false
         nfc_naming_code: pd_server_code1
+        nfc_code: pd_server_code
+        nfc_function: pd_server_description
   groups:
     hot-mog-0108-bs1271_group:
       type: org.openecomp.groups.heat.HeatStack

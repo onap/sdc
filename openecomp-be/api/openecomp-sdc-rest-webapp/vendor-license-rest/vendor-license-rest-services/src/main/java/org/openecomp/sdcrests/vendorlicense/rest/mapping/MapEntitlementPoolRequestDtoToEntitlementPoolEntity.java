@@ -45,7 +45,8 @@ public class MapEntitlementPoolRequestDtoToEntitlementPoolEntity
     target.setOperationalScope(new MapMultiChoiceOrOtherDtoToMultiChoiceOrOther()
         .applyMapping(source.getOperationalScope(), MultiChoiceOrOther.class));
     target.setTime(choiceOrOtherMapper.applyMapping(source.getTime(), ChoiceOrOther.class));
-
     target.setManufacturerReferenceNumber(source.getManufacturerReferenceNumber());
+    target.setStartDate(source.getStartDate());
+    target.setExpiryDate(source.getExpiryDate());
   }
 }

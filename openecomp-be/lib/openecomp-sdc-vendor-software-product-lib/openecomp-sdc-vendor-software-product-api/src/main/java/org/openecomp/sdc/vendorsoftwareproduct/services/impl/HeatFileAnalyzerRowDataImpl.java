@@ -108,6 +108,9 @@ public class HeatFileAnalyzerRowDataImpl implements HeatFileAnalyzer {
         }
         analyzedZipHeatFiles.addNestedFiles(fetchFileNamesToReturn(nestedFilesNames,
             foundHeatIdentifier));
+        if (Objects.nonNull(bfReader)) {
+          bfReader.close();
+        }
       }
     }
     return analyzedZipHeatFiles;

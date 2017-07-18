@@ -6,6 +6,8 @@
   "org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDaoFactory": "org.openecomp.sdc.vendorlicense.dao.impl.LicenseAgreementDaoFactoryImpl",
   "org.openecomp.sdc.vendorlicense.dao.FeatureGroupDaoFactory": "org.openecomp.sdc.vendorlicense.dao.impl.FeatureGroupDaoFactoryImpl",
   "org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDaoFactory": "org.openecomp.sdc.vendorlicense.dao.impl.LicenseKeyGroupDaoFactoryImpl",
-  "org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDaoFactory": "org.openecomp.sdc.vendorlicense.dao.impl.EntitlementPoolDaoFactoryImpl"
+  "org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDaoFactory": "org.openecomp.sdc.vendorlicense.dao.impl.EntitlementPoolDaoFactoryImpl",
+  "org.openecomp.sdc.vendorlicense.dao.LimitDaoFactory": "org.openecomp.sdc.vendorlicense.dao.impl.LimitDaoFactoryImpl"
+
 
 }

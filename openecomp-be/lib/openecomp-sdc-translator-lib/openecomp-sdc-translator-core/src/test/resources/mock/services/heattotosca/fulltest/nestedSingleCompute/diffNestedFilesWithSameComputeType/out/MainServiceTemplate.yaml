@@ -54,15 +54,15 @@ topology_template:
       immutable: false
       type: string
   node_templates:
-    abstract_pcm_server_1_0:
-      type: org.openecomp.resource.abstract.nodes.heat.pcm_server_1
+    server_pcm_002:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.2
       directives:
       - substitutable
       properties:
         pcm_flavor_name:
           get_input: pcm_flavor_name
         service_template_filter:
-          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
+          substitute_service_template: nested-pcm_v0.2ServiceTemplate.yaml
         port_pcm_port_1_network_role_tag: oam
         availabilityzone_name:
           get_input: availabilityzone_name
@@ -91,15 +91,15 @@ topology_template:
           get_input:
           - pcm_server_names
           - 0
-    abstract_pcm_server_0:
-      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
+    server_pcm_001:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
       directives:
       - substitutable
       properties:
         pcm_flavor_name:
           get_input: pcm_flavor_name
         service_template_filter:
-          substitute_service_template: nested-pcm_v0.2ServiceTemplate.yaml
+          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
         port_pcm_port_1_network_role_tag: oam
         availabilityzone_name:
           get_input: availabilityzone_name
@@ -149,7 +149,7 @@ topology_template:
       properties:
         compute_compute_user_data_format:
         - get_attribute:
-          - abstract_pcm_server_1_0
+          - server_pcm_001
           - oam_net_gw
         vm_image_name:
           get_input: compute_image_name
@@ -190,7 +190,7 @@ topology_template:
         heat_file: ../Artifacts/hot-nimbus-pcm_v0.4.yaml
         description: heat template that creates PCRF Cluman stack
       members:
+      - server_pcm_002
+      - server_pcm_001
       - compute_port_0
       - abstract_compute
-      - abstract_pcm_server_0
-      - abstract_pcm_server_1_0

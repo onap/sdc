@@ -271,10 +271,7 @@ public class ConsolidationDataUtil {
         targetResource, translateTo.getContext());
     // Add resource dependency information in nodesConnectedIn if the target node
     // is a consolidation entity
-    if (isConsolidationEntity(consolidationEntityType.getTargetEntityType())
-        && HeatToToscaUtil
-        .isValidDependsOnCandidate(heatOrchestrationTemplate, sourceResource,
-            targetResource, consolidationEntityType, translationContext)) {
+    if (isConsolidationEntity(consolidationEntityType.getTargetEntityType())) {
       ConsolidationDataUtil.updateNodesConnectedIn(translateTo,
           nodeTemplateId, consolidationEntityType.getTargetEntityType(), targetResourceId,
           requirementId, requirementAssignment);
@@ -282,10 +279,7 @@ public class ConsolidationDataUtil {
 
     //Add resource dependency information in nodesConnectedOut if the source node
     //is a consolidation entity
-    if (isConsolidationEntity(consolidationEntityType.getSourceEntityType())
-        && HeatToToscaUtil
-        .isValidDependsOnCandidate(heatOrchestrationTemplate, sourceResource,
-            targetResource, consolidationEntityType, translationContext)) {
+    if (isConsolidationEntity(consolidationEntityType.getSourceEntityType())) {
       ConsolidationDataUtil.updateNodesConnectedOut(translateTo,
           requirementAssignment.getNode(), consolidationEntityType.getSourceEntityType(),
           requirementId, requirementAssignment);

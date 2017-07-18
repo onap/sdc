@@ -14,8 +14,9 @@
  * permissions and limitations under the License.
  */
 import {Factory} from 'rosie';
+import randomstring from 'randomstring';
 
-export default new Factory()
+export const ComputeFlavorQData = new Factory()
 	.attrs({
 		'vmSizing':{
 			'numOfCPUs': 3,
@@ -24,6 +25,19 @@ export default new Factory()
 		'numOfVMs':{
 			'minimum':2
 		}
+	});
+
+export const ComputeFlavorBaseData = new Factory()
+	.attrs({
+		name: () => randomstring.generate(),
+		description: () => randomstring.generate(),
+		id: randomstring.generate()
+	});
+
+export const ComponentComputeFactory = new Factory()
+	.attrs({
+		computesList: [],
+		computeEditor: {}
 	});
 
 

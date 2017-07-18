@@ -26,16 +26,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.core.enrichment.types.ArtifactCategory;
-import org.openecomp.core.enrichment.types.ArtifactType;
+import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
 import org.openecomp.core.model.types.ServiceArtifact;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.MibDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentArtifactDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.MibEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -60,7 +60,7 @@ import static org.mockito.Mockito.times;
 
 public class MonitoringMibEnricherTest {
   @Mock
-  private MibDao mibDaoMock;
+  private ComponentArtifactDao componentArtifactDaoMock;
   @Mock
   private EnrichedServiceModelDao enrichedServiceModelDaoMock;
   @Mock
@@ -99,7 +99,7 @@ public class MonitoringMibEnricherTest {
         .assertEquals(expectedServiceArtifact.getValue().getName().startsWith(componentName), true);
     Assert.assertEquals(expectedServiceArtifact.getValue().getName(),
         componentName + File.separator + ArtifactCategory.DEPLOYMENT.getDisplayName() +
-            File.separator + ArtifactType.SNMP_POLL + File.separator + "mib1.yml");
+            File.separator + MonitoringUploadType.VES_EVENTS + File.separator + "mib1.yml");
 
   }
 
@@ -125,20 +125,20 @@ public class MonitoringMibEnricherTest {
     setMockToEnrichComponent(vspId, componentId1, version);
 
     monitoringMibEnricher.enrich(enrichmentInfo);
-    Mockito.verify(enrichedServiceModelDaoMock, times(8)).storeExternalArtifact(anyObject());
+    Mockito.verify(enrichedServiceModelDaoMock, times(12)).storeExternalArtifact(anyObject());
 
   }
 
   private void setMockToEnrichComponent(String vspId, String componentId, Version version) {
-    MibEntity returnedArtifact = new MibEntity();
+    ComponentMonitoringUploadEntity returnedArtifact = new ComponentMonitoringUploadEntity();
     returnedArtifact.setVspId(vspId);
     returnedArtifact.setVersion(version);
     returnedArtifact.setComponentId(componentId);
-    returnedArtifact.setType(ArtifactType.SNMP_POLL);
+    returnedArtifact.setType(MonitoringUploadType.SNMP_POLL);
     returnedArtifact.setArtifactName("mib.zip");
     returnedArtifact.setArtifact(getMibByteBuffer("/mock/enrichMib/MIB.zip"));
 
-    Mockito.when(mibDaoMock.getByType(anyObject()))
+    Mockito.when(componentArtifactDaoMock.getByType(anyObject()))
         .thenReturn(Optional.of(returnedArtifact));
     Mockito.doNothing().when(enrichedServiceModelDaoMock).storeExternalArtifact(anyObject());
   }

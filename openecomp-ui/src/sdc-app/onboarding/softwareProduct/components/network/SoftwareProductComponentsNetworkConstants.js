@@ -20,9 +20,19 @@ export const actionTypes = keyMirror({
 	NIC_LIST_UPDATE: null,
 
 	NICEditor: {
+		FILL_DATA: null,
+		CLEAR_DATA: null,
+	},
+	NICCreation: {
 		OPEN: null,
-		CLOSE: null
-	}
+		CLEAR_DATA: null,
+		DATA_CHANGED: null
+	},
 });
 
+export const networkTypes = {
+	EXTERNAL: 'External',
+	INTERNAL: 'Internal'
+};
 export const NIC_QUESTIONNAIRE = 'nic';
+export const NIC_CREATION_FORM_NAME = 'nicCreation';

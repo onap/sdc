@@ -48,8 +48,8 @@ public class ConsolidationService {
 
   }
 
-  void mainServiceTemplateConsolidation(ServiceTemplate serviceTemplate,
-                                        TranslationContext translationContext) {
+  void serviceTemplateConsolidation(ServiceTemplate serviceTemplate,
+                                    TranslationContext translationContext) {
 
     ConsolidationData consolidationData = translationContext.getConsolidationData();
 
@@ -90,7 +90,7 @@ public class ConsolidationService {
 
   }
 
-  private Map<String, String> getConsolidationEntityIdToType(ServiceTemplate serviceTemplate,
+  public static Map<String, String> getConsolidationEntityIdToType(ServiceTemplate serviceTemplate,
                                                              ConsolidationData consolidationData) {
     Map<String, String> consolidationEntityIdToType = new HashMap<>();
 
@@ -101,21 +101,24 @@ public class ConsolidationService {
     FilePortConsolidationData filePortConsolidationData =
         consolidationData.getPortConsolidationData()
             .getFilePortConsolidationData(serviceTemplateFileName);
-
-    for (String computeType : fileComputeConsolidationData.getAllComputeTypes()) {
-      TypeComputeConsolidationData typeComputeConsolidationData =
-          fileComputeConsolidationData.getTypeComputeConsolidationData(computeType);
-      Set<String> computeNodeTemplateIds =
-          typeComputeConsolidationData.getAllComputeNodeTemplateIds();
-      for (String computeNodeTemplateId : computeNodeTemplateIds) {
-        consolidationEntityIdToType.put(computeNodeTemplateId, computeType);
+    if(Objects.nonNull(fileComputeConsolidationData)) {
+      for (String computeType : fileComputeConsolidationData.getAllComputeTypes()) {
+        TypeComputeConsolidationData typeComputeConsolidationData =
+            fileComputeConsolidationData.getTypeComputeConsolidationData(computeType);
+        Set<String> computeNodeTemplateIds =
+            typeComputeConsolidationData.getAllComputeNodeTemplateIds();
+        for (String computeNodeTemplateId : computeNodeTemplateIds) {
+          consolidationEntityIdToType.put(computeNodeTemplateId, computeType);
+        }
       }
     }
 
-    Set<String> portNodeTemplateIds = filePortConsolidationData.getAllPortNodeTemplateIds();
-    for (String portNodeTemplateId : portNodeTemplateIds) {
-      consolidationEntityIdToType
-          .put(portNodeTemplateId, ConsolidationDataUtil.getPortType(portNodeTemplateId));
+    if(Objects.nonNull(filePortConsolidationData)) {
+      Set<String> portNodeTemplateIds = filePortConsolidationData.getAllPortNodeTemplateIds();
+      for (String portNodeTemplateId : portNodeTemplateIds) {
+        consolidationEntityIdToType
+            .put(portNodeTemplateId, ConsolidationDataUtil.getPortType(portNodeTemplateId));
+      }
     }
 
     return consolidationEntityIdToType;
@@ -287,8 +290,9 @@ public class ConsolidationService {
     return new ArrayList<>(firstMap.values()).equals(new ArrayList<>(secondMap.values()));
   }
 
-  private Set<GetAttrFuncData> getEntityGetAttrFuncAsSet(String portType,
-                                                         EntityConsolidationData entityConsolidationData) {
+  private Set<GetAttrFuncData> getEntityGetAttrFuncAsSet(
+      String portType,
+      EntityConsolidationData entityConsolidationData) {
 
     Set<GetAttrFuncData> getAttrFuncDataFromPortsWithSameType = new HashSet<>();
     Map<String, List<GetAttrFuncData>> nodesGetAttrOut =
@@ -506,8 +510,8 @@ public class ConsolidationService {
 
   private boolean checkGroupIdsRelations(EntityConsolidationData startingEntity,
                                          EntityConsolidationData currentEntity) {
-    if (CollectionUtils.isEmpty(startingEntity.getGroupIds()) &&
-        CollectionUtils.isEmpty(currentEntity.getGroupIds())) {
+    if (CollectionUtils.isEmpty(startingEntity.getGroupIds())
+        && CollectionUtils.isEmpty(currentEntity.getGroupIds())) {
       return true;
     }
 
@@ -710,7 +714,7 @@ public class ConsolidationService {
   }
 
   public void substitutionServiceTemplateConsolidation(String substituteNodeTemplateId,
-                                                       ServiceTemplate mainServiceTemplate,
+                                                       ServiceTemplate serviceTemplate,
                                                        ServiceTemplate substitutionServiceTemplate,
                                                        TranslationContext translationContext) {
 
@@ -720,24 +724,28 @@ public class ConsolidationService {
         translationContext.getConsolidationData().getComputeConsolidationData()
             .getFileComputeConsolidationData(
                 ToscaUtil.getServiceTemplateFileName(substitutionServiceTemplate));
-    boolean consolidationRuleResult =
+    boolean substitutionConsolidationRuleResult =
         substitutionServiceTemplateConsolidationRule(substitutionServiceTemplate,
             fileComputeConsolidationData, translationContext);
 
-    if (consolidationRuleResult) {
+    if (substitutionConsolidationRuleResult) {
       List<UnifiedCompositionData> unifiedCompositionDataList =
           createSubstitutionUnifiedCompositionDataList(substituteNodeTemplateId,
-              mainServiceTemplate, consolidationData);
+              serviceTemplate, consolidationData);
       unifiedCompositionService
-          .createUnifiedComposition(mainServiceTemplate, substitutionServiceTemplate,
+          .createUnifiedComposition(serviceTemplate, substitutionServiceTemplate,
               unifiedCompositionDataList, UnifiedCompositionMode.NestedSingleCompute,
               translationContext);
     } else {
-      //The node template does not qualify for unified composition
+      //The node template does not represent unified VFC but complexVFC
       //Adding the id in the context for fixing connectivity from/to nested non-unified nodes
       translationContext.addUnifiedNestedNodeTemplateId(ToscaUtil
-              .getServiceTemplateFileName(mainServiceTemplate),
+              .getServiceTemplateFileName(serviceTemplate),
           substituteNodeTemplateId, substituteNodeTemplateId);
+
+      if (!translationContext.isUnifiedHandledServiceTemplate(substitutionServiceTemplate)) {
+        serviceTemplateConsolidation(substitutionServiceTemplate, translationContext);
+      }
     }
   }
 
@@ -829,24 +837,21 @@ public class ConsolidationService {
             .getFileNestedConsolidationData(ToscaUtil.getServiceTemplateFileName(serviceTemplate));
 
     if (Objects.nonNull(fileNestedConsolidationData)) {
-      Collection<NestedTemplateConsolidationData> nestedConsolidationDatas =
-          fileNestedConsolidationData.getAllNestedConsolidationData();
-
-      for (NestedTemplateConsolidationData nested : nestedConsolidationDatas) {
-        if (nested.getNodeTemplateId().equals(substituteNodeTemplateId)) {
-          UnifiedCompositionData unifiedCompositionData = new UnifiedCompositionData();
-          unifiedCompositionData.setNestedTemplateConsolidationData(nested);
-          unifiedCompositionDataList.add(unifiedCompositionData);
-        }
-      }
+      NestedTemplateConsolidationData nestedTemplateConsolidationData =
+          fileNestedConsolidationData.getNestedTemplateConsolidationData(substituteNodeTemplateId);
+      UnifiedCompositionData unifiedCompositionData = new UnifiedCompositionData();
+      unifiedCompositionData.setNestedTemplateConsolidationData(nestedTemplateConsolidationData);
+      unifiedCompositionDataList.add(unifiedCompositionData);
+      return unifiedCompositionDataList;
     }
 
     return unifiedCompositionDataList;
   }
 
-  private boolean consolidationPreCondition(ServiceTemplate serviceTemplate,
-                                            ConsolidationData consolidationData,
-                                            TypeComputeConsolidationData typeComputeConsolidationData) {
+  private boolean consolidationPreCondition(
+      ServiceTemplate serviceTemplate,
+      ConsolidationData consolidationData,
+      TypeComputeConsolidationData typeComputeConsolidationData) {
 
     return (isThereMoreThanOneComputeTypeInstance(typeComputeConsolidationData)
         && isNumberOfPortsEqualsBetweenComputeNodes(typeComputeConsolidationData)

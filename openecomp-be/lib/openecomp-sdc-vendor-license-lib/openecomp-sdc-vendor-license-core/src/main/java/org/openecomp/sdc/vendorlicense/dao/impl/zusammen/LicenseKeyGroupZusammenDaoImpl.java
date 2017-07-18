@@ -74,13 +74,13 @@ public class LicenseKeyGroupZusammenDaoImpl implements LicenseKeyGroupDao {
     Optional<ElementInfo> lkgFromDb = zusammenAdaptor.getElementInfo(context, elementContext,
         new Id(licenseKeyGroup.getId()));
 
-    if (lkgFromDb.isPresent()) {
+    if(lkgFromDb.isPresent()) {
 
-      if (licenseKeyGroupElement.getRelations() == null) {
-        licenseKeyGroupElement.setRelations(new ArrayList<>());
+      if( licenseKeyGroupElement.getRelations() == null) {
+         licenseKeyGroupElement.setRelations(new ArrayList<>());
       }
 
-      if (lkgFromDb.get().getRelations() != null) {
+      if (lkgFromDb.get().getRelations() != null && lkgFromDb.get().getRelations().size() > 0) {
         licenseKeyGroupElement.getRelations().addAll(lkgFromDb.get().getRelations());
       }
     }
@@ -203,6 +203,7 @@ public class LicenseKeyGroupZusammenDaoImpl implements LicenseKeyGroupDao {
 
   private ZusammenElement buildLicenseKeyGroupElement(LicenseKeyGroupEntity licenseKeyGroup,
                                                       Action action) {
+
     ZusammenElement lkgElement = new ZusammenElement();
     lkgElement.setAction(action);
     if (licenseKeyGroup.getId() != null) {
@@ -215,13 +216,14 @@ public class LicenseKeyGroupZusammenDaoImpl implements LicenseKeyGroupDao {
     info.addProperty("operational_scope", licenseKeyGroup.getOperationalScope());
     lkgElement.setInfo(info);
 
-    if (licenseKeyGroup.getReferencingFeatureGroups() != null &&
-        licenseKeyGroup.getReferencingFeatureGroups().size() > 0) {
+   if (licenseKeyGroup.getReferencingFeatureGroups() != null
+       && licenseKeyGroup.getReferencingFeatureGroups().size() > 0) {
       lkgElement.setRelations(licenseKeyGroup.getReferencingFeatureGroups().stream()
           .map(rel -> VlmZusammenUtil
               .createRelation(RelationType.LicenseKeyGroupToReferencingFeatureGroup, rel))
           .collect(Collectors.toList()));
     }
+
     return lkgElement;
   }
 
@@ -248,13 +250,13 @@ public class LicenseKeyGroupZusammenDaoImpl implements LicenseKeyGroupDao {
   private MultiChoiceOrOther<OperationalScope> getOperationalScopeMultiChoiceOrOther
       (Map<String, Object>
            operationalScope) {
-
+  if(operationalScope != null && !operationalScope.isEmpty()) {
     Set<OperationalScope> choices = new HashSet<>();
-    ((List<String>) operationalScope.get("choices")).
-        forEach(choice -> choices.add(OperationalScope.valueOf(choice)));
+    ((List<String>) operationalScope.get("choices"))
+        .forEach(choice -> choices.add(OperationalScope.valueOf(choice)));
 
-    return new MultiChoiceOrOther<>(choices, (String) operationalScope.get("other"));
+    return new MultiChoiceOrOther<>(choices, operationalScope.get("other")==null?null:(String) operationalScope.get("other"));
   }
-
-
+  return null;
+  }
 }

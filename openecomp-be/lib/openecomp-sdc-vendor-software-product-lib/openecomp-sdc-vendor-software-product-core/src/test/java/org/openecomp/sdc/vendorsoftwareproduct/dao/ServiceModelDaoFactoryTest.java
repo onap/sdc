@@ -23,6 +23,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.dao;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
+import com.amdocs.zusammen.commons.health.data.HealthInfo;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.UserInfo;
@@ -32,15 +33,14 @@ import com.amdocs.zusammen.datatypes.item.Item;
 import com.amdocs.zusammen.datatypes.item.ItemVersion;
 import com.amdocs.zusammen.datatypes.item.ItemVersionData;
 import com.amdocs.zusammen.datatypes.itemversion.Tag;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.core.utilities.yaml.YamlUtil;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.model.impl.zusammen.ServiceModelDaoZusammenImpl;
 import org.openecomp.sdc.model.impl.zusammen.StructureElement;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -239,6 +239,11 @@ public class ServiceModelDaoFactoryTest {
       }
 
       @Override
+      public Collection<HealthInfo> checkHealth(SessionContext context) {
+        return null;
+      }
+
+      @Override
       public Id createItem(SessionContext context, Info info) {
         return null;
       }
@@ -274,6 +279,11 @@ public class ServiceModelDaoFactoryTest {
       public Optional<ElementInfo> getElementInfo(SessionContext context,
                                                   ElementContext elementContext,
                                                   Id elementId) {
+        return null;
+      }
+
+      @Override
+      public String getVersion(SessionContext sessionContext) {
         return null;
       }
 

@@ -1,0 +1,79 @@
+heat_template_version: 2013-05-23
+
+description: nested1
+
+parameters:
+  p1:
+    type: string
+    description: UID of OAM network
+  p2:
+    type: string
+    description: UID of OAM network
+  security_group_name:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  pd_server_names:
+    type: comma_delimited_list
+    description: PD server names
+  pd_server_image:
+    type: string
+    description: PD Image server
+  ps_server_names:
+    type: comma_delimited_list
+    description: Ps server names
+  ps_server_image:
+    type: string
+    description: Ps Image server
+  availability_zone_0:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  pd_server_flavor:
+    type: string
+    description: Flavor for PD server
+  ps_server_flavor:
+    type: string
+    description: Flavor for PS server
+  pd_server_ips:
+      type: string
+  ps_server_ips:
+      type: string
+  net:
+    type: string
+resources:
+
+  pd_server_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net }
+      fixed_ips: [{"ip_address": {get_param: [pd_server_ips, 0]}}]
+      replacement_policy: AUTO
+
+  ps_server_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net }
+      fixed_ips: [{"ip_address": {get_param: [ps_server_ips, 0]}}]
+      replacement_policy: AUTO
+
+  server_pd:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [pd_server_names, 0]}
+      image: { get_param: pd_server_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: pd_server_flavor }
+      networks:
+      - port: { get_resource: pd_server_port }
+
+  server_ps:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [ps_server_names, 1]}
+      image: { get_param: ps_server_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: ps_server_flavor }
+      networks:
+      - port: { get_resource: ps_server_port }
+
+

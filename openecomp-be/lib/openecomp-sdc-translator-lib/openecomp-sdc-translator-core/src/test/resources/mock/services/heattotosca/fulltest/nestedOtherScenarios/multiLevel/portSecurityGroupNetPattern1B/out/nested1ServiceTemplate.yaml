@@ -1,0 +1,1093 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested1
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    ps_server_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Ps Image server
+    p2:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    ps_server_ips:
+      hidden: false
+      immutable: false
+      type: string
+    net2:
+      hidden: false
+      immutable: false
+      type: string
+      description: Contrail V2 network
+    net1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Neutron network
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    ps_server_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for PS server
+    pd_server_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: PD server names
+      entry_schema:
+        type: string
+    pd_server_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for PD server
+    ps_server_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: Ps server names
+      entry_schema:
+        type: string
+    pd_server_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: PD Image server
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    net:
+      hidden: false
+      immutable: false
+      type: string
+    pd_server_ips:
+      hidden: false
+      immutable: false
+      type: string
+  node_templates:
+    abstract_pd_server:
+      type: org.openecomp.resource.abstract.nodes.pd_server
+      directives:
+      - substitutable
+      properties:
+        port_pd_server_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pd_server_port_security_groups:
+        - - get_input: p1
+          - get_input: p2
+        compute_pd_server_availability_zone:
+        - get_input: availability_zone_0
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 0
+        port_pd_server_port_network:
+        - get_input: net1
+        vm_flavor_name:
+          get_input: pd_server_flavor
+        port_pd_server_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - pd_server_ips
+            - 0
+        vm_image_name:
+          get_input: pd_server_image
+        port_pd_server_port_replacement_policy:
+        - AUTO
+        port_pd_server_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        service_template_filter:
+          substitute_service_template: Nested_pd_serverServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    abstract_ps_server:
+      type: org.openecomp.resource.abstract.nodes.ps_server
+      directives:
+      - substitutable
+      properties:
+        port_ps_server_port_network:
+        - get_input: net2
+        compute_ps_server_name:
+        - get_input:
+          - ps_server_names
+          - 1
+        port_ps_server_port_security_groups:
+        - - get_input: p1
+        compute_ps_server_availability_zone:
+        - get_input: availability_zone_0
+        port_ps_server_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - ps_server_ips
+            - 0
+        vm_flavor_name:
+          get_input: ps_server_flavor
+        port_ps_server_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_ps_server_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: ps_server_image
+        port_ps_server_port_replacement_policy:
+        - AUTO
+        service_template_filter:
+          substitute_service_template: Nested_ps_serverServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    test_nested2Level:
+      type: org.openecomp.resource.abstract.nodes.heat.nested2
+      directives:
+      - substitutable
+      properties:
+        p1:
+          get_input: p1
+        service_template_filter:
+          substitute_service_template: nested2ServiceTemplate.yaml
+        p2:
+          get_input: p2
+  groups:
+    nested1_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested1.yml
+        description: nested1
+      members:
+      - test_nested2Level
+      - abstract_pd_server
+      - abstract_ps_server
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested1
+    capabilities:
+      disk.device.allocation_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.device.allocation_server_sm
+      binding_server_sm_test_nested2Level:
+      - test_nested2Level
+      - binding_server_sm
+      disk.write.bytes_server_ps:
+      - abstract_ps_server
+      - disk.write.bytes_ps_server
+      disk.latency_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.latency_server_sm
+      network.outpoing.packets_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.outpoing.packets_cmaui_port_7_test_resourceGroup
+      disk.device.write.requests_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.device.write.requests_server_oam
+      cpu.delta_server_sm_test_nested2Level:
+      - test_nested2Level
+      - cpu.delta_server_sm
+      memory.usage_server_sm_test_nested2Level:
+      - test_nested2Level
+      - memory.usage_server_sm
+      disk.write.requests.rate_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.write.requests.rate_server_sm
+      disk.read.requests_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.read.requests_server_oam
+      network.outgoing.bytes_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.outgoing.bytes_cmaui_port_8_test_resourceGroup
+      disk.device.write.bytes_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.device.write.bytes_server_sm
+      network.outgoing.bytes_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.outgoing.bytes_sm_server_port
+      network.incoming.packets.rate_ps_server_port:
+      - abstract_ps_server
+      - network.incoming.packets.rate_ps_server_ps_server_port
+      disk.device.allocation_server_pd:
+      - abstract_pd_server
+      - disk.device.allocation_pd_server
+      binding_server_oam_test_nested2Level:
+      - test_nested2Level
+      - binding_server_oam
+      instance_server_oam_test_nested2Level:
+      - test_nested2Level
+      - instance_server_oam
+      network.outgoing.packets.rate_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.outgoing.packets.rate_cmaui_port_8_test_resourceGroup
+      os_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - os_server_cmaui_test_resourceGroup
+      disk.read.requests_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.read.requests_server_sm
+      vcpus_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - vcpus_server_cmaui_test_resourceGroup
+      instance_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - instance_server_cmaui_test_resourceGroup
+      feature_ps_server_port:
+      - abstract_ps_server
+      - feature_ps_server_ps_server_port
+      cpu.delta_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - cpu.delta_server_cmaui_test_resourceGroup
+      binding_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - binding_cmaui_port_8_test_resourceGroup
+      disk.write.bytes_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.write.bytes_server_sm
+      memory.resident_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - memory.resident_server_cmaui_test_resourceGroup
+      disk.write.requests.rate_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.write.requests.rate_server_oam
+      network.outgoing.bytes.rate_ps_server_port:
+      - abstract_ps_server
+      - network.outgoing.bytes.rate_ps_server_ps_server_port
+      disk.device.read.bytes_server_ps:
+      - abstract_ps_server
+      - disk.device.read.bytes_ps_server
+      disk.device.allocation_server_ps:
+      - abstract_ps_server
+      - disk.device.allocation_ps_server
+      network.outgoing.packets.rate_ps_server_port:
+      - abstract_ps_server
+      - network.outgoing.packets.rate_ps_server_ps_server_port
+      binding_ps_server_port:
+      - abstract_ps_server
+      - binding_ps_server_ps_server_port
+      disk.read.bytes.rate_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.read.bytes.rate_server_oam
+      feature_server_oam_test_nested2Level:
+      - test_nested2Level
+      - feature_server_oam
+      network.incoming.packets_pd_server_port:
+      - abstract_pd_server
+      - network.incoming.packets_pd_server_pd_server_port
+      cpu_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - cpu_server_cmaui_test_resourceGroup
+      cpu_util_server_oam_test_nested2Level:
+      - test_nested2Level
+      - cpu_util_server_oam
+      network.outpoing.packets_ps_server_port:
+      - abstract_ps_server
+      - network.outpoing.packets_ps_server_ps_server_port
+      disk.device.read.bytes_server_pd:
+      - abstract_pd_server
+      - disk.device.read.bytes_pd_server
+      endpoint_server_oam_test_nested2Level:
+      - test_nested2Level
+      - endpoint_server_oam
+      disk.read.bytes.rate_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.read.bytes.rate_server_cmaui_test_resourceGroup
+      disk.capacity_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.capacity_server_oam
+      disk.device.usage_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.device.usage_server_cmaui_test_resourceGroup
+      host_server_pd:
+      - abstract_pd_server
+      - host_pd_server
+      network.outpoing.packets_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.outpoing.packets_sm_server_port
+      disk.ephemeral.size_server_pd:
+      - abstract_pd_server
+      - disk.ephemeral.size_pd_server
+      disk.write.requests.rate_server_pd:
+      - abstract_pd_server
+      - disk.write.requests.rate_pd_server
+      disk.capacity_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.capacity_server_cmaui_test_resourceGroup
+      disk.device.usage_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.device.usage_server_sm
+      disk.ephemeral.size_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.ephemeral.size_server_oam
+      network.incoming.bytes_pd_server_port:
+      - abstract_pd_server
+      - network.incoming.bytes_pd_server_pd_server_port
+      disk.device.write.bytes.rate_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.device.write.bytes.rate_server_sm
+      feature_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - feature_oam_server_port
+      disk.device.allocation_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.device.allocation_server_oam
+      network.incoming.packets.rate_pd_server_port:
+      - abstract_pd_server
+      - network.incoming.packets.rate_pd_server_pd_server_port
+      disk.allocation_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.allocation_server_oam
+      feature_test_nested2Level:
+      - test_nested2Level
+      - feature
+      disk.read.bytes_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.read.bytes_server_cmaui_test_resourceGroup
+      disk.ephemeral.size_server_ps:
+      - abstract_ps_server
+      - disk.ephemeral.size_ps_server
+      memory.resident_server_sm_test_nested2Level:
+      - test_nested2Level
+      - memory.resident_server_sm
+      disk.write.requests.rate_server_ps:
+      - abstract_ps_server
+      - disk.write.requests.rate_ps_server
+      disk.usage_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.usage_server_sm
+      disk.device.capacity_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.device.capacity_server_sm
+      network.incoming.packets.rate_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.packets.rate_cmaui_port_7_test_resourceGroup
+      disk.device.read.requests.rate_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.device.read.requests.rate_server_sm
+      network.outgoing.bytes.rate_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.outgoing.bytes.rate_sm_server_port
+      disk.device.write.bytes.rate_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.device.write.bytes.rate_server_cmaui_test_resourceGroup
+      disk.ephemeral.size_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.ephemeral.size_server_cmaui_test_resourceGroup
+      feature_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - feature_cmaui_port_7_test_resourceGroup
+      network.incoming.bytes_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.bytes_cmaui_port_8_test_resourceGroup
+      network.incoming.packets_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.packets_oam_server_port
+      memory_server_sm_test_nested2Level:
+      - test_nested2Level
+      - memory_server_sm
+      disk.device.read.bytes.rate_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.device.read.bytes.rate_server_sm
+      network.outpoing.packets_pd_server_port:
+      - abstract_pd_server
+      - network.outpoing.packets_pd_server_pd_server_port
+      feature_server_sm_test_nested2Level:
+      - test_nested2Level
+      - feature_server_sm
+      network.incoming.packets.rate_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.packets.rate_cmaui_port_8_test_resourceGroup
+      host_server_ps:
+      - abstract_ps_server
+      - host_ps_server
+      network.incoming.packets_ps_server_port:
+      - abstract_ps_server
+      - network.incoming.packets_ps_server_ps_server_port
+      os_server_sm_test_nested2Level:
+      - test_nested2Level
+      - os_server_sm
+      network.outgoing.bytes_ps_server_port:
+      - abstract_ps_server
+      - network.outgoing.bytes_ps_server_ps_server_port
+      memory_server_oam_test_nested2Level:
+      - test_nested2Level
+      - memory_server_oam
+      memory_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - memory_server_cmaui_test_resourceGroup
+      disk.device.read.requests.rate_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.device.read.requests.rate_server_oam
+      network.outgoing.packets.rate_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.outgoing.packets.rate_sm_server_port
+      disk.device.write.bytes_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.device.write.bytes_server_cmaui_test_resourceGroup
+      disk.write.requests_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.write.requests_server_oam
+      disk.capacity_server_pd:
+      - abstract_pd_server
+      - disk.capacity_pd_server
+      network.incoming.bytes_ps_server_port:
+      - abstract_ps_server
+      - network.incoming.bytes_ps_server_ps_server_port
+      disk.device.capacity_server_pd:
+      - abstract_pd_server
+      - disk.device.capacity_pd_server
+      disk.device.read.requests.rate_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.device.read.requests.rate_server_cmaui_test_resourceGroup
+      network.incoming.bytes.rate_pd_server_port:
+      - abstract_pd_server
+      - network.incoming.bytes.rate_pd_server_pd_server_port
+      disk.device.read.requests_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.device.read.requests_server_sm
+      vcpus_server_ps:
+      - abstract_ps_server
+      - vcpus_ps_server
+      disk.read.bytes_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.read.bytes_server_oam
+      binding_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - binding_sm_server_port
+      disk.iops_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.iops_server_sm
+      network.incoming.packets.rate_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.packets.rate_sm_server_port
+      disk.capacity_server_ps:
+      - abstract_ps_server
+      - disk.capacity_ps_server
+      network.incoming.bytes.rate_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.bytes.rate_cmaui_port_8_test_resourceGroup
+      network.incoming.bytes_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.bytes_oam_server_port
+      host_server_sm_test_nested2Level:
+      - test_nested2Level
+      - host_server_sm
+      network.incoming.bytes.rate_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.bytes.rate_sm_server_port
+      disk.device.capacity_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.device.capacity_server_oam
+      network.outgoing.bytes.rate_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.outgoing.bytes.rate_oam_server_port
+      endpoint_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - endpoint_server_cmaui_test_resourceGroup
+      vcpus_server_sm_test_nested2Level:
+      - test_nested2Level
+      - vcpus_server_sm
+      network.incoming.packets_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.packets_cmaui_port_7_test_resourceGroup
+      disk.usage_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.usage_server_cmaui_test_resourceGroup
+      cpu_util_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - cpu_util_server_cmaui_test_resourceGroup
+      host_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - host_server_cmaui_test_resourceGroup
+      instance_server_pd:
+      - abstract_pd_server
+      - instance_pd_server
+      disk.device.write.requests.rate_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.device.write.requests.rate_server_sm
+      disk.device.allocation_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.device.allocation_server_cmaui_test_resourceGroup
+      feature_pd_server_port:
+      - abstract_pd_server
+      - feature_pd_server_pd_server_port
+      disk.read.bytes_server_ps:
+      - abstract_ps_server
+      - disk.read.bytes_ps_server
+      cpu_server_ps:
+      - abstract_ps_server
+      - cpu_ps_server
+      cpu.delta_server_pd:
+      - abstract_pd_server
+      - cpu.delta_pd_server
+      instance_server_ps:
+      - abstract_ps_server
+      - instance_ps_server
+      network.incoming.packets.rate_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.packets.rate_oam_server_port
+      disk.read.bytes.rate_server_ps:
+      - abstract_ps_server
+      - disk.read.bytes.rate_ps_server
+      disk.latency_server_pd:
+      - abstract_pd_server
+      - disk.latency_pd_server
+      disk.root.size_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.root.size_server_sm
+      network.outgoing.packets.rate_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.outgoing.packets.rate_oam_server_port
+      scalable_server_sm_test_nested2Level:
+      - test_nested2Level
+      - scalable_server_sm
+      cpu.delta_server_ps:
+      - abstract_ps_server
+      - cpu.delta_ps_server
+      disk.root.size_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.root.size_server_cmaui_test_resourceGroup
+      attachment_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - attachment_oam_server_port
+      disk.latency_server_ps:
+      - abstract_ps_server
+      - disk.latency_ps_server
+      disk.device.write.requests.rate_server_ps:
+      - abstract_ps_server
+      - disk.device.write.requests.rate_ps_server
+      disk.root.size_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.root.size_server_oam
+      disk.device.latency_server_pd:
+      - abstract_pd_server
+      - disk.device.latency_pd_server
+      disk.write.requests_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.write.requests_server_sm
+      memory.usage_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - memory.usage_server_cmaui_test_resourceGroup
+      disk.device.capacity_server_ps:
+      - abstract_ps_server
+      - disk.device.capacity_ps_server
+      disk.device.iops_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.device.iops_server_oam
+      scalable_server_pd:
+      - abstract_pd_server
+      - scalable_pd_server
+      cpu.delta_server_oam_test_nested2Level:
+      - test_nested2Level
+      - cpu.delta_server_oam
+      disk.device.latency_server_ps:
+      - abstract_ps_server
+      - disk.device.latency_ps_server
+      disk.device.write.requests.rate_server_pd:
+      - abstract_pd_server
+      - disk.device.write.requests.rate_pd_server
+      disk.device.read.bytes_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.device.read.bytes_server_oam
+      scalable_server_ps:
+      - abstract_ps_server
+      - scalable_ps_server
+      cpu_server_pd:
+      - abstract_pd_server
+      - cpu_pd_server
+      feature_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - feature_server_cmaui_test_resourceGroup
+      endpoint_server_sm_test_nested2Level:
+      - test_nested2Level
+      - endpoint_server_sm
+      disk.device.read.bytes.rate_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.device.read.bytes.rate_server_oam
+      vcpus_server_oam_test_nested2Level:
+      - test_nested2Level
+      - vcpus_server_oam
+      disk.iops_server_pd:
+      - abstract_pd_server
+      - disk.iops_pd_server
+      disk.device.read.bytes.rate_server_pd:
+      - abstract_pd_server
+      - disk.device.read.bytes.rate_pd_server
+      disk.write.bytes_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.write.bytes_server_oam
+      disk.iops_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.iops_server_oam
+      disk.device.read.requests_server_pd:
+      - abstract_pd_server
+      - disk.device.read.requests_pd_server
+      network.incoming.packets_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.packets_cmaui_port_8_test_resourceGroup
+      disk.read.bytes.rate_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.read.bytes.rate_server_sm
+      disk.iops_server_ps:
+      - abstract_ps_server
+      - disk.iops_ps_server
+      disk.device.read.bytes.rate_server_ps:
+      - abstract_ps_server
+      - disk.device.read.bytes.rate_ps_server
+      network.outgoing.bytes_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.outgoing.bytes_oam_server_port
+      binding_server_ps:
+      - abstract_ps_server
+      - binding_ps_server
+      attachment_ps_server_port:
+      - abstract_ps_server
+      - attachment_ps_server_ps_server_port
+      disk.device.read.requests_server_ps:
+      - abstract_ps_server
+      - disk.device.read.requests_ps_server
+      memory.usage_server_pd:
+      - abstract_pd_server
+      - memory.usage_pd_server
+      disk.ephemeral.size_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.ephemeral.size_server_sm
+      disk.device.write.requests.rate_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.device.write.requests.rate_server_cmaui_test_resourceGroup
+      disk.read.bytes.rate_server_pd:
+      - abstract_pd_server
+      - disk.read.bytes.rate_pd_server
+      os_server_oam_test_nested2Level:
+      - test_nested2Level
+      - os_server_oam
+      memory_server_pd:
+      - abstract_pd_server
+      - memory_pd_server
+      disk.device.read.requests_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.device.read.requests_server_cmaui_test_resourceGroup
+      disk.device.write.requests_server_pd:
+      - abstract_pd_server
+      - disk.device.write.requests_pd_server
+      network.incoming.bytes.rate_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.bytes.rate_cmaui_port_7_test_resourceGroup
+      feature_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - feature_sm_server_port
+      memory.usage_server_ps:
+      - abstract_ps_server
+      - memory.usage_ps_server
+      disk.read.bytes_server_pd:
+      - abstract_pd_server
+      - disk.read.bytes_pd_server
+      disk.device.write.requests_server_ps:
+      - abstract_ps_server
+      - disk.device.write.requests_ps_server
+      disk.latency_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.latency_server_cmaui_test_resourceGroup
+      network.outpoing.packets_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.outpoing.packets_cmaui_port_8_test_resourceGroup
+      network.incoming.bytes.rate_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.bytes.rate_oam_server_port
+      vcpus_server_pd:
+      - abstract_pd_server
+      - vcpus_pd_server
+      cpu_server_oam_test_nested2Level:
+      - test_nested2Level
+      - cpu_server_oam
+      network.incoming.bytes.rate_ps_server_port:
+      - abstract_ps_server
+      - network.incoming.bytes.rate_ps_server_ps_server_port
+      disk.write.bytes.rate_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.write.bytes.rate_server_cmaui_test_resourceGroup
+      host_server_oam_test_nested2Level:
+      - test_nested2Level
+      - host_server_oam
+      memory_server_ps:
+      - abstract_ps_server
+      - memory_ps_server
+      disk.device.write.requests_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.device.write.requests_server_cmaui_test_resourceGroup
+      attachment_pd_server_port:
+      - abstract_pd_server
+      - attachment_pd_server_pd_server_port
+      disk.write.requests_server_pd:
+      - abstract_pd_server
+      - disk.write.requests_pd_server
+      scalable_server_oam_test_nested2Level:
+      - test_nested2Level
+      - scalable_server_oam
+      network.incoming.bytes_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.bytes_cmaui_port_7_test_resourceGroup
+      disk.device.latency_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.device.latency_server_sm
+      disk.allocation_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.allocation_server_sm
+      disk.device.write.bytes_server_ps:
+      - abstract_ps_server
+      - disk.device.write.bytes_ps_server
+      disk.root.size_server_ps:
+      - abstract_ps_server
+      - disk.root.size_ps_server
+      disk.device.read.requests.rate_server_ps:
+      - abstract_ps_server
+      - disk.device.read.requests.rate_ps_server
+      network.outgoing.bytes_pd_server_port:
+      - abstract_pd_server
+      - network.outgoing.bytes_pd_server_pd_server_port
+      feature_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - feature_cmaui_port_8_test_resourceGroup
+      disk.write.requests_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.write.requests_server_cmaui_test_resourceGroup
+      disk.device.usage_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.device.usage_server_oam
+      disk.write.requests_server_ps:
+      - abstract_ps_server
+      - disk.write.requests_ps_server
+      network.incoming.bytes_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.bytes_sm_server_port
+      binding_server_pd:
+      - abstract_pd_server
+      - binding_pd_server
+      network.outgoing.bytes_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.outgoing.bytes_cmaui_port_7_test_resourceGroup
+      disk.device.read.bytes.rate_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.device.read.bytes.rate_server_cmaui_test_resourceGroup
+      disk.root.size_server_pd:
+      - abstract_pd_server
+      - disk.root.size_pd_server
+      memory.resident_server_oam_test_nested2Level:
+      - test_nested2Level
+      - memory.resident_server_oam
+      disk.device.read.requests.rate_server_pd:
+      - abstract_pd_server
+      - disk.device.read.requests.rate_pd_server
+      disk.device.write.bytes_server_pd:
+      - abstract_pd_server
+      - disk.device.write.bytes_pd_server
+      memory.usage_server_oam_test_nested2Level:
+      - test_nested2Level
+      - memory.usage_server_oam
+      disk.device.write.requests_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.device.write.requests_server_sm
+      memory.resident_server_pd:
+      - abstract_pd_server
+      - memory.resident_pd_server
+      disk.usage_server_ps:
+      - abstract_ps_server
+      - disk.usage_ps_server
+      cpu_util_server_pd:
+      - abstract_pd_server
+      - cpu_util_pd_server
+      endpoint_server_ps:
+      - abstract_ps_server
+      - endpoint_ps_server
+      disk.read.bytes_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.read.bytes_server_sm
+      attachment_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - attachment_cmaui_port_8_test_resourceGroup
+      disk.read.requests_server_ps:
+      - abstract_ps_server
+      - disk.read.requests_ps_server
+      memory.resident_server_ps:
+      - abstract_ps_server
+      - memory.resident_ps_server
+      disk.read.requests_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.read.requests_server_cmaui_test_resourceGroup
+      disk.usage_server_pd:
+      - abstract_pd_server
+      - disk.usage_pd_server
+      binding_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - binding_cmaui_port_7_test_resourceGroup
+      endpoint_server_pd:
+      - abstract_pd_server
+      - endpoint_pd_server
+      cpu_util_server_ps:
+      - abstract_ps_server
+      - cpu_util_ps_server
+      disk.write.bytes.rate_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.write.bytes.rate_server_oam
+      network.outpoing.packets_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.outpoing.packets_oam_server_port
+      disk.allocation_server_pd:
+      - abstract_pd_server
+      - disk.allocation_pd_server
+      disk.write.bytes_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.write.bytes_server_cmaui_test_resourceGroup
+      disk.device.write.bytes_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.device.write.bytes_server_oam
+      disk.device.usage_server_pd:
+      - abstract_pd_server
+      - disk.device.usage_pd_server
+      disk.allocation_server_ps:
+      - abstract_ps_server
+      - disk.allocation_ps_server
+      disk.latency_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.latency_server_oam
+      scalable_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - scalable_server_cmaui_test_resourceGroup
+      disk.write.requests.rate_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.write.requests.rate_server_cmaui_test_resourceGroup
+      disk.device.read.bytes_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.device.read.bytes_server_cmaui_test_resourceGroup
+      disk.device.write.requests.rate_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.device.write.requests.rate_server_oam
+      disk.device.usage_server_ps:
+      - abstract_ps_server
+      - disk.device.usage_ps_server
+      instance_server_sm_test_nested2Level:
+      - test_nested2Level
+      - instance_server_sm
+      disk.device.write.bytes.rate_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.device.write.bytes.rate_server_oam
+      disk.device.latency_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.device.latency_server_oam
+      network.outgoing.packets.rate_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.outgoing.packets.rate_cmaui_port_7_test_resourceGroup
+      disk.device.write.bytes.rate_server_ps:
+      - abstract_ps_server
+      - disk.device.write.bytes.rate_ps_server
+      disk.write.bytes.rate_server_ps:
+      - abstract_ps_server
+      - disk.write.bytes.rate_ps_server
+      network.outgoing.bytes.rate_pd_server_port:
+      - abstract_pd_server
+      - network.outgoing.bytes.rate_pd_server_pd_server_port
+      disk.device.iops_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.device.iops_server_sm
+      network.outgoing.packets.rate_pd_server_port:
+      - abstract_pd_server
+      - network.outgoing.packets.rate_pd_server_pd_server_port
+      binding_pd_server_port:
+      - abstract_pd_server
+      - binding_pd_server_pd_server_port
+      disk.write.bytes.rate_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.write.bytes.rate_server_sm
+      disk.device.iops_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.device.iops_server_cmaui_test_resourceGroup
+      disk.device.capacity_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.device.capacity_server_cmaui_test_resourceGroup
+      disk.allocation_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.allocation_server_cmaui_test_resourceGroup
+      disk.device.write.bytes.rate_server_pd:
+      - abstract_pd_server
+      - disk.device.write.bytes.rate_pd_server
+      disk.device.read.requests_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.device.read.requests_server_oam
+      os_server_ps:
+      - abstract_ps_server
+      - os_ps_server
+      cpu_util_server_sm_test_nested2Level:
+      - test_nested2Level
+      - cpu_util_server_sm
+      disk.usage_server_oam_test_nested2Level:
+      - test_nested2Level
+      - disk.usage_server_oam
+      binding_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - binding_server_cmaui_test_resourceGroup
+      binding_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - binding_oam_server_port
+      network.outgoing.bytes.rate_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.outgoing.bytes.rate_cmaui_port_8_test_resourceGroup
+      feature_server_ps:
+      - abstract_ps_server
+      - feature_ps_server
+      disk.device.iops_server_pd:
+      - abstract_pd_server
+      - disk.device.iops_pd_server
+      disk.read.requests_server_pd:
+      - abstract_pd_server
+      - disk.read.requests_pd_server
+      os_server_pd:
+      - abstract_pd_server
+      - os_pd_server
+      network.outgoing.bytes.rate_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - network.outgoing.bytes.rate_cmaui_port_7_test_resourceGroup
+      cpu_server_sm_test_nested2Level:
+      - test_nested2Level
+      - cpu_server_sm
+      disk.write.bytes_server_pd:
+      - abstract_pd_server
+      - disk.write.bytes_pd_server
+      disk.write.bytes.rate_server_pd:
+      - abstract_pd_server
+      - disk.write.bytes.rate_pd_server
+      disk.device.read.bytes_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.device.read.bytes_server_sm
+      network.incoming.packets_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - network.incoming.packets_sm_server_port
+      disk.device.iops_server_ps:
+      - abstract_ps_server
+      - disk.device.iops_ps_server
+      feature_server_pd:
+      - abstract_pd_server
+      - feature_pd_server
+      disk.device.latency_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.device.latency_server_cmaui_test_resourceGroup
+      feature_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - feature_test_resourceGroup
+      attachment_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - attachment_sm_server_port
+      disk.capacity_server_sm_test_nested2Level:
+      - test_nested2Level
+      - disk.capacity_server_sm
+      disk.iops_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - disk.iops_server_cmaui_test_resourceGroup
+      attachment_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - attachment_cmaui_port_7_test_resourceGroup
+    requirements:
+      dependency_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - dependency_server_cmaui_test_resourceGroup
+      dependency_server_pd:
+      - abstract_pd_server
+      - dependency_pd_server
+      dependency_ps_server_port:
+      - abstract_ps_server
+      - dependency_ps_server_ps_server_port
+      dependency_pd_server_port:
+      - abstract_pd_server
+      - dependency_pd_server_pd_server_port
+      dependency_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - dependency_test_resourceGroup
+      link_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - link_sm_server_port
+      dependency_server_sm_test_nested2Level:
+      - test_nested2Level
+      - dependency_server_sm
+      link_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - link_cmaui_port_8_test_resourceGroup
+      dependency_test_nested2Level:
+      - test_nested2Level
+      - dependency
+      link_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - link_oam_server_port
+      local_storage_server_ps:
+      - abstract_ps_server
+      - local_storage_ps_server
+      dependency_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - dependency_sm_server_port
+      local_storage_server_pd:
+      - abstract_pd_server
+      - local_storage_pd_server
+      dependency_server_ps:
+      - abstract_ps_server
+      - dependency_ps_server
+      dependency_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - dependency_oam_server_port
+      link_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - link_cmaui_port_7_test_resourceGroup
+      link_pd_server_port:
+      - abstract_pd_server
+      - link_pd_server_pd_server_port
+      link_ps_server_port:
+      - abstract_ps_server
+      - link_ps_server_ps_server_port
+      dependency_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - dependency_cmaui_port_7_test_resourceGroup
+      dependency_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - dependency_cmaui_port_8_test_resourceGroup
+      local_storage_server_sm_test_nested2Level:
+      - test_nested2Level
+      - local_storage_server_sm
+      dependency_server_oam_test_nested2Level:
+      - test_nested2Level
+      - dependency_server_oam
+      local_storage_server_oam_test_nested2Level:
+      - test_nested2Level
+      - local_storage_server_oam
+      local_storage_server_cmaui_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - local_storage_server_cmaui_test_resourceGroup

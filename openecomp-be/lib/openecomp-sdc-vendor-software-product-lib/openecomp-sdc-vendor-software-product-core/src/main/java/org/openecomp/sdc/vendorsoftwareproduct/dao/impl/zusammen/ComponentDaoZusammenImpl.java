@@ -215,7 +215,11 @@ public class ComponentDaoZusammenImpl implements ComponentDao {
               componentQuestionnaireToZusammen(component.getQuestionnaireData(), Action.CREATE),
               VspZusammenUtil.buildStructuralElement(StructureElement.Nics, Action.CREATE),
               VspZusammenUtil.buildStructuralElement(StructureElement.Processes, Action.CREATE),
-              VspZusammenUtil.buildStructuralElement(StructureElement.Mibs, Action.CREATE)));
+              VspZusammenUtil.buildStructuralElement(StructureElement.Mibs, Action.CREATE),
+              VspZusammenUtil.buildStructuralElement(StructureElement.Computes, Action.CREATE),
+              VspZusammenUtil.buildStructuralElement(StructureElement.Images, Action.CREATE)));
+
+
     }
     return componentElement;
   }

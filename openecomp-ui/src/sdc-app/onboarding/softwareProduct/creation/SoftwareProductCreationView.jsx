@@ -18,10 +18,14 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import Validator from 'nfvo-utils/Validator.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import Form from 'nfvo-components/input/validation/Form.jsx';
+import GridSection from 'nfvo-components/grid/GridSection.jsx';
+import GridItem from 'nfvo-components/grid/GridItem.jsx';
+
 import {SP_CREATION_FORM_NAME} from './SoftwareProductCreationConstants.js';
 import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 
 import SoftwareProductCategoriesHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductCategoriesHelper.js';
+import {onboardingMethod as onboardingMethodConst} from '../SoftwareProductConstants.js';
 
 const SoftwareProductPropType = React.PropTypes.shape({
 	id: React.PropTypes.string,
@@ -46,7 +50,7 @@ class SoftwareProductCreationView extends React.Component {
 
 	render() {
 		let {softwareProductCategories, data = {}, onDataChanged, onCancel, genericFieldInfo, disableVendor} = this.props;
-		let {name, description, vendorId, subCategory} = data;
+		let {name, description, vendorId, subCategory, onboardingMethod} = data;
 
 		const vendorList = this.getVendorList();
 		return (
@@ -58,10 +62,11 @@ class SoftwareProductCreationView extends React.Component {
 					onReset={() => onCancel() }
 					labledButtons={true}
 					isValid={this.props.isFormValid}
+					submitButtonText={i18n('Create')}
 					formReady={this.props.formReady}
 					onValidateForm={() => this.validate() }>
-					<div className='software-product-form-row'>
-						<div className='software-product-inline-section'>
+					<GridSection>
+						<GridItem colSpan='2'>
 							<Input
 								value={name}
 								label={i18n('Name')}
@@ -76,6 +81,7 @@ class SoftwareProductCreationView extends React.Component {
 								label={i18n('Vendor')}
 								type='select'
 								value={vendorId}
+								overlayPos='bottom'
 								isRequired={true}
 								disabled={disableVendor}
 								onChange={e => this.onSelectVendor(e)}
@@ -108,8 +114,8 @@ class SoftwareProductCreationView extends React.Component {
 									</optgroup>)
 								}
 							</Input>
-						</div>
-						<div className='software-product-inline-section'>
+						</GridItem>
+						<GridItem colSpan='2' stretch>
 							<Input
 								value={description}
 								label={i18n('Description')}
@@ -120,9 +126,10 @@ class SoftwareProductCreationView extends React.Component {
 								errorText={genericFieldInfo.description.errorText}
 								type='textarea'
 								className='field-section'
-								data-test-id='new-vsp-description' />
-						</div>
-					</div>
+								data-test-id='new-vsp-description'/>
+						</GridItem>
+					</GridSection>
+					<OnboardingProcedure genericFieldInfo={genericFieldInfo} onboardingMethod={onboardingMethod} onDataChanged={onDataChanged} />
 				</Form>}
 			</div>
 		);
@@ -173,5 +180,34 @@ class SoftwareProductCreationView extends React.Component {
 		this.props.onValidateForm(SP_CREATION_FORM_NAME);
 	}
 }
+
+const OnboardingProcedure = ({onboardingMethod, onDataChanged, genericFieldInfo}) => {
+	return(
+		<GridSection title={i18n('Onboarding procedure')}>
+			<GridItem colSpan={4}>
+				<Input
+					label={i18n('HEAT file')}
+					overlayPos='top'
+					isValid={genericFieldInfo.onboardingMethod.isValid}
+					checked={onboardingMethod === onboardingMethodConst.HEAT}
+					errorText={genericFieldInfo.onboardingMethod.errorText}
+					onChange={() => onDataChanged({onboardingMethod:'HEAT'},SP_CREATION_FORM_NAME)}
+					type='radio'
+					data-test-id='new-vsp-creation-procedure-heat' />
+			</GridItem>
+			<GridItem colSpan={4}>
+				<Input
+					label={i18n('Manual')}
+					overlayPos='bottom'
+					checked={onboardingMethod === onboardingMethodConst.MANUAL}
+					isValid={genericFieldInfo.onboardingMethod.isValid}
+					errorText={genericFieldInfo.onboardingMethod.errorText}
+					onChange={() => onDataChanged({onboardingMethod:'Manual'},SP_CREATION_FORM_NAME)}
+					type='radio'
+					data-test-id='new-vsp-creation-procedure-manual' />
+			</GridItem>
+		</GridSection>
+	);
+};
 
 export default SoftwareProductCreationView;

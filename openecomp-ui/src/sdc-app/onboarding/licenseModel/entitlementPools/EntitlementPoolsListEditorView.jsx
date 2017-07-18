@@ -45,14 +45,14 @@ class EntitlementPoolsListEditorView extends React.Component {
 	};
 
 	render() {
-		let {licenseModelId, vendorName, isReadOnlyMode, isDisplayModal, isModalInEditMode, version} = this.props;
+		let {licenseModelId, isReadOnlyMode, isDisplayModal, isModalInEditMode, version} = this.props;
 		let {onAddEntitlementPoolClick} = this.props;
 		const {localFilter} = this.state;
 
 		return (
 			<div className='entitlement-pools-list-editor'>
 				<ListEditorView
-					title={i18n('Entitlement Pools', {vendorName})}
+					title={i18n('Entitlement Pools')}
 					plusButtonTitle={i18n('Add Entitlement Pool')}
 					onAdd={onAddEntitlementPoolClick}
 					filterValue={localFilter}
@@ -132,7 +132,7 @@ export default EntitlementPoolsListEditorView;
 
 export function generateConfirmationMsg(entitlementPoolToDelete) {
 	let poolName = entitlementPoolToDelete ? entitlementPoolToDelete.name : '';
-	let msg = i18n('Are you sure you want to delete "{poolName}"?', {poolName});
+	let msg = i18n(`Are you sure you want to delete "${poolName}"?`);
 	let subMsg = entitlementPoolToDelete
 	&& entitlementPoolToDelete.referencingFeatureGroups
 	&& entitlementPoolToDelete.referencingFeatureGroups.length > 0 ?

@@ -1,0 +1,128 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: security_group_name
+    contrail_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of contrail v2 network
+    jsa_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa network
+    jsa_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+  node_templates:
+    test_nested1Level:
+      type: org.openecomp.resource.abstract.nodes.heat.nested1
+      directives:
+      - substitutable
+      properties:
+        p1: jsa_security_group1
+        service_template_filter:
+          substitute_service_template: nested1ServiceTemplate.yaml
+        p2: jsa_security_group2
+        net2:
+          get_attribute:
+          - test_contrailV2_net
+          - fq_name
+        net1: test_net
+      requirements:
+      - link_ps_server_port:
+          capability: tosca.capabilities.network.Linkable
+          node: test_contrailV2_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_pd_server_port:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net
+          relationship: tosca.relationships.network.LinksTo
+    test_contrailV2_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_name:
+          get_input: contrail_net_name
+    test_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_input: jsa_net_name
+    jsa_security_group1:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          get_input: security_group_name
+        description: ems security group
+        rules:
+        - protocol: icmp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          direction: ingress
+      requirements:
+      - port:
+          capability: attachment_oam_server_port_test_nested2Level
+          node: test_nested1Level
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_ps_server_port
+          node: test_nested1Level
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_pd_server_port
+          node: test_nested1Level
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_sm_server_port_test_nested2Level
+          node: test_nested1Level
+          relationship: org.openecomp.relationships.AttachesTo
+    jsa_security_group2:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          get_input: security_group_name
+        description: ems security group
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+      requirements:
+      - port:
+          capability: attachment_pd_server_port
+          node: test_nested1Level
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_sm_server_port_test_nested2Level
+          node: test_nested1Level
+          relationship: org.openecomp.relationships.AttachesTo
+  groups:
+    main_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - test_nested1Level
+      - test_contrailV2_net
+      - test_net
+      - jsa_security_group1
+      - jsa_security_group2

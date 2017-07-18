@@ -49,6 +49,8 @@ public class FeatureGroupEntity implements VersionableEntity {
   private String description;
   @Column(name = "part_num")
   private String partNumber;
+  @Column(name = "manufacturer_ref_num")
+  private String manufacturerReferenceNumber;
   @Column(name = "lkg_ids")
   private Set<String> licenseKeyGroupIds = new HashSet<>();
   @Column(name = "ep_ids")
@@ -134,6 +136,14 @@ public class FeatureGroupEntity implements VersionableEntity {
     this.partNumber = partNumber;
   }
 
+  public String getManufacturerReferenceNumber() {
+    return manufacturerReferenceNumber;
+  }
+
+  public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
+    this.manufacturerReferenceNumber = manufacturerReferenceNumber;
+  }
+
   public Set<String> getLicenseKeyGroupIds() {
     return licenseKeyGroupIds;
   }
@@ -161,8 +171,9 @@ public class FeatureGroupEntity implements VersionableEntity {
   @Override
   public int hashCode() {
     return Objects
-        .hash(vendorLicenseModelId, version, id, name, description, partNumber, licenseKeyGroupIds,
-            entitlementPoolIds, referencingLicenseAgreements);
+        .hash(vendorLicenseModelId, version, id, name, description, partNumber,
+        manufacturerReferenceNumber, licenseKeyGroupIds, entitlementPoolIds,
+            referencingLicenseAgreements);
   }
 
   @Override
@@ -180,6 +191,7 @@ public class FeatureGroupEntity implements VersionableEntity {
         && Objects.equals(name, that.name)
         && Objects.equals(description, that.description)
         && Objects.equals(partNumber, that.partNumber)
+        && Objects.equals(manufacturerReferenceNumber, that.manufacturerReferenceNumber)
         && Objects.equals(licenseKeyGroupIds, that.licenseKeyGroupIds)
         && Objects.equals(entitlementPoolIds, that.entitlementPoolIds)
         && Objects.equals(referencingLicenseAgreements, that.referencingLicenseAgreements);
@@ -194,6 +206,7 @@ public class FeatureGroupEntity implements VersionableEntity {
         + ", name='" + name + '\''
         + ", description='" + description + '\''
         + ", partNumber='" + partNumber + '\''
+        + ", manufacturerReferenceNumber='" + manufacturerReferenceNumber + '\''
         + ", licenseKeyGroupIds=" + licenseKeyGroupIds
         + ", entitlementPoolIds=" + entitlementPoolIds
         + ", referencingLicenseAgreements=" + referencingLicenseAgreements

@@ -15,7 +15,7 @@
           flex: 45%;
           .validation-input-wrapper {
             .field-section {
-              @extend .body-2-medium;
+              @extend .body-2-semibold;
               margin-bottom: 23px;
               color: $black;
             }

@@ -25,6 +25,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -34,6 +35,7 @@ import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.AttributeDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityType;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
@@ -42,6 +44,7 @@ import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.PropertyDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.errors.ToscaInvalidEntryNotFoundErrorBuilder;
 import org.openecomp.sdc.tosca.errors.ToscaInvalidSubstituteNodeTemplatePropertiesErrorBuilder;
@@ -51,7 +54,7 @@ import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
-import org.openecomp.sdc.tosca.services.yamlutil.ToscaExtensionYamlUtil;
+import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,9 +67,133 @@ import java.util.Optional;
 import java.util.Set;
 
 public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
+
+  protected static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+
+  public List<Map<String, RequirementDefinition>> calculateExposedRequirements(
+      List<Map<String, RequirementDefinition>> nodeTypeRequirementsDefinitionList,
+      Map<String, RequirementAssignment> nodeTemplateRequirementsAssignment) {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    if (nodeTypeRequirementsDefinitionList == null) {
+      return null;
+    }
+    for (Map.Entry<String, RequirementAssignment> entry : nodeTemplateRequirementsAssignment
+        .entrySet()) {
+      if (entry.getValue().getNode() != null) {
+        Optional<RequirementDefinition> requirementDefinition =
+            DataModelUtil.getRequirementDefinition(nodeTypeRequirementsDefinitionList, entry
+                .getKey());
+        RequirementDefinition cloneRequirementDefinition;
+        if (requirementDefinition.isPresent()) {
+          cloneRequirementDefinition = requirementDefinition.get().clone();
+          if (!evaluateRequirementFulfillment(cloneRequirementDefinition)) {
+            CommonMethods.mergeEntryInList(entry.getKey(), cloneRequirementDefinition,
+                nodeTypeRequirementsDefinitionList);
+          } else {
+            DataModelUtil.removeRequirementsDefinition(nodeTypeRequirementsDefinitionList, entry
+                .getKey());
+          }
+        }
+      } else {
+        for (Map<String, RequirementDefinition> nodeTypeRequirementsMap :
+            nodeTypeRequirementsDefinitionList) {
+          Object max = nodeTypeRequirementsMap.get(entry.getKey()).getOccurrences() != null
+              && nodeTypeRequirementsMap.get(entry.getKey()).getOccurrences().length > 0
+              ? nodeTypeRequirementsMap.get(entry.getKey()).getOccurrences()[1] : 1;
+          Object min = nodeTypeRequirementsMap.get(entry.getKey()).getOccurrences() != null
+              && nodeTypeRequirementsMap.get(entry.getKey()).getOccurrences().length > 0
+              ? nodeTypeRequirementsMap.get(entry.getKey()).getOccurrences()[0] : 1;
+          nodeTypeRequirementsMap.get(entry.getKey()).setOccurrences(new Object[]{min, max});
+        }
+      }
+    }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
+    return nodeTypeRequirementsDefinitionList;
+  }
+
+  private static boolean evaluateRequirementFulfillment(RequirementDefinition
+                                                            requirementDefinition) {
+    Object[] occurrences = requirementDefinition.getOccurrences();
+    if (occurrences == null) {
+      requirementDefinition.setOccurrences(new Object[]{1, 1});
+      return false;
+    }
+    if (occurrences[1].equals(ToscaConstants.UNBOUNDED)) {
+      return false;
+    }
+
+    if (occurrences[1].equals(1)) {
+      return true;
+    }
+    occurrences[1] = (Integer) occurrences[1] - 1;
+    return false;
+  }
+
+  public Map<String, CapabilityDefinition> calculateExposedCapabilities(
+      Map<String, CapabilityDefinition> nodeTypeCapabilitiesDefinition,
+      Map<String, Map<String, RequirementAssignment>> fullFilledRequirementsDefinitionMap) {
+
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    String capabilityKey;
+    String capability;
+    String node;
+    for (Map.Entry<String, Map<String, RequirementAssignment>> entry :
+        fullFilledRequirementsDefinitionMap.entrySet()) {
+      for (Map.Entry<String, RequirementAssignment> fullFilledEntry : entry.getValue().entrySet()) {
+
+        capability = fullFilledEntry.getValue().getCapability();
+        fullFilledEntry.getValue().getOccurrences();
+        node = fullFilledEntry.getValue().getNode();
+        capabilityKey = capability + "_" + node;
+        CapabilityDefinition capabilityDefinition = nodeTypeCapabilitiesDefinition.get(
+            capabilityKey);
+        if (capabilityDefinition != null) {
+          CapabilityDefinition clonedCapabilityDefinition = capabilityDefinition.clone();
+          nodeTypeCapabilitiesDefinition.put(capabilityKey, capabilityDefinition.clone());
+          if (evaluateCapabilityFulfillment(clonedCapabilityDefinition)) {
+            nodeTypeCapabilitiesDefinition.remove(capabilityKey);
+          } else {
+            nodeTypeCapabilitiesDefinition.put(capabilityKey, clonedCapabilityDefinition);
+          }
+        }
+      }
+    }
+
+    Map<String, CapabilityDefinition> exposedCapabilitiesDefinition = new HashMap<>();
+    for (Map.Entry<String, CapabilityDefinition> entry : nodeTypeCapabilitiesDefinition
+        .entrySet()) {
+      exposedCapabilitiesDefinition.put(entry.getKey(), entry.getValue());
+    }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
+    return exposedCapabilitiesDefinition;
+  }
+
+  private static boolean evaluateCapabilityFulfillment(CapabilityDefinition capabilityDefinition) {
+
+    Object[] occurrences = capabilityDefinition.getOccurrences();
+    if (occurrences == null) {
+      capabilityDefinition.setOccurrences(new Object[]{1, ToscaConstants.UNBOUNDED});
+      return false;
+    }
+    if (occurrences[1].equals(ToscaConstants.UNBOUNDED)) {
+      return false;
+    }
+
+    if (occurrences[1].equals(1)) {
+      return true;
+    }
+    occurrences[1] = (Integer) occurrences[1] - 1;
+    return false;
+  }
+
   /*
-  node template with type equal to node type or derived from node type
-   */
+    node template with type equal to node type or derived from node type
+     */
   @Override
   public Map<String, NodeTemplate> getNodeTemplatesByType(ServiceTemplate serviceTemplate,
                                                           String nodeType,

@@ -13,6 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+import 'sdc-ui/css/style.css';
 import '../../resources/scss/onboarding.scss';
 import 'dox-sequence-diagram-ui/src/main/webapp/res/sdc-sequencer.scss';
 

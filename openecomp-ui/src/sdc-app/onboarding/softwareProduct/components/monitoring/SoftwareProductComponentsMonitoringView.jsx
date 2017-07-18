@@ -19,14 +19,15 @@ import ButtonGroup from 'react-bootstrap/lib/ButtonGroup.js';
 import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar.js';
 import Button from 'react-bootstrap/lib/Button.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SoftwareProductComponentsMonitoringConstants from './SoftwareProductComponentsMonitoringConstants.js';
+import {fileTypes, type2Title, type2Name} from './SoftwareProductComponentsMonitoringConstants.js';
+
+
 
 class SoftwareProductComponentsMonitoringView extends Component {
 
 	static propTypes = {
 		isReadOnlyMode: PropTypes.bool,
-		trapFilename: PropTypes.string,
-		pollFilename: PropTypes.string,
+		filenames: PropTypes.object,
 		softwareProductId: PropTypes.string,
 
 		onDropMibFileToUpload: PropTypes.func,
@@ -38,26 +39,24 @@ class SoftwareProductComponentsMonitoringView extends Component {
 	};
 
 
+
+
 	render() {
 		return (
 			<div className='vsp-component-monitoring'>
-				{this.renderDropzoneWithType(SoftwareProductComponentsMonitoringConstants.SNMP_TRAP)}
-				{this.renderDropzoneWithType(SoftwareProductComponentsMonitoringConstants.SNMP_POLL)}
+				{this.renderDropzoneWithType(fileTypes.VES_EVENT)}
+				{this.renderDropzoneWithType(fileTypes.SNMP_TRAP)}
+				{this.renderDropzoneWithType(fileTypes.SNMP_POLL)}
 			</div>
 		);
 	}
 
 	renderDropzoneWithType(type) {
-		let {isReadOnlyMode, trapFilename, pollFilename} = this.props;
-		let fileName;
-		if (type === SoftwareProductComponentsMonitoringConstants.SNMP_TRAP) {
-			fileName = trapFilename;
-		}
-		else {
-			fileName = pollFilename;
-		}
+		let {isReadOnlyMode, filenames} = this.props;
+		let fileByType = type2Name[type];
+		let fileName = (filenames) ? filenames[fileByType] : undefined;
 		let refAndName = `fileInput${type.toString()}`;
-		let typeDisplayName = this.getFileTypeDisplayName(type);
+		let typeDisplayName = type2Title[type];
 		return (
 			<Dropzone
 				className={`snmp-dropzone ${this.state.dragging ? 'active-dragging' : ''}`}
@@ -97,7 +96,7 @@ class SoftwareProductComponentsMonitoringView extends Component {
 			<ButtonToolbar>
 				<ButtonGroup>
 					<Button disabled>{filename}</Button>
-					<Button className='delete-button' onClick={()=>this.props.onDeleteSnmpFile(type)}>X</Button>
+					<Button className='delete-button' onClick={()=>this.props.onDeleteFile(type)}>X</Button>
 				</ButtonGroup>
 			</ButtonToolbar>
 		);
@@ -126,11 +125,6 @@ class SoftwareProductComponentsMonitoringView extends Component {
 			this.props.onFileUploadError();
 		}
 	}
-
-	getFileTypeDisplayName(type) {
-		return type === SoftwareProductComponentsMonitoringConstants.SNMP_TRAP ? 'SNMP Trap' : 'SNMP Poll';
-	}
-
 }
 
 export default SoftwareProductComponentsMonitoringView;

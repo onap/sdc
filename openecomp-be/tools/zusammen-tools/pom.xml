@@ -47,12 +47,12 @@
         <dependency>
             <groupId>com.amdocs.zusammen.plugin</groupId>
             <artifactId>zusammen-state-store-cassandra-plugin</artifactId>
-            <version>0.0.1</version>
+              <version>${zusammen.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>RELEASE</version>
+            <version>${hibernate.validator.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
@@ -62,7 +62,7 @@
     </dependencies>
     <artifactId>openecomp-zusammen-tools</artifactId>
     <groupId>org.openecomp.sdc.core.tools</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>openecomp-sdc-lib</artifactId>

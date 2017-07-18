@@ -1,0 +1,22 @@
+{
+  "name": "Nested test",
+  "description": "HOT template to create nested one level multiple compute",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "main.yml",
+      "type": "HEAT",
+      "isBase": "true"
+    },
+    {
+      "file": "nested-same-file-1B.yml",
+      "type": "HEAT",
+      "isBase": "false"
+    },
+    {
+      "file": "nested-other-file-1B.yml",
+      "type": "HEAT",
+      "isBase": "false"
+    }
+  ]
+}

@@ -122,13 +122,11 @@ topology_template:
           relationship: tosca.relationships.network.BindsTo
   outputs:
     ps_server_accessIPv4:
-      type: list
+      type: string
       value:
         get_attribute:
         - ps_server
         - accessIPv4
-      entry_schema:
-        type: string
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.ps_server
     capabilities:

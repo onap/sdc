@@ -192,21 +192,17 @@ topology_template:
           relationship: tosca.relationships.network.BindsTo
   outputs:
     b_single_1b_instance_name:
-      type: list
+      type: string
       value:
         get_attribute:
         - b_single_1b
         - instance_name
-      entry_schema:
-        type: string
     b_single_1b_1b_t1_port_tenant_id:
-      type: list
+      type: string
       value:
         get_attribute:
         - b_single_1b_1b_t1_port
         - tenant_id
-      entry_schema:
-        type: string
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.b_single_1b_1
     capabilities:

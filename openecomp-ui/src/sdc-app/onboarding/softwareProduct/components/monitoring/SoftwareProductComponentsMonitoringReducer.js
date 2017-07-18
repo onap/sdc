@@ -13,35 +13,21 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {actionTypes} from './SoftwareProductComponentsMonitoringConstants.js';
+import {actionTypes, type2Name} from './SoftwareProductComponentsMonitoringConstants.js';
 
 export default (state = {}, action) => {
 	switch (action.type) {
-		case actionTypes.SNMP_FILES_DATA_CHANGE:
+		case actionTypes.MONITOR_FILES_DATA_CHANGE:
+			return action.data;
+		case actionTypes.MONITOR_UPLOADED:
 			return {
 				...state,
-				trapFilename: action.data.trapFilename,
-				pollFilename: action.data.pollFilename
+				[type2Name[action.data.type]]: action.data.filename
 			};
-		case actionTypes.SNMP_TRAP_UPLOADED:
+		case actionTypes.MONITOR_DELETED:
 			return {
 				...state,
-				trapFilename: action.data.filename
-			};
-		case actionTypes.SNMP_POLL_UPLOADED:
-			return {
-				...state,
-				pollFilename: action.data.filename
-			};
-		case actionTypes.SNMP_TRAP_DELETED:
-			return {
-				...state,
-				trapFilename: undefined
-			};
-		case actionTypes.SNMP_POLL_DELETED:
-			return {
-				...state,
-				pollFilename: undefined
+				[type2Name[action.data.type]]: undefined
 			};
 		default:
 			return state;

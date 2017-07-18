@@ -32,6 +32,9 @@ public class MapComponentDataToComponentDto extends MappingBase<ComponentData, C
         source.getDisplayName() == null ? source.getName() : source.getDisplayName());
     target.setVfcCode(
         source.getVfcCode() == null ? target.getDisplayName() : source.getVfcCode());
+    target.setNfcCode(
+        source.getNfcCode() == null ? source.getDisplayName() : source.getNfcCode());
+    target.setNfcFunction(source.getNfcFunction());
     target.setDescription(source.getDescription());
   }
 }

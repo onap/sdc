@@ -22,10 +22,12 @@ package org.openecomp.sdc.tosca.services;
 
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
 import org.openecomp.sdc.tosca.datatypes.model.PropertyDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 
 import java.util.Collection;
@@ -80,4 +82,12 @@ public interface ToscaAnalyzerService {
 
   public Map<String, PropertyDefinition> manageSubstitutionNodeTypeProperties(
       ServiceTemplate substitutionServiceTemplate);
+
+  public Map<String, CapabilityDefinition> calculateExposedCapabilities(
+      Map<String, CapabilityDefinition> nodeTypeCapabilitiesDefinition,
+      Map<String, Map<String, RequirementAssignment>> fullFilledRequirementsDefinitionMap);
+
+  public List<Map<String, RequirementDefinition>> calculateExposedRequirements(
+      List<Map<String, RequirementDefinition>> nodeTypeRequirementsDefinitionList,
+      Map<String, RequirementAssignment> nodeTemplateRequirementsAssignment);
 }

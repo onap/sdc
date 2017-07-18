@@ -7,7 +7,6 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.compositi
 import org.openecomp.sdc.translator.services.heattotosca.UnifiedComposition;
 import org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,14 +19,20 @@ public class UnifiedCompositionScalingInstances implements UnifiedComposition {
                                        ServiceTemplate nestedServiceTemplate,
                                        List<UnifiedCompositionData> unifiedCompositionDataList,
                                        TranslationContext context) {
-    if (CollectionUtils.isEmpty(unifiedCompositionDataList)) {
+    if (CollectionUtils.isEmpty(unifiedCompositionDataList)
+        || context.isUnifiedHandledServiceTemplate(serviceTemplate)) {
       return;
     }
 
+    unifiedCompositionService.handleComplexVfcType(serviceTemplate, context);
+
     Integer index = null;
+    String substitutionNodeTypeId =
+        unifiedCompositionService.getSubstitutionNodeTypeId(serviceTemplate,
+            unifiedCompositionDataList.get(0), null, context);
     Optional<ServiceTemplate> substitutionServiceTemplate =
         unifiedCompositionService.createUnifiedSubstitutionServiceTemplate(serviceTemplate,
-            unifiedCompositionDataList, context, index);
+            unifiedCompositionDataList, context, substitutionNodeTypeId, index);
 
     if (!substitutionServiceTemplate.isPresent()) {
       return;
@@ -35,7 +40,7 @@ public class UnifiedCompositionScalingInstances implements UnifiedComposition {
 
     String abstractNodeTemplateId = unifiedCompositionService
         .createAbstractSubstituteNodeTemplate(serviceTemplate, substitutionServiceTemplate.get(),
-            unifiedCompositionDataList, context, index);
+            unifiedCompositionDataList, substitutionNodeTypeId, context, index);
 
     unifiedCompositionService
         .updateCompositionConnectivity(serviceTemplate, unifiedCompositionDataList, context);

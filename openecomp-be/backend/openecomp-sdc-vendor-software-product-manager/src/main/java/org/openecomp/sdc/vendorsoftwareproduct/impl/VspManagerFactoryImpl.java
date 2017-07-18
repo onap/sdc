@@ -28,11 +28,15 @@ import org.openecomp.sdc.vendorlicense.VendorLicenseArtifactServiceFactory;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.InformationArtifactGeneratorFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 
 public class VspManagerFactoryImpl extends VspManagerFactory {
@@ -49,7 +53,10 @@ public class VspManagerFactoryImpl extends VspManagerFactory {
           VendorLicenseArtifactServiceFactory.getInstance().createInterface(),
           InformationArtifactGeneratorFactory.getInstance().createInterface(),
           PackageInfoDaoFactory.getInstance().createInterface(),
-          ActivityLogManagerFactory.getInstance().createInterface());
+          ActivityLogManagerFactory.getInstance().createInterface(),
+          DeploymentFlavorDaoFactory.getInstance().createInterface(),
+          NicDaoFactory.getInstance().createInterface(),
+          new ManualVspToscaManagerImpl());
 
   @Override
   public VendorSoftwareProductManager createInterface() {

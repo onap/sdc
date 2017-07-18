@@ -36,12 +36,14 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityValidationDataDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.NicCreationResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NicDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NicRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
 import org.openecomp.sdcrests.vsp.rest.Nics;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapCompositionEntityResponseToDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapCompositionEntityValidationDataToDto;
+import org.openecomp.sdcrests.vsp.rest.mapping.MapNicEntityToNicCreationResponseDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapNicEntityToNicDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapNicRequestDtoToNicEntity;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapNicToNicDto;
@@ -89,7 +91,11 @@ public class NicsImpl implements Nics {
     componentManager.validateComponentExistence(vspId, nic.getVersion(), componentId, user);
 
     NicEntity createdNic = nicManager.createNic(nic, user);
-    return Response.ok(createdNic != null ? new StringWrapperResponse(createdNic.getId()) : null)
+    MapNicEntityToNicCreationResponseDto mapping =
+        new MapNicEntityToNicCreationResponseDto();
+    NicCreationResponseDto createdNicDto = mapping.applyMapping(createdNic,
+        NicCreationResponseDto.class);
+    return Response.ok(createdNic != null ? createdNicDto : null)
         .build();
   }
 

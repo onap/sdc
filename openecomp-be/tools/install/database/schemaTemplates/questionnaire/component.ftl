@@ -32,39 +32,30 @@
         "image": {
           "type": "object",
           "properties": {
-            "format": {
-              "type": "string",
-              "enum": [
-                "aki",
-                "ami",
-                "ari",
-                "iso",
-                "qcow2",
-                "raw",
-                "vdi",
-                "vhd",
-                "vmdk"
-              ],
-              "default": "qcow2"
-            },
             "providedBy": {
               "type": "string",
               "enum": [
                 "Vendor"
               ],
               "default": "Vendor"
-            },
-            "bootDiskSizePerVM": {
-              "type": "number",
-              "maximum": 100
-            },
-            "ephemeralDiskSizePerVM": {
-              "type": "number",
-              "maximum": 400
             }
           },
           "additionalProperties": false
         },
+        "disk": {
+          "type": "object" ,
+          "properties": {
+              "bootDiskSizePerVM": {
+                "type": "number",
+                "maximum": 100
+              },
+             "ephemeralDiskSizePerVM": {
+               "type": "number",
+               "maximum": 400
+              }
+           },
+           "additionalProperties": false
+         },
         "recovery": {
           "type": "object",
           "properties": {
@@ -101,35 +92,6 @@
     "compute": {
       "type": "object",
       "properties": {
-        "vmSizing": {
-          "type": "object",
-          "properties": {
-            "numOfCPUs": {
-              "type": "number",
-              "minimum": 0,
-              "exclusiveMinimum": true,
-              "maximum": 16,
-              "default": 2
-            },
-            "fileSystemSizeGB": {
-              "type": "number",
-              "minimum": 0,
-              "exclusiveMinimum": true,
-              "default": 5
-            },
-            "persistentStorageVolumeSize": {
-              "type": "number",
-              "minimum": 0,
-              "exclusiveMinimum": true
-            },
-            "IOOperationsPerSec": {
-              "type": "number",
-              "minimum": 0,
-              "exclusiveMinimum": true
-            }
-          },
-          "additionalProperties": false
-        },
         "numOfVMs": {
           "type": "object",
           "properties": {
@@ -148,24 +110,6 @@
             0</#if> ,
               "exclusiveMinimum": true,
               "maximum": 100
-            },
-            "CpuOverSubscriptionRatio": {
-              "type": "string",
-              "enum": [
-                "1:1",
-                "4:1",
-                "16:1"
-              ],
-              "default": "4:1"
-            },
-            "MemoryRAM": {
-              "type": "string",
-              "enum": [
-                "2 GB",
-                "4 GB",
-                "8 GB"
-              ],
-              "default": "2 GB"
             }
           },
           "additionalProperties": false
@@ -184,6 +128,7 @@
                 32
               ],
               "default": 64
+
             },
             "tools": {
               "type": "string"

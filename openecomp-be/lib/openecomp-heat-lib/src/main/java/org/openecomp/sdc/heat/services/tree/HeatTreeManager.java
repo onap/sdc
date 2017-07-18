@@ -23,7 +23,7 @@ package org.openecomp.sdc.heat.services.tree;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.core.utilities.yaml.YamlUtil;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;

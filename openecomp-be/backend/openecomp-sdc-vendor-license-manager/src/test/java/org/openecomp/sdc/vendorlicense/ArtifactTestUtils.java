@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -126,12 +126,25 @@ public class ArtifactTestUtils {
   protected List featureGroupsforVlm3;
   protected LicenseAgreementEntity licenseAgreementVlm3;
 
+  public enum OnboardingMethod {
+    HEAT("HEAT"),
+    Manual("Manual");
+
+
+    OnboardingMethod(String method) {
+      this.method = method;
+    }
+
+    private  String method;
+  }
+
 
   protected static VspDetails createVspDetails(String id, Version version, String name, String desc,
                                                String vendorName, String vlm, String icon,
                                                String category, String subCategory,
                                                String licenseAgreement,
-                                               List<String> featureGroups) {
+                                               List<String> featureGroups,
+                                               String onboardingMethod) {
     VspDetails vspDetails = new VspDetails(id, version);
     vspDetails.setName(name);
     vspDetails.setDescription(desc);
@@ -142,6 +155,7 @@ public class ArtifactTestUtils {
     vspDetails.setVendorId(vlm);
     vspDetails.setLicenseAgreement(licenseAgreement);
     vspDetails.setFeatureGroups(featureGroups);
+    vspDetails.setOnboardingMethod(onboardingMethod);
     return vspDetails;
   }
 
@@ -238,7 +252,8 @@ public class ArtifactTestUtils {
         vendorLicenseFacade.getVersionInfo(vlm1Id, VersionableEntityAction.Read, "");
     vspDetails =
         createVspDetails(null, null, "VSP1_" + CommonMethods.nextUuId(), "Test-vsp", "vendorName",
-            vlm1Id, "icon", "category", "subCategory", la11Id, fgs);
+            vlm1Id, "icon", "category", "subCategory", la11Id, fgs, ArtifactTestUtils
+                .OnboardingMethod.HEAT.name());
 
     List<Version> finalVersions = versionInfo.getFinalVersions();
     Version finalVersion = finalVersions.get(1);
@@ -266,7 +281,8 @@ public class ArtifactTestUtils {
     vspDetailsVsp3 =
         createVspDetails(null, null, "VSP3_" + CommonMethods.nextUuId(), "VSP3",
             "vendorName",
-            vlm3Id, "icon", "category", "subCategory", licenceAgreementId, fgs);
+            vlm3Id, "icon", "category", "subCategory", licenceAgreementId, fgs, OnboardingMethod
+                .HEAT.name());
     VersionInfo versionInfo =
         vendorLicenseFacade.getVersionInfo(vlmToUse, VersionableEntityAction.Read, "");
 
@@ -383,7 +399,7 @@ public class ArtifactTestUtils {
     fgs.add(fg21Id);
     vsp2 =
         createVspDetails(null, null, "VSP2_" + CommonMethods.nextUuId(), "Test-vsp", "vendorName",
-            vlm2Id, "icon", "category", "subCategory", la21Id, fgs);
+            vlm2Id, "icon", "category", "subCategory", la21Id, fgs, OnboardingMethod.HEAT.name());
     vsp2 = vendorSoftwareProductManager.createVsp(vsp2, USER1);
   }
 

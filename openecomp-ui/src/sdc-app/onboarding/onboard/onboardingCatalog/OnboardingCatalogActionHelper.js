@@ -26,7 +26,7 @@ import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/Soft
 function getMessageForMigration(name) {
 	return (
 		<div>
-			<div>{i18n('{name} needs to be updated. Click ‘Checkout & Update’, to proceed.',{name})}</div>
+			<div>{i18n(`${name} needs to be updated. Click ‘Checkout & Update’, to proceed.`)}</div>
 			<div>{i18n('Please don’t forget to submit afterwards')}</div>
 		</div>
 	);
@@ -65,7 +65,7 @@ const OnboardingCatalogActionHelper = {
 				type: modalActionTypes.GLOBAL_MODAL_WARNING,				
 				data: {
 					title: 'WARNING',
-					msg: i18n('{name} is locked by user {lockingUser} for self-healing',{name, lockingUser})
+					msg: i18n(`${name} is locked by user ${lockingUser} for self-healing`)
 				}
 			});
 		} else { 

@@ -45,44 +45,6 @@ const NumberOfVms = ({qgenericFieldInfo, dataMap, onQDataChanged, qValidateData,
 					errorText={qgenericFieldInfo['compute/numOfVMs/maximum'].errorText}
 					value={dataMap['compute/numOfVMs/maximum']} />
 			</GridItem>
-			<GridItem>
-				<Input
-					data-test-id='numOfVMs-CpuOverSubscriptionRatio'
-					label={i18n('CPU Oversubscription Ratio')}
-					type='select'
-					groupClassName='bootstrap-input-options'
-					className='input-options-select'
-					isValid={qgenericFieldInfo['compute/numOfVMs/CpuOverSubscriptionRatio'].isValid}
-					errorText={qgenericFieldInfo['compute/numOfVMs/CpuOverSubscriptionRatio'].errorText}
-					value={dataMap['compute/numOfVMs/CpuOverSubscriptionRatio']}
-					onChange={(e) => {
-						const selectedIndex = e.target.selectedIndex;
-						const val = e.target.options[selectedIndex].value;
-						onQDataChanged({'compute/numOfVMs/CpuOverSubscriptionRatio' : val});}
-					}>
-					<option key='placeholder' value=''>{i18n('Select...')}</option>
-					{qgenericFieldInfo['compute/numOfVMs/CpuOverSubscriptionRatio'].enum.map(cpuOSR => <option value={cpuOSR.enum} key={cpuOSR.enum}>{cpuOSR.title}</option>)}
-				</Input>
-			</GridItem>
-			<GridItem>
-				<Input
-					data-test-id='numOfVMs-MemoryRAM'
-					type='select'
-					label={i18n('Memory - RAM')}
-					groupClassName='bootstrap-input-options'
-					className='input-options-select'
-					isValid={qgenericFieldInfo['compute/numOfVMs/MemoryRAM'].isValid}
-					errorText={qgenericFieldInfo['compute/numOfVMs/MemoryRAM'].errorText}
-					value={dataMap['compute/numOfVMs/MemoryRAM']}
-					onChange={(e) => {
-						const selectedIndex = e.target.selectedIndex;
-						const val = e.target.options[selectedIndex].value;
-						onQDataChanged({'compute/numOfVMs/MemoryRAM' : val});}
-					}>
-					<option key='placeholder' value=''>{i18n('Select...')}</option>
-					{qgenericFieldInfo['compute/numOfVMs/MemoryRAM'].enum.map(mRAM => <option value={mRAM.enum} key={mRAM.enum}>{mRAM.title}</option>)}
-				</Input>
-			</GridItem>
 		</GridSection>
 	);
 };

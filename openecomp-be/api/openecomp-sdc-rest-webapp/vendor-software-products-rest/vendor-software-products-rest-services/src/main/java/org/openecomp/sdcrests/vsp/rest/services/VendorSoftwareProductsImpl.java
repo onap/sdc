@@ -22,16 +22,24 @@ package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.openecomp.sdc.activityLog.ActivityLogManager;
 import org.openecomp.sdc.activityLog.ActivityLogManagerFactory;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.MdcUtil;
+import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
+import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.errors.OnboardingMethodErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.VersionedVendorSoftwareProductInfo;
@@ -42,16 +50,18 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.PackageInfoDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ValidationResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VersionSoftwareProductActionRequestDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspComputeDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspCreationDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
 import org.openecomp.sdcrests.vsp.rest.VendorSoftwareProducts;
+import org.openecomp.sdcrests.vsp.rest.mapping.MapComputeEntityToVspComputeDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapPackageInfoToPackageInfoDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapQuestionnaireResponseToQuestionnaireResponseDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapValidationResponseToDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapVersionedVendorSoftwareProductInfoToVspDetailsDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDescriptionDtoToVspDetails;
-import org.openecomp.sdcrests.vsp.rest.mapping.MspVspDetailsToVspCreationDto;
+import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDetailsToVspCreationDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
 import org.slf4j.MDC;
@@ -62,6 +72,7 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -79,21 +90,35 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   private ActivityLogManager activityLogManager =
       ActivityLogManagerFactory.getInstance().createInterface();
 
-  @Override
-  public Response createVsp(VspDescriptionDto vspDescriptionDto, String user) {
-    MdcUtil.initMdc(LoggerServiceName.Create_VSP.toString());
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VSP + vspDescriptionDto.getName());
+    @Override
+    public Response createVsp(VspDescriptionDto vspDescriptionDto, String user) {
+        MdcUtil.initMdc(LoggerServiceName.Create_VSP.toString());
+        logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VSP
+            + vspDescriptionDto.getName());
 
-    VspDetails vspDetails =
-        new MapVspDescriptionDtoToVspDetails().applyMapping(vspDescriptionDto, VspDetails.class);
+      VspCreationDto vspCreationDto = null;
+      switch (vspDescriptionDto.getOnboardingMethod()) {
+        case "HEAT":
+        case "Manual":
+          VspDetails vspDetails = new MapVspDescriptionDtoToVspDetails().
+              applyMapping(vspDescriptionDto, VspDetails.class);
 
-    vspDetails = vendorSoftwareProductManager.createVsp(vspDetails, user);
+          vspDetails = vendorSoftwareProductManager.createVsp(vspDetails, user);
 
-    MspVspDetailsToVspCreationDto mapping = new MspVspDetailsToVspCreationDto();
-    VspCreationDto vspCreationDto = mapping.applyMapping(vspDetails, VspCreationDto.class);
+          MapVspDetailsToVspCreationDto mapping = new MapVspDetailsToVspCreationDto();
+          vspCreationDto = mapping.applyMapping(vspDetails, VspCreationDto.class);
+          break;
+        default:
+          ErrorCode onboardingMethodUpdateErrorCode = OnboardingMethodErrorBuilder
+              .getInvalidOnboardingMethodErrorBuilder();
+          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
+              LoggerTragetServiceName.ADD_VSP, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), onboardingMethodUpdateErrorCode.message());
+          throw new CoreException(onboardingMethodUpdateErrorCode);
+      }
 
-    return Response.ok(vspCreationDto).build();
-  }
+      return Response.ok(vspCreationDto).build();
+    }
 
   @Override
   public Response listVsps(String versionFilter, String user) {
@@ -324,12 +349,26 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         vendorSoftwareProductManager.getInformationArtifact(vspId,
             resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), user);
 
-    Response.ResponseBuilder response = Response.ok(textInformationArtifact);
-    if (textInformationArtifact == null) {
-      return Response.status(Response.Status.NOT_FOUND).build();
+        Response.ResponseBuilder response = Response.ok(textInformationArtifact);
+        if (textInformationArtifact == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        response
+                .header("Content-Disposition", "attachment; filename=" + textInformationArtifact.getName());
+        return response.build();
     }
-    response
-        .header("Content-Disposition", "attachment; filename=" + textInformationArtifact.getName());
-    return response.build();
+
+  public Response listCompute(String vspId, String version, String user) {
+
+    Collection<ComputeEntity> computes = vendorSoftwareProductManager.getComputeByVsp(vspId,
+        resolveVspVersion(vspId, version, user, VersionableEntityAction.Read), user);
+
+    MapComputeEntityToVspComputeDto mapper = new MapComputeEntityToVspComputeDto();
+    GenericCollectionWrapper<VspComputeDto> results = new GenericCollectionWrapper<>();
+    for (ComputeEntity compute : computes) {
+      results.add(mapper.applyMapping(compute, VspComputeDto.class));
+    }
+
+    return Response.ok(results).build();
   }
 }

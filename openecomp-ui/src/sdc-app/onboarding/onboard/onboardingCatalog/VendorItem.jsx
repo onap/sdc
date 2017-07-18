@@ -19,7 +19,7 @@ import CatalogTile from '../CatalogTile.jsx';
 import classnames from 'classnames';
 import VSPOverlay from './VSPOverlay.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
 import tooltip from './Tooltip.jsx';
 
@@ -50,7 +50,7 @@ class VendorItem extends React.Component {
 					</div>
 					<OverlayTrigger placement='top' overlay={tooltip(vendorName)}>
 						<div className='catalog-tile-item-name'>{vendorName}</div>
-					</OverlayTrigger>	
+					</OverlayTrigger>
 					<div
 						className={classnames('catalog-tile-vsp-count', {active: shouldShowOverlay}, {clickable: softwareProductList.length})}
 						onClick={(event) => this.handleVspCountClick(event)}
@@ -63,7 +63,7 @@ class VendorItem extends React.Component {
 						</div>
 					</div>
 				</div>
-				
+
 				{shouldShowOverlay && softwareProductList.length > 0
 				&& <VSPOverlay onMigrate={onMigrate} VSPList={softwareProductList} onSelectVSP={onSelectVSP} onSeeMore={() => onVendorSelect(vendor)}/>}
 			</CatalogTile>

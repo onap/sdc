@@ -22,7 +22,7 @@
 	}
 	&:hover {
 		box-shadow: 0.3px 5px 12.8px 1.3px rgba(24, 24, 25, 0.15);
-		
+
 		border: 1px solid $light-gray;
 	}
 	&:only-child {
@@ -33,7 +33,7 @@
 		margin: 0 0 15px 0;
 	  }
 	  .create-item-text {
-		@extend .heading-4-medium;
+		@extend .heading-4-semibold;
 	  }
 	}
 	.create-item-plus-icon{
@@ -42,14 +42,14 @@
 	  margin: -5px 12px 0 0;
 			.svg-icon.plus {
 			height: 19px;
-			width: 19px;		
+			width: 19px;
 		}
 	}
 	&.vlm-type {
 	  .create-item-text {
 		color: $purple;
 	  }
-	 
+
 	  .create-item-plus-icon {
 		fill: $purple;
 	  }
@@ -58,14 +58,14 @@
 	  .create-item-text {
 		color: $blue;
 	  }
-	 
+
 	  .create-item-plus-icon {
 		fill: $blue;
 	  }
 	}
 	.create-item-text {
 	  width: 140px;
-	  @extend .heading-5-medium;
+	  @extend .heading-5-semibold;
 	}
   }
 }

@@ -31,12 +31,11 @@ public class LicenseKeyGroupRequestDto {
   @NotNull
   @Size(max = 120)
   private String name;
-  @NotNull
   @Size(max = 1000)
   private String description;
   @NotNull
   private LicenseKeyType type;
-  @NotNull
+
   @Valid
   private MultiChoiceOrOtherDto<OperationalScope> operationalScope;
 

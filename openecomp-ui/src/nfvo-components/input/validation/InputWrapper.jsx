@@ -71,6 +71,7 @@ class InputWrapper extends React.Component {
 						checked={checked}
 						disabled={isReadOnlyMode || Boolean(disabled)}
 						value={value}
+						ref={(input) => this.inputWrapper = input}
 						onChange={(e)=>this.onChangeRadio(e)}
 						data-test-id={this.props['data-test-id']}>{label}</Radio>}
 				{type === 'select' &&

@@ -1,10 +1,66 @@
 .dox-ui {
   @import "bootstrap";
   @import "~react-select/dist/react-select.min.css";
+  @import "~react-datepicker/dist/react-datepicker.min.css";
 
   @import "common";
   @import "components";
   @import "modules";
+}
+
+/* Out of namespace context for datepicker */
+div[data-reactroot].customized-date-picker-calendar {
+  @import "common/variables";
+  @import "common/typography";
+  border-radius: 2px;
+  border-color: $light-gray;
+  margin-top: -8px;
+  .react-datepicker__triangle {
+      margin-top: 0px;
+  }
+  .react-datepicker__navigation--previous {
+      border: none;      
+      width: 15px;
+      height: 15px; 
+      margin-top: 2px;
+      content: url(../images/angle-left.svg);               
+  }
+  .react-datepicker__navigation--next {
+      border: none;      
+      width: 15px;
+      height: 15px;
+      margin-top: 2px;      
+      content: url(../images/angle-right.svg);      
+  }
+  .react-datepicker__month-container {    
+		.react-datepicker__header {
+			background-color: $background-gray;
+      border-bottom: none;
+      .react-datepicker__current-month {
+        @extend .heading-5;
+        background-color: $background-gray;
+        margin-bottom: 10px;         
+      }
+      .react-datepicker__day-names {
+        @extend .heading-5;
+        background-color: $white;
+      }
+		}
+    .react-datepicker__day--selected {
+      @extend .heading-5;
+      border-radius: 20px;
+      background-color: $blue;
+      &:hover {
+        background-color: $dark-blue;
+      }
+    }
+    .react-datepicker__day {
+      @extend .heading-5;
+      &:hover {
+        border-radius: 20px;
+      }
+    }
+	}
 }
 
 /* Out of namespace context for tooltips */
@@ -16,11 +72,26 @@ div[data-reactroot].tooltip {
 	opacity: 1;
   }
   &.validation-error-message {
-	&.bottom {
-	  .tooltip-arrow {
-		border-bottom-color: $red !important;
-	  }
-	}
+    &.bottom {
+      .tooltip-arrow {
+      border-bottom-color: $red !important;
+      }
+    }
+    &.left {
+      .tooltip-arrow {
+        border-left-color: $red !important;
+      }
+    }
+    &.right {
+      .tooltip-arrow {
+        border-right-color: $red !important;
+      }
+    }
+    &.top {
+      .tooltip-arrow {
+        border-top-color: $red !important;
+      }
+    }
   }
   &.bottom {
 	.tooltip-arrow {

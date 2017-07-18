@@ -22,6 +22,9 @@ package org.openecomp.sdc.vendorsoftwareproduct.services.composition;
 
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.CompositionEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Component;
@@ -73,5 +76,18 @@ public interface CompositionEntityDataManager {
   ComponentEntity createComponent(ComponentEntity component);
 
   NicEntity createNic(NicEntity nic);
+
+  public ComputeEntity createCompute(ComputeEntity compute);
+
+  public DeploymentFlavorEntity createDeploymentFlavor(DeploymentFlavorEntity deploymentFlavor);
+
+  public ImageEntity createImage(ImageEntity image);
+
+  public void saveComputesFlavorByComponent(String vspId, Version version, Component component, String
+      componentId);
+  public void saveImagesByComponent(String vspId, Version version, Component component, String
+      componentId);
+  public void saveDeploymentFlavors(String vspId, Version version,
+                                    CompositionData compositionData);
 
 }

@@ -23,21 +23,41 @@ package org.openecomp.sdcrests.vsp.rest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.*;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.openecomp.sdc.vendorsoftwareproduct.types.FileDataStructureDto;
+import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.PackageInfoDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VersionSoftwareProductActionRequestDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspComputeDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspCreationDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.validation.IsValidJson;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
 import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
-
 @Path("/v1.0/vendor-software-products")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -183,4 +203,14 @@ public interface VendorSoftwareProducts extends VspEntities {
                                      @NotNull(message = USER_MISSING_ERROR_MSG)
                                      @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
+  @GET
+  @Path("/{vspId}/versions/{versionId}/compute-flavors")
+  @ApiOperation(value = "Get list of vendor software product compute-flavors",
+      response = VspComputeDto.class,
+      responseContainer = "List")
+  Response listCompute(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String
+                           vspId,
+                       @PathParam("versionId") String versionId,
+                       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
+                           String user);
 }

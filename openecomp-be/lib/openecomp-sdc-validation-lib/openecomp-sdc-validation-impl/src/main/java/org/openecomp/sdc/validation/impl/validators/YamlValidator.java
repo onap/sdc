@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.validation.impl.validators;
 
-import org.openecomp.core.utilities.yaml.YamlUtil;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;

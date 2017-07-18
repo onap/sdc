@@ -20,7 +20,7 @@
 
 package org.openecomp.core.nosqldb.util;
 
-import org.openecomp.core.utilities.yaml.YamlUtil;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

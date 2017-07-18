@@ -21,9 +21,7 @@ import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 import ListEditorItemViewField from 'nfvo-components/listEditor/ListEditorItemViewField.jsx';
 import Input from'nfvo-components/input/validation/Input.jsx';
-import Modal from 'nfvo-components/modal/Modal.jsx';
 
-import SoftwareProductComponentsNICEditor from './SoftwareProductComponentsNICEditor.js';
 
 class SoftwareProductComponentsNetworkView extends React.Component {
 
@@ -32,7 +30,7 @@ class SoftwareProductComponentsNetworkView extends React.Component {
 	};
 
 	render() {
-		let {dataMap, qgenericFieldInfo, onQDataChanged, isModalInEditMode, isDisplayModal, softwareProductId, componentId, isReadOnlyMode} = this.props;
+		let {dataMap, qgenericFieldInfo, onQDataChanged, isReadOnlyMode} = this.props;
 
 		return(
 			<div className='vsp-components-network'>
@@ -85,26 +83,14 @@ class SoftwareProductComponentsNetworkView extends React.Component {
 					</div>
 					{this.renderNicList()}
 				</div>
-				<Modal show={isDisplayModal} bsSize='large' animation={true} className='network-nic-modal'>
-					<Modal.Header>
-						<Modal.Title>{isModalInEditMode ? i18n('Edit NIC') : i18n('Create New NIC')}</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						{
-							<SoftwareProductComponentsNICEditor
-								softwareProductId={softwareProductId}
-								componentId={componentId}
-								isReadOnlyMode={isReadOnlyMode}/>
-						}
-					</Modal.Body>
-				</Modal>
+
 			</div>
 		);
 	}
 
 	renderNicList() {
 		const {localFilter} = this.state;
-		let {isReadOnlyMode} = this.props;
+		let {isReadOnlyMode, onAddNic, isManual} = this.props;
 		return (
 			<ListEditorView
 				title={i18n('Interfaces')}
@@ -112,6 +98,8 @@ class SoftwareProductComponentsNetworkView extends React.Component {
 				placeholder={i18n('Filter NICs by Name')}
 				isReadOnlyMode={isReadOnlyMode}
 				onFilter={value => this.setState({localFilter: value})}
+				onAdd={isManual ? onAddNic : null}
+				plusButtonTitle={i18n('Add NIC')}
 				twoColumns>
 				{this.filterList().map(nic => this.renderNicListItem(nic, isReadOnlyMode))}
 			</ListEditorView>
@@ -120,25 +108,26 @@ class SoftwareProductComponentsNetworkView extends React.Component {
 
 	renderNicListItem(nic, isReadOnlyMode) {
 		let {id, name, description, networkName = ''} = nic;
-		let {onEditNicClick, version} =  this.props;
+		let {onEditNicClick, version, isManual, onDeleteNic} =  this.props;
 		return (
 			<ListEditorItemView
 				key={id}
 				isReadOnlyMode={isReadOnlyMode}
-				onSelect={() => onEditNicClick(nic, version)}>
+				onSelect={() => onEditNicClick(nic, version, isReadOnlyMode)}
+				onDelete={isManual ? () => onDeleteNic(nic, version) : null}>
 
 				<ListEditorItemViewField>
 					<div className='name'>{name}</div>
 				</ListEditorItemViewField>
 				<ListEditorItemViewField>
-					<div className='details'>
-						<div className='title'>{i18n('Purpose of NIC')}</div>
-						<div className='description'>{description}</div>
+					<div className={isManual ? 'details-col' : 'details'}>
+						<div className={isManual ? 'manual-title' : 'title'}>{i18n('Purpose of NIC')}</div>
+						<div className={isManual ? 'description' : ''}>{description ? description : i18n('N/A')}</div>
 					</div>
-					<div className='details'>
+					{!isManual && <div className='details'>
 						<div className='title'>{i18n('Network')}</div>
 						<div className='artifact-name'>{networkName}</div>
-					</div>
+					</div>}
 				</ListEditorItemViewField>
 
 			</ListEditorItemView>

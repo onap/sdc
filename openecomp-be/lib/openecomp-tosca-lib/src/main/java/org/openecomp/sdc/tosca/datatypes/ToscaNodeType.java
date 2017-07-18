@@ -39,6 +39,8 @@ public class ToscaNodeType {
       config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_NODE_TYPE_ABSTARCT);
   public static String RULE_NODE_TYPE_PREFIX =
       config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_NODE_TYPE_RULE);
+  public static String NODE_TYPE_PREFIX =
+      config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX);
 
   //TOSCA native types
   public static String NATIVE_COMPUTE = "tosca.nodes.Compute";
@@ -80,6 +82,11 @@ public class ToscaNodeType {
   public static String VFC_ABSTRACT_SUBSTITUTE = ABSTRACT_NODE_TYPE_PREFIX + "VFC";
   public static String CONTRAIL_ABSTRACT_SUBSTITUTE =
       ABSTRACT_NODE_TYPE_PREFIX + "contrail.AbstractSubstitute";
-
+  public static String COMPLEX_VFC_NODE_TYPE = ABSTRACT_NODE_TYPE_PREFIX + "ComplexVFC";
+  //Questionnaire to Tosca Types
+  public static String VNF_CONFIG_NODE_TYPE = ABSTRACT_NODE_TYPE_PREFIX + "VnfConfiguration";
+  public static String MULTIFLAVOR_VFC_NODE_TYPE = ABSTRACT_NODE_TYPE_PREFIX + "MultiFlavorVFC";
+  public static String MULTIDEPLOYMENTFLAVOR_NODE_TYPE = ABSTRACT_NODE_TYPE_PREFIX
+      + "MultiDeploymentFlavor";
 }
 

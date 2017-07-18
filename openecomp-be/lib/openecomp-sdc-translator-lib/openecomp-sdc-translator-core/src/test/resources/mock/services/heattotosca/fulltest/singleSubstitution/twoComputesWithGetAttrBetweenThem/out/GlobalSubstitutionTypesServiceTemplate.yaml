@@ -86,10 +86,8 @@ node_types:
           type: string
     attributes:
       pd_server_accessIPv4:
-        type: list
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
     requirements:
     - dependency_pd_server:
         capability: tosca.capabilities.Node
@@ -507,10 +505,8 @@ node_types:
         status: SUPPORTED
     attributes:
       ps_server_accessIPv4:
-        type: list
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
     requirements:
     - dependency_ps_server:
         capability: tosca.capabilities.Node

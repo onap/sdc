@@ -31,3 +31,8 @@ export const typeEnum = {
 	WARNING: 'warning',
 	SUCCESS: 'success'
 };
+
+export const modalSizes  = {
+	LARGE: 'large',
+	SMALL: 'small'	
+};

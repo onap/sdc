@@ -16,23 +16,13 @@
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
-import SoftwareProductComponentsMonitoringConstants, {actionTypes} from './SoftwareProductComponentsMonitoringConstants.js';
+import {actionTypes} from './SoftwareProductComponentsMonitoringConstants.js';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
-
-const UPLOAD = true;
 
 function baseUrl(vspId, version, componentId) {
 	const versionId = version.id;
 	const restPrefix = Configuration.get('restPrefix');
-	return `${restPrefix}/v1.0/vendor-software-products/${vspId}/versions/${versionId}/components/${componentId}/monitors`;
-}
-
-function snmpTrapUrl(vspId, version, componentId, isUpload) {
-	return `${baseUrl(vspId, version, componentId)}/snmp-trap${isUpload ? '/upload' : ''}`;
-}
-
-function snmpPollUrl(vspId, version, componentId, isUpload) {
-	return `${baseUrl(vspId, version, componentId)}/snmp${isUpload ? '/upload' : ''}`;
+	return `${restPrefix}/v1.0/vendor-software-products/${vspId}/versions/${versionId}/components/${componentId}/uploads`;
 }
 
 let onInvalidFileSizeUpload = (dispatch) => dispatch({
@@ -43,62 +33,42 @@ let onInvalidFileSizeUpload = (dispatch) => dispatch({
 	}
 });
 
-let uploadSnmpTrapFile = (dispatch, {softwareProductId, version, componentId, formData}) => {
-	RestAPIUtil.post(snmpTrapUrl(softwareProductId, version, componentId, UPLOAD), formData).then(()=> dispatch({
-		type: actionTypes.SNMP_TRAP_UPLOADED, data: {filename: formData.get('upload').name}
+let uploadFile = (dispatch, {softwareProductId, version, componentId, formData, type}) => {
+	return RestAPIUtil.post(`${baseUrl(softwareProductId, version, componentId)}/types/${type}`, formData).then(()=> dispatch({
+		type: actionTypes.MONITOR_UPLOADED, data: {filename: formData.get('upload').name, type : type}
 	}));
 };
 
-let uploadSnmpPollFile = (dispatch, {softwareProductId, version, componentId, formData}) => {
-	RestAPIUtil.post(snmpPollUrl(softwareProductId, version, componentId, UPLOAD), formData).then(()=> dispatch({
-		type: actionTypes.SNMP_POLL_UPLOADED, data: {filename: formData.get('upload').name}
+let deleteFile = (dispatch, {softwareProductId, version, componentId, type}) => {
+	return RestAPIUtil.destroy(`${baseUrl(softwareProductId, version, componentId)}/types/${type}`).then(()=> dispatch({
+		type: actionTypes.MONITOR_DELETED,
+		data : { type: type}
 	}));
 };
 
-let deleteSnmpTrapFile = (dispatch, {softwareProductId, version, componentId}) => {
-	RestAPIUtil.destroy(snmpTrapUrl(softwareProductId, version, componentId, !UPLOAD)).then(()=> dispatch({
-		type: actionTypes.SNMP_TRAP_DELETED
-	}));
-};
-
-let deleteSnmpPollFile = (dispatch, {softwareProductId, version, componentId}) => {
-	RestAPIUtil.destroy(snmpPollUrl(softwareProductId, version, componentId, !UPLOAD)).then(()=> dispatch({
-		type: actionTypes.SNMP_POLL_DELETED
-	}));
-};
 
 const SoftwareProductComponentsMonitoringAction = {
 
 	fetchExistingFiles(dispatch, {softwareProductId, version, componentId}){
-		RestAPIUtil.fetch(`${baseUrl(softwareProductId, version, componentId)}/snmp`).then(response =>
+		return RestAPIUtil.fetch(`${baseUrl(softwareProductId, version, componentId)}`).then(response =>
 			dispatch({
-				type: actionTypes.SNMP_FILES_DATA_CHANGE,
-				data: {trapFilename: response.snmpTrap, pollFilename: response.snmpPoll}
+				type: actionTypes.MONITOR_FILES_DATA_CHANGE,
+				data: response
 			})
 		);
 	},
 
-	uploadSnmpFile(dispatch, {softwareProductId, version, componentId, formData, type}){
+	uploadFile(dispatch, {softwareProductId, version, componentId, formData, type}){
 		if (formData.get('upload').size) {
-			if (type === SoftwareProductComponentsMonitoringConstants.SNMP_TRAP) {
-				uploadSnmpTrapFile(dispatch, {softwareProductId, version, componentId, formData});
-			}
-			else {
-				uploadSnmpPollFile(dispatch, {softwareProductId, version, componentId, formData});
-			}
+			return uploadFile(dispatch, {softwareProductId, version, componentId, formData, type});
 		}
 		else {
 			onInvalidFileSizeUpload(dispatch);
 		}
 	},
 
-	deleteSnmpFile(dispatch, {softwareProductId, version, componentId, type}){
-		if (type === SoftwareProductComponentsMonitoringConstants.SNMP_TRAP) {
-			deleteSnmpTrapFile(dispatch, {softwareProductId, version, componentId});
-		}
-		else {
-			deleteSnmpPollFile(dispatch, {softwareProductId, version, componentId});
-		}
+	deleteFile(dispatch, {softwareProductId, version, componentId, type}){
+		return deleteFile(dispatch, {softwareProductId, version, componentId, type});
 	}
 
 };

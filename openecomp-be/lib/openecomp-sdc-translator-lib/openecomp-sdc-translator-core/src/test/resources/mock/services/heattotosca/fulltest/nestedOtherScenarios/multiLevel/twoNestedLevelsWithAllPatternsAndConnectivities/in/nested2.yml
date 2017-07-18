@@ -1,0 +1,197 @@
+heat_template_version: 2013-05-23
+
+description: nested1
+
+parameters:
+  p1:
+    type: string
+    description: UID of osm network
+  p2:
+    type: string
+    description: UID of osm network
+  security_group_name:
+    type: comma_delimited_list
+    description: BE1, BE2 server names
+  BE_1c1_names:
+    type: comma_delimited_list
+    description: BE1, BE2 server names
+  BE_1c1_image:
+    type: string
+    description: Image for BE server
+  availability_zone_0:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  BE_1c1_flavor:
+    type: string
+    description: Flavor for BE server
+  osm_server_1c2_names:
+    type: comma_delimited_list
+    description: BE1, BE2 server names
+  osm_server_1c2_image:
+    type: string
+    description: Image for BE server
+  osm_server_1c2_flavor:
+    type: string
+    description: Flavor for BE server
+  BE_osm_ips:
+      type: string
+  packet_internal_network_name:
+      type: string
+  packet_external_network_name:
+      type: string
+  net:
+    type: string
+  rd_server_1b_names:
+    type: comma_delimited_list
+    description: PD server names
+  rd_server_1b_image:
+    type: string
+    description: PD Image server
+  ps_server_1b_names:
+    type: comma_delimited_list
+    description: Ps server names
+  ps_server_1b_image:
+    type: string
+    description: Ps Image server
+  rd_server_1b_flavor:
+    type: string
+    description: Flavor for PD server
+  ps_server_1b_flavor:
+    type: string
+    description: Flavor for PS server
+  rd_server_1b_ips:
+      type: string
+  ps_server_1b_ips:
+      type: string
+
+resources:
+  rd_server_1b_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net }
+      fixed_ips: [{"ip_address": {get_param: [rd_server_1b_ips, 0]}}]
+      replacement_policy: AUTO
+
+  ps_server_1b_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net }
+      fixed_ips: [{"ip_address": {get_param: [ps_server_1b_ips, 0]}}]
+      replacement_policy: AUTO
+
+  server_1b_rd_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [rd_server_1b_names, 0]}
+      image: { get_param: rd_server_1b_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: rd_server_1b_flavor }
+      networks:
+      - port: { get_resource: rd_server_1b_port }
+
+  server_1b_rd_2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [rd_server_1b_names, 1]}
+      image: { get_param: rd_server_1b_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: rd_server_1b_flavor }
+      networks:
+      - port: { get_resource: ps_server_1b_port }
+
+  BE_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: packet_internal_network}
+      fixed_ips: [{"ip_address": {get_param: [BE_osm_ips, 0]}}]
+      replacement_policy: AUTO
+
+  BE_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: packet_internal_network}
+      fixed_ips: [{"ip_address": {get_param: [BE_osm_ips, 0]}}]
+      replacement_policy: AUTO
+
+  server_1c1_BE_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [BE_1c1_names, 0]}
+      image: { get_param: BE_1c1_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: BE_1c1_flavor }
+      networks:
+      - port: { get_resource: BE_port_1 }
+
+  server_1c1_BE_2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [BE_1c1_names, 1]}
+      image: { get_param: BE_1c1_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: BE_1c1_flavor }
+      networks:
+      - port: { get_resource: BE_port_2 }
+
+  osm_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: packet_internal_network}
+      fixed_ips: [{"ip_address": {get_param: [BE_osm_ips, 1]}}]
+      replacement_policy: AUTO
+
+  osm_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: packet_external_network}
+      fixed_ips: [{"ip_address": {get_param: [BE_osm_ips, 1]}}]
+      replacement_policy: AUTO
+
+  server_1c2_osm_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [osm_server_1c2_names, 0]}
+      image: { get_param: osm_server_1c2_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: osm_server_1c2_flavor }
+      networks:
+      - port: { get_resource: osm_port_1 }
+
+  server_1c2_osm_2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [osm_server_1c2_names, 1]}
+      image: { get_param: osm_server_1c2_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: osm_server_1c2_flavor }
+      networks:
+      - port: { get_resource: osm_port_2 }
+      metadata: {
+          connectivity_to_rd_server_1b: {get_attr: [server_1b_rd_1, accessIPv4]},
+          connectivity_to_server_1c1_BE_1: {get_attr: [server_1c1_BE_1, accessIPv4]},
+          connectivity_to_server_1c1_BE_2: {get_attr: [server_1c1_BE_2, accessIPv4]},
+          connectivity_to_pattern_4: {get_attr: [nested2_pattern_4, pattern4_attr_1]}
+      }
+
+  nested2_pattern_4:
+    type: nested-pattern-4.yml
+    properties:
+      p2: {get_param: p2}
+
+  packet_internal_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: packet_internal_network_name
+
+  packet_external_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: packet_external_network_name
+
+outputs:
+  all_pattern_attr_1:
+    description: all_pattern_attr_1
+    value: { get_attr: [server_1c2_osm_2, accessIPv4] }

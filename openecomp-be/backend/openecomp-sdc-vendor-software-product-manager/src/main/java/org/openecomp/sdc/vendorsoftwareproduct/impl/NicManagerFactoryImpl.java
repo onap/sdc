@@ -24,6 +24,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.NetworkManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManager;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;
 
 public class NicManagerFactoryImpl extends NicManagerFactory {
@@ -31,7 +32,8 @@ public class NicManagerFactoryImpl extends NicManagerFactory {
       new NicManagerImpl(
           NicDaoFactory.getInstance().createInterface(),
           CompositionEntityDataManagerFactory.getInstance().createInterface(),
-          NetworkManagerFactory.getInstance().createInterface());
+          NetworkManagerFactory.getInstance().createInterface(),
+          VendorSoftwareProductInfoDaoFactory.getInstance().createInterface());
 
   @Override
   public NicManager createInterface() {

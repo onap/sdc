@@ -17,6 +17,7 @@
         <module>openecomp-core-lib</module>
         <module>openecomp-common-lib</module>
         <module>openecomp-sdc-versioning-lib</module>
+        <module>openecomp-sdc-tosca-generator-lib</module>
         <module>openecomp-sdc-vendor-license-lib</module>
         <module>openecomp-sdc-vendor-software-product-lib</module>
         <module>openecomp-sdc-translator-lib</module>

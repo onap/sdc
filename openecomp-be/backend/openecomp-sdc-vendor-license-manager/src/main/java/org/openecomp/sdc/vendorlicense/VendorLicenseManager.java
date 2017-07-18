@@ -26,7 +26,9 @@ import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementModel;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
+import org.openecomp.sdc.vendorlicense.errors.LimitErrorBuilder;
 import org.openecomp.sdc.vendorlicense.types.VersionedVendorLicenseModel;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
@@ -108,5 +110,15 @@ public interface VendorLicenseManager {
   LicenseKeyGroupEntity getLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup, String user);
 
   void deleteLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup, String user);
+
+  LimitEntity createLimit(LimitEntity limitEntity, String user);
+
+  Collection<LimitEntity> listLimits(String vlmId, Version version, String epLkgId, String user);
+
+  void deleteLimit(LimitEntity limitEntity, String user);
+
+  void updateLimit(LimitEntity limitEntity, String user);
+
+  LimitEntity getLimit(LimitEntity entitlementPool, String user);
 
 }

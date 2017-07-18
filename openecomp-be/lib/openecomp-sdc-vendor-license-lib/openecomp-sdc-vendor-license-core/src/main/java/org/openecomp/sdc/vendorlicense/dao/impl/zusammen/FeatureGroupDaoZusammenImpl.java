@@ -176,12 +176,13 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
           mapElementInfoToFeatureGroup(featureGroup.getId(), featureGroup.getVersion(),
               elementInfo.get());
 
-      if (!(removedEntitlementPools == null)) {
+      if (!(removedEntitlementPools == null )) {
         currentFeatureGroup.getEntitlementPoolIds().removeAll(removedEntitlementPools);
       }
       if (!(addedEntitlementPools == null)) {
         currentFeatureGroup.getEntitlementPoolIds().addAll(addedEntitlementPools);
       }
+
       if (featureGroupElement.getRelations() == null) {
         featureGroupElement.setRelations(new ArrayList<>());
       }
@@ -191,13 +192,12 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
                   .createRelation(RelationType.FeatureGroupToEntitlmentPool, relation))
               .collect(Collectors.toList()));
 
-      if (!(removedLicenseKeyGroups == null)) {
+      if (! ( removedLicenseKeyGroups == null)) {
         currentFeatureGroup.getLicenseKeyGroupIds().removeAll(removedLicenseKeyGroups);
       }
-      if (!(addedLicenseKeyGroups == null)) {
+      if (! ( addedLicenseKeyGroups == null)) {
         currentFeatureGroup.getLicenseKeyGroupIds().addAll(addedLicenseKeyGroups);
       }
-      currentFeatureGroup.getLicenseKeyGroupIds().addAll(addedLicenseKeyGroups);
       featureGroupElement.getRelations()
           .addAll(currentFeatureGroup.getLicenseKeyGroupIds().stream()
               .map(relation -> VlmZusammenUtil
@@ -268,6 +268,7 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
   }
 
   private ZusammenElement buildFeatureGroupElement(FeatureGroupEntity featureGroup, Action action) {
+
     ZusammenElement featureGroupElement = new ZusammenElement();
     featureGroupElement.setAction(action);
     if (featureGroup.getId() != null) {
@@ -277,6 +278,7 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
     info.setName(featureGroup.getName());
     info.setDescription(featureGroup.getDescription());
     info.addProperty("partNumber", featureGroup.getPartNumber());
+    info.addProperty("manufacturerReferenceNumber", featureGroup.getManufacturerReferenceNumber());
     featureGroupElement.setInfo(info);
 
     featureGroupElement.setRelations(new ArrayList<>());
@@ -308,6 +310,7 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
               .collect(Collectors.toList()));
     }
     return featureGroupElement;
+
   }
 
   private FeatureGroupEntity mapElementInfoToFeatureGroup(String vlmId, Version version,
@@ -317,6 +320,8 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
     featureGroup.setName(elementInfo.getInfo().getName());
     featureGroup.setDescription(elementInfo.getInfo().getDescription());
     featureGroup.setPartNumber(elementInfo.getInfo().getProperty("partNumber"));
+    featureGroup.setManufacturerReferenceNumber(elementInfo.getInfo()
+        .getProperty("manufacturerReferenceNumber"));
 
     Set<String> entitlementPoolIds = new HashSet<>();
     Set<String> licenseAgreements = new HashSet<>();

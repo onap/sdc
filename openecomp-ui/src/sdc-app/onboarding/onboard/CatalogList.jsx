@@ -15,7 +15,7 @@
  */
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 
 const SoftwareProductListHeader = ({selectedVendor, onBack}) => (
 	<div className='vendor-page-header'>

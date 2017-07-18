@@ -22,6 +22,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
@@ -31,20 +32,30 @@ import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.CompositionEditNotAllowedErrorBuilder;
+import org.openecomp.sdc.vendorsoftwareproduct.errors.DeleteNicErrorBuilder;
+import org.openecomp.sdc.vendorsoftwareproduct.errors.DuplicateNicInComponentErrorBuilder;
+import org.openecomp.sdc.vendorsoftwareproduct.errors.NicInternalNetworkErrorBuilder;
+import org.openecomp.sdc.vendorsoftwareproduct.errors.NicNetworkIdNotAllowedExternalNetworkErrorBuilder;
+import org.openecomp.sdc.vendorsoftwareproduct.errors.NotSupportedHeatOnboardMethodErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.NetworkType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.NicCompositionSchemaInput;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateInput;
+import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
@@ -58,13 +69,16 @@ public class NicManagerImpl implements NicManager {
   private NicDao nicDao;
   private CompositionEntityDataManager compositionEntityDataManager;
   private NetworkManager networkManager;
+  private  VendorSoftwareProductInfoDao vspInfoDao;
 
   public NicManagerImpl(NicDao nicDao,
                         CompositionEntityDataManager compositionEntityDataManager,
-                        NetworkManager networkManager) {
+                        NetworkManager networkManager,
+                        VendorSoftwareProductInfoDao vspInfoDao) {
     this.nicDao = nicDao;
     this.compositionEntityDataManager = compositionEntityDataManager;
     this.networkManager = networkManager;
+    this.vspInfoDao = vspInfoDao;
   }
 
   @Override
@@ -96,15 +110,21 @@ public class NicManagerImpl implements NicManager {
 
   @Override
   public NicEntity createNic(NicEntity nic, String user) {
+    NicEntity createdNic = null;
     mdcDataDebugMessage.debugEntryMessage("VSP id, component id", nic.getVspId(),
         nic.getComponentId());
 
-    if (!isManual(nic.getVspId(), nic.getVersion())) {
+    if (!vspInfoDao.isManual(nic.getVspId(), nic.getVersion())) {
+      ErrorCode onboardingMethodUpdateErrorCode = NotSupportedHeatOnboardMethodErrorBuilder
+          .getAddNicNotSupportedHeatOnboardMethodErrorBuilder();
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't create nic");
-      throw new CoreException(
-          new CompositionEditNotAllowedErrorBuilder(nic.getVspId(), nic.getVersion()).build());
+          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
+          onboardingMethodUpdateErrorCode.message());
+      throw new CoreException(onboardingMethodUpdateErrorCode);
+    } else {
+      validateNic(nic, user);
+      createdNic = createNic(nic);
     }
 
     //nicDao.updateVspLatestModificationTime(nic.getVspId(), nic.getVersion());
@@ -112,7 +132,63 @@ public class NicManagerImpl implements NicManager {
     mdcDataDebugMessage
         .debugExitMessage("VSP id, component id", nic.getVspId(), nic.getComponentId());
 
-    return null;
+    return createdNic;
+  }
+
+  private NicEntity createNic(NicEntity nic) {
+    return compositionEntityDataManager.createNic(nic);
+  }
+
+  private void validateNic(NicEntity nic, String user) {
+    Collection<NicEntity> listNics = listNics(nic.getVspId(), nic.getVersion(), nic
+        .getComponentId(), user);
+    String networkId = nic.getNicCompositionData().getNetworkId();
+    NetworkType networkType = nic.getNicCompositionData().getNetworkType();
+    String networkDescription = nic.getNicCompositionData().getNetworkDescription();
+    listNics.forEach(nicEntity -> {
+      Nic nicdata = nicEntity.getNicCompositionData();
+      if (nic.getNicCompositionData().getName().equalsIgnoreCase(nicdata.getName())) {
+        final ErrorCode duplicateNicInComponentErrorBuilder =
+            new DuplicateNicInComponentErrorBuilder(nic.getNicCompositionData().getName(),
+                nic.getComponentId()).build();
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.DATA_ERROR.getErrorCode(),
+            duplicateNicInComponentErrorBuilder.message());
+        throw new CoreException(duplicateNicInComponentErrorBuilder);
+      }
+
+    });
+
+    if (networkType.equals(NetworkType.Internal)) {
+      if (!(networkId == null || networkId.equals(""))) {
+        //NetworkEntity ne = getNetwork(nic.getVspId(), activeVersion, networkId);
+        final CompositionEntityResponse<Network> network =
+            networkManager.getNetwork(nic.getVspId(), nic.getVersion(), networkId,
+                user);
+      }
+
+      if (!(networkDescription == null || networkDescription.equals(""))) {
+        final ErrorCode nicNetworkDescriptionErrorBuilder =
+            new NicInternalNetworkErrorBuilder()
+                .getNetworkDescriptionInternalNetworkErrorBuilder();
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.DATA_ERROR.getErrorCode(), nicNetworkDescriptionErrorBuilder.message());
+        throw new CoreException(nicNetworkDescriptionErrorBuilder);
+      }
+
+    } else if (networkType.equals(NetworkType.External)) {
+      if (!(networkId == null || networkId.equals(""))) {
+        final ErrorCode nicNetworkIdNotAllowedExternalNetworkErrorBuilder =
+            new NicNetworkIdNotAllowedExternalNetworkErrorBuilder().build();
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.DATA_ERROR.getErrorCode(),
+            nicNetworkIdNotAllowedExternalNetworkErrorBuilder.message());
+        throw new CoreException(nicNetworkIdNotAllowedExternalNetworkErrorBuilder);
+      }
+    }
   }
 
   @Override
@@ -125,7 +201,7 @@ public class NicManagerImpl implements NicManager {
     Nic nic = nicEntity.getNicCompositionData();
 
     NicCompositionSchemaInput schemaInput = new NicCompositionSchemaInput();
-    schemaInput.setManual(isManual(vspId, version));
+    schemaInput.setManual(vspInfoDao.isManual(vspId, version));
     schemaInput.setNic(nic);
     Map<String, String> networksNameById = listNetworksNameById(vspId, version, user);
     nic.setNetworkName(networksNameById.get(nic.getNetworkId()));
@@ -157,15 +233,20 @@ public class NicManagerImpl implements NicManager {
     mdcDataDebugMessage
         .debugEntryMessage("VSP id, component id", vspId, componentId, nicId);
 
-    if (!isManual(vspId, version)) {
+    if (!vspInfoDao.isManual(vspId, version)) {
+      final ErrorCode deleteNicErrorBuilder =
+          new DeleteNicErrorBuilder().getDeleteNicForHeatOnboardedVspErrorBuilder();
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.DELETE_NIC, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't delete nic");
-      throw new CoreException(
-          new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
+          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
+          deleteNicErrorBuilder.message());
+      throw new CoreException(deleteNicErrorBuilder);
     }
 
-    //nicDao.updateVspLatestModificationTime(vspId, version);
+    NicEntity nicEntity = getNic(vspId, version, componentId, nicId);
+    if (nicEntity != null) {
+      nicDao.delete(nicEntity);
+    }
 
     mdcDataDebugMessage
         .debugExitMessage("VSP id, component id", vspId, componentId, nicId);
@@ -181,7 +262,7 @@ public class NicManagerImpl implements NicManager {
         getNic(nic.getVspId(), nic.getVersion(), nic.getComponentId(), nic.getId());
 
     NicCompositionSchemaInput schemaInput = new NicCompositionSchemaInput();
-    schemaInput.setManual(isManual(nic.getVspId(), nic.getVersion()));
+    schemaInput.setManual(vspInfoDao.isManual(nic.getVspId(), nic.getVersion()));
     schemaInput.setNic(retrieved.getNicCompositionData());
 
     CompositionEntityValidationData validationData = compositionEntityDataManager
@@ -244,7 +325,7 @@ public class NicManagerImpl implements NicManager {
   }
   // todo *************************** move to reusable place! *************************
 
-  private boolean isManual(String vspId, Version version) {
+  /*private boolean isManual(String vspId, Version version) {
     return false;
-  }
+  }*/
 }

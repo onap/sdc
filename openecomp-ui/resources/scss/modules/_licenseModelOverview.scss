@@ -27,7 +27,7 @@
           margin-top:5px;
         }
         .vendor-name {
-          @extend .heading-3-medium;
+          @extend .heading-4-semibold;
           text-transform: none;
           padding-bottom: 15px;
           border-bottom: 1px solid $tlv-light-gray;
@@ -137,7 +137,7 @@
         background-color: $tlv-gray;
         .summary-count-item {
           @extend .flex;
-          @extend .heading-4-medium;
+          @extend .heading-5-semibold;
           padding-top: 5px;
           padding-left: 45px;
           padding-right: 45px;
@@ -349,7 +349,7 @@
             .additional-data {
               padding-left: 50px;
               .additional-data-name {
-                @extend .body-1-medium;
+                @extend .body-1-semibold;
               }
             }
             .additional-data-col-border {
@@ -373,7 +373,7 @@
           .vlm-list-item-title {
             @extend .flex;
             .item-name {
-              @extend .heading-5-medium;
+              @extend .heading-5-semibold;
               flex: 0 1 auto;
               margin-bottom: 4px;
             }

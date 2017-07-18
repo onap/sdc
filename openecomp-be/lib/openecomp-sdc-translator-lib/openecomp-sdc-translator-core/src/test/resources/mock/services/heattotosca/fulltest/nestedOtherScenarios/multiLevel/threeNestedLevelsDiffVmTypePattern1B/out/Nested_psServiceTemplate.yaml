@@ -1,0 +1,310 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_ps
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.ps:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_pd02_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_pd02_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    port_pd02_port_order:
+      type: integer
+      required: true
+    port_pd02_port_subnetpoolid:
+      type: string
+      required: true
+    port_pd02_port_network_role_tag:
+      type: string
+      required: true
+    port_pd02_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    vm_image_name:
+      type: string
+      required: true
+    port_pd02_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_ps_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd02_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd02_port_network_role:
+      type: string
+      required: true
+    compute_ps_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd02_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_pd02_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_pd02_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    ps:
+      type: org.openecomp.resource.vfc.nodes.heat.ps
+      properties:
+        availability_zone:
+          get_input:
+          - compute_ps_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_ps_name
+          - index_value
+    ps_pd02_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy:
+          get_input:
+          - port_pd02_port_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_pd02_port_mac_requirements
+        order:
+          get_input: port_pd02_port_order
+        security_groups:
+          get_input:
+          - port_pd02_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_pd02_port_exCP_naming
+        vlan_requirements:
+          get_input: port_pd02_port_vlan_requirements
+        ip_requirements:
+          get_input: port_pd02_port_ip_requirements
+        network_role_tag:
+          get_input: port_pd02_port_network_role_tag
+        network_role:
+          get_input: port_pd02_port_network_role
+        fixed_ips:
+          get_input: port_pd02_port_fixed_ips
+        subnetpoolid:
+          get_input: port_pd02_port_subnetpoolid
+        network:
+          get_input:
+          - port_pd02_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ps
+          relationship: tosca.relationships.network.BindsTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.ps
+    capabilities:
+      disk.write.requests.rate_ps:
+      - ps
+      - disk.write.requests.rate
+      disk.device.iops_ps:
+      - ps
+      - disk.device.iops
+      scalable_ps:
+      - ps
+      - scalable
+      disk.write.requests_ps:
+      - ps
+      - disk.write.requests
+      host_ps:
+      - ps
+      - host
+      disk.device.allocation_ps:
+      - ps
+      - disk.device.allocation
+      disk.read.bytes_ps:
+      - ps
+      - disk.read.bytes
+      memory.resident_ps:
+      - ps
+      - memory.resident
+      disk.device.usage_ps:
+      - ps
+      - disk.device.usage
+      network.outgoing.bytes.rate_ps_pd02_port:
+      - ps_pd02_port
+      - network.outgoing.bytes.rate
+      endpoint_ps:
+      - ps
+      - endpoint
+      disk.device.capacity_ps:
+      - ps
+      - disk.device.capacity
+      cpu_ps:
+      - ps
+      - cpu
+      network.incoming.packets_ps_pd02_port:
+      - ps_pd02_port
+      - network.incoming.packets
+      disk.device.write.bytes_ps:
+      - ps
+      - disk.device.write.bytes
+      network.outgoing.packets.rate_ps_pd02_port:
+      - ps_pd02_port
+      - network.outgoing.packets.rate
+      cpu.delta_ps:
+      - ps
+      - cpu.delta
+      disk.root.size_ps:
+      - ps
+      - disk.root.size
+      disk.device.read.requests.rate_ps:
+      - ps
+      - disk.device.read.requests.rate
+      binding_ps:
+      - ps
+      - binding
+      binding_ps_pd02_port:
+      - ps_pd02_port
+      - binding
+      disk.device.write.requests.rate_ps:
+      - ps
+      - disk.device.write.requests.rate
+      network.outgoing.bytes_ps_pd02_port:
+      - ps_pd02_port
+      - network.outgoing.bytes
+      cpu_util_ps:
+      - ps
+      - cpu_util
+      network.outpoing.packets_ps_pd02_port:
+      - ps_pd02_port
+      - network.outpoing.packets
+      network.incoming.packets.rate_ps_pd02_port:
+      - ps_pd02_port
+      - network.incoming.packets.rate
+      network.incoming.bytes_ps_pd02_port:
+      - ps_pd02_port
+      - network.incoming.bytes
+      disk.read.bytes.rate_ps:
+      - ps
+      - disk.read.bytes.rate
+      disk.device.read.bytes.rate_ps:
+      - ps
+      - disk.device.read.bytes.rate
+      disk.read.requests_ps:
+      - ps
+      - disk.read.requests
+      vcpus_ps:
+      - ps
+      - vcpus
+      instance_ps:
+      - ps
+      - instance
+      disk.latency_ps:
+      - ps
+      - disk.latency
+      disk.device.read.bytes_ps:
+      - ps
+      - disk.device.read.bytes
+      memory.usage_ps:
+      - ps
+      - memory.usage
+      feature_ps:
+      - ps
+      - feature
+      disk.device.write.bytes.rate_ps:
+      - ps
+      - disk.device.write.bytes.rate
+      disk.ephemeral.size_ps:
+      - ps
+      - disk.ephemeral.size
+      memory_ps:
+      - ps
+      - memory
+      feature_ps_pd02_port:
+      - ps_pd02_port
+      - feature
+      disk.usage_ps:
+      - ps
+      - disk.usage
+      disk.write.bytes.rate_ps:
+      - ps
+      - disk.write.bytes.rate
+      os_ps:
+      - ps
+      - os
+      disk.iops_ps:
+      - ps
+      - disk.iops
+      disk.allocation_ps:
+      - ps
+      - disk.allocation
+      attachment_ps_pd02_port:
+      - ps_pd02_port
+      - attachment
+      disk.device.read.requests_ps:
+      - ps
+      - disk.device.read.requests
+      disk.capacity_ps:
+      - ps
+      - disk.capacity
+      disk.device.latency_ps:
+      - ps
+      - disk.device.latency
+      network.incoming.bytes.rate_ps_pd02_port:
+      - ps_pd02_port
+      - network.incoming.bytes.rate
+      disk.device.write.requests_ps:
+      - ps
+      - disk.device.write.requests
+      disk.write.bytes_ps:
+      - ps
+      - disk.write.bytes
+    requirements:
+      dependency_ps_pd02_port:
+      - ps_pd02_port
+      - dependency
+      link_ps_pd02_port:
+      - ps_pd02_port
+      - link
+      dependency_ps:
+      - ps
+      - dependency
+      local_storage_ps:
+      - ps
+      - local_storage

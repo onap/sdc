@@ -32,6 +32,10 @@ topology_template:
       hidden: false
       immutable: false
       type: string
+    2c2_catalog_instance_names:
+      hidden: false
+      immutable: false
+      type: string
     pcm_server_names:
       hidden: false
       immutable: false
@@ -95,276 +99,54 @@ topology_template:
       immutable: false
       type: string
   node_templates:
-    abstract_pcm_server_1:
-      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
+    abstract_b_single_1b:
+      type: org.openecomp.resource.abstract.nodes.b_single_1b
       directives:
       - substitutable
       properties:
-        server_group: BE_Affinity_group
-        port_pcm_port_1_network_role_tag: oam
-        connectivityChk:
-          connectivityTo4PNested_2:
-            get_attribute:
-            - abstract_pcm_server_0
-            - server_pcm_id
-          connectivityTo1C1_T1_02:
-            get_attribute:
-            - abstract_1c11_scalling_instance
-            - 1c11_scalling_instance_1c1_t1_port_tenant_id
-          connectivityTo1C1_T1_11:
-            get_attribute:
-            - abstract_1c12_scalling_instance
-            - 1c12_scalling_instance_1c1_t1_port_tenant_id
-          connectivityTo1C1_T1_01:
-            get_attribute:
-            - abstract_1c11_scalling_instance
-            - 1c11_scalling_instance_1c1_t1_port_tenant_id
-          connectivityTo1C1_T1_12:
-            get_attribute:
-            - abstract_1c12_scalling_instance
-            - 1c12_scalling_instance_1c1_t1_port_tenant_id
-          connectivityTo1B01_1:
-            get_attribute:
-            - abstract_b_single_1b_1
-            - b_single_1b_instance_name
-          connectivityTo1B02_1:
-            get_attribute:
-            - abstract_b_single_1b_0
-            - b_single_1b_instance_name
-          connectivityTo1B01_2:
-            get_attribute:
-            - abstract_b_single_2b_1
-            - b_single_2b_instance_name
-          connectivityTo1C2_2_2:
-            get_attribute:
-            - abstract_1c2_catalog_instance_2
-            - 1c2_catalog_instance_instance_name
-          connectivityTo1A_2:
-            get_attribute:
-            - abstract_a_single_2a
-            - a_single_2a_instance_name
-          connectivityTo1B02_2:
-            get_attribute:
-            - abstract_b_single_2b_0
-            - b_single_2b_instance_name
-          connectivityToNoUnifiedNested_2:
-            get_attribute:
-            - nestedNoUnified_2
-            - portId
-          connectivityTo1A_1:
-            get_attribute:
-            - abstract_a_single_1a
-            - a_single_1a_instance_name
-          connectivityToNoUnifiedNested_1:
-            get_attribute:
-            - nestedNoUnified_1
-            - portId
-          connectivityTo1C2_1_1:
-            get_attribute:
-            - abstract_1c2_catalog_instance_0
-            - 1c2_catalog_instance_instance_name
-          connectivityTo1C2_2_1:
-            get_attribute:
-            - abstract_1c2_catalog_instance_3
-            - 1c2_catalog_instance_instance_name
-          connectivityTo1C2_1_2:
-            get_attribute:
-            - abstract_1c2_catalog_instance_1
-            - 1c2_catalog_instance_instance_name
-        port_pcm_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        pcm_image_name:
-          get_input: pcm_image_name
-        security_group_name: jsa_security_group
-        port_pcm_port_1_mac_requirements:
-          mac_count_required:
-            is_required: false
-        pcm_flavor_name:
-          get_input: pcm_flavor_name
-        service_template_filter:
-          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
-        port_pcm_port_1_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_pcm_port_0_network_role_tag: cps
-        port_pcm_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
-        pcm_server_name:
-          get_input:
-          - pcm_server_names
-          - 0
-        cps_net_name: nested_network
-      requirements:
-      - link_pcm_port_0:
-          capability: tosca.capabilities.network.Linkable
-          node: nested_network
-          relationship: tosca.relationships.network.LinksTo
-    abstract_pcm_server_0:
-      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
-      directives:
-      - substitutable
-      properties:
-        server_group: BE_Affinity_group
-        port_pcm_port_1_network_role_tag: oam
-        connectivityChk:
-          connectivityTo1C1_T1_02:
-            get_attribute:
-            - abstract_1c11_scalling_instance
-            - 1c11_scalling_instance_1c1_t1_port_tenant_id
-          connectivityTo1C1_T1_11:
-            get_attribute:
-            - abstract_1c12_scalling_instance
-            - 1c12_scalling_instance_1c1_t1_port_tenant_id
-          connectivityTo4PNested_1:
-            get_attribute:
-            - abstract_pcm_server_1
-            - server_pcm_id
-          connectivityTo1C1_T1_01:
-            get_attribute:
-            - abstract_1c11_scalling_instance
-            - 1c11_scalling_instance_1c1_t1_port_tenant_id
-          connectivityTo1C1_T1_12:
-            get_attribute:
-            - abstract_1c12_scalling_instance
-            - 1c12_scalling_instance_1c1_t1_port_tenant_id
-          connectivityTo1B01_1:
-            get_attribute:
-            - abstract_b_single_1b_1
-            - b_single_1b_instance_name
-          connectivityTo1B02_1:
-            get_attribute:
-            - abstract_b_single_1b_0
-            - b_single_1b_instance_name
-          connectivityTo1B01_2:
-            get_attribute:
-            - abstract_b_single_2b_1
-            - b_single_2b_instance_name
-          connectivityTo1C2_2_2:
-            get_attribute:
-            - abstract_1c2_catalog_instance_2
-            - 1c2_catalog_instance_instance_name
-          connectivityTo1A_2:
-            get_attribute:
-            - abstract_a_single_2a
-            - a_single_2a_instance_name
-          connectivityTo1B02_2:
-            get_attribute:
-            - abstract_b_single_2b_0
-            - b_single_2b_instance_name
-          connectivityToNoUnifiedNested_2:
-            get_attribute:
-            - nestedNoUnified_2
-            - portId
-          connectivityTo1A_1:
-            get_attribute:
-            - abstract_a_single_1a
-            - a_single_1a_instance_name
-          connectivityToNoUnifiedNested_1:
-            get_attribute:
-            - nestedNoUnified_1
-            - portId
-          connectivityTo1C2_1_1:
-            get_attribute:
-            - abstract_1c2_catalog_instance_0
-            - 1c2_catalog_instance_instance_name
-          connectivityTo1C2_2_1:
-            get_attribute:
-            - abstract_1c2_catalog_instance_3
-            - 1c2_catalog_instance_instance_name
-          connectivityTo1C2_1_2:
-            get_attribute:
-            - abstract_1c2_catalog_instance_1
-            - 1c2_catalog_instance_instance_name
-        port_pcm_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        pcm_image_name:
-          get_input: pcm_image_name
-        security_group_name: jsa_security_group
-        port_pcm_port_1_mac_requirements:
-          mac_count_required:
-            is_required: false
-        pcm_flavor_name:
-          get_input: pcm_flavor_name
-        service_template_filter:
-          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
-        port_pcm_port_1_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_pcm_port_0_network_role_tag: cps
-        port_pcm_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
-        pcm_server_name:
-          get_input:
-          - pcm_server_names
-          - 0
-        cps_net_name: nested_network
-      requirements:
-      - link_pcm_port_0:
-          capability: tosca.capabilities.network.Linkable
-          node: nested_network
-          relationship: tosca.relationships.network.LinksTo
-    abstract_1c2_catalog_instance_2:
-      type: org.openecomp.resource.abstract.nodes.1c2_catalog_instance_2
-      directives:
-      - substitutable
-      properties:
-        compute_1c2_catalog_instance_availability_zone:
-        - get_input: availabilityzone_name
         vm_flavor_name:
           get_input: pd_flavor_name
+        port_1b_t1_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
-        port_1c2_t2_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        port_1c2_t1_port_mac_requirements:
+        compute_b_single_1b_user_data_format:
+        - RAW
+        port_1b_t2_port_mac_requirements:
           mac_count_required:
             is_required: false
-        port_1c2_t2_port_network:
-        - 1c2_catalog_instance_network
-        compute_1c2_catalog_instance_name:
-        - get_input:
-          - 1c2_catalog_instance_names
-          - 3
-        port_1c2_t1_port_network:
-        - get_input: oam_net_name
-        port_1c2_t2_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        compute_1c2_catalog_instance_user_data_format:
-        - get_attribute:
-          - abstract_1c2_catalog_instance_1
-          - 1c2_catalog_instance_instance_name
-        port_1c2_t1_port_network_role_tag: oam
-        port_1c2_t1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        compute_1c2_catalog_instance_scheduler_hints:
+        compute_b_single_1b_availability_zone:
+        - get_input: availabilityzone_name
+        compute_b_single_1b_scheduler_hints:
         - group: BE_Affinity_group
+        port_1b_t2_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_1b_t1_port_value_specs:
+        - get_attribute:
+          - abstract_a_single_1a
+          - a_single_1a_1a_t1_port_tenant_id
+        port_1b_t1_port_network_role_tag: oam
+        port_1b_t1_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_1b_t2_port_network:
+        - b_single_1b_network_1
+        port_1b_t1_port_network:
+        - get_input: oam_net_name
+        compute_b_single_1b_name:
+        - get_input:
+          - b_single_1b_names
+          - 1
         service_template_filter:
-          substitute_service_template: Nested_1c2_catalog_instance_2ServiceTemplate.yaml
+          substitute_service_template: Nested_b_single_1bServiceTemplate.yaml
           count: 1
         index_value:
           get_property:
@@ -372,12 +154,124 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_1c2_catalog_instance_1c2_t2_port:
+      - link_b_single_1b_1b_t2_port:
+          capability: tosca.capabilities.network.Linkable
+          node: b_single_1b_network_1
+          relationship: tosca.relationships.network.LinksTo
+    abstract_2c2_catalog_instance_0:
+      type: org.openecomp.resource.abstract.nodes.2c2_catalog_instance
+      directives:
+      - substitutable
+      properties:
+        compute_2c2_catalog_instance_user_data_format:
+        - get_attribute:
+          - abstract_1c2_catalog_instance_1
+          - 1c2_catalog_instance_instance_name
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_2c202_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pd_image_name
+        port_1c201_port_network_role_tag: oam
+        compute_2c2_catalog_instance_scheduler_hints:
+        - group: BE_Affinity_group
+        compute_2c2_catalog_instance_availability_zone:
+        - get_input: availabilityzone_name
+        compute_2c2_catalog_instance_name:
+        - get_input:
+          - 2c2_catalog_instance_names
+          - 1
+        port_2c202_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_2c202_port_network:
+        - 1c2_catalog_instance_network
+        port_1c201_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_1c201_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_1c201_port_network:
+        - get_input: oam_net_name
+        service_template_filter:
+          substitute_service_template: Nested_2c2_catalog_instanceServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_2c2_catalog_instance_2c202_port:
           capability: tosca.capabilities.network.Linkable
           node: 1c2_catalog_instance_network
           relationship: tosca.relationships.network.LinksTo
-    abstract_1c2_catalog_instance_3:
-      type: org.openecomp.resource.abstract.nodes.1c2_catalog_instance_3
+    abstract_2c2_catalog_instance_1:
+      type: org.openecomp.resource.abstract.nodes.2c2_catalog_instance
+      directives:
+      - substitutable
+      properties:
+        compute_2c2_catalog_instance_user_data_format:
+        - RAW1
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_2c202_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pd_image_name
+        port_1c201_port_network_role_tag: oam
+        compute_2c2_catalog_instance_scheduler_hints:
+        - group: BE_Affinity_group
+        compute_2c2_catalog_instance_availability_zone:
+        - get_input: availabilityzone_name
+        compute_2c2_catalog_instance_name:
+        - get_input:
+          - 2c2_catalog_instance_names
+          - 0
+        port_2c202_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_2c202_port_network:
+        - 1c2_catalog_instance_network
+        port_1c201_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_1c201_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_1c201_port_network:
+        - get_input: oam_net_name
+        service_template_filter:
+          substitute_service_template: Nested_2c2_catalog_instanceServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_2c2_catalog_instance_2c202_port:
+          capability: tosca.capabilities.network.Linkable
+          node: 1c2_catalog_instance_network
+          relationship: tosca.relationships.network.LinksTo
+    abstract_1c2_catalog_instance_0:
+      type: org.openecomp.resource.abstract.nodes.1c2_catalog_instance
       directives:
       - substitutable
       properties:
@@ -385,167 +279,100 @@ topology_template:
         - get_input: availabilityzone_name
         vm_flavor_name:
           get_input: pd_flavor_name
-        vm_image_name:
-          get_input: pd_image_name
-        port_1c2_t2_port_ip_requirements:
+        compute_1c2_catalog_instance_personality:
+        - - UNSUPPORTED_RESOURCE_[1a_single_1A_1, instance_name]
+        port_2c202_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_1c2_t1_port_mac_requirements:
+        vm_image_name:
+          get_input: pd_image_name
+        port_1c201_port_network_role_tag: oam
+        compute_1c2_catalog_instance_name:
+        - get_input:
+          - 1c2_catalog_instance_names
+          - 1
+        port_2c202_port_mac_requirements:
           mac_count_required:
             is_required: false
-        port_1c2_t2_port_network:
+        port_2c202_port_network:
         - 1c2_catalog_instance_network
+        port_1c201_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_1c201_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_1c2_catalog_instance_user_data_format:
+        - RAW1
+        port_1c201_port_network:
+        - get_input: oam_net_name
+        compute_1c2_catalog_instance_scheduler_hints:
+        - group: BE_Affinity_group
+        service_template_filter:
+          substitute_service_template: Nested_1c2_catalog_instanceServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_1c2_catalog_instance_2c202_port:
+          capability: tosca.capabilities.network.Linkable
+          node: 1c2_catalog_instance_network
+          relationship: tosca.relationships.network.LinksTo
+    abstract_1c2_catalog_instance_1:
+      type: org.openecomp.resource.abstract.nodes.1c2_catalog_instance
+      directives:
+      - substitutable
+      properties:
+        compute_1c2_catalog_instance_availability_zone:
+        - get_input: availabilityzone_name
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_2c202_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pd_image_name
+        port_1c201_port_network_role_tag: oam
         compute_1c2_catalog_instance_name:
         - get_input:
           - 1c2_catalog_instance_names
           - 2
-        port_1c2_t1_port_network:
-        - get_input: oam_net_name
-        port_1c2_t2_port_mac_requirements:
+        port_2c202_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_2c202_port_network:
+        - 1c2_catalog_instance_network
+        port_1c201_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_1c201_port_mac_requirements:
           mac_count_required:
             is_required: false
         compute_1c2_catalog_instance_user_data_format:
         - get_attribute:
           - abstract_1c2_catalog_instance_0
           - 1c2_catalog_instance_instance_name
-        port_1c2_t1_port_network_role_tag: oam
-        port_1c2_t1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        compute_1c2_catalog_instance_scheduler_hints:
-        - group: BE_Affinity_group
-        service_template_filter:
-          substitute_service_template: Nested_1c2_catalog_instance_3ServiceTemplate.yaml
-          count: 1
-        index_value:
-          get_property:
-          - SELF
-          - service_template_filter
-          - index_value
-      requirements:
-      - link_1c2_catalog_instance_1c2_t2_port:
-          capability: tosca.capabilities.network.Linkable
-          node: 1c2_catalog_instance_network
-          relationship: tosca.relationships.network.LinksTo
-    abstract_1c2_catalog_instance_0:
-      type: org.openecomp.resource.abstract.nodes.1c2_catalog_instance_0
-      directives:
-      - substitutable
-      properties:
-        compute_1c2_catalog_instance_availability_zone:
-        - get_input: availabilityzone_name
-        vm_flavor_name:
-          get_input: pd_flavor_name
-        vm_image_name:
-          get_input: pd_image_name
-        port_1c2_t2_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        port_1c2_t1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_1c2_t2_port_network:
-        - 1c2_catalog_instance_network
-        compute_1c2_catalog_instance_metadata:
-        - connectivityTo4PNested_2:
-            get_attribute:
-            - abstract_pcm_server_0
-            - server_pcm_id
-          connectivityTo1C1_T1_02:
-            get_attribute:
-            - abstract_1c11_scalling_instance
-            - 1c11_scalling_instance_1c1_t1_port_tenant_id
-          connectivityTo1C1_T1_11:
-            get_attribute:
-            - abstract_1c12_scalling_instance
-            - 1c12_scalling_instance_1c1_t1_port_tenant_id
-          connectivityTo4PNested_1:
-            get_attribute:
-            - abstract_pcm_server_1
-            - server_pcm_id
-          connectivityTo1C1_T1_01:
-            get_attribute:
-            - abstract_1c11_scalling_instance
-            - 1c11_scalling_instance_1c1_t1_port_tenant_id
-          connectivityTo1C1_T1_12:
-            get_attribute:
-            - abstract_1c12_scalling_instance
-            - 1c12_scalling_instance_1c1_t1_port_tenant_id
-          connectivityTo1B01_1:
-            get_attribute:
-            - abstract_b_single_1b_1
-            - b_single_1b_instance_name
-          connectivityTo1B02_1:
-            get_attribute:
-            - abstract_b_single_1b_0
-            - b_single_1b_instance_name
-          connectivityTo1B01_2:
-            get_attribute:
-            - abstract_b_single_2b_1
-            - b_single_2b_instance_name
-          connectivityTo1C2_2_2:
-            get_attribute:
-            - abstract_1c2_catalog_instance_2
-            - 1c2_catalog_instance_instance_name
-          connectivityTo1A_2:
-            get_attribute:
-            - abstract_a_single_2a
-            - a_single_2a_instance_name
-          connectivityTo1B02_2:
-            get_attribute:
-            - abstract_b_single_2b_0
-            - b_single_2b_instance_name
-          connectivityToNoUnifiedNested_2:
-            get_attribute:
-            - nestedNoUnified_2
-            - portId
-          connectivityTo1A_1:
-            get_attribute:
-            - abstract_a_single_1a
-            - a_single_1a_instance_name
-          connectivityToNoUnifiedNested_1:
-            get_attribute:
-            - nestedNoUnified_1
-            - portId
-          connectivityTo1C2_2_1:
-            get_attribute:
-            - abstract_1c2_catalog_instance_3
-            - 1c2_catalog_instance_instance_name
-          connectivityTo1C2_1_2:
-            get_attribute:
-            - abstract_1c2_catalog_instance_1
-            - 1c2_catalog_instance_instance_name
-        compute_1c2_catalog_instance_name:
-        - get_input:
-          - 1c2_catalog_instance_names
-          - 1
-        port_1c2_t1_port_network:
+        port_1c201_port_network:
         - get_input: oam_net_name
-        port_1c2_t2_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        compute_1c2_catalog_instance_user_data_format:
-        - RAW1
-        port_1c2_t1_port_network_role_tag: oam
-        port_1c2_t1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
         compute_1c2_catalog_instance_scheduler_hints:
         - group: BE_Affinity_group
         service_template_filter:
-          substitute_service_template: Nested_1c2_catalog_instance_0ServiceTemplate.yaml
+          substitute_service_template: Nested_1c2_catalog_instanceServiceTemplate.yaml
           count: 1
         index_value:
           get_property:
@@ -553,62 +380,7 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_1c2_catalog_instance_1c2_t2_port:
-          capability: tosca.capabilities.network.Linkable
-          node: 1c2_catalog_instance_network
-          relationship: tosca.relationships.network.LinksTo
-    abstract_1c2_catalog_instance_1:
-      type: org.openecomp.resource.abstract.nodes.1c2_catalog_instance_1
-      directives:
-      - substitutable
-      properties:
-        compute_1c2_catalog_instance_availability_zone:
-        - get_input: availabilityzone_name
-        vm_flavor_name:
-          get_input: pd_flavor_name
-        vm_image_name:
-          get_input: pd_image_name
-        port_1c2_t2_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        port_1c2_t1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_1c2_t2_port_network:
-        - 1c2_catalog_instance_network
-        compute_1c2_catalog_instance_name:
-        - get_input:
-          - 1c2_catalog_instance_names
-          - 2
-        port_1c2_t1_port_network:
-        - get_input: oam_net_name
-        port_1c2_t2_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        compute_1c2_catalog_instance_user_data_format:
-        - RAW1
-        port_1c2_t1_port_network_role_tag: oam
-        port_1c2_t1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        compute_1c2_catalog_instance_scheduler_hints:
-        - group: BE_Affinity_group
-        service_template_filter:
-          substitute_service_template: Nested_1c2_catalog_instance_1ServiceTemplate.yaml
-          count: 1
-        index_value:
-          get_property:
-          - SELF
-          - service_template_filter
-          - index_value
-      requirements:
-      - link_1c2_catalog_instance_1c2_t2_port:
+      - link_1c2_catalog_instance_2c202_port:
           capability: tosca.capabilities.network.Linkable
           node: 1c2_catalog_instance_network
           relationship: tosca.relationships.network.LinksTo
@@ -617,17 +389,17 @@ topology_template:
       properties:
         dhcp_agent_ids:
           get_attribute:
-          - abstract_1c2_catalog_instance_3
-          - 1c2_catalog_instance_1c2_t1_port_tenant_id
+          - abstract_1c2_catalog_instance_1
+          - 1c2_catalog_instance_1c201_port_tenant_id
           - get_attribute:
             - abstract_1c2_catalog_instance_0
-            - 1c2_catalog_instance_1c2_t1_port_tenant_id
+            - 1c2_catalog_instance_1c201_port_tenant_id
             - get_attribute:
               - abstract_1c2_catalog_instance_1
               - 1c2_catalog_instance_instance_name
               - get_attribute:
-                - abstract_1c2_catalog_instance_3
-                - 1c2_catalog_instance_instance_name
+                - abstract_2c2_catalog_instance_1
+                - 2c2_catalog_instance_instance_name
         tenant_id:
           get_attribute:
           - abstract_1c11_scalling_instance
@@ -660,20 +432,20 @@ topology_template:
           - nestedNoUnified_1
           - portId
           - get_attribute:
-            - abstract_pcm_server_0
+            - 4p_nested_2
             - server_pcm_id
         value_specs:
           get_attribute:
           - abstract_b_single_1b_1
           - b_single_1b_instance_name
           - get_attribute:
-            - abstract_b_single_1b_0
+            - abstract_b_single_1b
             - b_single_1b_instance_name
             - get_attribute:
               - abstract_b_single_1b_1
               - b_single_1b_1b_t1_port_tenant_id
               - get_attribute:
-                - abstract_b_single_1b_0
+                - abstract_b_single_1b
                 - b_single_1b_1b_t1_port_tenant_id
     abstract_a_single_1a:
       type: org.openecomp.resource.abstract.nodes.a_single_1a
@@ -683,7 +455,7 @@ topology_template:
         compute_a_single_1a_metadata:
         - connectivityTo4PNested_2:
             get_attribute:
-            - abstract_pcm_server_0
+            - 4p_nested_2
             - server_pcm_id
           connectivityTo1A:
             get_attribute:
@@ -691,7 +463,7 @@ topology_template:
             - a_single_2a_instance_name
           connectivityTo1B02:
             get_attribute:
-            - abstract_b_single_1b_0
+            - abstract_b_single_1b
             - b_single_1b_instance_name
             - get_attribute:
               - abstract_b_single_1b_1
@@ -710,7 +482,7 @@ topology_template:
             - tenant_id
           connectivityTo4PNested_1:
             get_attribute:
-            - abstract_pcm_server_1
+            - 4p_nested_1
             - server_pcm_id
           connectivityTo1C1_T2_02:
             get_attribute:
@@ -722,8 +494,8 @@ topology_template:
             - tenant_id
           connectivityTo1C2_2_2:
             get_attribute:
-            - abstract_1c2_catalog_instance_2
-            - 1c2_catalog_instance_instance_name
+            - abstract_2c2_catalog_instance_0
+            - 2c2_catalog_instance_instance_name
           connectivityToNoUnifiedNested_2:
             get_attribute:
             - nestedNoUnified_2
@@ -738,8 +510,8 @@ topology_template:
             - 1c2_catalog_instance_instance_name
           connectivityTo1C2_2_1:
             get_attribute:
-            - abstract_1c2_catalog_instance_3
-            - 1c2_catalog_instance_instance_name
+            - abstract_2c2_catalog_instance_1
+            - 2c2_catalog_instance_instance_name
           connectivityTo1C2_1_2:
             get_attribute:
             - abstract_1c2_catalog_instance_1
@@ -807,7 +579,7 @@ topology_template:
         connectivityChk:
           connectivityTo4PNested_2:
             get_attribute:
-            - abstract_pcm_server_0
+            - 4p_nested_2
             - server_pcm_id
           connectivityTo1C1_T1_02:
             get_attribute:
@@ -819,7 +591,7 @@ topology_template:
             - 1c12_scalling_instance_1c1_t1_port_tenant_id
           connectivityTo4PNested_1:
             get_attribute:
-            - abstract_pcm_server_1
+            - 4p_nested_1
             - server_pcm_id
           connectivityTo1C1_T1_01:
             get_attribute:
@@ -835,7 +607,7 @@ topology_template:
             - b_single_1b_instance_name
           connectivityTo1B02_1:
             get_attribute:
-            - abstract_b_single_1b_0
+            - abstract_b_single_1b
             - b_single_1b_instance_name
           connectivityTo1B01_2:
             get_attribute:
@@ -843,15 +615,15 @@ topology_template:
             - b_single_2b_instance_name
           connectivityTo1C2_2_2:
             get_attribute:
-            - abstract_1c2_catalog_instance_2
-            - 1c2_catalog_instance_instance_name
+            - abstract_2c2_catalog_instance_0
+            - 2c2_catalog_instance_instance_name
           connectivityTo1A_2:
             get_attribute:
             - abstract_a_single_2a
             - a_single_2a_instance_name
           connectivityTo1B02_2:
             get_attribute:
-            - abstract_b_single_2b_0
+            - abstract_b_single_2b
             - b_single_2b_instance_name
           connectivityToNoUnifiedNested_2:
             get_attribute:
@@ -867,8 +639,8 @@ topology_template:
             - 1c2_catalog_instance_instance_name
           connectivityTo1C2_2_1:
             get_attribute:
-            - abstract_1c2_catalog_instance_3
-            - 1c2_catalog_instance_instance_name
+            - abstract_2c2_catalog_instance_1
+            - 2c2_catalog_instance_instance_name
           connectivityTo1C2_1_2:
             get_attribute:
             - abstract_1c2_catalog_instance_1
@@ -890,65 +662,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: nested_network
           relationship: tosca.relationships.network.LinksTo
-    abstract_b_single_2b_0:
-      type: org.openecomp.resource.abstract.nodes.b_single_2b_0
-      directives:
-      - substitutable
-      properties:
-        vm_flavor_name:
-          get_input: pd_flavor_name
-        port_1b_t1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        vm_image_name:
-          get_input: pd_image_name
-        compute_b_single_2b_scheduler_hints:
-        - group: BE_Affinity_group
-        compute_b_single_2b_availability_zone:
-        - get_input: availabilityzone_name
-        port_1b_t2_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_1b_t2_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        compute_b_single_2b_name:
-        - get_input:
-          - b_single_2b_names
-          - 1
-        port_1b_t1_port_value_specs:
-        - get_attribute:
-          - abstract_a_single_1a
-          - a_single_1a_1a_t1_port_tenant_id
-        compute_b_single_2b_user_data_format:
-        - RAW
-        port_1b_t1_port_network_role_tag: oam
-        port_1b_t1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_1b_t2_port_network:
-        - b_single_1b_network_2
-        port_1b_t1_port_network:
-        - get_input: oam_net_name
-        service_template_filter:
-          substitute_service_template: Nested_b_single_2b_0ServiceTemplate.yaml
-          count: 1
-        index_value:
-          get_property:
-          - SELF
-          - service_template_filter
-          - index_value
-      requirements:
-      - link_b_single_2b_1b_t2_port:
-          capability: tosca.capabilities.network.Linkable
-          node: b_single_1b_network_2
-          relationship: tosca.relationships.network.LinksTo
     nestedNoUnified_2:
       type: org.openecomp.resource.abstract.nodes.heat.nested-no_vfc_v0.1
       directives:
@@ -962,7 +675,7 @@ topology_template:
         connectivityChk:
           connectivityTo4PNested_2:
             get_attribute:
-            - abstract_pcm_server_0
+            - 4p_nested_2
             - server_pcm_id
           connectivityTo1C1_T1_02:
             get_attribute:
@@ -974,7 +687,7 @@ topology_template:
             - 1c12_scalling_instance_1c1_t1_port_tenant_id
           connectivityTo4PNested_1:
             get_attribute:
-            - abstract_pcm_server_1
+            - 4p_nested_1
             - server_pcm_id
           connectivityTo1C1_T1_01:
             get_attribute:
@@ -990,7 +703,7 @@ topology_template:
             - b_single_1b_instance_name
           connectivityTo1B02_1:
             get_attribute:
-            - abstract_b_single_1b_0
+            - abstract_b_single_1b
             - b_single_1b_instance_name
           connectivityTo1B01_2:
             get_attribute:
@@ -998,15 +711,15 @@ topology_template:
             - b_single_2b_instance_name
           connectivityTo1C2_2_2:
             get_attribute:
-            - abstract_1c2_catalog_instance_2
-            - 1c2_catalog_instance_instance_name
+            - abstract_2c2_catalog_instance_0
+            - 2c2_catalog_instance_instance_name
           connectivityTo1A_2:
             get_attribute:
             - abstract_a_single_2a
             - a_single_2a_instance_name
           connectivityTo1B02_2:
             get_attribute:
-            - abstract_b_single_2b_0
+            - abstract_b_single_2b
             - b_single_2b_instance_name
           connectivityTo1A_1:
             get_attribute:
@@ -1022,8 +735,8 @@ topology_template:
             - 1c2_catalog_instance_instance_name
           connectivityTo1C2_2_1:
             get_attribute:
-            - abstract_1c2_catalog_instance_3
-            - 1c2_catalog_instance_instance_name
+            - abstract_2c2_catalog_instance_1
+            - 2c2_catalog_instance_instance_name
           connectivityTo1C2_1_2:
             get_attribute:
             - abstract_1c2_catalog_instance_1
@@ -1112,7 +825,7 @@ topology_template:
         compute_b_single_2b_metadata:
         - connectivityTo4PNested_2:
             get_attribute:
-            - abstract_pcm_server_0
+            - 4p_nested_2
             - server_pcm_id
           connectivityTo1C1_T1_02:
             get_attribute:
@@ -1124,7 +837,7 @@ topology_template:
             - 1c12_scalling_instance_1c1_t1_port_tenant_id
           connectivityTo4PNested_1:
             get_attribute:
-            - abstract_pcm_server_1
+            - 4p_nested_1
             - server_pcm_id
           connectivityTo1C1_T1_01:
             get_attribute:
@@ -1140,12 +853,12 @@ topology_template:
             - b_single_1b_instance_name
           connectivityTo1B02_1:
             get_attribute:
-            - abstract_b_single_1b_0
+            - abstract_b_single_1b
             - b_single_1b_instance_name
           connectivityTo1C2_2_2:
             get_attribute:
-            - abstract_1c2_catalog_instance_2
-            - 1c2_catalog_instance_instance_name
+            - abstract_2c2_catalog_instance_0
+            - 2c2_catalog_instance_instance_name
           connectivityTo1A_2:
             get_attribute:
             - abstract_a_single_2a
@@ -1168,8 +881,8 @@ topology_template:
             - 1c2_catalog_instance_instance_name
           connectivityTo1C2_2_1:
             get_attribute:
-            - abstract_1c2_catalog_instance_3
-            - 1c2_catalog_instance_instance_name
+            - abstract_2c2_catalog_instance_1
+            - 2c2_catalog_instance_instance_name
           connectivityTo1C2_1_2:
             get_attribute:
             - abstract_1c2_catalog_instance_1
@@ -1360,19 +1073,19 @@ topology_template:
       requirements:
       - port:
           capability: attachment_pcm_port_0
-          node: abstract_pcm_server_1
+          node: 4p_nested_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_pcm_port_1
-          node: abstract_pcm_server_1
+          node: 4p_nested_1
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_pcm_port_0
-          node: abstract_pcm_server_0
+          node: 4p_nested_2
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_pcm_port_1
-          node: abstract_pcm_server_0
+          node: 4p_nested_2
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_pcm_port_0
@@ -1449,7 +1162,7 @@ topology_template:
         compute_a_single_2a_metadata:
         - connectivityTo4PNested_2:
             get_attribute:
-            - abstract_pcm_server_0
+            - 4p_nested_2
             - server_pcm_id
           connectivityTo1A:
             get_attribute:
@@ -1457,7 +1170,7 @@ topology_template:
             - a_single_1a_instance_name
           connectivityTo1B02:
             get_attribute:
-            - abstract_b_single_2b_0
+            - abstract_b_single_2b
             - b_single_2b_instance_name
             - get_attribute:
               - abstract_b_single_2b_1
@@ -1476,7 +1189,7 @@ topology_template:
             - tenant_id
           connectivityTo4PNested_1:
             get_attribute:
-            - abstract_pcm_server_1
+            - 4p_nested_1
             - server_pcm_id
           connectivityTo1C1_T2_02:
             get_attribute:
@@ -1488,8 +1201,8 @@ topology_template:
             - tenant_id
           connectivityTo1C2_2_2:
             get_attribute:
-            - abstract_1c2_catalog_instance_2
-            - 1c2_catalog_instance_instance_name
+            - abstract_2c2_catalog_instance_0
+            - 2c2_catalog_instance_instance_name
           connectivityToNoUnifiedNested_2:
             get_attribute:
             - nestedNoUnified_2
@@ -1504,8 +1217,8 @@ topology_template:
             - 1c2_catalog_instance_instance_name
           connectivityTo1C2_2_1:
             get_attribute:
-            - abstract_1c2_catalog_instance_3
-            - 1c2_catalog_instance_instance_name
+            - abstract_2c2_catalog_instance_1
+            - 2c2_catalog_instance_instance_name
           connectivityTo1C2_1_2:
             get_attribute:
             - abstract_1c2_catalog_instance_1
@@ -1522,65 +1235,6 @@ topology_template:
       - link_a_single_2a_1a_t1_port:
           capability: tosca.capabilities.network.Linkable
           node: a_single_1a_network
-          relationship: tosca.relationships.network.LinksTo
-    abstract_b_single_1b_0:
-      type: org.openecomp.resource.abstract.nodes.b_single_1b_0
-      directives:
-      - substitutable
-      properties:
-        vm_flavor_name:
-          get_input: pd_flavor_name
-        port_1b_t1_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        vm_image_name:
-          get_input: pd_image_name
-        compute_b_single_1b_user_data_format:
-        - RAW
-        port_1b_t2_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        compute_b_single_1b_availability_zone:
-        - get_input: availabilityzone_name
-        compute_b_single_1b_scheduler_hints:
-        - group: BE_Affinity_group
-        port_1b_t2_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        port_1b_t1_port_value_specs:
-        - get_attribute:
-          - abstract_a_single_1a
-          - a_single_1a_1a_t1_port_tenant_id
-        port_1b_t1_port_network_role_tag: oam
-        port_1b_t1_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_1b_t2_port_network:
-        - b_single_1b_network_1
-        port_1b_t1_port_network:
-        - get_input: oam_net_name
-        compute_b_single_1b_name:
-        - get_input:
-          - b_single_1b_names
-          - 1
-        service_template_filter:
-          substitute_service_template: Nested_b_single_1b_0ServiceTemplate.yaml
-          count: 1
-        index_value:
-          get_property:
-          - SELF
-          - service_template_filter
-          - index_value
-      requirements:
-      - link_b_single_1b_1b_t2_port:
-          capability: tosca.capabilities.network.Linkable
-          node: b_single_1b_network_1
           relationship: tosca.relationships.network.LinksTo
     1c1_t2_port_02:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
@@ -1629,6 +1283,65 @@ topology_template:
       properties:
         network_name:
           get_input: net_name
+    abstract_b_single_2b:
+      type: org.openecomp.resource.abstract.nodes.b_single_2b
+      directives:
+      - substitutable
+      properties:
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_1b_t1_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pd_image_name
+        compute_b_single_2b_scheduler_hints:
+        - group: BE_Affinity_group
+        compute_b_single_2b_availability_zone:
+        - get_input: availabilityzone_name
+        port_1b_t2_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_1b_t2_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        compute_b_single_2b_name:
+        - get_input:
+          - b_single_2b_names
+          - 1
+        port_1b_t1_port_value_specs:
+        - get_attribute:
+          - abstract_a_single_1a
+          - a_single_1a_1a_t1_port_tenant_id
+        compute_b_single_2b_user_data_format:
+        - RAW
+        port_1b_t1_port_network_role_tag: oam
+        port_1b_t1_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_1b_t2_port_network:
+        - b_single_1b_network_2
+        port_1b_t1_port_network:
+        - get_input: oam_net_name
+        service_template_filter:
+          substitute_service_template: Nested_b_single_2bServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_b_single_2b_1b_t2_port:
+          capability: tosca.capabilities.network.Linkable
+          node: b_single_1b_network_2
+          relationship: tosca.relationships.network.LinksTo
     dependsOn_network:
       type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
       properties:
@@ -1645,18 +1358,18 @@ topology_template:
           relationship: tosca.relationships.DependsOn
       - dependency:
           capability: tosca.capabilities.Node
-          node: abstract_pcm_server_1
+          node: 4p_nested_1
           relationship: tosca.relationships.DependsOn
       - dependency:
           capability: tosca.capabilities.Node
-          node: abstract_pcm_server_0
+          node: 4p_nested_2
           relationship: tosca.relationships.DependsOn
       - dependency:
-          capability: feature_1c2_catalog_instance_1c2_t1_port
-          node: abstract_1c2_catalog_instance_3
+          capability: feature_1c2_catalog_instance_1c201_port
+          node: abstract_1c2_catalog_instance_1
           relationship: tosca.relationships.DependsOn
       - dependency:
-          capability: feature_1c2_catalog_instance_1c2_t1_port
+          capability: feature_1c2_catalog_instance_1c201_port
           node: abstract_1c2_catalog_instance_0
           relationship: tosca.relationships.DependsOn
       - dependency:
@@ -1664,16 +1377,16 @@ topology_template:
           node: abstract_1c2_catalog_instance_0
           relationship: tosca.relationships.DependsOn
       - dependency:
-          capability: feature_1c2_catalog_instance
-          node: abstract_1c2_catalog_instance_3
+          capability: feature_2c2_catalog_instance
+          node: abstract_2c2_catalog_instance_1
           relationship: tosca.relationships.DependsOn
       - dependency:
           capability: feature_1c2_catalog_instance
           node: abstract_1c2_catalog_instance_1
           relationship: tosca.relationships.DependsOn
       - dependency:
-          capability: feature_1c2_catalog_instance
-          node: abstract_1c2_catalog_instance_2
+          capability: feature_2c2_catalog_instance
+          node: abstract_2c2_catalog_instance_0
           relationship: tosca.relationships.DependsOn
       - dependency:
           capability: feature_1c11_scalling_instance
@@ -1697,7 +1410,7 @@ topology_template:
           relationship: tosca.relationships.DependsOn
       - dependency:
           capability: feature_b_single_1b
-          node: abstract_b_single_1b_0
+          node: abstract_b_single_1b
           relationship: tosca.relationships.DependsOn
       - dependency:
           capability: feature_b_single_1b_1b_t1_port
@@ -1705,7 +1418,7 @@ topology_template:
           relationship: tosca.relationships.DependsOn
       - dependency:
           capability: feature_b_single_1b_1b_t1_port
-          node: abstract_b_single_1b_0
+          node: abstract_b_single_1b
           relationship: tosca.relationships.DependsOn
       - dependency:
           capability: feature_a_single_1a
@@ -1719,6 +1432,118 @@ topology_template:
           capability: feature_a_single_1a_1a_t1_port
           node: abstract_a_single_1a
           relationship: tosca.relationships.DependsOn
+    4p_nested_2:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      directives:
+      - substitutable
+      properties:
+        server_group: BE_Affinity_group
+        port_pcm_port_1_network_role_tag: oam
+        connectivityChk:
+          connectivityTo1C1_T1_02:
+            get_attribute:
+            - 1c1_t1_port_02
+            - tenant_id
+          connectivityTo1C1_T1_11:
+            get_attribute:
+            - 1c1_t1_port_11
+            - tenant_id
+          connectivityTo4PNested_1:
+            get_attribute:
+            - 4p_nested_1
+            - server_pcm_id
+          connectivityTo1C1_T1_01:
+            get_attribute:
+            - 1c1_t1_port_01
+            - tenant_id
+          connectivityTo1C1_T1_12:
+            get_attribute:
+            - 1c1_t1_port_12
+            - tenant_id
+          connectivityTo1B01_1:
+            get_attribute:
+            - 1b01_single_1B_1
+            - instance_name
+          connectivityTo1B02_1:
+            get_attribute:
+            - 1b02_single_1B_1
+            - instance_name
+          connectivityTo1B01_2:
+            get_attribute:
+            - 1b01_single_1B_2
+            - instance_name
+          connectivityTo1C2_2_2:
+            get_attribute:
+            - 2c202_catalog_instance_1C22
+            - instance_name
+          connectivityTo1A_2:
+            get_attribute:
+            - 2a_single_1A_2
+            - instance_name
+          connectivityTo1B02_2:
+            get_attribute:
+            - 1b02_single_1B_2
+            - instance_name
+          connectivityToNoUnifiedNested_2:
+            get_attribute:
+            - nestedNoUnified_2
+            - portId
+          connectivityTo1A_1:
+            get_attribute:
+            - 1a_single_1A_1
+            - instance_name
+          connectivityToNoUnifiedNested_1:
+            get_attribute:
+            - nestedNoUnified_1
+            - portId
+          connectivityTo1C2_1_1:
+            get_attribute:
+            - 1c201_catalog_instance_1C21
+            - instance_name
+          connectivityTo1C2_2_1:
+            get_attribute:
+            - 2c202_catalog_instance_1C21
+            - instance_name
+          connectivityTo1C2_1_2:
+            get_attribute:
+            - 1c201_catalog_instance_1C22
+            - instance_name
+        port_pcm_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        pcm_image_name:
+          get_input: pcm_image_name
+        security_group_name: jsa_security_group
+        port_pcm_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        pcm_flavor_name:
+          get_input: pcm_flavor_name
+        service_template_filter:
+          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
+        port_pcm_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pcm_port_0_network_role_tag: cps
+        port_pcm_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        pcm_server_name:
+          get_input:
+          - pcm_server_names
+          - 0
+        cps_net_name: nested_network
+      requirements:
+      - link_pcm_port_0:
+          capability: tosca.capabilities.network.Linkable
+          node: nested_network
+          relationship: tosca.relationships.network.LinksTo
     1c1_t2_port_12:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
@@ -1740,6 +1565,118 @@ topology_template:
         network_role_tag: ppds
         network:
           get_input: ppds_net_name
+    4p_nested_1:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      directives:
+      - substitutable
+      properties:
+        server_group: BE_Affinity_group
+        port_pcm_port_1_network_role_tag: oam
+        connectivityChk:
+          connectivityTo4PNested_2:
+            get_attribute:
+            - 4p_nested_2
+            - server_pcm_id
+          connectivityTo1C1_T1_02:
+            get_attribute:
+            - 1c1_t1_port_02
+            - tenant_id
+          connectivityTo1C1_T1_11:
+            get_attribute:
+            - 1c1_t1_port_11
+            - tenant_id
+          connectivityTo1C1_T1_01:
+            get_attribute:
+            - 1c1_t1_port_01
+            - tenant_id
+          connectivityTo1C1_T1_12:
+            get_attribute:
+            - 1c1_t1_port_12
+            - tenant_id
+          connectivityTo1B01_1:
+            get_attribute:
+            - 1b01_single_1B_1
+            - instance_name
+          connectivityTo1B02_1:
+            get_attribute:
+            - 1b02_single_1B_1
+            - instance_name
+          connectivityTo1B01_2:
+            get_attribute:
+            - 1b01_single_1B_2
+            - instance_name
+          connectivityTo1C2_2_2:
+            get_attribute:
+            - 2c202_catalog_instance_1C22
+            - instance_name
+          connectivityTo1A_2:
+            get_attribute:
+            - 2a_single_1A_2
+            - instance_name
+          connectivityTo1B02_2:
+            get_attribute:
+            - 1b02_single_1B_2
+            - instance_name
+          connectivityToNoUnifiedNested_2:
+            get_attribute:
+            - nestedNoUnified_2
+            - portId
+          connectivityTo1A_1:
+            get_attribute:
+            - 1a_single_1A_1
+            - instance_name
+          connectivityToNoUnifiedNested_1:
+            get_attribute:
+            - nestedNoUnified_1
+            - portId
+          connectivityTo1C2_1_1:
+            get_attribute:
+            - 1c201_catalog_instance_1C21
+            - instance_name
+          connectivityTo1C2_2_1:
+            get_attribute:
+            - 2c202_catalog_instance_1C21
+            - instance_name
+          connectivityTo1C2_1_2:
+            get_attribute:
+            - 1c201_catalog_instance_1C22
+            - instance_name
+        port_pcm_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        pcm_image_name:
+          get_input: pcm_image_name
+        security_group_name: jsa_security_group
+        port_pcm_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        pcm_flavor_name:
+          get_input: pcm_flavor_name
+        service_template_filter:
+          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
+        port_pcm_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pcm_port_0_network_role_tag: cps
+        port_pcm_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        pcm_server_name:
+          get_input:
+          - pcm_server_names
+          - 0
+        cps_net_name: nested_network
+      requirements:
+      - link_pcm_port_0:
+          capability: tosca.capabilities.network.Linkable
+          node: nested_network
+          relationship: tosca.relationships.network.LinksTo
     1c1_t2_port_11:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
@@ -1799,7 +1736,7 @@ topology_template:
         compute_b_single_1b_metadata:
         - connectivityTo4PNested_2:
             get_attribute:
-            - abstract_pcm_server_0
+            - 4p_nested_2
             - server_pcm_id
           connectivityTo1C1_T1_02:
             get_attribute:
@@ -1811,7 +1748,7 @@ topology_template:
             - 1c12_scalling_instance_1c1_t1_port_tenant_id
           connectivityTo4PNested_1:
             get_attribute:
-            - abstract_pcm_server_1
+            - 4p_nested_1
             - server_pcm_id
           connectivityTo1C1_T1_01:
             get_attribute:
@@ -1827,15 +1764,15 @@ topology_template:
             - b_single_2b_instance_name
           connectivityTo1C2_2_2:
             get_attribute:
-            - abstract_1c2_catalog_instance_2
-            - 1c2_catalog_instance_instance_name
+            - abstract_2c2_catalog_instance_0
+            - 2c2_catalog_instance_instance_name
           connectivityTo1A_2:
             get_attribute:
             - abstract_a_single_2a
             - a_single_2a_instance_name
           connectivityTo1B02_2:
             get_attribute:
-            - abstract_b_single_2b_0
+            - abstract_b_single_2b
             - b_single_2b_instance_name
           connectivityToNoUnifiedNested_2:
             get_attribute:
@@ -1855,8 +1792,8 @@ topology_template:
             - 1c2_catalog_instance_instance_name
           connectivityTo1C2_2_1:
             get_attribute:
-            - abstract_1c2_catalog_instance_3
-            - 1c2_catalog_instance_instance_name
+            - abstract_2c2_catalog_instance_1
+            - 2c2_catalog_instance_instance_name
           connectivityTo1C2_1_2:
             get_attribute:
             - abstract_1c2_catalog_instance_1
@@ -1902,53 +1839,53 @@ topology_template:
       - 1c1_t2_port_01
       - 1c1_scalling_instance_network
       - dependsOn_network
+      - 4p_nested_2
       - 1c1_t2_port_12
+      - 4p_nested_1
       - 1c1_t2_port_11
       - nested_network
       - abstract_a_single_2a
       - abstract_a_single_1a
       - abstract_1c11_scalling_instance
-      - abstract_b_single_1b_0
+      - abstract_b_single_1b
       - abstract_b_single_1b_1
-      - abstract_b_single_2b_0
+      - abstract_b_single_2b
       - abstract_b_single_2b_1
       - abstract_1c12_scalling_instance
+      - abstract_2c2_catalog_instance_0
+      - abstract_2c2_catalog_instance_1
       - abstract_1c2_catalog_instance_0
       - abstract_1c2_catalog_instance_1
-      - abstract_1c2_catalog_instance_2
-      - abstract_1c2_catalog_instance_3
-      - abstract_pcm_server_0
-      - abstract_pcm_server_1
     BE_Affinity_group:
       type: tosca.groups.Root
       members:
       - abstract_a_single_2a
       - abstract_a_single_1a
       - abstract_1c11_scalling_instance
-      - abstract_b_single_1b_0
+      - abstract_b_single_1b
       - abstract_b_single_1b_1
-      - abstract_b_single_2b_0
+      - abstract_b_single_2b
       - abstract_b_single_2b_1
       - abstract_1c12_scalling_instance
+      - abstract_2c2_catalog_instance_0
+      - abstract_2c2_catalog_instance_1
       - abstract_1c2_catalog_instance_0
       - abstract_1c2_catalog_instance_1
-      - abstract_1c2_catalog_instance_2
-      - abstract_1c2_catalog_instance_3
   outputs:
     out2:
       value:
         get_attribute:
-        - abstract_1c2_catalog_instance_3
-        - 1c2_catalog_instance_1c2_t1_port_tenant_id
+        - abstract_1c2_catalog_instance_1
+        - 1c2_catalog_instance_1c201_port_tenant_id
         - get_attribute:
           - abstract_1c2_catalog_instance_0
-          - 1c2_catalog_instance_1c2_t1_port_tenant_id
+          - 1c2_catalog_instance_1c201_port_tenant_id
           - get_attribute:
             - abstract_1c2_catalog_instance_1
             - 1c2_catalog_instance_instance_name
             - get_attribute:
-              - abstract_1c2_catalog_instance_3
-              - 1c2_catalog_instance_instance_name
+              - abstract_2c2_catalog_instance_1
+              - 2c2_catalog_instance_instance_name
     out3:
       value:
         get_attribute:
@@ -1975,13 +1912,13 @@ topology_template:
         - abstract_b_single_1b_1
         - b_single_1b_instance_name
         - get_attribute:
-          - abstract_b_single_1b_0
+          - abstract_b_single_1b
           - b_single_1b_instance_name
           - get_attribute:
             - abstract_b_single_1b_1
             - b_single_1b_1b_t1_port_tenant_id
             - get_attribute:
-              - abstract_b_single_1b_0
+              - abstract_b_single_1b
               - b_single_1b_1b_t1_port_tenant_id
     out5:
       value:
@@ -1994,7 +1931,7 @@ topology_template:
         - nestedNoUnified_1
         - portId
         - get_attribute:
-          - abstract_pcm_server_0
+          - 4p_nested_2
           - server_pcm_id
     out6:
       value:

@@ -22,8 +22,6 @@ package org.openecomp.sdcrests.errors;
 
 import org.codehaus.jackson.map.JsonMappingException;
 import org.hibernate.validator.internal.engine.path.PathImpl;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
@@ -34,10 +32,10 @@ import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
 import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
 import org.openecomp.sdc.common.errors.JsonMappingErrorBuilder;
 import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -50,8 +48,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
 
 public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
   private static final String ERROR_CODES_TO_RESPONSE_STATUS_MAPPING_FILE =
@@ -78,8 +76,8 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
 
     try {
       writeStackTraceToFile(exception);
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (IOException ex) {
+      ex.printStackTrace();
     }
     List<Object> contentTypes = new ArrayList<>();
     contentTypes.add(MediaType.APPLICATION_JSON);
@@ -174,15 +172,14 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
 
   private void writeStackTraceToFile(Exception exception) throws IOException {
     File file = new File("stack_trace.txt");
-    OutputStream outputStream = new FileOutputStream(file);
-
-    if(!file.exists()){
+    if (!file.exists()) {
       file.createNewFile();
     }
-
+    OutputStream outputStream = new FileOutputStream(file);
     PrintWriter printWriter = new PrintWriter(file);
     exception.printStackTrace(printWriter);
     printWriter.close();
+    outputStream.close();
   }
 
 }

@@ -183,21 +183,17 @@ topology_template:
           relationship: tosca.relationships.network.BindsTo
   outputs:
     pd_server_accessIPv4:
-      type: list
+      type: string
       value:
         get_attribute:
         - pd_server
         - accessIPv4
-      entry_schema:
-        type: string
     pd_server_pd01_port_device_owner:
-      type: list
+      type: string
       value:
         get_attribute:
         - pd_server_pd01_port
         - device_owner
-      entry_schema:
-        type: string
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.pd_server
     capabilities:

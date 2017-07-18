@@ -19,10 +19,11 @@ import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps} from 'sdc-app/onboarding/softwareProduct/components/monitoring/SoftwareProductComponentsMonitoring.js';
 import SoftwareProductComponentsMonitoringView from 'sdc-app/onboarding/softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringView.jsx';
 
-import {VSPComponentsMonitoringViewFactory} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsMonitoringFactories.js';
+import {VSPComponentsMonitoringViewFactory, trap, poll, ves} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsMonitoringFactories.js';
 import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
 
 const version = VersionControllerUtilsFactory.build();
+
 
 describe('SoftwareProductComponentsMonitoring Module Tests', function () {
 
@@ -33,24 +34,36 @@ describe('SoftwareProductComponentsMonitoring Module Tests', function () {
 	it('should return empty file names', () => {
 		let softwareProduct = {softwareProductEditor: {data: {...version}}, softwareProductComponents: {monitoring: {}}};
 		var results = mapStateToProps({softwareProduct});
-		expect(results.trapFilename).toEqual(undefined);
-		expect(results.pollFilename).toEqual(undefined);
+		expect(results.filenames[trap]).toEqual(undefined);
+		expect(results.filenames[poll]).toEqual(undefined);
+		expect(results.filenames[ves]).toEqual(undefined);
 	});
 
 	it('should return trap file name', () => {
-		const monitoring = VSPComponentsMonitoringViewFactory.build({}, {snmpTrapFlag: true});
+		const monitoring = VSPComponentsMonitoringViewFactory.build({}, {createTrap: true});
 		let softwareProduct = {softwareProductEditor: {data: {...version}}, softwareProductComponents: {monitoring}};
 		var results = mapStateToProps({softwareProduct});
-		expect(results.trapFilename).toEqual(monitoring.trapFilename);
-		expect(results.pollFilename).toEqual(undefined);
+		expect(results.filenames[trap]).toEqual(monitoring[trap]);
+		expect(results.filenames[poll]).toEqual(undefined);
+		expect(results.filenames[ves]).toEqual(undefined);
+	});
+
+	it('should return ves events file name', () => {
+		const monitoring = VSPComponentsMonitoringViewFactory.build({}, {createVes: true});
+		let softwareProduct = {softwareProductEditor: {data: {...version}}, softwareProductComponents: {monitoring}};
+		var results = mapStateToProps({softwareProduct});
+		expect(results.filenames[ves]).toEqual(monitoring[ves]);
+		expect(results.filenames[poll]).toEqual(undefined);
+		expect(results.filenames[trap]).toEqual(undefined);
 	});
 
 	it('should return poll file names', () => {
-		const monitoring = VSPComponentsMonitoringViewFactory.build({}, {snmpPollFlag: true});
+		const monitoring = VSPComponentsMonitoringViewFactory.build({}, {createPoll: true});
 		let softwareProduct = {softwareProductEditor: {data: {...version}}, softwareProductComponents: {monitoring}};
 		var results = mapStateToProps({softwareProduct});
-		expect(results.trapFilename).toEqual(undefined);
-		expect(results.pollFilename).toEqual(monitoring.pollFilename);
+		expect(results.filenames[poll]).toEqual(monitoring[poll]);
+		expect(results.filenames[trap]).toEqual(undefined);
+		expect(results.filenames[ves]).toEqual(undefined);
 
 		let renderer = TestUtils.createRenderer();
 		renderer.render(<SoftwareProductComponentsMonitoringView {...results} />);
@@ -58,12 +71,13 @@ describe('SoftwareProductComponentsMonitoring Module Tests', function () {
 		expect(renderedOutput).toBeTruthy();
 	});
 
-	it('should return both file names', () => {
-		const monitoring =  VSPComponentsMonitoringViewFactory.build({}, {snmpTrapFlag: true, snmpPollFlag: true});
+	it('should return all file names', () => {
+		const monitoring =  VSPComponentsMonitoringViewFactory.build({}, {createTrap: true, createVes: true, createPoll: true});
 		let softwareProduct = {softwareProductEditor: {data: {...version}}, softwareProductComponents: {monitoring}};
 		var results = mapStateToProps({softwareProduct});
-		expect(results.trapFilename).toEqual(monitoring.trapFilename);
-		expect(results.pollFilename).toEqual(monitoring.pollFilename);
+		expect(results.filenames[poll]).toEqual(monitoring[poll]);
+		expect(results.filenames[trap]).toEqual(monitoring[trap]);
+		expect(results.filenames[ves]).toEqual(monitoring[ves]);
 
 		let renderer = TestUtils.createRenderer();
 		renderer.render(<SoftwareProductComponentsMonitoringView {...results} />);

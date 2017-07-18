@@ -21,6 +21,7 @@
 package org.openecomp.sdcrests.vendorlicense.types;
 
 import io.swagger.annotations.ApiModel;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
@@ -32,17 +33,18 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @ApiModel(value = "EntitlementPoolRequest")
+//@JsonIgnoreProperties(value = {"manufacturerReferenceNumber"})
 public class EntitlementPoolRequestDto {
 
   @NotNull
   @Size(max = 120)
   private String name;
-  @NotNull
+
   @Size(max = 1000)
   private String description;
-  @NotNull
-  private int thresholdValue;
-  @NotNull
+
+  private Integer thresholdValue;
+
   private ThresholdUnit thresholdUnits;
   @NotNull
   @Valid
@@ -52,7 +54,7 @@ public class EntitlementPoolRequestDto {
   @NotNull
   @Valid
   private ChoiceOrOtherDto<AggregationFunction> aggregationFunction;
-  @NotNull
+
   @Valid
   private MultiChoiceOrOtherDto<OperationalScope> operationalScope;
   @NotNull
@@ -61,6 +63,9 @@ public class EntitlementPoolRequestDto {
   @NotNull
   @Size(max = 100)
   private String manufacturerReferenceNumber;
+
+  private String startDate;
+  private String expiryDate;
 
   public String getName() {
     return name;
@@ -78,11 +83,11 @@ public class EntitlementPoolRequestDto {
     this.description = description;
   }
 
-  public int getThresholdValue() {
+  public Integer getThresholdValue() {
     return thresholdValue;
   }
 
-  public void setThresholdValue(int thresholdValue) {
+  public void setThresholdValue(Integer thresholdValue) {
     this.thresholdValue = thresholdValue;
   }
 
@@ -140,5 +145,21 @@ public class EntitlementPoolRequestDto {
 
   public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
     this.manufacturerReferenceNumber = manufacturerReferenceNumber;
+  }
+
+  public String getStartDate() {
+    return startDate;
+  }
+
+  public void setStartDate(String startDate) {
+    this.startDate = startDate;
+  }
+
+  public String getExpiryDate() {
+    return expiryDate;
+  }
+
+  public void setExpiryDate(String expiryDate) {
+    this.expiryDate = expiryDate;
   }
 }

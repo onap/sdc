@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,11 +26,13 @@ public class UnifiedSubstitutionData {
   private Map<String, Integer> handledComputeTypesInNestedSubstitutionTemplate =
       new HashMap<>();
   //Key - nested compute type, Value - list of nested files that the compute type is present
-  private Map<String, Set<String>> handledNestedComputeTypesNestedFiles = new HashMap<>();
+  private Map<String, Integer> handledNestedComputeTypesNestedFiles = new HashMap<>();
   //Key - new property id, Value - orig property value
   private Map<String, Object> newParameterIdsToPropertiesFromOrigNodeTemplate = new HashMap<>();
   //handled nested files
   private Set<String> handledNestedFiles = new HashSet<>();
+  //handled nested nodes
+  private Set<String> handledNestedNodes = new HashSet<>();
 
   public Map<String, String> getNodesRelatedAbstractNode() {
     return nodesRelatedAbstractNode;
@@ -38,6 +41,10 @@ public class UnifiedSubstitutionData {
   public void setNodesRelatedAbstractNode(
       Map<String, String> nodesRelatedAbstractNode) {
     this.nodesRelatedAbstractNode = nodesRelatedAbstractNode;
+  }
+
+  public void addHandledNestedNodes(String handledNestedNodeId) {
+    this.handledNestedNodes.add(handledNestedNodeId);
   }
 
   public Map<String, String> getNodesRelatedSubstitutionServiceTemplateNode() {
@@ -114,8 +121,7 @@ public class UnifiedSubstitutionData {
     return new HashSet<>(this.nestedNodeTypeRelatedUnifiedTranslatedId.values());
   }
 
-  public void addHandledComputeType(String nestedServiceTemplateFileName,
-                                    String handledComputeType) {
+  public void addHandledComputeType(String handledComputeType) {
 
     if (this.handledComputeTypesInNestedSubstitutionTemplate.containsKey(handledComputeType)) {
       Integer timesHandled =
@@ -123,7 +129,7 @@ public class UnifiedSubstitutionData {
       this.handledComputeTypesInNestedSubstitutionTemplate
           .put(handledComputeType, timesHandled + 1);
     } else {
-      this.handledNestedFiles.add(nestedServiceTemplateFileName);
+      //this.handledNestedFiles.add(nestedServiceTemplateFileName);
       handledComputeTypesInNestedSubstitutionTemplate.put(handledComputeType, 0);
     }
   }
@@ -134,23 +140,38 @@ public class UnifiedSubstitutionData {
 
   public int getHandledNestedComputeNodeTemplateIndex(String computeType) {
     return this.handledComputeTypesInNestedSubstitutionTemplate.containsKey(computeType) ?
-        this.handledComputeTypesInNestedSubstitutionTemplate.get(computeType):
-        0;
+        this.handledComputeTypesInNestedSubstitutionTemplate.get(computeType) : 0;
+  }
+
+  public void addHandlesNestedServiceTemplate(String nestedServiceTemplateFileName){
+    this.handledNestedFiles.add(nestedServiceTemplateFileName);
   }
 
   public boolean isNestedServiceTemplateWasHandled(String nestedServiceTemplateFileName) {
     return this.handledNestedFiles.contains(nestedServiceTemplateFileName);
   }
 
-  public void addNestedFileToUsedNestedComputeType(String computeType,
-                                                   String nestedServiceTemplateFileName){
-    this.handledNestedComputeTypesNestedFiles.putIfAbsent(computeType, new HashSet<>());
-    this.handledNestedComputeTypesNestedFiles.get(computeType).add(nestedServiceTemplateFileName);
+  public void updateUsedTimesForNestedComputeNodeType(String computeType) {
+    this.handledNestedComputeTypesNestedFiles.putIfAbsent(computeType, 0);
+
+    Integer usedNumber = this.handledNestedComputeTypesNestedFiles.get(computeType);
+    this.handledNestedComputeTypesNestedFiles.put(computeType, usedNumber + 1);
+
   }
 
-  public int getGlobalNodeTypeIndex(String computeType){
-    return this.handledNestedComputeTypesNestedFiles.get(computeType).size() == 1 ? 0:
-        this.handledNestedComputeTypesNestedFiles.get(computeType).size() - 1;
+  public int getGlobalNodeTypeIndex(String computeType) {
+    return Objects.isNull(this.handledNestedComputeTypesNestedFiles.get(computeType))
+        || this.handledNestedComputeTypesNestedFiles.get(computeType)== 0 ? 0
+        : this.handledNestedComputeTypesNestedFiles.get(computeType);
+  }
+
+  public boolean isNestedNodeWasHandled(String nestedNodeId) {
+    return this.handledNestedNodes.contains(nestedNodeId);
+  }
+
+
+  public Map<String, Object> getAllNewPropertyInputParamIds(){
+    return this.newParameterIdsToPropertiesFromOrigNodeTemplate;
   }
 
   public void addNewPropertyIdToNodeTemplate(String newPropertyId,
@@ -168,7 +189,4 @@ public class UnifiedSubstitutionData {
     return Optional.of(newParameterIdsToPropertiesFromOrigNodeTemplate.get(newPropertyId));
   }
 
-  public Map<String, Object> getAllNewPropertyInputParamIds(){
-    return this.newParameterIdsToPropertiesFromOrigNodeTemplate;
-  }
 }

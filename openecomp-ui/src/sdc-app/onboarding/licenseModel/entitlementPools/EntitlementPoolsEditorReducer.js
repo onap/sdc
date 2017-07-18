@@ -14,10 +14,20 @@
  * permissions and limitations under the License.
  */
 import {actionTypes, defaultState, SP_ENTITLEMENT_POOL_FORM} from './EntitlementPoolsConstants.js';
+import moment from 'moment';
+import {DATE_FORMAT} from 'sdc-app/onboarding/OnboardingConstants.js';
 
 export default (state = {}, action) => {
 	switch (action.type) {
 		case actionTypes.entitlementPoolsEditor.OPEN:
+			let entitlementPoolData = {...action.entitlementPool};
+			let {startDate, expiryDate} = entitlementPoolData;
+			if (startDate) {
+				entitlementPoolData.startDate = moment(startDate, DATE_FORMAT).format(DATE_FORMAT);
+			}
+			if (expiryDate) {
+				entitlementPoolData.expiryDate = moment(expiryDate, DATE_FORMAT).format(DATE_FORMAT);
+			}
 			return {
 				...state,
 				formReady: null,
@@ -72,9 +82,19 @@ export default (state = {}, action) => {
 						isValid: true,
 						errorText: '',
 						validations: [{type: 'required', data: true}]
+					},
+					'startDate': {
+						isValid: true,
+						errorText: '',
+						validations: []
+					},
+					'expiryDate': {
+						isValid: true,
+						errorText: '',
+						validations: []
 					}
 				},
-				data: action.entitlementPool ? {...action.entitlementPool} : defaultState.ENTITLEMENT_POOLS_EDITOR_DATA
+				data: action.entitlementPool ? entitlementPoolData : defaultState.ENTITLEMENT_POOLS_EDITOR_DATA
 			};
 		case actionTypes.entitlementPoolsEditor.DATA_CHANGED:
 			return {

@@ -40,11 +40,11 @@ class SoftwareProductComponentsListView extends React.Component {
 	};
 
 	render() {
-		let {componentsList = []} =  this.props;
+		let {componentsList = [], isManual} =  this.props;
 		return (
 			<div className=''>
 				{
-					componentsList.length > 0 && this.renderComponents()
+					(componentsList.length > 0 || isManual) && this.renderComponents()
 				}
 			</div>
 		);
@@ -52,15 +52,16 @@ class SoftwareProductComponentsListView extends React.Component {
 
 	renderComponents() {
 		const {localFilter} = this.state;
-		let {isReadOnlyMode} =  this.props;
-
+		const {isManual, onAddComponent, isReadOnlyMode, currentSoftwareProduct: {id: softwareProductId}, componentsList } = this.props;
 		return (
 			<ListEditorView
 				title={i18n('Virtual Function Components')}
 				filterValue={localFilter}
 				placeholder={i18n('Filter Components')}
 				onFilter={value => this.setState({localFilter: value})}
-				isReadOnlyMode={isReadOnlyMode}
+				isReadOnlyMode={isReadOnlyMode || !!this.filterList().length}
+				plusButtonTitle={i18n('Add Component')}
+				onAdd={isManual && componentsList.length === 0 ? () => onAddComponent(softwareProductId) : false}
 				twoColumns>
 				{this.filterList().map(component => this.renderComponentsListItem(component))}
 			</ListEditorView>
@@ -69,11 +70,12 @@ class SoftwareProductComponentsListView extends React.Component {
 
 	renderComponentsListItem(component) {
 		let {id: componentId, name, displayName, description = ''} = component;
-		let {currentSoftwareProduct: {id, version}, onComponentSelect} = this.props;
+		let {currentSoftwareProduct: {id, version}, onComponentSelect, isManual, isReadOnlyMode, onDeleteComponent} = this.props;
 		return (
 			<ListEditorItemView
 				key={name + Math.floor(Math.random() * (100 - 1) + 1).toString()}
 				className='list-editor-item-view'
+				onDelete={isManual && !isReadOnlyMode ? () => onDeleteComponent(component, id, version) : false}
 				onSelect={() => onComponentSelect({id, componentId, version})}>
 				<ListEditorItemViewField>
 					<div className='name'>{displayName}</div>

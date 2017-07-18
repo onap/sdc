@@ -20,14 +20,14 @@
 
 package org.openecomp.core.utilities.file;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.core.utilities.yaml.YamlUtil;
-import org.openecomp.sdc.logging.types.LoggerConstants;
-import org.openecomp.sdc.logging.types.LoggerErrorDescription;
-import org.slf4j.MDC;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;

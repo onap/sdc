@@ -25,7 +25,7 @@ import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.MibEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 
 import java.util.Collection;
 
@@ -36,7 +36,7 @@ public class MibCassandraLoader {
       noSqlDb.getMappingManager().createAccessor(MibAccessor.class);
 
 
-  public Collection<MibEntity> list() {
+  public Collection<ComponentMonitoringUploadEntity> list() {
     return accessor.list().all();
   }
 
@@ -45,7 +45,7 @@ public class MibCassandraLoader {
 
     @Query(
         "select * from vsp_component_artifact")
-    Result<MibEntity> list();
+    Result<ComponentMonitoringUploadEntity> list();
 
 
   }

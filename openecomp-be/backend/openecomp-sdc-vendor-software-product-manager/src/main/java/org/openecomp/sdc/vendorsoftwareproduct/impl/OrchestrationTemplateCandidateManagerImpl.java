@@ -19,14 +19,12 @@
  */
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.GENERAL_COMPONENT_ID;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues
-    .PROCESS_NAME;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.xalan.xslt.Process;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.types.ServiceElement;
+import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
@@ -55,14 +53,16 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentArtifactDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.MibDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.MibEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadData;
@@ -79,24 +79,25 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStru
 import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.activitylog.types.ActivityType;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Collection;
+
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.GENERAL_COMPONENT_ID;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.PROCESS_NAME;
 
 public class OrchestrationTemplateCandidateManagerImpl
     implements OrchestrationTemplateCandidateManager {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static final Logger logger =
       LoggerFactory.getLogger(OrchestrationTemplateCandidateManagerImpl.class);
-
+  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private VendorSoftwareProductDao vendorSoftwareProductDao;
   private VendorSoftwareProductInfoDao vspInfoDao;
   private OrchestrationTemplateDao orchestrationTemplateDataDao;
@@ -107,10 +108,27 @@ public class OrchestrationTemplateCandidateManagerImpl
   private CompositionEntityDataManager compositionEntityDataManager;
   private NicDao nicDao;
   private ComponentDao componentDao;
-  private MibDao mibDao;
+  private ComponentArtifactDao componentArtifactDao;
   private ActivityLogManager activityLogManager;
   private ProcessDao processDao;
 
+  /**
+   * Instantiates a new Orchestration template candidate manager.
+   *
+   * @param vendorSoftwareProductDao     the vendor software product dao
+   * @param vspInfoDao                   the vsp info dao
+   * @param orchestrationTemplateDataDao the orchestration template data dao
+   * @param candidateService             the candidate service
+   * @param healingManager               the healing manager
+   * @param compositionDataExtractor     the composition data extractor
+   * @param serviceModelDao              the service model dao
+   * @param compositionEntityDataManager the composition entity data manager
+   * @param nicDao                       the nic dao
+   * @param componentDao                 the component dao
+   * @param componentArtifactDao                       the mib dao
+   * @param processDao                   the process dao
+   * @param activityLogManager           the activity log manager
+   */
   public OrchestrationTemplateCandidateManagerImpl(
       VendorSoftwareProductDao vendorSoftwareProductDao, VendorSoftwareProductInfoDao
       vspInfoDao,
@@ -121,7 +139,7 @@ public class OrchestrationTemplateCandidateManagerImpl
       CompositionEntityDataManager compositionEntityDataManager,
       NicDao nicDao,
       ComponentDao componentDao,
-      MibDao mibDao,
+      ComponentArtifactDao componentArtifactDao,
       ProcessDao processDao,
       ActivityLogManager activityLogManager) {
     this.vendorSoftwareProductDao = vendorSoftwareProductDao;
@@ -134,7 +152,7 @@ public class OrchestrationTemplateCandidateManagerImpl
     this.compositionEntityDataManager = compositionEntityDataManager;
     this.nicDao = nicDao;
     this.componentDao = componentDao;
-    this.mibDao = mibDao;
+    this.componentArtifactDao = componentArtifactDao;
     this.processDao = processDao;
     this.activityLogManager = activityLogManager;
   }
@@ -237,38 +255,43 @@ public class OrchestrationTemplateCandidateManagerImpl
     String manifest = candidateService.createManifest(vspDetails, structure);
     fileContentMap.addFile(SdcCommon.MANIFEST_NAME, manifest.getBytes());
 
-    HeatStructureTree tree = createAndValidateHeatTree(response, fileContentMap);
-
     Optional<ByteArrayInputStream> zipByteArrayInputStream = candidateService
         .fetchZipFileByteArrayInputStream(vspId, candidateDataEntity, manifest, uploadErrors);
     if (!zipByteArrayInputStream.isPresent()) {
       return response;
     }
-    Map<String,String> componentsQustanniare = new HashMap<>();
-    Map<String, Map<String, String>> componentNicsQustanniare = new HashMap<>();
-    Map<String, Collection<MibEntity>> componentMIBList = new HashMap<>();
+
+    HeatStructureTree tree = createAndValidateHeatTree(response, fileContentMap);
+
+    Map<String, String> componentsQuestionnaire = new HashMap<>();
+    Map<String, Map<String, String>> componentNicsQuestionnaire = new HashMap<>();
+    Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList = new HashMap<>();
     Map<String, Collection<ProcessEntity>> processes = new HashMap<>();
     Map<String, ProcessEntity> processArtifact = new HashMap<>();
 
-    backupComponentsQuestionnaireBeforeDelete(vspId, version, componentsQustanniare,
-        componentNicsQustanniare, componentMIBList, processes, processArtifact);
+    backupComponentsQuestionnaireBeforeDelete(vspId, version, componentsQuestionnaire,
+        componentNicsQuestionnaire, componentMibList, processes, processArtifact);
 
     deleteUploadDataAndContent(vspId, version);
     saveHotData(vspId, version, zipByteArrayInputStream.get(), fileContentMap, tree);
 
-    ToscaServiceModel toscaServiceModel =
-        HeatToToscaUtil.loadAndTranslateTemplateData(fileContentMap)
-            .getToscaServiceModel();
+    TranslatorOutput translatorOutput =
+        HeatToToscaUtil.loadAndTranslateTemplateData(fileContentMap);
+    ToscaServiceModel toscaServiceModel = translatorOutput.getToscaServiceModel();
     if (toscaServiceModel != null) {
       serviceModelDao.storeServiceModel(vspId, version, toscaServiceModel);
+      //Extracting the compostion data from the output service model of the first phase of
+      // translation
       compositionEntityDataManager.saveCompositionData(vspId, version,
-          compositionDataExtractor.extractServiceCompositionData(toscaServiceModel));
-      retainComponentQuestionnaireData(vspId, version, componentsQustanniare,
-          componentNicsQustanniare, componentMIBList, processes, processArtifact);
+          compositionDataExtractor.extractServiceCompositionData(translatorOutput
+              .getNonUnifiedToscaServiceModel()));
+      retainComponentQuestionnaireData(vspId, version, componentsQuestionnaire,
+          componentNicsQuestionnaire, componentMibList, processes, processArtifact);
     }
     uploadFileResponse.addStructureErrors(uploadErrors);
 
-    ActivityLogEntity activityLogEntity = new ActivityLogEntity(vspId,  String.valueOf(version.getMajor()+1),
+    ActivityLogEntity activityLogEntity =
+        new ActivityLogEntity(vspId, String.valueOf(version.getMajor() + 1),
             ActivityType.UPLOAD_HEAT.toString(), user, true, "", "");
     activityLogManager.addActionLog(activityLogEntity, user);
 
@@ -367,9 +390,10 @@ public class OrchestrationTemplateCandidateManagerImpl
 
   private void retainComponentQuestionnaireData(String vspId, Version activeVersion,
                                                 Map<String, String> componentsQustanniare,
-                                                Map<String, Map<String, String>> componentNicsQustanniare,
-                                                Map<String, Collection<MibEntity>> componentMIBList,
-                                                Map<String,Collection<ProcessEntity>> processes,
+                                                Map<String, Map<String, String>>
+                                                    componentNicsQustanniare,
+                                                Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList,
+                                                Map<String, Collection<ProcessEntity>> processes,
                                                 Map<String, ProcessEntity> processArtifact) {
     //VSP processes
     restoreProcess(vspId, activeVersion, GENERAL_COMPONENT_ID, GENERAL_COMPONENT_ID, processes,
@@ -378,27 +402,31 @@ public class OrchestrationTemplateCandidateManagerImpl
         components = vendorSoftwareProductDao.listComponents(vspId, activeVersion);
     components.forEach(componentEntity -> {
       String componentName = componentEntity.getComponentCompositionData().getName();
-      if( componentsQustanniare.containsKey(componentName) ){
+      if (componentsQustanniare.containsKey(componentName)) {
         componentDao.updateQuestionnaireData(vspId, activeVersion,
-            componentEntity.getId(),componentsQustanniare.get(componentEntity.getComponentCompositionData()
+            componentEntity.getId(),
+            componentsQustanniare.get(componentEntity.getComponentCompositionData()
                 .getName()));
-        if( componentNicsQustanniare.containsKey(componentName) ){
-          Map<String, String> nicsQustanniare=componentNicsQustanniare.get(componentName);
+        if (componentNicsQustanniare.containsKey(componentName)) {
+          Map<String, String> nicsQustanniare = componentNicsQustanniare.get(componentName);
           Collection<NicEntity>
-              nics=nicDao.list(new NicEntity(vspId, activeVersion, componentEntity.getId(), null));
-              nics.forEach(nicEntity -> {
-            if(nicsQustanniare.containsKey(nicEntity.getNicCompositionData().getName())){
-              nicDao.updateQuestionnaireData(vspId, activeVersion,componentEntity.getId
-                  (),nicEntity.getId(),nicsQustanniare.get(nicEntity.getNicCompositionData().getName()));
+              nics =
+              nicDao.list(new NicEntity(vspId, activeVersion, componentEntity.getId(), null));
+          nics.forEach(nicEntity -> {
+            if (nicsQustanniare.containsKey(nicEntity.getNicCompositionData().getName())) {
+              nicDao.updateQuestionnaireData(vspId, activeVersion,
+                  componentEntity.getId(), nicEntity.getId(),
+                  nicsQustanniare.get(nicEntity.getNicCompositionData().getName()));
             }
           });
         }
-        //MIB
-        if(componentMIBList.containsKey(componentName)) {
-          Collection<MibEntity> mibList = componentMIBList.get(componentName);
+        //MIB //todo add for VES_EVENTS
+        if (componentMibList.containsKey(componentName)) {
+          Collection<ComponentMonitoringUploadEntity> mibList =
+              componentMibList.get(componentName);
           mibList.forEach(mib -> {
             mib.setComponentId(componentEntity.getId());
-            mibDao.create(mib);
+            componentArtifactDao.create(mib);
           });
         }
         //VFC processes
@@ -411,43 +439,47 @@ public class OrchestrationTemplateCandidateManagerImpl
   private void backupComponentsQuestionnaireBeforeDelete(String vspId, Version activeVersion,
                                                          Map<String, String> componentsQustanniare,
                                                          Map<String, Map<String, String>>
-                                                             componentNicsQustanniare,
-                                                         Map<String, Collection<MibEntity>>
-                                                             componentMIBList,
-                                                         Map<String, Collection<ProcessEntity>> componentProcesses,
+                                                           componentNicsQustanniare,
+                                                         Map<String, Collection<ComponentMonitoringUploadEntity>>
+                                                           componentMibList,
+                                                         Map<String, Collection<ProcessEntity>>
+                                                             componentProcesses,
                                                          Map<String, ProcessEntity> processArtifact) {
     //backup VSP processes
     backupProcess(vspId, activeVersion, GENERAL_COMPONENT_ID, GENERAL_COMPONENT_ID,
-        componentProcesses,processArtifact);
-    Collection<ComponentEntity> componentsCompositionAndQuestionnaire= vendorSoftwareProductDao
+        componentProcesses, processArtifact);
+    Collection<ComponentEntity> componentsCompositionAndQuestionnaire = vendorSoftwareProductDao
         .listComponentsCompositionAndQuestionnaire(vspId,
             activeVersion);
-    componentsCompositionAndQuestionnaire.forEach(componentEntity ->{
-      String componentName=componentEntity.getComponentCompositionData().getName();
-      componentsQustanniare.put(componentName,componentEntity
+    componentsCompositionAndQuestionnaire.forEach(componentEntity -> {
+      String componentName = componentEntity.getComponentCompositionData().getName();
+      componentsQustanniare.put(componentName, componentEntity
           .getQuestionnaireData());
       Collection<NicEntity>
-          nics=nicDao.list(new NicEntity(vspId, activeVersion,componentEntity.getId(),null));
+          nics = nicDao.list(new NicEntity(vspId, activeVersion, componentEntity.getId(), null));
       //backup mib
-      Collection<MibEntity> componentMIB = mibDao.listArtifacts(new
-          MibEntity(vspId, activeVersion, componentEntity.getId(), null));
-      if(CollectionUtils.isNotEmpty(componentMIB)){
-        componentMIBList.put(componentName,componentMIB);
+      Collection<ComponentMonitoringUploadEntity> componentMib =
+          componentArtifactDao.listArtifacts(new
+              ComponentMonitoringUploadEntity(vspId, activeVersion, componentEntity.getId(),
+              null));
+      if(CollectionUtils.isNotEmpty(componentMib)){
+        componentMibList.put(componentName,componentMib);
       }
 
       //backup component processes
       backupProcess(vspId, activeVersion, componentEntity.getId(), componentName,
-          componentProcesses,processArtifact);
-      if(CollectionUtils.isNotEmpty(nics)) {
+          componentProcesses, processArtifact);
+      if (CollectionUtils.isNotEmpty(nics)) {
         Map<String, String> nicsQustanniare = new HashMap<>();
         nics.forEach(nicEntity -> {
-           NicEntity nic = nicDao.get(new NicEntity(vspId, activeVersion, componentEntity.getId(),
-           nicEntity.getId()));
-          NicEntity nicQuestionnaire = nicDao.getQuestionnaireData(vspId,activeVersion,
-              componentEntity.getId(),nicEntity.getId());
+          NicEntity nic = nicDao.get(new NicEntity(vspId, activeVersion, componentEntity.getId(),
+              nicEntity.getId()));
+          NicEntity nicQuestionnaire = nicDao.getQuestionnaireData(vspId, activeVersion,
+              componentEntity.getId(), nicEntity.getId());
 
           nicsQustanniare
-              .put(nicEntity.getNicCompositionData().getName(), nicQuestionnaire.getQuestionnaireData());
+              .put(nicEntity.getNicCompositionData().getName(),
+                  nicQuestionnaire.getQuestionnaireData());
         });
         componentNicsQustanniare.put(componentName, nicsQustanniare);
       }
@@ -456,17 +488,18 @@ public class OrchestrationTemplateCandidateManagerImpl
 
   private void backupProcess(String vspId, Version activeVersion, String componentId,
                              String componentName, Map<String,
-                             Collection<ProcessEntity>> processes,
-                             Map<String,ProcessEntity> processArtifact){
+      Collection<ProcessEntity>> processes,
+                             Map<String, ProcessEntity> processArtifact) {
     Collection<ProcessEntity> processList = vendorSoftwareProductDao.listProcesses(vspId,
         activeVersion, componentId);
-    if(!processList.isEmpty()){
-      processes.put(componentName,processList);
+    if (!processList.isEmpty()) {
+      processes.put(componentName, processList);
       processList.forEach(process -> {
         //ProcessArtifactEntity artifact = vendorSoftwareProductDao.getProcessArtifact(vspId,
         //    activeVersion, componentId, process.getId());
-        ProcessEntity artifact = processDao.get(new ProcessEntity(vspId,activeVersion,componentId,process.getId()));
-        if(artifact.getArtifact()!=null) {
+        ProcessEntity artifact =
+            processDao.get(new ProcessEntity(vspId, activeVersion, componentId, process.getId()));
+        if (artifact.getArtifact() != null) {
           processArtifact.put(process.getId(), artifact);
         }
       });
@@ -474,9 +507,10 @@ public class OrchestrationTemplateCandidateManagerImpl
   }
 
   private void restoreProcess(String vspId, Version activeVersion, String componentId,
-                              String componentName, Map<String, Collection<ProcessEntity>> processes,
-                              Map<String, ProcessEntity> processArtifact){
-    if(processes.containsKey(componentName)) {
+                              String componentName,
+                              Map<String, Collection<ProcessEntity>> processes,
+                              Map<String, ProcessEntity> processArtifact) {
+    if (processes.containsKey(componentName)) {
       Collection<ProcessEntity> processList = processes.get(componentName);
       processList.forEach(process -> {
         //Reatin VFC process
@@ -550,7 +584,7 @@ public class OrchestrationTemplateCandidateManagerImpl
                                                         byte[] uploadedFileData) {
     FileContentHandler contentMap = null;
     try {
-      contentMap = CommonUtil.loadUploadFileContent(uploadedFileData);
+      contentMap = CommonUtil.validateAndUploadFileContent(uploadedFileData);
     } catch (IOException exception) {
       uploadFileResponse.addStructureError(
           SdcCommon.UPLOAD_FILE,
@@ -574,7 +608,7 @@ public class OrchestrationTemplateCandidateManagerImpl
     return healingParams;
   }
 
-  public VspDetails getVspDetails(String vspId, Version version) {
+  private VspDetails getVspDetails(String vspId, Version version) {
     VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, version));
     vspDetails.setValidationData(orchestrationTemplateDataDao.getValidationData(vspId, version));
     return vspDetails;

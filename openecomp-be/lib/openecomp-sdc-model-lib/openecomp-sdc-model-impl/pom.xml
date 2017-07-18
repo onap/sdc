@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.openecomp.sdc.common</groupId>
+            <artifactId>openecomp-tosca-datatype</artifactId>
+            <version>${openecomp.sdc.common.version}</version>
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
@@ -45,6 +50,11 @@
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
             <version>${mockito.all.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
         </dependency>
     </dependencies>
 </project>

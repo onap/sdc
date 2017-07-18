@@ -7,14 +7,17 @@ import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.NetworkType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
@@ -22,6 +25,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -29,6 +33,7 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class NicManagerImplTest {
   private static final String NIC_NOT_EXIST_MSG =
@@ -50,6 +55,8 @@ public class NicManagerImplTest {
   private CompositionEntityDataManager compositionEntityDataManagerMock;
   @Mock
   private NetworkManager networkManagerMock;
+  @Mock
+  private VendorSoftwareProductInfoDao vspInfoDao;
   @InjectMocks
   @Spy
   private NicManagerImpl nicManager;
@@ -87,6 +94,112 @@ public class NicManagerImplTest {
     }
   }
 
+  @Test
+  public void testCreate() {
+    NicEntity nicEntity = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
+    Nic nic = nicEntity.getNicCompositionData();
+    nic.setNetworkType(NetworkType.Internal);
+    nicEntity.setNicCompositionData(nic);
+    doReturn(true).when(vspInfoDao).isManual(anyObject(),anyObject());
+    Collection<NicEntity> nicEntities = new ArrayList<>();
+    doReturn(nicEntities).when(nicDao).list(anyObject());
+    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(anyObject());
+
+    NicEntity created = nicManager.createNic(nicEntity,USER);
+    Assert.assertNotNull(created);
+  }
+
+  @Test
+  public void testCreateWithDupNicName() {
+    NicEntity nicEntity = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
+    Nic nic = nicEntity.getNicCompositionData();
+    nic.setNetworkType(NetworkType.Internal);
+    nicEntity.setNicCompositionData(nic);
+    doReturn(true).when(vspInfoDao).isManual(anyObject(),anyObject());
+    Collection<NicEntity> nicEntities = new ArrayList<>();
+
+    NicEntity nicEntityDiffName = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
+    Nic newNameNic = nicEntityDiffName.getNicCompositionData();
+    newNameNic.setName(NIC1_ID + " Name");
+    nicEntityDiffName.setNicCompositionData(newNameNic);
+    nicEntities.add(nicEntityDiffName);
+    doReturn(nicEntities).when(nicDao).list(anyObject());
+    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(anyObject());
+
+    try {
+      NicEntity created = nicManager.createNic(nicEntity,USER);
+    }  catch (CoreException exception) {
+      Assert.assertEquals("Invalid request, NIC with name "+ nic.getName() +
+          " already exist for component with ID "+ nicEntity.getComponentId() +".",
+          exception.code().message());
+      Assert.assertEquals(VendorSoftwareProductErrorCodes.DUPLICATE_NIC_NAME_NOT_ALLOWED,
+          exception.code().id());
+    }
+  }
+
+  @Test
+  public void testCreateWithExternalNetworkType() {
+    NicEntity nicEntity = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
+    Nic nic = nicEntity.getNicCompositionData();
+    nic.setNetworkType(NetworkType.External);
+    nicEntity.setNicCompositionData(nic);
+    doReturn(true).when(vspInfoDao).isManual(anyObject(),anyObject());
+    Collection<NicEntity> nicEntities = new ArrayList<>();
+    doReturn(nicEntities).when(nicDao).list(anyObject());
+    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(anyObject());
+
+    try {
+      NicEntity created = nicManager.createNic(nicEntity,USER);
+    }  catch (CoreException exception) {
+      Assert.assertEquals("Invalid request,NetworkId not allowed for External Networks",
+          exception.code().message());
+      Assert.assertEquals(VendorSoftwareProductErrorCodes.NETWORKID_NOT_ALLOWED_FOR_EXTERNAL_NETWORK,
+          exception.code().id());
+    }
+  }
+
+  @Test
+  public void testCreateWithNetworkDesc() {
+    NicEntity nicEntity = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
+    Nic nic = nicEntity.getNicCompositionData();
+    nic.setNetworkType(NetworkType.Internal);
+    nic.setNetworkDescription(NIC1_ID);
+    nicEntity.setNicCompositionData(nic);
+    doReturn(true).when(vspInfoDao).isManual(anyObject(),anyObject());
+    Collection<NicEntity> nicEntities = new ArrayList<>();
+    doReturn(nicEntities).when(nicDao).list(anyObject());
+    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(anyObject());
+
+    try {
+      NicEntity created = nicManager.createNic(nicEntity,USER);
+    }  catch (CoreException exception) {
+      Assert.assertEquals("Invalid request, Network Description not allowed for Internal Networks",
+          exception.code().message());
+      Assert.assertEquals(VendorSoftwareProductErrorCodes
+          .NETWORK_DESCRIPTION_NOT_ALLOWED_FOR_INTERNAL_NETWORK,exception.code().id());
+    }
+  }
+
+  @Test
+  public void testDeleteNic() {
+    NicEntity nicEntity = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
+    doReturn(true).when(vspInfoDao).isManual(anyObject(),anyObject());
+    doReturn(nicEntity).when(nicDao).get(anyObject());
+
+    nicManager.deleteNic(VSP_ID,new Version(0,1),COMPONENT_ID,NIC1_ID,USER);
+
+  }
+
+  @Test
+  public void testUpdateNicQuestionnaire() {
+    NicEntity nicEntity = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
+
+    doReturn(nicEntity).when(nicDao).get(anyObject());
+
+    nicManager.updateNicQuestionnaire(VSP_ID,new Version(0,1),COMPONENT_ID,NIC1_ID,"Ques",USER);
+
+  }
+
 //    @Test(dependsOnMethods = "testListWhenNone")
 //    public void testCreate() {
 //        NIC1_ID = testCreate(VSP_ID, COMPONENT_ID, NETWORK1_ID, NETWORK1_ID.getNetworkCompositionData().getName());
@@ -122,7 +235,7 @@ public class NicManagerImplTest {
   public void testCreateOnUploadVsp_negative() {
 
     testCreate_negative(new NicEntity(VSP_ID, VERSION, COMPONENT_ID, null), USER,
-        VendorSoftwareProductErrorCodes.VSP_COMPOSITION_EDIT_NOT_ALLOWED);
+        VendorSoftwareProductErrorCodes.ADD_NIC_NOT_ALLOWED_IN_HEAT_ONBOARDING);
   }
 
   @Test
@@ -230,7 +343,7 @@ public class NicManagerImplTest {
   @Test
   public void testDeleteOnUploadVsp_negative() {
     testDelete_negative(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, USER,
-        VendorSoftwareProductErrorCodes.VSP_COMPOSITION_EDIT_NOT_ALLOWED);
+        VendorSoftwareProductErrorCodes.DELETE_NIC_NOT_ALLOWED);
   }
 
   @Test(expectedExceptions = CoreException.class,

@@ -16,36 +16,177 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- *//*
+ */
 
 
 package org.openecomp.sdc.vendorlicense;
 
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
-import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.core.utilities.CommonMethods;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
-import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDaoFactory;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyType;
-import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
-import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
+import org.openecomp.sdc.vendorlicense.dao.LimitDao;
+import org.openecomp.sdc.vendorlicense.dao.types.*;
+import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.vendorlicense.impl.VendorLicenseManagerImpl;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
+import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+
 public class LicenseKeyGroupTest {
 
-  public static final String LKG1_NAME = "LKG1 name";
+    //JUnit Test Cases using Mockito
+    private  final String USER = "lkgTestUser";
+    private  final String LKG_NAME = "LKG name";
+    private  final String LT_NAME = "LT name";
+
+    @Mock
+    private VendorLicenseFacade vendorLicenseFacade;
+
+    @Mock
+    private LicenseKeyGroupDao licenseKeyGroupDao;
+    @Mock
+    private LimitDao limitDao;
+
+    @InjectMocks
+    @Spy
+    private VendorLicenseManagerImpl vendorLicenseManagerImpl;
+
+    @BeforeMethod
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    private LicenseKeyGroupEntity createLicenseKeyGroup(LicenseKeyType type, Set<OperationalScope> operationalScopeChoices,
+                                                            String operationalScopeOther)
+    {
+        LicenseKeyGroupEntity licenseKeyGroupEntity = new LicenseKeyGroupEntity();
+        licenseKeyGroupEntity.setType(type);
+        licenseKeyGroupEntity.setOperationalScope(
+                new MultiChoiceOrOther<>(operationalScopeChoices, operationalScopeOther));
+        return licenseKeyGroupEntity;
+    }
+
+    @Test
+    public void deleteLicenseKeyGroupTest() {
+        Set<OperationalScope> opScopeChoices;
+        opScopeChoices = new HashSet<>();
+        opScopeChoices.add(OperationalScope.Core);
+        opScopeChoices.add(OperationalScope.CPU);
+        opScopeChoices.add(OperationalScope.Network_Wide);
+
+        LicenseKeyGroupEntity licenseKeyGroup =
+                createLicenseKeyGroup(LicenseKeyType.Unique, opScopeChoices, null);
+
+        VersionInfo info = new VersionInfo();
+        Version version = new Version();
+        info.getViewableVersions().add(version);
+        info.setActiveVersion(version);
+        doReturn(info).when(vendorLicenseFacade).getVersionInfo(anyObject(),anyObject(),anyObject());
+
+        LimitEntity limitEntity = LimitTest.createLimitEntity(LT_NAME,LimitType.Vendor,"string",version,
+                EntitlementMetric.Core,AggregationFunction.Average,10,EntitlementTime.Hour);
+
+        ArrayList<LimitEntity> limitEntityList = new ArrayList();
+        limitEntityList.add(limitEntity);
+
+        doReturn(licenseKeyGroup).when(licenseKeyGroupDao).get(anyObject());
+        doReturn(limitEntityList).when(vendorLicenseFacade).listLimits(anyObject(), anyObject(), anyObject(), anyObject());
+        doReturn(true).when(limitDao).isLimitPresent(anyObject());
+        doReturn(limitEntity).when(limitDao).get(anyObject());
+        try {
+            Field limitField = VendorLicenseManagerImpl.class.getDeclaredField("limitDao");
+            limitField.setAccessible(true);
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(limitField, limitField.getModifiers() & ~Modifier.FINAL);
+            limitField.set(null, limitDao);
+
+            Field lkgField = VendorLicenseManagerImpl.class.getDeclaredField("licenseKeyGroupDao");
+            lkgField.setAccessible(true);
+            modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(lkgField, lkgField.getModifiers() & ~Modifier.FINAL);
+            lkgField.set(null, licenseKeyGroupDao);
+        } catch(NoSuchFieldException | IllegalAccessException e)
+        {
+            Assert.fail();
+        }
+
+        vendorLicenseManagerImpl.deleteLicenseKeyGroup(licenseKeyGroup, USER);
+
+        verify(limitDao).delete(anyObject());
+    }
+
+    @Test
+    public void deleteLicenseKeyGroupInvalidTest() {
+        try {
+            Set<OperationalScope> opScopeChoices;
+            opScopeChoices = new HashSet<>();
+            opScopeChoices.add(OperationalScope.Core);
+            opScopeChoices.add(OperationalScope.CPU);
+            opScopeChoices.add(OperationalScope.Network_Wide);
+
+            LicenseKeyGroupEntity licenseKeyGroup =
+                createLicenseKeyGroup(LicenseKeyType.Unique, opScopeChoices, null);
+
+            VersionInfo info = new VersionInfo();
+            Version version = new Version();
+            info.getViewableVersions().add(version);
+            info.setActiveVersion(version);
+            doReturn(info).when(vendorLicenseFacade).getVersionInfo(anyObject(),anyObject(),anyObject());
+
+            LimitEntity limitEntity = LimitTest.createLimitEntity(LT_NAME,LimitType.Vendor,"string",version,
+                EntitlementMetric.Core,AggregationFunction.Average,10,EntitlementTime.Hour);
+
+            ArrayList<LimitEntity> limitEntityList = new ArrayList();
+            limitEntityList.add(limitEntity);
+
+            doReturn(licenseKeyGroup).when(licenseKeyGroupDao).get(anyObject());
+            doReturn(limitEntityList).when(vendorLicenseFacade).listLimits(anyObject(), anyObject(), anyObject(), anyObject());
+            doReturn(false).when(limitDao).isLimitPresent(anyObject());
+
+            try {
+                Field limitField = VendorLicenseManagerImpl.class.getDeclaredField("limitDao");
+                limitField.setAccessible(true);
+                Field modifiersField = Field.class.getDeclaredField("modifiers");
+                modifiersField.setAccessible(true);
+                modifiersField.setInt(limitField, limitField.getModifiers() & ~Modifier.FINAL);
+                limitField.set(null, limitDao);
+
+                Field lkgField = VendorLicenseManagerImpl.class.getDeclaredField("licenseKeyGroupDao");
+                lkgField.setAccessible(true);
+                modifiersField = Field.class.getDeclaredField("modifiers");
+                modifiersField.setAccessible(true);
+                modifiersField.setInt(lkgField, lkgField.getModifiers() & ~Modifier.FINAL);
+                lkgField.set(null, licenseKeyGroupDao);
+            } catch(NoSuchFieldException | IllegalAccessException e)
+            {
+                Assert.fail();
+            }
+
+            vendorLicenseManagerImpl.deleteLicenseKeyGroup(licenseKeyGroup, USER);
+        } catch (CoreException exception) {
+            Assert.assertEquals(exception.code().id(), VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
+        }
+    }
+
+  /*public static final String LKG1_NAME = "LKG1 name";
   private static final Version VERSION01 = new Version(0, 1);
   private static final String USER1 = "user1";
   public static String vlm1Id;
@@ -179,6 +320,5 @@ public class LicenseKeyGroupTest {
   public void testCreateWithRemovedName() {
     testCreate(vlm1Id, LKG1_NAME);
   }
+  */
 }
-
-*/

@@ -32,6 +32,7 @@ public class FeatureGroupForArtifact {
   private String name;
   private String description;
   private String partNumber;
+  private String manufacturerReferenceNumber;
   private String id;
 
   public String getName() {
@@ -44,6 +45,10 @@ public class FeatureGroupForArtifact {
 
   public String getPartNumber() {
     return partNumber;
+  }
+
+  public String getManufacturerReferenceNumber(){
+    return manufacturerReferenceNumber;
   }
 
   public String getId() {

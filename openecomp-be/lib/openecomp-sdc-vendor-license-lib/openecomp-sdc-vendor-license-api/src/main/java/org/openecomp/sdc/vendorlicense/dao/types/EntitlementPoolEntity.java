@@ -30,9 +30,12 @@ import org.openecomp.sdc.vendorlicense.dao.types.xml.AggregationFunctionForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.EntitlementMetricForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.EntitlementTimeForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitForXml;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -56,7 +59,7 @@ public class EntitlementPoolEntity implements VersionableEntity {
   private String description;
 
   @Column(name = "threshold")
-  private int thresholdValue;
+  private Integer thresholdValue;
 
   @Column(name = "threshold_unit")
   @Enumerated
@@ -86,6 +89,12 @@ public class EntitlementPoolEntity implements VersionableEntity {
 
   @Column(name = "version_uuid")
   private String versionUuId;
+
+
+  private String startDate;
+  private String expiryDate;
+
+  private Collection<LimitEntity> limits;
 
   public EntitlementPoolEntity() {
   }
@@ -175,11 +184,11 @@ public class EntitlementPoolEntity implements VersionableEntity {
     this.description = description;
   }
 
-  public int getThresholdValue() {
+  public Integer getThresholdValue() {
     return thresholdValue;
   }
 
-  public void setThresholdValue(int thresholdValue) {
+  public void setThresholdValue(Integer thresholdValue) {
     this.thresholdValue = thresholdValue;
   }
 
@@ -222,7 +231,9 @@ public class EntitlementPoolEntity implements VersionableEntity {
   }
 
   public void setOperationalScope(MultiChoiceOrOther<OperationalScope> operationalScope) {
-    operationalScope.resolveEnum(OperationalScope.class);
+    if(operationalScope != null) {
+      operationalScope.resolveEnum(OperationalScope.class);
+    }
     this.operationalScope = operationalScope;
   }
 
@@ -292,12 +303,83 @@ public class EntitlementPoolEntity implements VersionableEntity {
     return timeForXml;
   }
 
+  public String getStartDate() {
+    return startDate;
+  }
+
+  public void setStartDate(String startDate) {
+    this.startDate = startDate;
+  }
+
+  public String getExpiryDate() {
+    return expiryDate;
+  }
+
+  public void setExpiryDate(String expiryDate) {
+    this.expiryDate = expiryDate;
+  }
+
+  public Collection<LimitEntity> getLimits() {
+    return limits;
+  }
+
+  public void setLimits(Collection<LimitEntity> limits) {
+    this.limits = limits;
+  }
+
+  public LimitForXml getSPLimits(){
+    if(limits != null){
+      Set<LimitXml> hs = new HashSet<>();
+      for(LimitEntity obj : limits){
+        if(obj.getType().equals(LimitType.ServiceProvider)){
+          LimitXml xmlObj = new LimitXml();
+          xmlObj.setDescription(obj.getDescription());
+          xmlObj.setMetric(obj.getMetric().toString());
+          xmlObj.setValues(obj.getValue()!=null?Integer.toString(obj.getValue()):null);
+          xmlObj.setUnit(obj.getUnit()!=null?Integer.toString(obj.getUnit()):null);
+          xmlObj.setAggregationFunction(obj.getAggregationFunction()!=null?obj.getAggregationFunction().name():null);
+          xmlObj.setTime(obj.getTime()!=null?obj.getTime().name():null);
+          hs.add(xmlObj);
+        }
+      }
+      LimitForXml spLimitForXml = new LimitForXml();
+      spLimitForXml.setLimits(hs);
+      return spLimitForXml;
+    }
+
+    return null;
+  }
+
+  public LimitForXml getVendorLimits(){
+    if(limits != null){
+      Set<LimitXml> hs = new HashSet<>();
+      for(LimitEntity obj : limits){
+        if(obj.getType().equals(LimitType.Vendor)){
+          LimitXml xmlObj = new LimitXml();
+          xmlObj.setDescription(obj.getDescription());
+          xmlObj.setMetric(obj.getMetric().toString());
+          xmlObj.setValues(obj.getValue()!=null?Integer.toString(obj.getValue()):null);
+          xmlObj.setUnit(obj.getUnit()!=null?Integer.toString(obj.getUnit()):null);
+          xmlObj.setAggregationFunction(obj.getAggregationFunction()!=null?obj.getAggregationFunction().name():null);
+          xmlObj.setTime(obj.getTime()!=null?obj.getTime().name():null);
+          hs.add(xmlObj);
+        }
+      }
+      LimitForXml vendorLimitForXml = new LimitForXml();
+      vendorLimitForXml.setLimits(hs);
+      return vendorLimitForXml;
+    }
+
+    return null;
+  }
+
+
   @Override
   public int hashCode() {
     return Objects
         .hash(vendorLicenseModelId, version, id, name, description, thresholdValue, thresholdUnit,
             entitlementMetric, increments, aggregationFunction, operationalScope, time,
-            manufacturerReferenceNumber, referencingFeatureGroups);
+            manufacturerReferenceNumber, referencingFeatureGroups, startDate, expiryDate);
   }
 
   @Override
@@ -309,7 +391,7 @@ public class EntitlementPoolEntity implements VersionableEntity {
       return false;
     }
     EntitlementPoolEntity that = (EntitlementPoolEntity) obj;
-    return Float.compare(that.thresholdValue, thresholdValue) == 0
+    return Objects.equals(that.thresholdValue, thresholdValue)
         && Objects.equals(vendorLicenseModelId, that.vendorLicenseModelId)
         && Objects.equals(id, that.id)
         && Objects.equals(name, that.name)
@@ -321,7 +403,9 @@ public class EntitlementPoolEntity implements VersionableEntity {
         && Objects.equals(operationalScope, that.operationalScope)
         && Objects.equals(time, that.time)
         && Objects.equals(manufacturerReferenceNumber, that.manufacturerReferenceNumber)
-        && Objects.equals(referencingFeatureGroups, that.referencingFeatureGroups);
+        && Objects.equals(referencingFeatureGroups, that.referencingFeatureGroups)
+        && Objects.equals(startDate, that.startDate)
+        && Objects.equals(expiryDate, that.expiryDate);
   }
 
   @Override
@@ -342,6 +426,8 @@ public class EntitlementPoolEntity implements VersionableEntity {
         + ", manufacturerReferenceNumber='" + manufacturerReferenceNumber + '\''
         + ", referencingFeatureGroups=" + referencingFeatureGroups
         + ", version_uuid=" + versionUuId
+        + ", startDate=" + startDate
+        + ", expiryDate=" + expiryDate
         + '}';
   }
 

@@ -128,20 +128,14 @@ node_types:
           type: string
     attributes:
       pd_server_accessIPv4:
-        type: list
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
       pd_server_pd02_port_device_owner:
-        type: list
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
       pd_server_pd01_port_device_id:
-        type: list
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
     requirements:
     - dependency_pd_server:
         capability: tosca.capabilities.Node

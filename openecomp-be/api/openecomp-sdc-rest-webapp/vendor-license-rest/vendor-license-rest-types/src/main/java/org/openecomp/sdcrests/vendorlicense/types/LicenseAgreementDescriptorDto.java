@@ -31,7 +31,7 @@ public class LicenseAgreementDescriptorDto {
   @NotNull
   @Size(max = 120)
   private String name;
-  @NotNull
+
   @Size(max = 1000)
   private String description;
   @NotNull

@@ -38,17 +38,24 @@ export const navigationItems = keyMirror({
 	VENDOR_SOFTWARE_PRODUCT: 'vendor-software-product',
 	GENERAL: 'general',
 	PROCESS_DETAILS: 'process-details',
-	NETWORKS: 'networks',
-	DEPENDENCIES: 'dependencies',
+	DEPLOYMENT_FLAVORS: 'deployment-flavor',
+	NETWORKS: 'networks',	
+	IMAGES: 'images',
 	ATTACHMENTS: 'attachments',
 	ACTIVITY_LOG: 'activity-log',
 	COMPONENTS: 'components',
+	DEPENDENCIES: 'dependencies',
 
 	COMPUTE: 'compute',
 	LOAD_BALANCING: 'load-balancing',
 	STORAGE: 'storage',
 	MONITORING: 'monitoring'
 });
+
+export const onboardingMethod = {
+	MANUAL: 'Manual',
+	HEAT: 'HEAT'
+};
 
 export const forms = keyMirror({
 	VENDOR_SOFTWARE_PRODUCT_DETAILS: 'vendor-software-product-details',
@@ -61,6 +68,7 @@ export const mapScreenToNavigationItem = {
 	[enums.SCREEN.SOFTWARE_PRODUCT_DETAILS]: navigationItems.GENERAL,
 	[enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS]: navigationItems.ATTACHMENTS,
 	[enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES]: navigationItems.PROCESS_DETAILS,
+	[enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT]: navigationItems.DEPLOYMENT_FLAVORS,
 	[enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS]: navigationItems.NETWORKS,
 	[enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG]: navigationItems.ACTIVITY_LOG,
 	[enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES]: navigationItems.DEPENDENCIES,
@@ -69,6 +77,7 @@ export const mapScreenToNavigationItem = {
 	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_COMPUTE]: navigationItems.COMPUTE,
 	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_LOAD_BALANCING]: navigationItems.LOAD_BALANCING,
 	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_NETWORK]: navigationItems.NETWORKS,
+	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES]: navigationItems.IMAGES,
 	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_STORAGE]: navigationItems.STORAGE,
 	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_PROCESSES]: navigationItems.PROCESS_DETAILS,
 	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING]: navigationItems.MONITORING,

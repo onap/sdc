@@ -33,6 +33,8 @@ public class MapComponentRequestDtoToComponentEntity
     component.setName(source.getName());
     component.setDisplayName(source.getDisplayName());
     component.setVfcCode(source.getVfcCode());
+    component.setNfcCode(source.getNfcCode());
+    component.setNfcFunction(source.getNfcFunction());
     component.setDescription(source.getDescription());
     target.setComponentCompositionData(component);
   }

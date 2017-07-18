@@ -17,44 +17,142 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-/*
+
 
 package org.openecomp.sdc.vendorlicense;
 
-import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.openecomp.sdc.vendorlicense.dao.*;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyType;
-import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
-import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
-import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
-import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
+import org.openecomp.sdc.vendorlicense.facade.impl.VendorLicenseFacadeImpl;
 import org.openecomp.sdc.vendorlicense.impl.VendorLicenseManagerImpl;
+import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-*/
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 /**
  * Created by KATYR on 4/10/2016
- *//*
+ */
 
 public class FeatureGroupTest {
+    //JUnit Test Cases using Mockito
+    private static final Version VERSION01 = new Version(0, 1);
+    private final String FG1_NAME = "FG1 name";
+
+    @Mock
+    private VendorLicenseModelDao vendorLicenseModelDao;
+
+    @Mock
+    private LicenseAgreementDao licenseAgreementDao;
+
+    @Mock
+    private FeatureGroupDao featureGroupDao;
+
+    @Mock
+    private EntitlementPoolDao entitlementPoolDao;
+
+    @Mock
+    private LicenseKeyGroupDao licenseKeyGroupDao;
+
+    @Mock
+    private VersioningManager versioningManager;
+
+    @InjectMocks
+    @Spy
+    private VendorLicenseManagerImpl vendorLicenseManagerImpl;
+
+    public FeatureGroupEntity updateFeatureGroup(String vlmId, Version version, String id, String name, String desc,
+                                                 String partNumber, String manufacturerReferenceNumber, Set<String>
+                                                         licenseKeyGroupIds, Set<String> entitlementPoolIds, Set<String>
+                                                         referencingLicenseAgreements){
+        FeatureGroupEntity featureGroup = new FeatureGroupEntity(vlmId, version, id);
+        featureGroup.setVendorLicenseModelId(vlmId);
+        featureGroup.setVersion(version);
+        featureGroup.setId(id);
+        featureGroup.setName(name);
+        featureGroup.setDescription(desc);
+        featureGroup.setPartNumber(partNumber);
+        //featureGroup.setManufacturerReferenceNumber(manufacturerReferenceNumber);
+        featureGroup.setLicenseKeyGroupIds(licenseKeyGroupIds);
+        featureGroup.setEntitlementPoolIds(entitlementPoolIds);
+        featureGroup.setReferencingLicenseAgreements(referencingLicenseAgreements);
+
+        return featureGroup;
+    }
+
+    @BeforeMethod
+    public void setUp() throws Exception{
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void testUpdate(){
+        Set<String> licenseKeyGroupIds;
+        licenseKeyGroupIds = new HashSet<>();
+        licenseKeyGroupIds.add("lkg1");
+
+        Set<String> entitlementPoolIds;
+        entitlementPoolIds = new HashSet<>();
+        entitlementPoolIds.add("ep1");
+
+        Set<String> referencingLicenseAgreements;
+        referencingLicenseAgreements = new HashSet<>();
+        referencingLicenseAgreements.add("la1");
+
+        FeatureGroupEntity featureGroupEntity = updateFeatureGroup("vlmId", VERSION01, "fgId", FG1_NAME, "fg1 desc",
+                "partNumber", "MRN", licenseKeyGroupIds, entitlementPoolIds,
+                referencingLicenseAgreements);
+
+        doReturn(featureGroupEntity).when(featureGroupDao).get(anyObject());
+
+        /*if(featureGroupEntity.getManufacturerReferenceNumber() != null)
+            featureGroupDao.update(featureGroupEntity);
+        verify(featureGroupDao).update(anyObject());*/
+    }
+
+    @Test
+    public void testUpdateWithoutManufacturingReferenceNumber(){
+        Set<String> licenseKeyGroupIds;
+        licenseKeyGroupIds = new HashSet<>();
+        licenseKeyGroupIds.add("lkg1");
+
+        Set<String> entitlementPoolIds;
+        entitlementPoolIds = new HashSet<>();
+        entitlementPoolIds.add("ep1");
+
+        Set<String> referencingLicenseAgreements;
+        referencingLicenseAgreements = new HashSet<>();
+        referencingLicenseAgreements.add("la1");
+
+        FeatureGroupEntity featureGroupEntity = updateFeatureGroup("vlmId", VERSION01, "fgId", FG1_NAME, "fg1 desc",
+                "partNumber", null, licenseKeyGroupIds, entitlementPoolIds,
+                referencingLicenseAgreements);
+
+        doReturn(featureGroupEntity).when(featureGroupDao).get(anyObject());
+
+        /*if(featureGroupEntity.getManufacturerReferenceNumber() != null)
+            featureGroupDao.update(featureGroupEntity);
+        verify(featureGroupDao, never()).update(anyObject());*/
+    }
+
+
+}
+
+/*
   protected static final Version VERSION01 = new Version(0, 1);
   protected static final String USER1 = "FeatureGroupTest_User1";
   protected static VendorLicenseManager vendorLicenseManager = new VendorLicenseManagerImpl();

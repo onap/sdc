@@ -20,6 +20,7 @@ import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
 import LandingPageView from './SoftwareProductLandingPageView.jsx';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
+import {onboardingMethod} from '../SoftwareProductConstants.js';
 
 export const mapStateToProps = ({softwareProduct, licenseModel: {licenseAgreement}}) => {
 	let {softwareProductEditor: {data:currentSoftwareProduct = {}}, softwareProductComponents, softwareProductCategories = []} = softwareProduct;
@@ -52,7 +53,8 @@ export const mapStateToProps = ({softwareProduct, licenseModel: {licenseAgreemen
 			fullCategoryDisplayName
 		},
 		isReadOnlyMode,
-		componentsList
+		componentsList,		
+		isManual: currentSoftwareProduct.onboardingMethod === onboardingMethod.MANUAL
 	};
 };
 

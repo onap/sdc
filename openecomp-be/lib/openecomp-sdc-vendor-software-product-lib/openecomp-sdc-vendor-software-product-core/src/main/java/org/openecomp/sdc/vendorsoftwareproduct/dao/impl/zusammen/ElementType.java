@@ -5,5 +5,9 @@ public enum ElementType {
   Component,
   Nic,
   Process,
-  LKG
+  Mib,
+  LKG,
+  Compute,
+  DeploymentFlavor,
+  Image
 }

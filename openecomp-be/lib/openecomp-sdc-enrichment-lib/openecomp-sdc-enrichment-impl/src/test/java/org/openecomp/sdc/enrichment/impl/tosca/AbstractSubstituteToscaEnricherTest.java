@@ -1,13 +1,6 @@
 package org.openecomp.sdc.enrichment.impl.tosca;
 
 
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
-
 import org.apache.commons.collections.map.HashedMap;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,6 +16,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_CODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_FUNCTION;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
 
 
 public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest {
@@ -51,11 +53,13 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
         loadToscaServiceModel("/mock/enrichHA/in/", "/mock/toscaGlobalServiceTemplates/",
             "MainServiceTemplate.yaml");
 
-    Map<String, Map<String, Object>> componentTypetoParams = new HashMap();
-    Map<String, Object> innerProps = new HashedMap();
+    Map<String, Map<String, Object>> componentTypetoParams = new HashMap<>();
+    Map<String, Object> innerProps = new HashMap<>();
     innerProps.put(MANDATORY, "YES");
     innerProps.put(HIGH_AVAIL_MODE, "geo-activestandby");
     innerProps.put(VFC_NAMING_CODE, "Code1");
+    innerProps.put(VFC_CODE, "pd_server_code");
+    innerProps.put(VFC_FUNCTION, "pd_server_description");
     innerProps.put(MIN_INSTANCES, 1);
     innerProps.put(MAX_INSTANCES, 2);
 
@@ -96,6 +100,8 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
     innerProps.put(MANDATORY, "NO");
     innerProps.put(HIGH_AVAIL_MODE, "");
     innerProps.put(VFC_NAMING_CODE, "pd_server_code1");
+    innerProps.put(VFC_CODE, "pd_server_code");
+    innerProps.put(VFC_FUNCTION, "pd_server_description");
     innerProps.put(MIN_INSTANCES, null);
     innerProps.put(MAX_INSTANCES, null);
 

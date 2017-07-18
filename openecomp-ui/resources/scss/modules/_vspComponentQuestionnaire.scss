@@ -25,7 +25,7 @@
       .vertical-flex {
         flex-direction: column;
         .control-label {
-          @extend .body-2-medium;
+          @extend .body-2-semibold;
         }
         .radio-options-content-row {
           display: flex;

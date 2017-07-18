@@ -15,11 +15,11 @@
             color: $dark-blue;
         }
     }
-    .select-action-table-view {        
+    .select-action-table-view {
         min-width: 770px;
     }
     .select-action-table-header {
-        @extend .body-1-medium;
+        @extend .body-1-semibold;
         color: $text-black;
     }
 }

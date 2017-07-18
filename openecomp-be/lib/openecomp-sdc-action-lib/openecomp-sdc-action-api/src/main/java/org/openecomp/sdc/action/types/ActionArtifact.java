@@ -137,4 +137,9 @@ public class ActionArtifact {
     }
     return false;
   }
+
+  @Override
+  public int hashCode() {
+    return artifactUuId.hashCode();
+  }
 }

@@ -201,21 +201,17 @@ topology_template:
           relationship: tosca.relationships.network.BindsTo
   outputs:
     a_single_1a_instance_name:
-      type: list
+      type: string
       value:
         get_attribute:
         - a_single_1a
         - instance_name
-      entry_schema:
-        type: string
     a_single_1a_1a_t1_port_tenant_id:
-      type: list
+      type: string
       value:
         get_attribute:
         - a_single_1a_1a_t1_port
         - tenant_id
-      entry_schema:
-        type: string
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.a_single_1a
     capabilities:

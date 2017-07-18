@@ -98,15 +98,11 @@ node_types:
           type: string
     attributes:
       pd_server_accessIPv4:
-        type: list
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
       pd_server_pd01_port_device_owner:
-        type: list
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
     requirements:
     - dependency_pd_server:
         capability: tosca.capabilities.Node
@@ -536,10 +532,8 @@ node_types:
           type: json
     attributes:
       oam_server_accessIPv4:
-        type: list
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
     requirements:
     - dependency_oam_server_pd01_port:
         capability: tosca.capabilities.Node
@@ -969,15 +963,11 @@ node_types:
           type: org.openecomp.datatypes.network.VlanRequirements
     attributes:
       ps_server_accessIPv4:
-        type: list
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
       ps_server_pd01_port_device_id:
-        type: list
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
     requirements:
     - dependency_ps_server_pd01_port:
         capability: tosca.capabilities.Node

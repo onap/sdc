@@ -49,7 +49,7 @@ import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.MibEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
@@ -266,7 +266,7 @@ public class MigrationMain {
   private static void convertMibs(SessionContext context,
                                   CassandraElementRepository cassandraElementRepository) {
     MibCassandraLoader cassandraLoader = new MibCassandraLoader();
-    Collection<MibEntity> mibs = cassandraLoader.list();
+    Collection<ComponentMonitoringUploadEntity> mibs = cassandraLoader.list();
     mibs.stream().filter(mibEntity -> needMigration(mibEntity.getVspId(), mibEntity.getVersion()))
         .forEach
             (mibEntity -> {

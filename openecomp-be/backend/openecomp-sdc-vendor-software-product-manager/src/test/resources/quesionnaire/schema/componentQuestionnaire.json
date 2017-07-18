@@ -157,11 +157,12 @@
             "MemoryRAM": {
               "type": "string",
               "enum": [
+                "1 GB",
                 "2 GB",
                 "4 GB",
                 "8 GB"
               ],
-              "default": "2 GB"
+              "default": "1 GB"
             }
           },
           "additionalProperties": false

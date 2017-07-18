@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UnifiedCompositionNestedSingleCompute implements UnifiedComposition {
+
+  // There is no consolidation in NestedSingleCompute implemetation.
+  // In case of  nested single compute, if there is more than one entry in the
+  // unifiedComposotionDataList, each one should be handed seperatly, no consolidation between
+  // them.
   @Override
   public void createUnifiedComposition(ServiceTemplate serviceTemplate,
                                        ServiceTemplate nestedServiceTemplate,
@@ -27,12 +32,12 @@ public class UnifiedCompositionNestedSingleCompute implements UnifiedComposition
 
       unifiedCompositionService
           .handleUnifiedNestedDefinition(serviceTemplate, nestedServiceTemplate,
-              unifiedCompositionDataList, context);
+              unifiedCompositionDataList.get(i), context);
       unifiedCompositionService
           .updateUnifiedNestedConnectivity(serviceTemplate, nestedServiceTemplate,
-              nestedUnifiedCompositionDataList, context);
+              unifiedCompositionDataList.get(i), context);
       unifiedCompositionService
-          .cleanUnifiedNestedEntities(serviceTemplate, nestedUnifiedCompositionDataList, context);
+          .cleanUnifiedNestedEntities(serviceTemplate, unifiedCompositionDataList.get(i), context);
     }
   }
 }

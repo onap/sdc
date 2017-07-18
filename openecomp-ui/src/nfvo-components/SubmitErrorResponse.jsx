@@ -16,7 +16,7 @@
 import React, {Component} from 'react';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import Icon from 'nfvo-components/icon/Icon.jsx';
 import {Collapse} from 'react-bootstrap';
 /**
@@ -145,7 +145,7 @@ class ErrorBlock extends React.Component {
 const ErrorHeader = ({errorType, collapsed, onClick}) => {
 	return(
 		<div onClick={onClick} className='error-block-header'>
-			<SVGIcon iconClassName={collapsed ? '' : 'right' } name='chevron-down'/>
+			<SVGIcon iconClassName={collapsed ? '' : 'right' } name='chevronDown'/>
 			{errorType}
 		</div>
 	);

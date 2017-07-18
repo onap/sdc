@@ -24,6 +24,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;
 
 public class ComponentManagerFactoryImpl extends ComponentManagerFactory {
@@ -31,7 +33,8 @@ public class ComponentManagerFactoryImpl extends ComponentManagerFactory {
       new ComponentManagerImpl(
           ComponentDaoFactory.getInstance().createInterface(),
           CompositionEntityDataManagerFactory.getInstance().createInterface(),
-          NicManagerFactory.getInstance().createInterface()
+          NicManagerFactory.getInstance().createInterface(),
+          VendorSoftwareProductInfoDaoFactory.getInstance().createInterface()
       );
 
   @Override

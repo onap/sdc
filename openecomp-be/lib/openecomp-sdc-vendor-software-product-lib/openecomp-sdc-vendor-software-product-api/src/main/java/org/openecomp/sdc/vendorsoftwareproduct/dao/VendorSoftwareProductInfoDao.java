@@ -37,4 +37,6 @@ public interface VendorSoftwareProductInfoDao extends VersionableDao, BaseDao<Vs
   VspQuestionnaireEntity getQuestionnaire(String vspId, Version version);
 
   void deleteAll(String vspId, Version version);
+
+  boolean isManual(String vspId, Version version);
 }

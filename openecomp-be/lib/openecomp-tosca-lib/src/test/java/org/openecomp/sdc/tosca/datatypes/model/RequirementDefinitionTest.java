@@ -22,7 +22,7 @@ package org.openecomp.sdc.tosca.datatypes.model;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openecomp.core.utilities.yaml.YamlUtil;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

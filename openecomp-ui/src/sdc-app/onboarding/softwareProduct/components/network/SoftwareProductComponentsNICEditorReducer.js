@@ -18,7 +18,7 @@ import {forms} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProdu
 
 export default (state = {}, action) => {
 	switch (action.type) {
-		case actionTypes.NICEditor.OPEN:
+		case actionTypes.NICEditor.FILL_DATA:
 			return {
 				...state,
 				data: action.nic,
@@ -31,12 +31,17 @@ export default (state = {}, action) => {
 					'name' : {
 						isValid: true,
 						errorText: '',
+						validations: [{type: 'required', data : true}]
+					},
+					'networkDescription' : {
+						isValid: true,
+						errorText: '',
 						validations: []
 					}
 				},
 				formName: forms.NIC_EDIT_FORM
 			};
-		case actionTypes.NICEditor.CLOSE:
+		case actionTypes.NICEditor.CLEAR_DATA:
 			return {};
 		default:
 			return state;

@@ -225,7 +225,7 @@ public class ProcessManagerImpl implements ProcessManager {
     vendorSoftwareProductDao.uploadProcessArtifact(vspId, version, componentId, processId, artifact,
             artifactFileName);
     ActivityLogEntity activityLogEntity = new ActivityLogEntity(vspId, String.valueOf(version.getMajor()+1),
-            ActivityType.UPLOAD_ARTIFACT.toString(), user, true, "", "");
+        ActivityType.UPLOAD_MONITORING_FILE.toString(), user, true, "", "");
     activityLogManager.addActionLog(activityLogEntity, user);
 
     mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);

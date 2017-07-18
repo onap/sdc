@@ -22,6 +22,7 @@ import FormGroup from 'react-bootstrap/lib/FormGroup.js';
 import FormControl from 'react-bootstrap/lib/FormControl.js';
 import Overlay from 'react-bootstrap/lib/Overlay.js';
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
+import Datepicker from 'nfvo-components/datepicker/Datepicker.jsx';
 
 class Input extends React.Component {
 
@@ -29,13 +30,14 @@ class Input extends React.Component {
 		value: this.props.value,
 		checked: this.props.checked,
 		selectedValues: []
-	}
+	};
 
 	render() {
 		const {label, isReadOnlyMode, value, onBlur, onKeyDown, type, disabled, checked, name} = this.props;
 		// eslint-disable-next-line no-unused-vars
-		const {groupClassName, isValid = true, errorText, isRequired,  ...inputProps} = this.props;
-		let wrapperClassName = (type !== 'radio') ? 'validation-input-wrapper' : 'form-group';
+		const {groupClassName, isValid = true, errorText, isRequired,  overlayPos, ...inputProps} = this.props;
+		const {dateFormat, startDate, endDate, selectsStart, selectsEnd} = this.props; // Date Props
+		let wrapperClassName = (type !== 'radio') ? 'validation-input-wrapper' : 'validation-radio-wrapper';
 		if (disabled) {
 			wrapperClassName += ' disabled';
 		}
@@ -43,7 +45,7 @@ class Input extends React.Component {
 			<div className={wrapperClassName}>
 				<FormGroup className={classNames('form-group', [groupClassName], {'required' : isRequired , 'has-error' : !isValid})} >
 					{(label && (type !== 'checkbox' && type !== 'radio')) && <label className='control-label'>{label}</label>}
-					{(type === 'text' || type === 'number') &&
+					{type === 'text'  &&
 					<FormControl
 						bsClass={'form-control input-options-other'}
 						onChange={(e) => this.onChange(e)}
@@ -51,6 +53,17 @@ class Input extends React.Component {
 						onBlur={onBlur}
 						onKeyDown={onKeyDown}
 						value={value || ''}
+						inputRef={(input) => this.input = input}
+						type={type}
+						data-test-id={this.props['data-test-id']}/>}
+					{type === 'number' &&
+					<FormControl
+						bsClass={'form-control input-options-other'}
+						onChange={(e) => this.onChange(e)}
+						disabled={isReadOnlyMode || Boolean(disabled)}
+						onBlur={onBlur}
+						onKeyDown={onKeyDown}
+						value={(value !== undefined) ? value : ''}
 						inputRef={(input) => this.input = input}
 						type={type}
 						data-test-id={this.props['data-test-id']}/>}
@@ -81,6 +94,7 @@ class Input extends React.Component {
 						   disabled={isReadOnlyMode || Boolean(disabled)}
 						   value={value}
 						   onChange={(e)=>this.onChangeRadio(e)}
+						   inputRef={(input) => this.input = input}
 						   data-test-id={this.props['data-test-id']}>{label}</Radio>}
 					{type === 'select' &&
 					<FormControl onClick={ (e) => this.optionSelect(e) }
@@ -88,6 +102,18 @@ class Input extends React.Component {
 						 inputRef={(input) => this.input = input}
 						 name={name} {...inputProps}
 						 data-test-id={this.props['data-test-id']}/>}
+					{type === 'date' && 
+					<Datepicker 
+						date={value}
+						format={dateFormat}
+						startDate={startDate}
+						endDate={endDate}
+						inputRef={(input) => this.input = input}
+						onChange={this.props.onChange}
+						disabled={isReadOnlyMode || Boolean(disabled)}
+						data-test-id={this.props['data-test-id']}
+						selectsStart={selectsStart}
+						selectsEnd={selectsEnd} />}
 				</FormGroup>
 				{ this.renderErrorOverlay() }
 			</div>
@@ -116,7 +142,11 @@ class Input extends React.Component {
 		const {onChange, type} = this.props;
 		let value = e.target.value;
 		if (type === 'number') {
-			value = Number(value);
+			if (value === '') {
+				value = undefined;
+			} else {
+				value = Number(value);
+			}
 		}
 		this.setState({
 			value
@@ -154,7 +184,9 @@ class Input extends React.Component {
 		else if (type === 'text'
 			|| type === 'email'
 			|| type === 'number'
-			|| type === 'password') {
+			|| type === 'radio'
+			|| type === 'password'
+			|| type === 'date') {
 			position = 'bottom';
 		}
 

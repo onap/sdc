@@ -1,7 +1,9 @@
 $gridItemSpace: 15%;
 
 .grid-section {
-		padding-bottom: 30px;
+		&:not(:last-of-type) {
+			padding-bottom: 30px;
+		}
 		.grid-items {
 			display: flex;
 			flex-direction: row;

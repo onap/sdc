@@ -22,7 +22,7 @@
       &,
       &:hover,
       &:focus {
-        @extend .body-1-medium;
+        @extend .body-1-semibold;
         border-bottom: 3px solid $blue;
       }
     }

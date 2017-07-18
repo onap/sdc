@@ -4,6 +4,9 @@ form {
       position: relative;
       flex: 1;
     }
+    .validation-radio-wrapper {
+      position: relative;
+    }
     .nav-tabs {
       position: relative;
       .invalid-tab:not(.active) {

@@ -1,12 +1,5 @@
 package org.openecomp.sdc.enrichment.impl.tosca;
 
-import static org.mockito.Mockito.doReturn;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -14,7 +7,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
-import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -24,6 +16,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.mockito.Mockito.doReturn;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_CODE;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_FUNCTION;
+import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
 
 public class ComponentQuestionnaireDataTest {
   private static String VSP_ID = "vspId";
@@ -47,8 +48,13 @@ public class ComponentQuestionnaireDataTest {
   @Test
   public void testGetData() {
     ComponentEntity componentEntity = new ComponentEntity(VSP_ID, VERSION01,"ID1" );
-    componentEntity.setCompositionData("{\"name\": \"org.openecomp.resource.vfc.nodes.heat.be\"," +
-        "\"displayName\": \"be\", \"vfcCode\": \"be_1\"}");
+    componentEntity.setCompositionData("{\n" +
+        "  \"name\": \"org.openecomp.resource.vfc.nodes.heat.be\",\n" +
+        "  \"displayName\": \"be\",\n" +
+        "  \"vfcCode\": \"be_1\",\n" +
+        "  \"nfcCode\": \"code\",\n" +
+        "  \"nfcFunction\": \"desc\"\n" +
+        "}");
     componentEntity.setQuestionnaireData
         ("{\"highAvailabilityAndLoadBalancing\":{\"isComponentMandatory\" : \"NO\"," +
             "\"highAvailabilityMode\":\"geo-activeactive\"},\"compute\":{\"numOfVMs\" " +
@@ -64,6 +70,8 @@ public class ComponentQuestionnaireDataTest {
 
     final Map<String, Object> be = propertiesfromCompQuestionnaire.get("be");
     Assert.assertEquals(be.get(VFC_NAMING_CODE) , "be_1");
+    Assert.assertEquals(be.get(VFC_CODE), "code");
+    Assert.assertEquals(be.get(VFC_FUNCTION), "desc");
     Assert.assertEquals(be.get(MANDATORY) ,"NO");
     Assert.assertEquals(be.get(HIGH_AVAIL_MODE) ,"geo-activeactive");
     Assert.assertEquals(be.get(MIN_INSTANCES) ,null);

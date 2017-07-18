@@ -20,6 +20,8 @@
 
 package org.openecomp.sdcrests.vendorlicense.types;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -27,11 +29,15 @@ public class FeatureGroupDescriptorDto {
   @NotNull
   @Size(max = 120)
   private String name;
-  @NotNull
+
   @Size(max = 1000)
   private String description;
   @NotNull
   private String partNumber;
+
+  //@NotBlank(message = "is mandatory and should not be empty")
+  @Size(max = 100)
+  private String manufacturerReferenceNumber;
 
   public String getName() {
     return name;
@@ -55,5 +61,13 @@ public class FeatureGroupDescriptorDto {
 
   public void setPartNumber(String partNumber) {
     this.partNumber = partNumber;
+  }
+
+  public String getManufacturerReferenceNumber() {
+    return manufacturerReferenceNumber;
+  }
+
+  public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
+    this.manufacturerReferenceNumber = manufacturerReferenceNumber;
   }
 }

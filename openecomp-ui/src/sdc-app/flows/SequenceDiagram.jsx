@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 import React, {Component, PropTypes} from 'react';
-import Button from 'react-bootstrap/lib/Button.js';
+import Button from 'sdc-ui/lib/react/Button.js';
 import Sequencer from 'dox-sequence-diagram-ui';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
@@ -38,8 +38,8 @@ class SequenceDiagram extends Component {
 					<Sequencer ref='sequencer' options={{useHtmlSelect: true}} model={this.props.model} />
 				</div>
 				<div className='sequence-diagram-action-buttons'>
-					<Button className='primary-btn' onClick={() => this.onSave()}>{i18n('Save')}</Button>
-					<Button className='primary-btn' onClick={this.props.onClose}>{i18n('Close')}</Button>
+					<Button onClick={() => this.onSave()}>{i18n('Save')}</Button>
+					<Button onClick={this.props.onClose}>{i18n('Close')}</Button>
 				</div>
 			</div>
 		);

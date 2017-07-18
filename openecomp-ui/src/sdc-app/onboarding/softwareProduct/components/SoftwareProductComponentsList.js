@@ -14,21 +14,16 @@
  * permissions and limitations under the License.
  */
 import {connect} from 'react-redux';
+import i18n from 'nfvo-utils/i18n/i18n.js';
+
 import SoftwareProductComponentsListView from './SoftwareProductComponentsListView.jsx';
 import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
+import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
+import SoftwareProductComponentsActionHelper from '../components/SoftwareProductComponentsActionHelper.js';
+import {actionTypes as globalModalActions} from 'nfvo-components/modal/GlobalModalConstants.js';
 
-
-const mapStateToProps = ({softwareProduct}) => {
-	let {softwareProductEditor: {data: currentSoftwareProduct}, softwareProductComponents} = softwareProduct;
-	let {componentsList} = softwareProductComponents;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
-
-	return {
-		currentSoftwareProduct,
-		isReadOnlyMode,
-		componentsList
-	};
+const generateMessage = (name) => {
+	return i18n(`Are you sure you want to delete ${name}?`);
 };
 
 
@@ -36,8 +31,21 @@ const mapActionToProps = (dispatch) => {
 	return {
 		onComponentSelect: ({id: softwareProductId, componentId, version}) => {
 			OnboardingActionHelper.navigateToSoftwareProductComponentGeneralAndUpdateLeftPanel(dispatch, {softwareProductId, componentId, version });
-		}
+		},
+		onAddComponent: (softwareProductId) => SoftwareProductActionHelper.addComponent(dispatch, {softwareProductId, modalClassName: 'create-vfc-modal'}),
+		onDeleteComponent: (component, softwareProductId, version) => dispatch({
+			type: globalModalActions.GLOBAL_MODAL_WARNING,
+			data:{
+				msg: generateMessage(component.displayName),
+				onConfirmed: ()=>SoftwareProductComponentsActionHelper.deleteComponent(dispatch,
+					{
+						softwareProductId,
+						componentId: component.id,
+						version
+					})
+			}
+		})
 	};
 };
 
-export default connect(mapStateToProps, mapActionToProps, null, {withRef: true})(SoftwareProductComponentsListView);
+export default connect(null, mapActionToProps, null, {withRef: true})(SoftwareProductComponentsListView);

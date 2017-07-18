@@ -48,6 +48,10 @@ public class YamlUtil {
     return yamlObj;
   }
 
+  public InputStream loadYamlFileIs(String yamlFullFileName) {
+    return YamlUtil.class.getResourceAsStream(yamlFullFileName);
+  }
+
   /**
    * Yaml to object t.
    *

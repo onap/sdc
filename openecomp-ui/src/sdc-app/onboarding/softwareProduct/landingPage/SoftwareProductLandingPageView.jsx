@@ -19,11 +19,10 @@ import Dropzone from 'react-dropzone';
 
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
-import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
-import ListEditorItemViewField from 'nfvo-components/listEditor/ListEditorItemViewField.jsx';
 
-import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
+import SoftwareProductComponentsList from '../components/SoftwareProductComponentsList.js';
 
 const SoftwareProductPropType = React.PropTypes.shape({
 	name: React.PropTypes.string,
@@ -47,7 +46,7 @@ const ComponentPropType = React.PropTypes.shape({
 class SoftwareProductLandingPageView extends React.Component {
 
 	state = {
-		localFilter: '',
+
 		fileName: '',
 		dragging: false,
 		files: []
@@ -67,13 +66,13 @@ class SoftwareProductLandingPageView extends React.Component {
 	};
 
 	render() {
-		let {currentSoftwareProduct, isReadOnlyMode, componentsList = []} =  this.props;
+		let {currentSoftwareProduct, isReadOnlyMode, isManual, onDetailsSelect, componentsList} =  this.props;
 		return (
 			<div className='software-product-landing-wrapper'>
 				<Dropzone
 					className={classnames('software-product-landing-view', {'active-dragging': this.state.dragging})}
-					onDrop={files => this.handleImportSubmit(files, isReadOnlyMode)}
-					onDragEnter={() => this.handleOnDragEnter(isReadOnlyMode)}
+					onDrop={files => this.handleImportSubmit(files, isReadOnlyMode, isManual)}
+					onDragEnter={() => this.handleOnDragEnter(isReadOnlyMode, isManual)}
 					onDragLeave={() => this.setState({dragging:false})}
 					multiple={false}
 					disableClick={true}
@@ -84,66 +83,27 @@ class SoftwareProductLandingPageView extends React.Component {
 					<div className='draggable-wrapper'>
 						<div className='software-product-landing-view-top'>
 							<div className='row'>
-								{this.renderProductSummary(currentSoftwareProduct)}
-								{this.renderProductDetails(currentSoftwareProduct, isReadOnlyMode)}
+								<ProductSummary currentSoftwareProduct={currentSoftwareProduct} onDetailsSelect={onDetailsSelect} />
+								{isManual ?
+									<div className='details-panel'/>
+									: this.renderProductDetails(currentSoftwareProduct, isReadOnlyMode)}
 							</div>
 						</div>
 					</div>
 				</Dropzone>
-				{
-					componentsList.length > 0 && this.renderComponents()
-				}
+				<SoftwareProductComponentsList
+					isReadOnlyMode={isReadOnlyMode}
+					componentsList={componentsList}
+					isManual={isManual}
+					currentSoftwareProduct={currentSoftwareProduct}/>
 			</div>
 		);
 	}
 
-	handleOnDragEnter(isReadOnlyMode) {
-		if (!isReadOnlyMode) {
+	handleOnDragEnter(isReadOnlyMode, isManual) {
+		if (!isReadOnlyMode && !isManual) {
 			this.setState({dragging: true});
 		}
-	}
-
-	renderProductSummary(currentSoftwareProduct) {
-		let {name = '', description = '', vendorName = '', fullCategoryDisplayName = '', licenseAgreementName = ''}  = currentSoftwareProduct;
-		let {onDetailsSelect} = this.props;
-		return (
-			<div className='details-panel'>
-				<div className='software-product-landing-view-heading-title'>{i18n('Software Product Details')}</div>
-				<div
-					className='software-product-landing-view-top-block clickable'
-					onClick={() => onDetailsSelect(currentSoftwareProduct)}>
-					<div className='details-container'>
-						<div className='single-detail-section title-section'>
-							<div className='single-detail-section title-text'>
-								{name}
-							</div>
-						</div>
-						<div className='details-section'>
-							<div className='multiple-details-section'>
-								<div className='detail-col' >
-									<div className='title'>{i18n('Vendor')}</div>
-									<div className='description'>{vendorName}</div>
-								</div>
-								<div className='detail-col'>
-									<div className='title'>{i18n('Category')}</div>
-									<div className='description'>{fullCategoryDisplayName}</div>
-								</div>
-								<div className='detail-col'>
-									<div className='title extra-large'>{i18n('License Agreement')}</div>
-									<div className='description'>
-										{this.renderLicenseAgreement(licenseAgreementName)}
-									</div>
-								</div>
-							</div>
-							<div className='single-detail-section'>
-								<div className='title'>{i18n('Description')}</div>
-								<div className='description'>{description}</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		);
 	}
 
 	renderProductDetails(currentSoftwareProduct, isReadOnlyMode) {
@@ -181,64 +141,8 @@ class SoftwareProductLandingPageView extends React.Component {
 		);
 	}
 
-	renderComponents() {
-		const {localFilter} = this.state;
-
-		return (
-			<ListEditorView
-				title={i18n('Virtual Function Components')}
-				filterValue={localFilter}
-				placeholder={i18n('Filter Components')}
-				onFilter={value => this.setState({localFilter: value})}
-				twoColumns>
-				{this.filterList().map(component => this.renderComponentsListItem(component))}
-			</ListEditorView>
-		);
-	}
-
-	renderComponentsListItem(component) {
-		let {id: componentId, name, displayName, description = ''} = component;
-		let {currentSoftwareProduct: {id}, onComponentSelect} = this.props;
-		return (
-			<ListEditorItemView
-				key={name + Math.floor(Math.random() * (100 - 1) + 1).toString()}
-				className='list-editor-item-view'
-				onSelect={() => onComponentSelect({id, componentId})}>
-				<ListEditorItemViewField>
-					<div className='name'>{displayName}</div>
-				</ListEditorItemViewField>
-				<ListEditorItemViewField>
-					<div className='description'>{description}</div>
-				</ListEditorItemViewField>
-			</ListEditorItemView>
-		);
-	}
-
-	renderLicenseAgreement(licenseAgreementName) {
-		if (licenseAgreementName !== null && !licenseAgreementName) {
-			return (<div className='missing-license'><SVGIcon name='exclamation-triangle-full'/><div className='warning-text'>{i18n('Missing')}</div></div>);
-		}
-		return (licenseAgreementName);
-	}
-
-
-	filterList() {
-		let {componentsList = []} = this.props;
-
-		let {localFilter} = this.state;
-		if (localFilter.trim()) {
-			const filter = new RegExp(escape(localFilter), 'i');
-			return componentsList.filter(({displayName = '', description = ''}) => {
-				return escape(displayName).match(filter) || escape(description).match(filter);
-			});
-		}
-		else {
-			return componentsList;
-		}
-	}
-
-	handleImportSubmit(files, isReadOnlyMode) {
-		if (isReadOnlyMode) {
+	handleImportSubmit(files, isReadOnlyMode, isManual) {
+		if (isReadOnlyMode || isManual) {
 			return;
 		}
 		if (files[0] && files[0].size) {
@@ -279,5 +183,55 @@ class SoftwareProductLandingPageView extends React.Component {
 
 	}
 }
+
+const ProductSummary = ({currentSoftwareProduct, onDetailsSelect}) => {
+	let {name = '', description = '', vendorName = '', fullCategoryDisplayName = '', licenseAgreementName = ''}  = currentSoftwareProduct;
+	return (
+		<div className='details-panel'>
+			<div className='software-product-landing-view-heading-title'>{i18n('Software Product Details')}</div>
+			<div
+				className='software-product-landing-view-top-block clickable'
+				onClick={() => onDetailsSelect(currentSoftwareProduct)}>
+				<div className='details-container'>
+					<div className='single-detail-section title-section'>
+						<div className='single-detail-section title-text'>
+							{name}
+						</div>
+					</div>
+					<div className='details-section'>
+						<div className='multiple-details-section'>
+							<div className='detail-col' >
+								<div className='title'>{i18n('Vendor')}</div>
+								<div className='description'>{vendorName}</div>
+							</div>
+							<div className='detail-col'>
+								<div className='title'>{i18n('Category')}</div>
+								<div className='description'>{fullCategoryDisplayName}</div>
+							</div>
+							<div className='detail-col'>
+								<div className='title extra-large'>{i18n('License Agreement')}</div>
+								<div className='description'>
+									<LicenseAgreement licenseAgreementName={licenseAgreementName}/>
+								</div>
+							</div>
+						</div>
+						<div className='single-detail-section'>
+							<div className='title'>{i18n('Description')}</div>
+							<div className='description'>{description}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+
+const LicenseAgreement = ({licenseAgreementName}) => {
+	if (!licenseAgreementName) {
+		return (<div className='missing-license'><SVGIcon name='exclamationTriangleFull'/><div className='warning-text'>{i18n('Missing')}</div></div>);
+	}
+	return <div>{licenseAgreementName}</div>;
+};
 
 export default SoftwareProductLandingPageView;

@@ -27,9 +27,12 @@ import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LicenseKeyTypeForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitForXml;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -59,6 +62,7 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
   @Column(name = "version_uuid")
   private String versionUuId;
 
+  private Collection<LimitEntity> limits;
 
   public LicenseKeyGroupEntity() {
   }
@@ -149,7 +153,9 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
   }
 
   public void setOperationalScope(MultiChoiceOrOther<OperationalScope> operationalScope) {
-    operationalScope.resolveEnum(OperationalScope.class);
+    if(operationalScope != null)  {
+      operationalScope.resolveEnum(OperationalScope.class);
+    }
     this.operationalScope = operationalScope;
   }
 
@@ -159,6 +165,60 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
 
   public void setReferencingFeatureGroups(Set<String> referencingFeatureGroups) {
     this.referencingFeatureGroups = referencingFeatureGroups;
+  }
+
+  public Collection<LimitEntity> getLimits() {
+    return limits;
+  }
+
+  public void setLimits(Collection<LimitEntity> limits) {
+    this.limits = limits;
+  }
+
+  public LimitForXml getSPLimits(){
+    if(limits != null){
+      Set<LimitXml> hs = new HashSet<>();
+      for(LimitEntity obj : limits){
+        if(obj.getType().equals(LimitType.ServiceProvider)){
+          LimitXml xmlObj = new LimitXml();
+          xmlObj.setDescription(obj.getDescription());
+          xmlObj.setMetric(obj.getMetric().toString());
+          xmlObj.setValues(obj.getValue()!=null?Integer.toString(obj.getValue()):null);
+          xmlObj.setUnit(obj.getUnit()!=null?Integer.toString(obj.getUnit()):null);
+          xmlObj.setAggregationFunction(obj.getAggregationFunction()!=null?obj.getAggregationFunction().name():null);
+          xmlObj.setTime(obj.getTime()!=null?obj.getTime().name():null);
+          hs.add(xmlObj);
+        }
+      }
+      LimitForXml spLimitForXml = new LimitForXml();
+      spLimitForXml.setLimits(hs);
+      return spLimitForXml;
+    }
+
+    return null;
+  }
+
+  public LimitForXml getVendorLimits(){
+    if(limits != null){
+      Set<LimitXml> hs = new HashSet<>();
+      for(LimitEntity obj : limits){
+        if(obj.getType().equals(LimitType.Vendor)){
+          LimitXml xmlObj = new LimitXml();
+          xmlObj.setDescription(obj.getDescription());
+          xmlObj.setMetric(obj.getMetric().toString());
+          xmlObj.setValues(obj.getValue()!=null?Integer.toString(obj.getValue()):null);
+          xmlObj.setUnit(obj.getUnit()!=null?Integer.toString(obj.getUnit()):null);
+          xmlObj.setAggregationFunction(obj.getAggregationFunction()!=null?obj.getAggregationFunction().name():null);
+          xmlObj.setTime(obj.getTime()!=null?obj.getTime().name():null);
+          hs.add(xmlObj);
+        }
+      }
+      LimitForXml vendorLimitForXml = new LimitForXml();
+      vendorLimitForXml.setLimits(hs);
+      return vendorLimitForXml;
+    }
+
+    return null;
   }
 
   @Override

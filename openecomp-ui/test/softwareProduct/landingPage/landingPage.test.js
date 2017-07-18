@@ -28,6 +28,8 @@ import {default as VspQdataFactory}  from 'test-utils/factories/softwareProduct/
 import {VSPComponentsFactory}  from 'test-utils/factories/softwareProduct/SoftwareProductComponentsFactories.js';
 import {FinalizedLicenseModelFactory} from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
 
+import { Provider } from 'react-redux';
+import {storeCreator} from 'sdc-app/AppStore.js';
 
 import {mapStateToProps} from 'sdc-app/onboarding/softwareProduct/landingPage/SoftwareProductLandingPage.js';
 import SoftwareProductLandingPageView from 'sdc-app/onboarding/softwareProduct/landingPage/SoftwareProductLandingPageView.jsx';
@@ -95,8 +97,9 @@ describe('Software Product Landing Page: ', function () {
 			componentsList: VSPComponentsFactory.buildList(2)
 		};
 
-		let vspLandingView = TestUtils.renderIntoDocument(<SoftwareProductLandingPageView
-			{...params}/>);
+		const store = storeCreator();
+		let vspLandingView = TestUtils.renderIntoDocument(<Provider store={store}><SoftwareProductLandingPageView
+			{...params}/></Provider>);
 		expect(vspLandingView).toBeTruthy();
 	});
 
@@ -108,11 +111,16 @@ describe('Software Product Landing Page: ', function () {
 			componentsList: VSPComponentsFactory.buildList(2)
 		};
 
-		let vspLandingView = TestUtils.renderIntoDocument(<SoftwareProductLandingPageView
-			{...params}/>);
+		const store = storeCreator();
+		let vspLandingView = TestUtils.renderIntoDocument(<Provider store={store}><SoftwareProductLandingPageView
+			{...params}/></Provider>);
+		let vspLandingViewWrapper = TestUtils.findRenderedComponentWithType(
+			vspLandingView,
+			SoftwareProductLandingPageView
+		);
 		expect(vspLandingView).toBeTruthy();
-		vspLandingView.handleOnDragEnter(false);
-		expect(vspLandingView.state.dragging).toEqual(true);
+		vspLandingViewWrapper.handleOnDragEnter(false);
+		expect(vspLandingViewWrapper.state.dragging).toEqual(true);
 	});
 
 
@@ -126,10 +134,7 @@ describe('Software Product Landing Page: ', function () {
 			onUpload: dummyFunc,
 			onInvalidFileSizeUpload: dummyFunc
 		};
-
-		let vspLandingView = TestUtils.renderIntoDocument(<SoftwareProductLandingPageView
-			{...params}/>);
-		expect(vspLandingView).toBeTruthy();
+		
 		const files = [
 			{
 				name: 'aaa',
@@ -137,16 +142,24 @@ describe('Software Product Landing Page: ', function () {
 			}
 		];
 
-		vspLandingView.handleImportSubmit(files, false);
-		expect(vspLandingView.state.dragging).toEqual(false);
-		expect(vspLandingView.state.fileName).toEqual(files[0].name);
+		const store = storeCreator();
+
+		let vspLandingView = TestUtils.renderIntoDocument(<Provider store={store}><SoftwareProductLandingPageView {...params}/></Provider>);
+		let vspLandingViewWrapper = TestUtils.findRenderedComponentWithType(
+			vspLandingView,
+			SoftwareProductLandingPageView
+		);
+		expect(vspLandingView).toBeTruthy();
+		vspLandingViewWrapper.handleImportSubmit(files, false);
+		expect(vspLandingViewWrapper.state.dragging).toEqual(false);
+		expect(vspLandingViewWrapper.state.fileName).toEqual(files[0].name);
 		const files1 = [
 			{
 				name: 'bbb',
 				size: 0
 			}
 		];
-		vspLandingView.handleImportSubmit(files1, false);
+		vspLandingViewWrapper.handleImportSubmit(files1, false);
 	});
 
 	it('vsp landing handleImportSubmit with damaged file test ', () => {
@@ -160,8 +173,15 @@ describe('Software Product Landing Page: ', function () {
 			onInvalidFileSizeUpload: dummyFunc
 		};
 
-		let vspLandingView = TestUtils.renderIntoDocument(<SoftwareProductLandingPageView
-			{...params}/>);
+		const store = storeCreator();
+
+		let vspLandingView = TestUtils.renderIntoDocument(<Provider store={store}><SoftwareProductLandingPageView
+			{...params}/></Provider>);
+
+		let vspLandingViewWrapper = TestUtils.findRenderedComponentWithType(
+			vspLandingView,
+			SoftwareProductLandingPageView
+		);	
 		expect(vspLandingView).toBeTruthy();
 		const files = [
 			{
@@ -170,8 +190,8 @@ describe('Software Product Landing Page: ', function () {
 			}
 		];
 
-		vspLandingView.handleImportSubmit(files, false);
-		expect(vspLandingView.state.dragging).toEqual(false);
-		expect(vspLandingView.state.fileName).toEqual('');
+		vspLandingViewWrapper.handleImportSubmit(files, false);
+		expect(vspLandingViewWrapper.state.dragging).toEqual(false);
+		expect(vspLandingViewWrapper.state.fileName).toEqual('');
 	});
 });

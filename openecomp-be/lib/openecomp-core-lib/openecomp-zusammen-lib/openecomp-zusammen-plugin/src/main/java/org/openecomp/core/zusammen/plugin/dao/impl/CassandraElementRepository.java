@@ -98,6 +98,12 @@ public class CassandraElementRepository implements ElementRepository {
         element.getNamespace().toString());
   }
 
+  @Override
+  public boolean checkHealth(SessionContext context) {
+    ResultSet resultSet = getVersionElementsAccessor(context).checkHealth();
+    return resultSet.getColumnDefinitions().contains("element_ids");
+  }
+
   private String getVersionId(ElementEntityContext elementContext) {
     return elementContext.getChangeRef() == null
         ? elementContext.getVersionId().toString()
@@ -350,6 +356,9 @@ CREATE TABLE IF NOT EXISTS element (
 
     @Query("SELECT element_ids FROM version_elements WHERE space=? AND item_id=? AND version_id=?")
     ResultSet get(String space, String itemId, String versionId);
+
+    @Query("SELECT element_ids FROM version_elements LIMIT 1")
+    ResultSet checkHealth();
   }
 
   private static final class VersionElementsField {

@@ -31,5 +31,6 @@ public class MapFeatureGroupEntityToFeatureGroupDescriptorDto
     target.setName(source.getName());
     target.setDescription(source.getDescription());
     target.setPartNumber(source.getPartNumber());
+    target.setManufacturerReferenceNumber(source.getManufacturerReferenceNumber());
   }
 }

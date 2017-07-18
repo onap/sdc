@@ -16,18 +16,18 @@
 import React from 'react';
 import classnames from 'classnames';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import store from 'sdc-app/AppStore.js';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 
 class ListEditorItem extends React.Component {
 	static propTypes = {
-		onSelect: React.PropTypes.func,
-		onDelete: React.PropTypes.func,
-		onEdit: React.PropTypes.func,
+		onSelect:  React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.bool]),
+		onDelete:  React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.bool]),
+		onEdit:  React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.bool]),
 		children: React.PropTypes.node,
 		isReadOnlyMode: React.PropTypes.bool
-	}
+	};
 
 	render() {
 		let {onDelete, onSelect, onEdit, children, isReadOnlyMode} = this.props;
@@ -39,7 +39,7 @@ class ListEditorItem extends React.Component {
 				</div>
 				{(onEdit || onDelete) && <div className='list-editor-item-view-controller'>
 					{onEdit && <SVGIcon name='sliders' onClick={() => this.onClickedItem(onEdit)}/>}
-					{onDelete && isAbilityToDelete && <SVGIcon name='trash-o' onClick={() => this.onClickedItem(onDelete)}/>}
+					{onDelete && isAbilityToDelete && <SVGIcon name='trashO' onClick={() => this.onClickedItem(onDelete)}/>}
 				</div>}
 			</div>
 		);
@@ -52,8 +52,8 @@ class ListEditorItem extends React.Component {
 				store.dispatch({
 					type: modalActionTypes.GLOBAL_MODAL_WARNING,
 					data: {
-						title: i18n('Error'), 
-						msg: i18n('This item is checkedin/submitted, Click Check Out to continue')						
+						title: i18n('Error'),
+						msg: i18n('This item is checkedin/submitted, Click Check Out to continue')
 					}
 				});
 			}

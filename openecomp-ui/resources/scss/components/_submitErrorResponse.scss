@@ -26,7 +26,7 @@
       background-color: $tlv-gray;
       padding: 5px;
       cursor: pointer;
-      .chevron-down {
+      .chevronDown {
         width:10px;
         height:10px;
         margin-right: 10px;
@@ -54,7 +54,7 @@
     .component-name-header {
       margin-left: 45px;
       margin-top: 10px;
-      @extend .heading-5-medium;
+      @extend .heading-5-semibold;
     }
   }
 }

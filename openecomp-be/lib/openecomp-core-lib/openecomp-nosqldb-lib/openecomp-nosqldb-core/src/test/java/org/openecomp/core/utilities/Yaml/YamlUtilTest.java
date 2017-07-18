@@ -22,7 +22,7 @@ package org.openecomp.core.utilities.Yaml;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.core.utilities.yaml.YamlUtil;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 import testobjects.yaml.YamlFile;
 
 

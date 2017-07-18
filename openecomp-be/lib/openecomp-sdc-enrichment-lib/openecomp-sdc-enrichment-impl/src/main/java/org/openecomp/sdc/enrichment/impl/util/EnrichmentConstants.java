@@ -8,5 +8,7 @@ public class EnrichmentConstants {
   public static final String MIN_INSTANCES = "min_instances";
   public static final String MAX_INSTANCES = "max_instances";
   public static final String VM_TYPE_TAG = "vm_type_tag";
+  public static final String VFC_CODE = "nfc_code";
+  public static final String VFC_FUNCTION = "nfc_function";
 
 }

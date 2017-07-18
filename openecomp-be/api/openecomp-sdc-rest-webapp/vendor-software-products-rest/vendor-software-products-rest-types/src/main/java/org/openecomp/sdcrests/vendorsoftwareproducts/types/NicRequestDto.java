@@ -20,11 +20,25 @@
 
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
+import org.hibernate.validator.constraints.NotBlank;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.validation.ValidateString;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 public class NicRequestDto {
 
+  @NotBlank(message = "is mandatory and should not be empty")
+  @Pattern(regexp = "^[a-zA-Z 0-9._-]*$", message = "must match \"^[a-zA-Z 0-9._-]*$\"")
   private String name;
   private String description;
   private String networkId;
+  @NotNull
+  @ValidateString(acceptedValues = {"External", "Internal"}, message =   "doesn't "
+      +  "meet the expected attribute value.", isCaseSensitive = true)
+  private String networkType;
+
+  private String networkDescription;
 
   public String getName() {
     return name;
@@ -48,5 +62,21 @@ public class NicRequestDto {
 
   public void setNetworkId(String networkId) {
     this.networkId = networkId;
+  }
+
+  public String getNetworkType(){
+    return networkType;
+  }
+
+  public void setNetworkType(String networkType){
+    this.networkType = networkType;
+  }
+
+  public String getNetworkDescription(){
+    return networkDescription;
+  }
+
+  public void setNetworkDescription(String networkDescription){
+    this.networkDescription = networkDescription;
   }
 }

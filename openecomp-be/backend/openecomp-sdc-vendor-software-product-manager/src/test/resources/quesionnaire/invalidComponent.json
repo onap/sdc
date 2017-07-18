@@ -6,9 +6,6 @@
       "drivers": ",Lz-m3R7iwRREmjBA3Ss6b0K8YBcH4SS66UJSG8OGTlaMs6Be"
     },
     "image": {
-      "ephemeralDiskSizePerVM": 8,
-      "format": "iso",
-      "bootDiskSizePerVM": 100,
       "providedBy": "Vendor"
     },
     "dnsConfiguration": "dolore adipisicing proident aute amet",

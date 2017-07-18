@@ -90,6 +90,8 @@ public class FeatureGroupConvertor {
         info.setName(featureGroup.getName());
         info.setDescription(featureGroup.getDescription());
         info.addProperty("partNumber", featureGroup.getPartNumber());
+        info.addProperty("manufacturerReferenceNumber", featureGroup.getManufacturerReferenceNumber());
+
         return info;
     }
 

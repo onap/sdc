@@ -1,0 +1,58 @@
+.image-modal-new {
+  .modal-dialog {
+    width: 600px;
+  }
+  .image-filename {
+    width: 480px;
+  }
+}
+
+.image-modal-edit {
+  .modal-dialog {
+    width: 910px;
+  }
+  .image-filename {
+    width: 550px;
+  }
+}
+
+.image-modal-edit, .image-modal-new {
+  .modal-body {
+    padding: 0;
+  }
+  .vsp-components-image-editor {
+
+    .image-format, .image-md5, .image-version {
+      width: 200px;
+    }
+    .image-version {
+      padding-left: 30px;
+    }
+    .section-title {
+      text-transform: capitalize;
+      font-size: 18px;
+    }
+  }
+}
+
+.vsp-components-image {
+  .list-editor-item-view-content {
+    flex:1;
+    min-width: 0;
+  }
+  .list-editor-item-view-controller {
+    padding-top: 5px;
+  }
+  .image-filename-cell {
+    display: flex;
+    .image-filename {
+      white-space: nowrap;
+      overflow: hidden;
+      display: inline-block;
+      text-overflow: ellipsis;
+       span {
+        @include ellipsis(100%);
+      }
+    }
+  }
+}

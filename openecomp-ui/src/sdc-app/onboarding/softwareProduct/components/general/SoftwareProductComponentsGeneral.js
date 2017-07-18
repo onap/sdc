@@ -22,6 +22,7 @@ import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/Soft
 
 
 import {forms, COMPONENTS_QUESTIONNAIRE} from '../SoftwareProductComponentsConstants.js';
+import {onboardingMethod} from '../../SoftwareProductConstants.js';
 
 
 export const mapStateToProps = ({softwareProduct}) => {
@@ -34,6 +35,7 @@ export const mapStateToProps = ({softwareProduct}) => {
 		componentData,
 		qdata,
 		isReadOnlyMode,
+		isManual: currentVSP.onboardingMethod === onboardingMethod.MANUAL,
 		genericFieldInfo,
 		qGenericFieldInfo,
 		dataMap,

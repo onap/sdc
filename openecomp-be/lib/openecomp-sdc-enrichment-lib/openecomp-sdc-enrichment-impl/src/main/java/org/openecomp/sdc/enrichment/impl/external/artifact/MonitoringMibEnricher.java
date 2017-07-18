@@ -21,9 +21,9 @@
 package org.openecomp.sdc.enrichment.impl.external.artifact;
 
 import org.openecomp.core.enrichment.types.ArtifactCategory;
-import org.openecomp.core.enrichment.types.ArtifactType;
-import org.openecomp.core.enrichment.types.ComponentMibInfo;
-import org.openecomp.core.enrichment.types.MibInfo;
+import org.openecomp.core.enrichment.types.ComponentMonitoringUploadInfo;
+import org.openecomp.core.enrichment.types.MonitoringArtifactInfo;
+import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
 import org.openecomp.core.model.dao.EnrichedServiceModelDaoFactory;
 import org.openecomp.core.model.types.ServiceArtifact;
@@ -35,12 +35,12 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.MibDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.MibDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentArtifactDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.MibEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.MonitoringUploadDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.io.File;
@@ -56,7 +56,7 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
 
   private EnrichedServiceModelDao enrichedServiceModelDao;
   private ComponentDao componentDao;
-  private MibDao mibDao;
+  private ComponentArtifactDao componentArtifactDao;
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
   /**
@@ -86,65 +86,77 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
-    ComponentMibInfo componentMibInfo =
+    ComponentMonitoringUploadInfo componentMonitoringUploadInfo =
         extractComponentMibInfo(componentEntry, vspId, version, errors);
-    enrichComponentMib(componentMibInfo, vspId, version, errors);
+    enrichComponentMib(componentMonitoringUploadInfo, vspId, version, errors);
 
     mdcDataDebugMessage.debugExitMessage(null, null);
     return errors;
   }
 
-  ComponentMibInfo extractComponentMibInfo(ComponentEntity componentEntity, String vspId,
-                                           Version version,
-                                           Map<String, List<ErrorMessage>> errors) {
+  private ComponentMonitoringUploadInfo extractComponentMibInfo(ComponentEntity componentEntity,
+                                                                String vspId,
+                                                                Version version,
+                                                                Map<String, List<ErrorMessage>> errors) {
 
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
     String componentId = componentEntity.getId();
-    MibEntity entity = new MibEntity();
+    ComponentMonitoringUploadEntity entity = new ComponentMonitoringUploadEntity();
 
     entity.setVspId(vspId);
     entity.setVersion(version);
     entity.setComponentId(componentId);
     String componentName = componentEntity.getComponentCompositionData().getName();
-    ComponentMibInfo componentMibInfo = new ComponentMibInfo();
-    updComponentMibInfoByType(componentName, ArtifactType.SNMP_POLL, entity, componentMibInfo,
-        errors);
-    updComponentMibInfoByType(componentName, ArtifactType.SNMP_TRAP, entity, componentMibInfo,
-        errors);
+    ComponentMonitoringUploadInfo componentMonitoringUploadInfo =
+        new ComponentMonitoringUploadInfo();
+    for (MonitoringUploadType monitoringUploadType : MonitoringUploadType.values()) {
+      updComponentMibInfoByType(componentName, monitoringUploadType, entity,
+          componentMonitoringUploadInfo,
+          errors);
+    }
+//    updComponentMibInfoByType(componentName, MonitoringUploadType.SNMP_POLL, entity,
+//        componentMonitoringUploadInfo,
+//        errors);
+//    updComponentMibInfoByType(componentName, MonitoringUploadType.SNMP_TRAP, entity,
+//        componentMonitoringUploadInfo,
+//        errors);
 
     mdcDataDebugMessage.debugExitMessage(null, null);
-    return componentMibInfo;
+    return componentMonitoringUploadInfo;
   }
 
-  void updComponentMibInfoByType(String componentName, ArtifactType type,
-                                 MibEntity mibEntity,
-                                 ComponentMibInfo componentMibInfo,
-                                 Map<String, List<ErrorMessage>> errors) {
+  private void updComponentMibInfoByType(String componentName, MonitoringUploadType type,
+                                         ComponentMonitoringUploadEntity componentMonitoringUploadEntity,
+                                         ComponentMonitoringUploadInfo componentMonitoringUploadInfo,
+                                         Map<String, List<ErrorMessage>> errors) {
 
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
     String path;
-    mibEntity.setType(type);
-    Optional<MibEntity> artifact =
-        getMibDao().getByType(mibEntity);
+    componentMonitoringUploadEntity.setType(type);
+    Optional<ComponentMonitoringUploadEntity> artifact =
+        getComponentArtifactDao().getByType(componentMonitoringUploadEntity);
 
     if (!artifact.isPresent()) {
       return;
     }
     path = componentName + File.separator + ArtifactCategory.DEPLOYMENT.getDisplayName()
         + File.separator + type.name();
-    MibInfo mibInfo = new MibInfo();
-    mibInfo.setName(path);
-    mibInfo.setContent(artifact.get().getArtifact().array());
-    switch (type) {
+    MonitoringArtifactInfo monitoringArtifactInfo = new MonitoringArtifactInfo();
+    monitoringArtifactInfo.setName(path);
+    monitoringArtifactInfo.setContent(artifact.get().getArtifact().array());
+    switch (type) { //todo as part of ATTASDC-4503
       case SNMP_POLL:
-        componentMibInfo.setSnmpPoll(mibInfo);
+        componentMonitoringUploadInfo.setSnmpPoll(monitoringArtifactInfo);
         break;
       case SNMP_TRAP:
-        componentMibInfo.setSnmpTrap(mibInfo);
+        componentMonitoringUploadInfo.setSnmpTrap(monitoringArtifactInfo);
+        break;
+      case VES_EVENTS:
+        componentMonitoringUploadInfo.setVesEvent(monitoringArtifactInfo);
         break;
       default:
         break;
@@ -153,8 +165,10 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
     mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
-  void enrichComponentMib(ComponentMibInfo componentMibInfo, String vspId, Version version,
-                          Map<String, List<ErrorMessage>> errors) {
+  private void enrichComponentMib(ComponentMonitoringUploadInfo componentMonitoringUploadInfo,
+                                  String vspId,
+                                  Version version,
+                                  Map<String, List<ErrorMessage>> errors) {
 
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
@@ -162,40 +176,50 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
     ServiceArtifact mibServiceArtifact = new ServiceArtifact();
     mibServiceArtifact.setVspId(vspId);
     mibServiceArtifact.setVersion(version);
-    enrichMibFiles(mibServiceArtifact, componentMibInfo, errors);
+    enrichMibFiles(mibServiceArtifact, componentMonitoringUploadInfo, errors);
 
     mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
-  void enrichMibFiles(ServiceArtifact mibServiceArtifact, ComponentMibInfo componentMibInfo,
-                      Map<String, List<ErrorMessage>> errors) {
+  private void enrichMibFiles(ServiceArtifact monitoringArtifact,
+                              ComponentMonitoringUploadInfo componentMonitoringUploadInfo,
+                              Map<String, List<ErrorMessage>> errors) {
 
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
-    if (componentMibInfo == null) {
+    if (componentMonitoringUploadInfo == null) {
       return;
     }
-    enrichMibByType(componentMibInfo.getSnmpTrap(), ArtifactType.SNMP_TRAP, mibServiceArtifact,
+    //todo fix as part of ATTASDC-4503
+    enrichMibByType(componentMonitoringUploadInfo.getSnmpTrap(), MonitoringUploadType.SNMP_TRAP,
+        monitoringArtifact,
         errors);
-    enrichMibByType(componentMibInfo.getSnmpPoll(), ArtifactType.SNMP_POLL, mibServiceArtifact,
+    enrichMibByType(componentMonitoringUploadInfo.getSnmpPoll(), MonitoringUploadType.SNMP_POLL,
+        monitoringArtifact,
+        errors);
+    enrichMibByType(componentMonitoringUploadInfo.getVesEvent(), MonitoringUploadType.VES_EVENTS,
+        monitoringArtifact,
         errors);
 
     mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
-  void enrichMibByType(MibInfo mibInfo, ArtifactType type, ServiceArtifact mibServiceArtifact,
-                       Map<String, List<ErrorMessage>> errors) {
+  private void enrichMibByType(MonitoringArtifactInfo monitoringArtifactInfo,
+                               MonitoringUploadType type,
+                               ServiceArtifact mibServiceArtifact,
+                               Map<String, List<ErrorMessage>> errors) {
 
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
-    if (mibInfo == null) {
+    if (monitoringArtifactInfo == null) {
       return;
     }
     FileContentHandler mibs;
     try {
-      mibs = FileUtils.getFileContentMapFromZip(FileUtils.toByteArray(mibInfo.getContent()));
+      mibs = FileUtils
+          .getFileContentMapFromZip(FileUtils.toByteArray(monitoringArtifactInfo.getContent()));
     } catch (IOException ioException) {
       ErrorMessage.ErrorMessageUtil
           .addMessage(mibServiceArtifact.getName() + "." + type.name(), errors)
@@ -205,7 +229,7 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
     Set<String> fileList = mibs.getFileList();
     for (String fileName : fileList) {
       mibServiceArtifact.setContentData(FileUtils.toByteArray(mibs.getFileContent(fileName)));
-      mibServiceArtifact.setName(mibInfo.getName() + File.separator + fileName);
+      mibServiceArtifact.setName(monitoringArtifactInfo.getName() + File.separator + fileName);
       getEnrichedServiceModelDao().storeExternalArtifact(mibServiceArtifact);
     }
 
@@ -226,11 +250,11 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
     return componentDao;
   }
 
-  private MibDao getMibDao() {
-    if (mibDao == null) {
-      mibDao = MibDaoFactory.getInstance().createInterface();
+  private ComponentArtifactDao getComponentArtifactDao() {
+    if (componentArtifactDao == null) {
+      componentArtifactDao = MonitoringUploadDaoFactory.getInstance().createInterface();
     }
-    return mibDao;
+    return componentArtifactDao;
   }
 
 }

@@ -13,7 +13,7 @@ module.exports = {
 	resolve: {
 		modules: [path.resolve('.'), path.join(__dirname, 'node_modules')],
 		alias: {
-			i18nJson: 'nfvo-utils/i18n/locale.json',
+			i18nJson: 'nfvo-utils/i18n/en.json', // only for default build, not through gulp
 			'nfvo-utils': 'src/nfvo-utils',
 			'nfvo-components': 'src/nfvo-components',
 			'sdc-app': 'src/sdc-app',

@@ -25,10 +25,9 @@ import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.translator.factory.HeatToToscaTranslatorFactory;
-import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.core.utilities.yaml.YamlUtil;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.utils.SdcCommon;
@@ -68,7 +67,6 @@ import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.SubstitutionMapping;
 import org.openecomp.sdc.tosca.datatypes.model.Template;
 import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
@@ -76,7 +74,7 @@ import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
-import org.openecomp.sdc.tosca.services.yamlutil.ToscaExtensionYamlUtil;
+import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedPropertyVal;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
 import org.openecomp.sdc.translator.datatypes.heattotosca.ReferenceType;
@@ -337,10 +335,11 @@ public class HeatToToscaUtil {
    * @param propertyValue             the property value
    * @return the optional
    */
-  public static Optional<AttachedResourceId> extractAttachedResourceId(String heatFileName,
-                                                                       HeatOrchestrationTemplate heatOrchestrationTemplate,
-                                                                       TranslationContext context,
-                                                                       Object propertyValue) {
+  public static Optional<AttachedResourceId> extractAttachedResourceId(
+      String heatFileName,
+      HeatOrchestrationTemplate heatOrchestrationTemplate,
+      TranslationContext context,
+      Object propertyValue) {
 
     Object entity;
     Object translatedId;
@@ -534,6 +533,32 @@ public class HeatToToscaUtil {
       return true;
     }
 
+    mdcDataDebugMessage.debugExitMessage(null, null);
+    return false;
+  }
+
+  /**
+   * Checks if the nested resource represents a VFC or a complex VFC (Heat file should contain at
+   * least one or more compute nodes).
+   *
+   * @param resource the resource
+   * @param context the context
+   * @return true if the resource represents a VFC and false otherwise.
+   */
+  public static boolean isNestedVfcResource(Resource resource, TranslationContext context) {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+    Optional<String> nestedHeatFileName = HeatToToscaUtil.getNestedHeatFileName(resource);
+    HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil()
+        .yamlToObject(context.getFileContent(nestedHeatFileName.get()),
+            HeatOrchestrationTemplate.class);
+    if (Objects.nonNull(nestedHeatOrchestrationTemplate.getResources())) {
+      for (String innerResourceId : nestedHeatOrchestrationTemplate.getResources().keySet()) {
+        if (ConsolidationDataUtil
+            .isComputeResource(nestedHeatOrchestrationTemplate, innerResourceId)) {
+          return true;
+        }
+      }
+    }
     mdcDataDebugMessage.debugExitMessage(null, null);
     return false;
   }
@@ -734,8 +759,9 @@ public class HeatToToscaUtil {
    * @param entryDefinitionMetadata template name of the entry definition servie template
    * @return the tosca service model
    */
-  public static ToscaServiceModel getToscaServiceModel(TranslationContext context,
-                                                       Map<String, String> entryDefinitionMetadata) {
+  public static ToscaServiceModel getToscaServiceModel(
+      TranslationContext context,
+      Map<String, String> entryDefinitionMetadata) {
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
     Map<String, ServiceTemplate> serviceTemplates =
@@ -773,28 +799,6 @@ public class HeatToToscaUtil {
 
     mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.empty();
-  }
-
-  /**
-   * Adding binding requerment from port node template to compute node template.
-   *
-   * @param computeNodeTemplateId compute node template id
-   * @param portNodeTemplate      port node template
-   */
-  public static void addBindingReqFromPortToCompute(String computeNodeTemplateId,
-                                                    NodeTemplate portNodeTemplate) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
-    RequirementAssignment requirementAssignment = new RequirementAssignment();
-    requirementAssignment.setCapability(ToscaCapabilityType.NATIVE_NETWORK_BINDABLE);
-    requirementAssignment.setRelationship(ToscaRelationshipType.NATIVE_NETWORK_BINDS_TO);
-    requirementAssignment.setNode(computeNodeTemplateId);
-    DataModelUtil.addRequirementAssignment(portNodeTemplate, ToscaConstants.BINDING_REQUIREMENT_ID,
-        requirementAssignment);
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   /**
@@ -1062,7 +1066,7 @@ public class HeatToToscaUtil {
             nestedSubstitutionServiceTemplate, context);
     //add substitution mapping after capability and requirement expose calculation
     nestedSubstitutionServiceTemplate.getTopology_template().setSubstitution_mappings(
-        createSubstitutionTemplateSubMapping(substitutionNodeTypeKey,
+        DataModelUtil.createSubstitutionTemplateSubMapping(substitutionNodeTypeKey,
             substitutionNodeType, substitutionMapping));
   }
 
@@ -1233,69 +1237,6 @@ public class HeatToToscaUtil {
     return substitutionProperties;
   }
 
-  private static SubstitutionMapping createSubstitutionTemplateSubMapping(
-      String nodeTypeKey,
-      NodeType substitutionNodeType,
-      Map<String, Map<String, List<String>>> mapping) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-    SubstitutionMapping substitutionMapping = new SubstitutionMapping();
-    substitutionMapping.setNode_type(nodeTypeKey);
-    substitutionMapping.setCapabilities(
-        manageCapabilityMapping(substitutionNodeType.getCapabilities(), mapping.get("capability")));
-    substitutionMapping.setRequirements(
-        manageRequirementMapping(substitutionNodeType.getRequirements(),
-            mapping.get("requirement")));
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
-    return substitutionMapping;
-  }
-
-  private static Map<String, List<String>> manageRequirementMapping(
-      List<Map<String, RequirementDefinition>> requirementList,
-      Map<String, List<String>> requirementSubstitutionMapping) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
-    if (requirementList == null) {
-      return null;
-    }
-    Map<String, List<String>> requirementMapping = new HashMap<>();
-    String requirementKey;
-    List<String> requirementMap;
-    for (Map<String, RequirementDefinition> requirementDefMap : requirementList) {
-      for (Map.Entry<String, RequirementDefinition> entry : requirementDefMap.entrySet()) {
-        requirementKey = entry.getKey();
-        requirementMap = requirementSubstitutionMapping.get(requirementKey);
-        requirementMapping.put(requirementKey, requirementMap);
-      }
-    }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
-    return requirementMapping;
-  }
-
-  private static Map<String, List<String>> manageCapabilityMapping(
-      Map<String, CapabilityDefinition> capabilities,
-      Map<String, List<String>> capabilitySubstitutionMapping) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
-    if (capabilities == null) {
-      mdcDataDebugMessage.debugExitMessage(null, null);
-      return null;
-    }
-
-    Map<String, List<String>> capabilityMapping = new HashMap<>();
-    String capabilityKey;
-    List<String> capabilityMap;
-    for (Map.Entry<String, CapabilityDefinition> entry : capabilities.entrySet()) {
-      capabilityKey = entry.getKey();
-      capabilityMap = capabilitySubstitutionMapping.get(capabilityKey);
-      capabilityMapping.put(capabilityKey, capabilityMap);
-    }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
-    return capabilityMapping;
-  }
-
   private static Map<String, Map<String, List<String>>>
   getSubstitutionNodeTypeExposedConnectionPoints(NodeType substitutionNodeType,
                                                  ServiceTemplate substitutionServiceTemplate,
@@ -1323,6 +1264,7 @@ public class HeatToToscaUtil {
         new HashMap<>();
     Map<String, CapabilityDefinition> nodeTypeCapabilitiesDefinition = new HashMap<>();
     Map<String, CapabilityDefinition> exposedCapabilitiesDefinition;
+    ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
 
     for (Map.Entry<String, NodeTemplate> entry : nodeTemplates.entrySet()) {
       nodeTemplateId = entry.getKey();
@@ -1336,9 +1278,11 @@ public class HeatToToscaUtil {
       nodeTemplateRequirementsAssignment = DataModelUtil.getNodeTemplateRequirements(nodeTemplate);
       fullFilledRequirementsDefinition.put(nodeTemplateId, nodeTemplateRequirementsAssignment);
       //set substitution node type requirements
-      exposedRequirementsDefinition = calculateExposedRequirements(nodeTypeRequirementsDefinition,
+      exposedRequirementsDefinition =
+          toscaAnalyzerService.calculateExposedRequirements(nodeTypeRequirementsDefinition,
           nodeTemplateRequirementsAssignment);
-      addSubstitutionNodeTypeRequirements(substitutionNodeType, exposedRequirementsDefinition,
+      DataModelUtil
+          .addSubstitutionNodeTypeRequirements(substitutionNodeType, exposedRequirementsDefinition,
           nodeTemplateId);
 
       //get capabilities
@@ -1347,54 +1291,13 @@ public class HeatToToscaUtil {
           nodeTemplateId, substitutionServiceTemplate, context);
     }
 
-    exposedCapabilitiesDefinition = calculateExposedCapabilities(nodeTypeCapabilitiesDefinition,
+    exposedCapabilitiesDefinition =
+        toscaAnalyzerService.calculateExposedCapabilities(nodeTypeCapabilitiesDefinition,
         fullFilledRequirementsDefinition);
     DataModelUtil.addNodeTypeCapabilitiesDef(substitutionNodeType, exposedCapabilitiesDefinition);
 
     mdcDataDebugMessage.debugExitMessage(null, null);
     return substitutionMapping;
-  }
-
-  private static Map<String, CapabilityDefinition> calculateExposedCapabilities(
-      Map<String, CapabilityDefinition> nodeTypeCapabilitiesDefinition,
-      Map<String, Map<String, RequirementAssignment>> fullFilledRequirementsDefinitionMap) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
-    String capabilityKey;
-    String capability;
-    String node;
-    for (Map.Entry<String, Map<String, RequirementAssignment>> entry :
-        fullFilledRequirementsDefinitionMap.entrySet()) {
-      for (Map.Entry<String, RequirementAssignment> fullFilledEntry : entry.getValue().entrySet()) {
-
-        capability = fullFilledEntry.getValue().getCapability();
-        fullFilledEntry.getValue().getOccurrences();
-        node = fullFilledEntry.getValue().getNode();
-        capabilityKey = capability + "_" + node;
-        CapabilityDefinition capabilityDefinition = nodeTypeCapabilitiesDefinition.get(
-            capabilityKey);
-        if (capabilityDefinition != null) {
-          CapabilityDefinition clonedCapabilityDefinition = capabilityDefinition.clone();
-          nodeTypeCapabilitiesDefinition.put(capabilityKey, capabilityDefinition.clone());
-          if (evaluateCapabilityFulfillment(clonedCapabilityDefinition)) {
-            nodeTypeCapabilitiesDefinition.remove(capabilityKey);
-          } else {
-            nodeTypeCapabilitiesDefinition.put(capabilityKey, clonedCapabilityDefinition);
-          }
-        }
-      }
-    }
-
-    Map<String, CapabilityDefinition> exposedCapabilitiesDefinition = new HashMap<>();
-    for (Map.Entry<String, CapabilityDefinition> entry : nodeTypeCapabilitiesDefinition
-        .entrySet()) {
-      exposedCapabilitiesDefinition.put(entry.getKey(), entry.getValue());
-    }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
-    return exposedCapabilitiesDefinition;
   }
 
   private static void addNodeTypeCapabilitiesToSubMapping(
@@ -1419,31 +1322,6 @@ public class HeatToToscaUtil {
         capabilitySubstitutionMapping.put(capabilityKey, capabilityMapping);
       }
     }
-    mdcDataDebugMessage.debugExitMessage(null, null);
-  }
-
-  private static void addSubstitutionNodeTypeRequirements(NodeType substitutionNodeType,
-                                                          List<Map<String, RequirementDefinition>>
-                                                              requirementsList,
-                                                          String templateName) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
-    if (requirementsList == null || requirementsList.size() == 0) {
-      return;
-    }
-
-    if (substitutionNodeType.getRequirements() == null) {
-      substitutionNodeType.setRequirements(new ArrayList<>());
-    }
-
-    for (Map<String, RequirementDefinition> requirementDef : requirementsList) {
-      for (Map.Entry<String, RequirementDefinition> entry : requirementDef.entrySet()) {
-        Map<String, RequirementDefinition> requirementMap = new HashMap<>();
-        requirementMap.put(entry.getKey() + "_" + templateName, entry.getValue().clone());
-        substitutionNodeType.getRequirements().add(requirementMap);
-      }
-    }
-
     mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
@@ -1487,85 +1365,6 @@ public class HeatToToscaUtil {
 
     mdcDataDebugMessage.debugExitMessage(null, null);
     return requirementList;
-  }
-
-  private static List<Map<String, RequirementDefinition>> calculateExposedRequirements(
-      List<Map<String, RequirementDefinition>> nodeTypeRequirementsDefinitionList,
-      Map<String, RequirementAssignment> nodeTemplateRequirementsAssignment) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
-    if (nodeTypeRequirementsDefinitionList == null) {
-      return null;
-    }
-    for (Map.Entry<String, RequirementAssignment> entry : nodeTemplateRequirementsAssignment
-        .entrySet()) {
-      if (entry.getValue().getNode() != null) {
-        Optional<RequirementDefinition> requirementDefinition =
-            DataModelUtil.getRequirementDefinition(nodeTypeRequirementsDefinitionList, entry
-                .getKey());
-        RequirementDefinition cloneRequirementDefinition;
-        if (requirementDefinition.isPresent()) {
-          cloneRequirementDefinition = requirementDefinition.get().clone();
-          if (!evaluateRequirementFulfillment(cloneRequirementDefinition)) {
-            CommonMethods.mergeEntryInList(entry.getKey(), cloneRequirementDefinition,
-                nodeTypeRequirementsDefinitionList);
-          } else {
-            DataModelUtil.removeRequirementsDefinition(nodeTypeRequirementsDefinitionList, entry
-                .getKey());
-          }
-        }
-      } else {
-        for (Map<String, RequirementDefinition> nodeTypeRequirementsMap :
-            nodeTypeRequirementsDefinitionList) {
-          Object max = nodeTypeRequirementsMap.get(entry.getKey()).getOccurrences() != null
-              && nodeTypeRequirementsMap.get(entry.getKey()).getOccurrences().length > 0
-              ? nodeTypeRequirementsMap.get(entry.getKey()).getOccurrences()[1] : 1;
-          Object min = nodeTypeRequirementsMap.get(entry.getKey()).getOccurrences() != null
-              && nodeTypeRequirementsMap.get(entry.getKey()).getOccurrences().length > 0
-              ? nodeTypeRequirementsMap.get(entry.getKey()).getOccurrences()[0] : 1;
-          nodeTypeRequirementsMap.get(entry.getKey()).setOccurrences(new Object[]{min, max});
-        }
-      }
-    }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
-    return nodeTypeRequirementsDefinitionList;
-  }
-
-  private static boolean evaluateRequirementFulfillment(RequirementDefinition
-                                                            requirementDefinition) {
-    Object[] occurrences = requirementDefinition.getOccurrences();
-    if (occurrences == null) {
-      requirementDefinition.setOccurrences(new Object[]{1, 1});
-      return false;
-    }
-    if (occurrences[1].equals(ToscaConstants.UNBOUNDED)) {
-      return false;
-    }
-
-    if (occurrences[1].equals(1)) {
-      return true;
-    }
-    occurrences[1] = (Integer) occurrences[1] - 1;
-    return false;
-  }
-
-  private static boolean evaluateCapabilityFulfillment(CapabilityDefinition capabilityDefinition) {
-
-    Object[] occurrences = capabilityDefinition.getOccurrences();
-    if (occurrences == null) {
-      capabilityDefinition.setOccurrences(new Object[]{1, ToscaConstants.UNBOUNDED});
-      return false;
-    }
-    if (occurrences[1].equals(ToscaConstants.UNBOUNDED)) {
-      return false;
-    }
-
-    if (occurrences[1].equals(1)) {
-      return true;
-    }
-    occurrences[1] = (Integer) occurrences[1] - 1;
-    return false;
   }
 
   /**

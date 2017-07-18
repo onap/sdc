@@ -33,6 +33,8 @@ public class ValidationResponseDto {
   private Collection<ErrorCodeDto> licensingDataErrors;
   private Map<String, List<ErrorMessageDto>> uploadDataErrors;
   private QuestionnaireValidationResultDto questionnaireValidationResult;
+  private ComponentValidationResultDto componentValidationResult;
+  private DeploymentFlavorValidationResultDto deploymentFlavorValidationResult;
 
   public boolean isValid() {
     return valid;
@@ -74,4 +76,23 @@ public class ValidationResponseDto {
       QuestionnaireValidationResultDto questionnaireValidationResult) {
     this.questionnaireValidationResult = questionnaireValidationResult;
   }
+
+  public ComponentValidationResultDto getComponentValidationResult() {
+    return componentValidationResult;
+  }
+
+  public void setComponentValidationResult(
+      ComponentValidationResultDto componentValidationResult) {
+    this.componentValidationResult = componentValidationResult;
+  }
+
+  public DeploymentFlavorValidationResultDto getDeploymentFlavorValidationResult() {
+    return deploymentFlavorValidationResult;
+  }
+
+  public void setDeploymentFlavorValidationResult(
+      DeploymentFlavorValidationResultDto deploymentFlavorValidationResult) {
+    this.deploymentFlavorValidationResult = deploymentFlavorValidationResult;
+  }
+
 }

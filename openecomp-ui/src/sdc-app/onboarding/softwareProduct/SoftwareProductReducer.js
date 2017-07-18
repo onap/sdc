@@ -22,6 +22,8 @@ import SoftwareProductCreationReducer from './creation/SoftwareProductCreationRe
 import SoftwareProductDetailsReducer from './details/SoftwareProductDetailsReducer.js';
 import SoftwareProductProcessesListReducer from './processes/SoftwareProductProcessesListReducer.js';
 import SoftwareProductProcessesEditorReducer from './processes/SoftwareProductProcessesEditorReducer.js';
+import SoftwareProductDeploymentListReducer from './deployment/SoftwareProductDeploymentListReducer.js';
+import SoftwareProductDeploymentEditorReducer from './deployment/editor/SoftwareProductDeploymentEditorReducer.js';
 import SoftwareProductNetworksListReducer from './networks/SoftwareProductNetworksListReducer.js';
 import SoftwareProductComponentsListReducer from './components/SoftwareProductComponentsListReducer.js';
 import SoftwareProductComponentEditorReducer from './components/SoftwareProductComponentEditorReducer.js';
@@ -31,12 +33,19 @@ import SoftwareProductComponentProcessesEditorReducer from './components/process
 import  {actionTypes as componentProcessesActionTypes} from './components/processes/SoftwareProductComponentProcessesConstants.js';
 import SoftwareProductComponentsNICListReducer from './components/network/SoftwareProductComponentsNICListReducer.js';
 import SoftwareProductComponentsNICEditorReducer from './components/network/SoftwareProductComponentsNICEditorReducer.js';
+import SoftwareProductComponentsImageListReducer from './components/images/SoftwareProductComponentsImageListReducer.js';
+import SoftwareProductComponentsImageEditorReducer from './components/images/SoftwareProductComponentsImageEditorReducer.js';
+import SoftwareProductComponentsImageNavigationReducer from './components/images/SoftwareProductComponentsImageNavigationReducer.js';
+import SoftwareProductComponentsNICCreationReducer from './components/network/NICCreation/NICCreationReducer.js';
 import SoftwareProductComponentsMonitoringReducer from './components/monitoring/SoftwareProductComponentsMonitoringReducer.js';
+import SoftwareProductComponentsComputeFlavorListReducer from './components/compute/computeComponents/computeFlavor/ComputeFlavorListReducer.js';
+import SoftwareProductComponentsComputeFlavorReducer from './components/compute/computeComponents/computeFlavor/ComputeFlavorReducer.js';
 import {createPlainDataReducer} from 'sdc-app/common/reducers/PlainDataReducer.js';
 import SoftwareProductDependenciesReducer from './dependencies/SoftwareProductDependenciesReducer.js';
 import {createJSONSchemaReducer, createComposedJSONSchemaReducer} from 'sdc-app/common/reducers/JSONSchemaReducer.js';
-import {COMPONENTS_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
+import {COMPONENTS_QUESTIONNAIRE, COMPONENTS_COMPUTE_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
 import {NIC_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNetworkConstants.js';
+import {IMAGE_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/images/SoftwareProductComponentsImageConstants.js';
 
 export default combineReducers({
 	softwareProductAttachments: combineReducers({
@@ -50,6 +59,10 @@ export default combineReducers({
 		processesList: SoftwareProductProcessesListReducer,
 		processesEditor: createPlainDataReducer(SoftwareProductProcessesEditorReducer),
 		processToDelete: (state = false, action) => action.type === processesActionTypes.SOFTWARE_PRODUCT_PROCESS_DELETE_CONFIRM ? action.processToDelete : state
+	}),
+	softwareProductDeployment: combineReducers({
+		deploymentFlavors: SoftwareProductDeploymentListReducer,
+		deploymentFlavorEditor: createPlainDataReducer(SoftwareProductDeploymentEditorReducer)
 	}),
 	softwareProductNetworks: combineReducers({
 		networksList: SoftwareProductNetworksListReducer
@@ -65,7 +78,17 @@ export default combineReducers({
 		}),
 		network: combineReducers({
 			nicList: SoftwareProductComponentsNICListReducer,
-			nicEditor: createPlainDataReducer(createComposedJSONSchemaReducer(NIC_QUESTIONNAIRE, SoftwareProductComponentsNICEditorReducer))
+			nicEditor: createPlainDataReducer(createComposedJSONSchemaReducer(NIC_QUESTIONNAIRE, SoftwareProductComponentsNICEditorReducer)),
+			nicCreation: createPlainDataReducer(SoftwareProductComponentsNICCreationReducer)
+		}),
+		images: combineReducers({
+			imagesList: SoftwareProductComponentsImageListReducer,
+			imagesNavigationList: SoftwareProductComponentsImageNavigationReducer,
+			imageEditor: createPlainDataReducer(createComposedJSONSchemaReducer(IMAGE_QUESTIONNAIRE, SoftwareProductComponentsImageEditorReducer))
+		}),
+		computeFlavor: combineReducers({
+			computesList: SoftwareProductComponentsComputeFlavorListReducer,
+			computeEditor: createPlainDataReducer(createComposedJSONSchemaReducer(COMPONENTS_COMPUTE_QUESTIONNAIRE, SoftwareProductComponentsComputeFlavorReducer)),
 		}),
 		monitoring: SoftwareProductComponentsMonitoringReducer
 	}),

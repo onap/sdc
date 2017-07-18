@@ -167,7 +167,7 @@ topology_template:
       default: oam_protected_net_0
   node_templates:
     abstract_pd_server_2:
-      type: org.openecomp.resource.abstract.nodes.pd_server_2
+      type: org.openecomp.resource.abstract.nodes.pd_server
       directives:
       - substitutable
       properties:
@@ -200,7 +200,7 @@ topology_template:
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
-          substitute_service_template: Nested_pd_server_2ServiceTemplate.yaml
+          substitute_service_template: Nested_pd_serverServiceTemplate.yaml
           count: 1
         index_value:
           get_property:
@@ -213,7 +213,7 @@ topology_template:
         name:
           get_input: dummy_net_name_1
     abstract_pd_server_0:
-      type: org.openecomp.resource.abstract.nodes.pd_server_0
+      type: org.openecomp.resource.abstract.nodes.pd_server
       directives:
       - substitutable
       properties:
@@ -244,7 +244,7 @@ topology_template:
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
-          substitute_service_template: Nested_pd_server_0ServiceTemplate.yaml
+          substitute_service_template: Nested_pd_serverServiceTemplate.yaml
           count: 1
         index_value:
           get_property:
@@ -252,7 +252,7 @@ topology_template:
           - service_template_filter
           - index_value
     abstract_pd_server_1:
-      type: org.openecomp.resource.abstract.nodes.pd_server_1
+      type: org.openecomp.resource.abstract.nodes.pd_server
       directives:
       - substitutable
       properties:
@@ -283,7 +283,7 @@ topology_template:
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
-          substitute_service_template: Nested_pd_server_1ServiceTemplate.yaml
+          substitute_service_template: Nested_pd_serverServiceTemplate.yaml
           count: 1
         index_value:
           get_property:

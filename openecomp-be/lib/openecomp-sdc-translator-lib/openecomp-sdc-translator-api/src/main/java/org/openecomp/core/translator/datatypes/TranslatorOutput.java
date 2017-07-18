@@ -30,6 +30,7 @@ import java.util.Map;
 public class TranslatorOutput {
   private Map<String, List<ErrorMessage>> errorMessages;
   private ToscaServiceModel toscaServiceModel;
+  private ToscaServiceModel nonUnifiedToscaServiceModel;
 
   public Map<String, List<ErrorMessage>> getErrorMessages() {
     return errorMessages;
@@ -45,5 +46,14 @@ public class TranslatorOutput {
 
   public void setToscaServiceModel(ToscaServiceModel toscaServiceModel) {
     this.toscaServiceModel = toscaServiceModel;
+  }
+
+  public ToscaServiceModel getNonUnifiedToscaServiceModel() {
+    return nonUnifiedToscaServiceModel;
+  }
+
+  public void setNonUnifiedToscaServiceModel(
+      ToscaServiceModel nonUnifiedToscaServiceModel) {
+    this.nonUnifiedToscaServiceModel = nonUnifiedToscaServiceModel;
   }
 }

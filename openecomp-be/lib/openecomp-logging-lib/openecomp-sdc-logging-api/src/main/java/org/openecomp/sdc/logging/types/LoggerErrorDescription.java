@@ -55,6 +55,8 @@ public class LoggerErrorDescription {
   public static final String VALIDATE_FILE = "Can't validate file";
   public static final String INVALID_FILE_TYPE = "Invalid file type";
   public static final String INVALID_ZIP = "Invalid zip file";
+  public static final String INVALID_VES_FILE = "Invalid VES file";
+
 
 
   public static final String RESOURCE_UNIQUE_NETWORK_ROLE =

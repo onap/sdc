@@ -1,5 +1,7 @@
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
+import static java.util.Objects.nonNull;
+
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -33,11 +35,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import static java.util.Objects.nonNull;
-
-/**
- * Created by TALIO on 2/23/2017.
- */
 public class NovaServerNamingConventionGuideLineValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
@@ -127,6 +124,11 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
           @Override
           public boolean equals(Object obj) {
             return false;
+          }
+
+          @Override
+          public int hashCode() {
+            return super.hashCode();
           }
         });
         propertyMap.putAll((Map) novaServerPropMetadata);

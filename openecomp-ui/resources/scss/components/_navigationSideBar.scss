@@ -16,7 +16,7 @@
       flex-direction: column;
       background-color: $tlv-gray;
       .group-name {
-        @extend .heading-4-medium;
+        @extend .heading-4-semibold;
         @include ellipsis;
         min-height: 56px;
         display: block;
@@ -47,13 +47,13 @@
           @include ellipsis;
           white-space: normal;
           &.selected {
-            @extend .body-1-medium;
+            @extend .body-1-semibold;
             border-left: 4px solid $blue;
             padding-left: 18px;
             color: $blue;
           }
           &.bold-name {
-            @extend .body-1-medium;
+            @extend .body-1-semibold;
           }
         }
       }

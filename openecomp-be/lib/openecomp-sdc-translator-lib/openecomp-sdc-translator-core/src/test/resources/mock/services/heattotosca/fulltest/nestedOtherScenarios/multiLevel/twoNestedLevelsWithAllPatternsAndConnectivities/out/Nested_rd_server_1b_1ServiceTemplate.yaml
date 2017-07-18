@@ -1,0 +1,301 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_rd_server_1b_1
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.rd_server_1b:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_ps_server_b_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_ps_server_b_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_ps_server_b_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    compute_rd_server_1b_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_ps_server_b_port_network_role:
+      type: string
+      required: true
+    port_ps_server_b_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    vm_flavor_name:
+      type: string
+      required: true
+    port_ps_server_b_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_ps_server_b_port_subnetpoolid:
+      type: string
+      required: true
+    port_ps_server_b_port_order:
+      type: integer
+      required: true
+    vm_image_name:
+      type: string
+      required: true
+    port_ps_server_b_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_ps_server_b_port_network_role_tag:
+      type: string
+      required: true
+    compute_rd_server_1b_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_ps_server_b_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    rd_server_1b_ps_server_b_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        exCP_naming:
+          get_input: port_ps_server_b_port_exCP_naming
+        replacement_policy:
+          get_input:
+          - port_ps_server_b_port_replacement_policy
+          - index_value
+        vlan_requirements:
+          get_input: port_ps_server_b_port_vlan_requirements
+        ip_requirements:
+          get_input: port_ps_server_b_port_ip_requirements
+        network_role_tag:
+          get_input: port_ps_server_b_port_network_role_tag
+        mac_requirements:
+          get_input: port_ps_server_b_port_mac_requirements
+        order:
+          get_input: port_ps_server_b_port_order
+        network_role:
+          get_input: port_ps_server_b_port_network_role
+        subnetpoolid:
+          get_input: port_ps_server_b_port_subnetpoolid
+        fixed_ips:
+          get_input: port_ps_server_b_port_fixed_ips
+        network:
+          get_input:
+          - port_ps_server_b_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: rd_server_1b
+          relationship: tosca.relationships.network.BindsTo
+    rd_server_1b:
+      type: org.openecomp.resource.vfc.nodes.heat.rd_server_1b
+      properties:
+        availability_zone:
+          get_input:
+          - compute_rd_server_1b_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_rd_server_1b_name
+          - index_value
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.rd_server_1b_1
+    capabilities:
+      disk.usage_rd_server_1b:
+      - rd_server_1b
+      - disk.usage
+      cpu_util_rd_server_1b:
+      - rd_server_1b
+      - cpu_util
+      vcpus_rd_server_1b:
+      - rd_server_1b
+      - vcpus
+      disk.device.write.requests_rd_server_1b:
+      - rd_server_1b
+      - disk.device.write.requests
+      disk.device.write.bytes_rd_server_1b:
+      - rd_server_1b
+      - disk.device.write.bytes
+      disk.capacity_rd_server_1b:
+      - rd_server_1b
+      - disk.capacity
+      disk.write.requests_rd_server_1b:
+      - rd_server_1b
+      - disk.write.requests
+      scalable_rd_server_1b:
+      - rd_server_1b
+      - scalable
+      network.outgoing.packets.rate_rd_server_1b_ps_server_b_port:
+      - rd_server_1b_ps_server_b_port
+      - network.outgoing.packets.rate
+      disk.device.usage_rd_server_1b:
+      - rd_server_1b
+      - disk.device.usage
+      disk.device.latency_rd_server_1b:
+      - rd_server_1b
+      - disk.device.latency
+      disk.device.read.bytes.rate_rd_server_1b:
+      - rd_server_1b
+      - disk.device.read.bytes.rate
+      disk.read.bytes.rate_rd_server_1b:
+      - rd_server_1b
+      - disk.read.bytes.rate
+      disk.root.size_rd_server_1b:
+      - rd_server_1b
+      - disk.root.size
+      network.incoming.packets.rate_rd_server_1b_ps_server_b_port:
+      - rd_server_1b_ps_server_b_port
+      - network.incoming.packets.rate
+      disk.device.write.requests.rate_rd_server_1b:
+      - rd_server_1b
+      - disk.device.write.requests.rate
+      os_rd_server_1b:
+      - rd_server_1b
+      - os
+      attachment_rd_server_1b_ps_server_b_port:
+      - rd_server_1b_ps_server_b_port
+      - attachment
+      disk.device.read.bytes_rd_server_1b:
+      - rd_server_1b
+      - disk.device.read.bytes
+      disk.device.read.requests.rate_rd_server_1b:
+      - rd_server_1b
+      - disk.device.read.requests.rate
+      network.incoming.bytes_rd_server_1b_ps_server_b_port:
+      - rd_server_1b_ps_server_b_port
+      - network.incoming.bytes
+      disk.device.allocation_rd_server_1b:
+      - rd_server_1b
+      - disk.device.allocation
+      disk.device.read.requests_rd_server_1b:
+      - rd_server_1b
+      - disk.device.read.requests
+      instance_rd_server_1b:
+      - rd_server_1b
+      - instance
+      disk.write.bytes.rate_rd_server_1b:
+      - rd_server_1b
+      - disk.write.bytes.rate
+      network.outgoing.bytes_rd_server_1b_ps_server_b_port:
+      - rd_server_1b_ps_server_b_port
+      - network.outgoing.bytes
+      memory_rd_server_1b:
+      - rd_server_1b
+      - memory
+      disk.write.bytes_rd_server_1b:
+      - rd_server_1b
+      - disk.write.bytes
+      binding_rd_server_1b:
+      - rd_server_1b
+      - binding
+      disk.read.bytes_rd_server_1b:
+      - rd_server_1b
+      - disk.read.bytes
+      feature_rd_server_1b:
+      - rd_server_1b
+      - feature
+      memory.resident_rd_server_1b:
+      - rd_server_1b
+      - memory.resident
+      disk.read.requests_rd_server_1b:
+      - rd_server_1b
+      - disk.read.requests
+      disk.ephemeral.size_rd_server_1b:
+      - rd_server_1b
+      - disk.ephemeral.size
+      network.incoming.packets_rd_server_1b_ps_server_b_port:
+      - rd_server_1b_ps_server_b_port
+      - network.incoming.packets
+      feature_rd_server_1b_ps_server_b_port:
+      - rd_server_1b_ps_server_b_port
+      - feature
+      network.outpoing.packets_rd_server_1b_ps_server_b_port:
+      - rd_server_1b_ps_server_b_port
+      - network.outpoing.packets
+      network.incoming.bytes.rate_rd_server_1b_ps_server_b_port:
+      - rd_server_1b_ps_server_b_port
+      - network.incoming.bytes.rate
+      disk.latency_rd_server_1b:
+      - rd_server_1b
+      - disk.latency
+      disk.write.requests.rate_rd_server_1b:
+      - rd_server_1b
+      - disk.write.requests.rate
+      disk.device.write.bytes.rate_rd_server_1b:
+      - rd_server_1b
+      - disk.device.write.bytes.rate
+      disk.device.iops_rd_server_1b:
+      - rd_server_1b
+      - disk.device.iops
+      cpu_rd_server_1b:
+      - rd_server_1b
+      - cpu
+      cpu.delta_rd_server_1b:
+      - rd_server_1b
+      - cpu.delta
+      host_rd_server_1b:
+      - rd_server_1b
+      - host
+      disk.device.capacity_rd_server_1b:
+      - rd_server_1b
+      - disk.device.capacity
+      disk.allocation_rd_server_1b:
+      - rd_server_1b
+      - disk.allocation
+      network.outgoing.bytes.rate_rd_server_1b_ps_server_b_port:
+      - rd_server_1b_ps_server_b_port
+      - network.outgoing.bytes.rate
+      disk.iops_rd_server_1b:
+      - rd_server_1b
+      - disk.iops
+      endpoint_rd_server_1b:
+      - rd_server_1b
+      - endpoint
+      binding_rd_server_1b_ps_server_b_port:
+      - rd_server_1b_ps_server_b_port
+      - binding
+      memory.usage_rd_server_1b:
+      - rd_server_1b
+      - memory.usage
+    requirements:
+      link_rd_server_1b_ps_server_b_port:
+      - rd_server_1b_ps_server_b_port
+      - link
+      dependency_rd_server_1b:
+      - rd_server_1b
+      - dependency
+      local_storage_rd_server_1b:
+      - rd_server_1b
+      - local_storage
+      dependency_rd_server_1b_ps_server_b_port:
+      - rd_server_1b_ps_server_b_port
+      - dependency

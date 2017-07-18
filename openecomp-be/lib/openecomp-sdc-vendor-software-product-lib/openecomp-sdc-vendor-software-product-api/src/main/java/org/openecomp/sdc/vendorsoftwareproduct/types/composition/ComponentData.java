@@ -25,6 +25,8 @@ public class ComponentData implements CompositionDataEntity {
   private String description;
   private String displayName;
   private String vfcCode;
+  private String nfcCode;
+  private String nfcFunction;
 
   public String getName() {
     return name;
@@ -48,6 +50,22 @@ public class ComponentData implements CompositionDataEntity {
 
   public void setDisplayName(String displayName) {
     this.displayName = displayName;
+  }
+
+  public String getNfcCode() {
+    return nfcCode;
+  }
+
+  public void setNfcCode(String nfcCode) {
+    this.nfcCode = nfcCode;
+  }
+
+  public String getNfcFunction() {
+    return nfcFunction;
+  }
+
+  public void setNfcFunction(String nfcFunction) {
+    this.nfcFunction = nfcFunction;
   }
 
   @Override

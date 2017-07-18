@@ -25,7 +25,9 @@ class Form extends React.Component {
 		onReset :  null,
 		labledButtons: true,
 		onValidChange :  null,
-		isValid: true
+		isValid: true,
+		submitButtonText: null,
+		cancelButtonText: null
 	};
 
 	static propTypes = {
@@ -36,6 +38,8 @@ class Form extends React.Component {
 		onSubmit : React.PropTypes.func,
 		onReset : React.PropTypes.func,
 		labledButtons: React.PropTypes.bool,
+		submitButtonText: React.PropTypes.string,
+		cancelButtonText: React.PropTypes.string,
 		onValidChange : React.PropTypes.func,
 		onValidityChanged: React.PropTypes.func,
 		onValidateForm: React.PropTypes.func
@@ -48,7 +52,8 @@ class Form extends React.Component {
 
 	render() {
 		// eslint-disable-next-line no-unused-vars
-		let {isValid, formReady, onValidateForm, isReadOnlyMode, hasButtons, onSubmit, labledButtons, onValidChange, onValidityChanged, onDataChanged, children, ...formProps} = this.props;
+		let {isValid, onValidChange, onValidityChanged, onDataChanged, formReady, onValidateForm, isReadOnlyMode, hasButtons, onSubmit, labledButtons, submitButtonText,
+			 cancelButtonText, children, ...formProps} = this.props;
 		return (
 			<form {...formProps} ref={(form) => this.form = form} onSubmit={event => this.handleFormValidation(event)}>
 				<div className='validation-form-content'>
@@ -56,7 +61,13 @@ class Form extends React.Component {
 						{children}
 					</fieldset>
 				</div>
-				{hasButtons && <ValidationButtons labledButtons={labledButtons} ref={(buttons) => this.buttons = buttons} isReadOnlyMode={isReadOnlyMode}/>}
+				{hasButtons && 
+					<ValidationButtons 
+						labledButtons={labledButtons} 
+						submitButtonText={submitButtonText} 
+						cancelButtonText={cancelButtonText} 
+						ref={(buttons) => this.buttons = buttons} 
+						isReadOnlyMode={isReadOnlyMode}/>}
 			</form>
 		);
 	}

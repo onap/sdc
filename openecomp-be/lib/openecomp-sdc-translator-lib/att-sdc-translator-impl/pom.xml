@@ -41,6 +41,11 @@
             <artifactId>openecomp-tosca-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.common</groupId>
+            <artifactId>openecomp-tosca-datatype</artifactId>
+            <version>${openecomp.sdc.common.version}</version>
+        </dependency>
 
 
         <!-- need to be changed to sdk -->

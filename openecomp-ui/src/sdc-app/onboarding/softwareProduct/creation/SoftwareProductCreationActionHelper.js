@@ -17,7 +17,7 @@ import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
-import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
+import {actionTypes as modalActionTypes, modalSizes} from 'nfvo-components/modal/GlobalModalConstants.js';
 import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
 import {actionTypes} from './SoftwareProductCreationConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
@@ -48,9 +48,10 @@ const SoftwareProductCreationActionHelper = {
 			type: modalActionTypes.GLOBAL_MODAL_SHOW,
 			data: {
 				modalComponentName: modalContentMapper.SOFTWARE_PRODUCT_CREATION,
-				title: i18n('New Software Product'),
+				title: i18n('New Software Product'),				
 				modalComponentProps: {
-					vendorId
+					vendorId,
+					size: modalSizes.LARGE					
 				}
 			}
 		});

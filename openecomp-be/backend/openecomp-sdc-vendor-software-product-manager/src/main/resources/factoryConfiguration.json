@@ -5,7 +5,10 @@
   "org.openecomp.sdc.vendorsoftwareproduct.NicManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.NicManagerFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.OrchestrationTemplateCandidateManagerFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.ProcessManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.ProcessManagerFactoryImpl",
-  "org.openecomp.sdc.vendorsoftwareproduct.MibManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.MibManagerFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.MonitoringUploadsManagerFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.ComponentDependencyModelManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.ComponentDependencyModelManagerFactoryImpl",
-  "org.openecomp.sdc.vendorsoftwareproduct.factories.VspServiceFactory": "org.openecomp.sdc.vendorsoftwareproduct.factories.impl.VspServiceFactoryImpl"
+  "org.openecomp.sdc.vendorsoftwareproduct.factories.VspServiceFactory": "org.openecomp.sdc.vendorsoftwareproduct.factories.impl.VspServiceFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.ComputeManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.ComputeManagerFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.DeploymentFlavorManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.DeploymentFlavorManagerFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.ImageManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.ImageManagerFactoryImpl"
 }

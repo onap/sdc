@@ -20,12 +20,13 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.composition;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
@@ -47,12 +48,14 @@ import org.openecomp.sdc.tosca.errors.ToscaMissingSubstitutionMappingForReqCapEr
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
-import org.openecomp.sdc.tosca.services.yamlutil.ToscaExtensionYamlUtil;
+import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionDataExtractor;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Component;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionData;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComputeData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ExtractCompositionDataContext;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Image;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 
@@ -60,7 +63,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CompositionDataExtractorImpl implements CompositionDataExtractor {
 
@@ -293,6 +298,10 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
     if (MapUtils.isEmpty(computeNodeTemplates)) {
       return;
     }
+    Map<String, List<String>> imageNodeTemplates = getComponentImages(computeNodeTemplates,
+        toscaServiceModel);
+    Map<String, List<String>> computeFlavorNodeTemplates =
+        getComponentComputeFlavor(computeNodeTemplates, toscaServiceModel);
     Map<String, NodeTemplate> portNodeTemplates = toscaAnalyzerService
         .getNodeTemplatesByType(serviceTemplate, ToscaNodeType.NATIVE_NETWORK_PORT,
             toscaServiceModel);
@@ -306,14 +315,90 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
         .filter(nodeType ->
             !context.getCreatedComponents().contains(nodeType))
         .forEach(nodeType -> extractComponent(serviceTemplate, computeToPortsConnection,
-            computesGroupedByType, nodeType, context));
+            computesGroupedByType, imageNodeTemplates, computeFlavorNodeTemplates, nodeType,
+            context));
 
     mdcDataDebugMessage.debugExitMessage(null);
+  }
+
+  private Map<String,List<String>> getComponentImages(Map<String, NodeTemplate>
+                                                          computeNodeTemplates,
+                                                      ToscaServiceModel toscaServiceModel) {
+    Map<String,List<String>> computeImages = new HashMap<>();
+    for (String component : computeNodeTemplates.keySet()) {
+      List<String> images = new ArrayList<>();
+      Map<String,Object> properties =  computeNodeTemplates.get(component).getProperties();
+
+      List<Object> imagesList = properties.entrySet()
+          .stream()
+          .filter(map -> map.getKey().equals("image"))
+          .map(map -> map.getValue())
+          .collect(Collectors.toList());
+      for (Object obj : imagesList) {
+        if (obj instanceof String) {
+          images.add((String) obj);
+        } else {
+          HashMap<String,String> objMap = new ObjectMapper().convertValue(obj,HashMap.class);
+          images.add(getInputs(toscaServiceModel,objMap.get("get_input")));
+        }
+      }
+      computeImages.put(component,images);
+    }
+    return computeImages;
+  }
+
+  private Map<String,List<String>> getComponentComputeFlavor(Map<String, NodeTemplate>
+                                                                 computeNodeTemplates,
+                                                             ToscaServiceModel toscaServiceModel) {
+    Map<String,List<String>> componentComputeFlavor = new HashMap<>();
+    for (String component : computeNodeTemplates.keySet()) {
+      List<String> computes = new ArrayList<>();
+      Map<String,Object> properties =  computeNodeTemplates.get(component).getProperties();
+
+      List<Object> computessList = properties.entrySet()
+          .stream()
+          .filter(map -> map.getKey().equals("flavor"))
+          .map(map -> map.getValue())
+          .collect(Collectors.toList());
+      for (Object obj : computessList) {
+        if (obj instanceof String) {
+          computes.add((String) obj);
+        } else {
+          HashMap<String, String> objMap = new ObjectMapper().convertValue(obj, HashMap.class);
+          computes.add(getInputs(toscaServiceModel, objMap.get("get_input")));
+        }
+      }
+      componentComputeFlavor.put(component,computes);
+    }
+    return componentComputeFlavor;
+  }
+
+  private String  getInputs(ToscaServiceModel toscaServiceModel, String inputValue) {
+    String mainTemplate = toscaServiceModel.getEntryDefinitionServiceTemplate();
+    List<ServiceTemplate> toscaServiceTemplates = toscaServiceModel.getServiceTemplates().entrySet()
+        .stream()
+        .filter(map -> map.getKey().equals(mainTemplate))
+        .map(map -> map.getValue())
+        .collect(Collectors.toList());
+    ServiceTemplate serviceTemplate = toscaServiceTemplates.get(0);
+
+    if (Objects.nonNull(serviceTemplate.getTopology_template())
+        && MapUtils.isNotEmpty(serviceTemplate.getTopology_template().getInputs())) {
+      for (Map.Entry<String, ParameterDefinition> inputEntry : serviceTemplate
+          .getTopology_template().getInputs().entrySet()) {
+        if (inputEntry.getKey().equals(inputValue)) {
+          return (String)inputEntry.getValue().get_default();
+        }
+      }
+    }
+    return inputValue;
   }
 
   private void extractComponent(ServiceTemplate serviceTemplate,
                                        Map<String, List<String>> computeToPortsConnection,
                                        Map<String, List<String>> computesGroupedByType,
+                                       Map<String, List<String>> imageList,
+                                       Map<String, List<String>> computeFlavorNodeTemplates,
                                        String computeNodeType,
                                        ExtractCompositionDataContext context) {
     ComponentData component = new ComponentData();
@@ -325,13 +410,27 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
 
     String computeId = computesGroupedByType.get(computeNodeType).get(0);
     List<String> connectedPortIds = computeToPortsConnection.get(computeId);
+    List<String> images = imageList.get(computeId);
+    List<String> computeFlavors = computeFlavorNodeTemplates.get(computeId);
 
     if (connectedPortIds != null) {
       componentModel.setNics(new ArrayList<>());
+      componentModel.setImages(new ArrayList<>());
+      componentModel.setCompute(new ArrayList<>());
       for (String portId : connectedPortIds) {
         Nic port = extractPort(serviceTemplate, portId);
         componentModel.getNics().add(port);
         context.addNic(portId, port);
+      }
+      for (String image : images) {
+        Image img = new Image(image);
+        componentModel.getImages().add(img);
+        context.addImage(image, img);
+      }
+      for (String flavor : computeFlavors) {
+        ComputeData computeFlavor = new ComputeData(flavor);
+        componentModel.getCompute().add(computeFlavor);
+        context.addCompute(flavor,computeFlavor);
       }
     }
     context.addComponent(componentModel);
@@ -355,7 +454,6 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
           new ToscaInvalidEntryNotFoundErrorBuilder("Node Template", portNodeTemplateId).build());
     }
   }
-
 
   private Map<String, List<String>> getNodeTemplatesGroupedByType(
       Map<String, NodeTemplate> nodeTemplates) {

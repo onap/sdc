@@ -17,56 +17,13 @@ var gulp = require('gulp');
 var fs = require('fs');
 var replace = require('gulp-replace');
 var clean = require('gulp-clean');
-var mkdirp = require('mkdirp');
-
-/**
- *
- * @param options.localesPath
- * @param options.lang = options.lang
- *
- * @returns {string}
- */
-function composeLocalesDirPath(options) {
-	return options.localesPath + options.lang;
-}
-
-/**
- *
- * @param options.localesPath
- * @param options.lang
- *
- * @returns {string}
- */
-function composeLocaleFilePath(options) {
-	return composeLocalesDirPath(options) + '/locale.json';
-}
-
-
-/**
- *
- * @param options.localesPath
- * @param options.lang = options.lang
- */
-function ensureLocalesDir(options) {
-
-	return new Promise(function (resolve, reject) {
-		mkdirp(composeLocalesDirPath(options), function (err) {
-			if (err) {
-				reject(err);
-			}
-			else {
-				resolve();
-			}
-		});
-	});
-}
-
+var tap = require('gulp-tap');
 /**
  *
  * @param options
- * @param options.outputPath
- * @param options.localesPath
- * @param options.lang = options.lang
+ * @param options.outDir
+ * @param options.srcDir
+ * @param options.i18nBundles - optional. if given will check the that all keys from js are mapped
  *
  */
 function i18nTask(options) {
@@ -75,31 +32,66 @@ function i18nTask(options) {
 
 	function addWord(expr) {
 		var word = expr.substring('i18n(\''.length, expr.length - 1);
-		i18nJson[word] = word;
+		if (word !== '') {
+			i18nJson[word] = word;
+		}
 		return expr;
 	}
 
-	return ensureLocalesDir(options).then(function () {
-		return new Promise(function(resolve, reject) {
-			gulp.src(options.outputPath + '**/*.js', {base: './'})
-				.pipe(replace(/i18n\('.*?'/g, addWord))
-				.pipe(clean())
-				.pipe(gulp.dest('./'))
-				.on('end', function () {
-
-					var i18nJsonWrapper = { dataWrapperArr: ["I18N_IDENTIFIER_START", i18nJson, "I18N_IDENTIFIER_END"] , i18nDataIdx: 1};
-
-					fs.writeFile(composeLocaleFilePath(options), JSON.stringify(i18nJsonWrapper), function (err) {
+	let createBundle = new Promise(function(resolve, reject) {
+		gulp.src(options.srcDir + '**/*.{js,jsx}', {base: './'})
+			.pipe(replace(/i18n\('.*?'/g, addWord))
+			.pipe(clean())
+			.pipe(gulp.dest('./'))
+			.on('end', function () {
+				console.log('Retrieved keys from static references.');
+				if (options.i18nBundles === undefined) {
+					// creating the file from the words saved during the replace
+					let outfile = options.outDir + '/bundleForStaticKeys.json';
+					fs.writeFile(outfile,JSON.stringify(i18nJson, null, '\t'), function (err) {
 						if (err) {
 							reject(err);
 						}
 						else resolve();
 					});
-				}).on('error', function (err) {
-				reject(err);
-			});
+					console.log('Bundle with static keys was created under: ' + outfile);
+				}
+				resolve();
+			}).on('error', function (err) {
+			reject(err);
 		});
 	});
+
+
+	if (options.i18nBundles === undefined) {
+		return createBundle;
+	} else {
+		return createBundle.then(() => {
+			new Promise(function (resolve, reject) {
+				gulp.src(options.i18nBundles)
+					.pipe(tap(function (file) {
+						console.log('Checking against bundle: ' + file.path);
+						let bundle = JSON.parse(file.contents.toString());
+						for (entry in i18nJson) {
+							if (!bundle[entry]) {
+								console.log('Missing Key: ' + entry);
+							} else {
+								delete bundle[entry];
+							}
+						}
+						for (entry in bundle) {
+							console.log('Unused in static files: ' + entry);
+						}
+					}))
+					.pipe(gulp.dest('./'))
+					.on('end', function () {
+						console.log('done');
+					}).on('error', function (err) {
+					reject(err);
+				});
+			});
+		});
+	}
 }
 
 module.exports = i18nTask;

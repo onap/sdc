@@ -70,5 +70,9 @@ public class FeatureGroupModel {
     return featureGroup.getPartNumber();
   }
 
+  public String getEntityManufacturerReferenceNumber(){
+    return featureGroup.getManufacturerReferenceNumber();
+  }
+
 
 }

@@ -28,8 +28,9 @@ import NameAndPurpose from './nicEditorComponents/NameAndPurpose.jsx';
 class SoftwareProductComponentsNetworkEditorView extends React.Component {
 
 	render() {
-		let {onCancel, onValidateForm, isReadOnlyMode, isFormValid, formReady, data = {}, qgenericFieldInfo, dataMap, onDataChanged, protocols, onQDataChanged} = this.props;
-		let {name, description, networkName} = data;
+		let {onCancel, onValidateForm, isReadOnlyMode, isFormValid, formReady, data = {}, qgenericFieldInfo,
+			dataMap, onDataChanged, protocols, onQDataChanged, isManual, genericFieldInfo} = this.props;
+		let {name, description, networkName, networkType, networkDescription} = data;
 		let netWorkValues = [{
 			enum: networkName,
 			title: networkName
@@ -48,10 +49,10 @@ class SoftwareProductComponentsNetworkEditorView extends React.Component {
 			onValidateForm={() => onValidateForm() }
 			className='vsp-components-network-editor'>
 				<div className='editor-data'>
-					<NameAndPurpose name={name} description={description} onDataChanged={onDataChanged} isReadOnlyMode={isReadOnlyMode}/>
+					<NameAndPurpose isManual={isManual}  name={name} description={description} onDataChanged={onDataChanged} isReadOnlyMode={isReadOnlyMode} genericFieldInfo={genericFieldInfo} />
 					<Protocols protocols={protocols} qgenericFieldInfo={qgenericFieldInfo} dataMap={dataMap} onQDataChanged={onQDataChanged} />
 					<IpConfig dataMap={dataMap} onQDataChanged={onQDataChanged} />
-					<Network networkValues={netWorkValues} />
+					<Network networkDescription={networkDescription} onDataChanged={onDataChanged} networkValues={netWorkValues}  isReadOnlyMode={isReadOnlyMode} networkType={networkType}  />
 					<Sizing qgenericFieldInfo={qgenericFieldInfo} dataMap={dataMap} onQDataChanged={onQDataChanged} />
 					<InFlowTraffic qgenericFieldInfo={qgenericFieldInfo} dataMap={dataMap} onQDataChanged={onQDataChanged} />
 					<OutFlowTraffic qgenericFieldInfo={qgenericFieldInfo} dataMap={dataMap} onQDataChanged={onQDataChanged} />

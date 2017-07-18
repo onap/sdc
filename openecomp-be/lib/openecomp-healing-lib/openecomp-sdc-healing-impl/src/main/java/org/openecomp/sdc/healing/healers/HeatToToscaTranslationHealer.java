@@ -16,8 +16,6 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadDataEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
@@ -55,7 +53,7 @@ public class HeatToToscaTranslationHealer implements Healer  {
     FileContentHandler fileContentHandler;
     TranslatorOutput translatorOutput;
     try {
-      fileContentHandler = CommonUtil.loadUploadFileContent(uploadData
+      fileContentHandler = CommonUtil.validateAndUploadFileContent(uploadData
           .getContentData().array());
       translatorOutput =
           HeatToToscaUtil.loadAndTranslateTemplateData(fileContentHandler);

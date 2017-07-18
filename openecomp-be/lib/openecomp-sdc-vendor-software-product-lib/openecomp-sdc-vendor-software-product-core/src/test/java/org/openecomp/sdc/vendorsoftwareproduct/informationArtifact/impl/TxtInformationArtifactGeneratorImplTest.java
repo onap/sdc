@@ -60,12 +60,6 @@ import static org.mockito.Matchers.anyString;
 import static org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.impl.TxtInformationArtifactConstants.HEADER;
 import static org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.impl.TxtInformationArtifactConstants.VFC_COMPUTE_CPU_OVER_SUBSCRIPTION;
 
-
-/**
- * @author KATYR
- * @since December 07, 2016
- */
-
 public class TxtInformationArtifactGeneratorImplTest {
 
   private static final String NETWORK_DESC = "\"network desc\"";
@@ -246,6 +240,7 @@ public class TxtInformationArtifactGeneratorImplTest {
     featureGroups.add("one too many feature group");
     featureGroups.add("the very last feature group");
     vspDetails.setFeatureGroups(featureGroups);
+    vspDetails.setOnboardingMethod("HEAT");
     return vspDetails;
   }
 

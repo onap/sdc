@@ -9,9 +9,7 @@ import org.openecomp.core.model.types.ServiceTemplate;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.model.impl.zusammen.ElementType;
 import org.openecomp.sdc.model.impl.zusammen.StructureElement;
-import org.openecomp.sdc.tosca.services.yamlutil.ToscaExtensionYamlUtil;
 
-import java.io.ByteArrayInputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

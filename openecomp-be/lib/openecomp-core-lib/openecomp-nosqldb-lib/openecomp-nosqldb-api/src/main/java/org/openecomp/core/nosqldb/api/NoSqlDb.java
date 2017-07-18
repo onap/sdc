@@ -34,4 +34,6 @@ public interface NoSqlDb {
   ResultSet execute(String statementName, Object... values);
 
   MappingManager getMappingManager();
+
+  String getVersion();
 }

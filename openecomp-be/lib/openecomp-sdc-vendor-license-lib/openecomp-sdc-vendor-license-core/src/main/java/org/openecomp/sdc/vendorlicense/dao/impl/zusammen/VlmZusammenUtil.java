@@ -65,4 +65,15 @@ public class VlmZusammenUtil {
     relation.setEdge2(edge2);
     return relation;
   }
+
+  public static Integer toInteger(Object val) {
+    if (val instanceof Double) {
+      return ((Double) val).intValue();
+    } else if (val instanceof String) {
+      return new Integer((String) val);
+    } else if (val instanceof Integer) {
+      return (Integer) val;
+    }
+    throw new RuntimeException("invalid value for integer:" + val.getClass());
+  }
 }

@@ -18,8 +18,9 @@ import mockRest from 'test-utils/MockRest.js';
 import {storeCreator} from 'sdc-app/AppStore.js';
 import SoftwareProductComponentsMonitoringConstants from 'sdc-app/onboarding/softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringConstants.js';
 import SoftwareProductComponentsMonitoringActionHelper from 'sdc-app/onboarding/softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringActionHelper.js';
+import {fileTypes} from 'sdc-app/onboarding/softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringConstants.js';
 
-import {VSPComponentsMonitoringRestFactory} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsMonitoringFactories.js';
+import {VSPComponentsMonitoringRestFactory, trap, poll, ves} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsMonitoringFactories.js';
 import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
 
 const softwareProductId = '123';
@@ -40,171 +41,103 @@ describe('Software Product Components Monitoring Module Tests', function () {
 		let emptyResult = VSPComponentsMonitoringRestFactory.build();
 
 		mockRest.addHandler('fetch', ({ baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/monitors/snmp`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/uploads`);
 			return emptyResult;
 		});
 
-		SoftwareProductComponentsMonitoringActionHelper.fetchExistingFiles(store.dispatch, {
-			softwareProductId,
-			version,
-			componentId
-		});
-		setTimeout(()=> {
+		return SoftwareProductComponentsMonitoringActionHelper.fetchExistingFiles(store.dispatch, {softwareProductId, version, componentId}).then(() => {
 			var {softwareProduct: {softwareProductComponents: {monitoring}}} = store.getState();
-			expect(monitoring.pollFilename).toEqual(emptyResult.snmpPoll);
-			expect(monitoring.trapFilename).toEqual(emptyResult.snmpTrap);
+			expect(monitoring[trap]).toEqual(emptyResult[trap]);
+			expect(monitoring[poll]).toEqual(emptyResult[poll]);
+			expect(monitoring[ves]).toEqual(emptyResult[ves]);
 			done();
-		}, 0);
+		});
+
 
 	});
 
 	it('Fetch for existing files - only snmp trap file exists', done => {
-		let response = VSPComponentsMonitoringRestFactory.build({}, {snmpTrapFlag: true});
+		let response = VSPComponentsMonitoringRestFactory.build({}, {createTrap: true});
 
 		mockRest.addHandler('fetch', ({ baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/monitors/snmp`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/uploads`);
 			return response;
 		});
 
-		SoftwareProductComponentsMonitoringActionHelper.fetchExistingFiles(store.dispatch, {
-			softwareProductId,
-			version,
-			componentId
-		});
-		setTimeout(()=> {
+		return SoftwareProductComponentsMonitoringActionHelper.fetchExistingFiles(store.dispatch, {softwareProductId, version, componentId}).then(() => {
+
 			var {softwareProduct: {softwareProductComponents: {monitoring}}} = store.getState();
-			expect(monitoring.pollFilename).toEqual(response.snmpPoll);
-			expect(monitoring.trapFilename).toEqual(response.snmpTrap);
+			expect(monitoring[poll]).toEqual(undefined);
+			expect(monitoring[trap]).toEqual(response[trap]);
+			expect(monitoring[ves]).toEqual(undefined);
 			done();
-		}, 0);
+		});
 	});
 
-	it('Fetch for existing files - only snmp poll file exists', done => {
-		let response  = VSPComponentsMonitoringRestFactory.build({}, {snmpPollFlag: true});
+
+	it('Fetch for existing files - all files exist', done => {
+		let response = VSPComponentsMonitoringRestFactory.build({}, {createSnmp: true, createPoll: true, createVes: true});
 
 		mockRest.addHandler('fetch', ({baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/monitors/snmp`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/uploads`);
 			return response;
 		});
 
-		SoftwareProductComponentsMonitoringActionHelper.fetchExistingFiles(store.dispatch, {
-			softwareProductId,
-			version,
-			componentId
-		});
-		setTimeout(()=> {
+		return SoftwareProductComponentsMonitoringActionHelper.fetchExistingFiles(store.dispatch, {softwareProductId, version, componentId}).then(() => {
+
 			var {softwareProduct: {softwareProductComponents: {monitoring}}} = store.getState();
-			expect(monitoring.pollFilename).toEqual(response.snmpPoll);
-			expect(monitoring.trapFilename).toEqual(response.snmpTrap);
+			expect(monitoring[trap]).toEqual(response[trap]);
+			expect(monitoring[poll]).toEqual(response[poll]);
+			expect(monitoring[ves]).toEqual(response[ves]);
 			done();
-		}, 0);
+		});
 	});
 
-	it('Fetch for existing files - both files exist', done => {
-		let response = VSPComponentsMonitoringRestFactory.build({}, {snmpTrapFlag: true, snmpPollFlag: true});
-
-		mockRest.addHandler('fetch', ({baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/monitors/snmp`);
-			return response;
-		});
-
-		SoftwareProductComponentsMonitoringActionHelper.fetchExistingFiles(store.dispatch, {
-			softwareProductId,
-			version,
-			componentId
-		});
-		setTimeout(()=> {
-			var {softwareProduct: {softwareProductComponents: {monitoring}}} = store.getState();
-			expect(monitoring.pollFilename).toEqual(response.snmpPoll);
-			expect(monitoring.trapFilename).toEqual(response.snmpTrap);
-			done();
-		}, 0);
-	});
-
-	it('Upload snmp trap file', done => {
+	it('Upload file', done => {
 
 		mockRest.addHandler('post', ({baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/monitors/snmp-trap/upload`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/uploads/types/${fileTypes.SNMP_TRAP}`);
 			return {};
 		});
 		var debug = {hello: 'world'};
 		let file = new Blob([JSON.stringify(debug, null, 2)], {type: 'application/json'});;
 		let formData = new FormData();
 		formData.append('upload', file);
-		SoftwareProductComponentsMonitoringActionHelper.uploadSnmpFile(store.dispatch, {
+		return SoftwareProductComponentsMonitoringActionHelper.uploadFile(store.dispatch, {
 			softwareProductId,
 			version,
 			componentId,
 			formData,
 			fileSize: file.size,
-			type: SoftwareProductComponentsMonitoringConstants.SNMP_TRAP
-		});
-		setTimeout(()=> {
+			type: fileTypes.SNMP_TRAP
+		}).then(() => {
 			var {softwareProduct: {softwareProductComponents: {monitoring}}} = store.getState();
-			expect(monitoring.pollFilename).toEqual(undefined);
-			expect(monitoring.trapFilename).toEqual('blob');
+			expect(monitoring[poll]).toEqual(undefined);
+			expect(monitoring[ves]).toEqual(undefined);
+			expect(monitoring[trap]).toEqual('blob');
 			done();
-		}, 0);
-	});
 
-	it('Upload snmp poll file', done => {
-		mockRest.addHandler('post', ({baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/monitors/snmp/upload`);
-			return {};
 		});
-		var debug = {hello: 'world'};
-		let file = new Blob([JSON.stringify(debug, null, 2)], {type: 'application/json'});;
-		let formData = new FormData();
-		formData.append('upload', file);
-		SoftwareProductComponentsMonitoringActionHelper.uploadSnmpFile(store.dispatch, {
-			softwareProductId,
-			version,
-			componentId,
-			formData,
-			fileSize: file.size,
-			type: SoftwareProductComponentsMonitoringConstants.SNMP_POLL
-		});
-		setTimeout(()=> {
-			var {softwareProduct: {softwareProductComponents: {monitoring}}} = store.getState();
-			expect(monitoring.pollFilename).toEqual('blob');
-			expect(monitoring.trapFilename).toEqual(undefined);
-			done();
-		}, 0);
 	});
 
 	it('Delete snmp trap file', done => {
 		mockRest.addHandler('destroy', ({baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/monitors/snmp-trap`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/uploads/types/${fileTypes.SNMP_TRAP}`);
 			return {};
 		});
-		SoftwareProductComponentsMonitoringActionHelper.deleteSnmpFile(store.dispatch, {
+
+
+		return SoftwareProductComponentsMonitoringActionHelper.deleteFile(store.dispatch, {
 			softwareProductId,
 			version,
 			componentId,
-			type: SoftwareProductComponentsMonitoringConstants.SNMP_TRAP
-		});
-		setTimeout(()=> {
+			type: fileTypes.SNMP_TRAP
+		}).then((dispatch) => {
 			var {softwareProduct: {softwareProductComponents: {monitoring}}} = store.getState();
-			expect(monitoring.trapFilename).toEqual(undefined);
+			expect(monitoring[trap]).toEqual(undefined);
 			done();
-		}, 0);
+		});
 	});
 
-	it('Delete snmp poll file', done => {
-		mockRest.addHandler('destroy', ({baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/monitors/snmp`);
-			return {};
-		});
-		SoftwareProductComponentsMonitoringActionHelper.deleteSnmpFile(store.dispatch, {
-			softwareProductId,
-			version,
-			componentId,
-			type: SoftwareProductComponentsMonitoringConstants.SNMP_POLL
-		});
-		setTimeout(()=> {
-			var {softwareProduct: {softwareProductComponents: {monitoring}}} = store.getState();
-			expect(monitoring.pollFilename).toEqual(undefined);
-			done();
-		}, 0);
-	});
+
 });

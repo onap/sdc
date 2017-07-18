@@ -18,6 +18,8 @@ import Configuration from 'sdc-app/config/Configuration.js';
 
 import {actionTypes, COMPONENTS_QUESTIONNAIRE} from './SoftwareProductComponentsConstants.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
+import SoftwareProductComponentsImageActionHelper from './images/SoftwareProductComponentsImageActionHelper.js';
+import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 
 function baseUrl(softwareProductId, version) {
 	const versionId = version.id;
@@ -46,17 +48,53 @@ function putSoftwareProductComponent(softwareProductId, version, vspComponentId,
 		name: vspComponent.name,
 		displayName: vspComponent.displayName,
 		vfcCode: vspComponent.vfcCode,
+		nfcFunction: vspComponent.nfcFunction,
 		description: vspComponent.description
 	});
 }
 
+function deleteSoftwareProductComponent(softwareProductId, componentId, version) {
+	return RestAPIUtil.destroy(`${baseUrl(softwareProductId, version)}/${componentId}`,);
+}
+
+
+function postSoftwareProductComponent(softwareProductId, vspComponent, version) {
+
+	return RestAPIUtil.post(`${baseUrl(softwareProductId, version)}`, {
+		name: vspComponent.displayName,
+		displayName: vspComponent.displayName,
+		description: vspComponent.description
+	});
+}
+
+
 const SoftwareProductComponentsActionHelper = {
-	fetchSoftwareProductComponents(dispatch, {softwareProductId, version}) {
+	fetchSoftwareProductComponents(dispatch, {softwareProductId, version, isFetchImageDetails = false}) {
 		return fetchSoftwareProductComponents(softwareProductId, version).then(response => {
-			dispatch({
-				type: actionTypes.COMPONENTS_LIST_UPDATE,
-				componentsList: response.results
-			});
+			let componentImagesCalls = [];
+			if (isFetchImageDetails && response.listCount) {
+				response.results.map(component => {
+					let componentId = component.id;
+					componentImagesCalls[componentImagesCalls.length] =
+						SoftwareProductComponentsImageActionHelper.fetchImagesList(dispatch, {
+							softwareProductId,
+							componentId,
+							version
+						});
+
+				});
+				return Promise.all(componentImagesCalls).then(() => {
+					dispatch({
+						type: actionTypes.COMPONENTS_LIST_UPDATE,
+						componentsList: response.results
+					});
+				});
+			} else {
+				dispatch({
+					type: actionTypes.COMPONENTS_LIST_UPDATE,
+					componentsList: response.results
+				});
+			}
 		});
 	},
 
@@ -110,7 +148,45 @@ const SoftwareProductComponentsActionHelper = {
 			type: actionTypes.COMPONENTS_LIST_UPDATE,
 			componentsList: []
 		});
-	}
+	},
+
+	createSoftwareProductComponent(dispatch,{softwareProductId, componentData, version}) {
+		SoftwareProductComponentsActionHelper.closeComponentCreationModal(dispatch);
+		/* for mock only */
+
+		dispatch({
+			type: actionTypes.COMPONENTS_LIST_UPDATE,
+			componentsList: [{id: '123', ...componentData}]
+		});
+
+		postSoftwareProductComponent(softwareProductId, componentData, version).then(() => {
+			SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version});
+		});
+	},
+
+	clearComponentCreationData(dispatch) {
+		dispatch({
+			type: actionTypes.COMPONENT_DATA_CLEAR
+		});
+	},
+
+	closeComponentCreationModal(dispatch) {
+		dispatch({
+			type: modalActionTypes.GLOBAL_MODAL_CLOSE
+		});
+		SoftwareProductComponentsActionHelper.clearComponentCreationData(dispatch);
+	},
+
+	deleteComponent(dispatch, {softwareProductId, componentId, version}) {
+		deleteSoftwareProductComponent(softwareProductId, componentId, version);
+		dispatch({
+			type: actionTypes.COMPONENT_DELETE,
+			componentId: componentId
+		});
+	},
+
+
+
 };
 
 export default SoftwareProductComponentsActionHelper;

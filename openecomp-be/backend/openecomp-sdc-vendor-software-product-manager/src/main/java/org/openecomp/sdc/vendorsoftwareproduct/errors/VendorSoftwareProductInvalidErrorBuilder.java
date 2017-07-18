@@ -28,6 +28,8 @@ public class VendorSoftwareProductInvalidErrorBuilder {
   private static final String VSP_INVALID_MSG =
       "Vendor software product with Id %s and version %s is invalid - does not contain "
           + "service model.";
+  private static final String VSP_INVALID_MISSING_DEPLOYMENT_FLAVOR_MSG ="VSP has to have a " +
+      "minimum of one Deployment Flavor defined for being able to be instantiated.Please add a Deployment Flavor and re-submit the VSP.";
   private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
@@ -36,14 +38,27 @@ public class VendorSoftwareProductInvalidErrorBuilder {
    * @param vendorSoftwareProductId the vendor software product id
    * @param version                 the version
    */
-  public VendorSoftwareProductInvalidErrorBuilder(String vendorSoftwareProductId, Version version) {
+  public static ErrorCode VendorSoftwareProductMissingServiceModelErrorBuilder(String
+                                                                         vendorSoftwareProductId,
+                                                             Version version) {
+    ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
     builder.withId(VendorSoftwareProductErrorCodes.VSP_INVALID);
     builder.withCategory(ErrorCategory.APPLICATION);
     builder
         .withMessage(String.format(VSP_INVALID_MSG, vendorSoftwareProductId, version.toString()));
-  }
-
-  public ErrorCode build() {
     return builder.build();
   }
+
+  /**
+   * Instantiates a new Vendor software product invalid error builder.
+   */
+  public static ErrorCode VspMissingDeploymentFlavorErrorBuilder() {
+    ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
+    builder.withId(VendorSoftwareProductErrorCodes.VSP_INVALID);
+    builder.withCategory(ErrorCategory.APPLICATION);
+    builder
+        .withMessage(String.format(VSP_INVALID_MISSING_DEPLOYMENT_FLAVOR_MSG));
+    return builder.build();
+  }
+
 }

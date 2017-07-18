@@ -19,7 +19,7 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
-const NameAndPurpose = ({onDataChanged, isReadOnlyMode, name, description}) => {
+const NameAndPurpose = ({onDataChanged, genericFieldInfo, isReadOnlyMode, name, description, isManual}) => {
 
 	return (
 		<GridSection>
@@ -28,7 +28,11 @@ const NameAndPurpose = ({onDataChanged, isReadOnlyMode, name, description}) => {
 					label={i18n('Name')}
 					value={name}
 					data-test-id='nic-name'
-					disabled={true}
+					disabled={!isManual}
+					isRequired={true}
+					onChange={name => onDataChanged({name})}
+					isValid={genericFieldInfo['name'].isValid}
+					errorText={genericFieldInfo['name'].errorText}
 					type='text' />
 			</GridItem>
 			<GridItem colSpan={2}>

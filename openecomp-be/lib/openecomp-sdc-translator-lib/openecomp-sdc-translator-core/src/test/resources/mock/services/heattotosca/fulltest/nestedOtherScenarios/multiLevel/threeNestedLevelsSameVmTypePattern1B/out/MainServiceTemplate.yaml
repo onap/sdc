@@ -1,0 +1,151 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    pd_flavor_name:
+      label: PD flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PD instance
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+    pd_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PD image name
+    pd_server_names:
+      label: PD server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PD instance
+      entry_schema:
+        type: string
+    oam_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: net name
+    jsa_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+  node_templates:
+    test_nested1Level:
+      type: org.openecomp.resource.abstract.nodes.heat.nested1
+      directives:
+      - substitutable
+      properties:
+        p1:
+          get_input: p1
+        service_template_filter:
+          substitute_service_template: nested1ServiceTemplate.yaml
+    abstract_pd_server_6:
+      type: org.openecomp.resource.abstract.nodes.pd_server_6
+      directives:
+      - substitutable
+      properties:
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 1
+        port_pd02_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_pd02_port_network_role_tag: oam
+        vm_image_name:
+          get_input: pd_image_name
+        port_pd02_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_pd02_port_network:
+        - get_input: oam_net_name
+        compute_pd_server_user_data_format:
+        - RAW
+        service_template_filter:
+          substitute_service_template: Nested_pd_server_6ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    abstract_pd_server_7:
+      type: org.openecomp.resource.abstract.nodes.pd_server_7
+      directives:
+      - substitutable
+      properties:
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 0
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_pd01_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pd_image_name
+        port_pd01_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_pd01_port_network:
+        - get_input: oam_net_name
+        port_pd01_port_network_role_tag: oam
+        compute_pd_server_user_data_format:
+        - RAW
+        service_template_filter:
+          substitute_service_template: Nested_pd_server_7ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+  groups:
+    main_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - test_nested1Level
+      - abstract_pd_server_6
+      - abstract_pd_server_7

@@ -22,6 +22,7 @@
         <module>openecomp-sdc-action-manager</module>
         <module>openecomp-sdc-application-config-manager</module>
         <module>openecomp-sdc-activity-log-manager</module>
+        <module>openecomp-sdc-healthcheck-manager</module>
     </modules>
 
     

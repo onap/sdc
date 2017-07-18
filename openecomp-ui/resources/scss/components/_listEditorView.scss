@@ -15,16 +15,16 @@
     border-bottom: 1px solid $light-gray;
     padding-bottom: 5px;
     .list-editor-view-title {
-      @extend .heading-3-medium;
+      @extend .heading-3-semibold;
     }
     .list-editor-view-add-controller {
-      @extend .heading-4-medium;
+      @extend .body-1-semibold;
       color: $blue;
       display: table;
       cursor: pointer;
       position: relative;
-      padding-top: 0px;
-      padding-bottom: 0px;
+      padding-top: 0;
+      padding-bottom: 0;
       margin-left: auto;
       .list-editor-view-add-title {
         display: flex;
@@ -148,6 +148,13 @@
               .title {
                 padding: 0;
                 margin-right: 5px;
+              }
+            }
+
+            .details-col{
+              flex-direction: column;
+              .title {
+                padding-bottom: 0;
               }
             }
 

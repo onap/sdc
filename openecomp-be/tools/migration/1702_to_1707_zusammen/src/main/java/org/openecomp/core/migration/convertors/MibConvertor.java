@@ -8,9 +8,8 @@ import org.openecomp.core.migration.MigrationMain;
 import org.openecomp.core.migration.store.ElementHandler;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.StructureElement;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.MibEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,45 +21,57 @@ public class MibConvertor {
   private static Set<String> compMibLoaded = new HashSet<>();
 
 
-  public static CollaborationElement[] convertMibToElement(MibEntity mibEntity) {
+  public static CollaborationElement[] convertMibToElement(
+      ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
     CollaborationElement[] elements;
-    List<String> mibNamespace = getMibNamespace(mibEntity);
+    List<String> mibNamespace = getMibNamespace(componentMonitoringUploadEntity);
 
     int index = 0;
-    String mibsEntityId = StructureElement.Mibs.name() + "_" + mibEntity.getComponentId();
+    String mibsEntityId =
+        StructureElement.Mibs.name() + "_" + componentMonitoringUploadEntity.getComponentId();
     if (compMibLoaded.contains(mibsEntityId)) {
       elements = new CollaborationElement[1];
     } else {
       compMibLoaded.add(mibsEntityId);
       elements = new CollaborationElement[2];
       elements[index++] = ElementHandler.getElementEntity(
-          mibEntity.getVspId(), mibEntity.getVersion().toString(), mibsEntityId, mibNamespace,
+          componentMonitoringUploadEntity.getVspId(),
+          componentMonitoringUploadEntity.getVersion().toString(), mibsEntityId, mibNamespace,
           ElementHandler.getStructuralElementInfo(StructureElement.Mibs.name()), null, null, null);
     }
 
     mibNamespace.add(mibsEntityId);
     elements[index] = ElementHandler.getElementEntity(
-        mibEntity.getVspId(), mibEntity.getVersion().toString(), mibEntity.getId(), mibNamespace,
-        getMibInfo(mibEntity), null, null, mibEntity.getArtifact().array());
+        componentMonitoringUploadEntity.getVspId(),
+        componentMonitoringUploadEntity.getVersion().toString(), componentMonitoringUploadEntity
+            .getId(), mibNamespace,
+        getMibInfo(componentMonitoringUploadEntity), null, null, componentMonitoringUploadEntity
+            .getArtifact().array());
 
     return elements;
   }
 
-  private static Info getMibInfo(MibEntity mibEntity) {
+  private static Info getMibInfo(
+      ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
     Info info = new Info();
-    info.setName(mibEntity.getType().toString());
-    info.getProperties().put("name", mibEntity.getArtifactName());
+    info.setName(componentMonitoringUploadEntity.getType().toString());
+    info.getProperties().put("name", componentMonitoringUploadEntity.getArtifactName());
     return info;
   }
 
-  private static List<String> getMibNamespace(MibEntity mibEntity) {
-    return ElementHandler.getElementPath(StructureElement.Components.name(), mibEntity
+  private static List<String> getMibNamespace(
+      ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
+    return ElementHandler
+        .getElementPath(StructureElement.Components.name(), componentMonitoringUploadEntity
         .getComponentId());
   }
 
-  public static ElementEntityContext convertMibToElementContext(MibEntity mibEntity) {
+  public static ElementEntityContext convertMibToElementContext(
+      ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
 
     return new ElementEntityContext("GLOBAL_USER", new
-        ElementContext(mibEntity.getVspId(), mibEntity.getVersion().toString()));
+        ElementContext(componentMonitoringUploadEntity.getVspId(),
+        componentMonitoringUploadEntity
+            .getVersion().toString()));
   }
 }

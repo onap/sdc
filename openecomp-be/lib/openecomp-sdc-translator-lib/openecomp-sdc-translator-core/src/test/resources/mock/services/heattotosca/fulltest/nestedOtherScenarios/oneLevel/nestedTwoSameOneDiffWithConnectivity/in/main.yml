@@ -1,0 +1,60 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  jsa_name:
+    type: string
+    description: network name of jsa log network
+  security_group_name:
+    type: string
+    description: security_group_name
+
+resources:
+  test_nested_same_file_1:
+    type: nested-same-file-1B.yml
+    properties:
+      p1: {get_attr: [test_nested_diff_file, nested_diff_file_attr_1]}
+      p2: { get_resource: jsa_security_group2}
+
+  test_nested_same_file_2:
+    type: nested-same-file-1B.yml
+    depends_on:
+      - test_nested_same_file_1
+    properties:
+      p2: {get_attr: [test_nested_same_file_1, nested_same_file_attr_1]}
+
+  test_nested_diff_file:
+    type: nested-other-file-1B.yml
+    depends_on:
+      - test_nested_same_file_1
+      - test_nested_same_file_2
+    properties:
+      p1: { get_resource: jsa_security_group1}
+
+  dependsOn_network:
+    type: OS::Neutron::Net
+    depends_on:
+      - test_nested_same_file_1
+      - test_nested_same_file_2
+      - test_nested_diff_file
+    properties:
+      name:
+        get_param: jsa_name
+
+  jsa_security_group1:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ems security group
+      name: {get_param: security_group_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0}]
+
+  jsa_security_group2:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ems security group
+      name: {get_param: security_group_name}
+      rules: [
+              {"direction": ingress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"}
+              ]

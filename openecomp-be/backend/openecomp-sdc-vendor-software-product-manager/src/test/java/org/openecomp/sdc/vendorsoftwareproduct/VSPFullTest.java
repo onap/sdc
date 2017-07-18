@@ -20,43 +20,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct;
 
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.io.IOUtils;
-import org.openecomp.core.enrichment.types.ArtifactType;
-import org.openecomp.core.model.dao.EnrichedServiceModelDaoFactory;
-import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
-import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
-import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.VersionedVendorSoftwareProductInfo;
-import org.openecomp.sdc.vendorsoftwareproduct.utils.VSPCommon;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 public class VSPFullTest {
 /*
 
@@ -71,7 +34,7 @@ public class VSPFullTest {
   private static VendorLicenseFacade vendorLicenseFacade =
       VendorLicenseFacadeFactory.getInstance().createInterface();
   private OrchestrationTemplateCandidateManager candidateManager;
-  private MibManager mibManager;
+  private MonitoringUploadsManager mibManager;
   private NicManager nicManager;
 
   @Test
@@ -106,7 +69,7 @@ public class VSPFullTest {
     mibManager
         .upload(zis1, "MMSC.zip", vspId, VERSION01,
             components.iterator().next().getId(),
-            ArtifactType.SNMP_TRAP,
+            MonitoringUploadType.SNMP_TRAP,
             USER1);
 
     //check in

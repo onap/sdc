@@ -1,0 +1,417 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    pd_flavor_name:
+      label: PD flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PD instance
+      default: m3.xlarge
+    dummy_net_name_1:
+      label: csb ineternal cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal cidr
+      default: mog_dummy_1
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+      default: nova
+    template_PortTuple_LB1:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    lb_st_interface_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    oam_sec_group_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    virtual_ip_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    nems_traffic_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    pd_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PD image name
+      default: MOG_BASE_8.0
+    pd_server_names:
+      label: PD server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PD instance
+      default:
+      - ZRDM1MOGX01MPD001
+      - ZRDM1MOGX01MPD002
+      entry_schema:
+        type: string
+    pd_security_group_name:
+      label: pd_security_group_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pd_security_group_name
+    jsa_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    pd_port_fixed_ips_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    parent_interface:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    virtual_ipv6_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    mac_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    pd_port_fixed_ips_subnet:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    lb_st_interface_vlan_tag_oam:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+  node_templates:
+    cmaui_volume_test_contrailv2_VMI_properties:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        availability_zone:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_virtual_machine_interface_mac_addresses
+          - mac_address
+        image:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_port_tuple_refs
+        metadata:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_virtual_machine_interface_mac_addresses
+        volume_type:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_virtual_machine_interface_allowed_address_pairs
+          - allowed_address_pair
+          - 0
+          - ip
+          - ip_prefix_len
+        volume_id:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_virtual_machine_interface_allowed_address_pairs
+          - allowed_address_pair
+          - 0
+          - ip
+          - ip_prefix
+        snapshot_id:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_virtual_machine_interface_allowed_address_pairs
+          - allowed_address_pair
+          - 0
+          - address_mode
+        description:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_virtual_network_refs
+        device_type:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_virtual_machine_interface_properties
+          - virtual_machine_interface_properties_service_interface_type
+        disk_bus:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_virtual_machine_interface_allowed_address_pairs
+          - allowed_address_pair
+          - 0
+          - ip
+        source_volid:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_virtual_machine_interface_allowed_address_pairs
+          - allowed_address_pair
+          - 0
+          - mac
+        size: 50*1024
+        name:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_name
+        swap_size:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_show
+        delete_on_termination:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_fq_name
+        multiattach:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_template_VMInt_OAM_lb_virtual_machine_interface_properties
+    cmaui_volume_test_neutron_port_properties:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        image:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_admin_state_up
+        metadata:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_allowed_address_pairs
+        volume_type:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_security_groups
+        volume_id:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_qos_policy
+        snapshot_id:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_name
+        device_type:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_show
+        disk_bus:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_subnets
+        backup_id:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_network
+        source_volid:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_port_security_enabled
+        size: '(get_attribute : [pd01_port_0, network]) * 1024'
+        read_only:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_device_owner
+        name:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_device_id
+        scheduler_hints:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_fixed_ips
+        swap_size:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_tenant_id
+        delete_on_termination:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_pd01_port_status
+    jsa_net4:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: nems_traffic_name
+    abstract_pd_server:
+      type: org.openecomp.resource.abstract.nodes.pd_server
+      directives:
+      - substitutable
+      properties:
+        compute_pd_server_key_name:
+        - SERVER_PD_KEY_NAME
+        port_pd01_port_replacement_policy:
+        - AUTO
+        compute_pd_server_personality:
+        - value: SERVER_PD_PERSONALITY
+        compute_pd_server_image_update_policy:
+        - REBUILD_PRESERVE_EPHEMERAL
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_pd01_port_security_groups:
+        - - DB_Affinity_group
+        port_pd01_port_mac_requirements:
+          mac_count_required:
+            is_required: true
+        vm_image_name:
+          get_input: pd_image_name
+        port_pd01_port_device_id:
+        - PORT_PD_DEVICE_ID
+        port_pd01_port_admin_state_up:
+        - true
+        compute_pd_server_metadata:
+        - value: SERVER_PD_METADATA
+        compute_pd_server_diskConfig:
+        - AUTO
+        port_pd01_port_mac_address: 00-13-24-01-44-35
+        port_pd01_port_allowed_address_pairs:
+        - mac_address: 00-14-22-01-23-45
+          ip_address: 10.12.13.134
+        - mac_address: 00-13-24-01-44-35
+          ip_address: 127.0.13.134
+        compute_pd_server_admin_pass:
+        - SERVER_PD_ADMIN_PASS
+        compute_pd_server_flavor_update_policy:
+        - REPLACE
+        port_pd01_port_value_specs:
+        - value: PORT_PD_VALUE_SPECS
+        compute_pd_server_security_groups:
+        - - get_input: pd_security_group_name
+        port_template_VMInt_OAM_lb_port_tuple_refs:
+        - - get_input: template_PortTuple_LB1
+        compute_pd_server_software_config_transport:
+        - POLL_SERVER_HEAT
+        compute_pd_server_scheduler_hints:
+        - group: DB_Affinity_group
+        port_pd01_port_name:
+        - PORT_PD_NAME
+        compute_pd_server_contrail_service_instance_ind:
+        - true
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 0
+        port_pd01_port_binding:vnic_type:
+        - direct-physical
+        port_pd01_port_device_owner:
+        - PORT_PD_DEVICE_OWNER
+        port_pd01_port_fixed_ips:
+        - ip_address:
+            get_input: pd_port_fixed_ips_address
+        - subnet:
+            get_input: pd_port_fixed_ips_subnet
+        port_pd01_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pd01_port_qos_policy:
+        - PORT_PD_QOS_POLICY
+        compute_pd_server_config_drive:
+        - true
+        compute_pd_server_user_data_format:
+        - RAW
+        port_template_VMInt_OAM_lb_virtual_network_refs:
+        - - get_attribute:
+            - jsa_net4
+            - fq_name
+        port_template_VMInt_OAM_lb_virtual_machine_interface_mac_addresses:
+        - - get_input: mac_address
+        port_template_VMInt_OAM_lb_name:
+        - template_VMInt_OAM_lb_NAME
+        port_pd01_port_port_security_enabled:
+        - false
+        compute_pd_server_user_data_update_policy:
+        - IGNORE
+        port_pd01_port_network:
+        - PORT_PD_NETWORK_ID
+        compute_pd_server_reservation_id:
+        - SERVER_PD_RESERVATION_ID
+        port_template_VMInt_OAM_lb_security_group_refs:
+        - - get_input: oam_sec_group_name
+        service_template_filter:
+          substitute_service_template: Nested_pd_serverServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    cmaui_volume_test_compute_properties:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        availability_zone:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_console_urls
+        backup_id:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_instance_name
+        image:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_accessIPv6
+        swap_size:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_accessIPv4
+        description:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_show
+        multiattach:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_addresses
+  groups:
+    DB_Affinity_group:
+      type: tosca.groups.Root
+      members:
+      - abstract_pd_server
+    hot-mog-0108-bs1271_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-mog-0108-bs1271.yml
+        description: heat template that creates MOG stack
+      members:
+      - cmaui_volume_test_contrailv2_VMI_properties
+      - cmaui_volume_test_neutron_port_properties
+      - jsa_net4
+      - cmaui_volume_test_compute_properties
+      - abstract_pd_server
+  policies:
+    DB_Affinity_policy:
+      type: org.openecomp.policies.placement.Antilocate
+      properties:
+        container_type: host
+      targets:
+      - DB_Affinity_group

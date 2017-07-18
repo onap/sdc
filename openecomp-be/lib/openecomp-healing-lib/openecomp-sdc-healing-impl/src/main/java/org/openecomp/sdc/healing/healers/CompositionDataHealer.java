@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,6 +35,12 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
@@ -42,6 +48,9 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadDataEntity;
@@ -49,6 +58,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionDataExtractorF
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionDataExtractor;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Component;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionData;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -70,6 +80,10 @@ public class CompositionDataHealer implements Healer {
   private static ComponentDao componentDao = ComponentDaoFactory.getInstance().createInterface();
   private static NicDao nicDao = NicDaoFactory.getInstance().createInterface();
   private static NetworkDao networkDao = NetworkDaoFactory.getInstance().createInterface();
+  private static ComputeDao computeDao = ComputeDaoFactory.getInstance().createInterface();
+  private static DeploymentFlavorDao deloymentFlavorDao = DeploymentFlavorDaoFactory.getInstance()
+      .createInterface();
+  private static ImageDao imageDao = ImageDaoFactory.getInstance().createInterface();
 
   private static final ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao =
       ServiceModelDaoFactory.getInstance().createInterface();
@@ -97,24 +111,93 @@ public class CompositionDataHealer implements Healer {
         networkDao.list(new NetworkEntity(vspId, version, null));
 
     Optional<ToscaServiceModel> serviceModelForHealing = getServiceModelForHealing(vspId, version);
-
-    if (!doesVspNeedCompositionDataHealing(componentEntities, networkEntities,
+    CompositionData compositionData = null;
+    if (!doesVspNeedCompositionDataHealing(vspId, version, componentEntities, networkEntities,
         nicEntities)) {
       updateComponentsDisplayNames(componentEntities);
-      mdcDataDebugMessage.debugExitMessage(null);
-      return Optional.empty();
+      mdcDataDebugMessage.debugExitMessage(null, null);
+      //return Optional.empty();
+    } else {
+      if (!serviceModelForHealing.isPresent()) {
+        mdcDataDebugMessage.debugExitMessage(null, null);
+        return Optional.empty();
+      }
+      compositionData = healCompositionData(vspId, version, serviceModelForHealing);
     }
-
-
-    if (!serviceModelForHealing.isPresent()) {
-      mdcDataDebugMessage.debugExitMessage(null);
-      return Optional.empty();
-    }
-
-    CompositionData compositionData = healCompositionData(vspId, version, serviceModelForHealing);
-
-    mdcDataDebugMessage.debugExitMessage(null);
+    compositionData =
+        getCompositionDataForHealing(vspId, version, serviceModelForHealing.get());
+    HealNfodData(vspId, version, compositionData);
+    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.of(compositionData);
+  }
+
+  private boolean doesVspNeedCompositionDataHealing(String vspId, Version version,
+                                                    Collection<ComponentEntity> componentEntities,
+                                                    Collection<NetworkEntity> networkEntities,
+                                                    Collection<NicEntity> nicEntities) {
+
+    return (CollectionUtils.isEmpty(componentEntities) && CollectionUtils.isEmpty(nicEntities) &&
+        CollectionUtils.isEmpty(networkEntities) );
+
+//    mdcDataDebugMessage.debugEntryMessage(null, null);
+//
+////    ToscaServiceModel toscaServiceModel;
+//
+//    ByteBuffer contentData = uploadData.getContentData();
+//    FileContentHandler fileContentHandler = CommonUtil.validateAndUploadFileContent(uploadData
+//        .getContentData().array());
+//
+//
+//
+//    TranslatorOutput translatorOutput =
+//        HeatToToscaUtil.loadAndTranslateTemplateData(fileContentHandler);
+//    ToscaServiceModel toscaServiceModel = translatorOutput.getToscaServiceModel();
+//
+////    toscaServiceModel = enrichedServiceModelDao.getServiceModel(vspId, version);
+//
+//    mdcDataDebugMessage.debugExitMessage(null, null);
+//    return toscaServiceModel;
+
+  }
+
+  private void HealNfodData(String vspId, Version version, CompositionData compositionData) {
+    Collection<ComponentEntity> componentEntities;
+    /*componentEntities =
+        vendorSoftwareProductDao.listComponents(vspId, version);*/
+    componentEntities = componentDao.list(new ComponentEntity(vspId, version, null));
+
+    /*Collection<ComputeEntity> computeEntities=vendorSoftwareProductDao.listComputesByVsp(vspId,
+        version);
+    Collection<ImageEntity> imageEntities =vendorSoftwareProductDao.listImagesByVsp(vspId, version);
+    Collection<DeploymentFlavorEntity> deploymentFlavorEntities =vendorSoftwareProductDao
+        .listDeploymentFlavors(vspId, version);*/
+
+    Collection<ComputeEntity> computeEntities = computeDao.listByVsp(vspId, version);
+    Collection<ImageEntity> imageEntities = imageDao.listByVsp(vspId, version);
+    Collection<DeploymentFlavorEntity> deploymentFlavorEntities = deloymentFlavorDao.list(new
+        DeploymentFlavorEntity(vspId, version, null));
+
+    if (CollectionUtils.isEmpty(computeEntities) && CollectionUtils.isEmpty(imageEntities)) {
+      for (Component component : compositionData.getComponents()) {
+        String componentId = null;
+        for (ComponentEntity componentEntity:componentEntities) {
+          if (componentEntity.getComponentCompositionData().getName().equals(component.getData()
+              .getName())) {
+            componentId = componentEntity.getId();
+            break;
+          }
+        }
+        compositionEntityDataManager.saveComputesFlavorByComponent(vspId,version,component,
+            componentId);
+        compositionEntityDataManager.saveImagesByComponent(vspId,version,component,
+            componentId);
+      }
+
+    }
+
+    if (CollectionUtils.isEmpty(deploymentFlavorEntities)) {
+      compositionEntityDataManager.saveDeploymentFlavors(vspId,version,compositionData);
+    }
   }
 
   private CompositionData healCompositionData(String vspId, Version version,
@@ -204,7 +287,7 @@ public class CompositionDataHealer implements Healer {
     try {
       serviceModelDao.storeServiceModel(vspId, version,
           translatorOutput.getToscaServiceModel());
-    }catch (Exception e){
+    } catch (Exception e) {
       return Optional.empty();
     }
 
@@ -212,14 +295,14 @@ public class CompositionDataHealer implements Healer {
     return Optional.of(translatorOutput.getToscaServiceModel());
   }
 
-  private TranslatorOutput getTranslatorOutputForHealing(UploadDataEntity uploadData){
+  private TranslatorOutput getTranslatorOutputForHealing(UploadDataEntity uploadData) {
 
     FileContentHandler fileContentHandler;
     try {
       fileContentHandler =
-          CommonUtil.loadUploadFileContent(uploadData.getContentData().array());
+          CommonUtil.validateAndUploadFileContent(uploadData.getContentData().array());
       return HeatToToscaUtil.loadAndTranslateTemplateData(fileContentHandler);
-    }catch (Exception e){
+    } catch (Exception e) {
       return null;
     }
   }

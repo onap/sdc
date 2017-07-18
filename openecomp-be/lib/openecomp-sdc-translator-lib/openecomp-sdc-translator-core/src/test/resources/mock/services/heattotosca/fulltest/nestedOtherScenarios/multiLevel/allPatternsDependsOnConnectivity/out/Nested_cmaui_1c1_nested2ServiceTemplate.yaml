@@ -1,0 +1,301 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_cmaui_1c1_nested2
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.cmaui_1c1_nested2:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_cmaui_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_cmaui_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_cmaui_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_cmaui_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_cmaui_port_network_role_tag:
+      type: string
+      required: true
+    port_cmaui_port_order:
+      type: integer
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    port_cmaui_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_cmaui_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cmaui_port_network_role:
+      type: string
+      required: true
+    vm_image_name:
+      type: string
+      required: true
+    port_cmaui_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    compute_cmaui_1c1_nested2_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cmaui_port_subnetpoolid:
+      type: string
+      required: true
+    compute_cmaui_1c1_nested2_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    cmaui_1c1_nested2_cmaui_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        exCP_naming:
+          get_input: port_cmaui_port_exCP_naming
+        replacement_policy:
+          get_input:
+          - port_cmaui_port_replacement_policy
+          - index_value
+        vlan_requirements:
+          get_input: port_cmaui_port_vlan_requirements
+        ip_requirements:
+          get_input: port_cmaui_port_ip_requirements
+        network_role_tag:
+          get_input: port_cmaui_port_network_role_tag
+        mac_requirements:
+          get_input: port_cmaui_port_mac_requirements
+        order:
+          get_input: port_cmaui_port_order
+        network_role:
+          get_input: port_cmaui_port_network_role
+        subnetpoolid:
+          get_input: port_cmaui_port_subnetpoolid
+        fixed_ips:
+          get_input: port_cmaui_port_fixed_ips
+        network:
+          get_input:
+          - port_cmaui_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cmaui_1c1_nested2
+          relationship: tosca.relationships.network.BindsTo
+    cmaui_1c1_nested2:
+      type: org.openecomp.resource.vfc.nodes.heat.cmaui_1c1_nested2
+      properties:
+        availability_zone:
+          get_input:
+          - compute_cmaui_1c1_nested2_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_cmaui_1c1_nested2_name
+          - index_value
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.cmaui_1c1_nested2
+    capabilities:
+      feature_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - feature
+      disk.device.write.bytes.rate_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.device.write.bytes.rate
+      disk.device.read.requests.rate_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.device.read.requests.rate
+      disk.write.bytes_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.write.bytes
+      disk.capacity_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.capacity
+      disk.device.capacity_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.device.capacity
+      network.outgoing.packets.rate_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - network.outgoing.packets.rate
+      vcpus_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - vcpus
+      disk.device.write.requests_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.device.write.requests
+      feature_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - feature
+      disk.usage_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.usage
+      disk.read.bytes_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.read.bytes
+      network.outpoing.packets_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - network.outpoing.packets
+      scalable_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - scalable
+      network.outgoing.bytes_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - network.outgoing.bytes
+      instance_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - instance
+      network.incoming.bytes_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - network.incoming.bytes
+      endpoint_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - endpoint
+      cpu.delta_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - cpu.delta
+      disk.device.read.bytes.rate_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.device.read.bytes.rate
+      disk.device.iops_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.device.iops
+      disk.device.read.bytes_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.device.read.bytes
+      disk.device.write.requests.rate_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.device.write.requests.rate
+      disk.device.write.bytes_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.device.write.bytes
+      network.incoming.packets.rate_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - network.incoming.packets.rate
+      host_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - host
+      disk.device.latency_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.device.latency
+      network.incoming.bytes.rate_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - network.incoming.bytes.rate
+      disk.write.bytes.rate_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.write.bytes.rate
+      binding_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - binding
+      memory_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - memory
+      disk.allocation_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.allocation
+      disk.device.usage_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.device.usage
+      disk.ephemeral.size_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.ephemeral.size
+      disk.read.requests_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.read.requests
+      network.outgoing.bytes.rate_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - network.outgoing.bytes.rate
+      os_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - os
+      network.incoming.packets_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - network.incoming.packets
+      disk.write.requests.rate_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.write.requests.rate
+      disk.device.read.requests_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.device.read.requests
+      disk.root.size_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.root.size
+      memory.usage_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - memory.usage
+      memory.resident_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - memory.resident
+      cpu_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - cpu
+      disk.read.bytes.rate_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.read.bytes.rate
+      disk.device.allocation_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.device.allocation
+      disk.latency_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.latency
+      binding_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - binding
+      disk.iops_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.iops
+      attachment_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - attachment
+      disk.write.requests_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - disk.write.requests
+      cpu_util_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - cpu_util
+    requirements:
+      link_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - link
+      dependency_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - dependency
+      local_storage_cmaui_1c1_nested2:
+      - cmaui_1c1_nested2
+      - local_storage
+      dependency_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - dependency

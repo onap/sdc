@@ -265,18 +265,18 @@ topology_template:
         - FSB1_addresses
         - get_attribute:
           - abstract_FSB1_0
-          - FSB1_FSB2_Internal_index
+          - FSB1_FSB2_Internal_tenant_id
     complexOutput2:
       description: cgi fw01 left interface Mac-Address
       value:
         get_attribute:
         - FSB1_Internal2
-        - addresses
+        - device_owner
         - get_input:
           - CMAUI_volume_type
           - get_attribute:
             - FSB2_Internal1
-            - oam_index
+            - user_data_format
         - 0
         - OS-EXT-IPS-MAC:mac_addr
     complexOutput3:
@@ -289,6 +289,6 @@ topology_template:
           - CMAUI_volume_type
           - get_attribute:
             - abstract_FSB1_0
-            - FSB1_FSB1_Internal_accessIPv6
+            - FSB1_FSB1_Internal_admin_state_up
         - 0
         - OS-EXT-IPS-MAC:mac_addr

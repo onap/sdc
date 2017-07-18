@@ -31,5 +31,9 @@ public class MapNicToNicDto extends MappingBase<Nic, NicDto> {
     target.setDescription(source.getDescription());
     target.setNetworkId(source.getNetworkId());
     target.setNetworkName(source.getNetworkName());
+    if (source.getNetworkType() != null) {
+      target.setNetworkType(source.getNetworkType().name());
+    }
+    target.setNetworkDescription(source.getNetworkDescription());
   }
 }

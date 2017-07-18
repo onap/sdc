@@ -25,20 +25,19 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 export const mapStateToProps = ({softwareProduct}) => {
 
 	let {softwareProductEditor: {data:currentVSP = {}}, softwareProductComponents: {monitoring}} = softwareProduct;
-	let {trapFilename, pollFilename} = monitoring;
+	let filenames = monitoring;
 	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentVSP);
 
 	return {
 		isReadOnlyMode,
-		trapFilename,
-		pollFilename
+		filenames
 	};
 };
 
 const mapActionsToProps = (dispatch, {softwareProductId, version, componentId}) => {
 	return {
 		onDropMibFileToUpload: (formData, type) =>
-			SoftwareProductComponentsMonitoringAction.uploadSnmpFile(dispatch, {
+			SoftwareProductComponentsMonitoringAction.uploadFile(dispatch, {
 				softwareProductId,
 				version,
 				componentId,
@@ -46,7 +45,7 @@ const mapActionsToProps = (dispatch, {softwareProductId, version, componentId}) 
 				type
 			}),
 
-		onDeleteSnmpFile: type => SoftwareProductComponentsMonitoringAction.deleteSnmpFile(dispatch, {
+		onDeleteFile: type => SoftwareProductComponentsMonitoringAction.deleteFile(dispatch, {
 			softwareProductId,
 			version,
 			componentId,
@@ -57,7 +56,7 @@ const mapActionsToProps = (dispatch, {softwareProductId, version, componentId}) 
 			type: modalActionTypes.GLOBAL_MODAL_ERROR,
 			data: {
 				title: i18n('Upload Failed'),
-				msg: i18n('Expected "zip" file. Please check the provided file type.')				
+				msg: i18n('Expected "zip" file. Please check the provided file type.')
 			}
 		}),
 

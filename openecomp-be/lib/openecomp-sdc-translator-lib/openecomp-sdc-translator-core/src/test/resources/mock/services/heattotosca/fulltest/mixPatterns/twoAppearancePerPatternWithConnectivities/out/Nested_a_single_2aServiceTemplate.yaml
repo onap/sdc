@@ -140,13 +140,11 @@ topology_template:
           relationship: tosca.relationships.network.BindsTo
   outputs:
     a_single_2a_instance_name:
-      type: list
+      type: string
       value:
         get_attribute:
         - a_single_2a
         - instance_name
-      entry_schema:
-        type: string
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.a_single_2a
     capabilities:

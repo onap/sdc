@@ -1,6 +1,6 @@
 .form-group {
   .control-label {
-    @extend .body-2-medium;
+    @extend .body-2-semibold;
   }
   &.required {
     label:before {

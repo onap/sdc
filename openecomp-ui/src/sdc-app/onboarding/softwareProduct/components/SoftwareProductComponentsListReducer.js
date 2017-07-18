@@ -22,6 +22,8 @@ export default (state = [], action) => {
 		case actionTypes.COMPONENTS_LIST_EDIT:
 			const indexForEdit = state.findIndex(component => component.id === action.component.id);
 			return [...state.slice(0, indexForEdit), action.component, ...state.slice(indexForEdit + 1)];
+		case actionTypes.COMPONENT_DELETE:
+			return state.filter(component => component.id !== action.componentId);
 		default:
 			return state;
 	}

@@ -233,29 +233,23 @@ topology_template:
           relationship: tosca.relationships.network.BindsTo
   outputs:
     1c1_scalling_instance_1c1_t1_port_tenant_id:
-      type: list
+      type: string
       value:
         get_attribute:
         - 1c1_scalling_instance_1c1_t1_port
         - tenant_id
-      entry_schema:
-        type: string
     1c1_scalling_instance_instance_name:
-      type: list
+      type: string
       value:
         get_attribute:
         - 1c1_scalling_instance
         - instance_name
-      entry_schema:
-        type: string
     1c1_scalling_instance_1c1_t2_port_tenant_id:
-      type: list
+      type: string
       value:
         get_attribute:
         - 1c1_scalling_instance_1c1_t2_port
         - tenant_id
-      entry_schema:
-        type: string
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.1c1_scalling_instance
     capabilities:

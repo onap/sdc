@@ -22,10 +22,10 @@ package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 
@@ -41,6 +41,9 @@ public class ValidationResponse {
   private Map<String, List<ErrorMessage>> uploadDataErrors;
   private Map<String, List<ErrorMessage>> compilationErrors;
   private QuestionnaireValidationResult questionnaireValidationResult;
+  private ComponentValidationResult componentValidationResult;
+  private DeploymentFlavorValidationResult deploymentFlavorValidationResult;
+
 
   public boolean isValid() {
     return valid;
@@ -66,6 +69,7 @@ public class ValidationResponse {
 
     VendorSoftwareProductUtils.setErrorsIntoLogger(vspErrors, serviceName, targetServiceName);
   }
+
 
   public Collection<ErrorCode> getLicensingDataErrors() {
     return licensingDataErrors;
@@ -140,6 +144,42 @@ public class ValidationResponse {
       QuestionnaireValidationResult questionnaireValidationResult) {
     this.questionnaireValidationResult = questionnaireValidationResult;
     if (questionnaireValidationResult != null && !questionnaireValidationResult.isValid()) {
+      valid = false;
+    }
+  }
+
+
+  public ComponentValidationResult getComponentValidationResult() {
+    return componentValidationResult;
+  }
+
+  /**
+   * Sets Component validation result.
+   *
+   * @param componentValidationResult the Component validation result
+   */
+  public void setComponentValidationResult(
+      ComponentValidationResult componentValidationResult) {
+    this.componentValidationResult = componentValidationResult;
+    if (componentValidationResult != null && !componentValidationResult.isValid()) {
+      valid = false;
+    }
+  }
+
+
+  public DeploymentFlavorValidationResult getDeploymentFlavorValidationResult() {
+    return deploymentFlavorValidationResult;
+  }
+
+  /**
+   * Sets Deployment validation result.
+   *
+   * @param deploymentFlavorValidationResult the Deployment validation result
+   */
+  public void setDeploymentFlavorValidationResult(
+      DeploymentFlavorValidationResult deploymentFlavorValidationResult) {
+    this.deploymentFlavorValidationResult = deploymentFlavorValidationResult;
+    if (deploymentFlavorValidationResult != null && !deploymentFlavorValidationResult.isValid()) {
       valid = false;
     }
   }

@@ -18,31 +18,33 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import Modal from 'nfvo-components/modal/Modal.jsx';
-import Button from 'react-bootstrap/lib/Button.js';
+import Button from 'sdc-ui/lib/react/Button.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import {modalContentComponents} from 'sdc-app/common/modal/ModalContentMapper.js';
 import {actionTypes, typeEnum} from './GlobalModalConstants.js';
 
 
 const typeClass = {
-	'default': 'primary',
-	error: 'danger',
+	'default': 'default',
+	error: 'negative',
 	warning: 'warning',
-	success: 'success'
+	success: 'positive'
 };
 
 
-const ModalFooter = ({type, onConfirmed, onDeclined, onClose, confirmationButtonText, cancelButtonText}) => 
+const ModalFooter = ({type, onConfirmed, onDeclined, onClose, confirmationButtonText, cancelButtonText}) =>
 		<Modal.Footer>
-			<Button bsStyle={typeClass[type]} onClick={onDeclined ? () => {
-				onDeclined(); 
-				onClose();} : () => onClose()}>
-				{cancelButtonText}
+			<div className='sdc-modal-footer'>
+				{onConfirmed && <Button color={typeClass[type]} onClick={() => {
+					onConfirmed();
+					onClose();
+				}}>{confirmationButtonText}</Button>}
+				<Button btnType='outline' color={typeClass[type]} onClick={onDeclined ? () => {
+					onDeclined();
+					onClose();} : () => onClose()}>
+					{cancelButtonText}
 				</Button>
-			{onConfirmed && <Button bsStyle={typeClass[type]} onClick={() => {
-				onConfirmed();
-				onClose();
-			}}>{confirmationButtonText}</Button>}
+			</div>
 		</Modal.Footer>;
 
 ModalFooter.defaultProps = {
@@ -87,7 +89,7 @@ export class  GlobalModalView extends React.Component {
 	};
 
 	render() {
-		let {title, type, show, modalComponentName, modalComponentProps, 
+		let {title, type, show, modalComponentName, modalComponentProps,
 		modalClassName, msg, onConfirmed, onDeclined, confirmationButtonText, cancelButtonText, onClose} = this.props;
 		const  ComponentToRender = modalContentComponents[modalComponentName];
 		return (
@@ -96,7 +98,7 @@ export class  GlobalModalView extends React.Component {
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					{ComponentToRender ? <ComponentToRender {...modalComponentProps}/> :  msg}				
+					{ComponentToRender ? <ComponentToRender {...modalComponentProps}/> :  msg}
 				</Modal.Body>
 				{(onConfirmed || onDeclined || type !== typeEnum.DEFAULT) &&
 						<ModalFooter
@@ -114,7 +116,7 @@ export class  GlobalModalView extends React.Component {
 		if (this.props.timeout) {
 			setTimeout(this.props.onClose, this.props.timeout);
 		}
-	}	
+	}
 };
 
 export default connect(mapStateToProps, mapActionToProps, null, {withRef: true})(GlobalModalView);

@@ -1,0 +1,301 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_cmaui_1c1_main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.cmaui_1c1_main:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_cmaui_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_cmaui_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_cmaui_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_cmaui_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_cmaui_port_network_role_tag:
+      type: string
+      required: true
+    port_cmaui_port_order:
+      type: integer
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    port_cmaui_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_cmaui_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cmaui_port_network_role:
+      type: string
+      required: true
+    vm_image_name:
+      type: string
+      required: true
+    port_cmaui_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    compute_cmaui_1c1_main_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_cmaui_1c1_main_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cmaui_port_subnetpoolid:
+      type: string
+      required: true
+  node_templates:
+    cmaui_1c1_main_cmaui_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        exCP_naming:
+          get_input: port_cmaui_port_exCP_naming
+        replacement_policy:
+          get_input:
+          - port_cmaui_port_replacement_policy
+          - index_value
+        vlan_requirements:
+          get_input: port_cmaui_port_vlan_requirements
+        ip_requirements:
+          get_input: port_cmaui_port_ip_requirements
+        network_role_tag:
+          get_input: port_cmaui_port_network_role_tag
+        mac_requirements:
+          get_input: port_cmaui_port_mac_requirements
+        order:
+          get_input: port_cmaui_port_order
+        network_role:
+          get_input: port_cmaui_port_network_role
+        subnetpoolid:
+          get_input: port_cmaui_port_subnetpoolid
+        fixed_ips:
+          get_input: port_cmaui_port_fixed_ips
+        network:
+          get_input:
+          - port_cmaui_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cmaui_1c1_main
+          relationship: tosca.relationships.network.BindsTo
+    cmaui_1c1_main:
+      type: org.openecomp.resource.vfc.nodes.heat.cmaui_1c1_main
+      properties:
+        availability_zone:
+          get_input:
+          - compute_cmaui_1c1_main_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_cmaui_1c1_main_name
+          - index_value
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.cmaui_1c1_main
+    capabilities:
+      disk.device.iops_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.device.iops
+      disk.device.write.bytes.rate_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.device.write.bytes.rate
+      binding_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - binding
+      cpu_util_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - cpu_util
+      disk.write.requests_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.write.requests
+      disk.latency_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.latency
+      network.incoming.bytes.rate_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - network.incoming.bytes.rate
+      disk.read.requests_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.read.requests
+      endpoint_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - endpoint
+      disk.device.read.bytes.rate_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.device.read.bytes.rate
+      disk.iops_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.iops
+      disk.device.read.requests.rate_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.device.read.requests.rate
+      disk.write.bytes_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.write.bytes
+      disk.device.read.requests_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.device.read.requests
+      attachment_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - attachment
+      instance_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - instance
+      disk.device.write.requests.rate_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.device.write.requests.rate
+      disk.device.write.bytes_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.device.write.bytes
+      vcpus_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - vcpus
+      disk.read.bytes.rate_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.read.bytes.rate
+      disk.device.capacity_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.device.capacity
+      disk.device.write.requests_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.device.write.requests
+      disk.usage_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.usage
+      network.incoming.bytes_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - network.incoming.bytes
+      disk.device.read.bytes_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.device.read.bytes
+      network.outgoing.bytes.rate_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - network.outgoing.bytes.rate
+      memory.usage_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - memory.usage
+      network.outpoing.packets_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - network.outpoing.packets
+      memory.resident_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - memory.resident
+      cpu.delta_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - cpu.delta
+      disk.capacity_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.capacity
+      disk.ephemeral.size_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.ephemeral.size
+      network.incoming.packets_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - network.incoming.packets
+      disk.write.requests.rate_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.write.requests.rate
+      feature_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - feature
+      network.outgoing.packets.rate_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - network.outgoing.packets.rate
+      disk.root.size_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.root.size
+      host_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - host
+      network.incoming.packets.rate_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - network.incoming.packets.rate
+      disk.write.bytes.rate_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.write.bytes.rate
+      network.outgoing.bytes_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - network.outgoing.bytes
+      memory_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - memory
+      scalable_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - scalable
+      cpu_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - cpu
+      disk.device.allocation_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.device.allocation
+      binding_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - binding
+      disk.device.usage_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.device.usage
+      os_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - os
+      disk.device.latency_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.device.latency
+      disk.read.bytes_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.read.bytes
+      feature_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - feature
+      disk.allocation_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - disk.allocation
+    requirements:
+      dependency_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - dependency
+      link_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - link
+      local_storage_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - local_storage
+      dependency_cmaui_1c1_main:
+      - cmaui_1c1_main
+      - dependency

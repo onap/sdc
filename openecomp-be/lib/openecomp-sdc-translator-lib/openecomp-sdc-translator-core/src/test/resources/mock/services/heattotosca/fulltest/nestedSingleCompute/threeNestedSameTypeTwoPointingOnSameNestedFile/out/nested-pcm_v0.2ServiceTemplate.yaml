@@ -236,7 +236,7 @@ topology_template:
       description: the pcm nova service id
       value: server_pcm
   substitution_mappings:
-    node_type: org.openecomp.resource.abstract.nodes.heat.pcm_server_1
+    node_type: org.openecomp.resource.abstract.nodes.heat.pcm_server_2
     capabilities:
       network.incoming.packets.rate_pcm_port_0:
       - pcm_port_0

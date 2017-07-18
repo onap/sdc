@@ -102,13 +102,15 @@ public class MultiChoiceOrOther<E extends Enum<E>> {
   }
 
   private Set<String> resolveResult() {
-    results = new HashSet<>();
-    if (choices.size() == 1 && OTHER_ENUM_VALUE.equals(choices.iterator().next().name())) {
-      results.add(other);
-    } else {
-      for (E choice : choices) {
-        results.add(choice.name());
-      }
+    if (choices != null) {
+        results = new HashSet<>();
+        if(choices.size() == 1 && OTHER_ENUM_VALUE.equals(choices.iterator().next().name())) {
+            results.add(other);
+        } else {
+            for (E choice : choices) {
+                results.add(choice.name());
+            }
+        }
     }
 
     return results;

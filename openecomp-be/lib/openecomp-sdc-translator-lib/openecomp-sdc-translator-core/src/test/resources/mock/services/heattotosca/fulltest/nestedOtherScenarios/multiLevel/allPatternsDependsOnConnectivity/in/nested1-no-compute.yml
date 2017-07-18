@@ -1,0 +1,29 @@
+heat_template_version: 2013-05-23
+
+description: nested1-no-compute
+
+parameters:
+  pd_server_ips:
+      type: string
+  ps_server_ips:
+      type: string
+  net:
+    type: string
+  name:
+    type: string
+    description: nested parameter
+
+resources:
+  pd_server_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net }
+      fixed_ips: [{"ip_address": {get_param: [pd_server_ips, 0]}}]
+      replacement_policy: AUTO
+
+  ps_server_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net }
+      fixed_ips: [{"ip_address": {get_param: [ps_server_ips, 0]}}]
+      replacement_policy: AUTO

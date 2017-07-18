@@ -21,6 +21,7 @@
 package org.openecomp.sdcrests.vsp.rest.mapping;
 
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.NetworkType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NicRequestDto;
@@ -32,6 +33,8 @@ public class MapNicRequestDtoToNicEntity extends MappingBase<NicRequestDto, NicE
     nic.setName(source.getName());
     nic.setDescription(source.getDescription());
     nic.setNetworkId(source.getNetworkId());
+    nic.setNetworkType(NetworkType.valueOf(source.getNetworkType()));
+    nic.setNetworkDescription(source.getNetworkDescription());
     target.setNicCompositionData(nic);
   }
 }

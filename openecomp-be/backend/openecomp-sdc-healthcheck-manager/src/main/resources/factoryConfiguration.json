@@ -1,0 +1,4 @@
+{
+  "org.openecomp.sdc.health.HealthCheckManagerFactory": "org.openecomp.sdc.health.impl.HealthCheckManagerFactoryImpl",
+  "org.openecomp.sdc.health.HealthCheckDaoFactory": "org.openecomp.sdc.health.impl.HealthCheckDaoFactoryImpl"
+}

@@ -22,9 +22,7 @@ package org.openecomp.sdc.translator.services.heattotosca;
 
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
-import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.core.utilities.yaml.YamlUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
@@ -32,9 +30,6 @@ import org.openecomp.sdc.heat.datatypes.model.Environment;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Output;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
-import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
-import org.openecomp.sdc.heat.services.tree.HeatTreeManagerUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
@@ -46,7 +41,6 @@ import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaGroupType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.GroupDefinition;
-import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
@@ -54,13 +48,11 @@ import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
-import org.openecomp.sdc.tosca.services.ToscaUtil;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.FileDataCollection;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.EntityConsolidationData;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.GetAttrFuncData;
 import org.openecomp.sdc.translator.services.heattotosca.errors.ResourceNotFoundInHeatFileErrorBuilder;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaParameterConverter;
@@ -68,7 +60,6 @@ import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatT
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -121,6 +112,10 @@ public class TranslationService {
         HeatToToscaUtil.createToscaServiceModel(mainServiceTemplate, translationContext);
 
     TranslatorOutput translatorOutput = new TranslatorOutput();
+    //Keeping a copy of tosca service model after first stage of translation for extraction of
+    // composition data
+    translatorOutput.setNonUnifiedToscaServiceModel(
+        ToscaServiceModel.getClonedServiceModel(toscaServiceModel));
     translatorOutput.setToscaServiceModel(toscaServiceModel);
 
     mdcDataDebugMessage.debugExitMessage(null, null);

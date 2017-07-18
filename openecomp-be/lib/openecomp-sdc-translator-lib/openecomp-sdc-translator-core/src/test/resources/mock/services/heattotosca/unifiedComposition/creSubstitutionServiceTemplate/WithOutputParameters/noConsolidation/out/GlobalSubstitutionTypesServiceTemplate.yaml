@@ -179,41 +179,29 @@ node_types:
         required: true
         status: SUPPORTED
     attributes:
+      FSB1_FSB_OAM_status:
+        type: string
+        status: SUPPORTED
+      FSB1_FSB2_Internal_tenant_id:
+        type: string
+        status: SUPPORTED
       FSB1_FSB1_Internal_network_id:
-        type: list
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
-      FSB1_FSB1_Internal_addresses:
-        type: list
-        status: SUPPORTED
-        entry_schema:
-          type: string
       FSB1_accessIPv6:
-        type: list
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
       FSB1_addresses:
-        type: list
+        type: map
         status: SUPPORTED
         entry_schema:
-          type: string
+          type: org.openecomp.datatypes.heat.novaServer.network.AddressInfo
       FSB1_FSB2_Internal_network_id:
-        type: list
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
-      FSB1_FSB2_Internal_index:
-        type: list
+      FSB1_FSB1_Internal_device_owner:
+        type: string
         status: SUPPORTED
-        entry_schema:
-          type: string
-      FSB1_FSB_OAM_oam_index:
-        type: list
-        status: SUPPORTED
-        entry_schema:
-          type: string
     requirements:
     - dependency_FSB1_FSB1_Internal:
         capability: tosca.capabilities.Node

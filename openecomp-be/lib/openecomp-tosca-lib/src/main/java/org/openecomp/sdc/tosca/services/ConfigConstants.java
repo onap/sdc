@@ -25,24 +25,19 @@ public class ConfigConstants {
   public static final String NAMESPACE = "ToscaModel";
 
   //keys
-  public static final String PREFIX_CAPABILITY_TYPE =
-      "tosca.entity.namespace.prefix.capabilityType";
-  public static final String PREFIX_DATA_TYPE = "tosca.entity.namespace.prefix.dataType";
-  public static final String PREFIX_GROUP_TYPE = "tosca.entity.namespace.prefix.groupType";
-  public static final String PREFIX_POLICY_TYPE = "tosca.entity.namespace.prefix.policyType";
-  public static final String PREFIX_ARTIFACT_TYPE = "tosca.entity.namespace.prefix.artifactType";
-  public static final String PREFIX_RELATIONSHIP_TYPE =
-      "tosca.entity.namespace.prefix.relationshipType";
+  public static final String PREFIX = "tosca.entity.namespace.prefix";
+  public static final String PREFIX_CAPABILITY_TYPE = PREFIX + ".capabilityType";
+  public static final String PREFIX_DATA_TYPE = PREFIX + ".dataType";
+  public static final String PREFIX_GROUP_TYPE = PREFIX + ".groupType";
+  public static final String PREFIX_POLICY_TYPE = PREFIX + ".policyType";
+  public static final String PREFIX_ARTIFACT_TYPE = PREFIX + ".artifactType";
+  public static final String PREFIX_RELATIONSHIP_TYPE = PREFIX + ".relationshipType";
 
-  public static final String PREFIX_NODE_TYPE_VFC = "tosca.entity.namespace.prefix.nodeType.vfc";
-  public static final String PREFIX_NODE_TYPE_NETWORK =
-      "tosca.entity.namespace.prefix.nodeType.network";
-  public static final String PREFIX_NODE_TYPE_CP =
-      "tosca.entity.namespace.prefix.nodeType.connectionPoint";
-  public static final String PREFIX_NODE_TYPE_ABSTARCT =
-      "tosca.entity.namespace.prefix.nodeType.abstract";
-  public static final String PREFIX_NODE_TYPE_RULE = "tosca.entity.namespace.prefix.nodeType.rule";
-
+  public static final String PREFIX_NODE_TYPE_VFC = PREFIX + ".nodeType.vfc";
+  public static final String PREFIX_NODE_TYPE_NETWORK = PREFIX + ".nodeType.network";
+  public static final String PREFIX_NODE_TYPE_CP = PREFIX + ".nodeType.connectionPoint";
+  public static final String PREFIX_NODE_TYPE_ABSTARCT = PREFIX + ".nodeType.abstract";
+  public static final String PREFIX_NODE_TYPE_RULE = PREFIX + ".nodeType.rule";
 
   private ConfigConstants() {
   }

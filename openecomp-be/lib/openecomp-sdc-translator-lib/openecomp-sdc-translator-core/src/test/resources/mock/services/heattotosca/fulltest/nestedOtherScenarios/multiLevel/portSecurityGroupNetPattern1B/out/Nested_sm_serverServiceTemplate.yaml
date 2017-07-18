@@ -1,0 +1,310 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_sm_server
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.sm_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_sm_server_port_order:
+      type: integer
+      required: true
+    port_sm_server_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_sm_server_port_subnetpoolid:
+      type: string
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    port_sm_server_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_sm_server_port_network_role_tag:
+      type: string
+      required: true
+    port_sm_server_port_network_role:
+      type: string
+      required: true
+    port_sm_server_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_sm_server_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_sm_server_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    vm_image_name:
+      type: string
+      required: true
+    compute_sm_server_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_sm_server_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_sm_server_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_sm_server_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_sm_server_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+  node_templates:
+    sm_server:
+      type: org.openecomp.resource.vfc.nodes.heat.sm_server
+      properties:
+        availability_zone:
+          get_input:
+          - compute_sm_server_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_sm_server_name
+          - index_value
+    sm_server_sm_server_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy:
+          get_input:
+          - port_sm_server_port_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_sm_server_port_mac_requirements
+        order:
+          get_input: port_sm_server_port_order
+        security_groups:
+          get_input:
+          - port_sm_server_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_sm_server_port_exCP_naming
+        vlan_requirements:
+          get_input: port_sm_server_port_vlan_requirements
+        ip_requirements:
+          get_input: port_sm_server_port_ip_requirements
+        network_role_tag:
+          get_input: port_sm_server_port_network_role_tag
+        network_role:
+          get_input: port_sm_server_port_network_role
+        fixed_ips:
+          get_input: port_sm_server_port_fixed_ips
+        subnetpoolid:
+          get_input: port_sm_server_port_subnetpoolid
+        network:
+          get_input:
+          - port_sm_server_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: sm_server
+          relationship: tosca.relationships.network.BindsTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.sm_server
+    capabilities:
+      disk.device.read.requests_sm_server:
+      - sm_server
+      - disk.device.read.requests
+      binding_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - binding
+      disk.iops_sm_server:
+      - sm_server
+      - disk.iops
+      disk.device.capacity_sm_server:
+      - sm_server
+      - disk.device.capacity
+      disk.device.read.bytes.rate_sm_server:
+      - sm_server
+      - disk.device.read.bytes.rate
+      disk.device.write.requests.rate_sm_server:
+      - sm_server
+      - disk.device.write.requests.rate
+      disk.device.allocation_sm_server:
+      - sm_server
+      - disk.device.allocation
+      network.incoming.bytes_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - network.incoming.bytes
+      attachment_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - attachment
+      memory.usage_sm_server:
+      - sm_server
+      - memory.usage
+      binding_sm_server:
+      - sm_server
+      - binding
+      disk.read.requests_sm_server:
+      - sm_server
+      - disk.read.requests
+      network.outpoing.packets_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - network.outpoing.packets
+      endpoint_sm_server:
+      - sm_server
+      - endpoint
+      disk.device.read.requests.rate_sm_server:
+      - sm_server
+      - disk.device.read.requests.rate
+      disk.capacity_sm_server:
+      - sm_server
+      - disk.capacity
+      disk.allocation_sm_server:
+      - sm_server
+      - disk.allocation
+      disk.root.size_sm_server:
+      - sm_server
+      - disk.root.size
+      disk.usage_sm_server:
+      - sm_server
+      - disk.usage
+      vcpus_sm_server:
+      - sm_server
+      - vcpus
+      disk.write.bytes_sm_server:
+      - sm_server
+      - disk.write.bytes
+      cpu.delta_sm_server:
+      - sm_server
+      - cpu.delta
+      os_sm_server:
+      - sm_server
+      - os
+      feature_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - feature
+      memory.resident_sm_server:
+      - sm_server
+      - memory.resident
+      network.outgoing.bytes_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - network.outgoing.bytes
+      instance_sm_server:
+      - sm_server
+      - instance
+      cpu_sm_server:
+      - sm_server
+      - cpu
+      disk.device.write.bytes_sm_server:
+      - sm_server
+      - disk.device.write.bytes
+      network.incoming.packets.rate_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - network.incoming.packets.rate
+      disk.write.requests.rate_sm_server:
+      - sm_server
+      - disk.write.requests.rate
+      disk.device.write.bytes.rate_sm_server:
+      - sm_server
+      - disk.device.write.bytes.rate
+      disk.write.bytes.rate_sm_server:
+      - sm_server
+      - disk.write.bytes.rate
+      disk.device.write.requests_sm_server:
+      - sm_server
+      - disk.device.write.requests
+      disk.device.latency_sm_server:
+      - sm_server
+      - disk.device.latency
+      host_sm_server:
+      - sm_server
+      - host
+      feature_sm_server:
+      - sm_server
+      - feature
+      disk.device.usage_sm_server:
+      - sm_server
+      - disk.device.usage
+      scalable_sm_server:
+      - sm_server
+      - scalable
+      disk.device.iops_sm_server:
+      - sm_server
+      - disk.device.iops
+      disk.read.bytes.rate_sm_server:
+      - sm_server
+      - disk.read.bytes.rate
+      disk.device.read.bytes_sm_server:
+      - sm_server
+      - disk.device.read.bytes
+      disk.latency_sm_server:
+      - sm_server
+      - disk.latency
+      network.incoming.bytes.rate_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - network.incoming.bytes.rate
+      disk.read.bytes_sm_server:
+      - sm_server
+      - disk.read.bytes
+      disk.write.requests_sm_server:
+      - sm_server
+      - disk.write.requests
+      cpu_util_sm_server:
+      - sm_server
+      - cpu_util
+      disk.ephemeral.size_sm_server:
+      - sm_server
+      - disk.ephemeral.size
+      network.outgoing.packets.rate_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - network.outgoing.packets.rate
+      network.incoming.packets_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - network.incoming.packets
+      memory_sm_server:
+      - sm_server
+      - memory
+      network.outgoing.bytes.rate_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - network.outgoing.bytes.rate
+    requirements:
+      dependency_sm_server:
+      - sm_server
+      - dependency
+      dependency_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - dependency
+      local_storage_sm_server:
+      - sm_server
+      - local_storage
+      link_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - link

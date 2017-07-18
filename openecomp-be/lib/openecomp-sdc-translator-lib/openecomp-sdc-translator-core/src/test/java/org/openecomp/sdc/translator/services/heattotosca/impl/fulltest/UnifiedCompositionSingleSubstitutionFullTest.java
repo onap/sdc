@@ -224,4 +224,14 @@ public class UnifiedCompositionSingleSubstitutionFullTest extends BaseFullTransl
 
     testTranslationWithInit();
   }
+
+  @Test
+  public void testInputOutputParameterTypes() throws IOException {
+    inputFilesPath =
+        "/mock/services/heattotosca/fulltest/singleSubstitution/inputOutputParamType/in";
+    outputFilesPath =
+        "/mock/services/heattotosca/fulltest/singleSubstitution/inputOutputParamType/out";
+
+    testTranslationWithInit();
+  }
 }

@@ -50,6 +50,9 @@ public abstract class MixinFeatureGroupEntity {
   abstract String getPartNumber();
 
   @JsonIgnore
+  abstract String getManufacturerReferenceNumber();
+
+  @JsonIgnore
   abstract Set<String> getLicenseKeyGroupIds();
 
   @JsonIgnore

@@ -269,7 +269,7 @@ resources:
       network: {get_resource: 1c2_catalog_instance_network}
 
 
-  nestedNoUnified:
+  nestedNoNestedSingleComputePattern:
     type: nested-no_vfc_v0.1.yaml
     depends_on:
       - 1c2_t2_port_1
@@ -293,7 +293,7 @@ resources:
       - 1c102_scalling_instance_1C1
       - 1c201_catalog_instance_1C2
       - 1c202_scalling_instance_1C2
-      - nestedNoUnified
+      - nestedNoNestedSingleComputePattern
       - nestedWithNoNovaHadDependencyToIt
     properties:
       security_group_name: group1
@@ -327,7 +327,7 @@ resources:
   dependsOn_network:
     type: OS::Neutron::Net
     depends_on:
-      - nestedNoUnified
+      - nestedNoNestedSingleComputePattern
       - 4p_nested
       - 1c2_t1_port_1
       - 1c2_t1_port_0
@@ -351,7 +351,7 @@ resources:
   nodeGetAttIn_network:
     type: OS::Neutron::Net
     properties:
-      name: { get_attr: [nestedNoUnified, portId, {get_attr: [4p_nested, server_pcm_id]}]}
+      name: { get_attr: [nestedNoNestedSingleComputePattern, portId, {get_attr: [4p_nested, server_pcm_id]}]}
       dhcp_agent_ids: { get_attr: [1c2_t1_port_1, tenant_id, {get_attr: [1c2_t1_port_0, tenant_id, {get_attr: [1c201_catalog_instance_1C2, instance_name, {get_attr: [1c202_scalling_instance_1C2,instance_name]}]}]}]}
       tenant_id: { get_attr:[1c101_scalling_instance_1C1, instance_name, {get_attr:[1c102_scalling_instance_1C1, instance_name, {get_attr:[1c1_t2_port_0, tenant_id, {get_attr:[1c1_t2_port_1, tenant_id]}]}]}]}
       value_specs: {get_attr:[1b01_single_1B, instance_name, get_attr:[1b02_single_1B,instance_name, {get_attr:[1b_t1_port_0, tenant_id, {get_attr:[1b_t1_port_1, tenant_id]}]}]] }
@@ -366,7 +366,7 @@ resources:
 
 outputs:
   out1:
-    value: { get_attr: [nestedNoUnified, portId, {get_attr: [4p_nested, server_pcm_id]}]}
+    value: { get_attr: [nestedNoNestedSingleComputePattern, portId, {get_attr: [4p_nested, server_pcm_id]}]}
   out2:
     value: { get_attr: [1c2_t1_port_1, tenant_id, {get_attr: [1c2_t1_port_0, tenant_id, {get_attr: [1c201_catalog_instance_1C2, instance_name, {get_attr: [1c202_scalling_instance_1C2,instance_name]}]}]}]}
   out3:

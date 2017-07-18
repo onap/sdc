@@ -83,7 +83,7 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
       if (entitlmentpoolElement.getRelations() == null) {
         entitlmentpoolElement.setRelations(new ArrayList<>());
       }
-      if (epFromDb.get().getRelations() != null) {
+      if (epFromDb.get().getRelations() != null && epFromDb.get().getRelations().size() > 0) {
         entitlmentpoolElement.getRelations().addAll(epFromDb.get().getRelations());
       }
     }
@@ -205,6 +205,7 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
 
   private ZusammenElement buildEntitlementPoolElement(EntitlementPoolEntity entitlementPool,
                                                       Action action) {
+
     ZusammenElement entitlementPoolElement = new ZusammenElement();
     entitlementPoolElement.setAction(action);
     if (entitlementPool.getId() != null) {
@@ -222,10 +223,12 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
     info.addProperty("EntitlementTime", entitlementPool.getTime());
     info.addProperty("manufacturerReferenceNumber",
         entitlementPool.getManufacturerReferenceNumber());
+    info.addProperty("startDate", entitlementPool.getStartDate());
+    info.addProperty("expiryDate", entitlementPool.getExpiryDate());
     entitlementPoolElement.setInfo(info);
 
-    if (entitlementPool.getReferencingFeatureGroups() != null &&
-        entitlementPool.getReferencingFeatureGroups().size() > 0) {
+   if (entitlementPool.getReferencingFeatureGroups() != null
+       && entitlementPool.getReferencingFeatureGroups().size() > 0) {
       entitlementPoolElement.setRelations(entitlementPool.getReferencingFeatureGroups().stream()
           .map(rel -> VlmZusammenUtil
               .createRelation(RelationType.EntitlmentPoolToReferencingFeatureGroup, rel))
@@ -241,9 +244,12 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
     entitlmentPool.setName(elementInfo.getInfo().getName());
     entitlmentPool.setDescription(elementInfo.getInfo().getDescription());
     entitlmentPool
-        .setThresholdValue(toInteger(elementInfo.getInfo().getProperty("thresholdValue")));
-    entitlmentPool.setThresholdUnit(
-        ThresholdUnit.valueOf(elementInfo.getInfo().getProperty("threshold_unit")));
+        .setThresholdValue(elementInfo.getInfo().getProperty("thresholdValue") != null
+                ? VlmZusammenUtil.toInteger(elementInfo.getInfo().getProperty("thresholdValue")) : null);
+
+    Object threshold_unit = elementInfo.getInfo().getProperty("threshold_unit");
+    entitlmentPool.setThresholdUnit( threshold_unit != null ?
+        ThresholdUnit.valueOf(elementInfo.getInfo().getProperty("threshold_unit")) : null);
     entitlmentPool.setEntitlementMetric(
         getEntitlementMetricCoiceOrOther(elementInfo.getInfo().getProperty("entitlement_metric")));
     entitlmentPool.setIncrements(elementInfo.getInfo().getProperty("increments"));
@@ -255,6 +261,8 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
         getEntitlementTimeCoiceOrOther(elementInfo.getInfo().getProperty("EntitlementTime")));
     entitlmentPool.setManufacturerReferenceNumber(
         elementInfo.getInfo().getProperty("manufacturerReferenceNumber"));
+    entitlmentPool.setStartDate(elementInfo.getInfo().getProperty("startDate"));
+    entitlmentPool.setExpiryDate(elementInfo.getInfo().getProperty("expiryDate"));
 
     if (elementInfo.getRelations() != null && elementInfo.getRelations().size() > 0) {
       entitlmentPool
@@ -284,22 +292,31 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
   private MultiChoiceOrOther<OperationalScope> getOperationalScopeMultiChoiceOrOther
       (Map<String, Object>
            operationalScope) {
-    Set<OperationalScope> choices = new HashSet<>();
-    ((List<String>) operationalScope.get("choices")).
-        forEach(choice -> choices.add(OperationalScope.valueOf(choice)));
+    if(operationalScope != null && !operationalScope.isEmpty()) {
+      Set<OperationalScope> choices = new HashSet<>();
+      ((List<String>) operationalScope.get("choices")).
+          forEach(choice -> choices.add(OperationalScope.valueOf(choice)));
 
-    return new MultiChoiceOrOther<>(choices, (String) operationalScope.get("other"));
+      return new MultiChoiceOrOther<>(choices, operationalScope.get("other")==null?null:
+          (String) operationalScope.get("other"));
+    }
+    return null;
   }
 
-  private Integer toInteger(Object val) {
-    if (val instanceof Double) {
-      return ((Double) val).intValue();
-    } else if (val instanceof String) {
-      return new Integer((String) val);
-    } else if (val instanceof Integer) {
-      return (Integer) val;
+  @Override
+  public String getManufacturerReferenceNumber(EntitlementPoolEntity entitlementPoolEntity){
+    SessionContext context = ZusammenUtil.createSessionContext();
+    Id itemId = new Id(entitlementPoolEntity.getVendorLicenseModelId());
+    ElementContext elementContext = new ElementContext(itemId,
+            VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
+            VlmZusammenUtil.getVersionTag(entitlementPoolEntity.getVersion()));
+    Optional<ElementInfo> elementInfo1 = zusammenAdaptor.getElementInfo(context, elementContext, new Id(entitlementPoolEntity.getId()));
+    Map<String, Object> properties = elementInfo1.get().getInfo().getProperties();
+    String manufacturerReferenceNumber = null;
+    if(properties != null && properties.containsKey("manufacturerReferenceNumber") ) {
+      manufacturerReferenceNumber = (String)properties.get("manufacturerReferenceNumber");
     }
-    throw new RuntimeException("invalid value for integer:" + val.getClass());
+    return manufacturerReferenceNumber;
   }
 
 }

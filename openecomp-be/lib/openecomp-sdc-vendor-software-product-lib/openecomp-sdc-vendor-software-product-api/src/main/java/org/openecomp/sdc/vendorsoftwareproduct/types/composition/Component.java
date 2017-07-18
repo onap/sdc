@@ -25,6 +25,8 @@ import java.util.List;
 public class Component {
   private ComponentData data;
   private List<Nic> nics;
+  private List<Image> images;
+  private List<ComputeData> compute;
 
   public ComponentData getData() {
     return data;
@@ -40,5 +42,22 @@ public class Component {
 
   public void setNics(List<Nic> nics) {
     this.nics = nics;
+  }
+
+  public List<Image> getImages() {
+    return images;
+  }
+
+  public void setImages(List<Image> images) {
+    this.images = images;
+  }
+
+  public List<ComputeData> getCompute() {
+    return compute;
+  }
+
+  public void setCompute(
+      List<ComputeData> compute) {
+    this.compute = compute;
   }
 }

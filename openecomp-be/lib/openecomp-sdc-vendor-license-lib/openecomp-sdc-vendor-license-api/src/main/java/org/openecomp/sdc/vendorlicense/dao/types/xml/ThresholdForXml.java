@@ -22,7 +22,7 @@ package org.openecomp.sdc.vendorlicense.dao.types.xml;
 
 public class ThresholdForXml {
   String unit;
-  int value;
+  Integer value;
 
   public String getUnit() {
     return unit;
@@ -32,11 +32,11 @@ public class ThresholdForXml {
     this.unit = unit;
   }
 
-  public int getValue() {
+  public Integer getValue() {
     return value;
   }
 
-  public void setValue(int value) {
+  public void setValue(Integer value) {
     this.value = value;
   }
 }

@@ -3,12 +3,11 @@
   "type": "object",
   "properties": {
     "name": {
-      "type": "string"<#if !manual>,
+      "type": "string",
       "enum": [
         "${nic.name}"
       ],
       "default": "${nic.name}"
-    </#if>
     },
     "description": {
       "type": "string"
@@ -20,15 +19,36 @@
       ],
       "default": "${nic.networkId}"
     }
-  </#if><#else>,
+  </#if>
+  <#elseif manual><#if nic.networkId??>,
+  "networkId": {
+  "type": "string",
+  "enum": [
+  "${nic.networkId}"
+  ],
+  "default": "${nic.networkId}"
+  }
+  </#if>
+<#else>,
     "networkId": {
       "type": "string",
       "enum": [<#list networkIds as networkId>
         "${networkId}"<#sep>,</#list>
       ]
     }
-  </#if>
+  </#if>,
+    "networkDescription": {
+      "type": "string"
+    },
+    "networkType": {
+      "type": "string",
+      "enum": [
+        "${nic.networkType}"
+      ],
+      "default": "${nic.networkType}"
+    }
   },
+
   "additionalProperties": false,
   "required": [
     "name"

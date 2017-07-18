@@ -1,0 +1,774 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested2
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    p2:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    net2:
+      hidden: false
+      immutable: false
+      type: string
+      description: Contrail V2 network
+    net1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Neutron network
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    sm_server_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: SM server names
+      entry_schema:
+        type: string
+    oam_server_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM Image server
+    oam_server_ips:
+      hidden: false
+      immutable: false
+      type: string
+    oam_server_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for OAM server
+    sm_server_ips:
+      hidden: false
+      immutable: false
+      type: string
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    net:
+      hidden: false
+      immutable: false
+      type: string
+    oam_server_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: OAM server names
+      entry_schema:
+        type: string
+    sm_server_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for SM server
+    sm_server_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: SM Image server
+  node_templates:
+    test_resourceGroup:
+      type: org.openecomp.resource.abstract.nodes.heat.nested3
+      directives:
+      - substitutable
+      properties:
+        p1:
+          get_input: net
+        service_template_filter:
+          substitute_service_template: nested3ServiceTemplate.yaml
+          count: 9
+          mandatory: true
+        port_cmaui_port_8_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_cmaui_port_7_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_cmaui_port_7_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        indx:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        port_cmaui_port_8_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+    abstract_sm_server:
+      type: org.openecomp.resource.abstract.nodes.sm_server
+      directives:
+      - substitutable
+      properties:
+        vm_flavor_name:
+          get_input: sm_server_flavor
+        port_sm_server_port_network:
+        - get_input: net1
+        compute_sm_server_name:
+        - get_input:
+          - sm_server_names
+          - 0
+        port_sm_server_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: sm_server_image
+        compute_sm_server_availability_zone:
+        - get_input: availability_zone_0
+        port_sm_server_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_sm_server_port_replacement_policy:
+        - AUTO
+        port_sm_server_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - sm_server_ips
+            - 0
+        port_sm_server_port_security_groups:
+        - - get_input: p1
+          - get_input: p2
+        service_template_filter:
+          substitute_service_template: Nested_sm_serverServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    abstract_oam_server:
+      type: org.openecomp.resource.abstract.nodes.oam_server
+      directives:
+      - substitutable
+      properties:
+        port_oam_server_port_network:
+        - get_input: net2
+        port_oam_server_port_security_groups:
+        - - get_input: p1
+        port_oam_server_port_replacement_policy:
+        - AUTO
+        vm_flavor_name:
+          get_input: oam_server_flavor
+        port_oam_server_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_oam_server_availability_zone:
+        - get_input: availability_zone_0
+        vm_image_name:
+          get_input: oam_server_image
+        port_oam_server_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - oam_server_ips
+            - 0
+        compute_oam_server_name:
+        - get_input:
+          - oam_server_names
+          - 1
+        port_oam_server_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        service_template_filter:
+          substitute_service_template: Nested_oam_serverServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+  groups:
+    nested2_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested2.yml
+        description: nested2
+      members:
+      - test_resourceGroup
+      - abstract_sm_server
+      - abstract_oam_server
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested2
+    capabilities:
+      network.outpoing.packets_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - network.outpoing.packets_cmaui_port_7
+      binding_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - binding_cmaui_port_7
+      memory.resident_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - memory.resident_server_cmaui
+      network.outgoing.bytes.rate_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - network.outgoing.bytes.rate_cmaui_port_7
+      os_server_sm:
+      - abstract_sm_server
+      - os_sm_server
+      disk.capacity_server_sm:
+      - abstract_sm_server
+      - disk.capacity_sm_server
+      memory_server_oam:
+      - abstract_oam_server
+      - memory_oam_server
+      feature_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - feature_cmaui_port_8
+      disk.write.bytes_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.write.bytes_server_cmaui
+      disk.device.iops_server_oam:
+      - abstract_oam_server
+      - disk.device.iops_oam_server
+      disk.device.usage_server_sm:
+      - abstract_sm_server
+      - disk.device.usage_sm_server
+      disk.device.write.requests.rate_server_sm:
+      - abstract_sm_server
+      - disk.device.write.requests.rate_sm_server
+      disk.allocation_server_oam:
+      - abstract_oam_server
+      - disk.allocation_oam_server
+      feature_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - feature_server_cmaui
+      network.incoming.packets_sm_server_port:
+      - abstract_sm_server
+      - network.incoming.packets_sm_server_sm_server_port
+      disk.write.bytes.rate_server_sm:
+      - abstract_sm_server
+      - disk.write.bytes.rate_sm_server
+      feature_oam_server_port:
+      - abstract_oam_server
+      - feature_oam_server_oam_server_port
+      disk.usage_server_oam:
+      - abstract_oam_server
+      - disk.usage_oam_server
+      disk.device.iops_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.device.iops_server_cmaui
+      instance_server_sm:
+      - abstract_sm_server
+      - instance_sm_server
+      disk.device.latency_server_oam:
+      - abstract_oam_server
+      - disk.device.latency_oam_server
+      disk.root.size_server_oam:
+      - abstract_oam_server
+      - disk.root.size_oam_server
+      host_server_sm:
+      - abstract_sm_server
+      - host_sm_server
+      memory.usage_server_oam:
+      - abstract_oam_server
+      - memory.usage_oam_server
+      disk.capacity_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.capacity_server_cmaui
+      disk.read.bytes_server_oam:
+      - abstract_oam_server
+      - disk.read.bytes_oam_server
+      disk.read.requests_server_oam:
+      - abstract_oam_server
+      - disk.read.requests_oam_server
+      cpu_util_server_sm:
+      - abstract_sm_server
+      - cpu_util_sm_server
+      network.incoming.bytes_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - network.incoming.bytes_cmaui_port_8
+      disk.device.capacity_server_sm:
+      - abstract_sm_server
+      - disk.device.capacity_sm_server
+      disk.device.read.bytes_server_oam:
+      - abstract_oam_server
+      - disk.device.read.bytes_oam_server
+      network.incoming.bytes_oam_server_port:
+      - abstract_oam_server
+      - network.incoming.bytes_oam_server_oam_server_port
+      network.outgoing.bytes.rate_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - network.outgoing.bytes.rate_cmaui_port_8
+      disk.device.iops_server_sm:
+      - abstract_sm_server
+      - disk.device.iops_sm_server
+      disk.device.read.requests.rate_server_oam:
+      - abstract_oam_server
+      - disk.device.read.requests.rate_oam_server
+      disk.device.latency_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.device.latency_server_cmaui
+      vcpus_server_oam:
+      - abstract_oam_server
+      - vcpus_oam_server
+      disk.device.read.bytes_server_sm:
+      - abstract_sm_server
+      - disk.device.read.bytes_sm_server
+      disk.read.bytes.rate_server_oam:
+      - abstract_oam_server
+      - disk.read.bytes.rate_oam_server
+      disk.write.bytes_server_oam:
+      - abstract_oam_server
+      - disk.write.bytes_oam_server
+      disk.write.requests.rate_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.write.requests.rate_server_cmaui
+      instance_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - instance_server_cmaui
+      disk.latency_server_sm:
+      - abstract_sm_server
+      - disk.latency_sm_server
+      disk.iops_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.iops_server_cmaui
+      disk.device.allocation_server_oam:
+      - abstract_oam_server
+      - disk.device.allocation_oam_server
+      attachment_oam_server_port:
+      - abstract_oam_server
+      - attachment_oam_server_oam_server_port
+      scalable_server_oam:
+      - abstract_oam_server
+      - scalable_oam_server
+      disk.root.size_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.root.size_server_cmaui
+      cpu_util_server_oam:
+      - abstract_oam_server
+      - cpu_util_oam_server
+      disk.device.usage_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.device.usage_server_cmaui
+      disk.write.bytes.rate_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.write.bytes.rate_server_cmaui
+      disk.latency_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.latency_server_cmaui
+      feature_server_sm:
+      - abstract_sm_server
+      - feature_sm_server
+      cpu.delta_server_oam:
+      - abstract_oam_server
+      - cpu.delta_oam_server
+      host_server_oam:
+      - abstract_oam_server
+      - host_oam_server
+      cpu_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - cpu_server_cmaui
+      cpu.delta_server_sm:
+      - abstract_sm_server
+      - cpu.delta_sm_server
+      binding_server_oam:
+      - abstract_oam_server
+      - binding_oam_server
+      disk.device.capacity_server_oam:
+      - abstract_oam_server
+      - disk.device.capacity_oam_server
+      binding_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - binding_server_cmaui
+      disk.device.write.bytes.rate_server_sm:
+      - abstract_sm_server
+      - disk.device.write.bytes.rate_sm_server
+      disk.write.bytes_server_sm:
+      - abstract_sm_server
+      - disk.write.bytes_sm_server
+      disk.latency_server_oam:
+      - abstract_oam_server
+      - disk.latency_oam_server
+      attachment_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - attachment_cmaui_port_8
+      network.incoming.packets_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - network.incoming.packets_cmaui_port_8
+      disk.device.allocation_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.device.allocation_server_cmaui
+      attachment_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - attachment_cmaui_port_7
+      disk.device.read.requests_server_oam:
+      - abstract_oam_server
+      - disk.device.read.requests_oam_server
+      disk.device.write.requests.rate_server_oam:
+      - abstract_oam_server
+      - disk.device.write.requests.rate_oam_server
+      endpoint_server_sm:
+      - abstract_sm_server
+      - endpoint_sm_server
+      disk.device.allocation_server_sm:
+      - abstract_sm_server
+      - disk.device.allocation_sm_server
+      feature_server_oam:
+      - abstract_oam_server
+      - feature_oam_server
+      feature_test_resourceGroup:
+      - test_resourceGroup
+      - feature
+      disk.read.requests_server_sm:
+      - abstract_sm_server
+      - disk.read.requests_sm_server
+      binding_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - binding_cmaui_port_8
+      disk.write.bytes.rate_server_oam:
+      - abstract_oam_server
+      - disk.write.bytes.rate_oam_server
+      disk.allocation_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.allocation_server_cmaui
+      memory.resident_server_sm:
+      - abstract_sm_server
+      - memory.resident_sm_server
+      disk.device.read.requests_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.device.read.requests_server_cmaui
+      network.incoming.packets_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - network.incoming.packets_cmaui_port_7
+      cpu_server_oam:
+      - abstract_oam_server
+      - cpu_oam_server
+      host_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - host_server_cmaui
+      memory_server_sm:
+      - abstract_sm_server
+      - memory_sm_server
+      scalable_server_sm:
+      - abstract_sm_server
+      - scalable_sm_server
+      scalable_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - scalable_server_cmaui
+      disk.device.read.bytes.rate_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.device.read.bytes.rate_server_cmaui
+      network.outgoing.packets.rate_sm_server_port:
+      - abstract_sm_server
+      - network.outgoing.packets.rate_sm_server_sm_server_port
+      binding_sm_server_port:
+      - abstract_sm_server
+      - binding_sm_server_sm_server_port
+      network.outgoing.bytes.rate_sm_server_port:
+      - abstract_sm_server
+      - network.outgoing.bytes.rate_sm_server_sm_server_port
+      disk.write.requests_server_oam:
+      - abstract_oam_server
+      - disk.write.requests_oam_server
+      disk.device.read.bytes_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.device.read.bytes_server_cmaui
+      disk.device.latency_server_sm:
+      - abstract_sm_server
+      - disk.device.latency_sm_server
+      memory.usage_server_sm:
+      - abstract_sm_server
+      - memory.usage_sm_server
+      memory.resident_server_oam:
+      - abstract_oam_server
+      - memory.resident_oam_server
+      network.incoming.bytes.rate_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - network.incoming.bytes.rate_cmaui_port_8
+      feature_sm_server_port:
+      - abstract_sm_server
+      - feature_sm_server_sm_server_port
+      disk.device.write.requests_server_sm:
+      - abstract_sm_server
+      - disk.device.write.requests_sm_server
+      network.incoming.packets.rate_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - network.incoming.packets.rate_cmaui_port_7
+      disk.write.requests_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.write.requests_server_cmaui
+      disk.device.write.bytes_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.device.write.bytes_server_cmaui
+      disk.device.write.requests_server_oam:
+      - abstract_oam_server
+      - disk.device.write.requests_oam_server
+      disk.read.bytes_server_sm:
+      - abstract_sm_server
+      - disk.read.bytes_sm_server
+      disk.device.write.requests.rate_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.device.write.requests.rate_server_cmaui
+      disk.device.write.bytes.rate_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.device.write.bytes.rate_server_cmaui
+      cpu_server_sm:
+      - abstract_sm_server
+      - cpu_sm_server
+      endpoint_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - endpoint_server_cmaui
+      network.outpoing.packets_sm_server_port:
+      - abstract_sm_server
+      - network.outpoing.packets_sm_server_sm_server_port
+      network.outgoing.packets.rate_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - network.outgoing.packets.rate_cmaui_port_7
+      network.incoming.bytes.rate_oam_server_port:
+      - abstract_oam_server
+      - network.incoming.bytes.rate_oam_server_oam_server_port
+      disk.device.usage_server_oam:
+      - abstract_oam_server
+      - disk.device.usage_oam_server
+      network.outgoing.packets.rate_oam_server_port:
+      - abstract_oam_server
+      - network.outgoing.packets.rate_oam_server_oam_server_port
+      network.incoming.packets.rate_sm_server_port:
+      - abstract_sm_server
+      - network.incoming.packets.rate_sm_server_sm_server_port
+      binding_oam_server_port:
+      - abstract_oam_server
+      - binding_oam_server_oam_server_port
+      disk.device.capacity_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.device.capacity_server_cmaui
+      network.incoming.packets.rate_oam_server_port:
+      - abstract_oam_server
+      - network.incoming.packets.rate_oam_server_oam_server_port
+      disk.device.write.bytes_server_oam:
+      - abstract_oam_server
+      - disk.device.write.bytes_oam_server
+      disk.device.read.requests_server_sm:
+      - abstract_sm_server
+      - disk.device.read.requests_sm_server
+      disk.device.write.requests_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.device.write.requests_server_cmaui
+      disk.read.bytes_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.read.bytes_server_cmaui
+      disk.device.read.bytes.rate_server_sm:
+      - abstract_sm_server
+      - disk.device.read.bytes.rate_sm_server
+      disk.ephemeral.size_server_oam:
+      - abstract_oam_server
+      - disk.ephemeral.size_oam_server
+      network.outpoing.packets_oam_server_port:
+      - abstract_oam_server
+      - network.outpoing.packets_oam_server_oam_server_port
+      os_server_oam:
+      - abstract_oam_server
+      - os_oam_server
+      network.outgoing.bytes_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - network.outgoing.bytes_cmaui_port_7
+      disk.capacity_server_oam:
+      - abstract_oam_server
+      - disk.capacity_oam_server
+      disk.write.requests_server_sm:
+      - abstract_sm_server
+      - disk.write.requests_sm_server
+      network.incoming.bytes_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - network.incoming.bytes_cmaui_port_7
+      disk.ephemeral.size_server_sm:
+      - abstract_sm_server
+      - disk.ephemeral.size_sm_server
+      disk.usage_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.usage_server_cmaui
+      disk.read.bytes.rate_server_sm:
+      - abstract_sm_server
+      - disk.read.bytes.rate_sm_server
+      endpoint_server_oam:
+      - abstract_oam_server
+      - endpoint_oam_server
+      network.outpoing.packets_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - network.outpoing.packets_cmaui_port_8
+      disk.device.read.requests.rate_server_sm:
+      - abstract_sm_server
+      - disk.device.read.requests.rate_sm_server
+      os_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - os_server_cmaui
+      binding_server_sm:
+      - abstract_sm_server
+      - binding_sm_server
+      disk.root.size_server_sm:
+      - abstract_sm_server
+      - disk.root.size_sm_server
+      network.outgoing.bytes_oam_server_port:
+      - abstract_oam_server
+      - network.outgoing.bytes_oam_server_oam_server_port
+      disk.allocation_server_sm:
+      - abstract_sm_server
+      - disk.allocation_sm_server
+      disk.iops_server_oam:
+      - abstract_oam_server
+      - disk.iops_oam_server
+      vcpus_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - vcpus_server_cmaui
+      network.outgoing.bytes_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - network.outgoing.bytes_cmaui_port_8
+      disk.write.requests.rate_server_sm:
+      - abstract_sm_server
+      - disk.write.requests.rate_sm_server
+      network.outgoing.bytes.rate_oam_server_port:
+      - abstract_oam_server
+      - network.outgoing.bytes.rate_oam_server_oam_server_port
+      disk.device.write.bytes_server_sm:
+      - abstract_sm_server
+      - disk.device.write.bytes_sm_server
+      network.incoming.packets.rate_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - network.incoming.packets.rate_cmaui_port_8
+      network.incoming.bytes.rate_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - network.incoming.bytes.rate_cmaui_port_7
+      disk.write.requests.rate_server_oam:
+      - abstract_oam_server
+      - disk.write.requests.rate_oam_server
+      network.outgoing.packets.rate_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - network.outgoing.packets.rate_cmaui_port_8
+      disk.device.read.bytes.rate_server_oam:
+      - abstract_oam_server
+      - disk.device.read.bytes.rate_oam_server
+      memory.usage_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - memory.usage_server_cmaui
+      network.incoming.bytes.rate_sm_server_port:
+      - abstract_sm_server
+      - network.incoming.bytes.rate_sm_server_sm_server_port
+      memory_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - memory_server_cmaui
+      disk.device.write.bytes.rate_server_oam:
+      - abstract_oam_server
+      - disk.device.write.bytes.rate_oam_server
+      network.incoming.packets_oam_server_port:
+      - abstract_oam_server
+      - network.incoming.packets_oam_server_oam_server_port
+      disk.read.requests_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.read.requests_server_cmaui
+      disk.ephemeral.size_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.ephemeral.size_server_cmaui
+      disk.usage_server_sm:
+      - abstract_sm_server
+      - disk.usage_sm_server
+      instance_server_oam:
+      - abstract_oam_server
+      - instance_oam_server
+      feature_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - feature_cmaui_port_7
+      cpu.delta_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - cpu.delta_server_cmaui
+      cpu_util_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - cpu_util_server_cmaui
+      disk.device.read.requests.rate_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.device.read.requests.rate_server_cmaui
+      network.outgoing.bytes_sm_server_port:
+      - abstract_sm_server
+      - network.outgoing.bytes_sm_server_sm_server_port
+      vcpus_server_sm:
+      - abstract_sm_server
+      - vcpus_sm_server
+      disk.read.bytes.rate_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - disk.read.bytes.rate_server_cmaui
+      attachment_sm_server_port:
+      - abstract_sm_server
+      - attachment_sm_server_sm_server_port
+      network.incoming.bytes_sm_server_port:
+      - abstract_sm_server
+      - network.incoming.bytes_sm_server_sm_server_port
+      disk.iops_server_sm:
+      - abstract_sm_server
+      - disk.iops_sm_server
+    requirements:
+      dependency_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - dependency_server_cmaui
+      local_storage_server_oam:
+      - abstract_oam_server
+      - local_storage_oam_server
+      link_sm_server_port:
+      - abstract_sm_server
+      - link_sm_server_sm_server_port
+      dependency_server_oam:
+      - abstract_oam_server
+      - dependency_oam_server
+      link_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - link_cmaui_port_7
+      link_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - link_cmaui_port_8
+      dependency_test_resourceGroup:
+      - test_resourceGroup
+      - dependency
+      dependency_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - dependency_cmaui_port_7
+      dependency_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - dependency_cmaui_port_8
+      dependency_sm_server_port:
+      - abstract_sm_server
+      - dependency_sm_server_sm_server_port
+      link_oam_server_port:
+      - abstract_oam_server
+      - link_oam_server_oam_server_port
+      local_storage_server_sm:
+      - abstract_sm_server
+      - local_storage_sm_server
+      local_storage_server_cmaui_test_resourceGroup:
+      - test_resourceGroup
+      - local_storage_server_cmaui
+      dependency_oam_server_port:
+      - abstract_oam_server
+      - dependency_oam_server_oam_server_port
+      dependency_server_sm:
+      - abstract_sm_server
+      - dependency_sm_server

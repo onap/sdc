@@ -30,7 +30,7 @@ import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidati
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validatePortConnectivityIn;
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validatePortConnectivityOut;
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validatePortsInConsolidationData;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateSubstituteMappingInConsolidationData;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateNestedConsolidationDataNodeTemplateIds;
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateVolumeInConsolidationData;
 
 import org.apache.commons.collections4.MapUtils;
@@ -244,12 +244,12 @@ public class BaseResourceTranslationTest {
     }
   }
 
-  public void validateSubsMappingInConsolidationData(){
+  public void validateNodeTemplateIdInNestedConsolidationData(){
     ConsolidationData consolidationData = translationContext.getConsolidationData();
     Map<String, ServiceTemplate> expectedServiceTemplateModels = TestUtils.getServiceTemplates
         (expectedResultMap);
     Assert.assertNotNull(consolidationData);
-    validateSubstituteMappingInConsolidationData(consolidationData,expectedServiceTemplateModels);
+    validateNestedConsolidationDataNodeTemplateIds(consolidationData,expectedServiceTemplateModels);
   }
 
   public void validateComputeTemplateConsolidationData(ConsolidationDataValidationType

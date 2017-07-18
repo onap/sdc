@@ -14,14 +14,14 @@
  * permissions and limitations under the License.
  */
 import React, {Component} from 'react';
-import Button from 'react-bootstrap/lib/Button.js';
+import Button from 'sdc-ui/lib/react/Button.js';
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
 import FormControl from 'react-bootstrap/lib/FormControl.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import SelectInput from 'nfvo-components/input/SelectInput.jsx';
 import Icon from 'nfvo-components/icon/Icon.jsx';
-import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import {fileTypes} from './HeatSetupConstants.js';
 import {tabsMapping} from '../SoftwareProductAttachmentsConstants.js';
 import {sortable} from 'react-sortable';
@@ -76,8 +76,8 @@ class SortableModuleFileList extends Component {
 			<div className='modules-list-wrapper'>
 				<div className='modules-list-header'>
 					<div className='modules-list-controllers'>
-						{!isBaseExist && <Button bsStyle='link' onClick={onBaseAdd} disabled={unassigned.length === 0}>{i18n('Add Base')}</Button>}
-						<Button bsStyle='link' onClick={onModuleAdd} disabled={unassigned.length === 0}>{i18n('Add Module')}</Button>
+						{!isBaseExist && <Button btnType='link' onClick={onBaseAdd} disabled={unassigned.length === 0}>{i18n('Add Base')}</Button>}
+						<Button btnType='link' onClick={onModuleAdd} disabled={unassigned.length === 0}>{i18n('Add Module')}</Button>
 					</div>
 				</div>
 				<ul>{listItems}</ul>
@@ -102,7 +102,7 @@ const EmptyListContent = props => {
 	return (
 		<div className='go-to-validation-button-wrapper'>
 			<div className='all-files-assigned'>{i18n(displayText)}</div>
-			{heatDataExist && <div className={'link'} onClick={onClick} data-test-id='go-to-validation'>{i18n('Proceed To Validation')}<SVGIcon name='angle-right'/></div>}
+			{heatDataExist && <div className={'link'} onClick={onClick} data-test-id='go-to-validation'>{i18n('Proceed To Validation')}<SVGIcon name='angleRight'/></div>}
 		</div>
 	);
 };
@@ -212,7 +212,7 @@ class ModuleFile extends Component {
 								data-test-id={isBase ? 'base-name' : 'module-name'}/>}
 						</div>
 					</div>
-					<SVGIcon name='trash-o' onClick={() => onModuleDelete(name)} data-test-id='module-delete'/>
+					<SVGIcon name='trashO' onClick={() => onModuleDelete(name)} data-test-id='module-delete'/>
 				</div>
 				<div className='modules-list-item-selectors'>
 					<SelectWithFileType

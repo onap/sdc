@@ -419,8 +419,8 @@ topology_template:
       description: csb internal network name
       default: int_mog_csb_net
   node_templates:
-    abstract_pcm_server_0:
-      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
+    server_pcm_003:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
       directives:
       - substitutable
       properties:
@@ -506,5 +506,5 @@ topology_template:
         heat_file: ../Artifacts/hot-mog-0108-bs1271.yml
         description: heat template that creates MOG stack
       members:
+      - server_pcm_003
       - abstract_pd_server
-      - abstract_pcm_server_0

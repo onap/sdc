@@ -21,6 +21,7 @@ class Validator {
 	static get globalValidationFunctions() {
 		return {
 			required: value => value !== '',
+			requiredChooseOption: value => value !== '',
 			maxLength: (value, length) => ValidatorJS.isLength(value, {max: length}),
 			minLength: (value, length) => ValidatorJS.isLength(value, {min: length}),
 			pattern: (value, pattern) => ValidatorJS.matches(value, pattern),
@@ -31,10 +32,10 @@ class Validator {
 				}
 				return ValidatorJS.isNumeric(value);
 			},
-			maximum: (value, maxValue) => value <= maxValue,
-			minimum: (value, minValue) => value >= minValue,
-			maximumExclusive: (value, maxValue) => value < maxValue,
-			minimumExclusive: (value, minValue) => value > minValue,
+			maximum: (value, maxValue) => {return (value === undefined) ? true : (value <= maxValue);},
+			minimum: (value, minValue) => {return (value === undefined) ? true : (value >= minValue);},
+			maximumExclusive: (value, maxValue) => {return (value === undefined) ? true : (value < maxValue);},
+			minimumExclusive: (value, minValue) => {return (value === undefined) ? true : (value > minValue);},
 			alphanumeric: value => ValidatorJS.isAlphanumeric(value),
 			alphanumericWithSpaces: value => ValidatorJS.isAlphanumeric(value.replace(/ /g, '')),
 			validateName: value => ValidatorJS.isAlphanumeric(value.replace(/\s|\.|\_|\-/g, ''), 'en-US'),
@@ -42,24 +43,26 @@ class Validator {
 			freeEnglishText: value => ValidatorJS.isAlphanumeric(value.replace(/\s|\.|\_|\-|\,|\(|\)|\?/g, ''), 'en-US'),
 			email: value => ValidatorJS.isEmail(value),
 			ip: value => ValidatorJS.isIP(value),
-			url: value => ValidatorJS.isURL(value)
+			url: value => ValidatorJS.isURL(value),
+			alphanumericWithUnderscores: value => ValidatorJS.isAlphanumeric(value.replace(/_/g, ''))
 		};
 	}
 
 	static get globalValidationMessagingFunctions() {
 		return {
 			required: () => i18n('Field is required'),
+			requiredChooseOption: () => i18n('Field should have one of these options'),
 			maxLength: (value, maxLength) => i18n('Field value has exceeded it\'s limit, {maxLength}. current length: {length}', {
 				length: value.length,
 				maxLength
 			}),
-			minLength: (value, minLength) => i18n('Field value should contain at least {minLength} characters.', {minLength}),
-			pattern: (value, pattern) => i18n('Field value should match the pattern: {pattern}.', {pattern}),
+			minLength: (value, minLength) => i18n(`Field value should contain at least ${minLength} characters.`),
+			pattern: (value, pattern) => i18n(`Field value should match the pattern: ${pattern}.`),
 			numeric: () => i18n('Field value should contain numbers only.'),
-			maximum: (value, maxValue) => i18n('Field value should be less or equal to: {maxValue}.', {maxValue}),
-			minimum: (value, minValue) => i18n('Field value should be at least: {minValue}.', {minValue: minValue.toString()}),
-			maximumExclusive: (value, maxValue) => i18n('Field value should be less than: {maxValue}.', {maxValue}),
-			minimumExclusive: (value, minValue) => i18n('Field value should be more than: {minValue}.', {minValue: minValue.toString()}),
+			maximum: (value, maxValue) => i18n(`Field value should be less or equal to: ${maxValue}.`),
+			minimum: (value, minValue) => i18n(`Field value should be at least: ${minValue.toString()}.`),
+			maximumExclusive: (value, maxValue) => i18n(`Field value should be less than: ${maxValue}.`),
+			minimumExclusive: (value, minValue) => i18n(`Field value should be more than: ${minValue.toString()}.`),
 			alphanumeric: () => i18n('Field value should contain letters or digits only.'),
 			alphanumericWithSpaces: () => i18n('Field value should contain letters, digits or spaces only.'),
 			validateName: ()=> i18n('Field value should contain English letters, digits , spaces, underscores, dashes and dots only.'),
@@ -68,7 +71,8 @@ class Validator {
 			email: () => i18n('Field value should be a valid email address.'),
 			ip: () => i18n('Field value should be a valid ip address.'),
 			url: () => i18n('Field value should be a valid url address.'),
-			general: () => i18n('Field value is invalid.')
+			general: () => i18n('Field value is invalid.'),
+			alphanumericWithUnderscores: () => i18n('Field value should contain letters, digits or _ only.')
 		};
 	}
 

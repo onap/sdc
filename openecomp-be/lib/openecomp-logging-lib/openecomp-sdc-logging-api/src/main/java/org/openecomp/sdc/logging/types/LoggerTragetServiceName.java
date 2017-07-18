@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -122,7 +122,9 @@ public class LoggerTragetServiceName {
 
   public static final String SUBMIT_VSP = "Submit VSP";
   public static final String GET_VSP = "Get VSP";
+  public static final String ADD_VSP = "Add VSP";
   public static final String DELETE_VSP = "Delete VSP";
+  public static final String UPDATE_VSP = "Update VSP";
   public static final String ENRICH = "Enrich";
   public static final String UPLOAD_FILE = "Upload file";
   public static final String GET_UPLOADED_HEAT = "Get Uploaded HEAT File";
@@ -135,8 +137,8 @@ public class LoggerTragetServiceName {
 
   public static final String GET_VLM = "Get VLM";
 
-  public static final String VALIDATE_MIB = "Validate MIB File";
-  public static final String UPLOAD_MIB = "Upload MIB file";
+  public static final String VALIDATE_MONITORING_FILE = "Validate Monitoring File";
+  public static final String UPLOAD_MONITORING_FILE = "Upload Monitoring file";
 
   public static final String GET_VERSION_INFO = "Get version info";
 
@@ -145,12 +147,18 @@ public class LoggerTragetServiceName {
 
   public static final String CREATE_COMPONENT = "Create Component";
   public static final String DELETE_COMPONENT = "Delete Component";
+  public static final String UPDATE_COMPONENT = "Update Component";
 
   public static final String GET_PROCESS_ARTIFACT = "Get Process Artifact";
   public static final String UPLOAD_PROCESS_ARTIFACT = "Upload Process Artifact";
 
   public static final String CREATE_NIC = "Create Nic";
   public static final String DELETE_NIC = "Delete Nic";
+  public static final String UPDATE_NIC = "Update Nic";
+
+  public static final String CREATE_DEPLOYMENT_FLAVOR = "Create Deployment Flavor";
+  public static final String DELETE_DEPLOYMENT_FLAVOR = "Delete Deployment Flavor";
+  public static final String UPDATE_DEPLOYMENT_FLAVOR = "Update Deployment Flavor";
 
   public static final String EXTRACT_COMPOSITION_DATA = "Extract Composition Data";
 
@@ -178,6 +186,18 @@ public class LoggerTragetServiceName {
       "Insert Value Into Application Config";
 
   public static final String VALIDATE_FILE_DATA_STRUCTURE = "Validate Manifest Sent From User";
+  public static final String CREATE_IMAGE = "Create Image";
+  public static final String DELETE_IMAGE = "Delete Image";
+  public static final String UPDATE_IMAGE = "Update Image";
+
+  public static final String CREATE_COMPUTE = "Create Compute";
+  public static final String UPDATE_COMPUTE = "Update Compute";
+  public static final String DELETE_COMPUTE = "Delete Compute";
+
+  public static final String COLLECT_MANUAL_VSP_TOSCA_DATA = "Collect Manual Vsp Tosca data";
+  public static final String GENERATE_MANUAL_VSP_TOSCA = "Generate Manual Vsp Tosca";
+
+  public static final String VALIDATE_DATE_RANGE = "Validate Date Range";
 
   public static final String CREATE_COMPONENT_DEPENDENCY_MODEL = "Create Component Dependency "
       + "Model";

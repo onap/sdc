@@ -46,14 +46,14 @@ class LicenseKeyGroupsListEditorView extends React.Component {
 	};
 
 	render() {
-		let {licenseModelId, vendorName, isReadOnlyMode, isDisplayModal, isModalInEditMode, version} = this.props;
+		let {licenseModelId, isReadOnlyMode, isDisplayModal, isModalInEditMode, version} = this.props;
 		let {onAddLicenseKeyGroupClick} = this.props;
 		const {localFilter} = this.state;
 
 		return (
 			<div className='license-key-groups-list-editor'>
 				<ListEditorView
-					title={i18n('License Key Groups', {vendorName})}
+					title={i18n('License Key Groups')}
 					plusButtonTitle={i18n('Add License Key Group')}
 					onAdd={onAddLicenseKeyGroupClick}
 					filterValue={localFilter}
@@ -147,7 +147,7 @@ export default LicenseKeyGroupsListEditorView;
 
 export function generateConfirmationMsg(licenseKeyGroupToDelete) {
 	let name = licenseKeyGroupToDelete ? licenseKeyGroupToDelete.name : '';
-	let msg = i18n('Are you sure you want to delete "{name}"?', {name});
+	let msg = i18n(`Are you sure you want to delete "${name}"?`);
 	let subMsg = licenseKeyGroupToDelete.referencingFeatureGroups
 	&& licenseKeyGroupToDelete.referencingFeatureGroups.length > 0 ?
 		i18n('This license key group is associated with one or more feature groups') :

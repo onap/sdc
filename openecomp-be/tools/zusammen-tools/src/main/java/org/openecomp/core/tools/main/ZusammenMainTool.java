@@ -38,7 +38,7 @@ public class ZusammenMainTool {
 
     switch (COMMANDS.valueOf(command)){
       case RESET_OLD_VERSION:
-        ResetOldVersion.reset(context,ToolsUtil.getParam("v",args));
+        ResetOldVersion.reset(context,ToolsUtil.getParam("v",args),ToolsUtil.getParam("n",args));
         break;
       case EXPORT:
         ExportDataCommand.exportData(context,ToolsUtil.getParam("i",args));

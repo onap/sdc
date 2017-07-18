@@ -15,18 +15,24 @@
  */
 import {Factory} from 'rosie';
 import randomstring from 'randomstring';
+import {type2Name, fileTypes} from 'sdc-app/onboarding/softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringConstants.js';
+
+export const trap = type2Name[fileTypes.SNMP_TRAP];
+export const poll = type2Name[fileTypes.SNMP_POLL];
+export const ves = type2Name[fileTypes.VES_EVENT];
 
 export const VSPComponentsMonitoringRestFactory = new Factory()
-	.option('snmpTrapFlag', false)
-	.option('snmpPollFlag', false)
-	.attr('snmpTrap', ['snmpTrapFlag'], snmpTrapFlag => snmpTrapFlag ? randomstring.generate() : undefined)
-	.attr('snmpPoll', ['snmpPollFlag'], snmpPollFlag => snmpPollFlag ? randomstring.generate() : undefined);
+	.option('createTrap', false)
+	.option('createPoll', false)
+	.option('createVes', false)
+
+	.attr(trap, ['createTrap'], (createTrap) => {return (createTrap) ? randomstring.generate() : undefined})
+	.attr(poll, ['createPoll'], (createPoll) => {return (createPoll) ? randomstring.generate() : undefined})
+	.attr(ves, ['createVes'], (createVes) => {return (createVes) ? randomstring.generate() : undefined});
+
 
 export const VSPComponentsMonitoringViewFactory = new Factory()
-	.extend(VSPComponentsMonitoringRestFactory)
-	.after(monitoring => {
-		monitoring['trapFilename'] = monitoring['snmpTrap'];
-		monitoring['pollFilename'] = monitoring['snmpPoll'];
-		delete monitoring['snmpTrap'];
-		delete monitoring['snmpPoll'];
-	});
+	.extend(VSPComponentsMonitoringRestFactory);
+//	.after(monitoring => {
+
+//	});

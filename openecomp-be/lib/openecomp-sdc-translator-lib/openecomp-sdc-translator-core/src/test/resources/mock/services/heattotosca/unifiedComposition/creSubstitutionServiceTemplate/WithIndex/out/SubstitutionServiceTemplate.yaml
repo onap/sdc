@@ -262,7 +262,7 @@ topology_template:
           type: tosca.artifacts.Deployment
           file: ../Artifacts/nimbus-ethernet
   substitution_mappings:
-    node_type: org.openecomp.resource.abstract.nodes.FSB1_2
+    node_type: org.openecomp.resource.abstract.nodes.FSB1
     capabilities:
       network.outgoing.packets.rate_FSB1_FSB_OAM:
       - FSB1_FSB_OAM

@@ -11,73 +11,6 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_GPB1_Internal1_network_role:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_GPB1_Internal2_network_role:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    compute_GPB1_name:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    vm_flavor_name:
-      type: string
-      required: true
-    port_GPB1_Internal2_mac_address:
-      type: string
-      required: true
-    port_GPB1_Internal1_order:
-      type: list
-      required: true
-      entry_schema:
-        type: integer
-    vm_image_name:
-      type: string
-      required: true
-    port_GPB1_Internal1_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: json
-    port_GPB1_Internal2_exCP_naming:
-      type: list
-      required: true
-      entry_schema:
-        type: json
-    port_GPB1_Internal1_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
-    compute_GPB1_availability_zone:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_GPB1_Internal1_exCP_naming:
-      type: list
-      required: true
-      entry_schema:
-        type: json
-    port_GPB1_Internal2_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_GPB1_Internal2_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: json
-    port_GPB1_Internal1_network_role_tag:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     port_GPB1_Internal2_network:
       type: list
       required: true
@@ -95,37 +28,52 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_GPB1_Internal2_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
+    compute_GPB1_name:
+      type: list
       required: true
-    port_GPB1_Internal1_mac_address:
+      entry_schema:
+        type: string
+    vm_flavor_name:
       type: string
       required: true
-    port_GPB1_Internal1_subnetpoolid:
+    port_GPB1_Internal2_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.MacRequirements
+    port_GPB1_Internal1_mac_address:
       type: list
       required: true
       entry_schema:
         type: string
-    port_GPB1_Internal2_subnetpoolid:
+    port_GPB1_Internal2_mac_address:
       type: list
       required: true
       entry_schema:
         type: string
-    port_GPB1_Internal2_network_role_tag:
-      type: list
+    vm_image_name:
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_GPB1_Internal1_ip_requirements:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_GPB1_Internal2_order:
+        type: json
+    port_GPB1_Internal1_mac_requirements:
       type: list
       required: true
       entry_schema:
-        type: integer
+        type: org.openecomp.datatypes.network.MacRequirements
+    compute_GPB1_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_GPB1_Internal2_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
   node_templates:
     GPB1:
       type: org.openecomp.resource.vfc.nodes.heat.GPB1
@@ -145,40 +93,22 @@ topology_template:
     GPB1_GPB1_Internal1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
-        exCP_naming:
-          get_input:
-          - port_GPB1_Internal1_exCP_naming
-          - index_value
-        vlan_requirements:
-          get_input:
-          - port_GPB1_Internal1_vlan_requirements
-          - index_value
         ip_requirements:
-          get_input: port_GPB1_Internal1_ip_requirements
-        network_role_tag:
           get_input:
-          - port_GPB1_Internal1_network_role_tag
+          - port_GPB1_Internal1_ip_requirements
           - index_value
         mac_requirements:
-          get_input: port_GPB1_Internal1_mac_requirements
-        order:
           get_input:
-          - port_GPB1_Internal1_order
-          - index_value
-        network_role:
-          get_input:
-          - port_GPB1_Internal1_network_role
-          - index_value
-        subnetpoolid:
-          get_input:
-          - port_GPB1_Internal1_subnetpoolid
+          - port_GPB1_Internal1_mac_requirements
           - index_value
         network:
           get_input:
           - port_GPB1_Internal1_network
           - index_value
         mac_address:
-          get_input: port_GPB1_Internal1_mac_address
+          get_input:
+          - port_GPB1_Internal1_mac_address
+          - index_value
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -187,40 +117,22 @@ topology_template:
     GPB1_GPB1_Internal2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
-        exCP_naming:
-          get_input:
-          - port_GPB1_Internal2_exCP_naming
-          - index_value
-        vlan_requirements:
-          get_input:
-          - port_GPB1_Internal2_vlan_requirements
-          - index_value
         ip_requirements:
-          get_input: port_GPB1_Internal2_ip_requirements
-        network_role_tag:
           get_input:
-          - port_GPB1_Internal2_network_role_tag
+          - port_GPB1_Internal2_ip_requirements
           - index_value
         mac_requirements:
-          get_input: port_GPB1_Internal2_mac_requirements
-        order:
           get_input:
-          - port_GPB1_Internal2_order
-          - index_value
-        network_role:
-          get_input:
-          - port_GPB1_Internal2_network_role
-          - index_value
-        subnetpoolid:
-          get_input:
-          - port_GPB1_Internal2_subnetpoolid
+          - port_GPB1_Internal2_mac_requirements
           - index_value
         network:
           get_input:
           - port_GPB1_Internal2_network
           - index_value
         mac_address:
-          get_input: port_GPB1_Internal2_mac_address
+          get_input:
+          - port_GPB1_Internal2_mac_address
+          - index_value
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable

@@ -25,7 +25,7 @@ import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.CINDER_V
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.core.utilities.yaml.YamlUtil;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Output;

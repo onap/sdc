@@ -46,7 +46,6 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslatedHeatResource;
 
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
-import org.openecomp.sdc.translator.services.heattotosca.ConfigConstants;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
@@ -480,7 +479,7 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
       if (translatedPortId.isPresent()) {
         NodeTemplate portNodeTemplate =
             DataModelUtil.getNodeTemplate(serviceTemplate, translatedPortId.get());
-        HeatToToscaUtil.addBindingReqFromPortToCompute(novaServerResourceId, portNodeTemplate);
+        DataModelUtil.addBindingReqFromPortToCompute(novaServerResourceId, portNodeTemplate);
 
         // Add ports
         ConsolidationDataUtil.updatePortInConsolidationData(translateTo, novaNodeTemplate.getType(),

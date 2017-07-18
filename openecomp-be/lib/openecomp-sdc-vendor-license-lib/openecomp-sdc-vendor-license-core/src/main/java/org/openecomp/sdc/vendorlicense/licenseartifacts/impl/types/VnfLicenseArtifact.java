@@ -32,15 +32,17 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitXml;
 import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins.MixinEntitlementPoolEntityForVnfArtifact;
 import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins.MixinFeatureGroupModel;
 import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins.MixinLicenseKeyGroupEntityForVnfArtifact;
+import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins.MixinLimitArtifact;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 @JacksonXmlRootElement(localName = "vf-license-model",
     namespace = "http://xmlns.openecomp.org/asdc/license-model/1.0")
@@ -93,5 +95,6 @@ public class VnfLicenseArtifact extends XmlArtifact {
     xmlMapper.addMixIn(EntitlementPoolEntity.class, MixinEntitlementPoolEntityForVnfArtifact.class);
     xmlMapper.addMixIn(LicenseKeyGroupEntity.class, MixinLicenseKeyGroupEntityForVnfArtifact.class);
     xmlMapper.addMixIn(FeatureGroupModel.class, MixinFeatureGroupModel.class);
+    xmlMapper.addMixIn(LimitXml.class, MixinLimitArtifact.class);
   }
 }

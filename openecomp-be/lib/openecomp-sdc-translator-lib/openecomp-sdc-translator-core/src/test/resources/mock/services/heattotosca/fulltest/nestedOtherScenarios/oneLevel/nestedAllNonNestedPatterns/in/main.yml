@@ -1,0 +1,16 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  jsa_name:
+    type: string
+    description: network name of jsa log network
+
+resources:
+  test_nested_all_patterns:
+    type: nested1.yml
+    properties:
+      p1: {get_param: jsa_name}
+      p2: image

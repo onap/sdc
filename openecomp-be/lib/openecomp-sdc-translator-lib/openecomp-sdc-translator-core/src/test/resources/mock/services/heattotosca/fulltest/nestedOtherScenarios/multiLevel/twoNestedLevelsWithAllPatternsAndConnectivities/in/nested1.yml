@@ -1,0 +1,197 @@
+heat_template_version: 2013-05-23
+
+description: nested1
+
+parameters:
+  p1:
+    type: string
+    description: UID of OAM network
+  p2:
+    type: string
+    description: UID of OAM network
+  security_group_name:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  cmaui_1c1_names:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  cmaui_1c1_image:
+    type: string
+    description: Image for CMAUI server
+  availability_zone_0:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  cmaui_1c1_flavor:
+    type: string
+    description: Flavor for CMAUI server
+  oam_server_1c2_names:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  oam_server_1c2_image:
+    type: string
+    description: Image for CMAUI server
+  oam_server_1c2_flavor:
+    type: string
+    description: Flavor for CMAUI server
+  cmaui_oam_ips:
+      type: string
+  packet_internal_network_name:
+      type: string
+  packet_external_network_name:
+      type: string
+  net:
+    type: string
+  pd_server_1b_names:
+    type: comma_delimited_list
+    description: PD server names
+  pd_server_1b_image:
+    type: string
+    description: PD Image server
+  ps_server_1b_names:
+    type: comma_delimited_list
+    description: Ps server names
+  ps_server_1b_image:
+    type: string
+    description: Ps Image server
+  pd_server_1b_flavor:
+    type: string
+    description: Flavor for PD server
+  ps_server_1b_flavor:
+    type: string
+    description: Flavor for PS server
+  pd_server_1b_ips:
+      type: string
+  ps_server_1b_ips:
+      type: string
+      
+resources:
+  pd_server_1b_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net }
+      fixed_ips: [{"ip_address": {get_param: [pd_server_1b_ips, 0]}}]
+      replacement_policy: AUTO
+
+  ps_server_1b_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net }
+      fixed_ips: [{"ip_address": {get_param: [ps_server_1b_ips, 0]}}]
+      replacement_policy: AUTO
+
+  server_1b_pd_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [pd_server_1b_names, 0]}
+      image: { get_param: pd_server_1b_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: pd_server_1b_flavor }
+      networks:
+      - port: { get_resource: pd_server_1b_port }
+
+  server_1b_pd_2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [pd_server_1b_names, 1]}
+      image: { get_param: pd_server_1b_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: pd_server_1b_flavor }
+      networks:
+      - port: { get_resource: ps_server_1b_port }
+      
+  cmaui_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: packet_internal_network}
+      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
+      replacement_policy: AUTO
+
+  cmaui_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: packet_internal_network}
+      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
+      replacement_policy: AUTO
+
+  server_1c1_cmaui_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [cmaui_1c1_names, 0]}
+      image: { get_param: cmaui_1c1_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: cmaui_1c1_flavor }
+      networks:
+      - port: { get_resource: cmaui_port_1 }
+
+  server_1c1_cmaui_2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [cmaui_1c1_names, 1]}
+      image: { get_param: cmaui_1c1_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: cmaui_1c1_flavor }
+      networks:
+      - port: { get_resource: cmaui_port_2 }
+
+  oam_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: packet_internal_network}
+      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 1]}}]
+      replacement_policy: AUTO
+
+  oam_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: packet_external_network}
+      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 1]}}]
+      replacement_policy: AUTO
+
+  server_1c2_oam_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [oam_server_1c2_names, 0]}
+      image: { get_param: oam_server_1c2_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: oam_server_1c2_flavor }
+      networks:
+      - port: { get_resource: oam_port_1 }
+
+  server_1c2_oam_2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [oam_server_1c2_names, 1]}
+      image: { get_param: oam_server_1c2_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: oam_server_1c2_flavor }
+      networks:
+      - port: { get_resource: oam_port_2 }
+      metadata: {
+          connectivity_to_pd_server_1b: {get_attr: [server_1b_pd_1, accessIPv4]},
+          connectivity_to_server_1c1_cmaui_1: {get_attr: [server_1c1_cmaui_1, accessIPv4]},
+          connectivity_to_server_1c1_cmaui_2: {get_attr: [server_1c1_cmaui_2, accessIPv4]},
+          connectivity_to_pattern_4: {get_attr: [nested1_pattern_4, pattern4_attr_1]}
+      }
+
+  nested1_pattern_4:
+    type: nested-pattern-4.yml
+    properties:
+      p2: {get_param: p2}
+
+  packet_internal_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: packet_internal_network_name
+
+  packet_external_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: packet_external_network_name
+
+outputs:
+  all_pattern_attr_1:
+    description: all_pattern_attr_1
+    value: { get_attr: [server_1c2_oam_2, accessIPv4] }

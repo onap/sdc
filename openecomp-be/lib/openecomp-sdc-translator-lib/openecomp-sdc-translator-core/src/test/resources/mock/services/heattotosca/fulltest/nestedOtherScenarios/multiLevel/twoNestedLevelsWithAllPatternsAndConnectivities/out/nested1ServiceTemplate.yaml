@@ -1,0 +1,1669 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested1
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    p2:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    cmaui_1c1_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+    ps_server_1b_ips:
+      hidden: false
+      immutable: false
+      type: string
+    packet_internal_network_name:
+      hidden: false
+      immutable: false
+      type: string
+    pd_server_1b_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: PD server names
+      entry_schema:
+        type: string
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    oam_server_1c2_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+    cmaui_1c1_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    ps_server_1b_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: Ps server names
+      entry_schema:
+        type: string
+    cmaui_1c1_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    pd_server_1b_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for PD server
+    pd_server_1b_ips:
+      hidden: false
+      immutable: false
+      type: string
+    packet_external_network_name:
+      hidden: false
+      immutable: false
+      type: string
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    ps_server_1b_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for PS server
+    cmaui_oam_ips:
+      hidden: false
+      immutable: false
+      type: string
+    ps_server_1b_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Ps Image server
+    net:
+      hidden: false
+      immutable: false
+      type: string
+    pd_server_1b_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: PD Image server
+    oam_server_1c2_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    oam_server_1c2_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+  node_templates:
+    abstract_pd_server_1b_1:
+      type: org.openecomp.resource.abstract.nodes.pd_server_1b_1
+      directives:
+      - substitutable
+      properties:
+        compute_pd_server_1b_name:
+        - get_input:
+          - pd_server_1b_names
+          - 0
+        vm_flavor_name:
+          get_input: pd_server_1b_flavor
+        port_pd_server_b_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pd_server_b_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - pd_server_1b_ips
+            - 0
+        vm_image_name:
+          get_input: pd_server_1b_image
+        port_pd_server_b_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pd_server_b_port_network:
+        - get_input: net
+        port_pd_server_b_port_replacement_policy:
+        - AUTO
+        compute_pd_server_1b_availability_zone:
+        - get_input: availability_zone_0
+        service_template_filter:
+          substitute_service_template: Nested_pd_server_1b_1ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    abstract_cmaui_1c1:
+      type: org.openecomp.resource.abstract.nodes.cmaui_1c1
+      directives:
+      - substitutable
+      properties:
+        port_cmaui_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        port_cmaui_port_network:
+        - packet_internal_network
+        compute_cmaui_1c1_availability_zone:
+        - get_input: availability_zone_0
+        - get_input: availability_zone_0
+        vm_flavor_name:
+          get_input: cmaui_1c1_flavor
+        port_cmaui_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_cmaui_port_replacement_policy:
+        - AUTO
+        vm_image_name:
+          get_input: cmaui_1c1_image
+        port_cmaui_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        compute_cmaui_1c1_name:
+        - get_input:
+          - cmaui_1c1_names
+          - 1
+        - get_input:
+          - cmaui_1c1_names
+          - 0
+        service_template_filter:
+          substitute_service_template: Nested_cmaui_1c1ServiceTemplate.yaml
+          count: 2
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_cmaui_1c1_cmaui_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
+    nested1_pattern_4:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pattern-4
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: nested-pattern-4ServiceTemplate.yaml
+        p2:
+          get_input: p2
+        port_pd_server_port_2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pd_server_port_2_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pd_server_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pd_server_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+    abstract_pd_server_1b:
+      type: org.openecomp.resource.abstract.nodes.pd_server_1b
+      directives:
+      - substitutable
+      properties:
+        compute_pd_server_1b_name:
+        - get_input:
+          - pd_server_1b_names
+          - 1
+        port_ps_server_b_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_ps_server_b_port_replacement_policy:
+        - AUTO
+        port_ps_server_b_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - ps_server_1b_ips
+            - 0
+        vm_flavor_name:
+          get_input: pd_server_1b_flavor
+        port_ps_server_b_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pd_server_1b_image
+        port_ps_server_b_port_network:
+        - get_input: net
+        compute_pd_server_1b_availability_zone:
+        - get_input: availability_zone_0
+        service_template_filter:
+          substitute_service_template: Nested_pd_server_1bServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    packet_external_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_external_network_name
+    packet_internal_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_internal_network_name
+    abstract_oam_server_1c2_1:
+      type: org.openecomp.resource.abstract.nodes.oam_server_1c2
+      directives:
+      - substitutable
+      properties:
+        port_oam_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_oam_server_1c2_name:
+        - get_input:
+          - oam_server_1c2_names
+          - 1
+        port_oam_port_network:
+        - packet_external_network
+        vm_flavor_name:
+          get_input: oam_server_1c2_flavor
+        compute_oam_server_1c2_availability_zone:
+        - get_input: availability_zone_0
+        port_oam_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 1
+        vm_image_name:
+          get_input: oam_server_1c2_image
+        compute_oam_server_1c2_metadata:
+        - connectivity_to_pattern_4:
+            get_attribute:
+            - nested1_pattern_4
+            - pattern4_attr_1
+          connectivity_to_server_1c1_cmaui_1:
+            get_attribute:
+            - abstract_cmaui_1c1
+            - cmaui_1c1_accessIPv4
+          connectivity_to_pd_server_1b:
+            get_attribute:
+            - abstract_pd_server_1b_1
+            - pd_server_1b_accessIPv4
+          connectivity_to_server_1c1_cmaui_2:
+            get_attribute:
+            - abstract_cmaui_1c1
+            - cmaui_1c1_accessIPv4
+        port_oam_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_oam_port_replacement_policy:
+        - AUTO
+        service_template_filter:
+          substitute_service_template: Nested_oam_server_1c2ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_oam_server_1c2_oam_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_external_network
+          relationship: tosca.relationships.network.LinksTo
+    abstract_oam_server_1c2_0:
+      type: org.openecomp.resource.abstract.nodes.oam_server_1c2
+      directives:
+      - substitutable
+      properties:
+        port_oam_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_oam_server_1c2_name:
+        - get_input:
+          - oam_server_1c2_names
+          - 0
+        port_oam_port_network:
+        - packet_internal_network
+        vm_flavor_name:
+          get_input: oam_server_1c2_flavor
+        compute_oam_server_1c2_availability_zone:
+        - get_input: availability_zone_0
+        port_oam_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 1
+        vm_image_name:
+          get_input: oam_server_1c2_image
+        port_oam_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_oam_port_replacement_policy:
+        - AUTO
+        service_template_filter:
+          substitute_service_template: Nested_oam_server_1c2ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_oam_server_1c2_oam_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
+  groups:
+    nested1_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested1.yml
+        description: nested1
+      members:
+      - nested1_pattern_4
+      - packet_external_network
+      - packet_internal_network
+      - abstract_oam_server_1c2_0
+      - abstract_oam_server_1c2_1
+      - abstract_pd_server_1b
+      - abstract_pd_server_1b_1
+      - abstract_cmaui_1c1
+  outputs:
+    all_pattern_attr_1:
+      description: all_pattern_attr_1
+      value:
+        get_attribute:
+        - abstract_oam_server_1c2_1
+        - oam_server_1c2_accessIPv4
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested1
+    capabilities:
+      disk.device.write.bytes.rate_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.device.write.bytes.rate_oam_server_1c2
+      disk.read.bytes_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.read.bytes_cmaui_1c1
+      disk.device.write.bytes.rate_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.device.write.bytes.rate_oam_server_1c2
+      disk.read.bytes_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.read.bytes_cmaui_1c1
+      memory_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - memory_server_pd
+      disk.iops_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.iops_oam_server_1c2
+      disk.capacity_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.capacity_pd_server_1b
+      disk.capacity_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.capacity_pd_server_1b
+      disk.usage_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.usage_oam_server_1c2
+      disk.read.requests_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.read.requests_cmaui_1c1
+      feature_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - feature_cmaui_1c1
+      disk.usage_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.usage_oam_server_1c2
+      network.incoming.bytes_pd_server_1b_port:
+      - abstract_pd_server_1b_1
+      - network.incoming.bytes_pd_server_1b_pd_server_b_port
+      feature_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - feature_cmaui_1c1
+      disk.read.requests_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.read.requests_cmaui_1c1
+      network.outgoing.bytes_cmaui_port_2:
+      - abstract_cmaui_1c1
+      - network.outgoing.bytes_cmaui_1c1_cmaui_port
+      disk.device.capacity_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.device.capacity_server_pd
+      disk.device.read.requests.rate_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.device.read.requests.rate_server_pd
+      disk.iops_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.iops_oam_server_1c2
+      network.outgoing.bytes_cmaui_port_1:
+      - abstract_cmaui_1c1
+      - network.outgoing.bytes_cmaui_1c1_cmaui_port
+      network.outgoing.packets.rate_oam_port_2:
+      - abstract_oam_server_1c2_1
+      - network.outgoing.packets.rate_oam_server_1c2_oam_port
+      network.outgoing.bytes_pd_server_port_1_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.outgoing.bytes_pd_server_port_1
+      binding_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - binding_server_pd
+      network.outgoing.packets.rate_oam_port_1:
+      - abstract_oam_server_1c2_0
+      - network.outgoing.packets.rate_oam_server_1c2_oam_port
+      cpu_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - cpu_pd_server_1b
+      feature_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - feature_server_pd
+      network.incoming.packets_pd_server_1b_port:
+      - abstract_pd_server_1b_1
+      - network.incoming.packets_pd_server_1b_pd_server_b_port
+      attachment_ps_server_1b_port:
+      - abstract_pd_server_1b
+      - attachment_pd_server_1b_ps_server_b_port
+      disk.device.write.requests.rate_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.device.write.requests.rate_oam_server_1c2
+      disk.device.iops_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.device.iops_pd_server_1b
+      disk.device.write.requests.rate_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.device.write.requests.rate_oam_server_1c2
+      disk.read.requests_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.read.requests_server_pd
+      disk.device.write.bytes_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.device.write.bytes_server_pd
+      disk.read.bytes.rate_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.read.bytes.rate_oam_server_1c2
+      memory.usage_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - memory.usage_server_pd
+      cpu.delta_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - cpu.delta_server_pd
+      scalable_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - scalable_server_pd
+      disk.read.bytes.rate_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.read.bytes.rate_oam_server_1c2
+      cpu_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - cpu_pd_server_1b
+      disk.usage_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.usage_server_pd
+      disk.device.iops_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.device.iops_pd_server_1b
+      network.outgoing.bytes_pd_server_port_2_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.outgoing.bytes_pd_server_port_2
+      scalable_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - scalable_oam_server_1c2
+      scalable_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - scalable_oam_server_1c2
+      vcpus_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - vcpus_server_pd
+      disk.device.read.requests_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.device.read.requests_server_pd
+      feature_pd_server_port_1_nested1_pattern_4:
+      - nested1_pattern_4
+      - feature_pd_server_port_1
+      network.outpoing.packets_pd_server_port_1_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.outpoing.packets_pd_server_port_1
+      disk.device.write.requests_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.device.write.requests_cmaui_1c1
+      disk.device.write.requests_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.device.write.requests_cmaui_1c1
+      disk.device.read.bytes_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.device.read.bytes_cmaui_1c1
+      disk.device.read.bytes_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.device.read.bytes_cmaui_1c1
+      disk.write.bytes_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.write.bytes_pd_server_1b
+      disk.write.bytes_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.write.bytes_pd_server_1b
+      disk.device.usage_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.device.usage_oam_server_1c2
+      network.incoming.packets.rate_pd_server_port_2_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.incoming.packets.rate_pd_server_port_2
+      disk.device.capacity_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.device.capacity_oam_server_1c2
+      disk.capacity_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.capacity_server_pd
+      disk.device.capacity_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.device.capacity_oam_server_1c2
+      disk.device.write.requests.rate_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.device.write.requests.rate_pd_server_1b
+      disk.device.usage_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.device.usage_oam_server_1c2
+      disk.latency_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.latency_server_pd
+      disk.device.write.requests.rate_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.device.write.requests.rate_pd_server_1b
+      network.outpoing.packets_oam_port_1:
+      - abstract_oam_server_1c2_0
+      - network.outpoing.packets_oam_server_1c2_oam_port
+      network.outpoing.packets_oam_port_2:
+      - abstract_oam_server_1c2_1
+      - network.outpoing.packets_oam_server_1c2_oam_port
+      disk.write.requests.rate_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.write.requests.rate_server_pd
+      binding_cmaui_port_1:
+      - abstract_cmaui_1c1
+      - binding_cmaui_1c1_cmaui_port
+      binding_cmaui_port_2:
+      - abstract_cmaui_1c1
+      - binding_cmaui_1c1_cmaui_port
+      os_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - os_server_pd
+      cpu_util_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - cpu_util_oam_server_1c2
+      cpu_util_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - cpu_util_oam_server_1c2
+      attachment_pd_server_port_1_nested1_pattern_4:
+      - nested1_pattern_4
+      - attachment_pd_server_port_1
+      memory_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - memory_oam_server_1c2
+      memory_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - memory_oam_server_1c2
+      disk.write.bytes_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.write.bytes_oam_server_1c2
+      disk.write.bytes_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.write.bytes_oam_server_1c2
+      memory.resident_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - memory.resident_oam_server_1c2
+      memory.resident_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - memory.resident_oam_server_1c2
+      network.incoming.bytes.rate_pd_server_port_2_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.incoming.bytes.rate_pd_server_port_2
+      network.incoming.bytes_cmaui_port_2:
+      - abstract_cmaui_1c1
+      - network.incoming.bytes_cmaui_1c1_cmaui_port
+      network.incoming.bytes_cmaui_port_1:
+      - abstract_cmaui_1c1
+      - network.incoming.bytes_cmaui_1c1_cmaui_port
+      network.incoming.packets_pd_server_port_2_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.incoming.packets_pd_server_port_2
+      os_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - os_oam_server_1c2
+      disk.device.iops_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.device.iops_cmaui_1c1
+      disk.device.iops_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.device.iops_cmaui_1c1
+      memory.resident_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - memory.resident_pd_server_1b
+      disk.allocation_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.allocation_server_pd
+      os_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - os_oam_server_1c2
+      memory.resident_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - memory.resident_pd_server_1b
+      disk.device.allocation_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.device.allocation_cmaui_1c1
+      disk.device.allocation_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.device.allocation_cmaui_1c1
+      disk.device.write.bytes.rate_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.device.write.bytes.rate_server_pd
+      feature_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - feature_oam_server_1c2
+      disk.root.size_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.root.size_server_pd
+      network.incoming.packets.rate_cmaui_port_1:
+      - abstract_cmaui_1c1
+      - network.incoming.packets.rate_cmaui_1c1_cmaui_port
+      vcpus_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - vcpus_cmaui_1c1
+      network.incoming.packets.rate_cmaui_port_2:
+      - abstract_cmaui_1c1
+      - network.incoming.packets.rate_cmaui_1c1_cmaui_port
+      feature_cmaui_port_1:
+      - abstract_cmaui_1c1
+      - feature_cmaui_1c1_cmaui_port
+      network.incoming.bytes.rate_pd_server_1b_port:
+      - abstract_pd_server_1b_1
+      - network.incoming.bytes.rate_pd_server_1b_pd_server_b_port
+      network.outgoing.bytes_oam_port_2:
+      - abstract_oam_server_1c2_1
+      - network.outgoing.bytes_oam_server_1c2_oam_port
+      feature_cmaui_port_2:
+      - abstract_cmaui_1c1
+      - feature_cmaui_1c1_cmaui_port
+      feature_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - feature_oam_server_1c2
+      network.outgoing.bytes_oam_port_1:
+      - abstract_oam_server_1c2_0
+      - network.outgoing.bytes_oam_server_1c2_oam_port
+      disk.device.capacity_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.device.capacity_cmaui_1c1
+      instance_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - instance_cmaui_1c1
+      instance_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - instance_cmaui_1c1
+      attachment_pd_server_port_2_nested1_pattern_4:
+      - nested1_pattern_4
+      - attachment_pd_server_port_2
+      host_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - host_server_pd
+      disk.device.read.requests.rate_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.device.read.requests.rate_oam_server_1c2
+      disk.device.read.requests.rate_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.device.read.requests.rate_oam_server_1c2
+      attachment_oam_port_2:
+      - abstract_oam_server_1c2_1
+      - attachment_oam_server_1c2_oam_port
+      disk.capacity_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.capacity_oam_server_1c2
+      os_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - os_pd_server_1b
+      disk.capacity_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.capacity_oam_server_1c2
+      endpoint_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - endpoint_server_pd
+      os_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - os_pd_server_1b
+      attachment_oam_port_1:
+      - abstract_oam_server_1c2_0
+      - attachment_oam_server_1c2_oam_port
+      disk.device.read.bytes.rate_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.device.read.bytes.rate_server_pd
+      disk.write.bytes.rate_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.write.bytes.rate_oam_server_1c2
+      disk.write.bytes.rate_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.write.bytes.rate_oam_server_1c2
+      disk.root.size_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.root.size_pd_server_1b
+      endpoint_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - endpoint_cmaui_1c1
+      host_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - host_pd_server_1b
+      network.outgoing.packets.rate_ps_server_1b_port:
+      - abstract_pd_server_1b
+      - network.outgoing.packets.rate_pd_server_1b_ps_server_b_port
+      disk.root.size_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.root.size_pd_server_1b
+      endpoint_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - endpoint_cmaui_1c1
+      disk.device.usage_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.device.usage_cmaui_1c1
+      disk.device.capacity_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.device.capacity_cmaui_1c1
+      disk.device.usage_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.device.usage_cmaui_1c1
+      network.incoming.bytes_ps_server_1b_port:
+      - abstract_pd_server_1b
+      - network.incoming.bytes_pd_server_1b_ps_server_b_port
+      host_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - host_pd_server_1b
+      attachment_pd_server_1b_port:
+      - abstract_pd_server_1b_1
+      - attachment_pd_server_1b_pd_server_b_port
+      vcpus_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - vcpus_cmaui_1c1
+      binding_ps_server_1b_port:
+      - abstract_pd_server_1b
+      - binding_pd_server_1b_ps_server_b_port
+      disk.device.latency_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.device.latency_oam_server_1c2
+      disk.device.latency_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.device.latency_oam_server_1c2
+      feature_packet_external_network:
+      - packet_external_network
+      - feature
+      disk.write.requests.rate_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.write.requests.rate_cmaui_1c1
+      disk.write.requests.rate_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.write.requests.rate_cmaui_1c1
+      disk.allocation_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.allocation_pd_server_1b
+      disk.allocation_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.allocation_pd_server_1b
+      cpu_util_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - cpu_util_cmaui_1c1
+      disk.allocation_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.allocation_oam_server_1c2
+      disk.allocation_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.allocation_oam_server_1c2
+      cpu_util_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - cpu_util_cmaui_1c1
+      disk.device.latency_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.device.latency_server_pd
+      disk.write.requests_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.write.requests_pd_server_1b
+      binding_pd_server_1b_port:
+      - abstract_pd_server_1b_1
+      - binding_pd_server_1b_pd_server_b_port
+      disk.device.read.requests.rate_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.device.read.requests.rate_pd_server_1b
+      disk.device.read.requests.rate_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.device.read.requests.rate_pd_server_1b
+      disk.read.bytes_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.read.bytes_oam_server_1c2
+      network.outpoing.packets_pd_server_port_2_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.outpoing.packets_pd_server_port_2
+      disk.read.bytes_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.read.bytes_oam_server_1c2
+      disk.write.requests_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.write.requests_pd_server_1b
+      binding_oam_port_2:
+      - abstract_oam_server_1c2_1
+      - binding_oam_server_1c2_oam_port
+      disk.write.bytes.rate_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.write.bytes.rate_cmaui_1c1
+      disk.write.bytes.rate_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.write.bytes.rate_cmaui_1c1
+      binding_oam_port_1:
+      - abstract_oam_server_1c2_0
+      - binding_oam_server_1c2_oam_port
+      memory.resident_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - memory.resident_server_pd
+      network.outgoing.bytes.rate_pd_server_port_2_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.outgoing.bytes.rate_pd_server_port_2
+      disk.read.bytes.rate_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.read.bytes.rate_cmaui_1c1
+      disk.read.bytes.rate_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.read.bytes.rate_cmaui_1c1
+      disk.device.allocation_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.device.allocation_server_pd
+      host_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - host_cmaui_1c1
+      host_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - host_cmaui_1c1
+      vcpus_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - vcpus_pd_server_1b
+      vcpus_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - vcpus_pd_server_1b
+      network.outpoing.packets_cmaui_port_1:
+      - abstract_cmaui_1c1
+      - network.outpoing.packets_cmaui_1c1_cmaui_port
+      network.outpoing.packets_cmaui_port_2:
+      - abstract_cmaui_1c1
+      - network.outpoing.packets_cmaui_1c1_cmaui_port
+      disk.latency_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.latency_oam_server_1c2
+      network.incoming.bytes.rate_pd_server_port_1_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.incoming.bytes.rate_pd_server_port_1
+      disk.latency_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.latency_oam_server_1c2
+      disk.read.bytes.rate_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.read.bytes.rate_pd_server_1b
+      disk.read.bytes.rate_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.read.bytes.rate_pd_server_1b
+      memory.usage_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - memory.usage_pd_server_1b
+      memory.usage_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - memory.usage_oam_server_1c2
+      memory.usage_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - memory.usage_pd_server_1b
+      network.outpoing.packets_ps_server_1b_port:
+      - abstract_pd_server_1b
+      - network.outpoing.packets_pd_server_1b_ps_server_b_port
+      memory.usage_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - memory.usage_oam_server_1c2
+      disk.read.requests_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.read.requests_oam_server_1c2
+      disk.latency_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.latency_pd_server_1b
+      attachment_packet_external_network:
+      - packet_external_network
+      - attachment
+      disk.read.requests_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.read.requests_oam_server_1c2
+      disk.latency_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.latency_pd_server_1b
+      disk.device.usage_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.device.usage_server_pd
+      disk.root.size_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.root.size_oam_server_1c2
+      memory.resident_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - memory.resident_cmaui_1c1
+      disk.root.size_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.root.size_oam_server_1c2
+      memory.resident_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - memory.resident_cmaui_1c1
+      disk.device.write.requests_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.device.write.requests_pd_server_1b
+      network.incoming.bytes.rate_ps_server_1b_port:
+      - abstract_pd_server_1b
+      - network.incoming.bytes.rate_pd_server_1b_ps_server_b_port
+      cpu_util_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - cpu_util_server_pd
+      disk.device.write.requests_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.device.write.requests_pd_server_1b
+      network.incoming.bytes.rate_oam_port_1:
+      - abstract_oam_server_1c2_0
+      - network.incoming.bytes.rate_oam_server_1c2_oam_port
+      os_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - os_cmaui_1c1
+      os_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - os_cmaui_1c1
+      disk.ephemeral.size_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.ephemeral.size_server_pd
+      instance_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - instance_oam_server_1c2
+      network.outgoing.bytes.rate_pd_server_port_1_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.outgoing.bytes.rate_pd_server_port_1
+      instance_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - instance_oam_server_1c2
+      network.incoming.bytes.rate_oam_port_2:
+      - abstract_oam_server_1c2_1
+      - network.incoming.bytes.rate_oam_server_1c2_oam_port
+      memory.usage_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - memory.usage_cmaui_1c1
+      memory.usage_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - memory.usage_cmaui_1c1
+      binding_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - binding_cmaui_1c1
+      memory_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - memory_cmaui_1c1
+      binding_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - binding_cmaui_1c1
+      feature_ps_server_1b_port:
+      - abstract_pd_server_1b
+      - feature_pd_server_1b_ps_server_b_port
+      disk.device.iops_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.device.iops_oam_server_1c2
+      disk.device.iops_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.device.iops_oam_server_1c2
+      network.incoming.bytes_pd_server_port_2_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.incoming.bytes_pd_server_port_2
+      binding_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - binding_oam_server_1c2
+      binding_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - binding_oam_server_1c2
+      disk.device.write.requests.rate_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.device.write.requests.rate_server_pd
+      attachment_packet_internal_network:
+      - packet_internal_network
+      - attachment
+      disk.device.read.bytes.rate_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.device.read.bytes.rate_pd_server_1b
+      network.outgoing.packets.rate_pd_server_1b_port:
+      - abstract_pd_server_1b_1
+      - network.outgoing.packets.rate_pd_server_1b_pd_server_b_port
+      disk.write.requests.rate_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.write.requests.rate_pd_server_1b
+      disk.write.requests.rate_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.write.requests.rate_pd_server_1b
+      memory_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - memory_cmaui_1c1
+      disk.write.requests_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.write.requests_oam_server_1c2
+      disk.read.bytes.rate_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.read.bytes.rate_server_pd
+      disk.write.requests_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.write.requests_oam_server_1c2
+      disk.device.read.bytes.rate_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.device.read.bytes.rate_pd_server_1b
+      network.outgoing.packets.rate_pd_server_port_2_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.outgoing.packets.rate_pd_server_port_2
+      disk.usage_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.usage_pd_server_1b
+      vcpus_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - vcpus_oam_server_1c2
+      vcpus_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - vcpus_oam_server_1c2
+      disk.write.bytes.rate_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.write.bytes.rate_pd_server_1b
+      disk.write.bytes.rate_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.write.bytes.rate_pd_server_1b
+      disk.device.allocation_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.device.allocation_pd_server_1b
+      disk.device.allocation_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.device.allocation_pd_server_1b
+      disk.usage_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.usage_pd_server_1b
+      disk.ephemeral.size_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.ephemeral.size_cmaui_1c1
+      disk.ephemeral.size_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.ephemeral.size_cmaui_1c1
+      disk.root.size_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.root.size_cmaui_1c1
+      disk.root.size_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.root.size_cmaui_1c1
+      network.incoming.packets_cmaui_port_2:
+      - abstract_cmaui_1c1
+      - network.incoming.packets_cmaui_1c1_cmaui_port
+      disk.read.requests_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.read.requests_pd_server_1b
+      disk.device.write.bytes.rate_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.device.write.bytes.rate_cmaui_1c1
+      disk.device.write.requests_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.device.write.requests_oam_server_1c2
+      disk.read.requests_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.read.requests_pd_server_1b
+      disk.allocation_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.allocation_cmaui_1c1
+      disk.device.write.bytes.rate_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.device.write.bytes.rate_pd_server_1b
+      disk.device.write.bytes.rate_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.device.write.bytes.rate_pd_server_1b
+      cpu_util_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - cpu_util_pd_server_1b
+      network.incoming.packets_cmaui_port_1:
+      - abstract_cmaui_1c1
+      - network.incoming.packets_cmaui_1c1_cmaui_port
+      cpu_util_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - cpu_util_pd_server_1b
+      network.outgoing.bytes.rate_ps_server_1b_port:
+      - abstract_pd_server_1b
+      - network.outgoing.bytes.rate_pd_server_1b_ps_server_b_port
+      disk.write.requests_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.write.requests_server_pd
+      feature_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - feature_pd_server_1b
+      network.incoming.packets.rate_ps_server_1b_port:
+      - abstract_pd_server_1b
+      - network.incoming.packets.rate_pd_server_1b_ps_server_b_port
+      disk.device.write.requests.rate_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.device.write.requests.rate_cmaui_1c1
+      disk.device.write.bytes_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.device.write.bytes_cmaui_1c1
+      disk.device.write.requests.rate_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.device.write.requests.rate_cmaui_1c1
+      feature_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - feature_pd_server_1b
+      disk.device.write.requests_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.device.write.requests_oam_server_1c2
+      disk.device.write.bytes.rate_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.device.write.bytes.rate_cmaui_1c1
+      disk.device.write.bytes_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.device.write.bytes_cmaui_1c1
+      disk.device.read.requests_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.device.read.requests_oam_server_1c2
+      disk.device.write.bytes_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.device.write.bytes_pd_server_1b
+      host_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - host_oam_server_1c2
+      disk.device.read.requests_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.device.read.requests_oam_server_1c2
+      disk.device.write.bytes_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.device.write.bytes_pd_server_1b
+      host_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - host_oam_server_1c2
+      disk.device.read.bytes_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.device.read.bytes_server_pd
+      network.incoming.packets.rate_oam_port_1:
+      - abstract_oam_server_1c2_0
+      - network.incoming.packets.rate_oam_server_1c2_oam_port
+      network.incoming.packets.rate_oam_port_2:
+      - abstract_oam_server_1c2_1
+      - network.incoming.packets.rate_oam_server_1c2_oam_port
+      disk.iops_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.iops_pd_server_1b
+      end_point_packet_external_network:
+      - packet_external_network
+      - end_point
+      cpu_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - cpu_server_pd
+      disk.iops_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.iops_pd_server_1b
+      network.outpoing.packets_pd_server_1b_port:
+      - abstract_pd_server_1b_1
+      - network.outpoing.packets_pd_server_1b_pd_server_b_port
+      disk.device.read.requests_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.device.read.requests_cmaui_1c1
+      disk.allocation_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.allocation_cmaui_1c1
+      disk.device.read.requests_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.device.read.requests_cmaui_1c1
+      binding_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - binding_pd_server_1b
+      binding_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - binding_pd_server_1b
+      disk.device.allocation_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.device.allocation_oam_server_1c2
+      disk.device.allocation_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.device.allocation_oam_server_1c2
+      network.outgoing.bytes_pd_server_1b_port:
+      - abstract_pd_server_1b_1
+      - network.outgoing.bytes_pd_server_1b_pd_server_b_port
+      disk.write.requests_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.write.requests_cmaui_1c1
+      disk.write.requests_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.write.requests_cmaui_1c1
+      network.outgoing.bytes.rate_cmaui_port_2:
+      - abstract_cmaui_1c1
+      - network.outgoing.bytes.rate_cmaui_1c1_cmaui_port
+      network.incoming.bytes_pd_server_port_1_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.incoming.bytes_pd_server_port_1
+      cpu_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - cpu_cmaui_1c1
+      network.outgoing.bytes.rate_cmaui_port_1:
+      - abstract_cmaui_1c1
+      - network.outgoing.bytes.rate_cmaui_1c1_cmaui_port
+      cpu_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - cpu_cmaui_1c1
+      binding_pd_server_port_2_nested1_pattern_4:
+      - nested1_pattern_4
+      - binding_pd_server_port_2
+      cpu_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - cpu_oam_server_1c2
+      cpu_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - cpu_oam_server_1c2
+      link_packet_external_network:
+      - packet_external_network
+      - link
+      disk.device.read.bytes.rate_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.device.read.bytes.rate_cmaui_1c1
+      disk.device.read.bytes.rate_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.device.read.bytes.rate_cmaui_1c1
+      disk.write.requests.rate_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.write.requests.rate_oam_server_1c2
+      disk.device.read.bytes_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.device.read.bytes_pd_server_1b
+      cpu.delta_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - cpu.delta_oam_server_1c2
+      disk.device.read.bytes_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.device.read.bytes_pd_server_1b
+      disk.iops_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.iops_server_pd
+      disk.ephemeral.size_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.ephemeral.size_pd_server_1b
+      disk.write.requests.rate_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.write.requests.rate_oam_server_1c2
+      disk.ephemeral.size_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.ephemeral.size_pd_server_1b
+      disk.usage_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.usage_cmaui_1c1
+      disk.usage_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.usage_cmaui_1c1
+      end_point_packet_internal_network:
+      - packet_internal_network
+      - end_point
+      network.incoming.bytes_oam_port_2:
+      - abstract_oam_server_1c2_1
+      - network.incoming.bytes_oam_server_1c2_oam_port
+      feature_packet_internal_network:
+      - packet_internal_network
+      - feature
+      network.incoming.bytes_oam_port_1:
+      - abstract_oam_server_1c2_0
+      - network.incoming.bytes_oam_server_1c2_oam_port
+      disk.write.bytes.rate_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.write.bytes.rate_server_pd
+      attachment_cmaui_port_2:
+      - abstract_cmaui_1c1
+      - attachment_cmaui_1c1_cmaui_port
+      network.outgoing.bytes.rate_oam_port_1:
+      - abstract_oam_server_1c2_0
+      - network.outgoing.bytes.rate_oam_server_1c2_oam_port
+      instance_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - instance_pd_server_1b
+      disk.device.capacity_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.device.capacity_pd_server_1b
+      network.outgoing.bytes.rate_oam_port_2:
+      - abstract_oam_server_1c2_1
+      - network.outgoing.bytes.rate_oam_server_1c2_oam_port
+      instance_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - instance_pd_server_1b
+      disk.device.capacity_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.device.capacity_pd_server_1b
+      disk.capacity_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.capacity_cmaui_1c1
+      network.outgoing.packets.rate_cmaui_port_1:
+      - abstract_cmaui_1c1
+      - network.outgoing.packets.rate_cmaui_1c1_cmaui_port
+      network.outgoing.packets.rate_cmaui_port_2:
+      - abstract_cmaui_1c1
+      - network.outgoing.packets.rate_cmaui_1c1_cmaui_port
+      attachment_cmaui_port_1:
+      - abstract_cmaui_1c1
+      - attachment_cmaui_1c1_cmaui_port
+      disk.capacity_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.capacity_cmaui_1c1
+      disk.ephemeral.size_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.ephemeral.size_oam_server_1c2
+      disk.ephemeral.size_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.ephemeral.size_oam_server_1c2
+      disk.read.bytes_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.read.bytes_pd_server_1b
+      disk.device.write.requests_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.device.write.requests_server_pd
+      disk.read.bytes_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.read.bytes_pd_server_1b
+      disk.device.read.requests.rate_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.device.read.requests.rate_cmaui_1c1
+      endpoint_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - endpoint_pd_server_1b
+      disk.device.read.bytes_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.device.read.bytes_oam_server_1c2
+      endpoint_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - endpoint_pd_server_1b
+      disk.device.read.bytes_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.device.read.bytes_oam_server_1c2
+      disk.device.read.requests.rate_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.device.read.requests.rate_cmaui_1c1
+      network.incoming.packets_ps_server_1b_port:
+      - abstract_pd_server_1b
+      - network.incoming.packets_pd_server_1b_ps_server_b_port
+      instance_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - instance_server_pd
+      feature_pd_server_1b_port:
+      - abstract_pd_server_1b_1
+      - feature_pd_server_1b_pd_server_b_port
+      disk.latency_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.latency_cmaui_1c1
+      memory_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - memory_pd_server_1b
+      disk.latency_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.latency_cmaui_1c1
+      memory_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - memory_pd_server_1b
+      cpu.delta_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - cpu.delta_oam_server_1c2
+      disk.device.read.bytes.rate_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.device.read.bytes.rate_oam_server_1c2
+      disk.device.usage_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.device.usage_pd_server_1b
+      network.outgoing.packets.rate_pd_server_port_1_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.outgoing.packets.rate_pd_server_port_1
+      disk.device.usage_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.device.usage_pd_server_1b
+      network.incoming.packets.rate_pd_server_port_1_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.incoming.packets.rate_pd_server_port_1
+      disk.device.read.bytes.rate_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.device.read.bytes.rate_oam_server_1c2
+      disk.write.bytes_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.write.bytes_cmaui_1c1
+      network.outgoing.bytes.rate_pd_server_1b_port:
+      - abstract_pd_server_1b_1
+      - network.outgoing.bytes.rate_pd_server_1b_pd_server_b_port
+      disk.write.bytes_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.write.bytes_cmaui_1c1
+      feature_oam_port_2:
+      - abstract_oam_server_1c2_1
+      - feature_oam_server_1c2_oam_port
+      feature_oam_port_1:
+      - abstract_oam_server_1c2_0
+      - feature_oam_server_1c2_oam_port
+      disk.device.latency_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.device.latency_pd_server_1b
+      disk.device.latency_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.device.latency_pd_server_1b
+      network.incoming.packets.rate_pd_server_1b_port:
+      - abstract_pd_server_1b_1
+      - network.incoming.packets.rate_pd_server_1b_pd_server_b_port
+      feature_nested1_pattern_4:
+      - nested1_pattern_4
+      - feature
+      network.incoming.packets_pd_server_port_1_nested1_pattern_4:
+      - nested1_pattern_4
+      - network.incoming.packets_pd_server_port_1
+      disk.device.latency_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.device.latency_cmaui_1c1
+      scalable_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - scalable_cmaui_1c1
+      disk.read.bytes_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.read.bytes_server_pd
+      link_packet_internal_network:
+      - packet_internal_network
+      - link
+      disk.device.latency_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.device.latency_cmaui_1c1
+      scalable_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - scalable_cmaui_1c1
+      cpu.delta_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - cpu.delta_cmaui_1c1
+      cpu.delta_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - cpu.delta_cmaui_1c1
+      disk.device.iops_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.device.iops_server_pd
+      network.incoming.packets_oam_port_1:
+      - abstract_oam_server_1c2_0
+      - network.incoming.packets_oam_server_1c2_oam_port
+      network.incoming.packets_oam_port_2:
+      - abstract_oam_server_1c2_1
+      - network.incoming.packets_oam_server_1c2_oam_port
+      scalable_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - scalable_pd_server_1b
+      scalable_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - scalable_pd_server_1b
+      cpu.delta_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - cpu.delta_pd_server_1b
+      cpu.delta_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - cpu.delta_pd_server_1b
+      network.incoming.bytes.rate_cmaui_port_1:
+      - abstract_cmaui_1c1
+      - network.incoming.bytes.rate_cmaui_1c1_cmaui_port
+      network.outgoing.bytes_ps_server_1b_port:
+      - abstract_pd_server_1b
+      - network.outgoing.bytes_pd_server_1b_ps_server_b_port
+      network.incoming.bytes.rate_cmaui_port_2:
+      - abstract_cmaui_1c1
+      - network.incoming.bytes.rate_cmaui_1c1_cmaui_port
+      disk.iops_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - disk.iops_cmaui_1c1
+      disk.iops_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - disk.iops_cmaui_1c1
+      disk.device.read.requests_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - disk.device.read.requests_pd_server_1b
+      disk.device.read.requests_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - disk.device.read.requests_pd_server_1b
+      disk.device.write.bytes_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - disk.device.write.bytes_oam_server_1c2
+      disk.device.write.bytes_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - disk.device.write.bytes_oam_server_1c2
+      binding_pd_server_port_1_nested1_pattern_4:
+      - nested1_pattern_4
+      - binding_pd_server_port_1
+      disk.write.bytes_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - disk.write.bytes_server_pd
+      feature_pd_server_port_2_nested1_pattern_4:
+      - nested1_pattern_4
+      - feature_pd_server_port_2
+      endpoint_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - endpoint_oam_server_1c2
+      endpoint_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - endpoint_oam_server_1c2
+    requirements:
+      link_pd_server_1b_port:
+      - abstract_pd_server_1b_1
+      - link_pd_server_1b_pd_server_b_port
+      dependency_oam_port_2:
+      - abstract_oam_server_1c2_1
+      - dependency_oam_server_1c2_oam_port
+      dependency_oam_port_1:
+      - abstract_oam_server_1c2_0
+      - dependency_oam_server_1c2_oam_port
+      dependency_pd_server_port_1_nested1_pattern_4:
+      - nested1_pattern_4
+      - dependency_pd_server_port_1
+      link_pd_server_port_2_nested1_pattern_4:
+      - nested1_pattern_4
+      - link_pd_server_port_2
+      link_ps_server_1b_port:
+      - abstract_pd_server_1b
+      - link_pd_server_1b_ps_server_b_port
+      dependency_ps_server_1b_port:
+      - abstract_pd_server_1b
+      - dependency_pd_server_1b_ps_server_b_port
+      dependency_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - dependency_oam_server_1c2
+      dependency_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - dependency_oam_server_1c2
+      local_storage_server_1c2_oam_2:
+      - abstract_oam_server_1c2_1
+      - local_storage_oam_server_1c2
+      local_storage_server_1c2_oam_1:
+      - abstract_oam_server_1c2_0
+      - local_storage_oam_server_1c2
+      dependency_cmaui_port_1:
+      - abstract_cmaui_1c1
+      - dependency_cmaui_1c1_cmaui_port
+      dependency_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - dependency_server_pd
+      dependency_pd_server_port_2_nested1_pattern_4:
+      - nested1_pattern_4
+      - dependency_pd_server_port_2
+      dependency_cmaui_port_2:
+      - abstract_cmaui_1c1
+      - dependency_cmaui_1c1_cmaui_port
+      dependency_packet_external_network:
+      - packet_external_network
+      - dependency
+      link_pd_server_port_1_nested1_pattern_4:
+      - nested1_pattern_4
+      - link_pd_server_port_1
+      dependency_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - dependency_cmaui_1c1
+      local_storage_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - local_storage_pd_server_1b
+      local_storage_server_pd_nested1_pattern_4:
+      - nested1_pattern_4
+      - local_storage_server_pd
+      local_storage_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - local_storage_pd_server_1b
+      dependency_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - dependency_cmaui_1c1
+      dependency_pd_server_1b_port:
+      - abstract_pd_server_1b_1
+      - dependency_pd_server_1b_pd_server_b_port
+      dependency_packet_internal_network:
+      - packet_internal_network
+      - dependency
+      local_storage_server_1c1_cmaui_2:
+      - abstract_cmaui_1c1
+      - local_storage_cmaui_1c1
+      local_storage_server_1c1_cmaui_1:
+      - abstract_cmaui_1c1
+      - local_storage_cmaui_1c1
+      dependency_server_1b_pd_1:
+      - abstract_pd_server_1b_1
+      - dependency_pd_server_1b
+      dependency_nested1_pattern_4:
+      - nested1_pattern_4
+      - dependency
+      dependency_server_1b_pd_2:
+      - abstract_pd_server_1b
+      - dependency_pd_server_1b

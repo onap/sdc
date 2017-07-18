@@ -20,12 +20,14 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
 
+
 public class Nic implements CompositionDataEntity {
   private String name;
   private String description;
   private String networkId;
   private String networkName;
   private NetworkType networkType;
+  private String networkDescription;
 
   public String getName() {
     return name;
@@ -67,12 +69,21 @@ public class Nic implements CompositionDataEntity {
     this.networkType = networkType;
   }
 
+  public String getNetworkDescription(){
+    return networkDescription;
+  }
+
+  public void setNetworkDescription(String networkDescription){
+    this.networkDescription=networkDescription;
+  }
+
   @Override
   public int hashCode() {
     int result = name != null ? name.hashCode() : 0;
     result = 31 * result + (description != null ? description.hashCode() : 0);
     result = 31 * result + (networkId != null ? networkId.hashCode() : 0);
     result = 31 * result + (networkType != null ? networkType.hashCode() : 0);
+    result = 31 * result + (networkDescription != null ? networkDescription.hashCode() : 0);
     return result;
   }
 
@@ -94,6 +105,12 @@ public class Nic implements CompositionDataEntity {
       return false;
     }
     if (networkId != null ? !networkId.equals(nic.networkId) : nic.networkId != null) {
+      return false;
+    }
+    if (networkType != null ? !networkType.equals(nic.networkType) : nic.networkType != null) {
+      return false;
+    }
+    if (networkDescription != null ? !networkDescription.equals(nic.networkDescription) : nic.networkDescription != null) {
       return false;
     }
     return networkType == nic.networkType;

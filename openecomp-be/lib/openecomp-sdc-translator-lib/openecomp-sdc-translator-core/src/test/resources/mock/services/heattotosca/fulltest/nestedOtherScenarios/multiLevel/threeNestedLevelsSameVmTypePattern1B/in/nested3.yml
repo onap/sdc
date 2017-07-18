@@ -1,0 +1,65 @@
+heat_template_version: 2013-05-23
+
+description: nested2
+
+parameters:
+  p1:
+    type: string
+    description: UID of OAM network
+  p2:
+    type: string
+    description: UID of OAM network
+  security_group_name:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  pd_server_names:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  pd_image_name:
+    type: string
+    description: Image for CMAUI server
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  pd_flavor_name:
+    type: string
+    description: Flavor for CMAUI server
+  oam_net_name:
+      type: string
+  net:
+    type: string
+resources:
+
+  server_pd_1:
+    type: OS::Nova::Server
+    properties:
+#      config_drive: "True"
+      name: {get_param: [pd_server_names, 0]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: pd01_port_0}
+      user_data_format:  RAW
+
+  server_pd_2:
+    type: OS::Nova::Server
+    properties:
+#      config_drive: "True"
+      name: {get_param: [pd_server_names, 1]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: pd02_port_0}
+      user_data_format:  RAW
+
+  pd01_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+  pd02_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}

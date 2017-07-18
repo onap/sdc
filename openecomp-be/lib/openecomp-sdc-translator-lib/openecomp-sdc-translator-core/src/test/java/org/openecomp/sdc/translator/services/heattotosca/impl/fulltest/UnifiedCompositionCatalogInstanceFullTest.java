@@ -44,6 +44,16 @@ public class UnifiedCompositionCatalogInstanceFullTest extends BaseFullTranslati
     testTranslationWithUnifiedCondition();
   }
 
+  @Test
+  public void testTwoNovaWithDiffProperties() throws IOException {
+    inputFilesPath =
+        "/mock/services/heattotosca/fulltest/catalogInstances/twoNovaWithDiffProperties/in";
+    outputFilesPath =
+        "/mock/services/heattotosca/fulltest/catalogInstances/twoNovaWithDiffProperties/out";
+
+    testTranslationWithUnifiedCondition();
+  }
+
 
 
   private void testTranslationWithUnifiedCondition() throws IOException {

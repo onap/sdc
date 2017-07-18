@@ -1,5 +1,5 @@
 import React from 'react';
-import SVGIcon from '../icon/SVGIcon.jsx';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 
@@ -11,19 +11,29 @@ function tooltip (msg)  {
 
 const IconWithOverlay = ({overlayMsg}) => (
 	<OverlayTrigger placement='bottom' overlay={tooltip(overlayMsg)}>
-		<SVGIcon name='error-circle'/>
+		<SVGIcon name='errorCircle'/>
 	</OverlayTrigger>
 );
 
-const SelectActionTableRow = ({children, onDelete, hasError, overlayMsg}) => (
+function renderErrorOrCheck({hasError, overlayMsg}) {
+	if (hasError === undefined) {
+		return <SVGIcon name='angleRight' className='dummy-icon' />;
+	}
+
+	if (hasError) {
+		return overlayMsg ? <IconWithOverlay overlayMsg={overlayMsg}/> :  <SVGIcon name='errorCircle'/>;
+	}
+
+	return <SVGIcon name='checkCircle'/>;
+}
+
+const SelectActionTableRow = ({children, onDelete, hasError, hasErrorIndication, overlayMsg}) => (
 	<div className='select-action-table-row-wrapper'>
 		<div className={`select-action-table-row ${hasError ? 'has-error' : ''}`}>
 			{children}
 		</div>
-		{onDelete ? <SVGIcon name='trash-o' data-test-id='select-action-table-delete' onClick={onDelete} /> : <SVGIcon name='angle-left' className='dummy-icon' />}		
-		{hasError ? overlayMsg ? <IconWithOverlay overlayMsg={overlayMsg}/> :  <SVGIcon name='error-circle'/>
-					: hasError === undefined ? <SVGIcon name='angle-left' className='dummy-icon'/> : <SVGIcon name='check-circle'/>}		
-		
+		{onDelete && <SVGIcon name='trashO' data-test-id='select-action-table-delete' onClick={onDelete} />}
+		{hasErrorIndication && renderErrorOrCheck({hasError, overlayMsg})}
 	</div>
 );
 
