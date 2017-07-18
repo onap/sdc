@@ -436,7 +436,7 @@ public class ResponseParser {
 	}
 
 	public static List<String> getDerivedListFromJson(RestResponse res) throws JSONException {
-		JSONArray listFromJson = getListFromJson(res, "derivedList");
+		JSONArray listFromJson = getListFromJson(res, "derivedFrom");
 		List<String> lst = new ArrayList<String>();
 		for (int i = 0; i < listFromJson.length(); i++) {
 			lst.add(listFromJson.getString(i));

@@ -20,6 +20,17 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import fj.data.Either;
+import org.apache.commons.codec.binary.Base64;
+import org.junit.Before;
+import org.junit.Test;
+import org.openecomp.sdc.be.model.UploadResourceInfo;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.slf4j.Logger;
+
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -27,19 +38,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-import org.apache.commons.codec.binary.Base64;
-import org.junit.Assert;
-import org.junit.Test;
-import org.openecomp.sdc.be.model.UploadResourceInfo;
-import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
-import org.openecomp.sdc.exception.ResponseFormat;
+import java.util.stream.Stream;
 
-import fj.data.Either;
-
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class AbstractValidationsServletTest {
-	private static AbstractValidationsServlet servlet = mock(AbstractValidationsServlet.class);
+	private static AbstractValidationsServlet servlet = new AbstractValidationsServlet() {};
+
+	private static final String BASIC_TOSCA_TEMPLATE = "tosca_definitions_version: tosca_simple_yaml_%s";
+
+	@Before
+	public void setUp() throws Exception {
+		servlet.initLog(mock(Logger.class));
+	}
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -65,8 +77,23 @@ public class AbstractValidationsServletTest {
 		} catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
-		Assert.assertTrue(returnValue.isLeft());
+		assertTrue(returnValue.isLeft());
 		Map<String, byte[]> csar = returnValue.left().value();
-		Assert.assertTrue(csar != null);
+		assertTrue(csar != null);
 	}
+
+	@Test
+	public void testValidToscaVersion() throws Exception {
+		Stream.of("1_0", "1_0_0", "1_1", "1_1_0").forEach(this::testValidToscaVersion);
+	}
+
+
+	private void testValidToscaVersion(String version)  {
+		Wrapper<Response> responseWrapper = new Wrapper<>();
+		servlet.validatePayloadIsTosca(responseWrapper, new UploadResourceInfo(), new User(), String.format(BASIC_TOSCA_TEMPLATE, version));
+		assertTrue(responseWrapper.isEmpty());
+	}
+
+
+
 }

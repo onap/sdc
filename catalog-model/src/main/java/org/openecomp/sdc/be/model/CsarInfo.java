@@ -5,21 +5,25 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-public class ImportCsarInfo {
+public class CsarInfo {
 	String vfResourceName;
 	User modifier;
 	String csarUUID;
 	Map<String, byte[]> csar;
 	Map<String, String> createdNodesToscaResourceNames;
 	Queue<String> cvfcToCreateQueue;
+	boolean isUpdate;
+	Map<String, Resource> createdNodes;
 	
-	public ImportCsarInfo(String vfResourceName, User modifier, String csarUUID, Map<String, byte[]> csar){
+	public CsarInfo(String vfResourceName, User modifier, String csarUUID, Map<String, byte[]> csar, boolean isUpdate){
 		this.vfResourceName = vfResourceName;
 		this.modifier = modifier;
 		this.csarUUID = csarUUID;
 		this.csar = csar;
 		this.createdNodesToscaResourceNames = new HashMap<>();
 		this.cvfcToCreateQueue = new PriorityQueue<>();
+		this.isUpdate = isUpdate;
+		this.createdNodes  = new HashMap<>(); 
 	}
 
 	public String getVfResourceName() {
@@ -69,5 +73,17 @@ public class ImportCsarInfo {
 	public void setCvfcToCreateQueue(Queue<String> cvfcToCreateQueue) {
 		this.cvfcToCreateQueue = cvfcToCreateQueue;
 	}
-	
+
+	public boolean isUpdate() {
+		return isUpdate;
+	}
+
+	public void setUpdate(boolean isUpdate) {
+		this.isUpdate = isUpdate;
+	}
+
+	public Map<String, Resource> getCreatedNodes() {
+		return createdNodes;
+	}
+
 }

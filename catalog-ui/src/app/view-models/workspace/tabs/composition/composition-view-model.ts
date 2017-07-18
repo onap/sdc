@@ -30,7 +30,8 @@ import {ResourceType} from "../../../../utils/constants";
 export interface ICompositionViewModelScope extends IWorkspaceViewModelScope {
 
     currentComponent:Component;
-    selectedComponent:Component;
+    selectedComponent: Component;
+    componentInstanceNames: Array<string>;
     isLoading:boolean;
     graphApi:any;
     sharingService:SharingService;
@@ -130,7 +131,6 @@ export class CompositionViewModel {
     private openUpdateComponentInstanceNameModal = ():void => {
         this.ModalsHandler.openUpdateComponentInstanceNameModal(this.$scope.currentComponent).then(()=> {
             this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_NAME_CHANGED, this.$scope.currentComponent.selectedInstance);
-
         });
     };
 
@@ -225,7 +225,7 @@ export class CompositionViewModel {
         this.$scope.openUpdateModal = ():void => {
             this.openUpdateComponentInstanceNameModal();
         };
-
+    
         this.$scope.deleteSelectedComponentInstance = ():void => {
             let state = "deleteInstance";
             let onOk = ():void => {

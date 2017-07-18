@@ -22,19 +22,30 @@ package org.openecomp.sdc.ci.tests.utils;
 
 import static org.testng.AssertJUnit.assertNotNull;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.codec.binary.Base64;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.model.ArtifactUiDownloadData;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ToscaKeysEnum;
+import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaNodeTemplatesTopologyTemplateDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaNodeTypesDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaPropertiesNodeTemplatesDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaRequirementsNodeTemplatesDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaTopologyTemplateDefinition;
+import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.validation.CsarValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +65,29 @@ public class ToscaParserUtils {
 		return null;
 	}
 
+	public static Map<String, Object> downloadAndParseToscaTemplate(User sdncModifierDetails, Component createdComponent) throws Exception {
+		String artifactUniqeId = createdComponent.getToscaArtifacts().get("assettoscatemplate").getUniqueId();
+		RestResponse toscaTemplate;
+
+		if (createdComponent.getComponentType() == ComponentTypeEnum.RESOURCE) {
+			toscaTemplate = ArtifactRestUtils.downloadResourceArtifactInternalApi(createdComponent.getUniqueId(), sdncModifierDetails, artifactUniqeId);
+
+		} else {
+			toscaTemplate = ArtifactRestUtils.downloadServiceArtifactInternalApi(createdComponent.getUniqueId(), sdncModifierDetails, artifactUniqeId);
+		}
+		BaseRestUtils.checkSuccess(toscaTemplate);
+
+		ArtifactUiDownloadData artifactUiDownloadData = ResponseParser.parseToObject(toscaTemplate.getResponse(), ArtifactUiDownloadData.class);
+		byte[] fromUiDownload = artifactUiDownloadData.getBase64Contents().getBytes();
+		byte[] decodeBase64 = Base64.decodeBase64(fromUiDownload);
+		Yaml yaml = new Yaml();
+
+		InputStream inputStream = new ByteArrayInputStream(decodeBase64);
+
+		Map<String, Object> load = (Map<String, Object>) yaml.load(inputStream);
+		return load;
+	}
+
 	public static ToscaDefinition getToscaDefinitionObjectByCsarUuid(String csarUUID) throws Exception {
 
 		String TOSCAMetaLocation = "TOSCA-Metadata/TOSCA.meta";
@@ -70,7 +104,7 @@ public class ToscaParserUtils {
 					ToscaKeysEnum toscaKey = ToscaKeysEnum.findToscaKey((String) key);
 					switch (toscaKey) {
 					case TOSCA_DEFINITION_VERSION:
-						getToscaDefinitionVersion(toscaMap, toscaDefinition);
+						enrichToscaDefinitionWithToscaVersion(toscaMap, toscaDefinition);
 						break;
 					case NODE_TYPES:
 						getToscaNodeTypes(toscaMap, toscaDefinition);
@@ -92,10 +126,14 @@ public class ToscaParserUtils {
 
 	}
 
-	public static void getToscaDefinitionVersion(Map<?, ?> toscaMap, ToscaDefinition toscaDefinition) {
+	public static void enrichToscaDefinitionWithToscaVersion(Map<?, ?> toscaMap, ToscaDefinition toscaDefinition) {
 		if (toscaMap.get("tosca_definitions_version") != null) {
-			toscaDefinition.setToscaDefinitionVersion((String) toscaMap.get("tosca_definitions_version"));
+			toscaDefinition.setToscaDefinitionVersion(getToscaVersion(toscaMap));
 		}
+	}
+
+	public static String getToscaVersion(Map<?, ?> toscaMap) {
+		return (String) toscaMap.get("tosca_definitions_version");
 	}
 
 	// spec 90 page
@@ -104,7 +142,7 @@ public class ToscaParserUtils {
 		Map<String, Map<String, String>> nodeTypes = (Map<String, Map<String, String>>) toscaMap.get("node_types");
 		List<ToscaNodeTypesDefinition> listToscaNodeTypes = new ArrayList<>();
 		if (nodeTypes != null) {
-			for (Map.Entry<String, Map<String, String>> entry : nodeTypes.entrySet()) {
+			for (Entry<String, Map<String, String>> entry : nodeTypes.entrySet()) {
 				ToscaNodeTypesDefinition toscaNodeTypes = new ToscaNodeTypesDefinition();
 				String toscaNodeName = entry.getKey();
 				toscaNodeTypes.setName(toscaNodeName);
@@ -179,7 +217,7 @@ public class ToscaParserUtils {
 			@SuppressWarnings("unchecked")
 			List<Map<String, Object>> requirementList = (List<Map<String, Object>>) node.get("requirements");
 			for (int i = 0; i < requirementList.size(); i++) {
-				for (Map.Entry<String, Object> requirement : requirementList.get(i).entrySet()) {
+				for (Entry<String, Object> requirement : requirementList.get(i).entrySet()) {
 					ToscaRequirementsNodeTemplatesDefinition toscaRequirement = new ToscaRequirementsNodeTemplatesDefinition();
 					if (requirement.getKey() != null) {
 						String requirementName = requirement.getKey();
@@ -237,7 +275,7 @@ public class ToscaParserUtils {
 		if (node.get("properties") != null) {
 			@SuppressWarnings("unchecked")
 			Map<String, Object> properties = (Map<String, Object>) node.get("properties");
-			for (Map.Entry<String, Object> property : properties.entrySet()) {
+			for (Entry<String, Object> property : properties.entrySet()) {
 				ToscaPropertiesNodeTemplatesDefinition toscaProperty = new ToscaPropertiesNodeTemplatesDefinition();
 				String propertyName = property.getKey();
 				Object propertyValue = property.getValue();

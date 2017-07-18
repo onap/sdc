@@ -48,6 +48,21 @@ export class CompositionGraphNodesUtils {
         })
     };
 
+
+    public highlightMatchingNodesByName = (cy: Cy.Instance, nameToMatch: string) => {
+
+        cy.batch(() => {
+            cy.nodes("[name !@^= '" + nameToMatch + "']").style({ 'background-image-opacity': 0.4 });
+            cy.nodes("[name @^= '" + nameToMatch + "']").style({ 'background-image-opacity': 1 });
+        })
+        
+    }
+
+    //Returns all nodes whose name starts with searchTerm
+    public getMatchingNodesByName = (cy: Cy.Instance, nameToMatch: string): Cy.CollectionNodes => {
+        return cy.nodes("[name @^= '" + nameToMatch + "']");
+    };
+
     /**
      * Deletes component instances on server and then removes it from the graph as well
      * @param cy

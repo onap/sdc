@@ -36,7 +36,7 @@
                             <span class="i-sdc-designer-sidebar-section-content-item-artifact-details-desc-label" data-ng-show="artifact.description">Description:</span>{{artifact.description}}
                         </div>
                     </div>
-                    <button ng-if="!isViewMode() && artifact.esId && !isComponentInstanceSelected() && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact)" class="i-sdc-designer-sidebar-section-content-item-button delete sprite e-sdc-small-icon-delete"
+                    <button ng-if="displayDeleteButtonMap[artifact.artifactLabel]" class="i-sdc-designer-sidebar-section-content-item-button delete sprite e-sdc-small-icon-delete"
                             data-tests-id="delete_{{artifact.artifactDisplayName}}" data-ng-click="delete(artifact)" type="button"></button>
                     <button ng-if="!isViewMode()  && artifact.isHEAT() && isComponentInstanceSelected() && artifact.heatParameters.length"
                             class="i-sdc-designer-sidebar-section-content-item-button attach sprite e-sdc-small-icon-pad"

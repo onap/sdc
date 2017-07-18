@@ -1,0 +1,5 @@
+<div class="search-bar-container {{class}}">
+    <input class="search-bar-input" type="text" [placeholder]="placeholder" [(ngModel)]="searchQuery" (ngModelChange)="searchQueryChange($event)"/>
+    <span class="clear-search-x" *ngIf="searchQuery" (click)="clearSearchQuery()">x</span>
+    <button class="search-bar-button" (click)="searchButtonClick()"></button>
+</div>

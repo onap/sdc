@@ -69,7 +69,6 @@ import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -818,85 +817,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 		return Either.left(deleteMarkedElements.left().value());
 	}
 
-	private Either<String, ResponseFormat> deleteMarkedComponent(String componentToDelete, ComponentTypeEnum componentType) {
-
-		Either<String, ResponseFormat> result = null;
-		NodeTypeEnum compNodeType = componentType.getNodeType();
-		StorageOperationStatus lockResult = graphLockOperation.lockComponent(componentToDelete, compNodeType);
-		if (!lockResult.equals(StorageOperationStatus.OK)) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedLockObjectError, "Delete marked component");
-			log.debug("Failed to lock component {} error - {}", componentToDelete, lockResult);
-			result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-			return result;
-		}
-		try {
-
-			// check if resource has relations
-			Either<Boolean, StorageOperationStatus> isResourceInUse = toscaOperationFacade.isComponentInUse(componentToDelete);
-			if (isResourceInUse.isRight()) {
-				log.info("deleteMarkedResource - failed to find relations to resource. id = {}, type = {}, error = {}", componentToDelete, componentType, isResourceInUse.right().value().name());
-				ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-				result = Either.right(responseFormat);
-				return result;
-			}
-
-			if (isResourceInUse.isLeft() && isResourceInUse.left().value() == false) {
-
-				// delete resource and its artifacts in one transaction
-				Either<List<ArtifactDefinition>, StorageOperationStatus> artifactsRes = getComponentArtifactsForDelete(componentToDelete, compNodeType, true);
-				if (artifactsRes.isRight() && !artifactsRes.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
-					log.info("failed to check artifacts for component node. id = {}, type = {}, error = {}", componentToDelete, componentType, artifactsRes.right().value().name());
-					ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-					result = Either.right(responseFormat);
-					return result;
-				}
-				List<ArtifactDefinition> artifactsToDelete = new ArrayList<>();
-				if (artifactsRes.isLeft()) {
-					artifactsToDelete = artifactsRes.left().value();
-				}
-				
-				Either<Component, StorageOperationStatus> deleteComponentRes = toscaOperationFacade.deleteToscaComponent(componentToDelete);
-				if (deleteComponentRes.isRight()) {
-					log.info("failed to delete component. id = {}, type = {}, error = {}", componentToDelete, componentType, deleteComponentRes.right().value().name());
-					ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(deleteComponentRes.right().value());
-					ResponseFormat responseFormat = componentsUtils.getResponseFormat(actionStatus, componentToDelete);
-					result = Either.right(responseFormat);
-				} else {
-					log.trace("component was deleted, id = {}, type = {}", componentToDelete, componentType);
-					// delete related artifacts
-					StorageOperationStatus deleteFromEsRes = artifactsBusinessLogic.deleteAllComponentArtifactsIfNotOnGraph(artifactsToDelete);
-					if (!deleteFromEsRes.equals(StorageOperationStatus.OK)) {
-						ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(deleteFromEsRes);
-						ResponseFormat responseFormat = componentsUtils.getResponseFormat(actionStatus, componentToDelete);
-						result = Either.right(responseFormat);
-						return result;
-					}
-					log.debug("component and all its artifacts were deleted, id = {}, type = {}", componentToDelete, componentType);
-					result = Either.left(componentToDelete);
-				}
-			} else {
-				// resource in use
-				log.debug("componentis marked for delete but still in use, id = {}, type = {}", componentToDelete, componentType);
-				ActionStatus actionStatus = ActionStatus.RESTRICTED_OPERATION;
-				ResponseFormat responseFormat = componentsUtils.getResponseFormat(actionStatus, componentToDelete);
-				result = Either.right(responseFormat);
-				return result;
-			}
-		} finally {
-			if (result == null || result.isRight()) {
-				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeSystemError, "delete marked component");
-				log.debug("operation failed. do rollback");
-				titanDao.rollback();
-			} else {
-				log.debug("operation success. do commit");
-				titanDao.commit();
-			}
-			graphLockOperation.unlockComponent(componentToDelete, compNodeType);
-		}
-
-		return result;
-	}
-	
 	public Either<List<ArtifactDefinition>, StorageOperationStatus> getComponentArtifactsForDelete(String parentId, NodeTypeEnum parentType, boolean inTransacton) {
 		List<ArtifactDefinition> artifacts = new ArrayList<ArtifactDefinition>();
 		Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifactsResponse = artifactToscaOperation.getArtifacts(parentId);
@@ -980,7 +900,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 	
 	protected <T extends Component> Either<Resource, ResponseFormat> fetchAndSetDerivedFromGenericType(T component){
 		String genericTypeToscaName = null;
-		if(component.getComponentType() == ComponentTypeEnum.RESOURCE && ((Resource)component).getResourceType() == ResourceTypeEnum.CVFC){
+		if(component.getComponentType() == ComponentTypeEnum.RESOURCE && ((Resource)component).getResourceType() == ResourceTypeEnum.CVFC && CollectionUtils.isNotEmpty(((Resource)component).getDerivedFrom())){
 			genericTypeToscaName = ((Resource)component).getDerivedFrom().get(0);
 		} else {
 			genericTypeToscaName = component.fetchGenericTypeToscaNameFromConfig();

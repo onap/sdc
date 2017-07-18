@@ -94,7 +94,7 @@ public class ToscaExportHandler {
 
 	private static Logger log = LoggerFactory.getLogger(ToscaExportHandler.class.getName());
 
-	public static final String TOSCA_VERSION = "tosca_simple_yaml_1_0";
+	public static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
 	public static final String SERVICE_NODE_TYPE_PREFIX = "org.openecomp.service.";
 	public static final String IMPORTS_FILE_KEY = "file";
 	public static final String TOSCA_TEMPLATE_NAME = "-template.yml";

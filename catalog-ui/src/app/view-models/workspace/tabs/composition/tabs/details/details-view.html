@@ -23,9 +23,9 @@
 
                 <span class="i-sdc-designer-sidebar-section-content-item-label">Version:</span>
                 <span class="i-sdc-designer-sidebar-section-content-item-value"
-                      data-ng-if="!isComponentInstanceSelected() || selectedComponent.isVl()"  data-tests-id="rightTab_version" data-ng-bind="selectedComponent.version"></span>
+                      data-ng-if="!isComponentInstanceSelected()"  data-tests-id="rightTab_version" data-ng-bind="selectedComponent.version"></span>
 
-                <ng-form name="editForm" data-ng-if="isComponentInstanceSelected() && !selectedComponent.isVl()">
+                <ng-form name="editForm" data-ng-if="isComponentInstanceSelected()">
                     <select data-ng-model="editResourceVersion.changeVersion" name="changeVersion" data-tests-id="changeVersion" data-ng-disabled="$parent.isViewOnly"
                             class="i-sdc-designer-sidebar-section-content-item-value i-sdc-form-select"
                             data-ng-class="{'minor': (editResourceVersion.changeVersion)%1}"

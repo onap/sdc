@@ -1,0 +1,53 @@
+.notification-container{
+    display: flex;
+    padding: 15px 11px;
+    float: left;
+    .icon-container{
+        flex-grow: 1;
+        margin-right: 20px;
+        .icon-circle{
+            background-color: black;
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            margin-right: 0;
+            background-color: rgba(255, 255, 255, 0.3);
+            .icon{
+                margin: 0 auto;
+                display: block;
+            }
+        }
+    }
+    .msg-content{
+        flex-grow: 3;
+        h3{
+            border-bottom: none;
+            font-weight: 400;
+            .f-type._18_m;
+        }
+        .message{
+            font-weight: 300;
+            .f-type._14_m;
+        }
+    }
+}
+.ui-notification.success{
+    background-color: @main_color_d;
+    .icon{
+        .notification-success-icon;
+    }
+}
+.ui-notification.error{
+    background-color: @func_color_q;
+    .icon{
+        .notification-error-icon;
+    }
+}
+.ui-notification.info{
+    background-color: @main_color_a;
+    .icon{
+        .notification-process-icon;
+    }
+}

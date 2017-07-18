@@ -1328,7 +1328,7 @@ public class ResourceBusinessLogicTest {
 
 		Resource resourceToUpdtae = createResourceObject(false);
 
-		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false);
+		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null);
 		assertTrue(createOrUpdateResource.isLeft());
 
 		Mockito.verify(toscaOperationFacade, Mockito.times(1)).overrideComponent(Mockito.any(Resource.class), Mockito.any(Resource.class));
@@ -1356,7 +1356,7 @@ public class ResourceBusinessLogicTest {
 
 		Resource resourceToUpdtae = createResourceObject(false);
 
-		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false);
+		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null);
 		assertTrue(createOrUpdateResource.isLeft());
 
 		Mockito.verify(toscaOperationFacade, Mockito.times(1)).overrideComponent(Mockito.any(Component.class), Mockito.any(Component.class));
@@ -1374,7 +1374,7 @@ public class ResourceBusinessLogicTest {
 		Either<Component, StorageOperationStatus> getLatestToscaNameResult = Either.right(StorageOperationStatus.NOT_FOUND);
 		when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdtae.getToscaResourceName())).thenReturn(getLatestToscaNameResult);
 
-		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false);
+		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null);
 		assertTrue(createOrUpdateResource.isLeft());
 
 		Mockito.verify(toscaOperationFacade, Mockito.times(0)).overrideComponent(Mockito.any(Component.class), Mockito.any(Component.class));

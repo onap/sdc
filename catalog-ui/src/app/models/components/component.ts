@@ -923,16 +923,17 @@ export abstract class Component implements IComponent {
     }
 
     public toJSON = ():any => {
-        this.componentService = undefined;
-        this.filterTerm = undefined;
-        this.iconSprite = undefined;
-        this.mainCategory = undefined;
-        this.subCategory = undefined;
-        this.selectedInstance = undefined;
-        this.showMenu = undefined;
-        this.$q = undefined;
-        this.selectedCategory = undefined;
-        return this;
+        let temp = angular.copy(this);
+        temp.componentService = undefined;
+        temp.filterTerm = undefined;
+        temp.iconSprite = undefined;
+        temp.mainCategory = undefined;
+        temp.subCategory = undefined;
+        temp.selectedInstance = undefined;
+        temp.showMenu = undefined;
+        temp.$q = undefined;
+        temp.selectedCategory = undefined;
+        return temp;
     };
 }
 

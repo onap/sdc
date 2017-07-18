@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.components.impl;
 import static org.openecomp.sdc.be.tosca.CsarUtils.ARTIFACTS_PATH;
 import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,6 +45,7 @@ import javax.servlet.ServletContext;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
@@ -87,7 +87,7 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
-import org.openecomp.sdc.be.model.ImportCsarInfo;
+import org.openecomp.sdc.be.model.CsarInfo;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
@@ -135,7 +135,6 @@ import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces;
 import org.openecomp.sdc.common.datastructure.Wrapper;
@@ -489,7 +488,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 		String lockedResourceId = oldRresource.getUniqueId();
 		List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
-		List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
 
 		Either<Map<String, byte[]>, StorageOperationStatus> csar = null;
 		if (csarUIPayload != null && csarUIPayload.left() != null && csarUIPayload.left().value() != null) {
@@ -525,35 +523,68 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			return Either.right(lockResult.right().value());
 		}
 
-		Either<Resource, ResponseFormat> result = null;
 		String yamlFileName = toscaYamlCsarStatus.left().value().getKey();
 		String yamlFileContents = toscaYamlCsarStatus.left().value().getValue();
-		Either<Map<String, Resource>, ResponseFormat> parseNodeTypeInfoYamlEither = null;
-		ImportCsarInfo importCsarInfo = new ImportCsarInfo(newRresource.getName(), user, csarUUID, csar.left().value());
+		CsarInfo csarInfo = new CsarInfo(newRresource.getName(), user, csarUUID, csar.left().value(), true);
+		Map<String, NodeTypeInfo> nodeTypesInfo = extractNodeTypesInfo(csar.left().value(), yamlFileContents);
+		Either<Resource, ResponseFormat>  result =null;
+		
+		Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo.getCsar(), csarInfo.getCsarUUID(), yamlFileName, oldRresource, csarInfo.getModifier());
+		if (findNodeTypesArtifactsToHandleRes.isRight()) {
+			log.debug("failed to find node types for update with artifacts during import csar {}. ", csarInfo.getCsarUUID());
+			result = Either.right(findNodeTypesArtifactsToHandleRes.right().value());
+			return result;
+		}
+		Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = findNodeTypesArtifactsToHandleRes.left().value();
+		try{
+			result =  updateResourceFromYaml(oldRresource, newRresource, updateResource, createdArtifacts, isUpdateYaml, yamlFileName, yamlFileContents, csarInfo, nodeTypesInfo, nodeTypesArtifactsToHandle, null);
+		
+		} finally {
+			if (result == null || result.isRight()) {
+				log.warn("operation failed. do rollback");
+				titanDao.rollback();
+				if (!createdArtifacts.isEmpty()) {
+					StorageOperationStatus deleteFromEsRes = artifactsBusinessLogic.deleteAllComponentArtifactsIfNotOnGraph(createdArtifacts);
+					if (!deleteFromEsRes.equals(StorageOperationStatus.OK)) {
+						ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(deleteFromEsRes);
+						result = Either.right(componentsUtils.getResponseFormat(actionStatus, oldRresource.getName()));
+					}
+					log.debug("component and all its artifacts were deleted, id = {}", oldRresource.getName());
+				}
+			} else {
+				log.debug("operation success. do commit");
+				titanDao.commit();
+			}
+			log.debug("unlock resource {}", lockedResourceId);
+			graphLockOperation.unlockComponent(lockedResourceId, NodeTypeEnum.Resource);
+		}
+		return result;
 
-		try {
+	}
+
+	private Either<Resource, ResponseFormat> updateResourceFromYaml(Resource oldRresource, Resource newRresource, AuditingActionEnum updateResource, List<ArtifactDefinition> createdArtifacts,
+			boolean isUpdateYaml, String yamlFileName,	String yamlFileContent, CsarInfo csarInfo, Map<String, NodeTypeInfo> nodeTypesInfo,
+			Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle, String nodeName) {
+		Either<Resource, ResponseFormat> result = null;
+		Either<Map<String, Resource>, ResponseFormat> parseNodeTypeInfoYamlEither;
+		boolean inTransaction = true;
+		boolean shouldLock = false;
+		
 			Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> prepareForUpdate = null;
 			Resource preparedResource = null;
-			Either<ParsedToscaYamlInfo, ResponseFormat> uploadComponentInstanceInfoMap = parseResourceInfoFromYaml(yamlFileName, newRresource, toscaYamlCsarStatus.left().value().getValue(), user, importCsarInfo.getCreatedNodesToscaResourceNames(), null, null);
+			Either<ParsedToscaYamlInfo, ResponseFormat> uploadComponentInstanceInfoMap = parseResourceInfoFromYaml(yamlFileName, newRresource, yamlFileContent, csarInfo.getModifier(), csarInfo.getCreatedNodesToscaResourceNames(), nodeTypesInfo, nodeName);
 			if (uploadComponentInstanceInfoMap.isRight()) {
 				ResponseFormat responseFormat = uploadComponentInstanceInfoMap.right().value();
-				componentsUtils.auditResource(responseFormat, user, newRresource, "", "", updateResource, null);
+				componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), newRresource, "", "", updateResource, null);
 				result = Either.right(responseFormat);
 				return result;
 			}
-			Map<String, NodeTypeInfo> nodeTypesInfo = extractNodeTypesInfo(csar.left().value(), yamlFileContents);
+			
 			Map<String, UploadComponentInstanceInfo> instances = uploadComponentInstanceInfoMap.left().value().getInstances();
-			Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(nodeTypesInfo, csar.left().value(), csarUUID, yamlFileName, oldRresource, user, true,
-					instances);
-			if (findNodeTypesArtifactsToHandleRes.isRight()) {
-				log.debug("failed to find node types for update with artifacts during import csar {}. ", csarUUID);
-				result = Either.right(findNodeTypesArtifactsToHandleRes.right().value());
-				return result;
-			}
-			Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = findNodeTypesArtifactsToHandleRes.left().value();
+
 			if (isUpdateYaml || !nodeTypesArtifactsToHandle.isEmpty()) {
 
-				prepareForUpdate = updateExistingResourceByImport(newRresource, oldRresource, user, true, false);
+				prepareForUpdate = updateExistingResourceByImport(newRresource, oldRresource, csarInfo.getModifier(), inTransaction, shouldLock);
 				if (prepareForUpdate.isRight()) {
 					log.debug("Failed to prepare resource for update : {}", prepareForUpdate.right().value());
 					result = Either.right(prepareForUpdate.right().value());
@@ -561,38 +592,38 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				}
 				preparedResource = prepareForUpdate.left().value().left;
 
-				log.trace("YAML topology file found in CSAR, file name: {}, contents: {}", yamlFileName, yamlFileContents);
+				log.trace("YAML topology file found in CSAR, file name: {}, contents: {}", yamlFileName, yamlFileContent);
 
-				parseNodeTypeInfoYamlEither = this.handleNodeTypes(yamlFileName, preparedResource, yamlFileContents, false, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, importCsarInfo);
+				parseNodeTypeInfoYamlEither = this.handleNodeTypes(yamlFileName, preparedResource, yamlFileContent, shouldLock, nodeTypesArtifactsToHandle, createdArtifacts, nodeTypesInfo, csarInfo, nodeName);
 				if (parseNodeTypeInfoYamlEither.isRight()) {
 					ResponseFormat responseFormat = parseNodeTypeInfoYamlEither.right().value();
-					componentsUtils.auditResource(responseFormat, user, preparedResource, "", "", updateResource, null);
+					componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), preparedResource, "", "", updateResource, null);
 					result = Either.right(responseFormat);
 					return result;
 				}
 
 				Map<String, InputDefinition> inputs = uploadComponentInstanceInfoMap.left().value().getInputs();
-				Either<Resource, ResponseFormat> createInputsOnResource = createInputsOnResource(preparedResource, user, inputs, true);
+				Either<Resource, ResponseFormat> createInputsOnResource = createInputsOnResource(preparedResource, csarInfo.getModifier(), inputs, inTransaction);
 				if (createInputsOnResource.isRight()) {
 					log.debug("failed to create resource inputs status is {}", createInputsOnResource.right().value());
 					ResponseFormat responseFormat = createInputsOnResource.right().value();
-					componentsUtils.auditResource(createInputsOnResource.right().value(), user, preparedResource, "", "", updateResource, null);
+					componentsUtils.auditResource(createInputsOnResource.right().value(), csarInfo.getModifier(), preparedResource, "", "", updateResource, null);
 					result = Either.right(responseFormat);
 					return result;
 				}
 				preparedResource = createInputsOnResource.left().value();
 
-				Either<Resource, ResponseFormat> createResourcesInstancesEither = createResourceInstances(user, yamlFileName, preparedResource, instances, true, false, parseNodeTypeInfoYamlEither.left().value());
+				Either<Resource, ResponseFormat> createResourcesInstancesEither = createResourceInstances(csarInfo.getModifier(), yamlFileName, preparedResource, instances, inTransaction, shouldLock, csarInfo.getCreatedNodes());
 				if (createResourcesInstancesEither.isRight()) {
 					log.debug("failed to create resource instances status is {}", createResourcesInstancesEither.right().value());
 					ResponseFormat responseFormat = createResourcesInstancesEither.right().value();
-					componentsUtils.auditResource(createResourcesInstancesEither.right().value(), user, preparedResource, "", "", updateResource, null);
+					componentsUtils.auditResource(createResourcesInstancesEither.right().value(), csarInfo.getModifier(), preparedResource, "", "", updateResource, null);
 					result = Either.right(responseFormat);
 					return result;
 				}
 				preparedResource = createResourcesInstancesEither.left().value();
-
-				createResourcesInstancesEither = createResourceInstancesRelations(user, yamlFileName, preparedResource, instances, true, false);
+				
+				createResourcesInstancesEither = createResourceInstancesRelations(csarInfo.getModifier(), yamlFileName, preparedResource, instances, inTransaction, shouldLock);
 				if (createResourcesInstancesEither.isRight()) {
 					log.debug("failed to create relation between resource instances status is {}", createResourcesInstancesEither.right().value());
 					result = Either.right(createResourcesInstancesEither.right().value());
@@ -614,7 +645,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				} else {
 					groups = uploadComponentInstanceInfoMap.left().value().getGroups();
 				}
-				Either<Resource, ResponseFormat> updatedGroupsOnResource = updateGroupsOnResource(preparedResource, user, groups);
+				Either<Resource, ResponseFormat> updatedGroupsOnResource = updateGroupsOnResource(preparedResource, csarInfo.getModifier(), groups);
 				if (updatedGroupsOnResource.isRight()) {
 
 					return updatedGroupsOnResource;
@@ -622,7 +653,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				preparedResource = updatedGroupsOnResource.left().value();
 
 			} else {
-				Either<Resource, ResponseFormat> dataModelResponse = updateResourceMetadata(oldRresource.getUniqueId(), newRresource, user, oldRresource, false, true);
+				Either<Resource, ResponseFormat> dataModelResponse = updateResourceMetadata(oldRresource.getUniqueId(), newRresource, csarInfo.getModifier(), oldRresource, shouldLock, inTransaction);
 				if (dataModelResponse.isRight()) {
 					log.debug("failed to update resource metadata {}", dataModelResponse.right().value());
 					result = Either.right(dataModelResponse.right().value());
@@ -631,44 +662,32 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				preparedResource = dataModelResponse.left().value();
 			}
 
-			Either<Resource, ResponseFormat> createdCsarArtifactsEither = handleVfCsarArtifacts(preparedResource, importCsarInfo, createdArtifacts,
-					artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.Update), false, true);
-			if (createdCsarArtifactsEither.isRight()) {
-
-				return createdCsarArtifactsEither;
+			if(preparedResource.getResourceType() == ResourceTypeEnum.CVFC){
+				if(nodeName != null && nodeTypesArtifactsToHandle.get(nodeName) != null && !nodeTypesArtifactsToHandle.get(nodeName).isEmpty()){
+					Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifactsRes = 
+							handleNodeTypeArtifacts(preparedResource, nodeTypesArtifactsToHandle.get(nodeName), createdArtifacts, csarInfo.getModifier(), inTransaction, true);
+					if(handleNodeTypeArtifactsRes.isRight()){
+						return Either.right(handleNodeTypeArtifactsRes.right().value());
+					}
+				}
+			} else {
+				Either<Resource, ResponseFormat> createdCsarArtifactsEither = handleVfCsarArtifacts(preparedResource, csarInfo, createdArtifacts,
+						artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.Update), shouldLock, inTransaction);
+				log.trace("************* Finished to add artifacts from yaml {}", yamlFileName);
+				if (createdCsarArtifactsEither.isRight()) {
+					return createdCsarArtifactsEither;
+				}
+				preparedResource = createdCsarArtifactsEither.left().value();
 			}
-			preparedResource = createdCsarArtifactsEither.left().value();
 
-			Either<List<ComponentInstance>, ResponseFormat> eitherSetPosition = compositionBusinessLogic.setPositionsForComponentInstances(preparedResource, user.getUserId());
+			Either<List<ComponentInstance>, ResponseFormat> eitherSetPosition = compositionBusinessLogic.setPositionsForComponentInstances(preparedResource, csarInfo.getModifier().getUserId());
 			result = eitherSetPosition.isRight() ? Either.right(eitherSetPosition.right().value()) : Either.left(preparedResource);
 
 			return result;
 
-		} finally {
-			if (result == null || result.isRight()) {
-				log.warn("operation failed. do rollback");
-				titanDao.rollback();
-				if (!createdArtifacts.isEmpty() || !nodeTypesNewCreatedArtifacts.isEmpty()) {
-					createdArtifacts.addAll(nodeTypesNewCreatedArtifacts);
-					StorageOperationStatus deleteFromEsRes = artifactsBusinessLogic.deleteAllComponentArtifactsIfNotOnGraph(createdArtifacts);
-					if (!deleteFromEsRes.equals(StorageOperationStatus.OK)) {
-						ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(deleteFromEsRes);
-						ResponseFormat responseFormat = componentsUtils.getResponseFormat(actionStatus, oldRresource.getName());
-					}
-					log.debug("component and all its artifacts were deleted, id = {}", oldRresource.getName());
-				}
-			} else {
-				log.debug("operation success. do commit");
-				titanDao.commit();
-			}
-			log.debug("unlock resource {}", lockedResourceId);
-			graphLockOperation.unlockComponent(lockedResourceId, NodeTypeEnum.Resource);
-		}
-
 	}
 
-	private Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(Map<String, NodeTypeInfo> nodeTypesInfo, Map<String, byte[]> csar, String csarUUID, String yamlFileName, Resource oldResource, User user,
-			boolean inTransaction, Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap) {
+	private Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(Map<String, NodeTypeInfo> nodeTypesInfo, Map<String, byte[]> csar, String csarUUID, String yamlFileName, Resource oldResource, User user) {
 
 		Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils.extractVfcsArtifactsFromCsar(csar);
 		Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
@@ -676,7 +695,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		try {
 			nodeTypesArtifactsToHandleRes = Either.left(nodeTypesArtifactsToHandle);
-			Map<String, String> extractedVfcToscaNames = extractVfcToscaNames(nodeTypesInfo, yamlFileName, oldResource.getSystemName(), uploadComponentInstanceInfoMap);
+			Map<String, String> extractedVfcToscaNames = extractVfcToscaNames(nodeTypesInfo, yamlFileName, oldResource.getSystemName());
 			Either<EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>, ResponseFormat> curNodeTypeArtifactsToHandleRes = null;
 			EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> curNodeTypeArtifactsToHandle = null;
 			log.debug("Going to fetch node types for resource with name {} during import csar with UUID {}. ", oldResource.getName(), csarUUID);
@@ -844,8 +863,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	 * @param inTransaction
 	 * @return
 	 */
-	public Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifacts(Resource nodeTypeResource, Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> vfcsNewCreatedArtifacts,
-			User user, boolean inTransaction) {
+	public Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifacts(Resource nodeTypeResource, Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> createdArtifacts,
+			User user, boolean inTransaction, boolean ignoreLifecycleState) {
 		Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifactsRequestRes;
 		Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifactsRes = null;
 		Either<Resource, ResponseFormat> changeStateResponse;
@@ -863,14 +882,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				List<ArtifactDefinition> curArtifactsToHandle = curOperationEntry.getValue();
 				if (curArtifactsToHandle != null && !curArtifactsToHandle.isEmpty()) {
 					log.debug("************* Going to {} artifact to vfc {}", curOperation.name(), nodeTypeResource.getName());
-					handleNodeTypeArtifactsRequestRes = artifactsBusinessLogic.handleArtifactsRequestForInnerVfcComponent(curArtifactsToHandle, nodeTypeResource, user, vfcsNewCreatedArtifacts,
-							artifactsBusinessLogic.new ArtifactOperationInfo(false, false, curOperation), false, inTransaction);
+					handleNodeTypeArtifactsRequestRes = artifactsBusinessLogic.handleArtifactsRequestForInnerVfcComponent(curArtifactsToHandle, nodeTypeResource, user, createdArtifacts,
+							artifactsBusinessLogic.new ArtifactOperationInfo(false, ignoreLifecycleState, curOperation), false, inTransaction);
 					if (handleNodeTypeArtifactsRequestRes.isRight()) {
 						handleNodeTypeArtifactsRes = Either.right(handleNodeTypeArtifactsRequestRes.right().value());
 						break;
 					}
 					if (curOperation == ArtifactOperationEnum.Create) {
-						vfcsNewCreatedArtifacts.addAll(handleNodeTypeArtifactsRequestRes.left().value());
+						createdArtifacts.addAll(handleNodeTypeArtifactsRequestRes.left().value());
 					}
 					handledNodeTypeArtifacts.addAll(handleNodeTypeArtifactsRequestRes.left().value());
 				}
@@ -886,8 +905,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return handleNodeTypeArtifactsRes;
 	}
 
-	@SuppressWarnings("unchecked")
-	private Map<String, String> extractVfcToscaNames(Map<String, NodeTypeInfo> nodeTypesInfo, String yamlFileName, String vfResourceName, Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap) {
+	private Map<String, String> extractVfcToscaNames(Map<String, NodeTypeInfo> nodeTypesInfo, String yamlFileName, String vfResourceName) {
 		Map<String, String> vfcToscaNames = new HashMap<>();
 			
 		Map<String, Object> nodes = extractAllNodes(nodeTypesInfo);
@@ -895,7 +913,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			Iterator<Entry<String, Object>> nodesNameEntry = nodes.entrySet().iterator();
 			while (nodesNameEntry.hasNext()) {
 				Entry<String, Object> nodeType = nodesNameEntry.next();
-				String toscaResourceName = buildNodeToscaResourceName(vfResourceName, nodeType.getKey());
+				String toscaResourceName = buildNestedToscaResourceName(ResourceTypeEnum.VFC.name(), vfResourceName, nodeType.getKey());
 				vfcToscaNames.put(nodeType.getKey(), toscaResourceName);
 			}
 		}
@@ -911,50 +929,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			}
 		}
 		return nodes;
-	}
-
-	@SuppressWarnings("unchecked")
-	private void putNodeTypesFromYaml(Map<String, byte[]> csar, String yamlFileName, Map<String, Object> nodeTypes) {
-
-		if (csar.containsKey(yamlFileName)) {
-			Map<String, Object> mappedToscaTemplate;
-			Either<Map<String, Object>, ResultStatusEnum> eitherNodeTypes;
-			mappedToscaTemplate = (Map<String, Object>) new Yaml().load(new String(csar.get(yamlFileName), StandardCharsets.UTF_8));
-			eitherNodeTypes = ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TYPES);
-			if (eitherNodeTypes.isLeft()) {
-				nodeTypes.putAll(eitherNodeTypes.left().value());
-			}
-		}
-	}
-
-	private void addSubstituteToscaNamespacesRecursively(Map<String, byte[]> csar, String yamlFileName, List<String> toscaNameSpaces, Map<String, String> nestedServiceTemplatesMap) {
-
-		Map<String, Object> nodeTypes = new HashMap<>();
-
-		if (csar.containsKey(yamlFileName)) {
-			putNodeTypesFromYaml(csar, yamlFileName, nodeTypes);
-		}
-		if (!nodeTypes.isEmpty()) {
-			Iterator<Entry<String, Object>> nodesNameEntry = nodeTypes.entrySet().iterator();
-			while (nodesNameEntry.hasNext()) {
-				Entry<String, Object> nodeType = nodesNameEntry.next();
-				String nodeTypeFullName = nodeType.getKey();
-				String toscaNameSpace = buildNestedVfcToscaNamespace(nodeTypeFullName);
-				if (toscaNameSpaces.contains(toscaNameSpace)) {
-					break;
-				}
-				toscaNameSpaces.add(toscaNameSpace);
-
-				String nodeTypeTemplateYamlName = null;
-				if (nestedServiceTemplatesMap.containsKey(nodeTypeFullName)) {
-					nodeTypeTemplateYamlName = nestedServiceTemplatesMap.get(nodeTypeFullName);
-				}
-
-				if (nodeTypeTemplateYamlName != null && csar.containsKey(nodeTypeTemplateYamlName)) {
-					addSubstituteToscaNamespacesRecursively(csar, nodeTypeTemplateYamlName, toscaNameSpaces, nestedServiceTemplatesMap);
-				}
-			}
-		}
 	}
 
 	public Either<Resource, ResponseFormat> createResourceFromCsar(Resource resource, User user, Either<Map<String, byte[]>, StorageOperationStatus> csarUIPayload, String csarUUID) {
@@ -984,8 +958,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		Map<String, NodeTypeInfo> nodeTypesInfo = extractNodeTypesInfo(csar.left().value(), yamlFileContents);
 		Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate = findNodeTypeArtifactsToCreate(csar.left().value(), resource);
-		ImportCsarInfo importCsarInfo = new ImportCsarInfo(resource.getName(), user, csarUUID, csar.left().value());
-		Either<Resource, ResponseFormat> createResourceFromYaml = createResourceFromYaml(resource, yamlFileContents, yamlFileName, nodeTypesInfo, importCsarInfo, nodeTypesArtifactsToCreate, true, false, null);
+		CsarInfo csarInfo = new CsarInfo(resource.getName(), user, csarUUID, csar.left().value(), false);
+		Either<Resource, ResponseFormat> createResourceFromYaml = createResourceFromYaml(resource, yamlFileContents, yamlFileName, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, true, false, null);
 		if (createResourceFromYaml.isRight()) {
 			log.debug("Couldn't create resource from YAML");
 			return Either.right(createResourceFromYaml.right().value());
@@ -1046,6 +1020,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return nodeTypesInfo;
 	}
 
+
+	@SuppressWarnings("unchecked")
 	private void markNestedVfc(String yamlFileContent, Map<String, NodeTypeInfo> nodeTypesInfo) {
 		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(yamlFileContent);
 		Either<Object, ResultStatusEnum> nodeTemplatesEither = ImportUtils.findToscaElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TEMPLATES, ToscaElementTypeEnum.MAP);
@@ -1119,21 +1095,21 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				return Either.right(validateDerivedFromNotEmpty.right().value());
 			}
 		}
-		return validateResourceBeforeCreate(resource, user, AuditingActionEnum.CREATE_RESOURCE, inTransaction);
+		return validateResourceBeforeCreate(resource, user, AuditingActionEnum.CREATE_RESOURCE, inTransaction, null);
 
 	}
-//resource, yamlFileContents, yamlFileName, nodeTypesInfo,importCsarInfo, nodeTypesArtifactsToCreate, true, false, null
+//resource, yamlFileContents, yamlFileName, nodeTypesInfo,csarInfo, nodeTypesArtifactsToCreate, true, false, null
 	private Either<Resource, ResponseFormat> createResourceFromYaml(Resource resource, String topologyTemplateYaml, String yamlName,
-			Map<String, NodeTypeInfo> nodeTypesInfo, ImportCsarInfo importCsarInfo,
+			Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo,
 			Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
-			boolean shouldLock, boolean inTransaction, String nodeTypeName) {
+			boolean shouldLock, boolean inTransaction, String nodeName) {
 
 		List<ArtifactDefinition> createdArtifacts = new ArrayList<ArtifactDefinition>();
 		log.trace("************* createResourceFromYaml before parse yaml ");
-		Either<ParsedToscaYamlInfo, ResponseFormat> parseResourceInfoFromYamlEither = parseResourceInfoFromYaml(yamlName, resource, topologyTemplateYaml, importCsarInfo.getModifier(), importCsarInfo.getCreatedNodesToscaResourceNames(), nodeTypesInfo, nodeTypeName);
+		Either<ParsedToscaYamlInfo, ResponseFormat> parseResourceInfoFromYamlEither = parseResourceInfoFromYaml(yamlName, resource, topologyTemplateYaml, csarInfo.getModifier(), csarInfo.getCreatedNodesToscaResourceNames(), nodeTypesInfo, nodeName);
 		if (parseResourceInfoFromYamlEither.isRight()) {
 			ResponseFormat responseFormat = parseResourceInfoFromYamlEither.right().value();
-			componentsUtils.auditResource(responseFormat, importCsarInfo.getModifier(), resource, "", "", AuditingActionEnum.IMPORT_RESOURCE, null);
+			componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, "", "", AuditingActionEnum.IMPORT_RESOURCE, null);
 			return Either.right(responseFormat);
 		}
 		log.trace("************* createResourceFromYaml after parse yaml ");
@@ -1142,11 +1118,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		log.trace("************* createResourceFromYaml before create ");
 		Either<Resource, ResponseFormat> createdResourceResponse = createResourceAndRIsFromYaml(yamlName, resource, parsedToscaYamlInfo, 
 				AuditingActionEnum.IMPORT_RESOURCE, false, createdArtifacts, topologyTemplateYaml,
-				nodeTypesInfo, importCsarInfo, nodeTypesArtifactsToCreate, shouldLock, inTransaction, nodeTypeName);
+				nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, shouldLock, inTransaction, nodeName);
 		log.trace("************* createResourceFromYaml after create ");
 		if (createdResourceResponse.isRight()) {
 			ResponseFormat responseFormat = createdResourceResponse.right().value();
-			componentsUtils.auditResource(responseFormat, importCsarInfo.getModifier(), resource, "", "", AuditingActionEnum.IMPORT_RESOURCE, null);
+			componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, "", "", AuditingActionEnum.IMPORT_RESOURCE, null);
 			return Either.right(responseFormat);
 		}
 
@@ -1154,10 +1130,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public Either<Map<String, Resource>, ResponseFormat> createResourcesFromYamlNodeTypesList(String yamlName, Resource resource, String resourceYml, Map<String, Object> mappedToscaTemplate, boolean needLock,
 																							  Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
-																							  Map<String, NodeTypeInfo> nodeTypesInfo, ImportCsarInfo importCsarInfo) {
+																							  Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo) {
 
 		Either<String, ResultStatusEnum> tosca_version = ImportUtils.findFirstToscaStringElement(mappedToscaTemplate, ToscaTagNamesEnum.TOSCA_VERSION);
 		if (tosca_version.isRight()) {
@@ -1165,8 +1140,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			return Either.right(responseFormat);
 		}
 		Either<Map<String, Object>, ResultStatusEnum> eitherNodeTypes = ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TYPES);
-		Map<String, Resource> nodeTypesResources = new HashMap<>();
-		Either<Map<String, Resource>, ResponseFormat> result = Either.left(nodeTypesResources);
+		Either<Map<String, Resource>, ResponseFormat> result = Either.left(csarInfo.getCreatedNodes());
 		Map<String, Object> mapToConvert = new HashMap<String, Object>();
 		mapToConvert.put(ToscaTagNamesEnum.TOSCA_VERSION.getElementName(), tosca_version.left().value());
 		Resource vfcCreated = null;
@@ -1178,25 +1152,25 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 				if (nodeTypesInfo.containsKey(nodeType.getKey())) {
 					log.trace("************* Going to handle nested vfc {}", nodeType.getKey());
-					Either<Resource, ResponseFormat> handleNeatedVfcYaml = handleNestedVfc(resource, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, importCsarInfo, nodeType.getKey(), nodeTypesResources);
+					Either<Resource, ResponseFormat> handleNeatedVfcYaml = handleNestedVfc(resource, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeType.getKey());
 					log.trace("************* Finished to handle nested vfc {}", nodeType.getKey());
 					if (handleNeatedVfcYaml.isRight()) {
 						return Either.right(handleNeatedVfcYaml.right().value());
 					}
 					vfcCreated = handleNeatedVfcYaml.left().value();
-				} else if(importCsarInfo.getCreatedNodesToscaResourceNames()!= null && !importCsarInfo.getCreatedNodesToscaResourceNames().containsKey(nodeType.getKey())){
+				} else if(csarInfo.getCreatedNodesToscaResourceNames()!= null && !csarInfo.getCreatedNodesToscaResourceNames().containsKey(nodeType.getKey())){
 					log.trace("************* Going to create node {}", nodeType.getKey());
-					Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> resourceCreated = this.createNodeTypeResourceFromYaml(yamlName, nodeType, importCsarInfo.getModifier(), mapToConvert, resource, needLock, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, true);
+					Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> resourceCreated = this.createNodeTypeResourceFromYaml(yamlName, nodeType, csarInfo.getModifier(), mapToConvert, resource, needLock, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, true, csarInfo);
 					log.debug("************* Finished to create node {}", nodeType.getKey());
 
 					if (resourceCreated.isRight()) {
 						return Either.right(resourceCreated.right().value());
 					}
 					vfcCreated = resourceCreated.left().value().getLeft();
-					importCsarInfo.getCreatedNodesToscaResourceNames().put(nodeType.getKey(),vfcCreated.getToscaResourceName());
+					csarInfo.getCreatedNodesToscaResourceNames().put(nodeType.getKey(),vfcCreated.getToscaResourceName());
 				}
 				if (vfcCreated != null) {
-					nodeTypesResources.put(nodeType.getKey(), vfcCreated);
+					csarInfo.getCreatedNodes().put(nodeType.getKey(), vfcCreated);
 				}
 				mapToConvert.remove(ToscaTagNamesEnum.NODE_TYPES.getElementName());
 			}
@@ -1204,59 +1178,113 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return result;
 	}
 
-	private Either<Resource, ResponseFormat> handleNestedVfc(Resource resource, Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle,
-			List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, Map<String, NodeTypeInfo> nodeTypesInfo, ImportCsarInfo importCsarInfo,
-			String nodeType, Map<String, Resource> createdResourcesFromdNodeTypeMap) {
+	private Either<Resource, ResponseFormat> handleNestedVfc(Resource resource, Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle,
+			List<ArtifactDefinition> createdArtifacts, Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo, String nodeName) {
 
 		Either<Resource, ResponseFormat> handleNestedVfcRes = Either.left(resource);
-		String serviceTemplateFileFullName = nodeTypesInfo.get(nodeType).getTemplateFileName();
-		String serviceTemplateFileContent =  new String(importCsarInfo.getCsar().get(serviceTemplateFileFullName));
-		Map<String, Object> nestedVfcJsonMap = nodeTypesInfo.get(nodeType).getMappedToscaTemplate();
+		String yamlName = nodesInfo.get(nodeName).getTemplateFileName();
+		String yamlContent =  new String(csarInfo.getCsar().get(yamlName));
+		Map<String, Object> nestedVfcJsonMap = nodesInfo.get(nodeName).getMappedToscaTemplate();
 
-		Either<Map<String, Resource>, ResponseFormat> createdResourcesFromdNodeTypeMapEither = 	createResourcesFromYamlNodeTypesList(serviceTemplateFileFullName, resource, serviceTemplateFileContent, 
-						nestedVfcJsonMap, false, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, importCsarInfo);
-		log.debug("************* Finished to create all nodes from yaml {}", serviceTemplateFileFullName);
-		if (createdResourcesFromdNodeTypeMapEither.isRight()) {
-			log.debug("failed to resources from node types status is {}", createdResourcesFromdNodeTypeMapEither.right().value());
-			return Either.right(createdResourcesFromdNodeTypeMapEither.right().value());
+		log.debug("************* Going to create node types from yaml {}", yamlName);
+		Either<Map<String, Resource>, ResponseFormat> createNodeTypesRes = 	createResourcesFromYamlNodeTypesList(yamlName, resource, yamlContent, 
+						nestedVfcJsonMap, false, nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo);
+		if (createNodeTypesRes.isRight()) {
+			log.debug("Failed to create node types from yaml {}. Status is {}", yamlName, createNodeTypesRes.right().value());
+			return Either.right(createNodeTypesRes.right().value());
 		}
-		createdResourcesFromdNodeTypeMap.putAll(createdResourcesFromdNodeTypeMapEither.left().value());
-
+		log.debug("************* Finished to create node types from yaml {}", yamlName);
+		
 		if (nestedVfcJsonMap.containsKey(ToscaTagNamesEnum.TOPOLOGY_TEMPLATE.getElementName())) {
-			Resource complexVfc = new Resource();
-			fillComplexVfcMetadata(resource, importCsarInfo, complexVfc, nodeType, nodeTypesInfo, false);
-			if(!importCsarInfo.getCvfcToCreateQueue().contains(nodeType)){
-				importCsarInfo.getCvfcToCreateQueue().add(nodeType);
-			} else {
-				log.debug("CFVC LOOP DETECTED, VSP {}, CVFC {}", importCsarInfo.getVfResourceName(), complexVfc.getName());
-				return Either.right(componentsUtils.getResponseFormat(ActionStatus.CFVC_LOOP_DETECTED, importCsarInfo.getVfResourceName(), complexVfc.getName()));
-			}
-			Either<Resource, ResponseFormat> validationRes = validateResourceBeforeCreate(complexVfc, importCsarInfo.getModifier(), AuditingActionEnum.IMPORT_RESOURCE, true);
-			if(validationRes.isRight()){
-				log.debug("Failed to validate complex VFC {}. ", complexVfc.getName());
-				return validationRes;
-			}
-			Map<String, NodeTypeInfo> newNodeTypesInfo = nodeTypesInfo.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().getUnmarkedCopy()));
-			markNestedVfc(serviceTemplateFileContent, newNodeTypesInfo);
-			handleNestedVfcRes = createResourceFromYaml(complexVfc, serviceTemplateFileContent, serviceTemplateFileFullName,
-					newNodeTypesInfo, importCsarInfo, nodeTypesArtifactsToHandle, false, true, nodeType);
-			if (handleNestedVfcRes.isRight()) {
-				log.debug("Couldn't create resource from YAML");
-				return Either.right(handleNestedVfcRes.right().value());
-			}
-			importCsarInfo.getCreatedNodesToscaResourceNames().put(nodeType, handleNestedVfcRes.left().value().getToscaResourceName());
-			LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction("certification on import", LifecycleChanceActionEnum.CREATE_FROM_CSAR);
-			log.debug("Going to certify cvfc {}. ", handleNestedVfcRes.left().value().getName());
-			Either<Resource, ResponseFormat> certRes = propagateStateToCertified(importCsarInfo.getModifier(),  handleNestedVfcRes.left().value(), lifecycleChangeInfo, true, false, true);
-			if (certRes.isRight()) {
-				log.debug("Couldn't certify resource {}. ", handleNestedVfcRes.left().value());
-				return certRes;
-			}
-			createdResourcesFromdNodeTypeMap.put(nodeType, certRes.left().value());
-			importCsarInfo.getCvfcToCreateQueue().remove();
+			log.debug("************* Going to handle complex VFC from yaml {}", yamlName);
+			handleNestedVfcRes = handleComplexVfc(resource, nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo, nodeName, yamlName, yamlContent);
 		}
-
 		return handleNestedVfcRes;
+	}
+
+	private Either<Resource, ResponseFormat> handleComplexVfc(Resource resource, Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle, List<ArtifactDefinition> createdArtifacts,
+			Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo, String nodeName, String yamlName, String yamlContent) {
+		
+		Either<Resource, ResponseFormat> result = null;
+		Resource  oldComplexVfc = null;
+		Resource  newComplexVfc = null;
+		
+		Either<Resource, ResponseFormat> buildCvfcRes = buildValidComplexVfc(resource, csarInfo, nodeName, nodesInfo);
+		if(buildCvfcRes.isRight()){
+			log.debug("Failed to validate complex VFC for node {}. ", nodeName);
+			result = buildCvfcRes;
+		}
+		if(result == null){
+			newComplexVfc = buildCvfcRes.left().value();
+			if(csarInfo.isUpdate()){
+				Either<Resource, StorageOperationStatus> oldComplexVfcRes = toscaOperationFacade.getLatestByToscaResourceName(newComplexVfc.getToscaResourceName());
+				if(oldComplexVfcRes.isRight() && oldComplexVfcRes.right().value() != StorageOperationStatus.NOT_FOUND){
+					log.debug("Failed to fetch previous complex VFC by tosca resource name {}. Status is {}. ", newComplexVfc.getToscaResourceName(), oldComplexVfcRes.right().value());
+					result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+				} else if(oldComplexVfcRes.isLeft()){
+					oldComplexVfc = oldComplexVfcRes.left().value();
+				}
+			}
+		}
+		if(result == null){
+			result = handleComplexVfc(nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo, nodeName, yamlName, yamlContent, oldComplexVfc, newComplexVfc);
+		}
+		if(result.isLeft()){
+			newComplexVfc = result.left().value();
+			csarInfo.getCreatedNodesToscaResourceNames().put(nodeName, newComplexVfc.getToscaResourceName());
+			LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction("certification on import", LifecycleChanceActionEnum.CREATE_FROM_CSAR);
+			log.debug("Going to certify cvfc {}. ", newComplexVfc.getName());
+			result = propagateStateToCertified(csarInfo.getModifier(), newComplexVfc, lifecycleChangeInfo, true, false, true);
+			if (result.isRight()) {
+				log.debug("Failed to certify complex VFC resource {}. ", newComplexVfc.getName());
+			}
+		}
+		if(result.isLeft()){
+			csarInfo.getCreatedNodes().put(nodeName, result.left().value());
+			csarInfo.getCvfcToCreateQueue().remove();
+		}
+		return result;
+	}
+
+	private Either<Resource, ResponseFormat> handleComplexVfc(Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle, List<ArtifactDefinition> createdArtifacts, Map<String, NodeTypeInfo> nodesInfo,
+			CsarInfo csarInfo, String nodeName, String yamlName, String yamlContent, Resource oldComplexVfc, Resource newComplexVfc) {
+		
+		Either<Resource, ResponseFormat> handleComplexVfcRes;
+		Map<String, NodeTypeInfo> newNodeTypesInfo = nodesInfo.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().getUnmarkedCopy()));
+		markNestedVfc(yamlContent, newNodeTypesInfo);
+		if(oldComplexVfc == null){
+			handleComplexVfcRes = createResourceFromYaml(newComplexVfc, yamlContent, yamlName, newNodeTypesInfo, csarInfo, nodesArtifactsToHandle, false, true, nodeName);
+			if (handleComplexVfcRes.isRight()) {
+				log.debug("Failed to create resource {} from YAML {}. ", newComplexVfc.getName(), yamlName);
+			}
+		} else {
+			handleComplexVfcRes = updateResourceFromYaml(oldComplexVfc, newComplexVfc, AuditingActionEnum.UPDATE_RESOURCE_METADATA, createdArtifacts, true, yamlContent, yamlName, csarInfo, newNodeTypesInfo, nodesArtifactsToHandle, nodeName);
+			if (handleComplexVfcRes.isRight()) {
+				log.debug("Failed to update resource {} from YAML {}. ", oldComplexVfc.getName(), yamlName);
+			}
+		}
+		return handleComplexVfcRes;
+	}
+
+	private Either<Resource, ResponseFormat> buildValidComplexVfc(Resource resource, CsarInfo csarInfo, String nodeName, Map<String, NodeTypeInfo> nodesInfo) {
+		
+		Either<Resource, ResponseFormat> result = null;
+		Resource complexVfc = buildComplexVfcMetadata(resource, csarInfo, nodeName, nodesInfo);
+		log.debug("************* Going to validate complex VFC from yaml {}", complexVfc.getName());
+		
+		if(!csarInfo.getCvfcToCreateQueue().contains(nodeName)){
+			csarInfo.getCvfcToCreateQueue().add(nodeName);
+		} else {
+			log.debug("Failed to validate complex VFC {}. Loop detected, VSP {}. ",  complexVfc.getName(), csarInfo.getVfResourceName());
+			result = Either.right(componentsUtils.getResponseFormat(ActionStatus.CFVC_LOOP_DETECTED, csarInfo.getVfResourceName(), complexVfc.getName()));
+		}
+		if(result == null){
+			result = validateResourceBeforeCreate(complexVfc, csarInfo.getModifier(), AuditingActionEnum.IMPORT_RESOURCE, true, csarInfo);
+			if(result.isRight()){
+				log.debug("Failed to validate complex VFC {}. ", complexVfc.getName());
+			}
+		}
+		return result;
 	}
 
 	private String getNodeTypeActualName(String fullName) {
@@ -1267,14 +1295,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createNodeTypeResourceFromYaml(String yamlName, Entry<String, Object> nodeNameValue, User user, Map<String, Object> mapToConvert, Resource resourceVf, boolean needLock,
-			Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed) {
+			Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed, CsarInfo csarInfo) {
 
 		Either<UploadResourceInfo, ResponseFormat> resourceMetaData = fillResourceMetadata(yamlName, resourceVf, nodeNameValue.getKey(), user);
 		if (resourceMetaData.isRight()) {
 			return Either.right(resourceMetaData.right().value());
 		}
-		String csarVfName = resourceVf.getSystemName();
-		String singleVfcYaml = buildNodeTypeYaml(nodeNameValue, mapToConvert, resourceMetaData.left().value().getResourceType(), csarVfName);
+		String singleVfcYaml = buildNodeTypeYaml(nodeNameValue, mapToConvert, resourceMetaData.left().value().getResourceType(), csarInfo.getVfResourceName());
 
 		Either<User, ResponseFormat> eitherCreator = validateUser(user, "CheckIn Resource", resourceVf, AuditingActionEnum.CHECKIN_RESOURCE, true);
 		if (eitherCreator.isRight()) {
@@ -1282,7 +1309,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 		user = eitherCreator.left().value();
 
-		return this.createResourceFromNodeType(singleVfcYaml, resourceMetaData.left().value(), user, true, needLock, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, forceCertificationAllowed);
+		return this.createResourceFromNodeType(singleVfcYaml, resourceMetaData.left().value(), user, true, needLock, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo);
 	}
 
 	private String buildNodeTypeYaml(Entry<String, Object> nodeNameValue, Map<String, Object> mapToConvert, String nodeResourceType, String csarVfName) {
@@ -1299,14 +1326,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return yaml.dumpAsMap(mapToConvert);
 	}
 
-	private String buildNestedToscaResourceName(String nodeResourceType, String csarVfName, String originToscaResourceName) {
-		String actualName = getNodeTypeActualName(originToscaResourceName);
-		if (!actualName.startsWith(Constants.ABSTRACT)) {
-			actualName = "." + Constants.ABSTRACT + actualName;
-		}
-		return ImportUtils.Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + nodeResourceType.toLowerCase() + '.' + ValidationUtils.convertToSystemName(csarVfName) + actualName;
-	}
-
 	public Either<Boolean, ResponseFormat> validateResourceCreationFromNodeType(Resource resource, User creator) {
 
 		Either<Boolean, ResponseFormat> validateDerivedFromNotEmpty = this.validateDerivedFromNotEmpty(creator, resource, AuditingActionEnum.CREATE_RESOURCE);
@@ -1317,25 +1336,25 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createResourceFromNodeType(String nodeTypeYaml, UploadResourceInfo resourceMetaData, User creator, boolean isInTransaction, boolean needLock,
-			Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed) {
+			Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed, CsarInfo csarInfo) {
 
 		LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction("certification on import", LifecycleChanceActionEnum.CREATE_FROM_CSAR);
 		Function<Resource, Either<Boolean, ResponseFormat>> validator = (resource) -> this.validateResourceCreationFromNodeType(resource, creator);
-		return this.resourceImportManager.importCertifiedResource(nodeTypeYaml, resourceMetaData, creator, validator, lifecycleChangeInfo, isInTransaction, true, needLock, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, forceCertificationAllowed);
+		return this.resourceImportManager.importCertifiedResource(nodeTypeYaml, resourceMetaData, creator, validator, lifecycleChangeInfo, isInTransaction, true, needLock, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo);
 	}
 
-	private Either<UploadResourceInfo, ResponseFormat> fillResourceMetadata(String yamlName, Resource resourceVf, String nodeTypeName, User user) {
+	private Either<UploadResourceInfo, ResponseFormat> fillResourceMetadata(String yamlName, Resource resourceVf, String nodeName, User user) {
 		UploadResourceInfo resourceMetaData = new UploadResourceInfo();
 
 		// validate nodetype name prefix
-		if (!nodeTypeName.startsWith(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX)) {
-			log.debug("invalid nodeTypeName:{} does not start with {}.", nodeTypeName, Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
-			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, resourceMetaData.getName(), nodeTypeName);
+		if (!nodeName.startsWith(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX)) {
+			log.debug("invalid nodeName:{} does not start with {}.", nodeName, Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
+			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, resourceMetaData.getName(), nodeName);
 			return Either.right(responseFormat);
 		}
 
-		String actualName = this.getNodeTypeActualName(nodeTypeName);
-		String namePrefix = nodeTypeName.replace(actualName, "");
+		String actualName = this.getNodeTypeActualName(nodeName);
+		String namePrefix = nodeName.replace(actualName, "");
 		String resourceType = namePrefix.substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
 
 		// if we import from csar, the node_type name can be
@@ -1347,7 +1366,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		// validating type
 		if (!ResourceTypeEnum.containsName(resourceType.toUpperCase())) {
 			log.debug("invalid resourceType:{} the type is not one of the valide types:{}.", resourceType.toUpperCase(), ResourceTypeEnum.values());
-			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, resourceMetaData.getName(), nodeTypeName);
+			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, resourceMetaData.getName(), nodeName);
 			return Either.right(responseFormat);
 		}
 
@@ -1382,9 +1401,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return Either.left(resourceMetaData);
 	}
 
-	private void fillComplexVfcMetadata(Resource resourceVf, ImportCsarInfo importCsarInfo, Resource cvfc, String nodeTypeName, Map<String, NodeTypeInfo> nodeTypesInfo, boolean shouldBeCertified) {
-		NodeTypeInfo nodeTypeInfo = nodeTypesInfo.get(nodeTypeName);
-		cvfc.setName(buildCvfcName(importCsarInfo.getVfResourceName(), nodeTypeName));
+	private Resource buildComplexVfcMetadata(Resource resourceVf, CsarInfo csarInfo, String nodeName, Map<String, NodeTypeInfo> nodesInfo) {
+		Resource cvfc = new Resource();
+		NodeTypeInfo nodeTypeInfo = nodesInfo.get(nodeName);
+		cvfc.setName(buildCvfcName(csarInfo.getVfResourceName(), nodeName));
 		cvfc.setNormalizedName(ValidationUtils.normaliseComponentName(cvfc.getName()));
 		cvfc.setSystemName(ValidationUtils.convertToSystemName(cvfc.getName()));
 		cvfc.setResourceType(ResourceTypeEnum.CVFC);
@@ -1392,12 +1412,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		cvfc.setDerivedFrom(nodeTypeInfo.getDerivedFrom());
 		cvfc.setDescription(ImportUtils.Constants.CVFC_DESCRIPTION);
 		cvfc.setIcon(ImportUtils.Constants.DEFAULT_ICON);
-		cvfc.setContactId(importCsarInfo.getModifier().getUserId());
-		cvfc.setCreatorUserId(importCsarInfo.getModifier().getUserId());
+		cvfc.setContactId(csarInfo.getModifier().getUserId());
+		cvfc.setCreatorUserId(csarInfo.getModifier().getUserId());
 		cvfc.setVendorName(resourceVf.getVendorName());
 		cvfc.setVendorRelease(resourceVf.getVendorRelease());
 		cvfc.setResourceVendorModelNumber(resourceVf.getResourceVendorModelNumber());
-		cvfc.setToscaResourceName(buildNestedToscaResourceName(ResourceTypeEnum.VFC.name(), importCsarInfo.getVfResourceName(), nodeTypeName));
+		cvfc.setToscaResourceName(buildNestedToscaResourceName(ResourceTypeEnum.VFC.name(), csarInfo.getVfResourceName(), nodeName));
 		cvfc.setInvariantUUID(UniqueIdBuilder.buildInvariantUUID());
 		
 		List<String> tags = new ArrayList<>();
@@ -1413,23 +1433,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		categories.add(category);
 		cvfc.setCategories(categories);
 
-		String version;
-		LifecycleStateEnum state;
-
-		if (shouldBeCertified) {
-			version = ImportUtils.Constants.FIRST_CERTIFIED_VERSION_VERSION;
-			state = ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE;
-		} else {
-			version = ImportUtils.Constants.FIRST_NON_CERTIFIED_VERSION;
-			state = ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE_NOT_CERTIFIED_CHECKOUT;
-		}
-		cvfc.setVersion(version);
-		cvfc.setLifecycleState(state);
+		cvfc.setVersion(ImportUtils.Constants.FIRST_NON_CERTIFIED_VERSION);
+		cvfc.setLifecycleState(ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE_NOT_CERTIFIED_CHECKOUT);
 		cvfc.setHighestVersion(ImportUtils.Constants.NORMATIVE_TYPE_HIGHEST_VERSION);
+		
+		return cvfc;
 	}
 
-	private String buildCvfcName(String resourceVfName, String nodeTypeName) {
-		String nameWithouNamespacePrefix = nodeTypeName.substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
+	private String buildCvfcName(String resourceVfName, String nodeName) {
+		String nameWithouNamespacePrefix = nodeName.substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
 		String[] findTypes = nameWithouNamespacePrefix.split("\\.");
 		String resourceType = findTypes[0];
 		return resourceVfName + "-" + nameWithouNamespacePrefix.substring(resourceType.length() + 1);
@@ -1437,11 +1449,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	private Either<Resource, ResponseFormat> createResourceAndRIsFromYaml(String yamlName, Resource resource, ParsedToscaYamlInfo parsedToscaYamlInfo, AuditingActionEnum actionEnum, boolean isNormative,
 																		  List<ArtifactDefinition> createdArtifacts, String topologyTemplateYaml, Map<String, NodeTypeInfo> nodeTypesInfo,
-																		  ImportCsarInfo importCsarInfo, Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
-																		  boolean shouldLock, boolean inTransaction, String nodeTypeName) {
+																		  CsarInfo csarInfo, Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
+																		  boolean shouldLock, boolean inTransaction, String nodeName) {
 
 		boolean result = true;
-		Map<String, Resource> createdVfcs = new HashMap<>();
 		List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
 
 		if (shouldLock) {
@@ -1459,7 +1470,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				result = false;
 				return genericResourceEither;
 			}
-			Either<Resource, ResponseFormat> createResourcesEither = createResourceTransaction(resource, importCsarInfo.getModifier(), isNormative, inTransaction);
+			Either<Resource, ResponseFormat> createResourcesEither = createResourceTransaction(resource, csarInfo.getModifier(), isNormative, inTransaction);
 			log.trace("************* createResourceFromYaml after full create resource {}", yamlName);
 			if (createResourcesEither.isRight()) {
 				result = false;
@@ -1472,7 +1483,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				generateInputsFromGenericTypeProperties(resource, genericResourceEither.left().value());
 
 			Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
-			Either<Resource, ResponseFormat> createInputsOnResource = createInputsOnResource(resource, importCsarInfo.getModifier(), inputs, inTransaction);
+			Either<Resource, ResponseFormat> createInputsOnResource = createInputsOnResource(resource, csarInfo.getModifier(), inputs, inTransaction);
 			if (createInputsOnResource.isRight()) {
 				result = false;
 				return createInputsOnResource;
@@ -1484,7 +1495,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			log.trace("************* Going to create nodes, RI's and Relations  from yaml {}", yamlName);
 
 			createResourcesEither = createRIAndRelationsFromYaml(yamlName, resource, uploadComponentInstanceInfoMap, actionEnum, topologyTemplateYaml,
-					nodeTypesNewCreatedArtifacts, createdVfcs, nodeTypesInfo, importCsarInfo, nodeTypesArtifactsToCreate);
+					nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, nodeName);
 			log.trace("************* Finished to create nodes, RI and Relation  from yaml {}", yamlName);
 			if (createResourcesEither.isRight()) {
 				result = false;
@@ -1507,7 +1518,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			} else {
 				groups = parsedToscaYamlInfo.getGroups();
 			}
-			Either<Resource, ResponseFormat> createGroupsOnResource = createGroupsOnResource(resource, importCsarInfo.getModifier(), groups);
+			Either<Resource, ResponseFormat> createGroupsOnResource = createGroupsOnResource(resource, csarInfo.getModifier(), groups);
 			if (createGroupsOnResource.isRight()) {
 				result = false;
 				return createGroupsOnResource;
@@ -1518,15 +1529,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			log.trace("************* Going to add artifacts from yaml {}", yamlName);
 
 			if(resource.getResourceType() == ResourceTypeEnum.CVFC){
-				if(nodeTypesArtifactsToCreate.containsKey(nodeTypeName) && nodeTypesArtifactsToCreate.get(nodeTypeName) !=null && !nodeTypesArtifactsToCreate.get(nodeTypeName).isEmpty()){
+				if(nodeTypesArtifactsToCreate.containsKey(nodeName) && nodeTypesArtifactsToCreate.get(nodeName) !=null && !nodeTypesArtifactsToCreate.get(nodeName).isEmpty()){
 					Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifactsRes = 
-							handleNodeTypeArtifacts(resource, nodeTypesArtifactsToCreate.get(nodeTypeName), nodeTypesNewCreatedArtifacts, importCsarInfo.getModifier(), true);
+							handleNodeTypeArtifacts(resource, nodeTypesArtifactsToCreate.get(nodeName), nodeTypesNewCreatedArtifacts, csarInfo.getModifier(), true, false);
 					if(handleNodeTypeArtifactsRes.isRight()){
 						return Either.right(handleNodeTypeArtifactsRes.right().value());
 					}
 				}
 			} else {
-				Either<Resource, ResponseFormat> createdCsarArtifactsEither = this.handleVfCsarArtifacts(resource, importCsarInfo, createdArtifacts, artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.Create), false,
+				Either<Resource, ResponseFormat> createdCsarArtifactsEither = this.handleVfCsarArtifacts(resource, csarInfo, createdArtifacts, artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.Create), false,
 						inTransaction);
 				log.trace("************* Finished to add artifacts from yaml {}", yamlName);
 				if (createdCsarArtifactsEither.isRight()) {
@@ -1536,7 +1547,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				resource = createdCsarArtifactsEither.left().value();
 			}
 			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
-			componentsUtils.auditResource(responseFormat, importCsarInfo.getModifier(), resource, "", "", actionEnum, null);
+			componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, "", "", actionEnum, null);
 			ASDCKpiApi.countCreatedResourcesKPI();
 			return Either.left(resource);
 
@@ -1550,7 +1561,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 						StorageOperationStatus deleteFromEsRes = artifactsBusinessLogic.deleteAllComponentArtifactsIfNotOnGraph(createdArtifacts);
 						if (!deleteFromEsRes.equals(StorageOperationStatus.OK)) {
 							ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(deleteFromEsRes);
-							ResponseFormat responseFormat = componentsUtils.getResponseFormat(actionStatus, resource.getName());
+							return Either.right(componentsUtils.getResponseFormat(actionStatus, resource.getName()));
 						}
 						log.debug("component and all its artifacts were deleted, id = {}", resource.getName());
 					}
@@ -1832,24 +1843,23 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> createRIAndRelationsFromYaml(String yamlName, Resource resource, Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap, AuditingActionEnum actionEnum,
-																		  String topologyTemplateYaml, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, Map<String, Resource> createdVfcs,
-																		  Map<String, NodeTypeInfo> nodeTypesInfo, ImportCsarInfo importCsarInfo, Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate) {
+																		  String topologyTemplateYaml, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
+																		  Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo, Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
+																		  String nodeName) {
 
 		Either<Resource, ResponseFormat> result;
 		Either<Resource, ResponseFormat> createResourcesInstancesEither;
 
 		log.debug("************* Going to create all nodes {}", yamlName);
-		Either<Map<String, Resource>, ResponseFormat> createdResourcesFromdNodeTypeMap = this.handleNodeTypes(yamlName, resource, topologyTemplateYaml, false, nodeTypesArtifactsToCreate, nodeTypesNewCreatedArtifacts, nodeTypesInfo, importCsarInfo);
+		Either<Map<String, Resource>, ResponseFormat> createdResourcesFromdNodeTypeMap = this.handleNodeTypes(yamlName, resource, topologyTemplateYaml, false, nodeTypesArtifactsToCreate, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeName);
 		log.debug("************* Finished to create all nodes {}", yamlName);
 		if (createdResourcesFromdNodeTypeMap.isRight()) {
 			log.debug("failed to resources from node types status is {}", createdResourcesFromdNodeTypeMap.right().value());
 			return Either.right(createdResourcesFromdNodeTypeMap.right().value());
 		}
 
-		createdVfcs.putAll(createdResourcesFromdNodeTypeMap.left().value());
-
 		log.debug("************* Going to create all resource instances {}", yamlName);
-		createResourcesInstancesEither = createResourceInstances(importCsarInfo.getModifier(), yamlName, resource, uploadComponentInstanceInfoMap, true, false, createdResourcesFromdNodeTypeMap.left().value());
+		createResourcesInstancesEither = createResourceInstances(csarInfo.getModifier(), yamlName, resource, uploadComponentInstanceInfoMap, true, false, csarInfo.getCreatedNodes());
 
 		log.debug("************* Finished to create all resource instances {}", yamlName);
 		if (createResourcesInstancesEither.isRight()) {
@@ -1859,7 +1869,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 		resource = createResourcesInstancesEither.left().value();
 		log.debug("************* Going to create all relations {}", yamlName);
-		createResourcesInstancesEither = createResourceInstancesRelations(importCsarInfo.getModifier(), yamlName, resource, uploadComponentInstanceInfoMap, true, false);
+		createResourcesInstancesEither = createResourceInstancesRelations(csarInfo.getModifier(), yamlName, resource, uploadComponentInstanceInfoMap, true, false);
 
 		log.debug("************* Finished to create all relations {}", yamlName);
 
@@ -1872,7 +1882,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 
 		log.debug("************* Going to create positions {}", yamlName);
-		Either<List<ComponentInstance>, ResponseFormat> eitherSetPosition = compositionBusinessLogic.setPositionsForComponentInstances(resource, importCsarInfo.getModifier().getUserId());
+		Either<List<ComponentInstance>, ResponseFormat> eitherSetPosition = compositionBusinessLogic.setPositionsForComponentInstances(resource, csarInfo.getModifier().getUserId());
 		log.debug("************* Finished to set positions {}", yamlName);
 		result = eitherSetPosition.isRight() ? Either.right(eitherSetPosition.right().value()) : Either.left(resource);
 
@@ -1906,43 +1916,48 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	@SuppressWarnings("unchecked")
 	private Either<Map<String, Resource>, ResponseFormat> handleNodeTypes(String yamlName, Resource resource, String topologyTemplateYaml, boolean needLock,
 																		 Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
-																		  Map<String, NodeTypeInfo> nodeTypesInfo, ImportCsarInfo importCsarInfo) {
+																		  Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo, String nodeName) {
 
-		Map<String, Resource> createdResourcesFromdNodeTypeMap = new HashMap<>();
-		Either<Map<String, Resource>, ResponseFormat> result = Either.left(createdResourcesFromdNodeTypeMap);
+		Either<Map<String, Resource>, ResponseFormat> result = Either.left(csarInfo.getCreatedNodes());
 		for (Entry<String, NodeTypeInfo> nodeTypeEntry : nodeTypesInfo.entrySet()) {
 			if (nodeTypeEntry.getValue().isNested()) {
 
 				Either<Resource, ResponseFormat> createResourceFromYaml = handleNestedVfc(resource, nodeTypesArtifactsToHandle, 
-						nodeTypesNewCreatedArtifacts, nodeTypesInfo, importCsarInfo, nodeTypeEntry.getKey(), createdResourcesFromdNodeTypeMap);
+						nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypeEntry.getKey());
 				log.trace("************* finished to create node {}", nodeTypeEntry.getKey());
 				if (createResourceFromYaml.isRight()) {
 					return Either.right(createResourceFromYaml.right().value());
 				}
 			}
 		}
-		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(topologyTemplateYaml);
+	
+		Map<String, Object> mappedToscaTemplate = null;
+		if(StringUtils.isNotEmpty(nodeName) && MapUtils.isNotEmpty(nodeTypesInfo) && nodeTypesInfo.containsKey(nodeName)){
+			mappedToscaTemplate = nodeTypesInfo.get(nodeName).getMappedToscaTemplate();
+		}
+		if(MapUtils.isEmpty(mappedToscaTemplate)){
+			mappedToscaTemplate = (Map<String, Object>) new Yaml().load(topologyTemplateYaml);
+		}
+		
 		Either<Map<String, Resource>, ResponseFormat> createdNodeTypeFromMainTemplateEither = createResourcesFromYamlNodeTypesList(yamlName, resource, topologyTemplateYaml, mappedToscaTemplate, needLock, nodeTypesArtifactsToHandle, 
-				nodeTypesNewCreatedArtifacts, nodeTypesInfo, importCsarInfo);
+				nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo);
 		if (createdNodeTypeFromMainTemplateEither.isRight()) {
 			ResponseFormat responseFormat = createdNodeTypeFromMainTemplateEither.right().value();
-			componentsUtils.auditResource(responseFormat, importCsarInfo.getModifier(), resource, "", "", AuditingActionEnum.IMPORT_RESOURCE, null);
+			componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, "", "", AuditingActionEnum.IMPORT_RESOURCE, null);
 			return Either.right(responseFormat);
 		}
 
-		createdResourcesFromdNodeTypeMap.putAll(createdNodeTypeFromMainTemplateEither.left().value());
-
 		// add the created node types to the cache although they are not in the
 		// graph.
-		createdResourcesFromdNodeTypeMap.values().stream().forEach(p -> cacheManagerOperation.storeComponentInCache(p, NodeTypeEnum.Resource));
+		csarInfo.getCreatedNodes().values().stream().forEach(p -> cacheManagerOperation.storeComponentInCache(p, NodeTypeEnum.Resource));
 
 		return result;
 	}
 
-	private Either<Resource, ResponseFormat> handleVfCsarArtifacts(Resource resource, ImportCsarInfo importCsarInfo, List<ArtifactDefinition> createdArtifacts, ArtifactOperationInfo artifactOperation, boolean shouldLock,
+	private Either<Resource, ResponseFormat> handleVfCsarArtifacts(Resource resource, CsarInfo csarInfo, List<ArtifactDefinition> createdArtifacts, ArtifactOperationInfo artifactOperation, boolean shouldLock,
 			boolean inTransaction) {
 
-		if (importCsarInfo.getCsar() != null) {
+		if (csarInfo.getCsar() != null) {
 			String vendorLicenseModelId = null;
 			String vfLicenseModelId = null;
 
@@ -1959,26 +1974,26 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 			}
 			// Specific Behavior for license artifacts
-			createOrUpdateSingleNonMetaArtifact(resource, importCsarInfo, CsarUtils.ARTIFACTS_PATH + Constants.VENDOR_LICENSE_MODEL, Constants.VENDOR_LICENSE_MODEL, ArtifactTypeEnum.VENDOR_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT,
+			createOrUpdateSingleNonMetaArtifact(resource, csarInfo, CsarUtils.ARTIFACTS_PATH + Constants.VENDOR_LICENSE_MODEL, Constants.VENDOR_LICENSE_MODEL, ArtifactTypeEnum.VENDOR_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT,
 					Constants.VENDOR_LICENSE_LABEL, Constants.VENDOR_LICENSE_DISPLAY_NAME, Constants.VENDOR_LICENSE_DESCRIPTION, vendorLicenseModelId, artifactOperation, null, shouldLock, inTransaction);
-			createOrUpdateSingleNonMetaArtifact(resource, importCsarInfo, CsarUtils.ARTIFACTS_PATH + Constants.VF_LICENSE_MODEL, Constants.VF_LICENSE_MODEL, ArtifactTypeEnum.VF_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT,
+			createOrUpdateSingleNonMetaArtifact(resource, csarInfo, CsarUtils.ARTIFACTS_PATH + Constants.VF_LICENSE_MODEL, Constants.VF_LICENSE_MODEL, ArtifactTypeEnum.VF_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT,
 					Constants.VF_LICENSE_LABEL, Constants.VF_LICENSE_DISPLAY_NAME, Constants.VF_LICENSE_DESCRIPTION, vfLicenseModelId, artifactOperation, null, shouldLock, inTransaction);
 
-			Either<Resource, ResponseFormat> eitherCreateResult = createOrUpdateNonMetaArtifacts(importCsarInfo, resource, createdArtifacts, shouldLock, inTransaction, artifactOperation);
+			Either<Resource, ResponseFormat> eitherCreateResult = createOrUpdateNonMetaArtifacts(csarInfo, resource, createdArtifacts, shouldLock, inTransaction, artifactOperation);
 			if (eitherCreateResult.isRight()) {
 				return Either.right(eitherCreateResult.right().value());
 			}
 
-			Either<ImmutablePair<String, String>, ResponseFormat> artifacsMetaCsarStatus = CsarValidationUtils.getArtifactsMeta(importCsarInfo.getCsar(), importCsarInfo.getCsarUUID(), componentsUtils);
+			Either<ImmutablePair<String, String>, ResponseFormat> artifacsMetaCsarStatus = CsarValidationUtils.getArtifactsMeta(csarInfo.getCsar(), csarInfo.getCsarUUID(), componentsUtils);
 			if (artifacsMetaCsarStatus.isLeft()) {
 
 				String artifactsFileName = artifacsMetaCsarStatus.left().value().getKey();
 				String artifactsContents = artifacsMetaCsarStatus.left().value().getValue();
 				Either<Resource, ResponseFormat> createArtifactsFromCsar = Either.left(resource);
 				if (artifactOperation.getArtifactOperationEnum() == ArtifactOperationEnum.Create)
-					createArtifactsFromCsar = createResourceArtifactsFromCsar(importCsarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts, shouldLock, inTransaction);
+					createArtifactsFromCsar = createResourceArtifactsFromCsar(csarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts, shouldLock, inTransaction);
 				else
-					createArtifactsFromCsar = updateResourceArtifactsFromCsar(importCsarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts, shouldLock, inTransaction);
+					createArtifactsFromCsar = updateResourceArtifactsFromCsar(csarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts, shouldLock, inTransaction);
 				if (createArtifactsFromCsar.isRight()) {
 					log.debug("Couldn't create artifacts from artifacts.meta");
 					return Either.right(createArtifactsFromCsar.right().value());
@@ -1997,7 +2012,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					 * Either.right(componentsUtils.getResponseFormat(actionStatus)); } } }
 					 */
 					for (String artifactId : artifactsToDelete) {
-						Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleDelete = artifactsBusinessLogic.handleDelete(resource.getUniqueId(), artifactId, importCsarInfo.getModifier(), AuditingActionEnum.ARTIFACT_DELETE, ComponentTypeEnum.RESOURCE,
+						Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleDelete = artifactsBusinessLogic.handleDelete(resource.getUniqueId(), artifactId, csarInfo.getModifier(), AuditingActionEnum.ARTIFACT_DELETE, ComponentTypeEnum.RESOURCE,
 								resource, null, null, shouldLock, inTransaction);
 						if (handleDelete.isRight()) {
 							log.debug("Couldn't delete  artifact {}", artifactId);
@@ -2018,18 +2033,18 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return Either.left(resource);
 	}
 
-	private Either<Boolean, ResponseFormat> createOrUpdateSingleNonMetaArtifact(Resource resource, ImportCsarInfo importCsarInfo, String artifactPath, String artifactFileName, String artifactType,
+	private Either<Boolean, ResponseFormat> createOrUpdateSingleNonMetaArtifact(Resource resource, CsarInfo csarInfo, String artifactPath, String artifactFileName, String artifactType,
 			ArtifactGroupTypeEnum artifactGroupType, String artifactLabel, String artifactDisplayName, String artifactDescription, String artifactId, ArtifactOperationInfo operation, List<ArtifactDefinition> createdArtifacts, boolean shouldLock,
 			boolean inTransaction) {
 		byte[] artifactFileBytes = null;
 
-		if (importCsarInfo.getCsar().containsKey(artifactPath)) {
-			artifactFileBytes = importCsarInfo.getCsar().get(artifactPath);
+		if (csarInfo.getCsar().containsKey(artifactPath)) {
+			artifactFileBytes = csarInfo.getCsar().get(artifactPath);
 		}
 		Either<Boolean, ResponseFormat> result = Either.left(true);
 		if (operation.getArtifactOperationEnum() == ArtifactOperationEnum.Update || operation.getArtifactOperationEnum() == ArtifactOperationEnum.Delete) {
 			if (artifactId != null && !artifactId.isEmpty() && artifactFileBytes == null) {
-				Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleDelete = artifactsBusinessLogic.handleDelete(resource.getUniqueId(), artifactId, importCsarInfo.getModifier(), AuditingActionEnum.ARTIFACT_DELETE, ComponentTypeEnum.RESOURCE, resource, null,
+				Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleDelete = artifactsBusinessLogic.handleDelete(resource.getUniqueId(), artifactId, csarInfo.getModifier(), AuditingActionEnum.ARTIFACT_DELETE, ComponentTypeEnum.RESOURCE, resource, null,
 						null, shouldLock, inTransaction);
 				if (handleDelete.isRight()) {
 					result = Either.right(handleDelete.right().value());
@@ -2044,10 +2059,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 		if (artifactFileBytes != null) {
 			Map<String, Object> vendorLicenseModelJson = buildJsonForUpdateArtifact(artifactId, artifactFileName, artifactType, artifactGroupType, artifactLabel, artifactDisplayName, artifactDescription, artifactFileBytes, null);
-			Either<Either<ArtifactDefinition, Operation>, ResponseFormat> eitherNonMetaArtifacts = createOrUpdateCsarArtifactFromJson(resource, importCsarInfo.getModifier(), vendorLicenseModelJson, operation, shouldLock, inTransaction);
+			Either<Either<ArtifactDefinition, Operation>, ResponseFormat> eitherNonMetaArtifacts = createOrUpdateCsarArtifactFromJson(resource, csarInfo.getModifier(), vendorLicenseModelJson, operation, shouldLock, inTransaction);
 			addNonMetaCreatedArtifactsToSupportRollback(operation, createdArtifacts, eitherNonMetaArtifacts);
 			if (eitherNonMetaArtifacts.isRight()) {
-				BeEcompErrorManager.getInstance().logInternalFlowError("UploadLicenseArtifact", "Failed to upload license artifact: " + artifactFileName + "With csar uuid: " + importCsarInfo.getCsarUUID(), ErrorSeverity.WARNING);
+				BeEcompErrorManager.getInstance().logInternalFlowError("UploadLicenseArtifact", "Failed to upload license artifact: " + artifactFileName + "With csar uuid: " + csarInfo.getCsarUUID(), ErrorSeverity.WARNING);
 				return Either.right(eitherNonMetaArtifacts.right().value());
 			}
 		}
@@ -2078,13 +2093,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return Either.left(uploadArtifactToService.left().value());
 	}
 
-	public Either<Resource, ResponseFormat> updateResourceArtifactsFromCsar(ImportCsarInfo importCsarInfo, Resource resource, String artifactsMetaFile, String artifactsMetaFileName, List<ArtifactDefinition> createdNewArtifacts,
+	public Either<Resource, ResponseFormat> updateResourceArtifactsFromCsar(CsarInfo csarInfo, Resource resource, String artifactsMetaFile, String artifactsMetaFileName, List<ArtifactDefinition> createdNewArtifacts,
 			boolean shouldLock, boolean inTransaction) {
 
-		Either<Map<String, List<ArtifactTemplateInfo>>, ResponseFormat> parseResourceInfoFromYamlEither = parseResourceArtifactsInfoFromFile(resource, artifactsMetaFile, artifactsMetaFileName, importCsarInfo.getModifier());
+		Either<Map<String, List<ArtifactTemplateInfo>>, ResponseFormat> parseResourceInfoFromYamlEither = parseResourceArtifactsInfoFromFile(resource, artifactsMetaFile, artifactsMetaFileName, csarInfo.getModifier());
 		if (parseResourceInfoFromYamlEither.isRight()) {
 			ResponseFormat responseFormat = parseResourceInfoFromYamlEither.right().value();
-			componentsUtils.auditResource(responseFormat, importCsarInfo.getModifier(), resource, "", "", AuditingActionEnum.IMPORT_RESOURCE, null);
+			componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, "", "", AuditingActionEnum.IMPORT_RESOURCE, null);
 			return Either.right(responseFormat);
 		}
 
@@ -2108,7 +2123,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					}
 				}
 			}
-			return createResourceArtifacts(importCsarInfo, resource, parseResourceInfoFromYamlEither.left().value(), AuditingActionEnum.CREATE_RESOURCE, createdNewArtifacts, shouldLock, inTransaction);
+			return createResourceArtifacts(csarInfo, resource, parseResourceInfoFromYamlEither.left().value(), AuditingActionEnum.CREATE_RESOURCE, createdNewArtifacts, shouldLock, inTransaction);
 		}
 
 		// find master in group
@@ -2138,13 +2153,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		Set<ArtifactDefinition> artifactsToDelete = new HashSet<ArtifactDefinition>();
 		Map<String, List<ArtifactDefinition>> groupToDelete = new HashMap<String, List<ArtifactDefinition>>();
-		Map<String, List<String>> dissocArtifactFromGroup = new HashMap<String, List<String>>();
 
 		Set<ArtifactTemplateInfo> jsonMasterArtifacts = parsedGroup.keySet();
 		Map<GroupDefinition, MergedArtifactInfo> mergedgroup = mergeGroupInUpdateFlow(groupArtifact, parsedGroup, artifactsToDelete, groupToDelete, jsonMasterArtifacts, createdDeplymentArtifactsAfterDelete);
 
 		// Set<String> deletedArtifactsName = new HashSet<String>();
-		Either<List<ArtifactDefinition>, ResponseFormat> deletedArtifactsEither = deleteArtifactsInUpdateCsarFlow(resource, importCsarInfo.getModifier(), shouldLock, inTransaction, artifactsToDelete, groupToDelete);
+		Either<List<ArtifactDefinition>, ResponseFormat> deletedArtifactsEither = deleteArtifactsInUpdateCsarFlow(resource, csarInfo.getModifier(), shouldLock, inTransaction, artifactsToDelete, groupToDelete);
 		if (deletedArtifactsEither.isRight()) {
 			log.debug("Failed to delete artifacts. Status is {} ", deletedArtifactsEither.right().value());
 
@@ -2171,7 +2185,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		////////////// dissociate, associate or create
 		////////////// artifacts////////////////////////////
-		Either<Resource, ResponseFormat> assDissotiateEither = associateAndDissociateArtifactsToGroup(importCsarInfo, resource, createdNewArtifacts, labelCounter, shouldLock, inTransaction, createdDeplymentArtifactsAfterDelete,
+		Either<Resource, ResponseFormat> assDissotiateEither = associateAndDissociateArtifactsToGroup(csarInfo, resource, createdNewArtifacts, labelCounter, shouldLock, inTransaction, createdDeplymentArtifactsAfterDelete,
 				mergedgroup, deletedArtifacts);
 
 		if (assDissotiateEither.isRight()) {
@@ -2251,7 +2265,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			if (validateGroupNamesRes.isRight()) {
 				return Either.right(validateGroupNamesRes.right().value());
 			}
-			Either<Resource, ResponseFormat> resStatus = createGroupDeploymentArtifactsFromCsar(importCsarInfo, resource, newArtifactsGroup, createdNewArtifacts, createdDeplymentArtifactsAfterDelete, labelCounter, shouldLock, inTransaction);
+			Either<Resource, ResponseFormat> resStatus = createGroupDeploymentArtifactsFromCsar(csarInfo, resource, newArtifactsGroup, createdNewArtifacts, createdDeplymentArtifactsAfterDelete, labelCounter, shouldLock, inTransaction);
 			if (resStatus.isRight())
 				return resStatus;
 		}
@@ -2332,7 +2346,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return Either.left(deletedArtifacts);
 	}
 
-	private Either<Resource, ResponseFormat> associateAndDissociateArtifactsToGroup(ImportCsarInfo importCsarInfo, Resource resource, List<ArtifactDefinition> createdNewArtifacts, int labelCounter, boolean shouldLock,
+	private Either<Resource, ResponseFormat> associateAndDissociateArtifactsToGroup(CsarInfo csarInfo, Resource resource, List<ArtifactDefinition> createdNewArtifacts, int labelCounter, boolean shouldLock,
 			boolean inTransaction, List<ArtifactDefinition> createdDeplymentArtifactsAfterDelete, Map<GroupDefinition, MergedArtifactInfo> mergedgroup, List<ArtifactDefinition> deletedArtifacts) {
 		Map<GroupDefinition, List<ArtifactTemplateInfo>> artifactsToAssotiate = new HashMap<GroupDefinition, List<ArtifactTemplateInfo>>();
 		Map<GroupDefinition, List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>>> artifactsToUpdateMap = new HashMap<GroupDefinition, List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>>>();
@@ -2365,7 +2379,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				for (ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo> artifact : artifactsToUpdateList) {
 					String prevUUID = artifact.getKey().getArtifactUUID();
 					String prevId = artifact.getKey().getUniqueId();
-					Either<ArtifactDefinition, ResponseFormat> updateArtifactEither = updateDeploymentArtifactsFromCsar(importCsarInfo, resource, artifact.getKey(), artifact.getValue(), updatedArtifacts,
+					Either<ArtifactDefinition, ResponseFormat> updateArtifactEither = updateDeploymentArtifactsFromCsar(csarInfo, resource, artifact.getKey(), artifact.getValue(), updatedArtifacts,
 							artifact.getRight().getRelatedArtifactsInfo(), shouldLock, inTransaction);
 					if (updateArtifactEither.isRight()) {
 						log.debug("failed to update artifacts. status is {}", updateArtifactEither.right().value());
@@ -2382,8 +2396,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				}
 			}
 		}
-
-		List<GroupDefinition> associateArtifactGroup = new ArrayList<GroupDefinition>();
 
 		for (Entry<GroupDefinition, List<ArtifactTemplateInfo>> associateEntry : artifactsToAssotiate.entrySet()) {
 			List<ArtifactTemplateInfo> associatedArtifact = associateEntry.getValue();
@@ -2431,7 +2443,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				}
 
 				if (isCreate) {
-					Either<ArtifactDefinition, ResponseFormat> createArtifactEither = createDeploymentArtifact(importCsarInfo, resource, ARTIFACTS_PATH, artifactTemplate, createdNewArtifacts, labelCounter, shouldLock, inTransaction);
+					Either<ArtifactDefinition, ResponseFormat> createArtifactEither = createDeploymentArtifact(csarInfo, resource, ARTIFACTS_PATH, artifactTemplate, createdNewArtifacts, labelCounter, shouldLock, inTransaction);
 					if (createArtifactEither.isRight()) {
 						resEither = Either.right(createArtifactEither.right().value());
 						return resEither;
@@ -2442,7 +2454,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(createdArtifact.getArtifactType());
 					if (artifactType == ArtifactTypeEnum.HEAT || artifactType == ArtifactTypeEnum.HEAT_NET || artifactType == ArtifactTypeEnum.HEAT_VOL) {
 						Either<ArtifactDefinition, ResponseFormat> createHeatEnvPlaceHolder = artifactsBusinessLogic.createHeatEnvPlaceHolder(createdArtifact, ArtifactsBusinessLogic.HEAT_VF_ENV_NAME, resource.getUniqueId(), NodeTypeEnum.Resource,
-								resource.getName(), importCsarInfo.getModifier(), resource, null);
+								resource.getName(), csarInfo.getModifier(), resource, null);
 						if (createHeatEnvPlaceHolder.isRight()) {
 							return Either.right(createHeatEnvPlaceHolder.right().value());
 						}
@@ -2605,20 +2617,20 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 	}
 
-	public Either<Resource, ResponseFormat> createResourceArtifactsFromCsar(ImportCsarInfo importCsarInfo, Resource resource, String artifactsMetaFile, String artifactsMetaFileName, List<ArtifactDefinition> createdArtifacts,
+	public Either<Resource, ResponseFormat> createResourceArtifactsFromCsar(CsarInfo csarInfo, Resource resource, String artifactsMetaFile, String artifactsMetaFileName, List<ArtifactDefinition> createdArtifacts,
 			boolean shouldLock, boolean inTransaction) {
 
 		log.debug("parseResourceArtifactsInfoFromFile start");
-		Either<Map<String, List<ArtifactTemplateInfo>>, ResponseFormat> parseResourceInfoFromYamlEither = parseResourceArtifactsInfoFromFile(resource, artifactsMetaFile, artifactsMetaFileName, importCsarInfo.getModifier());
+		Either<Map<String, List<ArtifactTemplateInfo>>, ResponseFormat> parseResourceInfoFromYamlEither = parseResourceArtifactsInfoFromFile(resource, artifactsMetaFile, artifactsMetaFileName, csarInfo.getModifier());
 		if (parseResourceInfoFromYamlEither.isRight()) {
 			ResponseFormat responseFormat = parseResourceInfoFromYamlEither.right().value();
-			componentsUtils.auditResource(responseFormat, importCsarInfo.getModifier(), resource, "", "", AuditingActionEnum.IMPORT_RESOURCE, null);
+			componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, "", "", AuditingActionEnum.IMPORT_RESOURCE, null);
 			return Either.right(responseFormat);
 		}
 		log.debug("parseResourceArtifactsInfoFromFile end");
 
 		log.debug("createResourceArtifacts start");
-		Either<Resource, ResponseFormat> respStatus = createResourceArtifacts(importCsarInfo, resource, parseResourceInfoFromYamlEither.left().value(), AuditingActionEnum.CREATE_RESOURCE, createdArtifacts, shouldLock, inTransaction);
+		Either<Resource, ResponseFormat> respStatus = createResourceArtifacts(csarInfo, resource, parseResourceInfoFromYamlEither.left().value(), AuditingActionEnum.CREATE_RESOURCE, createdArtifacts, shouldLock, inTransaction);
 		if (respStatus.isRight()) {
 			return respStatus;
 		}
@@ -2636,7 +2648,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	}
 
-	private Either<Resource, ResponseFormat> createGroupDeploymentArtifactsFromCsar(ImportCsarInfo importCsarInfo, Resource resource, List<ArtifactTemplateInfo> artifactsTemplateList,
+	private Either<Resource, ResponseFormat> createGroupDeploymentArtifactsFromCsar(CsarInfo csarInfo, Resource resource, List<ArtifactTemplateInfo> artifactsTemplateList,
 			List<ArtifactDefinition> createdNewArtifacts, List<ArtifactDefinition> artifactsFromResource, int labelCounter, boolean shouldLock, boolean inTransaction) {
 		Either<Resource, ResponseFormat> resStatus = Either.left(resource);
 		List<GroupDefinition> createdGroups = resource.getGroups();
@@ -2651,7 +2663,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			Set<String> artifactsGroup = new HashSet<String>();
 			Set<String> artifactsUUIDGroup = new HashSet<String>();
 
-			resStatus = createDeploymentArtifactsFromCsar(importCsarInfo, resource, artifactsGroup, artifactsUUIDGroup, groupTemplateInfo, createdNewArtifacts, artifactsFromResource, labelCounter, shouldLock, inTransaction);
+			resStatus = createDeploymentArtifactsFromCsar(csarInfo, resource, artifactsGroup, artifactsUUIDGroup, groupTemplateInfo, createdNewArtifacts, artifactsFromResource, labelCounter, shouldLock, inTransaction);
 			if (resStatus.isRight())
 				return resStatus;
 
@@ -2703,14 +2715,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 		resource = component.left().value();
 
-		Either<List<GroupDefinition>, ResponseFormat> addGroups = groupBusinessLogic.addGroups(resource, importCsarInfo.getModifier(), ComponentTypeEnum.RESOURCE, needToAdd);
+		Either<List<GroupDefinition>, ResponseFormat> addGroups = groupBusinessLogic.addGroups(resource, csarInfo.getModifier(), ComponentTypeEnum.RESOURCE, needToAdd);
 		if (addGroups.isRight())
 			return Either.right(addGroups.right().value());
 
 		return resStatus;
 	}
 
-	private Either<Resource, ResponseFormat> createDeploymentArtifactsFromCsar(ImportCsarInfo importCsarInfo, Resource resource, Set<String> artifactsGroup, Set<String> artifactsUUIDGroup,
+	private Either<Resource, ResponseFormat> createDeploymentArtifactsFromCsar(CsarInfo csarInfo, Resource resource, Set<String> artifactsGroup, Set<String> artifactsUUIDGroup,
 			ArtifactTemplateInfo artifactTemplateInfo, List<ArtifactDefinition> createdArtifacts, List<ArtifactDefinition> artifactsFromResource, int labelCounter, boolean shoudLock, boolean inTransaction) {
 		Either<Resource, ResponseFormat> resStatus = Either.left(resource);
 		String artifactFileName = artifactTemplateInfo.getFileName();
@@ -2759,7 +2771,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		// if not exist need to create
 		if (!alreadyExist) {
 
-			Either<ArtifactDefinition, ResponseFormat> newArtifactEither = createDeploymentArtifact(importCsarInfo, resource, ARTIFACTS_PATH, artifactTemplateInfo, createdArtifacts, labelCounter, shoudLock, inTransaction);
+			Either<ArtifactDefinition, ResponseFormat> newArtifactEither = createDeploymentArtifact(csarInfo, resource, ARTIFACTS_PATH, artifactTemplateInfo, createdArtifacts, labelCounter, shoudLock, inTransaction);
 			if (newArtifactEither.isRight()) {
 				resStatus = Either.right(newArtifactEither.right().value());
 				return resStatus;
@@ -2770,7 +2782,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(newArtifact.getArtifactType());
 			if (artifactType == ArtifactTypeEnum.HEAT || artifactType == ArtifactTypeEnum.HEAT_NET || artifactType == ArtifactTypeEnum.HEAT_VOL) {
 				Either<ArtifactDefinition, ResponseFormat> createHeatEnvPlaceHolder = artifactsBusinessLogic.createHeatEnvPlaceHolder(newArtifact, ArtifactsBusinessLogic.HEAT_VF_ENV_NAME, resource.getUniqueId(), NodeTypeEnum.Resource,
-						resource.getName(), importCsarInfo.getModifier(), resource, null);
+						resource.getName(), csarInfo.getModifier(), resource, null);
 				if (createHeatEnvPlaceHolder.isRight()) {
 					return Either.right(createHeatEnvPlaceHolder.right().value());
 				}
@@ -2787,7 +2799,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		List<ArtifactTemplateInfo> relatedArtifacts = artifactTemplateInfo.getRelatedArtifactsInfo();
 		if (relatedArtifacts != null) {
 			for (ArtifactTemplateInfo relatedArtifactTemplateInfo : relatedArtifacts) {
-				resStatus = createDeploymentArtifactsFromCsar(importCsarInfo, resource, artifactsGroup, artifactsUUIDGroup, relatedArtifactTemplateInfo, createdArtifacts, artifactsFromResource, labelCounter, shoudLock, inTransaction);
+				resStatus = createDeploymentArtifactsFromCsar(csarInfo, resource, artifactsGroup, artifactsUUIDGroup, relatedArtifactTemplateInfo, createdArtifacts, artifactsFromResource, labelCounter, shoudLock, inTransaction);
 				if (resStatus.isRight())
 					return resStatus;
 			}
@@ -2795,7 +2807,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return resStatus;
 	}
 
-	private Either<Resource, ResponseFormat> createResourceArtifacts(ImportCsarInfo importCsarInfo, Resource resource, Map<String, List<ArtifactTemplateInfo>> artifactsMap, AuditingActionEnum createResource,
+	private Either<Resource, ResponseFormat> createResourceArtifacts(CsarInfo csarInfo, Resource resource, Map<String, List<ArtifactTemplateInfo>> artifactsMap, AuditingActionEnum createResource,
 			List<ArtifactDefinition> createdArtifacts, boolean shouldLock, boolean inTransaction) {
 
 		Either<Resource, ResponseFormat> resStatus = Either.left(resource);
@@ -2804,7 +2816,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		for (List<ArtifactTemplateInfo> groupTemplateList : arifactsCollection) {
 			if (groupTemplateList != null) {
-				resStatus = createGroupDeploymentArtifactsFromCsar(importCsarInfo, resource, groupTemplateList, createdArtifacts, 0, shouldLock, inTransaction);
+				resStatus = createGroupDeploymentArtifactsFromCsar(csarInfo, resource, groupTemplateList, createdArtifacts, 0, shouldLock, inTransaction);
 				if (resStatus.isRight())
 					return resStatus;
 			}
@@ -2814,7 +2826,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	}
 
-	private Either<Resource, ResponseFormat> createOrUpdateNonMetaArtifacts(ImportCsarInfo importCsarInfo, Resource resource, List<ArtifactDefinition> createdArtifacts, boolean shouldLock, boolean inTransaction, ArtifactOperationInfo artifactOperation) {
+	private Either<Resource, ResponseFormat> createOrUpdateNonMetaArtifacts(CsarInfo csarInfo, Resource resource, List<ArtifactDefinition> createdArtifacts, boolean shouldLock, boolean inTransaction, ArtifactOperationInfo artifactOperation) {
 
 		Either<Resource, ResponseFormat> resStatus = null;
 		Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
@@ -2822,7 +2834,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		try {
 			List<NonMetaArtifactInfo> artifactPathAndNameList =
 					// Stream of file paths contained in csar
-					importCsarInfo.getCsar().entrySet().stream()
+					csarInfo.getCsar().entrySet().stream()
 							// Filter in only VF artifact path location
 							.filter(e -> Pattern.compile(VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN).matcher(e.getKey()).matches())
 							// Validate and add warnings
@@ -2846,7 +2858,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				vfCsarArtifactsToHandle = new EnumMap<>(ArtifactOperationEnum.class);
 				vfCsarArtifactsToHandle.put(artifactOperation.getArtifactOperationEnum(), artifactPathAndNameList);
 			} else {
-				Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat> findVfCsarArtifactsToHandleRes = findVfCsarArtifactsToHandle(resource, artifactPathAndNameList, importCsarInfo.getModifier());
+				Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat> findVfCsarArtifactsToHandleRes = findVfCsarArtifactsToHandle(resource, artifactPathAndNameList, csarInfo.getModifier());
 
 				if (findVfCsarArtifactsToHandleRes.isRight()) {
 					resStatus = Either.right(findVfCsarArtifactsToHandleRes.right().value());
@@ -2862,7 +2874,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 							// Stream of artifacts to be created
 							currArtifactOperationPair.getValue().stream()
 									// create each artifact
-									.map(e -> createOrUpdateSingleNonMetaArtifact(resource, importCsarInfo, e.getPath(), e.getArtifactName(), e.getArtifactType().getType(), e.getArtifactGroupType(), e.getArtifactLabel(), e.getDisplayName(),
+									.map(e -> createOrUpdateSingleNonMetaArtifact(resource, csarInfo, e.getPath(), e.getArtifactName(), e.getArtifactType().getType(), e.getArtifactGroupType(), e.getArtifactLabel(), e.getDisplayName(),
 											CsarUtils.ARTIFACT_CREATED_FROM_CSAR, e.getArtifactUniqueId(), artifactsBusinessLogic.new ArtifactOperationInfo(false, false, currArtifactOperationPair.getKey()), createdArtifacts, shouldLock,
 											inTransaction))
 									// filter in only error
@@ -2945,7 +2957,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return result;
 	}
 
-	private Either<Resource, ResponseFormat> createGroupDeploymentArtifactsFromCsar(ImportCsarInfo importCsarInfo, Resource resource, List<ArtifactTemplateInfo> artifactsTemplateList, List<ArtifactDefinition> createdArtifacts,
+	private Either<Resource, ResponseFormat> createGroupDeploymentArtifactsFromCsar(CsarInfo csarInfo, Resource resource, List<ArtifactTemplateInfo> artifactsTemplateList, List<ArtifactDefinition> createdArtifacts,
 			int labelCounter, boolean shouldLock, boolean inTransaction) {
 		Either<Resource, ResponseFormat> resStatus = Either.left(resource);
 		List<GroupDefinition> createdGroups = resource.getGroups();
@@ -2969,7 +2981,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			Set<String> artifactsUUIDGroup = new HashSet<String>();
 
 			log.debug("createDeploymentArtifactsFromCsar start");
-			resStatus = createDeploymentArtifactFromCsar(importCsarInfo, ARTIFACTS_PATH, resource, artifactsGroup, artifactsUUIDGroup, groupTemplateInfo, createdArtifacts, labelCounter, shouldLock, inTransaction);
+			resStatus = createDeploymentArtifactFromCsar(csarInfo, ARTIFACTS_PATH, resource, artifactsGroup, artifactsUUIDGroup, groupTemplateInfo, createdArtifacts, labelCounter, shouldLock, inTransaction);
 			log.debug("createDeploymentArtifactsFromCsar end");
 			if (resStatus.isRight())
 				return resStatus;
@@ -3024,7 +3036,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
 
-		Either<List<GroupDefinition>, ResponseFormat> createGroups = groupBusinessLogic.addGroups(component.left().value(), importCsarInfo.getModifier(), ComponentTypeEnum.RESOURCE, needToCreate);
+		Either<List<GroupDefinition>, ResponseFormat> createGroups = groupBusinessLogic.addGroups(component.left().value(), csarInfo.getModifier(), ComponentTypeEnum.RESOURCE, needToCreate);
 		if (createGroups.isRight()) {
 			return Either.right(createGroups.right().value());
 		}
@@ -3109,7 +3121,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 						String heatFileNAme = prop.getValue();
 						if (null == heatFileNAme || heatFileNAme.isEmpty())
 							continue;
-						List<ArtifactDefinition> artifacts = new ArrayList();
+						List<ArtifactDefinition> artifacts = new ArrayList<ArtifactDefinition>();
 						for (String artifactId : artifactsGroup) {
 							Optional<ArtifactDefinition> opArt = createdArtifacts.stream().filter(p -> p.getUniqueId().equals(artifactId)).findAny();
 							if (opArt.isPresent()) {
@@ -3133,7 +3145,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 	}
 
-	private Either<Resource, ResponseFormat> createDeploymentArtifactFromCsar(ImportCsarInfo importCsarInfo, String artifactPath, Resource resource, Set<String> artifactsGroup, Set<String> artifactsUUIDGroup,
+	private Either<Resource, ResponseFormat> createDeploymentArtifactFromCsar(CsarInfo csarInfo, String artifactPath, Resource resource, Set<String> artifactsGroup, Set<String> artifactsUUIDGroup,
 			ArtifactTemplateInfo artifactTemplateInfo, List<ArtifactDefinition> createdArtifacts, int labelCounter, boolean shoudLock, boolean inTransaction) {
 		Either<Resource, ResponseFormat> resStatus = Either.left(resource);
 		String artifactFileName = artifactTemplateInfo.getFileName();
@@ -3160,7 +3172,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		// if not exist need to create
 		if (!alreadyExist) {
 
-			Either<ArtifactDefinition, ResponseFormat> newArtifactEither = createDeploymentArtifact(importCsarInfo, resource, artifactPath, artifactTemplateInfo, createdArtifacts, labelCounter, shoudLock, inTransaction);
+			Either<ArtifactDefinition, ResponseFormat> newArtifactEither = createDeploymentArtifact(csarInfo, resource, artifactPath, artifactTemplateInfo, createdArtifacts, labelCounter, shoudLock, inTransaction);
 			if (newArtifactEither.isRight()) {
 				resStatus = Either.right(newArtifactEither.right().value());
 				return resStatus;
@@ -3172,7 +3184,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(newArtifact.getArtifactType());
 			if (artifactType == ArtifactTypeEnum.HEAT || artifactType == ArtifactTypeEnum.HEAT_NET || artifactType == ArtifactTypeEnum.HEAT_VOL) {
 				Either<ArtifactDefinition, ResponseFormat> createHeatEnvPlaceHolder = artifactsBusinessLogic.createHeatEnvPlaceHolder(newArtifact, ArtifactsBusinessLogic.HEAT_VF_ENV_NAME, resource.getUniqueId(), NodeTypeEnum.Resource,
-						resource.getName(), importCsarInfo.getModifier(), resource, null);
+						resource.getName(), csarInfo.getModifier(), resource, null);
 				if (createHeatEnvPlaceHolder.isRight()) {
 					return Either.right(createHeatEnvPlaceHolder.right().value());
 				}
@@ -3189,7 +3201,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		List<ArtifactTemplateInfo> relatedArtifacts = artifactTemplateInfo.getRelatedArtifactsInfo();
 		if (relatedArtifacts != null) {
 			for (ArtifactTemplateInfo relatedArtifactTemplateInfo : relatedArtifacts) {
-				resStatus = createDeploymentArtifactFromCsar(importCsarInfo, artifactPath, resource, artifactsGroup, artifactsUUIDGroup, relatedArtifactTemplateInfo, createdArtifacts, labelCounter, shoudLock, inTransaction);
+				resStatus = createDeploymentArtifactFromCsar(csarInfo, artifactPath, resource, artifactsGroup, artifactsUUIDGroup, relatedArtifactTemplateInfo, createdArtifacts, labelCounter, shoudLock, inTransaction);
 				if (resStatus.isRight())
 					return resStatus;
 			}
@@ -3206,10 +3218,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return artifactEnvUid;
 	}
 
-	private Either<ArtifactDefinition, ResponseFormat> createDeploymentArtifact(ImportCsarInfo importCsarInfo, Resource resource, String artifactPath, ArtifactTemplateInfo artifactTemplateInfo,
+	private Either<ArtifactDefinition, ResponseFormat> createDeploymentArtifact(CsarInfo csarInfo, Resource resource, String artifactPath, ArtifactTemplateInfo artifactTemplateInfo,
 			List<ArtifactDefinition> createdArtifacts, int labelCounter, boolean shoudLock, boolean inTransaction) {
 		final String artifactFileName = artifactTemplateInfo.getFileName();
-		Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactContententStatus = CsarValidationUtils.getArtifactsContent(importCsarInfo.getCsarUUID(), importCsarInfo.getCsar(), artifactPath + artifactFileName, artifactFileName, componentsUtils);
+		Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactContententStatus = CsarValidationUtils.getArtifactsContent(csarInfo.getCsarUUID(), csarInfo.getCsar(), artifactPath + artifactFileName, artifactFileName, componentsUtils);
 		if (artifactContententStatus.isRight()) {
 			return Either.right(artifactContententStatus.right().value());
 		}
@@ -3217,7 +3229,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		Map<String, Object> json = buildJsonForArtifact(artifactTemplateInfo, artifactContententStatus.left().value().getValue(), labelCounter);
 
-		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService = createOrUpdateCsarArtifactFromJson(resource, importCsarInfo.getModifier(), json, artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.Create),
+		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService = createOrUpdateCsarArtifactFromJson(resource, csarInfo.getModifier(), json, artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.Create),
 				shoudLock, inTransaction);
 
 		if (uploadArtifactToService.isRight())
@@ -3226,7 +3238,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		ArtifactDefinition currentInfo = uploadArtifactToService.left().value().left().value();
 		if (currentInfo.getHeatParameters() != null) {
 
-			Either<ArtifactDefinition, ResponseFormat> updateEnvEither = updateHeatParamsFromCsar(resource, importCsarInfo, artifactTemplateInfo, currentInfo, false);
+			Either<ArtifactDefinition, ResponseFormat> updateEnvEither = updateHeatParamsFromCsar(resource, csarInfo, artifactTemplateInfo, currentInfo, false);
 			if (updateEnvEither.isRight()) {
 				log.debug("failed to update parameters to artifact {}", artifactFileName);
 				return Either.right(updateEnvEither.right().value());
@@ -3242,17 +3254,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	}
 
-	private Either<ArtifactDefinition, ResponseFormat> updateDeploymentArtifactsFromCsar(ImportCsarInfo importCsarInfo, Resource resource, ArtifactDefinition oldArtifact, ArtifactTemplateInfo artifactTemplateInfo,
+	private Either<ArtifactDefinition, ResponseFormat> updateDeploymentArtifactsFromCsar(CsarInfo csarInfo, Resource resource, ArtifactDefinition oldArtifact, ArtifactTemplateInfo artifactTemplateInfo,
 			List<ArtifactDefinition> updatedArtifacts, List<ArtifactTemplateInfo> updatedRequiredArtifacts, boolean shouldLock, boolean inTransaction) {
 
 		Either<ArtifactDefinition, ResponseFormat> resStatus = null;
 		String artifactFileName = artifactTemplateInfo.getFileName();
-		String artifactUid = "";
 
 		// check if artifacts already exist
 		for (ArtifactDefinition updatedArtifact : updatedArtifacts) {
 			if (updatedArtifact.getArtifactName().equals(artifactFileName)) {
-				artifactUid = updatedArtifact.getUniqueId();
 				if (!updatedArtifact.getArtifactType().equalsIgnoreCase(artifactTemplateInfo.getType())) {
 					log.debug("Artifact with name {} and type {} already updated with type  {}", artifactFileName, artifactTemplateInfo.getType(), updatedArtifact.getArtifactType());
 					BeEcompErrorManager.getInstance().logInternalDataError("Artifact  file is not in expected formatr, fileName " + artifactFileName, "Artifact internals are invalid", ErrorSeverity.ERROR);
@@ -3265,7 +3275,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		}
 
-		Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactContententStatus = CsarValidationUtils.getArtifactsContent(importCsarInfo.getCsarUUID(), importCsarInfo.getCsar(), CsarUtils.ARTIFACTS_PATH + artifactFileName, artifactFileName, componentsUtils);
+		Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactContententStatus = CsarValidationUtils.getArtifactsContent(csarInfo.getCsarUUID(), csarInfo.getCsar(), CsarUtils.ARTIFACTS_PATH + artifactFileName, artifactFileName, componentsUtils);
 		if (artifactContententStatus.isRight()) {
 			resStatus = Either.right(artifactContententStatus.right().value());
 			return resStatus;
@@ -3274,7 +3284,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		Map<String, Object> json = buildJsonForUpdateArtifact(oldArtifact.getUniqueId(), artifactFileName, oldArtifact.getArtifactType(), ArtifactGroupTypeEnum.DEPLOYMENT, oldArtifact.getArtifactLabel(), oldArtifact.getArtifactDisplayName(),
 				oldArtifact.getDescription(), artifactContententStatus.left().value().getRight(), updatedRequiredArtifacts);
 
-		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService = createOrUpdateCsarArtifactFromJson(resource, importCsarInfo.getModifier(), json, artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.Update),
+		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService = createOrUpdateCsarArtifactFromJson(resource, csarInfo.getModifier(), json, artifactsBusinessLogic.new ArtifactOperationInfo(false, false, ArtifactOperationEnum.Update),
 				shouldLock, inTransaction);
 
 		if (uploadArtifactToService.isRight()) {
@@ -3283,7 +3293,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 		ArtifactDefinition currentInfo = uploadArtifactToService.left().value().left().value();
 
-		Either<ArtifactDefinition, ResponseFormat> updateEnvEither = updateHeatParamsFromCsar(resource, importCsarInfo, artifactTemplateInfo, currentInfo, true);
+		Either<ArtifactDefinition, ResponseFormat> updateEnvEither = updateHeatParamsFromCsar(resource, csarInfo, artifactTemplateInfo, currentInfo, true);
 		if (updateEnvEither.isRight()) {
 			log.debug("failed to update parameters to artifact {}", artifactFileName);
 			resStatus = Either.right(updateEnvEither.right().value());
@@ -3291,7 +3301,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 		// TODO evg update env time ( must be separate US for this!!!!)
 
-		artifactUid = updateEnvEither.left().value().getUniqueId();
 		updatedArtifacts.add(updateEnvEither.left().value());
 		resStatus = Either.left(updateEnvEither.left().value());
 
@@ -3299,11 +3308,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	}
 
-	private Either<ArtifactDefinition, ResponseFormat> updateHeatParamsFromCsar(Resource resource, ImportCsarInfo importCsarInfo, ArtifactTemplateInfo artifactTemplateInfo, ArtifactDefinition currentInfo, boolean isUpdateEnv) {
+	private Either<ArtifactDefinition, ResponseFormat> updateHeatParamsFromCsar(Resource resource, CsarInfo csarInfo, ArtifactTemplateInfo artifactTemplateInfo, ArtifactDefinition currentInfo, boolean isUpdateEnv) {
 		Either<ArtifactDefinition, ResponseFormat> resStatus = Either.left(currentInfo);
 		if (artifactTemplateInfo.getEnv() != null && !artifactTemplateInfo.getEnv().isEmpty()) {
 
-			Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactparamsStatus = CsarValidationUtils.getArtifactsContent(importCsarInfo.getCsarUUID(), importCsarInfo.getCsar(), CsarUtils.ARTIFACTS_PATH + artifactTemplateInfo.getEnv(), artifactTemplateInfo.getEnv(),
+			Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactparamsStatus = CsarValidationUtils.getArtifactsContent(csarInfo.getCsarUUID(), csarInfo.getCsar(), CsarUtils.ARTIFACTS_PATH + artifactTemplateInfo.getEnv(), artifactTemplateInfo.getEnv(),
 					componentsUtils);
 			if (artifactparamsStatus.isRight()) {
 				resStatus = Either.right(artifactparamsStatus.right().value());
@@ -3442,6 +3451,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return json;
 	}
 
+	@SuppressWarnings({ "unchecked", "static-access" })
 	private Either<Map<String, List<ArtifactTemplateInfo>>, ResponseFormat> parseResourceArtifactsInfoFromFile(Resource resource, String artifactsMetaFile, String artifactFileName, User user) {
 
 		try {
@@ -3541,7 +3551,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		if (allDataTypes.isRight()) {
 			TitanOperationStatus status = allDataTypes.right().value();
 			BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
-			ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(status)), yamlName);
+			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(status)), yamlName));
 
 		}
 
@@ -3575,13 +3585,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			String resourceInstanceId = currentCompInstance.getUniqueId();
 			Resource originResource = null;
 			if (!originCompMap.containsKey(currentCompInstance.getComponentUid())) {
-				Either<Resource, StorageOperationStatus> getPropertyRes = toscaOperationFacade.getToscaFullElement(currentCompInstance.getComponentUid());
-				if (getPropertyRes.isRight()) {
-					log.debug("failed to find properties of resource {} status is {}", currentCompInstance.getComponentUid(), getPropertyRes);
-					ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(getPropertyRes.right().value()), yamlName);
+				Either<Resource, StorageOperationStatus> getOriginResourceRes = toscaOperationFacade.getToscaFullElement(currentCompInstance.getComponentUid());
+				if (getOriginResourceRes.isRight()) {
+					log.debug("failed to fetch resource with uniqueId {} and tosca component name {} status is {}", currentCompInstance.getComponentUid(), currentCompInstance.getToscaComponentName(), getOriginResourceRes);
+					ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(getOriginResourceRes.right().value()), yamlName);
 					return Either.right(responseFormat);
 				}
-				originResource = getPropertyRes.left().value();
+				originResource = getOriginResourceRes.left().value();
 				originCompMap.put(originResource.getUniqueId(), originResource);
 			} else {
 				originResource = originCompMap.get(currentCompInstance.getComponentUid());
@@ -3628,7 +3638,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					return Either.right(addPropertiesValueToRiRes);
 				}
 			} else {
-				// TO DO
+				Either<Resource, ResponseFormat> genericResourceEither = fetchAndSetDerivedFromGenericType(originResource);
+				if (genericResourceEither.isRight()) {
+					return genericResourceEither;
+				}
+				log.trace("************* Going to add inputs from from original resource {} to resource instance. ", originResource.getName());
+				if (originResource.shouldGenerateInputs())
+					generateInputsFromGenericTypeProperties(originResource, genericResourceEither.left().value());
+				
 				ResponseFormat addInputValueToRiRes = addInputsValuesToRi(uploadComponentInstanceInfo, resource, originResource, currentCompInstance, yamlName, instInputs, allDataTypes.left().value());
 				if (addInputValueToRiRes.getStatus() != 200) {
 					return Either.right(addInputValueToRiRes);
@@ -3735,8 +3752,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	private ResponseFormat addRelationToRI(String yamlName, Resource resource, UploadComponentInstanceInfo nodesInfoValue, List<RequirementCapabilityRelDef> relations) {
 		List<ComponentInstance> componentInstancesList = resource.getComponentInstances();
-		long totalCreateRel = 0;
-		long totalCreatePropVal = 0;
 
 		UploadComponentInstanceInfo uploadComponentInstanceInfo = nodesInfoValue;
 
@@ -3763,8 +3778,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		if (regMap != null) {
 			Iterator<Entry<String, List<UploadReqInfo>>> nodesRegValue = regMap.entrySet().iterator();
-
-			long startAddRelation = System.currentTimeMillis();
 
 			while (nodesRegValue.hasNext()) {
 				Entry<String, List<UploadReqInfo>> nodesRegInfoEntry = nodesRegValue.next();
@@ -3826,7 +3839,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					relations.add(regCapRelDef);
 				}
 			}
-			totalCreateRel += (System.currentTimeMillis() - startAddRelation);
 		} else if (resource.getResourceType() != ResourceTypeEnum.CVFC) {
 			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK, yamlName);
 			return responseFormat;
@@ -3840,7 +3852,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		if (propMap != null && propMap.size() > 0) {
 			Map<String, InputDefinition> currPropertiesMap = new HashMap<String, InputDefinition>();
 
-			int index = 0;
 			List<InputDefinition> listFromMap = originResource.getInputs();
 			if (listFromMap == null || listFromMap.isEmpty()) {
 				log.debug("failed to find properties ");
@@ -3945,7 +3956,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		if (propMap != null && propMap.size() > 0) {
 			Map<String, PropertyDefinition> currPropertiesMap = new HashMap<String, PropertyDefinition>();
 
-			int index = 0;
 			List<PropertyDefinition> listFromMap = originResource.getProperties();
 			if (listFromMap == null || listFromMap.isEmpty()) {
 				log.debug("failed to find properties ");
@@ -4195,11 +4205,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Either<ParsedToscaYamlInfo, ResponseFormat> parseResourceInfoFromYaml(String yamlFileName, Resource resource, String resourceYml, User user, Map<String, String> createdNodesToscaResourceNames, Map<String, NodeTypeInfo> nodeTypesInfo, String nodeTypeName) {
+	public Either<ParsedToscaYamlInfo, ResponseFormat> parseResourceInfoFromYaml(String yamlFileName, Resource resource, String resourceYml, User user, Map<String, String> createdNodesToscaResourceNames, Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName) {
 
 		Map<String, Object> mappedToscaTemplate;
-		if(nodeTypesInfo != null && nodeTypeName != null && nodeTypesInfo.containsKey(nodeTypeName)){
-			mappedToscaTemplate = nodeTypesInfo.get(nodeTypeName).getMappedToscaTemplate();
+		if(nodeTypesInfo != null && nodeName != null && nodeTypesInfo.containsKey(nodeName)){
+			mappedToscaTemplate = nodeTypesInfo.get(nodeName).getMappedToscaTemplate();
 		}
 		else {
 			mappedToscaTemplate = (Map<String, Object>) new Yaml().load(resourceYml);
@@ -4237,7 +4247,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> createResourceInstances(User user, String yamlName, Resource resource, Map<String, UploadComponentInstanceInfo> uploadResInstancesMap, boolean inTransaction, boolean needLock,
-			Map<String, Resource> nodeTypeNamespaceMap) {
+			Map<String, Resource> nodeNamespaceMap) {
 
 		Either<Resource, ResponseFormat> eitherResource = null;
 		log.debug("createResourceInstances is {} - going to create resource instanse from CSAR", yamlName);
@@ -4248,8 +4258,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		}
 		Map<String, Resource> existingnodeTypeMap = new HashMap<>();
-		if (nodeTypeNamespaceMap != null && !nodeTypeNamespaceMap.isEmpty()) {
-			nodeTypeNamespaceMap.entrySet().stream().forEach(x -> existingnodeTypeMap.put(x.getValue().getToscaResourceName(), x.getValue()));
+		if (nodeNamespaceMap != null && !nodeNamespaceMap.isEmpty()) {
+			nodeNamespaceMap.entrySet().stream().forEach(x -> existingnodeTypeMap.put(x.getValue().getToscaResourceName(), x.getValue()));
 		}
 
 		Iterator<Entry<String, UploadComponentInstanceInfo>> nodesInfoValue = uploadResInstancesMap.entrySet().iterator();
@@ -4262,8 +4272,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			// updating type if the type is node type name - we need to take the
 			// updated name
 			log.debug("*************Going to create  resource instances {}", uploadComponentInstanceInfo.getName());
-			if (nodeTypeNamespaceMap.containsKey(uploadComponentInstanceInfo.getType())) {
-				uploadComponentInstanceInfo.setType(nodeTypeNamespaceMap.get(uploadComponentInstanceInfo.getType()).getToscaResourceName());
+			if (nodeNamespaceMap.containsKey(uploadComponentInstanceInfo.getType())) {
+				uploadComponentInstanceInfo.setType(nodeNamespaceMap.get(uploadComponentInstanceInfo.getType()).getToscaResourceName());
 			}
 
 			eitherResource = validateResourceInstanceBeforeCreate(yamlName, uploadComponentInstanceInfo, existingnodeTypeMap);
@@ -4339,11 +4349,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return Either.left(eitherGerResource.left().value());
 	}
 
-	private Either<Resource, ResponseFormat> validateResourceInstanceBeforeCreate(String yamlName, UploadComponentInstanceInfo uploadComponentInstanceInfo, Map<String, Resource> nodeTypeNamespaceMap) {
+	private Either<Resource, ResponseFormat> validateResourceInstanceBeforeCreate(String yamlName, UploadComponentInstanceInfo uploadComponentInstanceInfo, Map<String, Resource> nodeNamespaceMap) {
 		log.debug("validateResourceInstanceBeforeCreate - going to validate resource instance with name {} and type before create", uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
 		Resource refResource = null;
-		if (nodeTypeNamespaceMap.containsKey(uploadComponentInstanceInfo.getType())) {
-			refResource = nodeTypeNamespaceMap.get(uploadComponentInstanceInfo.getType());
+		if (nodeNamespaceMap.containsKey(uploadComponentInstanceInfo.getType())) {
+			refResource = nodeNamespaceMap.get(uploadComponentInstanceInfo.getType());
 		} else {
 			Either<Resource, StorageOperationStatus> findResourceEither = toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(uploadComponentInstanceInfo.getType());
 			if (findResourceEither.isRight()) {
@@ -4352,7 +4362,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				return Either.right(responseFormat);
 			}
 			refResource = findResourceEither.left().value();
-			nodeTypeNamespaceMap.put(refResource.getToscaResourceName(), refResource);
+			nodeNamespaceMap.put(refResource.getToscaResourceName(), refResource);
 		}
 		String componentState = refResource.getComponentMetadataDefinition().getMetadataDataDefinition().getState();
 		if (componentState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name())) {
@@ -4494,6 +4504,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return response;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Either<Map<String, List<UploadPropInfo>>, ResponseFormat> createPropModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
 		Map<String, List<UploadPropInfo>> moduleProp = new HashMap<String, List<UploadPropInfo>>();
 		Either<Map<String, List<UploadPropInfo>>, ResponseFormat> response = Either.left(moduleProp);
@@ -4567,6 +4578,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return response;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void createInputPropList(UploadPropInfo propertyDef, List<Object> propValueList) {
 		for (Object objValue : propValueList) {
 
@@ -4600,6 +4612,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void createGetInputModuleFromMap(String propName, Map<String, Object> propValue, UploadPropInfo propertyDef) {
 
 		if (propValue.containsKey(ToscaTagNamesEnum.GET_INPUT.getElementName())) {
@@ -4692,6 +4705,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private Either<Map<String, List<UploadCapInfo>>, ResponseFormat> createCapModuleFromYaml(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
 		Map<String, List<UploadCapInfo>> moduleCap = new HashMap<String, List<UploadCapInfo>>();
 		Either<Map<String, List<UploadCapInfo>>, ResponseFormat> response = Either.left(moduleCap);
@@ -4717,15 +4731,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 						list.add(requirementDef);
 						moduleCap.put(capName, list);
 					}
-
 				}
 			}
-
 		}
-
 		return response;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Either<Map<String, List<UploadReqInfo>>, ResponseFormat> createReqModuleFromYaml(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
 		Map<String, List<UploadReqInfo>> moduleRequirements = new HashMap<String, List<UploadReqInfo>>();
 		Either<Map<String, List<UploadReqInfo>>, ResponseFormat> response = Either.left(moduleRequirements);
@@ -4751,14 +4763,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 						list.add(requirementDef);
 						moduleRequirements.put(requirementName, list);
 					}
-
 				}
 			}
-
 		}
 		return response;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Either<UploadCapInfo, ResponseFormat> createModuleNodeTemplateCap(Object capObject) {
 		UploadCapInfo capTemplateInfo = new UploadCapInfo();
 		Either<UploadCapInfo, ResponseFormat> result = Either.left(capTemplateInfo);
@@ -4793,10 +4804,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				}
 			}
 		}
-
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Either<UploadReqInfo, ResponseFormat> createModuleNodeTemplateReg(Object regObject) {
 
 		UploadReqInfo regTemplateInfo = new UploadReqInfo();
@@ -4816,7 +4827,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				regTemplateInfo.setCapabilityName((String) nodeTemplateJsonMap.get(ToscaTagNamesEnum.CAPABILITY.getElementName()));
 			}
 		}
-
 		return result;
 	}
 
@@ -4879,7 +4889,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	 * createOrUpdateResourceByImport(resource, user, isNormative, false, needLock); }
 	 */
 
-	public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResourceByImport(Resource resource, User user, boolean isNormative, boolean isInTransaction, boolean needLock) {
+	public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResourceByImport(Resource resource, User user, boolean isNormative, boolean isInTransaction, boolean needLock, CsarInfo csarInfo) {
 
 		// check if resource already exist
 		Either<Resource, StorageOperationStatus> latestByName = toscaOperationFacade.getLatestByName(resource.getName());
@@ -4890,7 +4900,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 			Either<Resource, StorageOperationStatus> latestByToscaName = toscaOperationFacade.getLatestByToscaResourceName(resource.getToscaResourceName());
 			if (latestByToscaName.isRight() && latestByToscaName.right().value().equals(StorageOperationStatus.NOT_FOUND))
-				result = createResourceByImport(resource, user, isNormative, isInTransaction);
+				result = createResourceByImport(resource, user, isNormative, isInTransaction, csarInfo);
 
 			else {
 				StorageOperationStatus status = latestByName.right().value();
@@ -4920,9 +4930,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	}
 
-	private Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createResourceByImport(Resource resource, User user, boolean isNormative, boolean isInTransaction) {
+	private Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createResourceByImport(Resource resource, User user, boolean isNormative, boolean isInTransaction, CsarInfo csarInfo) {
 		log.debug("resource with name {} does not exist. create new resource", resource.getName());
-		Either<Resource, ResponseFormat> response = validateResourceBeforeCreate(resource, user, AuditingActionEnum.IMPORT_RESOURCE, isInTransaction);
+		Either<Resource, ResponseFormat> response = validateResourceBeforeCreate(resource, user, AuditingActionEnum.IMPORT_RESOURCE, isInTransaction, csarInfo);
 		if (response.isRight()) {
 			return Either.right(response.right().value());
 		}
@@ -5084,7 +5094,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return result;
 	}
 
-	public Either<Resource, ResponseFormat> validateResourceBeforeCreate(Resource resource, User user, AuditingActionEnum actionEnum, boolean inTransaction) {
+	public Either<Resource, ResponseFormat> validateResourceBeforeCreate(Resource resource, User user, AuditingActionEnum actionEnum, boolean inTransaction, CsarInfo csarInfo) {
 
 		Either<Boolean, ResponseFormat> eitherValidation = validateResourceFieldsBeforeCreate(user, resource, actionEnum, inTransaction);
 		if (eitherValidation.isRight()) {
@@ -5107,8 +5117,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		resource.setCreatorUserId(user.getUserId());
 		resource.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
 		resource.setContactId(resource.getContactId().toLowerCase());
-		if (!ToscaUtils.isAtomicType(resource) && resource.getResourceType() != ResourceTypeEnum.CVFC) {
-			resource.setToscaResourceName(CommonBeUtils.generateToscaResourceName(resource.getResourceType().name(), resource.getSystemName()));
+		if (StringUtils.isEmpty(resource.getToscaResourceName()) && !ToscaUtils.isAtomicType(resource)) {
+			String resourceSystemName;
+			if(csarInfo != null && StringUtils.isNotEmpty(csarInfo.getVfResourceName())){
+				resourceSystemName = ValidationUtils.convertToSystemName(csarInfo.getVfResourceName());
+			} else {
+				resourceSystemName = resource.getSystemName();
+			}
+			resource.setToscaResourceName(CommonBeUtils.generateToscaResourceName(resource.getResourceType().name().toLowerCase(), resourceSystemName));
 		}
 
 		// Generate invariant UUID - must be here and not in operation since it
@@ -5187,7 +5203,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	// @param typeObject- the object to which the validation is done
-	private Either<Boolean, ResponseFormat> validateCapabilityTypeExists(User user, ICapabilityTypeOperation capabilityTypeOperation, Resource resource, List validationObjects, AuditingActionEnum actionEnum, Either<Boolean, ResponseFormat> eitherResult, String type,
+	private Either<Boolean, ResponseFormat> validateCapabilityTypeExists(User user, ICapabilityTypeOperation capabilityTypeOperation, Resource resource, List<?> validationObjects, AuditingActionEnum actionEnum, Either<Boolean, ResponseFormat> eitherResult, String type,
 																		 boolean inTransaction) {
 		Either<CapabilityTypeDefinition, StorageOperationStatus> eitherCapTypeFound = capabilityTypeOperation.getCapabilityType(type, inTransaction);
 		if (eitherCapTypeFound.isRight()) {
@@ -5721,7 +5737,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 							.orElse(null).getMetadataDataDefinition() )
 					.orElse(null).getName();
 			if ( with != null  && replacePattern != null ){
-				Either result = updateComponentGroupName( replacePattern , with  ,currentResource.getGroups());
+				Either<List<GroupDefinition>,Boolean> result = updateComponentGroupName( replacePattern , with  ,currentResource.getGroups());
 				if (result.isLeft())
 					newResource.setGroups( (List<GroupDefinition>)result.left().value() );
 			}
@@ -6221,7 +6237,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade.validateToscaResourceNameExists(templateName);
 		if (dataModelResponse.isRight()) {
 			StorageOperationStatus storageStatus = dataModelResponse.right().value();
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError, "Create Resource - validateDerivedFromExist");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Create Resource - validateDerivedFromExist");
 			log.debug("request to data model failed with error: {}", storageStatus.name());
 			ResponseFormat responseFormat = componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(storageStatus), resource);
@@ -6782,6 +6797,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Either<GroupDefinition, ResponseFormat> createGroupInfo(String groupName, Object groupTemplateJson) {
 
 		GroupDefinition groupInfo = new GroupDefinition();
@@ -6845,6 +6861,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Either<List<GroupProperty>, ResponseFormat> createPropertiesValueModuleFromYaml(Object properties, String groupName, String groupType) {
 
 		List<GroupProperty> result = new ArrayList<>();
@@ -7048,37 +7065,20 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return nodeTypeArtifactsToHandleRes;
 	}
 
-	private String buildNestedVfcToscaNamespace(String nodeTypeFullName) {
 
-		String actualName = this.getNodeTypeActualName(nodeTypeFullName);
-		return ImportUtils.Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + ResourceTypeEnum.VFC.name().toLowerCase() + actualName;
-
-	}
-
-	private String buildNestedVfcToscaResourceName(String vfResourceName, String nodeTypeFullName) {
-		String toscaResourceName;
-		String nameWithouNamespacePrefix = getNodeTypeActualName(nodeTypeFullName);
-		if (nameWithouNamespacePrefix.startsWith(Constants.ABSTRACT)) {
-			toscaResourceName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + ResourceTypeEnum.VFC.name().toLowerCase() + '.' + vfResourceName + '.' + nameWithouNamespacePrefix;
-		} else {
-			toscaResourceName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + ResourceTypeEnum.VFC.name().toLowerCase() + '.' + vfResourceName + '.' + Constants.ABSTRACT + nameWithouNamespacePrefix;
-		}
-		return toscaResourceName;
-	}
-	
-	private String buildNodeToscaResourceName(String vfResourceName, String nodeTypeFullName) {
-		String toscaResourceName;
+	private String buildNestedToscaResourceName(String nodeResourceType, String vfResourceName, String nodeTypeFullName) {
+		StringBuilder toscaResourceName = new StringBuilder(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
 		String nameWithouNamespacePrefix = nodeTypeFullName.substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
 		String[] findTypes = nameWithouNamespacePrefix.split("\\.");
 		String resourceType = findTypes[0];
 		String actualName =  nameWithouNamespacePrefix.substring(resourceType.length());	
 		
 		if (actualName.startsWith(Constants.ABSTRACT)) {
-			toscaResourceName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + ResourceTypeEnum.VFC.name().toLowerCase() + '.' + vfResourceName + '.' + actualName;
+			toscaResourceName.append(resourceType.toLowerCase()).append('.').append(ValidationUtils.convertToSystemName(vfResourceName));
 		} else {
-			toscaResourceName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + resourceType.toLowerCase() + '.' + vfResourceName + '.' + Constants.ABSTRACT + actualName;
+			toscaResourceName.append(nodeResourceType.toLowerCase()).append('.').append(ValidationUtils.convertToSystemName(vfResourceName)).append('.').append(Constants.ABSTRACT);
 		}
-		return toscaResourceName;
+		return toscaResourceName.append(actualName.toLowerCase()).toString();
 	}
 
 	public ICacheMangerOperation getCacheManagerOperation() {
@@ -7090,7 +7090,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	///////////////////////////////////////// DataModel refactoring/////////////////////////////////////////////
-
+	@Override
 	public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String resourceId, List<String> dataParamsToReturn) {
 
 		ComponentParametersView paramsToRetuen = new ComponentParametersView(dataParamsToReturn);

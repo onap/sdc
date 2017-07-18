@@ -40,6 +40,8 @@ import {ComponentInstanceServiceNg2} from "./services/component-instance-service
 import { InterceptorService } from 'ng2-interceptors';
 import { XHRBackend, RequestOptions } from '@angular/http';
 import {HttpInterceptor} from "./services/http.interceptor.service";
+import { SearchBarComponent } from './shared/search-bar/search-bar.component';
+import { SearchWithAutoCompleteComponent } from './shared/search-with-autocomplete/search-with-autocomplete.component';
 
 export const upgradeAdapter = new UpgradeAdapter(forwardRef(() => AppModule));
 
@@ -60,7 +62,9 @@ export function interceptorFactory(xhrBackend: XHRBackend, requestOptions: Reque
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
+        SearchBarComponent,
+        SearchWithAutoCompleteComponent
     ],
     imports: [
         BrowserModule,
@@ -70,7 +74,7 @@ export function interceptorFactory(xhrBackend: XHRBackend, requestOptions: Reque
         PropertiesAssignmentModule
     ],
     exports: [],
-    entryComponents: [],
+    entryComponents: [SearchWithAutoCompleteComponent],
     providers: [
         DataTypesServiceProvider,
         SharingServiceProvider,

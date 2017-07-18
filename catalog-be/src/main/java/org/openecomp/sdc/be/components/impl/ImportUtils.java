@@ -104,8 +104,9 @@ public final class ImportUtils {
 		public static final String DEFAULT_ICON = "defaulticon";
 		public static final String INNER_VFC_DESCRIPTION = "Not reusable inner VFC";
 		public static final String USER_DEFINED_RESOURCE_NAMESPACE_PREFIX = "org.openecomp.resource.";
-		public static final List<String> TOSCA_DEFINITION_VERSIONS = Arrays.asList(new String[] { "tosca_simple_yaml_1_0_0", "tosca_simple_profile_for_nfv_1_0_0", "tosca_simple_yaml_1_0" });
-		public static final List<String> TOSCA_YML_CSAR_VALID_SUFFIX = Arrays.asList(new String[] { ".yml", ".yaml", ".csar" });
+		public static final String TOSCA_SIMPLE_YAML_PREFIX = "tosca_simple_yaml_";
+		public static final List<String> TOSCA_DEFINITION_VERSIONS = Arrays.asList(TOSCA_SIMPLE_YAML_PREFIX + "1_0_0", TOSCA_SIMPLE_YAML_PREFIX + "1_1_0", "tosca_simple_profile_for_nfv_1_0_0", TOSCA_SIMPLE_YAML_PREFIX + "1_0", TOSCA_SIMPLE_YAML_PREFIX + "1_1");
+		public static final List<String> TOSCA_YML_CSAR_VALID_SUFFIX = Arrays.asList(".yml", ".yaml", ".csar");
 		public static final String UI_JSON_PAYLOAD_NAME = "payloadName";
 		public static final String CVFC_DESCRIPTION = "Complex node type that is used as nested type in VF";
 	}

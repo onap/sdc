@@ -484,7 +484,7 @@ public class LifecycleBusinessLogic {
 		}
 		try{
 			if(result == null){
-				certifyResourceRes = lifecycleOperation.forceCerificationOfToscaElement(resource.getUniqueId(), user.getUserId(), user.getUserId());
+				certifyResourceRes = lifecycleOperation.forceCerificationOfToscaElement(resource.getUniqueId(), user.getUserId(), user.getUserId(), resource.getVersion());
 				if (certifyResourceRes.isRight()) {
 					StorageOperationStatus status = certifyResourceRes.right().value();
 					log.debug("Failed to perform a force certification of resource {}. The status is {}. ", resource.getName(), status);

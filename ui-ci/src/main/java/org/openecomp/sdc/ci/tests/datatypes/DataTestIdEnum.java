@@ -442,7 +442,7 @@ public final class DataTestIdEnum {
 		ACTIVITY_LOG("Activity Log"), 
 		DEPLOYMENT_VIEW("Deployment"), 
 		TOSCA_ARTIFACTS("TOSCA Artifacts"), 
-		MONITOR("Monitor step"), 
+		MONITOR("Monitor "), 
 		MANAGEMENT_WORKFLOW("Management Workflow"), 
 		INPUTS("Inputs"), 
 		HIERARCHY("Hierarchy");

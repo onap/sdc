@@ -72,7 +72,7 @@ public class CatalogLeftPanelTest extends  SetupCDTest{
 	public static String[] resourceTypes = Arrays.stream(ResourceTypeEnum.class.getEnumConstants()).
 			map(ResourceTypeEnum::name).toArray(String[]::new);
 	
-	public static String[] catalogTypes = {"RESOURCE", "SERVICE", "PRODUCT"};	
+	public static String[] catalogTypes = {"RESOURCE", "SERVICE"};	
 	
 	public static Object[][] provideData(String[] arObj) {
 	    Object[][] arObject = new Object[arObj.length][];

@@ -2761,8 +2761,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 					}
 				} else if (ArtifactTypeEnum.YANG_XML.getType().equalsIgnoreCase(artifactType) || ArtifactTypeEnum.VNF_CATALOG.getType().equalsIgnoreCase(artifactType) || ArtifactTypeEnum.VF_LICENSE.getType().equalsIgnoreCase(artifactType)
 						|| ArtifactTypeEnum.VENDOR_LICENSE.getType().equalsIgnoreCase(artifactType) || ArtifactTypeEnum.MODEL_INVENTORY_PROFILE.getType().equalsIgnoreCase(artifactType)
-						|| ArtifactTypeEnum.MODEL_QUERY_SPEC.getType().equalsIgnoreCase(artifactType)) {
-					isValidPayload = validateYangPayload(decodedPayload, artifactType);
+						|| ArtifactTypeEnum.MODEL_QUERY_SPEC.getType().equalsIgnoreCase(artifactType) || ArtifactTypeEnum.UCPE_LAYER_2_CONFIGURATION.getType().equalsIgnoreCase(artifactType)) {
+					isValidPayload = validateXmlPayload(decodedPayload, artifactType);
 					// else
 					// if(ArtifactTypeEnum.APPC_CONFIG.getType().equalsIgnoreCase(artifactType)
 					// || ){
@@ -2772,7 +2772,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 					String fileExtension = GeneralUtility.getFilenameExtension(artifactFileName).toLowerCase();
 					switch (fileExtension) {
 					case "xml":
-						isValidPayload = validateYangPayload(decodedPayload, artifactType);
+						isValidPayload = validateXmlPayload(decodedPayload, artifactType);
 						break;
 					case "json":
 						isValidPayload = validateJsonPayload(decodedPayload, artifactType);
@@ -2836,7 +2836,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		return res;
 	}
 
-	private Either<Boolean, ResponseFormat> validateYangPayload(byte[] payload, String artifactType) {
+	private Either<Boolean, ResponseFormat> validateXmlPayload(byte[] payload, String artifactType) {
 		boolean isXmlValid = isValidXml(payload);
 		if (!isXmlValid) {
 			ResponseFormat responseFormat = ResponseFormatManager.getInstance().getResponseFormat(ActionStatus.INVALID_XML, artifactType);
@@ -4294,7 +4294,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		Component component = null;
 		String componentId = null;
 		String artifactId = null;
-		ArtifactDefinition artifactInfo = RepresentationUtils.convertJsonToArtifactDefinition(data, ArtifactDefinition.class);
+		ArtifactDefinition artifactInfo = RepresentationUtils.convertJsonToArtifactDefinitionForUpdate(data, ArtifactDefinition.class);
 		String origMd5 = request.getHeader(Constants.MD5_HEADER);
 		String userId = request.getHeader(Constants.USER_ID_HEADER);
 

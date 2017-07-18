@@ -250,13 +250,14 @@
         _drawHandle: function (handle, target) {
 
             var position = this._getHandlePosition(handle, target);
-
+            var handleSize = target.renderedWidth() / 4;
+            
             this._ctx.beginPath();
 
             if (handle.imageUrl) {
                 var base_image = new Image();
                 base_image.src = handle.imageUrl;
-                this._ctx.drawImage(base_image, position.x, position.y, this.HANDLE_SIZE, this.HANDLE_SIZE);
+                this._ctx.drawImage(base_image, position.x, position.y, handleSize, handleSize);
             } else {
                 this._ctx.arc(position.x, position.y, this.HANDLE_SIZE, 0, 2 * Math.PI, false);
                 this._ctx.fillStyle = handle.color;
@@ -461,17 +462,17 @@
         },
         _getHandlePosition: function (handle, target) {
             var position = target.renderedPosition();
-            var width = target.renderedOuterWidth();
-            var height = target.renderedOuterHeight();
+            var width = target.renderedWidth();
+            var height = target.renderedHeight();
             var xpos = null;
             var ypos = null;
 
             switch (handle.positionX) {
                 case "left":
-                    xpos = position.x - width / 2 + this.HANDLE_SIZE;
+                    xpos = position.x - width / 4;
                     break;
                 case "right":
-                    xpos = position.x + width / 2 - this.HANDLE_SIZE;
+                    xpos = position.x + width / 4;
                     break;
                 case "center":
                     xpos = position.x;
@@ -480,18 +481,18 @@
 
             switch (handle.positionY) {
                 case "top":
-                    ypos = position.y - height / 2 + this.HANDLE_SIZE;
+                    ypos = position.y - width / 2;
                     break;
                 case "center":
                     ypos = position.y;
                     break;
                 case "bottom":
-                    ypos = position.y + height / 2 - this.HANDLE_SIZE;
+                    ypos = position.y + width / 2;
                     break;
             }
 
-            var offsetX = handle.offsetX ? handle.offsetX : 0;
-            var offsetY = handle.offsetY ? handle.offsetY : 0;
+            var offsetX =  0;
+            var offsetY =  0;
             return {x: xpos + offsetX, y: ypos + offsetY};
         },
         _getEdgeCSSByHandle: function (handle) {

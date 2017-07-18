@@ -53,6 +53,7 @@ import {downgradeComponent} from "@angular/upgrade/static";
 
 import {AppModule} from './ng2/app.module';
 import {PropertiesAssignmentComponent} from "./ng2/pages/properties-assignment/properties-assignment.page.component";
+import { SearchWithAutoCompleteComponent } from "./ng2/shared/search-with-autocomplete/search-with-autocomplete.component";
 import {Component} from "./models/components/component";
 import {ComponentServiceNg2} from "./ng2/services/component-services/component.service";
 import {ComponentMetadata} from "./models/component-metadata";
@@ -145,6 +146,13 @@ _.each(hostedApplications, (hostedApp)=> {
 
 export const ng1appModule:ng.IModule = angular.module(moduleName, dependentModules);
 angular.module('sdcApp').directive('propertiesAssignment', downgradeComponent({component: PropertiesAssignmentComponent}) as angular.IDirectiveFactory);
+angular.module('sdcApp').directive('ng2SearchWithAutocomplete',
+    downgradeComponent({
+        component: SearchWithAutoCompleteComponent,
+        inputs: ['searchPlaceholder', 'searchBarClass', 'autoCompleteValues'],
+        outputs: ['searchChanged', 'searchButtonClicked']
+    }) as angular.IDirectiveFactory);
+
 
 ng1appModule.config([
     '$stateProvider',
@@ -161,7 +169,7 @@ ng1appModule.config([
      NotificationProvider:any):void => {
 
         NotificationProvider.setOptions({
-            delay: 10000,
+            delay: 5000,
             startTop: 10,
             startRight: 10,
             closeOnClick: true,
@@ -170,6 +178,7 @@ ng1appModule.config([
             positionX: 'right',
             positionY: 'top'
         });
+        NotificationProvider.options.templateUrl = 'notification-custom-template.html';
 
         $translateProvider.useStaticFilesLoader({
             prefix: pathPrefix + 'assets/languages/',
@@ -617,6 +626,7 @@ ng1appModule.run([
     'LeftPaletteLoaderService',
     'Sdc.Services.DataTypesService',
     'AngularJSBridge',
+    '$templateCache',
     ($http:ng.IHttpService,
      cacheService:CacheService,
      cookieService:CookieService,
@@ -632,8 +642,9 @@ ng1appModule.run([
      ecompHeaderService:EcompHeaderService,
      LeftPaletteLoaderService:LeftPaletteLoaderService,
      DataTypesService:DataTypesService,
-     AngularJSBridge):void => {
-
+     AngularJSBridge,
+     $templateCache:ng.ITemplateCacheService):void => {
+        $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
         //handle cache data - version
         let initAsdcVersion:Function = ():void => {
 

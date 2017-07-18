@@ -47,7 +47,8 @@ interface ICompositionGraphScope extends ng.IScope {
 
     component:Component;
     isLoading: boolean;
-    isViewOnly:boolean;
+    isViewOnly: boolean;
+    withSidebar: boolean;
     // Link menu - create link menu
     relationMenuDirectiveObj:RelationMenuDirectiveObj;
     isLinkMenuOpen:boolean;
@@ -65,6 +66,14 @@ interface ICompositionGraphScope extends ng.IScope {
     //Links menus
     deleteRelation(link:Cy.CollectionEdges):void;
     hideRelationMenu();
+
+    //search,zoom in/out/all
+    componentInstanceNames: Array<string>; //id, name
+    zoom(zoomIn: boolean): void;
+    zoomAll(nodes?:Cy.CollectionNodes): void;
+    getAutoCompleteValues(searchTerm: string):void;
+    highlightSearchMatches(searchTerm: string): void;
+    
     /*//asset popover menu
     assetPopoverObj:AssetPopoverObj;
     assetPopoverOpen:boolean;
@@ -101,7 +110,8 @@ export class CompositionGraph implements ng.IDirective {
     template = require('./composition-graph.html');
     scope = {
         component: '=',
-        isViewOnly: '='
+        isViewOnly: '=',
+        withSidebar: '='
     };
 
     link = (scope:ICompositionGraphScope, el:JQuery) => {
@@ -147,7 +157,11 @@ export class CompositionGraph implements ng.IDirective {
         this._cy = cytoscape({
             container: graphEl,
             style: ComponentInstanceNodesStyle.getCompositionGraphStyle(),
-            zoomingEnabled: false,
+            zoomingEnabled: true,
+            maxZoom: 2.5,
+            minZoom: .1,
+            userZoomingEnabled: false,
+            userPanningEnabled: true,
             selectionType: 'single',
             boxSelectionEnabled: true,
             autolock: isViewOnly,
@@ -270,6 +284,40 @@ export class CompositionGraph implements ng.IDirective {
             this.loadGraphData(scope);
         });
 
+        scope.zoom = (zoomIn: boolean):void => {
+            let currentZoom: number = this._cy.zoom();
+            if (zoomIn) {
+                this.GeneralGraphUtils.zoomGraphTo(this._cy, currentZoom + .1);
+            } else {
+                this.GeneralGraphUtils.zoomGraphTo(this._cy, currentZoom - .1);
+            }
+        }
+
+        //Zooms to fit all of the nodes in the collection passed in. If no nodes are passed in, will zoom to fit all nodes on graph
+        scope.zoomAll = (nodes?:Cy.CollectionNodes) => {
+            scope.withSidebar = false;
+            this._cy.animate({
+                fit: { eles: nodes, padding: 20 },
+                center: { eles: nodes }
+            }, { duration: 400 });
+        };
+
+        scope.getAutoCompleteValues = (searchTerm: string) => {
+            if (searchTerm.length > 1) { //US requirement: only display search results after 2nd letter typed.
+                let nodes: Cy.CollectionNodes = this.NodesGraphUtils.getMatchingNodesByName(this._cy, searchTerm);
+                scope.componentInstanceNames = _.map(nodes, node => node.data('name'));
+            } else {
+                scope.componentInstanceNames = [];
+            }
+        };
+
+        scope.highlightSearchMatches = (searchTerm: string) => {
+            if (searchTerm === undefined) return; //dont zoom & highlight if click on Search initially (searchTerm will be undefined). However, allow highlights to be cleared after subsequent search (searchTerm will be "")
+            
+            this.NodesGraphUtils.highlightMatchingNodesByName(this._cy, searchTerm);
+            let matchingNodes: Cy.CollectionNodes = this.NodesGraphUtils.getMatchingNodesByName(this._cy, searchTerm);
+            scope.zoomAll(matchingNodes);
+        };
 
         scope.createLinkFromMenu = (chosenMatch:MatchBase):void => {
             scope.isLinkMenuOpen = false;
@@ -367,7 +415,7 @@ export class CompositionGraph implements ng.IDirective {
         });*/
         this._cy.on('handlemouseover', (event, payload) => {
 
-            if (payload.node.grabbed() /* || this._cy.scratch('_edge_editation_highlights') === true*/) { //no need to add opacity while we are dragging and hovering othe nodes- or if opacity was already calculated for these nodes
+            if (payload.node.grabbed() || this._cy.scratch('_edge_editation_highlights') === true) { //no need to add opacity while we are dragging and hovering othe nodes- or if opacity was already calculated for these nodes
                 return;
             }
             let nodesData = this.NodesGraphUtils.getAllNodesData(this._cy.nodes());
@@ -377,9 +425,9 @@ export class CompositionGraph implements ng.IDirective {
             let filteredNodesData = this.matchCapabilitiesRequirementsUtils.findByMatchingCapabilitiesToRequirements(payload.node.data().componentInstance, linkableNodes, nodesLinks);
             this.matchCapabilitiesRequirementsUtils.highlightMatchingComponents(filteredNodesData, this._cy);
             this.matchCapabilitiesRequirementsUtils.fadeNonMachingComponents(filteredNodesData, nodesData, this._cy, payload.node.data());
-            /*
+            
             this._cy.scratch()._edge_editation_highlights = true;
-            scope.hideAssetPopover();*/
+            /*scope.hideAssetPopover();*/
         });
 
         this._cy.on('handlemouseout', () => {

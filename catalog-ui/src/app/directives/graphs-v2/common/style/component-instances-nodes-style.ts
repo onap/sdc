@@ -231,7 +231,7 @@ export class ComponentInstanceNodesStyle {
 
     public static getBasicNodeHanlde = () => {
         return {
-            positionX: "center",
+            positionX: "right",
             positionY: "top",
             offsetX: 15,
             offsetY: -20,
@@ -248,7 +248,7 @@ export class ComponentInstanceNodesStyle {
 
     public static getBasicSmallNodeHandle = () => {
         return {
-            positionX: "center",
+            positionX: "right",
             positionY: "top",
             offsetX: 3,
             offsetY: -25,

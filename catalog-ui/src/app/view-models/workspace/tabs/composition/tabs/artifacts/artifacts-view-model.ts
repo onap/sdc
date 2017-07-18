@@ -33,13 +33,14 @@ import {ICompositionViewModelScope} from "../../composition-view-model";
 import {ArtifactsUtils, ModalsHandler, ArtifactGroupType} from "app/utils";
 import {GRAPH_EVENTS} from "app/utils/constants";
 import {EventListenerService} from "app/services/event-listener-service";
+import {Dictionary} from "../../../../../../utils/dictionary/dictionary";
 
 export interface IArtifactsViewModelScope extends ICompositionViewModelScope {
     artifacts:Array<ArtifactModel>;
     artifactType:string;
     downloadFile:IFileDownload;
     isLoading:boolean;
-
+    displayDeleteButtonMap:Dictionary<string, boolean>;
     getTitle():string;
     addOrUpdate(artifact:ArtifactModel):void;
     delete(artifact:ArtifactModel):void;
@@ -125,6 +126,10 @@ export class ResourceArtifactsViewModel {
             }
         }
         this.$scope.artifacts = artifacts;
+        this.$scope.displayDeleteButtonMap = new Dictionary<string, boolean>();
+        _.forEach(this.$scope.artifacts, (artifact:ArtifactModel)=>{
+            this.$scope.displayDeleteButtonMap[artifact.artifactLabel] = this.displayDeleteButton(artifact);
+        });
         this.$scope.isLoading = false;
     };
 
@@ -228,6 +233,17 @@ export class ResourceArtifactsViewModel {
             this.updateArtifactsIfNeeded();
         });
     };
+
+    private displayDeleteButton = (artifact:ArtifactModel):boolean => {
+    if(!this.$scope.isViewMode() && artifact.esId){
+        if(this.$scope.isComponentInstanceSelected()){//is artifact of instance
+            return !this.$scope.selectedComponent.deploymentArtifacts || !this.$scope.selectedComponent.deploymentArtifacts[artifact.artifactLabel];//if the artifact is not from instance parent
+        }else{//is artifact of main component
+            return (!artifact.isHEAT() && !artifact.isThirdParty() && !this.$scope.isLicenseArtifact(artifact));
+        }
+    }
+    return false;
+};
 
     private initScope = ():void => {
 

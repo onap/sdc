@@ -44,6 +44,42 @@ public class RepresentationUtils {
 
 	private static Logger log = LoggerFactory.getLogger(RepresentationUtils.class.getName());
 
+	public static ArtifactDefinition convertJsonToArtifactDefinitionForUpdate(String content, Class<ArtifactDefinition> clazz) {
+
+		JsonObject jsonElement = new JsonObject();
+		ArtifactDefinition resourceInfo = null;
+
+		try {
+			Gson gson = new Gson();
+			jsonElement = gson.fromJson(content, jsonElement.getClass());
+			String payload = null;
+			jsonElement.remove(Constants.ARTIFACT_GROUP_TYPE_FIELD);
+			//in update the group type is ignored but this spagheti code makes it too complex to remove this field.
+			jsonElement.addProperty(Constants.ARTIFACT_GROUP_TYPE_FIELD, ArtifactGroupTypeEnum.INFORMATIONAL.getType());
+			JsonElement artifactPayload = jsonElement.get(Constants.ARTIFACT_PAYLOAD_DATA);
+			if (artifactPayload != null && !artifactPayload.isJsonNull()) {
+				payload = artifactPayload.getAsString();
+			}
+			jsonElement.remove(Constants.ARTIFACT_PAYLOAD_DATA);
+			String json = gson.toJson(jsonElement);
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			mapper.configure(Feature.FAIL_ON_EMPTY_BEANS, false);
+			mapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+
+			resourceInfo = mapper.readValue(json, clazz);
+			resourceInfo.setPayloadData(payload);
+
+		} catch (Exception e) {
+			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeArtifactInformationInvalidError, "Artifact Upload / Update");
+			BeEcompErrorManager.getInstance().logBeArtifactInformationInvalidError("Artifact Upload / Update");
+			log.debug("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), e);
+		}
+
+		return resourceInfo;
+	}
+
+
 	public static class ResourceRep {
 
 	}

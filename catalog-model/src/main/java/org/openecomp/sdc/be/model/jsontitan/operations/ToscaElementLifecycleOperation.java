@@ -882,8 +882,9 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 		// check if component with the next version doesn't exist.
 		Iterator<Edge> nextVersionComponentIter = toscaElementVertex.getVertex().edges(Direction.OUT, EdgeLabelEnum.VERSION.name());
 		if (nextVersionComponentIter != null && nextVersionComponentIter.hasNext()) {
-			String fetchedVersion = (String) nextVersionComponentIter.next().inVertex().property(GraphPropertyEnum.VERSION.getProperty()).value();
-			String fetchedName = (String) nextVersionComponentIter.next().inVertex().property(GraphPropertyEnum.NORMALIZED_NAME.getProperty()).value();
+			Vertex  nextVersionVertex =  nextVersionComponentIter.next().inVertex();
+			String fetchedVersion = (String) nextVersionVertex.property(GraphPropertyEnum.VERSION.getProperty()).value();
+			String fetchedName = (String)nextVersionVertex.property(GraphPropertyEnum.NORMALIZED_NAME.getProperty()).value();
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to checkout component {} with version {}. The component with name {} and version {} was fetched from graph as existing following version. ",
 					toscaElementVertex.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME).toString(), toscaElementVertex.getMetadataProperty(GraphPropertyEnum.VERSION).toString(), fetchedName, fetchedVersion);
 			result = Either.right(StorageOperationStatus.ENTITY_ALREADY_EXISTS);
@@ -1429,6 +1430,13 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 		return verticesToGetParameters;
 	}
 
+
+	private String getNextCertifiedVersion(String version) {
+		String[] versionParts = version.split(VERSION_DELIMETER_REGEXP);
+		Integer nextMajorVersion = Integer.parseInt(versionParts[0]) + 1;
+		return nextMajorVersion + VERSION_DELIMETER + "0";
+	}
+	
 	private String getNextVersion(String currVersion) {
 		String[] versionParts = currVersion.split(VERSION_DELIMETER_REGEXP);
 		Integer minorVersion = Integer.parseInt(versionParts[1]) + 1;
@@ -1452,7 +1460,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 		return false;
 	}
 
-	public Either<ToscaElement,StorageOperationStatus> forceCerificationOfToscaElement(String toscaElementId, String modifierId, String ownerId) {
+	public Either<ToscaElement,StorageOperationStatus> forceCerificationOfToscaElement(String toscaElementId, String modifierId, String ownerId, String currVersion) {
 		Either<GraphVertex, StorageOperationStatus> resultUpdate = null;
 		Either<ToscaElement, StorageOperationStatus> result = null;
 		GraphVertex toscaElement = null;
@@ -1478,7 +1486,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 				LifecycleStateEnum nextState = LifecycleStateEnum.CERTIFIED;
 
 				toscaElement.addMetadataProperty(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
-				toscaElement.addMetadataProperty(GraphPropertyEnum.VERSION, "1.0");
+				toscaElement.addMetadataProperty(GraphPropertyEnum.VERSION, getNextCertifiedVersion(currVersion));
 
 				resultUpdate = updateToscaElementVertexMetadataPropertiesAndJson(toscaElement);
 				if (resultUpdate.isRight()) {

@@ -20,4 +20,11 @@
 
 </div>
 
+    <div class="w-sdc-search-menu" data-ng-class="{'with-sidebar': withSidebar}">
+        <ng2-search-with-autocomplete [search-placeholder]="'Type to search'" [auto-complete-values]="componentInstanceNames" (search-changed)="getAutoCompleteValues($event)" (search-button-clicked)="highlightSearchMatches($event)"
+            [search-bar-class]="'composition-search'"></ng2-search-with-autocomplete>
+        <div class="zoom-icons sprite-new canvas-fit-all" data-ng-click="zoomAll()"></div>
+        <div class="zoom-icons sprite-new zoom-plus" data-ng-click="zoom(true)"></div>
+        <div class="zoom-icons sprite-new zoom-minus" data-ng-click="zoom(false)"></div>
+    </div>
 <!--<asset-popover ng-if="assetPopoverOpen" asset-popover-obj="assetPopoverObj" delete-asset="deleteNode(assetPopoverObj.nodeId)"></asset-popover>-->

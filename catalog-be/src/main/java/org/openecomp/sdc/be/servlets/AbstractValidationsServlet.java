@@ -102,7 +102,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
 	}
 
-	private synchronized void initLog(Logger log) {
+	protected synchronized void initLog(Logger log) {
 		if (this.log == null) {
 			this.log = log;
 		}

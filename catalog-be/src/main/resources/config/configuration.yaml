@@ -306,6 +306,10 @@ serviceDeploymentArtifacts:
     MODEL_QUERY_SPEC:
         acceptedTypes:
             - xml
+    UCPE_LAYER_2_CONFIGURATION:
+        acceptedTypes:
+            - xml
+
 #AAI Artifacts
     AAI_SERVICE_MODEL:
         acceptedTypes:

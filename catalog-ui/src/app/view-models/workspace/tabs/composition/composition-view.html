@@ -6,7 +6,7 @@
                  is-loading="isLoading"></palette>
 
         <composition-graph component="currentComponent" data-tests-id="canvas"
-                           is-view-only="isViewOnly"></composition-graph>
+                           is-view-only="isViewOnly" with-sidebar="displayDesignerRightSidebar"></composition-graph>
     </div>
 
     <div class="w-sdc-designer-sidebar-toggle" data-ng-class="{'active': displayDesignerRightSidebar}"
@@ -21,7 +21,7 @@
             <div class="w-sdc-designer-sidebar-logo-ph">
                 <div class="large {{selectedComponent.iconSprite}} {{selectedComponent.icon}}">
                     <div ng-if="isComponentInstanceSelected()"
-                         data-ng-class="{'non-certified':'CERTIFIED' !== selectedComponent.lifecycleState, 'smaller-icon': selectedComponent.icon==='vl' || selectedComponent.icon==='cp'}"
+                         data-ng-class="{'non-certified':'CERTIFIED' !== selectedComponent.lifecycleState}"
                          tooltips tooltip-side="top" tooltip-content="Not certified"></div>
                 </div>
             </div>

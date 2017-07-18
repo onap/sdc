@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.dao.cassandra;
 
 import javax.annotation.PostConstruct;
 
+import com.datastax.driver.core.ResultSet;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
@@ -38,6 +39,7 @@ import fj.data.Either;
 public class ArtifactCassandraDao extends CassandraDao {
 
 	private static Logger logger = LoggerFactory.getLogger(ArtifactCassandraDao.class.getName());
+	private ArtifactAccessor artifactAccessor;
 
 	public ArtifactCassandraDao() {
 		super();
@@ -52,6 +54,7 @@ public class ArtifactCassandraDao extends CassandraDao {
 			if (result.isLeft()) {
 				session = result.left().value().left;
 				manager = result.left().value().right;
+				artifactAccessor = manager.createAccessor(ArtifactAccessor.class);
 				logger.info("** ArtifactCassandraDao created");
 			} else {
 				logger.info("** ArtifactCassandraDao failed");
@@ -105,6 +108,14 @@ public class ArtifactCassandraDao extends CassandraDao {
 	 */
 	public Either<Boolean, CassandraOperationStatus> isTableEmpty(String tableName) {
 		return super.isTableEmpty(tableName);
+	}
+
+	public Either<Long, CassandraOperationStatus> getCountOfArtifactById(String uniqeId) {
+		ResultSet artifactCount = artifactAccessor.getNumOfArtifactsById(uniqeId);
+		if (artifactCount == null) {
+			return Either.right(CassandraOperationStatus.NOT_FOUND);
+		}
+		return Either.left(artifactCount.one().getLong(0));
 	}
 
 }

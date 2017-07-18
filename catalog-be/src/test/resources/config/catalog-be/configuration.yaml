@@ -296,6 +296,9 @@ serviceDeploymentArtifacts:
     YANG_XML:
         acceptedTypes:
             - xml
+    UCPE_LAYER_2_CONFIGURATION:
+        acceptedTypes:
+            - xml
     VNF_CATALOG:
         acceptedTypes:
             - xml

@@ -64,6 +64,14 @@ export class CompositionGraphGeneralUtils {
     };
 
 
+    public zoomGraphTo = (cy:Cy.Instance, zoomLevel: number):void => {
+        let zy = cy.height() / 2;
+        let zx = cy.width() / 2;
+        cy.zoom({
+            level: zoomLevel,
+            renderedPosition: { x: zx, y: zy }
+        });
+    }
     /**
      * will return true/false if two nodes overlapping
      *

@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.openecomp.sdc.ci.tests.utils.ToscaParserUtils.downloadAndParseToscaTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -67,7 +68,9 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openecomp.sdc.ci.tests.utils.general.ImportUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
@@ -362,7 +365,7 @@ public class ExportToscaTest extends ComponentBaseTest {
 
 		JsonParser jsonParser = new JsonParser();
 
-		for (Map.Entry<String, List<ComponentInstanceProperty>> entry : componentInstancesProperties.entrySet()) {
+		for (Entry<String, List<ComponentInstanceProperty>> entry : componentInstancesProperties.entrySet()) {
 
 			Optional<ComponentInstance> findFirst = componentInstances.stream().filter(ci -> ci.getUniqueId().equals(entry.getKey())).findFirst();
 			assertTrue(findFirst.isPresent());
@@ -625,29 +628,6 @@ public class ExportToscaTest extends ComponentBaseTest {
 			assertEquals("validate input default", value, expValue);
 		}
 		assertEquals("validate input description", inputDef.getDescription(), (String) inputInFile.get("description"));
-	}
-
-	private Map<String, Object> downloadAndParseToscaTemplate(User sdncModifierDetails, Component createdComponent) throws Exception {
-		String artifactUniqeId = createdComponent.getToscaArtifacts().get("assettoscatemplate").getUniqueId();
-		RestResponse toscaTemplate;
-
-		if (createdComponent.getComponentType() == ComponentTypeEnum.RESOURCE) {
-			toscaTemplate = ArtifactRestUtils.downloadResourceArtifactInternalApi(createdComponent.getUniqueId(), sdncModifierDetails, artifactUniqeId);
-
-		} else {
-			toscaTemplate = ArtifactRestUtils.downloadServiceArtifactInternalApi(createdComponent.getUniqueId(), sdncModifierDetails, artifactUniqeId);
-		}
-		BaseRestUtils.checkSuccess(toscaTemplate);
-
-		ArtifactUiDownloadData artifactUiDownloadData = ResponseParser.parseToObject(toscaTemplate.getResponse(), ArtifactUiDownloadData.class);
-		byte[] fromUiDownload = artifactUiDownloadData.getBase64Contents().getBytes();
-		byte[] decodeBase64 = Base64.decodeBase64(fromUiDownload);
-		Yaml yaml = new Yaml();
-
-		InputStream inputStream = new ByteArrayInputStream(decodeBase64);
-
-		Map<String, Object> load = (Map<String, Object>) yaml.load(inputStream);
-		return load;
 	}
 
 	public ArtifactDefinition findMasterArtifact(Map<String, ArtifactDefinition> deplymentArtifact, List<ArtifactDefinition> artifacts, List<String> artifactsList) {

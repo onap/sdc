@@ -1,0 +1,6 @@
+<div class="search-with-autocomplete-container {{searchBarClass}}" [class.autocomplete-visible]="autoCompleteValues && autoCompleteValues.length" [class.active]="searchQuery && searchQuery.length">
+    <search-bar [placeholder]="searchPlaceholder" [searchQuery]="searchQuery" (searchButtonClicked)="updateSearch($event)" (searchChanged)="searchChange($event)"></search-bar>
+    <div class="autocomplete-results">
+        <div *ngFor="let item of autoCompleteValues" class="autocomplete-result-item" (click)="updateSearch(item)">{{item}}</div>
+    </div>
+</div>

@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.auditing.api.IAuditingManager;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
@@ -55,6 +56,7 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.CsarInfo;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -124,7 +126,7 @@ public class ResourceImportManager {
 		lifecycleChangeInfo.setUserRemarks("certification on import");
 		Function<Resource, Either<Boolean, ResponseFormat>> validator = (resource) -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
 
-		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null, false);
+		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null, false, null);
 	}
 	
 	public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> importNormativeResourceFromCsar(String resourceYml, UploadResourceInfo resourceMetaData, User creator, boolean createNewVersion, boolean needLock) {
@@ -133,11 +135,11 @@ public class ResourceImportManager {
 		lifecycleChangeInfo.setUserRemarks("certification on import");
 		Function<Resource, Either<Boolean, ResponseFormat>> validator = (resource) -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
 
-		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null, false);
+		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null, false, null);
 	}
 
 	public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> importCertifiedResource(String resourceYml, UploadResourceInfo resourceMetaData, User creator, Function<Resource, Either<Boolean, ResponseFormat>> validationFunction,
-			LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean isInTransaction, boolean createNewVersion, boolean needLock, Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed) {
+			LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean isInTransaction, boolean createNewVersion, boolean needLock, Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed, CsarInfo csarInfo) {
 		Resource resource = new Resource();
 		ImmutablePair<Resource, ActionStatus> responsePair = new ImmutablePair<>(resource, ActionStatus.CREATED);
 		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> response = Either.left(responsePair);
@@ -166,14 +168,14 @@ public class ResourceImportManager {
 					}
 				}
 
-				response = resourceBusinessLogic.createOrUpdateResourceByImport(resource, creator, true, isInTransaction, needLock);
+				response = resourceBusinessLogic.createOrUpdateResourceByImport(resource, creator, true, isInTransaction, needLock, csarInfo);
 				Either<Resource, ResponseFormat> changeStateResponse;
 				if (response.isLeft()) {
 					resource = response.left().value().left;
 					
 					if(nodeTypeArtifactsToHandle !=null && !nodeTypeArtifactsToHandle.isEmpty()){
 						Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifactsRes = 
-								resourceBusinessLogic.handleNodeTypeArtifacts(resource, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, creator, isInTransaction);
+								resourceBusinessLogic.handleNodeTypeArtifacts(resource, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, creator, isInTransaction, false);
 						if(handleNodeTypeArtifactsRes.isRight()){
 							return Either.right(handleNodeTypeArtifactsRes.right().value());
 						}
@@ -254,7 +256,7 @@ public class ResourceImportManager {
 			Either<Boolean, ResponseFormat> validatePropertiesTypes = resourceBusinessLogic.validatePropertiesDefaultValues(resource);
 
 			if (validatePropertiesTypes.isLeft()) {
-				response = resourceBusinessLogic.createOrUpdateResourceByImport(resource, creator, false, isInTransaction, true);
+				response = resourceBusinessLogic.createOrUpdateResourceByImport(resource, creator, false, isInTransaction, true, null);
 			} else {
 				ResponseFormat validationErrorResponse = validatePropertiesTypes.right().value();
 				auditErrorImport(resourceMetaData, creator, validationErrorResponse, false);
@@ -287,7 +289,8 @@ public class ResourceImportManager {
 			return Either.right(setDerivedFrom.right().value());
 		}
 		Resource parentResource = setDerivedFrom.left().value();
-		setToscaResourceName(toscaJson, resource);
+		if(StringUtils.isEmpty(resource.getToscaResourceName()))
+			setToscaResourceName(toscaJson, resource);
 		setAttributes(toscaJson, resource);
 		eitherResult = setCapabilities(toscaJson, resource, parentResource);
 		if (eitherResult.isRight())

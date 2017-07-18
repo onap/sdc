@@ -96,7 +96,7 @@ public class DriverFactory {
 				webDriverThread.quitDriver();
 		}
 		
-		MobProxy.removeAllProxyServers();
+//		MobProxy.removeAllProxyServers();
 		
 		deleteDownloadDirs();
 	}
