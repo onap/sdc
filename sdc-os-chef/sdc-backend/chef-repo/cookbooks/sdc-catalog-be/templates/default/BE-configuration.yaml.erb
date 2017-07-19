@@ -67,7 +67,7 @@ users:
 
 cassandraConfig:
     cassandraHosts: [<%= @cassandra_ip %>]
-    localDataCenter:
+    localDataCenter: <%= @DC_NAME %>
     reconnectTimeout : 30000
     authenticate: true
     username: asdc_user
