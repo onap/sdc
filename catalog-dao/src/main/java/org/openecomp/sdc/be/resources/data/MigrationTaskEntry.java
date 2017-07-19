@@ -34,6 +34,9 @@ public class MigrationTaskEntry {
     @Column(name = "msg")
     private String message;
 
+    @Column(name = "description")
+    private String description;
+
     public void setMajorVersion(Long majorVersion) {
         this.majorVersion = majorVersion;
     }
@@ -88,5 +91,13 @@ public class MigrationTaskEntry {
 
     public double getExecutionTime() {
         return executionTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

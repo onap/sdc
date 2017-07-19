@@ -48,6 +48,7 @@ export interface IOnboardVendorViewModelScope extends ng.IScope {
     topNavRootMenu:MenuItemGroup;
     user:IUserProperties;
     version:string;
+    isLoading: boolean;
 }
 
 export class OnboardVendorViewModel {
@@ -62,6 +63,12 @@ export class OnboardVendorViewModel {
     constructor(private $scope:IOnboardVendorViewModelScope,
                 private $q:ng.IQService,
                 private cacheService:CacheService) {
+
+        this.$scope.isLoading = true;
+
+        $.getScript("/onboarding/punch-outs_en.js", () => {
+            this.$scope.isLoading = false;
+        });
 
         this.$scope.vendorData = {
             breadcrumbs: {

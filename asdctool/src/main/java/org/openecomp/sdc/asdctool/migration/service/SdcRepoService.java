@@ -1,7 +1,7 @@
 package org.openecomp.sdc.asdctool.migration.service;
 
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
-import org.openecomp.sdc.be.dao.cassandra.MigrationTasksDao;
+import org.openecomp.sdc.asdctool.migration.dao.MigrationTasksDao;
 import org.openecomp.sdc.be.resources.data.MigrationTaskEntry;
 
 import java.math.BigInteger;

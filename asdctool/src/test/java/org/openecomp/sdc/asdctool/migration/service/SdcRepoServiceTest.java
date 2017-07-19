@@ -5,7 +5,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.verification.Times;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
-import org.openecomp.sdc.be.dao.cassandra.MigrationTasksDao;
+import org.openecomp.sdc.asdctool.migration.dao.MigrationTasksDao;
 import org.openecomp.sdc.be.resources.data.MigrationTaskEntry;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

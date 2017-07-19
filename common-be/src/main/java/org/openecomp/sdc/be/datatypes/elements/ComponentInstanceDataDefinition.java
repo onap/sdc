@@ -22,8 +22,10 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
 
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
 public class ComponentInstanceDataDefinition extends ToscaDataDefinition implements Serializable {
@@ -34,218 +36,201 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition impleme
 	
 	private static final long serialVersionUID = 7215033872921497743L;
 
-	private String icon;
-	
-	private String uniqueId;
 
-	private String name;
-	
-	private String normalizedName;
-
-	private String componentUid;
-
-	private Long creationTime;
-
-	private Long modificationTime;
-
-	private String description;
-
-	private String posX;
-
-	private String posY;
-	private Integer propertyValueCounter = 1;
-	private Integer attributeValueCounter;
-	private Integer inputValueCounter = 1;
-	private OriginTypeEnum originType;
-	private String customizationUUID;
-	private String componentName;
-	private String componentVersion;
-	private String toscaComponentName;
-	private String invariantName;
 	
 	public ComponentInstanceDataDefinition() {
 		super();
+		setPropertyValueCounter(1);
+		setAttributeValueCounter(1);
+		setInputValueCounter(1);
 	}
 
 	public ComponentInstanceDataDefinition(ComponentInstanceDataDefinition dataDefinition) {
-		this.icon = dataDefinition.icon;
-		this.uniqueId = dataDefinition.uniqueId;
-		this.name = dataDefinition.name;
-		this.componentUid = dataDefinition.componentUid;
-		this.creationTime = dataDefinition.creationTime;
-		this.modificationTime = dataDefinition.modificationTime;
-		this.description = dataDefinition.description;
-		this.posX = dataDefinition.posX;
-		this.posY = dataDefinition.posY;
-		this.propertyValueCounter = dataDefinition.propertyValueCounter;
-		this.normalizedName = dataDefinition.normalizedName;
-		this.originType = dataDefinition.originType;
-		this.customizationUUID = dataDefinition.customizationUUID;
-		this.componentName = dataDefinition.componentName;
-		this.componentVersion = dataDefinition.componentVersion;
-		this.toscaComponentName = dataDefinition.toscaComponentName;
-		this.invariantName = dataDefinition.invariantName;
+		setIcon(dataDefinition.getIcon());
+		setUniqueId(dataDefinition.getUniqueId());
+		setName(dataDefinition.getName());
+		setComponentUid(dataDefinition.getComponentUid());
+		setCreationTime(dataDefinition.getCreationTime());
+		setModificationTime(dataDefinition.getModificationTime());
+		setDescription(dataDefinition.getDescription());
+		setPosX(dataDefinition.getPosX());
+		setPosY(dataDefinition.getPosY());
+		setPropertyValueCounter(dataDefinition.getPropertyValueCounter());
+		setNormalizedName(dataDefinition.getNormalizedName());
+		setOriginType(dataDefinition.getOriginType());
+		setCustomizationUUID(dataDefinition.getCustomizationUUID());
+		setComponentName( dataDefinition.getComponentName());
+		setComponentVersion(dataDefinition.getComponentVersion());
+		setToscaComponentName(dataDefinition.getToscaComponentName());
+		setInvariantName( dataDefinition.getInvariantName());
 	}
 	
 	public String getIcon() {
-		return icon;
+		return (String) getToscaPresentationValue(JsonPresentationFields.CI_ICON);
 	}
 
 	public void setIcon(String icon) {
-		this.icon = icon;
+		setToscaPresentationValue(JsonPresentationFields.CI_ICON, icon);
 	}
 	public String getUniqueId() {
-		return uniqueId;
+		return (String) getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID);
 	}
 
 	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
+		setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
 	}
 
 	public Long getCreationTime() {
-		return creationTime;
+		return (Long) getToscaPresentationValue(JsonPresentationFields.CREATION_TIME);
 	}
 
 	public void setCreationTime(Long creationTime) {
-		this.creationTime = creationTime;
+		setToscaPresentationValue(JsonPresentationFields.CREATION_TIME, creationTime);
 	}
 
 	public Long getModificationTime() {
-		return modificationTime;
+		return (Long) getToscaPresentationValue(JsonPresentationFields.MODIFICATION_TIME);
 	}
 
 	public void setModificationTime(Long modificationTime) {
-		this.modificationTime = modificationTime;
+		setToscaPresentationValue(JsonPresentationFields.MODIFICATION_TIME, modificationTime);
 	}
 
 	public String getDescription() {
-		return description;
+		return (String) getToscaPresentationValue(JsonPresentationFields.DESCRIPTION);
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
 	}
 
 	public String getPosX() {
-		return posX;
+		return (String) getToscaPresentationValue(JsonPresentationFields.CI_POS_X);
 	}
 
 	public void setPosX(String posX) {
-		this.posX = posX;
+		setToscaPresentationValue(JsonPresentationFields.CI_POS_X, posX);
 	}
 
 	public String getPosY() {
-		return posY;
+		return (String) getToscaPresentationValue(JsonPresentationFields.CI_POS_Y);
 	}
 
 	public void setPosY(String posY) {
-		this.posY = posY;
+		setToscaPresentationValue(JsonPresentationFields.CI_POS_Y, posY);
 	}
 
 	public String getComponentUid() {
-		return componentUid;
+		return (String) getToscaPresentationValue(JsonPresentationFields.CI_COMPONENT_UID);
 	}
 
 	public void setComponentUid(String resourceUid) {
-		this.componentUid = resourceUid;
+		setToscaPresentationValue(JsonPresentationFields.CI_COMPONENT_UID, resourceUid);
 	}
 
 	public String getName() {
-		return name;
+		return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
 	}
 
 	public void setName(String name) {
-		if(invariantName == null){
-			invariantName = ValidationUtils.normalizeComponentInstanceName(name);
+		if(this.getInvariantName() == null){
+			this.setInvariantName(ValidationUtils.normalizeComponentInstanceName(name));
 		}
-		this.name = name;
+		setToscaPresentationValue(JsonPresentationFields.NAME, name);
 	}
 	
 	public String getInvariantName() {
-		return invariantName;
+		return (String) getToscaPresentationValue(JsonPresentationFields.CI_INVARIANT_NAME);
 	}
 
 	public void setInvariantName(String invariantName) {
-		this.invariantName = invariantName;
+		setToscaPresentationValue(JsonPresentationFields.CI_INVARIANT_NAME, invariantName);
 	}
 
 	public Integer getPropertyValueCounter() {
-		return propertyValueCounter;
+		return (Integer) getToscaPresentationValue(JsonPresentationFields.CI_PROP_VALUE_COUNTER);
 	}
 
 	public void setPropertyValueCounter(Integer propertyValueCounter) {
-		this.propertyValueCounter = propertyValueCounter;
+		setToscaPresentationValue(JsonPresentationFields.CI_PROP_VALUE_COUNTER, propertyValueCounter);
 	}
 
 	public String getNormalizedName() {
-		return normalizedName;
+		return (String) getToscaPresentationValue(JsonPresentationFields.NORMALIZED_NAME);
 	}
 
 	public void setNormalizedName(String normalizedName) {
-		this.normalizedName = normalizedName;
+		setToscaPresentationValue(JsonPresentationFields.NORMALIZED_NAME, normalizedName);
 	}
 
 	public OriginTypeEnum getOriginType() {
+		OriginTypeEnum originType = null;
+		String origType = (String) getToscaPresentationValue(JsonPresentationFields.CI_ORIGIN_TYPE);	
+		if (origType != null && !origType.isEmpty()) {
+
+			originType = OriginTypeEnum.findByValue(origType);
+		}
 		return originType;
 	}
 
 	public void setOriginType(OriginTypeEnum originType) {
-		this.originType = originType;
+		if(originType != null)
+			setToscaPresentationValue(JsonPresentationFields.CI_ORIGIN_TYPE, originType.getValue());
 	}
 
 	public Integer getAttributeValueCounter() {
-		return attributeValueCounter;
+		return (Integer) getToscaPresentationValue(JsonPresentationFields.CI_ATTR_VALUE_COUNTER);
 	}
 
 	public void setAttributeValueCounter(Integer attributeValueCounter) {
-		this.attributeValueCounter = attributeValueCounter;
+		setToscaPresentationValue(JsonPresentationFields.CI_ATTR_VALUE_COUNTER, attributeValueCounter);
 	}
 
 	public Integer getInputValueCounter() {
-		return inputValueCounter;
+		return (Integer) getToscaPresentationValue(JsonPresentationFields.CI_INPUT_VALUE_COUNTER);
 	}
 
 	public void setInputValueCounter(Integer inputValueCounter) {
-		this.inputValueCounter = inputValueCounter;
+		setToscaPresentationValue(JsonPresentationFields.CI_INPUT_VALUE_COUNTER, inputValueCounter);
 	}
 
 	public String getCustomizationUUID() {
-		return customizationUUID;
+		return (String) getToscaPresentationValue(JsonPresentationFields.CUSTOMIZATION_UUID);
 	}
 
 	public void setCustomizationUUID(String customizationUUID) {
-		this.customizationUUID = customizationUUID;
+		setToscaPresentationValue(JsonPresentationFields.CUSTOMIZATION_UUID, customizationUUID);
 	}
 
 	public String getComponentName() {
-		return componentName;
+		return (String) getToscaPresentationValue(JsonPresentationFields.CI_COMPONENT_NAME);
 	}
 
 	public void setComponentName(String resourceName) {
-		this.componentName = resourceName;
+		setToscaPresentationValue(JsonPresentationFields.CI_COMPONENT_NAME, resourceName);
 	}
 
 	public String getComponentVersion() {
-		return componentVersion;
+		return (String) getToscaPresentationValue(JsonPresentationFields.CI_COMPONENT_VERSION);
 	}
 
 	public String getToscaComponentName() {
-		return toscaComponentName;
+		return (String) getToscaPresentationValue(JsonPresentationFields.CI_TOSCA_COMPONENT_NAME);
 	}
 
 	public void setToscaComponentName(String toscaComponentName) {
-		this.toscaComponentName = toscaComponentName;
+		setToscaPresentationValue(JsonPresentationFields.CI_TOSCA_COMPONENT_NAME, toscaComponentName);
 	}
 
 	public void setComponentVersion(String resourceVersion) {
-		this.componentVersion = resourceVersion;
+		setToscaPresentationValue(JsonPresentationFields.CI_COMPONENT_VERSION, resourceVersion);
 	}
 
 	@Override
 	public String toString() {
-		return "ComponentInstanceDataDefinition [icon=" + icon + ", uniqueId=" + uniqueId + ", name=" + name + ", normalizedName=" + normalizedName + ", componentUid=" + componentUid + ", creationTime=" + creationTime + ", modificationTime="
-				+ modificationTime + ", description=" + description + ", posX=" + posX + ", posY=" + posY + ", propertyValueCounter=" + propertyValueCounter + ", attributeValueCounter=" + attributeValueCounter + ", inputValueCounter="
-				+ inputValueCounter + ", originType=" + originType + ", customizationUUID=" + customizationUUID + ", componentName=" + componentName + ", componentVersion=" + componentVersion + ", toscaComponentName=" + toscaComponentName + "]";
+		return "ComponentInstanceDataDefinition [icon=" + getIcon() + ", uniqueId=" + getUniqueId() + ", name=" + getName() + ", normalizedName=" + getNormalizedName() + ", componentUid=" + getComponentUid() + ", creationTime=" + getCreationTime() + ", modificationTime="
+				+ getModificationTime() + ", description=" + getDescription() + ", posX=" + getPosX() + ", posY=" + getPosY() + ", propertyValueCounter=" + getPropertyValueCounter() + ", attributeValueCounter=" + getAttributeValueCounter() + ", inputValueCounter="
+				+ getInputValueCounter() + ", originType=" + getOriginType() + ", customizationUUID=" + getCustomizationUUID() + ", componentName=" + getComponentName() + ", componentVersion=" + getComponentVersion() + ", toscaComponentName=" + getToscaComponentName() + "]";
 	}
 
 }

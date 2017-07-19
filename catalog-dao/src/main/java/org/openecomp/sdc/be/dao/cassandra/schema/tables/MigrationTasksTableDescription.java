@@ -54,6 +54,7 @@ public class MigrationTasksTableDescription implements ITableDescription {
         NAME("task_name", DataType.varchar(), false),
         STATUS("task_status", DataType.varchar(), false),
         MESSAGE("msg", DataType.varchar(), false),
+        DESCRIPTION("description", DataType.varchar(), false),
         EXECUTION_TIME("execution_time", DataType.cdouble(), false);
 
         private String fieldName;

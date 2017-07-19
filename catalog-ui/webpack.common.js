@@ -9,7 +9,7 @@ const postcssUrl = require('postcss-url');
 const {GlobCopyWebpackPlugin, BaseHrefWebpackPlugin} = require('@angular/cli/plugins/webpack');
 const {CommonsChunkPlugin} = require('webpack').optimize;
 const {AotPlugin} = require('@ngtools/webpack');
-
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const nodeModules = path.join(process.cwd(), 'node_modules');
 
 const bundledScripts = [
@@ -196,6 +196,7 @@ module.exports = function(params) {
             }),
             new webpack.NoEmitOnErrorsPlugin(),
             new ProgressPlugin(),
+            // new BundleAnalyzerPlugin(),
             // new HtmlWebpackPlugin({
             //     template: "./src/index.html",
             //     filename: "./index.html",

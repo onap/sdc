@@ -636,7 +636,7 @@ export class WorkspaceViewModel {
         this.$scope.reload = (component:Component):void => {
             this.$state.go(this.$state.current.name,{id:component.uniqueId},{reload:true});
         };
-        
+
     };
 
     private initAfterScope = ():void => {

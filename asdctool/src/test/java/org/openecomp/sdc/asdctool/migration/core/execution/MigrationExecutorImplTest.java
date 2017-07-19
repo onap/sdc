@@ -1,5 +1,6 @@
 package org.openecomp.sdc.asdctool.migration.core.execution;
 
+import org.openecomp.sdc.asdctool.migration.DummyMigrationFactory;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
@@ -12,36 +13,18 @@ public class MigrationExecutorImplTest {
 
     @Test
     public void testExecuteMigration() throws Exception {
-        MigrationExecutionResult execute = new MigrationExecutorImpl().execute(new DummyMigration());
-
+        MigrationExecutionResult execute = new MigrationExecutorImpl().execute(DummyMigrationFactory.SUCCESSFUL_MIGRATION);
+        assertMigrationTaskEntryByMigrationExecutionResult(execute, DummyMigrationFactory.SUCCESSFUL_MIGRATION);
     }
 
-    private void assertMigrationTaskEntryByMigrationExecutionResult(MigrationExecutionResult executionResult, Migration migration, MigrationResult result) {
-        assertEquals(executionResult.getMsg(), result.getMsg());
-        assertEquals(executionResult.getMigrationStatus().name(), result.getMigrationStatus());
+    private void assertMigrationTaskEntryByMigrationExecutionResult(MigrationExecutionResult executionResult, Migration migration) {
+        MigrationResult migrationResult = migration.migrate();
+        assertEquals(executionResult.getMsg(), migrationResult.getMsg());
+        assertEquals(executionResult.getMigrationStatus(), migrationResult.getMigrationStatus());
         assertEquals(executionResult.getTaskName(), migration.getClass().getName());
         assertEquals(executionResult.getVersion(), migration.getVersion());
+        assertEquals(executionResult.getDescription(), migration.description());
         assertNotNull(executionResult.getExecutionTime());
     }
 
-    private class DummyMigration implements Migration {
-
-        @Override
-        public String description() {
-            return null;
-        }
-
-        @Override
-        public DBVersion getVersion() {
-            return DBVersion.fromString("1710.22");
-        }
-
-        @Override
-        public MigrationResult migrate() {
-            MigrationResult migrationResult = new MigrationResult();
-            migrationResult.setMigrationStatus(MigrationResult.MigrationStatus.COMPLETED);
-            migrationResult.setMsg("myMsg");
-            return migrationResult;
-        }
-    }
 }

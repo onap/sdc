@@ -111,9 +111,7 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
+import org.xml.sax.*;
 import org.yaml.snakeyaml.Yaml;
 
 import com.google.gson.Gson;
@@ -2038,6 +2036,17 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 	@SuppressWarnings("restriction")
 	public boolean isValidXml(byte[] xmlToParse) {
 		XMLReader parser = new SAXParser();
+		try {
+			parser.setFeature("http://apache.org/xml/features/validation/schema", false);
+		} catch (SAXNotRecognizedException e) {
+			e.printStackTrace();
+			log.debug("Xml parser couldn't set feature: \"http://apache.org/xml/features/validation/schema\", false", e.getMessage(), e);
+
+		} catch (SAXNotSupportedException e) {
+			e.printStackTrace();
+			log.debug("Xml parser couldn't set feature: \"http://apache.org/xml/features/validation/schema\", false", e.getMessage(), e);
+
+		}
 		boolean isXmlValid = true;
 		try {
 			parser.parse(new InputSource(new ByteArrayInputStream(xmlToParse)));
@@ -4007,7 +4016,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 	}
 
 	private Either<Either<ArtifactDefinition,Operation>,ResponseFormat> getResponseAndAuditInvalidEmptyHeatEnvFile(AuditingActionEnum auditingAction, Component parent, String uniqueId, User user, ArtifactDefinition currHeatArtifact, String artifactId, ComponentTypeEnum componentType) {
-		ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_YAML);
+		ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_YAML, currHeatArtifact.getArtifactName());
 		handleAuditing(auditingAction, parent, parent.getUniqueId(), user, currHeatArtifact, null, artifactId, responseFormat, componentType, "");
 		return Either.right(responseFormat);
 	}

@@ -159,6 +159,21 @@ public enum JsonPresentationFields {
 	GROUP_INSTANCE_ARTIFACTS		("groupInstanceArtifacts",		null),
 	GROUP_INSTANCE_ARTIFACTS_UUID	("groupInstanceArtifactsUuid",	null),
 	GROUP_INSTANCE_PROPERTIES		("groupInstancesProperties",	null),
+	
+	//Component insatnce
+
+	CI_COMPONENT_UID 				("componentUid", null),
+	CI_POS_X 						("posX", null),
+	CI_POS_Y 						("posY", null),	
+	CI_PROP_VALUE_COUNTER 			("propertyValueCounter", null),
+	CI_ATTR_VALUE_COUNTER			("attributeValueCounter", null),
+	CI_INPUT_VALUE_COUNTER 			("inputValueCounter", null),
+	CI_ORIGIN_TYPE 					("originType", null),
+	CI_COMPONENT_NAME 				("componentName", null),
+	CI_COMPONENT_VERSION 			("componentVersion", null),
+	CI_TOSCA_COMPONENT_NAME 		("toscaComponentName", null),
+	CI_INVARIANT_NAME 				("invariantName", null),
+	CI_ICON 						("icon", null),
 
 	;
 	

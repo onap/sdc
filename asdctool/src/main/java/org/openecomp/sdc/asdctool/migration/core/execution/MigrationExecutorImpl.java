@@ -41,6 +41,7 @@ public class MigrationExecutorImpl implements MigrationExecutor {
         migrationExecutionResult.setMsg(migrationResult.getMsg());
         migrationExecutionResult.setTaskName(migration.getClass().getName());
         migrationExecutionResult.setVersion(migration.getVersion());
+        migrationExecutionResult.setDescription(migration.description());
         return migrationExecutionResult;
     }
 

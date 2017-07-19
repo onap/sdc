@@ -13,6 +13,7 @@ public class MigrationExecutionResult {
     private double executionTime;
     private DBVersion version;
     private String taskName;
+    private String description;
 
     public MigrationTaskEntry toMigrationTaskEntry() {
         MigrationTaskEntry migrationTaskEntry = new MigrationTaskEntry();
@@ -23,6 +24,7 @@ public class MigrationExecutionResult {
         migrationTaskEntry.setTaskStatus(this.getMigrationStatus().name());
         migrationTaskEntry.setMessage(this.getMsg());
         migrationTaskEntry.setExecutionTime(this.getExecutionTime());
+        migrationTaskEntry.setDescription(this.getDescription());
         return migrationTaskEntry;
     }
 
@@ -67,4 +69,11 @@ public class MigrationExecutionResult {
         this.taskName = taskName;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

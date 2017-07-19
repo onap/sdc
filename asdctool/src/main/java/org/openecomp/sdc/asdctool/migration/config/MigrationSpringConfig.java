@@ -6,7 +6,7 @@ import org.openecomp.sdc.asdctool.migration.resolver.MigrationResolver;
 import org.openecomp.sdc.asdctool.migration.resolver.SpringBeansMigrationResolver;
 import org.openecomp.sdc.asdctool.migration.service.SdcRepoService;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
-import org.openecomp.sdc.be.dao.cassandra.MigrationTasksDao;
+import org.openecomp.sdc.asdctool.migration.dao.MigrationTasksDao;
 import org.openecomp.sdc.be.dao.config.DAOSpringConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -55,5 +55,7 @@ public class MigrationSpringConfig {
     public CassandraClient cassandraClient() {
         return new CassandraClient();
     }
+
+
 
 }

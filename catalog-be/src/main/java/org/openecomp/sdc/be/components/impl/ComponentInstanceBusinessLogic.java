@@ -42,12 +42,15 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -65,11 +68,13 @@ import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
@@ -487,7 +492,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			}
 			Component origComponent = eitherResourceName.left().value();
 
-			resultOp = updateComponentInstanceMetadata(containerComponent, containerComponentType, origComponent, componentInstanceId, componentInstance, inTransaction);
+			resultOp = updateComponentInstanceMetadata(containerComponent, containerComponentType, origComponent, componentInstanceId, componentInstance);
 			return resultOp;
 
 		} finally {
@@ -562,7 +567,8 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 					Optional<ComponentInstance> op = componentInstanceList.stream().filter(ci -> ci.getUniqueId().equals(origInst.getUniqueId())).findAny();
 					if(op.isPresent()){
 						ComponentInstance updatedCi = op.get();	
-						updatedCi.setCustomizationUUID(origInst.getCustomizationUUID());
+						updatedCi = buildComponentInstance(updatedCi, origInst);
+						
 						Boolean isUniqueName = validateInstanceNameUniquenessUponUpdate(containerComponent, origInst, updatedCi.getName());
 						if(!isUniqueName){
 							CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update the name of the component instance {} to {}. A component instance with the same name already exists. ",
@@ -617,7 +623,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 	}
 
 	private Either<ComponentInstance, ResponseFormat> updateComponentInstanceMetadata(Component containerComponent, ComponentTypeEnum containerComponentType, org.openecomp.sdc.be.model.Component origComponent, String componentInstanceId,
-			ComponentInstance componentInstance, boolean inTransaction) {
+			ComponentInstance componentInstance) {
 
 		Either<ComponentInstance, ResponseFormat> resultOp = null;
 		Optional<ComponentInstance> componentInstanceOptional = null;
@@ -1871,5 +1877,41 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			result = Either.left(foundInstance.get());
 		}
 		return result;
+	}
+	
+	private ComponentInstance buildComponentInstance(ComponentInstance resourceInstanceForUpdate, ComponentInstance origInstanceForUpdate) {	
+
+		Long creationDate = origInstanceForUpdate.getCreationTime();		
+		
+		Long modificationTime = System.currentTimeMillis();
+		resourceInstanceForUpdate.setCreationTime(creationDate);
+		resourceInstanceForUpdate.setModificationTime(modificationTime);
+		
+		resourceInstanceForUpdate.setCustomizationUUID(origInstanceForUpdate.getCustomizationUUID());
+		
+		if (StringUtils.isEmpty(resourceInstanceForUpdate.getName())) {
+			resourceInstanceForUpdate.setName(origInstanceForUpdate.getName());
+			
+		}
+		if (StringUtils.isEmpty(resourceInstanceForUpdate.getNormalizedName()))
+			resourceInstanceForUpdate.setNormalizedName(origInstanceForUpdate.getNormalizedName());
+		
+		if (StringUtils.isEmpty(resourceInstanceForUpdate.getIcon()))
+			resourceInstanceForUpdate.setIcon(origInstanceForUpdate.getIcon());		
+	
+		
+		if (StringUtils.isEmpty(resourceInstanceForUpdate.getComponentVersion()))
+			resourceInstanceForUpdate.setComponentVersion(origInstanceForUpdate.getComponentVersion());
+		
+		if (StringUtils.isEmpty(resourceInstanceForUpdate.getComponentName()))
+			resourceInstanceForUpdate.setComponentName(origInstanceForUpdate.getComponentName());
+		
+		if (StringUtils.isEmpty(resourceInstanceForUpdate.getToscaComponentName()))
+				resourceInstanceForUpdate.setToscaComponentName(origInstanceForUpdate.getToscaComponentName());
+		
+		if (resourceInstanceForUpdate.getOriginType() == null) {			
+			resourceInstanceForUpdate.setOriginType(origInstanceForUpdate.getOriginType());
+		}
+		return resourceInstanceForUpdate;
 	}
 }

@@ -42,7 +42,6 @@ import fj.data.Either;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
-
 public class HealthCheckBusinessLogicTest {
 
 	HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic();

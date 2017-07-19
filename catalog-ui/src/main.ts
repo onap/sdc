@@ -38,10 +38,10 @@ if (__ENV__==='prod') {
 
 // Ugliy fix because the cookie recieved from webseal change his value after some seconds.
 declare var __ENV__: string;
-let timeout:number = 5000;
+let timeout:number = 0;
 if (__ENV__==='dev'){
     timeout=0;
-} 
+}
 window.setTimeout(()=>{
     platformBrowserDynamic().bootstrapModule(AppModule).then(platformRef => {
         const upgrade = platformRef.injector.get(UpgradeModule) as UpgradeModule;

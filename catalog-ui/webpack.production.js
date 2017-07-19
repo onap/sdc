@@ -7,20 +7,10 @@ const ServerConfig = require('./webpack.server');
 const webpackCommonConfig = require('./webpack.common');
 const {GlobCopyWebpackPlugin, BaseHrefWebpackPlugin} = require('@angular/cli/plugins/webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-
+var CompressionPlugin = require('compression-webpack-plugin');
 var currentTime = new Date().getTime();
 
-const params = {
-    // entryPoints: [
-    //     '/sdc1/scripts/inline',
-    //     '/sdc1/scripts/polyfills',
-    //     '/sdc1/scripts/vendor',
-    //     '/sdc1/scripts/main',
-    //     '/sdc1/scripts/sw-register',
-    //     '/sdc1/scripts/scripts',
-    //     '/sdc1/scripts/styles'
-    // ]
-};
+const params = {};
 
 const webpackProdConfig = {
     module: {
@@ -29,7 +19,7 @@ const webpackProdConfig = {
             {
                 test: /\.(jpg|png|gif|otf|ttf|woff|woff2|cur|ani)$/,
                 loader: "url-loader?name=/scripts/images/[name].[hash:20].[ext]&limit=10000"
-            }
+    }
         ]
     },
     output: {
@@ -47,9 +37,10 @@ const webpackProdConfig = {
         new CopyWebpackPlugin([
             {
                 from: './src/index.html', transform: function (content, path) {
-                    content = (content + '').replace(/\.bundle/g, '.' + currentTime + '.bundle');
-                    return content;
-                }
+                content = (content + '').replace(/\.bundle.js/g, '.' + currentTime + '.bundle.jsgz');
+
+                return content;
+            }
             }
         ]),
         new webpack.optimize.UglifyJsPlugin({
@@ -63,6 +54,12 @@ const webpackProdConfig = {
                 screw_ie8: true
             },
             comments: false
+        }),
+        new webpack.optimize.AggressiveMergingPlugin(),//Merge chunks
+        new CompressionPlugin({
+            asset: "[path]gz",
+            algorithm: "gzip",
+            test: /\.js$|\.css$|\.html$/
         })
     ]
 };

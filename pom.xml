@@ -13,7 +13,7 @@
 		<!-- ==================== -->
 		<!-- Generic properties -->
 		<!-- ==================== -->
-		<build.type>-SNAPSHOT</build.type>
+		<build.type></build.type>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sprint.number>74</sprint.number>
 
@@ -60,13 +60,13 @@
         <commons-logging>1.2</commons-logging>
 		<groovy.version>2.3.5</groovy.version>
 		<janino.version>3.0.6</janino.version>
-		
+
 		<!-- aspects -->
 		<jcabi.version>0.20.1</jcabi.version>
 		<aspectjrt.version>1.8.4</aspectjrt.version>
 		<aspectj.version>1.7.4</aspectj.version>
 		<jcabi.plugin.version>0.13.2</jcabi.plugin.version>
-		
+
 		<!-- Logging end -->
 		<!-- System Metrics -->
 		<sigar.version>1.6.4</sigar.version>
@@ -295,7 +295,8 @@
 					<sectionDelimiter>================================================================================</sectionDelimiter>
 					<licenseName>apache_v2</licenseName>
 					<inceptionYear>2017</inceptionYear>
-					<organizationName>AT&amp;T Intellectual Property. All rights reserved.</organizationName>
+					<organizationName>AT&amp;T Intellectual Property. All rights
+						reserved.</organizationName>
 					<projectName>SDC</projectName>
 					<canUpdateCopyright>true</canUpdateCopyright>
 					<canUpdateDescription>true</canUpdateDescription>
@@ -379,97 +380,16 @@
 			
 			<properties>
 				<ecomp.version>1.2.7</ecomp.version>
-				<artifact-generator-api.version>1707.0.0</artifact-generator-api.version>
-				<artifact-generator-core.version>1707.0.0</artifact-generator-core.version>
-				<dox-common-lib.version>1707.0.0</dox-common-lib.version>
+				<artifact-generator-api.version>1710.0.0-SNAPSHOT</artifact-generator-api.version>
+				<artifact-generator-core.version>1710.0.0-SNAPSHOT</artifact-generator-core.version>
+				<dox-common-lib.version>1710.0.0-SNAPSHOT</dox-common-lib.version>
 				<sdc-tosca-parser.version>1.1.14</sdc-tosca-parser.version>
 			</properties>	
 			
 			
 		</profile>
 		
-		<profile>
-			<id>build</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<modules>
-				<module>security-utils</module>
-				<module>common-app-api</module>
-				<module>common-be</module>
-				<module>catalog-dao</module>
-				<module>catalog-model</module>
-				<module>catalog-be</module>
-				<module>asdctool</module>
-				<module>catalog-ui</module>
-				<module>catalog-fe</module>
-				<module>asdc-tests</module>
-				<module>test-apis-ci</module>
-				<module>ui-ci</module>
-			</modules>
-			
-			
-			<properties>
-				<ecomp.version>1.2.7</ecomp.version>
-				<artifact-generator-api.version>1707.0.0</artifact-generator-api.version>
-				<artifact-generator-core.version>1707.0.0</artifact-generator-core.version>
-				<dox-common-lib.version>1707.0.0</dox-common-lib.version>
-				<sdc-tosca-parser.version>1.1.14</sdc-tosca-parser.version>
-			</properties>
-		
-			<build>
-				<plugins>
-					<!-- Create the 'next build number' file -->
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.5.0</version>
-						
-						<executions>
-							<execution>
-								<inherited>false</inherited>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-								<phase>initialize</phase>
-								<id>get.next.build.number</id>
-								<configuration>
-									<workingDirectory>${project.basedir}</workingDirectory>
-									<executable>/usr/bin/perl</executable>
-									<arguments>
-										<argument>scripts/get_next_version.pl</argument>
-										<argument>-groupId=${project.groupId}</argument>
-										<argument>-artifactId=${project.artifactId}</argument>
-										<argument>-baseVersion=${project.version}.${sprint.number}</argument>
-									</arguments>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
 
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>properties-maven-plugin</artifactId>
-						<version>1.0-alpha-2</version>
-
-						<executions>
-							<execution>
-								<phase>initialize</phase>
-								<inherited>false</inherited>
-								<goals>
-									<goal>read-project-properties</goal>
-								</goals>
-								<configuration>
-									<files>
-										<file>${project.build.directory}/FullReleaseVersion.properties</file>
-									</files>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 
 		<profile>
 			<id>onboarding</id>
@@ -480,50 +400,6 @@
 				<module>onboarding</module>
 			</modules>
 		</profile>
-
-		<profile>
-			<id>Fortify</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.fortify.ps.maven.plugin</groupId>
-						<artifactId>sca-maven-plugin</artifactId>
-						<version>4.30</version>
-						<configuration>
-							<source>1.8</source>
-							<buildId>${project.artifactId}</buildId>
-							<toplevelArtifactId>${project.artifactId}</toplevelArtifactId>
-							<fortify.sca.exclude>**/node_modules/*</fortify.sca.exclude>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
-			<id>WhiteSource</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.whitesource</groupId>
-						<artifactId>whitesource-maven-plugin</artifactId>
-						<version>3.1.6</version>
-						<configuration>
-							<orgToken>2809bf29-b00c-48c0-a1f0-ca5c9c22f3df</orgToken>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
 	</profiles>
 
 	<repositories>
@@ -549,11 +425,6 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-<!--		<repository>
-			<id>central</id>
-			<name>Official Maven repository</name>
-			<url>http://repo2.maven.org/maven2/</url>
-		</repository>-->
 		<repository>
 			<id>ecomp-releases</id>
 			<name>Release Repository</name>

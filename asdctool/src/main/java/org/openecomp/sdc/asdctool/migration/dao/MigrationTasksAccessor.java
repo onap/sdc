@@ -1,4 +1,4 @@
-package org.openecomp.sdc.be.dao.cassandra;
+package org.openecomp.sdc.asdctool.migration.dao;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.mapping.annotations.Accessor;

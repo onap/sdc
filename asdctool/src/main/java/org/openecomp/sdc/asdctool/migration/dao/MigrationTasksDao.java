@@ -1,4 +1,4 @@
-package org.openecomp.sdc.be.dao.cassandra;
+package org.openecomp.sdc.asdctool.migration.dao;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -7,6 +7,8 @@ import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.MappingManager;
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.dao.cassandra.CassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.resources.data.MigrationTaskEntry;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.slf4j.Logger;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 
-@Component("sdc-migration-tasks-cassandra-dao")
 public class MigrationTasksDao extends CassandraDao {
 
     private static Logger logger = LoggerFactory.getLogger(MigrationTasksDao.class.getName());

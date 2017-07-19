@@ -67,7 +67,7 @@ tosca.datatypes.TimeInterval:
 
 tosca.datatypes.network.NetworkInfo:
   derived_from: tosca.datatypes.Root
-  properties:  
+  properties:
     network_name: 
       type: string
     network_id: 
@@ -1045,7 +1045,13 @@ org.openecomp.datatypes.network.IpRequirements:
       required: false
     floating_ip_count_required:
       type: org.openecomp.datatypes.AssignmentRequirements
-      required: false 
+      required: false
+    ip_address_plan_name:
+      type: string
+      required: false
+    vrf_name:
+      type: string
+      required: false
 
 org.openecomp.datatypes.network.MacAssignments:
   derived_from: org.openecomp.datatypes.Root

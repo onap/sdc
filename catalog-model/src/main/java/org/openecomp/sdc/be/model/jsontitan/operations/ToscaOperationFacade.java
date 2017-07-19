@@ -2115,10 +2115,12 @@ public class ToscaOperationFacade {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to delete group instances for container {}. error {] ", componentInstanceId, status);
             return Either.right(status);
         }
-        status = addGroupInstancesToComponentInstance( containerComponent , componentInstance, componentInstance.getGroupInstances() );
-        if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to add group instances for container {}. error {] ", componentInstanceId, status);
-            return Either.right(status);
+        if(componentInstance.getGroupInstances() != null){
+        	status = addGroupInstancesToComponentInstance( containerComponent , componentInstance, componentInstance.getGroupInstances() );
+        	if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
+        		CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to add group instances for container {}. error {] ", componentInstanceId, status);
+        		return Either.right(status);
+        	}
         }
         return Either.left(status);
     }

@@ -1,5 +1,9 @@
 {
   "heat": [
+    "contrailPort",
+    "extCp",
+    "contrailV2VirtualMachineInterface",
+    "neutronPort",
     "Generic_PNF"
   ],
   "normative": [

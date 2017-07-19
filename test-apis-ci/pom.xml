@@ -353,29 +353,5 @@
 		</plugins>
 	</build>
 
-	<profiles>
-		<profile>
-			<id>Fortify</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
 
-			<build>
-				<plugins>
-					<!-- =========================== -->
-					<!-- HP Fortifay scanner -->
-					<!-- =========================== -->
-					<plugin>
-						<groupId>com.fortify.ps.maven.plugin</groupId>
-						<artifactId>sca-maven-plugin</artifactId>
-						<version>4.30</version>
-						<configuration>
-							<scanEnabled>false</scanEnabled>
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>

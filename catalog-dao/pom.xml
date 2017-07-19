@@ -300,28 +300,4 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>Fortify</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.fortify.ps.maven.plugin</groupId>
-						<artifactId>sca-maven-plugin</artifactId>
-						<version>4.30</version>
-						<configuration>
-							<source>1.8</source>
-							<buildId>${project.parent.artifactId}</buildId>
-							<toplevelArtifactId>${project.parent.artifactId}</toplevelArtifactId>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>
