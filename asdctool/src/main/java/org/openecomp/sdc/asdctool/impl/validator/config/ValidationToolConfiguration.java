@@ -7,6 +7,7 @@ import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.VfArtifactValid
 import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceValidatorExecuter;
 import org.openecomp.sdc.asdctool.impl.validator.executers.VfValidatorExecuter;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
+import org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson.ModuleJsonTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.be.dao.DAOTitanStrategy;
 import org.openecomp.sdc.be.dao.TitanClientStrategy;
@@ -36,6 +37,9 @@ public class ValidationToolConfiguration {
 
     @Bean
     public ServiceArtifactValidationTask serviceArtifactValidationTask() { return new ServiceArtifactValidationTask();}
+
+    @Bean
+    public ModuleJsonTask moduleJsonTask() { return new ModuleJsonTask();}
 
     @Bean
     public ValidationToolBL validationToolBL() {
