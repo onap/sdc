@@ -48,16 +48,99 @@
 			<scope>compile</scope>
 		</dependency>
 
+
 		<dependency>
 			<groupId>org.openecomp.sdc</groupId>
 			<artifactId>catalog-be</artifactId>
 			<version>${project.version}</version>
 
 			<!-- Comment Out in order to debug in eclipse -->
-			<classifier>classes</classifier>
+			 <classifier>classes</classifier>
 
-			<scope>compile</scope>
+			 <exclusions>
+			 	<exclusion>
+					<groupId>org.openecomp.ecompsdkos</groupId>
+					<artifactId>epsdk-fw</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>org.openecomp.sdc.common</groupId>
+					<artifactId>openecomp-sdc-artifact-generator-api</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>org.openecomp.sdc.common</groupId>
+					<artifactId>openecomp-sdc-artifact-generator-core</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<groupId>org.openecomp.sdc.common</groupId>
+					<artifactId>openecomp-common-lib</artifactId>
+				</exclusion>
+			 </exclusions>
+
+			 <scope>compile</scope> 
 		</dependency>
+
+		<dependency>
+			<groupId>org.openecomp.ecompsdkos</groupId>
+			<artifactId>epsdk-fw</artifactId>
+			<version>${ecomp.version}</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.att.nsa</groupId>
+					<artifactId>cambriaClient</artifactId>
+				</exclusion>
+
+				<exclusion>
+					<artifactId>slf4j-log4j12</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+
+		<!--Artifact Generator-->
+		<dependency>
+			<groupId>org.openecomp.sdc.common</groupId>
+			<artifactId>openecomp-sdc-artifact-generator-api</artifactId>
+			<version>${artifact-generator-api.version}</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openecomp.sdc.common</groupId>
+			<artifactId>openecomp-sdc-artifact-generator-core</artifactId>
+			<version>${artifact-generator-core.version}</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openecomp.sdc.common</groupId>
+			<artifactId>openecomp-common-lib</artifactId>
+			<version>${dox-common-lib.version}</version>
+			<type>pom</type>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 
 		<!-- ASDC dependencies end -->
 		<dependency>
