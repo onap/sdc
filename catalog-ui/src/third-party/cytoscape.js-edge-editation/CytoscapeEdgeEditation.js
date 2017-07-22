@@ -199,19 +199,7 @@
 
             this._resizeCanvas();
 
-            this._arrowEnd = this._cy.add({
-                group: "nodes",
-                data: {
-                    "id": this.ARROW_END_ID,
-                    "position": {x: 150, y: 150}
-                }
-            });
 
-            this._arrowEnd.css({
-                "opacity": 0,
-                'width': 0.0001,
-                'height': 0.0001
-            });
 
         },
         registerHandle: function (handle) {
@@ -250,7 +238,7 @@
         _drawHandle: function (handle, target) {
 
             var position = this._getHandlePosition(handle, target);
-            var handleSize = target.renderedWidth() / 4;
+            var handleSize = this.HANDLE_SIZE * this._cy.zoom();
             
             this._ctx.beginPath();
 
@@ -273,6 +261,22 @@
             if (this._hover) {
                 toNode = this._hover;
             } else {
+                if (!this._arrowEnd) {
+                    this._arrowEnd = this._cy.add({
+                        group: "nodes",
+                        data: {
+                            "id": this.ARROW_END_ID,
+                            "position": { x: 150, y: 150 }
+                        }
+                    });
+
+                    this._arrowEnd.css({
+                        "opacity": 0,
+                        'width': 0.0001,
+                        'height': 0.0001
+                    });                   
+                }
+
                 this._arrowEnd.renderedPosition(toPosition);
                 toNode = this._arrowEnd;
             }
@@ -301,6 +305,11 @@
             if (this._edge) {
                 this._edge.remove();
                 this._edge = null;
+            }
+
+            if (this._arrowEnd) {
+                this._arrowEnd.remove();
+                this._arrowEnd = null;
             }
         },
         _resizeCanvas: function () {
@@ -460,19 +469,20 @@
                 }
             }
         },
-        _getHandlePosition: function (handle, target) {
+        _getHandlePosition: function (handle, target) { //returns the upper left point at which to begin drawing the handle
             var position = target.renderedPosition();
             var width = target.renderedWidth();
             var height = target.renderedHeight();
+            var renderedHandleSize = this.HANDLE_SIZE * this._cy.zoom(); //actual number of pixels that handle will use.
             var xpos = null;
             var ypos = null;
 
             switch (handle.positionX) {
                 case "left":
-                    xpos = position.x - width / 4;
+                    xpos = position.x - width / 2;
                     break;
-                case "right":
-                    xpos = position.x + width / 4;
+                case "right": //position.x is the exact center of the node. Need to add half the width to get to the right edge. Then, subtract renderedHandleSize to get handle position
+                    xpos = position.x + width / 2 - renderedHandleSize;
                     break;
                 case "center":
                     xpos = position.x;
@@ -481,19 +491,21 @@
 
             switch (handle.positionY) {
                 case "top":
-                    ypos = position.y - width / 2;
+                    ypos = position.y - height / 2;
                     break;
                 case "center":
                     ypos = position.y;
                     break;
                 case "bottom":
-                    ypos = position.y + width / 2;
+                    ypos = position.y + height / 2;
                     break;
             }
 
-            var offsetX =  0;
-            var offsetY =  0;
-            return {x: xpos + offsetX, y: ypos + offsetY};
+            //Determine if handle will be too big and require offset to prevent it from covering too much of the node icon (in which case, move it over by 1/2 the renderedHandleSize, so half the handle overlaps).
+            //Need to use target.width(), which is the size of the node, unrelated to rendered size/zoom
+            var offsetX = (target.width() < 30) ? renderedHandleSize / 2 : 0; 
+            var offsetY = (target.height() < 30) ? renderedHandleSize /2 : 0;
+            return {x: xpos + offsetX, y: ypos - offsetY};
         },
         _getEdgeCSSByHandle: function (handle) {
             var color = handle.lineColor ? handle.lineColor : handle.color;

@@ -20,7 +20,7 @@
 import {CompositionCiNodeBase} from "./composition-ci-node-base";
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
 import {ImageCreatorService} from "../../../../directives/graphs-v2/image-creator/image-creator.service";
-import {ImagesUrl} from "../../../../utils/constants";
+import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
 
 export class CompositionCiNodeVf extends CompositionCiNodeBase {
 
@@ -32,6 +32,7 @@ export class CompositionCiNodeVf extends CompositionCiNodeBase {
 
     private initVf():void {
         this.img = this.imagesPath + ImagesUrl.RESOURCE_ICONS + this.componentInstance.icon + '.png';
+        this.imgWidth = GraphUIObjects.DEFAULT_RESOURCE_WIDTH;
         this.classes = 'vf-node';
         if (!this.certified) {
             this.classes = this.classes + ' not-certified';

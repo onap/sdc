@@ -59,6 +59,8 @@ public class Configuration extends BasicConfiguration {
 
 	private String onboardingForwardContext;
 
+	private OnboardingConfig onboarding;
+
 	public String getKibanaProtocol() {
 		return kibanaProtocol;
 	}
@@ -297,6 +299,54 @@ public class Configuration extends BasicConfiguration {
 
 	public void setOnboardingForwardContext(String onboardingForwardContext) {
 		this.onboardingForwardContext = onboardingForwardContext;
+	}
+
+	public OnboardingConfig getOnboarding() {
+		return onboarding;
+	}
+
+	public void setOnboarding(OnboardingConfig onboarding) {
+		this.onboarding = onboarding;
+	}
+
+	public static class OnboardingConfig {
+
+		String protocol = "http";
+		String host;
+		Integer port;
+		String healthCheckUri;
+
+		public String getProtocol() {
+			return protocol;
+		}
+
+		public void setProtocol(String protocol) {
+			this.protocol = protocol;
+		}
+
+		public String getHost() {
+			return host;
+		}
+
+		public void setHost(String host) {
+			this.host = host;
+		}
+
+		public Integer getPort() {
+			return port;
+		}
+
+		public void setPort(Integer port) {
+			this.port = port;
+		}
+
+		public String getHealthCheckUri() {
+			return healthCheckUri;
+		}
+
+		public void setHealthCheckUri(String healthCheckUri) {
+			this.healthCheckUri = healthCheckUri;
+		}
 	}
 
 	@Override

@@ -13,7 +13,7 @@
 		<!-- ==================== -->
 		<!-- Generic properties -->
 		<!-- ==================== -->
-		<build.type></build.type>
+		<build.type>-SNAPSHOT</build.type>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sprint.number>74</sprint.number>
 

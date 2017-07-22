@@ -57,6 +57,7 @@ import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckComponent;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
+import org.openecomp.sdc.common.api.HealthCheckWrapper;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -253,9 +254,9 @@ public class HealthCheckBusinessLogic {
 	private List<HealthCheckInfo> getAmdocsHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
 		HealthCheckStatus healthCheckStatus;
 		String description;
-		Map<String, Object> amdocsHC = null;
 		String version = null;
-		List<HealthCheckInfo> componentsInfo = null;
+		List<HealthCheckInfo> componentsInfo = new ArrayList<>();
+
 		CloseableHttpClient httpClient = getHttpClient();
 		String amdocsHealtchCheckUrl = buildHealthCheckUrl();
 		HttpGet httpGet = new HttpGet(amdocsHealtchCheckUrl);
@@ -265,37 +266,45 @@ public class HealthCheckBusinessLogic {
 			beResponse = httpClient.execute(httpGet);
 			beStatus = beResponse.getStatusLine().getStatusCode();
 
-			HttpEntity entity = beResponse.getEntity();
-			String beJsonResponse = EntityUtils.toString(entity);
-			Gson gson = new Gson();
-			amdocsHC = gson.fromJson(beJsonResponse, Map.class);
-			version = amdocsHC.get("sdcVersion") != null ? amdocsHC.get("sdcVersion").toString() : null;
-			Object object = amdocsHC.get("componentsInfo");
-			Type listType = new TypeToken<List<HealthCheckInfo>>(){}.getType();
-			componentsInfo = gson.fromJson(object.toString(), listType);
+			StringBuilder sb = new StringBuilder();
+
+			if (beStatus == HttpStatus.SC_OK || beStatus == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+				HttpEntity entity = beResponse.getEntity();
+				String beJsonResponse = EntityUtils.toString(entity);
+				Gson gson = new Gson();
+				HealthCheckWrapper healthCheckWrapper = gson.fromJson(beJsonResponse, HealthCheckWrapper.class);
+				version = healthCheckWrapper.getSdcVersion();
+				componentsInfo = healthCheckWrapper.getComponentsInfo();
+
+				if (componentsInfo != null) {
+					componentsInfo.forEach(x -> {
+						if (x.getHealthCheckStatus() == HealthCheckStatus.DOWN) {
+							sb.append("Component " + x.getHealthCheckComponent().name() + " is Down, ");
+						}
+					});
+				} else {
+					componentsInfo.add(new HealthCheckInfo(HealthCheckComponent.BE, HealthCheckStatus.DOWN, null, null));
+				}
+			}
 
 			if (beStatus != HttpStatus.SC_OK) {
 				healthCheckStatus = HealthCheckStatus.DOWN;
-				StringBuilder sb = new StringBuilder();
-				componentsInfo.forEach(x -> {
-					if (x.getHealthCheckStatus()==HealthCheckStatus.DOWN){
-						sb.append("Component "+x.getHealthCheckComponent().name()+" is Down,");
-					}
-				});
 				//Removing the last comma
 				description = sb.length()>0 
 						? sb.substring(0, sb.length()-1) 
 								: "Onboarding is Down, specific reason unknown";//No Amdocs inner component returned DOWN, but the status of Amdocs HC is still DOWN.
+				if (componentsInfo.size() == 0) {
+					componentsInfo.add(new HealthCheckInfo(HealthCheckComponent.BE, HealthCheckStatus.DOWN, null, description));
+				}
 			} else {
 				healthCheckStatus = HealthCheckStatus.UP;
 				description = "OK";
-
-
 			}
 
 		} catch (Exception e) {
 			healthCheckStatus = HealthCheckStatus.DOWN;
 			description = "Onboarding unexpected response: " + e.getMessage();
+			componentsInfo.add(new HealthCheckInfo(HealthCheckComponent.BE, HealthCheckStatus.DOWN, null, description));
 		} finally {
 			if (httpClient != null) {
 				try {

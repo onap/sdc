@@ -50,6 +50,7 @@ public class HealthCheckAPI extends ComponentBaseTest {
         assertTrue("Amdocs health check ZU component is down or not exists", amdocsHCComponents.get(HealthCheckComponent.ZU) != null && amdocsHCComponents.get(HealthCheckComponent.ZU).equals(HealthCheckStatus.UP));
         assertTrue("Amdocs health check BE component is down or not exists", amdocsHCComponents.get(HealthCheckComponent.BE) != null && amdocsHCComponents.get(HealthCheckComponent.BE).equals(HealthCheckStatus.UP));
         assertTrue("Amdocs health check CAS component is down or not exists", amdocsHCComponents.get(HealthCheckComponent.CAS) != null && amdocsHCComponents.get(HealthCheckComponent.CAS).equals(HealthCheckStatus.UP));
+        assertTrue("Amdocs health check FE component is down or not exists", amdocsHCComponents.get(HealthCheckComponent.FE) != null && amdocsHCComponents.get(HealthCheckComponent.FE).equals(HealthCheckStatus.UP));
     }
     
     @Test

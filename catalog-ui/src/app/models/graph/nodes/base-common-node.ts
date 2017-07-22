@@ -27,7 +27,8 @@ export abstract class CommonNodeBase {
 
     public displayName:string;
     public name:string;
-    public img:string;
+    public img: string;
+    public imgWidth: number;
     public certified:boolean;
     public isGroup:boolean;
     public imagesPath:string;

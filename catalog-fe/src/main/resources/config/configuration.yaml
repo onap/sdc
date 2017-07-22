@@ -26,6 +26,12 @@ requestTimeout: 10
 healthCheckSocketTimeoutInMs: 5000
 healthCheckIntervalInSeconds: 5
 
+onboarding:
+  protocol: http
+  host: localhost
+  port: 8181
+  healthCheckUri: "/onboarding/v1.0/healthcheck"
+
 identificationHeaderFields:
    -
         - &HTTP_IV_USER HTTP_IV_USER

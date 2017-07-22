@@ -9,6 +9,7 @@ ENV HTTPS_PROXY ${HTTPS_PROXY}
 RUN if [ ! -z ${HTTP_PROXY} ]; then echo "Acquire::http::proxy  \"${HTTP_PROXY}\";" >> /etc/apt/apt.conf; fi && \
     if [ ! -z ${HTTPS_PROXY} ]; then echo "Acquire::https::proxy \"${HTTPS_PROXY}\";" >> /etc/apt/apt.conf; fi 
 
+
 RUN apt-get -y update
 RUN apt-get -y install apt-utils
 RUN apt-get -y install curl

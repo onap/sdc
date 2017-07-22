@@ -188,6 +188,10 @@ export class GraphTransactionLogText {
 }
 
 export class GraphUIObjects {
+    public static HANDLE_SIZE = 18; 
+    public static NODE_OVERLAP_MIN_SIZE = 30; 
+    public static DEFAULT_RESOURCE_WIDTH = 65;
+    public static SMALL_RESOURCE_WIDTH = 21;
     public static LINK_MENU_HEIGHT = 420;
     public static TOP_HEADER_HEIGHT = 200;
     public static TOOLTIP_OFFSET_X = 50;

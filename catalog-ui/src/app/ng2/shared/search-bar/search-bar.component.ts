@@ -15,7 +15,9 @@ export class SearchBarComponent {
     @Output() searchButtonClicked: EventEmitter<string> = new EventEmitter<string>();
 
     searchButtonClick = (): void => {
-        this.searchButtonClicked.emit(this.searchQuery);
+        if (this.searchQuery) { //do not allow empty search
+            this.searchButtonClicked.emit(this.searchQuery);
+        }
     }
 
     searchQueryChange = ($event): void => {
@@ -24,7 +26,7 @@ export class SearchBarComponent {
 
     private clearSearchQuery = (): void => {
         this.searchQuery = "";
-        this.searchButtonClick();
+        this.searchButtonClicked.emit(this.searchQuery);
     }
 }
 

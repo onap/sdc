@@ -22,7 +22,7 @@ import {CompositionCiNodeBase} from "./composition-ci-node-base";
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
 import {ImageCreatorService} from "../../../../directives/graphs-v2/image-creator/image-creator.service";
 import {AngularJSBridge} from "../../../../services/angular-js-bridge-service";
-import {ImagesUrl} from "../../../../utils/constants";
+import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
 
 export class CompositionCiNodeCp extends CompositionCiNodeBase {
 
@@ -35,6 +35,7 @@ export class CompositionCiNodeCp extends CompositionCiNodeBase {
     private initCp():void {
         let sdcConfig = AngularJSBridge.getAngularConfig();
         this.img = sdcConfig.imagesPath + ImagesUrl.RESOURCE_ICONS + this.componentInstance.icon + '.png';
+        this.imgWidth = GraphUIObjects.SMALL_RESOURCE_WIDTH;
         this.type = "basic-small-node";
         //if the cp from type cpEndPointInstances create with another template
         if (sdcConfig.cpEndPointInstances.indexOf(this.componentInstance.icon) > -1) {

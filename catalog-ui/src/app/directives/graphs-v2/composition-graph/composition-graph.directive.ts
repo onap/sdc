@@ -158,7 +158,7 @@ export class CompositionGraph implements ng.IDirective {
             container: graphEl,
             style: ComponentInstanceNodesStyle.getCompositionGraphStyle(),
             zoomingEnabled: true,
-            maxZoom: 2.5,
+            maxZoom: 1.2,
             minZoom: .1,
             userZoomingEnabled: false,
             userPanningEnabled: true,
@@ -295,6 +295,10 @@ export class CompositionGraph implements ng.IDirective {
 
         //Zooms to fit all of the nodes in the collection passed in. If no nodes are passed in, will zoom to fit all nodes on graph
         scope.zoomAll = (nodes?:Cy.CollectionNodes) => {
+            if (!nodes || !nodes.length) {
+                nodes = this._cy.nodes();
+            }
+            
             scope.withSidebar = false;
             this._cy.animate({
                 fit: { eles: nodes, padding: 20 },
@@ -311,9 +315,7 @@ export class CompositionGraph implements ng.IDirective {
             }
         };
 
-        scope.highlightSearchMatches = (searchTerm: string) => {
-            if (searchTerm === undefined) return; //dont zoom & highlight if click on Search initially (searchTerm will be undefined). However, allow highlights to be cleared after subsequent search (searchTerm will be "")
-            
+        scope.highlightSearchMatches = (searchTerm: string) => {           
             this.NodesGraphUtils.highlightMatchingNodesByName(this._cy, searchTerm);
             let matchingNodes: Cy.CollectionNodes = this.NodesGraphUtils.getMatchingNodesByName(this._cy, searchTerm);
             scope.zoomAll(matchingNodes);

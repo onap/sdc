@@ -31,7 +31,7 @@ export class ImageCreatorService {
         body.appendChild(this._canvas);
     }
 
-    getImageBase64(imageBaseUri:string, imageLayerUri:string):ng.IPromise<string> {
+    getImageBase64(imageBaseUri:string, imageLayerUri:string, nodeWidth:number, canvasWidth:number, handleSize:number):ng.IPromise<string> {
         let deferred = this.$q.defer();
         let imageBase = new Image();
         let imageLayer = new Image();
@@ -42,14 +42,15 @@ export class ImageCreatorService {
             if (imagesLoaded < 2) {
                 return;
             }
-            this._canvas.setAttribute('width', imageBase.width.toString());
-            this._canvas.setAttribute('height', imageBase.height.toString());
+            this._canvas.setAttribute('width', canvasWidth.toString());
+            this._canvas.setAttribute('height', canvasWidth.toString());
 
             let canvasCtx = this._canvas.getContext('2d');
             canvasCtx.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
-            canvasCtx.drawImage(imageBase, 0, 0, imageBase.width, imageBase.height);
-            canvasCtx.drawImage(imageLayer, imageBase.width - imageLayer.width, 0, imageLayer.width, imageLayer.height);
+            //Note: params below are: image, x to start drawing at, y to start drawing at, num of x pixels to draw, num of y pixels to draw
+            canvasCtx.drawImage(imageBase, 0, canvasWidth - nodeWidth, nodeWidth, nodeWidth); //Draw the node: When nodeWidth == canvasWidth, we'll start at point 0,0. Otherwise, x starts at 0 (but will end before end of canvas) and y starts low enough that node img ends at bottom of canvas.
+            canvasCtx.drawImage(imageLayer, canvasWidth - handleSize, 0, handleSize, handleSize); //Draw the icon: icon should be drawn in top right corner
 
             let base64Image = this._canvas.toDataURL();
             deferred.resolve(base64Image);

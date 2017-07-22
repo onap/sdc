@@ -23,6 +23,7 @@ package org.openecomp.sdc.fe.servlets;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -32,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -72,6 +74,7 @@ public class HealthCheckService {
 	private static Logger log = LoggerFactory.getLogger(HealthCheckService.class.getName());
 
 	private HealthStatus lastHealthStatus = new HealthStatus(500, "{}");
+	private final List<HealthCheckComponent> healthCheckFeComponents = Arrays.asList(HealthCheckComponent.ON_BOARDING);
 
 	private class HealthCheckScheduledTask implements Runnable {
 		@Override
@@ -191,7 +194,59 @@ public class HealthCheckService {
 		String description = "OK";
 		healthCheckWrapper.getComponentsInfo()
 				.add(new HealthCheckInfo(HealthCheckComponent.FE, HealthCheckStatus.UP, appVersion, description));
+
+		//add hosted components fe component
+		for (HealthCheckComponent component: healthCheckFeComponents) {
+			List<HealthCheckInfo> feComponentsInfo = addHostedComponentsFeHealthCheck(component);
+			HealthCheckInfo baseComponentHCInfo = healthCheckWrapper.getComponentsInfo().stream().filter(c -> c.getHealthCheckComponent() == component).findFirst().orElse(null);
+			if (baseComponentHCInfo != null) {
+				if (baseComponentHCInfo.getComponentsInfo() == null) {
+					baseComponentHCInfo.setComponentsInfo(new ArrayList<>());
+				}
+				baseComponentHCInfo.getComponentsInfo().addAll(feComponentsInfo);
+			}
+		}
 		return gson.toJson(healthCheckWrapper);
+	}
+
+	private List<HealthCheckInfo> addHostedComponentsFeHealthCheck(HealthCheckComponent baseComponent) {
+		Configuration config = ((ConfigurationManager) context.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
+				.getConfiguration();
+
+		String healthCheckUrl = null;
+		switch(baseComponent) {
+			case ON_BOARDING:
+				healthCheckUrl = buildOnboardingHealthCheckUrl(config);
+				break;
+		}
+
+		String description;
+
+		if (healthCheckUrl != null) {
+			Gson gson = new Gson();
+			CloseableHttpClient httpClient = getHttpClient(config);
+			HttpGet httpGet = new HttpGet(healthCheckUrl);
+			CloseableHttpResponse beResponse;
+
+			try {
+				beResponse = httpClient.execute(httpGet);
+				int beStatus = beResponse.getStatusLine().getStatusCode();
+				if (beStatus == HttpStatus.SC_OK || beStatus == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+					String beJsonResponse = EntityUtils.toString(beResponse.getEntity());
+					HealthCheckWrapper healthCheckWrapper = gson.fromJson(beJsonResponse, HealthCheckWrapper.class);
+					return healthCheckWrapper.getComponentsInfo();
+				} else {
+					description = "Response code: " + beStatus;
+				}
+			} catch (Exception e) {
+				log.error("Health Check error when trying to connect to " + baseComponent, e);
+				description = e.getMessage();
+			}
+		} else {
+			description = "Incorrect Health Check Url";
+		}
+
+		return Arrays.asList(new HealthCheckInfo(HealthCheckComponent.FE, HealthCheckStatus.DOWN, null, description));
 	}
 
 	private HealthCheckWrapper getBeDownCheckInfos() {
@@ -216,5 +271,17 @@ public class HealthCheckService {
 		HttpClientBuilder builder = HttpClientBuilder.create();
 		builder.setDefaultRequestConfig(requestBuilder.build());
 		return builder.build();
+	}
+
+	private String buildOnboardingHealthCheckUrl(Configuration config) {
+
+		Configuration.OnboardingConfig onboardingConfig = config.getOnboarding();
+
+		String protocol = onboardingConfig.getProtocol();
+		String host = onboardingConfig.getHost();
+		Integer port = onboardingConfig.getPort();
+		String uri = onboardingConfig.getHealthCheckUri();
+
+		return protocol + "://" + host + ":" + port + uri;
 	}
 }

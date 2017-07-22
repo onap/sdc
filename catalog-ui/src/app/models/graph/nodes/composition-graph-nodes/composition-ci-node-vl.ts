@@ -20,7 +20,7 @@
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
 import {ImageCreatorService} from "../../../../directives/graphs-v2/image-creator/image-creator.service";
 import {CompositionCiNodeBase} from "./composition-ci-node-base";
-import {ImagesUrl} from "../../../../utils/constants";
+import { ImagesUrl, GraphUIObjects} from "../../../../utils/constants";
 
 export class CompositionCiNodeVl extends CompositionCiNodeBase {
     private toolTipText:string;
@@ -47,6 +47,7 @@ export class CompositionCiNodeVl extends CompositionCiNodeBase {
             }
         }
         this.img = this.imagesPath + ImagesUrl.RESOURCE_ICONS + 'vl.png';
+        this.imgWidth = GraphUIObjects.SMALL_RESOURCE_WIDTH;
 
         this.classes = 'vl-node';
         if (!this.certified) {

@@ -21,7 +21,7 @@
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
 import {CommonCINodeBase} from "../common-ci-node-base";
 import {ImageCreatorService} from "app/directives/graphs-v2/image-creator/image-creator.service";
-import {ImagesUrl} from "app/utils";
+import {ImagesUrl, GraphUIObjects} from "app/utils";
 import {AngularJSBridge} from "app/services";
 
 export interface ICompositionCiNodeBase {
@@ -51,13 +51,27 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
 
     }
 
-    public initImage(node:Cy.Collection):string {
-
+    public initUncertifiedImage(node:Cy.Collection, nodeMinSize:number):string {
+        
+        let uncertifiedIconWidth:number = GraphUIObjects.HANDLE_SIZE;
+        let nodeWidth:number = node.data('imgWidth') || node.width();
+        let uncertifiedCanvasWidth: number = nodeWidth;
+        
+        if (nodeWidth < nodeMinSize) { //uncertified icon will overlap too much of the node, need to expand canvas.
+            uncertifiedCanvasWidth = nodeWidth + uncertifiedIconWidth/2; //expand canvas so that only half of the icon overlaps with the node
+        }
+        
         this.imageCreator.getImageBase64(this.imagesPath + ImagesUrl.RESOURCE_ICONS + this.componentInstance.icon + '.png',
-            this.imagesPath + ImagesUrl.RESOURCE_ICONS + 'uncertified.png')
+            this.imagesPath + ImagesUrl.RESOURCE_ICONS + 'uncertified.png', nodeWidth, uncertifiedCanvasWidth, uncertifiedIconWidth) 
             .then(imageBase64 => {
                 this.img = imageBase64;
-                node.style({'background-image': this.img});
+                node.style({
+                    'background-image': this.img,
+                    'background-width': uncertifiedCanvasWidth,
+                    'background-height': uncertifiedCanvasWidth,
+                    'width': uncertifiedCanvasWidth,
+                    'height': uncertifiedCanvasWidth
+                });
             });
 
         return this.img;

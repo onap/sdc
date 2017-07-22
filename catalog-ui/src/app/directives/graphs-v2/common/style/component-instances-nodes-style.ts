@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {GraphColors} from "app/utils/constants";
+import { GraphColors, GraphUIObjects} from "app/utils/constants";
 import constant = require("lodash/constant");
 import {ImagesUrl} from "app/utils/constants";
 import {AngularJSBridge} from "app/services/angular-js-bridge-service";
@@ -61,11 +61,11 @@ export class ComponentInstanceNodesStyle {
                     'shape': 'rectangle',
                     'label': 'data(displayName)',
                     'background-image': 'data(img)',
-                    'width': 65,
-                    'height': 65,
+                    'width': GraphUIObjects.DEFAULT_RESOURCE_WIDTH,
+                    'height': GraphUIObjects.DEFAULT_RESOURCE_WIDTH,
                     'background-opacity': 0,
-                    "background-width": 65,
-                    "background-height": 65,
+                    "background-width": GraphUIObjects.DEFAULT_RESOURCE_WIDTH,
+                    "background-height": GraphUIObjects.DEFAULT_RESOURCE_WIDTH,
                     'text-valign': 'bottom',
                     'text-halign': 'center',
                     'background-fit': 'cover',
@@ -100,10 +100,10 @@ export class ComponentInstanceNodesStyle {
                     'shape': 'rectangle',
                     'label': 'data(displayName)',
                     'background-image': 'data(img)',
-                    'background-width': 21,
-                    'background-height': 21,
-                    'width': 21,
-                    'height': 21,
+                    'background-width': GraphUIObjects.SMALL_RESOURCE_WIDTH,
+                    'background-height': GraphUIObjects.SMALL_RESOURCE_WIDTH,
+                    'width': GraphUIObjects.SMALL_RESOURCE_WIDTH,
+                    'height': GraphUIObjects.SMALL_RESOURCE_WIDTH,
                     'text-valign': 'bottom',
                     'text-halign': 'center',
                     'background-opacity': 0,
@@ -118,10 +118,10 @@ export class ComponentInstanceNodesStyle {
                     'shape': 'rectangle',
                     'label': 'data(displayName)',
                     'background-image': 'data(img)',
-                    'background-width': 21,
-                    'background-height': 21,
-                    'width': 21,
-                    'height': 21,
+                    'background-width': GraphUIObjects.SMALL_RESOURCE_WIDTH,
+                    'background-height': GraphUIObjects.SMALL_RESOURCE_WIDTH,
+                    'width': GraphUIObjects.SMALL_RESOURCE_WIDTH,
+                    'height': GraphUIObjects.SMALL_RESOURCE_WIDTH,
                     'text-valign': 'bottom',
                     'text-halign': 'center',
                     'background-opacity': 0,
@@ -200,7 +200,7 @@ export class ComponentInstanceNodesStyle {
                 css: {
                     'shape': 'rectangle',
                     'background-image': (ele:Cy.Collection) => {
-                        return ele.data().initImage(ele)
+                        return ele.data().initUncertifiedImage(ele, GraphUIObjects.NODE_OVERLAP_MIN_SIZE)
                     },
                     "border-width": 0
                 }
