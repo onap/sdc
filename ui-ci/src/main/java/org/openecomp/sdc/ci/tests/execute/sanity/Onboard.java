@@ -31,9 +31,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.stream.Collectors;
 
+import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
@@ -328,8 +328,8 @@ public class Onboard extends SetupCDTest {
 			getExtendTest().log(Status.INFO, String.format("going to onboard the VNF %s......", vnfFile));
 			System.out.println(String.format("going to onboard the VNF %s......", vnfFile));
 
-			OnboardingUtils.createVendorLicense(getUser());
-			Pair<String,Map<String,String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(vnfFile, filepath, getUser());
+			AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
+			Pair<String,Map<String,String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(vnfFile, filepath, getUser(), amdocsLicenseMembers);
 
 			getExtendTest().log(Status.INFO, String.format("searching for onboarded %s", vnfFile));
 			HomePage.showVspRepository();

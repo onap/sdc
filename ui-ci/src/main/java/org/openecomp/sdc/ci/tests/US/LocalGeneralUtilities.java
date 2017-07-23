@@ -23,12 +23,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
@@ -74,9 +75,8 @@ public static List<String> getValuesFromJsonArray(RestResponse message) throws E
 }
 
 public static String simpleOnBoarding(String fileName, String filePath,User user) throws Exception {
-	OnboardingUtils.createVendorLicense(user);
-	Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils
-			.createVendorSoftwareProduct(fileName, filePath, user);
+	AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(user);
+	Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(fileName, filePath, user, amdocsLicenseMembers);
 	String vspName = createVendorSoftwareProduct.left;
 	HomePage.showVspRepository();
 	OnboardingUtils.importVSP(createVendorSoftwareProduct);

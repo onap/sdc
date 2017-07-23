@@ -28,6 +28,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -53,6 +55,8 @@ import org.yaml.snakeyaml.Yaml;
 
 public class SdcSchemaFileImport {
 	
+	private static final String SEPARATOR = FileSystems.getDefault().getSeparator();
+
 	private static SdcSchemaFilesCassandraDao schemaFilesCassandraDao;
 	
 	private static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
@@ -70,7 +74,7 @@ public class SdcSchemaFileImport {
 	public static void main(String[] args) throws Exception {
 		
 		//Generation flow start - generating SDC from normatives
-		
+		System.out.println("Starting SdcSchemaFileImport procedure...");
 		final String FILE_NAME = "SDC.zip";
 		
 		if (args == null || args.length < 4) {
@@ -88,10 +92,10 @@ public class SdcSchemaFileImport {
 	
 		//Initialize the license text
 		try {
-			LICENSE_TXT = new String(Files.readAllBytes(Paths.get(appConfigDir + "\\license.txt")));
+			LICENSE_TXT = new String(Files.readAllBytes(Paths.get(appConfigDir + SEPARATOR+"license.txt")));
 		}
 		catch(Exception e)  {
-			System.err.println("Couldn't read license.txt in location :" + appConfigDir);
+			System.err.println("Couldn't read license.txt in location :" + appConfigDir+", error: "+e);
 			System.exit(1);
 		}
 		
@@ -100,7 +104,7 @@ public class SdcSchemaFileImport {
 		for (SchemaZipFileEnum schemaZipFileEnum : schemaFileList) {
 			try {
 				//get the source yaml file
-				String pathname = importToscaPath + "\\" + schemaZipFileEnum.getSourceFolderName() + "\\" +  schemaZipFileEnum.getSourceFileName() + YAML_EXTENSION;
+				String pathname = importToscaPath + SEPARATOR + schemaZipFileEnum.getSourceFolderName() + SEPARATOR +  schemaZipFileEnum.getSourceFileName() + YAML_EXTENSION;
 				System.out.println("Processing file "+pathname+"....");
 				InputStream input = new FileInputStream(new File(pathname));
 				//Convert the content of file to yaml 
@@ -223,7 +227,7 @@ public class SdcSchemaFileImport {
 		String[] nodeTypesMainFolders = new String[]{"normative-types", "heat-types"};
 		
 		for (String nodeTypesMainFolder : nodeTypesMainFolders) {
-			Files.walk(Paths.get(importToscaPath + "\\" + nodeTypesMainFolder))
+			Files.walk(Paths.get(importToscaPath + SEPARATOR + nodeTypesMainFolder))
 		      .filter(path -> path.getFileName().toString().toLowerCase().endsWith(YAML_EXTENSION))
 		      .forEach(yamlFile -> {
 		    	  try {

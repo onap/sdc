@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
@@ -248,8 +249,8 @@ public class VFCArtifacts extends SetupCDTest {
 		String vnfFile = "vProbes_FE.zip";
 		String snmpFile = "Fault-alarms-ASDC-vprobes-vLB.zip";
 		
-		OnboardingUtils.createVendorLicense(getUser());
-		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(vnfFile, filePath, getUser());
+		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
+		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(vnfFile, filePath, getUser(), amdocsLicenseMembers);
 		String vspName = createVSP.left;
 		resourceMetaData.setName(vspName);
 		Map<String, String> resourceMeta = createVSP.right;
@@ -286,8 +287,8 @@ public class VFCArtifacts extends SetupCDTest {
 		String snmpPollFile = "vprobes-vLB.zip";
 		String updatedSnmpPollFile = "vprobes-vLBAgent.zip";
 		
-		OnboardingUtils.createVendorLicense(getUser());
-		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(vnfFile, filePath, getUser());
+		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
+		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(vnfFile, filePath, getUser(), amdocsLicenseMembers);
 		String vspName = createVSP.left;
 		resourceMetaData.setName(vspName);
 		Map<String, String> resourceMeta = createVSP.right;
@@ -336,8 +337,8 @@ public class VFCArtifacts extends SetupCDTest {
 		String snmpFile = "vprobes-vLB.zip";
 		String updatedSnmpFile = "vprobes-vLB-Modified.zip";
 		
-		OnboardingUtils.createVendorLicense(getUser());
-		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(vnfFile, filePath, getUser());
+		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
+		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(vnfFile, filePath, getUser(), amdocsLicenseMembers);
 		String vspName = createVSP.left;
 		resourceMetaData.setName(vspName);
 		Map<String, String> resourceMeta = createVSP.right;

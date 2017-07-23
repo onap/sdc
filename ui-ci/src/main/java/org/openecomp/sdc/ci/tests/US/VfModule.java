@@ -29,12 +29,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ToscaArtifactsScreenEnum;
 import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.TypeHeatMetaDefinition;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ToscaArtifactsScreenEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.devCI.ArtifactFromCsar;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
@@ -58,8 +59,8 @@ import org.openecomp.sdc.ci.tests.verificator.ServiceVerificator;
 import org.openecomp.sdc.ci.tests.verificator.VfModuleVerificator;
 import org.testng.annotations.Test;
 
-import com.clearspring.analytics.util.Pair;
 import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
 
 /**
  * @author al714h
@@ -79,8 +80,8 @@ public class VfModule extends SetupCDTest {
 		getExtendTest().log(Status.INFO, String.format("Going to onboard the VNF %s......", vnfFile));
 		System.out.println(String.format("Going to onboard the VNF %s......", vnfFile));
 
-		OnboardingUtils.createVendorLicense(getUser());
-		Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(vnfFile, filepath, getUser());
+		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
+		Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(vnfFile, filepath, getUser(), amdocsLicenseMembers);
 		String vspName = createVendorSoftwareProduct.left;
 		//
 		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, createVendorSoftwareProduct.right.get("vspId"));

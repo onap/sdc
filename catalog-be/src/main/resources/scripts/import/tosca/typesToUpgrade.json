@@ -4,7 +4,9 @@
     "extCp",
     "contrailV2VirtualMachineInterface",
     "neutronPort",
-    "Generic_PNF"
+    "Generic_PNF",
+    "multiFlavorVFC",
+	"vnfConfiguration"
   ],
   "normative": [
   ]

@@ -25,7 +25,6 @@ import static org.testng.AssertJUnit.assertEquals;
 import java.awt.AWTException;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -40,8 +39,8 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
@@ -51,8 +50,6 @@ import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.tosca.parser.exceptions.SdcToscaParserException;
-import org.openecomp.sdc.toscaparser.api.common.JToscaException;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
@@ -92,23 +89,18 @@ public class OnboardViaApis{
 	
 //-------------------------------------------------------------------------------------------------------
 	User sdncDesignerDetails1 = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		private static String vendorId;
-		private static String vendorLicenseName;
-		private static String vendorLicenseAgreementId;
-		private static String featureGroupId;
-		ResourceReqDetails resourceDetails;
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+	ResourceReqDetails resourceDetails;
+	Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         
         
-		@BeforeMethod
-		public void before(){
-			LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-			lc.getLogger("org.apache").setLevel(Level.OFF);
-			lc.getLogger("org.*").setLevel(Level.OFF);
-			lc.getLogger("org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest").setLevel(Level.OFF);
-			resourceDetails = ElementFactory.getDefaultResource();
-			
-		}
+	@BeforeMethod
+	public void before(){
+		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+		lc.getLogger("org.apache").setLevel(Level.OFF);
+		lc.getLogger("org.*").setLevel(Level.OFF);
+		lc.getLogger("org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest").setLevel(Level.OFF);
+		resourceDetails = ElementFactory.getDefaultResource();
+	}
 		
 	@Test(dataProvider = "VNF_List")
 	public void onboardVNFTestViaApis(String filepath, String vnfFile) throws Exception, Throwable {
@@ -203,8 +195,8 @@ public class OnboardViaApis{
 	
 	public Pair<String, Map<String, String>> onboardAndValidateViaApi(String filepath, String vnfFile, User user) throws Exception {
 	
-		createVendorLicense(user);
-		Pair<String, Map<String, String>> createVendorSoftwareProduct = createVendorSoftwareProduct(vnfFile, filepath, user);
+		AmdocsLicenseMembers amdocsLicenseMembers = createVendorLicense(user);
+		Pair<String, Map<String, String>> createVendorSoftwareProduct = createVendorSoftwareProduct(vnfFile, filepath, user, amdocsLicenseMembers);
 		String vspName = createVendorSoftwareProduct.left;
 		List<String> tags = new ArrayList<>();
 		tags.add(vspName);
@@ -223,9 +215,9 @@ public class OnboardViaApis{
 		return createVendorSoftwareProduct;
 	}
 	
-	public static Pair<String, Map<String, String>> createVendorSoftwareProduct(String HeatFileName, String filepath, User user)
+	public static Pair<String, Map<String, String>> createVendorSoftwareProduct(String HeatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers)
 			throws Exception {
-		Pair<String, Map<String, String>> pair = createVSP(HeatFileName, filepath, user);
+		Pair<String, Map<String, String>> pair = createVSP(HeatFileName, filepath, user, amdocsLicenseMembers);
 		
 		String vspid = pair.right.get("vspId");
 				
@@ -245,35 +237,29 @@ public class OnboardViaApis{
 		assertEquals("did not succeed to create package of new VSP ", 200, createPackage.getErrorCode().intValue());
 
 	}
-	public static void createVendorLicense(User user) throws Exception {
-		vendorLicenseName = "ciLicense" + UUID.randomUUID().toString().split("-")[0];
+	public static AmdocsLicenseMembers createVendorLicense(User user) throws Exception {
+		
+		AmdocsLicenseMembers amdocsLicenseMembers;
+		String vendorLicenseName = "ciLicense" + UUID.randomUUID().toString().split("-")[0];
 		RestResponse vendorLicenseResponse = OnboardingUtils.createVendorLicenseModels_1(vendorLicenseName, user);
-		assertEquals("did not succeed to create vendor license model", 200,
-				vendorLicenseResponse.getErrorCode().intValue());
-		vendorId = ResponseParser.getValueFromJsonResponse(vendorLicenseResponse.getResponse(), "value");
+		assertEquals("did not succeed to create vendor license model", 200, vendorLicenseResponse.getErrorCode().intValue());
+		String vendorId = ResponseParser.getValueFromJsonResponse(vendorLicenseResponse.getResponse(), "value");
 
 		RestResponse vendorKeyGroupsResponse = OnboardingUtils.createVendorKeyGroups_2(vendorId, user);
-		assertEquals("did not succeed to create vendor key groups", 200,
-				vendorKeyGroupsResponse.getErrorCode().intValue());
+		assertEquals("did not succeed to create vendor key groups", 200, vendorKeyGroupsResponse.getErrorCode().intValue());
 		String keyGroupId = ResponseParser.getValueFromJsonResponse(vendorKeyGroupsResponse.getResponse(), "value");
 
 		RestResponse vendorEntitlementPool = OnboardingUtils.createVendorEntitlementPool_3(vendorId, user);
-		assertEquals("did not succeed to create vendor entitlement pool", 200,
-				vendorEntitlementPool.getErrorCode().intValue());
-		String entitlementPoolId = ResponseParser.getValueFromJsonResponse(vendorEntitlementPool.getResponse(),
-				"value");
+		assertEquals("did not succeed to create vendor entitlement pool", 200, vendorEntitlementPool.getErrorCode().intValue());
+		String entitlementPoolId = ResponseParser.getValueFromJsonResponse(vendorEntitlementPool.getResponse(), "value");
 
-		RestResponse vendorLicenseFeatureGroups = OnboardingUtils.createVendorLicenseFeatureGroups_4(vendorId, keyGroupId,
-				entitlementPoolId, user);
-		assertEquals("did not succeed to create vendor license feature groups", 200,
-				vendorLicenseFeatureGroups.getErrorCode().intValue());
-		featureGroupId = ResponseParser.getValueFromJsonResponse(vendorLicenseFeatureGroups.getResponse(), "value");
+		RestResponse vendorLicenseFeatureGroups = OnboardingUtils.createVendorLicenseFeatureGroups_4(vendorId, keyGroupId, entitlementPoolId, user);
+		assertEquals("did not succeed to create vendor license feature groups", 200, vendorLicenseFeatureGroups.getErrorCode().intValue());
+		String featureGroupId = ResponseParser.getValueFromJsonResponse(vendorLicenseFeatureGroups.getResponse(), "value");
 
 		RestResponse vendorLicenseAgreement = OnboardingUtils.createVendorLicenseAgreement_5(vendorId, featureGroupId, user);
-		assertEquals("did not succeed to create vendor license agreement", 200,
-				vendorLicenseAgreement.getErrorCode().intValue());
-		vendorLicenseAgreementId = ResponseParser.getValueFromJsonResponse(vendorLicenseAgreement.getResponse(),
-				"value");
+		assertEquals("did not succeed to create vendor license agreement", 200, vendorLicenseAgreement.getErrorCode().intValue());
+		String vendorLicenseAgreementId = ResponseParser.getValueFromJsonResponse(vendorLicenseAgreement.getResponse(), "value");
 
 		RestResponse checkinVendorLicense = OnboardingUtils.checkinVendorLicense(vendorId, user);
 		assertEquals("did not succeed to checkin vendor license", 200, checkinVendorLicense.getErrorCode().intValue());
@@ -281,13 +267,16 @@ public class OnboardViaApis{
 		RestResponse submitVendorLicense = OnboardingUtils.submitVendorLicense(vendorId, user);
 		assertEquals("did not succeed to submit vendor license", 200, submitVendorLicense.getErrorCode().intValue());
 
+		amdocsLicenseMembers = new AmdocsLicenseMembers(vendorId, vendorLicenseName, vendorLicenseAgreementId, featureGroupId);
+		
+		return amdocsLicenseMembers;
 	}
 	
 	
-	public static Pair<String, Map<String, String>> createVSP(String HeatFileName, String filepath, User user) throws Exception {
+	public static Pair<String, Map<String, String>> createVSP(String HeatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers) throws Exception {
 		String vspName = OnboardingUtils.handleFilename(HeatFileName);
 		
-		Pair<RestResponse, Map<String, String>> createNewVspPair = OnboardingUtils.createNewVendorSoftwareProduct(vspName, vendorLicenseName, vendorId, vendorLicenseAgreementId, featureGroupId, user);
+		Pair<RestResponse, Map<String, String>> createNewVspPair = OnboardingUtils.createNewVendorSoftwareProduct(vspName, amdocsLicenseMembers, user);
 		RestResponse createNewVendorSoftwareProduct = createNewVspPair.left;
 		assertEquals("did not succeed to create new VSP", 200,createNewVendorSoftwareProduct.getErrorCode().intValue());
 		String vspid = ResponseParser.getValueFromJsonResponse(createNewVendorSoftwareProduct.getResponse(), "vspId");
@@ -303,7 +292,7 @@ public class OnboardViaApis{
 		}
 		vspObject.put("vspId", vspid);
 		vspObject.put("componentId", componentId);
-		vspObject.put("vendorName", vendorLicenseName);
+		vspObject.put("vendorName", amdocsLicenseMembers.getVendorLicenseName());
 		vspObject.put("attContact", user.getUserId());
 		
 		RestResponse uploadHeatPackage = OnboardingUtils.uploadHeatPackage(filepath, HeatFileName, vspid, user);

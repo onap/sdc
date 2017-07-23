@@ -37,6 +37,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
@@ -84,8 +85,8 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 		String vnfFile = "FDNT.zip";
 		String snmpFile = "Fault-alarms-ASDC-vprobes-vLB.zip";
 		
-		OnboardingUtils.createVendorLicense(getUser());
-		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(vnfFile, filePath, getUser());
+		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
+		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(vnfFile, filePath, getUser(), amdocsLicenseMembers);
 		String vspName = createVSP.left;
 		resourceMetaData.setName(vspName);
 		Map<String, String> resourceMeta = createVSP.right;
