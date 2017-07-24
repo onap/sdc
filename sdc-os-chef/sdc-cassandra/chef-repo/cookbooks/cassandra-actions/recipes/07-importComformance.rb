@@ -13,22 +13,19 @@ bash "extract sdctool.tar" do
   EOH
 end
 
-cookbook_file "/tmp/sdctool/config/SDC.zip" do
-   source "SDC-#{cl_release}.zip"
-end
 
 bash "import-Comformance" do
   cwd "#{working_directory}"
   code <<-EOH
     conf_dir=/tmp/sdctool/config
-    schema_file_name=SDC.zip
+    tosca_dir=/tmp/sdctool/tosca
 
     cl_version=`grep 'toscaConformanceLevel:' $conf_dir/configuration.yaml |awk '{print $2}'`
 
     cd /tmp/sdctool/scripts
     /bin/chmod +x sdcSchemaFileImport.sh
-    echo "execute /tmp/sdctool/scripts/sdcSchemaFileImport.sh $conf_dir/$schema_file_name #{cl_release} ${cl_version} ${conf_dir} "
-    ./sdcSchemaFileImport.sh ${conf_dir}/${schema_file_name} #{cl_release} ${cl_version} ${conf_dir} 
+    echo "execute /tmp/sdctool/scripts/sdcSchemaFileImport.sh ${tosca_dir} #{cl_release} ${cl_version} ${conf_dir} "
+    ./sdcSchemaFileImport.sh ${tosca_dir} #{cl_release} ${cl_version} ${conf_dir} 
   EOH
 end
 

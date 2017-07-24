@@ -22,5 +22,9 @@
             <directory>src/main/resources/config</directory>
             <outputDirectory>config</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>tosca</directory>
+            <outputDirectory>tosca</outputDirectory>
+        </fileSet>
     </fileSets>
 </assembly>

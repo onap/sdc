@@ -151,3 +151,5 @@ node/*
 .delivery
 
 common/openecomp-sdc-artifact-generator-lib/openecomp-sdc-artifact-generator-core/logs/*
+
+/asdctool/tosca/*
