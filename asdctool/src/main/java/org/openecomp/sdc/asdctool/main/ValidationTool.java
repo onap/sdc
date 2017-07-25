@@ -4,6 +4,7 @@ import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationToolConfiguration;
 import org.openecomp.sdc.asdctool.impl.migration.v1604.AppConfig;
+import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -29,7 +30,9 @@ public class ValidationTool {
         ValidationToolBL validationToolBL = context.getBean(ValidationToolBL.class);
 
         System.out.println("Start Validation Tool");
-        if (validationToolBL.validateAll()) {
+        Boolean result = validationToolBL.validateAll();
+        ReportManager.reportEndOfToolRun();
+        if (result) {
             System.out.println("Validation finished successfully");
             System.exit(0);
         } else {

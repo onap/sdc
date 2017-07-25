@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by chaya on 7/5/2017.
@@ -20,6 +18,7 @@ public class ReportManager {
 
     private static List<ValidationTaskResult> taskResults;
     private static String reportOutputFilePath;
+    private static Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
 
     public ReportManager() {
         try {
@@ -32,6 +31,15 @@ public class ReportManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void addFailedVertex (String taskName, String vertexId) {
+        Set<String> failedVertices = failedVerticesPerTask.get(taskName);
+        if (failedVertices == null) {
+            failedVertices = new HashSet<>();
+        }
+        failedVertices.add(vertexId);
+        failedVerticesPerTask.put(taskName, failedVertices);
     }
 
     public static void reportValidationTaskStatus(GraphVertex vertexScanned, String taskName, String taskResultMessage, boolean success) {
@@ -88,6 +96,19 @@ public class ReportManager {
         StrBuilder sb = new StrBuilder();
         sb.appendNewLine().appendNewLine();
         sb.appendln("-----------------------Vertex: "+vertex.getUniqueId()+", Task " + taskName + " Started-----------------------");
+        writeReportLineToFile(sb.toString());
+    }
+
+    public static void reportEndOfToolRun() {
+        StrBuilder sb = new StrBuilder();
+        sb.appendNewLine().appendNewLine();
+        sb.appendln("-----------------------------------Validator Tool Summary-----------------------------------");
+        failedVerticesPerTask.forEach((taskName, failedVertices) -> {
+            sb.append("Task: " + taskName);
+            sb.appendNewLine();
+            sb.append("FailedVertices: " + failedVertices);
+            sb.appendNewLine();
+        });
         writeReportLineToFile(sb.toString());
     }
 }

@@ -69,7 +69,10 @@ public class TopologyTemplateValidatorExecuter {
         Set<String> failedTasks = new HashSet<>();
         Set<String> successTasks = new HashSet<>();
         boolean successAllVertices = true;
+        int vertexNum = 0;
+        int verticesSize = vertices.size();
         for (GraphVertex vertex: vertices) {
+            vertexNum++;
             boolean successAllTasks = true;
             for (TopologyTemplateValidationTask task: tasks) {
                 ReportManager.reportStartTaskRun(vertex, task.getTaskName());
@@ -78,7 +81,7 @@ public class TopologyTemplateValidatorExecuter {
                     failedTasks.add(task.getTaskName());
                     successAllVertices = false;
                     successAllTasks = false;
-                } else {
+                } else if (successAllTasks && vertexNum == verticesSize) {
                     successTasks.add(task.getTaskName());
                 }
                 reportValidateTaskStatus(task, success, vertex);
