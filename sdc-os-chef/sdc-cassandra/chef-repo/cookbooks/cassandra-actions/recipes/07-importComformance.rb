@@ -2,16 +2,6 @@ working_directory =  "/tmp"
 cl_release=node['version'].split('.')[0..2].join('.').split('-')[0]
 printf("\033[33mcl_release=[%s]\n\033[0m", cl_release)
 
-cookbook_file "/tmp/sdctool.tar" do
-   source "sdctool.tar"
-end
-
-bash "extract sdctool.tar" do
-  cwd "#{working_directory}"
-  code <<-EOH
-    tar xvf /tmp/sdctool.tar
-  EOH
-end
 
 
 bash "import-Comformance" do

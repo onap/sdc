@@ -20,32 +20,53 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>com.google.code.maven-replacer-plugin</groupId>
-				<artifactId>replacer</artifactId>
-				<version>1.5.3</version>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.0.0</version>
 				<executions>
 					<execution>
+						<id>clean.tosca.chef.os.folder</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>${project.basedir}\sdc-cassandra\chef-repo\cookbooks\cassandra-actions\attributes\</directory>
+									<followSymlinks>false</followSymlinks>
+									<includes>
+										<include>**/default.rb</include>
+									</includes>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>ru.yaal.maven</groupId>
+				<artifactId>write-text-files-maven-plugin</artifactId>
+				<version>1.1</version>
+				<configuration>
+					<charset>UTF-8</charset>
+					<files>
+						<file>
+							<path>${project.basedir}\sdc-cassandra\chef-repo\cookbooks\cassandra-actions\attributes\default.rb</path>
+							<lines>
+								<line>normal['version'] = "${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"</line>
+							</lines>
+						</file>
+					</files>
+				</configuration>
+				<executions>
+					<execution>
+						<id>write-text-files</id>
 						<phase>prepare-package</phase>
 						<goals>
-							<goal>replace</goal>
+							<goal>write-text-files</goal>
 						</goals>
 					</execution>
 				</executions>
-
-				<configuration>
-					<basedir>${project.basedir}</basedir>
-					<includes>
-						<include>sdc-backend/Dockerfile</include>
-						<include>sdc-frontend/Dockerfile</include>
-						<include>scripts/docker_run.sh</include>
-					</includes>
-					<replacements>
-						<replacement>
-							<token>__SDC-RELEASE__</token>
-							<value>${project.version}</value>
-						</replacement>
-					</replacements>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
