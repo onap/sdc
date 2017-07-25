@@ -1,9 +1,6 @@
 #!/bin/bash
 
 cd /root/chef-solo
-mkdir -p /root/chef-solo/cookbooks/cassandra-actions/attributes
-cl_rel=`basename /root/chef-solo/cookbooks/cassandra-actions/files/default/SDC* .zip|awk -F"-" '{print $2}'`
-echo "normal['version'] = \"${cl_rel}\""   > /root/chef-solo/cookbooks/cassandra-actions/attributes/default.rb
 echo "normal['HOST_IP'] = \"${HOST_IP}\"" >> /root/chef-solo/cookbooks/cassandra-actions/attributes/default.rb
 
 export CHEFNAME=${ENVNAME}
