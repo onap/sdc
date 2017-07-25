@@ -216,7 +216,7 @@
 								</image>
 
 								<!-- Build sanity image -->
-								<image>
+								<!-- <image>
 									<name>openecomp/sdc-sanity</name>
 									<alias>sdc-sanity</alias>
 									<build>
@@ -228,7 +228,7 @@
 											<tag>1.1-STAGING-latest</tag>
 										</tags>
 									</build>
-								</image>
+								</image> -->
 
 							</images>
 						</configuration>
@@ -241,7 +241,7 @@
                                 </goals>
                                 <configuration>
                                 <removeAll>true</removeAll>
-                                <image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana,openecomp/sdc-sanity</image>
+                                <image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana<!-- ,openecomp/sdc-sanity --></image>
                                 </configuration>
 							</execution>
 
@@ -261,7 +261,7 @@
 									<goal>push</goal>
                                 </goals>
                                 <configuration>
-                                <image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana,openecomp/sdc-sanity</image>
+                                <image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana<!-- ,openecomp/sdc-sanity --></image>
                                 </configuration>
 							</execution>
 						</executions>
