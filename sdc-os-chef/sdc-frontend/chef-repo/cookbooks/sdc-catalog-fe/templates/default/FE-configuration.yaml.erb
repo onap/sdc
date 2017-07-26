@@ -28,7 +28,7 @@ healthCheckIntervalInSeconds: 5
 
 onboarding:
   protocol: http
-  host: localhost
+  host: <%= @fe_host_ip %>
   port: 8181
   healthCheckUri: "/onboarding/v1.0/healthcheck"
 
