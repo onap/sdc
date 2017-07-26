@@ -1,3 +1,21 @@
+$list-indentation: 20px;
+$arrow-margin: 30px;
+$icon-margin: 30px;
+$arrow-element-width: 30px;
+$list-item-padding: 15px;
+
+@mixin overview-tile-shadow() {
+	@include box-shadow(0.5px 0.8px 4px 0 rgba(24, 24, 25, 0.05));
+}
+
+// @mixin vlm-list-item-inset($color) {
+// 	@include box-shadow(inset 6px 0 0 0 $color);
+// }
+
+$la-color: $dark-blue;
+$fg-color: $blue;
+$lkg-ep-color: $light-blue;
+
 .license-model-overview {
   .overview-top-section {
     .overview-title{
@@ -20,59 +38,60 @@
       .vendor-data-view {
         @extend .flex-column;
         background-color: $tlv-gray;
-        padding: 20px 30px;
+        padding: 13px 30px;
         border: 1px solid $tlv-light-gray;
-        @include border-shadow();
+        @include overview-tile-shadow();
         .vendor-title {
           margin-top:5px;
         }
         .vendor-name {
           @extend .heading-4-semibold;
           text-transform: none;
-          padding-bottom: 15px;
+          padding-bottom: 10px;
           border-bottom: 1px solid $tlv-light-gray;
         }
-        .vendor-description {
+        .vendor-description, .vendor-description-readonly {
           @extend .flex;
           @extend .body-1;
           justify-content: space-between;
-          margin-top: 10px;
           overflow: hidden;
-          border: 1px solid transparent;
-          position: relative;
-          left: -6px;
-          width: 101%;
+					position: relative;
+					flex: initial;
+        }
 
+        &:not(.read-only) .vendor-description {
+          border: 1px solid transparent;
+          padding: 2px 0 2px 6px;
+          margin-top: 10px;
+
+          $hover-padding-right: 16px;
+          @include percent-plus-value($property: width, $percent: 100%, $value: -$hover-padding-right); // compensate for padding added on hover
           &:hover {
-            border: 1px solid $tlv-light-gray;
-            background-position: 99% 12%;
-            background-size: 15px;
-            padding-right: 20px;
+            padding-right: $hover-padding-right;
+            width: 100%;
+            border: 1px solid $light-gray;
+            cursor: pointer;
+
+            background-position: calc(100% - 4px) 4px;
+            background-size: 14px;
             background-image: url($pencil-icon);
             background-repeat: no-repeat;
-            cursor: pointer;
+            background-color: white;
+
+            .description-data:after {
+              background: white;
+            }
           }
-          &.read-only {
-            border: none;
-          }
-					.description-data {
-						@include multiline-ellipsis($lineCount: 3, $bgColor: $tlv-gray);
-					}
         }
 
         .vendor-description-readonly {
-          @extend .flex;
-          @extend .body-1;
-          justify-content: space-between;
-          margin-top: 10px;
-          overflow: hidden;
-          border: none;
-          height: 49px;
-          margin-bottom: 15px;
-          padding: 6px;
-          position: relative;
-          left:-6px;
+          margin-top: 16px;
         }
+
+				.description-data {
+					@include multiline-ellipsis($lineCount: 3, $bgColor: $tlv-gray);
+					flex: initial;
+				}
 
         .vendor-description-edit {
           @extend .flex;
@@ -84,6 +103,7 @@
           width: 101%;
           textarea {
             padding-left: 6px;
+            resize: vertical;
           }
           .buttons-row {
             @extend .flex;
@@ -133,12 +153,12 @@
         margin-left: 20px;
         justify-content: space-between;
         border: 1px solid $tlv-light-gray;
-        @include border-shadow();
+        @include overview-tile-shadow();
         background-color: $tlv-gray;
         .summary-count-item {
           @extend .flex;
-          @extend .heading-5-semibold;
-          padding-top: 5px;
+					@extend .heading-5-semibold;
+					align-items: center;
           padding-left: 45px;
           padding-right: 45px;
           border-bottom: 1px solid $tlv-light-gray;
@@ -184,9 +204,10 @@
       }
     }
   }
-  .vlm-list-tab-panel
-  {
-    @extend .flex;
+  .vlm-list-tab-panel {
+		
+		@extend .flex;
+		margin-bottom: 7px;
     .section-title {
       flex: 1;
     }
@@ -236,81 +257,33 @@
       }
       .vlm-list-view {
         .vlm-list {
-          .vlm-list-item {
-            @include border-shadow();
-            .list-item-icon-col {
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              margin-left: 5px;
-            }
-            &.vlm-list-item-la {
-              margin-left: 0;
-              .list-item-icon-col {
-                padding-left: 22px;
+          .vlm-list-item.orphan-list-item {
+						@include overview-tile-shadow();
+						margin-left: 0;
+						
+						.vlm-list-item-title {
 
-              }
-              .la-icon {
-                background-color: $gray;
-                border-color: $gray;
-              }
-              .list-item-section {
-                &:first-child {
-                  background-color: gray;
-                }
-              }
-            }
-            &.vlm-list-item-fg {
-              cursor: default;
-              margin-left: 0;
-              border-left: 10px solid $gray;
-              .list-item-arrow-col {
-                margin-left: 0px;
-              }
-              .list-item-icon-col {
-                padding-left: 22px;
-              }
-              .fg-icon {
-                background-color: $gray;
-                border-color: $gray;
-              }
-            }
-            &.vlm-list-item-ep {
-              margin-left: 0;
-              border-left: 10px solid $gray;
-              .list-item-icon-col {
-                padding-left: 22px;
-              }
-              .ep-icon {
-                background-color: $gray;
-                border-color: $gray;
-              }
-              .list-item-section {
-                &:first-child {
-                  display: flex;
-                  color: $white;
-                  min-width: 34px;
-                }
-              }
-            }
-            &.vlm-list-item-lkg {
-              margin-left: 0;
-              border-left: 10px solid $gray;
-              .list-item-icon-col {
-                padding-left: 22px;
-              }
-              .lkg-icon {
-                background-color: $gray;
-                border-color: $gray;
-              }
-              .list-item-section {
-                &:first-child {
-                  display: flex;
-                  color: $white;
-                  min-width: 34px;
-                }
-              }
-            }
+							.item-name {
+								color: $dark-gray;
+							}
+						}
+						.list-item-icon-col {
+							.overview-list-icon {
+								background-color: $gray;
+								border-color: $gray;
+							}
+						}
+						.list-item-section {
+							&:first-child {
+								display: flex;
+								color: $white;
+								min-width: $arrow-element-width;
+							}
+							&.list-item-icon-col {
+								margin-left: 65px;
+								margin-right: 65px - $list-item-padding;
+							}
+						}
           }
         }
       }
@@ -328,18 +301,32 @@
           @extend .flex;
           border: 1px solid $tlv-light-gray;
           margin-bottom: 0px;
-          cursor: pointer;
-          .list-item-icon-col {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-
-          }
+          .clickable {
+						cursor: pointer;
+					}
+          
           .list-item-section {
-            padding: 10px;
+						.count-value {
+							@extend .body-3;
+						}
+						&.list-item-icon-col {
+							display: flex;
+							flex-direction: column;
+							justify-content: center;
+							align-items: center;
+							padding: 0;
+							margin-right: 40px - $list-item-padding;
+							margin-left: $icon-margin;
+							.overview-list-icon {
+								@extend .body-2;
+							}
+						}
+						padding: 15px;
+						&.list-item-arrow-col {
+							padding: 0;
+						}
             .children-count {
               @extend .body-1;
-              line-height: 20px;
               color: $gray;
               padding-left: 5px;
               .count-value {
@@ -347,9 +334,18 @@
               }
             }
             .additional-data {
-              padding-left: 50px;
+							padding-left: 60px;
+							display: flex;
+							flex-direction: column;
+							justify-content: space-between;
+							*:last-child {
+								margin-top: 20px;
+							}
+							*:only-child {
+								margin-top: 0;
+							}
               .additional-data-name {
-                @extend .body-1-semibold;
+                @extend .body-2-semibold;
               }
             }
             .additional-data-col-border {
@@ -359,127 +355,139 @@
             }
           }
           .list-item-additional-data-col {
-            @extend .body-1;
+            @extend .body-2;
             @extend .flex;
-            align-items: center;
-            flex: 0.8;
+            align-items: stretch;
+						flex: 0.8;
+						margin-left: 30px;
+						padding-top: 17px;
+						padding-bottom: 11px;
           }
           .arrow-icon {
-            align-self: center;
+						align-self: center;
+						
           }
           .vlm-item-info {
             flex: 1;
           }
           .vlm-list-item-title {
-            @extend .flex;
+						@extend .flex;
+						align-items: baseline;
             .item-name {
               @extend .heading-5-semibold;
               flex: 0 1 auto;
-              margin-bottom: 4px;
+							margin-bottom: 4px;
+							text-transform: uppercase;
             }
           }
           .vlm-list-item-description {
             @extend .body-1;
-            overflow: hidden;
+						@include multiline-ellipsis($lineCount: 3, $bgColor: $tlv-gray);
             max-height: 38px;
           }
           &.vlm-list-item-la {
             margin-top: 10px;
-            border-left: 10px solid $dark-blue;
             .la-icon {
-              @include create-circle($circle-icon-size,$dark-blue,'LA');
+              @include create-circle($circle-icon-size,$la-color,'LA');
               color: $white;
-            }
+						}
+						.vlm-list-item-title {
+							.item-name {
+								color: $la-color;
+							}
+						}
             .list-item-section {
 
               &:first-child {
                 display: flex;
-                color: $dark-blue;
-                min-width: 34px;
+                color: $la-color;
+                min-width: $arrow-element-width;
               }
             }
             .list-item-arrow-col {
               flex: 0.01;
-              margin-left: 14px;
+							margin-left: $arrow-margin;
+							justify-content: center;
             }
-            .list-item-icon-col {
-              padding-left: 14px;
-              padding-right: 30px;
-              align-items: center;
-            }
-
           }
           &.vlm-list-item-fg {
-            border-left: 10px solid $blue;
-            margin-left: 20px;
-            margin-top: 10px;
+            margin-left: $list-indentation;
+						margin-top: 10px;
+						.fg-pipeline-separator {
+							color: $dark-gray;
+							padding: 0 5px;
+						}
+						.list-item-icon-col {
+							margin-left: 29px;
+						}
             .fg-icon {
-              @include create-circle($circle-icon-size,$blue,'FG');
+              @include create-circle($circle-icon-size,$fg-color,'FG');
               color: $white;
-            }
+						}
+						
+						.vlm-list-item-title {
+							.item-name {
+								color: $fg-color;
+							}
+						}
             .list-item-section {
               &:first-child {
                 display: flex;
-                color: $blue;
-                min-width: 34px;
+                color: $fg-color;
+                min-width: $arrow-element-width;
 
               }
             }
             .list-item-arrow-col {
               flex: 0.01;
-              margin-left: 26px;
-            }
-            .list-item-icon-col {
-              padding-left: 22px;
-              padding-right: 30px;
-              align-items: center;
+							margin-left: $arrow-margin - $list-indentation;
+							padding-left: $list-indentation;
             }
           }
           &.vlm-list-item-ep {
-            margin-left: 40px;
+            margin-left: $list-indentation * 2;
             margin-top: 10px;
-            border-left: 10px solid $light-blue;
             cursor: default;
             .ep-icon {
-              @include create-circle($circle-icon-size,$light-blue,'EP');
+              @include create-circle($circle-icon-size,$lkg-ep-color,'EP');
               color: $white;
-            }
-            .list-item-icon-col {
-              padding-left: 72px;
-              padding-right: 30px;
-              align-items: center;
-            }
+						}
+						.vlm-list-item-title {
+							.item-name {
+								color: $lkg-ep-color;
+							}
+						}
             .list-item-section {
               &:first-child {
                 display: none;
-              }
+							}
+							&.list-item-icon-col {
+								margin-left: 52px;
+							}
             }
-            .list-item-additional-data-col {
-              margin-right: 20px;
-            }
+						
           }
           &.vlm-list-item-lkg {
             margin-top: 10px;
-            margin-left: 40px;
-            border-left: 10px solid $light-blue;
+            margin-left: $list-indentation * 2;
             cursor: default;
             .lkg-icon {
-              @include create-circle($circle-icon-size,$light-blue,'KG');
+              @include create-circle($circle-icon-size,$lkg-ep-color,'KG');
               color: $white;
-            }
-            .list-item-icon-col {
-              padding-left: 72px;
-              padding-right: 30px;
-              align-items: center;
-            }
+						}
+						.vlm-list-item-title {
+							.item-name {
+								color: $lkg-ep-color;
+							}
+						}
             .list-item-section {
               &:first-child {
                 display: none;
-              }
+							}
+							&.list-item-icon-col {
+								margin-left: 52px;
+							}
 
-            }
-            .list-item-additional-data-col {
-              margin-right: 20px;
             }
           }
         }

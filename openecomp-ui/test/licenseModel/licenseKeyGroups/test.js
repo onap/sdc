@@ -21,6 +21,7 @@ import {LicenseKeyGroupStoreFactory, LicenseKeyGroupPostFactory} from 'test-util
 
 import LicenseKeyGroupsActionHelper from 'sdc-app/onboarding/licenseModel/licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
 import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
+import {LimitItemFactory, LimitPostFactory} from 'test-utils/factories/licenseModel/LimitFactories.js';
 
 describe('License Key Groups Module Tests', function () {
 
@@ -153,6 +154,174 @@ describe('License Key Groups Module Tests', function () {
 			licenseModelId: LICENSE_MODEL_ID,
 			version
 		}).then(() => {
+			expect(store.getState()).toEqual(expectedStore);
+		});
+	});
+
+	it('Load Limits List', () => {
+
+		const limitsList = LimitItemFactory.buildList(3);		
+		deepFreeze(limitsList);
+		const store = storeCreator();
+		deepFreeze(store.getState());
+
+		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsEditor.limitsList', limitsList);
+		const licenseKeyGroup = LicenseKeyGroupStoreFactory.build();
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${licenseKeyGroup.id}/limits`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: limitsList};
+		 });
+
+		return LicenseKeyGroupsActionHelper.fetchLimits(store.dispatch, {licenseModelId: LICENSE_MODEL_ID, version, licenseKeyGroup}).then(() => {
+			expect(store.getState()).toEqual(expectedStore);
+		 });
+	});
+
+	it('Add Limit', () => {
+
+		const store = storeCreator();
+		deepFreeze(store.getState());
+
+		const limitToAdd = LimitPostFactory.build();
+
+		deepFreeze(limitToAdd);
+
+		const LimitIdFromResponse = 'ADDED_ID';
+		const limitAddedItem = {...limitToAdd, id: LimitIdFromResponse};
+		deepFreeze(limitAddedItem);
+		const licenseKeyGroup = LicenseKeyGroupStoreFactory.build();
+
+		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsEditor.limitsList', [limitAddedItem]);
+
+		mockRest.addHandler('post', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${licenseKeyGroup.id}/limits`);
+			expect(data).toEqual(limitToAdd);
+			expect(options).toEqual(undefined);
+			return {
+				returnCode: 'OK',
+				value: LimitIdFromResponse
+			};
+		});
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${licenseKeyGroup.id}/limits`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: [limitAddedItem]};
+		 });
+
+		return LicenseKeyGroupsActionHelper.submitLimit(store.dispatch,
+			{
+				licenseModelId: LICENSE_MODEL_ID,
+				version,				
+				licenseKeyGroup,
+				limit: limitToAdd
+			}
+		).then(() => {
+			expect(store.getState()).toEqual(expectedStore);
+		});
+	});
+
+	it('Delete Limit', () => {
+
+		const limitsList = LimitItemFactory.buildList(1);		
+		deepFreeze(limitsList);
+					
+		const store = storeCreator({
+			licenseModel: {
+				entitlementPool: {
+					entitlementPoolEditor: {
+						limitsList
+					}
+				}
+			}
+		});
+		deepFreeze(store.getState());
+
+		const licenseKeyGroup = LicenseKeyGroupStoreFactory.build();
+		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsEditor.limitsList', []);
+
+		mockRest.addHandler('destroy', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${licenseKeyGroup.id}/limits/${limitsList[0].id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {
+				results: {
+					returnCode: 'OK'
+				}
+			};
+		});
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${licenseKeyGroup.id}/limits`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: []};
+		 });
+
+		return LicenseKeyGroupsActionHelper.deleteLimit(store.dispatch, {
+			licenseModelId: LICENSE_MODEL_ID,
+			version,
+			licenseKeyGroup,
+			limit: limitsList[0]
+		}).then(() => {
+			expect(store.getState()).toEqual(expectedStore);
+		});
+	});
+
+	it('Update Limit', () => {
+
+		const limitsList = LimitItemFactory.buildList(1);		
+		deepFreeze(limitsList);
+		const licenseKeyGroup = LicenseKeyGroupStoreFactory.build();
+		const store = storeCreator({
+			licenseModel: {
+				licenseKeyGroup: {
+					licenseKeyGroupsEditor: {
+						limitsList
+					}
+				}
+			}
+		});
+
+		deepFreeze(store.getState());
+
+		
+		const previousData = limitsList[0];
+		deepFreeze(previousData);
+		const limitId = limitsList[0].id;
+		
+		const updatedLimit = {...previousData, name: 'updatedLimit'};
+		deepFreeze(updatedLimit);
+		const updatedLimitForPut = {...updatedLimit, id: undefined};
+
+		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsEditor.limitsList', [updatedLimit]);
+
+
+		mockRest.addHandler('put', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${licenseKeyGroup.id}/limits/${limitId}`);
+			expect(data).toEqual(updatedLimitForPut);
+			expect(options).toEqual(undefined);
+			return {returnCode: 'OK'};
+		});
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${licenseKeyGroup.id}/limits`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: [updatedLimit]};
+		 });
+
+		return LicenseKeyGroupsActionHelper.submitLimit(store.dispatch,
+			{
+				licenseModelId: LICENSE_MODEL_ID,
+				version,				
+				licenseKeyGroup,
+				limit: updatedLimit
+			}
+		).then(() => {
 			expect(store.getState()).toEqual(expectedStore);
 		});
 	});

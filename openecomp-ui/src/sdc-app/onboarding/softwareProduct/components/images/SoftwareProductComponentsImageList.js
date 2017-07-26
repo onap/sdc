@@ -77,9 +77,10 @@ const mapActionsToProps = (dispatch, {softwareProductId, componentId}) => {
 				image, isReadOnlyMode, softwareProductId, componentId, version, modalClassName: 'image-modal-edit'}
 			);
 		},
-		onSubmit: ({qdata}) => { return SoftwareProductComponentsActionHelper.updateSoftwareProductComponentQuestionnaire(dispatch,
+		onSubmit: (version, qdata) => { return SoftwareProductComponentsActionHelper.updateSoftwareProductComponentQuestionnaire(dispatch,
 			{softwareProductId,
 				vspComponentId: componentId,
+				version,
 				qdata});
 		}
 	};

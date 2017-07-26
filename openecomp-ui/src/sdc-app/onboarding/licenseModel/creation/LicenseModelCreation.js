@@ -26,7 +26,7 @@ export const mapStateToProps = ({licenseModelList, licenseModel: {licenseModelCr
 
 	let VLMNames = {};
 	for (let i = 0; i < licenseModelList.length; i++) {
-		VLMNames[licenseModelList[i].vendorName] = licenseModelList[i].id;
+		VLMNames[licenseModelList[i].vendorName.toLowerCase()] = licenseModelList[i].id;
 	}
 
 	return {...licenseModelCreation, isFormValid: isFormValid, VLMNames};

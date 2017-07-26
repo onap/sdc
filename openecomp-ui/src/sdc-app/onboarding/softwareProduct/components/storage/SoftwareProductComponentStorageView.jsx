@@ -162,7 +162,7 @@ class SoftwareProductComponentStorageView extends React.Component {
 	};
 
 	render() {
-		let {onQDataChanged, dataMap, qGenericFieldInfo, isReadOnlyMode, onSubmit, qdata} =  this.props;
+		let {onQDataChanged, dataMap, qGenericFieldInfo, isReadOnlyMode, onSubmit, qdata, version} =  this.props;
 
 		return(
 			<div className='vsp-component-questionnaire-view'>
@@ -170,7 +170,7 @@ class SoftwareProductComponentStorageView extends React.Component {
 					ref={form => this.form = form }
 					isValid={true}
 					formReady={null}
-					onSubmit={() => onSubmit({qdata})}
+					onSubmit={() => onSubmit({qdata, version})}
 					className='component-questionnaire-validation-form'
 					isReadOnlyMode={isReadOnlyMode}
 					hasButtons={false}>
@@ -182,8 +182,9 @@ class SoftwareProductComponentStorageView extends React.Component {
 		);
 	}
 
-	save(){
-		return this.form.handleFormSubmit(new Event('dummy'));
+	save(){		
+		const {componentData, qdata, onSubmit, version} = this.props;
+		return onSubmit({componentData, qdata, version});		
 	}
 }
 

@@ -63,14 +63,15 @@ export default class SoftwareProductDependenciesView extends React.Component {
 					numOfIcons={2}
 					isReadOnlyMode={isReadOnlyMode}
 					onAdd={canAdd ? onAddDependency : undefined}
-					onAddItem={i18n('Add Rule')}>					
+					onAddItem={i18n('Add Rule')}>
 					{softwareProductDependencies.map(dependency => (
 						<SelectActionTableRow
 							key={dependency.id}
 							onDelete={() => onDataChanged(softwareProductDependencies.filter(currentDependency => currentDependency.id !== dependency.id))}
 							overlayMsg={i18n('There is a loop between selections')}
 							hasError={dependency.hasCycle}
-							hasErrorIndication>
+							hasErrorIndication
+							showDelete={dependency.id !== 'fake' || dependency.hasCycle !== undefined}>
 							<SelectActionTableCell
 								options={this.filterSources({componentsOptions, sourceToTargetMapping, selectedSourceId: dependency.sourceId, selectedTargetId: dependency.targetId})}
 								selected={dependency.sourceId}

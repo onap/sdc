@@ -35,7 +35,6 @@ import SoftwareProductComponentsNICListReducer from './components/network/Softwa
 import SoftwareProductComponentsNICEditorReducer from './components/network/SoftwareProductComponentsNICEditorReducer.js';
 import SoftwareProductComponentsImageListReducer from './components/images/SoftwareProductComponentsImageListReducer.js';
 import SoftwareProductComponentsImageEditorReducer from './components/images/SoftwareProductComponentsImageEditorReducer.js';
-import SoftwareProductComponentsImageNavigationReducer from './components/images/SoftwareProductComponentsImageNavigationReducer.js';
 import SoftwareProductComponentsNICCreationReducer from './components/network/NICCreation/NICCreationReducer.js';
 import SoftwareProductComponentsMonitoringReducer from './components/monitoring/SoftwareProductComponentsMonitoringReducer.js';
 import SoftwareProductComponentsComputeFlavorListReducer from './components/compute/computeComponents/computeFlavor/ComputeFlavorListReducer.js';
@@ -83,7 +82,6 @@ export default combineReducers({
 		}),
 		images: combineReducers({
 			imagesList: SoftwareProductComponentsImageListReducer,
-			imagesNavigationList: SoftwareProductComponentsImageNavigationReducer,
 			imageEditor: createPlainDataReducer(createComposedJSONSchemaReducer(IMAGE_QUESTIONNAIRE, SoftwareProductComponentsImageEditorReducer))
 		}),
 		computeFlavor: combineReducers({

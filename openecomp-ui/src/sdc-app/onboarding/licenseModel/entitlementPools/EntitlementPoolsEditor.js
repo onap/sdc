@@ -18,10 +18,12 @@ import EntitlementPoolsActionHelper from './EntitlementPoolsActionHelper.js';
 import EntitlementPoolsEditorView from './EntitlementPoolsEditorView.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 
+import LimitEditorActionHelper from '../limits/LimitEditorActionHelper.js';
+
 const mapStateToProps = ({licenseModel: {entitlementPool}}) => {
 
 
-	let {data, genericFieldInfo, formReady} = entitlementPool.entitlementPoolEditor;
+	let {data, genericFieldInfo, formReady, limitsList} = entitlementPool.entitlementPoolEditor;
 
 	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 
@@ -33,7 +35,7 @@ const mapStateToProps = ({licenseModel: {entitlementPool}}) => {
 
 	const list = entitlementPool.entitlementPoolsList;
 	for (let i = 0; i < list.length; i++) {
-		EPNames[list[i].name] = list[i].id;
+		EPNames[list[i].name.toLowerCase()] = list[i].id;
 	}
 
 	return {
@@ -42,7 +44,8 @@ const mapStateToProps = ({licenseModel: {entitlementPool}}) => {
 		previousData,
 		isFormValid,
 		formReady,
-		EPNames
+		EPNames,
+		limitsList
 	};
 };
 
@@ -50,11 +53,13 @@ const mapActionsToProps = (dispatch, {licenseModelId, version}) => {
 	return {
 		onDataChanged: (deltaData, formName, customValidations) => ValidationHelper.dataChanged(dispatch, {deltaData, formName, customValidations}),
 		onCancel: () => EntitlementPoolsActionHelper.closeEntitlementPoolsEditor(dispatch),
-		onSubmit: ({previousEntitlementPool, entitlementPool}) => {
-			EntitlementPoolsActionHelper.closeEntitlementPoolsEditor(dispatch);
+		onSubmit: ({previousEntitlementPool, entitlementPool, keepOpen}) => {
+			if (!keepOpen) {EntitlementPoolsActionHelper.closeEntitlementPoolsEditor(dispatch);}
 			EntitlementPoolsActionHelper.saveEntitlementPool(dispatch, {licenseModelId, previousEntitlementPool, entitlementPool, version});
 		},
-		onValidateForm: (formName) => ValidationHelper.validateForm(dispatch, formName)
+		onValidateForm: (formName) => ValidationHelper.validateForm(dispatch, formName),
+		onCloseLimitEditor: () => LimitEditorActionHelper.closeLimitsEditor(dispatch),
+		onOpenLimitEditor: (limit) => LimitEditorActionHelper.openLimitsEditor(dispatch, {limit})
 	};
 };
 

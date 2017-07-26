@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -44,6 +45,11 @@ public class VlmVersionHealer implements Healer {
 
     VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, version));
     VersionedVendorLicenseModel vendorLicenseModel;
+    
+    if(!Objects.isNull(vspDetails.getVlmVersion())) {
+      return Optional.empty();
+    }
+
 
     try{
       vendorLicenseModel =
@@ -60,6 +66,7 @@ public class VlmVersionHealer implements Healer {
     List<LicenseAgreementEntity> laList =
         new ArrayList<>(
             licenseAgreementDao.list(new LicenseAgreementEntity(vlmId, vlmVersion, null)));
+
 
     vspDetails.setVlmVersion(vlmVersion);
     vspDetails.setLicenseAgreement(laList.get(0).getId());

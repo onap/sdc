@@ -22,8 +22,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Component;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
@@ -99,7 +97,7 @@ public class DeplomentFlavorManagerImplTest {
 
     DeploymentFlavorEntity expectedDiffName = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
     DeploymentFlavor deploymentFlavor = expectedDiffName.getDeploymentFlavorCompositionData();
-    deploymentFlavor.setModel(DF1_ID + " Name");
+    deploymentFlavor.setModel(DF1_ID + "Name");
     expectedDiffName.setDeploymentFlavorCompositionData(deploymentFlavor);
     List<DeploymentFlavorEntity> list = new ArrayList<DeploymentFlavorEntity>();
     list.add(expectedDiffName);
@@ -115,6 +113,28 @@ public class DeplomentFlavorManagerImplTest {
     }
   }
 
+  @Test
+  public void testCreateManualDepFlavorWithIncorrectNameFormat() {
+    DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
+    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+
+    DeploymentFlavorEntity expectedDiffName = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
+    DeploymentFlavor deploymentFlavor = expectedDiffName.getDeploymentFlavorCompositionData();
+    deploymentFlavor.setModel(DF1_ID + "Name/*");
+    expectedDiffName.setDeploymentFlavorCompositionData(deploymentFlavor);
+    List<DeploymentFlavorEntity> list = new ArrayList<DeploymentFlavorEntity>();
+    list.add(expectedDiffName);
+    doReturn(list).when(deploymentFlavorDaoMock).list(anyObject());
+
+    try {
+      deploymentFlavorManager.createDeploymentFlavor(expectedDiffName, USER);
+      Assert.fail();
+    }
+    catch (CoreException ex) {
+      Assert.assertEquals(VendorSoftwareProductErrorCodes.DEPLOYMENT_FLAVOR_NAME_FORMAT_NOT_ALLOWED,
+              ex.code().id());
+    }
+  }
   @Test
   public void testCreateManualDepFlavorWithFGNotInVSP() {
     DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
@@ -253,7 +273,7 @@ public class DeplomentFlavorManagerImplTest {
     Assert.assertEquals(deploymentFlavorEntities.size(), 2);
     for (DeploymentFlavorEntity deploymentFlavorEntity : deploymentFlavorEntities) {
       Assert.assertEquals(deploymentFlavorEntity.getDeploymentFlavorCompositionData().getModel()
-          , DF1_ID.equals(deploymentFlavorEntity.getId()) ? DF1_ID+" name" : DF2_ID+" name" );
+          , DF1_ID.equals(deploymentFlavorEntity.getId()) ? DF1_ID+"name" : DF2_ID+"name" );
     }
   }
 
@@ -286,7 +306,7 @@ public class DeplomentFlavorManagerImplTest {
 
     DeploymentFlavorEntity deploymentFlavorEntity = new DeploymentFlavorEntity(VSP_ID, VERSION, DF1_ID);
     DeploymentFlavor deploymentFlavor = new DeploymentFlavor();
-    deploymentFlavor.setModel(DF1_ID + " name");
+    deploymentFlavor.setModel(DF1_ID + "_name");
     deploymentFlavor.setDescription(DF1_ID + " desc updated");
     deploymentFlavorEntity.setDeploymentFlavorCompositionData(deploymentFlavor);
 
@@ -295,6 +315,36 @@ public class DeplomentFlavorManagerImplTest {
     Assert.assertTrue(validationData == null || validationData.getErrors() == null);
     verify(deploymentFlavorDaoMock).update(deploymentFlavorEntity);
   }
+
+    @Test
+    public void testManualUpdateDepFlavorIncorrectNameFormat() {
+        doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+
+        doReturn(createDeploymentFlavor(VSP_ID, VERSION, DF1_ID))
+                .when(deploymentFlavorDaoMock).get(anyObject());
+
+        doReturn(new CompositionEntityValidationData(CompositionEntityType.image, DF1_ID))
+                .when(compositionEntityDataManagerMock)
+                .validateEntity(anyObject(), anyObject(), anyObject());
+
+        VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
+        doReturn(vspDetails).when(vspInfoDao).get(anyObject());
+
+        DeploymentFlavorEntity deploymentFlavorEntity = new DeploymentFlavorEntity(VSP_ID, VERSION, DF1_ID);
+        DeploymentFlavor deploymentFlavor = new DeploymentFlavor();
+        deploymentFlavor.setModel(DF1_ID + "_name/*");
+        deploymentFlavor.setDescription(DF1_ID + " desc updated");
+        deploymentFlavorEntity.setDeploymentFlavorCompositionData(deploymentFlavor);
+
+        try {
+            deploymentFlavorManager.updateDeploymentFlavor(deploymentFlavorEntity, USER);
+            Assert.fail();
+        }
+        catch (CoreException ex) {
+            Assert.assertEquals(VendorSoftwareProductErrorCodes.DEPLOYMENT_FLAVOR_NAME_FORMAT_NOT_ALLOWED,
+                    ex.code().id());
+        }
+    }
 
   @Test
   public void testGetNonExistingDepFlavorId_negative() {
@@ -378,7 +428,7 @@ public class DeplomentFlavorManagerImplTest {
 
     DeploymentFlavorEntity deploymentFlavorEntity = new DeploymentFlavorEntity(vspId, version, deploymentFlavorId);
     DeploymentFlavor deploymentFlavor = new DeploymentFlavor();
-    deploymentFlavor.setModel(deploymentFlavorId + " name");
+    deploymentFlavor.setModel(deploymentFlavorId + "name");
     deploymentFlavor.setDescription(deploymentFlavorId + " desc");
 
     deploymentFlavorEntity.setDeploymentFlavorCompositionData(deploymentFlavor);
@@ -388,8 +438,12 @@ public class DeplomentFlavorManagerImplTest {
   private void testUpdate_negative(String vspId, Version version, String
       deploymentFlavorId, String user, String expectedErrorCode) {
     try {
+      DeploymentFlavorEntity deploymentFlavorEntity = new DeploymentFlavorEntity(vspId, version, deploymentFlavorId);
+      DeploymentFlavor deploymentFlavor = new DeploymentFlavor();
+      deploymentFlavor.setModel("Name");
+      deploymentFlavorEntity.setDeploymentFlavorCompositionData(deploymentFlavor);
       deploymentFlavorManager
-          .updateDeploymentFlavor(new DeploymentFlavorEntity(vspId, version, deploymentFlavorId), user);
+          .updateDeploymentFlavor(deploymentFlavorEntity, user);
       Assert.fail();
     } catch (CoreException exception) {
       Assert.assertEquals(exception.code().id(), expectedErrorCode);

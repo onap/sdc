@@ -59,7 +59,7 @@ class LicenseAgreementListEditorView extends React.Component {
 					isReadOnlyMode={isReadOnlyMode}>
 					{this.filterList().map(licenseAgreement => this.renderLicenseAgreementListItem(licenseAgreement, isReadOnlyMode, version))}
 				</ListEditorView>
-				<Modal show={isDisplayModal} bsSize='large' animation={true} className='onborading-modal license-agreement-modal'>
+				<Modal show={isDisplayModal} bsSize='large' animation={true} className='onborading-modal license-model-modal license-agreement-modal'>
 					<Modal.Header>
 						<Modal.Title>{`${isModalInEditMode ? i18n('Edit License Agreement') : i18n('Create New License Agreement')}`}</Modal.Title>
 					</Modal.Header>

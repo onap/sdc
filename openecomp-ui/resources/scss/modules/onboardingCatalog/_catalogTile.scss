@@ -48,6 +48,9 @@
 		align-self: baseline;
 		color: $gray;
 		line-height: 10px;
+		&:first-letter {
+      text-transform: capitalize;
+    }
 		@include ellipsis(auto, inline-block, 178px);
 	  }
 
@@ -56,7 +59,10 @@
 	  @extend .heading-5-semibold;
 	  color: $black;
 	  @include ellipsis(auto, inline-block, 175px);
-	  line-height: inherit;
+		line-height: inherit;
+		&:first-letter {
+			text-transform: capitalize;
+		}
 	}
   }
   .catalog-tile-icon {

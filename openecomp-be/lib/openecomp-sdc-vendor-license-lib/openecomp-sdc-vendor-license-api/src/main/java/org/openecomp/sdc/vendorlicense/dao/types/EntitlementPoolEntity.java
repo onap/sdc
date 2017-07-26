@@ -26,12 +26,10 @@ import com.datastax.driver.mapping.annotations.Enumerated;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
-import org.openecomp.sdc.vendorlicense.dao.types.xml.AggregationFunctionForXml;
-import org.openecomp.sdc.vendorlicense.dao.types.xml.EntitlementMetricForXml;
-import org.openecomp.sdc.vendorlicense.dao.types.xml.EntitlementTimeForXml;
-import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
-import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.OperationalScopeForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
@@ -65,24 +63,11 @@ public class EntitlementPoolEntity implements VersionableEntity {
   @Enumerated
   private ThresholdUnit thresholdUnit;
 
-  @Column(name = "entitlement_metric")
-  @Frozen
-  private ChoiceOrOther<EntitlementMetric> entitlementMetric;
   private String increments;
-
-  @Column(name = "aggregation_func")
-  @Frozen
-  private ChoiceOrOther<AggregationFunction> aggregationFunction;
 
   @Column(name = "operational_scope")
   @Frozen
   private MultiChoiceOrOther<OperationalScope> operationalScope;
-
-  @Frozen
-  private ChoiceOrOther<EntitlementTime> time;
-
-  @Column(name = "manufacturer_ref_num")
-  private String manufacturerReferenceNumber;
 
   @Column(name = "ref_fg_ids")
   private Set<String> referencingFeatureGroups = new HashSet<>();
@@ -95,6 +80,9 @@ public class EntitlementPoolEntity implements VersionableEntity {
   private String expiryDate;
 
   private Collection<LimitEntity> limits;
+
+  //Defined and used only for License Artifcat XMLs
+  private String manufacturerReferenceNumber;
 
   public EntitlementPoolEntity() {
   }
@@ -200,30 +188,12 @@ public class EntitlementPoolEntity implements VersionableEntity {
     this.thresholdUnit = thresholdUnits;
   }
 
-  public ChoiceOrOther<EntitlementMetric> getEntitlementMetric() {
-    return entitlementMetric;
-  }
-
-  public void setEntitlementMetric(ChoiceOrOther<EntitlementMetric> entitlementMetric) {
-    entitlementMetric.resolveEnum(EntitlementMetric.class);
-    this.entitlementMetric = entitlementMetric;
-  }
-
   public String getIncrements() {
     return increments;
   }
 
   public void setIncrements(String increments) {
     this.increments = increments;
-  }
-
-  public ChoiceOrOther<AggregationFunction> getAggregationFunction() {
-    return aggregationFunction;
-  }
-
-  public void setAggregationFunction(ChoiceOrOther<AggregationFunction> aggregationFunction) {
-    aggregationFunction.resolveEnum(AggregationFunction.class);
-    this.aggregationFunction = aggregationFunction;
   }
 
   public MultiChoiceOrOther<OperationalScope> getOperationalScope() {
@@ -235,23 +205,6 @@ public class EntitlementPoolEntity implements VersionableEntity {
       operationalScope.resolveEnum(OperationalScope.class);
     }
     this.operationalScope = operationalScope;
-  }
-
-  public ChoiceOrOther<EntitlementTime> getTime() {
-    return time;
-  }
-
-  public void setTime(ChoiceOrOther<EntitlementTime> time) {
-    time.resolveEnum(EntitlementTime.class);
-    this.time = time;
-  }
-
-  public String getManufacturerReferenceNumber() {
-    return manufacturerReferenceNumber;
-  }
-
-  public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
-    this.manufacturerReferenceNumber = manufacturerReferenceNumber;
   }
 
   /**
@@ -272,35 +225,6 @@ public class EntitlementPoolEntity implements VersionableEntity {
    */
   public String getVersionForArtifact() {
     return version.toString();
-  }
-
-  /**
-   * Gets entitlement metric for artifact.
-   *
-   * @return the entitlement metric for artifact
-   */
-  public EntitlementMetricForXml getEntitlementMetricForArtifact() {
-    EntitlementMetricForXml metric = new EntitlementMetricForXml();
-    if (entitlementMetric != null) {
-      metric.setValue(entitlementMetric.getResult());
-    } else {
-      metric.setValue(null);
-    }
-    return metric;
-  }
-
-  /**
-   * Gets time for artifact.
-   *
-   * @return the time for artifact
-   */
-  public EntitlementTimeForXml getTimeForArtifact() {
-    EntitlementTimeForXml timeForXml = new EntitlementTimeForXml();
-    if (time != null) {
-      timeForXml.setValue(time.getResult());
-    }
-
-    return timeForXml;
   }
 
   public String getStartDate() {
@@ -334,7 +258,7 @@ public class EntitlementPoolEntity implements VersionableEntity {
         if(obj.getType().equals(LimitType.ServiceProvider)){
           LimitXml xmlObj = new LimitXml();
           xmlObj.setDescription(obj.getDescription());
-          xmlObj.setMetric(obj.getMetric().toString());
+          xmlObj.setMetric(obj.getMetric()!=null?obj.getMetric().name():null);
           xmlObj.setValues(obj.getValue()!=null?Integer.toString(obj.getValue()):null);
           xmlObj.setUnit(obj.getUnit()!=null?Integer.toString(obj.getUnit()):null);
           xmlObj.setAggregationFunction(obj.getAggregationFunction()!=null?obj.getAggregationFunction().name():null);
@@ -357,7 +281,7 @@ public class EntitlementPoolEntity implements VersionableEntity {
         if(obj.getType().equals(LimitType.Vendor)){
           LimitXml xmlObj = new LimitXml();
           xmlObj.setDescription(obj.getDescription());
-          xmlObj.setMetric(obj.getMetric().toString());
+          xmlObj.setMetric(obj.getMetric()!=null?obj.getMetric().name():null);
           xmlObj.setValues(obj.getValue()!=null?Integer.toString(obj.getValue()):null);
           xmlObj.setUnit(obj.getUnit()!=null?Integer.toString(obj.getUnit()):null);
           xmlObj.setAggregationFunction(obj.getAggregationFunction()!=null?obj.getAggregationFunction().name():null);
@@ -378,8 +302,7 @@ public class EntitlementPoolEntity implements VersionableEntity {
   public int hashCode() {
     return Objects
         .hash(vendorLicenseModelId, version, id, name, description, thresholdValue, thresholdUnit,
-            entitlementMetric, increments, aggregationFunction, operationalScope, time,
-            manufacturerReferenceNumber, referencingFeatureGroups, startDate, expiryDate);
+            increments, operationalScope, referencingFeatureGroups, startDate, expiryDate);
   }
 
   @Override
@@ -397,12 +320,8 @@ public class EntitlementPoolEntity implements VersionableEntity {
         && Objects.equals(name, that.name)
         && Objects.equals(description, that.description)
         && Objects.equals(thresholdUnit, that.thresholdUnit)
-        && Objects.equals(entitlementMetric, that.entitlementMetric)
         && Objects.equals(increments, that.increments)
-        && Objects.equals(aggregationFunction, that.aggregationFunction)
         && Objects.equals(operationalScope, that.operationalScope)
-        && Objects.equals(time, that.time)
-        && Objects.equals(manufacturerReferenceNumber, that.manufacturerReferenceNumber)
         && Objects.equals(referencingFeatureGroups, that.referencingFeatureGroups)
         && Objects.equals(startDate, that.startDate)
         && Objects.equals(expiryDate, that.expiryDate);
@@ -418,12 +337,8 @@ public class EntitlementPoolEntity implements VersionableEntity {
         + ", description='" + description + '\''
         + ", thresholdValue=" + thresholdValue
         + ", thresholdUnit='" + thresholdUnit + '\''
-        + ", entitlementMetric=" + entitlementMetric
         + ", increments='" + increments + '\''
-        + ", aggregationFunction=" + aggregationFunction
         + ", operationalScope=" + operationalScope
-        + ", time=" + time
-        + ", manufacturerReferenceNumber='" + manufacturerReferenceNumber + '\''
         + ", referencingFeatureGroups=" + referencingFeatureGroups
         + ", version_uuid=" + versionUuId
         + ", startDate=" + startDate
@@ -432,30 +347,26 @@ public class EntitlementPoolEntity implements VersionableEntity {
   }
 
   /**
-   * Gets aggregation function for artifact.
-   *
-   * @return the aggregation function for artifact
-   */
-  public AggregationFunctionForXml getAggregationFunctionForArtifact() {
-    AggregationFunctionForXml aggregationFunctionForXml = new AggregationFunctionForXml();
-    if (entitlementMetric != null) {
-      aggregationFunctionForXml.setValue(aggregationFunction.getResult());
-    } else {
-      aggregationFunctionForXml.setValue(null);
-    }
-    return aggregationFunctionForXml;
-  }
-
-  /**
    * Gets operational scope for artifact.
    *
    * @return the operational scope for artifact
    */
-  public Set<String> getOperationalScopeForArtifact() {
+  public OperationalScopeForXml getOperationalScopeForArtifact() {
+    OperationalScopeForXml obj = new OperationalScopeForXml();
     if (operationalScope != null) {
-      return operationalScope.getResults();
-    } else {
-      return null;
+      if(operationalScope.getResults().size() > 0) {
+        obj.setValue(operationalScope.getResults());
+      }
     }
+    return obj;
+  }
+
+  //Defined and used only for License Artifcat XMLs
+  public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
+    this.manufacturerReferenceNumber = manufacturerReferenceNumber;
+  }
+
+  public String getManufacturerReferenceNumber() {
+    return manufacturerReferenceNumber;
   }
 }

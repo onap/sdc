@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @ApiModel(value = "EntitlementPoolRequest")
-//@JsonIgnoreProperties(value = {"manufacturerReferenceNumber"})
+@JsonIgnoreProperties({"manufacturerReferenceNumber", "time", "aggregationFunction", "entitlementMetric"})
 public class EntitlementPoolRequestDto {
 
   @NotNull
@@ -46,23 +46,11 @@ public class EntitlementPoolRequestDto {
   private Integer thresholdValue;
 
   private ThresholdUnit thresholdUnits;
-  @NotNull
-  @Valid
-  private ChoiceOrOtherDto<EntitlementMetric> entitlementMetric;
   @Size(max = 120)
   private String increments;
-  @NotNull
-  @Valid
-  private ChoiceOrOtherDto<AggregationFunction> aggregationFunction;
 
   @Valid
   private MultiChoiceOrOtherDto<OperationalScope> operationalScope;
-  @NotNull
-  @Valid
-  private ChoiceOrOtherDto<EntitlementTime> time;
-  @NotNull
-  @Size(max = 100)
-  private String manufacturerReferenceNumber;
 
   private String startDate;
   private String expiryDate;
@@ -99,14 +87,6 @@ public class EntitlementPoolRequestDto {
     this.thresholdUnits = thresholdUnits;
   }
 
-  public ChoiceOrOtherDto<EntitlementMetric> getEntitlementMetric() {
-    return entitlementMetric;
-  }
-
-  public void setEntitlementMetric(ChoiceOrOtherDto<EntitlementMetric> entitlementMetric) {
-    this.entitlementMetric = entitlementMetric;
-  }
-
   public String getIncrements() {
     return increments;
   }
@@ -115,36 +95,12 @@ public class EntitlementPoolRequestDto {
     this.increments = increments;
   }
 
-  public ChoiceOrOtherDto<AggregationFunction> getAggregationFunction() {
-    return aggregationFunction;
-  }
-
-  public void setAggregationFunction(ChoiceOrOtherDto<AggregationFunction> aggregationFunction) {
-    this.aggregationFunction = aggregationFunction;
-  }
-
   public MultiChoiceOrOtherDto<OperationalScope> getOperationalScope() {
     return operationalScope;
   }
 
   public void setOperationalScope(MultiChoiceOrOtherDto<OperationalScope> operationalScope) {
     this.operationalScope = operationalScope;
-  }
-
-  public ChoiceOrOtherDto<EntitlementTime> getTime() {
-    return time;
-  }
-
-  public void setTime(ChoiceOrOtherDto<EntitlementTime> time) {
-    this.time = time;
-  }
-
-  public String getManufacturerReferenceNumber() {
-    return manufacturerReferenceNumber;
-  }
-
-  public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
-    this.manufacturerReferenceNumber = manufacturerReferenceNumber;
   }
 
   public String getStartDate() {

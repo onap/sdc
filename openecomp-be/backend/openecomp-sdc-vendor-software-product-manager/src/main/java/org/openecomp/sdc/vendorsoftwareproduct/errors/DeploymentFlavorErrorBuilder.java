@@ -17,6 +17,8 @@ public class DeploymentFlavorErrorBuilder {
         "Invalid Request,Same Vfc cannot be associated more than once.";
     private static final String DUPLICATE_DEPLOYMENT_FLAVOR_MODEL_NOT_ALLOWED_MSG =
         "Invalid request, Deployment Flavor with model %s already exists for Vsp with Id %s.";
+    private static final String DEPLOYMENT_FLAVOUR_NAME_FORMAT_MSG = "Field does not conform to predefined criteria"
+            + ": name : must match %s";
     private static final String INVALID_COMPUTE_FLAVOR_ID_MSG =
         "Invalid request, Compute Flavor with Id %s does not exist for VFC with Id %s.";
     private static final String INVALID_COMPONENT_COMPUTE_ASSOCIATION_ERROR_MSG="VSP cannot be " +
@@ -90,6 +92,14 @@ public class DeploymentFlavorErrorBuilder {
         builder.withId(VendorSoftwareProductErrorCodes.FEATUREGROUP_REQUIRED_IN_DEPLOYMENT_FLAVOR);
         builder.withCategory(ErrorCategory.APPLICATION);
         builder.withMessage(String.format(FEATUREGROUP_REQUIRED_IN_DEPLOYMENT_FLAVOR_MSG));
+        return builder.build();
+    }
+
+    public static ErrorCode getDeploymentFlavorNameFormatErrorBuilder(String pattern){
+        ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
+        builder.withId(VendorSoftwareProductErrorCodes.DEPLOYMENT_FLAVOR_NAME_FORMAT_NOT_ALLOWED);
+        builder.withCategory(ErrorCategory.APPLICATION);
+        builder.withMessage(String.format(DEPLOYMENT_FLAVOUR_NAME_FORMAT_MSG, pattern));
         return builder.build();
     }
 }

@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 
 export const actionTypes = keyMirror({
 	LICENSE_MODEL_LOADED: null,
@@ -31,3 +32,16 @@ export const navigationItems = keyMirror({
 	LICENSE_KEY_GROUPS: 'license-key-groups',
 	ACTIVITY_LOG: 'activity-log'
 });
+
+export const thresholdUnitType = {
+	ABSOLUTE: 'Absolute',
+	PERCENTAGE: 'Percentage'
+};
+
+export const optionsInputValues = {
+	THRESHOLD_UNITS: [
+		{enum: '', title: i18n('please select…')},
+		{enum: thresholdUnitType.ABSOLUTE, title: 'Absolute'},
+		{enum: thresholdUnitType.PERCENTAGE, title: '%'}
+	]
+};

@@ -22,7 +22,6 @@ package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdcrests.mapping.MappingBase;
-import org.openecomp.sdcrests.vendorlicense.types.ChoiceOrOtherDto;
 import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.MultiChoiceOrOtherDto;
 
@@ -39,14 +38,9 @@ public class MapEntitlementPoolEntityToEntitlementPoolEntityDto
 
     MapChoiceOrOtherToChoiceOrOtherDto choiceOrOtherMapper =
         new MapChoiceOrOtherToChoiceOrOtherDto();
-    target.setEntitlementMetric(
-        choiceOrOtherMapper.applyMapping(source.getEntitlementMetric(), ChoiceOrOtherDto.class));
-    target.setAggregationFunction(
-        choiceOrOtherMapper.applyMapping(source.getAggregationFunction(), ChoiceOrOtherDto.class));
     target.setOperationalScope(new MapMultiChoiceOrOtherToMultiChoiceOrOtherDto()
         .applyMapping(source.getOperationalScope(), MultiChoiceOrOtherDto.class));
-    target.setTime(choiceOrOtherMapper.applyMapping(source.getTime(), ChoiceOrOtherDto.class));
-    target.setManufacturerReferenceNumber(source.getManufacturerReferenceNumber());
+
     target.setReferencingFeatureGroups(source.getReferencingFeatureGroups());
 
     target.setStartDate(source.getStartDate());

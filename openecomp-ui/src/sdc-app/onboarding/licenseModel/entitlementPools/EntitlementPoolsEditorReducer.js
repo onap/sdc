@@ -41,12 +41,7 @@ export default (state = {}, action) => {
 					'description' : {
 						isValid: true,
 						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 1000}]
-					},
-					'manufacturerReferenceNumber' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 100}]
+						validations: [{type: 'maxLength', data: 1000}]
 					},
 					'increments' : {
 						isValid: true,
@@ -56,33 +51,18 @@ export default (state = {}, action) => {
 					'operationalScope' : {
 						isValid: true,
 						errorText: '',
-						validations: [{type: 'required', data: true}]
+						validations: []
 					},
 					'thresholdUnits' : {
 						isValid: true,
 						errorText: '',
-						validations: [{type: 'required', data: true}]
+						validations: []
 					},
 					'thresholdValue' : {
 						isValid: true,
 						errorText: '',
-						validations: [{type: 'required', data: true}]
-					},
-					'entitlementMetric' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}]
-					},
-					'aggregationFunction' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}]
-					},
-					'time' : {
-						isValid: true,
-						errorText: '',
-						validations: [{type: 'required', data: true}]
-					},
+						validations: []
+					},					
 					'startDate': {
 						isValid: true,
 						errorText: '',
@@ -106,6 +86,12 @@ export default (state = {}, action) => {
 			};
 		case actionTypes.entitlementPoolsEditor.CLOSE:
 			return {};
+
+		case actionTypes.entitlementPoolsEditor.LIMITS_LIST_LOADED:
+			return {
+				...state,
+				limitsList: action.response.results
+			};	
 		default:
 			return state;
 	}

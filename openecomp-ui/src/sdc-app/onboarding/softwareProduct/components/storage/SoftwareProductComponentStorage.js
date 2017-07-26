@@ -33,14 +33,15 @@ const mapStateToProps = ({softwareProduct}) => {
 		qdata,
 		isReadOnlyMode,
 		qGenericFieldInfo,
-		dataMap
+		dataMap,
+		version: currentVSP.version
 	};
 };
 
-const mapActionToProps = (dispatch, {softwareProductId, version, componentId}) => {
+const mapActionToProps = (dispatch, {softwareProductId, componentId}) => {
 	return {
 		onQDataChanged: (deltaData) => ValidationHelper.qDataChanged(dispatch, {deltaData, qName: COMPONENTS_QUESTIONNAIRE}),
-		onSubmit: ({componentData, qdata}) => { return SoftwareProductComponentsActionHelper.updateSoftwareProductComponent(dispatch,
+		onSubmit: ({componentData, qdata, version}) => { return SoftwareProductComponentsActionHelper.updateSoftwareProductComponent(dispatch,
 			{softwareProductId, version, vspComponentId: componentId, componentData, qdata});
 		}
 	};

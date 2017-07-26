@@ -77,13 +77,10 @@ public class EntitlementPoolConvertor {
     info.setDescription(entitlementPool.getDescription());
     info.addProperty("thresholdValue", entitlementPool.getThresholdValue());
     info.addProperty("threshold_unit", entitlementPool.getThresholdUnit());
-    info.addProperty("entitlement_metric", entitlementPool.getEntitlementMetric());
+    //info.addProperty("entitlement_metric", entitlementPool.getEntitlementMetric());
     info.addProperty("increments", entitlementPool.getIncrements());
-    info.addProperty("aggregation_func", entitlementPool.getAggregationFunction());
     info.addProperty("operational_scope", entitlementPool.getOperationalScope());
-    info.addProperty("EntitlementTime", entitlementPool.getTime());
-    info.addProperty("manufacturerReferenceNumber",
-        entitlementPool.getManufacturerReferenceNumber());
+
     return info;
   }
 

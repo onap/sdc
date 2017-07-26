@@ -31,18 +31,13 @@ import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManager;
+import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.errors.CompositionEditNotAllowedErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.errors.DeleteNicErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.errors.DuplicateNicInComponentErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.errors.NicInternalNetworkErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.errors.NicNetworkIdNotAllowedExternalNetworkErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.errors.NotSupportedHeatOnboardMethodErrorBuilder;
+import org.openecomp.sdc.vendorsoftwareproduct.errors.*;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
@@ -55,7 +50,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.NicCompositionSchemaInput;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateInput;
-import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
@@ -145,6 +139,19 @@ public class NicManagerImpl implements NicManager {
     String networkId = nic.getNicCompositionData().getNetworkId();
     NetworkType networkType = nic.getNicCompositionData().getNetworkType();
     String networkDescription = nic.getNicCompositionData().getNetworkDescription();
+
+    if(!nic.getNicCompositionData().getName().matches(VendorSoftwareProductConstants.NAME_PATTERN))
+    {
+      ErrorCode errorCode = NicErrorBuilder.getNicNameFormatErrorBuilder(nic
+              .getNicCompositionData().getName(), VendorSoftwareProductConstants.NAME_PATTERN);
+
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+              LoggerTragetServiceName.CREATE_NIC, ErrorLevel.ERROR.name(),
+              errorCode.id(),errorCode.message());
+
+      throw new CoreException(errorCode);
+    }
+
     listNics.forEach(nicEntity -> {
       Nic nicdata = nicEntity.getNicCompositionData();
       if (nic.getNicCompositionData().getName().equalsIgnoreCase(nicdata.getName())) {
@@ -264,6 +271,18 @@ public class NicManagerImpl implements NicManager {
     NicCompositionSchemaInput schemaInput = new NicCompositionSchemaInput();
     schemaInput.setManual(vspInfoDao.isManual(nic.getVspId(), nic.getVersion()));
     schemaInput.setNic(retrieved.getNicCompositionData());
+
+    if(schemaInput.isManual() && !nic.getNicCompositionData().getName().matches(VendorSoftwareProductConstants.NAME_PATTERN))
+    {
+      ErrorCode errorCode = NicErrorBuilder.getNicNameFormatErrorBuilder(nic
+              .getNicCompositionData().getName(), VendorSoftwareProductConstants.NAME_PATTERN);
+
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+              LoggerTragetServiceName.UPDATE_NIC, ErrorLevel.ERROR.name(),
+              errorCode.id(),errorCode.message());
+
+      throw new CoreException(errorCode);
+    }
 
     CompositionEntityValidationData validationData = compositionEntityDataManager
         .validateEntity(nic, SchemaTemplateContext.composition, schemaInput);

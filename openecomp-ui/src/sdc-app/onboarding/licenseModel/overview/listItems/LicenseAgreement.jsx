@@ -15,7 +15,7 @@
  */
 import React, {Component} from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import InputOptions, {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
+import InputOptions, {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
 import {optionsInputValues} from '../../licenseAgreement/LicenseAgreementConstants.js';
 import ArrowCol from './listItemsComponents/ArrowCol.jsx';
 import ItemInfo from './listItemsComponents/ItemInfo.jsx';
@@ -24,14 +24,17 @@ import {AdditionalDataCol, AdditionalDataElement} from './listItemsComponents/Ad
 
 class LicenseAgreement extends Component {
 	render() {
-		let {laData: {name, description, licenseTerm, children = []}, isCollapsed, onClick} = this.props;
+		let {laData: {name, description, licenseTerm, children = []}, isCollapsed, onClick, isOrphan} = this.props;
 		return (
-			<div onClick={e => onClick(e)} className='vlm-list-item vlm-list-item-la' data-test-id='vlm-list-la-item'>
-				<ArrowCol isCollapsed={isCollapsed} length={children.length} />
-				<IconCol className='la-icon'/>
+			<div 
+				onClick={e => onClick(e)} 
+				className={`vlm-list-item vlm-list-item-la ${isOrphan ? 'orphan-list-item' : ''} ${children.length && !isOrphan ? 'clickable' : ''} `} 
+				data-test-id='vlm-list-la-item'>
+				{!isOrphan && <ArrowCol isCollapsed={isCollapsed} length={children.length} />}
+				<IconCol className='la-icon' text='LA'/>
 				<ItemInfo name={name} description={description}>
 					<div className='children-count'>
-						<span className='count-value'>Feature Groups: <span data-test-id='vlm-list-fg-count-value'>{`${children.length}`}</span></span>
+						<span className='count-value'>{i18n('Feature Groups: ')}<span data-test-id='vlm-list-fg-count-value'>{`${children.length}`}</span></span>
 					</div>
 				</ItemInfo>
 				<AdditionalDataCol>

@@ -72,6 +72,11 @@
 				fill: $green;
 			  }
 			}
+			.svg-icon-wrapper.hideDelete {
+				.svg-icon {
+					fill: $white;
+				}
+			}
 			.select-action-table-row {
 				display: flex;
 				flex: 1;
@@ -80,6 +85,7 @@
 				&.has-error {
 					border-color: $red;
 				}
+
 				.select-action-table-cell {
 					flex: 1;
 					border-right: 1px solid;
@@ -127,10 +133,9 @@
 						border-bottom: 1px solid $blue;
 						overflow: auto;
 						.Select-menu {
-							display: inline-block;
 							.Select-option {
-								width: 100%;
-								display: inline-block;
+								overflow: hidden;
+								text-overflow: ellipsis;
 								border-bottom: 1px solid $light-gray;
 								&:hover {
 									background-color: $blue;

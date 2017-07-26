@@ -29,7 +29,6 @@ import javax.validation.constraints.Pattern;
 public class NicRequestDto {
 
   @NotBlank(message = "is mandatory and should not be empty")
-  @Pattern(regexp = "^[a-zA-Z 0-9._-]*$", message = "must match \"^[a-zA-Z 0-9._-]*$\"")
   private String name;
   private String description;
   private String networkId;

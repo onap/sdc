@@ -76,6 +76,9 @@ public interface VendorLicenseFacade {
   LicenseAgreementEntity createLicenseAgreement(LicenseAgreementEntity licenseAgreement,
                                                 String user);
 
+  Collection<FeatureGroupEntity> listFeatureGroups(String vlmId, Version version,
+                                                         String user);
+
   FeatureGroupEntity createFeatureGroup(FeatureGroupEntity featureGroup, String user);
 
 

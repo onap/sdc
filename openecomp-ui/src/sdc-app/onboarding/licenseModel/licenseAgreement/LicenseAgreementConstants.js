@@ -15,7 +15,7 @@
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import InputOptions, {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
+import InputOptions, {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
 
 export const actionTypes = keyMirror({
 	LICENSE_AGREEMENT_LIST_LOADED: null,

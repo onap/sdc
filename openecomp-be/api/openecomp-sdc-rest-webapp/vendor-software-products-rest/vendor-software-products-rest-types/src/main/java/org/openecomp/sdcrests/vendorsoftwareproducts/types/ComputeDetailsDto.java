@@ -8,7 +8,6 @@ import javax.validation.constraints.Size;
 public class ComputeDetailsDto implements CompositionDataEntityDto {
   @NotBlank(message = "is mandatory and should not be empty")
   @Size(min = 0, max = 30, message = "length should not exceed 30 characters.")
-  @Pattern(regexp = "^[a-zA-Z 0-9._-]*$", message = "must match \"^[a-zA-Z 0-9._-]*$\"")
   private String name;
   @Size(min = 0, max = 300, message = "length should not exceed 300 characters.")
   private String description;

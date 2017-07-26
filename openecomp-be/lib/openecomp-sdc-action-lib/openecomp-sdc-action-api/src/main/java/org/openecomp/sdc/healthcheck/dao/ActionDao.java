@@ -41,7 +41,7 @@ public interface ActionDao extends VersionableDao, BaseDao<ActionEntity> {
 
   public Action getActionsByActionUuId(String uniqueId) throws ActionException;
 
-  public List<OpenEcompComponent> getOpenEcompComponents() throws ActionException;
+  public List<OpenEcompComponent> getEcompComponents() throws ActionException;
 
   public List<Action> getActionsByActionInvariantUuId(String actionInvariantUuId)
       throws ActionException;

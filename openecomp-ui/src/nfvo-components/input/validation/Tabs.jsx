@@ -15,7 +15,7 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {default as BTabs} from 'react-bootstrap/lib/Tabs.js';
+import {default as SDCTabs} from 'sdc-ui/lib/react/Tabs.js';
 import Overlay from 'react-bootstrap/lib/Overlay.js';
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 
@@ -33,15 +33,15 @@ class Tabs extends React.Component {
 		return React.cloneElement(
 			element,
 			{
-				key: element.props.eventKey,
-				tabClassName: invalidTabs.indexOf(element.props.eventKey) > -1 ? 'invalid-tab' : 'valid-tab'
+				key: element.props.tabId,
+				className: invalidTabs.indexOf(element.props.tabId) > -1 ? 'invalid-tab' : 'valid-tab'
 			}
 		);
 	}
 
 	showTabsError() {
 		const {invalidTabs} = this.props;
-		const showError = ((invalidTabs.length === 1 && invalidTabs[0] !== this.props.activeKey) || (invalidTabs.length > 1));
+		const showError = ((invalidTabs.length === 1 && invalidTabs[0] !== this.props.activeTab) || (invalidTabs.length > 1));
 		return showError;
 	}
 
@@ -50,21 +50,20 @@ class Tabs extends React.Component {
 		let {invalidTabs, ...tabProps} = this.props;
 		return (
 			<div>
-				<BTabs {...tabProps} ref='tabsList' id='tabsList' >
+				<SDCTabs {...tabProps} ref='tabsList' id='tabsList' >
 					{this.props.children.map(element => this.cloneTab(element))}
-				</BTabs>
+				</SDCTabs>
 				<Overlay
 					animation={false}
 					show={this.showTabsError()}
 					placement='bottom'
-					containerPadding={50}
 					target={() => {
-						let target = ReactDOM.findDOMNode(this.refs.tabsList).querySelector('ul > li.invalid-tab:not(.active):nth-of-type(n)');
+						let target = ReactDOM.findDOMNode(this.refs.tabsList).querySelector('ul > li.invalid-tab:not(.sdc-tab-active):nth-of-type(n)');
 						return target && target.offsetParent ? target : undefined;
 					}
 					}
 					container={() => {
-						let target = ReactDOM.findDOMNode(this.refs.tabsList).querySelector('ul > li.invalid-tab:not(.active):nth-of-type(n)');
+						let target = ReactDOM.findDOMNode(this.refs.tabsList).querySelector('ul > li.invalid-tab:not(.sdc-tab-active):nth-of-type(n)');
 						return target && target.offsetParent ? target.offsetParent : this;
 					}}>
 					<Tooltip

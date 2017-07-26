@@ -10,7 +10,6 @@ import javax.validation.constraints.Size;
 
 public class DeploymentFlavorRequestDto {
     @NotBlank(message = "is mandatory and should not be empty")
-    @Pattern(regexp = "^[a-zA-Z 0-9._-]*$", message = "must match \"^[a-zA-Z 0-9._-]*$\"")
     @Size(min = 0, max = 30,message = "length should not exceed 30 characters.")
     private String model;
     @Size(min = 0, max = 300,message = "length should not exceed 300 characters.")

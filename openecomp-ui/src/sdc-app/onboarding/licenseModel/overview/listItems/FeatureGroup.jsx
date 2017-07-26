@@ -18,30 +18,41 @@ import {overviewEditorHeaders} from '../LicenseModelOverviewConstants.js';
 import ArrowCol from './listItemsComponents/ArrowCol.jsx';
 import ItemInfo from './listItemsComponents/ItemInfo.jsx';
 import IconCol from './listItemsComponents/IconCol.jsx';
+import i18n from 'nfvo-utils/i18n/i18n.js';
+import {AdditionalDataCol, AdditionalDataElement} from './listItemsComponents/AdditionalDataCol.jsx';
 
 class FeatureGroup extends Component {
 	render() {
-		let {fgData: {name, description, children = []}, isCollapsed, onClick} = this.props;
+		let {fgData: {name, manufacturerReferenceNumber, description, children = []}, isCollapsed, onClick, isOrphan} = this.props;
 		return (
-			<div onClick={e => onClick(e)} className='vlm-list-item vlm-list-item-fg' data-test-id='vlm-list-item-fg'>
-				<ArrowCol isCollapsed={isCollapsed} length={children.length} />
-				<IconCol className='fg-icon'/>
+			<div 
+				onClick={e => onClick(e)} 
+				className={`vlm-list-item vlm-list-item-fg ${isOrphan ? 'orphan-list-item' : ''} ${children.length && !isOrphan ? 'clickable' : ''}`} data-test-id='vlm-list-item-fg'>
+				{!isOrphan && <ArrowCol isCollapsed={isCollapsed} length={children.length} />}
+				<IconCol className='fg-icon' text='FG'/>
 				<ItemInfo name={name} description={description}>
 					<div className='children-count'>
 						<span className='count-value'>
-							Entitlement Pools:
+							{i18n('Entitlement Pools: ')}
 							<span data-test-id='vlm-list-ep-count-value'>
 								{`${children.filter(child => child.itemType === overviewEditorHeaders.ENTITLEMENT_POOL).length}`}
 							</span>
 						</span>
+						<span className='fg-pipeline-separator'>|</span>
 						<span className='count-value'>
-								License Key Groups:
+								{i18n('License Key Groups: ')}
 								<span data-test-id='vlm-list-lkg-count-value'>
 									{`${children.filter(child => child.itemType === overviewEditorHeaders.LICENSE_KEY_GROUP).length}`}
 								</span>
 						</span>
 					</div>
 				</ItemInfo>
+				<AdditionalDataCol>
+					<AdditionalDataElement
+						name={i18n('Manufacturer Reference Number')}
+						value={manufacturerReferenceNumber}
+						className='vlm-list-item-sku'/>
+				</AdditionalDataCol>
 			</div>
 		);
 	}

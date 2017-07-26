@@ -5,9 +5,10 @@ public class GeneratorConstants {
   public static final String IMAGES_PROPERTY = "images";
   public static final String RELEASE_VENDOR = "releaseVendor";
   public static final String VNF_CONFIG_NODE_TEMPLATE_ID_SUFFIX = "_VNF_Configuration";
-  public static final String VFC_NODE_TEMPLATE_ID_SUFFIX = "_VFC";
   public static final String VNF_NODE_TEMPLATE_ID_SUFFIX = "_VNF";
-  public static final String PORT_NODE_TEMPLATE_ID_SUFFIX = "_wan_port";
+  public static final String PORT_TYPE_INTERNAL_NODE_TEMPLATE_SUFFIX = "_lan";
+  public static final String PORT_TYPE_EXTERNAL_NODE_TEMPLATE_SUFFIX = "_wan";
+  public static final String PORT_NODE_TEMPLATE_ID_SUFFIX = "_port";
 
   public static final String TOSCA_SERVICE_TEMPLATE_FILE_NAME_SUFFIX = "ServiceTemplate.yaml";
 

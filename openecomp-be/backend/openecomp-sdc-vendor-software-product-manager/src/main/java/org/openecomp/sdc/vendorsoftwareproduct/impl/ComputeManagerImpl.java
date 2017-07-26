@@ -12,15 +12,15 @@ import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ComputeManager;
+import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.errors.ComputeErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.DuplicateComputeInComponentErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.NotSupportedHeatOnboardMethodErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
@@ -34,14 +34,11 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEnti
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComputeData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.compute.Compute;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.ComputeCompositionSchemaInput;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateInput;
-import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -92,9 +89,13 @@ public class ComputeManagerImpl implements ComputeManager {
           onboardingMethodUpdateErrorCode.message());
       throw new CoreException(onboardingMethodUpdateErrorCode);
     } else {
+
       //validateComponentId(compute.getVspId(),compute.getVersion(),compute.getComponentId());
-      validateCompute(compute);
-      createdCompute = createCompute(compute);
+        Collection<ComputeEntity> vfcComputeList = listCompute(compute.getVspId(),compute.getVersion
+                (),compute.getComponentId());
+
+        validateVfcCompute(compute, vfcComputeList, LoggerTragetServiceName.CREATE_COMPUTE);
+        createdCompute = createCompute(compute);
     }
 
     mdcDataDebugMessage
@@ -108,7 +109,7 @@ public class ComputeManagerImpl implements ComputeManager {
     return compositionEntityDataManager.createCompute(compute);
   }
 
-  private void validateCompute(ComputeEntity compute) {
+  /*private void validateCompute(ComputeEntity compute) {
     Collection<ComputeEntity> vfcComputeList = listCompute(compute.getVspId(),compute.getVersion
         (),compute.getComponentId());
 
@@ -123,7 +124,7 @@ public class ComputeManagerImpl implements ComputeManager {
       throw new CoreException(duplicateComputeInComponentErrorBuilder);
     }
 
-  }
+  }*/
 
   private void validateComputeUpdate(ComputeEntity compute) {
     Collection<ComputeEntity> vfcComputeList = listCompute(compute.getVspId(),compute.getVersion
@@ -347,7 +348,7 @@ public class ComputeManagerImpl implements ComputeManager {
     retrieved.setQuestionnaireData(null);
     vfcComputeList.remove(retrieved);
     if(vspInfoDao.isManual(compute.getVspId(), compute.getVersion()))
-      validateVfcCompute(compute, vfcComputeList);
+      validateVfcCompute(compute, vfcComputeList, LoggerTragetServiceName.UPDATE_COMPUTE);
 
     //Set format to default value in order to handle FTL validation when compute format is null
     /*if(compute.getComputeCompositionData().getFormat() == null)
@@ -384,22 +385,32 @@ public class ComputeManagerImpl implements ComputeManager {
     }
   }
 
-  private void validateVfcCompute(ComputeEntity compute, Collection<ComputeEntity> vfcComputeList) {
-    if (isComputeNameDuplicate(vfcComputeList,compute.getComputeCompositionData().getName(), compute.getId())) {
-      ErrorCode errorCode = DuplicateComputeInComponentErrorBuilder.getDuplicateComputeNameErrorBuilder(compute
+  private void validateVfcCompute(ComputeEntity compute, Collection<ComputeEntity> vfcComputeList, String event) {
+      if(!compute.getComputeCompositionData().getName().matches(VendorSoftwareProductConstants.NAME_PATTERN))
+      {
+          ErrorCode errorCode = ComputeErrorBuilder.getComputeNameFormatErrorBuilder(
+                  VendorSoftwareProductConstants.NAME_PATTERN);
+          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+                  event, ErrorLevel.ERROR.name(),
+                  errorCode.id(),errorCode.message());
+          throw new CoreException(errorCode);
+      }
+
+      if (isComputeNameDuplicate(vfcComputeList,compute.getComputeCompositionData().getName(), compute.getId())) {
+          ErrorCode errorCode = DuplicateComputeInComponentErrorBuilder.getDuplicateComputeNameErrorBuilder(compute
               .getComputeCompositionData().getName(), compute.getComponentId());
 
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              LoggerTragetServiceName.CREATE_COMPONENT, ErrorLevel.ERROR.name(),
+          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+              event, ErrorLevel.ERROR.name(),
               errorCode.id(),errorCode.message());
 
-      throw new CoreException(errorCode);
-    }
+          throw new CoreException(errorCode);
+      }
   }
 
   private boolean isComputeNameDuplicate(Collection<ComputeEntity> computes, String name, String computeId) {
     for (ComputeEntity compute : computes) {
-      if (compute.getComputeCompositionData().getName().equals(name) && !compute.getId().equals(computeId)) {
+      if (compute.getComputeCompositionData().getName().equalsIgnoreCase(name) && !compute.getId().equals(computeId)) {
         return true;
       }
     }

@@ -34,9 +34,9 @@ export const actionTypes = keyMirror({
 	LM_DATA_CHANGED: null
 });
 
-export const selectedButton = keyMirror({
-	VLM_LIST_VIEW: null,
-	NOT_IN_USE: null
-});
+export const selectedButton = {
+	VLM_LIST_VIEW: 'VLM_LIST_VIEW',
+	NOT_IN_USE: 'NOT_IN_USE'
+};
 
 export const VLM_DESCRIPTION_FORM = 'VLMDEWSCRIPTIONFORM';

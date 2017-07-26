@@ -35,6 +35,7 @@ import licenseKeyGroupsListReducer from './licenseKeyGroups/LicenseKeyGroupsList
 import {createPlainDataReducer} from 'sdc-app/common/reducers/PlainDataReducer.js';
 
 import {actionTypes as licenseModelOverviewConstants, selectedButton, VLM_DESCRIPTION_FORM} from './overview/LicenseModelOverviewConstants.js';
+import limitEditorReducer from './limits/LimitEditorReducer.js'; 
 
 export default combineReducers({
 	licenseModelCreation: createPlainDataReducer(licenseModelCreationReducer),
@@ -81,5 +82,6 @@ export default combineReducers({
 			}
 		}
 	)}),
+	limitEditor: createPlainDataReducer(limitEditorReducer),
 	activityLog: activityLogReducer
 });

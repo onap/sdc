@@ -230,9 +230,9 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
     }
     if (network.contains("_net_id")) {
       return network.substring(0, network.indexOf("_net_id"));
-    } else if (network.contains("net_name")) {
+    } else if (network.contains("_net_name")) {
       return network.substring(0, network.indexOf("_net_name"));
-    } else if (network.contains("net_fqdn")) {
+    } else if (network.contains("_net_fqdn")) {
       return network.substring(0, network.indexOf("_net_fqdn"));
     }
     return null;

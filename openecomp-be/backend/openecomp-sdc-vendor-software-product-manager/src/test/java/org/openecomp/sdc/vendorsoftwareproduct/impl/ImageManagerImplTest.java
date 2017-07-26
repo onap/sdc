@@ -84,7 +84,7 @@ public class ImageManagerImplTest {
     Assert.assertEquals(images.size(), 2);
     for (ImageEntity image : images) {
       Assert.assertEquals(image.getImageCompositionData().getFileName(),
-          IMAGE1_ID.equals(image.getId()) ? IMAGE1_ID+" name" : IMAGE2_ID+" name" );
+          IMAGE1_ID.equals(image.getId()) ? IMAGE1_ID+"_name" : IMAGE2_ID+"_name" );
     }
   }
 
@@ -105,13 +105,35 @@ public class ImageManagerImplTest {
   }
 
   @Test
+  public void testCreateManualImageWithIncorrectNameFormat() {
+    ImageEntity expected = createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
+    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+
+    ImageEntity expectedDiffName = createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
+    Image image = expectedDiffName.getImageCompositionData();
+    image.setFileName(IMAGE1_ID + " Name*/");
+    expectedDiffName.setImageCompositionData(image);
+    List<ImageEntity> vfcImageList = new ArrayList<ImageEntity>();
+    vfcImageList.add(expectedDiffName);
+    doReturn(vfcImageList).when(imageDao).list(anyObject());
+    try {
+      imageManager.createImage(expectedDiffName, USER);
+      Assert.fail();
+    }
+    catch (CoreException ex) {
+      Assert.assertEquals(VendorSoftwareProductErrorCodes.IMAGE_NAME_FORMAT_NOT_ALLOWED,
+              ex.code().id());
+    }
+  }
+
+  @Test
   public void testCreateManualImageWithDuplicateName() {
     ImageEntity expected = createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
 
     ImageEntity expectedDiffName = createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
     Image image = expectedDiffName.getImageCompositionData();
-    image.setFileName(IMAGE1_ID + " Name");
+    image.setFileName(IMAGE1_ID + "_Name");
     expectedDiffName.setImageCompositionData(image);
     List<ImageEntity> vfcImageList = new ArrayList<ImageEntity>();
     vfcImageList.add(expectedDiffName);
@@ -143,7 +165,7 @@ public class ImageManagerImplTest {
 
     ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
     Image imageData = new Image();
-    imageData.setFileName(IMAGE1_ID + " name");
+    imageData.setFileName(IMAGE1_ID + "_name");
     imageData.setDescription(IMAGE1_ID + " desc updated");
     imageEntity.setImageCompositionData(imageData);
 
@@ -151,6 +173,33 @@ public class ImageManagerImplTest {
         imageManager.updateImage(imageEntity, USER);
     Assert.assertTrue(validationData == null || validationData.getErrors() == null);
     verify(imageDao).update(imageEntity);
+  }
+
+  @Test
+  public void testUpdateImageWithIncorrectNameFormat() {
+    doReturn(createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID))
+            .when(imageDao).get(anyObject());
+
+    doReturn(new CompositionEntityValidationData(CompositionEntityType.image, IMAGE1_ID))
+            .when(compositionEntityDataManagerMock)
+            .validateEntity(anyObject(), anyObject(), anyObject());
+
+    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+
+    ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
+    Image imageData = new Image();
+    imageData.setFileName(IMAGE1_ID + "name/*");
+    imageData.setDescription(IMAGE1_ID + " desc updated");
+    imageEntity.setImageCompositionData(imageData);
+
+    try {
+      imageManager.updateImage(imageEntity, USER);
+      Assert.fail();
+    }
+    catch (CoreException ex) {
+      Assert.assertEquals(VendorSoftwareProductErrorCodes.IMAGE_NAME_FORMAT_NOT_ALLOWED,
+              ex.code().id());
+    }
   }
 
   @Test
@@ -169,7 +218,7 @@ public class ImageManagerImplTest {
 
     ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
     Image imageData = new Image();
-    imageData.setFileName(IMAGE1_ID + " name updated");
+    imageData.setFileName(IMAGE1_ID + "_name_updated");
     imageData.setDescription(IMAGE1_ID + " desc updated");
     imageEntity.setImageCompositionData(imageData);
 
@@ -345,7 +394,7 @@ public class ImageManagerImplTest {
   static ImageEntity createImage(String vspId, Version version, String compId, String imageId) {
     ImageEntity imageEntity = new ImageEntity(vspId, version, compId, imageId);
     Image imageData = new Image();
-    imageData.setFileName(imageId + " name");
+    imageData.setFileName(imageId + "_name");
     imageData.setDescription(imageId + " desc");
     imageEntity.setImageCompositionData(imageData);
     return imageEntity;

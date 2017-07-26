@@ -31,8 +31,7 @@ import OnboardActionHelper from './onboard/OnboardActionHelper.js';
 import SoftwareProductComponentsMonitoringAction from './softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringActionHelper.js';
 import {actionTypes, enums} from './OnboardingConstants.js';
 import SoftwareProductComponentsImageActionHelper from './softwareProduct/components/images/SoftwareProductComponentsImageActionHelper.js';
-import {navigationItems as SoftwareProductNavigationItems, actionTypes as SoftwareProductActionTypes,
-    onboardingMethod as onboardingMethodTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
+import {navigationItems as SoftwareProductNavigationItems, actionTypes as SoftwareProductActionTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 import ActivityLogActionHelper from 'sdc-app/common/activity-log/ActivityLogActionHelper.js';
 import licenseModelOverviewActionHelper from 'sdc-app/onboarding/licenseModel/overview/licenseModelOverviewActionHelper.js';
 import store from 'sdc-app/AppStore.js';
@@ -164,18 +163,10 @@ export default {
 			const newVersion = response[0].version ? response[0].version : version;
 
 			SoftwareProductActionHelper.loadSoftwareProductDetailsData(dispatch, {licenseModelId, licensingVersion});
-			let isFetchImageDetails = (response[0].onboardingMethod === onboardingMethodTypes.HEAT);
-			if (isFetchImageDetails) {
-				// will only continue after we can properly build the navigation bar with the images links
-				SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version: newVersion, isFetchImageDetails}).then(() => {
-					SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version: newVersion});
-					setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {softwareProductId, licenseModelId, version: newVersion});
-				});
-			} else {
-				SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version: newVersion, isFetchImageDetails});
-				SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version: newVersion});
-				setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {softwareProductId, licenseModelId, version: newVersion});
-			}
+
+			SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version: newVersion});
+			SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version: newVersion});
+			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {softwareProductId, licenseModelId, version: newVersion});
 		});
 	},
 

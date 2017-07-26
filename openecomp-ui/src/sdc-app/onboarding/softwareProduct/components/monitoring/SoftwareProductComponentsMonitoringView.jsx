@@ -96,7 +96,7 @@ class SoftwareProductComponentsMonitoringView extends Component {
 			<ButtonToolbar>
 				<ButtonGroup>
 					<Button disabled>{filename}</Button>
-					<Button className='delete-button' onClick={()=>this.props.onDeleteFile(type)}>X</Button>
+					<Button data-test-id={`monitoring-delete-${type}`} className='delete-button' onClick={()=>this.props.onDeleteFile(type)}>X</Button>
 				</ButtonGroup>
 			</ButtonToolbar>
 		);

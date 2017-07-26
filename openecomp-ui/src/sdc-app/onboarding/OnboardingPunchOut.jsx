@@ -415,9 +415,9 @@ export default class OnboardingPunchOut {
 	handleStoreChange() {
 		let {currentScreen, licenseModelList, softwareProductList,
 			softwareProduct: {softwareProductEditor: {data = {onboardingMethod: ''}},
-				softwareProductComponents: {componentsList, images: {imagesNavigationList}}, softwareProductAttachments: {heatSetup}}} = store.getState();
+				softwareProductComponents: {componentsList}, softwareProductAttachments: {heatSetup}}} = store.getState();
 		let {onboardingMethod} = data;
-		let breadcrumbsData = {onboardingMethod, currentScreen, licenseModelList, softwareProductList, componentsList, heatSetup, imagesNavigationList};
+		let breadcrumbsData = {onboardingMethod, currentScreen, licenseModelList, softwareProductList, componentsList, heatSetup};
 		if (currentScreen.forceBreadCrumbsUpdate || !isEqual(breadcrumbsData, this.prevBreadcrumbsData) || this.breadcrumbsPrefixSelected) {
 			this.prevBreadcrumbsData = breadcrumbsData;
 			this.breadcrumbsPrefixSelected = false;
@@ -434,7 +434,7 @@ export default class OnboardingPunchOut {
 		}
 	}
 
-	buildBreadcrumbs({currentScreen: {screen, props}, onboardingMethod, licenseModelList, softwareProductList, componentsList, heatSetup, imagesNavigationList}) {
+	buildBreadcrumbs({currentScreen: {screen, props}, onboardingMethod, licenseModelList, softwareProductList, componentsList, heatSetup}) {
 		let screenToBreadcrumb;
 		switch (screen) {
 			case enums.SCREEN.ONBOARDING_CATALOG:
@@ -646,15 +646,7 @@ export default class OnboardingPunchOut {
 							}, {
 								key: enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENT_MONITORING,
 								displayText: i18n('Monitoring')
-							}].filter(item => {
-								switch (item.key) {
-									case enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENT_IMAGES:
-										return (onboardingMethod === onboardingMethodTypes.MANUAL ||
-										(imagesNavigationList && imagesNavigationList[props.componentId] === true));
-									default:
-										return true;
-								}
-							})
+							}]
 						}]
 					];
 				}

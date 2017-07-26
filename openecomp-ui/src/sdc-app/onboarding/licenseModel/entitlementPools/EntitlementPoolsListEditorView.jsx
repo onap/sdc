@@ -21,7 +21,7 @@ import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 
 import EntitlementPoolsEditor from './EntitlementPoolsEditor.js';
-import {extractUnits, extractValue} from './EntitlementPoolsConstants';
+import {extractUnits} from './EntitlementPoolsConstants';
 
 class EntitlementPoolsListEditorView extends React.Component {
 	static propTypes = {
@@ -60,7 +60,7 @@ class EntitlementPoolsListEditorView extends React.Component {
 					isReadOnlyMode={isReadOnlyMode}>
 					{this.filterList().map(entitlementPool => this.renderEntitlementPoolListItem(entitlementPool, isReadOnlyMode))}
 				</ListEditorView>
-				<Modal show={isDisplayModal} bsSize='large' animation={true} className='onborading-modal entitlement-pools-modal'>
+				<Modal show={isDisplayModal} bsSize='large' animation={true} className='onborading-modal license-model-modal entitlement-pools-modal'>
 					<Modal.Header>
 						<Modal.Title>{`${isModalInEditMode ? i18n('Edit Entitlement Pool') : i18n('Create New Entitlement Pool')}`}</Modal.Title>
 					</Modal.Header>
@@ -91,8 +91,7 @@ class EntitlementPoolsListEditorView extends React.Component {
 	}
 
 	renderEntitlementPoolListItem(entitlementPool, isReadOnlyMode) {
-		let {id, name, description, thresholdValue, thresholdUnits, entitlementMetric, aggregationFunction,
-			manufacturerReferenceNumber, time} = entitlementPool;
+		let {id, name, description, thresholdValue, thresholdUnits} = entitlementPool;
 		let {onEditEntitlementPoolClick, onDeleteEntitlementPool} = this.props;
 		return (
 			<ListEditorItemView
@@ -109,13 +108,7 @@ class EntitlementPoolsListEditorView extends React.Component {
 
 				<div className='list-editor-item-view-field'>
 					<div className='title'>{i18n('Entitlement')}</div>
-					<div className='entitlement-parameters'>{`${extractValue(aggregationFunction)} ${extractValue(entitlementMetric)} per  ${extractValue(time)}`}</div>
-					<div className='entitlement-pools-count'>{`${thresholdValue ? thresholdValue : ''} ${extractUnits(thresholdUnits)}`}</div>
-				</div>
-
-				<div className='list-editor-item-view-field'>
-					<div className='title'>{i18n('Manufacturer Reference Number')}</div>
-					<div className='text contract-number'>{manufacturerReferenceNumber}</div>
+					<div className='entitlement-pools-count'>{thresholdValue && `${thresholdValue} ${extractUnits(thresholdUnits)}`}</div>
 				</div>
 
 				<div className='list-editor-item-view-field'>

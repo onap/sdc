@@ -39,7 +39,7 @@ class ListEditorItem extends React.Component {
 				</div>
 				{(onEdit || onDelete) && <div className='list-editor-item-view-controller'>
 					{onEdit && <SVGIcon name='sliders' onClick={() => this.onClickedItem(onEdit)}/>}
-					{onDelete && isAbilityToDelete && <SVGIcon name='trashO' onClick={() => this.onClickedItem(onDelete)}/>}
+					{onDelete && isAbilityToDelete && <SVGIcon name='trashO' data-test-id='delete-list-item' onClick={() => this.onClickedItem(onDelete)}/>}
 				</div>}
 			</div>
 		);

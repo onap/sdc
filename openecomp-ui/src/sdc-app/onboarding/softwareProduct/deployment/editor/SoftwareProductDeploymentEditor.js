@@ -58,7 +58,7 @@ export function mapStateToProps({licenseModel, softwareProduct}) {
 	let DFNames = {};
 
 	deploymentFlavors.map(deployment => {
-		DFNames[deployment.model] = deployment.id;
+		DFNames[deployment.model.toLowerCase()] = deployment.id;
 	});
 
 	return {

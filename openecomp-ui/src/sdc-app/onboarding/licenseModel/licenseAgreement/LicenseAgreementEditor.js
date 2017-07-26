@@ -32,7 +32,7 @@ export const mapStateToProps = ({licenseModel: {licenseAgreement, featureGroup}}
 	}
 
 	for (let i = 0; i < list.length; i++) {
-		LANames[list[i].name] = list[i].id;
+		LANames[list[i].name.toLowerCase()] = list[i].id;
 	}
 
 	const {featureGroupsList = []} = featureGroup;

@@ -24,7 +24,10 @@
   .catalog-tile-top {
 	.catalog-tile-item-name {
 	  margin-top: 21px;
-	  line-height: inherit;
+		line-height: inherit;
+		&:first-letter {
+      text-transform: capitalize;
+    }	
 	}
 	.catalog-tile-vsp-count {
 	  @extend .body-3-semibold;

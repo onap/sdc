@@ -19,7 +19,7 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import Input from 'nfvo-components/input/validation/Input.jsx';
-import InputOptions from 'nfvo-components/input/inputOptions/InputOptions.jsx';
+import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import SoftwareProductCategoriesHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductCategoriesHelper.js';

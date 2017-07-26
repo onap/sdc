@@ -22,6 +22,7 @@ package org.openecomp.sdcrests.vendorlicense.types;
 
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyType;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
+import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -38,6 +39,16 @@ public class LicenseKeyGroupRequestDto {
 
   @Valid
   private MultiChoiceOrOtherDto<OperationalScope> operationalScope;
+
+  private String startDate;
+  private String expiryDate;
+
+  private Integer thresholdValue;
+
+  private ThresholdUnit thresholdUnits;
+
+  @Size(max = 120)
+  private String increments;
 
   public String getName() {
     return name;
@@ -69,5 +80,45 @@ public class LicenseKeyGroupRequestDto {
 
   public void setOperationalScope(MultiChoiceOrOtherDto<OperationalScope> operationalScope) {
     this.operationalScope = operationalScope;
+  }
+
+  public String getStartDate() {
+    return startDate;
+  }
+
+  public void setStartDate(String startDate) {
+    this.startDate = startDate;
+  }
+
+  public String getExpiryDate() {
+    return expiryDate;
+  }
+
+  public void setExpiryDate(String expiryDate) {
+    this.expiryDate = expiryDate;
+  }
+
+  public Integer getThresholdValue() {
+    return thresholdValue;
+  }
+
+  public void setThresholdValue(Integer thresholdValue) {
+    this.thresholdValue = thresholdValue;
+  }
+
+  public ThresholdUnit getThresholdUnits() {
+    return thresholdUnits;
+  }
+
+  public void setThresholdUnits(ThresholdUnit thresholdUnits) {
+    this.thresholdUnits = thresholdUnits;
+  }
+
+  public String getIncrements() {
+    return increments;
+  }
+
+  public void setIncrements(String increments) {
+    this.increments = increments;
   }
 }

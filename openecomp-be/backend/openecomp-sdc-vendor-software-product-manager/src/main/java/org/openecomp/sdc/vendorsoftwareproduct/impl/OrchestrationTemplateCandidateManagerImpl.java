@@ -29,6 +29,7 @@ import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.activityLog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -47,6 +48,7 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.api.annotations.Metrics;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
@@ -90,6 +92,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.openecomp.sdc.logging.messages.AuditMessages.HEAT_VALIDATION_ERROR;
 import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.GENERAL_COMPONENT_ID;
 import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.PROCESS_NAME;
 
@@ -225,6 +228,7 @@ public class OrchestrationTemplateCandidateManagerImpl
       throw new CoreException(new OrchestrationTemplateNotFoundErrorBuilder(vspId).build());
     }
 
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_VALIDATION_STARTED + vspId);
     OrchestrationTemplateActionResponse response = new OrchestrationTemplateActionResponse();
     UploadFileResponse uploadFileResponse = new UploadFileResponse();
     OrchestrationTemplateCandidateData candidateDataEntity = candidate.get();
@@ -233,6 +237,8 @@ public class OrchestrationTemplateCandidateManagerImpl
     if (!fileContent.isPresent()) {
       response.addStructureErrors(uploadFileResponse.getErrors());
       mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
+      response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList,vspId,
+          HEAT_VALIDATION_ERROR));
       return response;
     }
 
@@ -246,6 +252,8 @@ public class OrchestrationTemplateCandidateManagerImpl
           Messages.FOUND_UNASSIGNED_FILES.getErrorMessage(), ErrorLevel.ERROR);
 
       mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
+      response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList,vspId,
+          HEAT_VALIDATION_ERROR));
       return response;
     }
 
@@ -258,6 +266,8 @@ public class OrchestrationTemplateCandidateManagerImpl
     Optional<ByteArrayInputStream> zipByteArrayInputStream = candidateService
         .fetchZipFileByteArrayInputStream(vspId, candidateDataEntity, manifest, uploadErrors);
     if (!zipByteArrayInputStream.isPresent()) {
+      response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList,vspId,
+          HEAT_VALIDATION_ERROR));
       return response;
     }
 
@@ -275,8 +285,18 @@ public class OrchestrationTemplateCandidateManagerImpl
     deleteUploadDataAndContent(vspId, version);
     saveHotData(vspId, version, zipByteArrayInputStream.get(), fileContentMap, tree);
 
+    response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList,vspId,
+        HEAT_VALIDATION_ERROR));
+    if ( MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, response.getErrors
+        ()))) {
+      logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_VALIDATION_COMPLETED + vspId);
+    }
+
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_STARTED + vspId);
+
     TranslatorOutput translatorOutput =
         HeatToToscaUtil.loadAndTranslateTemplateData(fileContentMap);
+
     ToscaServiceModel toscaServiceModel = translatorOutput.getToscaServiceModel();
     if (toscaServiceModel != null) {
       serviceModelDao.storeServiceModel(vspId, version, toscaServiceModel);
@@ -287,7 +307,10 @@ public class OrchestrationTemplateCandidateManagerImpl
               .getNonUnifiedToscaServiceModel()));
       retainComponentQuestionnaireData(vspId, version, componentsQuestionnaire,
           componentNicsQuestionnaire, componentMibList, processes, processArtifact);
+
+      logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_COMPLETED + vspId);
     }
+
     uploadFileResponse.addStructureErrors(uploadErrors);
 
     ActivityLogEntity activityLogEntity =
@@ -298,7 +321,6 @@ public class OrchestrationTemplateCandidateManagerImpl
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
     return response;
   }
-
 
   @Override
   public Optional<FilesDataStructure> getFilesDataStructure(
@@ -462,7 +484,7 @@ public class OrchestrationTemplateCandidateManagerImpl
           componentArtifactDao.listArtifacts(new
               ComponentMonitoringUploadEntity(vspId, activeVersion, componentEntity.getId(),
               null));
-      if(CollectionUtils.isNotEmpty(componentMib)){
+      if (CollectionUtils.isNotEmpty(componentMib)) {
         componentMibList.put(componentName,componentMib);
       }
 
@@ -614,4 +636,14 @@ public class OrchestrationTemplateCandidateManagerImpl
     return vspDetails;
   }
 
-}
+  private void printAuditForErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
+
+    errorList.forEach(errorMessage -> {
+      if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
+        logger.audit(AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(),
+            vspId));
+      }
+    });
+  }
+
+ }

@@ -25,6 +25,7 @@ import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseMod
 import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_LA_MISSING_FG;
 import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_MISSING_LA;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -70,10 +71,7 @@ import org.openecomp.sdc.versioning.errors.VersionableSubEntityNotFoundErrorBuil
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
 
@@ -128,8 +126,6 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
         getVersionInfo(featureGroup.getVendorLicenseModelId(), VersionableEntityAction.Read,
             user), user);
     featureGroup.setVersion(version);
-
-
     return getFeatureGroup(featureGroup);
   }
 
@@ -137,19 +133,9 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
     FeatureGroupEntity retrieved = featureGroupDao.get(featureGroup);
     VersioningUtil
         .validateEntityExistence(retrieved, featureGroup, VendorLicenseModelEntity.ENTITY_TYPE);
-    if(retrieved.getManufacturerReferenceNumber() == null){
-      Object[] entitlementPoolIdsList = retrieved.getEntitlementPoolIds().toArray();
-      if(entitlementPoolIdsList != null && entitlementPoolIdsList.length > 0){
-        String entitlementPoolId = entitlementPoolIdsList[0].toString();
-        EntitlementPoolEntity entitlementPoolEntity = new EntitlementPoolEntity(retrieved.getVendorLicenseModelId(),
-                retrieved.getVersion(), entitlementPoolId);
-        entitlementPoolEntity = entitlementPoolDao.get(entitlementPoolEntity);
-        retrieved.setManufacturerReferenceNumber(entitlementPoolDao.getManufacturerReferenceNumber(
-                entitlementPoolEntity));
-        featureGroupDao.update(retrieved);
-      }
+    if (retrieved.getManufacturerReferenceNumber() == null) {
+      updateManufacturerNumberInFeatureGroup(retrieved);
     }
-
     return retrieved;
   }
 
@@ -400,6 +386,20 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
   }
 
   @Override
+  public Collection<FeatureGroupEntity> listFeatureGroups(String vlmId, Version version,
+                                                                String user) {
+    Collection<FeatureGroupEntity> featureGroupEntities =
+        featureGroupDao.list(new FeatureGroupEntity(vlmId, VersioningUtil
+            .resolveVersion(version, getVersionInfo(vlmId, VersionableEntityAction.Read, user),
+                user), null));
+    featureGroupEntities.stream()
+        .filter(fgEntity -> Objects.isNull(fgEntity.getManufacturerReferenceNumber()))
+        .forEach(fgEntity -> updateManufacturerNumberInFeatureGroup(fgEntity));
+    return featureGroupEntities;
+  }
+
+
+  @Override
   public Collection<ErrorCode> validateLicensingData(String vlmId, Version version,
                                                      String licenseAgreementId,
                                                      Collection<String> featureGroupIds) {
@@ -503,41 +503,49 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
     return retrieved;
   }
 
+  private void updateManufacturerNumberInFeatureGroup(FeatureGroupEntity featureGroupEntity) {
+    if (CollectionUtils.isNotEmpty(featureGroupEntity.getEntitlementPoolIds())) {
+      Object[] entitlementPoolIdsList = featureGroupEntity.getEntitlementPoolIds().toArray();
+      if (entitlementPoolIdsList != null && entitlementPoolIdsList.length > 0) {
+        String entitlementPoolId = entitlementPoolIdsList[0].toString();
+        EntitlementPoolEntity entitlementPoolEntity =
+            new EntitlementPoolEntity(featureGroupEntity.getVendorLicenseModelId(),
+                featureGroupEntity.getVersion(), entitlementPoolId);
+        entitlementPoolEntity = entitlementPoolDao.get(entitlementPoolEntity);
+        featureGroupEntity.setManufacturerReferenceNumber(
+            entitlementPoolDao.getManufacturerReferenceNumber(entitlementPoolEntity));
+        featureGroupDao.update(featureGroupEntity);
+      }
+    }
+  }
   private void validateCompletedVendorLicenseModel(String vendorLicenseModelId, String user) {
-    Version version = VersioningUtil.resolveVersion(null,
-        getVersionInfo(vendorLicenseModelId, VersionableEntityAction.Read, user), user);
-    Collection<LicenseAgreementEntity> licenseAgreements = licenseAgreementDao
-        .list(new LicenseAgreementEntity(vendorLicenseModelId, version, null));
+      Version version = VersioningUtil.resolveVersion(null,
+              getVersionInfo(vendorLicenseModelId, VersionableEntityAction.Read, user), user);
+      Collection<LicenseAgreementEntity> licenseAgreements = licenseAgreementDao
+              .list(new LicenseAgreementEntity(vendorLicenseModelId, version, null));
 
-    if (licenseAgreements == null || licenseAgreements.isEmpty()) {
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.SUBMIT_ENTITY, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.SUBMIT_ENTITY);
-      throw new CoreException(
-              new SubmitUncompletedLicenseModelErrorBuilder(SUBMIT_UNCOMPLETED_VLM_MSG_MISSING_LA).build());
-    }
+      if (CollectionUtils.isNotEmpty(licenseAgreements)) {
+          licenseAgreements.forEach(licenseAgreement -> {
+              if (CollectionUtils.isEmpty(licenseAgreement.getFeatureGroupIds())) {
+                  MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+                          LoggerTragetServiceName.SUBMIT_ENTITY, ErrorLevel.ERROR.name(),
+                          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.SUBMIT_ENTITY);
+                  throw new CoreException(
+                          new SubmitUncompletedLicenseModelErrorBuilder(SUBMIT_UNCOMPLETED_VLM_MSG_LA_MISSING_FG).build());
+              }
+          });
 
-    for (LicenseAgreementEntity licenseAgreement : licenseAgreements) {
-        if (licenseAgreement.getFeatureGroupIds() == null || licenseAgreement.getFeatureGroupIds().isEmpty()) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.SUBMIT_ENTITY, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.SUBMIT_ENTITY);
-        throw new CoreException(
-                new SubmitUncompletedLicenseModelErrorBuilder(SUBMIT_UNCOMPLETED_VLM_MSG_LA_MISSING_FG).build());
+          Collection<FeatureGroupEntity> featureGroupEntities = featureGroupDao.list(
+                  new FeatureGroupEntity(vendorLicenseModelId, version, null));
+          featureGroupEntities.forEach(featureGroupEntity -> {
+              if(CollectionUtils.isEmpty(featureGroupEntity.getEntitlementPoolIds())) {
+                  MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+                          LoggerTragetServiceName.SUBMIT_ENTITY, ErrorLevel.ERROR.name(),
+                          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.SUBMIT_ENTITY);
+                  throw new CoreException(
+                          new SubmitUncompletedLicenseModelErrorBuilder(SUBMIT_UNCOMPLETED_VLM_MSG_FG_MISSING_EP).build());
+              }
+          });
       }
-    }
-
-    Collection<FeatureGroupEntity> featureGroupEntities =
-        featureGroupDao.list(new FeatureGroupEntity(vendorLicenseModelId, version, null));
-    for (FeatureGroupEntity featureGroupEntity : featureGroupEntities) {
-        if (featureGroupEntity.getEntitlementPoolIds() == null || featureGroupEntity.getEntitlementPoolIds().isEmpty()) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.SUBMIT_ENTITY, ErrorLevel.ERROR.name(),
-            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.SUBMIT_ENTITY);
-        throw new CoreException(
-                new SubmitUncompletedLicenseModelErrorBuilder(SUBMIT_UNCOMPLETED_VLM_MSG_FG_MISSING_EP).build());
-      }
-    }
-
   }
 }

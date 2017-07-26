@@ -27,7 +27,7 @@ export const mapStateToProps = ({finalizedLicenseModelList, softwareProductList,
 
 	let VSPNames = {};
 	for (let i = 0; i < softwareProductList.length; i++) {
-		VSPNames[softwareProductList[i].name] = softwareProductList[i].id;
+		VSPNames[softwareProductList[i].name.toLowerCase()] = softwareProductList[i].id;
 	}
 
 	return {

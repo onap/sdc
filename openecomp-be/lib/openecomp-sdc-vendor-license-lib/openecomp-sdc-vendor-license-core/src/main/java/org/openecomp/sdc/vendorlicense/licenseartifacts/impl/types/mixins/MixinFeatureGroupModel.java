@@ -41,9 +41,6 @@ public abstract class MixinFeatureGroupModel {
   @JacksonXmlProperty(isAttribute = false, localName = "part-number")
   abstract String getEntityPartNumber();
 
-  @JacksonXmlProperty(isAttribute = false, localName = "manufacturer-reference-number")
-  abstract String getManufacturerReferenceNumber();
-
   @JacksonXmlProperty(isAttribute = false, localName = "feature-group-uuid")
   abstract String getEntityId();
 
@@ -59,6 +56,9 @@ public abstract class MixinFeatureGroupModel {
 
   @JsonIgnore
   abstract String getEntityType();
+
+  @JsonIgnore
+  abstract String getEntityManufacturerReferenceNumber();
 
 
 }

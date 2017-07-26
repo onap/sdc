@@ -16,7 +16,7 @@ export default class SelectActionTable extends React.Component {
 				<div className='select-action-table'>
 					<div className='select-action-table-headers'>
 						{columns.map(column => <div key={uuid.create()} className='select-action-table-header'>{i18n(column)}</div>)}
-						{Array(numOfIcons).fill().map(() => <SVGIcon name='trashO' className='dummy-icon' />)}
+						{Array(numOfIcons).fill().map((e, i) => <SVGIcon name='trashO' key={i} className='dummy-icon' />)}
 					</div>
 					<div className='select-action-table-body'>
 						{children}

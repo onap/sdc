@@ -13,9 +13,11 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import React from 'react';
+import React, {Component} from 'react';
 import {connect} from 'react-redux';
 
+import Tooltip from 'react-bootstrap/lib/Tooltip.js';
+import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import licenseModelOverviewActionHelper from '../licenseModelOverviewActionHelper.js';
 import LicenseModelActionHelper from '../../LicenseModelActionHelper.js';
@@ -46,9 +48,7 @@ const mapActionsToProps = (dispatch) => {
 	};
 };
 
-
-
-export class VendorDataView extends React.Component {
+export class VendorDataView extends Component {
 	render() {
 		let {data: {vendorName}, description, isReadOnlyMode} = this.props;
 		return (
@@ -62,13 +62,16 @@ export class VendorDataView extends React.Component {
 		);
 	}
 
+
 	renderDescription() {
 		let {data: {description}, onVendorDescriptionEdit, isReadOnlyMode} = this.props;
 		return (
-			<div onClick={() => {if (!isReadOnlyMode) {onVendorDescriptionEdit(description);}}}  className={!isReadOnlyMode ? 'vendor-description' : 'vendor-description-readonly'}>
-				<div className='description-data' data-test-id='vlm-summary-vendor-description'>
-					{description}
-				</div>
+			<div onClick={() => {if (!isReadOnlyMode) {onVendorDescriptionEdit(description);}}} className={!isReadOnlyMode ? 'vendor-description' : 'vendor-description-readonly'}>
+				{this.renderOverlay(
+					<div className='description-data' data-test-id='vlm-summary-vendor-description'>
+						{description}
+					</div>
+				)}
 			</div>
 		);
 	}
@@ -80,7 +83,21 @@ export class VendorDataView extends React.Component {
 		);
 	}
 
+	renderOverlay(children) {
+		let {data: {description}, isReadOnlyMode} = this.props;
+		if (isReadOnlyMode) {
+			return (
+				<OverlayTrigger
+					placement='bottom'
+					overlay={<Tooltip className='vendor-description-tooltip' id='tooltip-bottom'>{description}</Tooltip>}
+					delayShow={400}>
+					{children}
+				</OverlayTrigger>
+			);
+		}
+		return children;
+	}
+
 }
 
 export default connect(mapStateToProps, mapActionsToProps)(VendorDataView);
-

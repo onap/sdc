@@ -8,7 +8,6 @@ import javax.validation.constraints.Pattern;
 public class ImageRequestDto implements CompositionDataEntityDto {
 
   @NotBlank(message = "is mandatory and should not be empty")
-  @Pattern(regexp = "^[a-zA-Z 0-9._-]*$", message = "must match \"^[a-zA-Z 0-9._-]*$\"")
   private String fileName;
   private String description;
   /*private String version;

@@ -66,7 +66,8 @@ class VLMListView extends Component {
 				<LicenseAgreement
 					laData={licenseAgreement}
 					isCollapsed={this.state[licenseAgreement.id]}
-					onClick={event => this.updateCollapsable(event, licenseAgreement.id) }/>
+					onClick={event => this.updateCollapsable(event, licenseAgreement.id) }
+					isOrphan={!this.props.showInUse}/>
 				<Collapse in={this.state[licenseAgreement.id]}>
 					<ul>
 						{licenseAgreement.children && licenseAgreement.children.map(item => this.renderLicensingItem(item))}
@@ -83,7 +84,8 @@ class VLMListView extends Component {
 				<FeatureGroup
 					fgData={featureGroup}
 					isCollapsed={this.state[featureGroup.id]}
-					onClick={event=> this.updateCollapsable(event, featureGroup.id) }/>
+					onClick={event=> this.updateCollapsable(event, featureGroup.id) }
+					isOrphan={!this.props.showInUse}/>
 				{
 					showInUse && <Collapse in={this.state[featureGroup.id]}>
 					<ul>
@@ -99,7 +101,7 @@ class VLMListView extends Component {
 	renderEntitlementPoolItem(entitlementPool) {
 		return (
 			<li key={entitlementPool.id}>
-				<EntitlementPool epData={entitlementPool}  />
+				<EntitlementPool epData={entitlementPool} isOrphan={!this.props.showInUse}/>
 			</li>
 		);
 	}
@@ -107,7 +109,7 @@ class VLMListView extends Component {
 	renderLicenseKeyGroupItem(licenseKeyGroup) {
 		return (
 			<li key={licenseKeyGroup.id}>
-				<LicenseKeyGroup lkgData={licenseKeyGroup}  />
+				<LicenseKeyGroup lkgData={licenseKeyGroup} isOrphan={!this.props.showInUse}/>
 			</li>
 		);
 	}

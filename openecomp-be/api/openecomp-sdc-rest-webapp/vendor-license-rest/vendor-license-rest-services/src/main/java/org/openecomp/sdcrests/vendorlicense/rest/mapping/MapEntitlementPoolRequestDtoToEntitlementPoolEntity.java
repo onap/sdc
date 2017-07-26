@@ -20,7 +20,6 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
-import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdcrests.mapping.MappingBase;
@@ -35,17 +34,11 @@ public class MapEntitlementPoolRequestDtoToEntitlementPoolEntity
     target.setThresholdValue(source.getThresholdValue());
     target.setThresholdUnit(source.getThresholdUnits());
     target.setIncrements(source.getIncrements());
-
     MapChoiceOrOtherDtoToChoiceOrOther choiceOrOtherMapper =
         new MapChoiceOrOtherDtoToChoiceOrOther();
-    target.setEntitlementMetric(
-        choiceOrOtherMapper.applyMapping(source.getEntitlementMetric(), ChoiceOrOther.class));
-    target.setAggregationFunction(
-        choiceOrOtherMapper.applyMapping(source.getAggregationFunction(), ChoiceOrOther.class));
     target.setOperationalScope(new MapMultiChoiceOrOtherDtoToMultiChoiceOrOther()
         .applyMapping(source.getOperationalScope(), MultiChoiceOrOther.class));
-    target.setTime(choiceOrOtherMapper.applyMapping(source.getTime(), ChoiceOrOther.class));
-    target.setManufacturerReferenceNumber(source.getManufacturerReferenceNumber());
+
     target.setStartDate(source.getStartDate());
     target.setExpiryDate(source.getExpiryDate());
   }

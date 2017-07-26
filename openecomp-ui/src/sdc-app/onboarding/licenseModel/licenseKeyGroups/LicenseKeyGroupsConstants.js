@@ -15,7 +15,7 @@
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import InputOptions, {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
+import InputOptions, {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
 
 export const actionTypes = keyMirror({
 
@@ -28,6 +28,7 @@ export const actionTypes = keyMirror({
 		OPEN: null,
 		CLOSE: null,
 		DATA_CHANGED: null,
+		LIMITS_LIST_LOADED: null
 	}
 });
 
@@ -76,4 +77,11 @@ export const getOperationalScopes = (operationalScope) => {
 		}
 		return allOpScopes;
 	}
+};
+
+export const tabIds = {
+	GENERAL: 'GENERAL',
+	SP_LIMITS: 'SP_LIMITS',
+	VENDOR_LIMITS: 'VENDOR_LIMITS',
+	ADD_LIMIT_BUTTON: 'ADD_LIMIT_BUTTON'
 };

@@ -16,6 +16,7 @@
 import {actionTypes} from './PlainDataReducerConstants.js';
 import Validator from 'nfvo-utils/Validator.js';
 import forOwn from 'lodash/forOwn.js';
+import {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
 
 function updateDataAndValidateReducer(state = {}, action) {
 	let genericFieldInfoCopy;
@@ -46,6 +47,12 @@ function updateDataAndValidateReducer(state = {}, action) {
 			forOwn(state.genericFieldInfo,(value, key) => {
 				let val = state.data && state.data[key] ? state.data[key] : '';
 				let result = Validator.validate(key, val, state.genericFieldInfo[key].validations, state, {});
+				if(val.choice !== undefined) {
+					result = Validator.validate(key, val.choice, state.genericFieldInfo[key].validations, state, {});
+				}
+				if(val.choice !== undefined && val.choice === optionInputOther.OTHER) {
+					result = Validator.validate(key, val.other, state.genericFieldInfo[key].validations, state, {});
+				}
 				genericFieldInfoCopy[key] = {...genericFieldInfoCopy[key], isValid: result.isValid, errorText: result.errorText};
 				if (!result.isValid) {
 					formReady = false;

@@ -34,6 +34,7 @@ import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.AggregationFunctionForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.EntitlementMetricForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.EntitlementTimeForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.OperationalScopeForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitForXml;
 
@@ -74,10 +75,10 @@ public abstract class MixinEntitlementPoolEntityForVnfArtifact {
   @JsonIgnore
   abstract float getThresholdValue();
 
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonProperty(value = "start-date")
   abstract String getStartDate();
 
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonProperty(value = "expiry-date")
   abstract String getExpiryDate();
 
   @JsonIgnore
@@ -92,9 +93,8 @@ public abstract class MixinEntitlementPoolEntityForVnfArtifact {
   @JsonIgnore
   abstract String getEntityType();
 
-  @JacksonXmlProperty(isAttribute = false, localName = "value")
-  @JacksonXmlElementWrapper(localName = "operational-scope")
-  abstract String getOperationalScopeForArtifact();
+  @JsonProperty(value = "operational-scope")
+  abstract OperationalScopeForXml getOperationalScopeForArtifact();
 
   @JsonIgnore
   abstract ChoiceOrOther<OperationalScope> getOperationalScope();

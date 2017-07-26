@@ -7,12 +7,10 @@ form {
     .validation-radio-wrapper {
       position: relative;
     }
-    .nav-tabs {
+    .sdc-tabs {
       position: relative;
-      .invalid-tab:not(.active) {
-        a {
+      .invalid-tab:not(.sdc-tab-active) {
           color: $red;
-        }
       }
     }
     .validation-error-message {

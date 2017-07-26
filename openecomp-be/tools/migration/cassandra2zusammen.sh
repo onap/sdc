@@ -9,7 +9,6 @@
 
 
 # change exist package and service templates in db
-java -Dlog.home=/apps/jetty/base/be/logs -Dconfiguration.yaml=/apps/jetty/base/be/config/catalog-be/configuration.yaml  -jar openecomp-zusammen-migration-1.0-SNAPSHOT.jar org.openecomp.core.migration.MigrationMain
-
-STATUS="${?}"
-echo "${STATUS}"
+## Code removed but script is kept for future hook use ##
+##STATUS="${?}"
+##echo "${STATUS}"

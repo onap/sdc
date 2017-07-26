@@ -6,6 +6,9 @@ debug.log
 dist
 node_modules
 devConfig.json
+proxy-server.js
+runLocalFE.cmd
+runLocalFE.js
 .npmrc
 test/coverage
 npm-debug.log

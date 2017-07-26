@@ -140,11 +140,12 @@ public class ComputeManagerImplTest {
     }
 
     @Test
-    public void testCreateManualImageWithDuplicateName() {
+    public void testCreateManualComputeWithDuplicateName() {
         ComputeEntity expected = createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
         doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
 
         ComputeEntity expectedDiffName = createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
+        expectedDiffName.setId(COMPUTE1_ID + "Name");
         ComputeData computeData = expectedDiffName.getComputeCompositionData();
         computeData.setName(COMPUTE1_ID + "Name");
         expectedDiffName.setComputeCompositionData(computeData);
@@ -162,6 +163,28 @@ public class ComputeManagerImplTest {
         }
     }
 
+    @Test
+    public void testCreateManualComputeWithIncorrectNameFormat() {
+        ComputeEntity expected = createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
+        doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+
+        ComputeEntity expectedDiffName = createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
+        ComputeData computeData = expectedDiffName.getComputeCompositionData();
+        computeData.setName(COMPUTE1_ID + "Name/*");
+        expectedDiffName.setComputeCompositionData(computeData);
+        List<ComputeEntity> vfcImageList = new ArrayList<ComputeEntity>();
+        vfcImageList.add(expectedDiffName);
+        doReturn(vfcImageList).when(computeDao).list(anyObject());
+
+        try {
+            computeManager.createCompute(expectedDiffName, USER);
+            Assert.fail();
+        }
+        catch (CoreException ex) {
+            Assert.assertEquals(VendorSoftwareProductErrorCodes.COMPUTE_NAME_FORMAT_NOT_ALLOWED,
+                    ex.code().id());
+        }
+    }
 
     @Test
     public void testUpdateNonExistingComputeId_negative() {
@@ -192,6 +215,33 @@ public class ComputeManagerImplTest {
     }
 
     @Test
+    public void testUpdateComputeWithIncorrectNameFormat() {
+        doReturn(createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID))
+                .when(computeDao).get(anyObject());
+
+        doReturn(new CompositionEntityValidationData(CompositionEntityType.compute, COMPUTE1_ID))
+                .when(compositionEntityDataManagerMock)
+                .validateEntity(anyObject(), anyObject(), anyObject());
+
+        doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+
+        ComputeEntity computeEntity = new ComputeEntity(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
+        ComputeData computeData = new ComputeData();
+        computeData.setName(COMPUTE1_ID + "name/*");
+        computeData.setDescription(COMPUTE1_ID + "desc updated");
+        computeEntity.setComputeCompositionData(computeData);
+
+        try {
+            computeManager.updateCompute(computeEntity, USER);
+            Assert.fail();
+        }
+        catch (CoreException ex) {
+            Assert.assertEquals(VendorSoftwareProductErrorCodes.COMPUTE_NAME_FORMAT_NOT_ALLOWED,
+                    ex.code().id());
+        }
+    }
+
+    @Test
     public void testIllegalComputeUpdate() {
         doReturn(createCompute(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID))
                 .when(computeDao).get(anyObject());
@@ -207,7 +257,7 @@ public class ComputeManagerImplTest {
 
         ComputeEntity computeEntity = new ComputeEntity(VSP_ID, VERSION, COMPONENT_ID, COMPUTE1_ID);
         ComputeData computeData = new ComputeData();
-        computeData.setName(COMPUTE1_ID + " name updated");
+        computeData.setName(COMPUTE1_ID + "_name_updated");
         computeData.setDescription(COMPUTE1_ID + " desc updated");
         computeEntity.setComputeCompositionData(computeData);
 

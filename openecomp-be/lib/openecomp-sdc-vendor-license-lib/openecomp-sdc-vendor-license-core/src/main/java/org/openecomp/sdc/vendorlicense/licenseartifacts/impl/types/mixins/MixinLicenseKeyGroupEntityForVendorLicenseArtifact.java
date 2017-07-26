@@ -21,6 +21,7 @@
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -28,6 +29,8 @@ import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LicenseKeyTypeForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.OperationalScopeForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitForXml;
 
 import java.util.Collection;
@@ -60,9 +63,8 @@ public abstract class MixinLicenseKeyGroupEntityForVendorLicenseArtifact {
   @JsonIgnore
   abstract ChoiceOrOther<OperationalScope> getOperationalScope();
 
-  @JacksonXmlProperty(isAttribute = false, localName = "value")
-  @JacksonXmlElementWrapper(localName = "operational-scope")
-  abstract String getOperationalScopeForArtifact();
+  @JsonProperty(value = "operational-scope")
+  abstract OperationalScopeForXml getOperationalScopeForArtifact();
 
 
   @JsonIgnore
@@ -79,5 +81,20 @@ public abstract class MixinLicenseKeyGroupEntityForVendorLicenseArtifact {
 
   @JsonIgnore
   abstract Collection<LimitEntity> getLimits();
+
+  @JsonProperty(value = "start-date")
+  abstract String getStartDate();
+
+  @JsonProperty(value = "expiry-date")
+  abstract String getExpiryDate();
+
+  @JsonProperty(value = "threshold-value")
+  abstract ThresholdForXml getThresholdForArtifact();
+
+  @JsonIgnore
+  abstract String getThresholdUnits();
+
+  @JsonIgnore
+  abstract float getThresholdValue();
 
 }

@@ -21,6 +21,7 @@
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -29,6 +30,8 @@ import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LicenseKeyTypeForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.OperationalScopeForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
 
 import java.util.Collection;
 import java.util.Set;
@@ -36,6 +39,9 @@ import java.util.Set;
 public abstract class MixinLicenseKeyGroupEntityForVnfArtifact {
   @JsonIgnore
   abstract String getId();
+
+  @JsonProperty(value = "manufacturer-reference-number")
+  abstract String getManufacturerReferenceNumber();
 
   @JsonIgnore
   abstract Set<String> getReferencingFeatureGroups();
@@ -63,9 +69,8 @@ public abstract class MixinLicenseKeyGroupEntityForVnfArtifact {
   @JsonIgnore
   abstract ChoiceOrOther<OperationalScope> getOperationalScope();
 
-  @JacksonXmlProperty(isAttribute = false, localName = "value")
-  @JacksonXmlElementWrapper(localName = "operational-scope")
-  abstract String getOperationalScopeForArtifact();
+  @JsonProperty(value = "operational-scope")
+  abstract OperationalScopeForXml getOperationalScopeForArtifact();
 
 
   @JsonIgnore
@@ -74,6 +79,8 @@ public abstract class MixinLicenseKeyGroupEntityForVnfArtifact {
   @JsonIgnore
   abstract String getVersionableId();
 
+  @JsonProperty(value = "threshold-value")
+  abstract ThresholdForXml getThresholdForArtifact();
   @JsonProperty(value = "sp-limits")
   abstract LimitForXml getSPLimits();
 
@@ -83,4 +90,15 @@ public abstract class MixinLicenseKeyGroupEntityForVnfArtifact {
   @JsonIgnore
   abstract Collection<LimitEntity> getLimits();
 
+  @JsonProperty(value = "start-date")
+  abstract String getStartDate();
+
+  @JsonProperty(value = "expiry-date")
+  abstract String getExpiryDate();
+
+  @JsonIgnore
+  abstract String getThresholdUnits();
+
+  @JsonIgnore
+  abstract float getThresholdValue();
 }

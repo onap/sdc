@@ -48,6 +48,7 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
+import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
@@ -594,6 +595,14 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     enrichmentManager.setModel(serviceModel);
     Map<String, List<ErrorMessage>> enrichErrors = enrichmentManager.enrich();
 
+    if (MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, enrichErrors))) {
+      logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.ENRICHMENT_COMPLETED
+          + vendorSoftwareProductId);
+    } else {
+      enrichErrors.values().forEach(errorList ->
+          auditIfContainsErrors(errorList,vendorSoftwareProductId,AuditMessages.ENRICHMENT_ERROR));
+    }
+
     enrichedServiceModelDao
         .storeServiceModel(vendorSoftwareProductId, version, enrichmentManager.getModel());
 
@@ -993,6 +1002,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     packageInfoDao.create(packageInfo);
 
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_PACKAGE + vspId);
+
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
     return packageInfo;
   }
@@ -1177,5 +1188,15 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   public Collection<ComputeEntity> getComputeByVsp(String vspId, Version version,
                                                    String user) {
     return vendorSoftwareProductDao.listComputesByVsp(vspId, version);
+  }
+
+  private void auditIfContainsErrors(List<ErrorMessage> errorList, String vspId,String auditType) {
+
+    errorList.forEach(errorMessage -> {
+      if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
+        logger.audit(AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(),
+            vspId));
+      }
+    });
   }
 }

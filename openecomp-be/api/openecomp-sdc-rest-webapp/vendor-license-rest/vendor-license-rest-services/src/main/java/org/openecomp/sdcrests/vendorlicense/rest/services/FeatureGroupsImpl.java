@@ -80,6 +80,7 @@ public class FeatureGroupsImpl implements FeatureGroups {
       fgDto.setLicenseKeyGroupsIds(fg.getLicenseKeyGroupIds());
       fgDto.setEntitlementPoolsIds(fg.getEntitlementPoolIds());
       fgDto.setReferencingLicenseAgreements(fg.getReferencingLicenseAgreements());
+      fgDto.setManufacturerReferenceNumber(fg.getManufacturerReferenceNumber());
       outputMapper.doMapping(fg, fgDto);
       results.add(fgDto);
     }

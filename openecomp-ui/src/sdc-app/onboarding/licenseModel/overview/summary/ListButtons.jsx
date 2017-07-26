@@ -15,19 +15,26 @@
  */
 import React from 'react';
 import {selectedButton} from '../LicenseModelOverviewConstants.js';
+import Tabs from 'sdc-ui/lib/react/Tabs.js';
+import Tab from 'sdc-ui/lib/react/Tab.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 
-function ListButtons ({onTabSelect, selectedInUse}) {
+function ListButtons ({onTabSelect, selectedTab}) {
 	return (
-		<div className='overview-buttons-section'>
-			<div onClick={()=>onTabSelect(selectedButton.VLM_LIST_VIEW)}
-				className={selectedInUse ? 'button-vlm-list-view  vlm-list-icon selected' : 'button-vlm-list-view   vlm-list-icon' }
-				data-test-id='vlm-overview-vlmlist-tab'></div>
-			<div onClick={()=>onTabSelect(selectedButton.NOT_IN_USE)}
-				className={selectedInUse ? 'button-vlm-list-view entities-list-icon' : 'button-vlm-list-view  entities-list-icon selected'  }
-				data-test-id='vlm-overview-orphans-tab' >
-			</div>
-
-		</div>
+		<Tabs 
+			onTabClick={(tabId) => onTabSelect(tabId)}
+			activeTab={selectedTab} 
+			className='overview-buttons-section' 
+			type='header' >
+			<Tab 
+				tabId={selectedButton.VLM_LIST_VIEW}
+				title={i18n('Connections List')}
+				data-test-id='vlm-overview-vlmlist-tab' />
+			<Tab 
+				tabId={selectedButton.NOT_IN_USE}
+				title={i18n('Orphans List')}
+				data-test-id='vlm-overview-orphans-tab' />
+		</Tabs>
 	);
 }
 

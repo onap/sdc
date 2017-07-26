@@ -20,7 +20,9 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 class Validator {
 	static get globalValidationFunctions() {
 		return {
-			required: value => value !== '',
+			required: value => {				
+				return typeof value === 'string' ? value.replace(/\s+/g, '') !== '' : value !== '';				
+			},
 			requiredChooseOption: value => value !== '',
 			maxLength: (value, length) => ValidatorJS.isLength(value, {max: length}),
 			minLength: (value, length) => ValidatorJS.isLength(value, {min: length}),
@@ -107,6 +109,7 @@ class Validator {
 	}
 
 	static isItemNameAlreadyExistsInList({itemId, itemName, list}) {
+		itemName = itemName.toLowerCase();
 		return list[itemName] && list[itemName] !== itemId;
 	}
 }

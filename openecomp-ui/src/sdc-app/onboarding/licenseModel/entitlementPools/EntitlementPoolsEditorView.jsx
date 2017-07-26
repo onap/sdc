@@ -21,41 +21,39 @@ import Validator from 'nfvo-utils/Validator.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
 import Form from 'nfvo-components/input/validation/Form.jsx';
+import Button from 'sdc-ui/lib/react/Button.js';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
-import {optionsInputValues as  EntitlementPoolsOptionsInputValues, thresholdUnitType, SP_ENTITLEMENT_POOL_FORM, EP_TIME_FORMAT}  from  './EntitlementPoolsConstants.js';
-import {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
+import {optionsInputValues as  EntitlementPoolsOptionsInputValues, SP_ENTITLEMENT_POOL_FORM, tabIds}  from  './EntitlementPoolsConstants.js';
+import {optionsInputValues as LicenseModelOptionsInputValues} from '../LicenseModelConstants.js';
+import {validateStartDate, thresholdValueValidation} from '../LicenseModelValidations.js';
+import {DATE_FORMAT} from 'sdc-app/onboarding/OnboardingConstants.js';
+import {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
+import Tabs from 'sdc-ui/lib/react/Tabs.js';
+import Tab from 'sdc-ui/lib/react/Tab.js';
+import EntitlementPoolsLimits from './EntitlementPoolsLimits.js';
+import {limitType, NEW_LIMIT_TEMP_ID} from '../limits/LimitEditorConstants.js';
 
 const EntitlementPoolPropType = React.PropTypes.shape({
 	id: React.PropTypes.string,
 	name: React.PropTypes.string,
 	description: React.PropTypes.string,
-	manufacturerReferenceNumber: React.PropTypes.string,
 	operationalScope: React.PropTypes.shape({
 		choices: React.PropTypes.array,
 		other: React.PropTypes.string
 	}),
-	aggregationFunction: React.PropTypes.shape({
-		choice: React.PropTypes.string,
-		other: React.PropTypes.string
-	}),
+	thresholdUnits: React.PropTypes.string,
+	thresholdValue: React.PropTypes.number,
 	increments: React.PropTypes.string,
-	time: React.PropTypes.shape({
-		choice: React.PropTypes.string,
-		other: React.PropTypes.string
-	}),
-	entitlementMetric: React.PropTypes.shape({
-		choice: React.PropTypes.string,
-		other: React.PropTypes.string
-	})
+	startDate: React.PropTypes.string,
+	expiryDate: React.PropTypes.string
 });
 
-const EntitlementPoolsFormContent = ({data, genericFieldInfo, onDataChanged, validateName, validateChoiceWithOther, validateTimeOtherValue,
+const EntitlementPoolsFormContent = ({data, genericFieldInfo, onDataChanged, validateName,
 	 thresholdValueValidation, validateStartDate}) => {
-	let {
-		name, description, manufacturerReferenceNumber, operationalScope , aggregationFunction,  thresholdUnits, thresholdValue,
-		increments, time, entitlementMetric, startDate, expiryDate} = data;
 
+	let {name, description, operationalScope, thresholdUnits, thresholdValue,
+		increments, startDate, expiryDate} = data;
 	return (
 		<GridSection>
 			<GridItem colSpan={2}>
@@ -73,12 +71,10 @@ const EntitlementPoolsFormContent = ({data, genericFieldInfo, onDataChanged, val
 				<InputOptions
 					onInputChange={()=>{}}
 					isMultiSelect={true}
-
-					isRequired={true}
 					onEnumChange={operationalScope => onDataChanged({operationalScope:{choices: operationalScope, other: ''}},
-						SP_ENTITLEMENT_POOL_FORM, {operationalScope: validateChoiceWithOther})}
+						SP_ENTITLEMENT_POOL_FORM)}
 					onOtherChange={operationalScope => onDataChanged({operationalScope:{choices: [optionInputOther.OTHER],
-						other: operationalScope}}, SP_ENTITLEMENT_POOL_FORM, {operationalScope: validateChoiceWithOther})}
+						other: operationalScope}}, SP_ENTITLEMENT_POOL_FORM)}
 					label={i18n('Operational Scope')}
 					data-test-id='create-ep-operational-scope'
 					type='select'
@@ -95,21 +91,21 @@ const EntitlementPoolsFormContent = ({data, genericFieldInfo, onDataChanged, val
 					errorText={genericFieldInfo.description.errorText}
 					label={i18n('Description')}
 					value={description}
-					isRequired={true}
 					data-test-id='create-ep-description'
 					type='textarea'/>
 			</GridItem>
 			<GridItem colSpan={2}>
 				<div className='threshold-section'>
 					<Input
-						isRequired={true}
 						onChange={e => {
 							// setting the unit to the correct value
 							const selectedIndex = e.target.selectedIndex;
 							const val = e.target.options[selectedIndex].value;
 							onDataChanged({thresholdUnits: val}, SP_ENTITLEMENT_POOL_FORM);
 							// TODO make sure that the value is valid too
-							onDataChanged({thresholdValue: thresholdValue}, SP_ENTITLEMENT_POOL_FORM,{thresholdValue : thresholdValueValidation});}
+							if(thresholdValue && thresholdValue !== '') {
+								onDataChanged({thresholdValue: thresholdValue}, SP_ENTITLEMENT_POOL_FORM,{thresholdValue : thresholdValueValidation});
+							}}
 
 						}
 						value={thresholdUnits}
@@ -120,7 +116,7 @@ const EntitlementPoolsFormContent = ({data, genericFieldInfo, onDataChanged, val
 						groupClassName='bootstrap-input-options'
 						className='input-options-select'
 						type='select' >
-						{EntitlementPoolsOptionsInputValues.THRESHOLD_UNITS.map(mtype =>
+						{LicenseModelOptionsInputValues.THRESHOLD_UNITS.map(mtype =>
 							<option key={mtype.enum} value={mtype.enum}>{`${mtype.title}`}</option>)}
 					</Input>
 
@@ -133,116 +129,46 @@ const EntitlementPoolsFormContent = ({data, genericFieldInfo, onDataChanged, val
 						errorText={genericFieldInfo.thresholdValue.errorText}
 						data-test-id='create-ep-threshold-value'
 						value={thresholdValue}
-						isRequired={true}
 						type='text'/>
 				</div>
-				<InputOptions
-					onInputChange={()=>{}}
-					isMultiSelect={false}
-					isRequired={true}
-					onEnumChange={entitlementMetric => onDataChanged({entitlementMetric:{choice: entitlementMetric, other: ''}},
-						SP_ENTITLEMENT_POOL_FORM, {entitlementMetric: validateChoiceWithOther})}
-					onOtherChange={entitlementMetric => onDataChanged({entitlementMetric:{choice: optionInputOther.OTHER,
-						other: entitlementMetric}}, SP_ENTITLEMENT_POOL_FORM, {entitlementMetric: validateChoiceWithOther})}
-					label={i18n('Entitlement Metric')}
-					data-test-id='create-ep-entitlement-metric'
-					type='select'
-					required={true}
-					selectedEnum={entitlementMetric && entitlementMetric.choice}
-					otherValue={entitlementMetric && entitlementMetric.other}
-					values={EntitlementPoolsOptionsInputValues.ENTITLEMENT_METRIC}
-					isValid={genericFieldInfo.entitlementMetric.isValid}
-					errorText={genericFieldInfo.entitlementMetric.errorText} />
-				<InputOptions
-					onInputChange={()=>{}}
-					isMultiSelect={false}
-					isRequired={true}
-					onEnumChange={aggregationFunction => onDataChanged({aggregationFunction:{choice: aggregationFunction, other: ''}},
-						SP_ENTITLEMENT_POOL_FORM, {aggregationFunction: validateChoiceWithOther})}
-					onOtherChange={aggregationFunction => onDataChanged({aggregationFunction:{choice: optionInputOther.OTHER,
-						other: aggregationFunction}}, SP_ENTITLEMENT_POOL_FORM, {aggregationFunction: validateChoiceWithOther})}
-					label={i18n('Aggregate Function')}
-					data-test-id='create-ep-aggregate-function'
-					type='select'
-					required={true}
-					selectedEnum={aggregationFunction && aggregationFunction.choice}
-					otherValue={aggregationFunction && aggregationFunction.other}
-					values={EntitlementPoolsOptionsInputValues.AGGREGATE_FUNCTION}
-					isValid={genericFieldInfo.aggregationFunction.isValid}
-					errorText={genericFieldInfo.aggregationFunction.errorText} />
-			</GridItem>
-			<GridItem colSpan={2}>
-				<Input
-					onChange={manufacturerReferenceNumber => onDataChanged({manufacturerReferenceNumber}, SP_ENTITLEMENT_POOL_FORM)}
-					label={i18n('Manufacturer Reference Number')}
-					value={manufacturerReferenceNumber}
-					isValid={genericFieldInfo.manufacturerReferenceNumber.isValid}
-					errorText={genericFieldInfo.manufacturerReferenceNumber.errorText}
-					isRequired={true}
-					data-test-id='create-ep-reference-number'
-					type='text'/>
-			</GridItem>
-			<GridItem colSpan={2}>
-				<InputOptions
-					onInputChange={()=>{}}
-					isMultiSelect={false}
-					isRequired={true}
-					onEnumChange={time => onDataChanged({time:{choice: time, other: ''}},
-						SP_ENTITLEMENT_POOL_FORM, {time: validateChoiceWithOther})}
-					onOtherChange={time => onDataChanged({time:{choice: optionInputOther.OTHER,
-						other: time}}, SP_ENTITLEMENT_POOL_FORM, {time: validateTimeOtherValue})}
-					label={i18n('Time')}
-					data-test-id='create-ep-time'
-					type='select'
-					required={true}
-					selectedEnum={time && time.choice}
-					otherValue={time && time.other}
-					values={EntitlementPoolsOptionsInputValues.TIME}
-					isValid={genericFieldInfo.time.isValid}
-					errorText={genericFieldInfo.time.errorText} />
-			</GridItem>
-			<GridItem colSpan={2}>
 				<Input
 					onChange={increments => onDataChanged({increments}, SP_ENTITLEMENT_POOL_FORM)}
 					label={i18n('Increments')}
 					value={increments}
 					data-test-id='create-ep-increments'
 					type='text'/>
-			</GridItem>
-			<GridItem colSpan={2} />
-			<GridItem colSpan={2}>
-				<Input
-					type='date'
-					label={i18n('Start Date')} 
-					value={startDate}
-					dateFormat={EP_TIME_FORMAT}
-					startDate={startDate}
-					endDate={expiryDate}
-					onChange={startDate => onDataChanged(
-						{startDate: startDate ? startDate.format(EP_TIME_FORMAT) : ''}, 
-						SP_ENTITLEMENT_POOL_FORM,
-						{startDate: validateStartDate}
-					)}
-					isValid={genericFieldInfo.startDate.isValid}
-					errorText={genericFieldInfo.startDate.errorText}
-					selectsStart/>
-			</GridItem>
-			<GridItem colSpan={2}>
-				<Input
-					type='date' 
-					label={i18n('Expiry Date')} 
-					value={expiryDate}
-					dateFormat={EP_TIME_FORMAT}
-					startDate={startDate}
-					endDate={expiryDate}
-					onChange={expiryDate => {
-						onDataChanged({expiryDate: expiryDate ? expiryDate.format(EP_TIME_FORMAT) : ''}, SP_ENTITLEMENT_POOL_FORM);
-						onDataChanged({startDate}, SP_ENTITLEMENT_POOL_FORM, {startDate: validateStartDate});
-					}}
-					isValid={genericFieldInfo.expiryDate.isValid}
-					errorText={genericFieldInfo.expiryDate.errorText}
-					selectsEnd/>
-			</GridItem>
+				<div className='date-section'>
+					<Input
+						type='date'
+						label={i18n('Start Date')}
+						value={startDate}
+						dateFormat={DATE_FORMAT}
+						startDate={startDate}
+						endDate={expiryDate}
+						onChange={startDate => onDataChanged(
+							{startDate: startDate ? startDate.format(DATE_FORMAT) : ''},
+							SP_ENTITLEMENT_POOL_FORM,
+							{startDate: validateStartDate}
+						)}
+						isValid={genericFieldInfo.startDate.isValid}
+						errorText={genericFieldInfo.startDate.errorText}
+						selectsStart/>	
+					<Input
+						type='date'
+						label={i18n('Expiry Date')}
+						value={expiryDate}
+						dateFormat={DATE_FORMAT}
+						startDate={startDate}
+						endDate={expiryDate}
+						onChange={expiryDate => {
+							onDataChanged({expiryDate: expiryDate ? expiryDate.format(DATE_FORMAT) : ''}, SP_ENTITLEMENT_POOL_FORM);
+							onDataChanged({startDate}, SP_ENTITLEMENT_POOL_FORM, {startDate: validateStartDate});
+						}}
+						isValid={genericFieldInfo.expiryDate.isValid}
+						errorText={genericFieldInfo.expiryDate.errorText}
+						selectsEnd/>
+				</div>							
+			</GridItem>									
 		</GridSection>
 	);
 };
@@ -263,42 +189,102 @@ class EntitlementPoolsEditorView extends React.Component {
 		data: {}
 	};
 
-	render() {
-		let {data = {}, onDataChanged, isReadOnlyMode, genericFieldInfo} = this.props;
+	componentDidUpdate(prevProps) {				
+		if (this.props.formReady && this.props.formReady !== prevProps.formReady) { // if form validation succeeded -> continue with submit
+			this.submit();
+		}
+	}
+	
+	state = {		
+		selectedTab: tabIds.GENERAL,
+		selectedLimit: ''
+	};
 
+	render() {
+		let {data = {}, onDataChanged, isReadOnlyMode, genericFieldInfo, onCloseLimitEditor, limitsList = []} = this.props;
+		const {selectedTab} = this.state;
+		const isTabsDisabled = !data.id || !this.props.isFormValid;
 
 		return (
 			<div>
-				{
-					genericFieldInfo && <Form
-						ref='validationForm'
-						hasButtons={true}
-						onSubmit={ () => this.submit() }
-						onReset={ () => this.props.onCancel() }
-						labledButtons={true}
-						isReadOnlyMode={isReadOnlyMode}
-						isValid={this.props.isFormValid}
-						formReady={this.props.formReady}
-						onValidateForm={() => this.props.onValidateForm(SP_ENTITLEMENT_POOL_FORM) }
-						className='entitlement-pools-form'>
-						<EntitlementPoolsFormContent
-							data={data}
-							genericFieldInfo={genericFieldInfo}
-							onDataChanged={onDataChanged}
-							validateName={(value)=> this.validateName(value)}
-							validateTimeOtherValue ={(value)=> this.validateTimeOtherValue(value)}
-							validateChoiceWithOther={(value)=> this.validateChoiceWithOther(value)}
-							validateStartDate={(value, state)=> this.validateStartDate(value, state)}
-							thresholdValueValidation={(value, state)=> this.thresholdValueValidation(value, state)}/>
-					</Form>
+			<Tabs 
+				type='menu' 
+				activeTab={selectedTab} 
+				onTabClick={(tabIndex)=>{
+					if (tabIndex === tabIds.ADD_LIMIT_BUTTON)  {
+						this.onAddLimit();
+					} else {
+						this.setState({selectedTab: tabIndex});
+						this.setState({selectedLimit: ''});
+						onCloseLimitEditor();
+					}
+					
+				}} 
+				invalidTabs={[]}>
+				<Tab tabId={tabIds.GENERAL} data-test-id='general-tab' title={i18n('General')}>
+					{
+						genericFieldInfo && <Form
+							ref='validationForm'
+							hasButtons={false}						
+							labledButtons={false}
+							isReadOnlyMode={isReadOnlyMode}
+							isValid={this.props.isFormValid}
+							formReady={this.props.formReady}
+							onValidateForm={() => this.props.onValidateForm(SP_ENTITLEMENT_POOL_FORM) }
+							className='license-model-form entitlement-pools-form'>
+							<EntitlementPoolsFormContent
+								data={data}
+								genericFieldInfo={genericFieldInfo}
+								onDataChanged={onDataChanged}
+								validateName={(value) => this.validateName(value)}
+								validateStartDate={(value, state) => validateStartDate(value, state)}
+								thresholdValueValidation={(value, state) => thresholdValueValidation(value, state)}/>
+						</Form>
+					}
+				</Tab>
+				<Tab disabled={isTabsDisabled} tabId={tabIds.SP_LIMITS} data-test-id='sp-limits-tab' title={i18n('SP Limits')}>
+					{selectedTab === tabIds.SP_LIMITS && 
+						<EntitlementPoolsLimits 
+							limitType={limitType.SERVICE_PROVIDER} 
+							limitsList={limitsList.filter(item => item.type === limitType.SERVICE_PROVIDER)}
+							selectedLimit={this.state.selectedLimit}
+							onCloseLimitEditor={() => this.onCloseLimitEditor()}
+							onSelectLimit={limit => this.onSelectLimit(limit)}/>}
+				</Tab>
+				<Tab disabled={isTabsDisabled} tabId={tabIds.VENDOR_LIMITS} data-test-id='vendor-limits-tab' title={i18n('Vendor Limits')}>
+					{selectedTab === tabIds.VENDOR_LIMITS && 
+						<EntitlementPoolsLimits 
+							limitType={limitType.VENDOR} 
+							limitsList={limitsList.filter(item => item.type === limitType.VENDOR)}
+							selectedLimit={this.state.selectedLimit}
+							onCloseLimitEditor={() => this.onCloseLimitEditor()}
+							onSelectLimit={limit => this.onSelectLimit(limit)}/>}
+				</Tab>
+				{selectedTab !== tabIds.GENERAL ? 
+					<Button disabled={this.state.selectedLimit} className='add-limit-button' tabId={tabIds.ADD_LIMIT_BUTTON} btnType='link' iconName='plus'>{i18n('Add Limit')}</Button> : 
+					<div></div> // Render empty div to not break tabs
 				}
+			</Tabs>
+			<GridSection className='license-model-modal-buttons entitlement-pools-editor-buttons'>
+			{!this.state.selectedLimit && <Button btnType='default' disabled={!this.props.isFormValid} onClick={() => this.submit()} type='reset'>{i18n('Save')}</Button>}
+			<Button btnType={this.state.selectedLimit ? 'default' : 'outline'} onClick={() => this.props.onCancel()} type='reset'>
+				{i18n('Cancel')}
+			</Button>
+			</GridSection>	
 			</div>
 		);
 	}
 
 	submit() {
-		const {data: entitlementPool, previousData: previousEntitlementPool} = this.props;
-		this.props.onSubmit({entitlementPool, previousEntitlementPool});
+		const {data: entitlementPool, previousData: previousEntitlementPool, formReady} = this.props;
+
+		if (!formReady) {
+			this.props.onValidateForm(SP_ENTITLEMENT_POOL_FORM);
+		} else {
+			this.props.onSubmit({entitlementPool, previousEntitlementPool});
+		}
+
+		
 	}
 
 	validateName(value) {
@@ -309,52 +295,26 @@ class EntitlementPoolsEditorView extends React.Component {
 		{isValid: false, errorText: i18n('Entitlement pool by the name \'' + value + '\' already exists. Entitlement pool name must be unique')};
 	}
 
-	validateStartDate(value, state) {
-		if (state.data.expiryDate) {
-			if (!value) {
-				return {isValid: false, errorText: i18n('Start date has to be specified if expiry date is specified')};
-			}
+	onSelectLimit(limit) {
+		if (limit.id === this.state.selectedLimit) {
+			this.setState({selectedLimit: ''});
+			return;
 		}
-		return {isValid: true, errorText: ''};
+		this.setState({selectedLimit: limit.id});
+		this.props.onOpenLimitEditor(limit);
 	}
 
-	validateTimeOtherValue(value) {
-		return Validator.validate('time', value.other, [{type: 'required', data: true}, {type: 'numeric', data: true}]);
+	onCloseLimitEditor() {
+		this.setState({selectedLimit: ''});
+		this.props.onCloseLimitEditor();
 	}
 
-	validateChoiceWithOther(value) {
-		let chosen = value.choice;
-		// if we have an empty multiple select we have a problem since it's required
-		if (value.choices) {
-			if (value.choices.length === 0) {
-				return  Validator.validate('field', '', [{type: 'required', data: true}]);
-			} else {
-				// continuing validation with the first chosen value in case we have the 'Other' field
-				chosen = value.choices[0];
-			}
-		}
-		if (chosen !== optionInputOther.OTHER) {
-			return  Validator.validate('field', chosen, [{type: 'required', data: true}]);
-		} else { // when 'Other' was chosen, validate other value
-			return  Validator.validate('field', value.other, [{type: 'required', data: true}]);
-		}
+	onAddLimit() {
+		this.setState({selectedLimit: NEW_LIMIT_TEMP_ID});
+		this.props.onOpenLimitEditor();
 	}
 
-	thresholdValueValidation(value, state) {
 
-		let  unit = state.data.thresholdUnits;
-		if (unit === thresholdUnitType.PERCENTAGE) {
-			return Validator.validate('thresholdValue', value, [
-				{type: 'required', data: true},
-				{type: 'numeric', data: true},
-				{type: 'maximum', data: 100},
-				{type: 'minimum', data: 0}]);
-		} else {
-			return Validator.validate('thresholdValue', value, [
-				{type: 'numeric', data: true},
-				{type: 'required', data: true}]);
-		}
-	}
 
 }
 

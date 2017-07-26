@@ -1,6 +1,7 @@
 .modal-content {
   .modal-header {
     border-top: 3px solid $blue;
+		padding-left: 50px;
     .modal-title {
       @extend .heading-2;
     }

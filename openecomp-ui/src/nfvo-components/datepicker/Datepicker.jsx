@@ -17,10 +17,10 @@ class CustomInput extends React.Component {
 		const text = date ? date : placeholderText;
 		const textStyle = date ? '' : 'placeholder';
 		return (
-			<div ref={inputRef} className='datepicker-custom-input'>
-				<div onClick={onClick} className={`datepicker-text ${textStyle}`}>{text}</div>
-				<div onClick={onClear} className='clear-input'/>
-				<SVGIcon onClick={onClick} name='calendar'/>
+			<div onClick={onClick} ref={inputRef} className='datepicker-custom-input'>
+				<div  className={`datepicker-text ${textStyle}`}>{text}</div>
+				{date && <SVGIcon onClick={e => {e.stopPropagation(); onClear();}} name='close' className='clear-input'/>}
+				<SVGIcon name='calendar'/>
 			</div>
 		);
 	}

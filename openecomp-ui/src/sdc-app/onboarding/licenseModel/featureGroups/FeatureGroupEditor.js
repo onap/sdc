@@ -34,7 +34,7 @@ export const mapStateToProps = ({licenseModel: {featureGroup, entitlementPool, l
 	}
 
 	for (let i = 0; i < list.length; i++) {
-		FGNames[list[i].name] = list[i].id;
+		FGNames[list[i].name.toLowerCase()] = list[i].id;
 	}
 
 	for (let field in genericFieldInfo) {

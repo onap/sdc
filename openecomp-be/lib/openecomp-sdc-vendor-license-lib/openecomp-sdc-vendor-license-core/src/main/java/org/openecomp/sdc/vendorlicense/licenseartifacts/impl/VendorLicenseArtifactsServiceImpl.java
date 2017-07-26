@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
@@ -41,6 +42,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -74,11 +76,15 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
         for(EntitlementPoolEntity entitlementPoolEntity : entitlementPoolEntities){
           entitlementPoolEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, vlmVersion,
               entitlementPoolEntity.getId(), user));
+          entitlementPoolEntity.setManufacturerReferenceNumber(featureGroupModel.
+              getEntityManufacturerReferenceNumber());
         }
         Set<LicenseKeyGroupEntity> licenseKeyGroupEntities = featureGroupModel.getLicenseKeyGroups();
         for(LicenseKeyGroupEntity licenseKeyGroupEntity : licenseKeyGroupEntities){
           licenseKeyGroupEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, vlmVersion,
               licenseKeyGroupEntity.getId(), user));
+          licenseKeyGroupEntity.setManufacturerReferenceNumber(featureGroupModel.
+              getEntityManufacturerReferenceNumber());
         }
 
         featureGroupModel.setEntitlementPools(entitlementPoolEntities.stream().map(
@@ -109,18 +115,29 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
     for (Version finalVersion : finalVersions) {
       Collection<EntitlementPoolEntity> coll = vendorLicenseFacade.listEntitlementPools(vlmId,
           finalVersion, user);
-      for(EntitlementPoolEntity entitlementPoolEntity : coll){
+      coll.stream().forEach( entitlementPoolEntity -> {
         entitlementPoolEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, finalVersion,
             entitlementPoolEntity.getId(), user));
-      }
+        Optional<String> manufacturerReferenceNumber = getFeatureGroupManufactureRefNumber
+            (entitlementPoolEntity.getReferencingFeatureGroups(), vlmId, finalVersion, user);
+        manufacturerReferenceNumber.ifPresent(mrn -> entitlementPoolEntity
+            .setManufacturerReferenceNumber(mrn));
+      });
+
       entitlementPoolEntities.addAll(coll);
 
       Collection<LicenseKeyGroupEntity> coll2 = vendorLicenseFacade.listLicenseKeyGroups(vlmId,
           finalVersion, user);
-      for(LicenseKeyGroupEntity licenseKeyGroupEntity : coll2){
+
+      coll2.stream().forEach( licenseKeyGroupEntity -> {
         licenseKeyGroupEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, finalVersion,
             licenseKeyGroupEntity.getId(), user));
-      }
+        Optional<String> manufacturerReferenceNumber = getFeatureGroupManufactureRefNumber
+            (licenseKeyGroupEntity.getReferencingFeatureGroups(), vlmId, finalVersion, user);
+        manufacturerReferenceNumber.ifPresent(mrn -> licenseKeyGroupEntity
+            .setManufacturerReferenceNumber(mrn));
+      });
+
       licenseKeyGroupEntities.addAll(coll2);
     }
 
@@ -136,6 +153,23 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
 
     mdcDataDebugMessage.debugExitMessage("VLM name", vendorName);
     return vendorLicenseArtifact.toXml().getBytes();
+  }
+
+  private static Optional<String> getFeatureGroupManufactureRefNumber(Set<String> featureGroupIds,
+         String vlmId, Version finalVersion, String user) {
+    String manufactureReferenceNumber = null;
+    if (CollectionUtils.isNotEmpty(featureGroupIds)) {
+      Object[] featureGroupIdsList = featureGroupIds.toArray();
+      if (featureGroupIdsList != null && featureGroupIdsList.length > 0) {
+        FeatureGroupEntity featureGroup =
+            vendorLicenseFacade.getFeatureGroup(new FeatureGroupEntity(vlmId, finalVersion,
+                featureGroupIdsList[0].toString()), user);
+        manufactureReferenceNumber = featureGroup != null ? featureGroup
+            .getManufacturerReferenceNumber() : null;
+      }
+    }
+    return manufactureReferenceNumber != null ? Optional.of(manufactureReferenceNumber) :
+        Optional.empty();
   }
 
 

@@ -21,7 +21,7 @@ import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 
 import LicenseKeyGroupsEditor from './LicenseKeyGroupsEditor.js';
-import InputOptions, {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
+import InputOptions, {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
 import {optionsInputValues} from './LicenseKeyGroupsConstants';
 
 class LicenseKeyGroupsListEditorView extends React.Component {
@@ -61,7 +61,7 @@ class LicenseKeyGroupsListEditorView extends React.Component {
 					isReadOnlyMode={isReadOnlyMode}>
 					{this.filterList().map(licenseKeyGroup => (this.renderLicenseKeyGroupListItem(licenseKeyGroup, isReadOnlyMode)))}
 				</ListEditorView>
-				<Modal show={isDisplayModal} bsSize='large' animation={true} className='onborading-modal license-key-groups-modal'>
+				<Modal show={isDisplayModal} bsSize='large' animation={true} className='onborading-modal license-model-modal license-key-groups-modal'>
 					<Modal.Header>
 						<Modal.Title>{`${isModalInEditMode ? i18n('Edit License Key Group') : i18n('Create New License Key Group')}`}</Modal.Title>
 					</Modal.Header>
@@ -122,16 +122,20 @@ class LicenseKeyGroupsListEditorView extends React.Component {
 	}
 
 	getOperationalScopes(operationalScope) {
-		if(operationalScope.choices.toString() === i18n(optionInputOther.OTHER) && operationalScope.other !== '') {
+		
+		if(operationalScope.choices && operationalScope.choices.toString() === i18n(optionInputOther.OTHER)) {
 			return operationalScope.other;
 		}
-		else {
+		else if (operationalScope.choices) {
 			let allOpScopes = '';
 			for (let opScope of operationalScope.choices) {
 				allOpScopes += allOpScopes === '' ? InputOptions.getTitleByName(optionsInputValues, opScope) : `, ${InputOptions.getTitleByName(optionsInputValues, opScope)}`;
 			}
 			return allOpScopes;
-		}
+		} 
+		else {
+			return '';
+		} 
 	}
 
 	extractValue(item) {

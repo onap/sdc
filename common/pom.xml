@@ -15,17 +15,7 @@
     </parent>
 
     <properties>
-        <junit.version>4.12</junit.version>
-        <java.source>1.8</java.source>
-        <java.target>1.8</java.target>
-        <slf4j.version>1.7.21</slf4j.version>
         <aspectj.version>1.8.7</aspectj.version>
-        <servlet.version>2.5</servlet.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <commons.codec.version>1.10</commons.codec.version> <!-- orignal 1.6 updated to resolve
-		blackduck violation -->
-        <org.reflections.version>0.9.10</org.reflections.version><!-- orignal 0.9.9 updated to
-        resolve blackduck violation -->
 
     </properties>
 

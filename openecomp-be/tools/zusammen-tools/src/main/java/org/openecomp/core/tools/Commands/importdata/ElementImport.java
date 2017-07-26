@@ -1,5 +1,6 @@
 package org.openecomp.core.tools.Commands.importdata;
 
+import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import org.openecomp.core.tools.store.ElementCassandraLoader;
 import org.openecomp.core.tools.store.ElementNamespaceHandler;
@@ -15,21 +16,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.io.File.separator;
 import static org.openecomp.core.tools.Commands.exportdata.ImportProperties.*;
 
 public class ElementImport {
     private static final Logger logger = LoggerFactory.getLogger(ElementImport.class);
+    public static final String ROOT_ITEM = Id.ZERO.getValue();
+
     private ElementCassandraLoader elementCassandraLoader = new ElementCassandraLoader();
     private ElementNamespaceHandler cassandraElementRepository = new ElementNamespaceHandler();
     private VersionCassandraLoader versionCassandraLoader = new VersionCassandraLoader();
 
-    public void loadPath(SessionContext sessionContext, Path elementDir, String elementId, String[] pathObjects) {
+    public void loadPath(SessionContext sessionContext, Path elementDir, String elementId, String[]
+            pathObjects) {
         try {
+            if (!Files.isDirectory(elementDir)){
+                return;
+            }
             // load info file
             ElementEntity elementEntity = new ElementEntity();
             Path infoFilePath = Paths.get(elementDir.toString() + separator + ELEMENT_INFO_PREFIX
@@ -38,7 +44,6 @@ public class ElementImport {
                 String info = new String(Files.readAllBytes(infoFilePath));
                 elementEntity.setInfo(info);
             }
-
             // load relation file
             Path realtionsFilePath = Paths.get(elementDir.toString() + separator
                     + ELEMENT_RELATION_PREFIX + elementId + JSON_POSTFIX);
@@ -58,7 +63,7 @@ public class ElementImport {
 
             //load visualization
             Path visualFilePath = Paths.get(elementDir.toString() + separator
-                    + ELEMENT_VISUALIZATION_PREFIX + elementId );
+                    + ELEMENT_VISUALIZATION_PREFIX + elementId);
             if (Files.exists(visualFilePath)) {
                 byte[] bytes = Files.readAllBytes(visualFilePath);
                 ByteBuffer visualization = ByteBuffer.wrap(bytes);
@@ -67,45 +72,60 @@ public class ElementImport {
 
             //load searchable
             Path searchableFilePath = Paths.get(elementDir.toString() + separator
-                    + ELEMENT_SEARCHABLE_PREFIX + elementId );
+                    + ELEMENT_SEARCHABLE_PREFIX + elementId);
             if (Files.exists(searchableFilePath)) {
                 byte[] bytes = Files.readAllBytes(searchableFilePath);
                 ByteBuffer searchable = ByteBuffer.wrap(bytes);
                 elementEntity.setSearchableData(searchable);
             }
-
+            String element_Id = pathObjects[pathObjects.length - 1];
             elementEntity.setSpace(pathObjects[2]);
             elementEntity.setItemId(pathObjects[0]);
             elementEntity.setVersionId(pathObjects[1]);
-            elementEntity.setElement_id(pathObjects[pathObjects.length - 1]);
+            elementEntity.setElement_id(element_Id);
             elementEntity.setNamespace(getNameSpace(pathObjects));
             elementEntity.setParentId(getParentId(pathObjects));
-            elementEntity.setSubElementIds(getAllSubElementsIds(elementDir));
+            elementEntity.setSubElementIds(getAllSubElementsIds(elementDir, element_Id));
             elementCassandraLoader.createEntity(elementEntity);
             cassandraElementRepository.createElementNamespace(elementEntity);
             versionCassandraLoader.insertElementToVersion(elementEntity);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
+            ex.printStackTrace();
         }
     }
 
     private String getParentId(String[] pathObjects) {
-        if (pathObjects.length <= 4) {
+
+        if (pathObjects[pathObjects.length - 1].equals(ROOT_ITEM)) {
             return null;
+        }
+        if (pathObjects.length == 4) {
+            return ROOT_ITEM;
         }
         return pathObjects[pathObjects.length - 2];
     }
 
-    private Set<String> getAllSubElementsIds(Path root) throws IOException {
-        try (Stream<Path> walk = Files.walk(root)) {
-           return  walk.filter(path -> Files.isDirectory(path))
-                   .map(path -> path.toFile().getName() ).collect(Collectors.toSet());
+    private Set<String> getAllSubElementsIds(Path root, String elementId) throws IOException {
+        if (elementId.equals(ROOT_ITEM)) {
+            root = root.getParent();
         }
+        File file = root.toFile();
+        Set<String> retVal = new HashSet<>();
+        File[] files = file.listFiles();
+        for (File f : files){
+            if (f.isDirectory()){
+                retVal.add(f.getName());
+            }
+        }
+        retVal.remove(ROOT_ITEM);
+        return retVal;
+
     }
 
     private String getNameSpace(String[] pathObjects) {
         if (pathObjects.length <= 4) {
-            return null;
+            return "";
         }
         if (pathObjects.length == 5) {
             return pathObjects[3];

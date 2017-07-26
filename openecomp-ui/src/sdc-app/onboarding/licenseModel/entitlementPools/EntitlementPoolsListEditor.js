@@ -39,7 +39,7 @@ const mapStateToProps = ({licenseModel: {entitlementPool, licenseModelEditor}}) 
 const mapActionsToProps = (dispatch, {licenseModelId, version}) => {
 	return {
 		onAddEntitlementPoolClick: () => EntitlementPoolsActionHelper.openEntitlementPoolsEditor(dispatch),
-		onEditEntitlementPoolClick: entitlementPool => EntitlementPoolsActionHelper.openEntitlementPoolsEditor(dispatch, {entitlementPool}),
+		onEditEntitlementPoolClick: entitlementPool => EntitlementPoolsActionHelper.openEntitlementPoolsEditor(dispatch, {entitlementPool, licenseModelId, version}),
 		onDeleteEntitlementPool: entitlementPool => dispatch({
 			type: globalMoadlActions.GLOBAL_MODAL_WARNING,
 			data:{

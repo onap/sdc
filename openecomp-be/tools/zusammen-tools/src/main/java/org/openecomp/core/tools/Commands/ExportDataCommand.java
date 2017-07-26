@@ -18,6 +18,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static java.nio.file.Files.createDirectories;
 public class ExportDataCommand {
@@ -25,6 +29,8 @@ public class ExportDataCommand {
 
     public static void exportData(SessionContext context, String filterItem) {
         try {
+            Set<String> filteredItem = new HashSet<>();
+            filteredItem.add(filterItem);
             ImportProperties.initParams();
             CassandraConnectionInitializer.setCassandraConnectionPropertiesToSystem();
             Path rootDir = Paths.get(ImportProperties.ROOT_DIRECTORY);
@@ -32,10 +38,10 @@ public class ExportDataCommand {
             if (filterItem != null) {
                 filterItem = filterItem.replaceAll("\\r", "");
             }
-            new ItemHandler().createItemsData(context, filterItem);
-            new VersionHandler().loadVersions(filterItem);
-            new ElementHandler().loadElements(filterItem);
-            zipPath(rootDir,filterItem);
+            new ItemHandler().createItemsData(context, filteredItem);
+            new VersionHandler().loadVersions(filteredItem);
+            new ElementHandler().loadElements(filteredItem);
+            zipPath(rootDir,filteredItem);
             FileUtils.forceDelete(rootDir.toFile());
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
@@ -43,12 +49,14 @@ public class ExportDataCommand {
         }
 
     }
-    private static void zipPath(Path rootDir,String filterItem ) throws Exception{
+    private static void zipPath(Path rootDir,Set<String> filterItem ) throws Exception{
         LocalDateTime date = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         String dateStr = date.format(formatter);
         String zipFile = System.getProperty("user.home")+ File.separatorChar+"onboarding_import"+ dateStr + ".zip";
         ZipUtils.createZip(zipFile, rootDir,filterItem);
+        logger.info("Exported file :" + zipFile);
+        System.out.println("Exported file :" + zipFile);
     }
 
 

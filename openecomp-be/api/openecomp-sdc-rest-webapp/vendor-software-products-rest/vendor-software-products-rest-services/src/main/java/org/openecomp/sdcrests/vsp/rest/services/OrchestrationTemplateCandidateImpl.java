@@ -3,6 +3,8 @@ package org.openecomp.sdcrests.vsp.rest.services;
 import org.apache.commons.beanutils.BeanUtils;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.MdcUtil;
@@ -30,6 +32,9 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 @Named
@@ -82,8 +87,11 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     OrchestrationTemplateActionResponseDto responseDto =
         new OrchestrationTemplateActionResponseDto();
     BeanUtils.copyProperties(responseDto, response);
+
     return Response.ok(responseDto).build();
   }
+
+
 
   @Override
   public Response updateFilesDataStructure(

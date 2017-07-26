@@ -25,6 +25,7 @@ import org.openecomp.sdc.activityLog.ActivityLogManagerFactory;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.MdcUtil;
@@ -74,6 +75,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+
+import static org.openecomp.sdc.logging.messages.AuditMessages.SUBMIT_VSP_ERROR;
 
 
 @Named
@@ -206,8 +209,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     switch (request.getAction()) {
       case Checkout:
         MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Checkout_VSP.toString());
-        logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CHECK_OUT_VSP + vspId);
         vendorSoftwareProductManager.checkout(vspId, user);
+        logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CHECK_OUT_VSP + vspId);
         break;
       case Undo_Checkout:
         MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Undo_Checkout_VSP.toString());
@@ -215,18 +218,28 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         break;
       case Checkin:
         MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Checkin_VSP.toString());
-        logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CHECK_IN_VSP + vspId);
         vendorSoftwareProductManager.checkin(vspId, user);
+        logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CHECK_IN_VSP + vspId);
         break;
       case Submit:
         MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Submit_VSP.toString());
-        logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP + vspId);
         ValidationResponse validationResponse = vendorSoftwareProductManager.submit(vspId, user);
         if (!validationResponse.isValid()) {
+          logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP_FAIL + vspId);
+          if (validationResponse.getVspErrors() != null) {
+            validationResponse.getVspErrors().forEach(errorCode -> logger.audit(AuditMessages
+                .AUDIT_MSG + String.format(SUBMIT_VSP_ERROR, errorCode.message(), vspId)));
+          }
+          if (validationResponse.getUploadDataErrors() != null) {
+            validationResponse.getUploadDataErrors().values().forEach(errorMessages
+                -> printAuditForErrors(errorMessages, vspId, SUBMIT_VSP_ERROR));
+          }
+
           return Response.status(Response.Status.EXPECTATION_FAILED).entity(
               new MapValidationResponseToDto()
                   .applyMapping(validationResponse, ValidationResponseDto.class)).build();
         }
+        logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP + vspId);
         break;
       case Create_Package:
         MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Create_Package.toString());
@@ -370,5 +383,15 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     return Response.ok(results).build();
+  }
+
+  private void printAuditForErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
+
+    errorList.forEach(errorMessage -> {
+      if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
+        logger.audit(AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(),
+            vspId));
+      }
+    });
   }
 }

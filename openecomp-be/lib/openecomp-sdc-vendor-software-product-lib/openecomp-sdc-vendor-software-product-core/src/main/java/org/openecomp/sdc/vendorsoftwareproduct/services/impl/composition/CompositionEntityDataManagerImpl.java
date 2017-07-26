@@ -224,7 +224,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
     Map<String, String> networkIdByName = saveNetworks(vspId, version, compositionData);
     saveComponents(vspId, version, compositionData, networkIdByName);
-    saveDeploymentFlavors(vspId, version, compositionData);
 
     mdcDataDebugMessage.debugExitMessage(null);
   }
@@ -686,40 +685,6 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
         createImage(imageEntity);
       }
     }
-  }
-
-  public void saveDeploymentFlavors(String vspId, Version version,
-                                    CompositionData compositionData) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
-
-    if (CollectionUtils.isNotEmpty(compositionData.getComponents())) {
-      DeploymentFlavorEntity deploymentFlavorEntity = new DeploymentFlavorEntity(vspId, version,
-          null);
-      DeploymentFlavor deploymentFlavor = new DeploymentFlavor();
-      VspDetails vendorSoftwareProductInfo =
-          vspInfoDao.get(new VspDetails(vspId, version));
-      if (vendorSoftwareProductInfo.getName() != null) {
-        deploymentFlavor.setModel(vendorSoftwareProductInfo.getName());
-        List<ComponentComputeAssociation> componentComputeAssociationList = new ArrayList<>();
-        Collection<ComputeEntity> computes= vendorSoftwareProductDao.listComputesByVsp(vspId,
-            version);
-        for (ComputeEntity compute : computes) {
-          ComponentComputeAssociation componentComputeAssociation = new
-              ComponentComputeAssociation();
-          if (compute.getComponentId() != null && compute.getId() != null){
-            componentComputeAssociation.setComponentId(compute.getComponentId());
-            componentComputeAssociation.setComputeFlavorId(compute.getId());
-            componentComputeAssociationList.add(componentComputeAssociation);
-          }
-        }
-        deploymentFlavor.setComponentComputeAssociations(componentComputeAssociationList);
-      }
-      deploymentFlavorEntity.setDeploymentFlavorCompositionData(deploymentFlavor);
-      createDeploymentFlavor(deploymentFlavorEntity);
-    }
-
-    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
 }

@@ -18,7 +18,6 @@ import Configuration from 'sdc-app/config/Configuration.js';
 
 import {actionTypes, COMPONENTS_QUESTIONNAIRE} from './SoftwareProductComponentsConstants.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
-import SoftwareProductComponentsImageActionHelper from './images/SoftwareProductComponentsImageActionHelper.js';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 
 function baseUrl(softwareProductId, version) {
@@ -69,32 +68,12 @@ function postSoftwareProductComponent(softwareProductId, vspComponent, version) 
 
 
 const SoftwareProductComponentsActionHelper = {
-	fetchSoftwareProductComponents(dispatch, {softwareProductId, version, isFetchImageDetails = false}) {
+	fetchSoftwareProductComponents(dispatch, {softwareProductId, version}) {
 		return fetchSoftwareProductComponents(softwareProductId, version).then(response => {
-			let componentImagesCalls = [];
-			if (isFetchImageDetails && response.listCount) {
-				response.results.map(component => {
-					let componentId = component.id;
-					componentImagesCalls[componentImagesCalls.length] =
-						SoftwareProductComponentsImageActionHelper.fetchImagesList(dispatch, {
-							softwareProductId,
-							componentId,
-							version
-						});
-
-				});
-				return Promise.all(componentImagesCalls).then(() => {
-					dispatch({
-						type: actionTypes.COMPONENTS_LIST_UPDATE,
-						componentsList: response.results
-					});
-				});
-			} else {
-				dispatch({
-					type: actionTypes.COMPONENTS_LIST_UPDATE,
-					componentsList: response.results
-				});
-			}
+			dispatch({
+				type: actionTypes.COMPONENTS_LIST_UPDATE,
+				componentsList: response.results
+			});
 		});
 	},
 

@@ -17,6 +17,7 @@ import static org.openecomp.core.tools.Commands.exportdata.ImportProperties.ROOT
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 
 public class VersionHandler {
     private static final Logger logger = LoggerFactory.getLogger(ExportDataCommand.class);
@@ -24,17 +25,17 @@ public class VersionHandler {
     public VersionHandler() {
     }
 
-    public void loadVersions(String filteredItem) {
+    public void loadVersions(Set<String> filteredItem) {
         VersionCassandraLoader versionCassandraLoader = new VersionCassandraLoader();
         versionCassandraLoader.list().forEach(versionEntity -> handleVersionEntity(versionEntity,filteredItem));
         VersionInfoCassandraLoader versionInfoCassandraLoader = new VersionInfoCassandraLoader();
         versionInfoCassandraLoader.list().forEach(versionInfoEntity ->  handleVersionInfo(versionInfoEntity,filteredItem));
     }
 
-    private void handleVersionEntity(VersionEntity versionEntity, String filteredItem) {
+    private void handleVersionEntity(VersionEntity versionEntity, Set<String> filteredItem) {
         try {
             String itemId = versionEntity.getItemId();
-            if (filteredItem != null && !itemId.contains(filteredItem)){
+            if (!filteredItem.isEmpty()  && !filteredItem.contains(itemId)){
                 return;
             }
             String versionId = versionEntity.getVersionId();
@@ -55,7 +56,7 @@ public class VersionHandler {
 
     }
 
-    private void handleVersionInfo(VersionInfoEntity versionInfoEntity, String filteredItem) {
+    private void handleVersionInfo(VersionInfoEntity versionInfoEntity, Set<String> filteredItem) {
         try {
             String itemId = versionInfoEntity.getEntityId();
             Path itemDirectory = Paths.get( ROOT_DIRECTORY + separator + itemId);

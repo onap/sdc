@@ -8,8 +8,8 @@
     "start": "gulp dev && webpack-dev-server --progress",
     "build": "gulp build",
     "css-usage": "gulp css-usage",
-    "static-keys-bundle" : "gulp static-keys-bundle",
-    "check-keys-against-bundles" : "gulp static-keys-bundle-with-report",
+    "static-keys-bundle": "gulp static-keys-bundle",
+    "check-keys-against-bundles": "gulp static-keys-bundle-with-report",
     "test": "jest",
     "test-failedTestReport": "jest --json | node test-utils/failedTestReport.js",
     "test-dev": "jest --watch",
@@ -18,9 +18,10 @@
     "storyshots": "jest storyshots.test.js",
     "build-storybook": "build-storybook -c .storybook -o .storybook-dist && gulp copy-storybook-fonts && gulp copy-storybook-resources-prod"
   },
-  "dependencies": {
+  "dependencies": {    
     "classnames": "^2.2.5",
     "core-js": "^2.4.0",
+    "d3": "^3.5.16",
     "dox-sequence-diagram-ui": "file:../dox-sequence-diagram-ui",
     "intl": "^1.0.1",
     "intl-format-cache": "^2.0.5",
@@ -39,7 +40,7 @@
     "react-sortable": "^1.2.0",
     "redux": "^3.3.1",
     "restful-js": "^0.7.0",
-    "sdc-ui": "^1.5.12",
+    "sdc-ui": "1.6.0",
     "uuid-js": "^0.7.5",
     "validator": "^4.3.0"
   },

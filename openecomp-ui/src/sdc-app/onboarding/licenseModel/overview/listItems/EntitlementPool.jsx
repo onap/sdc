@@ -15,7 +15,7 @@
  */
 import React, {Component} from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import {extractValue, extractUnits} from '../../entitlementPools/EntitlementPoolsConstants.js';
+import {extractUnits} from '../../entitlementPools/EntitlementPoolsConstants.js';
 import ArrowCol from './listItemsComponents/ArrowCol.jsx';
 import ItemInfo from './listItemsComponents/ItemInfo.jsx';
 import IconCol from './listItemsComponents/IconCol.jsx';
@@ -23,29 +23,21 @@ import {AdditionalDataCol, AdditionalDataElement} from './listItemsComponents/Ad
 
 class EntitlementPool extends Component {
 	render() {
-		let {epData: {name, description, manufacturerReferenceNumber}} = this.props;
+		let {epData: {name, description, thresholdValue, thresholdUnits}, isOrphan} = this.props;
 		return (
-			<div className='vlm-list-item vlm-list-item-ep' data-test-id='vlm-list-item-ep'>
-				<ArrowCol/>
-				<IconCol className='ep-icon'/>
+			<div className={`vlm-list-item vlm-list-item-ep ${isOrphan ? 'orphan-list-item' : ''}`} data-test-id='vlm-list-item-ep'>
+				{!isOrphan && <ArrowCol/>}
+				<IconCol className='ep-icon' text='EP'/>
 				<ItemInfo name={name} description={description}/>
 				<AdditionalDataCol>
-					<AdditionalDataElement
+					{thresholdValue && <AdditionalDataElement
 						className='vlm-list-item-entitlement-metric'
 						name={i18n('Entitlement')}
-						value={this.getEntitlement()}/>
-					<AdditionalDataElement
-						name={i18n('Manufacturer Reference Number')}
-						value={manufacturerReferenceNumber}
-						className='vlm-list-item-sku'/>
+						value={`${thresholdValue} ${extractUnits(thresholdUnits)}`}/>
+					}
 				</AdditionalDataCol>
 			</div>
 		);
-	}
-
-	getEntitlement() {
-		let {epData: {entitlementMetric, aggregationFunction, time, thresholdValue, thresholdUnits}} = this.props;
-		return `${extractValue(aggregationFunction)} ${extractValue(entitlementMetric)} per  ${extractValue(time)} ${thresholdValue} ${extractUnits(thresholdUnits)}`;
 	}
 
 }

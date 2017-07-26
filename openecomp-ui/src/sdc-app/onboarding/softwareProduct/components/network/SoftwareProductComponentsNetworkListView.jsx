@@ -122,7 +122,7 @@ class SoftwareProductComponentsNetworkView extends React.Component {
 				<ListEditorItemViewField>
 					<div className={isManual ? 'details-col' : 'details'}>
 						<div className={isManual ? 'manual-title' : 'title'}>{i18n('Purpose of NIC')}</div>
-						<div className={isManual ? 'description' : ''}>{description ? description : i18n('N/A')}</div>
+						{description && <div className={isManual ? 'description' : ''}>{description}</div>}
 					</div>
 					{!isManual && <div className='details'>
 						<div className='title'>{i18n('Network')}</div>

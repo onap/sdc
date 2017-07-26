@@ -36,7 +36,7 @@ function getActiveNavigationId(screen, componentId) {
 	return activeItemId;
 }
 
-const buildComponentNavigationBarGroups = ({componentId, meta, hasImages}) => {
+const buildComponentNavigationBarGroups = ({componentId, meta}) => {
 	const groups = ([
 		{
 			id: navigationItems.GENERAL + '|' + componentId,
@@ -67,7 +67,6 @@ const buildComponentNavigationBarGroups = ({componentId, meta, hasImages}) => {
 			id: navigationItems.IMAGES + '|' + componentId,
 			name: i18n('Images'),
 			disabled: false,
-			hidden: (!hasImages),
 			meta
 		}, {
 			id: navigationItems.PROCESS_DETAILS + '|' + componentId,
@@ -85,7 +84,7 @@ const buildComponentNavigationBarGroups = ({componentId, meta, hasImages}) => {
 	return groups;
 };
 
-const buildNavigationBarProps = ({softwareProduct, meta, screen, componentId, componentsList, mapOfExpandedIds, imagesNavigationList}) => {
+const buildNavigationBarProps = ({softwareProduct, meta, screen, componentId, componentsList, mapOfExpandedIds}) => {
 	const {softwareProductEditor: {data: currentSoftwareProduct = {}}} = softwareProduct;
 	const {id, name, onboardingMethod} = currentSoftwareProduct;
 	const groups = [{
@@ -148,8 +147,7 @@ const buildNavigationBarProps = ({softwareProduct, meta, screen, componentId, co
 						name: displayName,
 						meta,
 						expanded: mapOfExpandedIds[navigationItems.COMPONENTS + '|' + id] === true  && screen !== enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE,
-						items: buildComponentNavigationBarGroups({componentId: id, meta,
-							hasImages : (onboardingMethod === onboardingMethodTypes.MANUAL || imagesNavigationList[id] === true)})
+						items: buildComponentNavigationBarGroups({componentId: id, meta})
 					}))
 				]
 			}
@@ -193,12 +191,12 @@ function buildMeta({softwareProduct, componentId, softwareProductDependencies}) 
 const mapStateToProps = ({softwareProduct}, {currentScreen: {screen, props: {componentId}}}) => {
 	const {softwareProductEditor, softwareProductComponents, softwareProductDependencies} = softwareProduct;
 	const {mapOfExpandedIds = []} = softwareProductEditor;
-	const {componentsList = [], images: {imagesNavigationList}} = softwareProductComponents;
+	const {componentsList = []} = softwareProductComponents;
 
 	const meta = buildMeta({softwareProduct, componentId, softwareProductDependencies});
 	return {
 		versionControllerProps: buildVersionControllerProps(softwareProduct),
-		navigationBarProps: buildNavigationBarProps({softwareProduct, meta, screen, componentId, componentsList, mapOfExpandedIds, imagesNavigationList}),
+		navigationBarProps: buildNavigationBarProps({softwareProduct, meta, screen, componentId, componentsList, mapOfExpandedIds}),
 		meta
 	};
 };

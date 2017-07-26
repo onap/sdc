@@ -31,8 +31,11 @@ public class ItemImport {
             Item item = JsonUtil.json2Object(itemJson, Item.class);
             ItemDao itemDao = getItemDao(sessionContext);
             itemDao.create(sessionContext, item.getId(), item.getInfo(), item.getCreationTime());
+            logger.info("Item Created :"+item.getInfo().getName()+" , "+item.getId());
+            System.out.println("Item Created :"+item.getInfo().getName()+" , "+item.getId());
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
+            ex.printStackTrace();
         }
     }
 

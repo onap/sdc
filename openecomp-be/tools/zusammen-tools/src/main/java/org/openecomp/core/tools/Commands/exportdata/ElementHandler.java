@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.Set;
 
 import static java.io.File.separator;
 import static java.nio.file.Files.*;
@@ -22,15 +23,16 @@ public class ElementHandler {
     public ElementHandler() {
     }
 
-    public void loadElements(String filteredItem) {
+    public void loadElements(Set<String> filteredItem) {
         ElementCassandraLoader elementCassandraLoader = new ElementCassandraLoader();
-        elementCassandraLoader.list().forEach(elementEntity ->  handleElementEntity(elementEntity,filteredItem));
+          elementCassandraLoader.list().forEach(elementEntity ->  handleElementEntity(elementEntity,filteredItem));
     }
 
-    private void handleElementEntity(ElementEntity elementEntity, String filteredItem) {
+    private void handleElementEntity(ElementEntity elementEntity, Set<String> filteredItem) {
         try {
             String itemId = elementEntity.getItemId();
-            if (filteredItem != null && !itemId.contains(filteredItem)){
+
+            if (!filteredItem.isEmpty() && !filteredItem.contains(itemId)){
                 return;
             }
             String versionId = elementEntity.getVersionId();
@@ -42,11 +44,18 @@ public class ElementHandler {
             if (!isNull(namespace)){
                 namespacePath =  namespace.replace(ELEMENT_NAMESPACE_SPLITTER,separator)+separator;
             }
-            Path elementDirectoryPath = Paths.get( ROOT_DIRECTORY + separator + itemId
-                    + separator + versionId + separator + space + separator + namespacePath+ separator + elementId);
+            Path elementDirectoryPath;
+            if (!isNull(namespace)){
+                elementDirectoryPath = Paths.get( ROOT_DIRECTORY + separator + itemId
+                        + separator + versionId + separator + space + separator + namespacePath+ separator + elementId);
+            } else {
+                elementDirectoryPath = Paths.get( ROOT_DIRECTORY + separator + itemId
+                        + separator + versionId + separator + space + separator + elementId);
+              }
+
             if (notExists(elementDirectoryPath)) {
-                createDirectories(elementDirectoryPath);
-            }
+                 Path created = createDirectories(elementDirectoryPath);
+             }
 
             String info = elementEntity.getInfo();
             if (!isNull(info)) {

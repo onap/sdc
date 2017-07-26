@@ -1,6 +1,9 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.openecomp.sdc.generator.util.GeneratorConstants.ALLOWED_FLAVORS_PROPERTY;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.IMAGES_PROPERTY;
 import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_NODE_TEMPLATE_ID_SUFFIX;
 import static org.openecomp.sdc.tosca.services.ToscaConstants.BINDING_REQUIREMENT_ID;
 import static org.openecomp.sdc.tosca.services.ToscaConstants.COUNT_PROPERTY_NAME;
@@ -10,6 +13,10 @@ import static org.openecomp.sdc.translator.services.heattotosca.Constants.GLOBAL
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.openecomp.sdc.generator.core.utils.GeneratorUtils;
 import org.openecomp.sdc.generator.datatypes.tosca.ComputeFlavor;
 import org.openecomp.sdc.generator.datatypes.tosca.DeploymentFlavorModel;
@@ -36,42 +43,111 @@ import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.ManualVspToscaManager;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
+import org.openecomp.sdc.vendorsoftwareproduct.services.ManualVspDataCollectionService;
+import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class ManualVspToscaManagerImplTest {
 
+  private static final String USER = "manualVspToscaTestUser";
+  private static final String INVALID_VSP_ID = "Invalid_Vsp_Id";
+  private static final String VSP_ID = "Vsp_Id_1";
+  private static final String VSP_VERSION = "1.0";
+
+  private static final String RELEASE_VENDOR = "Vendor-1";
   private static final String COMPONENT_ID = "Component_id";
   private static final String COMPONENT_NAME = "Component_name";
   private static final String SP_PART_NUMBER_1 = "Part_number_123";
   private static final String FEATURE_GROUP_ID_1 = "Feature_Group_id_1";
   private static final String MANUFACTURER_REF_1 = "Manufacturer_Ref_1";
-  private static final String VENDOR_MODEL_1 = "VLM_1";
+  private static final String VENDOR_MODEL_1 = "Deployment_Flavor_Model_1";
   private static final int NUM_CPUS_1 = 1;
-  private static final String DISK_SIZE_1 = "2GB";
-  private static final String MEM_SIZE_1 = "8GB";
+  private static final String DISK_SIZE_1 = "2 GB";
+  private static final String MEM_SIZE_1 = "8 GB";
 
   private static final String SP_PART_NUMBER_2 = "Part_number_345";
   private static final String FEATURE_GROUP_ID_2 = "Feature_Group_id_2";
   private static final String MANUFACTURER_REF_2 = "Manufacturer_Ref_2";
-  private static final String VENDOR_MODEL_2 = "VLM_2";
+  private static final String VENDOR_MODEL_2 = "Deployment_Flavor_Model_2";
   private static final int NUM_CPUS_2 = 4;
-  private static final String DISK_SIZE_2 = "3GB";
-  private static final String MEM_SIZE_2 = "2GB";
+  private static final String DISK_SIZE_2 = "3 GB";
+  private static final String MEM_SIZE_2 = "2 GB";
 
   private static final String IMAGE_VERSION_1 = "3.16.1";
   private static final String IMAGE_HASH_1 = "65edfgye3256hjutve";
   private static final String IMAGE_FILE_NAME_1 = "image-file-name1";
-  private static final String IMAGE_FILE_FORMAT_1 = "qcow2";
   private static final String IMAGE_VERSION_2 = "3.1.9";
   private static final String IMAGE_HASH_2 = "84rtedfe3256hjutaw";
   private static final String IMAGE_FILE_NAME_2 = "image-file-name1";
-  private static final String IMAGE_FILE_FORMAT_2 = "iso";
 
   private ManualVspToscaManager manualVspToscaManager = new ManualVspToscaManagerImpl();
+
+  @Spy
+  @InjectMocks
+  private ManualVspToscaManagerImpl manualVspToscaManagerMock;
+
+  @Mock
+  private ManualVspDataCollectionService manualVspDataCollectionServiceMock;
+
+  @Test
+  public void testGatherVspInformationInvalidVsp() {
+    MockitoAnnotations.initMocks(this);
+    VspModelInfo expectedVspData = new VspModelInfo();
+    doThrow(new RuntimeException())
+        .when(manualVspDataCollectionServiceMock)
+        .getReleaseVendor(INVALID_VSP_ID, Version.valueOf(VSP_VERSION), USER);
+    doThrow(new RuntimeException())
+        .when(manualVspDataCollectionServiceMock)
+        .getAllowedFlavors(INVALID_VSP_ID, Version.valueOf(VSP_VERSION), USER);
+    doThrow(new RuntimeException())
+        .when(manualVspDataCollectionServiceMock)
+        .getVspComponentImages(INVALID_VSP_ID, Version.valueOf(VSP_VERSION), USER);
+    doThrow(new RuntimeException())
+        .when(manualVspDataCollectionServiceMock)
+        .getVspComponents(INVALID_VSP_ID, Version.valueOf(VSP_VERSION), USER);
+    doThrow(new RuntimeException())
+        .when(manualVspDataCollectionServiceMock)
+        .getVspComponentNics(INVALID_VSP_ID, Version.valueOf(VSP_VERSION), USER);
+    VspModelInfo vspModelInfo = manualVspToscaManagerMock.gatherVspInformation(INVALID_VSP_ID,
+        Version.valueOf(VSP_VERSION), USER);
+    Assert.assertEquals(expectedVspData, vspModelInfo);
+  }
+
+
+  @Test
+  public void testGatherVspInformationValidVsp() {
+    MockitoAnnotations.initMocks(this);
+    Map<String, DeploymentFlavorModel> deploymentFlavorData = getDeploymentFlavorData();
+    Map<String, List<Nic>> componentNics = getComponentNics();
+    Map<String, String> componentData = getComponentData();
+    Map<String, List<MultiFlavorVfcImage>> vfcImageData = getVfcImageData();
+    doReturn(Optional.of(RELEASE_VENDOR)).when(manualVspDataCollectionServiceMock)
+        .getReleaseVendor(VSP_ID, Version.valueOf(VSP_VERSION), USER);
+    doReturn(deploymentFlavorData).when(manualVspDataCollectionServiceMock)
+        .getAllowedFlavors(VSP_ID, Version.valueOf(VSP_VERSION), USER);
+    doReturn(vfcImageData).when(manualVspDataCollectionServiceMock)
+        .getVspComponentImages(VSP_ID, Version.valueOf(VSP_VERSION), USER);
+    doReturn(componentData).when(manualVspDataCollectionServiceMock)
+        .getVspComponents(VSP_ID, Version.valueOf(VSP_VERSION), USER);
+    doReturn(componentNics).when(manualVspDataCollectionServiceMock)
+        .getVspComponentNics(VSP_ID, Version.valueOf(VSP_VERSION), USER);
+    VspModelInfo vspModelInfo = manualVspToscaManagerMock.gatherVspInformation(VSP_ID,
+        Version.valueOf(VSP_VERSION), USER);
+
+    VspModelInfo expectedVspData = new VspModelInfo();
+    expectedVspData.setReleaseVendor(RELEASE_VENDOR);
+    expectedVspData.setComponents(getComponentData());
+    expectedVspData.setMultiFlavorVfcImages(getVfcImageData());
+    expectedVspData.setAllowedFlavors(getDeploymentFlavorData());
+    expectedVspData.setNics(getComponentNics());
+
+    Assert.assertEquals(expectedVspData, vspModelInfo);
+  }
 
   @Test
   public void testGenerateToscaInvalidVspId() {
@@ -87,7 +163,7 @@ public class ManualVspToscaManagerImplTest {
   @Test
   public void testGenerateToscaNoComponent() {
     VspModelInfo vspCollectedData = new VspModelInfo();
-    vspCollectedData.setReleaseVendor("Vendor-1");
+    vspCollectedData.setReleaseVendor(RELEASE_VENDOR);
     vspCollectedData.setComponents(null);
     vspCollectedData.setMultiFlavorVfcImages(null);
     vspCollectedData.setAllowedFlavors(getDeploymentFlavorData());
@@ -111,7 +187,6 @@ public class ManualVspToscaManagerImplTest {
         manualVspToscaManager.generateToscaModel(vspCollectedData);
     Assert.assertNotNull(toscaServiceModel);
     Assert.assertNotNull(toscaServiceModel.getServiceTemplates());
-    //Service model should contain only the packed global types
     Assert.assertEquals(22, toscaServiceModel.getServiceTemplates().size());
     Map<String, ServiceTemplate> serviceTemplates = toscaServiceModel.getServiceTemplates();
     String entryDefinitionServiceTemplate = toscaServiceModel.getEntryDefinitionServiceTemplate();
@@ -131,7 +206,6 @@ public class ManualVspToscaManagerImplTest {
         manualVspToscaManager.generateToscaModel(vspCollectedData);
     Assert.assertNotNull(toscaServiceModel);
     Assert.assertNotNull(toscaServiceModel.getServiceTemplates());
-    //Service model should contain only the packed global types
     Assert.assertEquals(22, toscaServiceModel.getServiceTemplates().size());
     Map<String, ServiceTemplate> serviceTemplates = toscaServiceModel.getServiceTemplates();
     String entryDefinitionServiceTemplate = toscaServiceModel.getEntryDefinitionServiceTemplate();
@@ -139,8 +213,8 @@ public class ManualVspToscaManagerImplTest {
     Assert.assertNotNull(mainServiceTemplate);
     String componentName = vspCollectedData.getComponents().get(COMPONENT_ID);
     Assert.assertNull(mainServiceTemplate.getTopology_template().getNode_templates()
-        .get(componentName + GeneratorConstants.VFC_NODE_TEMPLATE_ID_SUFFIX)
-        .getProperties());
+        .get(componentName + GeneratorConstants.VNF_NODE_TEMPLATE_ID_SUFFIX)
+        .getProperties().get(IMAGES_PROPERTY));
   }
 
   @Test
@@ -154,7 +228,6 @@ public class ManualVspToscaManagerImplTest {
         manualVspToscaManager.generateToscaModel(vspCollectedData);
     Assert.assertNotNull(toscaServiceModel);
     Assert.assertNotNull(toscaServiceModel.getServiceTemplates());
-    //Service model should contain only the packed global types
     Assert.assertEquals(22, toscaServiceModel.getServiceTemplates().size());
     Map<String, ServiceTemplate> serviceTemplates = toscaServiceModel.getServiceTemplates();
     String componentName = vspCollectedData.getComponents().get(COMPONENT_ID);
@@ -171,7 +244,7 @@ public class ManualVspToscaManagerImplTest {
   @Test
   public void testGenerateToscaNoManufacturerRefNumAndFeatureGroup() {
     VspModelInfo vspCollectedData = new VspModelInfo();
-    vspCollectedData.setReleaseVendor("Vendor-1");
+    vspCollectedData.setReleaseVendor(RELEASE_VENDOR);
     vspCollectedData.setComponents(getComponentData());
     vspCollectedData.setMultiFlavorVfcImages(getVfcImageData());
     Map<String, DeploymentFlavorModel> deploymentFlavorData = getDeploymentFlavorData();
@@ -184,7 +257,6 @@ public class ManualVspToscaManagerImplTest {
         manualVspToscaManager.generateToscaModel(vspCollectedData);
     Assert.assertNotNull(toscaServiceModel);
     Assert.assertNotNull(toscaServiceModel.getServiceTemplates());
-    //Service model should contain only the packed global types
     Assert.assertEquals(22, toscaServiceModel.getServiceTemplates().size());
     Map<String, ServiceTemplate> serviceTemplates = toscaServiceModel.getServiceTemplates();
     String entryDefinitionServiceTemplate = toscaServiceModel.getEntryDefinitionServiceTemplate();
@@ -204,7 +276,7 @@ public class ManualVspToscaManagerImplTest {
   @Test
   public void testGenerateToscaNoDeploymentFlavor() {
     VspModelInfo vspCollectedData = new VspModelInfo();
-    vspCollectedData.setReleaseVendor("Vendor-1");
+    vspCollectedData.setReleaseVendor(RELEASE_VENDOR);
     vspCollectedData.setComponents(getComponentData());
     vspCollectedData.setMultiFlavorVfcImages(getVfcImageData());
     vspCollectedData.setAllowedFlavors(null);
@@ -213,7 +285,6 @@ public class ManualVspToscaManagerImplTest {
         manualVspToscaManager.generateToscaModel(vspCollectedData);
     Assert.assertNotNull(toscaServiceModel);
     Assert.assertNotNull(toscaServiceModel.getServiceTemplates());
-    //Service model should contain only the packed global types
     Assert.assertEquals(22, toscaServiceModel.getServiceTemplates().size());
     Map<String, ServiceTemplate> serviceTemplates = toscaServiceModel.getServiceTemplates();
     String entryDefinitionServiceTemplate = toscaServiceModel.getEntryDefinitionServiceTemplate();
@@ -228,7 +299,7 @@ public class ManualVspToscaManagerImplTest {
   @Test
   public void testGenerateToscaCompleteData() {
     VspModelInfo vspCollectedData = new VspModelInfo();
-    vspCollectedData.setReleaseVendor("Vendor-1");
+    vspCollectedData.setReleaseVendor(RELEASE_VENDOR);
     vspCollectedData.setComponents(getComponentData());
     vspCollectedData.setMultiFlavorVfcImages(getVfcImageData());
     vspCollectedData.setAllowedFlavors(getDeploymentFlavorData());
@@ -237,31 +308,23 @@ public class ManualVspToscaManagerImplTest {
         manualVspToscaManager.generateToscaModel(vspCollectedData);
     Assert.assertNotNull(toscaServiceModel);
     Assert.assertNotNull(toscaServiceModel.getServiceTemplates());
-    //Service model should contain only the packed global types
     Assert.assertEquals(22, toscaServiceModel.getServiceTemplates().size());
     Map<String, ServiceTemplate> serviceTemplates = toscaServiceModel.getServiceTemplates();
     String entryDefinitionServiceTemplate = toscaServiceModel.getEntryDefinitionServiceTemplate();
     ServiceTemplate mainServiceTemplate = serviceTemplates.get(entryDefinitionServiceTemplate);
     Assert.assertNotNull(mainServiceTemplate);
     String componentName = vspCollectedData.getComponents().get(COMPONENT_ID);
-
-    Assert.assertNotNull(mainServiceTemplate.getTopology_template().getNode_templates()
-        .get(componentName + GeneratorConstants.VFC_NODE_TEMPLATE_ID_SUFFIX));
     Assert.assertNotNull(mainServiceTemplate.getTopology_template().getNode_templates()
         .get(componentName + GeneratorConstants.VNF_NODE_TEMPLATE_ID_SUFFIX));
     //Validate vnf configuration node template
     validateVnfConfigurationNodeTemplate(mainServiceTemplate, componentName);
-    //Validate vfc node template
-    validateVfcNodeTemplateinMainServiceTemplate(mainServiceTemplate, componentName);
     //Validate vnf node template
     validateVnfNodeTemplate(mainServiceTemplate, componentName);
-
     //Validate substitution service template
     ServiceTemplate substitutionServiceTemplate = toscaServiceModel.getServiceTemplates()
         .get(componentName + GeneratorConstants.TOSCA_SERVICE_TEMPLATE_FILE_NAME_SUFFIX);
     List<Nic> nics = vspCollectedData.getNics().get(COMPONENT_ID);
     validateSubstitutionServiceTemplate(substitutionServiceTemplate, nics, componentName);
-
     //Validate global substitution service template
     ServiceTemplate globalSubstitutionServiceTemplate = toscaServiceModel.getServiceTemplates()
         .get(ToscaUtil.getServiceTemplateFileName(GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME));
@@ -284,24 +347,18 @@ public class ManualVspToscaManagerImplTest {
     Assert.assertEquals(deploymentFlavorData, allowedFlavors);
   }
 
-  private void validateVfcNodeTemplateinMainServiceTemplate(ServiceTemplate mainServiceTemplate,
-                                                            String componentName) {
-    NodeTemplate vfcNodeTemplate =
-        mainServiceTemplate.getTopology_template().getNode_templates()
-            .get(componentName + GeneratorConstants.VFC_NODE_TEMPLATE_ID_SUFFIX);
-    Assert.assertNotNull(vfcNodeTemplate);
-    Assert.assertEquals(ToscaNodeType.MULTIFLAVOR_VFC_NODE_TYPE, vfcNodeTemplate.getType());
+  private void validateImagePropertyData(NodeTemplate vnfNodeTemplate, String componentName) {
     Map<String, MultiFlavorVfcImage> vfcImages = (Map<String, MultiFlavorVfcImage>)
-        vfcNodeTemplate.getProperties().get(GeneratorConstants.IMAGES_PROPERTY);
+        vnfNodeTemplate.getProperties().get(GeneratorConstants.IMAGES_PROPERTY);
     Assert.assertNotNull(vfcImages);
     Assert.assertEquals(2, vfcImages.size());
     MultiFlavorVfcImage image1 = vfcImages.get(IMAGE_VERSION_1);
     MultiFlavorVfcImage expectedImage1 = getImageData(IMAGE_VERSION_1, IMAGE_HASH_1,
-        IMAGE_FILE_NAME_1, "md5", IMAGE_FILE_FORMAT_1);
+        IMAGE_FILE_NAME_1, "md5");
     Assert.assertEquals(expectedImage1, image1);
     MultiFlavorVfcImage image2 = vfcImages.get(IMAGE_VERSION_2);
     MultiFlavorVfcImage expectedImage2 = getImageData(IMAGE_VERSION_2, IMAGE_HASH_2,
-        IMAGE_FILE_NAME_2, "md5", IMAGE_FILE_FORMAT_2);
+        IMAGE_FILE_NAME_2, "md5");
     Assert.assertEquals(expectedImage2, image2);
   }
 
@@ -311,12 +368,11 @@ public class ManualVspToscaManagerImplTest {
         mainServiceTemplate.getTopology_template().getNode_templates()
             .get(componentName + GeneratorConstants.VNF_NODE_TEMPLATE_ID_SUFFIX);
     Assert.assertNotNull(vnfNodeTemplate);
-    Assert.assertEquals(ToscaNodeType.MULTIDEPLOYMENTFLAVOR_NODE_TYPE + "." + componentName,
-        vnfNodeTemplate.getType());
+    Assert.assertEquals(ToscaNodeType.MULTIDEPLOYMENTFLAVOR_NODE_TYPE, vnfNodeTemplate.getType());
     Assert.assertNotNull(vnfNodeTemplate.getDirectives());
     Assert.assertEquals(true, vnfNodeTemplate.getDirectives().contains(ToscaConstants
         .NODE_TEMPLATE_DIRECTIVE_SUBSTITUTABLE));
-
+    validateImagePropertyData(vnfNodeTemplate, componentName);
     Map<String, Object> serviceTemplateFilterProperty = (Map<String, Object>) vnfNodeTemplate
         .getProperties().get(SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
     Assert.assertNotNull(serviceTemplateFilterProperty);
@@ -372,8 +428,8 @@ public class ManualVspToscaManagerImplTest {
   private void validateSubstitutionMappings(SubstitutionMapping substitutionMappings,
                                             List<Nic> nics,
                                             String componentName) {
-    Assert.assertEquals(ToscaNodeType.MULTIDEPLOYMENTFLAVOR_NODE_TYPE + "." + componentName,
-        substitutionMappings.getNode_type());
+    Assert.assertEquals(ToscaNodeType.MULTIDEPLOYMENTFLAVOR_NODE_TYPE, substitutionMappings
+        .getNode_type());
     Map<String, List<String>> capabilities = substitutionMappings.getCapabilities();
     validateSubstitutionCapabilities(capabilities, componentName);
     Map<String, List<String>> requirements = substitutionMappings.getRequirements();
@@ -420,7 +476,7 @@ public class ManualVspToscaManagerImplTest {
     Map<String, NodeType> nodeTypes = globalSubstitutionServiceTemplate.getNode_types();
     Assert.assertEquals(1, nodeTypes.size());
     NodeType deploymentFlavorNodeType =
-        nodeTypes.get(ToscaNodeType.MULTIDEPLOYMENTFLAVOR_NODE_TYPE + "." + componentName);
+        nodeTypes.get(ToscaNodeType.MULTIDEPLOYMENTFLAVOR_NODE_TYPE);
     Assert.assertNotNull(deploymentFlavorNodeType);
     Map<String, PropertyDefinition> properties = deploymentFlavorNodeType.getProperties();
     Assert.assertNotNull(properties);
@@ -475,9 +531,9 @@ public class ManualVspToscaManagerImplTest {
     Map<String, List<MultiFlavorVfcImage>> imageData = new HashMap<>();
     List<MultiFlavorVfcImage> images = new ArrayList<>(2);
     MultiFlavorVfcImage image1 = getImageData(IMAGE_VERSION_1, IMAGE_HASH_1, IMAGE_FILE_NAME_1,
-        "md5", IMAGE_FILE_FORMAT_1);
+        "md5");
     MultiFlavorVfcImage image2 = getImageData(IMAGE_VERSION_2, IMAGE_HASH_2, IMAGE_FILE_NAME_2,
-        "md5", IMAGE_FILE_FORMAT_2);
+        "md5");
     images.add(image1);
     images.add(image2);
     imageData.put(COMPONENT_ID, images);
@@ -522,10 +578,10 @@ public class ManualVspToscaManagerImplTest {
     return computeFlavor;
   }
 
-  private VendorInfo getVendorInfo(String manufacturerRefNumber, String vlmId) {
+  private VendorInfo getVendorInfo(String manufacturerRefNumber, String deploymentFlavorModel) {
     VendorInfo vendorInfo = new VendorInfo();
     vendorInfo.setManufacturer_reference_number(manufacturerRefNumber);
-    vendorInfo.setVendor_model(vlmId);
+    vendorInfo.setVendor_model(deploymentFlavorModel);
     return vendorInfo;
   }
 
@@ -535,13 +591,13 @@ public class ManualVspToscaManagerImplTest {
     return licenseFlavor;
   }
 
-  private MultiFlavorVfcImage getImageData(String imageVersion, String fileHash, String fileName,
-                                           String fileHashType, String fileFormat) {
+  private MultiFlavorVfcImage getImageData(String imageVersion, String fileHash,
+                                           String fileName, String fileHashType) {
     MultiFlavorVfcImage image = new MultiFlavorVfcImage();
     image.setSoftware_version(imageVersion);
     image.setFile_hash(fileHash);
     image.setFile_hash_type(fileHashType);
-    image.setFile_name(fileName+"-"+IMAGE_VERSION_2+"."+fileFormat);
+    image.setFile_name(fileName);
     return image;
   }
 

@@ -87,6 +87,6 @@ public class ToscaNodeType {
   public static String VNF_CONFIG_NODE_TYPE = ABSTRACT_NODE_TYPE_PREFIX + "VnfConfiguration";
   public static String MULTIFLAVOR_VFC_NODE_TYPE = ABSTRACT_NODE_TYPE_PREFIX + "MultiFlavorVFC";
   public static String MULTIDEPLOYMENTFLAVOR_NODE_TYPE = ABSTRACT_NODE_TYPE_PREFIX
-      + "MultiDeploymentFlavor";
+      + "MultiDeploymentFlavor.CVFC";
 }
 

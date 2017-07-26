@@ -49,7 +49,7 @@ const CatalogTileVendorName = ({vendorName, catalogItemTypeClass}) => {
 };
 
 const CatalogTileItemName = ({name}) => (
-	<OverlayTrigger placement='top' overlay={tooltip(name && name.toUpperCase())}>
+	<OverlayTrigger placement='top' overlay={tooltip(name)}>
 		<div className='catalog-tile-item-name'>{name}</div>
 	</OverlayTrigger>
 );

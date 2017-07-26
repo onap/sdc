@@ -29,6 +29,8 @@ import com.datastax.driver.mapping.annotations.Table;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LicenseKeyTypeForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.OperationalScopeForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
@@ -61,8 +63,17 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
   private Set<String> referencingFeatureGroups = new HashSet<>();
   @Column(name = "version_uuid")
   private String versionUuId;
+  private Integer thresholdValue;
+  private ThresholdUnit thresholdUnits;
+  private String increments;
 
   private Collection<LimitEntity> limits;
+  private String startDate;
+  private String expiryDate;
+
+  //Defined and used only for License Artifcat XMLs
+  private String manufacturerReferenceNumber;
+
 
   public LicenseKeyGroupEntity() {
   }
@@ -167,6 +178,37 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
     this.referencingFeatureGroups = referencingFeatureGroups;
   }
 
+  public Integer getThresholdValue() {
+    return thresholdValue;
+  }
+
+  public void setThresholdValue(Integer thresholdValue) {
+    this.thresholdValue = thresholdValue;
+  }
+
+  public ThresholdUnit getThresholdUnits() {
+    return thresholdUnits;
+  }
+
+  public void setThresholdUnits(ThresholdUnit thresholdUnit) {
+    this.thresholdUnits = thresholdUnit;
+  }
+
+  public String getIncrements() {
+    return increments;
+  }
+
+  public void setIncrements(String increments) {
+    this.increments = increments;
+  }
+
+  public ThresholdForXml getThresholdForArtifact() {
+    ThresholdForXml threshold = new ThresholdForXml();
+    threshold.setUnit(getThresholdUnits() == null ? null : getThresholdUnits().name());
+    threshold.setValue(getThresholdValue());
+    return threshold;
+  }
+
   public Collection<LimitEntity> getLimits() {
     return limits;
   }
@@ -221,11 +263,28 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
     return null;
   }
 
+  public String getStartDate() {
+    return startDate;
+  }
+
+  public void setStartDate(String startDate) {
+    this.startDate = startDate;
+  }
+
+  public String getExpiryDate() {
+    return expiryDate;
+  }
+
+  public void setExpiryDate(String expiryDate) {
+    this.expiryDate = expiryDate;
+  }
+
   @Override
   public int hashCode() {
     return Objects
         .hash(vendorLicenseModelId, version, id, name, description, type, operationalScope,
-            referencingFeatureGroups);
+            referencingFeatureGroups, startDate, expiryDate,
+            thresholdValue, thresholdUnits, increments);
   }
 
   @Override
@@ -243,7 +302,12 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
         && Objects.equals(description, that.description)
         && type == that.type
         && Objects.equals(operationalScope, that.operationalScope)
-        && Objects.equals(referencingFeatureGroups, that.referencingFeatureGroups);
+        && Objects.equals(referencingFeatureGroups, that.referencingFeatureGroups)
+        && Objects.equals(startDate, that.startDate)
+        && Objects.equals(expiryDate, that.expiryDate)
+        && Objects.equals(thresholdValue, that.thresholdValue)
+        && Objects.equals(thresholdUnits, that.thresholdUnits)
+        && Objects.equals(increments, that.increments);
   }
 
   @Override
@@ -257,6 +321,11 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
         + ", operationalScope=" + operationalScope
         + ", referencingFeatureGroups=" + referencingFeatureGroups
         + ", versionUuId='" + versionUuId + '\''
+        + ", startDate=" + startDate
+        + ", expiryDate=" + expiryDate
+        + ", thresholdValue='" + thresholdValue + '\''
+        + ", thresholdUnits='" + thresholdUnits + '\''
+        + ", increments='" + increments + '\''
         + '}';
   }
 
@@ -265,12 +334,14 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
    *
    * @return the operational scope for artifact
    */
-  public Set<String> getOperationalScopeForArtifact() {
+  public OperationalScopeForXml getOperationalScopeForArtifact() {
+    OperationalScopeForXml obj = new OperationalScopeForXml();
     if (operationalScope != null) {
-      return operationalScope.getResults();
-    } else {
-      return null;
+      if(operationalScope.getResults().size() > 0) {
+        obj.setValue(operationalScope.getResults());
+      }
     }
+    return obj;
   }
 
   /**
@@ -294,5 +365,14 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
       typeXml.setValue(null);
     }
     return typeXml;
+  }
+
+  //Defined and used only for License Artifcat XMLs
+  public String getManufacturerReferenceNumber() {
+    return manufacturerReferenceNumber;
+  }
+
+  public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
+    this.manufacturerReferenceNumber = manufacturerReferenceNumber;
   }
 }

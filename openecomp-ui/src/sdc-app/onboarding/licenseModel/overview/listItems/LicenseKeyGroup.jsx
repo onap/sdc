@@ -23,17 +23,17 @@ import {AdditionalDataCol, AdditionalDataElement} from './listItemsComponents/Ad
 
 class LicenseKeyGroup extends Component {
 	render() {
-		let {lkgData: {name, description, operationalScope, type}} = this.props;
+		let {lkgData: {name, description, operationalScope, type}, isOrphan} = this.props;
 		return (
-			<div className='vlm-list-item vlm-list-item-lkg' data-test-id='vlm-list-item-lkg'>
-				<ArrowCol/>
-				<IconCol className='lkg-icon'/>
+			<div className={`vlm-list-item vlm-list-item-lkg ${isOrphan ? 'orphan-list-item' : ''}`} data-test-id='vlm-list-item-lkg'>
+				{!isOrphan && <ArrowCol/>}
+				<IconCol className='lkg-icon' text='LKG'/>
 				<ItemInfo name={name} description={description}/>
 				<AdditionalDataCol>
-					<AdditionalDataElement
+					{operationalScope && operationalScope.choices && <AdditionalDataElement
 						className='vlm-list-item-operational-scope'
 						name={i18n('Operational Scope')}
-						value={operationalScope && getOperationalScopes(operationalScope)}/>
+						value={getOperationalScopes(operationalScope)}/>}
 					<AdditionalDataElement
 						className='vlm-list-item-group-type'
 						name={i18n('Type')}

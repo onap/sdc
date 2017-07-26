@@ -365,9 +365,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
                                                           String user) {
     mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
     mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
-    return featureGroupDao.list(new FeatureGroupEntity(vlmId, VersioningUtil
-        .resolveVersion(version, getVersionInfo(vlmId, VersionableEntityAction.Read, user), user),
-        null));
+    return vendorLicenseFacade.listFeatureGroups(vlmId, version, user);
   }
 
   @Override
@@ -487,15 +485,6 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         .debugEntryMessage("VLM id", entitlementPool.getVendorLicenseModelId());
     mdcDataDebugMessage
         .debugExitMessage("VLM id", entitlementPool.getVendorLicenseModelId());
-    validateCreateDate(entitlementPool);
-    return vendorLicenseFacade.createEntitlementPool(entitlementPool, user);
-  }
-
-  private void validateCreateDate(EntitlementPoolEntity entitlementPool){
-    mdcDataDebugMessage.debugEntryMessage("Start date and end date", entitlementPool.getStartDate
-        ()+"   "+entitlementPool.getExpiryDate());
-
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ss'Z'");
 
     entitlementPool.setStartDate(entitlementPool.getStartDate() != null ? (entitlementPool
         .getStartDate().trim().length() != 0 ? entitlementPool.getStartDate()+"T00:00:00Z"
@@ -504,40 +493,49 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         .getExpiryDate().trim().length() != 0 ? entitlementPool.getExpiryDate()+"T23:59:59Z"
         : null) : null);
 
-    if(entitlementPool.getStartDate() != null && entitlementPool.getExpiryDate() != null) {
-      if (LocalDate.parse(entitlementPool.getStartDate(), formatter).atStartOfDay().isBefore
-          (LocalDate.now().atStartOfDay()) ||
-          LocalDate.parse(entitlementPool.getExpiryDate(), formatter).atStartOfDay()
-              .isEqual(LocalDate.now().atStartOfDay()) ||
-          LocalDate.parse(entitlementPool.getExpiryDate(), formatter)
-              .isBefore(LocalDate.parse(entitlementPool.getStartDate(), formatter))) {
+    validateCreateDate(entitlementPool.getStartDate(), entitlementPool.getExpiryDate(),
+        entitlementPool.getVendorLicenseModelId());
+    return vendorLicenseFacade.createEntitlementPool(entitlementPool, user);
+  }
+
+  private void validateCreateDate(String startDate, String expiryDate, String vendorLicenseModelId){
+    mdcDataDebugMessage.debugEntryMessage("Start date and end date", startDate
+        +"   "+expiryDate);
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ss'Z'");
+
+    if(startDate != null && expiryDate != null) {
+      if (LocalDate.parse(startDate, formatter).atStartOfDay().isBefore
+          (LocalDate.now().atStartOfDay()) || LocalDate.parse(expiryDate, formatter).atStartOfDay()
+              .isEqual(LocalDate.parse(startDate, formatter).atStartOfDay()) || LocalDate
+          .parse(expiryDate, formatter).isBefore(LocalDate.parse(startDate, formatter))) {
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
             LoggerTragetServiceName.VALIDATE_DATE_RANGE,ErrorLevel.ERROR.name(),
             LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
         throw new CoreException(
-            new InvalidDateErrorBuilder(entitlementPool.getVendorLicenseModelId())
+            new InvalidDateErrorBuilder(vendorLicenseModelId)
                 .build());
       }
     }
 
-    if(entitlementPool.getStartDate() != null && entitlementPool.getExpiryDate() == null) {
-      if (LocalDate.parse(entitlementPool.getStartDate(), formatter).atStartOfDay().isBefore
+    if(startDate != null && expiryDate == null) {
+      if (LocalDate.parse(startDate, formatter).atStartOfDay().isBefore
           (LocalDate.now().atStartOfDay())) {
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
             LoggerTragetServiceName.VALIDATE_DATE_RANGE,ErrorLevel.ERROR.name(),
             LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
         throw new CoreException(
-            new InvalidDateErrorBuilder(entitlementPool.getVendorLicenseModelId())
+            new InvalidDateErrorBuilder(vendorLicenseModelId)
                 .build());
       }
     }
 
-    if(entitlementPool.getStartDate() == null && entitlementPool.getExpiryDate() != null) {
+    if(startDate == null && expiryDate != null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.VALIDATE_DATE_RANGE,ErrorLevel.ERROR.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
       throw new CoreException(
-          new InvalidDateErrorBuilder(entitlementPool.getVendorLicenseModelId())
+          new InvalidDateErrorBuilder(vendorLicenseModelId)
               .build());
 
     }
@@ -545,39 +543,31 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     mdcDataDebugMessage.debugExitMessage(null,null);
   }
 
-  private void validateUpdateDate(EntitlementPoolEntity entitlementPool){
-    mdcDataDebugMessage.debugEntryMessage("Start date and end date", entitlementPool.getStartDate
-        ()+"   "+entitlementPool.getExpiryDate());
+  private void validateUpdateDate(String startDate, String expiryDate, String vendorLicenseModelId){
+    mdcDataDebugMessage.debugEntryMessage("Start date and end date", startDate
+        +"   "+ expiryDate);
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ss'Z'");
 
-    entitlementPool.setStartDate(entitlementPool.getStartDate() != null ? (entitlementPool
-        .getStartDate().trim().length() != 0 ? entitlementPool.getStartDate()+"T00:00:00Z"
-        : null) : null);
-    entitlementPool.setExpiryDate(entitlementPool.getExpiryDate() != null ? (entitlementPool
-        .getExpiryDate().trim().length() != 0 ? entitlementPool.getExpiryDate()+"T23:59:59Z"
-        : null) : null);
-
-    if(entitlementPool.getStartDate() != null && entitlementPool.getExpiryDate() != null) {
-      if (LocalDate.parse(entitlementPool.getExpiryDate(), formatter).atStartOfDay()
-          .isEqual(LocalDate.parse(entitlementPool.getStartDate(), formatter).atStartOfDay()) ||
-          LocalDate.parse(entitlementPool.getExpiryDate(), formatter)
-              .isBefore(LocalDate.parse(entitlementPool.getStartDate(), formatter))) {
+    if(startDate != null && expiryDate != null) {
+      if (LocalDate.parse(expiryDate, formatter).atStartOfDay()
+          .isEqual(LocalDate.parse(startDate, formatter).atStartOfDay()) ||
+          LocalDate.parse(expiryDate, formatter).isBefore(LocalDate.parse(startDate, formatter))) {
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
             LoggerTragetServiceName.VALIDATE_DATE_RANGE,ErrorLevel.ERROR.name(),
             LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
         throw new CoreException(
-            new InvalidDateErrorBuilder(entitlementPool.getVendorLicenseModelId())
+            new InvalidDateErrorBuilder(vendorLicenseModelId)
                 .build());
       }
     }
 
-    if(entitlementPool.getStartDate() == null && entitlementPool.getExpiryDate() != null) {
+    if(startDate == null && expiryDate != null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.VALIDATE_DATE_RANGE,ErrorLevel.ERROR.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
       throw new CoreException(
-          new InvalidDateErrorBuilder(entitlementPool.getVendorLicenseModelId())
+          new InvalidDateErrorBuilder(vendorLicenseModelId)
               .build());
 
     }
@@ -590,7 +580,15 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     mdcDataDebugMessage.debugEntryMessage("VLM id, EP id", entitlementPool
         .getVendorLicenseModelId(), entitlementPool.getId());
 
-    validateUpdateDate(entitlementPool);
+    entitlementPool.setStartDate(entitlementPool.getStartDate() != null ? (entitlementPool
+        .getStartDate().trim().length() != 0 ? entitlementPool.getStartDate()+"T00:00:00Z"
+        : null) : null);
+    entitlementPool.setExpiryDate(entitlementPool.getExpiryDate() != null ? (entitlementPool
+        .getExpiryDate().trim().length() != 0 ? entitlementPool.getExpiryDate()+"T23:59:59Z"
+        : null) : null);
+
+    validateUpdateDate(entitlementPool.getStartDate(), entitlementPool.getExpiryDate(),
+        entitlementPool.getVendorLicenseModelId());
     Version version = VersioningUtil.resolveVersion(entitlementPool.getVersion(),
         getVersionInfo(entitlementPool.getVendorLicenseModelId(), VersionableEntityAction.Write,
             user), user);
@@ -692,6 +690,16 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
     mdcDataDebugMessage.debugExitMessage("VLM id", licenseKeyGroup
         .getVendorLicenseModelId());
+
+    licenseKeyGroup.setStartDate(licenseKeyGroup.getStartDate() != null ? (licenseKeyGroup
+        .getStartDate().trim().length() != 0 ? licenseKeyGroup.getStartDate()+"T00:00:00Z"
+        : null) : null);
+    licenseKeyGroup.setExpiryDate(licenseKeyGroup.getExpiryDate() != null ? (licenseKeyGroup
+        .getExpiryDate().trim().length() != 0 ? licenseKeyGroup.getExpiryDate()+"T23:59:59Z"
+        : null) : null);
+
+    validateCreateDate(licenseKeyGroup.getStartDate(), licenseKeyGroup.getExpiryDate(),
+        licenseKeyGroup.getVendorLicenseModelId());
     return vendorLicenseFacade.createLicenseKeyGroup(licenseKeyGroup, user);
   }
 
@@ -699,6 +707,16 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
   public void updateLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup, String user) {
     mdcDataDebugMessage.debugEntryMessage("VLM id, LKG id", licenseKeyGroup
         .getVendorLicenseModelId(), licenseKeyGroup.getId());
+
+    licenseKeyGroup.setStartDate(licenseKeyGroup.getStartDate() != null ? (licenseKeyGroup
+        .getStartDate().trim().length() != 0 ? licenseKeyGroup.getStartDate()+"T00:00:00Z"
+        : null) : null);
+    licenseKeyGroup.setExpiryDate(licenseKeyGroup.getExpiryDate() != null ? (licenseKeyGroup
+        .getExpiryDate().trim().length() != 0 ? licenseKeyGroup.getExpiryDate()+"T23:59:59Z"
+        : null) : null);
+
+    validateUpdateDate(licenseKeyGroup.getStartDate(), licenseKeyGroup.getExpiryDate(),
+        licenseKeyGroup.getVendorLicenseModelId());
 
     Version version = VersioningUtil.resolveVersion(licenseKeyGroup.getVersion(),
         getVersionInfo(licenseKeyGroup.getVendorLicenseModelId(), VersionableEntityAction.Write,

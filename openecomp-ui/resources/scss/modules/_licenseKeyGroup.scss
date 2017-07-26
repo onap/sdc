@@ -16,23 +16,3 @@
     }
   }
 }
-
-.license-key-groups-modal {
-  .modal-body {
-    padding: 0;
-  }
-  .license-key-groups-form {
-    .validation-form-content {
-      padding: 50px;
-      .field-section {
-        @extend .body-2-semibold;
-        margin-bottom: 23px;
-        width: 400px;
-        color: $black;
-      }
-    }
-    .validation-buttons {
-      padding: 20px 50px;
-    }
-  }
-}

@@ -18,6 +18,12 @@
     .modal-content .modal-header {
       border-top: 3px solid $red;
     }
+	}
+	
+	&.negative {
+    .modal-content .modal-header {
+      border-top: 3px solid $red;
+    }
   }
 
   &.warning {

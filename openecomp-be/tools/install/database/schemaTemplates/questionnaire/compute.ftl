@@ -40,12 +40,12 @@
         "memoryRAM": {
           "type": "string",
           "enum": [
-            "1",
-            "2",
-            "4",
-            "8"
+            "1 GB",
+            "2 GB",
+            "4 GB",
+            "8 GB"
           ],
-          "default": "1"
+          "default": "1 GB"
         }
       },
       "additionalProperties": false

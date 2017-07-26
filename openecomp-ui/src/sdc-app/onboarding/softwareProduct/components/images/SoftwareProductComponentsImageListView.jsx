@@ -125,8 +125,8 @@ class SoftwareProductComponentsImageListView extends React.Component {
 	}
 
 	save() {
-		let {onSubmit, qdata} = this.props;
-		return onSubmit({qdata});
+		let {onSubmit, qdata, version} = this.props;
+		return onSubmit(version, qdata);
 	}
 }
 export default SoftwareProductComponentsImageListView;

@@ -110,6 +110,31 @@ public class NicManagerImplTest {
   }
 
   @Test
+  public void testCreateWithIncorrectNicNameFormat() {
+    NicEntity nicEntity = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
+    Nic nic = nicEntity.getNicCompositionData();
+    nic.setNetworkType(NetworkType.Internal);
+    nicEntity.setNicCompositionData(nic);
+    doReturn(true).when(vspInfoDao).isManual(anyObject(),anyObject());
+    Collection<NicEntity> nicEntities = new ArrayList<>();
+
+    NicEntity nicEntityDiffName = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
+    Nic newNameNic = nicEntityDiffName.getNicCompositionData();
+    newNameNic.setName(NIC1_ID + "_Name/*");
+    nicEntityDiffName.setNicCompositionData(newNameNic);
+    nicEntities.add(nicEntityDiffName);
+    doReturn(nicEntities).when(nicDao).list(anyObject());
+    doReturn(nicEntity).when(compositionEntityDataManagerMock).createNic(anyObject());
+
+    try {
+      NicEntity created = nicManager.createNic(nicEntity,USER);
+    }  catch (CoreException exception) {
+            Assert.assertEquals(VendorSoftwareProductErrorCodes.NIC_NAME_FORMAT_NOT_ALLOWED,
+              exception.code().id());
+    }
+  }
+
+  @Test
   public void testCreateWithDupNicName() {
     NicEntity nicEntity = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
     Nic nic = nicEntity.getNicCompositionData();
@@ -120,7 +145,7 @@ public class NicManagerImplTest {
 
     NicEntity nicEntityDiffName = createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID);
     Nic newNameNic = nicEntityDiffName.getNicCompositionData();
-    newNameNic.setName(NIC1_ID + " Name");
+    newNameNic.setName(NIC1_ID + "_Name");
     nicEntityDiffName.setNicCompositionData(newNameNic);
     nicEntities.add(nicEntityDiffName);
     doReturn(nicEntities).when(nicDao).list(anyObject());
@@ -282,7 +307,7 @@ public class NicManagerImplTest {
 
     NicEntity nicEntity = new NicEntity(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID);
     Nic nicData = new Nic();
-    nicData.setName(NIC1_ID + " name updated");
+    nicData.setName(NIC1_ID + "_name_updated");
     nicData.setDescription(NIC1_ID + " desc updated");
     nicData.setNetworkId(NETWORK1_ID);
     nicEntity.setNicCompositionData(nicData);
@@ -292,6 +317,36 @@ public class NicManagerImplTest {
     Assert.assertEquals(validationData.getErrors().size(), 2);
 
     verify(nicDao, never()).update(nicEntity);
+  }
+
+  @Test
+  public void testUpdateIncorrectNameFormat() {
+    doReturn(createNic(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID, NETWORK1_ID))
+            .when(nicDao).get(anyObject());
+
+    CompositionEntityValidationData toBeReturned =
+            new CompositionEntityValidationData(CompositionEntityType.nic, NIC1_ID);
+    toBeReturned.setErrors(Arrays.asList("error1", "error2"));
+    doReturn(toBeReturned)
+            .when(compositionEntityDataManagerMock)
+            .validateEntity(anyObject(), anyObject(), anyObject());
+    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+
+    NicEntity nicEntity = new NicEntity(VSP_ID, VERSION, COMPONENT_ID, NIC1_ID);
+    Nic nicData = new Nic();
+    nicData.setName(NIC1_ID + "_name_updated/*");
+    nicData.setDescription(NIC1_ID + " desc updated");
+    nicData.setNetworkId(NETWORK1_ID);
+    nicEntity.setNicCompositionData(nicData);
+
+    try {
+      nicManager.updateNic(nicEntity, USER);
+      Assert.fail();
+    }
+    catch (CoreException ex) {
+      Assert.assertEquals(VendorSoftwareProductErrorCodes.NIC_NAME_FORMAT_NOT_ALLOWED,
+              ex.code().id());
+    }
   }
 
 
@@ -426,7 +481,7 @@ public class NicManagerImplTest {
                              String networkId) {
     NicEntity nicEntity = new NicEntity(vspId, version, compId, nicId);
     Nic nicData = new Nic();
-    nicData.setName(nicId + " name");
+    nicData.setName(nicId + "_name");
     nicData.setDescription(nicId + " desc");
     nicData.setNetworkId(networkId);
     nicEntity.setNicCompositionData(nicData);

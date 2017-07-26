@@ -11,11 +11,7 @@ import com.amdocs.zusammen.datatypes.item.Info;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.api.ZusammenUtil;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
-import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
-import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
 import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
@@ -214,15 +210,11 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
     Info info = new Info();
     info.setName(entitlementPool.getName());
     info.setDescription(entitlementPool.getDescription());
+    info.addProperty("version_uuid", entitlementPool.getVersionUuId());
     info.addProperty("thresholdValue", entitlementPool.getThresholdValue());
     info.addProperty("threshold_unit", entitlementPool.getThresholdUnit());
-    info.addProperty("entitlement_metric", entitlementPool.getEntitlementMetric());
     info.addProperty("increments", entitlementPool.getIncrements());
-    info.addProperty("aggregation_func", entitlementPool.getAggregationFunction());
     info.addProperty("operational_scope", entitlementPool.getOperationalScope());
-    info.addProperty("EntitlementTime", entitlementPool.getTime());
-    info.addProperty("manufacturerReferenceNumber",
-        entitlementPool.getManufacturerReferenceNumber());
     info.addProperty("startDate", entitlementPool.getStartDate());
     info.addProperty("expiryDate", entitlementPool.getExpiryDate());
     entitlementPoolElement.setInfo(info);
@@ -243,6 +235,7 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
         new EntitlementPoolEntity(vlmId, version, elementInfo.getId().getValue());
     entitlmentPool.setName(elementInfo.getInfo().getName());
     entitlmentPool.setDescription(elementInfo.getInfo().getDescription());
+    entitlmentPool.setVersionUuId(elementInfo.getInfo().getProperty("version_uuid"));
     entitlmentPool
         .setThresholdValue(elementInfo.getInfo().getProperty("thresholdValue") != null
                 ? VlmZusammenUtil.toInteger(elementInfo.getInfo().getProperty("thresholdValue")) : null);
@@ -250,17 +243,9 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
     Object threshold_unit = elementInfo.getInfo().getProperty("threshold_unit");
     entitlmentPool.setThresholdUnit( threshold_unit != null ?
         ThresholdUnit.valueOf(elementInfo.getInfo().getProperty("threshold_unit")) : null);
-    entitlmentPool.setEntitlementMetric(
-        getEntitlementMetricCoiceOrOther(elementInfo.getInfo().getProperty("entitlement_metric")));
     entitlmentPool.setIncrements(elementInfo.getInfo().getProperty("increments"));
-    entitlmentPool.setAggregationFunction(
-        getAggregationFuncCoiceOrOther(elementInfo.getInfo().getProperty("aggregation_func")));
     entitlmentPool.setOperationalScope(getOperationalScopeMultiChoiceOrOther(
         elementInfo.getInfo().getProperty("operational_scope")));
-    entitlmentPool.setTime(
-        getEntitlementTimeCoiceOrOther(elementInfo.getInfo().getProperty("EntitlementTime")));
-    entitlmentPool.setManufacturerReferenceNumber(
-        elementInfo.getInfo().getProperty("manufacturerReferenceNumber"));
     entitlmentPool.setStartDate(elementInfo.getInfo().getProperty("startDate"));
     entitlmentPool.setExpiryDate(elementInfo.getInfo().getProperty("expiryDate"));
 
@@ -270,23 +255,6 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
               .getEdge2().getElementId().getValue()).collect(Collectors.toSet()));
     }
     return entitlmentPool;
-  }
-
-  private ChoiceOrOther<AggregationFunction> getAggregationFuncCoiceOrOther(
-      Map aggregationFunction) {
-    return new ChoiceOrOther<>
-        (AggregationFunction.valueOf((String) aggregationFunction.get("choice")),
-            (String) aggregationFunction.get("other"));
-  }
-
-  private ChoiceOrOther<EntitlementMetric> getEntitlementMetricCoiceOrOther(Map entitlementMetric) {
-    return new ChoiceOrOther<>(EntitlementMetric.valueOf((String) entitlementMetric.get("choice")
-    ), (String) entitlementMetric.get("other"));
-  }
-
-  private ChoiceOrOther<EntitlementTime> getEntitlementTimeCoiceOrOther(Map entitlementTime) {
-    return new ChoiceOrOther<>(EntitlementTime.valueOf((String) entitlementTime.get("choice")),
-        (String) entitlementTime.get("other"));
   }
 
   private MultiChoiceOrOther<OperationalScope> getOperationalScopeMultiChoiceOrOther

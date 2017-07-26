@@ -163,8 +163,8 @@ public class GeneratorUtils {
     } catch (Exception ex) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
           LoggerTragetServiceName.GENERATE_MANUAL_VSP_TOSCA, ErrorLevel.INFO.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Error occured in get node type exposed "
-              + "points");
+          LoggerErrorCode.DATA_ERROR.getErrorCode(),
+          "Error occured in get node type exposed points : " + ex.getMessage());
       return null;
     }
     return substitutionMapping;

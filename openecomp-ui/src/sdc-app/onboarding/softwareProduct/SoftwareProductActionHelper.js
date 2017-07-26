@@ -251,8 +251,7 @@ const SoftwareProductActionHelper = {
 	processAndValidateHeatCandidate(dispatch, {softwareProductId, version}){
 		return validateHeatCandidate(softwareProductId, version).then(response => {
 			if (response.status === 'Success') {
-				let isFetchImageDetails = true;
-				SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version, isFetchImageDetails});
+				SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version});
 				SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {softwareProductId, version});
 			}
 		});

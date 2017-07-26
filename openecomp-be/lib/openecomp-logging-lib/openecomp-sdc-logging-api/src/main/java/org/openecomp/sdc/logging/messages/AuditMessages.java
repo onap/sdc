@@ -16,14 +16,24 @@ public class AuditMessages {
   public static final String CHECK_IN_VSP = "Check in VSP. VSP Id: ";
   public static final String CHECK_OUT_VSP = "Check out VSP. VSP Id: ";
   public static final String SUBMIT_VSP = "Submit VSP. VSP Id: ";
+  public static final String SUBMIT_VSP_FAIL = "Submit VSP failed!. VSP Id: ";
+  public static final String SUBMIT_VSP_ERROR = "Submit VSP error: %s. VSP Id: %s";
 
   public static final String UPLOAD_HEAT = "Upload HEAT. VSP Id: ";
   public static final String UPLOAD_PROCESS_ARTIFACT = "Upload Process Artifact. VSP Id: ";
-  public static final String UPLOAD_MONITORING_FILE = "Upload Monitoring File of type %s " +
-      "" + ". VSP Id: %s, component id: %s";
-//    public static final String UPLOAD_ARTIFACT_MIB_TRAP = "Upload Artifact SNMP TRAP. VSP Id: ";
+  public static final String UPLOAD_MONITORING_FILE = "Upload Monitoring File of type %s "
+      +  ". VSP Id: %s, component id: %s";
 
   public static final String IMPORT_SUCCESS = "VSP import to VF success. VSP Id: ";
   public static final String IMPORT_FAIL = "VSP import to VF fail. VSP Id: ";
+
+  public static final String HEAT_VALIDATION_STARTED = "HEAT validation started. VSP Id: ";
+  public static final String HEAT_VALIDATION_COMPLETED = "HEAT validation completed. VSP Id: ";
+  public static final String HEAT_VALIDATION_ERROR = "HEAT validation error: %s. VSP Id: %s";
+  public static final String HEAT_TRANSLATION_STARTED = "HEAT translation started. VSP Id: ";
+  public static final String HEAT_TRANSLATION_COMPLETED = "HEAT translation completed. VSP Id: ";
+  public static final String ENRICHMENT_ERROR = "Enrichment error: %s. VSP Id: %s";
+  public static final String ENRICHMENT_COMPLETED = "Enrichment completed. VSP Id: ";
+  public static final String CREATE_PACKAGE = "Created package. VSP Id: ";
 
 }

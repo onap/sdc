@@ -15,7 +15,7 @@
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import InputOptions, {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
+import InputOptions, {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
 
 export const actionTypes = keyMirror({
 
@@ -28,6 +28,7 @@ export const actionTypes = keyMirror({
 		OPEN: null,
 		CLOSE: null,
 		DATA_CHANGED: null,
+		LIMITS_LIST_LOADED: null
 	}
 
 });
@@ -94,11 +95,6 @@ export const optionsInputValues = {
 		{enum: 'Units_TB', title: 'Units-TB'},
 		{enum: 'Units_GB', title: 'Units-GB'},
 		{enum: 'Units_MB', title: 'Units-MB'}
-	],
-	THRESHOLD_UNITS: [
-		{enum: '', title: i18n('please select…')},
-		{enum: thresholdUnitType.ABSOLUTE, title: 'Absolute'},
-		{enum: thresholdUnitType.PERCENTAGE, title: '%'}
 	]
 };
 
@@ -112,6 +108,11 @@ export const extractUnits = (units) => {
 	return units === 'Absolute' ? '' : '%';
 };
 
-export const SP_ENTITLEMENT_POOL_FORM = 'SPENTITLEMENTPOOL';
+export const tabIds = {
+	GENERAL: 'GENERAL',
+	SP_LIMITS: 'SP_LIMITS',
+	VENDOR_LIMITS: 'VENDOR_LIMITS',
+	ADD_LIMIT_BUTTON: 'ADD_LIMIT_BUTTON'
+};
 
-export const EP_TIME_FORMAT = 'MM/DD/YYYY';
+export const SP_ENTITLEMENT_POOL_FORM = 'SPENTITLEMENTPOOL';

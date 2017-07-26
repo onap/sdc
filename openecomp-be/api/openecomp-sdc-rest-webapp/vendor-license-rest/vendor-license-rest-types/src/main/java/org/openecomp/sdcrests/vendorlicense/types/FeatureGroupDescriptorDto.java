@@ -35,7 +35,7 @@ public class FeatureGroupDescriptorDto {
   @NotNull
   private String partNumber;
 
-  //@NotBlank(message = "is mandatory and should not be empty")
+  @NotBlank(message = "is mandatory and should not be empty")
   @Size(max = 100)
   private String manufacturerReferenceNumber;
 

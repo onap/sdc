@@ -38,7 +38,7 @@ const mapStateToProps = ({licenseModel: {licenseKeyGroup, licenseModelEditor}}) 
 const mapActionsToProps = (dispatch, {licenseModelId, version}) => {	
 	return {
 		onAddLicenseKeyGroupClick: () => LicenseKeyGroupsActionHelper.openLicenseKeyGroupsEditor(dispatch),
-		onEditLicenseKeyGroupClick: licenseKeyGroup => LicenseKeyGroupsActionHelper.openLicenseKeyGroupsEditor(dispatch, {licenseKeyGroup}),
+		onEditLicenseKeyGroupClick: licenseKeyGroup => LicenseKeyGroupsActionHelper.openLicenseKeyGroupsEditor(dispatch, {licenseKeyGroup, licenseModelId, version}),
 		onDeleteLicenseKeyGroupClick: licenseKeyGroup => dispatch({
 			type: globalMoadlActions.GLOBAL_MODAL_WARNING,
 			data:{

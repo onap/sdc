@@ -9,9 +9,10 @@ import static org.openecomp.sdc.generator.util.GeneratorConstants.MEM_SIZE_PROP_
 import static org.openecomp.sdc.generator.util.GeneratorConstants.NUM_CPUS;
 import static org.openecomp.sdc.generator.util.GeneratorConstants.NUM_CPUS_PROP_DESC_PREFIX;
 import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_NODE_TEMPLATE_ID_SUFFIX;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_TYPE_EXTERNAL_NODE_TEMPLATE_SUFFIX;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_TYPE_INTERNAL_NODE_TEMPLATE_SUFFIX;
 import static org.openecomp.sdc.generator.util.GeneratorConstants.RELEASE_VENDOR;
 import static org.openecomp.sdc.generator.util.GeneratorConstants.TOSCA_SERVICE_TEMPLATE_FILE_NAME_SUFFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.VFC_NODE_TEMPLATE_ID_SUFFIX;
 import static org.openecomp.sdc.generator.util.GeneratorConstants.VNF_CONFIG_NODE_TEMPLATE_ID_SUFFIX;
 import static org.openecomp.sdc.generator.util.GeneratorConstants.VNF_NODE_TEMPLATE_ID_SUFFIX;
 
@@ -36,6 +37,7 @@ import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.NetworkType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 
 import java.util.ArrayList;
@@ -118,8 +120,7 @@ public class ManualVspToscaGenerationService {
       // May be need to revisited for supporting multiple components
       String componentId = components.entrySet().iterator().next().getKey();
       createVnfConfigurationNodeTemplate(mainServiceTemplate, vspModelInfo);
-      createComponentNodeTemplate(mainServiceTemplate, vspModelInfo, componentId);
-      createVnfNodeTemplate(mainServiceTemplate, vspModelInfo);
+      createVnfNodeTemplate(mainServiceTemplate, vspModelInfo, componentId);
     }
     return mainServiceTemplate;
   }
@@ -141,42 +142,16 @@ public class ManualVspToscaGenerationService {
     }
   }
 
-  private void createComponentNodeTemplate(ServiceTemplate mainServiceTemplate,
-                                                  VspModelInfo vspModelInfo,
-                                                  String componentId) {
-    Optional<String> componentName = getComponentNameFromVspModel(vspModelInfo);
-    if (componentName.isPresent()) {
-      NodeTemplate vfcNodeTemplate = new NodeTemplate();
-      vfcNodeTemplate.setType(ToscaNodeType.MULTIFLAVOR_VFC_NODE_TYPE);
-      Map<String, Object> properties = new LinkedHashMap<>();
-      if (MapUtils.isNotEmpty(vspModelInfo.getMultiFlavorVfcImages())) {
-        List<MultiFlavorVfcImage> componentImages =
-            vspModelInfo.getMultiFlavorVfcImages().get(componentId);
-        Map<String, MultiFlavorVfcImage> vfcImages = new HashMap<>();
-        for (MultiFlavorVfcImage image : componentImages) {
-          vfcImages.put(image.getSoftware_version(), image);
-        }
-        properties.put(IMAGES_PROPERTY, vfcImages);
-        vfcNodeTemplate.setProperties(properties);
-      }
-      String nodeTemplateId = componentName.get() + VFC_NODE_TEMPLATE_ID_SUFFIX;
-      DataModelUtil.addNodeTemplate(mainServiceTemplate, nodeTemplateId,
-          vfcNodeTemplate);
-    }
-  }
-
   private void createVnfNodeTemplate(ServiceTemplate mainServiceTemplate,
-                                      VspModelInfo vspModelInfo) {
+                                     VspModelInfo vspModelInfo, String componentId) {
     Optional<String> componentName = getComponentNameFromVspModel(vspModelInfo);
     if (componentName.isPresent()) {
       NodeTemplate vnfNodeTemplate = new NodeTemplate();
-      String vnfNodeTemplateType =
-          ToscaNodeType.MULTIDEPLOYMENTFLAVOR_NODE_TYPE + "." + componentName.get();
-      vnfNodeTemplate.setType(vnfNodeTemplateType);
+      vnfNodeTemplate.setType(ToscaNodeType.MULTIDEPLOYMENTFLAVOR_NODE_TYPE);
       List<String> directiveList = new ArrayList<>();
       directiveList.add(ToscaConstants.NODE_TEMPLATE_DIRECTIVE_SUBSTITUTABLE);
       vnfNodeTemplate.setDirectives(directiveList);
-      vnfNodeTemplate.setProperties(new LinkedHashMap<>());
+      vnfNodeTemplate.setProperties(getVnfNodeTemplateProperties(vspModelInfo, componentId));
       DataModelUtil
           .addSubstitutionFilteringProperty(getSubstitutionServiceTemplateFileName(componentName
                   .get()), vnfNodeTemplate, 1);
@@ -186,8 +161,26 @@ public class ManualVspToscaGenerationService {
       String nodeTemplateId = componentName.get() + VNF_NODE_TEMPLATE_ID_SUFFIX;
       DataModelUtil.addNodeTemplate(mainServiceTemplate, nodeTemplateId,
           vnfNodeTemplate);
-      abstractSubstitutionIdTypes.put(componentName.get(), vnfNodeTemplateType);
+      abstractSubstitutionIdTypes.put(componentName.get(), ToscaNodeType
+          .MULTIDEPLOYMENTFLAVOR_NODE_TYPE);
     }
+  }
+
+  private Map<String, Object> getVnfNodeTemplateProperties(VspModelInfo vspModelInfo,
+                                                           String componentId) {
+    Map<String, Object> properties = new LinkedHashMap<>();
+    if (MapUtils.isNotEmpty(vspModelInfo.getMultiFlavorVfcImages())) {
+      List<MultiFlavorVfcImage> componentImages =
+          vspModelInfo.getMultiFlavorVfcImages().get(componentId);
+      if (Objects.nonNull(componentImages)) {
+        Map<String, MultiFlavorVfcImage> vfcImages = new HashMap<>();
+        componentImages.stream()
+            .forEach(multiFlavorVfcImage ->
+                vfcImages.put(multiFlavorVfcImage.getSoftware_version(), multiFlavorVfcImage));
+        properties.put(IMAGES_PROPERTY, vfcImages);
+      }
+    }
+    return properties;
   }
 
   private String getSubstitutionServiceTemplateFileName(String componentName) {
@@ -276,7 +269,7 @@ public class ManualVspToscaGenerationService {
             nicNodeTemplate.setType(ToscaNodeType.NETWORK_PORT);
             DataModelUtil.addBindingReqFromPortToCompute(componentNodeTemplateId, nicNodeTemplate);
             DataModelUtil.addNodeTemplate(substitutionServiceTemplate,
-                getNicNodeTemplateId(nic.getName()), nicNodeTemplate);
+                getNicNodeTemplateId(nic.getName(), nic.getNetworkType()), nicNodeTemplate);
           }
         }
       }
@@ -288,9 +281,14 @@ public class ManualVspToscaGenerationService {
     return componentName;
   }
 
-  private String getNicNodeTemplateId(String nicName) {
+  private String getNicNodeTemplateId(String nicName, NetworkType nicNetworkType) {
     StringBuilder builder = new StringBuilder();
     builder.append(nicName);
+    if (nicNetworkType == NetworkType.External) {
+      builder.append(PORT_TYPE_EXTERNAL_NODE_TEMPLATE_SUFFIX);
+    } else if (nicNetworkType == NetworkType.Internal) {
+      builder.append(PORT_TYPE_INTERNAL_NODE_TEMPLATE_SUFFIX);
+    }
     builder.append(PORT_NODE_TEMPLATE_ID_SUFFIX);
     return builder.toString();
   }
@@ -337,7 +335,6 @@ public class ManualVspToscaGenerationService {
         createGlobalSubstitutionNodeType(substitutionServiceTemplate, componentName);
     DataModelUtil.addNodeType(globalSubstitutionServiceTemplate, substitutionNodeTypeId,
         substitutionNodeType);
-
     Map<String, Map<String, List<String>>> substitutionMapping =
         GeneratorUtils.getSubstitutionNodeTypeExposedConnectionPoints(substitutionNodeType,
             substitutionServiceTemplate, toscaServiceModel);
@@ -379,7 +376,7 @@ public class ManualVspToscaGenerationService {
                                                 String componentName) {
     NodeType substitutionNodeType = new ToscaAnalyzerServiceImpl()
         .createInitSubstitutionNodeType(substitutionServiceTemplate,
-            ToscaNodeType.VFC_ABSTRACT_SUBSTITUTE);
+            ToscaNodeType.MULTIFLAVOR_VFC_NODE_TYPE);
     substitutionNodeType.setProperties(
         getManualVspSubstitutionNodeTypeProperties(substitutionNodeType, componentName));
     return substitutionNodeType;

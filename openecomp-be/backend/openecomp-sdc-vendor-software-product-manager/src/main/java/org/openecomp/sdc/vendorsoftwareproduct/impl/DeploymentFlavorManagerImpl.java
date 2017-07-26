@@ -10,6 +10,7 @@ import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.DeploymentFlavorManager;
+import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
@@ -23,17 +24,14 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.NotSupportedHeatOnboardMet
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.VersionedVendorSoftwareProductInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.DeploymentFlavorCompositionSchemaInput;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
-import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -112,6 +110,18 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
 
   private void validateDeploymentFlavor(DeploymentFlavorEntity deploymentFlavorEntity, String
       user, Version activeVersion) {
+
+    if(!deploymentFlavorEntity.getDeploymentFlavorCompositionData().getModel().matches(VendorSoftwareProductConstants.NAME_PATTERN))
+    {
+      ErrorCode errorCode = DeploymentFlavorErrorBuilder.getDeploymentFlavorNameFormatErrorBuilder(
+              VendorSoftwareProductConstants.NAME_PATTERN);
+
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+              LoggerTragetServiceName.UPDATE_NIC, ErrorLevel.ERROR.name(),
+              errorCode.id(),errorCode.message());
+
+      throw new CoreException(errorCode);
+    }
     //Validation for unique model.
     Collection<DeploymentFlavorEntity> listDeploymentFlavors =
         listDeploymentFlavors(deploymentFlavorEntity.getVspId(),
@@ -356,6 +366,17 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
           LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
           updateDeploymentFlavorErrorBuilder.message());
       throw new CoreException(updateDeploymentFlavorErrorBuilder);
+    }
+    else {
+        if(!deploymentFlavorEntity.getDeploymentFlavorCompositionData().getModel().matches(VendorSoftwareProductConstants.NAME_PATTERN))
+        {
+            ErrorCode errorCode = DeploymentFlavorErrorBuilder.getDeploymentFlavorNameFormatErrorBuilder(
+                    VendorSoftwareProductConstants.NAME_PATTERN);
+            MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+                    LoggerTragetServiceName.UPDATE_DEPLOYMENT_FLAVOR, ErrorLevel.ERROR.name(),
+                    errorCode.id(),errorCode.message());
+            throw new CoreException(errorCode);
+        }
     }
     //deploymentFlavorEntity.setVersion(activeVersion);
     DeploymentFlavorEntity retrieved =

@@ -16,12 +16,13 @@
 import {connect} from 'react-redux';
 import LicenseKeyGroupsActionHelper from './LicenseKeyGroupsActionHelper.js';
 import LicenseKeyGroupsEditorView from './LicenseKeyGroupsEditorView.jsx';
+import LimitEditorActionHelper from '../limits/LimitEditorActionHelper.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 
 const mapStateToProps = ({licenseModel: {licenseKeyGroup}}) => {
 
 
-	let {data, genericFieldInfo, formReady} = licenseKeyGroup.licenseKeyGroupsEditor;
+	let {data, genericFieldInfo, formReady, limitsList} = licenseKeyGroup.licenseKeyGroupsEditor;
 
 	let previousData, LKGNames = {};
 	const licenseKeyGroupId = data ? data.id : null;
@@ -33,7 +34,7 @@ const mapStateToProps = ({licenseModel: {licenseKeyGroup}}) => {
 
 	const list = licenseKeyGroup.licenseKeyGroupsList;
 	for (let i = 0; i < list.length; i++) {
-		LKGNames[list[i].name] = list[i].id;
+		LKGNames[list[i].name.toLowerCase()] = list[i].id;
 	}
 
 	return {
@@ -42,7 +43,8 @@ const mapStateToProps = ({licenseModel: {licenseKeyGroup}}) => {
 		genericFieldInfo,
 		isFormValid,
 		formReady,
-		LKGNames
+		LKGNames,
+		limitsList
 	};
 };
 
@@ -50,11 +52,13 @@ const mapActionsToProps = (dispatch, {licenseModelId, version}) => {
 	return {
 		onDataChanged: (deltaData, formName, customValidations) => ValidationHelper.dataChanged(dispatch, {deltaData, formName, customValidations}),
 		onCancel: () => LicenseKeyGroupsActionHelper.closeLicenseKeyGroupEditor(dispatch),
-		onSubmit: ({previousLicenseKeyGroup, licenseKeyGroup}) => {
-			LicenseKeyGroupsActionHelper.closeLicenseKeyGroupEditor(dispatch);
+		onSubmit: ({previousLicenseKeyGroup, licenseKeyGroup, keepOpen}) => {
+			if (!keepOpen) {LicenseKeyGroupsActionHelper.closeLicenseKeyGroupEditor(dispatch);}
 			LicenseKeyGroupsActionHelper.saveLicenseKeyGroup(dispatch, {licenseModelId, previousLicenseKeyGroup, licenseKeyGroup, version});
 		},
-		onValidateForm: (formName) => ValidationHelper.validateForm(dispatch, formName)
+		onValidateForm: (formName) => ValidationHelper.validateForm(dispatch, formName),
+		onCloseLimitEditor: () => LimitEditorActionHelper.closeLimitsEditor(dispatch),
+		onOpenLimitEditor: (limit) => LimitEditorActionHelper.openLimitsEditor(dispatch, {limit})
 	};
 };
 

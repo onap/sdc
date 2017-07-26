@@ -12,9 +12,7 @@ import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ImageManager;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
+import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
@@ -34,10 +32,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.ima
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.ImageCompositionSchemaInput;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateInput;
-import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 
 import java.util.Collection;
 
@@ -66,7 +62,8 @@ public class ImageManagerImpl implements ImageManager {
         VersionableEntityAction.Write, user).getActiveVersion();
 
     imageEntity.setVersion(activeVersion);*/
-    if (!vspInfoDao.isManual(imageEntity.getVspId(), imageEntity.getVersion())) {
+    boolean isManual = vspInfoDao.isManual(imageEntity.getVspId(), imageEntity.getVersion());
+    if (!isManual) {
 
       ErrorCode errorCode = NotSupportedHeatOnboardMethodErrorBuilder
           .getAddImageNotSupportedHeatOnboardMethodErrorBuilder();
@@ -80,7 +77,7 @@ public class ImageManagerImpl implements ImageManager {
 
     Collection<ImageEntity> vfcImageList = listImages(imageEntity.getVspId() ,
         imageEntity.getVersion(), imageEntity.getComponentId());
-    validateVfcImage(imageEntity, vfcImageList);
+    validateVfcImage(isManual, imageEntity, vfcImageList, LoggerTragetServiceName.CREATE_IMAGE);
     compositionEntityDataManager.createImage(imageEntity);
     return imageEntity;
   }
@@ -219,11 +216,11 @@ public class ImageManagerImpl implements ImageManager {
     /*Version activeVersion =
         getVersionInfo(image.getVspId(), VersionableEntityAction.Write, user).getActiveVersion();
     image.setVersion(activeVersion);*/
-
+    boolean isManual = vspInfoDao.isManual(image.getVspId(), image.getVersion());
     ImageEntity retrieved = getImageEntity(image.getVspId(), image.getVersion(), image.getComponentId(),
         image.getId());
 
-    if(!vspInfoDao.isManual(image.getVspId(), image.getVersion())) {
+    if(!isManual) {
       final Image imageCompositionData = image.getImageCompositionData();
       final String fileName = imageCompositionData.getFileName();
       //final String format = imageCompositionData.getFormat();
@@ -239,7 +236,7 @@ public class ImageManagerImpl implements ImageManager {
     //Set to null so that retrieved object is equal to one in list and gets removed.
     retrieved.setQuestionnaireData(null);
     vfcImageList.remove(retrieved);
-    validateVfcImage(image, vfcImageList);
+    validateVfcImage(isManual, image, vfcImageList, LoggerTragetServiceName.UPDATE_IMAGE);
 
     //Set format to default value in order to handle FTL validation when image format is null
     /*if(image.getImageCompositionData().getFormat() == null)
@@ -325,13 +322,25 @@ public class ImageManagerImpl implements ImageManager {
     return false;
   }
 
-  private void validateVfcImage(ImageEntity image, Collection<ImageEntity> vfcImageList) {
+  private void validateVfcImage(boolean isManual, ImageEntity image, Collection<ImageEntity> vfcImageList, String event) {
+    if(isManual && !image.getImageCompositionData().getFileName().matches(VendorSoftwareProductConstants.NAME_PATTERN))
+    {
+      ErrorCode errorCode = ImageErrorBuilder.getImageNameFormatErrorBuilder(
+              VendorSoftwareProductConstants.NAME_PATTERN);
+
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+              event, ErrorLevel.ERROR.name(),
+              errorCode.id(),errorCode.message());
+
+      throw new CoreException(errorCode);
+    }
+
     if (isImageNameDuplicate(vfcImageList,image.getImageCompositionData().getFileName())) {
       ErrorCode errorCode = ImageErrorBuilder.getDuplicateImageNameErrorBuilder(image
           .getImageCompositionData().getFileName(), image.getComponentId());
 
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_COMPONENT, ErrorLevel.ERROR.name(),
+              event, ErrorLevel.ERROR.name(),
           errorCode.id(),errorCode.message());
 
       throw new CoreException(errorCode);
@@ -354,6 +363,4 @@ public class ImageManagerImpl implements ImageManager {
         .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.image,
             schemaInput);
   }
-
-
 }

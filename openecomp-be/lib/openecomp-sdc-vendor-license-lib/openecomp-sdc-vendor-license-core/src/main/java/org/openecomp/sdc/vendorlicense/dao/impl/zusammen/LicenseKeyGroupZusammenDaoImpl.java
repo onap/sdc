@@ -15,6 +15,7 @@ import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyType;
 import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
+import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.ArrayList;
@@ -212,8 +213,15 @@ public class LicenseKeyGroupZusammenDaoImpl implements LicenseKeyGroupDao {
     Info info = new Info();
     info.setName(licenseKeyGroup.getName());
     info.setDescription(licenseKeyGroup.getDescription());
+    info.addProperty("version_uuid", licenseKeyGroup.getVersionUuId());
     info.addProperty("LicenseKeyType", licenseKeyGroup.getType());
+    info.addProperty("version_uuid", licenseKeyGroup.getVersionUuId());
     info.addProperty("operational_scope", licenseKeyGroup.getOperationalScope());
+    info.addProperty("startDate", licenseKeyGroup.getStartDate());
+    info.addProperty("expiryDate", licenseKeyGroup.getExpiryDate());
+    info.addProperty("thresholdValue", licenseKeyGroup.getThresholdValue());
+    info.addProperty("thresholdUnits", licenseKeyGroup.getThresholdUnits());
+    info.addProperty("increments", licenseKeyGroup.getIncrements());
     lkgElement.setInfo(info);
 
    if (licenseKeyGroup.getReferencingFeatureGroups() != null
@@ -233,11 +241,23 @@ public class LicenseKeyGroupZusammenDaoImpl implements LicenseKeyGroupDao {
         new LicenseKeyGroupEntity(vlmId, version, elementInfo.getId().getValue());
     licenseKeyGroup.setName(elementInfo.getInfo().getName());
     licenseKeyGroup.setDescription(elementInfo.getInfo().getDescription());
-
+    licenseKeyGroup.setVersionUuId(elementInfo.getInfo().getProperty("version_uuid"));
     licenseKeyGroup
         .setType(LicenseKeyType.valueOf(elementInfo.getInfo().getProperty("LicenseKeyType")));
+    licenseKeyGroup.setVersionUuId(elementInfo.getInfo().getProperty("version_uuid"));
     licenseKeyGroup.setOperationalScope(getOperationalScopeMultiChoiceOrOther(
         elementInfo.getInfo().getProperty("operational_scope")));
+    licenseKeyGroup.setStartDate(elementInfo.getInfo().getProperty("startDate"));
+    licenseKeyGroup.setExpiryDate(elementInfo.getInfo().getProperty("expiryDate"));
+    if (elementInfo.getInfo().getProperty("thresholdUnits") != null ){
+      licenseKeyGroup.setThresholdUnits(ThresholdUnit.valueOf(elementInfo
+          .getInfo().getProperty("thresholdUnits")));
+    }
+    if (elementInfo.getInfo().getProperty("thresholdValue") != null ){
+      licenseKeyGroup.setThresholdValue(toInteger(elementInfo.getInfo().getProperty
+          ("thresholdValue")));
+    }
+    licenseKeyGroup.setIncrements(elementInfo.getInfo().getProperty("increments"));
 
     if (elementInfo.getRelations() != null && elementInfo.getRelations().size() > 0) {
       licenseKeyGroup
@@ -258,5 +278,16 @@ public class LicenseKeyGroupZusammenDaoImpl implements LicenseKeyGroupDao {
     return new MultiChoiceOrOther<>(choices, operationalScope.get("other")==null?null:(String) operationalScope.get("other"));
   }
   return null;
+  }
+
+  private Integer toInteger(Object val) {
+    if (val instanceof Double) {
+      return ((Double) val).intValue();
+    } else if (val instanceof String) {
+      return new Integer((String) val);
+    } else if (val instanceof Integer) {
+      return (Integer) val;
+    }
+    throw new RuntimeException("invalid value for integer:" + val.getClass());
   }
 }

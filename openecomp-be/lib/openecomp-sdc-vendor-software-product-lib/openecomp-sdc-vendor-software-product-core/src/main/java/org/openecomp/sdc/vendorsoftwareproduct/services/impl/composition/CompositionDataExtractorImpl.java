@@ -338,7 +338,7 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
         if (obj instanceof String) {
           images.add((String) obj);
         } else {
-          HashMap<String,String> objMap = new ObjectMapper().convertValue(obj,HashMap.class);
+          Map<String,String> objMap = new ObjectMapper().convertValue(obj,Map.class);
           images.add(getInputs(toscaServiceModel,objMap.get("get_input")));
         }
       }
@@ -364,7 +364,7 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
         if (obj instanceof String) {
           computes.add((String) obj);
         } else {
-          HashMap<String, String> objMap = new ObjectMapper().convertValue(obj, HashMap.class);
+          Map<String, String> objMap = new ObjectMapper().convertValue(obj, Map.class);
           computes.add(getInputs(toscaServiceModel, objMap.get("get_input")));
         }
       }
@@ -387,7 +387,13 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
       for (Map.Entry<String, ParameterDefinition> inputEntry : serviceTemplate
           .getTopology_template().getInputs().entrySet()) {
         if (inputEntry.getKey().equals(inputValue)) {
-          return (String)inputEntry.getValue().get_default();
+          String value;
+          try {
+            value= (String) inputEntry.getValue().get_default();
+          } catch (Exception e) {
+            value = inputEntry.getValue().get_default().toString();
+          }
+        return value;
         }
       }
     }

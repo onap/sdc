@@ -36,5 +36,10 @@ public class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto
     target.setOperationalScope(new MapMultiChoiceOrOtherToMultiChoiceOrOtherDto()
         .applyMapping(source.getOperationalScope(), MultiChoiceOrOtherDto.class));
     target.setReferencingFeatureGroups(source.getReferencingFeatureGroups());
+    target.setStartDate(source.getStartDate());
+    target.setExpiryDate(source.getExpiryDate());
+    target.setThresholdUnits(source.getThresholdUnits());
+    target.setThresholdValue(source.getThresholdValue());
+    target.setIncrements(source.getIncrements());
   }
 }

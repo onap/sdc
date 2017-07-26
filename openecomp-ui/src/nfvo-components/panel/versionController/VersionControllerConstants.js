@@ -33,7 +33,7 @@ export const statusEnum = keyMirror({
 
 export const statusBarTextMap = keyMirror({
 	'Locked': 'Checked Out',
-	'LockedByUser': '',
+	'LockedByUser': 'Locked',
 	'Available': 'Checked In',
 	'Final': 'Submitted',
 	'READ ONLY': 'Locked'

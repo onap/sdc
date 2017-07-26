@@ -15,7 +15,7 @@
  */
 import React from 'react';
 import Tabs from 'nfvo-components/input/validation/Tabs.jsx';
-import Tab from 'react-bootstrap/lib/Tab.js';
+import Tab from 'sdc-ui/lib/react/Tab.js';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import {TabsForm as Form} from 'nfvo-components/input/validation/Form.jsx';
@@ -31,12 +31,13 @@ const FeatureGroupsPropType = React.PropTypes.shape({
 	name: React.PropTypes.string,
 	description: React.PropTypes.string,
 	partNumber: React.PropTypes.string,
+	manufacturerReferenceNumber: React.PropTypes.string,
 	entitlementPoolsIds: React.PropTypes.arrayOf(React.PropTypes.string),
 	licenseKeyGroupsIds: React.PropTypes.arrayOf(React.PropTypes.string)
 });
 
 const GeneralTab = ({data = {}, onDataChanged, genericFieldInfo, validateName}) => {
-	let {name, description, partNumber} = data;
+	let {name, description, partNumber, manufacturerReferenceNumber} = data;
 	return (
 			<GridSection>
 				<GridItem colSpan={2}>
@@ -51,6 +52,8 @@ const GeneralTab = ({data = {}, onDataChanged, genericFieldInfo, validateName}) 
 						isRequired={true}
 						isValid={genericFieldInfo.name.isValid}
 						errorText={genericFieldInfo.name.errorText} />
+				</GridItem>
+				<GridItem colSpan={2}>
 					<Input
 						groupClassName='field-section'
 						className='description-field'
@@ -60,9 +63,10 @@ const GeneralTab = ({data = {}, onDataChanged, genericFieldInfo, validateName}) 
 						value={description}
 						name='feature-group-description'
 						type='textarea'
-						isRequired={true}
 						isValid={genericFieldInfo.description.isValid}
 						errorText={genericFieldInfo.description.errorText} />
+				</GridItem>
+				<GridItem colSpan={2}>
 					<Input
 						groupClassName='field-section'
 						onChange={partNumber => onDataChanged({partNumber}, FG_EDITOR_FORM)}
@@ -73,6 +77,18 @@ const GeneralTab = ({data = {}, onDataChanged, genericFieldInfo, validateName}) 
 						type='text'
 						isValid={genericFieldInfo.partNumber.isValid}
 						errorText={genericFieldInfo.partNumber.errorText} />
+				</GridItem>
+				<GridItem colSpan={2}>
+					<Input
+						groupClassName='field-section'
+						onChange={manufacturerReferenceNumber => onDataChanged({manufacturerReferenceNumber}, FG_EDITOR_FORM)}
+						label={i18n('Manufacturer Reference Number')}
+						data-test-id='create-fg-reference-number'
+						value={manufacturerReferenceNumber}
+						isRequired={true}
+						type='text'
+						isValid={genericFieldInfo.manufacturerReferenceNumber.isValid}
+						errorText={genericFieldInfo.manufacturerReferenceNumber.errorText} />
 				</GridItem>
 			</GridSection>
 		);
@@ -94,7 +110,7 @@ const EntitlementPoolsTab = ({entitlementPoolsList, data, onDataChanged, isReadO
 		);
 	} else {
 		return (
-			<p>{i18n('There is no available entitlement pools')}</p>
+			<p>{i18n('There are no available entitlement pools')}</p>
 		);
 	}
 };
@@ -115,7 +131,7 @@ const LKGTab = ({licenseKeyGroupsList, data, onDataChanged, isReadOnlyMode}) => 
 		);
 	} else {
 		return (
-			<p>{i18n('There is no available licsense key groups')}</p>
+			<p>{i18n('There are no available license key groups')}</p>
 		);
 	}
 };
@@ -166,22 +182,22 @@ class FeatureGroupEditorView extends React.Component {
 				labledButtons={true}
 				isReadOnlyMode={isReadOnlyMode}
 				name='feature-group-validation-form'
-				className='feature-group-form'>
-				<Tabs activeKey={onTabSelect ? selectedTab : undefined} onSelect={onTabSelect} invalidTabs={invalidTabs} id='vlmFGValTabs' >
-					<Tab eventKey={FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.GENERAL} title={i18n('General')}  >
+				className='license-model-form feature-group-form'>
+				<Tabs activeTab={onTabSelect ? selectedTab : undefined} onTabClick={onTabSelect} invalidTabs={invalidTabs} id='vlmFGValTabs' >
+					<Tab tabId={FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.GENERAL} title={i18n('General')}  >
 						<fieldset disabled={isReadOnlyMode}>
 							<GeneralTab data={data} onDataChanged={onDataChanged} genericFieldInfo={genericFieldInfo}  validateName={(value)=> this.validateName(value)}/>
 						</fieldset>
 					</Tab>
 					<Tab
-						eventKey={FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.ENTITLEMENT_POOLS}
+						tabId={FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.ENTITLEMENT_POOLS}
 						title={i18n('Entitlement Pools')} >
 						<fieldset disabled={isReadOnlyMode}>
 							<EntitlementPoolsTab isReadOnlyMode={isReadOnlyMode} data={data} onDataChanged={onDataChanged} entitlementPoolsList={entitlementPoolsList} />
 						</fieldset>
 					</Tab>
 					<Tab
-						eventKey={FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.LICENSE_KEY_GROUPS}
+						tabId={FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.LICENSE_KEY_GROUPS}
 						title={i18n('License Key Groups')} >
 						<fieldset disabled={isReadOnlyMode}>
 							<LKGTab isReadOnlyMode={isReadOnlyMode} data={data} onDataChanged={onDataChanged} licenseKeyGroupsList={licenseKeyGroupsList} />

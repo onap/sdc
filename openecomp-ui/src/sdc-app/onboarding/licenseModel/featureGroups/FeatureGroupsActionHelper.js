@@ -39,6 +39,7 @@ function addFeatureGroup(licenseModelId, featureGroup, version) {
 		name: featureGroup.name,
 		description: featureGroup.description,
 		partNumber: featureGroup.partNumber,
+		manufacturerReferenceNumber: featureGroup.manufacturerReferenceNumber,
 		addedLicenseKeyGroupsIds: featureGroup.licenseKeyGroupsIds,
 		addedEntitlementPoolsIds: featureGroup.entitlementPoolsIds
 	});
@@ -54,6 +55,7 @@ function updateFeatureGroup(licenseModelId, previousFeatureGroup, featureGroup, 
 		name: featureGroup.name,
 		description: featureGroup.description,
 		partNumber: featureGroup.partNumber,
+		manufacturerReferenceNumber: featureGroup.manufacturerReferenceNumber,
 		addedLicenseKeyGroupsIds: licenseKeyGroupsIds.filter(licenseKeyGroupId => prevLicenseKeyGroupsIds.indexOf(licenseKeyGroupId) === -1),
 		removedLicenseKeyGroupsIds: prevLicenseKeyGroupsIds.filter(prevLicenseKeyGroupId => licenseKeyGroupsIds.indexOf(prevLicenseKeyGroupId) === -1),
 		addedEntitlementPoolsIds: entitlementPoolsIds.filter(entitlementPoolId => prevEntitlementPoolsIds.indexOf(entitlementPoolId) === -1),

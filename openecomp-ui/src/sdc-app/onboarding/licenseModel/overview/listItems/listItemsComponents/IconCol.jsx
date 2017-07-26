@@ -15,10 +15,10 @@
  */
 import React from 'react';
 
-function IconCol({className}) {
+function IconCol({className, text}) {
 	return (
 		<div className='list-item-section list-item-icon-col'>
-			<div className={className}></div>
+			<div className={`overview-list-icon ${className ? className : ''}`}>{text}</div>
 		</div>
 	);
 }

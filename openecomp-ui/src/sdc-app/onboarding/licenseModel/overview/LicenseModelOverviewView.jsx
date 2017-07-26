@@ -52,7 +52,7 @@ class LicenseModelOverviewView extends React.Component {
 		licenseModelId: React.PropTypes.string,
 		licensingDataList: React.PropTypes.array,
 		modalHeader: React.PropTypes.string,
-		selectedTab: React.PropTypes.symbol,
+		selectedTab: React.PropTypes.string,
 		onTabSelect: React.PropTypes.func,
 		onCallVCAction: React.PropTypes.func,
 		onClose: React.PropTypes.func
@@ -67,14 +67,13 @@ class LicenseModelOverviewView extends React.Component {
 				<SummaryView/>
 				<div className={classNames('overview-list-section ', !selectedInUse ? 'overview-list-orphans' : '' )}>
 					<div className='vlm-list-tab-panel'>
-						<div className='section-title'>{selectedInUse ? i18n('VLM List View') : i18n('Entities not in Use')}</div>
-						<ListButtons onTabSelect={onTabSelect} selectedInUse={selectedInUse}/>
+						<ListButtons onTabSelect={onTabSelect} selectedTab={selectedTab}/>
 					</div>
 					<VLMListView licensingDataList={licensingDataList} showInUse={selectedInUse}/>
 				</div>
 				{
 					isDisplayModal &&
-					<Modal show={isDisplayModal} bsSize='large' animation={true} className={classNames('onborading-modal', setModalClassName(modalHeader))}>
+					<Modal show={isDisplayModal} bsSize='large' animation={true} className={classNames('onborading-modal license-model-modal', setModalClassName(modalHeader))}>
 						<Modal.Header>
 							<Modal.Title>{`${i18n('Create New ')}${i18n(modalHeader)}`}</Modal.Title>
 						</Modal.Header>

@@ -87,7 +87,5 @@ public interface CompositionEntityDataManager {
       componentId);
   public void saveImagesByComponent(String vspId, Version version, Component component, String
       componentId);
-  public void saveDeploymentFlavors(String vspId, Version version,
-                                    CompositionData compositionData);
 
 }

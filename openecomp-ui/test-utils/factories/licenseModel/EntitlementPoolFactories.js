@@ -19,9 +19,7 @@ import {overviewEditorHeaders} from 'sdc-app/onboarding/licenseModel/overview/Li
 Factory.define('EntitlementPoolBaseFactory')
 	.attrs({
 		name: 'EntitlementPoolName',
-		description: 'description',
-		entitlementMetric: {'choice': 'User', 'other': ''},
-		manufacturerReferenceNumber: '123'
+		description: 'description'
 	});
 
 Factory.define('EntitlementPoolExtendedBaseFactory')
@@ -29,10 +27,10 @@ Factory.define('EntitlementPoolExtendedBaseFactory')
 	.attrs({
 		thresholdValue: 75,
 		thresholdUnits: '%',
-		increments: 'string',
-		aggregationFunction: {'choice': 'Average', 'other': ''},
-		operationalScope: {'choices': ['Other'], 'other': 'blabla'},
-		time: {'choice': 'Hour', 'other': ''}
+		increments: 'string',		
+		operationalScope: {'choices': ['Other'], 'other': 'blabla'},		
+		startDate: (new Date()).getTime(),
+		expiryDate: (new Date()).getTime()
 	});
 
 export const EntitlementPoolListItemFactory = new Factory()

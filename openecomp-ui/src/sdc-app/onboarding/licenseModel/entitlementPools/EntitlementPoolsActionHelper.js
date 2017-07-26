@@ -17,6 +17,8 @@ import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import {actionTypes as entitlementPoolsActionTypes } from './EntitlementPoolsConstants.js';
 import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
+import {actionTypes as limitEditorActions} from 'sdc-app/onboarding/licenseModel/limits/LimitEditorConstants.js';
+import getValue from 'nfvo-utils/getValue.js';
 
 function baseUrl(licenseModelId, version) {
 	const restPrefix = Configuration.get('restPrefix');
@@ -28,18 +30,16 @@ function fetchEntitlementPoolsList(licenseModelId, version) {
 	return RestAPIUtil.fetch(`${baseUrl(licenseModelId, version)}`);
 }
 
-function postEntitlementPool(licenseModelId, entitlementPool, version) {
+function postEntitlementPool(licenseModelId, entitlementPool, version) {	
 	return RestAPIUtil.post(baseUrl(licenseModelId, version), {
 		name: entitlementPool.name,
 		description: entitlementPool.description,
 		thresholdValue: entitlementPool.thresholdValue,
-		thresholdUnits: entitlementPool.thresholdUnits,
+		thresholdUnits: getValue(entitlementPool.thresholdUnits),
 		entitlementMetric: entitlementPool.entitlementMetric,
 		increments: entitlementPool.increments,
-		aggregationFunction: entitlementPool.aggregationFunction,
-		operationalScope: entitlementPool.operationalScope,
+		operationalScope: getValue(entitlementPool.operationalScope),
 		time: entitlementPool.time,
-		manufacturerReferenceNumber: entitlementPool.manufacturerReferenceNumber,
 		startDate: entitlementPool.startDate,
 		expiryDate: entitlementPool.expiryDate
 	});
@@ -47,17 +47,16 @@ function postEntitlementPool(licenseModelId, entitlementPool, version) {
 
 
 function putEntitlementPool(licenseModelId, previousEntitlementPool, entitlementPool, version) {
+	
 	return RestAPIUtil.put(`${baseUrl(licenseModelId, version)}/${entitlementPool.id}`, {
 		name: entitlementPool.name,
 		description: entitlementPool.description,
 		thresholdValue: entitlementPool.thresholdValue,
-		thresholdUnits: entitlementPool.thresholdUnits,
+		thresholdUnits: getValue(entitlementPool.thresholdUnits),
 		entitlementMetric: entitlementPool.entitlementMetric,
 		increments: entitlementPool.increments,
-		aggregationFunction: entitlementPool.aggregationFunction,
-		operationalScope: entitlementPool.operationalScope,
+		operationalScope: getValue(entitlementPool.operationalScope),
 		time: entitlementPool.time,
-		manufacturerReferenceNumber: entitlementPool.manufacturerReferenceNumber,
 		startDate: entitlementPool.startDate,
 		expiryDate: entitlementPool.expiryDate
 	});
@@ -67,8 +66,43 @@ function deleteEntitlementPool(licenseModelId, entitlementPoolId, version) {
 	return RestAPIUtil.destroy(`${baseUrl(licenseModelId, version)}/${entitlementPoolId}`);
 }
 
+function fetchLimitsList(licenseModelId, entitlementPoolId, version) {	
+	return RestAPIUtil.fetch(`${baseUrl(licenseModelId, version)}/${entitlementPoolId}/limits`);
+}
+
+function deleteLimit(licenseModelId, entitlementPoolId, version, limitId) {	
+	return RestAPIUtil.destroy(`${baseUrl(licenseModelId, version)}/${entitlementPoolId}/limits/${limitId}`);
+}
+
+function postLimit(licenseModelId, entitlementPoolId, version, limit) {	
+	return RestAPIUtil.post(`${baseUrl(licenseModelId, version)}/${entitlementPoolId}/limits`, {
+		name: limit.name,
+		type: limit.type,
+		description: limit.description,
+		metric: limit.metric,
+		value: limit.value,
+		unit: limit.unit,
+		aggregationFunction: getValue(limit.aggregationFunction),
+		time: getValue(limit.time)
+	});
+}
+
+function putLimit(licenseModelId, entitlementPoolId, version, limit) {
+	
+	return RestAPIUtil.put(`${baseUrl(licenseModelId, version)}/${entitlementPoolId}/limits/${limit.id}`, {
+		name: limit.name,
+		type: limit.type,
+		description: limit.description,
+		metric: limit.metric,
+		value: limit.value,
+		unit: limit.unit,
+		aggregationFunction: getValue(limit.aggregationFunction),
+		time: getValue(limit.time)
+	});	
+}
 
 export default {
+
 	fetchEntitlementPoolsList(dispatch, {licenseModelId, version}) {
 		return fetchEntitlementPoolsList(licenseModelId, version).then(response => dispatch({
 			type: entitlementPoolsActionTypes.ENTITLEMENT_POOLS_LIST_LOADED,
@@ -76,7 +110,10 @@ export default {
 		}));
 	},
 
-	openEntitlementPoolsEditor(dispatch, {entitlementPool} = {}) {
+	openEntitlementPoolsEditor(dispatch, {entitlementPool, licenseModelId, version} = {}) {
+		if (licenseModelId && version) {
+			this.fetchLimits(dispatch, {licenseModelId, version, entitlementPool});
+		}
 		dispatch({
 			type: entitlementPoolsActionTypes.entitlementPoolsEditor.OPEN,
 			entitlementPool
@@ -145,5 +182,32 @@ export default {
 		LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version}).then(() => {
 			this.fetchEntitlementPoolsList(dispatch, {licenseModelId, version});
 		});
+	},
+
+
+	fetchLimits(dispatch, {licenseModelId, version, entitlementPool}) {
+		return fetchLimitsList(licenseModelId, entitlementPool.id, version). then (response => {
+			dispatch({
+				type: entitlementPoolsActionTypes.entitlementPoolsEditor.LIMITS_LIST_LOADED,
+				response
+			});
+		});		
+	},
+
+	submitLimit(dispatch, {licenseModelId, version, entitlementPool, limit}) {	
+		const propmise  =  limit.id ? putLimit(licenseModelId,entitlementPool.id, version, limit)
+			: postLimit(licenseModelId,entitlementPool.id, version, limit);
+		return propmise.then(() => {
+			dispatch({
+				type: limitEditorActions.CLOSE
+			});
+			this.fetchLimits(dispatch, {licenseModelId, version, entitlementPool});
+		});		
+	},
+
+	deleteLimit(dispatch, {licenseModelId, version, entitlementPool, limit}) {				
+		return  deleteLimit(licenseModelId,entitlementPool.id, version, limit.id).then(() => {
+			this.fetchLimits(dispatch, {licenseModelId, version, entitlementPool});		
+		});				
 	}
 };

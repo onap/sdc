@@ -17,8 +17,8 @@ import {actionTypes} from './HeatSetupConstants.js';
 import isEqual from 'lodash/isEqual.js';
 import cloneDeep from 'lodash/cloneDeep.js';
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
-import i18n from 'nfvo-utils/i18n/i18n.js';
-import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
+// import i18n from 'nfvo-utils/i18n/i18n.js';
+// import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 
 export default {
 
@@ -56,7 +56,11 @@ export default {
 		dispatch({type: actionTypes.ADD_ALL_UNASSIGNED_TO_ARTIFACTS});
 	},
 
-	heatSetupLeaveConfirmation(dispatch, {softwareProductId, heatSetup, heatSetupCache}) {
+	heatSetupLeaveConfirmation() {
+		return Promise.resolve();
+	}
+
+	/*heatSetupLeaveConfirmation(dispatch, {softwareProductId, heatSetup, heatSetupCache}) {
 		return new Promise((resolve, reject) => {
 			if (isEqual({...heatSetup, softwareProductId}, heatSetupCache)) {
 				resolve();
@@ -73,5 +77,5 @@ export default {
 				});
 			}
 		});
-	}
+	}*/
 };

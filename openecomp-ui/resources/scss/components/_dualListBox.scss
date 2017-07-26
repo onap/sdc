@@ -7,8 +7,7 @@
 	}
 
   .dual-search-multi-select-section {
-    $multi-select-box-width: 398px;
-    width: $multi-select-box-width;
+    flex: 1;
     .dual-text-box-search-title, .dual-list-box-multi-select-text {
       @extend .body-1;
       color: $dark-gray;

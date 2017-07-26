@@ -1,6 +1,5 @@
 
-.entitlement-pools-list-editor {
-
+.entitlement-pools-list-editor {  
   .list-editor-view-list {
     .list-editor-item-view {
       min-height: 110px;
@@ -8,12 +7,8 @@
     }
     .list-editor-item-view-field {
 
-      .entitlement-pools-count, .entitlement-parameters, .contract-number, .type{
+      .entitlement-pools-count, .contract-number, .type{
         color: $purple;
-      }
-      .entitlement-parameters {
-        @include ellipsis;
-        margin-bottom: 2px;
       }
       .entitlement-pools-count {
         @extend .heading-1;
@@ -25,22 +20,29 @@
 }
 
 .entitlement-pools-modal {
-  .validation-form-content {
-    padding: 50px;
-  }
   .modal-body {
     padding: 0;
   }
+	.sdc-tab-content {
+		margin: 0;
+	}
   .entitlement-pools-form {
-    .tab-content {
-      padding: 50px;
-    }
 		.threshold-section {
 			display: flex;
 			justify-content: space-between;
 			.validation-input-wrapper {
 				flex: 0 0 46%;
 			}
+    }
+    .date-section {
+			display: flex;
+			justify-content: space-between;
+			.validation-input-wrapper {
+				flex: 0 0 46%;
+			}
+		}
+		.validation-form-content {
+			padding: 20px 50px;
 		}
   }
   .validation-buttons {

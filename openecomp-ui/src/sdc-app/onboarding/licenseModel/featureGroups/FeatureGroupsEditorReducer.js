@@ -30,13 +30,19 @@ export default (state = {}, action) => {
 					'description': {
 						isValid: true,
 						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 1000}],
+						validations: [{type: 'maxLength', data: 1000}],
 						tabId: FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.GENERAL
 					},
 					'partNumber': {
 						isValid: true,
 						errorText: '',
 						validations: [{type: 'required', data: true}],
+						tabId: FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.GENERAL
+					},
+					'manufacturerReferenceNumber': {
+						isValid: true,
+						errorText: '',
+						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 100}],
 						tabId: FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.GENERAL
 					},
 					'name': {

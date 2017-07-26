@@ -1,20 +1,53 @@
-.license-model-type-modal {
+.license-model-modal {
   .modal-body {
     padding: 0;
   }
-  .validation-form-content {
-    padding: 50px;
-    .field-section {
-      @extend .body-2-semibold;
-      margin-bottom: 23px;
-      width: 400px;
-      color: $black;
-    }
-    textarea {
-      height: 107px;
-    }
+	.modal-header {
+		border-bottom: none;
+		padding-bottom: 30px;
+	}
+  .modal-body {
+    padding: 0;
   }
-  .validation-buttons {
-    padding: 20px 50px;
-  }
+	.sdc-tabs-list {
+		padding-left: 50px;
+		border-bottom: 1px solid $tlv-light-gray;
+		display: flex;
+		align-items: baseline;
+	}
+	.sdc-tab-content {
+		margin-top: 0;
+	}
+	.add-limit-button {
+		margin-left: auto;
+		margin-right: 50px;
+		padding-right: 0;
+		text-align: end;
+	}
+	.license-model-form {
+    .validation-form-content {
+      padding: 20px 50px;
+		}
+    .validation-buttons {
+      padding: 20px 50px;
+    }
+		&.license-agreement-form, &.feature-group-form {
+			.validation-form-content {
+				padding: 0;
+			}
+			.sdc-tab-content {
+				padding: 20px 50px;
+			}
+		}
+	}
+	.license-model-modal-buttons {
+		padding: 21px 50px;
+    display: flex;
+    justify-content: flex-end;
+		background-color: $tlv-gray;
+		margin-top: 2px;
+    .sdc-button {
+      margin-left: 20px;
+    }
+	}
 }

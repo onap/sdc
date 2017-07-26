@@ -19,7 +19,7 @@ import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import {TabsForm as Form} from 'nfvo-components/input/validation/Form.jsx';
 import Tabs from 'nfvo-components/input/validation/Tabs.jsx';
-import Tab from 'react-bootstrap/lib/Tab.js';
+import Tab from 'sdc-ui/lib/react/Tab.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import DualListboxView from 'nfvo-components/input/dualListbox/DualListboxView.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
@@ -96,7 +96,6 @@ const GeneralTabContent = ({data, genericFieldInfo, onDataChanged, validateName,
 					overlayPos='bottom'
 					data-test-id='create-la-description'
 					name='license-agreement-description'
-					isRequired={true}
 					type='textarea'/>
 			</GridItem>
 		</GridSection>
@@ -145,10 +144,10 @@ class LicenseAgreementEditorView extends React.Component {
 					isValid={this.props.isFormValid}
 					formReady={this.props.formReady}
 					onValidateForm={() => this.props.onValidateForm(LA_EDITOR_FORM) }
-					className='license-agreement-form'>
-					<Tabs activeKey={onTabSelect ? selectedTab : undefined} onSelect={onTabSelect} invalidTabs={this.props.invalidTabs} >
+					className='license-model-form license-agreement-form'>
+					<Tabs activeTab={onTabSelect ? selectedTab : undefined} onTabClick={onTabSelect} invalidTabs={this.props.invalidTabs} >
 						<Tab
-							eventKey={LicenseAgreementEnums.SELECTED_LICENSE_AGREEMENT_TAB.GENERAL}
+							tabId={LicenseAgreementEnums.SELECTED_LICENSE_AGREEMENT_TAB.GENERAL}
 							data-test-id='general-tab'
 							title={i18n('General')}>
 								<fieldset disabled={isReadOnlyMode}>
@@ -157,7 +156,7 @@ class LicenseAgreementEditorView extends React.Component {
 								</fieldset>
 						</Tab>
 						<Tab
-							eventKey={LicenseAgreementEnums.SELECTED_LICENSE_AGREEMENT_TAB.FEATURE_GROUPS}
+							tabId={LicenseAgreementEnums.SELECTED_LICENSE_AGREEMENT_TAB.FEATURE_GROUPS}
 							data-test-id='feature-group-tab'
 							title={i18n('Feature Groups')}>
 								<fieldset disabled={isReadOnlyMode}>
@@ -168,7 +167,7 @@ class LicenseAgreementEditorView extends React.Component {
 										selectedValuesList={data.featureGroupsIds}
 										availableList={featureGroupsList}
 										onChange={ selectedValuesList => onDataChanged( { featureGroupsIds: selectedValuesList }, LA_EDITOR_FORM )}/> :
-									<p>{i18n('There is no available feature groups')}</p>}
+									<p>{i18n('There are no available feature groups')}</p>}
 								</fieldset>
 						</Tab>
 					</Tabs>

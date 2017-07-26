@@ -64,7 +64,8 @@ class InputOptions extends React.Component {
 		const dataTestId = this.props['data-test-id'] ? {'data-test-id': this.props['data-test-id']} : {};
 		let currentMultiSelectedEnum = [];
 		let currentSelectedEnum = '';
-		let {otherInputDisabled} = this.state;
+		let otherInputDisabled = (isMultiSelect && (multiSelectedEnum === undefined || multiSelectedEnum.length === 0 || multiSelectedEnum[0] !== other.OTHER))
+			|| (!isMultiSelect && (selectedEnum === undefined || selectedEnum !== other.OTHER));
 		if (isMultiSelect) {
 			currentMultiSelectedEnum = multiSelectedEnum;
 			if(!otherInputDisabled) {

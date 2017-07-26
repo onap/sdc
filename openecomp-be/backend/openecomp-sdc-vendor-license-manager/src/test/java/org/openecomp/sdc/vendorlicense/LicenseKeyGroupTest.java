@@ -29,6 +29,7 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
 import org.openecomp.sdc.vendorlicense.dao.LimitDao;
 import org.openecomp.sdc.vendorlicense.dao.types.*;
+import org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.vendorlicense.impl.VendorLicenseManagerImpl;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -41,6 +42,10 @@ import org.testng.annotations.Test;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,6 +59,8 @@ public class LicenseKeyGroupTest {
     private  final String USER = "lkgTestUser";
     private  final String LKG_NAME = "LKG name";
     private  final String LT_NAME = "LT name";
+    private final String LKG1_NAME = "LKG1 name";
+    private final String USER1 = "user1";
 
     @Mock
     private VendorLicenseFacade vendorLicenseFacade;
@@ -186,8 +193,193 @@ public class LicenseKeyGroupTest {
         }
     }
 
+  @Test
+  public void createTest() {
+    Set<OperationalScope> opScopeChoices;
+    opScopeChoices = new HashSet<>();
+    opScopeChoices.add(OperationalScope.Core);
+    opScopeChoices.add(OperationalScope.CPU);
+    opScopeChoices.add(OperationalScope.Network_Wide);
+    LicenseKeyGroupEntity lkg =
+        createLicenseKeyGroup("vlm1Id", null, LKG1_NAME, "LKG1 dec",LicenseKeyType.Unique,
+            new MultiChoiceOrOther<>(opScopeChoices, null));
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    lkg.setStartDate(LocalDate.now().format(formatter));
+    lkg.setExpiryDate(LocalDate.now().plusDays(1L).format(formatter));
+
+    vendorLicenseManagerImpl.createLicenseKeyGroup(lkg, USER1);
+  }
+
+  @Test
+  public void createWithInvalidStartExpiryDateTest() {
+    try {
+
+      Set<OperationalScope> opScopeChoices;
+      opScopeChoices = new HashSet<>();
+      opScopeChoices.add(OperationalScope.Core);
+      opScopeChoices.add(OperationalScope.CPU);
+      opScopeChoices.add(OperationalScope.Network_Wide);
+      LicenseKeyGroupEntity lkg =
+          createLicenseKeyGroup("vlm1Id", null, LKG1_NAME, "LKG1 dec",LicenseKeyType.Unique,
+              new MultiChoiceOrOther<>(opScopeChoices, null));
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+      lkg.setStartDate(LocalDate.now().format(formatter));
+      lkg.setExpiryDate(LocalDate.now().minusDays(2L).format(formatter));
+      vendorLicenseManagerImpl.createLicenseKeyGroup(lkg, USER1);
+      Assert.fail();
+    } catch (CoreException exception) {
+      Assert.assertEquals(exception.code().id(), VendorLicenseErrorCodes.DATE_RANGE_INVALID);
+    }
+  }
+
+  @Test
+  public void createWithoutStartDateTest() {
+    try {
+
+      Set<OperationalScope> opScopeChoices;
+      opScopeChoices = new HashSet<>();
+      opScopeChoices.add(OperationalScope.Core);
+      opScopeChoices.add(OperationalScope.CPU);
+      opScopeChoices.add(OperationalScope.Network_Wide);
+      LicenseKeyGroupEntity lkg =
+          createLicenseKeyGroup("vlm1Id", null, LKG1_NAME, "LKG1 dec",LicenseKeyType.Unique,
+              new MultiChoiceOrOther<>(opScopeChoices, null));
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+      lkg.setExpiryDate(LocalDate.now().plusDays(2L).format(formatter));
+      vendorLicenseManagerImpl.createLicenseKeyGroup(lkg, USER1).getId();
+      Assert.fail();
+    } catch (CoreException exception) {
+      Assert.assertEquals(exception.code().id(), VendorLicenseErrorCodes.DATE_RANGE_INVALID);
+    }
+  }
+
+  @Test
+  public void createWithSameStartExpiryDateTest() {
+    try {
+
+      Set<OperationalScope> opScopeChoices;
+      opScopeChoices = new HashSet<>();
+      opScopeChoices.add(OperationalScope.Core);
+      opScopeChoices.add(OperationalScope.CPU);
+      opScopeChoices.add(OperationalScope.Network_Wide);
+      LicenseKeyGroupEntity lkg =
+          createLicenseKeyGroup("vlm1Id", null, LKG1_NAME, "LKG1 dec",LicenseKeyType.Unique,
+              new MultiChoiceOrOther<>(opScopeChoices, null));
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+      lkg.setStartDate(LocalDate.now().plusDays(2L).format(formatter));
+      lkg.setExpiryDate(LocalDate.now().plusDays(2L).format(formatter));
+      vendorLicenseManagerImpl.createLicenseKeyGroup(lkg, USER1).getId();
+      Assert.fail();
+    } catch (CoreException exception) {
+      Assert.assertEquals(exception.code().id(), VendorLicenseErrorCodes.DATE_RANGE_INVALID);
+    }
+  }
+
+  @Test
+  public void createUpdate() {
+    Set<OperationalScope> opScopeChoices;
+    opScopeChoices = new HashSet<>();
+    opScopeChoices.add(OperationalScope.Core);
+    opScopeChoices.add(OperationalScope.CPU);
+    opScopeChoices.add(OperationalScope.Network_Wide);
+    LicenseKeyGroupEntity lkg =
+        createLicenseKeyGroup("vlm1Id", null, LKG1_NAME, "LKG1 dec",LicenseKeyType.Unique,
+            new MultiChoiceOrOther<>(opScopeChoices, null));
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    lkg.setStartDate(LocalDate.now().minusDays(3L).format(formatter));
+    lkg.setExpiryDate(LocalDate.now().minusDays(2L).format(formatter));
+    VersionInfo info = new VersionInfo();
+    Version version = new Version();
+    info.getViewableVersions().add(version);
+    info.setActiveVersion(version);
+    doReturn(info).when(vendorLicenseFacade).getVersionInfo(anyObject(),anyObject(),anyObject());
+
+    vendorLicenseManagerImpl.updateLicenseKeyGroup(lkg, USER1);
+  }
+
+  @Test
+  public void updateWithInvalidStartExpiryDateTest() {
+    try {
+
+      Set<OperationalScope> opScopeChoices;
+      opScopeChoices = new HashSet<>();
+      opScopeChoices.add(OperationalScope.Core);
+      opScopeChoices.add(OperationalScope.CPU);
+      opScopeChoices.add(OperationalScope.Network_Wide);
+      LicenseKeyGroupEntity lkg =
+          createLicenseKeyGroup("vlm1Id", null, LKG1_NAME, "LKG1 dec",LicenseKeyType.Unique,
+              new MultiChoiceOrOther<>(opScopeChoices, null));
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+      lkg.setStartDate(LocalDate.now().format(formatter));
+      lkg.setExpiryDate(LocalDate.now().minusDays(2L).format(formatter));
+      vendorLicenseManagerImpl.updateLicenseKeyGroup(lkg, USER1);
+      Assert.fail();
+    } catch (CoreException exception) {
+      Assert.assertEquals(exception.code().id(), VendorLicenseErrorCodes.DATE_RANGE_INVALID);
+    }
+  }
+
+  @Test
+  public void updateWithoutStartDateTest() {
+    try {
+
+      Set<OperationalScope> opScopeChoices;
+      opScopeChoices = new HashSet<>();
+      opScopeChoices.add(OperationalScope.Core);
+      opScopeChoices.add(OperationalScope.CPU);
+      opScopeChoices.add(OperationalScope.Network_Wide);
+      LicenseKeyGroupEntity lkg =
+          createLicenseKeyGroup("vlm1Id", null, LKG1_NAME, "LKG1 dec",LicenseKeyType.Unique,
+              new MultiChoiceOrOther<>(opScopeChoices, null));
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+      lkg.setExpiryDate(LocalDate.now().plusDays(2L).format(formatter));
+      vendorLicenseManagerImpl.updateLicenseKeyGroup(lkg, USER1);
+      Assert.fail();
+    } catch (CoreException exception) {
+      Assert.assertEquals(exception.code().id(), VendorLicenseErrorCodes.DATE_RANGE_INVALID);
+    }
+  }
+
+  @Test
+  public void updateWithSameStartExpiryDateTest() {
+    try {
+
+      Set<OperationalScope> opScopeChoices;
+      opScopeChoices = new HashSet<>();
+      opScopeChoices.add(OperationalScope.Core);
+      opScopeChoices.add(OperationalScope.CPU);
+      opScopeChoices.add(OperationalScope.Network_Wide);
+      LicenseKeyGroupEntity lkg =
+          createLicenseKeyGroup("vlm1Id", null, LKG1_NAME, "LKG1 dec",LicenseKeyType.Unique,
+              new MultiChoiceOrOther<>(opScopeChoices, null));
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+      lkg.setStartDate(LocalDate.now().format(formatter));
+      lkg.setExpiryDate(LocalDate.now().format(formatter));
+      vendorLicenseManagerImpl.updateLicenseKeyGroup(lkg, USER1);
+      Assert.fail();
+    } catch (CoreException exception) {
+      Assert.assertEquals(exception.code().id(), VendorLicenseErrorCodes.DATE_RANGE_INVALID);
+    }
+  }
+
+
+  public static LicenseKeyGroupEntity createLicenseKeyGroup(String vlmId, Version version,
+                                                            String name, String desc,
+                                                            LicenseKeyType type,
+                                                            MultiChoiceOrOther<OperationalScope> operationalScope) {
+    LicenseKeyGroupEntity licenseKeyGroup = new LicenseKeyGroupEntity();
+    licenseKeyGroup.setVendorLicenseModelId(vlmId);
+    licenseKeyGroup.setVersion(version);
+    licenseKeyGroup.setName(name);
+    licenseKeyGroup.setDescription(desc);
+    licenseKeyGroup.setType(type);
+    licenseKeyGroup.setOperationalScope(operationalScope);
+    return licenseKeyGroup;
+  }
+
   /*public static final String LKG1_NAME = "LKG1 name";
   private static final Version VERSION01 = new Version(0, 1);
+  public static final String LKG1_NAME = "LKG1 name";
   private static final String USER1 = "user1";
   public static String vlm1Id;
   public static String vlm2Id;
@@ -211,7 +403,12 @@ public class LicenseKeyGroupTest {
     return licenseKeyGroup;
   }
 
-  @BeforeClass
+  @BeforeMethod
+  public void setUp() throws Exception {
+    MockitoAnnotations.initMocks(this);
+  }
+
+  /*@BeforeClass
   private void init() {
     licenseKeyGroupDao = LicenseKeyGroupDaoFactory.getInstance().createInterface();
     noSqlDb = NoSqlDbFactory.getInstance().createInterface();

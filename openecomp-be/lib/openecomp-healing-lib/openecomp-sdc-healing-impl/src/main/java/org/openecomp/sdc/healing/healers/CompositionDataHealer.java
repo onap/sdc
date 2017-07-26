@@ -174,8 +174,8 @@ public class CompositionDataHealer implements Healer {
 
     Collection<ComputeEntity> computeEntities = computeDao.listByVsp(vspId, version);
     Collection<ImageEntity> imageEntities = imageDao.listByVsp(vspId, version);
-    Collection<DeploymentFlavorEntity> deploymentFlavorEntities = deloymentFlavorDao.list(new
-        DeploymentFlavorEntity(vspId, version, null));
+    //Collection<DeploymentFlavorEntity> deploymentFlavorEntities = deloymentFlavorDao.list(new
+        //DeploymentFlavorEntity(vspId, version, null));
 
     if (CollectionUtils.isEmpty(computeEntities) && CollectionUtils.isEmpty(imageEntities)) {
       for (Component component : compositionData.getComponents()) {
@@ -195,9 +195,9 @@ public class CompositionDataHealer implements Healer {
 
     }
 
-    if (CollectionUtils.isEmpty(deploymentFlavorEntities)) {
+    /*if (CollectionUtils.isEmpty(deploymentFlavorEntities)) {
       compositionEntityDataManager.saveDeploymentFlavors(vspId,version,compositionData);
-    }
+    }*/
   }
 
   private CompositionData healCompositionData(String vspId, Version version,

@@ -219,14 +219,10 @@ $browserPrefixes: webkit moz o ms;
   width: $size;
   height: $size;
   background: $bgcolor;
-  border: 3px solid $bgcolor;
-  &:after {
-    content: $content;
-    position: relative;
-    left: 9px;
-    top: 9px;
-    @extend .circle-icon-text;
-  }
+	border: 3px solid $bgcolor;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 /**/
@@ -305,4 +301,13 @@ $browserPrefixes: webkit moz o ms;
 /**/
 @mixin border-shadow($xShadow: 0.545px, $yShadow: 0.839px, $blur: 4px, $spread: 0, $color: $light-gray, $opacity: 0.2) {
   @include box-shadow($xShadow $yShadow $blur $spread rgba($color, $opacity));
+}
+
+/* percent-plus-value */
+// @mixin
+//     Calculate length property (e.g. width, margin) by adding a value (e.g. in pixels)
+//     to a percentage of container height/width
+@mixin percent-plus-value($property, $value, $percent: 100%) {
+  $string: 'calc(' + $percent + ' + ' + $value + ')';
+  #{$property}: unquote($string);
 }

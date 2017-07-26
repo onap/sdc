@@ -1,12 +1,9 @@
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.DUPLICATE_IMAGE_NAME_NOT_ALLOWED;
-
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.UPDATE_IMAGE_NOT_ALLOWED;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.VFC_IMAGE_INVALID_FORMAT;
-
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.*;
 
 /**
  * The Image error builder.
@@ -15,7 +12,8 @@ public class ImageErrorBuilder {
 
   private static final String VFC_IMAGE_DUPLICATE_NAME_MSG = "Invalid request, Image with name %s"
       + " already exists for component with ID %s.";
-
+  private static final String VFC_IMAGE_NAME_FORMAT_MSG = "Field does not conform to predefined criteria"
+          + ": name : must match %s";
   private static final String IMAGE_INVALID_FORMAT_MSG = "The format value doesn't meet the "
       + "expected attribute value.";
 
@@ -28,11 +26,24 @@ public class ImageErrorBuilder {
    *
    * @return the duplicate image name error builder
    */
-  public static ErrorCode getDuplicateImageNameErrorBuilder(String imageName, String componenetId) {
+  public static ErrorCode getDuplicateImageNameErrorBuilder(String imageName, String componentId) {
     ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
     builder.withId(DUPLICATE_IMAGE_NAME_NOT_ALLOWED);
     builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(String.format(VFC_IMAGE_DUPLICATE_NAME_MSG, imageName, componenetId ));
+    builder.withMessage(String.format(VFC_IMAGE_DUPLICATE_NAME_MSG, imageName, componentId ));
+    return builder.build();
+  }
+
+  /**
+   * Gets image name format error builder.
+   *
+   * @return the image name format error builder
+   */
+  public static ErrorCode getImageNameFormatErrorBuilder(String pattern) {
+    ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
+    builder.withId(IMAGE_NAME_FORMAT_NOT_ALLOWED);
+    builder.withCategory(ErrorCategory.APPLICATION);
+    builder.withMessage(String.format(VFC_IMAGE_NAME_FORMAT_MSG, pattern));
     return builder.build();
   }
 

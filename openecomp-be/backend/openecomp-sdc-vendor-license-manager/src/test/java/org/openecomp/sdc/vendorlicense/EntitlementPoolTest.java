@@ -89,15 +89,9 @@ public class EntitlementPoolTest {
         entitlementPool.setDescription(desc);
         entitlementPool.setThresholdValue(threshold);
         entitlementPool.setThresholdUnit(thresholdUnit);
-        entitlementPool
-                .setEntitlementMetric(new ChoiceOrOther<>(entitlementMetricChoice, entitlementMetricOther));
         entitlementPool.setIncrements(increments);
-        entitlementPool.setAggregationFunction(
-                new ChoiceOrOther<>(aggregationFunctionChoice, aggregationFunctionOther));
         entitlementPool.setOperationalScope(
                 new MultiChoiceOrOther<>(operationalScopeChoices, operationalScopeOther));
-        entitlementPool.setTime(new ChoiceOrOther<>(timeChoice, timeOther));
-        entitlementPool.setManufacturerReferenceNumber(sku);
         return entitlementPool;
     }
 

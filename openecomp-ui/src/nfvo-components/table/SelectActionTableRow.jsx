@@ -27,12 +27,12 @@ function renderErrorOrCheck({hasError, overlayMsg}) {
 	return <SVGIcon name='checkCircle'/>;
 }
 
-const SelectActionTableRow = ({children, onDelete, hasError, hasErrorIndication, overlayMsg}) => (
+const SelectActionTableRow = ({children, onDelete, hasError, hasErrorIndication, overlayMsg, showDelete}) => (
 	<div className='select-action-table-row-wrapper'>
 		<div className={`select-action-table-row ${hasError ? 'has-error' : ''}`}>
 			{children}
 		</div>
-		{onDelete && <SVGIcon name='trashO' data-test-id='select-action-table-delete' onClick={onDelete} />}
+		{onDelete && <SVGIcon name='trashO' iconClassName={(showDelete) ? '' : 'hideDelete'} data-test-id='select-action-table-delete' onClick={(showDelete) ? onDelete : null} />}
 		{hasErrorIndication && renderErrorOrCheck({hasError, overlayMsg})}
 	</div>
 );

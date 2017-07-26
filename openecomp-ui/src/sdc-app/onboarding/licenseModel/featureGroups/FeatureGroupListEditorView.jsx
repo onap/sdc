@@ -65,7 +65,7 @@ class FeatureGroupListEditorView extends React.Component {
 					{this.filterList().map(listItem => this.renderFeatureGroupListItem(listItem, isReadOnlyMode, version))}
 				</ListEditorView>
 				{featureGroupsModal.show && <Modal show={featureGroupsModal.show} bsSize='large' animation={true}
-					       className='onborading-modal feature-group-modal'>
+					       className='onborading-modal license-model-modal feature-group-modal'>
 						<Modal.Header>
 							<Modal.Title>{`${featureGroupsModal.editMode ? i18n('Edit Feature Group') : i18n('Create New Feature Group')}`}</Modal.Title>
 						</Modal.Header>
@@ -84,7 +84,7 @@ class FeatureGroupListEditorView extends React.Component {
 
 
 	renderFeatureGroupListItem(listItem, isReadOnlyMode, version) {
-		let {name, description, entitlementPoolsIds = [], licenseKeyGroupsIds = []} = listItem;
+		let {name, description, manufacturerReferenceNumber, entitlementPoolsIds = [], licenseKeyGroupsIds = []} = listItem;
 		return (
 			<ListEditorItemView
 				key={listItem.id}
@@ -111,9 +111,19 @@ class FeatureGroupListEditorView extends React.Component {
 				</div>
 
 				<div className='list-editor-item-view-field'>
+					<div className='feature-groups-count-field'>
+						<div className='title'>{i18n('Manufacturer Reference')}</div>
+						<div className='title'>{i18n('Number')}</div>
+						<div className='feature-groups-count-ep'>{manufacturerReferenceNumber}</div>
+					</div>
+				</div>
+
+				<div className='list-editor-item-view-field'>
 					<div className='title'>{i18n('Description')}</div>
 					<div className='text description'>{description}</div>
 				</div>
+				
+				
 
 			</ListEditorItemView>
 		);

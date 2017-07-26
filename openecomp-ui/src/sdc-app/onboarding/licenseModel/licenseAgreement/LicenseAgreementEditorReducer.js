@@ -26,7 +26,7 @@ export default (state = {}, action) => {
 					'description' : {
 						isValid: true,
 						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'maxLength', data: 1000}],
+						validations: [{type: 'maxLength', data: 1000}],
 						tabId: LicenseAgreementEnums.SELECTED_LICENSE_AGREEMENT_TAB.GENERAL
 					},
 					'requirementsAndConstrains' : {
@@ -38,7 +38,7 @@ export default (state = {}, action) => {
 					'licenseTerm' : {
 						isValid: true,
 						errorText: '',
-						validations: [],
+						validations: [{type: 'required', data: true}],
 						tabId: LicenseAgreementEnums.SELECTED_LICENSE_AGREEMENT_TAB.GENERAL
 					},
 					'name' : {
