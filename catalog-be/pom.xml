@@ -583,7 +583,6 @@
 		<finalName>${project.artifactId}-${project.version}</finalName>
 
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -682,8 +681,31 @@
 							</resources>
 						</configuration>
 					</execution>
+					
+					<execution>
+						<id>copy-static-configuration-files</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.parent.basedir}/catalog-be/src/main/resources/config</directory>
+									<includes>
+										<include>Artifact-Generator.properties</include>
+										<include>error-configuration.yaml</include>
+										<include>ecomp-error-configuration.yaml</include>
+										<include>logback.xml</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					
           			<execution>
-            			<id>copy.tosca.folder.to.os.chef</id>
+            			<id>copy-tosca-folder</id>
             			<!-- here the phase you need -->
             			<phase>install</phase>
             			<goals>
@@ -707,18 +729,28 @@
 				<version>3.0.0</version>
 				<executions>
 					<execution>
-						<id>clean.tosca.chef.os.folder</id>
+						<id>clean-static-files</id>
 						<phase>clean</phase>
 						<goals>
 							<goal>clean</goal>
 						</goals>
 						<configuration>
-
 							<filesets>
+								<!-- tosca files -->
 								<fileset>
 									<directory>${project.parent.basedir}/asdctool/tosca</directory>
 									<followSymlinks>false</followSymlinks>
 								</fileset>
+								<!-- static configuration files -->
+								<fileset>	
+          							<directory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</directory>
+          							<includes>
+										<include>Artifact-Generator.properties</include>
+										<include>error-configuration.yaml</include>
+										<include>ecomp-error-configuration.yaml</include>
+										<include>logback.xml</include>
+									</includes>
+          						</fileset>
 							</filesets>
 						</configuration>
 					</execution>

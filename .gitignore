@@ -153,3 +153,8 @@ node/*
 common/openecomp-sdc-artifact-generator-lib/openecomp-sdc-artifact-generator-core/logs/*
 
 /asdctool/tosca/*
+
+/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/Artifact-Generator.properties
+/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/ecomp-error-configuration.yaml
+/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml
+/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/logback.xml
