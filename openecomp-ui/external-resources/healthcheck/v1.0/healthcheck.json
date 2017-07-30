@@ -1,10 +1,10 @@
 {
-  "sdcVersion": "1.0-SNAPSHOT",
+  "sdcVersion": "{VERSION}",
   "componentsInfo": [
     {
       "healthCheckComponent": "FE",
       "healthCheckStatus": "UP",
-      "version": "1.0-SNAPSHOT",
+      "version": "{VERSION}",
       "description": "OK"
     }
   ]
