@@ -33,14 +33,16 @@ const path = {
 	svgSrc: './resources/images/svg/*.svg',
 	appinf: './webapp-onboarding/**/*.*',
 	jetty: './webapp-onboarding/WEB-INF/jetty-web.xml',
+	healthCheckInput: './external-resources/healthcheck/v1.0/healthcheck.json',
 	srcDir: './src/',
 	// output
 	output: dist,
 	css: dist + '/css',
 	svg: dist + '/resources/images/svg',
 	appinf_output: dist + '/webapp-onboarding',
+	healthCheckOutput: dist + '/v1.0',
 	// war
-	war: [dist + '/index.html', dist + '/punch-outs*.js', dist + '/**/*.{css,png,svg,eot,ttf,woff,woff2,otf}', dist + '/**/*(config.json)', dist + '/webapp-onboarding/**'],
+	war: [dist + '/index.html', dist + '/punch-outs*.js', dist + '/**/*.{css,png,svg,eot,ttf,woff,woff2,otf}', dist + '/**/*(config.json)', dist + '/webapp-onboarding/**', dist + '/**/*(healthcheck.json)'],
 	heatWar: [dist + '/heat.html', dist + '/heat-validation_en.js', dist + '/**/*.{css,png,svg,eot,ttf,woff,woff2,otf}', dist + '/**/*(config.json)', 'webapp-heat-validation/**'],
 	wardest: dist,
 	// storybook
@@ -69,6 +71,17 @@ taskMaker.defineTask('watch', {taskName: 'watch-stuff', src: [path.json, path.in
 //TODO: delete this task after gulp-css-usage support for SCSS files
 taskMaker.defineTask('sass', {taskName: 'sass', src: path.scss, dest: path.css, config: {outputStyle: 'compressed'}});
 
+// copy the healthcheck file and replace the version with command line argument
+gulp.task('healthcheck', function(){
+	let args = process.argv;
+	let versionArg = args.find(arg => arg.startsWith('--version'));
+	let version = versionArg && versionArg.slice(versionArg.indexOf('=') + 1);
+	if (versionArg) {
+		gulp.src(path.healthCheckInput)
+			.pipe(replace('{VERSION}', version))
+			.pipe(gulp.dest(path.healthCheckOutput));
+	}
+});
 
 // update the app-context for the web-xml file to the value from the config
 gulp.task('app-context', function(){
@@ -86,7 +99,7 @@ gulp.task('copy-stuff', callback => runSequence(['copy-json', 'copy-index.html',
 // minimum build for dev
 gulp.task('dev', callback => runSequence('clean', 'copy-stuff', callback));
 // build procedure for war file
-gulp.task('build', callback => runSequence('clean', 'copy-stuff', 'prod', ['compress-war', 'compress-heat-war'], callback));
+gulp.task('build', callback => runSequence('clean', 'copy-stuff', 'healthcheck', 'prod', ['compress-war', 'compress-heat-war'], callback));
 // default build is set to 'dev'
 gulp.task('default', ['dev']);
 // creating the webpack tasks for the production build
