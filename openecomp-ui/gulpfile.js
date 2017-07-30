@@ -33,7 +33,7 @@ const path = {
 	svgSrc: './resources/images/svg/*.svg',
 	appinf: './webapp-onboarding/**/*.*',
 	jetty: './webapp-onboarding/WEB-INF/jetty-web.xml',
-	healthCheckInput: './external-resources/healthcheck/v1.0/healthcheck.json',
+	healthCheckInput: './external-resources/healthcheck/healthcheck.json',
 	srcDir: './src/',
 	// output
 	output: dist,
