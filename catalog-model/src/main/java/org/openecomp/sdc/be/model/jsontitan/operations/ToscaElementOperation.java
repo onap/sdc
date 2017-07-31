@@ -1068,7 +1068,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 	public <T extends ToscaElement> Either<List<T>, StorageOperationStatus> getElementCatalogData(ComponentTypeEnum componentType, List<ResourceTypeEnum> excludeTypes, boolean isHighestVersions) {
 		Either<List<GraphVertex>, TitanOperationStatus> listOfComponents;
 		if (isHighestVersions) {
-			listOfComponents = getListOfHighestComponents(componentType, excludeTypes);
+			listOfComponents = getListOfHighestComponents(componentType, excludeTypes, JsonParseFlagEnum.NoParse);
 		}
 		else {
 			listOfComponents = getListOfHighestAndAllCertifiedComponents(componentType, excludeTypes);
@@ -1095,7 +1095,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 		return Either.left(result);
 	}
 
-	private Either<List<GraphVertex>, TitanOperationStatus> getListOfHighestComponents(ComponentTypeEnum componentType, List<ResourceTypeEnum> excludeTypes) {
+	private Either<List<GraphVertex>, TitanOperationStatus> getListOfHighestComponents(ComponentTypeEnum componentType, List<ResourceTypeEnum> excludeTypes, JsonParseFlagEnum parseFlag) {
 		Map<GraphPropertyEnum, Object> propertiesToMatch = new HashMap<>();
 		Map<GraphPropertyEnum, Object> propertiesHasNotToMatch = new HashMap<>();
 		propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
@@ -1107,13 +1107,13 @@ public abstract class ToscaElementOperation extends BaseOperation {
 		}
 		propertiesHasNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
 
-		return titanDao.getByCriteria(null, propertiesToMatch, propertiesHasNotToMatch, JsonParseFlagEnum.ParseMetadata);
+		return titanDao.getByCriteria(null, propertiesToMatch, propertiesHasNotToMatch, parseFlag);
 	}
 
 	// highest + (certified && !highest)
 	public Either<List<GraphVertex>, TitanOperationStatus> getListOfHighestAndAllCertifiedComponents(ComponentTypeEnum componentType, List<ResourceTypeEnum> excludeTypes) {
 		long startFetchAllStates = System.currentTimeMillis();
-		Either<List<GraphVertex>, TitanOperationStatus> highestNodes = getListOfHighestComponents(componentType, excludeTypes);
+		Either<List<GraphVertex>, TitanOperationStatus> highestNodes = getListOfHighestComponents(componentType, excludeTypes, JsonParseFlagEnum.ParseMetadata);
 
 		Map<GraphPropertyEnum, Object> propertiesToMatchCertified = new HashMap<>();
 		Map<GraphPropertyEnum, Object> propertiesHasNotToMatchCertified = new HashMap<>();

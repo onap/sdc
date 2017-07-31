@@ -53,8 +53,6 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -1189,17 +1187,25 @@ public abstract class BaseOperation {
 		}
 		if (result == null) {
 			toscaDataVertex = toscaDataVertexRes.left().value();
-			existingToscaDataMap = (Map<String, ToscaDataDefinition>) getDeepElements(toscaDataVertexRes.left().value(), pathKeys);
-			for (String uniqueKey : uniqueKeys) {
-				result = removeToscaDataElement(toscaElement, edgeLabel, uniqueKey, toscaDataVertex, existingToscaDataMap);
-				if (result != StorageOperationStatus.OK) {
-					break;
-				}
-			}
+			existingToscaDataMap = getDeepElements(toscaDataVertexRes.left().value(), pathKeys);
+			result = deleteElementsFromDataVertex(toscaElement, edgeLabel, uniqueKeys, toscaDataVertex, existingToscaDataMap);
 		}
 		if (result == null) {
 			result = StorageOperationStatus.OK;
 		}
+		return result;
+	}
+
+	private StorageOperationStatus deleteElementsFromDataVertex(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, List<String> uniqueKeys, GraphVertex toscaDataVertex, Map<String, ToscaDataDefinition> existingToscaDataMap) {
+		StorageOperationStatus result;
+		for (String uniqueKey : uniqueKeys) {
+			result = removeKeyFromDataVertex(uniqueKey, existingToscaDataMap);
+			if (result != StorageOperationStatus.OK) {
+				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to delete tosca data element of the tosca element {} by label {}. Status is {}. ", toscaElement.getUniqueId(), edgeLabel, result);
+				break;
+			}
+		}
+		result = updateToscaDataElement(toscaElement, edgeLabel, toscaDataVertex);
 		return result;
 	}
 
@@ -1229,7 +1235,6 @@ public abstract class BaseOperation {
  * @return
  */
 	public StorageOperationStatus deleteToscaDataElements(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, List<String> uniqueKeys) {
-
 		StorageOperationStatus result = null;
 		GraphVertex toscaDataVertex;
 		Map<String, ToscaDataDefinition> existingToscaDataMap;
@@ -1242,12 +1247,7 @@ public abstract class BaseOperation {
 		if (result == null) {
 			toscaDataVertex = toscaDataVertexRes.left().value();
 			existingToscaDataMap = (Map<String, ToscaDataDefinition>) toscaDataVertex.getJson();
-			for (String uniqueKey : uniqueKeys) {
-				result = removeToscaDataElement(toscaElement, edgeLabel, uniqueKey, toscaDataVertex, existingToscaDataMap);
-				if (result != StorageOperationStatus.OK) {
-					break;
-				}
-			}
+			result = deleteElementsFromDataVertex(toscaElement, edgeLabel, uniqueKeys, toscaDataVertex, existingToscaDataMap);
 		}
 		if (result == null) {
 			result = StorageOperationStatus.OK;
@@ -1255,21 +1255,22 @@ public abstract class BaseOperation {
 		return result;
 	}
 
-	private <T extends ToscaDataDefinition> StorageOperationStatus removeToscaDataElement(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, String uniqueKey, GraphVertex toscaDataVertex, Map<String, T> existingToscaDataMap) {
-
+	private <T extends ToscaDataDefinition> StorageOperationStatus updateToscaDataElement(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, GraphVertex toscaDataVertex) {
 		StorageOperationStatus result = StorageOperationStatus.OK;
-		if (!existingToscaDataMap.containsKey(uniqueKey)) {
-			result = StorageOperationStatus.NOT_FOUND;
-			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to delete tosca data element of the tosca element {} by label {}. Status is {}. ", toscaElement.getUniqueId(), edgeLabel, result);
-		} else {
-			existingToscaDataMap.remove(uniqueKey);
-			Either<GraphVertex, TitanOperationStatus> updateOrCopyRes = updateOrCopyOnUpdate(toscaDataVertex, toscaElement, edgeLabel);
-			if (updateOrCopyRes.isRight()) {
-				result = DaoStatusConverter.convertTitanStatusToStorageStatus(updateOrCopyRes.right().value());
-				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to update tosca data {} of the tosca element {}. Status is {}. ", edgeLabel, toscaElement.getUniqueId(), result);
-			}
+		Either<GraphVertex, TitanOperationStatus> updateOrCopyRes = updateOrCopyOnUpdate(toscaDataVertex, toscaElement, edgeLabel);
+		if (updateOrCopyRes.isRight()) {
+			result = DaoStatusConverter.convertTitanStatusToStorageStatus(updateOrCopyRes.right().value());
+			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to update tosca data {} of the tosca element {}. Status is {}. ", edgeLabel, toscaElement.getUniqueId(), result);
 		}
 		return result;
+	}
+
+	private <T extends ToscaDataDefinition> StorageOperationStatus removeKeyFromDataVertex(String uniqueKey, Map<String, T> existingToscaDataMap) {
+		if (!existingToscaDataMap.containsKey(uniqueKey)) {
+			return StorageOperationStatus.NOT_FOUND;
+		}
+		existingToscaDataMap.remove(uniqueKey);
+		return StorageOperationStatus.OK;
 	}
 
 	protected <K extends ToscaDataDefinition> StorageOperationStatus handleToscaData(GraphVertex toscaElement, VertexTypeEnum vertexLabel, EdgeLabelEnum edgeLabel, GraphVertex toscaDataVertex, Map<String, K> mergedToscaDataMap) {

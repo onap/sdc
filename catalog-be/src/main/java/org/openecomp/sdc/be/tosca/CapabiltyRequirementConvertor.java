@@ -122,7 +122,7 @@ public class CapabiltyRequirementConvertor {
 		if (prop.getSchema() != null && prop.getSchema().getProperty() != null) {
 			innerType = prop.getSchema().getProperty().getType();
 		}
-		Object convertedValue = PropertyConvertor.getInstance().convertToToscaObject(propertyType, prop.getName(), prop.getValue(), innerType, dataTypes);
+		Object convertedValue = PropertyConvertor.getInstance().convertToToscaObject(propertyType,  prop.getValue(), innerType, dataTypes);
 		return convertedValue;
 	}
 
@@ -183,9 +183,19 @@ public class CapabiltyRequirementConvertor {
 		if (requirements != null) {
 			for (Map.Entry<String, List<RequirementDefinition>> entry : requirements.entrySet()) {
 				entry.getValue().stream().forEach(r -> {
-					String fullReqName = getRequirementPath(r);
+					String fullReqName;
+					String sourceCapName;
+					if(ToscaUtils.isComplexVfc(component)){
+						fullReqName = r.getName();
+						sourceCapName = getSourceCvfcDataTypeName(r.getName(), r.getOwnerName());
+					} else {
+						fullReqName = getRequirementPath(r);
+						sourceCapName = getSubPathByFirstDelimiterAppearance(fullReqName);
+					}
 					log.debug("the requirement {} belongs to resource {} ", fullReqName, component.getUniqueId());
-					toscaRequirements.put(fullReqName, new String[]{r.getOwnerName(), getSubPathByFirstDelimiterAppearance(fullReqName)});
+					if(sourceCapName!= null){
+						toscaRequirements.put(fullReqName, new String[]{r.getOwnerName(), sourceCapName});
+					}
 				});
 				log.debug("Finish convert Requirements for node type");
 			}
@@ -193,6 +203,13 @@ public class CapabiltyRequirementConvertor {
 			log.debug("No Requirements for node type");
 		}
 		return toscaRequirements;
+	}
+
+	private String getSourceCvfcDataTypeName(String name, String ownerName) {
+		if(name.contains(ownerName)){
+			return name.substring(0, name.length() - ownerName.length() - 1);
+		}
+		return null;
 	}
 
 	private String getRequirementPath(RequirementDefinition r) {
@@ -254,9 +271,19 @@ public class CapabiltyRequirementConvertor {
 		if (capabilities != null) {
 			for (Map.Entry<String, List<CapabilityDefinition>> entry : capabilities.entrySet()) {
 				entry.getValue().stream().forEach(c -> {
-					String fullCapName = getCapabilityPath(c);
+					String fullCapName;
+					String sourceReqName;
+					if(ToscaUtils.isComplexVfc(component)){
+						fullCapName = c.getName();
+						sourceReqName = getSourceCvfcDataTypeName(c.getName(), c.getOwnerName());
+					} else {
+						fullCapName = getCapabilityPath(c);
+						sourceReqName = getSubPathByFirstDelimiterAppearance(fullCapName);
+					}
 					log.debug("the capabilty {} belongs to resource {} ", fullCapName, component.getUniqueId());
-					toscaCapabilities.put(fullCapName, new String[]{c.getOwnerName(), getSubPathByFirstDelimiterAppearance(fullCapName)});
+					if(sourceReqName!= null){
+						toscaCapabilities.put(fullCapName, new String[]{c.getOwnerName(), sourceReqName});
+					}
 				});
 			}
 		} else {

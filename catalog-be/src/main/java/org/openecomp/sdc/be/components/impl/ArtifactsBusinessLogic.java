@@ -1526,7 +1526,14 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 			handleAuditing(auditingAction, parent, componentId, user, null, null, artifactId, responseFormat, componentType, null);
 			return Either.right(responseFormat);
 		}
-		Either<ArtifactDefinition, Operation> insideEither = Either.left(artifactDefinition);
+		if(artifactDefinition.getPayloadData() == null) {
+			log.debug("Empty payload data returned from DB by artifat id {}", artifactId);
+			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, artifactId);
+			handleAuditing(auditingAction, parent, componentId, user, null, null, artifactId, responseFormat, componentType, null);
+			return Either.right(responseFormat);
+
+		}
+			Either<ArtifactDefinition, Operation> insideEither = Either.left(artifactDefinition);
 		ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
 		handleAuditing(auditingAction, parent, componentId, user, artifactDefinition, null, artifactId, responseFormat, componentType, null);
 		return Either.left(insideEither);

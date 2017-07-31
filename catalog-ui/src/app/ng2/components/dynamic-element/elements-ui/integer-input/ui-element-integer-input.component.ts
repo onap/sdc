@@ -35,7 +35,7 @@ export class UiElementIntegerInputComponent extends UiElementBase implements UiE
 
     onSave() {
         if (!this.control.invalid){
-            this.baseEmitter.emit(JSON.parse(this.value));
+            this.baseEmitter.emit(this.value ? JSON.parse(this.value) : this.value);
         }
     }
 }

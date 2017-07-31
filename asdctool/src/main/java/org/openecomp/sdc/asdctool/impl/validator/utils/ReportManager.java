@@ -1,7 +1,6 @@
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
 import org.apache.commons.lang.text.StrBuilder;
-import org.openecomp.sdc.asdctool.impl.validator.tasks.TopologyTemplateValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
@@ -16,21 +15,40 @@ import java.util.*;
  */
 public class ReportManager {
 
-    private static List<ValidationTaskResult> taskResults;
     private static String reportOutputFilePath;
+    private static String csvReportFilePath;
     private static Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
+    private static Map<String, Map<String, VertexResult>> resultsPerVertex = new HashMap<>();
 
     public ReportManager() {
         try {
-            taskResults = new ArrayList<>();
-            // open file for first time
-            reportOutputFilePath = ValidationConfigManager.getOutputFilePath();
-            StrBuilder sb = new StrBuilder();
-            sb.appendln("-----------------------Validation Tool Results:-------------------------");
-            Files.write(Paths.get(reportOutputFilePath), sb.toString().getBytes());
+            initCsvFile();
+            initReportFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void initReportFile() throws IOException {
+        reportOutputFilePath = ValidationConfigManager.getOutputFilePath();
+        StrBuilder sb = new StrBuilder();
+        sb.appendln("-----------------------Validation Tool Results:-------------------------");
+        Files.write(Paths.get(reportOutputFilePath), sb.toString().getBytes());
+    }
+
+    private void initCsvFile() throws IOException {
+        csvReportFilePath = ValidationConfigManager.getCsvReportFilePath();
+        StrBuilder sb = new StrBuilder();
+        sb.append("Vertex ID,"+"Task Name,"+"Success,"+"Result Details"+","+"Result Description");
+        sb.appendNewLine();
+        Files.write(Paths.get(csvReportFilePath), sb.toString().getBytes());
+    }
+
+    public static void reportTaskEnd(String vertexId, String taskName, VertexResult result) {
+        Map<String, VertexResult> vertexTasksResults =
+                Optional.ofNullable(resultsPerVertex.get(vertexId)).orElse(new HashMap<>());
+        vertexTasksResults.put(taskName, result);
+        resultsPerVertex.put(vertexId, vertexTasksResults);
     }
 
     public static void addFailedVertex (String taskName, String vertexId) {
@@ -42,12 +60,7 @@ public class ReportManager {
         failedVerticesPerTask.put(taskName, failedVertices);
     }
 
-    public static void reportValidationTaskStatus(GraphVertex vertexScanned, String taskName, String taskResultMessage, boolean success) {
-        taskResults.add(new ValidationTaskResult(vertexScanned, taskName, taskResultMessage, success));
-        printValidationTaskStatus(vertexScanned, taskName, success);
-    }
-
-    private static void printValidationTaskStatus(GraphVertex vertexScanned, String taskName, boolean success) {
+    public static void printValidationTaskStatus(GraphVertex vertexScanned, String taskName, boolean success) {
         String successStatus = success ? "success" : "failed";
         String line = "-----------------------Vertex: "+vertexScanned.getUniqueId()+", Task " + taskName + " " +successStatus+"-----------------------";
         StrBuilder sb = new StrBuilder();
@@ -55,16 +68,6 @@ public class ReportManager {
         sb.appendln(line);
         sb.appendNewLine();
         writeReportLineToFile(line);
-    }
-
-    public static void reportValidationTaskSummary(TopologyTemplateValidationTask task, int numOfFailedComponents, int numOfSuccessComponents) {
-        StrBuilder sb = new StrBuilder();
-        sb.appendNewLine();
-        sb.appendln("-----------------------Task " + task.getTaskName() + " Validation Summary-----------------------");
-        sb.appendln("Num of failed components: "+ numOfFailedComponents);
-        sb.appendln("Num of success components: "+ numOfSuccessComponents);
-        sb.appendln("Total components scanned: " + numOfFailedComponents+numOfSuccessComponents);
-        writeReportLineToFile(sb.toString());
     }
 
     public static void writeReportLineToFile(String message) {
@@ -110,5 +113,20 @@ public class ReportManager {
             sb.appendNewLine();
         });
         writeReportLineToFile(sb.toString());
+        printAllResults();
+    }
+
+    public static void printAllResults() {
+        resultsPerVertex.forEach((vertex, tasksResults)->{
+            tasksResults.forEach((task, result) -> {
+                try {
+                    String resultLine = vertex +","+task+","+result.getStatus()+","+result.getResult();
+                    Files.write(Paths.get(csvReportFilePath), resultLine.getBytes(), StandardOpenOption.APPEND);
+                    Files.write(Paths.get(csvReportFilePath), new StrBuilder().appendNewLine().toString().getBytes(), StandardOpenOption.APPEND);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        });
     }
 }

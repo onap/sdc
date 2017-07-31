@@ -22,7 +22,6 @@ package org.openecomp.sdc.ci.tests.execute.sanity;
 
 import static org.testng.AssertJUnit.assertTrue;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,11 +58,8 @@ import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import com.aventstack.extentreports.Status;
 
 public class ImportVFCAsset extends SetupCDTest {
 	
@@ -72,13 +68,7 @@ public class ImportVFCAsset extends SetupCDTest {
 	private String filePath;
 	@BeforeClass
 	public void beforeClass(){
-		filePath = System.getProperty("filepath");
-		if (filePath == null && System.getProperty("os.name").contains("Windows")) {
-			filePath = FileHandling.getResourcesFilesPath();
-		}
-		else if(filePath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
-			filePath = FileHandling.getBasePath() + File.separator + "Files" + File.separator + "";
-		}
+		filePath = FileHandling.getFilePath("");
 	}
 	
 	@DataProvider(name = "assetFiles", parallel = false)

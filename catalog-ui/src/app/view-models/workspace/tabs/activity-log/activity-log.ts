@@ -54,7 +54,6 @@ export class ActivityLogViewModel {
         this.initScope();
         this.$scope.setValidState(true);
         this.initSortedTableScope();
-        this.$scope.updateSelectedMenuItem();
 
         // Set default sorting
         this.$scope.sortBy = 'logDate';

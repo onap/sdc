@@ -52,7 +52,6 @@ export class PropertiesViewModel {
                 private ModalsHandler:ModalsHandler,
                 private ComponentServiceNg2:ComponentServiceNg2) {
         this.initComponentProperties();
-        this.$scope.updateSelectedMenuItem();
     }
 
     private initComponentProperties = ():void => {

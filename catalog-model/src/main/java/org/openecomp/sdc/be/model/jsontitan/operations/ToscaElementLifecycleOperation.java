@@ -767,6 +767,12 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 			}
 		}
 		if (result == null) {
+			Either<GraphVertex, StorageOperationStatus> updateRelationsRes = updateLastModifierEdge(toscaElement, owner, modifier);
+			if (updateRelationsRes.isRight()) {
+				result = updateRelationsRes.right().value();
+			}
+		}
+		if (result == null) {
 			result = StorageOperationStatus.OK;
 		}
 		return result;

@@ -20,7 +20,7 @@ public class ServiceArtifactValidationTask extends ServiceValidationTask {
     }
 
     @Override
-    public boolean validate(GraphVertex vertex) {
+    public ArtifactsVertexResult validate(GraphVertex vertex) {
         return artifactValidationUtils.validateTopologyTemplateArtifacts(vertex, getTaskName());
     }
 }

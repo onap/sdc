@@ -22,7 +22,7 @@
  * Created by rc2122 on 6/1/2017.
  */
 import { Component, ElementRef, Input, OnInit, OnDestroy } from '@angular/core';
-//import {ViewContainerRef, ViewChild} from '@angular/core';
+import {ViewContainerRef, ViewChild} from '@angular/core';
 import * as $ from 'jquery';
 import { ButtonsModelMap, ModalModel } from 'app/models';
 
@@ -34,9 +34,9 @@ import { ButtonsModelMap, ModalModel } from 'app/models';
 
 export class ModalComponent implements OnInit, OnDestroy {
     @Input() input: ModalModel;
+    @Input() dynamicContent: any;
+    @ViewChild('dynamicContentContainer', { read: ViewContainerRef }) dynamicContentContainer: ViewContainerRef; //Allows for custom component as body instead of simple message. See ModalService.createActionModal for implementation details, and HttpService's catchError() for example.
     private modalElement: JQuery;
-    //@ViewChild('modalBody', { read: ViewContainerRef }) modalContainer: ViewContainerRef; //TODO: allow for custom component as body instead of simple message
-    
 
     constructor( el: ElementRef ) {
         this.modalElement = $(el.nativeElement);

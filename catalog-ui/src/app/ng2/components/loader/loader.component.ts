@@ -21,7 +21,7 @@
 /**
  * Created by rc2122 on 6/6/2017.
  */
-import {Component, Input, ElementRef, Renderer, SimpleChanges} from "@angular/core";
+import { Component, Input, ViewContainerRef, SimpleChanges} from "@angular/core";
 @Component({
     selector: 'loader',
     templateUrl: './loader.component.html',
@@ -29,13 +29,20 @@ import {Component, Input, ElementRef, Renderer, SimpleChanges} from "@angular/co
 })
 export class LoaderComponent {
 
-    @Input() display:boolean;
-    @Input() size:string;// small || medium || large
-    @Input() relative: boolean;
-    @Input() elementSelector: string; // optional. If is relative is set to true, option to pass in element that loader should be relative to. Otherwise, will be relative to parent element.
+    @Input() display: boolean;
+    @Input() size: string;// small || medium || large
+    @Input() relative: boolean; // If is relative is set to true, loader will appear over parent element. Otherwise, will be fixed over the entire page.
+    @Input() loaderDelay: number; //optional - number of ms to delay loader display.
     
+    private isVisible: boolean = false;
+    private offset : {
+        top: string;
+        left: string;
+        width: string;
+        height: string;
+    };
 
-    constructor (private el: ElementRef, private renderer: Renderer){
+    constructor(private viewContainerRef: ViewContainerRef) { 
     }
 
     ngOnInit() {
@@ -49,46 +56,31 @@ export class LoaderComponent {
 
     ngOnChanges(changes: SimpleChanges) {
         if(changes.display){
-            if (this.display) {
-                this.changeLoaderDisplay(false); //display is set to true, so loader will appear unless we explicitly tell it not to.
-                window.setTimeout((): void => {
-                    this.display && this.changeLoaderDisplay(true); //only show loader if we still need to display it.
-                }, 500);
-            } else {
-                window.setTimeout(():void => {
-                    this.changeLoaderDisplay(false);
-                }, 0);
-            }
+            this.changeLoaderDisplay(this.display);
         }
     }
 
-    changeLoaderDisplay = (display: boolean): void => {
+    private changeLoaderDisplay = (display: boolean): void => {
         if (display) {
-            this.calculateLoaderPosition();
-            this.renderer.setElementStyle(this.el.nativeElement, 'display', 'block');
+            window.setTimeout((): void => {
+                this.display && this.showLoader(); //only show loader if this.display has not changed in the meanwhile.
+            }, this.loaderDelay || 0);
         } else {
-            this.renderer.setElementStyle(this.el.nativeElement, 'display', 'none');
+            this.isVisible = false;
         }
     }
 
-    calculateLoaderPosition = () => {
-        if (this.relative === true) { // Can change the parent position to relative without causing style issues.
-            let parent = (this.elementSelector) ? angular.element(this.elementSelector).get(0) : this.el.nativeElement.parentElement;
-            this.renderer.setElementStyle(parent, 'position', 'relative');
-            this.setLoaderPosition(0, 0); //will be relative to parent and appear over specified element
-            //TODO: DONT force parent to have position relative; set inner div's style instead of outer element
-            // let parentPos: ClientRect = this.el.nativeElement.parentElement.getBoundingClientRect();
-            // this.setLoaderPosition(parentPos.top, parentPos.left, parentPos.width, parentPos.height);
-        } else {
-            this.setLoaderPosition(0, 0); //will appear over whole page
+    private showLoader = () => {
+        if (this.relative === true) {
+            let parentElement = this.viewContainerRef.element.nativeElement.parentElement;
+            this.offset = {
+                left: (parentElement.offsetLeft) ? parentElement.offsetLeft + "px" : undefined,
+                top: (parentElement.offsetTop) ? parentElement.offsetTop + "px" : undefined,
+                width: (parentElement.offsetWidth) ? parentElement.offsetWidth + "px" : undefined,
+                height: (parentElement.offsetHeight) ? parentElement.offsetHeight + "px" : undefined
+            };
         }
+        this.isVisible = true;
     }
 
-    setLoaderPosition = (top:number, left:number, width?:number, height?:number): void => {
-        this.renderer.setElementStyle(this.el.nativeElement, 'position', 'absolute');
-        this.renderer.setElementStyle(this.el.nativeElement, 'top', top? top.toString() : "0");
-        this.renderer.setElementStyle(this.el.nativeElement, 'left', left? left.toString() : "0");
-        this.renderer.setElementStyle(this.el.nativeElement, 'width', width? width.toString() : "100%");
-        this.renderer.setElementStyle(this.el.nativeElement, 'height', height? height.toString() : "100%");
-    };
 }

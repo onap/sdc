@@ -95,6 +95,7 @@ export * from './models/member';
 export * from './models/modules/base-module';
 export * from './models/properties';
 export * from './models/requirement';
+export * from './models/server-error-response';
 export * from './models/tab';
 export * from './models/tooltip-data';
 export * from './models/user';

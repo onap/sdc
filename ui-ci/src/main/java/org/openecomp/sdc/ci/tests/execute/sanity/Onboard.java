@@ -25,6 +25,7 @@ import static org.testng.AssertJUnit.assertTrue;
 
 import java.awt.AWTException;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -150,17 +151,7 @@ public class Onboard extends SetupCDTest {
 
 	
 	public void runOnboardToDistributionFlow(String filepath, String vnfFile) throws Exception, AWTException {
-		Pair<String,Map<String,String>> onboardAndValidate = OnboardingUtils.onboardAndValidate(filepath, vnfFile, getUser());
-		String vspName = onboardAndValidate.left;
-		
-		DeploymentArtifactPage.getLeftPanel().moveToCompositionScreen();
-		ExtentTestActions.addScreenshot(Status.INFO, "TopologyTemplate_" + vnfFile ,"The topology template for " + vnfFile + " is as follows : ");
-		
-		DeploymentArtifactPage.clickSubmitForTestingButton(vspName);
-
-		reloginWithNewRole(UserRoleEnum.TESTER);
-		GeneralUIUtils.findComponentAndClick(vspName);
-		TesterOperationPage.certifyComponent(vspName);
+		String vspName = onboardAndCertify(filepath, vnfFile);
 
 		reloginWithNewRole(UserRoleEnum.DESIGNER);
 		// create service
@@ -207,6 +198,24 @@ public class Onboard extends SetupCDTest {
 		getExtendTest().log(Status.INFO, String.format("The onboarding %s test is passed ! ", vnfFile));
 	}
 
+	public String onboardAndCertify(String filepath, String vnfFile) throws Exception, IOException {
+		Pair<String,Map<String,String>> onboardAndValidate = OnboardingUtils.onboardAndValidate(filepath, vnfFile, getUser());
+		String vspName = onboardAndValidate.left;
+		
+		DeploymentArtifactPage.getLeftPanel().moveToCompositionScreen();
+		ExtentTestActions.addScreenshot(Status.INFO, "TopologyTemplate_" + vnfFile ,"The topology template for " + vnfFile + " is as follows : ");
+		
+		DeploymentArtifactPage.clickSubmitForTestingButton(vspName);
+
+		reloginWithNewRole(UserRoleEnum.TESTER);
+		GeneralUIUtils.findComponentAndClick(vspName);
+		TesterOperationPage.certifyComponent(vspName);
+		return vspName;
+	}
+	
+	
+	
+
 //	protected synchronized void validateInputArtsVSouput(String serviceName) {
 //		
 //		
@@ -225,12 +234,19 @@ public class Onboard extends SetupCDTest {
 		System.out.println("printttttttttttttt - >" + makeDistributionValue);
 		runOnboardToDistributionFlow(filepath, vnfFile);
 	}
+	
+	@Test(dataProvider = "VNF_List")
+	public void onboardVNFShotFlow(String filepath, String vnfFile) throws Exception, Throwable {
+		setLog(vnfFile);
+		System.out.println("printttttttttttttt - >" + makeDistributionValue);
+		onboardAndCertify(filepath, vnfFile);
+	}
 
 	@Test(dataProvider = "randomVNF_List")
 	public void onboardRandomVNFsTest(String filepath, String vnfFile) throws Exception, Throwable {
 		setLog(vnfFile);
 		System.out.println("printttttttttttttt - >" + makeDistributionValue);
-		System.out.println("vnf File name is: " + vnfFile);
+		System.out.println("Vnf File name is: " + vnfFile);
 		runOnboardToDistributionFlow(filepath, vnfFile);
 	}
 	
@@ -309,7 +325,7 @@ public class Onboard extends SetupCDTest {
 				OpsOperationPage.waitUntilArtifactsDistributed(0);
 		
 		
-		getExtendTest().log(Status.INFO, String.format("onboarding %s test is passed ! ", vnfFile));
+		getExtendTest().log(Status.INFO, String.format("Onboarding %s test is passed ! ", vnfFile));
 		
 		
 	}
@@ -325,15 +341,15 @@ public class Onboard extends SetupCDTest {
 		
 		Map<String, String> vspNames = new HashMap<String, String>(); 
 		for (String vnfFile : vmmscList){
-			getExtendTest().log(Status.INFO, String.format("going to onboard the VNF %s......", vnfFile));
-			System.out.println(String.format("going to onboard the VNF %s......", vnfFile));
+			getExtendTest().log(Status.INFO, String.format("Going to onboard the VNF %s......", vnfFile));
+			System.out.println(String.format("Going to onboard the VNF %s......", vnfFile));
 
 			AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
 			Pair<String,Map<String,String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(vnfFile, filepath, getUser(), amdocsLicenseMembers);
 
-			getExtendTest().log(Status.INFO, String.format("searching for onboarded %s", vnfFile));
+			getExtendTest().log(Status.INFO, String.format("Searching for onboarded %s", vnfFile));
 			HomePage.showVspRepository();
-			getExtendTest().log(Status.INFO,String.format("going to import %s......", vnfFile.substring(0, vnfFile.indexOf("."))));
+			getExtendTest().log(Status.INFO,String.format("Going to import %s......", vnfFile.substring(0, vnfFile.indexOf("."))));
 			OnboardingUtils.importVSP(createVendorSoftwareProduct);
 			
 			ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
@@ -389,19 +405,6 @@ public class Onboard extends SetupCDTest {
 		OpsOperationPage.waitUntilArtifactsDistributed(0);
 
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	@Override

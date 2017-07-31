@@ -92,13 +92,7 @@ public class Vf extends SetupCDTest {
 	private String filePath;
 	@BeforeClass
 	public void beforeClass(){
-		filePath = System.getProperty("filepath");
-		if (filePath == null && System.getProperty("os.name").contains("Windows")) {
-			filePath = FileHandling.getResourcesFilesPath();
-		}
-		else if(filePath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
-			filePath = FileHandling.getBasePath() + File.separator + "Files" + File.separator;
-		}
+		filePath = FileHandling.getFilePath("");
 	}
 	
 	@BeforeMethod
@@ -520,6 +514,11 @@ public class Vf extends SetupCDTest {
 	
 	@Test
 	public void addDeploymentArtifactAndVerifyInCompositionScreen() throws Exception{
+		
+		if(true){
+			throw new SkipException("Open bug 320081");			
+		}
+		
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 		ResourceUIUtils.createResource(vfMetaData, getUser());
 		

@@ -880,6 +880,120 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
 	}
 	
+	@POST
+	@Path("/{containerComponentType}/{containerComponentId}/serviceProxy")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Create service proxy", httpMethod = "POST", notes = "Returns created service proxy", response = Response.class)
+	@ApiResponses(value = { @ApiResponse(code = 201, message = "Service proxy created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
+			@ApiResponse(code = 409, message = "Service proxy already exist") })
+	public Response createServiceProxy(@ApiParam(value = "RI object to be created", required = true) String data, @PathParam("containerComponentId") final String containerComponentId,
+			@ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
+			@HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of modifier user", required = true) String userId, @Context final HttpServletRequest request) {
+		ServletContext context = request.getSession().getServletContext();
+
+		try {
+
+			ComponentInstance componentInstance = RepresentationUtils.fromRepresentation(data, ComponentInstance.class);
+			componentInstance.setInvariantName(null);
+			ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
+			if(componentTypeEnum != ComponentTypeEnum.SERVICE){
+				log.debug("Unsupported container component type {}", containerComponentType);
+				return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+			}
+			ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context, componentTypeEnum);
+			if (componentInstanceLogic == null) {
+				log.debug("Unsupported component type {}", containerComponentType);
+				return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+			}
+			Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceLogic.createServiceProxy(containerComponentType, containerComponentId, userId, componentInstance);
+
+			if (actionResponse.isRight()) {
+				return buildErrorResponse(actionResponse.right().value());
+			}
+			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResponse.left().value());
+
+		} catch (Exception e) {
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create service proxy");
+			log.debug("Create service proxy failed with exception", e);
+			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+		}
+	}
+		
+	@DELETE
+	@Path("/{containerComponentType}/{containerComponentId}/serviceProxy/{serviceProxyId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Delete service proxy", httpMethod = "DELETE", notes = "Returns delete service proxy", response = Response.class)
+	@ApiResponses(value = { @ApiResponse(code = 201, message = "Service proxy deleted"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
+	public Response deleteServiceProxy(@PathParam("containerComponentId") final String containerComponentId, @PathParam("serviceProxyId") final String serviceProxyId,
+			@ApiParam(value = "valid values: resources / services / products", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME + ","
+					+ ComponentTypeEnum.PRODUCT_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
+			@Context final HttpServletRequest request) {
+		ServletContext context = request.getSession().getServletContext();
+		String url = request.getMethod() + " " + request.getRequestURI();
+		Response response = null;
+		try {
+			log.debug("Start handle request of {}", url);
+			ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
+			ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context, componentTypeEnum);
+			if (componentInstanceLogic == null) {
+				log.debug("Unsupported component type {}", containerComponentType);
+				return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+			}
+			String userId = request.getHeader(Constants.USER_ID_HEADER);
+			Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceLogic.deleteServiceProxy(containerComponentType, containerComponentId, serviceProxyId, userId);
+
+			if (actionResponse.isRight()) {
+				response = buildErrorResponse(actionResponse.right().value());
+			} else {
+				response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), null);
+			}
+			return response;
+		} catch (Exception e) {
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete service proxy");
+			log.debug("Delete service proxy failed with exception", e);
+			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+		}
+	}
+	
+	@POST
+	@Path("/{containerComponentType}/{containerComponentId}/serviceProxy/{serviceProxyId}/changeVersion/{newServiceId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Update service proxy with new version", httpMethod = "POST", notes = "Returns updated service proxy", response = Response.class)
+	@ApiResponses(value = { @ApiResponse(code = 201, message = "Service proxy created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
+	public Response changeServiceProxyVersion(@PathParam("containerComponentId") final String containerComponentId, @PathParam("serviceProxyId") final String serviceProxyId,
+			@ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
+			@Context final HttpServletRequest request) {
+		ServletContext context = request.getSession().getServletContext();
+
+		String url = request.getMethod() + " " + request.getRequestURI();
+		log.debug("Start handle request of {}", url);
+		try {
+
+			String userId = request.getHeader(Constants.USER_ID_HEADER);
+
+			ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
+			ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context, componentTypeEnum);
+			if (componentInstanceLogic == null) {
+				log.debug("Unsupported component type {}", containerComponentType);
+				return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+			}
+			Either<ComponentInstance, ResponseFormat> actionResponse = componentInstanceLogic.changeServiceProxyVersion(containerComponentType, containerComponentId, serviceProxyId, userId);
+			
+			if (actionResponse.isRight()) {
+				return buildErrorResponse(actionResponse.right().value());
+			}
+			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
+
+		} catch (Exception e) {
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update service proxy with new version");
+			log.debug("Update service proxy with new version failed with exception", e);
+			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+		}
+	}
+	
 	private Either<ComponentInstance, ResponseFormat> convertToResourceInstance(String data) {
 
 		// Either<ComponentInstance, ActionStatus> convertStatus =

@@ -659,8 +659,7 @@ public class AuditValidationUtils {
 	public static void compareElements(Object expectedValue, Object foundValue) {
 		if (expectedValue instanceof String) {
 			assertTrue("Actual value " + foundValue + " is not string", foundValue instanceof String);
-			assertTrue("Expected " + expectedValue + " not equal to actual " + foundValue,
-					foundValue.equals(expectedValue));
+			assertTrue("Expected " + "[" + expectedValue +"]" + " not equal to actual [" + foundValue + "]", foundValue.equals(expectedValue));
 		}
 		/*
 		 * else if( expectedValue instanceof Number){ assertTrue(foundValue

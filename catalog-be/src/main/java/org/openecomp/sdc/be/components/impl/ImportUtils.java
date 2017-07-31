@@ -21,12 +21,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -61,22 +56,55 @@ public final class ImportUtils {
 	private ImportUtils() {
 
 	}
-	public static Yaml STRICT_MAPPING_YAML_LOADER = new YamlLoader().getStrictYamlLoader();
 	
 	private static CustomResolver customResolver = new CustomResolver();
+	private static Yaml STRICT_MAPPING_YAML_LOADER =  new YamlLoader().getStrictYamlLoader();
 
 	private static class CustomResolver extends Resolver {
-	     @Override
+		@Override
 		protected void addImplicitResolvers() {
-	    	// avoid implicit resolvers for strings that can be interpreted as boolean values
-	         addImplicitResolver(Tag.STR, EMPTY, "");
-	         addImplicitResolver(Tag.STR, NULL, null);
-	         addImplicitResolver(Tag.NULL, NULL, "~nN\0");
-	         addImplicitResolver(Tag.NULL, EMPTY, null);
-	         addImplicitResolver(Tag.YAML, YAML, "!&*");	
+			// avoid implicit resolvers for strings that can be interpreted as boolean values
+			addImplicitResolver(Tag.STR, EMPTY, "");
+			addImplicitResolver(Tag.STR, NULL, null);
+			addImplicitResolver(Tag.NULL, NULL, "~nN\0");
+			addImplicitResolver(Tag.NULL, EMPTY, null);
+			addImplicitResolver(Tag.INT, INT, "-+0123456789");
+			addImplicitResolver(Tag.FLOAT, FLOAT, "-+0123456789.");
+			addImplicitResolver(Tag.YAML, YAML, "!&*");
 		}
 	}
-	
+
+
+	private static void buildMap(Map<String, Object> output, Map<String, Object> map) {
+		for (Entry<String, Object> entry : map.entrySet()) {
+			String key = entry.getKey();
+			Object value = entry.getValue();
+			if (value instanceof Map) {
+				Map<String, Object> result = new LinkedHashMap<>();
+				buildMap(result, (Map) value);
+				output.put(key, result);
+			}
+			else if (value instanceof Collection) {
+				Map<String, Object> result = new LinkedHashMap<>();
+				int i = 0;
+				for(Object item : (Collection<Object>) value) {
+					buildMap(result, Collections.singletonMap("[" + (i++) + "]", item));
+				}
+				output.put(key, new ArrayList<>(result.values()));
+			}
+			else {
+				output.put(key, value);
+			}
+		}
+	}
+
+	public static Map<String, Object> loadYamlAsStrictMap(String content){
+		Map<String, Object> result = new LinkedHashMap<>();
+		Object map = STRICT_MAPPING_YAML_LOADER.load(content);
+		buildMap(result, (Map<String, Object>)map);
+		return result;
+	}
+
 	private static class YamlLoader extends YamlProcessor {
 		public Yaml getStrictYamlLoader() {
 			return createYaml();

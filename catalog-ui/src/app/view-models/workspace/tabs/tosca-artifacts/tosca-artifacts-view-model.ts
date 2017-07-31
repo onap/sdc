@@ -50,7 +50,6 @@ export class ToscaArtifactsViewModel {
                 private $filter:ng.IFilterService,
                 private ComponentServiceNg2:ComponentServiceNg2) {
         this.initToscaArtifacts();
-        this.$scope.updateSelectedMenuItem();
     }
 
     private initToscaArtifacts = (): void => {

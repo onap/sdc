@@ -26,7 +26,7 @@ import { Response } from '@angular/http';
 import {Service} from "app/models";
 import { downgradeInjectable } from '@angular/upgrade/static';
 import {sdc2Config} from "../../../../main";
-import {InterceptorService} from "ng2-interceptors/index";
+import { HttpService } from '../http.service';
 
 
 @Injectable()
@@ -34,7 +34,7 @@ export class ServiceServiceNg2 {
 
     protected baseUrl = "";
 
-    constructor(private http: InterceptorService) {
+    constructor(private http: HttpService) {
         this.baseUrl = sdc2Config.api.root + sdc2Config.api.component_api_root;
     }
 

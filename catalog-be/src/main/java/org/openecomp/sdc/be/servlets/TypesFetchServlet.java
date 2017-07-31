@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 
 import javax.inject.Singleton;
@@ -39,7 +40,9 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintSerialiser;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.common.datastructure.Wrapper;
@@ -48,6 +51,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.jcabi.aspects.Loggable;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -95,9 +101,12 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
 
 					// return buildErrorResponse(allDataTypes.right().value());
 				} else {
+					
 					Map<String, DataTypeDefinition> dataTypes = allDataTypes.left().value();
-					Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypes);
+					String dataTypeJson = gson.toJson(dataTypes);					
+					Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);					
 					responseWrapper.setInnerElement(okResponse);
+					
 				}
 			}
 

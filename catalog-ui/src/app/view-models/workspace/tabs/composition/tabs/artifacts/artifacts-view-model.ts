@@ -249,7 +249,6 @@ export class ResourceArtifactsViewModel {
 
         this.$scope.isLoading = false;
         this.$scope.artifactType = this.artifactsUtils.getArtifactTypeByState(this.$state.current.name);
-        this.loadArtifacts();
         this.$scope.getTitle = ():string => {
             return this.artifactsUtils.getTitle(this.$scope.artifactType, this.$scope.currentComponent);
         };
@@ -335,5 +334,7 @@ export class ResourceArtifactsViewModel {
             this.eventListenerService.unRegisterObserver(GRAPH_EVENTS.ON_NODE_SELECTED, this.loadArtifacts);
             this.eventListenerService.unRegisterObserver(GRAPH_EVENTS.ON_GRAPH_BACKGROUND_CLICKED, this.loadArtifacts);
         });
+
+        this.loadArtifacts();
     }
 }

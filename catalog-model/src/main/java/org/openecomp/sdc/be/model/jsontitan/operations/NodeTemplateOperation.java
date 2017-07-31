@@ -1620,6 +1620,14 @@ public class NodeTemplateOperation extends BaseOperation {
 	}
 
 	public StorageOperationStatus addDeploymentArtifactsToInstance(String toscaElementId, String instanceId, Map<String, ArtifactDataDefinition> instDeplArtifacts) {
+		return addArtifactsToInstance(toscaElementId, instanceId, instDeplArtifacts,  EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS);
+	}
+	
+	public StorageOperationStatus addInformationalArtifactsToInstance(String toscaElementId, String instanceId, Map<String, ArtifactDataDefinition> instDeplArtifacts) {
+		return addArtifactsToInstance(toscaElementId, instanceId, instDeplArtifacts,  EdgeLabelEnum.INSTANCE_ARTIFACTS, VertexTypeEnum.INSTANCE_ARTIFACTS);
+	}
+	
+	public StorageOperationStatus addArtifactsToInstance(String toscaElementId, String instanceId, Map<String, ArtifactDataDefinition> instDeplArtifacts, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexType) {
 		Either<GraphVertex, TitanOperationStatus> metadataVertex = titanDao.getVertexById(toscaElementId, JsonParseFlagEnum.NoParse);
 		if (metadataVertex.isRight()) {
 			TitanOperationStatus status = metadataVertex.right().value();
@@ -1629,7 +1637,7 @@ public class NodeTemplateOperation extends BaseOperation {
 			return DaoStatusConverter.convertTitanStatusToStorageStatus(status);
 		}
 		MapArtifactDataDefinition instArtifacts = new MapArtifactDataDefinition(instDeplArtifacts);
-		return addToscaDataDeepElementsBlockToToscaElement(metadataVertex.left().value(), EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS, instArtifacts, instanceId);
+		return addToscaDataDeepElementsBlockToToscaElement(metadataVertex.left().value(),edgeLabel, vertexType, instArtifacts, instanceId);
 
 	}
 

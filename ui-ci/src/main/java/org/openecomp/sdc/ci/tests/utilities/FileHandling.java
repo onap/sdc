@@ -109,11 +109,9 @@ public class FileHandling {
 		return System.getProperty("user.dir") + File.separator;
 	}
 	
-	public static String getSdcVncPath() {
-		return  Paths.get(System.getProperty("user.dir"), "..", "..", "sdc-vnfs").toString();
+	public static String getSdcVnfsPath() {
+		return  getBasePath() + Paths.get("..", "..", "sdc-vnfs").toString();
 	}
-	
-
 	
 	public static String getDriversPath() {
 		return getBasePath() + "src" + File.separator + "main" + File.separator + "resources"
@@ -124,8 +122,7 @@ public class FileHandling {
 //		return getBasePath() + "src" + File.separator + "main" + File.separator + "resources"
 //				+ File.separator + "Files" + File.separator;
 
-		return getSdcVncPath()+ File.separator + "ui-tests" 
-				+ File.separator + "Files" + File.separator;
+		return getSdcVnfsPath()+ File.separator + "ui-tests" + File.separator + "Files" + File.separator;
 	}
 	
 	public static String getResourcesEnvFilesPath() {

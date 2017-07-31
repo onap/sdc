@@ -80,7 +80,7 @@
 	</servlet-mapping>
 
  
-	<filter>
+<!--  <filter>
 		<filter-name>GzipFilter</filter-name>
 		<filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
         <async-supported>true</async-supported>
@@ -103,14 +103,12 @@
 		<filter-name>GzipFilter</filter-name>
 		<url-pattern>/sdc1/*</url-pattern>
 	</filter-mapping>
-
-
-
+ 	-->
+	
 	 <filter>
 	   <filter-name>gzipFilter</filter-name>
 	   <filter-class>org.openecomp.sdc.fe.GzipFilter</filter-class>
 	 </filter>
-	
 	 <filter-mapping>
 	   <filter-name>gzipFilter</filter-name>
 	   <url-pattern>*.jsgz</url-pattern>

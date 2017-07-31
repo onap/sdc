@@ -1,7 +1,12 @@
 outputFolder: target
 reportName: index.html
-catalogBeHost: 127.0.0.1
-catalogFeHost: fehost
+#catalogBeHost: 127.0.0.1
+#Automate
+#catalogBeHost: 135.63.125.67
+#catalogFeHost: 135.63.125.63
+#IFT
+catalogBeHost: 135.21.143.248
+catalogFeHost: 135.21.125.96
 esHost: eshost
 disributionClientHost: disClient
 catalogFePort: 8181
@@ -12,7 +17,9 @@ neoHost: neoHost
 neoPort: 7474
 neoDBusername: neo4j
 neoDBpassword: 123456
-url: http://localhost:8285/sdc1
+#url: http://localhost:8285/sdc1
+#url: https://www.e-access.att.com/QA-AUTOMATE1/sdc1/portal
+url: https://www.e-access.att.com/AA-IFT-testing/sdc1/portal
 remoteTestingMachineIP: 0.0.0.0
 remoteTestingMachinePort: 5566
 remoteTesting: false

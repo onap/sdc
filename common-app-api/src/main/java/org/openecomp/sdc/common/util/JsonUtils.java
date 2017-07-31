@@ -21,6 +21,7 @@
 package org.openecomp.sdc.common.util;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class JsonUtils {
 
@@ -40,6 +41,18 @@ public class JsonUtils {
 			return null;
 		}
 
+	}
+
+	public static boolean containsEntry(JsonObject json, String key) {
+		return json.get(key) != null;
+	}
+
+	public static boolean isEmptyJson(JsonObject json) {
+		return json.entrySet().isEmpty();
+	}
+
+	public static boolean isEmptyJson(JsonElement json) {
+		return json.isJsonPrimitive() ? false : JsonUtils.isEmptyJson(json.getAsJsonObject());
 	}
 
 }

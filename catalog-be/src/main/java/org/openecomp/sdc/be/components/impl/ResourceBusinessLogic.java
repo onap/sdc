@@ -154,6 +154,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import fj.data.Either;
+import org.yaml.snakeyaml.parser.ParserException;
 
 @org.springframework.stereotype.Component("resourceBusinessLogic")
 public class ResourceBusinessLogic extends ComponentBusinessLogic {
@@ -686,7 +687,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			return result;
 
 	}
-
 	private Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(Map<String, NodeTypeInfo> nodeTypesInfo, Map<String, byte[]> csar, String csarUUID, String yamlFileName, Resource oldResource, User user) {
 
 		Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils.extractVfcsArtifactsFromCsar(csar);
@@ -695,8 +695,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		try {
 			nodeTypesArtifactsToHandleRes = Either.left(nodeTypesArtifactsToHandle);
-			Map<String, String> extractedVfcToscaNames = extractVfcToscaNames(nodeTypesInfo, yamlFileName, oldResource.getSystemName());
-			Either<EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>, ResponseFormat> curNodeTypeArtifactsToHandleRes = null;
+			Map<String, String> extractedVfcToscaNames = extractVfcToscaNames(nodeTypesInfo, yamlFileName, oldResource.getName());
+			Either<EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>, ResponseFormat> curNodeTypeArtifactsToHandleRes;
 			EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> curNodeTypeArtifactsToHandle = null;
 			log.debug("Going to fetch node types for resource with name {} during import csar with UUID {}. ", oldResource.getName(), csarUUID);
 
@@ -3348,7 +3348,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 									resStatus = Either.right(responseFormat);
 									return resStatus;
 								}
-								currHeatParam.setCurrentValue(HeatParameterType.isValidType(currHeatParam.getType()).getConverter().convert(updatedParamValue, null, null));
+								currHeatParam.setCurrentValue(paramType.getConverter().convert(updatedParamValue, null, null));
 								// newHeatEnvParams.add(currHeatParam);
 								break;
 							}
@@ -3558,6 +3558,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		Map<String, List<ComponentInstanceProperty>> instProperties = new HashMap<>();
 		Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties = new HashMap<>();
 		Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
+		Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
 		Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
 		Map<String, List<PropertyDefinition>> instAttributes = new HashMap<>();
 		Map<String, Resource> originCompMap = new HashMap<>();
@@ -3629,7 +3630,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				instRequirements.put(currentCompInstance, originRequirements);
 			}
 			if (originResource.getDeploymentArtifacts() != null && !originResource.getDeploymentArtifacts().isEmpty())
-				instArtifacts.put(resourceInstanceId, originResource.getDeploymentArtifacts());
+				instDeploymentArtifacts.put(resourceInstanceId, originResource.getDeploymentArtifacts());
+			if (originResource.getArtifacts() != null && !originResource.getArtifacts().isEmpty())
+				instArtifacts.put(resourceInstanceId, originResource.getArtifacts());
 			if (originResource.getAttributes() != null && !originResource.getAttributes().isEmpty())
 				instAttributes.put(resourceInstanceId, originResource.getAttributes());
 			if (originResource.getResourceType() != ResourceTypeEnum.CVFC) {
@@ -3667,7 +3670,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				return Either.right(responseFormat);
 			}
 		}
-		StorageOperationStatus addArtToInst = toscaOperationFacade.associateArtifactToInstances(instArtifacts, resource.getUniqueId(), user);
+		StorageOperationStatus addArtToInst = toscaOperationFacade.associateDeploymentArtifactsToInstances(instDeploymentArtifacts, resource.getUniqueId(), user);
+		if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
+			log.debug("failed to associate artifact of resource {} status is {}", resource.getUniqueId(), addArtToInst);
+			ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName);
+			return Either.right(responseFormat);
+		}
+		
+		addArtToInst = toscaOperationFacade.associateArtifactsToInstances(instArtifacts, resource.getUniqueId(), user);
 		if (addArtToInst != StorageOperationStatus.OK && addArtToInst != StorageOperationStatus.NOT_FOUND) {
 			log.debug("failed to associate artifact of resource {} status is {}", resource.getUniqueId(), addArtToInst);
 			ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addArtToInst), yamlName);
@@ -4212,7 +4222,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			mappedToscaTemplate = nodeTypesInfo.get(nodeName).getMappedToscaTemplate();
 		}
 		else {
-			mappedToscaTemplate = (Map<String, Object>) new Yaml().load(resourceYml);
+			try {
+				//DE154502 Fail if duplicate key found in file
+				mappedToscaTemplate = ImportUtils.loadYamlAsStrictMap(resourceYml);
+
+			} catch(ParserException e) {
+				log.error("Failed to load yaml file {}", yamlFileName, e);
+				ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.TOSCA_PARSE_ERROR, yamlFileName, e.getMessage());
+				return Either.right(responseFormat);
+			}
 		}
 		Either<Object, ResultStatusEnum> toscaElementEither = ImportUtils.findToscaElement(mappedToscaTemplate, ToscaTagNamesEnum.TOPOLOGY_TEMPLATE, ToscaElementTypeEnum.ALL);
 		if (toscaElementEither.isRight()) {
@@ -5573,10 +5591,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		// IResourceOperation dataModel = getResourceOperation();
 		Either<Resource, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(resourceId);
-
 		if (storageStatus.isRight()) {
 			log.debug("failed to get resource by id {}", resourceId);
-			return Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(storageStatus.right().value()), ""));
+			return Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(storageStatus.right().value()), resourceId));
+		}
+		if(!(storageStatus.left().value() instanceof Resource)){
+			return Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND), resourceId));
 		}
 		return Either.left(storageStatus.left().value());
 
@@ -6807,14 +6827,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		try {
 			if (groupTemplateJson != null && groupTemplateJson instanceof Map) {
 				Map<String, Object> groupTemplateJsonMap = (Map<String, Object>) groupTemplateJson;
-				// Type
-				String groupType = null;
-				if (groupTemplateJsonMap.containsKey(ToscaTagNamesEnum.TYPE.getElementName())) {
-					groupType = (String) groupTemplateJsonMap.get(ToscaTagNamesEnum.TYPE.getElementName());
+				String groupType = (String) groupTemplateJsonMap.get(ToscaTagNamesEnum.TYPE.getElementName());
+				if (!StringUtils.isEmpty(groupType)) {
 					groupInfo.setType(groupType);
 				} else {
 					log.debug("The 'type' member is not found under group {}", groupName);
-					result = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE));
+					return Either.right(componentsUtils.getResponseFormat(ActionStatus.GROUP_MISSING_GROUP_TYPE, groupName));
 				}
 
 				if (groupTemplateJsonMap.containsKey(ToscaTagNamesEnum.DESCRIPTION.getElementName())) {
@@ -6832,8 +6850,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 							}
 							groupInfo.setMembers(membersLoaded);
 						} else {
-							log.debug("The 'type' member is not found under group {}", groupName);
-							result = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE));
+							log.debug("The 'members' member is not of type list under group {}", groupName);
+							return Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE));
 						}
 					}
 				}
@@ -6873,7 +6891,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		Either<GroupTypeDefinition, StorageOperationStatus> groupTypeRes = groupTypeOperation.getLatestGroupTypeByType(groupType, true);
 
 		if (groupTypeRes.isRight()) {
-			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GROUP_MISSING_GROUP_TYPE, groupType));
+			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GROUP_TYPE_IS_INVALID, groupType));
 		}
 
 		Map<String, PropertyDefinition> gtProperties = new HashMap<>();

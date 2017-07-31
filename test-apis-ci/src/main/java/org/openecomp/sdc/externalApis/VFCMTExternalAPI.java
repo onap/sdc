@@ -216,10 +216,6 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 	// Various failure flows
 	@Test(dataProvider="createVfcmtVariousFailureFlows")
 	public void createVfcmtVariousFailureFlows(String flow) throws Exception {
-		//TODO: check what happens now, test will prbably fail
-		if(flow.equals("resource_type_missing") || flow.equals("resource_type_invalid")) {
-			throw new SkipException("TC require repairs");			
-		}
 		
 		User defaultUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 		ResourceExternalReqDetails defaultResource = ElementFactory.getDefaultResourceByType("ci", ResourceCategoryEnum.TEMPLATE_MONITORING_TEMPLATE, defaultUser.getUserId(), ResourceTypeEnum.VFCMT.toString());

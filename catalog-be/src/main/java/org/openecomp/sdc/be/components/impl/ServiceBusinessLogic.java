@@ -1144,17 +1144,22 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 		if (eitherCreator.isRight()) {
 			return Either.right(eitherCreator.right().value());
 		}
-		user = eitherCreator.left().value();
 
 		Either<Service, StorageOperationStatus> storageStatus = toscaOperationFacade.getToscaElement(serviceId);
 		if (storageStatus.isRight()) {
 			log.debug("failed to get service by id {}", serviceId);
 			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageStatus.right().value(), ComponentTypeEnum.SERVICE), serviceId));
 		}
-		// Service service =
-		// createServiceApiArtifactLIst(storageStatus.left().value());
+
+		if(!(storageStatus.left().value() instanceof Service)){
+			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND), serviceId));
+		}
 		Service service = storageStatus.left().value();
 		return Either.left(service);
+
+
+
+
 	}
 
 	public Either<Service, ResponseFormat> getServiceByNameAndVersion(String serviceName, String serviceVersion, String userId) {

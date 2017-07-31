@@ -74,7 +74,8 @@ public class EsGateway extends ProxyServlet {
 			esPort = monitoringBL.getEsPort();
 		}
 
-		String scheme = request.getScheme();
+		//String scheme = request.getScheme(); esGateway HTTP
+		String scheme = "http";
 		String contextPath = request.getContextPath(); // /mywebapp
 		String servletPath = request.getServletPath(); // /servlet/MyServlet
 		String pathInfo = request.getPathInfo(); // /a/b;c=123

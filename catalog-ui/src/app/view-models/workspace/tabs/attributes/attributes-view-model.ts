@@ -53,7 +53,6 @@ export class AttributesViewModel {
                 private ComponentServiceNg2: ComponentServiceNg2) {
 
         this.initComponentAttributes();
-        this.$scope.updateSelectedMenuItem();
     }
 
     private initComponentAttributes = () => {

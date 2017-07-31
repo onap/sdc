@@ -18,7 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-(function(window) {
+
+
+(function (window) {
     "use strict";
 
     if (window.PunchOutRegistry) {
@@ -29,9 +31,20 @@
     var factoryPromises = new Map();
     var instancePromises = new Map();
 
+    function loadOnBoarding(callback) {
+
+        if (factoryPromises.has("onboarding/vendor") && !queuedFactoryRequests.has("onboarding/vendor")) {
+            callback();
+        }
+        else {
+            console.log("Load OnBoarding");
+            $.getScript("/onboarding/punch-outs_en.js").then(callback);
+        }
+    }
+
     function registerFactory(name, factory) {
         if (factoryPromises.has(name) && !queuedFactoryRequests.has(name)) {
-            console.error("PunchOut \"" + name + "\" has been already registered");
+            // console.error("PunchOut \"" + name + "\" has been already registered");
             return;
         }
         if (queuedFactoryRequests.has(name)) {
@@ -58,7 +71,7 @@
         var factoryPromise;
         var instancePromise = instancePromises.get(element);
         if (!instancePromise) {
-            instancePromise = getFactoryPromise(name).then(function(factory) {
+            instancePromise = getFactoryPromise(name).then(function (factory) {
                 return factory();
             });
             instancePromises.set(element, instancePromise);
@@ -69,7 +82,8 @@
     function renderPunchOut(params, element) {
         var name = params.name;
         var options = params.options || {};
-        var onEvent = params.onEvent || function () {};
+        var onEvent = params.onEvent || function () {
+            };
 
         getInstancePromise(name, element).then(function (punchOut) {
             punchOut.render({options: options, onEvent: onEvent}, element);
@@ -81,7 +95,7 @@
             console.error("There is no PunchOut in element", element);
             return;
         }
-        instancePromises.get(element).then(function(punchOut) {
+        instancePromises.get(element).then(function (punchOut) {
             punchOut.unmount(element);
         });
         instancePromises.delete(element);
@@ -90,7 +104,8 @@
     var PunchOutRegistry = Object.freeze({
         register: registerFactory,
         render: renderPunchOut,
-        unmount: unmountPunchOut
+        unmount: unmountPunchOut,
+        loadOnBoarding: loadOnBoarding
     });
 
     window.PunchOutRegistry = PunchOutRegistry;

@@ -24,14 +24,18 @@ import {Observable} from 'rxjs/Observable';
 import {UUID} from 'angular2-uuid';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import 'rxjs/add/observable/throw';
 import {Dictionary} from "../../utils/dictionary/dictionary";
 import {SharingService, CookieService} from "app/services";
 import {sdc2Config} from './../../../main';
+import { ModalService } from "app/ng2/services/modal.service";
+import { ServerErrorResponse } from "app/models";
+import { ErrorMessageComponent } from 'app/ng2/components/modal/error-message/error-message.component';
 
 @Injectable()
 export class HttpService extends Http {
 
-    constructor(backend:XHRBackend, options:RequestOptions, private sharingService:SharingService, private cookieService: CookieService) {
+    constructor(backend: XHRBackend, options: RequestOptions, private sharingService: SharingService, private cookieService: CookieService, private modalService: ModalService) {
         super(backend, options);
         this._defaultOptions.withCredentials = true;
         this._defaultOptions.headers.append(cookieService.getUserIdSuffix(), cookieService.getUserId());
@@ -64,7 +68,7 @@ export class HttpService extends Http {
             }
             request.headers.set('X-ECOMP-RequestID', UUID.UUID());
         }
-        return super.request(request, options).catch(this.catchAuthError(this));
+        return super.request(request, options).catch((err) => this.catchError(err));
     }
 
     private getUuidValue = (url: string) :string => {
@@ -79,15 +83,14 @@ export class HttpService extends Http {
         return '';
     }
 
-    private catchAuthError(self:HttpService) {
-        // we have to pass HttpService's own instance here as `self`
-        return (res:Response) => {
-            console.log(res);
-            if (res.status === 401 || res.status === 403) {
-                // if not authenticated
-                console.log(res);
-            }
-            return Observable.throw(res);
-        };
-    }
+    private catchError = (response: Response): Observable<any> => {
+        
+        let modalInstance = this.modalService.createErrorModal("OK");
+        let errorResponse: ServerErrorResponse = new ServerErrorResponse(response);
+        this.modalService.addDynamicContentToModal(modalInstance, ErrorMessageComponent, errorResponse);
+        modalInstance.instance.open();
+        
+        return Observable.throw(response);
+    };
+
 }

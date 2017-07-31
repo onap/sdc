@@ -167,6 +167,12 @@ export class ModalType {
     static ALERT = 'alert';
 }
 
+export class ServerErrors {
+    static ERROR_TITLE = 'Error';
+    static DEFAULT_ERROR = 'Error getting response from server';
+    static MESSAGE_ERROR = 'Wrong error format from server';
+}
+
 export class GraphColors {
     public static NOT_CERTIFIED_LINK = 'rgb(218,31,61)';
     public static VL_LINK = 'rgb(216,216,216)';

@@ -3,6 +3,7 @@ package org.openecomp.sdc.asdctool.impl.validator.executers;
 import fj.data.Either;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.TopologyTemplateValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
+import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -29,9 +30,6 @@ public class TopologyTemplateValidatorExecuter {
     protected TitanDao titanDao;
 
     @Autowired
-    protected ToscaOperationFacade toscaOperationFacade;
-
-    @Autowired
     protected TopologyTemplateOperation topologyTemplateOperation;
 
     protected String name;
@@ -44,10 +42,6 @@ public class TopologyTemplateValidatorExecuter {
         return name;
     }
 
-    public void reportValidateTaskStatus(TopologyTemplateValidationTask validationTask, boolean success, GraphVertex vertexScanned) {
-        ReportManager.reportValidationTaskStatus(vertexScanned, validationTask.getTaskName(), validationTask.getTaskResultStatus(), success);
-    }
-
     protected List<GraphVertex> getVerticesToValidate(ComponentTypeEnum type) {
         Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
         props.put(GraphPropertyEnum.COMPONENT_TYPE, type.name());
@@ -58,7 +52,7 @@ public class TopologyTemplateValidatorExecuter {
         Either<List<GraphVertex>, TitanOperationStatus> results = titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props);
         if (results.isRight()) {
             System.out.println("getVerticesToValidate failed "+ results.right().value());
-            return new ArrayList<GraphVertex>();
+            return new ArrayList<>();
         }
         System.out.println("getVerticesToValidate: "+results.left().value().size()+" vertices to scan");
         return results.left().value();
@@ -71,20 +65,22 @@ public class TopologyTemplateValidatorExecuter {
         boolean successAllVertices = true;
         int vertexNum = 0;
         int verticesSize = vertices.size();
+
         for (GraphVertex vertex: vertices) {
             vertexNum++;
             boolean successAllTasks = true;
             for (TopologyTemplateValidationTask task: tasks) {
                 ReportManager.reportStartTaskRun(vertex, task.getTaskName());
-                boolean success = task.validate(vertex);
-                if (!success) {
+                VertexResult result = task.validate(vertex);
+                if (!result.getStatus()) {
                     failedTasks.add(task.getTaskName());
                     successAllVertices = false;
                     successAllTasks = false;
                 } else if (successAllTasks && vertexNum == verticesSize) {
                     successTasks.add(task.getTaskName());
                 }
-                reportValidateTaskStatus(task, success, vertex);
+                ReportManager.printValidationTaskStatus(vertex, task.getTaskName(), result.getStatus());
+                ReportManager.reportTaskEnd(vertex.getUniqueId(), task.getTaskName(), result);
             }
             String componentScanStatus = successAllTasks? "success" : "failed";
             System.out.println("Topology Template "+vertex.getUniqueId()+" Validation finished with "+componentScanStatus);

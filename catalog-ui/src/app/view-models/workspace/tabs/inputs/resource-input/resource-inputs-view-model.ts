@@ -45,7 +45,6 @@ export class ResourceInputsViewModel {
 
     constructor(private $scope:IInputsViewModelScope, private $q:ng.IQService, private ModalsHandler:ModalsHandler) {
         this.initScope();
-        this.$scope.updateSelectedMenuItem();
     }
 
     private initScope = ():void => {

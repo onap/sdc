@@ -193,22 +193,8 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
 		} 
 		JsonObject asJsonObjectIn = entryValue.getAsJsonObject();
 
-		DataTypeDefinition dataTypeDefinition = dataTypes.get(innerType);
-		Map<String, PropertyDefinition> allProperties = getAllProperties(dataTypeDefinition);
+		DataTypePropertyConverter.getInstance().mergeDataTypeDefaultValuesWithPropertyValue(asJsonObjectIn, innerType, dataTypes);
 		Map<String, Object> toscaObjectPresentation = new HashMap<>();
-
-		for (Entry<String, PropertyDefinition> entry : allProperties.entrySet()) {
-			String propName = entry.getKey();
-			PropertyDefinition propertyDefinition = entry.getValue();
-			JsonElement elementValue = asJsonObjectIn.get(propName);
-			if(elementValue == null && propertyDefinition.getDefaultValue() != null){
-				JsonReader jsonReader = new JsonReader(new StringReader(propertyDefinition.getDefaultValue()));
-				jsonReader.setLenient(true);
-				elementValue = jsonParser.parse(jsonReader);
-				asJsonObjectIn.add(propName, elementValue);
-			}
-		}
-		
 		Set<Entry<String, JsonElement>> entrySetIn = asJsonObjectIn.entrySet();
 		
 		for (Entry<String, JsonElement> entry : entrySetIn) {
@@ -217,6 +203,8 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
 			JsonElement elementValue = entry.getValue();
 			Object convValue;
 			if (isScalarF == false) {
+				DataTypeDefinition dataTypeDefinition = dataTypes.get(innerType);
+				Map<String, PropertyDefinition> allProperties = getAllProperties(dataTypeDefinition);
 				PropertyDefinition propertyDefinition = allProperties.get(propName);
 				if (propertyDefinition == null) {
 					log.trace("The property {} was not found under data type . Parse as map", propName);

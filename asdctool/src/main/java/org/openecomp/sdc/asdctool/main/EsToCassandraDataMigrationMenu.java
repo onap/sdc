@@ -32,7 +32,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 public class EsToCassandraDataMigrationMenu {
 
-	private static Logger log = LoggerFactory.getLogger(MigrationMenu.class.getName());
+	private static Logger log = LoggerFactory.getLogger(EsToCassandraDataMigrationMenu.class.getName());
 
 	public static void main(String[] args) throws Exception {
 

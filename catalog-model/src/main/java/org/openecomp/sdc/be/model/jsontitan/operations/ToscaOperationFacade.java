@@ -25,6 +25,7 @@ import fj.data.Either;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -1097,7 +1098,34 @@ public class ToscaOperationFacade {
 
     }
 
-    public StorageOperationStatus associateArtifactToInstances(Map<String, Map<String, ArtifactDefinition>> instArtifacts, String componentId, User user) {
+    public StorageOperationStatus associateDeploymentArtifactsToInstances(Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts, String componentId, User user) {
+
+        Either<GraphVertex, TitanOperationStatus> getVertexEither = titanDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
+        if (getVertexEither.isRight()) {
+            log.debug("Couldn't fetch component with and unique id {}, error: {}", componentId, getVertexEither.right().value());
+            return DaoStatusConverter.convertTitanStatusToStorageStatus(getVertexEither.right().value());
+
+        }
+
+        GraphVertex vertex = getVertexEither.left().value();
+        Map<String, MapArtifactDataDefinition> instArtMap = new HashMap<>();
+        if (instDeploymentArtifacts != null) {
+
+            MapArtifactDataDefinition artifactsMap;
+            for (Entry<String, Map<String, ArtifactDefinition>> entry : instDeploymentArtifacts.entrySet()) {
+                Map<String, ArtifactDefinition> artList = entry.getValue();
+                Map<String, ArtifactDataDefinition> artifacts = artList.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new ArtifactDataDefinition(e.getValue())));
+                artifactsMap = nodeTemplateOperation.prepareInstDeploymentArtifactPerInstance(artifacts, entry.getKey(), user, NodeTemplateOperation.HEAT_VF_ENV_NAME);
+
+                instArtMap.put(entry.getKey(), artifactsMap);
+            }
+        }
+
+        return topologyTemplateOperation.associateInstDeploymentArtifactsToComponent(vertex, instArtMap);
+
+    }
+    
+    public StorageOperationStatus associateArtifactsToInstances(Map<String, Map<String, ArtifactDefinition>> instArtifacts, String componentId, User user) {
 
         Either<GraphVertex, TitanOperationStatus> getVertexEither = titanDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
         if (getVertexEither.isRight()) {
@@ -1114,13 +1142,13 @@ public class ToscaOperationFacade {
             for (Entry<String, Map<String, ArtifactDefinition>> entry : instArtifacts.entrySet()) {
                 Map<String, ArtifactDefinition> artList = entry.getValue();
                 Map<String, ArtifactDataDefinition> artifacts = artList.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new ArtifactDataDefinition(e.getValue())));
-                artifactsMap = nodeTemplateOperation.prepareInstDeploymentArtifactPerInstance(artifacts, entry.getKey(), user, NodeTemplateOperation.HEAT_VF_ENV_NAME);
+                artifactsMap = new MapArtifactDataDefinition(artifacts);
 
                 instArtMap.put(entry.getKey(), artifactsMap);
             }
         }
 
-        return topologyTemplateOperation.associateInstArtifactToComponent(vertex, instArtMap);
+        return topologyTemplateOperation.associateInstArtifactsToComponent(vertex, instArtMap);
 
     }
 
@@ -1912,6 +1940,15 @@ public class ToscaOperationFacade {
         Map<String, ArtifactDataDefinition> instDeplArtifacts = finalDeploymentArtifacts.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new ArtifactDataDefinition(e.getValue())));
 
         return nodeTemplateOperation.addDeploymentArtifactsToInstance(componentId, componentInstance.getUniqueId(), instDeplArtifacts);
+    }
+    
+    public StorageOperationStatus addInformationalArtifactsToInstance(String componentId, ComponentInstance componentInstance, Map<String, ArtifactDefinition> artifacts) {
+    	StorageOperationStatus status = StorageOperationStatus.OK;
+    	if(MapUtils.isNotEmpty(artifacts)){
+	        Map<String, ArtifactDataDefinition> instDeplArtifacts = artifacts.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> new ArtifactDataDefinition(e.getValue())));
+	        status= nodeTemplateOperation.addInformationalArtifactsToInstance(componentId, componentInstance.getUniqueId(), instDeplArtifacts);
+    	}
+    	return status;
     }
 
     public StorageOperationStatus generateCustomizationUUIDOnInstance(String componentId, String instanceId) {

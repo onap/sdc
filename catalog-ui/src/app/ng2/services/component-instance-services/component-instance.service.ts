@@ -25,14 +25,14 @@ import {sdc2Config} from "../../../../main";
 import {PropertyBEModel} from "app/models";
 import {CommonUtils} from "app/utils";
 import {Component, ComponentInstance, InputModel} from "app/models";
-import {InterceptorService} from "ng2-interceptors/index";
+import { HttpService } from '../http.service';
 
 @Injectable()
 export class ComponentInstanceServiceNg2 {
 
     protected baseUrl;
 
-    constructor(private http: InterceptorService) {
+    constructor(private http: HttpService) {
         this.baseUrl = sdc2Config.api.root + sdc2Config.api.component_api_root;
     }
 

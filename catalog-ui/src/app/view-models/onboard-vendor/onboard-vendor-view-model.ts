@@ -22,6 +22,7 @@
 import {IUserProperties} from "app/models";
 import {MenuItemGroup, MenuItem} from "app/utils";
 import {CacheService} from "app/services";
+declare var PunchOutRegistry;
 
 export class BreadcrumbsMenuItem {
     key:string;
@@ -48,7 +49,7 @@ export interface IOnboardVendorViewModelScope extends ng.IScope {
     topNavRootMenu:MenuItemGroup;
     user:IUserProperties;
     version:string;
-    isLoading: boolean;
+    isLoading:boolean;
 }
 
 export class OnboardVendorViewModel {
@@ -66,10 +67,13 @@ export class OnboardVendorViewModel {
 
         this.$scope.isLoading = true;
 
-        $.getScript("/onboarding/punch-outs_en.js", () => {
+        PunchOutRegistry.loadOnBoarding(()=> {
             this.$scope.isLoading = false;
         });
+        this.initScope();
 
+    }
+    private initScope = ():void => {
         this.$scope.vendorData = {
             breadcrumbs: {
                 selectedKeys: []
@@ -89,6 +93,7 @@ export class OnboardVendorViewModel {
         this.$scope.topNavMenuModel = [];
 
         this.$scope.user = this.cacheService.get('user');
+
     }
 
     updateBreadcrumbsPath = (selectedKeys:Array<string>):ng.IPromise<boolean> => {
@@ -140,6 +145,7 @@ export class OnboardVendorViewModel {
             let topNavRootMenu = topNavMenuModel[0];
             let onboardItem = topNavRootMenu.menuItems[topNavRootMenu.selectedIndex];
             let originalCallback = onboardItem.callback;
+            //noinspection TypeScriptValidateTypes
             onboardItem.callback = (...args) => {
                 let ret = this.updateBreadcrumbsPath([]);
                 return originalCallback && originalCallback.apply(undefined, args) || ret;

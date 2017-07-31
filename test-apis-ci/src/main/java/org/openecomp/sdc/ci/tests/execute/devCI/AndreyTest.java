@@ -55,7 +55,7 @@ public class AndreyTest {
 //        File path = new File("C:/Data/D2.0/TOSCA_Ex/resource-Vl11Vl10-template.yml");
 //        File path = new File("C:/Data/D2.0/TOSCA_Ex/service-Servicepxtc-template US822998.yml");
 //        File path = new File("C:/Data/FileToParse/Definitions/service-Ciservice513e6fa67d07-template.yml");
-		toscaDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File("C:/Data/FileToParse/LDSA/LDSA_amdocs.csar"));
+		toscaDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File("C:/Data/FileToParse/LDSA/service-LdsaService-csar.csar"));
 //        File path = new File("C:/Data/FileToParse/Definitions/resource-Civfonboarded2016006VvmVvm301607E2100a9b04-template.yml");
 //        File csarPath = new File("C:/Data/D2.0/TOSCA_Ex/Nested.csar");
 

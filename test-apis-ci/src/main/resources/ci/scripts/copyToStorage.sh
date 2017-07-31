@@ -3,7 +3,6 @@
 REPORT_NAME=$1
 VERSION=$2
 ENV=$3
-IP=$4
 
 if [ -z "$REPORT_NAME" ]
  then
@@ -19,6 +18,12 @@ if [ -z "$REPORT_NAME" ]
                         fi
 
  fi
+ 
+source conf/attInternal.info
+IP=$automationResutlsRepo
+PASS=$automationResutlsRepoPass
+
+echo ${IP}
 
 /usr/bin/expect  << EOF
 spawn ssh admin@${IP} mkdir -p -m 775 /home/admin/reports/${ENV}/${VERSION}/APIs/
@@ -29,7 +34,7 @@ expect {
     exp_continue
   }
   -re ".*sword.*" {
-    exp_send "Aa123456\r"
+    exp_send ${PASS}\r
   }
 }
 
@@ -43,7 +48,7 @@ expect {
     exp_continue
   }
   -re ".*sword.*" {
-    exp_send "Aa123456\r"
+    exp_send ${PASS}\r
   }
 }
 
@@ -57,7 +62,7 @@ expect {
     exp_continue
   }
   -re ".*sword.*" {
-    exp_send "Aa123456\r"
+    exp_send ${PASS}\r
   }
 }
 

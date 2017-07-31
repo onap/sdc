@@ -62,7 +62,6 @@ export class ServiceInputsViewModel {
                 private ModalsHandler:ModalsHandler,
                 private DataTypesService:DataTypesService) {
         this.initScope();
-        this.$scope.updateSelectedMenuItem();
         this.$scope.isViewOnly = this.$scope.isViewMode();
     }
 

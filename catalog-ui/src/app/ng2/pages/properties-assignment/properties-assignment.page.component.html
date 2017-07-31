@@ -43,7 +43,7 @@
             <tabs #hierarchyNavTabs tabStyle="simple-tabs">
                 <tab tabTitle="Composition">
                     <div class="hierarchy-nav-container">
-                        <loader [display]="loadingInstances" size="medium" [relative]="true"></loader>
+                        <loader [display]="loadingInstances" [size]="'medium'" [relative]="true" [loaderDelay]="500"></loader>
                         <div class="hierarchy-header white-sub-header">
                             <span tooltip="{{component.name}}">{{component.name}}</span>
                         </div>

@@ -81,7 +81,7 @@ public class ServiceVerificator {
 		}
 		JSONObject jsonResource = (JSONObject) JSONValue.parse(responseAfterDrag);
 		int size = ((JSONArray) jsonResource.get("componentInstances")).size();
-		assertTrue(size == numOfVFC);
+		assertTrue(size == numOfVFC, "Expected number of componenet instances is " + numOfVFC + ", but actual is " + size);
 		ExtentTestActions.log(Status.INFO, "The number of components on the canvas was verified.");
 	}
 	

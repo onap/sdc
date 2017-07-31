@@ -5,12 +5,14 @@ export class ModalModel {
     title: string;
     content: any;
     buttons: Array<ButtonModel>;
+    type: string; 'standard|error|alert'
 
-    constructor(size?: string, title?: string, content?: any, buttons?: Array<ButtonModel>) {
+    constructor(size?: string, title?: string, content?: any, buttons?: Array<ButtonModel>, type?:string) {
         this.size = size;
         this.title = title;
         this.content = content;
         this.buttons = buttons;
+        this.type = type || 'standard';
     }
 }
 

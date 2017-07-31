@@ -44,9 +44,7 @@ export class PropertiesUtils {
             let propertyFeArray: Array<PropertyFEModel> = [];
             _.forEach(properties, (property: PropertyBEModel) => {
 
-                if (!this.dataTypeService.getDataTypeByTypeName(property.type)) { // if type not exist in data types remove property from list
-                    console.log("ERROR: missing type " + property.type + " in dataTypes , of property ", property);
-                } else {
+                if (this.dataTypeService.getDataTypeByTypeName(property.type)) { // if type not exist in data types remove property from list
 
                     let newFEProp: PropertyFEModel = new PropertyFEModel(property); //Convert property to FE
 

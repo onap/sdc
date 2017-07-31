@@ -158,7 +158,7 @@
 		<url-pattern>/lbClassicStatus</url-pattern>
 	</servlet-mapping>
 
-	<filter>
+<!--  	<filter>
 	   <filter-name>GzipFilter</filter-name>
 	   <filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
 	   <async-supported>true</async-supported>
@@ -175,7 +175,7 @@
 	   <filter-name>GzipFilter</filter-name>
 		<url-pattern>/sdc2/rest/*</url-pattern>
 	</filter-mapping>
-
+-->
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
@@ -189,9 +189,6 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-
-
-
 
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

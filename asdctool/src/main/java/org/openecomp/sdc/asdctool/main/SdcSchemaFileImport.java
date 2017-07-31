@@ -130,9 +130,9 @@ public class SdcSchemaFileImport {
     		System.err.println("Failed to pack SDC.zip file, error: "+ex);
     		System.exit(1);
     	}
-    	
-    	//Generation flow end - generating SDC from normatives
 		
+    	//Generation flow end - generating SDC from normatives
+				
 		AnnotationConfigApplicationContext context = initContext(appConfigDir);
 		schemaFilesCassandraDao = (SdcSchemaFilesCassandraDao) context.getBean("sdc-schema-files-cassandra-dao");
 		

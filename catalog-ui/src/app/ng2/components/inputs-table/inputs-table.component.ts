@@ -57,7 +57,7 @@ export class InputsTableComponent {
 
     openDeleteModal = (input:InputFEModel) => {
         this.selectedInputToDelete = input;
-        this.modalService.openActionModal("Delete Input", "Are you sure you want to delete this input?", "Delete", this.onDeleteInput, "Close");
+        this.modalService.createActionModal("Delete Input", "Are you sure you want to delete this input?", "Delete", this.onDeleteInput, "Close").instance.open();
     }
 }
 

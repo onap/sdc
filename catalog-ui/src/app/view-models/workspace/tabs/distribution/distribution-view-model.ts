@@ -48,7 +48,6 @@ export class DistributionViewModel {
                 private ModalsHandler:ModalsHandler) {
         this.initScope();
         this.$scope.setValidState(true);
-        this.$scope.updateSelectedMenuItem();
     }
 
     private initScope = ():void => {

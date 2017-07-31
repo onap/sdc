@@ -1274,6 +1274,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 			input.setName(inputName + "_" + prop.getName());
 
 		}
+		input.setDefaultValue(prop.getValue());
 		input.setName(inputName);
 		input.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(component.getUniqueId(), input.getName()));
 		input.setInputPath(propertiesName);

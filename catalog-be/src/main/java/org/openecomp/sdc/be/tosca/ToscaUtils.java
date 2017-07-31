@@ -44,6 +44,16 @@ public class ToscaUtils {
 		}
 		return false;
 	}
+	
+	public static boolean isComplexVfc(Component component) {
+		if (ComponentTypeEnum.RESOURCE == component.getComponentType()) {
+			ResourceTypeEnum resourceType = ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getResourceType();
+			if (ResourceTypeEnum.CVFC == resourceType) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public static Map<String, Object> objectToMap(Object objectToConvert, Class clazz) throws IllegalArgumentException, IllegalAccessException {
 		Map<String, Object> map = new HashMap<>();

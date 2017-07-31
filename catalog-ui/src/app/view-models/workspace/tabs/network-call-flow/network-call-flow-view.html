@@ -1,3 +1,4 @@
-<div class="workspace-network-call-flow">
+<loader data-display="isLoading"></loader>
+<div ng-if="vendorMessageModel" class="workspace-network-call-flow">
     <punch-out name="'sequence-diagram'" data="vendorMessageModel"  user="user" on-event="onVendorEvent"></punch-out>
 </div>
