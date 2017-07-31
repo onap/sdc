@@ -33,7 +33,7 @@ const path = {
 	svgSrc: './resources/images/svg/*.svg',
 	appinf: './webapp-onboarding/**/*.*',
 	jetty: './webapp-onboarding/WEB-INF/jetty-web.xml',
-	healthCheckInput: './external-resources/healthcheck/healthcheck.json',
+	healthCheckInput: './external-resources/healthcheck/healthcheck',
 	srcDir: './src/',
 	// output
 	output: dist,
@@ -42,7 +42,7 @@ const path = {
 	appinf_output: dist + '/webapp-onboarding',
 	healthCheckOutput: dist + '/v1.0',
 	// war
-	war: [dist + '/index.html', dist + '/punch-outs*.js', dist + '/**/*.{css,png,svg,eot,ttf,woff,woff2,otf}', dist + '/**/*(config.json)', dist + '/webapp-onboarding/**', dist + '/**/*(healthcheck.json)'],
+	war: [dist + '/index.html', dist + '/punch-outs*.js', dist + '/**/*.{css,png,svg,eot,ttf,woff,woff2,otf}', dist + '/**/*(config.json)', dist + '/webapp-onboarding/**', dist + '/**/*(healthcheck)'],
 	heatWar: [dist + '/heat.html', dist + '/heat-validation_en.js', dist + '/**/*.{css,png,svg,eot,ttf,woff,woff2,otf}', dist + '/**/*(config.json)', 'webapp-heat-validation/**'],
 	wardest: dist,
 	// storybook
