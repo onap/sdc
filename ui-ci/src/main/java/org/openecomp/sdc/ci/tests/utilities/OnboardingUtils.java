@@ -399,6 +399,7 @@ public class OnboardingUtils {
 		jObject.put("name", "xyz");
 		jObject.put("description", "new vendor license feature groups");
 		jObject.put("partNumber", "123abc456");
+		jObject.put("manufacturerReferenceNumber", "5");
 		jObject.put("addedLicenseKeyGroupsIds", Arrays.asList(licenseKeyGroupId).toArray());
 		jObject.put("addedEntitlementPoolsIds", Arrays.asList(entitlementPoolId).toArray());
 
@@ -514,7 +515,7 @@ public class OnboardingUtils {
 		return new Pair<RestResponse, Map<String, String>>(response, vspMetadta);
 	}
 	
-	public static RestResponse getVendorSoftwareProduct(Map vspObject, User user) throws Exception {
+/*	public static RestResponse getVendorSoftwareProduct(Map vspObject, User user) throws Exception {
 		Config config = Utils.getConfig();
 		String url = String.format("http://%s:%s/onboarding-api/v1.0/vendor-software-products/" + vspObject.get("vspId"),
 				config.getCatalogBeHost(), config.getCatalogBePort());
@@ -527,7 +528,7 @@ public class OnboardingUtils {
 		RestResponse response = http.httpsSendGet(url, headersMap);
 
 		return response;
-	}
+	}*/
 	
 	public static RestResponse validateUpload(String vspid, User user) throws Exception {
 		Config config = Utils.getConfig();

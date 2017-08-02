@@ -22,7 +22,6 @@ package org.openecomp.sdc.ci.tests.execute.sanity;
 
 import static org.testng.Assert.assertTrue;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -66,16 +65,9 @@ public class VFCArtifacts extends SetupCDTest {
 	private static final String ARTIFACTS = "artifacts";
 	private static final String DEPLOYMENT_ARTIFACTS = "deploymentArtifacts";
 	private String filePath;
-	private Object object;
 	@BeforeClass
 	public void beforeClass(){
-		filePath = System.getProperty("filepath");
-		if (filePath == null && System.getProperty("os.name").contains("Windows")) {
-			filePath = FileHandling.getResourcesFilesPath() + "VFCArtifacts"+ File.separator;
-		}
-		else if(filePath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
-			filePath = FileHandling.getBasePath() + File.separator + "Files" + File.separator + "VFCArtifacts"+ File.separator;
-		}
+		filePath = FileHandling.getFilePath("");
 	}
 
 	@Test

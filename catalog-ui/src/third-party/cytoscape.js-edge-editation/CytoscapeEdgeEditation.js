@@ -459,7 +459,8 @@
                         var handle = handles[i];
 
                         var position = this._getHandlePosition(handle, this._hover);
-                        if (VectorMath.distance(position, mousePoisition) < this.HANDLE_SIZE) {
+                        var renderedHandleSize = this.HANDLE_SIZE * this._cy.zoom(); //actual number of pixels that handle uses.
+                        if (VectorMath.distance(position, mousePoisition) < renderedHandleSize) {
                             return {
                                 handle: handle,
                                 position: position

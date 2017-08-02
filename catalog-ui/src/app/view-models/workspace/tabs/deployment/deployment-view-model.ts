@@ -86,7 +86,6 @@ export class DeploymentViewModel {
         this.$scope.setValidState(true);
         this.initScope();
         this.initGraphData();
-        this.$scope.updateSelectedMenuItem();
     }
 
 

@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import java.io.File;
-
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
 import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
@@ -32,12 +30,10 @@ import org.openecomp.sdc.ci.tests.pages.CompositionPage;
 import org.openecomp.sdc.ci.tests.pages.GeneralPageElements;
 import org.openecomp.sdc.ci.tests.pages.ProductGeneralPage;
 import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
-import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.ProductUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.ServiceUIUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
@@ -47,21 +43,7 @@ import org.testng.annotations.Test;
 
 public class Product extends SetupCDTest {
 	
-	private String filePath;
-	@BeforeMethod
-	public void beforeTest(){
-		filePath = System.getProperty("filepath");
-	
-		if (filePath == null && System.getProperty("os.name").contains("Windows")) {
-			filePath = FileHandling.getResourcesFilesPath();
-		}
-		
-		else if(filePath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
-			filePath = FileHandling.getBasePath() + File.separator + "Files" + File.separator;
-		}
-	}
 
-	
 	@Test
 	public void createProductAndAddCertifiedServiceInstance() throws Exception {		
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();

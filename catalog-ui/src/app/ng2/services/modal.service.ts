@@ -11,10 +11,10 @@ export class ModalService {
     constructor(private componentFactoryResolver: ComponentFactoryResolver, private applicationRef: ApplicationRef) { }
 
     
-    /* Shortcut method to open a simple modal with title, message, and close button that simply closes the modal. */
+    /* Shortcut method to open an alert modal with title, message, and close button that simply closes the modal. */
     public openAlertModal(title: string, message: string, closeButtonText?:string) {
         let closeButton: ButtonModel = new ButtonModel(closeButtonText || 'Close', 'grey', this.closeCurrentModal);
-        let modalModel: ModalModel = new ModalModel('sm', title, message, [closeButton]);
+        let modalModel: ModalModel = new ModalModel('sm', title, message, [closeButton], 'alert');
         this.createCustomModal(modalModel).instance.open();
     }
 
@@ -22,19 +22,28 @@ export class ModalService {
     /**
      * Shortcut method to open a basic modal with title, message, and an action button with callback, as well as close button.
      * NOTE: To close the modal from within the callback, use modalService.closeCurrentModal() //if you run into zone issues with callbacks see:https://stackoverflow.com/questions/36566698/how-to-dynamically-create-bootstrap-modals-as-angular2-components
+     * NOTE: To add dynamic content to the modal, use modalService.addDynamicContentToModal(). First param is the return value of this function -- componentRef<ModalComponent>.
      * @param title Heading for modal
      * @param message Message for modal
      * @param actionButtonText Blue call to action button
      * @param actionButtonCallback function to invoke when button is clicked
      * @param cancelButtonText text for close/cancel button
      */    
-    public openActionModal = (title:string, message:string, actionButtonText:string, actionButtonCallback:Function, cancelButtonText:string) => {
+    public createActionModal = (title: string, message: string, actionButtonText: string, actionButtonCallback: Function, cancelButtonText: string): ComponentRef<ModalComponent> => {
         let actionButton: ButtonModel = new ButtonModel(actionButtonText, 'blue', actionButtonCallback);
         let cancelButton: ButtonModel = new ButtonModel(cancelButtonText, 'grey', this.closeCurrentModal);
         let modalModel: ModalModel = new ModalModel('sm', title, message, [actionButton, cancelButton]);
-        this.createCustomModal(modalModel).instance.open();
+        let modalInstance: ComponentRef<ModalComponent> = this.createCustomModal(modalModel);
+        return modalInstance;
     }
-    
+
+
+    public createErrorModal = (closeButtonText?: string, errorMessage?: string):ComponentRef<ModalComponent> => {
+        let closeButton: ButtonModel = new ButtonModel(closeButtonText || 'Close', 'grey', this.closeCurrentModal);
+        let modalModel: ModalModel = new ModalModel('sm', 'Error', errorMessage, [closeButton], 'error');
+        let modalInstance: ComponentRef<ModalComponent> = this.createCustomModal(modalModel);
+        return modalInstance;
+    }
 
     /* Use this method to create a modal with title, message, and completely custom buttons. Use response.instance.open() to open */
     public createCustomModal = (customModalData: ModalModel): ComponentRef<ModalComponent> => {
@@ -52,6 +61,14 @@ export class ModalService {
         this.currentModal.destroy();
     }
 
+
+    public addDynamicContentToModal = (modalInstance: ComponentRef<ModalComponent>, dynamicComponentType: Type<any>, dynamicComponentInput: any) => {
+
+        let dynamicContent = this.createDynamicComponent(dynamicComponentType, modalInstance.instance.dynamicContentContainer);
+        dynamicContent.instance.input = dynamicComponentInput;
+        modalInstance.instance.dynamicContent = dynamicContent;
+        return modalInstance;
+    }
 
     //Creates a component dynamically (aka during runtime). If a view container is not specified, it will append the new component to the app root. 
     //To subscribe to an event from invoking component: componentRef.instance.clicked.subscribe((m) => console.log(m.name));

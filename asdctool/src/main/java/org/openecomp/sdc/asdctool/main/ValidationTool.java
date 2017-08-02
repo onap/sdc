@@ -3,7 +3,6 @@ package org.openecomp.sdc.asdctool.main;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationToolConfiguration;
-import org.openecomp.sdc.asdctool.impl.migration.v1604.AppConfig;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -22,8 +21,9 @@ public class ValidationTool {
 
     public static void main(String[] args) throws Exception {
 
-        String outputFilePath = args[0];
-        ValidationConfigManager.setOutputFilePath(outputFilePath);
+        String outputPath = args[0];
+        ValidationConfigManager.setOutputFilePath(outputPath);
+        ValidationConfigManager.setCsvReportFilePath(outputPath);
 
         String appConfigDir = args[1];
         AnnotationConfigApplicationContext context = initContext(appConfigDir);

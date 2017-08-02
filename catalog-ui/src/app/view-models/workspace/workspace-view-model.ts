@@ -87,7 +87,7 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     getLatestVersion():void;
     getStatus():string;
     showLifecycleIcon():boolean;
-    updateSelectedMenuItem():void;
+    updateSelectedMenuItem(state:string):void;
     uploadFileChangedInGeneralTab():void;
     updateMenuComponentName(ComponentName:string):void;
     getTabTitle():string;
@@ -136,6 +136,7 @@ export class WorkspaceViewModel {
 
         this.initScope();
         this.initAfterScope();
+        this.$scope.updateSelectedMenuItem(this.$state.current.name);
     }
 
     private role:string;
@@ -216,6 +217,7 @@ export class WorkspaceViewModel {
         this.$scope.onMenuItemPressed = (state:string):ng.IPromise<boolean> => {
             let deferred = this.$q.defer();
             let goToState = ():void => {
+                this.$scope.updateSelectedMenuItem(state);
                 this.$state.go(state, {
                     id: this.$scope.component.uniqueId,
                     type: this.$scope.component.componentType.toLowerCase(),
@@ -613,9 +615,9 @@ export class WorkspaceViewModel {
             return result;
         };
 
-        this.$scope.updateSelectedMenuItem = ():void => {
+        this.$scope.updateSelectedMenuItem = (state:string):void => {
             let selectedItem:MenuItem = _.find(this.$scope.leftBarTabs.menuItems, (item:MenuItem) => {
-                return item.state === this.$state.current.name;
+                return item.state === state;
             });
             this.$scope.leftBarTabs.selectedIndex = selectedItem ? this.$scope.leftBarTabs.menuItems.indexOf(selectedItem) : 0;
         };

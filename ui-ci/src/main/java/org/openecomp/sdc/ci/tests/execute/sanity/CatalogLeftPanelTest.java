@@ -22,7 +22,6 @@ package org.openecomp.sdc.ci.tests.execute.sanity;
 
 import static org.testng.AssertJUnit.assertTrue;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,15 +57,7 @@ public class CatalogLeftPanelTest extends  SetupCDTest{
 	private String filePath;
 	@BeforeMethod
 	public void beforeTest(){
-		filePath = System.getProperty("filepath");
-	
-		if (filePath == null && System.getProperty("os.name").contains("Windows")) {
-			filePath = FileHandling.getResourcesFilesPath();
-		}
-		
-		else if(filePath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
-			filePath = FileHandling.getBasePath() + File.separator + "Files" + File.separator;
-		}
+		filePath = FileHandling.getFilePath("");
 	}
 	
 	public static String[] resourceTypes = Arrays.stream(ResourceTypeEnum.class.getEnumConstants()).

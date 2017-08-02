@@ -18,16 +18,21 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.impl.migration.v1707;
+/**
+ * Created by ngordon on 7/30/2017.
+ */
+import { Component, Input } from '@angular/core';
+import { ServerErrorResponse } from 'app/models';
 
-import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.TitanClientStrategy;
+@Component({
+    selector: 'error-message',
+    templateUrl: './error-message.component.html'
+})
 
-public class MigrationTitanStrategy implements TitanClientStrategy {
+export class ErrorMessageComponent {
+    @Input() input: ServerErrorResponse;
 
-    @Override
-    public String getConfigFile() {
-        return ConfigurationManager.getConfigurationManager().getConfiguration().getTitanMigrationKeySpaceCfgFile();
+    constructor() {
     }
 
 }

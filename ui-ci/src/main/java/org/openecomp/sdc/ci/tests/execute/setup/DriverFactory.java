@@ -37,6 +37,8 @@ import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.testng.ITestContext;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
@@ -96,7 +98,7 @@ public class DriverFactory {
 				webDriverThread.quitDriver();
 		}
 		
-//		MobProxy.removeAllProxyServers();
+		MobProxy.removeAllProxyServers();
 		
 		deleteDownloadDirs();
 	}

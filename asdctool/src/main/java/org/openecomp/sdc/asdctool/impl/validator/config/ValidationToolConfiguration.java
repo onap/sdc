@@ -1,6 +1,5 @@
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
-import org.openecomp.sdc.asdctool.impl.migration.v1707.MigrationTitanStrategy;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidationUtils;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.VfArtifactValidationTask;

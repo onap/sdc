@@ -38,12 +38,14 @@ export class DataTypeService {
     }
 
     public getDataTypeByTypeName(typeName: string): DataTypeModel {
+        if (!this.dataTypes[typeName]) console.log("MISSING Datatype: " + typeName);
         return this.dataTypes[typeName];
     }
 
 
     public getDerivedDataTypeProperties(dataTypeObj: DataTypeModel, propertiesArray: Array<DerivedFEProperty>, parentName: string) {
         //push all child properties to array
+        if (!dataTypeObj) return;
         if (dataTypeObj.properties) {
             dataTypeObj.properties.forEach((derivedProperty) => {
                 if(dataTypeObj.name !== PROPERTY_DATA.OPENECOMP_ROOT || derivedProperty.name !== PROPERTY_DATA.SUPPLEMENTAL_DATA){//The requirement is to not display the property supplemental_data

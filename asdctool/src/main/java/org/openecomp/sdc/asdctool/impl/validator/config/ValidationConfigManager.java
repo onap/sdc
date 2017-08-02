@@ -16,11 +16,21 @@ public class ValidationConfigManager {
         return outputFilePath;
     }
 
-    public static void setOutputFilePath(String outputFilePath) {
-        ValidationConfigManager.outputFilePath = outputFilePath;
+    public static void setOutputFilePath(String outputPath) {
+        ValidationConfigManager.outputFilePath = outputPath+ "/reportOutput.txt";
     }
 
     private static String outputFilePath;
+
+    public static String getCsvReportFilePath() {
+        return csvReportFilePath;
+    }
+
+    public static void setCsvReportFilePath(String outputPath) {
+        ValidationConfigManager.csvReportFilePath = outputPath +"/csvSummary_"+System.currentTimeMillis()+".csv";
+    }
+
+    private static String csvReportFilePath = "summary.csv";
 
     public static Properties setValidationConfiguration(String path){
         InputStream input = null;

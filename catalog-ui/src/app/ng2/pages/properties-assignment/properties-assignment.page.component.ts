@@ -105,7 +105,7 @@ export class PropertiesAssignmentComponent {
                 });
                 this.loadingInputs = false;
 
-            });
+            }, error => {}); //ignore error
         this.componentServiceNg2
             .getComponentResourceInstances(this.component)
             .subscribe(response => {
@@ -120,7 +120,7 @@ export class PropertiesAssignmentComponent {
                     this.loadingProperties = false;
                 }
                 this.selectFirstInstanceByDefault();
-            });
+            }, error => {}); //ignore error
 
     };
 
@@ -159,7 +159,7 @@ export class PropertiesAssignmentComponent {
                     this.processInstancePropertiesResponse(instanceBePropertiesMap, true);
                     this.loadingProperties = false;
 
-                });
+                }, error => {}); //ignore error
         } else {
             this.componentInstanceServiceNg2
                 .getComponentInstanceProperties(this.component, resourceInstance.uniqueId)
@@ -167,7 +167,7 @@ export class PropertiesAssignmentComponent {
                     instanceBePropertiesMap[resourceInstance.uniqueId] = response;
                     this.processInstancePropertiesResponse(instanceBePropertiesMap, false);
                     this.loadingProperties = false;
-                });
+                }, error => {}); //ignore error
         }
 
         if(resourceInstance.componentName === "vnfConfiguration") {
@@ -203,16 +203,16 @@ export class PropertiesAssignmentComponent {
             this.componentInstanceServiceNg2
                 .updateInstanceInput(this.component, this.selectedInstanceData.uniqueId, inputToUpdate)
                 .subscribe(response => {
-                    console.log("update resource instance input and got this response: ", response);
-                })
+                    console.log("Update resource instance input response: ", response);
+                }, error => {}); //ignore error
         }
         else {
             let propertyBe = new PropertyBEModel(event);
             this.componentInstanceServiceNg2
                 .updateInstanceProperty(this.component, this.selectedInstanceData.uniqueId, propertyBe)
                 .subscribe(response => {
-                    console.log("updated resource instance property and got this response: ", response);
-                });
+                    console.log("Update resource instance property response: ", response);
+                }, error => {}); //ignore error
             console.log(event);
         }
 
@@ -226,7 +226,7 @@ export class PropertiesAssignmentComponent {
             .updateComponentInput(this.component, inputToUpdate)
             .subscribe(response => {
                 console.log("updated the component input and got this response: ", response);
-            })
+            }, error => {}); //ignore error
     };
 
 
@@ -322,7 +322,7 @@ export class PropertiesAssignmentComponent {
                     this.inputs.push(newInput);
                     this.updatePropertyValueAfterDeclare(newInput);
                 });
-            });
+            }, error => {}); //ignore error
     };
 
 
@@ -373,7 +373,7 @@ export class PropertiesAssignmentComponent {
                 //         this.propertiesService.undoDisableRelatedProperties(propToEnable, response.inputPath);
                 //     }
                 // }
-            });
+            }, error => {}); //ignore error
     };
 
 
@@ -391,7 +391,7 @@ export class PropertiesAssignmentComponent {
                 this.renderer.invokeElementMethod(this.hierarchyNavTabs, 'triggerTabChange', ['Composition']);
                 this.propertiesNavigationData = [];
                 this.displayClearSearch = true;
-            });
+            }, error => {}); //ignore error
 
     };
 

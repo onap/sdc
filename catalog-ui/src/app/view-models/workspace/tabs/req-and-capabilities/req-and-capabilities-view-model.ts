@@ -67,7 +67,6 @@ export class ReqAndCapabilitiesViewModel {
                 private ComponentServiceNg2: ComponentServiceNg2) {
 
         this.initCapabilitiesAndRequirements();
-        this.$scope.updateSelectedMenuItem();
     }
 
     private initCapabilitiesAndRequirements = (): void => {

@@ -20,10 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,15 +54,7 @@ public class DeploymentViewTests extends SetupCDTest {
 	
 	@BeforeMethod
 	public void beforeTest(){
-		filePath = System.getProperty("filepath");
-	
-		if (filePath == null && System.getProperty("os.name").contains("Windows")) {
-			filePath = FileHandling.getResourcesFilesPath();
-		}
-		
-		else if(filePath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
-			filePath = FileHandling.getBasePath() + File.separator + "Files" + File.separator;
-		}
+		filePath = FileHandling.getFilePath("");
 	}
 	
 	@DataProvider(name = "CSAR_VF_Files", parallel = false)

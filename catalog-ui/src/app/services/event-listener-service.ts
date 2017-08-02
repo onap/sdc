@@ -48,7 +48,7 @@ export class EventListenerService implements IEventListenerService {
 
             // Only insert the callback if the callback is different from existing callbacks.
             for (let i = 0; i < callbacks.length; i++) {
-                if (callbacks[i].toString() === callback.toString()) {
+                if (callbacks[i].callback.toString() === callback.toString()) {
                     return; // Do not add this callback.
                 }
             }

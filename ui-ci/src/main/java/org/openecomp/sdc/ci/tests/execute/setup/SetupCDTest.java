@@ -238,7 +238,7 @@ public abstract class SetupCDTest extends DriverFactory {
 		}
 	}
 	
-	public void generateReport4Jenkins(ITestResult result, ITestContext context) {
+	public void generateReport4Jenkins(ITestContext context) {
 		String suiteName = ExtentManager.getSuiteName(context);	
 //		String outputDirectory = context.getOutputDirectory();
 	    JSONObject obj = new JSONObject();
@@ -269,16 +269,17 @@ public abstract class SetupCDTest extends DriverFactory {
 	
 		
 	@AfterSuite(alwaysRun = true)
-	public void afterSuite(ITestResult result, ITestContext context) throws Exception  {
+	
+	public void afterSuite2() throws Exception  {
+//		public void afterSuite() throws Exception  {
+		
+		csvReport.closeFile();
+		generateReport4Jenkins(myContext);
+		RestCDUtils.deleteOnDemand();
 		
 		if (getConfig().getUseBrowserMobProxy()){
 			MobProxy.getPoxyServer().stop();
 		}
-		
-		csvReport.closeFile();
-		generateReport4Jenkins(result, context);
-		RestCDUtils.deleteOnDemand();
-		
 	}
 	
 	protected static String setUrl() {
@@ -299,7 +300,7 @@ public abstract class SetupCDTest extends DriverFactory {
 		}
 		File credentialsFileRemote = new File(FileHandling.getBasePath() + File.separator + "conf" + File.separator + CREDENTIALS_FILE);
 //		File credentialsFileLocal = new File(FileHandling.getConfFilesPath() + CREDENTIALS_FILE);
-		File credentialsFileLocal = new File(FileHandling.getSdcVncPath() + File.separator + "conf" 
+		File credentialsFileLocal = new File(FileHandling.getSdcVnfsPath() + File.separator + "conf" 
 				+ File.separator + CREDENTIALS_FILE);
 		File[] credentialFiles = {credentialsFileRemote, credentialsFileLocal};
 		for (File credentialsFile : credentialFiles){

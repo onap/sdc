@@ -1,5 +1,5 @@
 @import '../../../../assets/styles/variables';
-//@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import '../../../../assets/styles/mixins';
 @ng2-shadow-gray: #f8f8f8;
 @ng2-light-gray: #eaeaea;
 @ng2-medium-gray: #d2d2d2;
@@ -36,7 +36,7 @@
         /deep/ .tab {
             padding: 12px;
             flex: 1;
-            font-weight:bold;
+            font-family: @font-opensans-regular;
 
             &.active {
                 color:#009fdb;
@@ -44,6 +44,7 @@
                 border-top: solid 4px #009fdb;
                 background-color: white;
                 padding-top:9px;
+                font-family: @font-opensans-medium;
             }
 
             .tab-indication {
@@ -129,8 +130,12 @@
             flex: none;
             padding: 8px 20px 0;
             font-size: 14px;
-            font-weight:bold;
             line-height:30px;
+            font-family: @font-opensans-regular;
+
+            &.active {
+                font-family: @font-opensans-medium;
+            }
         }
     }
 
@@ -146,8 +151,6 @@
         background-color:  #fffefe;
         box-shadow: 0px 1px 0.99px 0.01px rgba(34, 31, 31, 0.15);
         border-bottom: #d2d2d2 solid 1px;
-        color:#009fdb;
-        font-weight:bold;
         font-size:14px;
         text-align:left;
         flex:0 0 auto;
@@ -155,6 +158,8 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+        .a_13_r;
+        text-transform: uppercase;
 
         &.hierarchy-header {
             padding-left:20px;

@@ -30,8 +30,8 @@ import {ComponentGenericResponse} from "../responses/component-generic-response"
 import {sdc2Config} from "../../../../main";
 import {InstanceBePropertiesMap} from "../../../models/properties-inputs/property-fe-map";
 import {API_QUERY_PARAMS} from "app/utils";
-import {ComponentType, ServerTypeUrl} from "../../../utils/constants";
-import {InterceptorService} from "ng2-interceptors/index";
+import { ComponentType, ServerTypeUrl } from "../../../utils/constants";
+import { HttpService } from '../http.service';
 
 declare var angular:angular.IAngularStatic;
 
@@ -40,7 +40,7 @@ export class ComponentServiceNg2 {
 
     protected baseUrl;
 
-    constructor(private http:InterceptorService) {
+    constructor(private http:HttpService) {
         this.baseUrl = sdc2Config.api.root + sdc2Config.api.component_api_root;
     }
 
@@ -54,7 +54,7 @@ export class ComponentServiceNg2 {
         return this.http.get(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/filteredDataByParams', {search: params})
             .map((res:Response) => {
                 return new ComponentGenericResponse().deserialize(res.json());
-            }).do(error => console.log('server data:', error));
+            });
     }
 
     private getServerTypeUrl = (componentType:string):string => {

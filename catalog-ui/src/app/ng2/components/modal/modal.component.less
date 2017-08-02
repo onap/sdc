@@ -37,12 +37,25 @@
                 display: -ms-flexbox;
                 display: flex;
                 text-align: left;
-                border-bottom: solid 1px @main_color_o;
                 -webkit-box-align: center;
                 -ms-flex-align: center;
                 align-items: center;
                 margin: 0px 20px;
+
+                &.modal-type-standard {
+                    border-bottom: solid 3px @main_color_a;
+                }
+
+                &.modal-type-error {
+                    border-bottom: solid 3px @func_color_q;
+                }
+
+                &.modal-type-alert{
+                    border-bottom: solid 3px @main_color_h;
+                }
+
                 .title{
+                    .s_18_m;
                     -webkit-box-flex: 999;
                     -ms-flex-positive: 999;
                     flex-grow: 999;

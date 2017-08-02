@@ -118,7 +118,6 @@ export class GeneralViewModel {
         this.initScopeValidation();
         this.initScopeMethods();
         this.initScope();
-        this.$scope.updateSelectedMenuItem();
     }
 
 

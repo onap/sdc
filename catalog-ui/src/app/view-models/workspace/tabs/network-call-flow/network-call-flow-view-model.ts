@@ -25,9 +25,11 @@ import {ResourceType, ArtifactType} from "app/utils";
 import {ComponentInstance} from "app/models";
 import {ComponentGenericResponse} from "../../../../ng2/services/responses/component-generic-response";
 import {ComponentServiceNg2} from "../../../../ng2/services/component-services/component.service";
+declare var PunchOutRegistry;
 
 export interface INetworkCallFlowViewModelScope extends IWorkspaceViewModelScope {
     vendorMessageModel:VendorModel;
+    isLoading: boolean;
 }
 
 export class participant {
@@ -53,8 +55,12 @@ export class NetworkCallFlowViewModel {
                 private uuid4:any,
                 private ComponentServiceNg2: ComponentServiceNg2) {
 
-        this.initComponentInstancesAndInformationalArtifacts();
-        this.$scope.updateSelectedMenuItem();
+        this.$scope.isLoading = true;
+
+        PunchOutRegistry.loadOnBoarding(()=> {
+            this.$scope.isLoading = false;
+            this.initComponentInstancesAndInformationalArtifacts();
+        });
     }
 
     private getVFParticipantsFromInstances(instances:Array<ComponentInstance>):Array<participant> {

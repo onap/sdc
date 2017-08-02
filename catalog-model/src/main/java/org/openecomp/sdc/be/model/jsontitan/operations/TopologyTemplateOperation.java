@@ -349,9 +349,17 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 		return StorageOperationStatus.OK;
 	}
 
-	public StorageOperationStatus associateInstArtifactToComponent(GraphVertex nodeTypeVertex, Map<String, MapArtifactDataDefinition> instProps) {
+	public StorageOperationStatus associateInstDeploymentArtifactsToComponent(GraphVertex nodeTypeVertex, Map<String, MapArtifactDataDefinition> instArtifacts) {
+		return associateInstanceArtifactsToComponent(nodeTypeVertex, instArtifacts, VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS);
+	}
+	
+	public StorageOperationStatus associateInstArtifactsToComponent(GraphVertex nodeTypeVertex, Map<String, MapArtifactDataDefinition> instArtifacts) {
+		return associateInstanceArtifactsToComponent(nodeTypeVertex, instArtifacts, VertexTypeEnum.INSTANCE_ARTIFACTS, EdgeLabelEnum.INSTANCE_ARTIFACTS);
+	}
+
+	private StorageOperationStatus associateInstanceArtifactsToComponent(GraphVertex nodeTypeVertex, Map<String, MapArtifactDataDefinition> instProps, VertexTypeEnum vertexType, EdgeLabelEnum edgeLabel) {
 		if (instProps != null && !instProps.isEmpty()) {
-			Either<GraphVertex, StorageOperationStatus> assosiateElementToData = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, instProps);
+			Either<GraphVertex, StorageOperationStatus> assosiateElementToData = assosiateElementToData(nodeTypeVertex, vertexType, edgeLabel, instProps);
 			if (assosiateElementToData.isRight()) {
 				return assosiateElementToData.right().value();
 			}

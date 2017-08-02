@@ -47,6 +47,7 @@ export interface ICompositionViewModelScope extends IWorkspaceViewModelScope {
     onBackgroundClick():void;
     setSelectedInstance(componentInstance:ComponentInstance):void;
     printScreen():void;
+    isPNF():boolean;
 
     cacheComponentsInstancesFullData:Component;
 }
@@ -90,7 +91,6 @@ export class CompositionViewModel {
         this.$scope.setValidState(true);
         this.initScope();
         this.initGraphData();
-        this.$scope.updateSelectedMenuItem();
         this.registerGraphEvents(this.$scope);
     }
 
@@ -242,7 +242,10 @@ export class CompositionViewModel {
             this.$scope.setComponent(this.$scope.currentComponent);
             this.$scope.updateSelectedComponent();
         };
-        
+
+        this.$scope.isPNF = (): boolean => {
+            return this.$scope.selectedComponent.isResource() && (<Resource>this.$scope.selectedComponent).resourceType === ResourceType.PNF;
+        };
 
         this.eventListenerService.registerObserverCallback(EVENTS.ON_CHECKOUT, this.$scope.reload);
 

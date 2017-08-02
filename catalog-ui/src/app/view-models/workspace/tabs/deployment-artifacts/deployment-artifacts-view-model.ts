@@ -74,7 +74,6 @@ export class DeploymentArtifactsViewModel {
                 private ModalsHandler:ModalsHandler,
                 private ComponentServiceNg2: ComponentServiceNg2) {
         this.initScope();
-        this.$scope.updateSelectedMenuItem();
     }
 
     private initDescriptions = ():void => {

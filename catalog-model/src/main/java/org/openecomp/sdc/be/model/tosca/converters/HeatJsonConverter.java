@@ -39,12 +39,15 @@ public class HeatJsonConverter implements PropertyValueConverter {
 
 	@Override
 	public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		String coverted = ValidationUtils.removeNoneUtf8Chars(original);
-		coverted = ValidationUtils.removeHtmlTagsOnly(coverted);
-		coverted = ValidationUtils.normaliseWhitespace(coverted);
-		coverted = ValidationUtils.stripOctets(coverted);
+		if (original == null) {
+			return null;
+		}
+		String converted = ValidationUtils.removeNoneUtf8Chars(original);
+		converted = ValidationUtils.removeHtmlTagsOnly(converted);
+		converted = ValidationUtils.normaliseWhitespace(converted);
+		converted = ValidationUtils.stripOctets(converted);
 		// As opposed to string converter, keeping the " and ' symbols
-		return coverted;
+		return converted;
 	}
 
 }

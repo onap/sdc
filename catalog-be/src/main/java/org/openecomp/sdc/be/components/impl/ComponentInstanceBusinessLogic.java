@@ -401,6 +401,15 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(result)));
 		}
 		componentInstance.setDeploymentArtifacts(finalDeploymentArtifacts);
+		
+		
+		artStatus = toscaOperationFacade.addInformationalArtifactsToInstance(containerComponent.getUniqueId(), componentInstance, originComponent.getArtifacts());
+		if ( artStatus != StorageOperationStatus.OK){
+			log.debug("Failed to add informational artifacts to the instance {} belonging to the conatiner {}. Status is {}", componentInstance.getUniqueId(), containerComponent.getUniqueId(), artStatus);
+			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponseForResourceInstance(artStatus, false)));
+			
+		}
+		componentInstance.setArtifacts(originComponent.getArtifacts());
 		return Either.left(ActionStatus.OK);
 	}
 
@@ -1828,23 +1837,23 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		}
 		return result;
 	}
+	
+	public Either<ComponentInstance, ResponseFormat> deleteServiceProxy(String containerComponentType, String containerComponentId, String serviceProxyId, String userId) {
+		// TODO Add implementation
+		Either<ComponentInstance, ResponseFormat> result = Either.left(new ComponentInstance());
+		return result;
+	}
 
-	private Boolean validateInstanceNameUniqueness(Component containerComponent, ComponentInstance oldComponentInstance, String newInstanceName) {
-		Boolean isUnique = true;
-		String newInstanceNormalizedName = ValidationUtils.normalizeComponentInstanceName(newInstanceName);
-		if (!oldComponentInstance.getNormalizedName().equals(newInstanceNormalizedName)) {
-			Optional<ComponentInstance> foundComponentInstance = containerComponent.getComponentInstances().stream().filter(ci -> ci.getNormalizedName().equals(newInstanceNormalizedName)).findFirst();
-			if (foundComponentInstance.isPresent()) {
-				isUnique = false;
-			}
-			if (isUnique) {
-				foundComponentInstance = containerComponent.getComponentInstances().stream().filter(ci -> ci.getUniqueId().endsWith(newInstanceNormalizedName)).findFirst();
-				if (foundComponentInstance.isPresent()) {
-					isUnique = false;
-				}
-			}
-		}
-		return isUnique;
+	public Either<ComponentInstance, ResponseFormat> createServiceProxy(String containerComponentType, String containerComponentId, String userId, ComponentInstance componentInstance) {
+		// TODO Add implementation
+		Either<ComponentInstance, ResponseFormat> result = Either.left(new ComponentInstance());
+		return result;
+	}
+
+	public Either<ComponentInstance, ResponseFormat> changeServiceProxyVersion(String containerComponentType, String containerComponentId, String serviceProxyId, String userId) {
+		// TODO Add implementation
+		Either<ComponentInstance, ResponseFormat> result = Either.left(new ComponentInstance());
+		return result;
 	}
 	
 	private Boolean validateInstanceNameUniquenessUponUpdate(Component containerComponent, ComponentInstance oldComponentInstance, String newInstanceName) {
@@ -1889,12 +1898,11 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		
 		resourceInstanceForUpdate.setCustomizationUUID(origInstanceForUpdate.getCustomizationUUID());
 		
-		if (StringUtils.isEmpty(resourceInstanceForUpdate.getName())) {
+		if (StringUtils.isEmpty(resourceInstanceForUpdate.getName()) && StringUtils.isNotEmpty(origInstanceForUpdate.getName())) {
 			resourceInstanceForUpdate.setName(origInstanceForUpdate.getName());
-			
 		}
-		if (StringUtils.isEmpty(resourceInstanceForUpdate.getNormalizedName()))
-			resourceInstanceForUpdate.setNormalizedName(origInstanceForUpdate.getNormalizedName());
+		
+		resourceInstanceForUpdate.setNormalizedName(ValidationUtils.normalizeComponentInstanceName(resourceInstanceForUpdate.getName()));
 		
 		if (StringUtils.isEmpty(resourceInstanceForUpdate.getIcon()))
 			resourceInstanceForUpdate.setIcon(origInstanceForUpdate.getIcon());		

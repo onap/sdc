@@ -45,7 +45,6 @@ import { KeysPipe } from 'app/ng2/pipes/keys.pipe';
 import {TooltipModule} from "../../components/tooltip/tooltip.module";
 import { ComponentModeService } from "app/ng2/services/component-mode.service"
 import {LoaderComponent} from "app/ng2/components/loader/loader.component"
-import {HttpInterceptor} from "../../services/http.interceptor.service";
 
 @NgModule({
     declarations: [
@@ -81,7 +80,7 @@ import {HttpInterceptor} from "../../services/http.interceptor.service";
         // PopoverContentComponent,
         // PopoverComponent
     ],
-    providers: [PropertiesService, HierarchyNavService, PropertiesUtils, DataTypeService,HttpInterceptor, ContentAfterLastDotPipe, GroupByPipe, KeysPipe, ComponentModeService]
+    providers: [PropertiesService, HierarchyNavService, PropertiesUtils, DataTypeService, ContentAfterLastDotPipe, GroupByPipe, KeysPipe, ComponentModeService]
 })
 export class PropertiesAssignmentModule {
 

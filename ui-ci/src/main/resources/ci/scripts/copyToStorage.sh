@@ -3,7 +3,7 @@
 REPORT_NAME=$1
 VERSION=$2
 ENV=$3
-IP=$3
+
 
 if [ -z "$REPORT_NAME" ]
  then
@@ -20,6 +20,10 @@ if [ -z "$REPORT_NAME" ]
 
  fi
 
+source conf/attInternal.info
+IP=$automationResutlsRepo
+PASS=$automationResutlsRepoPass
+
 /usr/bin/expect  << EOF
 spawn ssh admin@${IP} mkdir -p -m 775 /home/admin/reports/${ENV}/${VERSION}/UI/
 
@@ -29,13 +33,13 @@ expect {
     exp_continue
   }
   -re ".*sword.*" {
-    exp_send "Aa123456\r"
+    exp_send ${PASS}\r
   }
 }
 
 expect eof
 
-spawn scp -pr ExtentReport admin@{IP}:/home/admin/reports/${ENV}/${VERSION}/UI/${REPORT_NAME}/
+spawn scp -pr ExtentReport admin@${IP}:/home/admin/reports/${ENV}/${VERSION}/UI/${REPORT_NAME}/
 
 expect {
   -re ".*es.*o.*" {
@@ -43,7 +47,7 @@ expect {
     exp_continue
   }
   -re ".*sword.*" {
-    exp_send "Aa123456\r"
+    exp_send ${PASS}\r
   }
 }
 

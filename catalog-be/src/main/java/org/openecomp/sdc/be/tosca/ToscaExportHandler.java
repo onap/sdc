@@ -634,7 +634,8 @@ public class ToscaExportHandler {
 		List<ComponentInstanceInput> instanceInputsList = componentInstancesInputs.get(instanceUniqueId);
 		if (instanceInputsList != null) {
 			instanceInputsList.forEach(input -> {
-				Supplier<String> supplier = () -> input.getValue();
+				
+				Supplier<String> supplier = () -> input.getValue() != null && !input.getValue().isEmpty()? input.getValue(): input.getDefaultValue();
 				convertAndAddValue(dataTypes, componentInstance, props, input, supplier);
 			});
 		}
@@ -695,7 +696,7 @@ public class ToscaExportHandler {
 		if (input.getSchema() != null && input.getSchema().getProperty() != null) {
 			innerType = input.getSchema().getProperty().getType();
 		}
-		return propertyConvertor.convertToToscaObject(propertyType, input.getName(), supplier.get(), innerType, dataTypes);
+		return propertyConvertor.convertToToscaObject(propertyType, supplier.get(), innerType, dataTypes);
 	}
 
 	private ToscaGroupTemplate convertGroup(GroupDefinition group) {

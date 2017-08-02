@@ -89,6 +89,7 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.util.GeneralUtility;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -2098,7 +2099,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		
 		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.ARTIFACT_LOGICAL_NAME_CANNOT_BE_CHANGED.name());
 		List<String> variables = asList();
-		artifactReqDetails.setArtifactLabel("invalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidType");
+		artifactReqDetails.setArtifactLabel("invalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidType");
 
 		if(componentInstance != null) {
 			updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
@@ -2166,8 +2167,8 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 			}
 		}
 			
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.ARTIFACT_LOGICAL_NAME_CANNOT_BE_CHANGED.name());
-		List<String> variables = asList();
+		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.EXCEEDS_LIMIT.name());
+		List<String> variables = asList("artifact description", ValidationUtils.ARTIFACT_DESCRIPTION_MAX_LENGTH.toString());
 		artifactReqDetails.setDescription("invalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidType");
 		
 		if(componentInstance != null) {
@@ -2202,7 +2203,8 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		}
 		
 		
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.ARTIFACT_LOGICAL_NAME_CANNOT_BE_CHANGED.name());
+//		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.ARTIFACT_LOGICAL_NAME_CANNOT_BE_CHANGED.name());
+		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.MISSING_DATA.name());
 		List<String> variables = asList("artifact description");
 		artifactReqDetails.setDescription("");
 		

@@ -65,7 +65,6 @@ export class InformationArtifactsViewModel {
                 private ModalsHandler:ModalsHandler,
                 private ComponentServiceNg2: ComponentServiceNg2) {
         this.initInformationalArtifacts();
-        this.$scope.updateSelectedMenuItem();
     }
 
     private initInformationalArtifacts = ():void => {

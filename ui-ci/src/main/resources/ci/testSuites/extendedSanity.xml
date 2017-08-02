@@ -9,6 +9,8 @@
    		<class name="org.openecomp.sdc.ci.tests.execute.sanity.Onboard">
    			  <methods>
 				<exclude name="onboardVNFTestSanity"/>
+				<exclude name="onboardVNFShotFlow"/>
+				<exclude name="onboardRandomVNFsTest"/>
 			  </methods>
 		</class>
    		<class name="org.openecomp.sdc.ci.tests.execute.sanity.CatalogLeftPanelTest"/>

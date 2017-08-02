@@ -18,130 +18,137 @@
  * ============LICENSE_END=========================================================
  */
 
-    'use strict';
-    import {ArtifactType} from "app/utils";
-    import {ArtifactGroupModel} from "app/models";
-    import {participant} from "app/view-models/workspace/tabs/network-call-flow/network-call-flow-view-model";
-    import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
-    import {ComponentGenericResponse} from "../../../../ng2/services/responses/component-generic-response";
-    import {ComponentServiceNg2} from "../../../../ng2/services/component-services/component.service";
+'use strict';
+import {ArtifactType} from "app/utils";
+import {ArtifactGroupModel} from "app/models";
+import {participant} from "app/view-models/workspace/tabs/network-call-flow/network-call-flow-view-model";
+import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
+import {ComponentGenericResponse} from "../../../../ng2/services/responses/component-generic-response";
+import {ComponentServiceNg2} from "../../../../ng2/services/component-services/component.service";
+declare var PunchOutRegistry;
 
-    export interface IManagementWorkflowViewModelScope extends IWorkspaceViewModelScope {
-        vendorModel:VendorModel;
+export interface IManagementWorkflowViewModelScope extends IWorkspaceViewModelScope {
+    vendorModel:VendorModel;
+    isLoading: boolean;
+}
+
+export class VendorModel {
+    artifacts:ArtifactGroupModel;
+    serviceID:string;
+    readonly:boolean;
+    sessionID:string;
+    requestID:string;
+    diagramType:string;
+    participants:Array<participant>;
+
+    constructor(artifacts:ArtifactGroupModel, serviceID:string, readonly:boolean, sessionID:string,
+                requestID:string, diagramType:string, participants:Array<participant>) {
+        this.artifacts = artifacts;
+        this.serviceID = serviceID;
+        this.readonly = readonly;
+        this.sessionID = sessionID;
+        this.requestID = requestID;
+        this.diagramType = diagramType;
+        this.participants = participants;
     }
+}
 
-    export class VendorModel {
-        artifacts: ArtifactGroupModel;
-        serviceID: string;
-        readonly: boolean;
-        sessionID: string;
-        requestID: string;
-        diagramType: string;
-        participants:Array<participant>;
+export class ManagementWorkflowViewModel {
 
-        constructor(artifacts: ArtifactGroupModel, serviceID:string, readonly:boolean, sessionID:string,
-                    requestID:string, diagramType:string, participants:Array<participant>){
-            this.artifacts = artifacts;
-            this.serviceID = serviceID;
-            this.readonly = readonly;
-            this.sessionID = sessionID;
-            this.requestID = requestID;
-            this.diagramType = diagramType;
-            this.participants = participants;
-        }
-    }
+    static '$inject' = [
+        '$scope',
+        'uuid4',
+        'ComponentServiceNg2'
+    ];
 
-    export class ManagementWorkflowViewModel {
+    constructor(private $scope:IManagementWorkflowViewModelScope,
+                private uuid4:any,
+                private ComponentServiceNg2:ComponentServiceNg2) {
 
-        static '$inject' = [
-            '$scope',
-            'uuid4',
-            'ComponentServiceNg2'
-        ];
+        this.$scope.isLoading = true;
 
-        constructor(private $scope:IManagementWorkflowViewModelScope,
-                    private uuid4:any,
-                    private ComponentServiceNg2: ComponentServiceNg2) {
-
+        PunchOutRegistry.loadOnBoarding(()=> {
+            this.$scope.isLoading = false;
             this.initInformationalArtifacts();
-            this.$scope.updateSelectedMenuItem();
-        }
+        });
+    }
 
 
-        private initInformationalArtifacts = ():void => {
-            if(!this.$scope.component.artifacts) {
-                this.$scope.isLoading = true;
-                this.ComponentServiceNg2.getComponentInformationalArtifacts(this.$scope.component).subscribe((response:ComponentGenericResponse) => {
-                    this.$scope.component.artifacts = response.artifacts;
-                    this.initScope();
-                    this.$scope.isLoading = false;
-                });
-            } else {
+    private initInformationalArtifacts = ():void => {
+        if (!this.$scope.component.artifacts) {
+            this.$scope.isLoading = true;
+            this.ComponentServiceNg2.getComponentInformationalArtifacts(this.$scope.component).subscribe((response:ComponentGenericResponse) => {
+                this.$scope.component.artifacts = response.artifacts;
                 this.initScope();
-            }
-        }
-
-        private static getParticipants():Array<participant> {
-            return [
-                {
-                    "id": "1",
-                    "name": "Customer"},
-                {
-                    "id": "2",
-                    "name": "CCD"
-                },
-                {
-                    "id": "3",
-                    "name": "Infrastructure"
-                },
-                {
-                    "id": "4",
-                    "name": "MSO"
-                },
-                {
-                    "id": "5",
-                    "name": "SDN-C"
-                },
-                {
-                    "id": "6",
-                    "name": "A&AI"
-                },
-                {
-                    "id": "7",
-                    "name": "APP-C"
-                },
-                {
-                    "id": "8",
-                    "name": "Cloud"
-                },
-                {
-                    "id": "9",
-                    "name": "DCAE"
-                },
-                {
-                    "id": "10",
-                    "name": "ALTS"
-                },
-                {
-                    "id": "11",
-                    "name": "VF"
-                }
-            ]
-        }
-
-
-        private initScope():void {
-            this.$scope.vendorModel = new VendorModel(
-                this.$scope.component.artifacts.filteredByType(ArtifactType.THIRD_PARTY_RESERVED_TYPES.WORKFLOW),
-                this.$scope.component.uniqueId,
-                this.$scope.isViewMode(),
-                this.$scope.user.userId,
-                this.uuid4.generate(),
-                ArtifactType.THIRD_PARTY_RESERVED_TYPES.WORKFLOW,
-                ManagementWorkflowViewModel.getParticipants()
-            );
-
-            this.$scope.thirdParty = true;
-            this.$scope.setValidState(true);
+                this.$scope.isLoading = false;
+            });
+        } else {
+            this.initScope();
         }
     }
+
+    private static getParticipants():Array<participant> {
+        return [
+            {
+                "id": "1",
+                "name": "Customer"
+            },
+            {
+                "id": "2",
+                "name": "CCD"
+            },
+            {
+                "id": "3",
+                "name": "Infrastructure"
+            },
+            {
+                "id": "4",
+                "name": "MSO"
+            },
+            {
+                "id": "5",
+                "name": "SDN-C"
+            },
+            {
+                "id": "6",
+                "name": "A&AI"
+            },
+            {
+                "id": "7",
+                "name": "APP-C"
+            },
+            {
+                "id": "8",
+                "name": "Cloud"
+            },
+            {
+                "id": "9",
+                "name": "DCAE"
+            },
+            {
+                "id": "10",
+                "name": "ALTS"
+            },
+            {
+                "id": "11",
+                "name": "VF"
+            }
+        ]
+    }
+
+
+    private initScope():void {
+        this.$scope.vendorModel = new VendorModel(
+            this.$scope.component.artifacts.filteredByType(ArtifactType.THIRD_PARTY_RESERVED_TYPES.WORKFLOW),
+            this.$scope.component.uniqueId,
+            this.$scope.isViewMode(),
+            this.$scope.user.userId,
+            this.uuid4.generate(),
+            ArtifactType.THIRD_PARTY_RESERVED_TYPES.WORKFLOW,
+            ManagementWorkflowViewModel.getParticipants()
+        );
+
+        this.$scope.thirdParty = true;
+        this.$scope.setValidState(true);
+    }
+}

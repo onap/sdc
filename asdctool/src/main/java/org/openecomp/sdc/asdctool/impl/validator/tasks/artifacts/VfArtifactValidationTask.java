@@ -1,6 +1,7 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
 import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
+import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,11 @@ public class VfArtifactValidationTask extends VfValidationTask {
     protected TopologyTemplateOperation topologyTemplateOperation;
 
     public VfArtifactValidationTask() {
-        this.name = "Artifact Validation Task";
+        this.name = "VF Artifact Validation Task";
     }
 
     @Override
-    public boolean validate(GraphVertex vertex) {
+    public VertexResult validate(GraphVertex vertex) {
         return artifactValidationUtils.validateTopologyTemplateArtifacts(vertex, getTaskName());
     }
 }

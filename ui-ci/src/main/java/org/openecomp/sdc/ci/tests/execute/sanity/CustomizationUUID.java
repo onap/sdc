@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,15 +70,7 @@ public class CustomizationUUID extends SetupCDTest {
 	
 	@BeforeMethod
 	public void beforeTest(){
-		filePath = System.getProperty("filepath");
-	
-		if (filePath == null && System.getProperty("os.name").contains("Windows")) {
-			filePath = FileHandling.getResourcesFilesPath();
-		}
-		
-		else if(filePath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
-			filePath = FileHandling.getBasePath() + File.separator + "Files" + File.separator;
-		}
+		filePath = FileHandling.getFilePath("");
 	}
 	
 	@Test

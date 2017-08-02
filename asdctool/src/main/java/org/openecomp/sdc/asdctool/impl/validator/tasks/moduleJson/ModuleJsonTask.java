@@ -4,10 +4,12 @@ import fj.data.Either;
 import org.apache.cassandra.cql3.CQL3Type;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
+import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
@@ -32,7 +34,11 @@ public class ModuleJsonTask extends ServiceValidationTask {
     }
 
     @Override
-    public boolean validate(GraphVertex vertex) {
+    public VertexResult validate(GraphVertex vertex) {
+        if (!isAfterSubmitForTesting(vertex)) {
+            return new VertexResult(true);
+        }
+
         ComponentParametersView paramView = new ComponentParametersView();
         paramView.disableAll();
         paramView.setIgnoreArtifacts(false);
@@ -40,23 +46,20 @@ public class ModuleJsonTask extends ServiceValidationTask {
         paramView.setIgnoreComponentInstances(false);
         Either<ToscaElement, StorageOperationStatus> toscaElementEither = topologyTemplateOperation.getToscaElement(vertex.getUniqueId(), paramView);
         if (toscaElementEither.isRight()) {
-            return false;
+            return new VertexResult(false);
         }
         TopologyTemplate element = (TopologyTemplate) toscaElementEither.left().value();
-        if (!isAfterSubmitForTesting(element)) {
-            return true;
-        }
         Map<String, MapGroupsDataDefinition> instGroups = element.getInstGroups();
         Map<String, MapArtifactDataDefinition> instDeploymentArtifacts = element.getInstDeploymentArtifacts();
 
         for (Map.Entry<String, MapGroupsDataDefinition> pair : Optional.ofNullable(instGroups).orElse(Collections.emptyMap()).entrySet()) {
             MapGroupsDataDefinition groups = pair.getValue();
             if (groups != null && !groups.getMapToscaDataDefinition().isEmpty()) {
-                return findCoordinateModuleJson(pair, instDeploymentArtifacts, vertex);
+                return new VertexResult(findCoordinateModuleJson(pair, instDeploymentArtifacts, vertex));
             }
-            return true;
+            return new VertexResult(true);
         }
-        return true;
+        return new VertexResult(true);
     }
 
     private boolean findCoordinateModuleJson(Map.Entry<String, MapGroupsDataDefinition> pair, Map<String, MapArtifactDataDefinition> instDeploymentArtifacts, GraphVertex vertex) {
@@ -84,9 +87,9 @@ public class ModuleJsonTask extends ServiceValidationTask {
         return false;
     }
 
-    private boolean isAfterSubmitForTesting(TopologyTemplate element){
-        List allowedStates = new ArrayList<>(Arrays.asList(LifecycleStateEnum.READY_FOR_CERTIFICATION,
-                LifecycleStateEnum.CERTIFICATION_IN_PROGRESS, LifecycleStateEnum.CERTIFIED));
-        return allowedStates.contains(element.getLifecycleState());
+    private boolean isAfterSubmitForTesting(GraphVertex vertex){
+        List allowedStates = new ArrayList<>(Arrays.asList(LifecycleStateEnum.READY_FOR_CERTIFICATION.name(),
+                LifecycleStateEnum.CERTIFICATION_IN_PROGRESS.name(), LifecycleStateEnum.CERTIFIED.name()));
+        return allowedStates.contains(vertex.getMetadataProperty(GraphPropertyEnum.STATE));
     }
 }

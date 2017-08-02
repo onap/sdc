@@ -27,21 +27,21 @@ public class ArtifactValidationUtils {
     @Autowired
     private TopologyTemplateOperation topologyTemplateOperation;
 
-    public boolean validateArtifactsAreInCassandra(GraphVertex vertex, String taskName, List<ArtifactDataDefinition> artifacts) {
-        boolean allArtifactsExist = true;
+    public ArtifactsVertexResult validateArtifactsAreInCassandra(GraphVertex vertex, String taskName, List<ArtifactDataDefinition> artifacts) {
+        ArtifactsVertexResult result = new ArtifactsVertexResult(true);
         for(ArtifactDataDefinition artifact:artifacts) {
             boolean isArtifactExist = isArtifcatInCassandra(artifact.getEsId());
             String status = isArtifactExist ? "Artifact " + artifact.getEsId() + " is in Cassandra" :
                     "Artifact " + artifact.getEsId() + " doesn't exist in Cassandra";
-            if (!isArtifactExist) {
-                ReportManager.addFailedVertex(taskName, vertex.getUniqueId());
-            }
+
             ReportManager.writeReportLineToFile(status);
             if (!isArtifactExist) {
-                allArtifactsExist = false;
+                ReportManager.addFailedVertex(taskName, vertex.getUniqueId());
+                result.setStatus(false);
+                result.addNotFoundArtifact(artifact.getUniqueId());
             }
         }
-        return allArtifactsExist;
+        return result;
     }
 
     public boolean isArtifcatInCassandra(String uniueId) {
@@ -54,7 +54,6 @@ public class ArtifactValidationUtils {
         }
         Long count = countOfArtifactsEither.left().value();
         if (count <1) {
-            //System.out.print("Artifact "+uniueId+" count is: "+count);
             return false;
         }
         return true;
@@ -70,14 +69,16 @@ public class ArtifactValidationUtils {
         return artifacts;
     }
 
-    public boolean validateTopologyTemplateArtifacts(GraphVertex vertex, String taskName) {
+    public ArtifactsVertexResult validateTopologyTemplateArtifacts(GraphVertex vertex, String taskName) {
+        ArtifactsVertexResult result = new ArtifactsVertexResult();
         ComponentParametersView paramView = new ComponentParametersView();
         paramView.disableAll();
         paramView.setIgnoreArtifacts(false);
         paramView.setIgnoreComponentInstances(false);
         Either<ToscaElement, StorageOperationStatus> toscaElementEither = topologyTemplateOperation.getToscaElement(vertex.getUniqueId(), paramView);
         if (toscaElementEither.isRight()) {
-            return false;
+            result.setStatus(false);
+            return result;
         }
         TopologyTemplate element = (TopologyTemplate) toscaElementEither.left().value();
         Map<String, ArtifactDataDefinition> deploymentArtifacts = element.getDeploymentArtifacts();

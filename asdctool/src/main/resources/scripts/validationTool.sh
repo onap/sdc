@@ -18,7 +18,8 @@ source ${FULL_PATH}/baseOperation.sh
 
 mainClass="org.openecomp.sdc.asdctool.main.ValidationTool"
 
-command="java $JVM_LOG_FILE -cp $JARS $mainClass reportOutput.txt /home/vagrant/catalog-be/config/catalog-be/"
+#command="java $JVM_LOG_FILE -cp $JARS $mainClass reportOutput.txt /home/vagrant/catalog-be/config/catalog-be/"
+command="java $JVM_LOG_FILE -cp $JARS $mainClass . /apps/jetty/base/be/config/catalog-be/"
 echo $command
 
 $command

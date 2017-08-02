@@ -1,4 +1,5 @@
-<div *ngIf="display" data-tests-id="tlv-loader">
+<div *ngIf="isVisible"  data-tests-id="tlv-loader" [ngClass]="relative ? 'loader-relative' : 'loader-fixed'" 
+        [style.top]="offset.top" [style.left]="offset.left" [style.width]="offset.width"  [style.height]="offset.height">
     <div class="tlv-loader-back" [ngClass]="{'tlv-loader-relative':relative}"></div>
     <div class="tlv-loader {{size}}"></div>
 </div>

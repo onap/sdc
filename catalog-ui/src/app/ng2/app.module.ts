@@ -32,14 +32,13 @@ import {
 } from "./utils/ng1-upgraded-provider";
 import {ConfigService} from "./services/config.service";
 import {HttpModule} from '@angular/http';
+import {HttpService} from './services/http.service';
 import {AuthenticationService} from './services/authentication.service';
 import {Cookie2Service} from "./services/cookie.service";
 import {ComponentServiceNg2} from "./services/component-services/component.service";
 import {ServiceServiceNg2} from "./services/component-services/service.service";
 import {ComponentInstanceServiceNg2} from "./services/component-instance-services/component-instance.service";
-import { InterceptorService } from 'ng2-interceptors';
 import { XHRBackend, RequestOptions } from '@angular/http';
-import {HttpInterceptor} from "./services/http.interceptor.service";
 import { SearchBarComponent } from './shared/search-bar/search-bar.component';
 import { SearchWithAutoCompleteComponent } from './shared/search-with-autocomplete/search-with-autocomplete.component';
 
@@ -49,16 +48,6 @@ export function configServiceFactory(config:ConfigService) {
     return () => config.loadValidationConfiguration();
 }
 
-export function interceptorFactory(xhrBackend: XHRBackend, requestOptions: RequestOptions){
-    let service = new InterceptorService(xhrBackend, requestOptions);
-      service.addInterceptor(new HttpInterceptor());
-    return service;
-}
-
-
-// export function httpServiceFactory(backend: XHRBackend, options: RequestOptions) {
-//     return new HttpService(backend, options);
-// }
 
 @NgModule({
     declarations: [
@@ -87,6 +76,7 @@ export function interceptorFactory(xhrBackend: XHRBackend, requestOptions: Reque
         ConfigService,
         ComponentServiceNg2,
         ServiceServiceNg2,
+        HttpService,
         ComponentInstanceServiceNg2,
         {
             provide: APP_INITIALIZER,
@@ -94,11 +84,6 @@ export function interceptorFactory(xhrBackend: XHRBackend, requestOptions: Reque
             deps: [ConfigService],
             multi: true
         },
-        {
-            provide: InterceptorService,
-            useFactory: interceptorFactory,
-            deps: [XHRBackend, RequestOptions]
-        }
      ],
     bootstrap: [AppComponent]
 })
