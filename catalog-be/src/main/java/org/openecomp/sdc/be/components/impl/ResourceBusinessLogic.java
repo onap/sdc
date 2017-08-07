@@ -3567,10 +3567,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
 
 		for (Entry<String, UploadComponentInstanceInfo> entry : uploadResInstancesMap.entrySet()) {
+			log.trace("Processing entry: {}", entry);
 			UploadComponentInstanceInfo uploadComponentInstanceInfo = entry.getValue();
 			ComponentInstance currentCompInstance = null;
 			for (ComponentInstance compInstance : componentInstancesList) {
-
+				log.trace("Processing component instance: {}", compInstance);
 				if (compInstance.getName().equals(uploadComponentInstanceInfo.getName())) {
 					currentCompInstance = compInstance;
 					break;

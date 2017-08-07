@@ -905,11 +905,18 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 		} else {
 			genericTypeToscaName = component.fetchGenericTypeToscaNameFromConfig();
 		}
-		if(null == genericTypeToscaName)
+		log.debug("Fetching generic tosca name {}", genericTypeToscaName);
+		if(null == genericTypeToscaName) {
+			log.debug("Failed to fetch certified node type by tosca resource name {}", genericTypeToscaName);
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+		}
+		
 		Either<Resource, StorageOperationStatus> findLatestGeneric = toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(genericTypeToscaName);
-		if(findLatestGeneric.isRight())
+		if(findLatestGeneric.isRight()){
+			log.debug("Failed to fetch certified node type by tosca resource name {}", genericTypeToscaName);
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), genericTypeToscaName));
+		}
+		
 		Resource genericTypeResource = findLatestGeneric.left().value();
 		component.setDerivedFromGenericInfo(genericTypeResource);
 		return Either.left(genericTypeResource);
