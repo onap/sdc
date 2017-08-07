@@ -1,5 +1,6 @@
+jetty_base="/var/lib/jetty"
 template "catalog-fe-config" do
-   path "/var/lib/jetty/config/catalog-fe/configuration.yaml"
+   path "#{jetty_base}/config/catalog-fe/configuration.yaml"
    source "FE-configuration.yaml.erb"
    owner "jetty"
    group "jetty"
@@ -14,7 +15,7 @@ end
 
 
 template "onboarding-fe-config" do
- path "/#{jetty_base}/config/onboarding-fe/onboarding_configuration.yaml"
+ path "#{jetty_base}/config/onboarding-fe/onboarding_configuration.yaml"
  source "FE-onboarding-configuration.yaml.erb"
  owner "jetty"
  group "jetty"

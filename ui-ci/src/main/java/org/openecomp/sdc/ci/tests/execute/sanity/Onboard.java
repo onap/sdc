@@ -69,7 +69,7 @@ import com.clearspring.analytics.util.Pair;
 
 public class Onboard extends SetupCDTest {
 	
-	
+	protected static String filepath = FileHandling.getVnfRepositoryPath();
 	protected String makeDistributionValue;
 	
 	@Parameters({ "makeDistribution" })
@@ -78,8 +78,18 @@ public class Onboard extends SetupCDTest {
 		makeDistributionValue = makeDistributionReadValue;                             
 	}
 	
-	public static Object[][] provideData(Object[] fileNamesFromFolder, String filepath) {
-		Object[][] arObject = new Object[fileNamesFromFolder.length][];
+//	public static Object[][] provideData(Object[] fileNamesFromFolder, String filepath) {
+//		Object[][] arObject = new Object[fileNamesFromFolder.length][];
+//
+//		int index = 0;
+//		for (Object obj : fileNamesFromFolder) {
+//			arObject[index++] = new Object[] { filepath, obj };
+//		}
+//		return arObject;
+//	}
+
+	public static Object[][] provideData(List<String> fileNamesFromFolder, String filepath) {
+		Object[][] arObject = new Object[fileNamesFromFolder.size()][];
 
 		int index = 0;
 		for (Object obj : fileNamesFromFolder) {
@@ -87,65 +97,106 @@ public class Onboard extends SetupCDTest {
 		}
 		return arObject;
 	}
-
+	
 	@DataProvider(name = "VNF_List" , parallel = true)
 	private static final Object[][] VnfList() throws Exception {
-		String filepath = getFilePath();
 		
-		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
-		System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.length));
+		List<String> fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
+		List<String> exludeVnfList = Arrays.asList("2016-197_vscp_vscp-fw_1610_e2e.zip", "2016-281_vProbes_BE_11_1_f_30_1610_e2e.zip", 
+				"2016-282_vProbes_FE_11_1_f_30_1610_e2e.zip", "2016-044_vfw_fnat_30_1607_e2e.zip", "2017-376_vMOG_11_1.zip", "vMOG.zip", 
+				"vMRF_USP_AIC3.0_1702.zip", "2016-211_vprobesbe_vprobes_be_30_1610_e2e.zip", "2016-005_vprobesfe_vprobes_fe_30_1607_e2e.zip", 
+				"vMRF_RTT.zip", "2016-006_vvm_vvm_30_1607_e2e.zip", "2016-001_vvm_vvm_30_1607_e2e.zip");
+		fileNamesFromFolder.removeAll(exludeVnfList);
+		
+		System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
 		return provideData(fileNamesFromFolder, filepath);
 	}
 
 	
+//	@DataProvider(name = "randomVNF_List", parallel = false)
+//	private static final Object[][] randomVnfList() throws Exception {
+//		int randomElementNumber = 3; //how many VNFs to onboard randomly
+//		String filepath = getFilePath();
+//		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
+//		Object[] newRandomFileNamesFromFolder = getRandomElements(randomElementNumber, fileNamesFromFolder);
+//		System.out.println(String.format("There are %s zip file(s) to test", newRandomFileNamesFromFolder.length));
+//		return provideData(newRandomFileNamesFromFolder, filepath);
+//	}
+	
 	@DataProvider(name = "randomVNF_List", parallel = false)
 	private static final Object[][] randomVnfList() throws Exception {
 		int randomElementNumber = 3; //how many VNFs to onboard randomly
-		String filepath = getFilePath();
-		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
-		Object[] newRandomFileNamesFromFolder = getRandomElements(randomElementNumber, fileNamesFromFolder);
-		System.out.println(String.format("There are %s zip file(s) to test", newRandomFileNamesFromFolder.length));
+		List<String> fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
+		List<String> exludeVnfList = Arrays.asList("2016-197_vscp_vscp-fw_1610_e2e.zip", "2016-281_vProbes_BE_11_1_f_30_1610_e2e.zip", 
+				"2016-282_vProbes_FE_11_1_f_30_1610_e2e.zip", "2016-044_vfw_fnat_30_1607_e2e.zip", "2017-376_vMOG_11_1.zip", "vMOG.zip", 
+				"vMRF_USP_AIC3.0_1702.zip", "2016-211_vprobesbe_vprobes_be_30_1610_e2e.zip", "2016-005_vprobesfe_vprobes_fe_30_1607_e2e.zip", 
+				"vMRF_RTT.zip", "2016-006_vvm_vvm_30_1607_e2e.zip", "2016-001_vvm_vvm_30_1607_e2e.zip");
+		fileNamesFromFolder.removeAll(exludeVnfList);
+		List<String> newRandomFileNamesFromFolder = getRandomElements(randomElementNumber, fileNamesFromFolder);
+		System.out.println(String.format("There are %s zip file(s) to test", newRandomFileNamesFromFolder.size()));
 		return provideData(newRandomFileNamesFromFolder, filepath);
 	}
 	
-	
-	private static Object[] getRandomElements(int randomElementNumber, Object[] fileNamesFromFolder) {
-		if(fileNamesFromFolder.length == 0 || fileNamesFromFolder.length < randomElementNumber){
+	private static List<String> getRandomElements(int randomElementNumber, List<String> fileNamesFromFolder) {
+		if(fileNamesFromFolder.size() == 0 || fileNamesFromFolder.size() < randomElementNumber){
 			return null;
 		}else{
 			List<Integer> indexList = new ArrayList<>();
-			Object[] newRandomFileNamesFromFolder = new Object[randomElementNumber]; 
-			for(int i = 0; i < fileNamesFromFolder.length; i++){
+			List<String> newRandomFileNamesFromFolder = new ArrayList<>(); 
+			for(int i = 0; i < fileNamesFromFolder.size(); i++){
 				indexList.add(i);
 			}
 			Collections.shuffle(indexList);
 			Integer[] randomArray = indexList.subList(0, randomElementNumber).toArray(new Integer[randomElementNumber]);
 			for(int i = 0; i < randomArray.length; i++){
-				newRandomFileNamesFromFolder[i] = fileNamesFromFolder[randomArray[i]];
+				newRandomFileNamesFromFolder.add(fileNamesFromFolder.get(randomArray[i]));
 			}
 			return newRandomFileNamesFromFolder;
 		}
 	}
+	
+//	private static Object[] getRandomElements(int randomElementNumber, Object[] fileNamesFromFolder) {
+//		if(fileNamesFromFolder.length == 0 || fileNamesFromFolder.length < randomElementNumber){
+//			return null;
+//		}else{
+//			List<Integer> indexList = new ArrayList<>();
+//			Object[] newRandomFileNamesFromFolder = new Object[randomElementNumber]; 
+//			for(int i = 0; i < fileNamesFromFolder.length; i++){
+//				indexList.add(i);
+//			}
+//			Collections.shuffle(indexList);
+//			Integer[] randomArray = indexList.subList(0, randomElementNumber).toArray(new Integer[randomElementNumber]);
+//			for(int i = 0; i < randomArray.length; i++){
+//				newRandomFileNamesFromFolder[i] = fileNamesFromFolder[randomArray[i]];
+//			}
+//			return newRandomFileNamesFromFolder;
+//		}
+//	}
 
-	public static String getFilePath() {
-		String filepath = System.getProperty("filepath");
-		if (filepath == null && System.getProperty("os.name").contains("Windows")) {
-			filepath = FileHandling.getResourcesFilesPath() +"VNFs";
-		}
-		
-		else if(filepath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
-				filepath = FileHandling.getBasePath() + File.separator + "Files" + File.separator +"VNFs";
-		}
-		return filepath;
-	}
+//	public static String getFilePath() {
+//		String filepath = System.getProperty("filepath");
+//		if (filepath == null && System.getProperty("os.name").contains("Windows")) {
+//			filepath = FileHandling.getResourcesFilesPath() +"VNFs";
+//		}
+//		
+//		else if(filepath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
+//				filepath = FileHandling.getBasePath() + File.separator + "Files" + File.separator +"VNFs";
+//		}
+//		return filepath;
+//	}
 	
 	@Test
 	public void onboardVNFTestSanity() throws Exception, Throwable {
-		String filepath = getFilePath();
 //		String vnfFile = "2016-012_vMX_AV_30_1072_e2e.zip";
 //		String filepath = getFilePath();
-		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
-		String vnfFile = fileNamesFromFolder[0].toString();
+//		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
+		List<String> fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
+		List<String> exludeVnfList = Arrays.asList("2016-197_vscp_vscp-fw_1610_e2e.zip", "2016-281_vProbes_BE_11_1_f_30_1610_e2e.zip", 
+				"2016-282_vProbes_FE_11_1_f_30_1610_e2e.zip", "2016-044_vfw_fnat_30_1607_e2e.zip", "2017-376_vMOG_11_1.zip", "vMOG.zip", 
+				"vMRF_USP_AIC3.0_1702.zip", "2016-211_vprobesbe_vprobes_be_30_1610_e2e.zip", "2016-005_vprobesfe_vprobes_fe_30_1607_e2e.zip", 
+				"vMRF_RTT.zip", "2016-006_vvm_vvm_30_1607_e2e.zip", "2016-001_vvm_vvm_30_1607_e2e.zip");
+		fileNamesFromFolder.removeAll(exludeVnfList);
+		String vnfFile = fileNamesFromFolder.get(0).toString();
 		runOnboardToDistributionFlow(filepath, vnfFile);
 	}
 
@@ -253,9 +304,10 @@ public class Onboard extends SetupCDTest {
 	
 	@Test
 	public void onboardUpdateVNFTest() throws Exception, Throwable {
-		String filepath = getFilePath();
-		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
-		String vnfFile = fileNamesFromFolder[0].toString();
+//		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
+		List<String> fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
+//		String vnfFile = fileNamesFromFolder[0].toString();
+		String vnfFile = fileNamesFromFolder.get(0);
 		
 		Pair<String,Map<String,String>> vsp = OnboardingUtils.onboardAndValidate(filepath, vnfFile, getUser());
 		String vspName = vsp.left;
@@ -280,7 +332,8 @@ public class Onboard extends SetupCDTest {
 		HomePage.navigateToHomePage();
 		
 		///update flow
-		String updatedVnfFile = fileNamesFromFolder[1].toString();
+//		String updatedVnfFile = fileNamesFromFolder[1].toString();
+		String updatedVnfFile = fileNamesFromFolder.get(1);
 
 		getExtendTest().log(Status.INFO, String.format("Going to update the VNF with %s......", updatedVnfFile));
 		// update VendorSoftwareProduct
@@ -332,8 +385,6 @@ public class Onboard extends SetupCDTest {
 
 	@Test
 	public void threeVMMSCsInServiceTest() throws Exception{
-		String filepath = getFilePath();
-		
 		
 		List<String> vmmscList = new ArrayList<String>();
 		vmmscList = Arrays.asList(new File(filepath).list()).stream().filter(e -> e.contains("vmmsc") && e.endsWith(".zip")).collect(Collectors.toList());

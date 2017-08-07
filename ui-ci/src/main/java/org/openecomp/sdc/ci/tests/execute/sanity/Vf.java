@@ -647,7 +647,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void exportToscaWithModulePropertiesVFTest() throws AWTException, Exception {
 		String vnfFile = "2016-042_vmsp_pxmc_30_1607_e2e.zip";
-		Pair<String, Map<String, String>> vsp=OnboardingUtils.onboardAndValidate(Onboard.getFilePath(), vnfFile, getUser());
+		Pair<String, Map<String, String>> vsp=OnboardingUtils.onboardAndValidate(FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		String vspName = vsp.left;
 		ResourceGeneralPage.clickSubmitForTestingButton(vsp.left);
 		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
@@ -657,7 +657,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void exportToscaWithModulePropertiesTemplateCheckVFTest() throws AWTException, Exception {
 		String vnfFile = "2016-042_vmsp_pxmc_30_1607_e2e.zip";
-		OnboardingUtils.onboardAndValidate(Onboard.getFilePath(), vnfFile, getUser());
+		OnboardingUtils.onboardAndValidate(FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		ResourceGeneralPage.getLeftMenu().moveToToscaArtifactsScreen();
 		GeneralUIUtils.clickOnElementByTestId(ToscaArtifactsScreenEnum.TOSCA_MODEL.getValue());
 		File latestFilefromDir = FileHandling.getLastModifiedFileFromDir();

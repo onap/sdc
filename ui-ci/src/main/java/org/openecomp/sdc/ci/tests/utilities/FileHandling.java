@@ -179,6 +179,30 @@ public class FileHandling {
 		return null;
 	}
 
+	public static List<String> filterFileNamesListFromFolder(String filepath, String extension) {
+		try {
+			File dir = new File(filepath);
+			List<String> filenames = new ArrayList<String>();
+			
+			FilenameFilter extensionFilter = new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return name.endsWith(extension);
+				}
+			};
+			
+			if (dir.isDirectory()) {
+				for (File file : dir.listFiles(extensionFilter)) {
+					filenames.add(file.getName());
+				}
+				return filenames;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static String[] getArtifactsFromZip(String filepath, String zipFilename){
 		try{
 			ZipFile zipFile = new ZipFile(filepath + File.separator + zipFilename);
@@ -211,8 +235,12 @@ public class FileHandling {
 		
 	}
 
-	public static Object[] getZipFileNamesFromFolder(String filepath) {
-		return filterFileNamesFromFolder(filepath, ".zip");
+//	public static Object[] getZipFileNamesFromFolder(String filepath) {
+//		return filterFileNamesFromFolder(filepath, ".zip");
+//	}
+	
+	public static List<String> getZipFileNamesFromFolder(String filepath) {
+		return filterFileNamesListFromFolder(filepath, ".zip");
 	}
 
 	public static int countFilesInZipFile(String[] artifactsArr, String reqExtension){

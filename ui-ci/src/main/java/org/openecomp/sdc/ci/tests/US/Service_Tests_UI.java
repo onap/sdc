@@ -54,7 +54,7 @@ public class Service_Tests_UI extends SetupCDTest{
 	@Test
 	public void declareVL_CP_InputsInServiceLevel() throws Exception {
 		String vnfFile = "FDNT.zip";
-		Pair<String,Map<String,String>> VspName =OnboardingUtils.onboardAndValidate(Onboard.getFilePath(), vnfFile, getUser());
+		Pair<String,Map<String,String>> VspName =OnboardingUtils.onboardAndValidate(FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		ServiceReqDetails servicemetadata = ElementFactory.getDefaultService(getUser());
 		ServiceUIUtils.createService(servicemetadata, getUser());
 		GeneralUIUtils.moveToStep(StepsEnum.COMPOSITION);
@@ -72,7 +72,7 @@ public class Service_Tests_UI extends SetupCDTest{
 	@Test
 	public void CreateServiceWithCpInstance() throws Exception {
 		String vnfFile = "FDNT.zip";
-		Pair<String,Map<String,String>> VspName =OnboardingUtils.onboardAndValidate(Onboard.getFilePath(), vnfFile, getUser());
+		Pair<String,Map<String,String>> VspName =OnboardingUtils.onboardAndValidate(FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		ServiceReqDetails servicemetadata = ElementFactory.getDefaultService(getUser());
 		ServiceUIUtils.createService(servicemetadata, getUser());
 		GeneralUIUtils.moveToStep(StepsEnum.COMPOSITION);

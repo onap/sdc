@@ -25,15 +25,18 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.openecomp.sdc.ci.tests.datatypes.GroupHeatMetaDefinition;
-import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
-import org.openecomp.sdc.ci.tests.datatypes.TypeHeatMetaDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
-import org.openecomp.sdc.ci.tests.utils.CsarParserUtils;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaTopologyTemplateDefinition;
 import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
+import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.openecomp.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
@@ -49,13 +52,32 @@ public class AndreyTest {
 
 
 	public static void main(String[] args) throws Exception {
-		ToscaDefinition toscaDefinition;
+		ToscaDefinition toscaMainAmdocsDefinition, toscaMainVfDefinition, toscaMainServiceDefinition;
+		File filesFolder = new File("C:/Users/al714h/Downloads/Design/");
+		File amdocsCsarFileName = new File("/77e6b842669f441db20a83489da3f4be.csar");
+		File VfCsarFileName = new File("/resource-Civfonboarded2016012VmxAv301072E2e1424cb9d-csar.csar");
+		File serviceCsarFileName = new File("/service-Ciservicefeba0521131d-csar.csar");
+		
 		System.out.println("start " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+		
 //        File path = new File("C:/Data/D2.0/TOSCA_Ex/Definitions/tosca_definition_version.yaml");
 //        File path = new File("C:/Data/D2.0/TOSCA_Ex/resource-Vl11Vl10-template.yml");
 //        File path = new File("C:/Data/D2.0/TOSCA_Ex/service-Servicepxtc-template US822998.yml");
 //        File path = new File("C:/Data/FileToParse/Definitions/service-Ciservice513e6fa67d07-template.yml");
-		toscaDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File("C:/Data/FileToParse/LDSA/service-LdsaService-csar.csar"));
+//		toscaMainAmdocsDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File("C:/Data/FileToParse/LDSA/service-LdsaService-csar.csar"));
+		toscaMainAmdocsDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + amdocsCsarFileName));
+		toscaMainVfDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + VfCsarFileName));
+		toscaMainServiceDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + serviceCsarFileName));
+		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, "Generic_VF", "1.0");
+		ToscaTopologyTemplateDefinition topology_template = toscaMainAmdocsDefinition.getTopology_template();
+		Map<String, Object> newInput = new HashMap<String, Object>();
+		for (PropertyDefinition property : resource.getProperties()) {
+			newInput.put(property.getLabel(),property);
+		}
+		topology_template.setInputs(newInput);
+		
+		
+		List<PropertyDefinition> properties = resource.getProperties();
 //        File path = new File("C:/Data/FileToParse/Definitions/resource-Civfonboarded2016006VvmVvm301607E2100a9b04-template.yml");
 //        File csarPath = new File("C:/Data/D2.0/TOSCA_Ex/Nested.csar");
 

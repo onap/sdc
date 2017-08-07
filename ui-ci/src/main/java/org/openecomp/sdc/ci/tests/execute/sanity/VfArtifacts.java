@@ -206,7 +206,7 @@ public class VfArtifacts extends SetupCDTest{
 		String vnfFile = "2016-043_vsaegw_fdnt_30_1607_e2e.zip";
 		String downloadDirPath=SetupCDTest.getConfig().getWindowsDownloadDirectory();
 		
-		Pair<String, Map<String, String>> vsp=OnboardingUtils.onboardAndValidate(Onboard.getFilePath(), vnfFile, getUser());
+		Pair<String, Map<String, String>> vsp=OnboardingUtils.onboardAndValidate(FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		
 		Map<String, File> currentZipEnvfiles=ArtifactBusinessLogic.createEnvFilesListFromCsar(vsp.left,downloadDirPath);
 		GeneralUIUtils.findComponentAndClick(vsp.left);
@@ -231,7 +231,7 @@ public class VfArtifacts extends SetupCDTest{
 		String downloadDirPath=SetupCDTest.getConfig().getWindowsDownloadDirectory();
 		String vnfFile = "2016-043_vsaegw_fdnt_30_1607_e2e.zip";
 		
-		Pair<String, Map<String, String>> vsp=OnboardingUtils.onboardAndValidate(Onboard.getFilePath(), vnfFile, getUser());
+		Pair<String, Map<String, String>> vsp=OnboardingUtils.onboardAndValidate(FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		Map<String, File> currentZipEnvfiles=ArtifactBusinessLogic.createEnvFilesListFromCsar(vsp.left,downloadDirPath);
 		GeneralUIUtils.findComponentAndClick(vsp.left);
 		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -255,7 +255,7 @@ public class VfArtifacts extends SetupCDTest{
 		
 		String vnfFile = "2016-044_vfw_fcgi_30_1607_e2e.zip";
 		String downloadDirPath=SetupCDTest.getConfig().getWindowsDownloadDirectory();
-		Pair<String, Map<String, String>> CreatedVsp=OnboardingUtils.onboardAndValidate(Onboard.getFilePath(), vnfFile, getUser());
+		Pair<String, Map<String, String>> CreatedVsp=OnboardingUtils.onboardAndValidate(FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		
 		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, CreatedVsp.left, "0.1");
         Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
