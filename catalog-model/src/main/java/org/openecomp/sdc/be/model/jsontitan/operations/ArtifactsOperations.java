@@ -269,6 +269,8 @@ public class ArtifactsOperations extends BaseOperation {
 				} else {
 					updateVersionAndDate(artifactData, oldVesrion);
 				}
+				long time = System.currentTimeMillis();
+				artifactData.setHeatParamsUpdateDate(time);
 				break;
 			case HEAT:
 			case HEAT_NET:

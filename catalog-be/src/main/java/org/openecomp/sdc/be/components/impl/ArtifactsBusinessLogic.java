@@ -619,7 +619,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 			}
 			return Either.left(new ImmutablePair<String, byte[]>(csarArtifact.getArtifactName(), generated.left().value()));
 		}
-		return downloadArtifact(csarArtifact);
+		return downloadArtifact(csarArtifact, component);
 	}
 
 	public Either<ImmutablePair<String, byte[]>, ResponseFormat> handleDownloadRequestById(String componentId, String artifactId, String userId, ComponentTypeEnum componentType, String parentId, String containerComponentType) {
@@ -640,7 +640,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		if (artifactDefinition.getPayloadData() != null) {
 			return Either.left(new ImmutablePair<String, byte[]>(artifactDefinition.getArtifactName(), artifactDefinition.getPayloadData()));
 		}
-		return downloadArtifact(artifactDefinition);
+		return downloadArtifact(artifactDefinition, null);
 	}
 
 	public Either<Map<String, ArtifactDefinition>, ResponseFormat> handleGetArtifactsByType(String containerComponentType, String parentId, ComponentTypeEnum componentType, String componentId, String artifactGroupType, String userId) {
@@ -1526,14 +1526,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 			handleAuditing(auditingAction, parent, componentId, user, null, null, artifactId, responseFormat, componentType, null);
 			return Either.right(responseFormat);
 		}
-		if(artifactDefinition.getPayloadData() == null) {
-			log.debug("Empty payload data returned from DB by artifat id {}", artifactId);
-			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, artifactId);
-			handleAuditing(auditingAction, parent, componentId, user, null, null, artifactId, responseFormat, componentType, null);
-			return Either.right(responseFormat);
 
-		}
-			Either<ArtifactDefinition, Operation> insideEither = Either.left(artifactDefinition);
+		Either<ArtifactDefinition, Operation> insideEither = Either.left(artifactDefinition);
 		ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
 		handleAuditing(auditingAction, parent, componentId, user, artifactDefinition, null, artifactId, responseFormat, componentType, null);
 		return Either.left(insideEither);
@@ -3008,7 +3002,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		}
 
 		// Downloading the artifact
-		Either<ImmutablePair<String, byte[]>, ResponseFormat> downloadArtifactEither = downloadArtifact(deploymentArtifact);
+		Either<ImmutablePair<String, byte[]>, ResponseFormat> downloadArtifactEither = downloadArtifact(deploymentArtifact, null);
 		if (downloadArtifactEither.isRight()) {
 			log.debug("Download artifact {} failed", artifactName);
 			return Either.right(downloadArtifactEither.right().value());
@@ -3069,7 +3063,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		log.debug("Found deployment artifact {}", artifactName);
 		deployableArtifact = artifacts.values().stream().filter(filterArtifactByName).findFirst().get();
 		// Downloading the artifact
-		Either<ImmutablePair<String, byte[]>, ResponseFormat> downloadArtifactEither = downloadArtifact(deployableArtifact);
+		Either<ImmutablePair<String, byte[]>, ResponseFormat> downloadArtifactEither = downloadArtifact(deployableArtifact, service );
 
 		if (downloadArtifactEither.isRight()) {
 			log.debug("Download artifact {} failed", artifactName);
@@ -3174,7 +3168,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		}
 		log.debug("Found deployment artifact {}", normalizedArtifactName);
 		// Downloading the artifact
-		Either<ImmutablePair<String, byte[]>, ResponseFormat> downloadArtifactEither = downloadArtifact(foundArtifactOptl.get());
+		Either<ImmutablePair<String, byte[]>, ResponseFormat> downloadArtifactEither = downloadArtifact(foundArtifactOptl.get(), service);
 		if (downloadArtifactEither.isRight()) {
 			log.debug("Download artifact {} failed", normalizedArtifactName);
 			return Either.right(downloadArtifactEither.right().value());
@@ -3197,7 +3191,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, ""));
 		}
 
-		return downloadArtifact(artifactDefinition);
+		return downloadArtifact(artifactDefinition, null);
 	}
 
 	private boolean checkArtifactInComponent(org.openecomp.sdc.be.model.Component component, String artifactId) {
@@ -3377,7 +3371,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		return auditingAction;
 	}
 
-	private Either<ImmutablePair<String, byte[]>, ResponseFormat> downloadArtifact(ArtifactDefinition artifactDefinition) {
+	private Either<ImmutablePair<String, byte[]>, ResponseFormat> downloadArtifact(ArtifactDefinition artifactDefinition, Component component) {
 		String esArtifactId = artifactDefinition.getEsId();
 		Either<ESArtifactData, CassandraOperationStatus> artifactfromES = artifactCassandraDao.getArtifact(esArtifactId);
 		if (artifactfromES.isRight()) {
@@ -3385,7 +3379,10 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 			StorageOperationStatus storageResponse = DaoStatusConverter.convertCassandraStatusToStorageStatus(resourceUploadStatus);
 			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(storageResponse);
 			log.debug("Error when getting artifact from ES, error: {}", actionStatus.name());
-			return Either.right(componentsUtils.getResponseFormatByArtifactId(actionStatus, artifactDefinition.getArtifactDisplayName()));
+			ResponseFormat responseFormat = componentsUtils.getResponseFormatByArtifactId(actionStatus, artifactDefinition.getArtifactDisplayName());
+			handleAuditing(AuditingActionEnum.DOWNLOAD_ARTIFACT, component, null, null, artifactDefinition, null, artifactDefinition.getArtifactUUID(), responseFormat, null, null);
+
+		return Either.right(responseFormat);
 		}
 
 		ESArtifactData esArtifactData = artifactfromES.left().value();
@@ -3871,7 +3868,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 					}
 				}
 			}
-			currArtifact.setHeatParamsUpdateDate(System.currentTimeMillis());
+			//currArtifact.setHeatParamsUpdateDate(System.currentTimeMillis());
 			currArtifact.setListHeatParameters(currentHeatEnvParams);
 
 			Either<ArtifactDefinition, StorageOperationStatus> updateArifactRes = artifactToscaOperation.updateArifactOnResource(currArtifact, parent.getUniqueId(), currArtifact.getUniqueId(), componentType.getNodeType(), componentId);
@@ -4783,7 +4780,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		}
 		if (errorWrapper.isEmpty()) {
 			deploymentArtifact = artifactsList.get(0);
-			downloadArtifactEither = downloadArtifact(deploymentArtifact);
+			downloadArtifactEither = downloadArtifact(deploymentArtifact, null);
 			if (downloadArtifactEither.isRight()) {
 				log.debug("Failed to download artifact {}. ", deploymentArtifact.getArtifactName());
 				errorWrapper.setInnerElement(downloadArtifactEither.right().value());

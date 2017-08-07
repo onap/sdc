@@ -112,7 +112,9 @@ export class DynamicPropertyComponent {
                 //grab the cumulative value for the new item from parent PropertyFEModel and assign that value to DerivedFEProp[0] (which is the list or map parent with UUID of the set we just added)
                 let parentNames = (<PropertyFEModel>this.property).getParentNamesArray(newProps[0].propertiesName, []);
                 newProps[0].valueObj = _.get(this.property.valueObj, parentNames.join('.'));
-                this.valueChanged.emit(this.property.name);
+                if ( newProps[0].mapKey ) {//prevent saving if it is map item, whem it is list item- the map key is the es type (it will be saved only after user enter key)
+                    this.valueChanged.emit(this.property.name);
+                }
             }
         }
     }
@@ -122,7 +124,9 @@ export class DynamicPropertyComponent {
         if (this.property instanceof PropertyFEModel) { // will always be the case
             this.property.childPropUpdated(property);
             this.dataTypeService.checkForCustomBehavior(this.property);
-            this.valueChanged.emit(this.property.name);
+            if (this.property.getParentNamesArray(property.propertiesName, []).indexOf('') === -1) {//If one of the parents is empty key -don't save
+                this.valueChanged.emit(this.property.name);
+            }
         }
     }
 
@@ -142,6 +146,9 @@ export class DynamicPropertyComponent {
                 let oldKey = item.mapKey;
                 if (target && typeof target.value == 'string') { //allow saving empty string
                     let replaceKey:string = target.value;
+                    if (!replaceKey) {//prevent delete map key
+                        return;
+                    }
                     if(Object.keys(itemParent.valueObj).indexOf(replaceKey) > -1){//the key is exists
                         target.setCustomValidity('This key is already exists.');
                         return;
@@ -156,11 +163,12 @@ export class DynamicPropertyComponent {
                 let itemIndex: number = this.property.flattenedChildren.filter(prop => prop.parentName == item.parentName).map(prop => prop.propertiesName).indexOf(item.propertiesName);
                 itemParent.valueObj.splice(itemIndex, 1);
             }
-
-            if (itemParent instanceof PropertyFEModel) { //direct child
-                this.valueChanged.emit(this.property.name);
-            } else { //nested child - need to update parent prop by getting flattened name (recurse through parents and replace map/list keys, etc)
-                this.childValueChanged(itemParent);
+            if (item.mapKey) {//prevent going to BE if user tries to delete map item without key (it was not saved in BE)
+                if (itemParent instanceof PropertyFEModel) { //direct child
+                    this.valueChanged.emit(this.property.name);
+                } else { //nested child - need to update parent prop by getting flattened name (recurse through parents and replace map/list keys, etc)
+                    this.childValueChanged(itemParent);
+                }
             }
         }
     }

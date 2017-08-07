@@ -84,8 +84,7 @@ public class CatalogRestUtils extends BaseRestUtils {
 	public static RestResponse getOsVersion() throws IOException {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.OS_VERSION, config.getCatalogBeHost(),
-				config.getCatalogBePort());
+		String url = String.format(Urls.OS_VERSION, config.getCatalogBeHost(), config.getCatalogBePort());
 
 		return sendGet(url, UserRoleEnum.DESIGNER.getUserId());
 	}

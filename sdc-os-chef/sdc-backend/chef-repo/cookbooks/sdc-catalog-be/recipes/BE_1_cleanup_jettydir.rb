@@ -47,3 +47,11 @@ directory "BE_create_catalog-be" do
   action :create
 end
 
+
+directory "BE_create_catalog-be" do
+  path "/var/lib/jetty/config/onboarding-be"
+  owner 'jetty'
+  group 'jetty'
+  mode '0755'
+  action :create
+end

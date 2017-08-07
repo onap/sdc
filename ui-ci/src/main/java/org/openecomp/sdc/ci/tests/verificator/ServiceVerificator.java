@@ -145,10 +145,10 @@ public class ServiceVerificator {
 	public static void verifyOpenTabTitle(DataTestIdEnum.CompositionScreenEnum currentTab) throws Exception{
 		List<String> expectedTitles  = new ArrayList<String>();
 		for(String expectedTitle: currentTab.getTitle()){
-			expectedTitles.add(expectedTitle);
+			expectedTitles.add(expectedTitle.toLowerCase());
 		}		
 		for (WebElement actualTitle: CompositionPage.getOpenTabTitle()){
-			int indexOfTitle = expectedTitles.indexOf(actualTitle.getText());
+			int indexOfTitle = expectedTitles.indexOf(actualTitle.getText().trim().toLowerCase());
 			assertTrue(indexOfTitle >= 0, "Wrong title");
 			expectedTitles.remove(indexOfTitle);
 		}
