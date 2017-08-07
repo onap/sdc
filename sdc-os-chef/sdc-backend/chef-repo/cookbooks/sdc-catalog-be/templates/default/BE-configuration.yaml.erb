@@ -141,6 +141,7 @@ resourceTypes: &allResourceTypes
   - VF
   - VFCMT
   - Abstract
+  - CVFC
 
 # validForResourceTypes usage
 #     validForResourceTypes:
@@ -177,6 +178,8 @@ toscaArtifacts:
 #Informational artifacts placeHolder
 excludeResourceCategory:
   - Generic
+excludeResourceType:
+  - PNF  
 informationalResourceArtifacts:
   features:
       displayName: Features
@@ -285,10 +288,12 @@ serviceDeploymentArtifacts:
     MODEL_QUERY_SPEC:
         acceptedTypes:
             - xml
-    AAI_SERVICE_MODEL:
+    UCPE_LAYER_2_CONFIGURATION:
         acceptedTypes:
             - xml
-    UCPE_LAYER_2_CONFIGURATION:
+
+#AAI Artifacts
+    AAI_SERVICE_MODEL:
         acceptedTypes:
             - xml
     AAI_VF_MODULE_MODEL:
@@ -296,10 +301,9 @@ serviceDeploymentArtifacts:
             - xml
     AAI_VF_INSTANCE_MODEL:
         acceptedTypes:
-            - xml
+            - xml 
     OTHER:
         acceptedTypes:
-
 
 resourceDeploymentArtifacts:
     HEAT:
@@ -369,7 +373,6 @@ resourceDeploymentArtifacts:
         acceptedTypes:
         validForResourceTypes:
             - VF
-    #DCAE Artifacts
     DCAE_TOSCA:
         acceptedTypes:
             - yml
@@ -392,14 +395,13 @@ resourceDeploymentArtifacts:
     DCAE_DOC:
         acceptedTypes:
         validForResourceTypes:
-            - VF
-            - VFCMT
+            - VF 
+            - VFCMT       
     DCAE_EVENT:
         acceptedTypes:
         validForResourceTypes:
             - VF
             - VFCMT
-#AAI Artifacts
     AAI_VF_MODEL:
         acceptedTypes:
             - xml
@@ -434,7 +436,6 @@ resourceInstanceDeploymentArtifacts:
     PERFORMANCE_COUNTER:
         acceptedTypes:
             - csv
-#DCAE_VF Instance Artifacts
     DCAE_INVENTORY_TOSCA:
         acceptedTypes:
             - yml
@@ -488,7 +489,15 @@ resourceInformationalArtifacts:
         validForResourceTypes: *allResourceTypes
     OTHER:
         acceptedTypes:
-        validForResourceTypes: *allResourceTypes
+        validForResourceTypes: 
+            - VFC
+            - CVFC
+            - CP
+            - VL
+            - VF
+            - VFCMT
+            - Abstract
+            - PNF
     SNMP_POLL:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
@@ -500,6 +509,7 @@ resourceInformationalArtifacts:
         validForResourceTypes:
             - VF
             - VFC
+            - CVFC
 
 resourceInformationalDeployedArtifacts:
 
@@ -519,10 +529,8 @@ cleanComponentsConfiguration:
 
 artifactsIndex: resources
 
-heatEnvArtifactHeader:
-    ""
-heatEnvArtifactFooter:
-    ""
+heatEnvArtifactHeader: ""
+heatEnvArtifactFooter: ""
 
 onboarding:
     protocol: http
@@ -589,5 +597,7 @@ vfModuleProperties:
 
 genericAssetNodeTypes:
   VFC: org.openecomp.resource.abstract.nodes.VFC
+  CVFC: org.openecomp.resource.abstract.nodes.VFC
   VF : org.openecomp.resource.abstract.nodes.VF
+  PNF: org.openecomp.resource.abstract.nodes.PNF
   Service: org.openecomp.resource.abstract.nodes.service
