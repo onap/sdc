@@ -20,19 +20,15 @@
 
 package org.openecomp.sdc.be.model.operations.utils;
 
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
-import org.openecomp.sdc.be.model.operations.api.IServiceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import fj.data.Either;
 
 public class ComponentValidationUtils {
 

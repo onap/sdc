@@ -20,13 +20,7 @@
 
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.apache.tinkerpop.shaded.minlog.Log;
+import fj.data.Either;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
@@ -34,11 +28,9 @@ import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
@@ -48,20 +40,17 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
-import org.openecomp.sdc.be.model.operations.impl.LifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
-import org.openecomp.sdc.be.resources.data.GroupData;
-import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.carrotsearch.junitbenchmarks.annotation.LabelType;
-import com.thinkaurelius.titan.diskstorage.Entry;
-
-import fj.data.Either;
-import javassist.expr.NewArray;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("groups-operation")
 public class GroupsOperation extends BaseOperation {
@@ -242,7 +231,7 @@ public class GroupsOperation extends BaseOperation {
 	 */
 	private String increaseMajorVersion(String version) {
 
-		String[] versionParts = version.split(LifecycleOperation.VERSION_DELIMETER_REGEXP);
+		String[] versionParts = version.split(ToscaElementLifecycleOperation.VERSION_DELIMETER_REGEXP);
 		Integer majorVersion = Integer.parseInt(versionParts[0]);
 
 		majorVersion++;

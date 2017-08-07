@@ -20,26 +20,8 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
+import com.google.gson.Gson;
+import fj.data.Either;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -68,10 +50,10 @@ import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
-import org.openecomp.sdc.be.model.operations.impl.LifecycleOperation;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
@@ -92,9 +74,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.gson.Gson;
-
-import fj.data.Either;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 
 /**
@@ -814,10 +812,10 @@ public class CsarUtils {
 		if (UUID_NORMATIVE_NEW_VERSION.matcher(component.getVersion()).matches() ) {
 			version = component.getVersion();
 		} else {
-			String[] versionParts = component.getVersion().split(LifecycleOperation.VERSION_DELIMETER_REGEXP);
+			String[] versionParts = component.getVersion().split(ToscaElementLifecycleOperation.VERSION_DELIMETER_REGEXP);
 			Integer majorVersion = Integer.parseInt(versionParts[0]);
 
-			version = (majorVersion + 1) + LifecycleOperation.VERSION_DELIMETER + "0";
+			version = (majorVersion + 1) + ToscaElementLifecycleOperation.VERSION_DELIMETER + "0";
 		}
 
 		additionalParams.put(AdditionalParams.ServiceVersion.getName(), version);

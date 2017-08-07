@@ -957,9 +957,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		log.trace("YAML topology file found in CSAR, file name: {}, contents: {}", yamlFileName, yamlFileContents);
 
 		Map<String, NodeTypeInfo> nodeTypesInfo = extractNodeTypesInfo(csar.left().value(), yamlFileContents);
-		Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate = findNodeTypeArtifactsToCreate(csar.left().value(), resource);
 		CsarInfo csarInfo = new CsarInfo(resource.getName(), user, csarUUID, csar.left().value(), false);
-		Either<Resource, ResponseFormat> createResourceFromYaml = createResourceFromYaml(resource, yamlFileContents, yamlFileName, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, true, false, null);
+		Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo.getCsar(), csarInfo.getCsarUUID(), yamlFileName, resource, csarInfo.getModifier());
+		if (findNodeTypesArtifactsToHandleRes.isRight()) {
+			log.debug("failed to find node types for update with artifacts during import csar {}. ", csarInfo.getCsarUUID());
+			return Either.right(findNodeTypesArtifactsToHandleRes.right().value());
+		}
+		Either<Resource, ResponseFormat> createResourceFromYaml = createResourceFromYaml(resource, yamlFileContents, yamlFileName, nodeTypesInfo, csarInfo, findNodeTypesArtifactsToHandleRes.left().value(), true, false, null);
 		if (createResourceFromYaml.isRight()) {
 			log.debug("Couldn't create resource from YAML");
 			return Either.right(createResourceFromYaml.right().value());
@@ -1216,14 +1220,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 		if(result == null){
 			newComplexVfc = buildCvfcRes.left().value();
-			if(csarInfo.isUpdate()){
-				Either<Resource, StorageOperationStatus> oldComplexVfcRes = toscaOperationFacade.getLatestByToscaResourceName(newComplexVfc.getToscaResourceName());
-				if(oldComplexVfcRes.isRight() && oldComplexVfcRes.right().value() != StorageOperationStatus.NOT_FOUND){
-					log.debug("Failed to fetch previous complex VFC by tosca resource name {}. Status is {}. ", newComplexVfc.getToscaResourceName(), oldComplexVfcRes.right().value());
-					result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-				} else if(oldComplexVfcRes.isLeft()){
-					oldComplexVfc = oldComplexVfcRes.left().value();
-				}
+			Either<Resource, StorageOperationStatus> oldComplexVfcRes = toscaOperationFacade.getLatestByToscaResourceName(newComplexVfc.getToscaResourceName());
+			if(oldComplexVfcRes.isRight() && oldComplexVfcRes.right().value() != StorageOperationStatus.NOT_FOUND){
+				log.debug("Failed to fetch previous complex VFC by tosca resource name {}. Status is {}. ", newComplexVfc.getToscaResourceName(), oldComplexVfcRes.right().value());
+				result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+			} else if(oldComplexVfcRes.isLeft()){
+				oldComplexVfc = oldComplexVfcRes.left().value();
 			}
 		}
 		if(result == null){
@@ -1417,7 +1419,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		cvfc.setVendorName(resourceVf.getVendorName());
 		cvfc.setVendorRelease(resourceVf.getVendorRelease());
 		cvfc.setResourceVendorModelNumber(resourceVf.getResourceVendorModelNumber());
-		cvfc.setToscaResourceName(buildNestedToscaResourceName(ResourceTypeEnum.VFC.name(), csarInfo.getVfResourceName(), nodeName));
+		cvfc.setToscaResourceName(buildNestedToscaResourceName(ResourceTypeEnum.CVFC.name(), csarInfo.getVfResourceName(), nodeName));
 		cvfc.setInvariantUUID(UniqueIdBuilder.buildInvariantUUID());
 		
 		List<String> tags = new ArrayList<>();
@@ -1887,18 +1889,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		result = eitherSetPosition.isRight() ? Either.right(eitherSetPosition.right().value()) : Either.left(resource);
 
 		return result;
-	}
-
-	private Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> findNodeTypeArtifactsToCreate(Map<String, byte[]> csar, Resource resource) {
-
-		Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils.extractVfcsArtifactsFromCsar(csar);
-		Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
-		for (Map.Entry<String, List<ArtifactDefinition>> currArts : extractedVfcsArtifacts.entrySet()) {
-			EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> artifactsToCreate = new EnumMap<>(ArtifactOperationEnum.class);
-			artifactsToCreate.put(ArtifactOperationEnum.Create, currArts.getValue());
-			nodeTypesArtifactsToHandle.put(currArts.getKey(), artifactsToCreate);
-		}
-		return nodeTypesArtifactsToHandle;
 	}
 
 	private void handleAndAddExtractedVfcsArtifacts(List<ArtifactDefinition> vfcArtifacts, List<ArtifactDefinition> artifactsToAdd) {
@@ -7086,6 +7076,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 
 	private String buildNestedToscaResourceName(String nodeResourceType, String vfResourceName, String nodeTypeFullName) {
+		String actualType;
+		String actualVfName;
+		if(ResourceTypeEnum.CVFC.name().equals(nodeResourceType)){
+			actualVfName = vfResourceName + ResourceTypeEnum.CVFC.name();
+			actualType = ResourceTypeEnum.VFC.name();
+		} else {
+			actualVfName = vfResourceName;
+			actualType = nodeResourceType;
+		}
 		StringBuilder toscaResourceName = new StringBuilder(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX);
 		String nameWithouNamespacePrefix = nodeTypeFullName.substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
 		String[] findTypes = nameWithouNamespacePrefix.split("\\.");
@@ -7093,9 +7092,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		String actualName =  nameWithouNamespacePrefix.substring(resourceType.length());	
 		
 		if (actualName.startsWith(Constants.ABSTRACT)) {
-			toscaResourceName.append(resourceType.toLowerCase()).append('.').append(ValidationUtils.convertToSystemName(vfResourceName));
+			toscaResourceName.append(resourceType.toLowerCase()).append('.').append(ValidationUtils.convertToSystemName(actualVfName));
 		} else {
-			toscaResourceName.append(nodeResourceType.toLowerCase()).append('.').append(ValidationUtils.convertToSystemName(vfResourceName)).append('.').append(Constants.ABSTRACT);
+			toscaResourceName.append(actualType.toLowerCase()).append('.').append(ValidationUtils.convertToSystemName(actualVfName)).append('.').append(Constants.ABSTRACT);
 		}
 		return toscaResourceName.append(actualName.toLowerCase()).toString();
 	}

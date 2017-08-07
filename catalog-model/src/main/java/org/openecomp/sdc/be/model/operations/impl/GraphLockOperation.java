@@ -40,7 +40,7 @@ import fj.data.Either;
 
 @Component("graph-lock-operation")
 public class GraphLockOperation implements IGraphLockOperation {
-	private static Logger log = LoggerFactory.getLogger(ResourceOperation.class.getName());
+	private static Logger log = LoggerFactory.getLogger(GraphLockOperation.class.getName());
 
 	@javax.annotation.Resource
 	private TitanGenericDao titanGenericDao;

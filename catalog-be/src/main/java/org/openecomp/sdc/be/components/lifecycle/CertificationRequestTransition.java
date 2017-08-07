@@ -20,18 +20,8 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-
-import org.apache.commons.codec.binary.Base64;
+import fj.data.Either;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -42,40 +32,30 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
-import org.openecomp.sdc.be.model.operations.api.ILifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
-import org.openecomp.sdc.be.model.operations.impl.ResourceOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
-import org.openecomp.sdc.be.tosca.ToscaRepresentation;
-import org.openecomp.sdc.be.tosca.ToscaUtils;
 import org.openecomp.sdc.be.user.Role;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 
 public class CertificationRequestTransition extends LifeCycleTransition {
 
@@ -323,47 +303,6 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 			}
 		}
 		log.debug("Submit for testing validation - validating configured req/cap satisfied for inner atomic instances finished successfully, component id:{}", component.getUniqueId());
-		return Either.left(true);
-	}
-
-	private Either<Boolean, ResponseFormat> parseRelationsForReqCapVerification(Component component, Map<String, List<String>> reqName2Ids, Map<String, List<String>> capName2Ids) {
-		log.debug("Submit for testing validation - Preparing relations for inner atomic instances validation");
-		List<RequirementCapabilityRelDef> componentInstancesRelations = component.getComponentInstancesRelations();
-		if (componentInstancesRelations != null) {
-			for (RequirementCapabilityRelDef reqCapRelDef : componentInstancesRelations) {
-				List<RequirementAndRelationshipPair> relationships = reqCapRelDef.getRelationships();
-				if (relationships != null) {
-					for (RequirementAndRelationshipPair reqRelPair : relationships) {
-						String capUniqueId = reqRelPair.getCapabilityUid();
-						Either<CapabilityDefinition, StorageOperationStatus> capability = capabilityOperation.getCapability(capUniqueId);
-						if (capability.isRight()) {
-							log.error("Couldn't fetch capability by id {}", capUniqueId);
-							return Either.right(componentUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-						}
-						String reqCapType = capability.left().value().getType();
-						String capabilityOwnerId = reqRelPair.getCapabilityOwnerId();
-						String requirementOwnerId = reqRelPair.getRequirementOwnerId();
-						// Update req
-						List<String> reqIds = reqName2Ids.get(reqCapType);
-						if (reqIds == null) {
-							reqIds = new ArrayList<>();
-							reqName2Ids.put(reqCapType, reqIds);
-						}
-						reqIds.add(requirementOwnerId);
-						// Update cap
-						List<String> capIds = capName2Ids.get(reqCapType);
-						if (capIds == null) {
-							capIds = new ArrayList<>();
-							capName2Ids.put(reqCapType, capIds);
-						}
-						capIds.add(capabilityOwnerId);
-					}
-				}
-			}
-			log.debug("Parsed req for validation: {}, parsed cap for validation: {}", reqName2Ids, capName2Ids);
-		} else {
-			log.debug("There are no relations found for component {}", component.getUniqueId());
-		}
 		return Either.left(true);
 	}
 

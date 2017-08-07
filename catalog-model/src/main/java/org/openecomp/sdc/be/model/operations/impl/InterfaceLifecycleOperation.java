@@ -71,12 +71,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 	private TitanGenericDao titanGenericDao;
 
 	@Override
-	public Either<InterfaceDefinition, StorageOperationStatus> addInterfaceToResource(InterfaceDefinition interf, String resourceId, String interfaceName) {
-
-		return addInterfaceToResource(interf, resourceId, interfaceName, false);
-	}
-
-	@Override
 	public Either<InterfaceDefinition, StorageOperationStatus> addInterfaceToResource(InterfaceDefinition interf, String resourceId, String interfaceName, boolean inTransaction) {
 
 		return createInterfaceOnResource(interf, resourceId, interfaceName, true, inTransaction);
@@ -111,34 +105,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 
 		return Either.left(createOpNodeResult.left().value());
 
-	}
-
-	private Either<TitanVertex, TitanOperationStatus> addOperationToGraph(InterfaceDefinition interf, String opName, Operation op, TitanVertex interfaceVertex) {
-
-		String interfaceId = (String) titanGenericDao.getProperty(interfaceVertex, GraphPropertiesDictionary.UNIQUE_ID.getProperty());
-		op.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(interfaceId, opName));
-		OperationData operationData = new OperationData(op);
-
-		log.debug("Before adding operation to graph {}", operationData);
-		Either<TitanVertex, TitanOperationStatus> createOpNodeResult = titanGenericDao.createNode(operationData);
-
-		if (createOpNodeResult.isRight()) {
-			TitanOperationStatus opStatus = createOpNodeResult.right().value();
-			log.error("Failed to add operation {} to graph. status is {}", opName, opStatus);
-			return Either.right(opStatus);
-		}
-
-		Map<String, Object> props = new HashMap<String, Object>();
-		props.put(GraphPropertiesDictionary.NAME.getProperty(), opName);
-		TitanVertex operationVertex = createOpNodeResult.left().value();
-		TitanOperationStatus createRelResult = titanGenericDao.createEdge(interfaceVertex, operationVertex, GraphEdgeLabels.INTERFACE_OPERATION, props);
-
-		if (!createRelResult.equals(TitanOperationStatus.OK)) {
-			log.error("Failed to associate operation {} to property {} in graph. status is {}", interfaceId, opName, createRelResult);
-
-			return Either.right(createRelResult);
-		}
-		return Either.left(operationVertex);
 	}
 
 	private InterfaceDefinition convertInterfaceDataToInterfaceDefinition(InterfaceData interfaceData) {
@@ -179,25 +145,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 			return createInterfaceNodeAndRelation(interfaceNameSplitted, resourceId, interfaceData, resourceData);
 		} else {
 			log.debug("Interface {} already exist", interfaceData.getUniqueId());
-			return Either.right(TitanOperationStatus.ALREADY_EXIST);
-		}
-	}
-
-	private Either<TitanVertex, TitanOperationStatus> addInterfaceToGraph(InterfaceDefinition interfaceInfo, String interfaceName, String resourceId, TitanVertex metadataVertex) {
-
-		InterfaceData interfaceData = new InterfaceData(interfaceInfo);
-
-		String interfaceNameSplitted = getShortInterfaceName(interfaceInfo);
-
-		interfaceInfo.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(resourceId, interfaceNameSplitted));
-
-		Either<TitanVertex, TitanOperationStatus> existInterface = titanGenericDao.getVertexByProperty(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId());
-
-		if (existInterface.isRight()) {
-
-			return createInterfaceNodeAndRelation(interfaceNameSplitted, resourceId, interfaceData, metadataVertex);
-		} else {
-			log.debug("Interface {}  already exist", interfaceData.getUniqueId());
 			return Either.right(TitanOperationStatus.ALREADY_EXIST);
 		}
 	}
@@ -804,70 +751,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 	}
 
 	@Override
-	public StorageOperationStatus createInterfaceOnResource(InterfaceDefinition interf, String resourceId, String interfaceName, boolean failIfExist, boolean inTransaction, TitanVertex metadataVertex) {
-
-		Either<TitanVertex, TitanOperationStatus> interfaceResult = addInterfaceToGraph(interf, interfaceName, resourceId, metadataVertex);
-
-		if (interfaceResult.isRight()) {
-			if (false == inTransaction) {
-				titanGenericDao.rollback();
-			}
-			log.error("Failed to add interface {} to resource {}", interfaceName, resourceId);
-			return DaoStatusConverter.convertTitanStatusToStorageStatus(interfaceResult.right().value());
-		} else {
-
-			if (false == inTransaction) {
-				titanGenericDao.commit();
-			}
-			TitanVertex interfaceVertex = interfaceResult.left().value();
-
-			// InterfaceDefinition interfaceDefResult =
-			// convertInterfaceDataToInterfaceDefinition(interfaceData);
-			Map<String, Operation> operations = interf.getOperationsMap();
-			if (operations != null && !operations.isEmpty()) {
-				Set<String> opNames = operations.keySet();
-				for (String operationName : opNames) {
-
-					Operation op = operations.get(operationName);
-					Either<TitanVertex, TitanOperationStatus> operationResult = addOperationToGraph(interf, operationName, op, interfaceVertex);
-					if (operationResult.isRight()) {
-						if (false == inTransaction) {
-							titanGenericDao.rollback();
-						}
-						log.error("Failed to add operation {} to interface {}", operationName, interfaceName);
-						return DaoStatusConverter.convertTitanStatusToStorageStatus(operationResult.right().value());
-					} else {
-						if (false == inTransaction) {
-							titanGenericDao.commit();
-						}
-						TitanVertex operationVertex = operationResult.left().value();
-
-						ArtifactDefinition art = op.getImplementationArtifact();
-						if (art != null) {
-							String opId = (String) titanGenericDao.getProperty(operationVertex, GraphPropertiesDictionary.UNIQUE_ID.getProperty());
-							StorageOperationStatus artRes = artifactOperation.addArifactToComponent(art, opId, NodeTypeEnum.InterfaceOperation, failIfExist, operationVertex);
-							if (!artRes.equals(StorageOperationStatus.OK)) {
-								if (false == inTransaction) {
-									titanGenericDao.rollback();
-								}
-								log.error("Failed to add artifact {} to interface {}", operationName, interfaceName);
-								return artRes;
-							}
-						}
-					}
-				}
-			}
-			return StorageOperationStatus.OK;
-		}
-
-	}
-
-	@Override
-	public Either<Operation, StorageOperationStatus> deleteInterfaceOperation(String resourceId, String interfaceName, String operationId) {
-		return deleteInterfaceOperation(resourceId, interfaceName, operationId, false);
-	}
-
-	@Override
 	public Either<Operation, StorageOperationStatus> deleteInterfaceOperation(String resourceId, String interfaceName, String operationId, boolean inTransaction) {
 
 		Either<Operation, TitanOperationStatus> status = removeOperationOnGraph(resourceId, interfaceName, operationId);
@@ -886,29 +769,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 			log.debug("The returned Operation is {}", opDefResult);
 			return Either.left(opDefResult);
 		}
-
-	}
-
-	@Override
-	public Either<InterfaceDefinition, StorageOperationStatus> deleteInterfaceOfResourceOnGraph(String resourceId, InterfaceDefinition interfaceDef, boolean inTransaction) {
-
-		Map<String, Operation> operations = interfaceDef.getOperationsMap();
-		String interfaceNameSplitted = getShortInterfaceName(interfaceDef);
-		if (operations != null) {
-			for (Entry<String, Operation> entry : operations.entrySet()) {
-
-				Operation op = entry.getValue();
-				Either<Operation, StorageOperationStatus> removeOperationFromResource = deleteInterfaceOperation(resourceId, interfaceNameSplitted, op.getUniqueId(), true);
-				if (removeOperationFromResource.isRight()) {
-					if (false == inTransaction) {
-						titanGenericDao.rollback();
-					}
-					log.error("Failed to delete operation {} of interface {} resource {}", op.getUniqueId(), interfaceDef.getType(), resourceId);
-					return Either.right(removeOperationFromResource.right().value());
-				}
-			}
-		}
-		return Either.left(interfaceDef);
 
 	}
 
@@ -1091,27 +951,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 		}
 	}
 
-	@Override
-	public StorageOperationStatus associateInterfaceToNode(GraphNode node, InterfaceDefinition interfaceDefinition, TitanVertex metadataVertex) {
-
-		Either<TitanVertex, TitanOperationStatus> interfaceData = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Interface), interfaceDefinition.getUniqueId());
-		if (interfaceData.isRight()) {
-			return DaoStatusConverter.convertTitanStatusToStorageStatus(interfaceData.right().value());
-		}
-
-		Map<String, Object> properties = new HashMap<String, Object>();
-
-		String interfaceName = getShortInterfaceName(interfaceDefinition);
-
-		properties.put(GraphPropertiesDictionary.NAME.getProperty(), interfaceName.toLowerCase());
-		TitanOperationStatus createRelation = titanGenericDao.createEdge(metadataVertex, interfaceData.left().value(), GraphEdgeLabels.INTERFACE, properties);
-		if (!createRelation.equals(TitanOperationStatus.OK)) {
-			return DaoStatusConverter.convertTitanStatusToStorageStatus(createRelation);
-		}
-
-		return StorageOperationStatus.OK;
-	}
-
 	public String getShortInterfaceName(InterfaceDataDefinition interfaceDefinition) {
 		String[] packageName = interfaceDefinition.getType().split("\\.");
 		String interfaceName;
@@ -1128,43 +967,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 	 */
 	public Either<InterfaceDefinition, StorageOperationStatus> createInterfaceType(InterfaceDefinition interf) {
 		return createInterfaceType(interf, false);
-	}
-
-	@Override
-	public Either<Operation, StorageOperationStatus> getSpecificOperation(String resourceId, String interfaceType, String operationName) {
-		log.trace("Getting operation, resourceId {}, interfaceType {}, operationName {}", resourceId, interfaceType, operationName);
-		Either<Map<String, InterfaceDefinition>, StorageOperationStatus> allInterfacesOfResource = getAllInterfacesOfResource(resourceId, false);
-		if (allInterfacesOfResource.isRight() || allInterfacesOfResource.left().value() == null || allInterfacesOfResource.left().value().get(interfaceType) == null) {
-			log.debug("Couldn't find interface definition of type {} for resource id {}", interfaceType, resourceId);
-			return Either.right(allInterfacesOfResource.right().value());
-		}
-		InterfaceDefinition interfaceDefinition = allInterfacesOfResource.left().value().get(interfaceType);
-		Map<String, Operation> operations = interfaceDefinition.getOperationsMap();
-		if (operations == null || operations.get(operationName) == null) {
-			log.debug("Couldn't find operation for operation name {}, interface type {}", operationName, interfaceType);
-			return Either.right(StorageOperationStatus.GENERAL_ERROR);
-		}
-		return Either.left(operations.get(operationName));
-	}
-
-	@Override
-	public Either<InterfaceDefinition, StorageOperationStatus> dissociateInterfaceFromNode(GraphNode node, InterfaceDefinition interfaceDefinition) {
-
-		Either<InterfaceData, TitanOperationStatus> interfaceData = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Interface), interfaceDefinition.getUniqueId(), InterfaceData.class);
-		if (interfaceData.isRight()) {
-			log.debug("Couldn't find interface {}", interfaceDefinition);
-			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(interfaceData.right().value()));
-		}
-
-		InterfaceData value = interfaceData.left().value();
-		Either<GraphRelation, TitanOperationStatus> deleteRelation = titanGenericDao.deleteRelation(node, value, GraphEdgeLabels.INTERFACE);
-		if (deleteRelation.isRight()) {
-			TitanOperationStatus status = deleteRelation.right().value();
-			log.debug("Couldn't dissociate interface between node {} to node {}. Status is {}", node.getUniqueId(), value.getUniqueId(), status);
-			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-		}
-
-		return Either.left(interfaceDefinition);
 	}
 
 }

@@ -37,6 +37,7 @@ import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.operations.api.ICapabilityOperation;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
@@ -54,7 +55,7 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
 	@Autowired
 	private PropertyOperation propertyOperation;
 	@Autowired
-	private CapabilityOperation capabilityOperation;
+	private ICapabilityOperation capabilityOperation;
 
 	public CapabilityTypeOperation() {
 		super();

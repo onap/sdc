@@ -20,25 +20,12 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ServiceComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -55,7 +42,6 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.ServiceOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -66,7 +52,13 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 public class ResourceInstanceBusinessLogicTest {
 
@@ -87,7 +79,7 @@ public class ResourceInstanceBusinessLogicTest {
 
 	public static final ArtifactsBusinessLogic artifactBusinessLogic = Mockito.mock(ArtifactsBusinessLogic.class);
 	public static final UserBusinessLogic userAdminManager = Mockito.mock(UserBusinessLogic.class);
-	public static final ServiceOperation serviceOperation = Mockito.mock(ServiceOperation.class);
+//	public static final ServiceOperation serviceOperation = Mockito.mock(ServiceOperation.class);
 	public static final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
 	public static final IGroupInstanceOperation groupInstanceOperation = Mockito.mock(IGroupInstanceOperation.class);
 	public static final ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
@@ -132,7 +124,7 @@ public class ResourceInstanceBusinessLogicTest {
 
 		Object lightService = new Service();
 		Either<Object, StorageOperationStatus> eitherLightService = Either.left(lightService);
-		Mockito.when(serviceOperation.getLightComponent(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(eitherLightService);
+//		Mockito.when(serviceOperation.getLightComponent(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(eitherLightService);
 
 		Mockito.doNothing().when(componentsUtils).auditComponent(Mockito.any(ResponseFormat.class), Mockito.any(User.class), Mockito.any(Component.class), Mockito.anyString(), Mockito.anyString(), Mockito.any(AuditingActionEnum.class),
 				Mockito.any(ComponentTypeEnum.class), Mockito.any(EnumMap.class));
@@ -157,7 +149,7 @@ public class ResourceInstanceBusinessLogicTest {
 	@Before
 	public void initMocks() {
 		MockitoAnnotations.initMocks(this);
-		Mockito.reset(artifactBusinessLogic, serviceOperation, componentsUtils, userAdminManager);
+//		Mockito.reset(artifactBusinessLogic, serviceOperation, componentsUtils, userAdminManager);
 		setup();
 	}
 

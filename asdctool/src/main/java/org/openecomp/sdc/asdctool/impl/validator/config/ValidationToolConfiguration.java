@@ -16,8 +16,6 @@ import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
 import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
 import org.openecomp.sdc.be.model.jsontitan.operations.*;
-import org.openecomp.sdc.be.model.operations.api.ToscaDefinitionPathCalculator;
-import org.openecomp.sdc.be.model.operations.impl.ToscaDefinitionPathCalculatorImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -112,11 +110,6 @@ public class ValidationToolConfiguration {
     @Bean(name = "category-operation")
     public CategoryOperation categoryOperation() {
         return new CategoryOperation();
-    }
-
-    @Bean(name = "tosca-path-calculator")
-    public ToscaDefinitionPathCalculator pathCalculator() {
-        return new ToscaDefinitionPathCalculatorImpl();
     }
 
     @Bean(name = "artifacts-operation")

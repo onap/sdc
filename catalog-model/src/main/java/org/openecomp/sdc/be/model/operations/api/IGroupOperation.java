@@ -34,72 +34,11 @@ import fj.data.Either;
 
 public interface IGroupOperation {
 
-	// add full group to component
-	public Either<GroupData, TitanOperationStatus> addGroupToGraph(NodeTypeEnum nodeTypeEnum, String componentId, GroupDefinition groupDefinition);
-
-	public Either<GroupDefinition, StorageOperationStatus> addGroup(NodeTypeEnum nodeTypeEnum, String componentId, GroupDefinition groupDefinition);
-
-	public Either<GroupDefinition, StorageOperationStatus> addGroup(NodeTypeEnum nodeTypeEnum, String componentId, GroupDefinition groupDefinition, boolean inTransaction);
-
-	public Either<List<GroupDefinition>, StorageOperationStatus> addGroups(NodeTypeEnum nodeTypeEnum, String componentId, List<GroupDefinition> groups, boolean inTransaction);
-
-	// get group
-	public Either<GroupDefinition, TitanOperationStatus> getGroupFromGraph(String uniqueId);
-
-	public Either<GroupDefinition, StorageOperationStatus> getGroup(String uniqueId);
-
-	public Either<GroupDefinition, StorageOperationStatus> getGroup(String uniqueId, boolean inTransaction);
-
-	// get all groups under component
-	public Either<List<GroupDefinition>, TitanOperationStatus> getAllGroupsFromGraph(String componentId, NodeTypeEnum componentTypeEnum);
-
-	public Either<List<GroupDefinition>, StorageOperationStatus> getAllGroups(String componentId, NodeTypeEnum compTypeEnum, boolean inTransaction);
-
-	public Either<List<GroupDefinition>, StorageOperationStatus> getAllGroups(String componentId, NodeTypeEnum compTypeEnum);
-
-	// delete all groups under component
-	public Either<List<GroupDefinition>, TitanOperationStatus> deleteAllGroupsFromGraph(String componentId, NodeTypeEnum compTypeEnum);
-
-	public Either<List<GroupDefinition>, StorageOperationStatus> deleteAllGroups(String componentId, NodeTypeEnum compTypeEnum, boolean inTransaction);
-
-	public Either<List<GroupDefinition>, StorageOperationStatus> deleteAllGroups(String componentId, NodeTypeEnum compTypeEnum);
-
-	// Association
-	public Either<List<String>, StorageOperationStatus> getAssociatedGroupsToComponentInstance(String componentInstanceId, boolean inTransaction);
-
-	public Either<List<String>, StorageOperationStatus> getAssociatedGroupsToComponentInstance(String componentInstanceId);
-
-	public Either<List<String>, TitanOperationStatus> getAssociatedGroupsToComponentInstanceFromGraph(String componentInstanceId);
-
-	public StorageOperationStatus associateGroupsToComponentInstance(List<String> groups, String componentInstanceId, String compInstName, boolean inTransaction);
-
-	public StorageOperationStatus associateGroupsToComponentInstance(List<String> groups, String componentInstanceId, String compInstName);
-
-	public Either<List<GraphRelation>, TitanOperationStatus> associateGroupsToComponentInstanceOnGraph(List<String> groups, String componentInstanceId, String compInstName);
-
 	public Either<List<GraphRelation>, TitanOperationStatus> dissociateAllGroupsFromArtifactOnGraph(String componentId, NodeTypeEnum componentTypeEnum, String artifactId);
-
-	public StorageOperationStatus dissociateAllGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String artifactId, boolean inTransaction);
-
-	public StorageOperationStatus dissociateAllGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String artifactId);
-
-	public TitanOperationStatus dissociateAndAssociateGroupsFromArtifactOnGraph(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact);
 
 	public StorageOperationStatus dissociateAndAssociateGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact, boolean inTransaction);
 
-	public StorageOperationStatus dissociateAndAssociateGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact);
-
 	public boolean isGroupExist(String groupName, boolean inTransaction);
-	/**
-	 * Updates Group Metadata (name and properties)
-	 * @param groupToUpdateFromUniqueId
-	 * @param newName
-	 * @param groupToUpdateTo
-	 * @param inTransaction
-	 * @return
-	 */
-	public Either<GroupDefinition, StorageOperationStatus> updateGroupName(String groupToUpdateFromUniqueId,
-			String newName, GroupDefinition groupToUpdateTo, boolean inTransaction);
 
 	public StorageOperationStatus validateAndUpdatePropertyValue(GroupProperty property);
 }

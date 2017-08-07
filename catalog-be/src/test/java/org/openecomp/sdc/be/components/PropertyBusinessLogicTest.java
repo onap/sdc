@@ -41,7 +41,6 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
-import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.be.user.Role;
@@ -73,8 +72,6 @@ public class PropertyBusinessLogicTest {
 	private ServletContext servletContext;
 	@Mock
 	private IPropertyOperation propertyOperation;
-	@Mock
-	private IResourceOperation resourceOperation;
 	@Mock
 	private WebAppContextWrapper webAppContextWrapper;
 	@Mock
@@ -115,20 +112,20 @@ public class PropertyBusinessLogicTest {
 		when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
 		when(servletContext.getAttribute(Constants.PROPERTY_OPERATION_MANAGER)).thenReturn(propertyOperation);
 		when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
-		when(servletContext.getAttribute(Constants.RESOURCE_OPERATION_MANAGER)).thenReturn(resourceOperation);
+//		when(servletContext.getAttribute(Constants.RESOURCE_OPERATION_MANAGER)).thenReturn(resourceOperation);
 		when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
 
 		// Resource Operation mock methods
 		// getCount
-		Either<Integer, StorageOperationStatus> eitherCount = Either.left(0);
-		when(resourceOperation.getNumberOfResourcesByName("MyResourceName".toLowerCase())).thenReturn(eitherCount);
-		Either<Integer, StorageOperationStatus> eitherCountExist = Either.left(1);
-		when(resourceOperation.getNumberOfResourcesByName("alreadyExist".toLowerCase())).thenReturn(eitherCountExist);
-		Either<Integer, StorageOperationStatus> eitherCountRoot = Either.left(1);
-		when(resourceOperation.getNumberOfResourcesByName("Root".toLowerCase())).thenReturn(eitherCountRoot);
-
-		Either<Resource, StorageOperationStatus> eitherGetResource = Either.left(createResourceObject(true));
-		when(resourceOperation.getResource(resourceId)).thenReturn(eitherGetResource);
+//		Either<Integer, StorageOperationStatus> eitherCount = Either.left(0);
+//		when(resourceOperation.getNumberOfResourcesByName("MyResourceName".toLowerCase())).thenReturn(eitherCount);
+//		Either<Integer, StorageOperationStatus> eitherCountExist = Either.left(1);
+//		when(resourceOperation.getNumberOfResourcesByName("alreadyExist".toLowerCase())).thenReturn(eitherCountExist);
+//		Either<Integer, StorageOperationStatus> eitherCountRoot = Either.left(1);
+//		when(resourceOperation.getNumberOfResourcesByName("Root".toLowerCase())).thenReturn(eitherCountRoot);
+//
+//		Either<Resource, StorageOperationStatus> eitherGetResource = Either.left(createResourceObject(true));
+//		when(resourceOperation.getResource(resourceId)).thenReturn(eitherGetResource);
 
 	}
 

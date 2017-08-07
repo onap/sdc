@@ -53,20 +53,6 @@ cookbook_file "ArtifactGenerator" do
 end
 
 
-template "onboarding-be-config" do
- path "/#{jetty_base}/config/onboarding-be/onboarding_configuration.yaml"
- source "BE-onboarding-configuration.yaml.erb"
- owner "m98835"
- group "mechid"
- mode "0755"
- variables({
-    :catalog_ip   => node['HOST_IP'],
-    :catalog_port => node['BE'][:http_port],
-    :ssl_port     => node['BE'][:https_port]
-})
-end
-
-
 cookbook_file "/#{jetty_base}/etc/keystore" do
    source "keystore"
    owner "jetty"

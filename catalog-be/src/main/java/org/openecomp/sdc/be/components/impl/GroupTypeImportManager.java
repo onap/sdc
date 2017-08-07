@@ -20,15 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
@@ -37,16 +29,21 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
-import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Component("groupTypeImportManager")
 public class GroupTypeImportManager {
@@ -69,13 +66,11 @@ public class GroupTypeImportManager {
 
 	private static Logger log = LoggerFactory.getLogger(GroupTypeImportManager.class.getName());
 	@Resource
-	private PropertyOperation propertyOperation;
-	@Resource
 	private IGroupTypeOperation groupTypeOperation;
 	@Resource
 	private ComponentsUtils componentsUtils;
 	@Resource
-	private IResourceOperation resourceOperation;
+	private ToscaOperationFacade toscaOperationFacade;
 
 	@Resource
 	private CommonImportManager commonImportManager;
@@ -103,7 +98,7 @@ public class GroupTypeImportManager {
 			} else {
 				for (String member : groupType.getMembers()) {
 					// Verify that such Resource exist
-					Either<org.openecomp.sdc.be.model.Resource, StorageOperationStatus> eitherMemberExist = resourceOperation.getLatestByToscaResourceName(member, false);
+					Either<org.openecomp.sdc.be.model.Resource, StorageOperationStatus> eitherMemberExist = toscaOperationFacade.getLatestByToscaResourceName(member);
 					if (eitherMemberExist.isRight()) {
 						StorageOperationStatus operationStatus = eitherMemberExist.right().value();
 						log.debug("Error when fetching parent resource {}, error: {}", member, operationStatus);

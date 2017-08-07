@@ -154,24 +154,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return functionPatterns;
 	}
 
-	@Override
-	public Either<PropertyDefinition, StorageOperationStatus> getPropertyOfResource(String propertyName, String resourceId) {
-
-		String propertyId = UniqueIdBuilder.buildComponentPropertyUniqueId(resourceId, propertyName);
-
-		Either<PropertyData, TitanOperationStatus> getResult = this.titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Property), propertyId, PropertyData.class);
-		if (getResult.isLeft()) {
-			PropertyData propertyData = getResult.left().value();
-			return Either.left(convertPropertyDataToPropertyDefinition(propertyData, propertyName, resourceId));
-		} else {
-			TitanOperationStatus titanStatus = getResult.right().value();
-			log.debug("Node with id {} was not found in the graph. status: {}", propertyId, titanStatus);
-			StorageOperationStatus storageOperationStatus = DaoStatusConverter.convertTitanStatusToStorageStatus(titanStatus);
-			return Either.right(storageOperationStatus);
-		}
-
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -2024,8 +2006,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		}
 	}
 
-	@Override
-	public Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition, boolean inTransaction) {
+	private Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition, boolean inTransaction) {
 
 		Either<DataTypeDefinition, StorageOperationStatus> result = null;
 
@@ -2110,8 +2091,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return getDataTypeByNameWithoutDerived(name, true);
 	}
 
-	@Override
-	public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByNameWithoutDerived(String name, boolean inTransaction) {
+	private Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByNameWithoutDerived(String name, boolean inTransaction) {
 
 		Either<DataTypeDefinition, StorageOperationStatus> result = null;
 		try {
@@ -2534,8 +2514,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		return updateDataType(newDataTypeDefinition, oldDataTypeDefinition, true);
 	}
 
-	@Override
-	public Either<DataTypeDefinition, StorageOperationStatus> updateDataType(DataTypeDefinition newDataTypeDefinition, DataTypeDefinition oldDataTypeDefinition, boolean inTransaction) {
+	private Either<DataTypeDefinition, StorageOperationStatus> updateDataType(DataTypeDefinition newDataTypeDefinition, DataTypeDefinition oldDataTypeDefinition, boolean inTransaction) {
 
 		Either<DataTypeDefinition, StorageOperationStatus> result = null;
 

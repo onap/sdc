@@ -36,8 +36,6 @@ public interface IUserAdminOperation {
 
 	public Either<User, ActionStatus> getUserData(String id, boolean inTransaction);
 
-	public Either<User, ActionStatus> getInactiveUserData(String id);
-
 	public Either<User, StorageOperationStatus> saveUserData(User user);
 
 	public Either<User, StorageOperationStatus> updateUserData(User user);
@@ -48,11 +46,6 @@ public interface IUserAdminOperation {
 
 	public Either<List<User>, ActionStatus> getAllUsersWithRole(String role, String status);
 
-	Either<List<User>, ActionStatus> getAllUsers();
-
 	public Either<List<Edge>, StorageOperationStatus> getUserPendingTasksList(User user, Map<String, Object> properties);
 
-	public Either<ImmutablePair<User, FunctionalMenuInfo>, ActionStatus> getUserDataWithFunctionalMenu(String userId);
-
-	public Either<FunctionalMenuInfo, TitanOperationStatus> createOrUpdateFunctionalMenu(String userId, String newFunctionalMenu);
 }

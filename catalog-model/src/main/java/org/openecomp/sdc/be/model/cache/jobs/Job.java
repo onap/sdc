@@ -26,7 +26,6 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.cache.DaoInfo;
-import org.openecomp.sdc.be.model.operations.api.IComponentOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.slf4j.Logger;

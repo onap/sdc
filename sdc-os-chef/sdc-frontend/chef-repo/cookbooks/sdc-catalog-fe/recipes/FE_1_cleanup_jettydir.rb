@@ -47,3 +47,11 @@ directory "FE_create_catalog-fe" do
   action :create
 end
 
+
+directory "FE_create_catalog-fe" do
+  path "/var/lib/jetty/config/onboarding-fe"
+  owner 'jetty'
+  group 'jetty'
+  mode '0755'
+  action :create
+end

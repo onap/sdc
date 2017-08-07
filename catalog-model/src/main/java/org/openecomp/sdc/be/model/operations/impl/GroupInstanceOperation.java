@@ -20,6 +20,51 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanVertex;
+import fj.data.Either;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.GroupInstanceProperty;
+import org.openecomp.sdc.be.model.GroupProperty;
+import org.openecomp.sdc.be.model.IComponentInstanceConnectedElement;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
+import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.resources.data.ArtifactData;
+import org.openecomp.sdc.be.resources.data.GroupInstanceData;
+import org.openecomp.sdc.be.resources.data.PropertyData;
+import org.openecomp.sdc.be.resources.data.PropertyValueData;
+import org.openecomp.sdc.be.resources.data.UniqueIdData;
+import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.util.ValidationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,73 +74,8 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.structure.VertexProperty;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
-import org.openecomp.sdc.be.dao.graph.GraphElementFactory;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
-import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.dao.utils.Constants;
-import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-
-import org.openecomp.sdc.be.model.ComponentInstance;
-
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.GroupInstanceProperty;
-import org.openecomp.sdc.be.model.GroupProperty;
-import org.openecomp.sdc.be.model.GroupTypeDefinition;
-import org.openecomp.sdc.be.model.IComponentInstanceConnectedElement;
-import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
-import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-import org.openecomp.sdc.be.resources.data.ArtifactData;
-import org.openecomp.sdc.be.resources.data.AttributeValueData;
-import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
-import org.openecomp.sdc.be.resources.data.GroupData;
-import org.openecomp.sdc.be.resources.data.GroupInstanceData;
-import org.openecomp.sdc.be.resources.data.PropertyData;
-import org.openecomp.sdc.be.resources.data.PropertyValueData;
-import org.openecomp.sdc.be.resources.data.UniqueIdData;
-import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.openecomp.sdc.common.util.ValidationUtils;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
-
-import fj.data.Either;
-
 @org.springframework.stereotype.Component("group-instance-operation")
 public class GroupInstanceOperation extends AbstractOperation implements IGroupInstanceOperation {
-
-	private static String ADDING_GROUP = "AddingGroupInstance";
 
 	private static Logger log = LoggerFactory.getLogger(GroupInstanceOperation.class.getName());
 
@@ -110,72 +90,6 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 	@javax.annotation.Resource
 	private ApplicationDataTypeCache dataTypeCache;
 
-	@Override
-	public Either<GroupInstance, StorageOperationStatus> createGroupInstance(String componentInstId, GroupInstance groupInstance, boolean isCreateLogicalName) {
-		Either<GroupInstance, StorageOperationStatus> result = null;
-
-		if (!ValidationUtils.validateStringNotEmpty(groupInstance.getCustomizationUUID())) {
-			generateCustomizationUUID(groupInstance);
-		}
-
-		Either<GroupInstance, TitanOperationStatus> addRes = addGroupInstanceToComponentInstance(componentInstId,  isCreateLogicalName, groupInstance);
-		if (addRes.isRight()) {
-			TitanOperationStatus status = addRes.right().value();
-			log.error("Failed to add resource instance {} to service {}. status is {}", groupInstance, componentInstId, status);
-			result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-			return result;
-		}
-
-		GroupInstance value = addRes.left().value();
-		result = Either.left(value);
-
-		return result;
-
-	}
-
-	@Override
-	public Either<GroupInstance, StorageOperationStatus> createGroupInstance(TitanVertex ciVertex, String componentInstId,  GroupInstance groupInstance, boolean isCreateLogicalName) {
-		Either<GroupInstance, StorageOperationStatus> result = null;
-
-		if (!ValidationUtils.validateStringNotEmpty(groupInstance.getCustomizationUUID())) {
-			generateCustomizationUUID(groupInstance);
-		}
-
-		Either<TitanVertex, TitanOperationStatus> addComponentInstanceToContainerComponent = addGroupInstanceToContainerComponent(ciVertex, componentInstId, isCreateLogicalName, groupInstance);
-
-		if (addComponentInstanceToContainerComponent.isRight()) {
-			TitanOperationStatus status = addComponentInstanceToContainerComponent.right().value();
-			if (status == TitanOperationStatus.NOT_FOUND) {
-				status = TitanOperationStatus.INVALID_ID;
-			}
-			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-		}
-		TitanVertex giVertex = addComponentInstanceToContainerComponent.left().value();
-		Map<String, Object> properties = titanGenericDao.getProperties(giVertex);
-		GroupInstanceData createdGroupInstanceData = GraphElementFactory.createElement(NodeTypeEnum.GroupInstance.getName(), GraphElementTypeEnum.Node, properties, GroupInstanceData.class);
-
-		GroupInstance createdGroupInstance = new GroupInstance(createdGroupInstanceData.getGroupDataDefinition());
-		createdGroupInstance.setGroupName(groupInstance.getGroupName());
-
-		createdGroupInstance.setArtifacts(groupInstance.getArtifacts());
-
-		result = Either.left(createdGroupInstance);
-
-		return result;
-
-	}
-
-	@Override
-	public Either<GroupInstance, StorageOperationStatus> deleteGroupInstanceInstance(NodeTypeEnum containerNodeType, String containerComponentId, String groupInstUid) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Either<GroupInstance, StorageOperationStatus> updateGroupInstance(String serviceId, NodeTypeEnum nodeType, String resourceInstanceName, ComponentInstance resourceInstance) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public Either<List<GroupInstance>, StorageOperationStatus> getAllGroupInstances(String parentId, NodeTypeEnum parentType) {
@@ -275,55 +189,6 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 	}
 
 	@Override
-	public Either<GroupInstance, TitanOperationStatus> getGroupInstanceById(String groupResourceId) {
-		// TODO Auto-generated method stub
-		return getGroupInstanceFromGraph(groupResourceId, false, false);
-	}
-
-	@Override
-	public TitanOperationStatus deleteAllGroupInstances(String componentInstId) {
-
-		return deleteAssociatedGroupInstances(componentInstId);
-	}
-
-	private TitanOperationStatus deleteAssociatedGroupInstances(String resourceInstanceUid) {
-		final GraphEdgeLabels edgeConectingToRI = GraphEdgeLabels.GROUP_INST;
-		final NodeTypeEnum elementTypeToDelete = NodeTypeEnum.GroupInstance;
-		return deleteAssociatedRIElements(elementTypeToDelete, edgeConectingToRI, resourceInstanceUid, () -> GroupInstanceData.class);
-	}
-
-	private <T extends GraphNode> TitanOperationStatus deleteAssociatedRIElements(NodeTypeEnum elementTypeToDelete, GraphEdgeLabels edgeConectingToRI, String resourceInstanceUid, Supplier<Class<T>> classGen) {
-
-		Either<List<ImmutablePair<T, GraphEdge>>, TitanOperationStatus> elementsNodesRes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), resourceInstanceUid, edgeConectingToRI, elementTypeToDelete,
-				classGen.get());
-
-		if (elementsNodesRes.isRight()) {
-			TitanOperationStatus status = elementsNodesRes.right().value();
-			if (status != TitanOperationStatus.NOT_FOUND) {
-				BeEcompErrorManager.getInstance().logInternalFlowError("deleteAssociatedRIElements", "Failed to find the elements of resource instance " + resourceInstanceUid + ". status is " + status, ErrorSeverity.ERROR);
-				return status;
-			}
-		} else {
-
-			List<ImmutablePair<T, GraphEdge>> relationshipNodes = elementsNodesRes.left().value();
-			if (relationshipNodes != null) {
-				for (ImmutablePair<T, GraphEdge> immutablePair : relationshipNodes) {
-					T elementValueDataData = immutablePair.getKey();
-					Either<T, TitanOperationStatus> deleteNode = titanGenericDao.deleteNode(elementValueDataData, classGen.get());
-					if (deleteNode.isRight()) {
-						TitanOperationStatus status = deleteNode.right().value();
-						BeEcompErrorManager.getInstance().logInternalFlowError("deleteAssociatedRIElements", "Failed to delete element value node " + elementValueDataData + ". status is " + status, ErrorSeverity.ERROR);
-						return status;
-					}
-				}
-			}
-
-		}
-
-		return TitanOperationStatus.OK;
-	}
-
-	@Override
 	public Either<Integer, StorageOperationStatus> increaseAndGetGroupInstancePropertyCounter(String groupInstanceId) {
 		Either<Integer, StorageOperationStatus> result = null;
 
@@ -358,18 +223,6 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 		result = Either.left(counter);
 		return result;
 
-	}
-
-	@Override
-	public Either<Boolean, StorageOperationStatus> isGroupInstanceNameExist(String parentComponentId, NodeTypeEnum parentNodeType, String compInstId, String componentInstName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Either<ComponentInstance, StorageOperationStatus> getFullGroupInstance(ComponentInstance componentInstance, NodeTypeEnum compInstNodeType) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -425,36 +278,10 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 	}
 
 	@Override
-	public Either<ComponentInstanceProperty, StorageOperationStatus> addPropertyValueToGroupInstance(ComponentInstanceProperty resourceInstanceProperty, String resourceInstanceId, boolean isvalidate, Integer index, boolean inTransaction) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Either<ComponentInstanceProperty, StorageOperationStatus> updatePropertyValueInGroupInstance(ComponentInstanceProperty gropuInstanceProperty, String groupInstanceId, boolean inTransaction) {
 		// TODO Auto-generated method stub
 		// change Propety class
 		return null;
-	}
-
-	@Override
-	public Either<Map<String, ArtifactDefinition>, StorageOperationStatus> fetchCIEnvArtifacts(String componentInstanceId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public StorageOperationStatus updateCustomizationUUID(String groupInstanceId) {
-		Either<TitanVertex, TitanOperationStatus> vertexByProperty = titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), groupInstanceId);
-		if (vertexByProperty.isRight()) {
-			log.debug("Failed to fetch component instance by id {} error {}", groupInstanceId, vertexByProperty.right().value());
-			return DaoStatusConverter.convertTitanStatusToStorageStatus(vertexByProperty.right().value());
-		}
-		UUID uuid = UUID.randomUUID();
-		TitanVertex ciVertex = vertexByProperty.left().value();
-		ciVertex.property(GraphPropertiesDictionary.CUSTOMIZATION_UUID.getProperty(), uuid.toString());
-
-		return StorageOperationStatus.OK;
 	}
 
 	public void generateCustomizationUUID(GroupInstance groupInstance) {
@@ -465,8 +292,6 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 	/**
 	 * add property to resource instance
 	 * 
-	 * @param resourceInstanceProperty
-	 * @param resourceInstanceId
 	 * @param index
 	 * @return
 	 */
@@ -608,242 +433,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 
 	}
 
-	public Either<ComponentInstanceProperty, TitanOperationStatus> addPropertyToResourceInstance(ComponentInstanceProperty groupInstanceProperty, TitanVertex groupInstanceVertex, Integer index, String groupInstanceId) {
 
-		String propertyId = groupInstanceProperty.getUniqueId();
-		Either<PropertyData, TitanOperationStatus> findPropertyDefRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Property), propertyId, PropertyData.class);
-
-		if (findPropertyDefRes.isRight()) {
-			TitanOperationStatus status = findPropertyDefRes.right().value();
-			if (status == TitanOperationStatus.NOT_FOUND) {
-				status = TitanOperationStatus.INVALID_ID;
-			}
-			return Either.right(status);
-		}
-
-		String valueUniqueUid = groupInstanceProperty.getValueUniqueUid();
-		if (valueUniqueUid == null) {
-
-			PropertyData propertyData = findPropertyDefRes.left().value();
-
-			ImmutablePair<TitanOperationStatus, String> isPropertyValueExists = propertyOperation.findPropertyValue(groupInstanceId, propertyId);
-			if (isPropertyValueExists.getLeft() == TitanOperationStatus.ALREADY_EXIST) {
-				log.trace("The property {} already added to the resource instance {}", propertyId, groupInstanceId);
-				groupInstanceProperty.setValueUniqueUid(isPropertyValueExists.getRight());
-				Either<PropertyValueData, TitanOperationStatus> updatePropertyOfResourceInstance = updatePropertyOfGroupInstance(groupInstanceProperty, groupInstanceId);
-				if (updatePropertyOfResourceInstance.isRight()) {
-					BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + updatePropertyOfResourceInstance.right().value(), ErrorSeverity.ERROR);
-					return Either.right(updatePropertyOfResourceInstance.right().value());
-				}
-				return Either.right(TitanOperationStatus.OK);
-			}
-
-			if (isPropertyValueExists.getLeft() != TitanOperationStatus.NOT_FOUND) {
-				log.trace("After finding property value of {} on componenet instance {}", propertyId, groupInstanceId);
-				return Either.right(isPropertyValueExists.getLeft());
-			}
-
-			String innerType = null;
-
-			PropertyDataDefinition propDataDef = propertyData.getPropertyDataDefinition();
-			String propertyType = propDataDef.getType();
-			String value = groupInstanceProperty.getValue();
-			ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
-
-			if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
-				SchemaDefinition def = propDataDef.getSchema();
-				if (def == null) {
-					log.debug("Schema doesn't exists for property of type {}", type);
-					return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
-				}
-				PropertyDataDefinition propDef = def.getProperty();
-				if (propDef == null) {
-					log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
-					return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
-				}
-				innerType = propDef.getType();
-			}
-
-			log.trace("Before validateAndUpdatePropertyValue");
-			Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = dataTypeCache.getAll();
-			if (allDataTypes.isRight()) {
-				TitanOperationStatus status = allDataTypes.right().value();
-				BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
-				return Either.right(status);
-			}
-			Either<Object, Boolean> isValid = propertyOperation.validateAndUpdatePropertyValue(propertyType, value, innerType, allDataTypes.left().value());
-			log.trace("After validateAndUpdatePropertyValue. isValid = {}", isValid);
-
-			String newValue = value;
-			if (isValid.isRight()) {
-				Boolean res = isValid.right().value();
-				if (res == false) {
-					return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
-				}
-			} else {
-				Object object = isValid.left().value();
-				if (object != null) {
-					newValue = object.toString();
-				}
-			}
-
-			String uniqueId = UniqueIdBuilder.buildResourceInstancePropertyValueUid(groupInstanceId, index);
-			PropertyValueData propertyValueData = new PropertyValueData();
-			propertyValueData.setUniqueId(uniqueId);
-			propertyValueData.setValue(newValue);
-
-			log.trace("Before validateAndUpdateRules");
-			ImmutablePair<String, Boolean> pair = propertyOperation.validateAndUpdateRules(propertyType, groupInstanceProperty.getRules(), innerType, allDataTypes.left().value(), false);
-			log.debug("After validateAndUpdateRules. pair = {} ", pair);
-			if (pair.getRight() != null && pair.getRight() == false) {
-				BeEcompErrorManager.getInstance().logBeInvalidValueError("Add property value", pair.getLeft(), groupInstanceProperty.getName(), propertyType);
-				return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
-			}
-			propertyOperation.addRulesToNewPropertyValue(propertyValueData, groupInstanceProperty, groupInstanceId);
-
-			log.trace("Before adding property value to graph {}", propertyValueData);
-			Either<PropertyValueData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(propertyValueData, PropertyValueData.class);
-			log.trace("After adding property value to graph {}", propertyValueData);
-
-			if (createNodeResult.isRight()) {
-				TitanOperationStatus operationStatus = createNodeResult.right().value();
-				return Either.right(operationStatus);
-			}
-			propertyValueData = createNodeResult.left().value();
-
-			Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(propertyValueData, propertyData, GraphEdgeLabels.PROPERTY_IMPL, null);
-
-			if (createRelResult.isRight()) {
-				TitanOperationStatus operationStatus = createRelResult.right().value();
-				log.error("Failed to associate property value {} to property {} in graph. status is {}", uniqueId, propertyId, operationStatus);
-				return Either.right(operationStatus);
-			}
-
-			TitanOperationStatus edgeResult = titanGenericDao.createEdge(groupInstanceVertex, propertyValueData, GraphEdgeLabels.PROPERTY_VALUE, null);
-
-			if (edgeResult != TitanOperationStatus.OK) {
-				log.error("Failed to associate resource instance {} property value {} in graph. status is {}", groupInstanceId, uniqueId, edgeResult);
-				return Either.right(edgeResult);
-			}
-
-			ComponentInstanceProperty propertyValueResult = propertyOperation.buildResourceInstanceProperty(propertyValueData, groupInstanceProperty);
-			log.debug("The returned ResourceInstanceProperty is {} ", propertyValueResult);
-
-			return Either.left(propertyValueResult);
-		} else {
-			log.debug("property value already exists.");
-			return Either.right(TitanOperationStatus.ALREADY_EXIST);
-		}
-
-	}
-
-	public Either<GroupInstance, TitanOperationStatus> addGroupInstanceToComponentInstance(String componentInstanceId, boolean isCreateLogicaName, GroupInstance groupInstance) {
-		log.debug("Going to create group instance {} in componentInstance {}", groupInstance, componentInstanceId);
-
-		Either<TitanVertex, TitanOperationStatus> metadataVertex = titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), componentInstanceId);
-		if (metadataVertex.isRight()) {
-			TitanOperationStatus status = metadataVertex.right().value();
-			if (status == TitanOperationStatus.NOT_FOUND) {
-				status = TitanOperationStatus.INVALID_ID;
-			}
-			return Either.right(status);
-		}
-		Either<TitanVertex, TitanOperationStatus> addComponentInstanceToContainerComponent = addGroupInstanceToContainerComponent(metadataVertex.left().value(), componentInstanceId, isCreateLogicaName, groupInstance);
-
-		if (addComponentInstanceToContainerComponent.isRight()) {
-			TitanOperationStatus status = addComponentInstanceToContainerComponent.right().value();
-			if (status == TitanOperationStatus.NOT_FOUND) {
-				status = TitanOperationStatus.INVALID_ID;
-			}
-			return Either.right(status);
-		}
-		TitanVertex ciVertex = addComponentInstanceToContainerComponent.left().value();
-		Map<String, Object> properties = titanGenericDao.getProperties(ciVertex);
-		GroupInstanceData createdComponentInstance = GraphElementFactory.createElement(NodeTypeEnum.GroupInstance.getName(), GraphElementTypeEnum.Node, properties, GroupInstanceData.class);
-
-		GroupInstance createdResourceInstance = new GroupInstance(createdComponentInstance.getGroupDataDefinition());
-
-		return Either.left(createdResourceInstance);
-
-	}
-
-	/**
-	 * 
-	 * @param containerComponentId
-	 * @param containerNodeType
-	 * @param instanceNumber
-	 * @param isCreateLogicaName
-	 * @param componentInstance
-	 * @param compInstNodeType
-	 * @param metadataVertex
-	 * @return
-	 */
-	public Either<TitanVertex, TitanOperationStatus> addGroupInstanceToContainerComponent(TitanVertex ciVertex, String componentInstanceId,  boolean isCreateLogicaName, GroupInstance groupInstance) {
-		TitanOperationStatus status = null;
-		log.debug("Going to create group instance {} in component instance {}", groupInstance, componentInstanceId);
-		String instOriginGroupId = groupInstance.getGroupUid();
-		String logicalName = groupInstance.getName();
-		if (isCreateLogicaName){
-			String instanceName = (String) titanGenericDao.getProperty(ciVertex, GraphPropertiesDictionary.NORMALIZED_NAME.getProperty());
-			logicalName = createGroupInstLogicalName(instanceName, groupInstance.getGroupName());
-		}
-
-		GroupInstanceData groupInstanceData = buildGroupInstanceData(groupInstance, componentInstanceId, logicalName);
-		Either<TitanVertex, TitanOperationStatus> originVertexEither = titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), instOriginGroupId);
-		if (originVertexEither.isRight()) {
-			log.debug("Failed to fetch vertex of origin resource for id {} error {}", instOriginGroupId, originVertexEither.right().value());
-			return Either.right(originVertexEither.right().value());
-		}
-		TitanVertex originVertex = originVertexEither.left().value();
-
-		// String originType = (String) titanGenericDao.getProperty(originVertex, GraphPropertiesDictionary.LABEL.getProperty());
-		String groupType = (String) titanGenericDao.getProperty(originVertex, GraphPropertiesDictionary.TYPE.getProperty());
-		// detectOriginType(originType, groupInstanceData, resourceType);
-
-		log.trace("Before adding component instance to graph. componentInstanceData = {}", groupInstanceData);
-		// groupInstanceData.getGroupDataDefinition().setGroupUid(groupType);
-
-		Either<TitanVertex, TitanOperationStatus> createGIResult = titanGenericDao.createNode(groupInstanceData);
-
-		log.debug("After adding component instance to graph. status is = {}", createGIResult);
-
-		if (createGIResult.isRight()) {
-			status = createGIResult.right().value();
-			BeEcompErrorManager.getInstance().logBeDaoSystemError("Add Component Instance");
-			log.debug("Failed to create group instance node in graph. status is {}", status);
-			return Either.right(status);
-		}
-		TitanVertex createdGroupInstanceVertex = createGIResult.left().value();
-		TitanOperationStatus associateContainerRes = associateComponentInstanceToGroupInstance(ciVertex, createdGroupInstanceVertex, logicalName);
-
-		String componentInstanceUniqueId = groupInstanceData.getUniqueId();
-		if (associateContainerRes != TitanOperationStatus.OK) {
-			BeEcompErrorManager.getInstance().logBeDaoSystemError("Add Component Instance");
-			log.debug("Failed to associate container component {} to component instance {}. Status is {}", componentInstanceId, componentInstanceUniqueId, associateContainerRes);
-			return Either.right(associateContainerRes);
-		}
-		// String originId = (String) titanGenericDao.getProperty(createdGroupInstanceVertex, GraphPropertiesDictionary.TYPE.getProperty());
-
-		TitanOperationStatus associateToInstOriginComponent = associateToInstOriginGroup(createdGroupInstanceVertex, originVertex, instOriginGroupId);
-		if (associateToInstOriginComponent != TitanOperationStatus.OK) {
-			BeEcompErrorManager.getInstance().logBeDaoSystemError("Add Component Instance");
-			log.debug("Failed to associate component instance {} to its origin component {}. Status is {}", componentInstanceUniqueId, groupInstanceData.getGroupDataDefinition().getGroupUid(), associateToInstOriginComponent);
-			return Either.right(associateToInstOriginComponent);
-		}
-
-		// Capability instance with property values implementation
-
-		if (status == null) {
-			// ComponentInstance createdResourceInstance = new
-			// ComponentInstance(createdComponentInstance.getComponentInstDataDefinition());
-			//
-			// String icon = (String) titanGenericDao.getProperty(originVertex,
-			// GraphPropertiesDictionary.ICON.getProperty());
-			// createdResourceInstance.setIcon(icon);
-			return Either.left(createdGroupInstanceVertex);
-		}
-		return Either.right(status);
-	}
 
 	private GroupInstanceData buildGroupInstanceData(GroupInstance groupInstance, String componentInstanceId, String logicalName) {
 		String ciOriginComponentUid = groupInstance.getGroupUid();
@@ -869,119 +459,9 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 		return resourceInstanceData;
 	}
 
-	@Override
-	public String createGroupInstLogicalName(String instanceName, String groupName) {
-
-		String logicalName = buildGroupInstanceLogicalName(instanceName, groupName);
-
-		return logicalName;
-	}
-
-	private String buildGroupInstanceLogicalName(String instanceName, String groupName) {
-		return ValidationUtils.normalizeComponentInstanceName(instanceName) + ".." + groupName;
-	}
-
-	/**
-	 * Make a relation between service to resource instance.
-	 * 
-	 * @param containerCompIdData
-	 * @param componentInstanceData
-	 * @param logicalName
-	 * @return
-	 */
-	private Either<GraphRelation, TitanOperationStatus> associateComponentInstanceToGroupInstance(UniqueIdData compInstIdData, GroupInstanceData groupInstanceData, String logicalName) {
-		Map<String, Object> properties = new HashMap<String, Object>();
-
-		properties.put(GraphPropertiesDictionary.NAME.getProperty(), logicalName);
-		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(compInstIdData, groupInstanceData, GraphEdgeLabels.GROUP_INST, properties);
-
-		log.debug("After associating container component {} to resource instance {} with logical name {}. Status is {}", compInstIdData.getUniqueId(), groupInstanceData.getUniqueId(), logicalName, createRelation);
-
-		return createRelation;
-	}
-
-	private TitanOperationStatus associateComponentInstanceToGroupInstance(TitanVertex componentInstVertex, TitanVertex groupInstanceVertex, String logicalName) {
-		Map<String, Object> properties = new HashMap<String, Object>();
-
-		properties.put(GraphPropertiesDictionary.NAME.getProperty(), logicalName);
-		TitanOperationStatus createRelation = titanGenericDao.createEdge(componentInstVertex, groupInstanceVertex, GraphEdgeLabels.GROUP_INST, properties);
-
-		return createRelation;
-	}
-
-	private Either<GraphRelation, TitanOperationStatus> associateToInstOriginGroup(GroupInstanceData groupInstanceData, NodeTypeEnum compInstNodeType) {
-
-		UniqueIdData groupIdData = new UniqueIdData(compInstNodeType, groupInstanceData.getGroupDataDefinition().getGroupUid());
-
-		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(groupInstanceData, groupIdData, GraphEdgeLabels.INSTANCE_OF, null);
-
-		log.debug("After associating group instance {} to group {}. status is {}", groupInstanceData.getUniqueId(), groupInstanceData.getGroupDataDefinition().getGroupUid(), createRelation);
-
-		return createRelation;
-	}
-
-	private TitanOperationStatus associateToInstOriginGroup(TitanVertex groupInstanceVertex, TitanVertex originVertex, String originId) {
-
-		TitanOperationStatus createRelation = titanGenericDao.createEdge(groupInstanceVertex, originVertex, GraphEdgeLabels.INSTANCE_OF, null);
-
-		log.debug("After associating group instance {} to group {}. status is {}", groupInstanceVertex, originId, createRelation);
-
-		return createRelation;
-	}
-
-	public Either<List<GroupProperty>, TitanOperationStatus> getGroupInstanceProperties(GroupInstance groupInstance, GroupDefinition groupDefinition) {
-
-		// 1. Go over each instance
-		// 1.1 get all properties of from the parents of the instance
-		// 1.2 get all updated properties
-		// 1.3 find all instances included in the parent of this instance and
-		// run this method on them.
-		String groupInstanceId = groupInstance.getUniqueId();
-		if (log.isDebugEnabled())
-			log.debug("Going to update properties of group instance {}", groupInstanceId);
-		String groupUid = groupInstance.getGroupUid();
-		List<GroupProperty> properties = groupDefinition.convertToGroupProperties();
-
-		if (log.isDebugEnabled())
-			log.debug("After getting properties of group {} . Number of properties is {}", groupUid, (properties == null ? 0 : properties.size()));
-		List<GroupProperty> resourceInstancePropertyList = new ArrayList<>();
-		if (properties != null && false == properties.isEmpty()) {
-
-			// TODO: WE MAY HAVE INDIRECT PROPERTY VALUE ALSO IN CASE NO
-			// PROPERTY ON THIS COMPONENT
-
-			// String resourceInstanceUid = resourceInstance.getUniqueId();
-
-			for (GroupProperty propertyDefinition : properties) {
-
-				String defaultValue = propertyDefinition.getDefaultValue();
-				String value = defaultValue;
-				String valueUid = null;
-
-				// String propertyId = propertyDefinition.getUniqueId();
-
-				GroupProperty resourceInstanceProperty = new GroupProperty(propertyDefinition, value, valueUid);
-
-				// resourceInstanceProperty.setPath(cloneList(path));
-
-				// TODO: currently ignore constraints since they are not inuse
-				// and cause to error in convertion to object.
-				resourceInstanceProperty.setConstraints(null);
-
-				resourceInstancePropertyList.add(resourceInstanceProperty);
-
-			}
-
-		}
-
-		return Either.left(resourceInstancePropertyList);
-	}
-
 	/**
 	 * update value of attribute on resource instance
 	 * 
-	 * @param resourceInstanceProerty
-	 * @param resourceInstanceId
 	 * @return
 	 */
 	public Either<PropertyValueData, TitanOperationStatus> updatePropertyOfGroupInstance(ComponentInstanceProperty groupInstanceProerty, String groupInstanceId) {
@@ -1207,68 +687,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 		}
 	}
 
-	/**
-	 * Associate artifacts to a given group
-	 * 
-	 * @param groupId
-	 * @param artifactsId
-	 * @param inTransaction
-	 * @return
-	 */
-	public Either<GroupInstance, StorageOperationStatus> associateArtifactsToGroupInstance(String groupId, List<String> artifactsId) {
-
-		Either<GroupInstance, StorageOperationStatus> result = null;
-
-		Either<GroupInstance, TitanOperationStatus> titanRes = this.associateArtifactsToGroupInstanceOnGraph(groupId, artifactsId);
-
-		if (titanRes.isRight()) {
-			StorageOperationStatus status = DaoStatusConverter.convertTitanStatusToStorageStatus(titanRes.right().value());
-			result = Either.right(status);
-		}
-
-		result = Either.left(titanRes.left().value());
-		return result;
-
-	}
-
-	public Either<GroupInstance, TitanOperationStatus> associateArtifactsToGroupInstanceOnGraph(String groupInstanceId, List<String> artifactsId) {
-
-		if (artifactsId == null || artifactsId.isEmpty()) {
-			return Either.right(TitanOperationStatus.OK);
-		}
-
-		for (String artifactId : artifactsId) {
-			Either<ArtifactData, TitanOperationStatus> findArtifactRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactRef), artifactId, ArtifactData.class);
-			if (findArtifactRes.isRight()) {
-				TitanOperationStatus status = findArtifactRes.right().value();
-				if (status == TitanOperationStatus.NOT_FOUND) {
-					status = TitanOperationStatus.INVALID_ID;
-				}
-				String description = "Failed to associate group " + groupInstanceId + " to artifact " + artifactId + " in graph. Status is " + status;
-				BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
-				return Either.right(status);
-			}
-
-			Map<String, Object> props = new HashMap<String, Object>();
-			props.put(GraphPropertiesDictionary.NAME.getProperty(), findArtifactRes.left().value().getLabel());
-
-			GraphNode groupData = new UniqueIdData(NodeTypeEnum.GroupInstance, groupInstanceId);
-			Either<GraphRelation, TitanOperationStatus> addArtifactsRefResult = titanGenericDao.createRelation(groupData, findArtifactRes.left().value(), GraphEdgeLabels.GROUP_ARTIFACT_REF, props);
-
-			if (addArtifactsRefResult.isRight()) {
-				TitanOperationStatus status = addArtifactsRefResult.right().value();
-				String description = "Failed to associate group " + groupData.getUniqueId() + " to artifact " + artifactId + " in graph. Status is " + status;
-				BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
-				return Either.right(status);
-			}
-		}
-
-		Either<GroupInstance, TitanOperationStatus> groupFromGraph = this.getGroupInstanceFromGraph(groupInstanceId, true, false);
-
-		return groupFromGraph;
-	}
-
-	public Either<GroupInstance, TitanOperationStatus> getGroupInstanceFromGraph(String uniqueId, boolean skipProperties, boolean skipArtifacts) {
+	private Either<GroupInstance, TitanOperationStatus> getGroupInstanceFromGraph(String uniqueId, boolean skipProperties, boolean skipArtifacts) {
 
 		Either<GroupInstance, TitanOperationStatus> result = null;
 
@@ -1337,20 +756,20 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 
 	private void buildGroupInstanceFromGroup(GroupInstance groupInstance, GroupDefinition groupDefinition, Map<String, PropertyValueData> groupInstancePropertyValues) {
 
-	groupInstance.setGroupName(groupDefinition.getName());
-	groupInstance.setInvariantUUID(groupDefinition.getInvariantUUID());
-	groupInstance.setDescription(groupDefinition.getDescription());
-	groupInstance.setVersion(groupDefinition.getVersion());
-	groupInstance.setArtifacts(groupDefinition.getArtifacts());
-	groupInstance.setArtifactsUuid(groupDefinition.getArtifactsUuid());
-	groupInstance.setType(groupDefinition.getType());
-	groupInstance.setGroupUUID(groupDefinition.getGroupUUID());
-	
-	List<GroupInstanceProperty> groupInstanceProperties = groupDefinition.convertToGroupProperties()
-			//converts List of GroupProperties to List of GroupInstanceProperties and updates it with group instance property data
-			.stream().map(p->getUpdatedConvertedProperty(p, groupInstancePropertyValues)).collect(Collectors.toList());
-	groupInstance.convertFromGroupInstancesProperties(groupInstanceProperties);
-}
+		groupInstance.setGroupName(groupDefinition.getName());
+		groupInstance.setInvariantUUID(groupDefinition.getInvariantUUID());
+		groupInstance.setDescription(groupDefinition.getDescription());
+		groupInstance.setVersion(groupDefinition.getVersion());
+		groupInstance.setArtifacts(groupDefinition.getArtifacts());
+		groupInstance.setArtifactsUuid(groupDefinition.getArtifactsUuid());
+		groupInstance.setType(groupDefinition.getType());
+		groupInstance.setGroupUUID(groupDefinition.getGroupUUID());
+
+		List<GroupInstanceProperty> groupInstanceProperties = groupDefinition.convertToGroupProperties()
+				//converts List of GroupProperties to List of GroupInstanceProperties and updates it with group instance property data
+				.stream().map(p -> getUpdatedConvertedProperty(p, groupInstancePropertyValues)).collect(Collectors.toList());
+		groupInstance.convertFromGroupInstancesProperties(groupInstanceProperties);
+	}
 	
 	private GroupInstanceProperty getUpdatedConvertedProperty(GroupProperty groupProperty,  Map<String, PropertyValueData> groupInstancePropertyValues){
 
@@ -1401,14 +820,11 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 	@Override
 	public StorageOperationStatus dissociateAndAssociateGroupsInstanceFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact) {
 
-		StorageOperationStatus result = null;
-
 		return this.dissociateAndAssociateGroupsInstanceFromArtifactOnGraph(componentId, componentTypeEnum, oldArtifactId, newArtifact);
 
 	}
 
-	@Override
-	public StorageOperationStatus dissociateAndAssociateGroupsInstanceFromArtifactOnGraph(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact) {
+	private StorageOperationStatus dissociateAndAssociateGroupsInstanceFromArtifactOnGraph(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact) {
 
 		Either<List<GroupInstance>, StorageOperationStatus> allGroupsFromGraph = getAllGroupInstances(componentId, componentTypeEnum);
 		if (allGroupsFromGraph.isRight()) {
@@ -1461,212 +877,6 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 		return StorageOperationStatus.OK;
 	}
 
-	@Override
-	public Either<GroupInstance, StorageOperationStatus> updateGroupInstancePropertyValues(GroupInstance oldGroupInstance, List<GroupInstanceProperty> newProperties, Boolean inTransaction) {
-		
-		Either<GroupInstance, StorageOperationStatus> updateRes = Either.left(oldGroupInstance);
-		try{
-			if(!CollectionUtils.isEmpty(newProperties)){
-				updateRes = updateGroupInstancePropertyValuesOnGraph(oldGroupInstance, newProperties);
-			}
-		}catch(Exception e){ 
-			log.debug("The Exception occured during update of group instance {} property values. The message is {}. ", oldGroupInstance.getName(), e.getMessage(), e);
-			updateRes = Either.right(StorageOperationStatus.GENERAL_ERROR);
-		}finally {
-			handleTransactionCommitRollback(inTransaction, updateRes);
-		}
-		return updateRes;
-	}
-
-	private Either<GroupInstance, StorageOperationStatus> updateGroupInstancePropertyValuesOnGraph( GroupInstance oldGroupInstance, List<GroupInstanceProperty> newProperties ) {
-		Either<GroupInstance, StorageOperationStatus> updateRes = null;
-		Either<Integer, StorageOperationStatus> nodeUpdateRes = null;
-		Vertex groupInstanceVertex = null;
-		Either<Vertex, StorageOperationStatus> groupInstanceVertexRes;
-		Map<String, Vertex> existingPropertyValueVertices = new HashMap<>();
-		Map<String, Vertex> existingPropertyVertices = new HashMap<>();
-		groupInstanceVertexRes = getVertexFromGraph(GraphPropertiesDictionary.UNIQUE_ID.getProperty(),oldGroupInstance.getUniqueId());
-		try{
-			if (groupInstanceVertexRes.isRight()) {
-				log.debug("Failed to fetch group instance vertex {} from graph. ", oldGroupInstance.getName());
-				updateRes = Either.right(groupInstanceVertexRes.right().value());
-			} else {
-				groupInstanceVertex = groupInstanceVertexRes.left().value();
-				findExistingPropertyValueVertices(groupInstanceVertex, existingPropertyValueVertices);
-				nodeUpdateRes = handlePropertyValues(oldGroupInstance, oldGroupInstance.getPropertyValueCounter(),  newProperties, groupInstanceVertex, existingPropertyValueVertices, existingPropertyVertices);
-				if(nodeUpdateRes.isRight()){
-					log.debug("Failed to handle property values of group instance {}. ", oldGroupInstance.getName());
-					updateRes = Either.right(nodeUpdateRes.right().value());
-				} else {
-					updateRes = updateGroupInstanceVertexAndGetUpdatedGroupInstance(groupInstanceVertex, nodeUpdateRes.left().value(), oldGroupInstance);
-				}
-			}
-		} catch(Exception e){
-			log.debug("The Exception occured during update group instance {} property values on graph. The message is {}. ", oldGroupInstance.getName(), e.getMessage(), e);
-			updateRes = Either.right(StorageOperationStatus.GENERAL_ERROR);
-		}
-		return updateRes;
-	}
-
-	private Either<Integer, StorageOperationStatus> handlePropertyValues(GroupInstance oldGroupInstance, Integer propertyValueCounter, List<GroupInstanceProperty> newProperties, Vertex groupInstanceVertex,
-			Map<String, Vertex> existingPropertyValueVertices, Map<String, Vertex> existingPropertyVertices) {
-
-		Either<Integer, StorageOperationStatus> nodeHandleRes = null;
-		int currCounter = propertyValueCounter;
-		for(GroupInstanceProperty currProperty : newProperties){
-			nodeHandleRes = handlePropertyValueNode(oldGroupInstance, currCounter,  currProperty, groupInstanceVertex, existingPropertyValueVertices, existingPropertyVertices);
-			if(nodeHandleRes.isRight()){
-				break;
-			}
-			currCounter = nodeHandleRes.left().value();
-		}
-		return nodeHandleRes;
-	}
-
-	private Either<GroupInstance, StorageOperationStatus> updateGroupInstanceVertexAndGetUpdatedGroupInstance( Vertex groupInstanceVertex, Integer propertyValueCounter, GroupInstance oldGroupInstance) {
-		
-		TitanOperationStatus status;
-		Either<GroupInstance, StorageOperationStatus> actionResult;
-		status = updateGroupInstanceVertex(groupInstanceVertex, propertyValueCounter);
-		if(status != TitanOperationStatus.OK){
-			log.debug("Failed to update group instance {}. ", oldGroupInstance.getName());
-			actionResult = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-		}else{
-			Either<GroupInstance, TitanOperationStatus> updatedGroupInstanceRes = getGroupInstanceFromGraph(oldGroupInstance.getUniqueId(), false, false);
-			if(updatedGroupInstanceRes.isRight()){
-				status = updatedGroupInstanceRes.right().value();
-				log.debug("Failed to get updated group instance {}. Status is {}. ", oldGroupInstance.getName(), status);
-				actionResult = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-			}else{
-				actionResult = Either.left(updatedGroupInstanceRes.left().value());
-			}
-		}
-		return actionResult;
-	}
-
-	private Either<Integer, StorageOperationStatus> handlePropertyValueNode(GroupInstance oldGroupInstance, Integer propertyValueCounter, GroupInstanceProperty currProperty, Vertex groupInstanceVertex, Map<String, Vertex> existingPropertyValueVertices, Map<String, Vertex> existingPropertyVertices) {
-		
-		String groupInstanceName = oldGroupInstance.getName();
-		TitanOperationStatus updateStatus;
-		TitanOperationStatus addStatus;
-		Vertex propertyValueVertex;
-		String propertyValueId;
-		propertyValueId = currProperty.getValueUniqueUid();
-		Either<Integer, StorageOperationStatus> actionResult = null;
-		if(existingPropertyValueVertices.containsKey(propertyValueId)){
-			updateStatus = updatePropertyValueVertex(existingPropertyValueVertices.get(propertyValueId), currProperty);
-			if(updateStatus != TitanOperationStatus.OK){
-				log.debug("Failed to update property value {} of group instance {}. ", currProperty.getName(), groupInstanceName);
-				actionResult = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updateStatus));
-			}
-		}
-		else{
-			if(MapUtils.isEmpty(existingPropertyVertices)){
-				findExistingPropertyVertices(existingPropertyVertices, groupInstanceVertex);
-			}
-			propertyValueVertex = existingPropertyVertices.get(currProperty.getUniqueId());
-			addStatus = addPropertyValueNodeToGroupInstance(currProperty, groupInstanceVertex, propertyValueVertex, oldGroupInstance.getUniqueId(), ++propertyValueCounter);
-			if(addStatus != TitanOperationStatus.OK){
-				log.debug("Failed to add property value {} to group instance {}. ", currProperty.getName(), groupInstanceName);
-				actionResult = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(addStatus));
-			}
-		}
-		if(actionResult == null){
-			actionResult = Either.left(propertyValueCounter);
-		}
-		return actionResult;
-	}
-
-	@SuppressWarnings("unchecked")
-	private Either<Vertex, StorageOperationStatus> getVertexFromGraph(String uniqueKeyName, String uniqueId) {
-	
-		Either<Vertex, StorageOperationStatus> actionResult = null;
-		try{
-			Either<TitanGraph, TitanOperationStatus> graph = titanGenericDao.getGraph();
-			Iterable<TitanVertex> vertices = null;
-			if (graph.isRight()) {
-				log.debug("Failed to get graph. Status is {}", graph.right().value());
-				actionResult = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(graph.right().value()));
-			}
-			if(actionResult == null){
-				TitanGraph tGraph = graph.left().value();
-				vertices = tGraph.query().has(uniqueKeyName, uniqueId).vertices();
-				if (vertices == null || vertices.iterator() == null || !vertices.iterator().hasNext()) {
-					log.debug("Failed to get nodes from graph for type {}  for id = {}", NodeTypeEnum.GroupInstance, uniqueId);
-					actionResult = Either.right(StorageOperationStatus.NOT_FOUND);
-				}
-			}
-			if(actionResult == null && vertices != null){
-				actionResult = Either.left(vertices.iterator().next());
-			}
-		} catch(Exception e){
-			log.debug("The Exception occured during get vertex {} from graph. The message is {}. ", uniqueId, e.getMessage(), e);
-		}
-		return actionResult;
-	}
-
-	private void findExistingPropertyValueVertices(Vertex groupInstanceVertex,	Map<String, Vertex> existingPropertyValueVertices) {
-		Iterator<Edge> propertyValueEdges = groupInstanceVertex.edges(Direction.OUT, GraphEdgeLabels.PROPERTY_VALUE.getProperty());
-		Vertex propertyValueVertex;
-		while(propertyValueEdges.hasNext()){
-			propertyValueVertex = propertyValueEdges.next().inVertex();
-			existingPropertyValueVertices.put((String) propertyValueVertex.property(GraphPropertiesDictionary.UNIQUE_ID.getProperty()).value(), propertyValueVertex);
-		}
-	}
-
-	private void findExistingPropertyVertices(Map<String, Vertex> existingPropertyVertices, Vertex groupInstanceVertex) {
-		Vertex groupVertex = groupInstanceVertex.edges(Direction.OUT, GraphEdgeLabels.INSTANCE_OF.getProperty()).next().inVertex();
-		Vertex groupTypeVertex = groupVertex.edges(Direction.OUT, GraphEdgeLabels.TYPE_OF.getProperty()).next().inVertex();
-		Iterator<Edge> groupTypePropertiesIterator = groupTypeVertex.edges(Direction.OUT, GraphEdgeLabels.PROPERTY.getProperty());
-		while(groupTypePropertiesIterator.hasNext()){
-			Vertex propertyValueVertex = groupTypePropertiesIterator.next().inVertex();
-			existingPropertyVertices.put((String) propertyValueVertex.property(GraphPropertiesDictionary.UNIQUE_ID.getProperty()).value(), propertyValueVertex);
-		}
-	}
-
-	private TitanOperationStatus addPropertyValueNodeToGroupInstance(GroupInstanceProperty currProperty, Vertex groupInstanceVertex, Vertex propertyVertex, String groupInstanceId, int index) {
-		TitanOperationStatus status = null;
-		TitanVertex propertyValueVertex = null;
-		PropertyValueData newPropertyValue = new PropertyValueData();
-		Long creationTime = System.currentTimeMillis();
-		newPropertyValue.setModificationTime(creationTime);
-		newPropertyValue.setCreationTime(creationTime);
-		newPropertyValue.setUniqueId(UniqueIdBuilder.buildGroupPropertyValueUid(groupInstanceId, index));
-		newPropertyValue.setValue(currProperty.getValue());
-		newPropertyValue.setType(currProperty.getType());
-		Either<TitanVertex, TitanOperationStatus> propertyValueNodeRes = titanGenericDao.createNode(newPropertyValue);
-		if(propertyValueNodeRes.isRight()){
-			status = propertyValueNodeRes.right().value();
-		}
-		if(status == null){
-			propertyValueVertex = propertyValueNodeRes.left().value();
-			Map<String, Object> props = new HashMap<>();
-			props.put(GraphPropertiesDictionary.PROPERTY_NAME.getProperty(), currProperty.getName());
-			status = titanGenericDao.createEdge(groupInstanceVertex, propertyValueVertex, GraphEdgeLabels.PROPERTY_VALUE, props);
-		}
-		if(status == TitanOperationStatus.OK){
-			status = titanGenericDao.createEdge(propertyValueVertex, propertyVertex, GraphEdgeLabels.PROPERTY_IMPL, null);
-		}
-		return status;
-	}
-
-	private TitanOperationStatus updatePropertyValueVertex(Vertex propertyValueVertex, GroupInstanceProperty property) {
-		PropertyValueData propertyValue = new PropertyValueData();
-		propertyValue.setUniqueId(property.getValue());
-		propertyValue.setModificationTime(System.currentTimeMillis());
-		propertyValue.setType(property.getType());
-		propertyValue.setValue(property.getValue());
-		return titanGenericDao.updateVertex(propertyValue, propertyValueVertex);
-	}
-	
-	private TitanOperationStatus updateGroupInstanceVertex(Vertex groupInstanceVertex, int propertyValueCounter) {
-		GroupInstanceData groupInstanceData = new GroupInstanceData();
-		groupInstanceData.getGroupDataDefinition().setModificationTime(System.currentTimeMillis());
-		groupInstanceData.getGroupDataDefinition().setCustomizationUUID(UUID.randomUUID().toString());
-		groupInstanceData.getGroupDataDefinition().setPropertyValueCounter(propertyValueCounter);
-		return  titanGenericDao.updateVertex(groupInstanceData, groupInstanceVertex);
-	}
-	
 	private Either<Map<String, PropertyValueData>, TitanOperationStatus> getAllGroupInstancePropertyValuesData(GroupInstanceData groupInstData) {
 		
 		Either<Map<String, PropertyValueData>, TitanOperationStatus> result = null;
@@ -1693,9 +903,5 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 			}
 		}
 		return result;
-	}
-	@Override
-	public Either<GroupInstance, StorageOperationStatus> updateGroupInstancePropertyValues(GroupInstance groupInstance, List<GroupInstanceProperty> newProperties) {
-		return updateGroupInstancePropertyValues(groupInstance, newProperties, false);
 	}
 }

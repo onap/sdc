@@ -45,57 +45,15 @@ import fj.data.Either;
 
 public interface IGroupInstanceOperation {
 	
-	public Either<GroupInstance, StorageOperationStatus> createGroupInstance(String ComponentInstId,   GroupInstance groupInstance, boolean isCreateLogicalName);
-	
-	public Either<GroupInstance, StorageOperationStatus> createGroupInstance(TitanVertex ciVertex, String componentInstId,  GroupInstance groupInstance, boolean isCreateLogicalName);
-	
-	public Either<GroupInstance, StorageOperationStatus> deleteGroupInstanceInstance(NodeTypeEnum containerNodeType, String containerComponentId, String groupInstUid);
-	
-	public Either<GroupInstance, StorageOperationStatus> updateGroupInstance(String serviceId, NodeTypeEnum nodeType, String resourceInstanceName, ComponentInstance resourceInstance);
-	
-	public Either<List<GroupInstance>, StorageOperationStatus> getAllGroupInstances(String componentInstId, NodeTypeEnum compInstNodeType);
-	
-	public Either<GroupInstance, TitanOperationStatus> getGroupInstanceById(String groupResourceId);
 
-	public TitanOperationStatus deleteAllGroupInstances(String componentInstId);
+	public Either<List<GroupInstance>, StorageOperationStatus> getAllGroupInstances(String componentInstId, NodeTypeEnum compInstNodeType);
 
 	public Either<Integer, StorageOperationStatus> increaseAndGetGroupInstancePropertyCounter(String groupInstanceId);
 
-	public Either<Boolean, StorageOperationStatus> isGroupInstanceNameExist(String parentComponentId, NodeTypeEnum parentNodeType, String compInstId, String componentInstName);
-
-	public Either<ComponentInstance, StorageOperationStatus> getFullGroupInstance(ComponentInstance componentInstance, NodeTypeEnum compInstNodeType);
-
 	public Either<ComponentInstanceProperty, StorageOperationStatus> addPropertyValueToGroupInstance(ComponentInstanceProperty resourceInstanceProperty, String resourceInstanceId, Integer index, boolean inTransaction);
 
-	public Either<ComponentInstanceProperty, StorageOperationStatus> addPropertyValueToGroupInstance(ComponentInstanceProperty resourceInstanceProperty, String resourceInstanceId, boolean isvalidate, Integer index, boolean inTransaction);
-
 	public Either<ComponentInstanceProperty, StorageOperationStatus> updatePropertyValueInGroupInstance(ComponentInstanceProperty gropuInstanceProperty, String groupInstanceId, boolean inTransaction);
-	
-	public Either<Map<String, ArtifactDefinition>, StorageOperationStatus> fetchCIEnvArtifacts(String componentInstanceId);
-
-	public StorageOperationStatus updateCustomizationUUID(String componentInstanceId);
-	
-	public String createGroupInstLogicalName(String instanceNumber, String groupInstanceName);
-
-	public Either<GroupInstance, StorageOperationStatus> associateArtifactsToGroupInstance(String groupId, List<String> artifactsId);
 
 	StorageOperationStatus dissociateAndAssociateGroupsInstanceFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact);
 
-	StorageOperationStatus dissociateAndAssociateGroupsInstanceFromArtifactOnGraph(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact);
-	/**
-	 * updates group instance property values
-	 * @param value
-	 * @param newProperties
-	 * @return
-	 */
-	public Either<GroupInstance, StorageOperationStatus> updateGroupInstancePropertyValues(GroupInstance value, List<GroupInstanceProperty> newProperties);
-	/**
-	 * updates group instance property values
-	 * @param oldGroupInstance
-	 * @param newProperties
-	 * @param inTransaction
-	 * @return
-	 */
-	public Either<GroupInstance, StorageOperationStatus> updateGroupInstancePropertyValues(GroupInstance oldGroupInstance, List<GroupInstanceProperty> newProperties, Boolean inTransaction);
-	
 }

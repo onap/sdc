@@ -33,29 +33,6 @@ import fj.data.Either;
 public interface IPropertyOperation {
 
 	/**
-	 * add property to resource
-	 * 
-	 * @param propertyName
-	 * @param propertyDefinition
-	 * @param nodeType
-	 * @param id
-	 * @return
-	 * 
-	 * 		public Either<PropertyDefinition, StorageOperationStatus> addPropertyToResource( String propertyName, PropertyDefinition propertyDefinition, NodeTypeEnum nodeType, String id);
-	 */
-
-	/**
-	 * get property belongs to resource
-	 * 
-	 * @param propertyName
-	 *            - property name
-	 * @param resourceId
-	 *            - resource unique id
-	 * @return
-	 */
-	public Either<PropertyDefinition, StorageOperationStatus> getPropertyOfResource(String propertyName, String resourceId);
-
-	/**
 	 * Delete all properties of resource
 	 * 
 	 * @param nodeType
@@ -76,8 +53,6 @@ public interface IPropertyOperation {
 	 */
 	public Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition);
 
-	public Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition, boolean inTransaction);
-
 	/**
 	 * @param name
 	 * @return
@@ -86,13 +61,9 @@ public interface IPropertyOperation {
 
 	public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByName(String name, boolean inTransaction);
 
-	public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByNameWithoutDerived(String name, boolean inTransaction);
-
 	public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByNameWithoutDerived(String name);
 
 	public StorageOperationStatus validateAndUpdateProperty(IComplexDefaultValue propertyDefinition, Map<String, DataTypeDefinition> dataTypes);
-
-	public Either<DataTypeDefinition, StorageOperationStatus> updateDataType(DataTypeDefinition newDataTypeDefinition, DataTypeDefinition oldDataTypeDefinition, boolean inTransaction);
 
 	public Either<DataTypeDefinition, StorageOperationStatus> updateDataType(DataTypeDefinition newDataTypeDefinition, DataTypeDefinition oldDataTypeDefinition);
 

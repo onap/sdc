@@ -38,36 +38,8 @@ import fj.data.Either;
 
 public interface ICapabilityOperation {
 
-	public Either<CapabilityDefinition, StorageOperationStatus> addCapability(String resourceId, String capabilityName, CapabilityDefinition capabilityDefinition);
+	Either<Map<String, PropertyDefinition>, TitanOperationStatus> getAllCapabilityTypePropertiesFromAllDerivedFrom(String firstParentType);
 
-	public Either<CapabilityDefinition, StorageOperationStatus> addCapability(String resourceId, String capabilityName, CapabilityDefinition capabilityDefinition, boolean inTransaction);
-
-	/**
-	 * @param uniqueId
-	 * @return
-	 */
-	public Either<CapabilityDefinition, StorageOperationStatus> getCapability(String uniqueId);
-
-	public Either<CapabilityDefinition, StorageOperationStatus> getCapability(String uniqueId, boolean inTransaction);
-
-	public Either<CapabilityDefinition, StorageOperationStatus> getCapability(String capabilityName, String resourceId);
-
-	public Either<CapabilityDefinition, StorageOperationStatus> getCapability(String capabilityName, String resourceId, boolean inTransaction);
-
-	public Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> getAllCapabilitiesPairs(String resourceId);
-
-	public Either<Map<String, CapabilityDefinition>, StorageOperationStatus> deleteAllCapabilities(String resourceId, boolean inTransaction);
-
-	public Either<CapabilityDefinition, TitanOperationStatus> getCapabilityByCapabilityData(CapabilityData capabilityData);
-
-	public TitanOperationStatus getCapabilitySourcesList(String resourceId, List<String> derivedFromList);
-
-	public Either<Map<String, PropertyData>, StorageOperationStatus> updatePropertiesOfCapability(String uniqueId, String capabilityType, List<PropertyDefinition> newProperties);
-
-	public Either<Map<String, PropertyData>, StorageOperationStatus> updatePropertiesOfCapability(String uniqueId, String capabilityType, List<PropertyDefinition> newProperties, boolean inTransaction);
-
-	StorageOperationStatus addCapability(TitanVertex metadataVertex, String resourceId, String capabilityName, CapabilityDefinition capabilityDefinition, boolean inTransaction);
-
-	Either<CapabilityTypeData, TitanOperationStatus> getCapabilityTypeOfCapability(String uniqueId);
+	Either<List<PropertyDefinition>, TitanOperationStatus> validatePropertyUniqueness(Map<String, PropertyDefinition> propertiesOfCapabilityType, List<PropertyDefinition> properties);
 
 }

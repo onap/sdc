@@ -68,11 +68,6 @@ public class UserAdminOperation implements IUserAdminOperation {
 	private static Logger log = LoggerFactory.getLogger(UserAdminOperation.class.getName());
 
 	@Override
-	public Either<User, ActionStatus> getInactiveUserData(String id) {
-		return getUserData(id, false, false);
-	}
-
-	@Override
 	public Either<User, ActionStatus> getUserData(String id, boolean inTransaction) {
 		return getUserData(id, true, inTransaction);
 	}
@@ -380,16 +375,6 @@ public class UserAdminOperation implements IUserAdminOperation {
 		return result;
 	}
 
-	@Override
-	public Either<List<User>, ActionStatus> getAllUsers() {
-		try {
-			Either<List<UserData>, TitanOperationStatus> userNodes = titanGenericDao.getAll(NodeTypeEnum.User, UserData.class);
-			return convertToUsers("", userNodes);
-		} finally {
-			titanGenericDao.commit();
-		}
-	}
-
 	private Either<User, ActionStatus> getUserNotFoundError(String uid, TitanOperationStatus status) {
 		if (status == TitanOperationStatus.NOT_FOUND) {
             log.debug("User with userId {} not found", uid);
@@ -425,98 +410,6 @@ public class UserAdminOperation implements IUserAdminOperation {
 		userData.setStatus(user.getStatus().name());
 		userData.setLastLoginTime(user.getLastLoginTime());
 		return userData;
-	}
-
-	@Override
-	public Either<ImmutablePair<User, FunctionalMenuInfo>, ActionStatus> getUserDataWithFunctionalMenu(String userId) {
-
-		Either<User, ActionStatus> userData = getUserData(userId, true, true);
-
-		if (userData.isRight()) {
-			return Either.right(userData.right().value());
-		}
-		User user = userData.left().value();
-		Either<UserFunctionalMenuData, TitanOperationStatus> functionalMenu = getFunctionalMenu(userId);
-
-		FunctionalMenuInfo functionalMenuInfo = new FunctionalMenuInfo();
-		if (functionalMenu.isRight()) {
-			TitanOperationStatus status = functionalMenu.right().value();
-			if (status != TitanOperationStatus.NOT_FOUND) {
-				return Either.right(ActionStatus.GENERAL_ERROR);
-			}
-		} else {
-			UserFunctionalMenuData userFunctionalMenuData = functionalMenu.left().value();
-			functionalMenuInfo.setFunctionalMenu(userFunctionalMenuData.getFunctionalMenu());
-		}
-
-		ImmutablePair<User, FunctionalMenuInfo> result = new ImmutablePair<User, FunctionalMenuInfo>(user, functionalMenuInfo);
-
-		return Either.left(result);
-	}
-
-	public Either<UserFunctionalMenuData, TitanOperationStatus> getFunctionalMenu(String userId) {
-
-		Either<UserFunctionalMenuData, TitanOperationStatus> result;
-		if (userId == null) {
-			log.info("User userId  is empty");
-			result = Either.right(TitanOperationStatus.NOT_FOUND);
-			return result;
-		}
-		userId = userId.toLowerCase();
-		String uid = UniqueIdBuilder.buildUserFunctionalMenuUid(userId);
-
-		Either<UserFunctionalMenuData, TitanOperationStatus> either = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.UserFunctionalMenu), uid, UserFunctionalMenuData.class);
-
-		return either;
-	}
-
-	public Either<FunctionalMenuInfo, TitanOperationStatus> createOrUpdateFunctionalMenu(String userId, String newFunctionalMenu) {
-
-		Either<UserFunctionalMenuData, TitanOperationStatus> functionalMenu = getFunctionalMenu(userId);
-
-		if (functionalMenu.isRight()) {
-			TitanOperationStatus status = functionalMenu.right().value();
-			if (status == TitanOperationStatus.NOT_FOUND) {
-				String uid = UniqueIdBuilder.buildUserFunctionalMenuUid(userId);
-				UserFunctionalMenuData functionalMenuData = new UserFunctionalMenuData(newFunctionalMenu, uid);
-
-				Either<UserFunctionalMenuData, TitanOperationStatus> createNode = titanGenericDao.createNode(functionalMenuData, UserFunctionalMenuData.class);
-
-				if (createNode.isRight()) {
-					return Either.right(createNode.right().value());
-				} else {
-					return Either.left(convert(createNode.left().value()));
-				}
-
-			} else {
-				return Either.right(status);
-			}
-
-		} else {
-			UserFunctionalMenuData userFunctionalMenuData = functionalMenu.left().value();
-			userFunctionalMenuData.setFunctionalMenu(newFunctionalMenu);
-			Either<UserFunctionalMenuData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(userFunctionalMenuData, UserFunctionalMenuData.class);
-
-			if (updateNode.isRight()) {
-				return Either.right(updateNode.right().value());
-			} else {
-				return Either.left(convert(updateNode.left().value()));
-			}
-		}
-
-	}
-
-	private FunctionalMenuInfo convert(UserFunctionalMenuData functionalMenuData) {
-
-		if (functionalMenuData == null) {
-			return null;
-		}
-
-		FunctionalMenuInfo functionalMenuInfo = new FunctionalMenuInfo();
-		functionalMenuInfo.setFunctionalMenu(functionalMenuData.getFunctionalMenu());
-
-		return functionalMenuInfo;
-
 	}
 
 }

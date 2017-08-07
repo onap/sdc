@@ -20,41 +20,36 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
-import javax.annotation.Resource;
-
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IPolicyTypeOperation;
-import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 @Component("policyTypeImportManager")
 public class PolicyTypeImportManager {
 
 	@Resource
-	private PropertyOperation propertyOperation;
-	@Resource
 	private IPolicyTypeOperation policyTypeOperation;
 	@Resource
 	private ComponentsUtils componentsUtils;
-	@Resource
-	private IResourceOperation resourceOperation;
 	@Autowired
 	protected IGroupOperation groupOperation;
+	@Autowired
+	private ToscaOperationFacade toscaOperationFacade;
 
 	@Resource
 	private CommonImportManager commonImportManager;
@@ -82,7 +77,8 @@ public class PolicyTypeImportManager {
 			}
 			if (result.isLeft()) {
 				for (String targetName : policyType.getTargets()) {
-					boolean isValid = resourceOperation.getLatestByToscaResourceName(targetName, false).isLeft();
+
+					boolean isValid = toscaOperationFacade.getLatestByToscaResourceName(targetName).isLeft();;
 					if (!isValid) {
 						isValid = groupOperation.isGroupExist(targetName, false);
 					}

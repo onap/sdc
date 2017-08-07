@@ -20,19 +20,9 @@
 
 package org.openecomp.sdc.be.listen;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.impl.DownloadArtifactLogic;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
 import org.openecomp.sdc.be.monitoring.BeMonitoringService;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -40,6 +30,14 @@ import org.openecomp.sdc.common.listener.AppContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 public class BEAppContextListener extends AppContextListener implements ServletContextListener {
 
@@ -71,11 +69,6 @@ public class BEAppContextListener extends AppContextListener implements ServletC
 
 	}
 	
-	private IResourceOperation getResourceOperationManager(Class<? extends IResourceOperation> clazz, WebApplicationContext webContext) {
-
-		return webContext.getBean(clazz);
-	}
-
 	private String getVersionFromManifest(ServletContextEvent context) {
 		ServletContext servletContext = context.getServletContext();
 		InputStream inputStream = servletContext.getResourceAsStream(MANIFEST_FILE_NAME);

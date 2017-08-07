@@ -20,18 +20,10 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.cassandra.io.sstable.Component;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import fj.data.Either;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
@@ -40,11 +32,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.components.ArtifactsResolver;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -66,7 +55,6 @@ import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
-import org.openecomp.sdc.be.model.operations.impl.ServiceOperation;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -76,11 +64,14 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import fj.data.Either;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 public class ArtifactBusinessLogicTest {
 
@@ -95,7 +86,6 @@ public class ArtifactBusinessLogicTest {
 	public static final IInterfaceLifecycleOperation lifecycleOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
 	public static final IUserAdminOperation userOperation = Mockito.mock(IUserAdminOperation.class);
 	public static final IElementOperation elementOperation = Mockito.mock(IElementOperation.class);
-	public static final ServiceOperation serviceOperation = Mockito.mock(ServiceOperation.class);
 	public static final ArtifactCassandraDao artifactCassandraDao =  Mockito.mock(ArtifactCassandraDao.class);
 	public static final ToscaOperationFacade toscaOperationFacade =  Mockito.mock(ToscaOperationFacade.class);
 
@@ -110,7 +100,7 @@ public class ArtifactBusinessLogicTest {
 	public static void setup() {
 
 		Either<ArtifactDefinition, StorageOperationStatus> NotFoundResult = Either.right(StorageOperationStatus.NOT_FOUND);
-		when(artifactOperation.getArtifactById(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(NotFoundResult);
+//		when(artifactOperation.getArtifactById(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(NotFoundResult);
 
 		Either<Map<String, ArtifactDefinition>, StorageOperationStatus> NotFoundResult2 = Either.right(StorageOperationStatus.NOT_FOUND);
 		when(artifactOperation.getArtifacts(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Service), Mockito.anyBoolean())).thenReturn(NotFoundResult2);

@@ -95,7 +95,7 @@ public class GroupBusinessLogicTest {
 	@BeforeClass
 	public static void setupBeforeClass() {
 		when(graphLockOperation.lockComponent(componentId, ComponentTypeEnum.RESOURCE.getNodeType())).thenReturn(StorageOperationStatus.OK);
-		when(groupOperation.getGroup(groupUniqueId)).thenReturn(Either.left(groupDefenition));
+//		when(groupOperation.getGroup(groupUniqueId)).thenReturn(Either.left(groupDefenition));
 	}
 	
 	public enum ResponseEnum{

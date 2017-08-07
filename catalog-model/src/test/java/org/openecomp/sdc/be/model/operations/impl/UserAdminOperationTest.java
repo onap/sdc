@@ -20,24 +20,7 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.temporal.TemporalField;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Graph;
@@ -59,12 +42,17 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
-import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
 import org.openecomp.sdc.be.resources.data.UserData;
 import org.openecomp.sdc.common.api.UserRoleEnum;
 
-import fj.data.Either;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 public class UserAdminOperationTest extends ModelTestBase {
 	private static final TitanGenericDao titanGenericDao = mock(TitanGenericDao.class);
@@ -97,33 +85,6 @@ public class UserAdminOperationTest extends ModelTestBase {
 		assertTrue(eitherUser.isLeft());
 		User user = eitherUser.left().value();
 		assertTrue(user.getStatus() == UserStatusEnum.INACTIVE);
-
-	}
-
-	/*
-	 * @Test public void testDeActivateUserDataFail(){ UserData userData = mockTitanGet(ADMIN, UserRoleEnum.ADMIN, false);
-	 * 
-	 * Either<User, StorageOperationStatus> eitherUser = userAdminOperation.deActivateUser(userAdminOperation.convertToUser( userData));
-	 * 
-	 * verify(titanGenericDao, times(0)).updateNode(Mockito.any(UserData.class), Mockito.eq(UserData.class)); verify(titanGenericDao, times(0)).deleteNode(Mockito.any(UserData.class), Mockito.eq(UserData.class)); assertTrue(eitherUser.isRight());
-	 * assertTrue(eitherUser.right().value() == StorageOperationStatus.USER_INACTIVE);
-	 * 
-	 * }
-	 */
-
-	@Test
-	public void testGetAllUsers() throws Exception {
-		UserData user1 = mockTitanGet("user1", UserRoleEnum.ADMIN, true);
-		UserData user2 = mockTitanGet("user2", UserRoleEnum.DESIGNER, false);
-		UserData user3 = mockTitanGet("user3", UserRoleEnum.PRODUCT_MANAGER, true);
-		when(titanGenericDao.getAll(NodeTypeEnum.User, UserData.class)).thenReturn(Either.left(Arrays.asList(user1, user2, user3)));
-
-		List<User> allUsers = userAdminOperation.getAllUsers().left().value();
-		assertEquals(3, allUsers.size());
-		assertUserEquals(user1, allUsers.get(0));
-		assertUserEquals(user2, allUsers.get(1));
-		assertUserEquals(user3, allUsers.get(2));
-		verify(titanGenericDao).commit();
 	}
 
 	@Test
