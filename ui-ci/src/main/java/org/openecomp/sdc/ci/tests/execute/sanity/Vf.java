@@ -513,12 +513,7 @@ public class Vf extends SetupCDTest {
 	}
 	
 	@Test
-	public void addDeploymentArtifactAndVerifyInCompositionScreen() throws Exception{
-		
-		if(true){
-			throw new SkipException("Open bug 320081");			
-		}
-		
+	public void addDeploymentArtifactAndVerifyInCompositionScreen() throws Exception{		
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 		ResourceUIUtils.createResource(vfMetaData, getUser());
 		

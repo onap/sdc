@@ -146,7 +146,7 @@ public class CompositionPage extends GeneralPageElements {
 	
 	public static List<WebElement> getOpenTabTitle() throws Exception{
 //		return GeneralUIUtils.getElementsByCSS("expand-collapse span");
-		return GeneralUIUtils.getElementsByCSS("expand-collapse");
+		return GeneralUIUtils.getElementsByCSS("expand-collapse ng-transclude");
 	}
 	
 	public static void clickOnTab(DataTestIdEnum.CompositionScreenEnum tabSelector) throws Exception{

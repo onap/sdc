@@ -5,9 +5,9 @@
   <test name="Test">
     <classes>
       <class 
-      name="org.openecomp.sdc.ci.tests.execute.devCI.CRUDExternalAPI">
+      name="org.openecomp.sdc.externalApis.CRUDExternalAPI">
    			   <methods>
-					<include name="uploadArtifactOnVFViaExternalAPI" />
+				<!-- 	<include name="uploadArtifactOnVFViaExternalAPI" />
 					<include name="uploadArtifactOnServiceViaExternalAPI" />
 					<include name="uploadArtifactOnRIViaExternalAPI" />
 					<include name="uploadInvalidArtifactTypeExtensionLabelDescriptionCheckSumDuplicateLabelViaExternalAPI" />
@@ -30,7 +30,9 @@
 					<include name="deleteArtifactOnRIViaExternalAPI" />
 					<include name="deleteArtifactOnVFViaExternalAPIByDiffrentUserThenCreatorOfAsset" />
 					<include name="deleteArtifactOnAssetWhichNotExist" />
-					<include name="deleteArtifactOnAssetWhichInInvalidStateForUploading" />
+					<include name="deleteArtifactOnAssetWhichInInvalidStateForUploading" /> -->
+					
+					<include name="deleteArtifactForServiceViaExternalAPI" />
 				</methods>
       
       </class>

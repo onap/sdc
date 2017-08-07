@@ -15,7 +15,8 @@
     "recipe[sdc-catalog-fe::FE_3_errors_config]",
     "recipe[sdc-catalog-fe::FE_4_logback]",
     "recipe[sdc-catalog-fe::FE_5_rest_configuration]",
-	"recipe[sdc-catalog-fe::FE_6_create_jetty_modules]"
+    "recipe[sdc-catalog-fe::FE_6_create_jetty_modules]",
+    "recipe[sdc-catalog-fe::FE_7_locate_keystore]"
   ],
   "env_run_lists": {
   }

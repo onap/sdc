@@ -1,7 +1,8 @@
+jetty_base="/var/lib/jetty"
 replication_factor=1
 
 template "titan.properties" do
-   path "/var/lib/jetty/config/catalog-be/titan.properties"
+   path "/#{jetty_base}/config/catalog-be/titan.properties"
    source "BE-titan.properties.erb"
    owner "jetty"
    group "jetty"
@@ -17,7 +18,7 @@ end
 
 
 template "catalog-be-config" do
-   path "/var/lib/jetty/config/catalog-be/configuration.yaml"
+   path "/#{jetty_base}/config/catalog-be/configuration.yaml"
    source "BE-configuration.yaml.erb"
    owner "jetty"
    group "jetty"
@@ -35,7 +36,7 @@ end
 
 
 template "distribution-engine-configuration" do
-   path "/var/lib/jetty/config/catalog-be/distribution-engine-configuration.yaml"
+   path "/#{jetty_base}/config/catalog-be/distribution-engine-configuration.yaml"
    source "BE-distribution-engine-configuration.yaml.erb"
    owner "jetty"
    group "jetty"
@@ -44,7 +45,7 @@ end
 
 
 cookbook_file "ArtifactGenerator" do
-   path "/var/lib/jetty/config/catalog-be/Artifact-Generator.properties"
+   path "/#{jetty_base}/config/catalog-be/Artifact-Generator.properties"
    source "Artifact-Generator.properties"
    owner "jetty"
    group "jetty"
@@ -52,3 +53,23 @@ cookbook_file "ArtifactGenerator" do
 end
 
 
+template "onboarding-be-config" do
+ path "/#{jetty_base}/config/onboarding-be/onboarding_configuration.yaml"
+ source "BE-onboarding-configuration.yaml.erb"
+ owner "m98835"
+ group "mechid"
+ mode "0755"
+ variables({
+    :catalog_ip   => node['HOST_IP'],
+    :catalog_port => node['BE'][:http_port],
+    :ssl_port     => node['BE'][:https_port]
+})
+end
+
+
+cookbook_file "/#{jetty_base}/etc/keystore" do
+   source "keystore"
+   owner "jetty"
+   group "jetty"
+   mode 0755
+end

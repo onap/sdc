@@ -56,6 +56,7 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtilsExternalAPI;
 import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -268,7 +269,7 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 		case "description_with_invalid_char":
 			defaultResource.setDescription("\uC2B5");
 			expectedResourceAuditJavaObject.setDesc("t");
-			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.INVALID_RESOURCE_TYPE.name());
+			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_INVALID_DESCRIPTION.name());
 			variables = asList(ComponentTypeEnum.RESOURCE.getValue());
 			break;
 		// TODO: defect on the flow - need to get error instead create VFC
@@ -315,7 +316,7 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 		case "vendor_name_to_long":
 			defaultResource.setVendorName("asdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdffasdff");
 			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT.name());
-			variables = asList("25");
+			variables = asList(ValidationUtils.VENDOR_NAME_MAX_LENGTH.toString());
 			break;
 		case "vendor_name_with_invalid_char":
 			defaultResource.setVendorName("!@#$*()&*^%$#@");

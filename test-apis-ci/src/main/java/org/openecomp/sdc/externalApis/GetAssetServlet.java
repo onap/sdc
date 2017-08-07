@@ -332,8 +332,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			ArtifactUiDownloadData artifactUiDownloadData = mapper.readValue(artifactUiDownloadDataStr,
-					ArtifactUiDownloadData.class);
+			ArtifactUiDownloadData artifactUiDownloadData = mapper.readValue(artifactUiDownloadDataStr, ArtifactUiDownloadData.class);
 			return artifactUiDownloadData;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -455,11 +455,6 @@ public class ImportDCAE extends SetupCDTest {
 	
 	@Test
 	public void addDeploymentArtifactAndVerifyInCompositionScreenDCAEAssetTest() throws Exception{
-		
-		if(true){
-			throw new SkipException("Open bug 320081");			
-		}
-		
 		createDCAEAsset();
 		
 		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();

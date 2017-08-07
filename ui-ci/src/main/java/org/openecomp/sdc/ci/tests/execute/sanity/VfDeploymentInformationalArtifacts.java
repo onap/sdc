@@ -58,10 +58,6 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 	// TC1434241 - Import VF Artifacts - Deployment Artifacts - One Artifact, One Type
 	@Test
 	public void importVfArtifactsDeploymentArtifactsOneArtifactOneType() throws Exception {
-		
-		if(true){
-			throw new SkipException("Open bug 320081");			
-		}
 		String fileName = "TC1434241.csar";
 		String folder ="US825779";
 		
@@ -77,10 +73,6 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 	// TC1434245 - Import VF Artifacts - Deployment Artifacts - Multiple Artifacts, Multiple Types
 	@Test
 	public void importVfArtifactsDeploymentArtifactsMultipleArtifactsMultipleTypes() throws Exception {
-		
-		if(true){
-			throw new SkipException("Open bug 320081");			
-		}
 		String fileName = "TC1434245.csar";
 		String folder ="US825779";
 		
@@ -545,9 +537,6 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 	public void updateWithExistedDeploymentArtifactByArtifactWithDifferentType() throws Exception {
 		String folder ="US825779";
 		String fileName =  "ImportTC1444206.csar";
-		if(true){
-			throw new SkipException("Open bug 320081");			
-		}	
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		deploymentArtifacts.add(new ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
 		deploymentArtifacts.add(new ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));			
@@ -604,11 +593,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 	// US825779 - Story: [BE] Import VSP - VF informational artifacts  - Update
 	// TC1444208 - Update With Existed Informational Artifact By Deployment Artifact With Different Type
 	@Test
-	public void updateWithExistedInformationalArtifactByDeploymentArtifactWithDifferentType() throws Exception {
-		
-		if(true){
-			throw new SkipException("Open bug 320081");			
-		}
+	public void updateWithExistedInformationalArtifactByDeploymentArtifactWithDifferentType() throws Exception {		
 		String folder ="US825779";
 		String fileName =  "ImportTC1444208.csar";
 			
@@ -733,10 +718,6 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 	
 	@Test
 	public void importValidInformationalArtifactInInvalidFolerTest_TC1438313() throws Exception{
-		
-		if(true){
-			throw new SkipException("Open bug 320081");			
-		}
 		String fileName =  "ValidArtifactNameInInvalidFolder.csar";
 		String folder = "US824719";
 		
@@ -749,10 +730,6 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 	
 	@Test
 	public void updateValidInformationalArtifactInInvalidFolerTest_TC1444533() throws Exception{
-		if(true){
-			throw new SkipException("Open bug 320081");			
-		}
-		
 		String fileName =  "ImportTC1444533.csar";
 		String folder = "US824719";
 		String filePath = FileHandling.getFilePath(folder);

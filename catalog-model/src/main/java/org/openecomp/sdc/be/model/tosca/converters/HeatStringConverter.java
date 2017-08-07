@@ -45,7 +45,6 @@ public class HeatStringConverter implements PropertyValueConverter {
 			coverted = ValidationUtils.normaliseWhitespace(coverted);
 			coverted = ValidationUtils.stripOctets(coverted);
 			coverted = ValidationUtils.removeHtmlTagsOnly(coverted);
-			coverted = coverted.replaceAll("\"", "").replaceAll("\'", "");
 		}
 		return coverted;
 	}

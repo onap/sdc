@@ -616,8 +616,10 @@ export class WorkspaceViewModel {
         };
 
         this.$scope.updateSelectedMenuItem = (state:string):void => {
+            let stateArray:Array<string> = state.split('.');
+            let stateWithoutInternalNavigate:string = stateArray[0] + '.' + stateArray[1];
             let selectedItem:MenuItem = _.find(this.$scope.leftBarTabs.menuItems, (item:MenuItem) => {
-                return item.state === state;
+                return _.startsWith(item.state, stateWithoutInternalNavigate);
             });
             this.$scope.leftBarTabs.selectedIndex = selectedItem ? this.$scope.leftBarTabs.menuItems.indexOf(selectedItem) : 0;
         };

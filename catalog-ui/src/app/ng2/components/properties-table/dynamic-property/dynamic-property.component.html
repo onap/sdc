@@ -10,7 +10,7 @@
         </div>
         <div class="table-cell" *ngIf="!canBeDeclared && !property.isChildOfListOrMap">{{property.name}}</div> <!-- simple children of complex type within map or list -->
         <div class="table-cell map-entry" *ngIf="property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP"><!-- map left cell -->
-            <input [value]="property.mapKey" #mapKey (change)="mapKeyChanged.emit(mapKey)" [readonly]="readonly" type="text" [ngClass]="{'disabled':readonly, 'error':!mapKey.validity.valid}" />
+            <input [value]="property.mapKey" #mapKey (change)="mapKeyChanged.emit(mapKey)" [readonly]="readonly" type="text" [ngClass]="{'disabled':readonly, 'error':!mapKey.validity.valid}" required/>
         </div>
     </ng-container>
     <!-- RIGHT CELL OR FULL WIDTH CELL-->
@@ -23,7 +23,7 @@
                 [name]="property.name"
                 [path]="property.propertiesName"
                 (valueChange)="valueChanged.emit();"
-                [readonly]="readonly||property.isDeclared||property.isDisabled"
+                [readonly]="readonly || property.isDeclared || property.isDisabled"
             ></dynamic-element>
         </div>
     </ng-container>

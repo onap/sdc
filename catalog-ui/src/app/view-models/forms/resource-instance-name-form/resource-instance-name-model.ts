@@ -109,7 +109,8 @@ export class ResourceInstanceNameViewModel {
         ];
 
         this.$scope.$watch("[forms.editNameForm.$invalid,componentInstanceModel.name,isAlreadyPressed]", (newVal, oldVal) => {
-            this.$scope.footerButtons[0].disabled = this.$scope.forms.editNameForm.$invalid || this.$scope.isAlreadyPressed || this.$scope.componentInstanceModel.name === this.$scope.oldName;
+            //if the name is invalid or if user pressed ok and didn't try to change name again or the new name = source name
+            this.$scope.footerButtons[0].disabled = this.$scope.forms.editNameForm.$invalid || (this.$scope.isAlreadyPressed && newVal[1] === oldVal[1]) || this.$scope.componentInstanceModel.name === this.$scope.oldName;
         });
     }
 }
