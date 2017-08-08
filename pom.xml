@@ -403,28 +403,7 @@
 	</profiles>
 
 	<repositories>
-		<repository>
-			<id>virtuos</id>
-			<name>Virtuos</name>
-			<url>http://nexus.virtuos.uos.de/nexus/content/repositories/public/</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>apache-public</id>
-			<name>Apache-Public</name>
-			<url>https://repository.apache.org/content/groups/public/</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>elasticsearch-releases</id>
-			<url>https://maven.elasticsearch.org/releases</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+		<!-- LF repositories -->
 		<repository>
 			<id>ecomp-releases</id>
 			<name>Release Repository</name>
@@ -440,16 +419,7 @@
 			<name>Snapshots Repository</name>
 			<url>${nexus.proxy}/content/repositories/snapshots/</url>
 		</repository>
-		<repository>
-			<id>node</id>
-			<name>Node</name>
-			<url>https://maven-nodejs-proxy.pvtool.org/</url>
-		</repository>
-		<repository>
-			<id>SonoType</id>
-			<name>sonotype</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</repository>
+		<!-- LF repositories END-->
 	</repositories>
 
 	<distributionManagement>
