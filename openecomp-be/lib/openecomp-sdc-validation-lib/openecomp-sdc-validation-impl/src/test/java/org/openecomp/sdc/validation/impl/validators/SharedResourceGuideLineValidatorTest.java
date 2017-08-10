@@ -18,12 +18,12 @@ public class SharedResourceGuideLineValidatorTest {
   @Test
   public void testBaseHeatExposeNetwork() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/baseHeatDoesNotExposeNetwork/positive/");
+        "/org/openecomp/validation/validators/guideLineValidator/baseHeatDoesNotExposeNetwork/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
     messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/baseHeatDoesNotExposeNetwork/negative/");
+        "/org/openecomp/validation/validators/guideLineValidator/baseHeatDoesNotExposeNetwork/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
@@ -34,12 +34,12 @@ public class SharedResourceGuideLineValidatorTest {
   @Test
   public void testBaseHeatExposeNetworkAndVolume() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/baseHeatDoesNotExposeNetworkAndVolume/positive/");
+        "/org/openecomp/validation/validators/guideLineValidator/baseHeatDoesNotExposeNetworkAndVolume/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
     messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/baseHeatDoesNotExposeNetworkAndVolume/negative/");
+        "/org/openecomp/validation/validators/guideLineValidator/baseHeatDoesNotExposeNetworkAndVolume/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 2);
@@ -52,12 +52,12 @@ public class SharedResourceGuideLineValidatorTest {
   @Test
   public void testBaseHeatExposeServerGroup() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/baseHeatDoesNotExposeServerGroup/positive/");
+        "/org/openecomp/validation/validators/guideLineValidator/baseHeatDoesNotExposeServerGroup/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
     messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/baseHeatDoesNotExposeServerGroup/negative/");
+        "/org/openecomp/validation/validators/guideLineValidator/baseHeatDoesNotExposeServerGroup/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
@@ -68,12 +68,12 @@ public class SharedResourceGuideLineValidatorTest {
   @Test
   public void testBaseHeatExposeSecurityGroup() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/baseHeatDoesNotExposeSecurityGroup/positive/");
+        "/org/openecomp/validation/validators/guideLineValidator/baseHeatDoesNotExposeSecurityGroup/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
     messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/baseHeatDoesNotExposeSecurityGroup/negative/");
+        "/org/openecomp/validation/validators/guideLineValidator/baseHeatDoesNotExposeSecurityGroup/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
@@ -84,12 +84,12 @@ public class SharedResourceGuideLineValidatorTest {
   @Test
   public void testBaseHeatExposeVolume() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/baseHeatDoesNotExposeVolume/positive/");
+        "/org/openecomp/validation/validators/guideLineValidator/baseHeatDoesNotExposeVolume/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
     messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/baseHeatDoesNotExposeVolume/negative/");
+        "/org/openecomp/validation/validators/guideLineValidator/baseHeatDoesNotExposeVolume/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
@@ -100,12 +100,12 @@ public class SharedResourceGuideLineValidatorTest {
   @Test
   public void testHeatVolumeExpose() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatVolumeExpose/positive/");
+        "/org/openecomp/validation/validators/guideLineValidator/heatVolumeExpose/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
     messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatVolumeExpose/negative/");
+        "/org/openecomp/validation/validators/guideLineValidator/heatVolumeExpose/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("firstVol.yaml").getErrorMessageList().size(), 1);
@@ -117,13 +117,13 @@ public class SharedResourceGuideLineValidatorTest {
   @Test
   public void testResourceIsExposedByCallingGetResourceNotFromOutput() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/baseHeatExposeResourceUsingGetResource/positive");
+        "/org/openecomp/validation/validators/guideLineValidator/baseHeatExposeResourceUsingGetResource/positive");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
 
     messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/baseHeatExposeResourceUsingGetResource/negative");
+        "/org/openecomp/validation/validators/guideLineValidator/baseHeatExposeResourceUsingGetResource/negative");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("base_virc.yaml").getErrorMessageList().size(), 1);
@@ -134,7 +134,7 @@ public class SharedResourceGuideLineValidatorTest {
   @Test
   public void testMissingBaseHeat() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/missingBaseHeat/");
+        "/org/openecomp/validation/validators/guideLineValidator/missingBaseHeat/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("MANIFEST.json").getErrorMessageList().size(), 1);
@@ -145,7 +145,7 @@ public class SharedResourceGuideLineValidatorTest {
   @Test
   public void testMultiBaseHeat() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/multiBaseHeat/");
+        "/org/openecomp/validation/validators/guideLineValidator/multiBaseHeat/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("MANIFEST.json").getErrorMessageList().size(), 1);

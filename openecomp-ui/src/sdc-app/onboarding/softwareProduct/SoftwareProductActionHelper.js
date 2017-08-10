@@ -409,6 +409,7 @@ const SoftwareProductActionHelper = {
 						}
 					});
 					const newVersionId = adjustMajorVersion(version.label, 1);
+					OnboardingActionHelper.updateCurrentScreenVersion(dispatch, {label: newVersionId, id: newVersionId});
 					SoftwareProductActionHelper.fetchSoftwareProduct(dispatch,{softwareProductId, version: {id: newVersionId}});
 					return Promise.resolve({newVersion: {id: newVersionId}});
 				});
@@ -438,6 +439,7 @@ const SoftwareProductActionHelper = {
 						newVersionId = adjustMinorVersion(version.label, -1);
 						break;
 				}
+				OnboardingActionHelper.updateCurrentScreenVersion(dispatch, {label: newVersionId, id: newVersionId});
 				SoftwareProductActionHelper.fetchSoftwareProduct(dispatch,{softwareProductId, version:{id: newVersionId}});
 				return Promise.resolve({newVersion: {id: newVersionId}});
 			});

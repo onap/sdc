@@ -22,20 +22,7 @@
     right: 40px;
     top: 15px;
 		display: flex;
-		.icon-label {
-			color: $dark-gray;
-		}
 
-		.go-to-overview-icon {
-			.icon-label {
-				color: $blue;
-			}
-			&.disabled {
-				.icon-label {
-					color: $gray;
-				}
-			}
-		}
 
     .icon-component {
       margin-right: 30px;
@@ -104,6 +91,11 @@
       z-index: 1;
       padding-right: 20px;
       .counter {
+        .svg-icon {
+          &.__exclamationTriangleLine {
+            fill :$orange;
+          }
+        }
         display: flex;
         &:first-child {
           margin-right: 20px;
@@ -145,8 +137,8 @@
           justify-content: space-between;
           height: 40px;
           align-items: center;
-          .svg-icon-wrapper.chevronDown, .svg-icon-wrapper.chevronUp {
-            .svg-icon {
+          .svg-icon {
+            &.__chevronUp, &.__chevronDown {
               height: 10px;
               width: 10px;
             }
@@ -224,6 +216,13 @@
     .error-item {
       display: flex;
       margin: 10px 0;
+      .large {
+        .svg-icon {
+          width: 20px;
+          height: 20px;
+          fill: $orange;
+        }
+      }
       .error-item-file-type {
         margin-left: 15px;
       }
@@ -231,6 +230,9 @@
         @extend .body-1-semibold;
         margin-right: 5px;
       }
+
+
+
     }
 
   }

@@ -1433,7 +1433,7 @@ topology_template:
           node: abstract_a_single_1a
           relationship: tosca.relationships.DependsOn
     4p_nested_2:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
       directives:
       - substitutable
       properties:
@@ -1566,7 +1566,7 @@ topology_template:
         network:
           get_input: ppds_net_name
     4p_nested_1:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
       directives:
       - substitutable
       properties:

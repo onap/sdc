@@ -24,6 +24,7 @@ import org.openecomp.sdc.logging.context.MdcUtil;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
+import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorlicense.rest.EntitlementPools;
@@ -47,8 +48,8 @@ import java.util.Collection;
 public class EntitlementPoolsImpl implements EntitlementPools {
 
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  @Autowired
-  private VendorLicenseManager vendorLicenseManager;
+  private VendorLicenseManager vendorLicenseManager =
+      VendorLicenseManagerFactory.getInstance().createInterface();
 
   /**
    * List entitlement pools response.

@@ -18,6 +18,7 @@ import {connect} from 'react-redux';
 
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import licenseModelOverviewActionHelper from '../licenseModelOverviewActionHelper.js';
 import LicenseModelActionHelper from '../../LicenseModelActionHelper.js';
@@ -70,6 +71,7 @@ export class VendorDataView extends Component {
 				{this.renderOverlay(
 					<div className='description-data' data-test-id='vlm-summary-vendor-description'>
 						{description}
+						<SVGIcon name='pencil'/>
 					</div>
 				)}
 			</div>

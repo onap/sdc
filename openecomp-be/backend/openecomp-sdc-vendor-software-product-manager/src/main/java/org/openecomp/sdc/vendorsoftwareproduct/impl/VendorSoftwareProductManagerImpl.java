@@ -136,6 +136,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -747,21 +748,22 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   private void updateDeploymentFlavor(VspDetails vspDetails, String user) {
     final List<String> featureGroups = vspDetails.getFeatureGroups();
     if (featureGroups != null && !featureGroups.isEmpty() ) {
-      /*final Collection<DeploymentFlavorEntity> deploymentFlavorEntities =
-          listDeploymentFlavors(vspDetails.getId(), vspDetails.getVersion(), user);*/
-
       final Collection<DeploymentFlavorEntity> deploymentFlavorEntities = deploymentFlavorDao
           .list(new DeploymentFlavorEntity(vspDetails.getId(), vspDetails
           .getVersion(), null));
-      for (DeploymentFlavorEntity deploymentFlavorEntity : deploymentFlavorEntities) {
-        final String featureGroupId =
-            deploymentFlavorEntity.getDeploymentFlavorCompositionData().getFeatureGroupId();
-        if ( !featureGroups.contains(featureGroupId)) {
-          DeploymentFlavor deploymentFlavorCompositionData =
-              deploymentFlavorEntity.getDeploymentFlavorCompositionData();
-          deploymentFlavorCompositionData.setFeatureGroupId(null);
-          vendorSoftwareProductDao.updateDeploymentFlavor(deploymentFlavorEntity);
-        }
+      if (Objects.nonNull(deploymentFlavorEntities)) {
+        deploymentFlavorEntities.forEach(deploymentFlavorEntity -> {
+          final String featureGroupId =
+              deploymentFlavorEntity.getDeploymentFlavorCompositionData().getFeatureGroupId();
+          if ( !featureGroups.contains(featureGroupId)) {
+            DeploymentFlavor deploymentFlavorCompositionData =
+                deploymentFlavorEntity.getDeploymentFlavorCompositionData();
+            deploymentFlavorCompositionData.setFeatureGroupId(null);
+            deploymentFlavorEntity.setDeploymentFlavorCompositionData
+                (deploymentFlavorCompositionData);
+            vendorSoftwareProductDao.updateDeploymentFlavor(deploymentFlavorEntity);
+          }
+        });
       }
     }
   }

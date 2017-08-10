@@ -18,7 +18,7 @@ import Tabs from 'react-bootstrap/lib/Tabs.js';
 import Tab from 'react-bootstrap/lib/Tab.js';
 import {tabsMapping} from './SoftwareProductAttachmentsConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import Icon from 'nfvo-components/icon/Icon.jsx';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import HeatValidation from './validation/HeatValidation.js';
 
 class HeatScreenView extends Component {
@@ -38,27 +38,32 @@ class HeatScreenView extends Component {
 			<div className='vsp-attachments-view'>
 				<div className='attachments-view-controllers'>
 					{(this.state.activeTab === tabsMapping.SETUP) &&
-						<Icon
-							iconClassName={heatDataExist ? '' : 'disabled'}
-							className={heatDataExist ? '' : 'disabled'}
-							image='download'
+						<SVGIcon
+							disabled={heatDataExist ? false : true}
+							name='download'
+							className='icon-component'
 							label={i18n('Download HEAT')}
+							labelPosition='right'
+							color='secondary'
 							onClick={heatDataExist ? () => onDownload({heatCandidate: heatSetup, isReadOnlyMode, version}) : undefined}
 							data-test-id='download-heat'/>}
 					{(this.state.activeTab === tabsMapping.VALIDATION && softwareProductId) &&
-						<Icon
-							iconClassName={this.props.goToOverview ? '' : 'disabled'}
-							className={`go-to-overview-icon ${this.props.goToOverview ? '' : 'disabled'}`}
-							labelClassName='go-to-overview-label'
+						<SVGIcon
+							disabled={this.props.goToOverview !== true}
 							onClick={this.props.goToOverview ? () => onGoToOverview({version}) : undefined}
-							image='go-to-overview'
+							name='proceedToOverview'
+							className='icon-component'
 							label={i18n('Go to Overview')}
+							labelPosition='right'
+							color={this.props.goToOverview ? 'primary' : 'secondary'}
 							data-test-id='go-to-overview'/>}
-					<Icon
-						image='upload'
+					<SVGIcon
+						name='upload'
+						className='icon-component'
 						label={i18n('Upload New HEAT')}
-						className={isReadOnlyMode ? 'disabled' : ''}
-						iconClassName={isReadOnlyMode ? 'disabled' : ''}
+						labelPosition='right'
+						color='secondary'
+						disabled={isReadOnlyMode}
 						onClick={evt => {this.refs.hiddenImportFileInput.click(evt);}}
 						data-test-id='upload-heat'/>
 					<input
@@ -87,9 +92,9 @@ class HeatScreenView extends Component {
 	}
 
 	handleTabPress(key) {
-		let {heatSetup, heatSetupCache, onProcessAndValidate, isReadOnlyMode, version} = this.props;		
+		let {heatSetup, heatSetupCache, onProcessAndValidate, isReadOnlyMode, version} = this.props;
 		switch (key) {
-			case tabsMapping.VALIDATION:				
+			case tabsMapping.VALIDATION:
 				onProcessAndValidate({heatData: heatSetup, heatDataCache: heatSetupCache, isReadOnlyMode, version}).then(
 					() => this.setState({activeTab: tabsMapping.VALIDATION})
 				);

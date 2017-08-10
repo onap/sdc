@@ -4,7 +4,6 @@ import org.openecomp.sdc.validation.impl.validators.HeatResourceValidator;
 
 import org.openecomp.core.validation.types.MessageContainer;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
-import org.openecomp.sdc.validation.impl.validators.HeatResourceValidator;
 import org.openecomp.sdc.validation.util.ValidationTestUtil;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -24,7 +23,7 @@ public class ContrailServiceTemplateNamingConventionValidatorTest {
   public void testContrailServiceTemplateImageAndFlavorNamesAlignedWithNamingConventionButDifferentVmType() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_TEMPLATE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatcontrailservicetemplateimageandflavor/imageandflavordifferentvmtype");
+        "/org/openecomp/validation/validators/guideLineValidator/heatcontrailservicetemplateimageandflavor/imageandflavordifferentvmtype");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(
@@ -37,7 +36,7 @@ public class ContrailServiceTemplateNamingConventionValidatorTest {
   public void testContrailServiceTemplateImageAndFlavorNamesNotAlignedWithNamingConvention() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_TEMPLATE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatcontrailservicetemplateimageandflavor/notaligned");
+        "/org/openecomp/validation/validators/guideLineValidator/heatcontrailservicetemplateimageandflavor/notaligned");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 2);
@@ -51,7 +50,7 @@ public class ContrailServiceTemplateNamingConventionValidatorTest {
   public void testContrailServiceTemplateImageAndFlavorNamesAlignedWithNamingConvention() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_TEMPLATE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatcontrailservicetemplateimageandflavor/aligned");
+        "/org/openecomp/validation/validators/guideLineValidator/heatcontrailservicetemplateimageandflavor/aligned");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
   }

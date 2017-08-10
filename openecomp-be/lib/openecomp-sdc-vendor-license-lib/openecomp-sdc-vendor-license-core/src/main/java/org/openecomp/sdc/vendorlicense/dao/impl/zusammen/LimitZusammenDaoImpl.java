@@ -113,20 +113,16 @@ public class LimitZusammenDaoImpl implements LimitDao {
     limitEntity.setType( elementInfo.getInfo().getProperties().get(LIMT_TYPE) != null ?
         LimitType.valueOf((String) elementInfo.getInfo().getProperties().get(LIMT_TYPE)) :
         null);
-    limitEntity.setTime( elementInfo.getInfo().getProperties().get(TIME) != null ?
-        EntitlementTime.valueOf((String) elementInfo.getInfo().getProperties().get(TIME)) :
-        null);
-    limitEntity.setMetric( elementInfo.getInfo().getProperties().get(METRIC) != null ?
-        EntitlementMetric.valueOf((String) elementInfo.getInfo().getProperties().get(METRIC)) :
-        null);
+    limitEntity.setTime((String) elementInfo.getInfo().getProperties().get(TIME) );
+    limitEntity.setMetric( (String) elementInfo.getInfo().getProperties().get(METRIC));
     limitEntity.setAggregationFunction( elementInfo.getInfo().getProperties().get
         (AGGREGATIONFUNCTION) != null ?
         AggregationFunction.valueOf((String) elementInfo.getInfo().getProperties()
             .get(AGGREGATIONFUNCTION)) : null);
     Object unit = elementInfo.getInfo().getProperties().get(UNIT);
-    limitEntity.setUnit(unit != null ? VlmZusammenUtil.toInteger(unit) : null);
+    limitEntity.setUnit((String) unit);
     Object value = elementInfo.getInfo().getProperties().get(VALUE);
-    limitEntity.setValue(value != null ? VlmZusammenUtil.toInteger(value) : null);
+    limitEntity.setValue((String) value);
 
     return limitEntity;
   }

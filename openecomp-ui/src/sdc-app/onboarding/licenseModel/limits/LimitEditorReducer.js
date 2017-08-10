@@ -20,7 +20,7 @@ export default (state = {}, action) => {
 	switch (action.type) {
 		case actionTypes.OPEN:
 			return {
-				...state,				
+				...state,
 				data: action.limitItem ? {...action.limitItem} : defaultState.LIMITS_EDITOR_DATA,
 				formReady: null,
 				formName: LIMITS_FORM_NAME,
@@ -38,17 +38,17 @@ export default (state = {}, action) => {
 					'metric' : {
 						isValid: true,
 						errorText: '',
-						validations: [{type: 'required', data: true}]
+						validations: []
 					},
 					'value' : {
 						isValid: true,
 						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'numeric', data: true}, {type: 'minimum', data: 0}]
+						validations: [{type: 'required', data: true}]
 					},
 					'unit' : {
 						isValid: true,
 						errorText: '',
-						validations: [{type: 'numeric', data: true}]
+						validations: []
 					},
 					'aggregationFunction' : {
 						isValid: true,

@@ -54,9 +54,10 @@ import javax.ws.rs.ext.ExceptionMapper;
 public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
   private static final String ERROR_CODES_TO_RESPONSE_STATUS_MAPPING_FILE =
       "errorCodesToResponseStatusMapping.json";
-  private static Map<String, String> errorCodeToResponseStatus = JsonUtil
-      .json2Object(FileUtils.getFileInputStream(ERROR_CODES_TO_RESPONSE_STATUS_MAPPING_FILE),
-          Map.class);
+  @SuppressWarnings("unchecked")
+  private static Map<String, String> errorCodeToResponseStatus =
+      JsonUtil.json2Object(FileUtils
+          .getFileInputStream(ERROR_CODES_TO_RESPONSE_STATUS_MAPPING_FILE), Map.class);
   private static Logger logger = (Logger) LoggerFactory.getLogger(DefaultExceptionMapper.class);
 
   @Override
@@ -74,11 +75,6 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
       response = transform(exception);
     }
 
-    try {
-      writeStackTraceToFile(exception);
-    } catch (IOException ex) {
-      ex.printStackTrace();
-    }
     List<Object> contentTypes = new ArrayList<>();
     contentTypes.add(MediaType.APPLICATION_JSON);
     response.getMetadata().put("Content-Type", contentTypes);
@@ -169,17 +165,4 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
   private Object toEntity(Response.Status status, ErrorCode code) {
     return new ErrorCodeAndMessage(status, code);
   }
-
-  private void writeStackTraceToFile(Exception exception) throws IOException {
-    File file = new File("stack_trace.txt");
-    if (!file.exists()) {
-      file.createNewFile();
-    }
-    OutputStream outputStream = new FileOutputStream(file);
-    PrintWriter printWriter = new PrintWriter(file);
-    exception.printStackTrace(printWriter);
-    printWriter.close();
-    outputStream.close();
-  }
-
 }

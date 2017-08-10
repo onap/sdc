@@ -24,10 +24,12 @@
 		  position: relative;
 		  top: -2px;
 		}
+
 		.modules-list-wrapper {
-			padding-bottom: 20px;
-			margin-bottom: 20px;
-			border-bottom: 1px solid $tlv-light-gray;
+			&.modules-list-wrapper-divider {
+				border-bottom: 1px solid $tlv-light-gray;
+			}
+
 			ul {
 				.undefined-dragging {
 					opacity: 0.5;
@@ -36,7 +38,7 @@
 					display: flex;
 					justify-content: space-between;
 					flex-wrap: wrap;
-
+					padding-bottom: 3px;
 					.Select-value-label {
 						@include ellipsis(85%);
 					}
@@ -55,24 +57,6 @@
 				}
 			}
 
-			.modules-list-controllers {
-				text-align: right;
-				.btn-link {
-					&[disabled] {
-						color: $gray;
-					}
-					@extend .body-1;
-					color: $blue;
-					&:last-child {
-						padding-right: 0;
-					}
-					&:hover {
-						color: $dark-blue;
-						text-decoration: none;
-					}
-				}
-			}
-
 			.modules-list-item-controllers {
 				display: flex;
 				justify-content: space-between;
@@ -82,16 +66,15 @@
 					min-width: 0;
 				}
 
-				.svg-icon-wrapper.trashO {
-				  .svg-icon {
-					fill: $dark-gray;
-					height: 18px;
-					width: 18px;
-					&:hover {
-					  fill: $black;
+				.svg-icon {
+					&.__trashO {
+						fill: $dark-gray;
+						&:hover {
+							fill: $black;
+						}
 					}
-				  }
 				}
+
 				.module-title-by-type {
 					@extend .heading-5-semibold;
 					margin-right: 3px;
@@ -100,14 +83,14 @@
 					display: flex;
 					align-items: center;
 
-					.svg-icon-wrapper.pencil {
-						.svg-icon {
-						  height: 15px;
-						  width: 15px;
+					.svg-icon {
+						&.__pencil {
+							margin-left: 3px;
+							opacity: 0;
 						}
-						margin-left: 3px;
-						opacity: 0;
 					}
+
+
 
 					.filename-text {
 						@extend .heading-5-semibold;
@@ -144,14 +127,16 @@
 								border-color: transparent;
 							}
 						}
-						.svg-icon-wrapper.pencil {
-							margin-left: 10px;
-							opacity: 1;
-							.svg-icon {
-							  stroke: $dark-gray;
-							  &:hover {
-							   stroke: $black;
-							  }
+						.svg-icon {
+							&.__pencil {
+								margin-left: 10px;
+								opacity: 1;
+								.svg-icon {
+									stroke: $dark-gray;
+									&:hover {
+										stroke: $black;
+									}
+								}
 							}
 						}
 					}
@@ -173,23 +158,8 @@
 					}
 				}
 				.add-or-delete-volumes {
-					.svg-icon-wrapper {
-						margin-right: 8px;
-						.svg-icon {
-							height: 10px;
-							width: 10px;
-							fill: $blue;
-						}
-					}
-					cursor: pointer;
-					color: $blue;
+					margin-right: 8px;
 					margin-bottom: 11px;
-					&:hover {
-						color: $dark-blue;
-						.svg-icon {
-							fill: $dark-blue;
-						}
-					}
 				}
 				&:before {
 					content: "\00B7\00B7\00B7\00B7\00B7\00B7";
@@ -208,7 +178,9 @@
 
 		.artifact-files {
 			@include modules-and-artifacts-list-items;
-			margin-top: 20px;
+			&.with-list-items {
+				margin-top: 10px;
+			}
 
 			&.nested {
 				.nested-list {
@@ -238,21 +210,20 @@
 					display: flex;
 				}
 
-				.add-all-unassigned {
-					@extend .body-1;
-					margin-bottom: 0;
-					color: $blue;
-					cursor: pointer;
-					&:hover {
-						color: $dark-blue;
-					}
-				}
 			}
 		}
 	}
 
+	.modules-list-header {
+		height: 30px;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: flex-end;
+		align-items: baseline;
+	}
+
 	.unassigned-files {
-		margin-top: 30px;
 		border: 1px solid $light-gray;
 		background-color: $white;
 		height: 250px;
@@ -283,26 +254,12 @@
 					@extend .heading-4;
 					margin-bottom: 10px;
 				}
-				.link {
-					color: $blue;
-					cursor: pointer;
-					display: flex;
-					align-items: center;
+				.svg-icon-wrapper {
 					margin-bottom: 10px;
-					.svg-icon-wrapper.angleRight {
-					  .svg-icon {
-						height: 10px;
-						width: 10px;
-						margin-left: 7px;
-						fill: $blue;
-					  }
-					}
-					&:hover {
-						color: $dark-blue;
-						.svg-icon-wrapper.angleRight {
-						  .svg-icon {
-							fill: $dark-blue;
-						  }
+					.svg-icon {
+						&.__angleRight {
+							width: 10px;
+							height: 10px;
 						}
 					}
 				}

@@ -18,7 +18,7 @@ import Configuration from 'sdc-app/config/Configuration.js';
 import {actionTypes as licenseKeyGroupsConstants} from './LicenseKeyGroupsConstants.js';
 import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
 import {actionTypes as limitEditorActions} from 'sdc-app/onboarding/licenseModel/limits/LimitEditorConstants.js';
-import getValue from 'nfvo-utils/getValue.js';
+import {default as getValue, getStrValue} from 'nfvo-utils/getValue.js';
 
 function baseUrl(licenseModelId, version) {
 	const restPrefix = Configuration.get('restPrefix');
@@ -75,9 +75,9 @@ function postLimit(licenseModelId, licenseKeyGroupId, version, limit) {
 		name: limit.name,
 		type: limit.type,
 		description: limit.description,
-		metric: limit.metric,
+		metric: getStrValue(limit.metric),
 		value: limit.value,
-		unit: limit.unit,
+		unit: getStrValue(limit.unit),
 		aggregationFunction: getValue(limit.aggregationFunction),
 		time: getValue(limit.time)
 	});
@@ -89,9 +89,9 @@ function putLimit(licenseModelId, licenseKeyGroupId, version, limit) {
 		name: limit.name,
 		type: limit.type,
 		description: limit.description,
-		metric: limit.metric,
+		metric: getStrValue(limit.metric),
 		value: limit.value,
-		unit: limit.unit,
+		unit: getStrValue(limit.unit),
 		aggregationFunction: getValue(limit.aggregationFunction),
 		time: getValue(limit.time)
 	});
@@ -181,8 +181,8 @@ export default {
 			dispatch({
 				type: licenseKeyGroupsConstants.licenseKeyGroupsEditor.LIMITS_LIST_LOADED,
 				response
-			});	
-		});									
+			});
+		});
 	},
 
 	submitLimit(dispatch, {licenseModelId, version, licenseKeyGroup, limit}) {
@@ -193,13 +193,13 @@ export default {
 				type: limitEditorActions.CLOSE
 			});
 			this.fetchLimits(dispatch, {licenseModelId, version, licenseKeyGroup});
-		});	  			
+		});
 	},
 
 	deleteLimit(dispatch, {licenseModelId, version, licenseKeyGroup, limit}) {
 		return deleteLimit(licenseModelId,licenseKeyGroup.id, version, limit.id).then(() => {
 			this.fetchLimits(dispatch, {licenseModelId, version, licenseKeyGroup});
-		});		
+		});
 	}
 
 

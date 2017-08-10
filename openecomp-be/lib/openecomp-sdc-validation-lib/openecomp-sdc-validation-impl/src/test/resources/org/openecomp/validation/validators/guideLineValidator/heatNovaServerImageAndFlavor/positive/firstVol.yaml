@@ -1,0 +1,19 @@
+
+heat_template_version:  2013-05-23
+
+parameters:
+   not_null:
+     type: number
+     label: not_number
+
+
+resources:
+   volume_expose:
+     type: OS::Cinder::Volume
+     properties:
+       not_null: not_null
+outputs:
+  not_expose_resource_network_output:
+    description: the pcrf_server
+    value: { get_resource: volume_expose }
+

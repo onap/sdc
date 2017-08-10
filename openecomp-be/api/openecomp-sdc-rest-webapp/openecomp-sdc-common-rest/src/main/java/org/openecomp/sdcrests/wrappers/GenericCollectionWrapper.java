@@ -27,7 +27,7 @@ import java.util.List;
 public class GenericCollectionWrapper<T> implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  private List<T> results;
+  private transient List<T> results;
   private int listCount;
 
   public GenericCollectionWrapper() {

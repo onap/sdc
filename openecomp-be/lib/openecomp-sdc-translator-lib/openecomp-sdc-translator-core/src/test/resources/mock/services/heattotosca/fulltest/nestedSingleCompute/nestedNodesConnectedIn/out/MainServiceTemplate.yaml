@@ -155,7 +155,7 @@ topology_template:
       default: oam_protected_net_0
   node_templates:
     server_pcm_002:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
       directives:
       - substitutable
       properties:
@@ -192,7 +192,7 @@ topology_template:
           - pcm_server_names
           - 0
     server_oam_001:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-oam_v0.1
+      type: org.openecomp.resource.abstract.nodes.heat.oam_server
       directives:
       - substitutable
       properties:
@@ -251,7 +251,7 @@ topology_template:
         oam_net_name:
           get_input: oam_net_name
     server_pcm_001:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
       directives:
       - substitutable
       properties:
@@ -384,7 +384,7 @@ topology_template:
           node: server_pcm_002
           relationship: org.openecomp.relationships.AttachesTo
     test_shared_node_connected_in_nested:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-oam_v0.1
+      type: org.openecomp.resource.abstract.nodes.heat.oam_server
       directives:
       - substitutable
       properties:

@@ -57,6 +57,8 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,6 +73,9 @@ import java.util.UUID;
 
 @SuppressWarnings("Duplicates")
 public class ActionTest {
+
+  /*
+  Logger logger = LoggerFactory.getLogger(ActionTest.class);
   private static final Version VERSION01 = new Version(0, 1);
   private static final String USER1 = "actionTestUser1";
   private static final String USER2 = "actionTestUser2";
@@ -325,6 +330,7 @@ public class ActionTest {
       actionManager.createAction(createAction(ACTION_1), USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ActionErrorConstants.ACTION_ENTITY_UNIQUE_VALUE_ERROR);
     }
   }
@@ -377,6 +383,7 @@ public class ActionTest {
       actionManager.updateAction(action, USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert
           .assertEquals(exception.getErrorCode(), ActionErrorConstants.ACTION_UPDATE_NOT_ALLOWED_CODE_NAME);
     }
@@ -395,6 +402,7 @@ public class ActionTest {
       actionManager.updateAction(action, USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ActionErrorConstants.ACTION_UPDATE_INVALID_VERSION);
     }
   }
@@ -413,6 +421,7 @@ public class ActionTest {
       actionManager.updateAction(updatedAction, USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ActionErrorConstants.ACTION_UPDATE_NOT_ALLOWED_CODE);
     }
   }
@@ -435,7 +444,7 @@ public class ActionTest {
             boolean result = message.contains("No enum constant");
             Assert.assertEquals(true, result);
         }
-    }*/
+    }
 
   @Test(groups = "updateTestGroup", dependsOnMethods = {"updateTest"})
   public void testUpdateInvariantId_negative() {
@@ -450,6 +459,7 @@ public class ActionTest {
       actionManager.updateAction(action, USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ActionErrorConstants.ACTION_ENTITY_NOT_EXIST_CODE);
     }
   }
@@ -470,6 +480,7 @@ public class ActionTest {
       actionManager.updateAction(action, USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ActionErrorConstants.ACTION_UPDATE_NOT_ALLOWED_CODE);
     }
   }
@@ -487,8 +498,10 @@ public class ActionTest {
       actionManager.updateAction(action, USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ActionErrorConstants.ACTION_UPDATE_NOT_ALLOWED_CODE);
     } catch (IllegalArgumentException ie) {
+      logger.error(ie.getMessage());
       String message = ie.getMessage();
       boolean result = message.contains("No enum constant");
       Assert.assertEquals(true, result);
@@ -508,6 +521,7 @@ public class ActionTest {
       actionManager.updateAction(action, USER2);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(),
           ActionErrorConstants.ACTION_EDIT_ON_ENTITY_LOCKED_BY_OTHER_USER);
     }
@@ -518,6 +532,7 @@ public class ActionTest {
     try {
       actionManager.checkout(action1Id, USER1);
     } catch (ActionException wae) {
+      logger.error(wae.getMessage());
       Assert
           .assertEquals(wae.getErrorCode(), ActionErrorConstants.ACTION_CHECKOUT_ON_LOCKED_ENTITY);
       Assert.assertEquals(wae.getDescription(),
@@ -531,6 +546,7 @@ public class ActionTest {
     try {
       actionManager.checkout(action1Id, "invlaiduser");
     } catch (ActionException wae) {
+      logger.error(wae.getMessage());
       Assert.assertEquals(wae.getErrorCode(),
           ActionErrorConstants.ACTION_CHECKOUT_ON_LOCKED_ENTITY_OTHER_USER);
       Assert.assertEquals(wae.getDescription(),
@@ -560,6 +576,7 @@ public class ActionTest {
       actionManager.updateAction(existingActionEntity.toDto(), USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ActionErrorConstants.ACTION_UPDATE_ON_UNLOCKED_ENTITY);
     }
   }
@@ -576,6 +593,7 @@ public class ActionTest {
     try {
       actionManager.checkin(action1Id, "invaliduser");
     } catch (ActionException wae) {
+      logger.error(wae.getMessage());
       Assert
           .assertEquals(wae.getErrorCode(), ActionErrorConstants.ACTION_CHECKIN_ON_UNLOCKED_ENTITY);
       Assert.assertEquals(wae.getDescription(),
@@ -598,6 +616,7 @@ public class ActionTest {
     try {
       actionManager.checkin(action1Id, "invaliduser");
     } catch (ActionException wae) {
+      logger.error(wae.getMessage());
       Assert.assertEquals(wae.getErrorCode(),
           ActionErrorConstants.ACTION_CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER);
       Assert.assertEquals(wae.getDescription(),
@@ -611,6 +630,7 @@ public class ActionTest {
     try {
       actionManager.submit(action1Id, USER1);
     } catch (ActionException wae) {
+      logger.error(wae.getMessage());
       Assert.assertEquals(wae.getErrorCode(),
           ActionErrorConstants.ACTION_SUBMIT_LOCKED_ENTITY_NOT_ALLOWED);
       Assert.assertEquals(wae.getDescription(), "Versionable entity Action with id " + action1Id +
@@ -655,6 +675,7 @@ public class ActionTest {
       Action action = actionManager.getActionsByActionUuId("");
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ActionErrorConstants.ACTION_ENTITY_NOT_EXIST_CODE);
     }
   }
@@ -780,6 +801,7 @@ public class ActionTest {
       actionManager.deleteAction(deleteActionInvariantId, USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ACTION_DELETE_ON_LOCKED_ENTITY_CODE);
       Assert.assertEquals(exception.getDescription(), String.format(
           "Can not delete versionable entity Action with id %s since it is checked out by other user: %s",
@@ -794,6 +816,7 @@ public class ActionTest {
       actionManager.checkin(deleteActionInvariantId, USER1);
       actionManager.deleteAction(deleteActionInvariantId, USER1);
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.fail("Delete action test failed with exception : " + exception.getDescription());
     }
   }
@@ -805,6 +828,7 @@ public class ActionTest {
       actionManager.checkout(deleteActionInvariantId, USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ACTION_ENTITY_NOT_EXIST_CODE);
       Assert.assertEquals(exception.getDescription(), ACTION_ENTITY_NOT_EXIST);
     }
@@ -812,6 +836,7 @@ public class ActionTest {
       actionManager.checkin(deleteActionInvariantId, USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ACTION_ENTITY_NOT_EXIST_CODE);
       Assert.assertEquals(exception.getDescription(), ACTION_ENTITY_NOT_EXIST);
     }
@@ -819,6 +844,7 @@ public class ActionTest {
       actionManager.submit(deleteActionInvariantId, USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ACTION_ENTITY_NOT_EXIST_CODE);
       Assert.assertEquals(exception.getDescription(), ACTION_ENTITY_NOT_EXIST);
     }
@@ -826,6 +852,7 @@ public class ActionTest {
       actionManager.undoCheckout(deleteActionInvariantId, USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ACTION_ENTITY_NOT_EXIST_CODE);
       Assert.assertEquals(exception.getDescription(), ACTION_ENTITY_NOT_EXIST);
     }
@@ -833,6 +860,7 @@ public class ActionTest {
       actionManager.deleteAction(deleteActionInvariantId, USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ACTION_ENTITY_NOT_EXIST_CODE);
       Assert.assertEquals(exception.getDescription(), ACTION_ENTITY_NOT_EXIST);
     }
@@ -844,6 +872,7 @@ public class ActionTest {
       actionManager.createAction(createAction(ACTION_TEST_DELETE), USER1);
       Assert.fail();
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ACTION_ENTITY_UNIQUE_VALUE_ERROR);
       Assert.assertEquals(exception.getDescription(), String
           .format(ACTION_ENTITY_UNIQUE_VALUE_MSG, ActionConstants.UniqueValues.ACTION_NAME,
@@ -889,7 +918,7 @@ public class ActionTest {
   /***
    * ACTION ARTIFACT OPERATION TEST CASES
    ***/
-
+/*
   @Test
   public void testUploadArtifact() {
     actionArtifact = new ActionArtifact();
@@ -908,6 +937,7 @@ public class ActionTest {
       actionArtifact.setArtifactDescription("Test Artifact Description");
       actionArtifact.setArtifactProtection(ActionArtifactProtection.readWrite.name());
     } catch (IOException exception) {
+      logger.error(exception.getMessage());
       exception.printStackTrace();
     }
 
@@ -942,6 +972,7 @@ public class ActionTest {
     try {
       actionManager.uploadArtifact(testArtifact, "INVALID_UUID", USER1);
     } catch (ActionException ae) {
+      logger.error(ae.getMessage());
       Assert.assertEquals(ae.getErrorCode(), ACTION_ENTITY_NOT_EXIST_CODE);
       Assert.assertEquals(ae.getDescription(), ACTION_ENTITY_NOT_EXIST);
     }
@@ -953,6 +984,7 @@ public class ActionTest {
       actionManager
           .uploadArtifact(actionArtifact, testArtifactAction.getActionInvariantUuId(), USER1);
     } catch (ActionException ae) {
+      logger.error(ae.getMessage());
       Assert.assertEquals(ae.getErrorCode(), ACTION_ARTIFACT_ALREADY_EXISTS_CODE);
       Assert.assertEquals(ae.getDescription(), String
           .format(ACTION_ARTIFACT_ALREADY_EXISTS, testArtifactAction.getActionInvariantUuId()));
@@ -965,6 +997,7 @@ public class ActionTest {
       actionManager
           .uploadArtifact(actionArtifact, testArtifactAction.getActionInvariantUuId(), USER2);
     } catch (ActionException ae) {
+      logger.error(ae.getMessage());
       Assert.assertEquals(ae.getErrorCode(), ACTION_EDIT_ON_ENTITY_LOCKED_BY_OTHER_USER);
       Assert.assertEquals(ae.getDescription(),
           "Versionable entity Action with id " + testArtifactAction.getActionInvariantUuId() +
@@ -980,6 +1013,7 @@ public class ActionTest {
       actionManager
           .uploadArtifact(actionArtifact, testArtifactAction.getActionInvariantUuId(), USER1);
     } catch (ActionException ae) {
+      logger.error(ae.getMessage());
       Assert.assertEquals(ae.getErrorCode(), ACTION_UPDATE_ON_UNLOCKED_ENTITY);
       Assert.assertEquals(ae.getDescription(), "Can not update versionable entity Action with id " +
           testArtifactAction.getActionInvariantUuId() + " since it is not checked out.");
@@ -1001,6 +1035,7 @@ public class ActionTest {
     try {
       ActionArtifact response = actionManager.downloadArtifact(actionUUID, artifactUUID);
     } catch (ActionException ae) {
+      logger.error(ae.getMessage());
       Assert.assertEquals(ae.getErrorCode(), ACTION_ARTIFACT_ENTITY_NOT_EXIST_CODE);
     }
 
@@ -1012,6 +1047,7 @@ public class ActionTest {
     try {
       ActionArtifact response = actionManager.downloadArtifact(actionUUID, expectedArtifactUUID);
     } catch (ActionException ae) {
+      logger.error(ae.getMessage());
       Assert.assertEquals(ae.getErrorCode(), ACTION_ENTITY_NOT_EXIST_CODE);
     }
 
@@ -1022,6 +1058,7 @@ public class ActionTest {
     try {
       actionManager.deleteArtifact("action2Id", "1234", USER1);
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ActionErrorConstants.ACTION_ENTITY_NOT_EXIST_CODE);
       Assert.assertEquals(exception.getDescription(), ActionErrorConstants.ACTION_ENTITY_NOT_EXIST);
     }
@@ -1032,6 +1069,7 @@ public class ActionTest {
     try {
       actionManager.deleteArtifact(action2Id, "1234", USER1);
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(),
           ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST_CODE);
       Assert
@@ -1055,6 +1093,7 @@ public class ActionTest {
           testArtifact.getArtifactUuId(), USER1);
 
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(), ActionErrorConstants.ACTION_ARTIFACT_DELETE_READ_ONLY);
       Assert.assertEquals(exception.getDescription(),
           ActionErrorConstants.ACTION_ARTIFACT_DELETE_READ_ONLY_MSG);
@@ -1076,6 +1115,7 @@ public class ActionTest {
       actionManager.deleteArtifact(testArtifactAction.getActionInvariantUuId(),
           actionArtifact.getArtifactUuId(), USER2);
     } catch (ActionException ae) {
+      logger.error(ae.getMessage());
       Assert.assertEquals(ae.getErrorCode(), ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER_CODE);
       Assert.assertEquals(ae.getDescription(),
           String.format(ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER, USER1));
@@ -1088,6 +1128,7 @@ public class ActionTest {
       actionManager.deleteArtifact(testArtifactAction.getActionInvariantUuId(),
           actionArtifact.getArtifactUuId(), USER1);
     } catch (ActionException ae) {
+      logger.error(ae.getMessage());
       Assert.assertEquals(ae.getErrorCode(), ACTION_NOT_LOCKED_CODE);
       Assert.assertEquals(ae.getDescription(), ACTION_NOT_LOCKED_MSG);
     }
@@ -1107,6 +1148,7 @@ public class ActionTest {
       ActionArtifact response = actionManager
           .downloadArtifact(testArtifactAction.getActionUuId(), testArtifact.getArtifactUuId());
     } catch (ActionException exception) {
+      logger.error(exception.getMessage());
       Assert.assertEquals(exception.getErrorCode(),
           ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST_CODE);
       Assert
@@ -1135,6 +1177,7 @@ public class ActionTest {
       updatedArtifact.setArtifactDescription("Test Artifact Update Description");
       updatedArtifact.setArtifactProtection(ActionArtifactProtection.readWrite.name());
     } catch (IOException exception) {
+      logger.error(exception.getMessage());
       exception.printStackTrace();
     }
 
@@ -1164,6 +1207,7 @@ public class ActionTest {
           .updateArtifact(invalidActionArtifact, testArtifactAction.getActionInvariantUuId(),
               USER1);
     } catch (ActionException actionException) {
+      logger.error(actionException.getMessage());
       Assert.assertEquals(actionException.getDescription(), ACTION_ARTIFACT_ENTITY_NOT_EXIST);
     }
   }
@@ -1282,5 +1326,7 @@ public class ActionTest {
     String artifactUUID = generateArtifactUUID.replace("-", "");
     return artifactUUID.toUpperCase();
   }
+
+  */
 
 }

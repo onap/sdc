@@ -20,6 +20,15 @@
 
 package org.openecomp.sdcrests.mapping;
 
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
+import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.openecomp.sdc.logging.types.LoggerServiceName;
+
 /**
  * Base class for all mapping classes. Mapping classes will perform data mapping from source object
  *  to target object Base class provides following<br>  <ol>  <li>provides life cycle of
@@ -93,8 +102,19 @@ public abstract class MappingBase<S, T> {
     try {
       object = clazz.newInstance();
 
-    } catch (InstantiationException | IllegalAccessException exception) {
+    } catch (InstantiationException | IllegalAccessException exception ) {
       //TODO: what what?
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(
+          LoggerConstants.TARGET_ENTITY,
+          LoggerServiceName.Create_LIMIT.toString(), ErrorLevel.ERROR.name(),
+          exception.getMessage(), exception.getMessage());
+
+      throw new CoreException((new ErrorCode.ErrorCodeBuilder())
+          .withMessage(exception.getMessage())
+          .withId(exception.getMessage())
+          .withCategory(ErrorCategory.APPLICATION).build());
+
+
     }
     return object;
 

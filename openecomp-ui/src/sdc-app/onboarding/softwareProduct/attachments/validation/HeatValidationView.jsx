@@ -16,19 +16,18 @@
 import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 import Collapse from 'react-bootstrap/lib/Collapse.js';
-import Icon from 'nfvo-components/icon/Icon.jsx';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import {mouseActions, errorLevels, nodeFilters} from './HeatValidationConstants.js';
 
 const leftPanelWidth = 250;
 const typeToIcon = Object.freeze({
-	heat: 'heat',
-	volume: 'volume',
+	heat: 'nestedHeat',
+	volume: 'base',
 	network: 'network',
-	artifact: 'validation-artifacts',
+	artifact: 'artifacts',
 	env: 'env',
-	other: 'validation-other'
+	other: 'other'
 });
 
 
@@ -74,7 +73,7 @@ function HeatFileTreeRow(props) {
 				{
 
 					<span className='tree-node-icon'>
-						<Icon image={typeToIcon[node.type]} iconClassName={selectedNode === node.name ? 'selected' : ''}/>
+						<SVGIcon name={typeToIcon[node.type]} color={selectedNode === node.name ? 'primary' : 'secondary'}/>
 					</span>
 				}
 				{
@@ -94,7 +93,7 @@ function HeatFileTreeHeader(props) {
 		<div onClick={() => props.selectNode(nodeFilters.ALL)} className={classNames({'attachments-tree-header': true,
 			'header-selected' : props.selectedNode === nodeFilters.ALL})} data-test-id='validation-tree-header'>
 			<div className='tree-header-title' >
-				<Icon image='zip' iconClassName={classNames(props.selectedNode === nodeFilters.ALL ? 'selected' : '', 'header-icon')} />
+				<SVGIcon name='zip' color={props.selectedNode === nodeFilters.ALL ? 'primary' : ''}  iconClassName='header-icon' />
 				<span className={classNames({'tree-header-title-text' : true,
 					'tree-header-title-selected' : props.selectedNode === nodeFilters.ALL})}>{i18n(`HEAT${hasErrors ? ' (Draft)' : ''}`)}</span>
 			</div>
@@ -200,12 +199,13 @@ class HeatMessageBoard extends Component {
 	}
 	renderError(error) {
 		let rand = Math.random() * (3000 - 1) + 1;
+		console.log(this.props.selectedNode );
 		return (
 			<div
 				key={error.name + error.errorMessage + error.parentName + rand}
 				className='error-item' data-test-id='validation-error'>
 				{error.level === errorLevels.WARNING ?
-					<SVGIcon name='exclamationTriangleLine' iconClassName='large' /> : <Icon image='error-lg' /> }
+					<SVGIcon name='exclamationTriangleLine' iconClassName='large' color='warning' /> : <SVGIcon iconClassName='large' color='negative' /> }
 				<span className='error-item-file-type'>
 				{
 					(this.props.selectedNode === nodeFilters.ALL) ?
@@ -217,7 +217,7 @@ class HeatMessageBoard extends Component {
 								{i18n(error.errorMessage)}
 							</span>
 						</span> :
-						i18n(error.errorMesage)
+						i18n(error.errorMessage)
 				}
 				</span>
 			</div>
@@ -234,18 +234,14 @@ class ErrorsAndWarningsCount extends Component {
 		if (!errors) {
 			return null;
 		}
-		let errIcon = 'error';
 		let {size} = this.props;
-		if (size && size === 'large') {
-			errIcon += '-lg';
-		}
 		return (<div className='counters'>
 			{(errors.errorCount > 0) && <div className='counter'>
-				<Icon image={errIcon} iconClassName='counter-icon'/>
-				<div className={'error-text ' + (size ? size : '')} data-test-id='validation-error-count'>{errors.errorCount}</div>
+				<SVGIcon name='error' color='negative' iconClassName={size}/>
+				<div className={'error-text ' + (size ? size : '')} data-test-id='validation-error-count'>={errors.errorCount}</div>
 			</div>}
 			{(errors.warningCount > 0) && <div className='counter'>
-				<SVGIcon name='exclamationTriangleLine' iconClassName={size} />
+				<SVGIcon name='exclamationTriangleLine' iconClassName={size} color='warning'/>
 				<div className={'warning-text ' + (size ? size : '')} data-test-id='validation-warning-count'>{errors.warningCount}</div>
 			</div>}
 		</div>);

@@ -39,11 +39,7 @@ $message-info-icon-size: 16px;
 	.svg-icon-wrapper {
 	  float: right;
 	}
-	.checkCircle {
-	  fill: $green;
-	  width: 16px;
-	  height: 16px;
-	}
+
 	.status-icon.false:after {
 	  @include status-icon-class;
 	  float: right;

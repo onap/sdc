@@ -1,6 +1,6 @@
 
 .vsp-component-monitoring {
-  .snmp-dropzone {
+  .dropzone {
     .section-title {
       padding-bottom: 20px;
     }
@@ -22,7 +22,7 @@
       }
       .drag-text {
         color: $blue;
-        @extend .body-1-semibold;
+        @extend .body-1-semibold
       }
       .or-text {
         margin-top: 10px;
@@ -30,6 +30,20 @@
       }
     }
 
+    .monitoring-file {
+      display: flex;
+      .filename {
+        opacity: 1;
+        width: auto;
+        border-right-style: none;
+      }
+      .delete {
+        display: flex;
+        width: 30px;
+        justify-content: center;
+        align-items: center;
+      }
+    }
   }
 
   .delete-button {

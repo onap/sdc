@@ -275,6 +275,13 @@ export default {
 			version
 		});
 		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES, {softwareProductId, version, componentId});
+	},
+
+	updateCurrentScreenVersion(dispatch, version) {
+		dispatch({
+			type: actionTypes.SET_CURRENT_SCREEN_VERSION,
+			version
+		});
 	}
 
 };

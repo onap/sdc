@@ -21,6 +21,13 @@
 package org.openecomp.server.interceptors;
 
 
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Link;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.net.URI;
@@ -29,20 +36,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ws.rs.core.EntityTag;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.Link;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.core.Response;
-
 public class DefaultOutput extends Response implements Serializable {
 
   private static final long serialVersionUID = 8061802931931401706L;
 
   private final int status;
-  private final Object entity;
+  private final transient Object entity;
   private MultivaluedMap<String, Object> metadata;
 
   public DefaultOutput(int s0, Object e0) {

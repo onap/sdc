@@ -11,7 +11,7 @@ function tooltip (msg)  {
 
 const IconWithOverlay = ({overlayMsg}) => (
 	<OverlayTrigger placement='bottom' overlay={tooltip(overlayMsg)}>
-		<SVGIcon name='errorCircle'/>
+		<SVGIcon name='errorCircle' color='negative'/>
 	</OverlayTrigger>
 );
 
@@ -21,10 +21,10 @@ function renderErrorOrCheck({hasError, overlayMsg}) {
 	}
 
 	if (hasError) {
-		return overlayMsg ? <IconWithOverlay overlayMsg={overlayMsg}/> :  <SVGIcon name='errorCircle'/>;
+		return overlayMsg ? <IconWithOverlay overlayMsg={overlayMsg}/> :  <SVGIcon color='negative' name='errorCircle'/>;
 	}
 
-	return <SVGIcon name='checkCircle'/>;
+	return <SVGIcon name='checkCircle' color='positive'/>;
 }
 
 const SelectActionTableRow = ({children, onDelete, hasError, hasErrorIndication, overlayMsg, showDelete}) => (
@@ -32,7 +32,7 @@ const SelectActionTableRow = ({children, onDelete, hasError, hasErrorIndication,
 		<div className={`select-action-table-row ${hasError ? 'has-error' : ''}`}>
 			{children}
 		</div>
-		{onDelete && <SVGIcon name='trashO' iconClassName={(showDelete) ? '' : 'hideDelete'} data-test-id='select-action-table-delete' onClick={(showDelete) ? onDelete : null} />}
+		{onDelete && <SVGIcon color='secondary' name='trashO' data-test-id='select-action-table-delete' onClick={onDelete} iconClassName={(showDelete) ? '' : 'hideDelete'}/>}
 		{hasErrorIndication && renderErrorOrCheck({hasError, overlayMsg})}
 	</div>
 );

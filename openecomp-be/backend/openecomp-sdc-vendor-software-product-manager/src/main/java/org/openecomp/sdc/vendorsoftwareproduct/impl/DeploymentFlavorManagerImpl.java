@@ -111,17 +111,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
   private void validateDeploymentFlavor(DeploymentFlavorEntity deploymentFlavorEntity, String
       user, Version activeVersion) {
 
-    if(!deploymentFlavorEntity.getDeploymentFlavorCompositionData().getModel().matches(VendorSoftwareProductConstants.NAME_PATTERN))
-    {
-      ErrorCode errorCode = DeploymentFlavorErrorBuilder.getDeploymentFlavorNameFormatErrorBuilder(
-              VendorSoftwareProductConstants.NAME_PATTERN);
-
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              LoggerTragetServiceName.UPDATE_NIC, ErrorLevel.ERROR.name(),
-              errorCode.id(),errorCode.message());
-
-      throw new CoreException(errorCode);
-    }
     //Validation for unique model.
     Collection<DeploymentFlavorEntity> listDeploymentFlavors =
         listDeploymentFlavors(deploymentFlavorEntity.getVspId(),
@@ -366,17 +355,6 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
           LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
           updateDeploymentFlavorErrorBuilder.message());
       throw new CoreException(updateDeploymentFlavorErrorBuilder);
-    }
-    else {
-        if(!deploymentFlavorEntity.getDeploymentFlavorCompositionData().getModel().matches(VendorSoftwareProductConstants.NAME_PATTERN))
-        {
-            ErrorCode errorCode = DeploymentFlavorErrorBuilder.getDeploymentFlavorNameFormatErrorBuilder(
-                    VendorSoftwareProductConstants.NAME_PATTERN);
-            MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-                    LoggerTragetServiceName.UPDATE_DEPLOYMENT_FLAVOR, ErrorLevel.ERROR.name(),
-                    errorCode.id(),errorCode.message());
-            throw new CoreException(errorCode);
-        }
     }
     //deploymentFlavorEntity.setVersion(activeVersion);
     DeploymentFlavorEntity retrieved =

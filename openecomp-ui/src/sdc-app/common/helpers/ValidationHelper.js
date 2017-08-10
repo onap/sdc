@@ -51,10 +51,11 @@ class ValidationHelper {
 		});
 	}
 
-	static qValidateForm(dispatch, qName){
+	static qValidateForm(dispatch, qName, customValidations){
 		dispatch({
 			type: qcommonActionTypes.VALIDATE_FORM,
-			qName
+			qName,
+			customValidations
 		});
 	}
 

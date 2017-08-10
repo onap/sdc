@@ -4,7 +4,6 @@ import org.openecomp.sdc.validation.impl.validators.NamingConventionGuideLineVal
 
 import org.openecomp.core.validation.types.MessageContainer;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
-import org.openecomp.sdc.validation.impl.validators.NamingConventionGuideLineValidator;
 import org.openecomp.sdc.validation.util.ValidationTestUtil;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -24,13 +23,13 @@ public class NeutronPortNamingConventionValidatorTest {
   public void testHeatPortNetworkNamingConvention() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatPortNetworkNamingConvention/positive/");
+        "/org/openecomp/validation/validators/guideLineValidator/heatPortNetworkNamingConvention/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
     messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatPortNetworkNamingConvention/negative/");
+        "/org/openecomp/validation/validators/guideLineValidator/heatPortNetworkNamingConvention/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 3);
@@ -42,13 +41,13 @@ public class NeutronPortNamingConventionValidatorTest {
   public void testNeutronFixedIpName() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatPortFixedIpNamingConvention/positive");
+        "/org/openecomp/validation/validators/guideLineValidator/heatPortFixedIpNamingConvention/positive");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
     messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatPortFixedIpNamingConvention/negative/");
+        "/org/openecomp/validation/validators/guideLineValidator/heatPortFixedIpNamingConvention/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 4);

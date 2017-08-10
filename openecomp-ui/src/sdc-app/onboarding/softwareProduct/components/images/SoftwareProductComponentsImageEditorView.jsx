@@ -20,6 +20,7 @@ import Form from 'nfvo-components/input/validation/Form.jsx';
 
 import FileDetails from './imagesEditorComponents/FileDetails.jsx';
 import ImageDetails from './imagesEditorComponents/ImageDetails.jsx';
+import {imageCustomValidations} from './ImageValidations.js';
 
 class SoftwareProductComponentsImageEditorView extends React.Component {
 	static propTypes = {
@@ -44,7 +45,7 @@ class SoftwareProductComponentsImageEditorView extends React.Component {
 					isValid={isFormValid}
 					formReady={formReady}
 					submitButtonText={editingMode ? i18n('Save') : i18n('Create')}
-					onValidateForm={() => onValidateForm() }
+					onValidateForm={() => onValidateForm(imageCustomValidations) }
 					className='vsp-components-image-editor'>
 					<div className='editor-data'>
 						<FileDetails
@@ -56,7 +57,7 @@ class SoftwareProductComponentsImageEditorView extends React.Component {
 							isManual={isManual}
 							dataMap={dataMap}
 							onQDataChanged={onQDataChanged}/>
-						{editingMode && <ImageDetails dataMap={dataMap}qgenericFieldInfo={qgenericFieldInfo} onQDataChanged={onQDataChanged}/>}
+						{editingMode && <ImageDetails dataMap={dataMap} qgenericFieldInfo={qgenericFieldInfo} onQDataChanged={onQDataChanged}/>}
 					</div>
 				</Form>}
 			</div>

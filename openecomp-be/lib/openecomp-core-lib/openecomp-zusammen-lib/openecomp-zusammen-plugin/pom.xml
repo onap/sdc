@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.amdocs.zusammen.plugin</groupId>
             <artifactId>zusammen-state-store-cassandra-plugin</artifactId>
-              <version>${zusammen.version}</version>
+              <version>${zusammen-state-store.version}</version>
         </dependency>
     </dependencies>
 </project>

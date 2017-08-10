@@ -37,12 +37,14 @@
 	  }
 	}
 	.create-item-plus-icon{
-	  width: 19px;
-	  height: 19px;
-	  margin: -5px 12px 0 0;
-			.svg-icon.plus {
-			height: 19px;
-			width: 19px;
+		margin: -5px 12px 0 0;
+		height: 19px;
+		width: 19px;
+		.svg-icon {
+			&.__plus {
+				width: 19px;
+				height: 19px;
+			}
 		}
 	}
 	&.vlm-type {

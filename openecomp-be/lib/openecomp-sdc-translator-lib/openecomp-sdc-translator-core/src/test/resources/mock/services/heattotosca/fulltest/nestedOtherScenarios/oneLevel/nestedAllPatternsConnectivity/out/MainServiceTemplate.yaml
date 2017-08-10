@@ -33,7 +33,7 @@ topology_template:
           node: test_nested_pattern_4
           relationship: tosca.relationships.DependsOn
     test_nested_pattern_4:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-pattern-4
+      type: org.openecomp.resource.abstract.nodes.heat.pd_server
       directives:
       - substitutable
       properties:

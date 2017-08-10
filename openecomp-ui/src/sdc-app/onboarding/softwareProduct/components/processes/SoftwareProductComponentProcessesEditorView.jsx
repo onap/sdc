@@ -17,6 +17,7 @@ import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Dropzone from 'react-dropzone';
 
+import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
 import  {optionsInputValues as ComponentProcessesOptionsInputValues} from './SoftwareProductComponentProcessesConstants.js';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import Input from 'nfvo-components/input/validation/Input.jsx';
@@ -31,17 +32,6 @@ const SoftwareProductProcessEditorPropType = React.PropTypes.shape({
 	type: React.PropTypes.string
 });
 
-const FileUploadBox = ({onClick}) => {
-	return (
-		<div className='file-upload-box'>
-			<div className='drag-text'>{i18n('Drag & drop for upload')}</div>
-			<div className='or-text'>{i18n('or')}</div>
-			<div className='upload-btn primary-btn' onClick={onClick}>
-				<span className='primary-btn-text'>{i18n('Select file')}</span>
-			</div>
-		</div>
-	);
-};
 
 class SoftwareProductProcessesEditorView extends React.Component {
 
@@ -99,7 +89,7 @@ class SoftwareProductProcessesEditorView extends React.Component {
 										type='text'/>
 								</GridItem>
 								<GridItem colSpan={2}>
-									<FileUploadBox onClick={() => this.refs.processEditorFileInput.open()} />
+									<DraggableUploadFileBox isReadOnlyMode={isReadOnlyMode} className='file-upload-box' onClick={() => this.refs.processEditorFileInput.open()} />
 								</GridItem>
 							</GridSection>
 							<GridSection>

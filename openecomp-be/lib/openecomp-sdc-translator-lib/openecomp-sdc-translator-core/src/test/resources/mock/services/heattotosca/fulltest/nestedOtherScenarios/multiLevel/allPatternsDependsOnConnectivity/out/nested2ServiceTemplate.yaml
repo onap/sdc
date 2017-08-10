@@ -150,7 +150,7 @@ topology_template:
           node: test_nested3Level
           relationship: tosca.relationships.DependsOn
     test_nested_pattern_4_nested2:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-pattern-4
+      type: org.openecomp.resource.abstract.nodes.heat.pd_server_pattern4
       directives:
       - substitutable
       properties:
@@ -200,7 +200,7 @@ topology_template:
           node: abstract_ps_server_nested2_1b
           relationship: tosca.relationships.DependsOn
     test_nested_pattern_4_same_type_diff_file:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-pattern-4-same-type
+      type: org.openecomp.resource.abstract.nodes.heat.pd_server_pattern4_2
       directives:
       - substitutable
       properties:

@@ -4,6 +4,8 @@ package org.openecomp.sdcrests.vsp.rest.mapping;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
@@ -15,6 +17,8 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentRelationType
 
 public class MapComponentDependencyModelRequestToEntity extends
     MappingBase<ComponentDependencyModel, ComponentDependencyModelEntity> {
+  private static final Logger logger =
+      LoggerFactory.getLogger(MapComponentDependencyModelRequestToEntity.class);
 
   @Override
   public void doMapping(ComponentDependencyModel source,
@@ -30,6 +34,7 @@ public class MapComponentDependencyModelRequestToEntity extends
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.CREATE_COMPONENT_DEPENDENCY_MODEL, ErrorLevel.ERROR.name(),
           errorCode.id(), errorCode.message() );
+      logger.error(errorCode.message(), exception);
       throw new CoreException(errorCode);
     }
   }

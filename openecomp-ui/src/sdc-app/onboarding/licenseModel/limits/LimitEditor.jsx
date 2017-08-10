@@ -7,16 +7,24 @@ import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import {LIMITS_FORM_NAME, selectValues} from './LimitEditorConstants.js';
 import Button from 'sdc-ui/lib/react/Button.js';
 import Validator from 'nfvo-utils/Validator.js';
+import {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
+import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
 
 const LimitPropType = React.PropTypes.shape({
 	id: React.PropTypes.string,
 	name: React.PropTypes.string,
 	description: React.PropTypes.string,
-	metric: React.PropTypes.string,
-	value: React.PropTypes.number,
+	metric: React.PropTypes.shape({
+		choice: React.PropTypes.string,
+		other: React.PropTypes.string
+	}),
+	value: React.PropTypes.string,
 	aggregationFunction: React.PropTypes.string,
 	time: React.PropTypes.string,
-	unit: React.PropTypes.number
+	unit: React.PropTypes.shape({
+		choice: React.PropTypes.string,
+		other: React.PropTypes.string
+	})
 });
 
 class LimitEditor extends React.Component {
@@ -33,8 +41,8 @@ class LimitEditor extends React.Component {
 		onCancel: React.PropTypes.func.isRequired
 	};
 
-	componentDidUpdate(prevProps) {				
-		if (this.props.formReady && this.props.formReady !== prevProps.formReady) { 
+	componentDidUpdate(prevProps) {
+		if (this.props.formReady && this.props.formReady !== prevProps.formReady) {
 			this.submit();
 		}
 	}
@@ -44,21 +52,21 @@ class LimitEditor extends React.Component {
 		let {name, description, metric, value, aggregationFunction, time, unit} = data;
 		return (
 			<div className='limit-editor'>
-			{!data.id && 
+			{!data.id &&
 			<div className='limit-editor-title'>
 				{data.name ? data.name : i18n('NEW LIMIT')}
 			</div>}
 			{
-				genericFieldInfo && 
+				genericFieldInfo &&
 				<Form
 					ref='validationForm'
-					hasButtons={false}				
+					hasButtons={false}
 					isValid={isFormValid}
 					formReady={formReady}
 					onValidateForm={() => onValidateForm(LIMITS_FORM_NAME) }
 					labledButtons={false}
 					isReadOnlyMode={isReadOnlyMode}
-					className='limit-editor-form'>					
+					className='limit-editor-form'>
 					<GridSection className='limit-editor-form-grid-section'>
 						<GridItem colSpan={2}>
 							<Input
@@ -83,24 +91,23 @@ class LimitEditor extends React.Component {
 								type='text'/>
 						</GridItem>
 						<GridItem colSpan={2}>
-							<Input
-								onChange={e => {									
-									const selectedIndex = e.target.selectedIndex;
-									const val = e.target.options[selectedIndex].value;
-									onDataChanged({metric: val}, LIMITS_FORM_NAME);}
-								}
+							<InputOptions
+								onInputChange={()=>{}}
+								isMultiSelect={false}
 								isRequired={true}
-								value={metric}
+								onEnumChange={metric => onDataChanged({metric:{choice: metric, other: ''}},
+									LIMITS_FORM_NAME, {metric: this.validateChoiceWithOther})}
+								onOtherChange={metric => onDataChanged({metric:{choice: optionInputOther.OTHER,
+									other: metric}}, LIMITS_FORM_NAME, {metric: this.validateChoiceWithOther})}
 								label={i18n('Metric')}
 								data-test-id='limit-editor-metric'
+								type='select'
+								required={true}
+								selectedEnum={metric && metric.choice}
+								otherValue={metric && metric.other}
+								values={selectValues.METRIC}
 								isValid={genericFieldInfo.metric.isValid}
-								errorText={genericFieldInfo.metric.errorText}
-								groupClassName='bootstrap-input-options'
-								className='input-options-select'
-								type='select' >
-								{selectValues.METRIC.map(mtype =>
-									<option key={mtype.enum} value={mtype.enum}>{`${mtype.title}`}</option>)}
-							</Input>
+								errorText={genericFieldInfo.metric.errorText} />
 						</GridItem>
 						<GridItem>
 							<Input
@@ -111,22 +118,30 @@ class LimitEditor extends React.Component {
 								isValid={genericFieldInfo.value.isValid}
 								errorText={genericFieldInfo.value.errorText}
 								isRequired={true}
-								type='number'/>
+								type='text'/>
 						</GridItem>
 						<GridItem>
-							<Input
-								onChange={unit => onDataChanged({unit}, LIMITS_FORM_NAME)}
+							<InputOptions
+								onInputChange={()=>{}}
+								isMultiSelect={false}
+								isRequired={false}
+								onEnumChange={unit => onDataChanged({unit:{choice: unit, other: ''}},
+									LIMITS_FORM_NAME)}
+								onOtherChange={unit => onDataChanged({unit:{choice: optionInputOther.OTHER,
+									other: unit}}, LIMITS_FORM_NAME)}
 								label={i18n('Units')}
 								data-test-id='limit-editor-units'
-								value={unit}
+								type='select'
+								required={false}
+								selectedEnum={unit && unit.choice}
+								otherValue={unit && unit.other}
+								values={selectValues.UNIT}
 								isValid={genericFieldInfo.unit.isValid}
-								errorText={genericFieldInfo.unit.errorText}
-								isRequired={false}
-								type='number'/>
+								errorText={genericFieldInfo.unit.errorText} />
 						</GridItem>
 						<GridItem colSpan={2}>
 							<Input
-								onChange={e => {									
+								onChange={e => {
 									const selectedIndex = e.target.selectedIndex;
 									const val = e.target.options[selectedIndex].value;
 									onDataChanged({aggregationFunction: val}, LIMITS_FORM_NAME);}
@@ -145,7 +160,7 @@ class LimitEditor extends React.Component {
 						</GridItem>
 						<GridItem>
 							<Input
-								onChange={e => {									
+								onChange={e => {
 									const selectedIndex = e.target.selectedIndex;
 									const val = e.target.options[selectedIndex].value;
 									onDataChanged({time: val}, LIMITS_FORM_NAME);}
@@ -160,15 +175,15 @@ class LimitEditor extends React.Component {
 								type='select' >
 								{selectValues.TIME.map(mtype =>
 									<option key={mtype.enum} value={mtype.enum}>{`${mtype.title}`}</option>)}
-							</Input>							
+							</Input>
 						</GridItem>
 					</GridSection>
 					<GridSection className='limit-editor-buttons'>
-						<Button btnType='outline'  disabled={!isFormValid} onClick={() => this.submit()} type='reset'>{i18n('Save')}</Button>	
+						<Button btnType='outline'  disabled={!isFormValid} onClick={() => this.submit()} type='reset'>{i18n('Save')}</Button>
 						<Button btnType='outline' color='gray' onClick={onCancel} type='reset'>{i18n('Cancel')}</Button>
-					</GridSection>						
-				</Form>	
-			}	
+					</GridSection>
+				</Form>
+			}
 			</div>
 		);
 	}
@@ -179,6 +194,24 @@ class LimitEditor extends React.Component {
 
 		return !isExists ?  {isValid: true, errorText: ''} :
 		{isValid: false, errorText: i18n('Limit by the name \'' + value + '\' already exists. Limit name must be unique')};
+	}
+
+	validateChoiceWithOther(value) {
+		let chosen = value.choice;
+		// if we have an empty multiple select we have a problem since it's required
+		if (value.choices) {
+			if (value.choices.length === 0) {
+				return  Validator.validate('field', '', [{type: 'required', data: true}]);
+			} else {
+				// continuing validation with the first chosen value in case we have the 'Other' field
+				chosen = value.choices[0];
+			}
+		}
+		if (chosen !== optionInputOther.OTHER) {
+			return  Validator.validate('field', chosen, [{type: 'required', data: true}]);
+		} else { // when 'Other' was chosen, validate other value
+			return  Validator.validate('field', value.other, [{type: 'required', data: true}]);
+		}
 	}
 
 	submit() {

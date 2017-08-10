@@ -22,6 +22,7 @@ import {LicenseKeyGroupStoreFactory, LicenseKeyGroupPostFactory} from 'test-util
 import LicenseKeyGroupsActionHelper from 'sdc-app/onboarding/licenseModel/licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
 import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
 import {LimitItemFactory, LimitPostFactory} from 'test-utils/factories/licenseModel/LimitFactories.js';
+import {getStrValue} from 'nfvo-utils/getValue.js';
 
 describe('License Key Groups Module Tests', function () {
 
@@ -160,7 +161,7 @@ describe('License Key Groups Module Tests', function () {
 
 	it('Load Limits List', () => {
 
-		const limitsList = LimitItemFactory.buildList(3);		
+		const limitsList = LimitItemFactory.buildList(3);
 		deepFreeze(limitsList);
 		const store = storeCreator();
 		deepFreeze(store.getState());
@@ -185,8 +186,12 @@ describe('License Key Groups Module Tests', function () {
 		deepFreeze(store.getState());
 
 		const limitToAdd = LimitPostFactory.build();
+		let limitFromBE = {...limitToAdd};
+		limitFromBE.metric = getStrValue(limitFromBE.metric);
+		limitFromBE.unit = getStrValue(limitFromBE.unit);
 
 		deepFreeze(limitToAdd);
+		deepFreeze(limitFromBE);
 
 		const LimitIdFromResponse = 'ADDED_ID';
 		const limitAddedItem = {...limitToAdd, id: LimitIdFromResponse};
@@ -197,7 +202,7 @@ describe('License Key Groups Module Tests', function () {
 
 		mockRest.addHandler('post', ({data, options, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${licenseKeyGroup.id}/limits`);
-			expect(data).toEqual(limitToAdd);
+			expect(data).toEqual(limitFromBE);
 			expect(options).toEqual(undefined);
 			return {
 				returnCode: 'OK',
@@ -215,7 +220,7 @@ describe('License Key Groups Module Tests', function () {
 		return LicenseKeyGroupsActionHelper.submitLimit(store.dispatch,
 			{
 				licenseModelId: LICENSE_MODEL_ID,
-				version,				
+				version,
 				licenseKeyGroup,
 				limit: limitToAdd
 			}
@@ -226,9 +231,9 @@ describe('License Key Groups Module Tests', function () {
 
 	it('Delete Limit', () => {
 
-		const limitsList = LimitItemFactory.buildList(1);		
+		const limitsList = LimitItemFactory.buildList(1);
 		deepFreeze(limitsList);
-					
+
 		const store = storeCreator({
 			licenseModel: {
 				entitlementPool: {
@@ -273,7 +278,7 @@ describe('License Key Groups Module Tests', function () {
 
 	it('Update Limit', () => {
 
-		const limitsList = LimitItemFactory.buildList(1);		
+		const limitsList = LimitItemFactory.buildList(1);
 		deepFreeze(limitsList);
 		const licenseKeyGroup = LicenseKeyGroupStoreFactory.build();
 		const store = storeCreator({
@@ -288,16 +293,18 @@ describe('License Key Groups Module Tests', function () {
 
 		deepFreeze(store.getState());
 
-		
+
 		const previousData = limitsList[0];
 		deepFreeze(previousData);
 		const limitId = limitsList[0].id;
-		
-		const updatedLimit = {...previousData, name: 'updatedLimit'};
-		deepFreeze(updatedLimit);
-		const updatedLimitForPut = {...updatedLimit, id: undefined};
 
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsEditor.limitsList', [updatedLimit]);
+		let updatedLimit = {...previousData, name: 'updatedLimit'};
+		const updatedLimitForPut = {...updatedLimit, id: undefined};
+		updatedLimit.metric = {choice: updatedLimit.metric, other: ''};
+		updatedLimit.unit = {choice: updatedLimit.unit, other: ''};
+		deepFreeze(updatedLimit);
+
+		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsEditor.limitsList', [updatedLimitForPut]);
 
 
 		mockRest.addHandler('put', ({data, options, baseUrl}) => {
@@ -311,13 +318,13 @@ describe('License Key Groups Module Tests', function () {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${licenseKeyGroup.id}/limits`);
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
-			return {results: [updatedLimit]};
+			return {results: [updatedLimitForPut]};
 		 });
 
 		return LicenseKeyGroupsActionHelper.submitLimit(store.dispatch,
 			{
 				licenseModelId: LICENSE_MODEL_ID,
-				version,				
+				version,
 				licenseKeyGroup,
 				limit: updatedLimit
 			}

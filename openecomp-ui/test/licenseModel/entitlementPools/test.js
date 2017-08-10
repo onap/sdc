@@ -21,6 +21,7 @@ import EntitlementPoolsActionHelper from 'sdc-app/onboarding/licenseModel/entitl
 import {EntitlementPoolStoreFactory, EntitlementPoolPostFactory} from 'test-utils/factories/licenseModel/EntitlementPoolFactories.js';
 import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
 import {LimitItemFactory, LimitPostFactory} from 'test-utils/factories/licenseModel/LimitFactories.js';
+import {getStrValue} from 'nfvo-utils/getValue.js';
 
 describe('Entitlement Pools Module Tests', function () {
 
@@ -165,7 +166,7 @@ describe('Entitlement Pools Module Tests', function () {
 
 	it('Load Limits List', () => {
 
-		const limitsList = LimitItemFactory.buildList(3);		
+		const limitsList = LimitItemFactory.buildList(3);
 		deepFreeze(limitsList);
 		const store = storeCreator();
 		deepFreeze(store.getState());
@@ -190,8 +191,12 @@ describe('Entitlement Pools Module Tests', function () {
 		deepFreeze(store.getState());
 
 		const limitToAdd = LimitPostFactory.build();
+		let limitFromBE = {...limitToAdd};
+		limitFromBE.metric = getStrValue(limitFromBE.metric);
+		limitFromBE.unit = getStrValue(limitFromBE.unit);
 
 		deepFreeze(limitToAdd);
+		deepFreeze(limitFromBE);
 
 		const LimitIdFromResponse = 'ADDED_ID';
 		const limitAddedItem = {...limitToAdd, id: LimitIdFromResponse};
@@ -202,7 +207,7 @@ describe('Entitlement Pools Module Tests', function () {
 
 		mockRest.addHandler('post', ({data, options, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/entitlement-pools/${entitlementPool.id}/limits`);
-			expect(data).toEqual(limitToAdd);
+			expect(data).toEqual(limitFromBE);
 			expect(options).toEqual(undefined);
 			return {
 				returnCode: 'OK',
@@ -220,7 +225,7 @@ describe('Entitlement Pools Module Tests', function () {
 		return EntitlementPoolsActionHelper.submitLimit(store.dispatch,
 			{
 				licenseModelId: LICENSE_MODEL_ID,
-				version,				
+				version,
 				entitlementPool,
 				limit: limitToAdd
 			}
@@ -232,9 +237,9 @@ describe('Entitlement Pools Module Tests', function () {
 
 	it('Delete Limit', () => {
 
-		const limitsList = LimitItemFactory.buildList(1);		
+		const limitsList = LimitItemFactory.buildList(1);
 		deepFreeze(limitsList);
-					
+
 		const store = storeCreator({
 			licenseModel: {
 				entitlementPool: {
@@ -279,7 +284,7 @@ describe('Entitlement Pools Module Tests', function () {
 
 	it('Update Limit', () => {
 
-		const limitsList = LimitItemFactory.buildList(1);		
+		const limitsList = LimitItemFactory.buildList(1);
 		deepFreeze(limitsList);
 		const entitlementPool = EntitlementPoolStoreFactory.build();
 		const store = storeCreator({
@@ -294,16 +299,20 @@ describe('Entitlement Pools Module Tests', function () {
 
 		deepFreeze(store.getState());
 
-		
+
 		const previousData = limitsList[0];
+
 		deepFreeze(previousData);
 		const limitId = limitsList[0].id;
-		
-		const updatedLimit = {...previousData, name: 'updatedLimit'};
-		deepFreeze(updatedLimit);
-		const updatedLimitForPut = {...updatedLimit, id: undefined};
 
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolEditor.limitsList', [updatedLimit]);
+		let updatedLimit = {...previousData, name: 'updatedLimit'};
+
+		const updatedLimitForPut = {...updatedLimit, id: undefined};
+		updatedLimit.metric = {choice: updatedLimit.metric, other: ''};
+		updatedLimit.unit = {choice: updatedLimit.unit, other: ''};
+		deepFreeze(updatedLimit);
+
+		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolEditor.limitsList', [updatedLimitForPut]);
 
 
 		mockRest.addHandler('put', ({data, options, baseUrl}) => {
@@ -317,13 +326,13 @@ describe('Entitlement Pools Module Tests', function () {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/entitlement-pools/${entitlementPool.id}/limits`);
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
-			return {results: [updatedLimit]};
+			return {results: [updatedLimitForPut]};
 		 });
 
 		return EntitlementPoolsActionHelper.submitLimit(store.dispatch,
 			{
 				licenseModelId: LICENSE_MODEL_ID,
-				version,				
+				version,
 				entitlementPool,
 				limit: updatedLimit
 			}

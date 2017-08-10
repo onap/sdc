@@ -61,25 +61,33 @@ $lkg-ep-color: $light-blue;
 
         &:not(.read-only) .vendor-description {
           border: 1px solid transparent;
+          width: 100%;
           padding: 2px 0 2px 6px;
           margin-top: 10px;
-
+          position: relative;
+          .svg-icon-wrapper {
+            position: absolute;;
+            right:0;
+            top:0;
+            opacity: 0;
+          }
           $hover-padding-right: 16px;
           @include percent-plus-value($property: width, $percent: 100%, $value: -$hover-padding-right); // compensate for padding added on hover
           &:hover {
             padding-right: $hover-padding-right;
-            width: 100%;
             border: 1px solid $light-gray;
             cursor: pointer;
 
-            background-position: calc(100% - 4px) 4px;
-            background-size: 14px;
-            background-image: url($pencil-icon);
-            background-repeat: no-repeat;
-            background-color: white;
-
+            background-color: $white;
+            .svg-icon-wrapper {
+              opacity: 1;
+              z-index: 10;
+            }
             .description-data:after {
               background: white;
+            }
+            .description-data {
+              width: 100%;
             }
           }
         }
@@ -167,20 +175,23 @@ $lkg-ep-color: $light-blue;
             flex-grow: 2;
             margin-left: 5px;
           }
-          .add-button {
-            cursor: pointer;
-            font-size: larger;
-            background-image: url($vlm-summary-plus);
-            background-size: 20px;
-            background-repeat: no-repeat;
-            width:20px;
-            height:20px;
-            margin-top: 3px;
-            margin-left: auto;
-            &:hover {
-              cursor: pointer;
-              background-image: url($vlm-summary-plus-blue);
-            }
+          .summary-name-and-count {
+            width: 100%;
+          }
+          .svg-icon-wrapper {
+
+            .svg-icon {
+              &.__plusCircle {
+                width: 20px;
+                height: 20px;
+                margin-top: 3px;
+                margin-left: auto;
+                fill: $dark-gray;
+                &:hover {
+                  fill: $blue;
+                }
+              }
+          }
           }
 
           .summary-name-and-count {
@@ -205,7 +216,7 @@ $lkg-ep-color: $light-blue;
     }
   }
   .vlm-list-tab-panel {
-		
+
 		@extend .flex;
 		margin-bottom: 7px;
     .section-title {
@@ -221,6 +232,7 @@ $lkg-ep-color: $light-blue;
         margin-left:10px;
         cursor: pointer;
       }
+      /**
       .vlm-list-icon {
         background-size: 32px;
         background-repeat: no-repeat;
@@ -237,7 +249,7 @@ $lkg-ep-color: $light-blue;
           background-image: url($vlm-summary-orphans-blue);
         }
       }
-
+      **/
     }
   }
 
@@ -260,7 +272,7 @@ $lkg-ep-color: $light-blue;
           .vlm-list-item.orphan-list-item {
 						@include overview-tile-shadow();
 						margin-left: 0;
-						
+
 						.vlm-list-item-title {
 
 							.item-name {
@@ -304,7 +316,7 @@ $lkg-ep-color: $light-blue;
           .clickable {
 						cursor: pointer;
 					}
-          
+
           .list-item-section {
 						.count-value {
 							@extend .body-3;
@@ -365,7 +377,7 @@ $lkg-ep-color: $light-blue;
           }
           .arrow-icon {
 						align-self: center;
-						
+
           }
           .vlm-item-info {
             flex: 1;
@@ -424,7 +436,7 @@ $lkg-ep-color: $light-blue;
               @include create-circle($circle-icon-size,$fg-color,'FG');
               color: $white;
 						}
-						
+
 						.vlm-list-item-title {
 							.item-name {
 								color: $fg-color;
@@ -465,7 +477,7 @@ $lkg-ep-color: $light-blue;
 								margin-left: 52px;
 							}
             }
-						
+
           }
           &.vlm-list-item-lkg {
             margin-top: 10px;

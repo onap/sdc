@@ -50,6 +50,7 @@ const pointers = [
 		added: 'Please describe.'
 	}
 ];
+//TODO check for buttons
 
 const TextAreaItem = ({item, toggle, expanded, genericFieldInfo, dataMap, onQDataChanged}) => (
 		<GridItem colSpan={3} key={item.key} >

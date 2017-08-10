@@ -19,14 +19,26 @@ function getValueFromObject(element) {
 	return element.choices && element.choices.length > 0 && element.choices[0] !== '' && element.choices[0] !== optionInputOther.OTHER ||
 			element.other && element.choices[0] === optionInputOther.OTHER ?
 			element : undefined;
-} 
+}
 
 function getValueFromVariable(variable) {
 	return variable ? variable : undefined;
 }
 
  let getValue = element => {
-	return typeof element === 'object' ? getValueFromObject(element) : getValueFromVariable(element);	
+	return typeof element === 'object' ? getValueFromObject(element) : getValueFromVariable(element);
  };
+
+export function getStrValue(choiceObject) {
+	if (!choiceObject) {
+		return undefined;
+	}
+	if (choiceObject.choice && choiceObject.choice !== '' && choiceObject.choice !== optionInputOther.OTHER) {
+		return choiceObject.choice;
+	}
+	else if (choiceObject.other && choiceObject.choice === optionInputOther.OTHER) {
+		return choiceObject.other;
+	}
+}
 
  export default getValue;

@@ -19,7 +19,7 @@ import Dropzone from 'react-dropzone';
 
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
-
+import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
 
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import SoftwareProductComponentsList from '../components/SoftwareProductComponentsList.js';
@@ -128,14 +128,11 @@ class SoftwareProductLandingPageView extends React.Component {
 							</div>
 						</div>
 					</div>
-					<div
-						className={classnames('software-product-landing-view-top-block-col-upl', {'disabled': isReadOnlyMode})}>
-						<div className='drag-text'>{i18n('Drag & drop for upload')}</div>
-						<div className='or-text'>{i18n('or')}</div>
-						<div data-test-id='upload-btn' className='upload-btn primary-btn' onClick={() => this.refs.fileInput.open()}>
-							<span className='primary-btn-text'>{i18n('Select file')}</span>
-						</div>
-					</div>
+					<DraggableUploadFileBox
+						dataTestId='upload-btn'
+						isReadOnlyMode={isReadOnlyMode}
+						className={classnames('software-product-landing-view-top-block-col-upl', {'disabled': isReadOnlyMode})}
+						onClick={() => this.refs.fileInput.open()}/>
 				</div>
 			</div>
 		);
@@ -229,7 +226,7 @@ const ProductSummary = ({currentSoftwareProduct, onDetailsSelect}) => {
 
 const LicenseAgreement = ({licenseAgreementName}) => {
 	if (!licenseAgreementName) {
-		return (<div className='missing-license'><SVGIcon name='exclamationTriangleFull'/><div className='warning-text'>{i18n('Missing')}</div></div>);
+		return (<div className='missing-license'><SVGIcon color='warning' name='exclamationTriangleFull'/><div className='warning-text'>{i18n('Missing')}</div></div>);
 	}
 	return <div>{licenseAgreementName}</div>;
 };

@@ -49,11 +49,13 @@ import org.openecomp.sdc.vendorsoftwareproduct.ManualVspToscaManager;
 import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManager;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadDataEntity;
@@ -66,6 +68,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionE
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.VersionedVendorSoftwareProductInfo;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
@@ -144,6 +147,8 @@ public class VendorSoftwareProductManagerImplTest {
   private VendorSoftwareProductInfoDao vspInfoDaoMock;
   @Mock
   private ManualVspToscaManager manualVspToscaManager;
+  @Mock
+  private DeploymentFlavorDao deploymentFlavorDaoMock;
 
 
   @Spy
@@ -337,6 +342,50 @@ public class VendorSoftwareProductManagerImplTest {
     verify(vspInfoDaoMock).update(updatedVsp);
   }
 
+  @Test
+  public void testUpdateRemoveFG() {
+    VersionInfo versionInfo = new VersionInfo();
+    versionInfo.setActiveVersion(VERSION01);
+    doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
+        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+        VersionableEntityAction.Write);
+    List<String> fgs = new ArrayList<String>();
+    fgs.add("fg1"); fgs.add("fg2");
+    VspDetails existingVsp =
+        createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
+            "category",
+            "subCategory", "456", fgs);
+
+    List<String> updFgs = new ArrayList<String>();
+    updFgs.add("fg2");
+    VspDetails updatedVsp =
+        createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
+            "category_updated",
+            "subCategory", "456", updFgs);
+    existingVsp.setWritetimeMicroSeconds(8L);
+    doReturn(existingVsp).when(vspInfoDaoMock)
+        .get(any(VspDetails.class));
+    doNothing().when(vendorSoftwareProductManager)
+        .updateUniqueName(existingVsp.getName(), updatedVsp.getName());
+
+    DeploymentFlavorEntity dfEntity = new DeploymentFlavorEntity(VSP_ID,VERSION01,"DF_ID");
+    DeploymentFlavor flavor = new DeploymentFlavor();
+    flavor.setFeatureGroupId("fg1");
+    dfEntity.setDeploymentFlavorCompositionData(flavor);
+
+    List<DeploymentFlavorEntity> dfList = new ArrayList<DeploymentFlavorEntity>();
+    dfList.add(dfEntity);
+
+    doReturn(dfList).when(deploymentFlavorDaoMock).list(anyObject());
+
+    vendorSoftwareProductManager.updateVsp(updatedVsp, USER1);
+
+    verify(vendorSoftwareProductDaoMock).updateDeploymentFlavor(dfEntity);
+
+    Assert.assertNull(dfEntity.getDeploymentFlavorCompositionData().getFeatureGroupId());
+
+  }
+
   @Test(expectedExceptions = CoreException.class)
   public void testGetNonExistingVersion_negative() {
     Version notExistversion = new Version(43, 8);
@@ -453,7 +502,7 @@ public class VendorSoftwareProductManagerImplTest {
     Assert.assertEquals(undoCheckoutVersion, VERSION01);
   }
 
-
+/*
   @Test
   public void testSubmitWithMissingData() throws IOException {
     VersionInfo versionInfo = new VersionInfo();
@@ -494,6 +543,8 @@ public class VendorSoftwareProductManagerImplTest {
             USER1, null);
     verify(activityLogManagerMock, never()).addActionLog(any(ActivityLogEntity.class), eq(USER1));
   }
+
+  */
 
   // TODO: 3/15/2017 fix and enable
   //@Test

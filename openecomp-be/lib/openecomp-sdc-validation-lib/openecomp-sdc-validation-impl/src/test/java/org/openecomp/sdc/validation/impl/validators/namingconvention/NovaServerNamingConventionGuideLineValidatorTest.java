@@ -23,13 +23,13 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
   public void testHeatNovaServerMetaDataValidation() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatNovaServerMetaDataValidation/positive/");
+        "/org/openecomp/validation/validators/guideLineValidator/heatNovaServerMetaDataValidation/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
     messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatNovaServerMetaDataValidation/negative/");
+        "/org/openecomp/validation/validators/guideLineValidator/heatNovaServerMetaDataValidation/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
@@ -41,13 +41,13 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
   public void testNovaServerAvailabilityZoneName() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatNovaServerAvailabilityZoneName/positive");
+        "/org/openecomp/validation/validators/guideLineValidator/heatNovaServerAvailabilityZoneName/positive");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
     messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatNovaServerAvailabilityZoneName/negative");
+        "/org/openecomp/validation/validators/guideLineValidator/heatNovaServerAvailabilityZoneName/negative");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 3);
@@ -61,13 +61,13 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
   public void testNovaImageAndFlavorNames() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatNovaServerImageAndFlavor/positive");
+        "/org/openecomp/validation/validators/guideLineValidator/heatNovaServerImageAndFlavor/positive");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
     messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatNovaServerImageAndFlavor/negative");
+        "/org/openecomp/validation/validators/guideLineValidator/heatNovaServerImageAndFlavor/negative");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 2);
@@ -81,13 +81,13 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
   public void testNovaResourceNetworkUniqueRole() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatNovaNetworkUniqueRoleConvention/positive/");
+        "/org/openecomp/validation/validators/guideLineValidator/heatNovaNetworkUniqueRoleConvention/positive/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
     messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatNovaNetworkUniqueRoleConvention/negative/");
+        "/org/openecomp/validation/validators/guideLineValidator/heatNovaNetworkUniqueRoleConvention/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
@@ -99,13 +99,13 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
   public void testNovaServerName() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatNovaServerNameValidation/positive");
+        "/org/openecomp/validation/validators/guideLineValidator/heatNovaServerNameValidation/positive");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
     messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatNovaServerNameValidation/negative/");
+        "/org/openecomp/validation/validators/guideLineValidator/heatNovaServerNameValidation/negative/");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 2);
@@ -117,7 +117,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
   public void testVMNameSyncInNova() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/novaVMNameSync/input");
+        "/org/openecomp/validation/validators/guideLineValidator/novaVMNameSync/input");
 
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
@@ -138,7 +138,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
   public void testAvailabilityZoneName() throws IOException {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/att_naming_convention/availability_zone_name/input");
+        "/org/openecomp/validation/validators/naming_convention/availability_zone_name/input");
 
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);

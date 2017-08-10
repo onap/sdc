@@ -40,6 +40,7 @@ public class ApplicationConfigManagerTest {
   public static final String TEST_VALUE = "test-app-value";
   ApplicationConfigManager applicationConfigManager = new ApplicationConfigManagerImpl();
 
+  /*
   @Test
   public void testInsertIntoTable() {
     try {
@@ -83,4 +84,6 @@ public class ApplicationConfigManagerTest {
     Assert.assertNotNull(ACElist);
     Assert.assertEquals(ACElist.size(), 3);
   }
+
+  */
 }

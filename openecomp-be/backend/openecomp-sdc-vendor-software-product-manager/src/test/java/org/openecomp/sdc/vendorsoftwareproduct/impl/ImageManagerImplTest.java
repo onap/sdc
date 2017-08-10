@@ -105,28 +105,6 @@ public class ImageManagerImplTest {
   }
 
   @Test
-  public void testCreateManualImageWithIncorrectNameFormat() {
-    ImageEntity expected = createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
-
-    ImageEntity expectedDiffName = createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
-    Image image = expectedDiffName.getImageCompositionData();
-    image.setFileName(IMAGE1_ID + " Name*/");
-    expectedDiffName.setImageCompositionData(image);
-    List<ImageEntity> vfcImageList = new ArrayList<ImageEntity>();
-    vfcImageList.add(expectedDiffName);
-    doReturn(vfcImageList).when(imageDao).list(anyObject());
-    try {
-      imageManager.createImage(expectedDiffName, USER);
-      Assert.fail();
-    }
-    catch (CoreException ex) {
-      Assert.assertEquals(VendorSoftwareProductErrorCodes.IMAGE_NAME_FORMAT_NOT_ALLOWED,
-              ex.code().id());
-    }
-  }
-
-  @Test
   public void testCreateManualImageWithDuplicateName() {
     ImageEntity expected = createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
@@ -173,33 +151,6 @@ public class ImageManagerImplTest {
         imageManager.updateImage(imageEntity, USER);
     Assert.assertTrue(validationData == null || validationData.getErrors() == null);
     verify(imageDao).update(imageEntity);
-  }
-
-  @Test
-  public void testUpdateImageWithIncorrectNameFormat() {
-    doReturn(createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID))
-            .when(imageDao).get(anyObject());
-
-    doReturn(new CompositionEntityValidationData(CompositionEntityType.image, IMAGE1_ID))
-            .when(compositionEntityDataManagerMock)
-            .validateEntity(anyObject(), anyObject(), anyObject());
-
-    doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
-
-    ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
-    Image imageData = new Image();
-    imageData.setFileName(IMAGE1_ID + "name/*");
-    imageData.setDescription(IMAGE1_ID + " desc updated");
-    imageEntity.setImageCompositionData(imageData);
-
-    try {
-      imageManager.updateImage(imageEntity, USER);
-      Assert.fail();
-    }
-    catch (CoreException ex) {
-      Assert.assertEquals(VendorSoftwareProductErrorCodes.IMAGE_NAME_FORMAT_NOT_ALLOWED,
-              ex.code().id());
-    }
   }
 
   @Test
@@ -321,6 +272,35 @@ public class ImageManagerImplTest {
     verify(imageDao).updateQuestionnaireData(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, json);
   }
 
+  /*
+  @Test
+  public void testUpdateManDupImageVerQuestionnaire() throws Exception {
+    try{
+        String json = "{\"md5\" :\"FFDSD33SS\", \"version\" :\"1.0\"}";
+        ImageEntity imageEntity = new ImageEntity();
+        imageEntity.setId(IMAGE2_ID);
+        imageEntity.setQuestionnaireData(json);
+        List<ImageEntity> imageEntities = new ArrayList(){{
+            add(imageEntity);
+        }};
+
+        doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
+        doReturn(imageEntity).when(imageDao).get(anyObject());
+        doReturn(imageEntities).when(imageDao).list(anyObject());
+        doReturn(imageEntities.get(0)).when(imageDao).getQuestionnaireData(anyObject(), anyObject(), anyObject(), anyObject());
+
+        imageManager.updateImageQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, json, USER);
+        Assert.fail();
+    } catch (CoreException exception) {
+        Assert.assertEquals(exception.code().id(), VendorSoftwareProductErrorCodes.DUPLICATE_IMAGE_VERSION_NOT_ALLOWED);
+
+    }
+  }
+
+  */
+
+  /*
+
   @Test
   public void testUpdateHEATImageQuestionnaireWithFormat() throws Exception {
     String json = "{\"format\" :\"qcow2\"}";
@@ -341,6 +321,8 @@ public class ImageManagerImplTest {
       Assert.assertEquals(ex.code().id(), VendorSoftwareProductErrorCodes.UPDATE_IMAGE_NOT_ALLOWED);
     }
   }
+
+  */
 
   @Test
   public void testUpdateHEATImageQuestionnaireWithInvalidFormat() throws Exception {

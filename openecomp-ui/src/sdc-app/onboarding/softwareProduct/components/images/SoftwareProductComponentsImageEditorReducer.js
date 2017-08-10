@@ -30,7 +30,7 @@ export default (state = {}, action) => {
 					'fileName' : {
 						isValid: true,
 						errorText: '',
-						validations: [{type: 'required', data: true}, {type: 'validateName', data: true}]
+						validations: [{type: 'required', data: true}]
 					}
 				},
 				formName: forms.IMAGE_EDIT_FORM

@@ -216,7 +216,7 @@ topology_template:
           node: packet_internal_network
           relationship: tosca.relationships.network.LinksTo
     nested1_pattern_4:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-pattern-4
+      type: org.openecomp.resource.abstract.nodes.heat.pd_server
       directives:
       - substitutable
       properties:

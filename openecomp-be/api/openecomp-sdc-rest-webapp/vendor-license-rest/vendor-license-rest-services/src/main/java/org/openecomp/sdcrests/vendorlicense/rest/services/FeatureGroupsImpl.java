@@ -25,6 +25,7 @@ import org.openecomp.sdc.logging.context.MdcUtil;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
+import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
@@ -58,8 +59,8 @@ import java.util.HashSet;
 public class FeatureGroupsImpl implements FeatureGroups {
 
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  @Autowired
-  private VendorLicenseManager vendorLicenseManager;
+  private VendorLicenseManager vendorLicenseManager =
+      VendorLicenseManagerFactory.getInstance().createInterface();
 
   @Override
   public Response listFeatureGroups(String vlmId, String versionId, String user) {

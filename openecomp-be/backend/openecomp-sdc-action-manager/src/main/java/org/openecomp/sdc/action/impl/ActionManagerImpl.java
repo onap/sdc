@@ -68,6 +68,7 @@ import static org.openecomp.sdc.action.util.ActionUtil.actionLogPreProcessor;
 import static org.openecomp.sdc.action.util.ActionUtil.getCurrentTimeStampUtc;
 import static org.openecomp.sdc.versioning.dao.types.Version.VERSION_STRING_VIOLATION_MSG;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.action.types.*;
 import org.openecomp.sdc.logging.api.Logger;
@@ -142,7 +143,7 @@ public class ActionManagerImpl implements ActionManager {
 
   @Override
   public List<Action> getActionsByActionInvariantUuId(String invariantId) throws ActionException {
-    List<Action> actions = null;
+    List<Action> actions;
 
     log.debug(" entering getActionsByActionInvariantUuId with  invariantID = " + invariantId);
     actions = actionDao
@@ -291,6 +292,7 @@ public class ActionManagerImpl implements ActionManager {
       String errorDesc = String
           .format(ACTION_ENTITY_UNIQUE_VALUE_MSG, ActionConstants.UniqueValues.ACTION_NAME,
               action.getName());
+      log.error(errorDesc, exception);
       actionLogPostProcessor(StatusCode.ERROR, ACTION_ENTITY_UNIQUE_VALUE_ERROR, errorDesc, false);
       throw new ActionException(ACTION_ENTITY_UNIQUE_VALUE_ERROR, errorDesc);
     } finally {
@@ -470,7 +472,7 @@ public class ActionManagerImpl implements ActionManager {
       List<ActionArtifact> currentVersionArtifacts = action.getArtifacts();
 
       //Delete the artifacts from action_artifact table (if any)
-      if (currentVersionArtifacts != null && currentVersionArtifacts.size() > 0) {
+      if (CollectionUtils.isNotEmpty(currentVersionArtifacts) && currentVersionArtifacts.size() > 0) {
         for (ActionArtifact artifact : currentVersionArtifacts) {
           ActionArtifactEntity artifactDeleteEntity =
               new ActionArtifactEntity(artifact.getArtifactUuId(),

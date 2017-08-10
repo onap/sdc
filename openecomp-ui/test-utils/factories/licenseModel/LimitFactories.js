@@ -19,20 +19,20 @@ import {limitType} from 'sdc-app/onboarding/licenseModel/limits/LimitEditorConst
 import IdMixin from 'test-utils/factories/mixins/IdMixin.js';
 
 Factory.define('LimitBaseFactory')
-	.attrs({		
+	.attrs({
 		name: 'SpLimit1',
 		type: limitType.SERVICE_PROVIDER,
 		description: 'fgfg',
-		metric: 'CPU',
 		value: 45,
-		unit: 55,
 		aggregationFunction: 'Peak',
-		time: 'Day'		
+		time: 'Day'
 	});
 
 export const LimitPostFactory = new Factory()
+	.attrs({metric: {choice: 'BWDT', other: ''}, unit: {choice: 'GB', other: ''}})
 	.extend('LimitBaseFactory');
 
 export const LimitItemFactory = new Factory()
+	.attrs({metric: 'BWDT', unit:  'GB'})
 	.extend('LimitBaseFactory')
-	.extend(IdMixin);	
+	.extend(IdMixin);

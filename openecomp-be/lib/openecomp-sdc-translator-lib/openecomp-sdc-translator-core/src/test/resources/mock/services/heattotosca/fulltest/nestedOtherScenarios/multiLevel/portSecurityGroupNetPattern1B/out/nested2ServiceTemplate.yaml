@@ -89,7 +89,7 @@ topology_template:
       description: SM Image server
   node_templates:
     test_resourceGroup:
-      type: org.openecomp.resource.abstract.nodes.heat.nested3
+      type: org.openecomp.resource.abstract.nodes.heat.cmaui
       directives:
       - substitutable
       properties:

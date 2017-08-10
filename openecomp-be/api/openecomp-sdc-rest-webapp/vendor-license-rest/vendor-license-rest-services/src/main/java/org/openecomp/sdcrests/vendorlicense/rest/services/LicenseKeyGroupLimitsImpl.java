@@ -4,6 +4,7 @@ import org.openecomp.sdc.logging.context.MdcUtil;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
+import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -30,8 +31,8 @@ import javax.ws.rs.core.Response;
 public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
 
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  @Autowired
-  private VendorLicenseManager vendorLicenseManager;
+  private VendorLicenseManager vendorLicenseManager =
+      VendorLicenseManagerFactory.getInstance().createInterface();
 
   @Override
   public Response createLimit(LimitRequestDto request,

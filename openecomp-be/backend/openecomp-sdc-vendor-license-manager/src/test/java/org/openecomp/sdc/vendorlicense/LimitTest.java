@@ -76,9 +76,9 @@ public class LimitTest {
   private VendorLicenseManagerImpl vendorLicenseManagerImpl;
 
   public static LimitEntity createLimitEntity(String name, LimitType type, String description,
-                                       Version version, EntitlementMetric metric,
+                                       Version version, String metric,
                                        AggregationFunction aggregationFunction, int unit,
-                                       EntitlementTime time) {
+                                              String time) {
     LimitEntity limitEntity = new LimitEntity();
     limitEntity.setName(name);
     limitEntity.setType(type);
@@ -86,7 +86,7 @@ public class LimitTest {
     limitEntity.setVersion(version);
     limitEntity.setMetric(metric);
     limitEntity.setAggregationFunction(aggregationFunction);
-    limitEntity.setUnit(unit);
+    limitEntity.setUnit(String.valueOf(unit));
     limitEntity.setTime(time);
     return limitEntity;
   }
@@ -94,26 +94,15 @@ public class LimitTest {
   @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    try {
-      Field limitField = VendorLicenseManagerImpl.class.getDeclaredField("limitDao");
-      limitField.setAccessible(true);
-      Field modifiersField = Field.class.getDeclaredField("modifiers");
-      modifiersField.setAccessible(true);
-      modifiersField.setInt(limitField, limitField.getModifiers() & ~Modifier.FINAL);
-      limitField.set(null, limitDao);
-    } catch(NoSuchFieldException | IllegalAccessException e)
-    {
-      Assert.fail();
-    }
   }
 
   @Test
   public void testUpdateLimit() {
     Version version = new Version();
     LimitEntity limitEntity1 = createLimitEntity(LT1_NAME,LimitType.Vendor,"string",version,
-        EntitlementMetric.Core,AggregationFunction.Average,10,EntitlementTime.Hour);
+        "Core",AggregationFunction.Average,10,"Hour");
     LimitEntity limitEntity2 = createLimitEntity(LT1_NAME,LimitType.Vendor,"string",version,
-        EntitlementMetric.Tokens,AggregationFunction.Peak,12,EntitlementTime.Month);
+        "Tokens",AggregationFunction.Peak,12,"Month");
     VersionInfo info = new VersionInfo();
     info.getViewableVersions().add(version);
     info.setActiveVersion(version);
@@ -140,9 +129,9 @@ public class LimitTest {
     try {
       Version version = new Version();
       LimitEntity limitEntity1 = createLimitEntity(LT1_NAME,LimitType.Vendor,"string",version,
-          EntitlementMetric.Core,AggregationFunction.Average,10,EntitlementTime.Hour);
+          "Core",AggregationFunction.Average,10,"Hour");
       LimitEntity limitEntity2 = createLimitEntity(LT1_NAME,LimitType.Vendor,"string",version,
-          EntitlementMetric.Tokens,AggregationFunction.Peak,12,EntitlementTime.Month);
+          "Tokens",AggregationFunction.Peak,12,"Month");
       VersionInfo info = new VersionInfo();
       info.getViewableVersions().add(version);
       info.setActiveVersion(version);
@@ -170,7 +159,7 @@ public class LimitTest {
   public void testDeleteLimit() {
     Version version = new Version();
     LimitEntity limitEntity = createLimitEntity(LT1_NAME,LimitType.Vendor,"string",version,
-            EntitlementMetric.Core,AggregationFunction.Average,10,EntitlementTime.Hour);
+            "Core",AggregationFunction.Average,10,"Hour");
     VersionInfo info = new VersionInfo();
     info.getViewableVersions().add(version);
     info.setActiveVersion(version);
@@ -193,9 +182,9 @@ public class LimitTest {
     try {
       Version version = new Version();
       LimitEntity limitEntity1 = createLimitEntity(LT1_NAME,LimitType.Vendor,"string",version,
-          EntitlementMetric.Core,AggregationFunction.Average,10,EntitlementTime.Hour);
+          "Core",AggregationFunction.Average,10,"Hour");
       LimitEntity limitEntity2 = createLimitEntity(LT1_NAME,LimitType.Vendor,"string",version,
-          EntitlementMetric.Tokens,AggregationFunction.Peak,12,EntitlementTime.Month);
+          "Tokens",AggregationFunction.Peak,12,"Month");
       VersionInfo info = new VersionInfo();
       info.getViewableVersions().add(version);
       info.setActiveVersion(version);
@@ -291,11 +280,11 @@ public class LimitTest {
   public void testGet() {
     LimitEntity expected = createLimit(VLM_ID, VERSION, EPLKG_ID, LIMIT1_ID);
     expected.setType(LimitType.Vendor);
-    expected.setValue(100);
-    expected.setUnit(10);
+    expected.setValue(String.valueOf(100));
+    expected.setUnit(String.valueOf(10));
     expected.setAggregationFunction(AggregationFunction.Average);
-    expected.setMetric(EntitlementMetric.CPU);
-    expected.setTime(EntitlementTime.Day);
+    expected.setMetric("BWTH");
+    expected.setTime("Day");
 
     doReturn(true).when(limitDao).isLimitPresent(anyObject());
     doReturn(expected).when(limitDao).get(anyObject());
@@ -313,7 +302,7 @@ public class LimitTest {
     Assert.assertEquals(actual.getValue(), expected.getValue());
     Assert.assertEquals(actual.getAggregationFunction().name(), expected.getAggregationFunction()
         .name());
-    Assert.assertEquals(actual.getMetric().name(), expected.getMetric().name());
+    Assert.assertEquals(actual.getMetric(), expected.getMetric());
 
   }
 
@@ -322,11 +311,11 @@ public class LimitTest {
     limitEntity.setName(limitId + " name");
     limitEntity.setDescription(limitId + " desc");
     limitEntity.setVersion(version);
-    limitEntity.setMetric(EntitlementMetric.CPU);
+    limitEntity.setMetric("BWTH");
     limitEntity.setAggregationFunction(AggregationFunction.Average);
-    limitEntity.setUnit(10);
-    limitEntity.setTime(EntitlementTime.Day);
-    limitEntity.setValue(100);
+    limitEntity.setUnit(String.valueOf(10));
+    limitEntity.setTime("Day");
+    limitEntity.setValue(String.valueOf(100));
     return limitEntity;
   }
 }

@@ -385,27 +385,20 @@ public class ComputeManagerImpl implements ComputeManager {
     }
   }
 
-  private void validateVfcCompute(ComputeEntity compute, Collection<ComputeEntity> vfcComputeList, String event) {
-      if(!compute.getComputeCompositionData().getName().matches(VendorSoftwareProductConstants.NAME_PATTERN))
-      {
-          ErrorCode errorCode = ComputeErrorBuilder.getComputeNameFormatErrorBuilder(
-                  VendorSoftwareProductConstants.NAME_PATTERN);
-          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-                  event, ErrorLevel.ERROR.name(),
-                  errorCode.id(),errorCode.message());
-          throw new CoreException(errorCode);
-      }
+  private void validateVfcCompute(ComputeEntity compute, Collection<ComputeEntity> vfcComputeList,
+                                  String event) {
+    if (isComputeNameDuplicate(vfcComputeList,compute.getComputeCompositionData().getName(),
+        compute.getId())) {
+      ErrorCode errorCode = DuplicateComputeInComponentErrorBuilder
+          .getDuplicateComputeNameErrorBuilder(compute.getComputeCompositionData().getName(),
+              compute.getComponentId());
 
-      if (isComputeNameDuplicate(vfcComputeList,compute.getComputeCompositionData().getName(), compute.getId())) {
-          ErrorCode errorCode = DuplicateComputeInComponentErrorBuilder.getDuplicateComputeNameErrorBuilder(compute
-              .getComputeCompositionData().getName(), compute.getComponentId());
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          event, ErrorLevel.ERROR.name(),
+          errorCode.id(),errorCode.message());
 
-          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              event, ErrorLevel.ERROR.name(),
-              errorCode.id(),errorCode.message());
-
-          throw new CoreException(errorCode);
-      }
+      throw new CoreException(errorCode);
+    }
   }
 
   private boolean isComputeNameDuplicate(Collection<ComputeEntity> computes, String name, String computeId) {
