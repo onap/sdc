@@ -9,6 +9,8 @@
 
 	<properties>
 		<jetty-version>9.2.10.v20150310</jetty-version>
+		<docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
+		<docker.latest.tag>${project.version}-latest</docker.latest.tag>
 	</properties>
 
 	<dependencies>
@@ -107,4 +109,115 @@
 
 		</plugins>
 	</build>
+	
+	<profiles>
+		<profile>
+			<id>docker-staging</id>
+			<properties>
+				<docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>
+				<docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>docker</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.0.2</version>
+						<executions>
+							<execution>
+								<id>copy-resources-simulator</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/sdc-simulator</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${basedir}/target</directory>
+											<includes>
+												<include>WSSimulator.war</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+
+
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.19.1</version>
+
+						<configuration>
+							<dockerHost>http://localhost:2375</dockerHost>
+							<verbose>true</verbose>
+							<apiVersion>1.23</apiVersion>
+
+							<images>
+
+								<!-- Build simulator image -->
+								<image>
+									<name>${basedir}/sdc-simulator</name>
+									<alias>sdc-simulator</alias>
+									<build>
+										<cleanup>try</cleanup>
+										<dockerFileDir>${basedir}/sdc-simulator</dockerFileDir>
+										<tags>
+											<tag>${docker.tag}</tag>
+											<tag>${docker.latest.tag}</tag>
+											<tag>1.1-STAGING-latest</tag>
+										</tags>
+									</build>
+								</image>
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+								<id>clean-images</id>
+								<phase>pre-clean</phase>
+								<goals>
+									<goal>remove</goal>
+								</goals>
+								<configuration>
+								<removeAll>true</removeAll>
+								<image>${basedir}/sdc-simulator</image>
+								</configuration>
+							</execution>
+
+							<execution>
+								<id>generate-images</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+
+							<execution>
+                                <id>push-images</id>
+                                <phase>deploy</phase>
+                                <goals>
+									<goal>build</goal>
+									<goal>push</goal>
+                                </goals>
+                                <configuration>
+                                <image>${basedir}/sdc-simulator</image>
+                                </configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
