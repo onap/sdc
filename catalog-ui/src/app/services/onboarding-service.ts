@@ -44,11 +44,21 @@ export class OnboardingService implements IOnboardingService {
         this.api = sdcConfig.api;
     }
 
-    getOnboardingComponents = ():ng.IPromise<Array<IComponent>> => {
-        let defer = this.$q.defer<Array<IComponent>>();
+    getOnboardingVSPs = ():ng.IPromise<Array<ICsarComponent>> =>{
+        let defer = this.$q.defer<Array<ICsarComponent>>();
         this.$http.get(this.api.GET_onboarding)
             .then((response:any) => {
-                let onboardingComponents:Array<ICsarComponent> = response.data.results;
+                defer.resolve(response.data.results);
+            },(response) => {
+                defer.reject(response);
+            });
+
+        return defer.promise;
+    };
+
+    getOnboardingComponents = ():ng.IPromise<Array<IComponent>> => {
+        let defer = this.$q.defer<Array<IComponent>>();
+        this.getOnboardingVSPs().then((onboardingComponents:Array<ICsarComponent>) => {
                 let componentsList:Array<IComponent> = new Array();
 
                 onboardingComponents.forEach((obc:ICsarComponent) => {

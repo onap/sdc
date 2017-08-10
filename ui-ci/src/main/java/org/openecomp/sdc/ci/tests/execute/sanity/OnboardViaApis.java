@@ -28,7 +28,6 @@ import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +39,7 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.dataProvider.OnbordingDataProviders;
 import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
@@ -53,7 +53,6 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.clearspring.analytics.util.Pair;
@@ -68,31 +67,6 @@ public class OnboardViaApis{
 
 	private static final String FULL_PATH = "C://tmp//CSARs//";
 	
-	public static Object[][] provideData(List<String> fileNamesFromFolder, String filepath) {
-		Object[][] arObject = new Object[fileNamesFromFolder.size()][];
-
-		int index = 0;
-		for (Object obj : fileNamesFromFolder) {
-			arObject[index++] = new Object[] { filepath, obj };
-		}
-		return arObject;
-	}
-
-	@DataProvider(name = "VNF_List" , parallel = false)
-	private static final Object[][] VnfList() throws Exception {
-		String filepath = FileHandling.getVnfRepositoryPath();
-		
-//		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
-		List<String> fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
-		List<String> exludeVnfList = Arrays.asList("2016-197_vscp_vscp-fw_1610_e2e.zip", "2016-281_vProbes_BE_11_1_f_30_1610_e2e.zip", 
-				"2016-282_vProbes_FE_11_1_f_30_1610_e2e.zip", "2016-044_vfw_fnat_30_1607_e2e.zip", "2017-376_vMOG_11_1.zip", "vMOG.zip", 
-				"vMRF_USP_AIC3.0_1702.zip", "2016-211_vprobesbe_vprobes_be_30_1610_e2e.zip", "2016-005_vprobesfe_vprobes_fe_30_1607_e2e.zip", 
-				"vMRF_RTT.zip", "2016-006_vvm_vvm_30_1607_e2e.zip", "2016-001_vvm_vvm_30_1607_e2e.zip");
-		fileNamesFromFolder.removeAll(exludeVnfList);
-		System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
-		return provideData(fileNamesFromFolder, filepath);
-	}
-
 	
 //-------------------------------------------------------------------------------------------------------
 	User sdncDesignerDetails1 = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
@@ -109,7 +83,7 @@ public class OnboardViaApis{
 		resourceDetails = ElementFactory.getDefaultResource();
 	}
 		
-	@Test(dataProvider = "VNF_List")
+	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")
 	public void onboardVNFTestViaApis(String filepath, String vnfFile) throws Exception, Throwable {
 		Service service = null;
 		String fullFileName = FULL_PATH + vnfFile + ".csar";

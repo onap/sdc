@@ -68,6 +68,10 @@ public class ToscaTopologyTemplateDefinition {
 		this.inputs = inputs;
 	}
 
+	public void addInputs(Map<String, Object> inputs) {
+		this.inputs.putAll(inputs);
+	}
+	
 	public Map<String, ToscaNodeTemplatesTopologyTemplateDefinition> getNode_templates() {
 		return node_templates;
 	}

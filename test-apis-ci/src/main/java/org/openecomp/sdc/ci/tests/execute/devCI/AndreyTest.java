@@ -30,9 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaTopologyTemplateDefinition;
 import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
@@ -54,6 +51,11 @@ public class AndreyTest {
 	public static void main(String[] args) throws Exception {
 		ToscaDefinition toscaMainAmdocsDefinition, toscaMainVfDefinition, toscaMainServiceDefinition;
 		File filesFolder = new File("C:/Users/al714h/Downloads/Design/");
+		File genericFilesFolder = new File("C:/Git_work/sdc/catalog-be/src/main/resources/import/tosca/heat-types/");
+		File genericVF = new File ("/Generic_VF/Generic_VF.yml");
+		File genericVFC = new File ("/Generic_VFC/Generic_VFC.yml");
+		File genericPNF = new File ("/Generic_PNF/Generic_PNF.yml");
+		File genericService = new File ("/Generic_Service/Generic_Service.yml");
 		File amdocsCsarFileName = new File("/77e6b842669f441db20a83489da3f4be.csar");
 		File VfCsarFileName = new File("/resource-Civfonboarded2016012VmxAv301072E2e1424cb9d-csar.csar");
 		File serviceCsarFileName = new File("/service-Ciservicefeba0521131d-csar.csar");
@@ -68,16 +70,19 @@ public class AndreyTest {
 		toscaMainAmdocsDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + amdocsCsarFileName));
 		toscaMainVfDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + VfCsarFileName));
 		toscaMainServiceDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + serviceCsarFileName));
-		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, "Generic_VF", "1.0");
-		ToscaTopologyTemplateDefinition topology_template = toscaMainAmdocsDefinition.getTopology_template();
-		Map<String, Object> newInput = new HashMap<String, Object>();
-		for (PropertyDefinition property : resource.getProperties()) {
-			newInput.put(property.getLabel(),property);
-		}
-		topology_template.setInputs(newInput);
+//		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, "Generic_VF", "1.0");
+		ToscaTopologyTemplateDefinition topologyTemplate = toscaMainAmdocsDefinition.getTopology_template();
+//		FileHandling.parseYamlFileToMapByPattern("","");
 		
+//		Map<String, Object> newInput = new HashMap<String, Object>();
+//		for (PropertyDefinition property : resource.getProperties()) {
+//			newInput.put(property.getName(),property);
+//		}
 		
-		List<PropertyDefinition> properties = resource.getProperties();
+//		topologyTemplate.addInputs(newInput);
+//		
+//		
+//		List<PropertyDefinition> properties = resource.getProperties();
 //        File path = new File("C:/Data/FileToParse/Definitions/resource-Civfonboarded2016006VvmVvm301607E2100a9b04-template.yml");
 //        File csarPath = new File("C:/Data/D2.0/TOSCA_Ex/Nested.csar");
 

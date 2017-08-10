@@ -18,17 +18,60 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.dao.cassandra;
+package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Param;
-import com.datastax.driver.mapping.annotations.Query;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
-@Accessor
-public interface SdcSchemaFilesAccessor {
-	@Query("SELECT * FROM sdcartifact.sdcschemafiles WHERE SDCRELEASENUM = :sdcreleasenum AND CONFORMANCELEVEL = :conformancelevel ORDER BY timestamp DESC")
-	Result<SdcSchemaFilesData> getSpecificSdcSchemaFiles(@Param("sdcreleasenum") String sdcreleasenum, @Param("conformancelevel") String conformancelevel);
+public class ToscaValidation{
+	
+	
+	@BeforeClass
+	public void precondition(){
+		
+		Map<String, Map<String, Object>> expected = new HashMap<String, Map<String, Object>>();
+		
+		//import amdocs VNF and download csar
+		
+		//parse downloaded csar and add it to expected object
+		
+		//create VF base on VNF imported from previous step - declare all inputs
+		
+		//certify VF  and download csar
+		
+		//parse downloaded csar and add it to expected object
+		
+		//create service add VF  - declare all inputs
+		
+		//certify service and download csar
+		
+		//parse downloaded csar and add it to expected object
+		
+				
+	}
+	
+	@Test
+	public void validateMetaData(){
+		
+		
+		
+		
+	}
+	
+	@Test
+	public void validatePropertiesInputs(){
+		
+		
+		
+	}
+	
+	
+	
+	
+
+	
+
 }

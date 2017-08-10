@@ -526,11 +526,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		String yamlFileName = toscaYamlCsarStatus.left().value().getKey();
 		String yamlFileContents = toscaYamlCsarStatus.left().value().getValue();
-		CsarInfo csarInfo = new CsarInfo(newRresource.getName(), user, csarUUID, csar.left().value(), true);
-		Map<String, NodeTypeInfo> nodeTypesInfo = extractNodeTypesInfo(csar.left().value(), yamlFileContents);
-		Either<Resource, ResponseFormat>  result =null;
+		CsarInfo csarInfo = new CsarInfo(newRresource.getName(), user, csarUUID, csar.left().value(), yamlFileContents, true);
+		Map<String, NodeTypeInfo> nodeTypesInfo = extractNodeTypesInfo(csarInfo);
+		Either<Resource, ResponseFormat>  result = null;
 		
-		Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo.getCsar(), csarInfo.getCsarUUID(), yamlFileName, oldRresource, csarInfo.getModifier());
+		Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo, oldRresource);
 		if (findNodeTypesArtifactsToHandleRes.isRight()) {
 			log.debug("failed to find node types for update with artifacts during import csar {}. ", csarInfo.getCsarUUID());
 			result = Either.right(findNodeTypesArtifactsToHandleRes.right().value());
@@ -566,14 +566,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	private Either<Resource, ResponseFormat> updateResourceFromYaml(Resource oldRresource, Resource newRresource, AuditingActionEnum updateResource, List<ArtifactDefinition> createdArtifacts,
 			boolean isUpdateYaml, String yamlFileName,	String yamlFileContent, CsarInfo csarInfo, Map<String, NodeTypeInfo> nodeTypesInfo,
 			Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle, String nodeName) {
-		Either<Resource, ResponseFormat> result = null;
+		Either<Resource, ResponseFormat> result;
 		Either<Map<String, Resource>, ResponseFormat> parseNodeTypeInfoYamlEither;
 		boolean inTransaction = true;
 		boolean shouldLock = false;
 		
-			Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> prepareForUpdate = null;
-			Resource preparedResource = null;
-			Either<ParsedToscaYamlInfo, ResponseFormat> uploadComponentInstanceInfoMap = parseResourceInfoFromYaml(yamlFileName, newRresource, yamlFileContent, csarInfo.getModifier(), csarInfo.getCreatedNodesToscaResourceNames(), nodeTypesInfo, nodeName);
+			Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> prepareForUpdate;
+			Resource preparedResource;
+			Either<ParsedToscaYamlInfo, ResponseFormat> uploadComponentInstanceInfoMap = parseResourceInfoFromYaml(yamlFileName, newRresource, yamlFileContent, csarInfo.getCreatedNodesToscaResourceNames(), nodeTypesInfo, nodeName);
 			if (uploadComponentInstanceInfoMap.isRight()) {
 				ResponseFormat responseFormat = uploadComponentInstanceInfoMap.right().value();
 				componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), newRresource, "", "", updateResource, null);
@@ -687,18 +687,18 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			return result;
 
 	}
-	private Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(Map<String, NodeTypeInfo> nodeTypesInfo, Map<String, byte[]> csar, String csarUUID, String yamlFileName, Resource oldResource, User user) {
+	private Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo, Resource oldResource) {
 
-		Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils.extractVfcsArtifactsFromCsar(csar);
+		Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils.extractVfcsArtifactsFromCsar(csarInfo.getCsar());
 		Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
 		Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> nodeTypesArtifactsToHandleRes;
 
 		try {
 			nodeTypesArtifactsToHandleRes = Either.left(nodeTypesArtifactsToHandle);
-			Map<String, String> extractedVfcToscaNames = extractVfcToscaNames(nodeTypesInfo, yamlFileName, oldResource.getName());
+			Map<String, String> extractedVfcToscaNames = extractVfcToscaNames(nodeTypesInfo, oldResource.getName(), csarInfo);
 			Either<EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>, ResponseFormat> curNodeTypeArtifactsToHandleRes;
 			EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> curNodeTypeArtifactsToHandle = null;
-			log.debug("Going to fetch node types for resource with name {} during import csar with UUID {}. ", oldResource.getName(), csarUUID);
+			log.debug("Going to fetch node types for resource with name {} during import csar with UUID {}. ", oldResource.getName(), csarInfo.getCsarUUID());
 
 			for (Entry<String, String> currVfcToscaNameEntry : extractedVfcToscaNames.entrySet()) {
 				String currVfcToscaName = currVfcToscaNameEntry.getValue();
@@ -709,8 +709,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				Resource curNodeType = null;
 				if (curVfcRes.isRight() && curVfcRes.right().value() != StorageOperationStatus.NOT_FOUND) {
 					log.debug("Error occured during fetching node type with tosca name {}, error: {}", currVfcToscaName, curVfcRes.right().value());
-					ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(curVfcRes.right().value()), csarUUID);
-					componentsUtils.auditResource(responseFormat, user, oldResource, "", "", AuditingActionEnum.CREATE_RESOURCE, null);
+					ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(curVfcRes.right().value()), csarInfo.getCsarUUID());
+					componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), oldResource, "", "", AuditingActionEnum.CREATE_RESOURCE, null);
 					nodeTypesArtifactsToHandleRes = Either.right(responseFormat);
 					break;
 				} else if (curVfcRes.isLeft()) {
@@ -905,10 +905,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return handleNodeTypeArtifactsRes;
 	}
 
-	private Map<String, String> extractVfcToscaNames(Map<String, NodeTypeInfo> nodeTypesInfo, String yamlFileName, String vfResourceName) {
+	private Map<String, String> extractVfcToscaNames(Map<String, NodeTypeInfo> nodeTypesInfo, String vfResourceName, CsarInfo csarInfo) {
 		Map<String, String> vfcToscaNames = new HashMap<>();
 			
-		Map<String, Object> nodes = extractAllNodes(nodeTypesInfo);
+		Map<String, Object> nodes = extractAllNodes(nodeTypesInfo, csarInfo);
 		if (!nodes.isEmpty()) {
 			Iterator<Entry<String, Object>> nodesNameEntry = nodes.entrySet().iterator();
 			while (nodesNameEntry.hasNext()) {
@@ -920,15 +920,20 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return vfcToscaNames;
 	}
 
-	private Map<String, Object> extractAllNodes(Map<String, NodeTypeInfo> nodeTypesInfo) {
+	private Map<String, Object> extractAllNodes(Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo) {
 		Map<String, Object> nodes = new HashMap<>();
 		for(NodeTypeInfo nodeTypeInfo: nodeTypesInfo.values()){
-			Either<Map<String, Object>, ResultStatusEnum> eitherNodeTypes = ImportUtils.findFirstToscaMapElement(nodeTypeInfo.getMappedToscaTemplate(), ToscaTagNamesEnum.NODE_TYPES);
-			if (eitherNodeTypes.isLeft()) {
-				nodes.putAll(eitherNodeTypes.left().value());
-			}
+			extractNodeTypes(nodes, nodeTypeInfo.getMappedToscaTemplate());
 		}
+		extractNodeTypes(nodes, csarInfo.getMappedToscaMainTemplate());
 		return nodes;
+	}
+
+	private void extractNodeTypes(Map<String, Object> nodes, Map<String, Object> mappedToscaTemplate) {
+		Either<Map<String, Object>, ResultStatusEnum> eitherNodeTypes = ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TYPES);
+		if (eitherNodeTypes.isLeft()) {
+			nodes.putAll(eitherNodeTypes.left().value());
+		}
 	}
 
 	public Either<Resource, ResponseFormat> createResourceFromCsar(Resource resource, User user, Either<Map<String, byte[]>, StorageOperationStatus> csarUIPayload, String csarUUID) {
@@ -956,9 +961,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		String yamlFileContents = toscaYamlCsarStatus.left().value().getValue();
 		log.trace("YAML topology file found in CSAR, file name: {}, contents: {}", yamlFileName, yamlFileContents);
 
-		Map<String, NodeTypeInfo> nodeTypesInfo = extractNodeTypesInfo(csar.left().value(), yamlFileContents);
-		CsarInfo csarInfo = new CsarInfo(resource.getName(), user, csarUUID, csar.left().value(), false);
-		Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo.getCsar(), csarInfo.getCsarUUID(), yamlFileName, resource, csarInfo.getModifier());
+		CsarInfo csarInfo = new CsarInfo(resource.getName(), user, csarUUID, csar.left().value(), yamlFileContents, false);
+		Map<String, NodeTypeInfo> nodeTypesInfo = extractNodeTypesInfo(csarInfo);
+		Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo, resource);
 		if (findNodeTypesArtifactsToHandleRes.isRight()) {
 			log.debug("failed to find node types for update with artifacts during import csar {}. ", csarInfo.getCsarUUID());
 			return Either.right(findNodeTypesArtifactsToHandleRes.right().value());
@@ -974,60 +979,69 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return Either.left(vfResource);
 	}
 
-	@SuppressWarnings("unchecked")
-	private Map<String, NodeTypeInfo> extractNodeTypesInfo(Map<String, byte[]> csar, String yamlFileContent) {
+	private Map<String, NodeTypeInfo> extractNodeTypesInfo(CsarInfo csarInfo) {
 		Map<String, NodeTypeInfo> nodeTypesInfo = new HashMap<>();
 		List<Entry<String, byte[]>> globalSubstitutes = new ArrayList<>();
-		for (Map.Entry<String, byte[]> entry : csar.entrySet()) {
-			if (Pattern.compile(CsarUtils.SERVICE_TEMPLATE_PATH_PATTERN).matcher(entry.getKey()).matches()) {
-				if (!isGlobalSubstitute(entry.getKey())) {
-					String yamlFileContents = new String(entry.getValue());
-					Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(yamlFileContents);
-					Either<Object, ResultStatusEnum> substitutionMappingsEither = ImportUtils.findToscaElement(mappedToscaTemplate, ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS, ToscaElementTypeEnum.MAP);
-					if (substitutionMappingsEither.isLeft()) {
-						Map<String, Object> substitutionMappings = (Map<String, Object>) substitutionMappingsEither.left().value();
-						if (substitutionMappings.containsKey(ToscaTagNamesEnum.NODE_TYPE.getElementName())) {
-							NodeTypeInfo nodeTypeInfo = new NodeTypeInfo();
-							nodeTypeInfo.setType((String) substitutionMappings.get(ToscaTagNamesEnum.NODE_TYPE.getElementName()));
-							nodeTypeInfo.setTemplateFileName(entry.getKey());
-							nodeTypeInfo.setMappedToscaTemplate(mappedToscaTemplate);
-							nodeTypesInfo.put(nodeTypeInfo.getType(), nodeTypeInfo);
-						}
-					}
-				} else {
-					globalSubstitutes.add(entry);
-				}
-			}
+		for (Map.Entry<String, byte[]> entry : csarInfo.getCsar().entrySet()) {
+			extractNodeTypeInfo(nodeTypesInfo, globalSubstitutes, entry);
 		}
 		if (CollectionUtils.isNotEmpty(globalSubstitutes)) {
-			for (Map.Entry<String, byte[]> entry : globalSubstitutes) {
-				String yamlFileContents = new String(entry.getValue());
-				Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(yamlFileContents);
-				Either<Object, ResultStatusEnum> nodeTypesEither = ImportUtils.findToscaElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TYPES, ToscaElementTypeEnum.MAP);
-				if (nodeTypesEither.isLeft()) {
-					Map<String, Object> nodeTypes = (Map<String, Object>) nodeTypesEither.left().value();
-					for (Entry<String, Object> nodeType : nodeTypes.entrySet()) {
-						Map<String, Object> nodeTypeMap = (Map<String, Object>) nodeType.getValue();
-						if (nodeTypeMap.containsKey(ToscaTagNamesEnum.DERIVED_FROM.getElementName())) {
-							if (nodeTypesInfo.containsKey(nodeType.getKey())) {
-								NodeTypeInfo nodeTypeInfo = nodeTypesInfo.get(nodeType.getKey());
-								List<String> derivedFrom = new ArrayList<>();
-								derivedFrom.add((String) nodeTypeMap.get(ToscaTagNamesEnum.DERIVED_FROM.getElementName()));
-								nodeTypeInfo.setDerivedFrom(derivedFrom);
-							}
+			setDerivedFrom(nodeTypesInfo, globalSubstitutes);
+		}
+		markNestedVfc(csarInfo.getMappedToscaMainTemplate(), nodeTypesInfo);
+		return nodeTypesInfo;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void setDerivedFrom(Map<String, NodeTypeInfo> nodeTypesInfo, List<Entry<String, byte[]>> globalSubstitutes) {
+		for (Map.Entry<String, byte[]> entry : globalSubstitutes) {
+			String yamlFileContents = new String(entry.getValue());
+			Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(yamlFileContents);
+			Either<Object, ResultStatusEnum> nodeTypesEither = ImportUtils.findToscaElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TYPES, ToscaElementTypeEnum.MAP);
+			if (nodeTypesEither.isLeft()) {
+				Map<String, Object> nodeTypes = (Map<String, Object>) nodeTypesEither.left().value();
+				for (Entry<String, Object> nodeType : nodeTypes.entrySet()) {
+					Map<String, Object> nodeTypeMap = (Map<String, Object>) nodeType.getValue();
+					if (nodeTypeMap.containsKey(ToscaTagNamesEnum.DERIVED_FROM.getElementName())) {
+						if (nodeTypesInfo.containsKey(nodeType.getKey())) {
+							NodeTypeInfo nodeTypeInfo = nodeTypesInfo.get(nodeType.getKey());
+							List<String> derivedFrom = new ArrayList<>();
+							derivedFrom.add((String) nodeTypeMap.get(ToscaTagNamesEnum.DERIVED_FROM.getElementName()));
+							nodeTypeInfo.setDerivedFrom(derivedFrom);
 						}
 					}
 				}
 			}
 		}
-		markNestedVfc(yamlFileContent, nodeTypesInfo);
-		return nodeTypesInfo;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void extractNodeTypeInfo(Map<String, NodeTypeInfo> nodeTypesInfo,
+			List<Entry<String, byte[]>> globalSubstitutes, Map.Entry<String, byte[]> entry) {
+		if (Pattern.compile(CsarUtils.SERVICE_TEMPLATE_PATH_PATTERN).matcher(entry.getKey()).matches()) {
+			if (!isGlobalSubstitute(entry.getKey())) {
+				String yamlFileContents = new String(entry.getValue());
+				Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(yamlFileContents);
+				Either<Object, ResultStatusEnum> substitutionMappingsEither = ImportUtils.findToscaElement(mappedToscaTemplate, ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS, ToscaElementTypeEnum.MAP);
+				if (substitutionMappingsEither.isLeft()) {
+					Map<String, Object> substitutionMappings = (Map<String, Object>) substitutionMappingsEither.left().value();
+					if (substitutionMappings.containsKey(ToscaTagNamesEnum.NODE_TYPE.getElementName())) {
+						NodeTypeInfo nodeTypeInfo = new NodeTypeInfo();
+						nodeTypeInfo.setType((String) substitutionMappings.get(ToscaTagNamesEnum.NODE_TYPE.getElementName()));
+						nodeTypeInfo.setTemplateFileName(entry.getKey());
+						nodeTypeInfo.setMappedToscaTemplate(mappedToscaTemplate);
+						nodeTypesInfo.put(nodeTypeInfo.getType(), nodeTypeInfo);
+					}
+				}
+			} else {
+				globalSubstitutes.add(entry);
+			}
+		}
 	}
 
 
 	@SuppressWarnings("unchecked")
-	private void markNestedVfc(String yamlFileContent, Map<String, NodeTypeInfo> nodeTypesInfo) {
-		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(yamlFileContent);
+	private void markNestedVfc(Map<String, Object> mappedToscaTemplate, Map<String, NodeTypeInfo> nodeTypesInfo) {
 		Either<Object, ResultStatusEnum> nodeTemplatesEither = ImportUtils.findToscaElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TEMPLATES, ToscaElementTypeEnum.MAP);
 		if (nodeTemplatesEither.isLeft()) {
 			Map<String, Object> nodeTemplates = (Map<String, Object>) nodeTemplatesEither.left().value();
@@ -1110,7 +1124,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		List<ArtifactDefinition> createdArtifacts = new ArrayList<ArtifactDefinition>();
 		log.trace("************* createResourceFromYaml before parse yaml ");
-		Either<ParsedToscaYamlInfo, ResponseFormat> parseResourceInfoFromYamlEither = parseResourceInfoFromYaml(yamlName, resource, topologyTemplateYaml, csarInfo.getModifier(), csarInfo.getCreatedNodesToscaResourceNames(), nodeTypesInfo, nodeName);
+		Either<ParsedToscaYamlInfo, ResponseFormat> parseResourceInfoFromYamlEither = parseResourceInfoFromYaml(yamlName, resource, topologyTemplateYaml, csarInfo.getCreatedNodesToscaResourceNames(), nodeTypesInfo, nodeName);
 		if (parseResourceInfoFromYamlEither.isRight()) {
 			ResponseFormat responseFormat = parseResourceInfoFromYamlEither.right().value();
 			componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, "", "", AuditingActionEnum.IMPORT_RESOURCE, null);
@@ -1134,7 +1148,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	}
 
-	public Either<Map<String, Resource>, ResponseFormat> createResourcesFromYamlNodeTypesList(String yamlName, Resource resource, String resourceYml, Map<String, Object> mappedToscaTemplate, boolean needLock,
+	public Either<Map<String, Resource>, ResponseFormat> createResourcesFromYamlNodeTypesList(String yamlName, Resource resource, Map<String, Object> mappedToscaTemplate, boolean needLock,
 																							  Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
 																							  Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo) {
 
@@ -1187,11 +1201,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		Either<Resource, ResponseFormat> handleNestedVfcRes = Either.left(resource);
 		String yamlName = nodesInfo.get(nodeName).getTemplateFileName();
-		String yamlContent =  new String(csarInfo.getCsar().get(yamlName));
 		Map<String, Object> nestedVfcJsonMap = nodesInfo.get(nodeName).getMappedToscaTemplate();
 
 		log.debug("************* Going to create node types from yaml {}", yamlName);
-		Either<Map<String, Resource>, ResponseFormat> createNodeTypesRes = 	createResourcesFromYamlNodeTypesList(yamlName, resource, yamlContent, 
+		Either<Map<String, Resource>, ResponseFormat> createNodeTypesRes = 	createResourcesFromYamlNodeTypesList(yamlName, resource,
 						nestedVfcJsonMap, false, nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo);
 		if (createNodeTypesRes.isRight()) {
 			log.debug("Failed to create node types from yaml {}. Status is {}", yamlName, createNodeTypesRes.right().value());
@@ -1201,13 +1214,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		
 		if (nestedVfcJsonMap.containsKey(ToscaTagNamesEnum.TOPOLOGY_TEMPLATE.getElementName())) {
 			log.debug("************* Going to handle complex VFC from yaml {}", yamlName);
-			handleNestedVfcRes = handleComplexVfc(resource, nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo, nodeName, yamlName, yamlContent);
+			handleNestedVfcRes = handleComplexVfc(resource, nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo, nodeName, yamlName);
 		}
 		return handleNestedVfcRes;
 	}
 
 	private Either<Resource, ResponseFormat> handleComplexVfc(Resource resource, Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle, List<ArtifactDefinition> createdArtifacts,
-			Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo, String nodeName, String yamlName, String yamlContent) {
+			Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo, String nodeName, String yamlName) {
 		
 		Either<Resource, ResponseFormat> result = null;
 		Resource  oldComplexVfc = null;
@@ -1229,7 +1242,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			}
 		}
 		if(result == null){
-			result = handleComplexVfc(nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo, nodeName, yamlName, yamlContent, oldComplexVfc, newComplexVfc);
+			result = handleComplexVfc(nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo, nodeName, yamlName, oldComplexVfc, newComplexVfc);
 		}
 		if(result.isLeft()){
 			newComplexVfc = result.left().value();
@@ -1249,11 +1262,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> handleComplexVfc(Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle, List<ArtifactDefinition> createdArtifacts, Map<String, NodeTypeInfo> nodesInfo,
-			CsarInfo csarInfo, String nodeName, String yamlName, String yamlContent, Resource oldComplexVfc, Resource newComplexVfc) {
+			CsarInfo csarInfo, String nodeName, String yamlName, Resource oldComplexVfc, Resource newComplexVfc) {
 		
 		Either<Resource, ResponseFormat> handleComplexVfcRes;
+		Map<String, Object> mappedToscaTemplate = nodesInfo.get(nodeName).getMappedToscaTemplate();
+		String yamlContent =  new String(csarInfo.getCsar().get(yamlName));
 		Map<String, NodeTypeInfo> newNodeTypesInfo = nodesInfo.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().getUnmarkedCopy()));
-		markNestedVfc(yamlContent, newNodeTypesInfo);
+		markNestedVfc(mappedToscaTemplate, newNodeTypesInfo);
 		if(oldComplexVfc == null){
 			handleComplexVfcRes = createResourceFromYaml(newComplexVfc, yamlContent, yamlName, newNodeTypesInfo, csarInfo, nodesArtifactsToHandle, false, true, nodeName);
 			if (handleComplexVfcRes.isRight()) {
@@ -1929,7 +1944,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			mappedToscaTemplate = (Map<String, Object>) new Yaml().load(topologyTemplateYaml);
 		}
 		
-		Either<Map<String, Resource>, ResponseFormat> createdNodeTypeFromMainTemplateEither = createResourcesFromYamlNodeTypesList(yamlName, resource, topologyTemplateYaml, mappedToscaTemplate, needLock, nodeTypesArtifactsToHandle, 
+		Either<Map<String, Resource>, ResponseFormat> createdNodeTypeFromMainTemplateEither = createResourcesFromYamlNodeTypesList(yamlName, resource, mappedToscaTemplate, needLock, nodeTypesArtifactsToHandle, 
 				nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo);
 		if (createdNodeTypeFromMainTemplateEither.isRight()) {
 			ResponseFormat responseFormat = createdNodeTypeFromMainTemplateEither.right().value();
@@ -4206,7 +4221,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Either<ParsedToscaYamlInfo, ResponseFormat> parseResourceInfoFromYaml(String yamlFileName, Resource resource, String resourceYml, User user, Map<String, String> createdNodesToscaResourceNames, Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName) {
+	public Either<ParsedToscaYamlInfo, ResponseFormat> parseResourceInfoFromYaml(String yamlFileName, Resource resource, String resourceYml, Map<String, String> createdNodesToscaResourceNames, Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName) {
 
 		Map<String, Object> mappedToscaTemplate;
 		if(nodeTypesInfo != null && nodeName != null && nodeTypesInfo.containsKey(nodeName)){

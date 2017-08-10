@@ -67,7 +67,7 @@ public class VFCArtifacts extends SetupCDTest {
 	private String filePath;
 	@BeforeClass
 	public void beforeClass(){
-		filePath = FileHandling.getFilePath("");
+		filePath = FileHandling.getFilePath("VFCArtifacts");
 	}
 
 	@Test

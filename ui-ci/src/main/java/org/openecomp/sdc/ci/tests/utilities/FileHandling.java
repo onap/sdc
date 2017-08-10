@@ -26,6 +26,7 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
@@ -44,7 +45,9 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.common.util.GeneralUtility;
@@ -88,6 +91,12 @@ public class FileHandling {
 		return objectMap;
 	}
 	
+	
+	public static Map<String, DataTypeDefinition> parseDataTypesYaml(String filePath) throws Exception {
+		@SuppressWarnings("unchecked")
+		Map<String, DataTypeDefinition> dataTypesMap = (Map<String, DataTypeDefinition>) parseYamlFile(filePath);
+		return dataTypesMap;
+	}
 //	-------------------------------------------------------------------------------------------------
 	
 	public static String getFilePath(String folder) {

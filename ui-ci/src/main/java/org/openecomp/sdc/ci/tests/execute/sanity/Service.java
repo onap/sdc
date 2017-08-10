@@ -264,12 +264,7 @@ public class Service extends SetupCDTest {
 	}
 	
 	@Test
-	public void addAPIArtifactInCompositionScreenTest() throws Exception{
-		
-		if(true){
-			throw new SkipException("Open bug 292017");			
-		}
-		
+	public void addAPIArtifactInCompositionScreenTest() throws Exception{		
 		String fileName        = HEAT_FILE_YAML_NAME,
 			   descriptionText = DESCRIPTION,
 		       url             = "http://kuku.com";

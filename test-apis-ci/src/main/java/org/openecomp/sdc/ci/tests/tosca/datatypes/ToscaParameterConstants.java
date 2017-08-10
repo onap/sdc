@@ -6,4 +6,6 @@ public interface ToscaParameterConstants {
 	public static final String TOSCA_META_PATH = "TOSCA-Metadata/TOSCA.meta";
 	public static final String HEAT_META_PATH = "Artifacts/HEAT.meta";
 	public static final String IMPORT_STRUCTURE = "importStructure";
+	public static final String NODE_TYPES = "node_types";
+	public static final String PROPERTIES = "properties";
 }

@@ -5,21 +5,28 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import org.yaml.snakeyaml.Yaml;
+
 public class CsarInfo {
 	String vfResourceName;
 	User modifier;
 	String csarUUID;
 	Map<String, byte[]> csar;
+	String mainTemplateContent;
+	Map<String, Object> mappedToscaMainTemplate;
 	Map<String, String> createdNodesToscaResourceNames;
 	Queue<String> cvfcToCreateQueue;
 	boolean isUpdate;
 	Map<String, Resource> createdNodes;
 	
-	public CsarInfo(String vfResourceName, User modifier, String csarUUID, Map<String, byte[]> csar, boolean isUpdate){
+	@SuppressWarnings("unchecked")
+	public CsarInfo(String vfResourceName, User modifier, String csarUUID, Map<String, byte[]> csar, String mainTemplateContent, boolean isUpdate){
 		this.vfResourceName = vfResourceName;
 		this.modifier = modifier;
 		this.csarUUID = csarUUID;
 		this.csar = csar;
+		this.mainTemplateContent = mainTemplateContent;
+		this.mappedToscaMainTemplate = (Map<String, Object>) new Yaml().load(mainTemplateContent);
 		this.createdNodesToscaResourceNames = new HashMap<>();
 		this.cvfcToCreateQueue = new PriorityQueue<>();
 		this.isUpdate = isUpdate;
@@ -56,6 +63,14 @@ public class CsarInfo {
 
 	public void setCsar(Map<String, byte[]> csar) {
 		this.csar = csar;
+	}
+
+	public String getMainTemplateContent() {
+		return mainTemplateContent;
+	}
+
+	public Map<String, Object> getMappedToscaMainTemplate() {
+		return mappedToscaMainTemplate;
 	}
 
 	public Map<String, String> getCreatedNodesToscaResourceNames() {

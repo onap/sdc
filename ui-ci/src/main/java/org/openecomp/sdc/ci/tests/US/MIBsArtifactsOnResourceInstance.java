@@ -75,7 +75,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
 	// TODO: Change download validation from download artifact via external API to UI
 	@Test(dataProvider="mibsArtifactCRUDUi")
 	public void mibsArtifactCRUDUi(String fileName, ResourceTypeEnum resourceTypeEnum) throws Exception {
-		setLog("mibsArtifactCRUDUi");
+		setLog(fileName);
 		String filePath = FileHandling.getFilePath(folder);
 		
 		// import Resource
@@ -144,8 +144,12 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
 	// Import VFC/VL/CP, upload MIBs artifacts then drag it on VF & verify that deployment artifact have only download option
 	@Test(dataProvider="mibsArtifacsOnResourceInstanceShouldOnlyHaveDownloadOption")
 	public void mibsArtifacsOnResourceInstanceShouldOnlyHaveDownloadOption(String fileName, ResourceTypeEnum resourceTypeEnum) throws Exception {
+		
+		if(resourceTypeEnum.equals(ResourceTypeEnum.CP)){
+			throw new SkipException("Open bug 322930");			
+		}
 
-		setLog("mibsArtifacsOnResourceInstanceShouldOnlyHaveDownloadOption");
+		setLog(fileName);
 		
 		String filePath = FileHandling.getFilePath(folder);
 

@@ -21,9 +21,10 @@
 'use strict';
 import {ModalsHandler, ValidationUtils, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, DEFAULT_ICON,
     ResourceType} from "app/utils";
-import {CacheService, EventListenerService, ProgressService} from "app/services";
-import {IAppConfigurtaion, IValidate, IMainCategory, Resource, ISubCategory,Service} from "app/models";
+import {CacheService, EventListenerService, ProgressService, OnboardingService} from "app/services";
+import {IAppConfigurtaion, IValidate, IMainCategory, Resource, ISubCategory,Service, ICsarComponent} from "app/models";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
+import {Dictionary} from "lodash";
 
 export class Validation {
     componentNameValidationPattern:RegExp;
@@ -91,7 +92,8 @@ export class GeneralViewModel {
         'Sdc.Services.ProgressService',
         '$interval',
         '$filter',
-        '$timeout'
+        '$timeout',
+        'Sdc.Services.OnboardingService'
     ];
 
     constructor(private $scope:IGeneralScope,
@@ -113,7 +115,8 @@ export class GeneralViewModel {
                 private progressService:ProgressService,
                 protected $interval:any,
                 private $filter:ng.IFilterService,
-                private $timeout:ng.ITimeoutService) {
+                private $timeout:ng.ITimeoutService,
+                private onBoardingService:OnboardingService) {
 
         this.initScopeValidation();
         this.initScopeMethods();
@@ -135,6 +138,40 @@ export class GeneralViewModel {
         this.$scope.validation.projectCodeValidationPattern = this.ProjectCodeValidationPattern;
     };
 
+    private initImportedToscaBrowseFile = ():void =>{
+        // Init the decision if to show onboarding
+        this.$scope.isShowOnboardingSelectionBrowse = false;
+        if (this.$scope.component.isResource() &&
+            this.$scope.isEditMode() &&
+            (<Resource>this.$scope.component).resourceType == ResourceType.VF &&
+            (<Resource>this.$scope.component).csarUUID) {
+            this.$scope.isShowOnboardingSelectionBrowse = true;
+            let onboardCsarFilesMap:Dictionary<string> = this.cacheService.get('onboardCsarFilesMap');
+            // The onboardCsarFilesMap in cache contains map of [packageId]:[vsp display name for brows]
+            // if the map is empty - Do request to BE
+            if(onboardCsarFilesMap) {
+                this.$scope.importedToscaBrowseFileText = onboardCsarFilesMap[(<Resource>this.$scope.component).csarUUID];
+            }
+            if(!onboardCsarFilesMap || !this.$scope.importedToscaBrowseFileText){
+
+                let onSuccess = (vsps:Array<ICsarComponent>): void =>{
+                    onboardCsarFilesMap = {};
+                    _.each(vsps, (vsp:ICsarComponent)=>{
+                        onboardCsarFilesMap[vsp.packageId] = vsp.vspName + " (" + vsp.version + ")";
+                    });
+                    this.cacheService.set('onboardCsarFilesMap', onboardCsarFilesMap);
+                    this.$scope.importedToscaBrowseFileText = onboardCsarFilesMap[(<Resource>this.$scope.component).csarUUID];
+                };
+
+                let onError = (): void =>{
+                    console.log("Error getting onboarding list");
+                };
+
+                this.onBoardingService.getOnboardingVSPs().then(onSuccess, onError);
+            }
+        }
+    };
+
     private initScope = ():void => {
 
         // Work around to change the csar version
@@ -142,7 +179,6 @@ export class GeneralViewModel {
             (<Resource>this.$scope.component).csarVersion = this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
         }
 
-        this.$scope.importedToscaBrowseFileText = this.$scope.component.name + " (" + (<Resource>this.$scope.component).csarVersion + ")";
         this.$scope.importCsarProgressKey = "importCsarProgressKey";
         this.$scope.browseFileLabel = this.$scope.component.isResource() && (<Resource>this.$scope.component).resourceType === ResourceType.VF ? "Upload file" : "Upload VFC";
         this.$scope.progressService = this.progressService;
@@ -167,16 +203,8 @@ export class GeneralViewModel {
                 this.$scope.isShowFileBrowse = true;
             }
         }
-        ;
 
-        // Init the decision if to show onboarding
-        this.$scope.isShowOnboardingSelectionBrowse = false;
-        if (this.$scope.component.isResource() &&
-            this.$scope.isEditMode() &&
-            (<Resource>this.$scope.component).resourceType == ResourceType.VF &&
-            (<Resource>this.$scope.component).csarUUID) {
-            this.$scope.isShowOnboardingSelectionBrowse = true;
-        }
+        this.initImportedToscaBrowseFile();
 
         //init file extensions based on the file that was imported.
         if (this.$scope.component.isResource() && (<Resource>this.$scope.component).importedFile) {

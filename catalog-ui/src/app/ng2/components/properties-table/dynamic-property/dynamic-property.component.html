@@ -38,7 +38,7 @@
     <ng-container *ngIf="!property.isDeclared">
             <a *ngIf="(propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && !property.isChildOfListOrMap" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(property)}">Add value to list</a>
             <span *ngIf="property.isChildOfListOrMap" (click)="deleteItem.emit(property);" class="property-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}"></span>
-            <span *ngIf="!isPropertyFEModel && (propType == derivedPropertyTypes.COMPLEX || ((propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && hasChildren()))" (click)="expandChildById(propPath)" class="property-icon sprite-new round-expand-icon" [class.open]="expandedChildId.indexOf(propPath) == 0"></span>
+            <span *ngIf="!isPropertyFEModel && (propType == derivedPropertyTypes.COMPLEX || ((propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && hasChildren))" (click)="expandChildById(propPath)" class="property-icon sprite-new round-expand-icon" [class.open]="expandedChildId.indexOf(propPath) == 0"></span>
     </ng-container>
 
 </div>
@@ -52,6 +52,7 @@
             [expandedChildId]="expandedChildId"
             [propertyNameSearchText]="propertyNameSearchText"
             [readonly]="readonly"
+            [hasChildren]="getHasChildren(prop)"
             (valueChanged)="childValueChanged(prop)"
             (mapKeyChanged)="removeValueFromParent(prop, $event)"
             (expandChild)="expandChildById($event)"

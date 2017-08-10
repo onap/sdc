@@ -51,8 +51,9 @@ export class FileOpenerDirective implements ng.IDirective {
 
         scope.onFileSelect = () => {
             scope.onFileUpload({file: scope.importFile});
-            element.html('app/directives/file-opener/file-opener.html');
-            this.$compile(element.contents())(scope);
+            // fix bug 311261
+            // element.html('app/directives/file-opener/file-opener.html');
+            // this.$compile(element.contents())(scope);
         };
 
         scope.getExtensionsWithDot = ():string => {

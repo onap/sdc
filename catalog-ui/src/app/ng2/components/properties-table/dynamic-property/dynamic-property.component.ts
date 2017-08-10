@@ -46,6 +46,7 @@ export class DynamicPropertyComponent {
     @Input() selectedPropertyId: string;
     @Input() propertyNameSearchText: string;
     @Input() readonly: boolean;
+    @Input() hasChildren: boolean;
 
     @Output() valueChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() expandChild: EventEmitter<string> = new EventEmitter<string>();
@@ -83,8 +84,10 @@ export class DynamicPropertyComponent {
         this.checkProperty.emit(propName);
     }
 
-    hasChildren = (): number => {
-        return (this.property.valueObj && typeof this.property.valueObj == 'object') ? Object.keys(this.property.valueObj).length : 0;
+    getHasChildren = (property:DerivedFEProperty): boolean => {// enter to this function only from base property (PropertyFEModel) and check for child property if it has children
+        return _.filter((<PropertyFEModel>this.property).flattenedChildren,(prop:DerivedFEProperty)=>{
+            return _.startsWith(prop.propertiesName + '#', property.propertiesName);
+        }).length > 1;
     }
 
     createNewChildProperty = (): void => {
@@ -106,15 +109,26 @@ export class DynamicPropertyComponent {
 
 
             if(!newProps[0].schema.property.isSimpleType){
-                angular.forEach(newProps, (prop:DerivedFEProperty):void => { //Update parent PropertyFEModel with value for each child, including nested props
+                if ( newProps[0].mapKey ) {//prevent update the new item value on parent property valueObj and saving on BE if it is map item, it will be updated and saved only after user enter key (when it is list item- the map key is the es type)
+                    this.updateMapKeyValueOnMainParent(newProps);
+                    if (this.property.getParentNamesArray(newProps[0].propertiesName, []).indexOf('') === -1) {
+                        this.valueChanged.emit(this.property.name);
+                    }
+                }
+            }
+        }
+    }
+
+    updateMapKeyValueOnMainParent(childrenProps: Array<DerivedFEProperty>){
+        if (this.property instanceof PropertyFEModel) {
+            //Update only if all this property parents has key name
+            if (this.property.getParentNamesArray(childrenProps[0].propertiesName, []).indexOf('') === -1){
+                angular.forEach(childrenProps, (prop:DerivedFEProperty):void => { //Update parent PropertyFEModel with value for each child, including nested props
                     (<PropertyFEModel>this.property).childPropUpdated(prop);
                 },this);
                 //grab the cumulative value for the new item from parent PropertyFEModel and assign that value to DerivedFEProp[0] (which is the list or map parent with UUID of the set we just added)
-                let parentNames = (<PropertyFEModel>this.property).getParentNamesArray(newProps[0].propertiesName, []);
-                newProps[0].valueObj = _.get(this.property.valueObj, parentNames.join('.'));
-                if ( newProps[0].mapKey ) {//prevent saving if it is map item, whem it is list item- the map key is the es type (it will be saved only after user enter key)
-                    this.valueChanged.emit(this.property.name);
-                }
+                let parentNames = (<PropertyFEModel>this.property).getParentNamesArray(childrenProps[0].propertiesName, []);
+                childrenProps[0].valueObj = _.get(this.property.valueObj, parentNames.join('.'));
             }
         }
     }
@@ -122,9 +136,9 @@ export class DynamicPropertyComponent {
     childValueChanged = (property: DerivedFEProperty) => { //value of child property changed
 
         if (this.property instanceof PropertyFEModel) { // will always be the case
-            this.property.childPropUpdated(property);
-            this.dataTypeService.checkForCustomBehavior(this.property);
             if (this.property.getParentNamesArray(property.propertiesName, []).indexOf('') === -1) {//If one of the parents is empty key -don't save
+                this.property.childPropUpdated(property);
+                this.dataTypeService.checkForCustomBehavior(this.property);
                 this.valueChanged.emit(this.property.name);
             }
         }
@@ -156,6 +170,14 @@ export class DynamicPropertyComponent {
                         target.setCustomValidity('');
                         _.set(itemParent.valueObj, replaceKey, itemParent.valueObj[oldKey]);
                         item.mapKey = replaceKey;
+                        //If the map key was empty its valueObj was not updated on its prent property valueObj, and now we should update it.
+                        if(!oldKey && !item.schema.property.isSimpleType){
+                            //Search this map item children and update these value on parent property valueOBj
+                            let mapKeyFlattenChildren:Array<DerivedFEProperty> = _.filter(this.property.flattenedChildren, (prop:DerivedFEProperty) => {
+                                return _.startsWith(prop.propertiesName, item.propertiesName);
+                            });
+                            this.updateMapKeyValueOnMainParent(mapKeyFlattenChildren);
+                        }
                     }
                 }
                 delete itemParent.valueObj[oldKey];

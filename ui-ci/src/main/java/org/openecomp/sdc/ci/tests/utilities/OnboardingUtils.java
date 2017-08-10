@@ -77,6 +77,11 @@ import com.clearspring.analytics.util.Pair;
 
 public class OnboardingUtils {
 
+	protected static List<String> exludeVnfList = Arrays.asList("2016-197_vscp_vscp-fw_1610_e2e.zip", "2016-281_vProbes_BE_11_1_f_30_1610_e2e.zip", 
+			"2016-282_vProbes_FE_11_1_f_30_1610_e2e.zip", "2016-044_vfw_fnat_30_1607_e2e.zip", "2017-376_vMOG_11_1.zip", "vMOG.zip", 
+			"vMRF_USP_AIC3.0_1702.zip", "2016-211_vprobesbe_vprobes_be_30_1610_e2e.zip", "2016-005_vprobesfe_vprobes_fe_30_1607_e2e.zip", 
+			"vMRF_RTT.zip", "2016-006_vvm_vvm_30_1607_e2e.zip", "2016-001_vvm_vvm_30_1607_e2e.zip");
+
 	public OnboardingUtils() {
 	}
 
@@ -789,6 +794,18 @@ public class OnboardingUtils {
 			}
 			ArtifactUIUtils.validateArtifactNameVersionType(artifactName, artifactVersion, deploymentArtifact.getType());
 		}
+	}
+	
+	
+	/**
+	 * @return
+	 * The method returns VNF names list from Files directory under sdc-vnfs repository
+	 */
+	public static List<String> getVnfNamesFileList() {
+		String filepath = FileHandling.getVnfRepositoryPath();
+		List<String> fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
+		fileNamesFromFolder.removeAll(exludeVnfList);
+		return fileNamesFromFolder;
 	}
 
 }
