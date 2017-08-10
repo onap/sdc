@@ -266,7 +266,7 @@ topology_template:
         security_group_name: group1
         net_name: myNetwork
     4p_nested:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
       directives:
       - substitutable
       properties:

@@ -59,56 +59,33 @@
           margin-right: 20px;
           padding-bottom: 5px;
 
-          .versionControllerLockClosed {
+
+          .svg-icon {
             fill: $dark-gray;
-            width: 21px;
-            height: 23px;
-            margin-top: -3px;
-            &.disabled {
-              fill: $light-gray;
-            }
             &:hover {
               fill: $black;
             }
-          }
-          .versionControllerLockOpen {
-            fill: $dark-gray;
-            width: 24px;
-            height: 28px;
-            margin-top: -6px;
-            &:hover {
-              fill: $black;
+            &.__versionControllerLockClosed {
+              margin-top: -3px;
+            }
+            &.__versionControllerLockOpen {
+              margin-top: -6px;
+            }
+            &.__versionControllerSubmit {
+              fill: $blue;
+              &:hover {
+                fill: $dark-blue;
+              }
+              &.disabled {
+                fill: $dark-gray;
+              }
             }
           }
-          .versionControllerSubmit {
-            fill: $blue;
-            &.disabled {
-              fill: $light-gray;
-            }
-            &:hover {
-              fill: $dark-blue;
-            }
           }
 
-          .versionControllerRevert {
-            fill: $dark-gray;
-            &.disabled {
-              fill: $light-gray;
-            }
-            &:hover {
-              fill: $black;
-            }
-          }
-          .versionControllerSave {
-            fill: $dark-gray;
-            &.disabled {
-              fill: $light-gray;
-            }
-            &:hover {
-              fill: $black;
-            }
-          }
-        }
+
+
+
       }
       .vc-nav-item-close {
         display: flex;

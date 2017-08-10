@@ -1,0 +1,40 @@
+heat_template_version: 2013-05-23
+
+description: heat expose volume resource
+
+resources:
+  port_resource_0:
+    type: OS::Neutron::Port
+    properties:
+     network_id: { get_param: Internal1_net_id }
+     fixed_ips:
+      - ip_address: {get_param: pcrf_net_ips}
+      - ip_address: {get_param: pcrf_net_v6_ip_a}
+  port_resource_1:
+    type: OS::Neutron::Port
+    properties:
+     network_id: { get_param: Internal1_net_name }
+     fixed_ips:
+      - ip_address: {get_param: pcrf_net_v6_ips}
+      - ip_address: { "Fn::Select" : [ { get_param: indx }, { get_param: [{ get_param: mvs_mgmt_ip_0 }] } ] }
+  port_resource_2:
+    type: OS::Neutron::Port
+    properties:
+     network_id: { get_param: Internal1_net_fqdn }
+     fixed_ips:
+      - ip_address: {get_param: pcrf_net_ipz}
+      - ip_address: {get_param: pcrf_net_v6_ip_4}
+      - ip_address": {get_param: pcrf_net_v0_ip_3}
+
+outputs:
+  expose_resource_port_output_0:
+    description: the pcrf_server
+    value: { get_resource: port_resource_0 }
+  expose_resource_port_output_1:
+    description: the pcrf_server
+    value: { get_resource: port_resource_1 }
+  expose_resource_port_output_2:
+    description: the pcrf_server
+    value: { get_resource: port_resource_2 }
+
+

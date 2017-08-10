@@ -61,7 +61,7 @@ topology_template:
       type: string
   node_templates:
     test_nested4Level:
-      type: org.openecomp.resource.abstract.nodes.heat.nested4
+      type: org.openecomp.resource.abstract.nodes.heat.cmaui
       directives:
       - substitutable
       properties:

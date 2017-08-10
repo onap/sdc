@@ -9,7 +9,8 @@
         ]
     },
     "version": {
-        "type": "string"
+        "type": "string",
+        "minLength": 1
     },
     "md5": {
         "type": "string"

@@ -23,6 +23,7 @@ import LicenseAgreementActionHelper from './licenseAgreement/LicenseAgreementAct
 import FeatureGroupsActionHelper from './featureGroups/FeatureGroupsActionHelper.js';
 import EntitlementPoolsActionHelper from './entitlementPools/EntitlementPoolsActionHelper.js';
 import LicenseKeyGroupsActionHelper from './licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
+import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
 
 function baseUrl() {
 	const restPrefix = Configuration.get('restPrefix');
@@ -139,6 +140,8 @@ const LicenseModelActionHelper = {
 				case vcActionsEnum.SUBMIT:
 					newVersionId = adjustMajorVersion(version.label, 1);
 			}
+
+			OnboardingActionHelper.updateCurrentScreenVersion(dispatch, {label: newVersionId, id: newVersionId});
 
 			LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version:{id: newVersionId, label: newVersionId}});
 			return Promise.resolve({id: newVersionId, label: newVersionId});

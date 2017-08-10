@@ -54,9 +54,12 @@ const mapActionsToProps = (dispatch, {softwareProductId, componentId, version}) 
 		onDataChanged: (deltaData) => ValidationHelper.dataChanged(dispatch, {deltaData, formName: forms.IMAGE_EDIT_FORM}),
 		onSubmit: ({data, qdata}) => SoftwareProductComponentsImageActionHelper.saveImageDataAndQuestionnaire(dispatch, {softwareProductId, componentId, version, data, qdata}),
 		onCancel: () => SoftwareProductComponentsImageActionHelper.closeImageEditor(dispatch),
-		onValidateForm: () => ValidationHelper.validateForm(dispatch, forms.IMAGE_EDIT_FORM),
-		onQDataChanged: (deltaData) => ValidationHelper.qDataChanged(dispatch, {deltaData,
-			qName: IMAGE_QUESTIONNAIRE}),
+		onValidateForm: customValidations => {
+			ValidationHelper.validateForm(dispatch, forms.IMAGE_EDIT_FORM);
+			ValidationHelper.qValidateForm(dispatch, IMAGE_QUESTIONNAIRE, customValidations);
+		},
+		onQDataChanged: (deltaData, customValidations) => ValidationHelper.qDataChanged(dispatch, {deltaData,
+			qName: IMAGE_QUESTIONNAIRE, customValidations}),
 	};
 };
 

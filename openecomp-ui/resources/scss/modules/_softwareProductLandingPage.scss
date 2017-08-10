@@ -28,20 +28,18 @@
     .missing-license {
       display: flex;
       align-items: baseline;
-      .svg-icon-wrapper.exclamationTriangleFull .svg-icon{
-        fill: $orange;
+      .svg-icon{
+        margin-right: 7px;
+        margin-left: 3px;
+        &.__exclamationTriangleFull {
+          fill: $orange;
+            width: 17px;
+            height: 17px;
+        }
       }
       .warning-text {
         position: relative;
         top: -2px;
-      }
-      .svg-icon-wrapper {
-        margin-right: 7px;
-        margin-left: 3px;
-        .svg-icon {
-          height: 17px;
-          width: 17px;
-        }
       }
     }
   }

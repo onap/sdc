@@ -224,11 +224,11 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
         if(obj.getType().equals(LimitType.ServiceProvider)){
           LimitXml xmlObj = new LimitXml();
           xmlObj.setDescription(obj.getDescription());
-          xmlObj.setMetric(obj.getMetric().toString());
-          xmlObj.setValues(obj.getValue()!=null?Integer.toString(obj.getValue()):null);
-          xmlObj.setUnit(obj.getUnit()!=null?Integer.toString(obj.getUnit()):null);
+          xmlObj.setMetric(obj.getMetric());
+          xmlObj.setValues(obj.getValue());
+          xmlObj.setUnit(obj.getUnit());
           xmlObj.setAggregationFunction(obj.getAggregationFunction()!=null?obj.getAggregationFunction().name():null);
-          xmlObj.setTime(obj.getTime()!=null?obj.getTime().name():null);
+          xmlObj.setTime(obj.getTime());
           hs.add(xmlObj);
         }
       }
@@ -247,11 +247,11 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
         if(obj.getType().equals(LimitType.Vendor)){
           LimitXml xmlObj = new LimitXml();
           xmlObj.setDescription(obj.getDescription());
-          xmlObj.setMetric(obj.getMetric().toString());
-          xmlObj.setValues(obj.getValue()!=null?Integer.toString(obj.getValue()):null);
-          xmlObj.setUnit(obj.getUnit()!=null?Integer.toString(obj.getUnit()):null);
+          xmlObj.setMetric(obj.getMetric());
+          xmlObj.setValues(obj.getValue());
+          xmlObj.setUnit(obj.getUnit());
           xmlObj.setAggregationFunction(obj.getAggregationFunction()!=null?obj.getAggregationFunction().name():null);
-          xmlObj.setTime(obj.getTime()!=null?obj.getTime().name():null);
+          xmlObj.setTime(obj.getTime());
           hs.add(xmlObj);
         }
       }

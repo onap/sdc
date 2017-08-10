@@ -13,18 +13,25 @@ export const LIMITS_FORM_NAME = 'LIMITSFORM';
 export const selectValues = {
 	METRIC: [
 		{enum: '', title: i18n('please select…')},
-		{enum: 'Software_Instances_Count', title: 'Software Instances'},
-		{enum: 'Core', title: 'Core'},
-		{enum: 'CPU', title: 'CPU'},
-		{enum: 'Trunks', title: 'Trunks'},
-		{enum: 'User', title: 'User'},
-		{enum: 'Subscribers', title: 'Subscribers'},
-		{enum: 'Tenants', title: 'Tenants'},
-		{enum: 'Tokens', title: 'Tokens'},
-		{enum: 'Seats', title: 'Seats'},
-		{enum: 'Units_TB', title: 'Units-TB'},
-		{enum: 'Units_GB', title: 'Units-GB'},
-		{enum: 'Units_MB', title: 'Units-MB'}
+		{enum: 'BWTH', title: 'BWTH'},
+		{enum: 'Country', title: 'Country'},
+		{enum: 'Session', title: 'Session'},
+		{enum: 'LoB', title: 'LoB'},
+		{enum: 'Site', title: 'Site'},
+		{enum: 'Usage', title: 'Usage'}
+	],
+	UNIT: [
+		{enum: '', title: i18n('please select…')},
+		{enum: 'trunk', title: 'Trunks'},
+		{enum: 'user', title: 'Users'},
+		{enum: 'subscriber', title: 'Subscribers'},
+		{enum: 'session', title: 'Sessions'},
+		{enum: 'tenant', title: 'Tenants'},
+		{enum: 'token', title: 'Tokens'},
+		{enum: 'seats', title: 'Seats'},
+		{enum: 'TB', title: 'TB'},
+		{enum: 'GB', title: 'GB'},
+		{enum: 'MB', title: 'MB'}
 	],
 	AGGREGATION_FUNCTION: [
 		{enum: '', title: i18n('please select…')},
@@ -33,11 +40,14 @@ export const selectValues = {
 	],
 	TIME: [
 		{enum: '', title: i18n('please select…')},
-		{enum: 'Hour', title: 'Hour'},
 		{enum: 'Day', title: 'Day'},
-		{enum: 'Month', title: 'Month'}
+		{enum: 'Month', title: 'Month'},
+		{enum: 'Hour', title: 'Hour'},
+		{enum: 'Minute', title: 'Minute'},
+		{enum: 'Second', title: 'Second'},
+		{enum: 'Milli-Second', title: 'Milli-Second'}
 	]
-	
+
 };
 
 export const limitType = {
@@ -46,7 +56,9 @@ export const limitType = {
 };
 
 export const defaultState = {
-	LIMITS_EDITOR_DATA: {}
+	LIMITS_EDITOR_DATA: {
+		metric: {choice: '', other: ''},
+	}
 };
 
 export const NEW_LIMIT_TEMP_ID = 'NEW_LIMIT_TEMP_ID';

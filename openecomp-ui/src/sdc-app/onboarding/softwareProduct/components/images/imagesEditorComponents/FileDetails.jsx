@@ -40,6 +40,7 @@ const FileDetails = ({editingMode, fileName, onDataChanged, isManual, dataMap, o
 					type='text'
 					className='image-filename'/>
 			</GridItem>
+			{!editingMode && <div className='note-text'>{i18n('After image creation you must go to Edit Image and add File Version')}</div>}
 			{editingMode && <Version isManual={isManual} dataMap={dataMap} qgenericFieldInfo={qgenericFieldInfo} onQDataChanged={onQDataChanged}/>}
 			{editingMode && <Format isManual={isManual} qgenericFieldInfo={qgenericFieldInfo} dataMap={dataMap} onQDataChanged={onQDataChanged}/>}
 		</GridSection>

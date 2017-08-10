@@ -40,7 +40,7 @@ describe('listEditor Module Tests', function () {
 			</ListEditorView>
 		);
 		expect(itemView).toBeTruthy();
-		let sliderIcon = TestUtils.findRenderedDOMComponentWithClass(itemView, 'sliders');
+		let sliderIcon = TestUtils.findRenderedDOMComponentWithClass(itemView, '__sliders');
 		TestUtils.Simulate.click(sliderIcon);
 	});
 
@@ -60,7 +60,7 @@ describe('listEditor Module Tests', function () {
 			</ListEditorItemView>
 		);
 		expect(itemView).toBeTruthy();
-		let sliderIcon = TestUtils.findRenderedDOMComponentWithClass(itemView, 'sliders');
+		let sliderIcon = TestUtils.findRenderedDOMComponentWithClass(itemView, '__sliders');
 		TestUtils.Simulate.click(sliderIcon);
 	});
 
@@ -71,7 +71,7 @@ describe('listEditor Module Tests', function () {
 			</ListEditorItemView>
 		);
 		expect(itemView).toBeTruthy();
-		let sliderIcon = TestUtils.findRenderedDOMComponentWithClass(itemView, 'trashO');
+		let sliderIcon = TestUtils.findRenderedDOMComponentWithClass(itemView, '__trashO');
 		TestUtils.Simulate.click(sliderIcon);
 	});
 
@@ -82,7 +82,8 @@ describe('listEditor Module Tests', function () {
 			</ListEditorItemView>
 		);
 		expect(itemView).toBeTruthy();
-		let trashIcon = TestUtils.scryRenderedDOMComponentsWithClass(itemView, 'fa-trash-o');
+		let trashIcon = TestUtils.scryRenderedDOMComponentsWithClass(itemView, '__trashOq');
 		expect(trashIcon).toEqual([]);
 	});
+
 });

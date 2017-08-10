@@ -104,7 +104,7 @@ topology_template:
       type: string
   node_templates:
     test_nested_pattern_4_main_1:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-pattern-4
+      type: org.openecomp.resource.abstract.nodes.heat.pd_server_pattern4
       directives:
       - substitutable
       properties:

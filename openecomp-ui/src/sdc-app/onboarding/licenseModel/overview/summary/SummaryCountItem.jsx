@@ -14,15 +14,17 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 
 function  SummaryCountItem ({name, counter, onAdd, onNavigate, isReadOnlyMode}) {
+	//TODO check for buttons
 	return(
 		<div className='summary-count-item'>
 			<div className='summary-name-and-count' onClick={onNavigate}>
 				<span className='item-name' onClick={onNavigate}>{name}</span>
 				<span className='item-count' onClick={onNavigate} data-test-id={'vlm-summary-vendor-counter-' + name.toLowerCase().replace(/\s/g,'-')}>({counter})</span>
 			</div>
-			<div className={isReadOnlyMode ? 'add-button disabled' : 'add-button'}   onClick={onAdd} data-test-id={'vlm-summary-vendor-add-btn-' + name.toLowerCase().replace(/\s/g,'-')}/>
+			<SVGIcon name='plusCircle' disabled={isReadOnlyMode} color='secondary' onClick={onAdd} data-test-id={'vlm-summary-vendor-add-btn-' + name.toLowerCase().replace(/\s/g,'-')}/>
 		</div>
 	);
 }

@@ -15,10 +15,8 @@
  */
 import React, {Component, PropTypes} from 'react';
 import Dropzone from 'react-dropzone';
-import ButtonGroup from 'react-bootstrap/lib/ButtonGroup.js';
-import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar.js';
-import Button from 'react-bootstrap/lib/Button.js';
-import i18n from 'nfvo-utils/i18n/i18n.js';
+import Button from 'sdc-ui/lib/react/Button.js';
+import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
 import {fileTypes, type2Title, type2Name} from './SoftwareProductComponentsMonitoringConstants.js';
 
 
@@ -59,7 +57,7 @@ class SoftwareProductComponentsMonitoringView extends Component {
 		let typeDisplayName = type2Title[type];
 		return (
 			<Dropzone
-				className={`snmp-dropzone ${this.state.dragging ? 'active-dragging' : ''}`}
+				className={`dropzone ${this.state.dragging ? 'active-dragging' : ''}`}
 				onDrop={(acceptedFiles, rejectedFiles) => this.handleImport(acceptedFiles, rejectedFiles, {isReadOnlyMode, type, refAndName})}
 				onDragEnter={() => this.handleOnDragEnter(isReadOnlyMode)}
 				onDragLeave={() => this.setState({dragging:false})}
@@ -71,7 +69,7 @@ class SoftwareProductComponentsMonitoringView extends Component {
 				disabled>
 				<div className='draggable-wrapper'>
 					<div className='section-title'>{typeDisplayName}</div>
-					{fileName ? this.renderUploadedFileName(fileName, type) : this.renderUploadButton(refAndName)}
+					{fileName ? this.renderUploadedFileName(fileName, type, isReadOnlyMode) : this.renderUploadButton(refAndName)}
 				</div>
 			</Dropzone>
 		);
@@ -80,25 +78,32 @@ class SoftwareProductComponentsMonitoringView extends Component {
 	renderUploadButton(refAndName) {
 		let {isReadOnlyMode} = this.props;
 		return (
-			<div
-				className={`software-product-landing-view-top-block-col-upl${isReadOnlyMode ? ' disabled' : ''}`}>
-				<div className='drag-text'>{i18n('Drag & drop for upload')}</div>
-				<div className='or-text'>{i18n('or')}</div>
-				<div className='upload-btn primary-btn' data-test-id={`monitoring-upload-${refAndName}`} onClick={() => this.refs[refAndName].open()}>
-					<span className='primary-btn-text'>{i18n('Select file')}</span>
-				</div>
-			</div>
+			<DraggableUploadFileBox
+				dataTestId={`monitoring-upload-${refAndName}`}
+				className='software-product-landing-view-top-block-col-upl'
+				isReadOnlyMode={isReadOnlyMode}
+				onClick={() => this.refs[refAndName].open()}/>
 		);
 	}
 
-	renderUploadedFileName(filename, type) {
+	renderUploadedFileName(filename, type, isReadOnlyMode) {
 		return (
-			<ButtonToolbar>
-				<ButtonGroup>
-					<Button disabled>{filename}</Button>
-					<Button data-test-id={`monitoring-delete-${type}`} className='delete-button' onClick={()=>this.props.onDeleteFile(type)}>X</Button>
-				</ButtonGroup>
-			</ButtonToolbar>
+				<div className='monitoring-file'>
+					<Button
+						color='white'
+						disabled={true}
+						className='filename'>
+						{filename}
+					</Button>
+
+					<Button
+						color='gray'
+						data-test-id={`monitoring-delete-${type}`}
+						disabled={isReadOnlyMode}
+						onClick={()=>this.props.onDeleteFile(type)}
+						iconName='close'
+						className='delete'/>
+				</div>
 		);
 	}
 

@@ -7,8 +7,8 @@ public class LimitEntityDto {
   private String type;
   private String description;
   private String metric;
-  private Integer value;
-  private Integer unit;
+  private String value;
+  private String unit;
   private String aggregationFunction;
   private String time;
 
@@ -52,11 +52,11 @@ public class LimitEntityDto {
     this.metric = metric;
   }
 
-  public Integer getUnit() {
+  public String getUnit() {
     return unit;
   }
 
-  public void setUnit(Integer unit) {
+  public void setUnit(String unit) {
     this.unit = unit;
   }
 
@@ -76,11 +76,11 @@ public class LimitEntityDto {
     this.time = time;
   }
 
-  public Integer getValue() {
+  public String getValue() {
     return value;
   }
 
-  public void setValue(Integer value) {
+  public void setValue(String value) {
     this.value = value;
   }
 }

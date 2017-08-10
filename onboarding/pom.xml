@@ -92,5 +92,6 @@
         <woodstox.version>4.4.1</woodstox.version>
         <ws.rs.version>2.0.1</ws.rs.version>  <!--  New version 2.0.1 to fix blackduck violation Failing with comiplation issues-->
         <zusammen.version>0.2.0</zusammen.version>
+        <zusammen-state-store.version>0.2.1</zusammen-state-store.version>
     </properties>
 </project>

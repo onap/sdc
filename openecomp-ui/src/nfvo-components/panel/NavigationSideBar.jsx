@@ -109,6 +109,7 @@ function NavigationMenuItem(props) {
 
 function NavigationLink(props) {
 	const {item, activeItemId, onClick} = props;
+	// todo should this be button
 	return (
 		<div
 			key={'navAction_' + item.id}

@@ -40,6 +40,7 @@ const CatalogList = ({children, onAddVLM, onAddVSP, vendorPageOptions}) => (
 );
 
 const CreateItemTile = ({onClick, dataTestId, title, className = ''}) => {
+	//TODO check for buttons
 	return (
 			<div className={'create-catalog-item tile ' + className} onClick={() => onClick()} data-test-id={dataTestId}>
 				<div className='create-item-plus-icon'><SVGIcon name='plus' /></div>

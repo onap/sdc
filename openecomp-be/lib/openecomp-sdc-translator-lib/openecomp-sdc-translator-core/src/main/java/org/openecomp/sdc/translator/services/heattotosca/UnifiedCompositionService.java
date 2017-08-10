@@ -2812,6 +2812,10 @@ public class UnifiedCompositionService {
       }
     }
 
+    String subNodeType =
+        nestedServiceTemplate.getTopology_template().getSubstitution_mappings().getNode_type();
+    nestedNodeTemplate.setType(subNodeType);
+
   }
 
   private void handleSubstitutionMappingInNestedServiceTemplate(

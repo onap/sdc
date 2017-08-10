@@ -26,13 +26,18 @@
       background-color: $tlv-gray;
       padding: 5px;
       cursor: pointer;
-      .chevronDown {
-        width:10px;
-        height:10px;
-        margin-right: 10px;
-        &.right {
-          transform: rotate(270deg);
+      .svg-icon {
+        &.__chevronDown {
+          margin-right: 10px;
         }
+      }
+      .collapse-right {
+        .svg-icon {
+          &.__chevronDown {
+              transform: rotate(270deg);
+          }
+        }
+
       }
 
     }

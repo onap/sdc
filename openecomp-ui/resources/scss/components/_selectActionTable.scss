@@ -1,15 +1,13 @@
 .select-action-table-view {
 	.svg-icon-wrapper {
 		flex-direction: row;
-
-		&::before {
-			content:"";
-		}
 		.svg-icon {
-			margin-left: 5px;
-			margin-right: 5px;
-			width:16px;
-			height:16px;
+			&:not(.__plus) {
+				margin-left: 5px;
+				margin-right: 5px;
+				width:16px;
+				height:16px;
+			}
 		}
 	}
 	.dummy-icon {
@@ -57,21 +55,6 @@
 			display: flex;
 			flex-direction: row;
     		margin-bottom: 14px;
-			.svg-icon-wrapper.trashO {
-				.svg-icon {
-				  fill: $dark-gray;
-				}
-			}
-		  	.svg-icon-wrapper.errorCircle {
-			  .svg-icon {
-				fill: $red;
-			  }
-			}
-		  	.svg-icon-wrapper.checkCircle {
-			  .svg-icon {
-				fill: $green;
-			  }
-			}
 			.svg-icon-wrapper.hideDelete {
 				.svg-icon {
 					fill: $white;

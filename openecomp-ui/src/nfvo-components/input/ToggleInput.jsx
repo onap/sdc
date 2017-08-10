@@ -41,6 +41,7 @@ class ToggleInput extends React.Component {
 	render() {
 		let {label, disabled} = this.props;
 		let checked = this.status() === 'on';
+		//TODO check onclick
 		return (
 			<div className='toggle-input-wrapper form-group' onClick={!disabled && this.click}>
 				<div className='toggle-input-label'>{label}</div>

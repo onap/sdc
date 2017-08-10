@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import Button from 'sdc-ui/lib/react/Button.js';
 import classnames from 'classnames';
 import ExpandableInput from 'nfvo-components/input/ExpandableInput.jsx';
 
@@ -21,11 +22,9 @@ const ListEditorHeader = ({onAdd, isReadOnlyMode, title, plusButtonTitle}) => {
 	 return (
 		 <div className='list-editor-view-header'>
 			 {title && <div className='list-editor-view-title'>{title}</div>}
-			 <div className={`list-editor-view-add-controller${isReadOnlyMode ? ' disabled' : ''}`}>
+			 <div>
 				 { onAdd &&
-					 <div className='list-editor-view-add-title' data-test-id='add-button' onClick={onAdd}>
-						 <span>{`+ ${plusButtonTitle}`}</span>
-					 </div>
+					 <Button data-test-id='add-button' iconName='plusThin' btnType='link' onClick={onAdd} disabled={isReadOnlyMode === true}>{plusButtonTitle}</Button>
 				 }
 			 </div>
 		 </div>

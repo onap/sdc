@@ -31,21 +31,35 @@ const typeClass = {
 	success: 'positive'
 };
 
+const type2HeaderColor = {
+	'default': 'primary',
+	error: 'danger',
+	warning: 'warning',
+	success: 'success'
+};
 
-const ModalFooter = ({type, onConfirmed, onDeclined, onClose, confirmationButtonText, cancelButtonText}) =>
+
+const ModalFooter = ({type, onConfirmed, onDeclined, onClose, confirmationButtonText, cancelButtonText}) => {
+	let myPropsForNoConfirmed = {};
+	if (onConfirmed) {
+		myPropsForNoConfirmed.btnType = 'outline';
+	}
+	return (
 		<Modal.Footer>
 			<div className='sdc-modal-footer'>
 				{onConfirmed && <Button color={typeClass[type]} onClick={() => {
 					onConfirmed();
 					onClose();
 				}}>{confirmationButtonText}</Button>}
-				<Button btnType='outline' color={typeClass[type]} onClick={onDeclined ? () => {
+				<Button {...myPropsForNoConfirmed} color={typeClass[type]} onClick={onDeclined ? () => {
 					onDeclined();
 					onClose();} : () => onClose()}>
 					{cancelButtonText}
 				</Button>
 			</div>
-		</Modal.Footer>;
+		</Modal.Footer>
+	);
+};
 
 ModalFooter.defaultProps = {
 	type: 'default',
@@ -93,7 +107,7 @@ export class  GlobalModalView extends React.Component {
 		modalClassName, msg, onConfirmed, onDeclined, confirmationButtonText, cancelButtonText, onClose} = this.props;
 		const  ComponentToRender = modalContentComponents[modalComponentName];
 		return (
-			<Modal show={show} bsSize={modalComponentProps && modalComponentProps.size} className={`onborading-modal ${modalClassName || ''} ${typeClass[type]}`}>
+			<Modal show={show} bsSize={modalComponentProps && modalComponentProps.size} className={`onborading-modal ${modalClassName || ''} ${type2HeaderColor[type]}`}>
 				<Modal.Header>
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>

@@ -19,7 +19,8 @@ export const DATE_FORMAT = 'MM/DD/YYYY';
 
 export const actionTypes = keyMirror({
 	SET_CURRENT_SCREEN: null,
-	SET_CURRENT_LICENSE_MODEL: null
+	SET_CURRENT_LICENSE_MODEL: null,
+	SET_CURRENT_SCREEN_VERSION: null,
 });
 
 export const enums = keyMirror({

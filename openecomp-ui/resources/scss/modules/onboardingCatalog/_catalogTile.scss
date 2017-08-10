@@ -79,36 +79,22 @@
 	  width: 58px;
 	  margin-left: 122px;
 	  background-repeat: no-repeat;
-	  .svg-icon-wrapper {
-		&.vendor {
-		  .svg-icon {
+	  .svg-icon {
+		&.__vendor {
 			fill: $dark-gray;
-			width: 53px;
-			height: 47px;
 			&:hover {
 			  fill: $dark-gray;
 			}
-		  }
 		  margin-top: 22px;
-
 		}
-		&.vsp {
-		  .svg-icon {
+		&.__vsp {
 			fill: $light-blue;
-			width: 60px;
-			height: 40px;
 		  }
 		  margin-top: 18px;
 		  margin-left: 3px;
-		}
-		&.vlm {
+		&.__vlm {
 		  margin-top: 18px;
-		  .svg-icon {
 			fill: $purple;
-
-			width: 45px;
-			height: 53px;
-		  }
 		}
 	  }
 	}
@@ -121,13 +107,11 @@
 	margin-top: 2px;
 	padding-bottom: 3px;
 	@extend .body-2-semibold;
-	.svg-icon-wrapper {
-	  &.plus {
-		.svg-icon {
-		  height: 9px;
-		  width: 9px;
+	.svg-icon {
+	  &.__plus {
+		  width: 20px;
+		  height: 20px;
 		  fill: $blue;
-		}
 	  }
 	}
 	.catalog-tile-item-details {
@@ -136,6 +120,13 @@
 
 	.catalog-tile-add-new-vsp {
 	  color: $blue;
+		.svg-icon {
+			&.__plus {
+				width: 20px;
+				height: 20px;
+
+			}
+		}
 	  margin-left: 40px;
 	}
 	.catalog-tile-locking-user-name {
@@ -143,18 +134,12 @@
 	  @include ellipsis(auto, inline-block, 180px);
 	}
 	.catalog-tile-check-in-status {
-	  .svg-icon-wrapper {
-		&.locked {
-		  .svg-icon {
-			width: 11px;
+	  .svg-icon {
+		&.__locked {
 			fill: $gray;
-		  }
 		}
-		&.unlocked {
-		  .svg-icon {
-			width: 11px;
+		&.__unlocked {
 			fill: $gray;
-		  }
 		}
 	  }
 	}

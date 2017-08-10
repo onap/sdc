@@ -18,6 +18,7 @@ import Input from 'nfvo-components/input/validation/Input.jsx';
 
 class LicenseModelDescriptionEdit extends React.Component {
 	render() {
+		//TODO check if buttons
 		let {onDataChanged, description, genericFieldInfo} = this.props;
 		let saveButtonClassName = (genericFieldInfo.description.isValid) ? 'description-save' : 'description-save disabled';
 		return(

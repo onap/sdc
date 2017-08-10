@@ -16,9 +16,19 @@
 import {actionTypes, enums} from './OnboardingConstants.js';
 
 export const currentScreenReducer = (state = {forceBreadCrumbsUpdate: false, screen: enums.SCREEN.ONBOARDING_CATALOG, props: {}}, action) => {
-	if (action.type === actionTypes.SET_CURRENT_SCREEN) {
-		return action.currentScreen;
-	}
-	return state;
+	switch (action.type) {
+		case actionTypes.SET_CURRENT_SCREEN: 
+			return action.currentScreen;
+		case actionTypes.SET_CURRENT_SCREEN_VERSION:
+			return {
+				...state,
+				props: {
+					...state.props,
+					version: action.version
+				}
+			};	
+		default:
+			return state;
+	}	
 };
 

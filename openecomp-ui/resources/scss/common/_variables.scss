@@ -47,14 +47,23 @@ $desktop-min-width: 1824px;
 
 /* Textures */
 $images-folder-name: "../images";
+/*
+$plus-circle-icon: $images-folder-name + "/plus-circle-icon.svg";
+$interface-icon: $images-folder-name + "/interface.svg";
+$sdc-logo: $images-folder-name + "/logo.svg";
+$warning-icon: $images-folder-name + "/warning.svg";
+*/
 
 /* Icons */
 $icons-folder: "../images/icons";
-$artifacts-icon: $images-folder-name + "/artifacts_icon.png";
-$check-icon: $images-folder-name + "/v_icon.png";
-$base-module-icon: $images-folder-name + "/base_icon.png";
-$module-icon: $images-folder-name + "/module_icon.png";
+/*
+$plus-circle-icon: $images-folder-name + "/plus-circle-icon.svg";
+$interface-icon: $images-folder-name + "/interface.svg";
+$sdc-logo: $images-folder-name + "/logo.svg";
+$warning-icon: $images-folder-name + "/warning.svg";
+*/
 $pencil-icon: $images-folder-name + "/pencil_icon-01.svg";
+/*
 $vc-check-in-icon: $icons-folder + "/checked_in.png";
 $vc-checkout-icon: $icons-folder + "/checked_out.png";
 $vc-revert-icon: $icons-folder + "/reverticon.png";
@@ -66,11 +75,12 @@ $vc-submit-disabled-icon: $icons-folder + "/submit_icon_disable.png";
 $trash-icon: $images-folder-name + "/trash_icon.png";
 $download-icon: $images-folder-name + "/download_icon.png";
 $upload-icon: $images-folder-name + "/upload_icon.png";
+*/
 
-
-/* catalog icons */
+/*****
+// catalog icons
 $back-icon: $icons-folder + "/back_icon.png";
-/* validation icons */
+// validation icons
 $artifacts-selected-icon: $icons-folder + "/artifacts_blue_icon.png";
 $artifacts-regular-icon: $icons-folder + "/artifacts_grey_icon.png";
 $chevron_down: $icons-folder + "/down_chevron.png";
@@ -93,7 +103,7 @@ $heat-selected-icon: $icons-folder + "/nested_HEAT_icon_blue.png";
 $env-icon: $icons-folder + "/env_icon.png";
 $env-selected-icon: $icons-folder + "/env_icon_blue.png";
 
-/* vlm summary icons */
+// vlm summary icons
 
 $vlm-summary-plus-blue: $icons-folder + "/plus_vlm_summary_icon_blue.png";
 $vlm-summary-plus: $icons-folder + "/plus_vlm_summary_icon.png";
@@ -102,4 +112,5 @@ $vlm-summary-orphans: $icons-folder + "/orphans_grey_icon.png";
 $vlm-summary-orphans-blue: $icons-folder + "/orphans_blue_icon-n.png";
 $vlm-summary-used: $icons-folder + "/vlm_list_view_grey_icon.png";
 $vlm-summary-used-blue: $icons-folder + "/vlm_list_view_blue_icon.png";
+*****/
 

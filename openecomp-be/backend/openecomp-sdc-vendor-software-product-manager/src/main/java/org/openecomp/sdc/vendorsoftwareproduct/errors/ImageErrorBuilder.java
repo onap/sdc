@@ -19,6 +19,8 @@ public class ImageErrorBuilder {
 
   private static final String IMAGE_HEAT_READONLY_ATTR_MSG = "Update of attribute %s not allowed "
       + "for VSP onboarded via HEAT.";
+  private static final String VFC_IMAGE_DUPLICATE_VERSION_MSG = "Invalid request, Image with version %s"
+          + " already exists for component with ID %s.";
 
 
   /**
@@ -34,6 +36,18 @@ public class ImageErrorBuilder {
     return builder.build();
   }
 
+  /**
+   * Gets duplicate image version error builder.
+   *
+   * @return the duplicate image version error builder
+   */
+  public static ErrorCode getDuplicateImageVersionErrorBuilder(String version, String componentId) {
+    ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
+    builder.withId(DUPLICATE_IMAGE_VERSION_NOT_ALLOWED);
+    builder.withCategory(ErrorCategory.APPLICATION);
+    builder.withMessage(String.format(VFC_IMAGE_DUPLICATE_VERSION_MSG, version, componentId ));
+    return builder.build();
+  }
   /**
    * Gets image name format error builder.
    *

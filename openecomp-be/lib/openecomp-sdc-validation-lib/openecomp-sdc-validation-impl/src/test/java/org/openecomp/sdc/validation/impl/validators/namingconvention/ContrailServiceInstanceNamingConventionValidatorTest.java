@@ -22,7 +22,7 @@ public class ContrailServiceInstanceNamingConventionValidatorTest {
   public void testContrailServiceInstanceAvailabilityZoneNotAlignedWithNamingConvention() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_INSTANCE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatcontrailserviceinstanceavailabilityzone/notaligned");
+        "/org/openecomp/validation/validators/guideLineValidator/heatcontrailserviceinstanceavailabilityzone/notaligned");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
@@ -34,7 +34,7 @@ public class ContrailServiceInstanceNamingConventionValidatorTest {
   public void testContrailServiceInstanceAvailabilityZoneAlignedWithNamingConvention() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
         resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_INSTANCE.getHeatResource(),
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatcontrailserviceinstanceavailabilityzone/aligned");
+        "/org/openecomp/validation/validators/guideLineValidator/heatcontrailserviceinstanceavailabilityzone/aligned");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
   }

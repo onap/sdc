@@ -154,7 +154,7 @@ function VCButton({name, tooltipText, isDisabled, onClick, dataTestId}) {
 	return (
 		<OverlayTrigger placement='top' overlay={<Tooltip id='vc-tooltip'>{tooltipText}</Tooltip>}>
 			<div disabled={disabled} className='action-buttons-svg'>
-				<SVGIcon data-test-id={dataTestId} iconClassName={disabled} onClick={onClickAction ? onClickAction : undefined} name={name}/>
+				<SVGIcon data-test-id={dataTestId} disabled={isDisabled} onClick={onClickAction ? onClickAction : undefined} name={name}/>
 			</div>
 		</OverlayTrigger>
 	);

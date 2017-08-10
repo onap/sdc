@@ -165,7 +165,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
                       VersionableEntityAction.Read), user);
           versionInfo = getVersionInfo(vspId, VersionableEntityAction.Read, user);
         } catch (Exception e) {
-          //to do
+          logger.error(e.getMessage(), e);
         }
       }
     }

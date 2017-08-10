@@ -20,7 +20,6 @@ import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
 import FormControl from 'react-bootstrap/lib/FormControl.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import SelectInput from 'nfvo-components/input/SelectInput.jsx';
-import Icon from 'nfvo-components/icon/Icon.jsx';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import {fileTypes} from './HeatSetupConstants.js';
 import {tabsMapping} from '../SoftwareProductAttachmentsConstants.js';
@@ -52,7 +51,7 @@ class SortableModuleFileList extends Component {
 
 	render() {
 
-		let {unassigned, onModuleRename, onModuleDelete, onModuleAdd, onBaseAdd, onModuleFileTypeChange, isBaseExist} = this.props;
+		let {unassigned, onModuleRename, onModuleDelete, onModuleAdd, onBaseAdd, onModuleFileTypeChange, isBaseExist, isReadOnlyMode} = this.props;
 		const childProps = module => ({
 			module,
 			onModuleRename,
@@ -68,19 +67,17 @@ class SortableModuleFileList extends Component {
 					items={this.state.data}
 					draggingIndex={this.state.draggingIndex}
 					sortId={i}
-					outline='list'><ModuleFile {...childProps(item)} /></SortableListItem>
+					outline='list'><ModuleFile {...childProps(item)} isReadOnlyMode={this.props.isReadOnlyMode} /></SortableListItem>
 			);
 		}, this);
 
 		return (
-			<div className='modules-list-wrapper'>
+			<div className={`modules-list-wrapper ${(listItems.length > 0) ? 'modules-list-wrapper-divider' : ''}`}>
 				<div className='modules-list-header'>
-					<div className='modules-list-controllers'>
-						{!isBaseExist && <Button btnType='link' onClick={onBaseAdd} disabled={unassigned.length === 0}>{i18n('Add Base')}</Button>}
-						<Button btnType='link' onClick={onModuleAdd} disabled={unassigned.length === 0}>{i18n('Add Module')}</Button>
-					</div>
+					{!isBaseExist && <div><Button btnType='link' onClick={onBaseAdd} disabled={isReadOnlyMode || unassigned.length === 0}>{i18n('Add Base')}</Button></div>}
+					<div><Button btnType='link' onClick={onModuleAdd} disabled={isReadOnlyMode || unassigned.length === 0}>{i18n('Add Module')}</Button></div>
 				</div>
-				<ul>{listItems}</ul>
+				{(listItems.length > 0) && <ul>{listItems}</ul>}
 			</div>
 		);
 	}
@@ -89,20 +86,24 @@ class SortableModuleFileList extends Component {
 const tooltip = (name) => <Tooltip id='tooltip-bottom'>{name}</Tooltip>;
 const UnassignedFileList = (props) => {
 	return (
-		<div className='unassigned-files'>
+		<div>
+			<div className='modules-list-header'/>
+				<div className='unassigned-files'>
 			<div className='unassigned-files-title'>{i18n('UNASSIGNED FILES')}</div>
 			<div className='unassigned-files-list'>{props.children}</div>
+			</div>
 		</div>
 	);
 };
 
 const EmptyListContent = props => {
-	let {onClick, heatDataExist} = props;
+	let {onClick, heatDataExist, isReadOnlyMode} = props;
 	let displayText = heatDataExist ? 'All Files Are Assigned' : '';
 	return (
 		<div className='go-to-validation-button-wrapper'>
 			<div className='all-files-assigned'>{i18n(displayText)}</div>
-			{heatDataExist && <div className={'link'} onClick={onClick} data-test-id='go-to-validation'>{i18n('Proceed To Validation')}<SVGIcon name='angleRight'/></div>}
+			{heatDataExist && <SVGIcon disabled={isReadOnlyMode} name='angleRight' onClick={onClick}
+				data-test-id='go-to-validation' label={i18n('Proceed To Validation')} labelPosition='left' color='primary'/>}
 		</div>
 	);
 };
@@ -112,14 +113,11 @@ const UnassignedFile = (props) => (
 	</OverlayTrigger>
 );
 
-const AddOrDeleteVolumeFiels = ({add = true, onAdd, onDelete}) => {
+const AddOrDeleteVolumeFiles = ({add = true, onAdd, onDelete, isReadOnlyMode}) => {
 	const displayText = add ? 'Add Volume Files' : 'Delete Volume Files';
 	const action = add ? onAdd : onDelete;
 	return (
-		<div className='add-or-delete-volumes' onClick={action}>
-			<SVGIcon name={add ? 'plus' : 'close'} />
-			<span>{i18n(displayText)}</span>
-		</div>
+		<Button disabled={isReadOnlyMode} onClick={action} btnType='link' className='add-or-delete-volumes' iconName={add ? 'plus' : 'close'}>{i18n(displayText)}</Button>
 	);
 };
 
@@ -195,14 +193,14 @@ class ModuleFile extends Component {
 	}
 
 	render() {
-		const {module: {name, isBase, yaml, env, vol, volEnv}, onModuleDelete, files, onModuleFileTypeChange} = this.props;
+		const {module: {name, isBase, yaml, env, vol, volEnv}, onModuleDelete, files, onModuleFileTypeChange, isReadOnlyMode} = this.props;
 		const {displayVolumes} = this.state;
 		const moduleType = isBase ? 'BASE' : 'MODULE';
 		return (
 			<div className='modules-list-item' data-test-id='module-item'>
 				<div className='modules-list-item-controllers'>
 					<div className='modules-list-item-filename'>
-						<Icon image={isBase ? 'base' : 'module'} iconClassName='heat-setup-module-icon' />
+						<SVGIcon name={isBase ? 'base' : 'module'} color='primary' iconClassName='heat-setup-module-icon' />
 						<span className='module-title-by-type'>{`${moduleType}: `}</span>
 						<div className={`text-and-icon ${this.state.isInNameEdit ? 'in-edit' : ''}`}>
 							{this.renderNameAccordingToEditState()}
@@ -235,7 +233,7 @@ class ModuleFile extends Component {
 						files={files}
 						selected={volEnv}
 						onChange={onModuleFileTypeChange}/>}
-					<AddOrDeleteVolumeFiels onAdd={() => this.setState({displayVolumes: true})} onDelete={() => this.deleteVolumeFiles()} add={!displayVolumes}/>
+					<AddOrDeleteVolumeFiles isReadOnlyMode={isReadOnlyMode} onAdd={() => this.setState({displayVolumes: true})} onDelete={() => this.deleteVolumeFiles()} add={!displayVolumes}/>
 				</div>
 			</div>
 		);
@@ -245,15 +243,15 @@ class ModuleFile extends Component {
 class ArtifactOrNestedFileList extends Component {
 
 	render() {
-		let {type, title, selected, options, onSelectChanged, onAddAllUnassigned} = this.props;
+		let {type, title, selected, options, onSelectChanged, onAddAllUnassigned, isReadOnlyMode, headerClassName} = this.props;
 		return (
-			<div className={`artifact-files ${type === 'nested' ? 'nested' : ''}`}>
+			<div className={`artifact-files ${type === 'nested' ? 'nested' : ''} ${headerClassName} `}>
 				<div className='artifact-files-header'>
 					<span>
-						{type === 'artifact' && (<Icon image='artifacts' iconClassName='heat-setup-module-icon' />)}
+						{type === 'artifact' && (<SVGIcon color='primary' name='artifacts' iconClassName='heat-setup-module-icon' />)}
 						{`${title}`}
 					</span>
-					{type === 'artifact' && <span className='add-all-unassigned' onClick={onAddAllUnassigned}>{i18n('Add All Unassigned Files')}</span>}
+					{type === 'artifact' && <Button disabled={isReadOnlyMode} btnType='link' className='add-all-unassigned' onClick={onAddAllUnassigned}>{i18n('Add All Unassigned Files')}</Button>}
 				</div>
 				{type === 'nested' ? (
 					<ul className='nested-list'>{selected.map(nested =>
@@ -294,6 +292,7 @@ class SoftwareProductHeatSetupView extends Component {
 				<div className='heat-setup-view-modules-and-artifacts'>
 					<SortableModuleFileList
 						{...this.props}
+						isReadOnlyMode={this.props.isReadOnlyMode}
 						artifacts={formattedArtifacts}
 						unassigned={formattedUnassigned}/>
 					<ArtifactOrNestedFileList
@@ -302,11 +301,14 @@ class SoftwareProductHeatSetupView extends Component {
 						options={formattedUnassigned}
 						selected={formattedArtifacts}
 						onSelectChanged={onArtifactListChange}
+						isReadOnlyMode={this.props.isReadOnlyMode}
+						headerClassName={(modules && modules.length > 0) ? 'with-list-items' : ''}
 						onAddAllUnassigned={onAddAllUnassigned}/>
 					<ArtifactOrNestedFileList
 						type={'nested'}
 						title={i18n('NESTED HEAT FILES')}
 						options={[]}
+						isReadOnlyMode={this.props.isReadOnlyMode}
 						selected={nested}/>
 				</div>
 				<UnassignedFileList>
@@ -316,6 +318,7 @@ class SoftwareProductHeatSetupView extends Component {
 						:
 						(<EmptyListContent
 							heatDataExist={heatDataExist}
+							isReadOnlyMode={this.props.isReadOnlyMode}
 							onClick={() => this.processAndValidateHeat({modules, unassigned, artifacts, nested}, heatSetupCache)}/>)
 					}
 				</UnassignedFileList>

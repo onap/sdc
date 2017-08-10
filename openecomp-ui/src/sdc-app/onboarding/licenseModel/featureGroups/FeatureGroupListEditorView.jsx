@@ -97,24 +97,23 @@ class FeatureGroupListEditorView extends React.Component {
 					<div className='text name'>{name}</div>
 				</div>
 
-				<div className='list-editor-item-view-field'>
+				<div className='list-editor-item-view-field smaller-field'>
 					<div className='feature-groups-count-field'>
-						<div className='title'>{i18n('Entitlement')}</div>
-						<div className='title'>{i18n('Pools')}</div>
+						<div className='title'>{i18n('EP')}</div>
 						<div className='feature-groups-count-ep'>{entitlementPoolsIds.length || 0}</div>
 					</div>
+				</div>
+				<div className='list-editor-item-view-field smaller-field'>
 					<div className='feature-groups-count-field'>
-						<div className='title'>{i18n('License key')}</div>
-						<div className='title'>{i18n('Groups')}</div>
+						<div className='title'>{i18n('LKG')}</div>
 						<div className='feature-groups-count-lk'>{licenseKeyGroupsIds.length || 0}</div>
 					</div>
 				</div>
 
 				<div className='list-editor-item-view-field'>
 					<div className='feature-groups-count-field'>
-						<div className='title'>{i18n('Manufacturer Reference')}</div>
-						<div className='title'>{i18n('Number')}</div>
-						<div className='feature-groups-count-ep'>{manufacturerReferenceNumber}</div>
+						<div className='title title-no-wrap'>{i18n('Manufacturer Reference Number')}</div>
+						<div className='feature-groups-mrn-ep'>{manufacturerReferenceNumber}</div>
 					</div>
 				</div>
 
@@ -122,8 +121,8 @@ class FeatureGroupListEditorView extends React.Component {
 					<div className='title'>{i18n('Description')}</div>
 					<div className='text description'>{description}</div>
 				</div>
-				
-				
+
+
 
 			</ListEditorItemView>
 		);

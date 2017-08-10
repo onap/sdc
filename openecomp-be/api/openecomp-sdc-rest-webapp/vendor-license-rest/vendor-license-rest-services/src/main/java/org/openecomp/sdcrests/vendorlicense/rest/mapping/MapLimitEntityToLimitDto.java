@@ -12,10 +12,10 @@ public class MapLimitEntityToLimitDto extends MappingBase<LimitEntity, LimitEnti
     target.setId(source.getId());
     target.setName(source.getName());
     target.setDescription(source.getDescription());
-    target.setMetric(source.getMetric() != null ? source.getMetric().name() : null);
+    target.setMetric(source.getMetric());
     target.setAggregationFunction(source.getAggregationFunction() != null ? source
         .getAggregationFunction().name() : null);
-    target.setTime(source.getTime() != null ? source.getTime().name() : null);
+    target.setTime(source.getTime());
     target.setType(source.getType() != null ? source.getType().name() : null);
     target.setUnit(source.getUnit());
     target.setValue(source.getValue());

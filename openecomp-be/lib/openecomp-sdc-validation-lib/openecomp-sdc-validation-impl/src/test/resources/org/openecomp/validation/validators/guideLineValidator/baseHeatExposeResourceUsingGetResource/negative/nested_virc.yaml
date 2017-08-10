@@ -1,0 +1,207 @@
+heat_template_version: 2015-04-30
+
+description: virc_nested
+
+parameters:
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance
+  vf_module_name:
+    type: string
+    description: Unique name for this VF Module instance
+  vm_roles:
+    type: comma_delimited_list
+    description: Unique roles for this group of instances
+  virc_names:
+    type: comma_delimited_list
+    description: name of virc instances
+  virc_image_name:
+    type: string
+    description: name of virc image
+  virc_flavor_name:
+    type: string
+    description: flavor of instance to use
+  virc_keypair:
+    type: string
+    description: Key pair containing public SSH key for vIRC instances
+  availability_zone_0:
+    type: string
+    description: Availability zone used for this resource group
+  management_net_name:
+    type: string
+    description: virc management network name
+  virc_management_dhcp:
+    type: string
+    description: yes if port configured by dhcp, otherwise no
+  virc_management_ips:
+    type: comma_delimited_list
+    description: virc management network fixed ips
+  virc_management_netmask:
+    type: string
+    description: virc management netmask
+  virc_management_gateway:
+    type: string
+    description: virc management gateway
+  virc_management_default_route:
+    type: string
+    description: yes if this default route is that of this nic
+  data_net_name:
+    type: string
+    description: virc data network name
+  virc_data_dhcp:
+    type: string
+    description: yes if port configured by dhcp, otherwise no
+  virc_data_ips:
+    type: comma_delimited_list
+    description: virc data network fixed ips
+  virc_data_netmask:
+    type: string
+    description: virc data netmask
+  virc_data_gateway:
+    type: string
+    description: virc data gateway
+  virc_data_default_route:
+    type: string
+    description: yes if this default route is that of this nic
+  signaling_net_name:
+    type: string
+    description: virc signaling network name
+  virc_signaling_dhcp:
+    type: string
+    description: yes if port configured by dhcp, otherwise no
+  virc_signaling_ips:
+    type: comma_delimited_list
+    description: virc signaling network fixed ips
+  virc_signaling_netmask:
+    type: string
+    description: virc signaling netmask
+  virc_signaling_gateway:
+    type: string
+    description: virc signaling gateway
+  virc_signaling_default_route:
+    type: string
+    description: yes if this default route is that of this nic
+  virc_sg:
+    type: string
+    description: virc security group
+  virc_domain:
+    type: string
+    description: domain of the virc instance
+  virc_dns1:
+    type: string
+    description: first dns nameserver for virc instance
+  virc_dns2:
+    type: string
+    description: second dns nameserver for virc instance
+  virc_default_gateway:
+    type: string
+    description: default gateway for VM
+  virc_version:
+    type: string
+    description: virc deployment version
+  virc_environment:
+    type: string
+    description: virc deployment environment
+  virc_version_file:
+    type: string
+    description: vIRC CC version file name
+  index_num:
+    type: number
+    description: Current index value of the resource group
+    constraints:
+      - range: { min: 0, max: 18 }
+
+resources:
+  virc_0:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [virc_names, {get_param: index_num}]}
+      metadata:
+        vnf_id: { get_param: vnf_id }
+        vnf_name: { get_param: vnf_name }
+        vf_module_id: { get_param: vf_module_id }
+        vf_module_name: { get_param: vf_module_name }
+        vm_role: { get_param: [vm_roles, {get_param: index_num}]}
+      key_name: {get_param: virc_keypair}
+      image: {get_param: virc_image_name}
+      flavor: {get_param: virc_flavor_name} 
+      availability_zone: {get_param: availability_zone_0}
+      networks:
+        - port: { get_resource: virc_management_0_port}
+        - port: { get_resource: virc_data_1_port}
+        - port: { get_resource: virc_signaling_2_port}
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: {get_file: user_data.sh}
+          params:
+            __hostname__: {get_param: [virc_names, {get_param: index_num}]} 
+            __domain__: {get_param: virc_domain}
+            __dns1__: {get_param: virc_dns1}
+            __dns2__: {get_param: virc_dns2}
+            __default_gateway__: {get_param: virc_default_gateway}
+            __port_mac_0__: {get_attr: [virc_management_0_port, mac_address]}
+            __port_ip_0__: {get_param: [virc_management_ips, {get_param: index_num}]}
+            __port_netmask_0__: {get_param: virc_management_netmask}
+            __port_gateway_0__: {get_param: virc_management_gateway}
+            __port_def_route_0__: {get_param: virc_management_default_route}
+            __port_dhcp_0__: {get_param: virc_management_dhcp}
+            __port_mac_1__: {get_attr: [virc_data_1_port, mac_address]}
+            __port_ip_1__: {get_param: [virc_data_ips, {get_param: index_num}]}
+            __port_netmask_1__: {get_param: virc_data_netmask}
+            __port_gateway_1__: {get_param: virc_data_gateway}
+            __port_def_route_1__: {get_param: virc_data_default_route}
+            __port_dhcp_1__: {get_param: virc_data_dhcp}
+            __port_ip6_1__: {get_param: [virc_data_ips, {get_param: index_num}]}
+            __port_mac_2__: {get_attr: [virc_signaling_2_port, mac_address]}
+            __port_ip_2__: {get_param: [virc_signaling_ips, {get_param: index_num}]}
+            __port_netmask_2__: {get_param: virc_signaling_netmask}
+            __port_gateway_2__: {get_param: virc_signaling_gateway}
+            __port_def_route_2__: {get_param: virc_signaling_default_route}
+            __port_dhcp_2__: {get_param: virc_signaling_dhcp}
+            __virc_environment__: {get_param: virc_environment}
+            __virc_version__: {get_param: virc_version}
+            __virc_version_file__: {get_param: virc_version_file}
+
+  virc_management_0_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: management_net_name }
+      fixed_ips:
+       - ip_address: { get_param: [virc_management_ips, {get_param: index_num}]}
+      security_groups:
+       - { get_param: virc_sg }
+  virc_data_1_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: data_net_name }
+      fixed_ips:
+        - ip_address: { get_param: [virc_data_ips, {get_param: index_num}]}
+      security_groups:
+        - { get_param: virc_sg }
+  virc_signaling_2_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: signaling_net_name }
+      fixed_ips:
+        - ip_address: { get_param: [virc_signaling_ips, {get_param: index_num}]}
+      security_groups:
+        - { get_param: virc_sg }
+  virc_volume:
+    type: OS::Cinder::Volume
+    properties:
+#      name: {get_param: [virc_names, {get_param: index_num}]}
+      availability_zone: nova
+#      availability_zone: {get_param: availability_zone_0}
+      size: 1
+  virc_volumeattachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: virc_0 }
+      volume_id: { get_resource: virc_volume }

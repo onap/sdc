@@ -999,7 +999,7 @@ topology_template:
                 get_input: vnf_name
         description: Cinder volume for the second vSON Cluster leader.
     vson_clm_0:
-      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server
+      type: org.openecomp.resource.abstract.nodes.heat.vson_vm_4
       directives:
       - substitutable
       properties:
@@ -1063,7 +1063,7 @@ topology_template:
           node: oam_net_security_group
           relationship: tosca.relationships.DependsOn
     vson_mgt_group:
-      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_from_vol
+      type: org.openecomp.resource.abstract.nodes.heat.vson_vm_2
       directives:
       - substitutable
       properties:
@@ -1141,7 +1141,7 @@ topology_template:
           get_input: vson_dbs_volume_name_1
         description: Cinder volume for the second vSON DBS VM instance.
     vson_dbc_group:
-      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_with_vol
+      type: org.openecomp.resource.abstract.nodes.heat.vson_vm_1
       directives:
       - substitutable
       properties:
@@ -1223,7 +1223,7 @@ topology_template:
           get_input: vson_dbs_volume_name_0
         description: Cinder volume for the first vSON DBS VM instance.
     vson_clm_group:
-      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server
+      type: org.openecomp.resource.abstract.nodes.heat.vson_vm_4
       directives:
       - substitutable
       properties:
@@ -1342,7 +1342,7 @@ topology_template:
                 get_input: vnf_name
         description: Cinder volume for the second vSON DC leader.
     vson_mdr_group:
-      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_from_vol
+      type: org.openecomp.resource.abstract.nodes.heat.vson_vm_2
       directives:
       - substitutable
       properties:
@@ -1406,7 +1406,7 @@ topology_template:
         vson_vm_names:
         - get_input: vson_mdr_name_0
     vson_dbs_group:
-      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_with_vol
+      type: org.openecomp.resource.abstract.nodes.heat.vson_vm_1
       directives:
       - substitutable
       properties:
@@ -1478,7 +1478,7 @@ topology_template:
         - get_input: vson_dbs_name_0
         - get_input: vson_dbs_name_1
     vson_app_group:
-      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_with_vol_dual_ip_stack
+      type: org.openecomp.resource.abstract.nodes.heat.vson_vm
       directives:
       - substitutable
       properties:
@@ -1710,7 +1710,7 @@ topology_template:
           get_input: vson_dbg_volume_name_0
         description: vSON DB Global cinder volume.
     vson_dbg_group:
-      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_with_vol
+      type: org.openecomp.resource.abstract.nodes.heat.vson_vm_1
       directives:
       - substitutable
       properties:
@@ -1778,7 +1778,7 @@ topology_template:
         vson_vm_names:
         - get_input: vson_dbg_name_0
     vson_cll_group:
-      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_with_vol
+      type: org.openecomp.resource.abstract.nodes.heat.vson_vm_1
       directives:
       - substitutable
       properties:
@@ -1867,7 +1867,7 @@ topology_template:
           get_input: vson_app_volume_name_0
         description: vSON APP cinder volume.
     vson_mon_group:
-      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_from_vol
+      type: org.openecomp.resource.abstract.nodes.heat.vson_vm_2
       directives:
       - substitutable
       properties:
@@ -1931,7 +1931,7 @@ topology_template:
         vson_vm_names:
         - get_input: vson_mon_name_0
     vson_dcl_group:
-      type: org.openecomp.resource.abstract.nodes.heat.nested_vson_server_with_vol
+      type: org.openecomp.resource.abstract.nodes.heat.vson_vm_1
       directives:
       - substitutable
       properties:

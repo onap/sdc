@@ -99,8 +99,8 @@ function updateSchemaDataAndValidateReducer (state = {}, action, questionnaireNa
 			genericFieldInfoClone = {...state.qgenericFieldInfo};
 			let formReady = true;
 			forOwn(state.qgenericFieldInfo,(value, key) => {
-				let val = state.data[key] ? state.data[key] : '';
-				let result = Validator.validate(key, val, state.qgenericFieldInfo[key].validations, state, {});
+				let val = state.dataMap[key] ? state.dataMap[key] : '';
+				let result = Validator.validate(key, val, state.qgenericFieldInfo[key].validations, state, action.customValidations);
 				genericFieldInfoClone[key] = {...genericFieldInfoClone[key], isValid: result.isValid, errorText: result.errorText};
 				if (!result.isValid) {
 					formReady = false;

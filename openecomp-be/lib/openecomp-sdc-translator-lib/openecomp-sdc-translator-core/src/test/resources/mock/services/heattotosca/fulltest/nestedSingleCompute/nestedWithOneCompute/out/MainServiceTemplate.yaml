@@ -121,7 +121,7 @@ topology_template:
       type: string
   node_templates:
     server_pcm_001:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      type: org.openecomp.resource.abstract.nodes.heat.pcm_server
       directives:
       - substitutable
       properties:

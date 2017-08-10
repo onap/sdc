@@ -28,8 +28,11 @@ import org.openecomp.sdc.logging.messages.AuditMessages;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
+import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.vendorlicense.types.VersionedVendorLicenseModel;
+import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
+import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorlicense.rest.VendorLicenseModels;
 import org.openecomp.sdcrests.vendorlicense.rest.mapping.MapVendorLicenseModelRequestDtoToVendorLicenseModelEntity;
@@ -56,8 +59,10 @@ import java.util.Collection;
 public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  @Autowired
-  private VendorLicenseManager vendorLicenseManager;
+
+  private VendorLicenseManager vendorLicenseManager =
+      VendorLicenseManagerFactory.getInstance().createInterface();
+
   private static final Logger logger =
           LoggerFactory.getLogger(VendorLicenseModelsImpl.class);
 

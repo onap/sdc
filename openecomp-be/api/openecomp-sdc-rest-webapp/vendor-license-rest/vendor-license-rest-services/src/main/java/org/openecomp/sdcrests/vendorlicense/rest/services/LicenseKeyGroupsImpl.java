@@ -24,6 +24,7 @@ import org.openecomp.sdc.logging.context.MdcUtil;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
+import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorlicense.rest.LicenseKeyGroups;
@@ -49,8 +50,8 @@ import java.util.Collection;
 public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
 
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  @Autowired
-  private VendorLicenseManager vendorLicenseManager;
+  private VendorLicenseManager vendorLicenseManager =
+      VendorLicenseManagerFactory.getInstance().createInterface();
 
   /**
    * List license key groups response.

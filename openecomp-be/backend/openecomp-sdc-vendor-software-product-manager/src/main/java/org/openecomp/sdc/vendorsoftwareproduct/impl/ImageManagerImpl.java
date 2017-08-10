@@ -36,6 +36,7 @@ import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class ImageManagerImpl implements ImageManager {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
@@ -296,11 +297,51 @@ public class ImageManagerImpl implements ImageManager {
       }
     }
 
+    if(!isImageVersionUnique(vspId, version, componentId, imageId, image, user))
+    {
+        ErrorCode errorCode = ImageErrorBuilder.getDuplicateImageVersionErrorBuilder(image
+                .getVersion(), componentId);
+
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+                LoggerTragetServiceName.UPDATE_IMAGE, ErrorLevel.ERROR.name(),
+                errorCode.id(),errorCode.message());
+
+        throw new CoreException(errorCode);
+    }
+
     imageDao.updateQuestionnaireData(vspId, version, componentId, imageId, questionnaireData);
     mdcDataDebugMessage.debugExitMessage("VSP id, component id, imageId", vspId, componentId,
         imageId);
   }
 
+  private boolean isImageVersionUnique(String vspId, Version version, String componentId, String imageId,
+                                       ImageDetails image, String user)
+  {
+    boolean isPresent = true;
+    if(image!=null && image.getVersion()!=null)
+    {
+        Collection<ImageEntity> imageEntities = imageDao.list(new ImageEntity(vspId, version, componentId, null));
+        if(CollectionUtils.isNotEmpty(imageEntities))
+        {
+            imageEntities = imageEntities.stream().filter(imageEntity -> image.getVersion().trim().equalsIgnoreCase(
+                    getImageVersion(vspId, version, componentId, imageEntity, user))
+                    && !imageEntity.getId().equals(imageId)).collect(Collectors.toList());
+
+            isPresent = CollectionUtils.isEmpty(imageEntities);
+        }
+    }
+
+    return isPresent;
+  }
+
+  private String getImageVersion(String vspId, Version version, String componentId, ImageEntity imageEntity, String user)
+  {
+      QuestionnaireResponse imageQuestionnaire = getImageQuestionnaire(vspId, version,
+              componentId, imageEntity.getId(), user);
+      ImageDetails imageDetails = JsonUtil.json2Object(imageQuestionnaire.getData(), ImageDetails.class);
+
+      return imageDetails==null?null:imageDetails.getVersion()!=null?imageDetails.getVersion().trim():null;
+  }
   private ImageEntity getImageEntity(String vspId, Version version, String componentId,
                                      String imageId) {
     //validateComponentId(vspId,version,componentId);
@@ -322,19 +363,8 @@ public class ImageManagerImpl implements ImageManager {
     return false;
   }
 
-  private void validateVfcImage(boolean isManual, ImageEntity image, Collection<ImageEntity> vfcImageList, String event) {
-    if(isManual && !image.getImageCompositionData().getFileName().matches(VendorSoftwareProductConstants.NAME_PATTERN))
-    {
-      ErrorCode errorCode = ImageErrorBuilder.getImageNameFormatErrorBuilder(
-              VendorSoftwareProductConstants.NAME_PATTERN);
-
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              event, ErrorLevel.ERROR.name(),
-              errorCode.id(),errorCode.message());
-
-      throw new CoreException(errorCode);
-    }
-
+  private void validateVfcImage(boolean isManual, ImageEntity image,
+                                Collection<ImageEntity> vfcImageList, String event) {
     if (isImageNameDuplicate(vfcImageList,image.getImageCompositionData().getFileName())) {
       ErrorCode errorCode = ImageErrorBuilder.getDuplicateImageNameErrorBuilder(image
           .getImageCompositionData().getFileName(), image.getComponentId());

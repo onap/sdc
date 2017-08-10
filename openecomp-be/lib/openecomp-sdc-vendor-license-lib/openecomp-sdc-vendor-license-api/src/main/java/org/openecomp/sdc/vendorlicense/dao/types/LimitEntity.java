@@ -14,12 +14,12 @@ public class LimitEntity implements VersionableEntity {
   private String name;
   private LimitType type;
   private String description;
-  private EntitlementMetric metric;
+  private String metric;
   private Version version;
-  private Integer value;
-  private Integer unit;
+  private String value;
+  private String unit;
   private AggregationFunction aggregationFunction;
-  private EntitlementTime time;
+  private String time;
 
   public LimitEntity() {
   }
@@ -31,11 +31,11 @@ public class LimitEntity implements VersionableEntity {
     this.id = id;
   }
 
-  public Integer getUnit() {
+  public String getUnit() {
     return unit;
   }
 
-  public void setUnit(Integer unit) {
+  public void setUnit(String unit) {
     this.unit = unit;
   }
 
@@ -48,11 +48,11 @@ public class LimitEntity implements VersionableEntity {
     this.aggregationFunction = aggregationFunction;
   }
 
-  public EntitlementTime getTime() {
+  public String getTime() {
     return time;
   }
 
-  public void setTime(EntitlementTime time) {
+  public void setTime(String time) {
     this.time = time;
   }
 
@@ -119,11 +119,11 @@ public class LimitEntity implements VersionableEntity {
     this.name = name;
   }
 
-  public EntitlementMetric getMetric() {
+  public String getMetric() {
     return metric;
   }
 
-  public void setMetric(EntitlementMetric metric) {
+  public void setMetric(String metric) {
     this.metric = metric;
   }
 
@@ -135,11 +135,11 @@ public class LimitEntity implements VersionableEntity {
     this.description = description;
   }
 
-  public Integer getValue() {
+  public String getValue() {
     return value;
   }
 
-  public void setValue(Integer value) {
+  public void setValue(String value) {
     this.value = value;
   }
 

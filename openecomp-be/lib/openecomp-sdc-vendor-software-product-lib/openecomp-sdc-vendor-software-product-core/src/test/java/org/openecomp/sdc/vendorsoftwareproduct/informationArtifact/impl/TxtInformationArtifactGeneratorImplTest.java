@@ -70,6 +70,8 @@ public class TxtInformationArtifactGeneratorImplTest {
   @InjectMocks
   TxtInformationArtifactGeneratorImpl informationArtifactGenerator;
 
+  /*
+
   @BeforeMethod(alwaysRun = true)
   public void injectDoubles() {
     MockitoAnnotations.initMocks(this);
@@ -243,5 +245,7 @@ public class TxtInformationArtifactGeneratorImplTest {
     vspDetails.setOnboardingMethod("HEAT");
     return vspDetails;
   }
+
+  */
 
 }

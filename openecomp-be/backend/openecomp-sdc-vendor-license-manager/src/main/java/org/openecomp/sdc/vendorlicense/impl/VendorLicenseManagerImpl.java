@@ -86,27 +86,40 @@ import java.util.Set;
 import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE;
 
 public class VendorLicenseManagerImpl implements VendorLicenseManager {
-  private static final VersioningManager versioningManager =
-      VersioningManagerFactory.getInstance().createInterface();
-  private VendorLicenseFacade vendorLicenseFacade =
-      VendorLicenseFacadeFactory.getInstance().createInterface();
-  private static final VendorLicenseModelDao vendorLicenseModelDao =
-      VendorLicenseModelDaoFactory.getInstance().createInterface();
-  private static final LicenseAgreementDao licenseAgreementDao =
-      LicenseAgreementDaoFactory.getInstance().createInterface();
-  private static final FeatureGroupDao featureGroupDao =
-      FeatureGroupDaoFactory.getInstance().createInterface();
-  private static final EntitlementPoolDao entitlementPoolDao =
-      EntitlementPoolDaoFactory.getInstance().createInterface();
-  private static final LicenseKeyGroupDao licenseKeyGroupDao =
-      LicenseKeyGroupDaoFactory.getInstance().createInterface();
-  private static final LimitDao limitDao =
-      LimitDaoFactory.getInstance().createInterface();
+  private VersioningManager versioningManager;
+  private VendorLicenseFacade vendorLicenseFacade;
+  private VendorLicenseModelDao vendorLicenseModelDao;
+  private LicenseAgreementDao licenseAgreementDao;
+  private FeatureGroupDao featureGroupDao;
+  private EntitlementPoolDao entitlementPoolDao;
+  private LicenseKeyGroupDao licenseKeyGroupDao;
+  private LimitDao limitDao;
+  private ActivityLogManager activityLogManager;
 
-  private ActivityLogManager activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static final Logger logger =
       LoggerFactory.getLogger(VendorLicenseManagerImpl.class);
+
+  public VendorLicenseManagerImpl(VersioningManager versioningManager,
+                                  VendorLicenseFacade vendorLicenseFacade,
+                                  VendorLicenseModelDao vendorLicenseModelDao,
+                                  LicenseAgreementDao licenseAgreementDao,
+                                  FeatureGroupDao featureGroupDao,
+                                  EntitlementPoolDao entitlementPoolDao,
+                                  LicenseKeyGroupDao licenseKeyGroupDao,
+                                  ActivityLogManager activityLogManager,
+                                  LimitDao limitDao) {
+    this.versioningManager = versioningManager;
+    this.vendorLicenseFacade = vendorLicenseFacade;
+    this.vendorLicenseModelDao = vendorLicenseModelDao;
+    this.licenseAgreementDao = licenseAgreementDao;
+    this.featureGroupDao = featureGroupDao;
+    this.entitlementPoolDao = entitlementPoolDao;
+    this.licenseKeyGroupDao = licenseKeyGroupDao;
+    this.activityLogManager = activityLogManager;
+    this.limitDao = limitDao;
+  }
+
 
   private static void sortVlmListByModificationTimeDescOrder(
       List<VersionedVendorLicenseModel> vendorLicenseModels) {
@@ -239,15 +252,15 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
                                        String user) {
     mdcDataDebugMessage.debugEntryMessage("VLM id", vendorLicenseModelEntity.getId());
 
-    Version version = VersioningUtil.resolveVersion(null,
+    Version version = resloveVersion(vendorLicenseModelEntity.getId(),null,
         getVersionInfo(vendorLicenseModelEntity.getId(), VersionableEntityAction.Write, user),
         user);
     vendorLicenseModelEntity.setVersion(version);
 
     String existingVendorName = vendorLicenseModelDao.get(vendorLicenseModelEntity).getVendorName();
-    UniqueValueUtil
-        .updateUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, existingVendorName,
-            vendorLicenseModelEntity.getVendorName());
+
+    updateUniqueName(VendorLicenseConstants.UniqueValues.VENDOR_NAME, existingVendorName,
+        vendorLicenseModelEntity.getVendorName());
     vendorLicenseModelDao.update(vendorLicenseModelEntity);
 
     vendorLicenseFacade
@@ -275,9 +288,12 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
                                                                   String user) {
     mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
     mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
-    return licenseAgreementDao.list(new LicenseAgreementEntity(vlmId, VersioningUtil
-        .resolveVersion(version, getVersionInfo(vlmId, VersionableEntityAction.Read, user), user),
-        null));
+    LicenseAgreementEntity licenseAgreementEntity =  createLicenseAgreementForList(vlmId, version,
+        user);
+//    return licenseAgreementDao.list(new LicenseAgreementEntity(vlmId, VersioningUtil
+//        .resolveVersion(version, getVersionInfo(vlmId, VersionableEntityAction.Read, user), user),
+//        null));
+    return licenseAgreementDao.list(licenseAgreementEntity);
   }
 
   @Override
@@ -310,7 +326,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         new FeatureGroupEntity(licenseAgreement.getVendorLicenseModelId(), version, null),
         featureGroupDao, VendorLicenseModelEntity.ENTITY_TYPE);
 
-    UniqueValueUtil.updateUniqueValue(VendorLicenseConstants.UniqueValues.LICENSE_AGREEMENT_NAME,
+    updateUniqueName(VendorLicenseConstants.UniqueValues.LICENSE_AGREEMENT_NAME,
         retrieved.getName(), licenseAgreement.getName(), licenseAgreement.getVendorLicenseModelId(),
         licenseAgreement.getVersion().toString());
     licenseAgreementDao.updateColumnsAndDeltaFeatureGroupIds(licenseAgreement, addedFeatureGroupIds,
@@ -349,8 +365,9 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
     removeFeatureGroupsToLicenseAgreementRef(retrieved.getFeatureGroupIds(), retrieved);
 
-    licenseAgreementDao.delete(input);
-    UniqueValueUtil.deleteUniqueValue(VendorLicenseConstants.UniqueValues.LICENSE_AGREEMENT_NAME,
+    licenseAgreementDao.delete(retrieved);
+
+    deleteUniqueName(VendorLicenseConstants.UniqueValues.LICENSE_AGREEMENT_NAME,
         retrieved.getVendorLicenseModelId(), retrieved.getVersion().toString(),
         retrieved.getName());
 
@@ -406,7 +423,8 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     VersioningUtil.validateEntitiesExistence(addedEntitlementPools,
         new EntitlementPoolEntity(featureGroup.getVendorLicenseModelId(), version, null),
         entitlementPoolDao, VendorLicenseModelEntity.ENTITY_TYPE);
-    UniqueValueUtil.updateUniqueValue(VendorLicenseConstants.UniqueValues.FEATURE_GROUP_NAME,
+
+    updateUniqueName(VendorLicenseConstants.UniqueValues.FEATURE_GROUP_NAME,
         retrieved.getName(), featureGroup.getName(), featureGroup.getVendorLicenseModelId(),
         featureGroup.getVersion().toString());
 
@@ -458,7 +476,8 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     }
 
     featureGroupDao.delete(featureGroup);
-    UniqueValueUtil.deleteUniqueValue(VendorLicenseConstants.UniqueValues.FEATURE_GROUP_NAME,
+
+    deleteUniqueName(VendorLicenseConstants.UniqueValues.FEATURE_GROUP_NAME,
         retrieved.getVendorLicenseModelId(), retrieved.getVersion().toString(),
         retrieved.getName());
 
@@ -655,7 +674,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
     entitlementPoolDao.delete(entitlementPool);
 
-    UniqueValueUtil.deleteUniqueValue(VendorLicenseConstants.UniqueValues.ENTITLEMENT_POOL_NAME,
+    deleteUniqueName(VendorLicenseConstants.UniqueValues.ENTITLEMENT_POOL_NAME,
         retrieved.getVendorLicenseModelId(), retrieved.getVersion().toString(),
         retrieved.getName());
 
@@ -666,7 +685,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         .getVendorLicenseModelId(), entitlementPool.getId());
   }
 
-  private void deleteChildLimits(String vlmId, Version version, String epLkgId, String user) {
+  protected void deleteChildLimits(String vlmId, Version version, String epLkgId, String user) {
       Optional<Collection<LimitEntity>> limitEntities = Optional.ofNullable(
               listLimits(vlmId, version, epLkgId, user));
       limitEntities.ifPresent(entities->
@@ -773,7 +792,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
     licenseKeyGroupDao.delete(licenseKeyGroup);
 
-    UniqueValueUtil.deleteUniqueValue(VendorLicenseConstants.UniqueValues.LICENSE_KEY_GROUP_NAME,
+    deleteUniqueName(VendorLicenseConstants.UniqueValues.LICENSE_KEY_GROUP_NAME,
         retrieved.getVendorLicenseModelId(), retrieved.getVersion().toString(),
         retrieved.getName());
 
@@ -902,7 +921,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     return retrieved;
   }
 
-  private void addFeatureGroupsToLicenseAgreementRef(Set<String> featureGroupIds,
+  protected void addFeatureGroupsToLicenseAgreementRef(Set<String> featureGroupIds,
                                                      LicenseAgreementEntity licenseAgreement) {
     if (featureGroupIds != null) {
       for (String featureGroupId : featureGroupIds) {
@@ -913,7 +932,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     }
   }
 
-  private void removeFeatureGroupsToLicenseAgreementRef(Set<String> featureGroupIds,
+  protected void removeFeatureGroupsToLicenseAgreementRef(Set<String> featureGroupIds,
                                                         LicenseAgreementEntity licenseAgreement) {
     if (featureGroupIds != null) {
       for (String featureGroupId : featureGroupIds) {
@@ -924,7 +943,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     }
   }
 
-  private void addLicenseKeyGroupsToFeatureGroupsRef(Set<String> licenseKeyGroupIds,
+  protected void addLicenseKeyGroupsToFeatureGroupsRef(Set<String> licenseKeyGroupIds,
                                                      FeatureGroupEntity featureGroup) {
     if (licenseKeyGroupIds != null) {
       for (String licenseKeyGroupId : licenseKeyGroupIds) {
@@ -935,7 +954,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     }
   }
 
-  private void removeLicenseKeyGroupsToFeatureGroupsRef(Set<String> licenseKeyGroupIds,
+  protected void removeLicenseKeyGroupsToFeatureGroupsRef(Set<String> licenseKeyGroupIds,
                                                         FeatureGroupEntity featureGroup) {
     if (licenseKeyGroupIds != null) {
       for (String licenseKeyGroupId : licenseKeyGroupIds) {
@@ -946,7 +965,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     }
   }
 
-  private void addEntitlementPoolsToFeatureGroupsRef(Set<String> entitlementPoolIds,
+  protected void addEntitlementPoolsToFeatureGroupsRef(Set<String> entitlementPoolIds,
                                                      FeatureGroupEntity featureGroup) {
     if (entitlementPoolIds != null) {
       for (String entitlementPoolId : entitlementPoolIds) {
@@ -957,7 +976,7 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     }
   }
 
-  private void removeEntitlementPoolsToFeatureGroupsRef(Set<String> entitlementPoolIds,
+  protected void removeEntitlementPoolsToFeatureGroupsRef(Set<String> entitlementPoolIds,
                                                         FeatureGroupEntity featureGroup) {
     if (entitlementPoolIds != null) {
       for (String entitlementPoolId : entitlementPoolIds) {
@@ -968,8 +987,32 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
     }
   }
 
-  private VersionInfo getVersionInfo(String vendorLicenseModelId, VersionableEntityAction action,
+  protected VersionInfo getVersionInfo(String vendorLicenseModelId, VersionableEntityAction action,
                                      String user) {
     return vendorLicenseFacade.getVersionInfo(vendorLicenseModelId, action, user);
   }
+
+  protected LicenseAgreementEntity createLicenseAgreementForList(String vlmId, Version version,
+                                                                 String user) {
+    return new LicenseAgreementEntity(vlmId, VersioningUtil
+        .resolveVersion(version, getVersionInfo(vlmId, VersionableEntityAction.Read, user), user),
+        null);
+  }
+
+  protected void updateUniqueName(String uniqueValueType ,String oldName, String newName,String ...
+      context) {
+    UniqueValueUtil
+        .updateUniqueValue(uniqueValueType, oldName, newName,context);
+  }
+
+  protected void deleteUniqueName(String uniqueValueType,String ... uniqueCombination) {
+    UniqueValueUtil.deleteUniqueValue(uniqueValueType, uniqueCombination);
+  }
+
+  protected Version resloveVersion(String vlmId,Version requestedVersion, VersionInfo versionInfo,
+                                   String user){
+       return VersioningUtil.resolveVersion(null,
+        getVersionInfo(vlmId, VersionableEntityAction.Write, user), user);
+  }
+
 }

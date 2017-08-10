@@ -30,7 +30,6 @@
     <bean id="outEmptyResponseInterceptor" class="org.openecomp.server.interceptors.EmptyOutputOutInterceptor"/>
 
     <!-- ASDC -->
-    <bean id="vendorLicenseManager" class="org.openecomp.sdc.vendorlicense.impl.VendorLicenseManagerImpl"/>
     <bean id="uploadValidationManager" class="org.openecomp.sdc.validation.impl.UploadValidationManagerImpl"/>
     <bean id="actionManager" class="org.openecomp.sdc.action.impl.ActionManagerImpl"/>
     <bean id="applicationConfigManager" class="org.openecomp.sdc.applicationconfig.impl.ApplicationConfigManagerImpl"/>

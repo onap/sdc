@@ -29,11 +29,10 @@ import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
-import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 @Table(keyspace = "dox", name = "vsp_component_artifact")
-public class ComponentMonitoringUploadEntity implements VersionableEntity, Serializable {
+public class ComponentMonitoringUploadEntity implements VersionableEntity {
   public static final String ENTITY_TYPE = "Vendor Software Product Component Artifact";
   @PartitionKey
   @Column(name = "vsp_id")

@@ -20,86 +20,9 @@
 
 package org.openecomp.sdcrests.action.rest.services;
 
-import static org.openecomp.sdc.action.ActionConstants.ACTION_REQUEST_PARAM_NAME;
-import static org.openecomp.sdc.action.ActionConstants.ACTION_REQUEST_PARAM_SUPPORTED_COMPONENTS;
-import static org.openecomp.sdc.action.ActionConstants.ACTION_REQUEST_PARAM_SUPPORTED_MODELS;
-import static org.openecomp.sdc.action.ActionConstants.ARTIFACT_FILE;
-import static org.openecomp.sdc.action.ActionConstants.ARTIFACT_NAME;
-import static org.openecomp.sdc.action.ActionConstants.BE_FQDN;
-import static org.openecomp.sdc.action.ActionConstants.CATEGORY_LOG_LEVEL;
-import static org.openecomp.sdc.action.ActionConstants.CLIENT_IP;
-import static org.openecomp.sdc.action.ActionConstants.ERROR_DESCRIPTION;
-import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_CATEGORY;
-import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_OPEN_ECOMP_COMPONENT;
-import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_MODEL;
-import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_NAME;
-import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_NONE;
-import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_VENDOR;
-import static org.openecomp.sdc.action.ActionConstants.INSTANCE_UUID;
-import static org.openecomp.sdc.action.ActionConstants.LOCAL_ADDR;
-import static org.openecomp.sdc.action.ActionConstants.MAX_ACTION_ARTIFACT_SIZE;
-import static org.openecomp.sdc.action.ActionConstants.MDC_ASDC_INSTANCE_UUID;
-import static org.openecomp.sdc.action.ActionConstants.PARTNER_NAME;
-import static org.openecomp.sdc.action.ActionConstants.REMOTE_HOST;
-import static org.openecomp.sdc.action.ActionConstants.REQUEST_EMPTY_BODY;
-import static org.openecomp.sdc.action.ActionConstants.REQUEST_ID;
-import static org.openecomp.sdc.action.ActionConstants.REQUEST_TYPE_CREATE_ACTION;
-import static org.openecomp.sdc.action.ActionConstants.REQUEST_TYPE_UPDATE_ACTION;
-import static org.openecomp.sdc.action.ActionConstants.REQUEST_TYPE_VERSION_ACTION;
-import static org.openecomp.sdc.action.ActionConstants.SERVICE_INSTANCE_ID;
-import static org.openecomp.sdc.action.ActionConstants.SERVICE_METRIC_BEGIN_TIMESTAMP;
-import static org.openecomp.sdc.action.ActionConstants.SERVICE_NAME;
-import static org.openecomp.sdc.action.ActionConstants.STATUS;
-import static org.openecomp.sdc.action.ActionConstants.STATUS_CODE;
-import static org.openecomp.sdc.action.ActionConstants.SUPPORTED_COMPONENTS_ID;
-import static org.openecomp.sdc.action.ActionConstants.SUPPORTED_MODELS_VERSION_ID;
-import static org.openecomp.sdc.action.ActionConstants.TARGET_ENTITY;
-import static org.openecomp.sdc.action.ActionConstants.TARGET_ENTITY_API;
-import static org.openecomp.sdc.action.ActionConstants.TARGET_SERVICE_NAME;
-import static org.openecomp.sdc.action.ActionConstants.TIMESTAMP;
-import static org.openecomp.sdc.action.ActionConstants.UPDATED_BY;
-import static org.openecomp.sdc.action.ActionConstants.X_OPEN_ECOMP_INSTANCE_ID_HEADER_PARAM;
-import static org.openecomp.sdc.action.ActionConstants.X_OPEN_ECOMP_REQUEST_ID_HEADER_PARAM;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_CHECKSUM_ERROR_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_INVALID_NAME;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_INVALID_NAME_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_INVALID_PROTECTION_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_READ_FILE_ERROR;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_TOO_BIG_ERROR;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_TOO_BIG_ERROR_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_NOT_EXIST;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_NOT_EXIST_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_FILTER_MULTIPLE_QUERY_PARAM_NOT_SUPPORTED;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INTERNAL_SERVER_ERR_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_INSTANCE_ID_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_PARAM_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_REQUEST_BODY_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_REQUEST_ID_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INVALID_SEARCH_CRITERIA;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_MULT_SEARCH_CRITERIA;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_ARTIFACT_CHECKSUM_ERROR;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_ARTIFACT_INVALID_PROTECTION_VALUE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_ARTIFACT_OPERATION_ALLOWED;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_BODY_EMPTY;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_CONTENT_TYPE_INVALID;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_OPEN_ECOMP_INSTANCE_ID_INVALID;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_OPEN_ECOMP_REQUEST_ID_INVALID;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_FILTER_PARAM_INVALID;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_INVALID_GENERIC_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_INVALID_NAME;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_REQUEST_MISSING_MANDATORY_PARAM;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UNSUPPORTED_OPERATION;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UPDATE_NOT_ALLOWED_CODE;
-import static org.openecomp.sdc.action.util.ActionUtil.actionErrorLogProcessor;
-import static org.openecomp.sdc.action.util.ActionUtil.actionLogPostProcessor;
-import static org.openecomp.sdc.action.util.ActionUtil.getUtcDateStringFromTimestamp;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.action.ActionConstants;
@@ -108,11 +31,9 @@ import org.openecomp.sdc.action.errors.ActionErrorConstants;
 import org.openecomp.sdc.action.errors.ActionException;
 import org.openecomp.sdc.action.logging.CategoryLogLevel;
 import org.openecomp.sdc.action.logging.StatusCode;
-import org.openecomp.sdc.action.types.Action;
-import org.openecomp.sdc.action.types.ActionArtifact;
-import org.openecomp.sdc.action.types.ActionArtifactProtection;
-import org.openecomp.sdc.action.types.ActionRequest;
-import org.openecomp.sdc.action.types.OpenEcompComponent;
+import org.openecomp.sdc.action.types.*;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdcrests.action.rest.Actions;
 import org.openecomp.sdcrests.action.rest.mapping.MapActionToActionResponseDto;
 import org.openecomp.sdcrests.action.types.ActionResponseDto;
@@ -125,18 +46,18 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import java.util.*;
+
+import static org.openecomp.sdc.action.ActionConstants.*;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.*;
+import static org.openecomp.sdc.action.util.ActionUtil.*;
 
 /**
  * Implements various CRUD API that can be performed on Action
@@ -148,7 +69,7 @@ import javax.ws.rs.core.Response;
 @Validated
 public class ActionsImpl implements Actions {
 
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+  private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(ActionsImpl.class);
   @Autowired
   private ActionManager actionManager;
   private String whitespaceCharacters = "\\s"       /* dummy empty string for homogeneity */
@@ -203,7 +124,7 @@ public class ActionsImpl implements Actions {
     ListResponseWrapper responseList = new ListResponseWrapper();
 
     try {
-      log.debug(" entering getActionsByActionInvariantUuId ");
+      LOGGER.debug(" entering getActionsByActionInvariantUuId ");
       initializeRequestMDC(servletRequest, invariantID, ActionRequest.GET_ACTIONS_INVARIANT_ID);
       MDC.put(SERVICE_INSTANCE_ID, invariantID);
 
@@ -217,26 +138,26 @@ public class ActionsImpl implements Actions {
     } catch (ActionException exception) {
       actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
-      log.error("");
+      LOGGER.error("");
       throw exception;
     } catch (Exception exception) {
       actionLogPostProcessor(StatusCode.ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
-      log.error("");
+      LOGGER.error("");
       throw exception;
     } finally {
       finalAuditMetricsLogProcessor(ActionRequest.GET_ACTIONS_INVARIANT_ID.name());
     }
 
-    log.debug(" exit getActionsByActionInvariantUuId ");
+    LOGGER.debug(" exit getActionsByActionInvariantUuId ");
     actionLogPostProcessor(StatusCode.COMPLETE, true);
     return Response.ok(responseList).build();
   }
 
   private ListResponseWrapper getActionsByInvId(HttpServletRequest servletRequest,
                                                 String invariantID) {
-    log.debug(" entering getActionsByInvId with invariantID= " + invariantID);
+    LOGGER.debug(" entering getActionsByInvId with invariantID= " + invariantID);
     ListResponseWrapper responseList = new ListResponseWrapper();
     if (StringUtils.isEmpty(servletRequest.getQueryString())) {
       Map<String, String> errorMap = validateRequestHeaders(servletRequest);
@@ -244,7 +165,7 @@ public class ActionsImpl implements Actions {
       errorMap.putAll(queryParamErrors);
       if (errorMap.isEmpty()) {
         List<Action> actions = actionManager.getActionsByActionInvariantUuId(invariantID);
-        List<ActionResponseDto> versionList = new ArrayList<ActionResponseDto>();
+        List<ActionResponseDto> versionList = new ArrayList<>();
         for (Action action : actions) {
           ActionResponseDto responseDTO = createResponseDTO(action);
           versionList.add(responseDTO);
@@ -256,7 +177,7 @@ public class ActionsImpl implements Actions {
         checkAndThrowError(errorMap);
       }
     }
-    log.debug(" exit getActionsByInvId with invariantID= " + invariantID);
+    LOGGER.debug(" exit getActionsByInvId with invariantID= " + invariantID);
     return responseList;
   }
 
@@ -264,7 +185,7 @@ public class ActionsImpl implements Actions {
                                    String actionUUID) throws ActionException {
     int noOfFilterParams = 0;
     Response response = null;
-    log.debug(" entering getActionByUUID with invariantID= " + invariantID + " and actionUUID= " +
+    LOGGER.debug(" entering getActionByUUID with invariantID= " + invariantID + " and actionUUID= " +
         actionUUID);
     if (!StringUtils.isEmpty(actionUUID)) {
       noOfFilterParams++;
@@ -275,7 +196,7 @@ public class ActionsImpl implements Actions {
           ACTION_REQUEST_FILTER_PARAM_INVALID);
     }
 
-    log.debug(" exit getActionByUUID with invariantID= " + invariantID + " and actionUUID= " +
+    LOGGER.debug(" exit getActionByUUID with invariantID= " + invariantID + " and actionUUID= " +
         actionUUID);
     return response;
   }
@@ -283,7 +204,7 @@ public class ActionsImpl implements Actions {
   @Override
   public Response getOpenEcompComponents(HttpServletRequest servletRequest) {
     try {
-      log.debug(" entering getOpenEcompComponents ");
+      LOGGER.debug(" entering getEcompComponents ");
       initializeRequestMDC(servletRequest, "", ActionRequest.GET_OPEN_ECOMP_COMPONENTS);
       //Validate request syntax before passing to the manager
       Map<String, String> errorMap = validateRequestHeaders(servletRequest);
@@ -292,19 +213,19 @@ public class ActionsImpl implements Actions {
       List<OpenEcompComponent> openEcompComponents = actionManager.getOpenEcompComponents();
       response.setActionList(null);
       response.setComponentList(openEcompComponents);
-      log.debug(" exit getOpenEcompComponents ");
+      LOGGER.debug(" exit getEcompComponents ");
       actionLogPostProcessor(StatusCode.COMPLETE, true);
       return Response.ok(response).build();
     } catch (ActionException exception) {
       actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
-      log.error("");
+      LOGGER.error("");
       throw exception;
     } catch (Exception exception) {
       actionLogPostProcessor(StatusCode.ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
-      log.error("");
+      LOGGER.error("");
       throw exception;
     } finally {
       finalAuditMetricsLogProcessor(ActionRequest.GET_OPEN_ECOMP_COMPONENTS.name());
@@ -315,40 +236,17 @@ public class ActionsImpl implements Actions {
   public Response getFilteredActions(String vendor, String category, String name, String modelID,
                                      String componentID, HttpServletRequest servletRequest) {
     try {
-      log.debug(" entering getFilteredActions ");
-      Response response = null;
+      LOGGER.debug(" entering getFilteredActions ");
+      Response response;
       initializeRequestMDC(servletRequest, "", ActionRequest.GET_FILTERED_ACTIONS);
-      int noOfFilterParams = 0;
-      if (!StringUtils.isEmpty(vendor)) {
-        noOfFilterParams++;
-      }
-      if (!StringUtils.isEmpty(category)) {
-        noOfFilterParams++;
-      }
-      if (!StringUtils.isEmpty(name)) {
-        noOfFilterParams++;
-      }
-      if (!StringUtils.isEmpty(modelID)) {
-        noOfFilterParams++;
-      }
-      if (!StringUtils.isEmpty(componentID)) {
-        noOfFilterParams++;
-      }
+      int noOfFilterParams = getNoOfFilterParams(vendor, category, name, modelID, componentID);
       if (StringUtils.isEmpty(servletRequest.getQueryString())) {
         response = getAllActions(servletRequest);
-        log.debug(" exit getFilteredActions ");
+        LOGGER.debug(" exit getFilteredActions ");
         actionLogPostProcessor(StatusCode.COMPLETE, true);
         return response;
       }
-      if (noOfFilterParams > 1) {
-        throw new ActionException(ACTION_MULT_SEARCH_CRITERIA,
-            ACTION_FILTER_MULTIPLE_QUERY_PARAM_NOT_SUPPORTED);
-      }
-      if (noOfFilterParams == 0) {
-        throw new ActionException(ACTION_INVALID_SEARCH_CRITERIA,
-            ACTION_REQUEST_FILTER_PARAM_INVALID);
-      }
-      ListResponseWrapper responseList = null;
+      validateNoOfFilterParamsExactly1(noOfFilterParams);
       if (!StringUtils.isEmpty(vendor)) {
         response = getActionsByVendor(vendor, servletRequest);
       } else if (!StringUtils.isEmpty(category)) {
@@ -363,30 +261,61 @@ public class ActionsImpl implements Actions {
         throw new ActionException(ACTION_INVALID_PARAM_CODE, ACTION_REQUEST_FILTER_PARAM_INVALID);
       }
 
-      log.debug(" exit getFilteredActions ");
+      LOGGER.debug(" exit getFilteredActions ");
       actionLogPostProcessor(StatusCode.COMPLETE, true);
       return response;
     } catch (ActionException exception) {
       actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
-      log.error("");
+      LOGGER.error("");
       throw exception;
     } catch (Exception exception) {
       actionLogPostProcessor(StatusCode.ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
-      log.error("");
+      LOGGER.error("");
       throw exception;
     } finally {
       finalAuditMetricsLogProcessor(ActionRequest.GET_FILTERED_ACTIONS.name());
     }
   }
 
+  private void validateNoOfFilterParamsExactly1(int noOfFilterParams) {
+    if (noOfFilterParams > 1) {
+      throw new ActionException(ACTION_MULT_SEARCH_CRITERIA,
+          ACTION_FILTER_MULTIPLE_QUERY_PARAM_NOT_SUPPORTED);
+    }
+    if (noOfFilterParams == 0) {
+      throw new ActionException(ACTION_INVALID_SEARCH_CRITERIA,
+          ACTION_REQUEST_FILTER_PARAM_INVALID);
+    }
+  }
+
+  private int getNoOfFilterParams(String vendor, String category, String name, String modelID, String componentID) {
+    int noOfFilterParams = 0;
+    if (!StringUtils.isEmpty(vendor)) {
+      noOfFilterParams++;
+    }
+    if (!StringUtils.isEmpty(category)) {
+      noOfFilterParams++;
+    }
+    if (!StringUtils.isEmpty(name)) {
+      noOfFilterParams++;
+    }
+    if (!StringUtils.isEmpty(modelID)) {
+      noOfFilterParams++;
+    }
+    if (!StringUtils.isEmpty(componentID)) {
+      noOfFilterParams++;
+    }
+    return noOfFilterParams;
+  }
+
   @Override
   public Response createAction(String requestJSON, HttpServletRequest servletRequest) {
     try {
       initializeRequestMDC(servletRequest, null, ActionRequest.CREATE_ACTION);
-      log.debug(" entering API createAction ");
+      LOGGER.debug(" entering API createAction ");
       Map<String, String> errorMap = validateRequestHeaders(servletRequest);
       Map<String, String> requestBodyErrors =
           validateRequestBody(REQUEST_TYPE_CREATE_ACTION, requestJSON);
@@ -403,18 +332,18 @@ public class ActionsImpl implements Actions {
         checkAndThrowError(errorMap);
       }
       actionLogPostProcessor(StatusCode.COMPLETE, true);
-      log.debug(" exit API createAction with ActionInvariantUUID= " + MDC.get(SERVICE_INSTANCE_ID));
+      LOGGER.debug(" exit API createAction with ActionInvariantUUID= " + MDC.get(SERVICE_INSTANCE_ID));
       return Response.ok(actionResponseDTO).build();
     } catch (ActionException exception) {
       actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
-      log.error("");
+      LOGGER.error("");
       throw exception;
     } catch (Exception exception) {
       actionLogPostProcessor(StatusCode.ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
-      log.error(exception.getMessage());
+      LOGGER.error(exception.getMessage());
       throw exception;
     } finally {
       finalAuditMetricsLogProcessor(ActionRequest.CREATE_ACTION.name());
@@ -447,13 +376,13 @@ public class ActionsImpl implements Actions {
     } catch (ActionException exception) {
       actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
-      log.error("");
+      LOGGER.error("");
       throw exception;
     } catch (Exception exception) {
       actionLogPostProcessor(StatusCode.ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
-      log.error(exception.getMessage());
+      LOGGER.error(exception.getMessage());
       throw exception;
     } finally {
       finalAuditMetricsLogProcessor(ActionRequest.UPDATE_ACTION.name());
@@ -479,13 +408,13 @@ public class ActionsImpl implements Actions {
     } catch (ActionException exception) {
       actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
-      log.error(MDC.get(ERROR_DESCRIPTION));
+      LOGGER.error(MDC.get(ERROR_DESCRIPTION));
       throw exception;
     } catch (Exception exception) {
       actionLogPostProcessor(StatusCode.ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
-      log.error(exception.getMessage());
+      LOGGER.error(exception.getMessage());
       throw exception;
     } finally {
       finalAuditMetricsLogProcessor(ActionRequest.DELETE_ACTION.name());
@@ -498,7 +427,7 @@ public class ActionsImpl implements Actions {
     Response response = null;
     try {
       initializeRequestMDC(servletRequest, invariantUUID, ActionRequest.ACTION_VERSIONING);
-      log.debug("entering actOnAction with invariantUUID= " + invariantUUID + " and requestJSON= " +
+      LOGGER.debug("entering actOnAction with invariantUUID= " + invariantUUID + " and requestJSON= " +
           requestJSON);
       Map<String, String> errorMap = validateRequestHeaders(servletRequest);
       Map<String, String> requestBodyErrors =
@@ -542,17 +471,17 @@ public class ActionsImpl implements Actions {
     } catch (ActionException exception) {
       actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
-      log.error(MDC.get(ERROR_DESCRIPTION));
+      LOGGER.error(MDC.get(ERROR_DESCRIPTION));
       throw exception;
     } catch (Exception exception) {
       actionLogPostProcessor(StatusCode.ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
-      log.error(exception.getMessage());
+      LOGGER.error(exception.getMessage());
       throw exception;
     } finally {
       finalAuditMetricsLogProcessor(ActionRequest.ACTION_VERSIONING.name());
-      log.debug("exit actOnAction with invariantUUID= " + invariantUUID + " and requestJSON= " +
+      LOGGER.debug("exit actOnAction with invariantUUID= " + invariantUUID + " and requestJSON= " +
           requestJSON);
     }
     return response;
@@ -571,29 +500,29 @@ public class ActionsImpl implements Actions {
     Response response = null;
     try {
       initializeRequestMDC(servletRequest, actionInvariantUUID, ActionRequest.UPLOAD_ARTIFACT);
-      log.debug("entering uploadArtifact with actionInvariantUuId= " + actionInvariantUUID +
+      LOGGER.debug("entering uploadArtifact with actionInvariantUuId= " + actionInvariantUUID +
           "artifactName= " + artifactName);
       response =
           uploadArtifactInternal(actionInvariantUUID, artifactName, artifactLabel, artifactCategory,
               artifactDescription, artifactProtection, checksum, artifactToUpload, servletRequest);
       actionLogPostProcessor(StatusCode.COMPLETE, true);
-      log.debug("exiting uploadArtifact with actionInvariantUuId= " + actionInvariantUUID +
+      LOGGER.debug("exiting uploadArtifact with actionInvariantUuId= " + actionInvariantUUID +
           "artifactName= " + artifactName);
     } catch (ActionException exception) {
       actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
-      log.error(MDC.get(ERROR_DESCRIPTION));
+      LOGGER.error(MDC.get(ERROR_DESCRIPTION));
       throw exception;
     } catch (Exception exception) {
       actionLogPostProcessor(StatusCode.ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
-      log.error(exception.getMessage());
+      LOGGER.error(exception.getMessage());
       throw exception;
     } finally {
       finalAuditMetricsLogProcessor(ActionRequest.UPLOAD_ARTIFACT.name());
     }
-    log.debug("exiting uploadArtifact with actionInvariantUuId= " + actionInvariantUUID +
+    LOGGER.debug("exiting uploadArtifact with actionInvariantUuId= " + actionInvariantUUID +
         "artifactName= " + artifactName);
     return response;
   }
@@ -632,6 +561,7 @@ public class ActionsImpl implements Actions {
     try {
       artifactInputStream = artifactToUpload.getDataHandler().getInputStream();
     } catch (IOException exception) {
+      LOGGER.error(ACTION_ARTIFACT_READ_FILE_ERROR, exception);
       throw new ActionException(ACTION_INTERNAL_SERVER_ERR_CODE, ACTION_ARTIFACT_READ_FILE_ERROR);
     }
 
@@ -680,7 +610,7 @@ public class ActionsImpl implements Actions {
     Response response = null;
     try {
       initializeRequestMDC(servletRequest, "", ActionRequest.DOWNLOAD_ARTIFACT);
-      log.debug(
+      LOGGER.debug(
           " entering downloadArtifact with actionUUID= " + actionUUID + " and artifactUUID= " +
               artifactUUID);
       response = downloadArtifactInternal(actionUUID, artifactUUID, servletRequest);
@@ -688,18 +618,18 @@ public class ActionsImpl implements Actions {
     } catch (ActionException exception) {
       actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
-      log.error(MDC.get(ERROR_DESCRIPTION));
+      LOGGER.error(MDC.get(ERROR_DESCRIPTION));
       throw exception;
     } catch (Exception exception) {
       actionLogPostProcessor(StatusCode.ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
-      log.error(exception.getMessage());
+      LOGGER.error(exception.getMessage());
       throw exception;
     } finally {
       finalAuditMetricsLogProcessor(ActionRequest.DOWNLOAD_ARTIFACT.name());
     }
-    log.debug(" exit downloadArtifact with actionUUID= " + actionUUID + " and artifactUUID= " +
+    LOGGER.debug(" exit downloadArtifact with actionUUID= " + actionUUID + " and artifactUUID= " +
         artifactUUID);
     return response;
   }
@@ -728,22 +658,22 @@ public class ActionsImpl implements Actions {
     Response response = null;
     try {
       initializeRequestMDC(servletRequest, actionInvariantUUID, ActionRequest.DELETE_ARTIFACT);
-      log.debug(" entering deleteArtifact with actionInvariantUuId= " + actionInvariantUUID +
+      LOGGER.debug(" entering deleteArtifact with actionInvariantUuId= " + actionInvariantUUID +
           " and artifactUUID= " + artifactUUID);
       response = deleteArtifactInternal(actionInvariantUUID, artifactUUID, servletRequest);
-      log.debug(" exit deleteArtifact with actionInvariantUuId= " + actionInvariantUUID +
+      LOGGER.debug(" exit deleteArtifact with actionInvariantUuId= " + actionInvariantUUID +
           " and artifactUUID= " + artifactUUID);
       actionLogPostProcessor(StatusCode.COMPLETE, true);
     } catch (ActionException exception) {
       actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
-      log.error(MDC.get(ERROR_DESCRIPTION));
+      LOGGER.error(MDC.get(ERROR_DESCRIPTION));
       throw exception;
     } catch (Exception exception) {
       actionLogPostProcessor(StatusCode.ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
-      log.error(exception.getMessage());
+      LOGGER.error(exception.getMessage());
       throw exception;
     } finally {
       finalAuditMetricsLogProcessor(ActionRequest.DELETE_ARTIFACT.name());
@@ -774,7 +704,7 @@ public class ActionsImpl implements Actions {
                                  String checksum, Attachment artifactToUpdate,
                                  HttpServletRequest servletRequest) {
     Response response = null;
-    log.debug(" entering updateArtifact with actionInvariantUuId= " + actionInvariantUUID +
+    LOGGER.debug(" entering updateArtifact with actionInvariantUuId= " + actionInvariantUUID +
         " and artifactUUID= " + artifactUUID + " and artifactName= " + artifactName +
         " and artifactLabel= " + artifactLabel + " and artifactCategory= " + artifactCategory +
         " and artifactDescription= " + artifactDescription + " and artifactProtection= " +
@@ -789,18 +719,18 @@ public class ActionsImpl implements Actions {
     } catch (ActionException exception) {
       actionLogPostProcessor(StatusCode.ERROR, exception.getErrorCode(), exception.getDescription(), true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
-      log.error(MDC.get(ERROR_DESCRIPTION));
+      LOGGER.error(MDC.get(ERROR_DESCRIPTION));
       throw exception;
     } catch (Exception exception) {
       actionLogPostProcessor(StatusCode.ERROR, true);
       actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE,
           ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
-      log.error(exception.getMessage());
+      LOGGER.error(exception.getMessage());
       throw exception;
     } finally {
       finalAuditMetricsLogProcessor(ActionRequest.UPDATE_ARTIFACT.name());
     }
-    log.debug(" exit updateArtifact with actionInvariantUuId= " + actionInvariantUUID +
+    LOGGER.debug(" exit updateArtifact with actionInvariantUuId= " + actionInvariantUUID +
         " and artifactUUID= " + artifactUUID + " and artifactName= " + artifactName +
         " and artifactLabel= " + artifactLabel + " and artifactCategory= " + artifactCategory +
         " and artifactDescription= " + artifactDescription + " and artifactProtection= " +
@@ -811,8 +741,8 @@ public class ActionsImpl implements Actions {
   private void finalAuditMetricsLogProcessor(String targetServiceName) {
     MDC.put(TARGET_SERVICE_NAME, targetServiceName);
     MDC.put(TARGET_ENTITY, TARGET_ENTITY_API);
-    log.metrics("");
-    log.audit("");
+    LOGGER.metrics("");
+    LOGGER.audit("");
   }
 
   private Response updateArtifactInternal(String actionInvariantUUID, String artifactUUID,
@@ -835,6 +765,7 @@ public class ActionsImpl implements Actions {
       try {
         artifactInputStream = artifactToUpdate.getDataHandler().getInputStream();
       } catch (IOException exception) {
+        LOGGER.error(ACTION_ARTIFACT_READ_FILE_ERROR, exception);
         throw new ActionException(ACTION_INTERNAL_SERVER_ERR_CODE, ACTION_ARTIFACT_READ_FILE_ERROR);
       }
 
@@ -951,7 +882,7 @@ public class ActionsImpl implements Actions {
    */
   private Response getActionsByUniqueID(String actionUUID, HttpServletRequest servletRequest,
                                         String actionInvariantUUID) {
-    log.debug(
+    LOGGER.debug(
         " entering getActionByUUID with invariantID= " + actionInvariantUUID + " and actionUUID= " +
             actionUUID);
     Map<String, Object> responseDTO = new LinkedHashMap<>();
@@ -972,7 +903,7 @@ public class ActionsImpl implements Actions {
     } else {
       checkAndThrowError(errorMap);
     }
-    log.debug(
+    LOGGER.debug(
         " exit getActionByUUID with invariantID= " + actionInvariantUUID + " and actionUUID= " +
             actionUUID);
     return Response.ok(responseDTO).build();
@@ -1175,11 +1106,11 @@ public class ActionsImpl implements Actions {
     if (actionartifact != null && actionartifact.getArtifact() != null) {
       byte[] artifactsBytes = actionartifact.getArtifact();
       File artifactFile = new File(actionartifact.getArtifactName());
-      try {
-        FileOutputStream fos = new FileOutputStream(artifactFile);
+      try (FileOutputStream fos = new FileOutputStream(artifactFile)) {
         fos.write(artifactsBytes);
         fos.close();
       } catch (IOException exception) {
+        LOGGER.error(ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG, exception);
         throw new ActionException(ActionErrorConstants.ACTION_INTERNAL_SERVER_ERR_CODE,
             ActionErrorConstants.ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
       }
@@ -1215,13 +1146,13 @@ public class ActionsImpl implements Actions {
     MDC.put(LOCAL_ADDR, MDC.get("ServerIPAddress"));
     MDC.put(BE_FQDN, MDC.get("ServerFQDN"));
 
-    if (log.isDebugEnabled()) {
+    if (LOGGER.isDebugEnabled()) {
       MDC.put(CATEGORY_LOG_LEVEL, CategoryLogLevel.DEBUG.name());
-    } else if (log.isInfoEnabled()) {
+    } else if (LOGGER.isInfoEnabled()) {
       MDC.put(CATEGORY_LOG_LEVEL, CategoryLogLevel.INFO.name());
-    } else if (log.isWarnEnabled()) {
+    } else if (LOGGER.isWarnEnabled()) {
       MDC.put(CATEGORY_LOG_LEVEL, CategoryLogLevel.WARN.name());
-    } else if (log.isErrorEnabled()) {
+    } else if (LOGGER.isErrorEnabled()) {
       MDC.put(CATEGORY_LOG_LEVEL, CategoryLogLevel.ERROR.name());
     }
   }

@@ -1,0 +1,26 @@
+{
+    "name": "virc", 
+    "description": "", 
+    "data": [
+        {
+            "file": "base_virc.yaml", 
+            "type": "HEAT", 
+            "isBase": "true", 
+            "data": [
+                {
+                    "file": "base_virc.env", 
+                    "type": "HEAT_ENV"
+                }
+            ]
+        }, 
+        {
+            "file": "nested_virc.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "user_data.sh", 
+            "type": "SHELL"
+        }
+    ]
+}

@@ -1,8 +1,6 @@
 package org.openecomp.sdc.validation.impl.validators;
 
-import org.openecomp.sdc.validation.Validator;
 import org.openecomp.core.validation.types.MessageContainer;
-import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.validation.util.ValidationTestUtil;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -39,13 +37,13 @@ public class ForbiddenResourceGuideLineValidatorTest {
   @Test
   public void testFloatingIpResourceType() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(forbiddenResourceGuideLineValidator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatFloatingIpResourceType/positive");
+        "/org/openecomp/validation/validators/guideLineValidator/heatFloatingIpResourceType/positive");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
 
 
     messages = ValidationTestUtil.testValidator(forbiddenResourceGuideLineValidator,
-        "/org/openecomp/validation/validators/attGuideLineValidator/heatFloatingIpResourceType/negative");
+        "/org/openecomp/validation/validators/guideLineValidator/heatFloatingIpResourceType/negative");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);

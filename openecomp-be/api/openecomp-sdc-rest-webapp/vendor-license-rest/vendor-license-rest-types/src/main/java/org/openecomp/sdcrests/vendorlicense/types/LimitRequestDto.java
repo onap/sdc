@@ -20,11 +20,9 @@ public class LimitRequestDto {
   private String description;
   @NotBlank(message = "is mandatory and should not be empty")
   private String metric;
-  @NotNull(message = "is mandatory and should not be empty")
-  @Min(value = 1, message = "should be integer and > 0")
-  private Integer value;
-  @Min(value = 1, message = "should be integer and > 0")
-  private Integer unit;
+  @NotBlank(message = "is mandatory and should not be empty")
+  private String value;
+  private String unit;
   private String aggregationFunction;
   private String time;
 
@@ -77,19 +75,19 @@ public class LimitRequestDto {
     this.time = time;
   }
 
-  public Integer getUnit() {
+  public String getUnit() {
     return unit;
   }
 
-  public void setUnit(Integer unit) {
+  public void setUnit(String unit) {
     this.unit = unit;
   }
 
-  public Integer getValue() {
+  public String getValue() {
     return value;
   }
 
-  public void setValue(Integer value) {
+  public void setValue(String value) {
     this.value = value;
   }
 

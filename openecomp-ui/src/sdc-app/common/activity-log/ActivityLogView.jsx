@@ -22,6 +22,7 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import LogDetails from './LogixUtil.jsx';
 
 function ActivityLogSortableCellHeader({isHeader, data, isDes, onSort}) {
+	//TODO check icon sdc-ui
 	if (isHeader) {
 		return (
 			<span className='date-header' onClick={onSort}>
@@ -51,7 +52,7 @@ function ActivityLogStatus({status, isHeader}) {
 	return (
 		<span>
 			<span className={`status-icon ${success}`}>{`${success ? i18n('Success') : i18n('Failure')}`}</span>
-			{success && <SVGIcon name='checkCircle'/>}
+			{success && <SVGIcon name='checkCircle' color='positive'/>}
 			{!success && <OverlayTrigger placement='bottom' overlay={<Tooltip className='activity-log-message-tooltip' id={'activity-log-message-tooltip'}>
 				<div className='message-block'>{message}</div>
 			</Tooltip>}>
