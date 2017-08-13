@@ -464,12 +464,27 @@ public class LifecycleBusinessLogic {
 		
 		return Either.left(latestComponent);
 	}
-
+/**
+ * Performs Force certification.
+ * Note that a Force certification is allowed for the first certification only,
+ * as only a state and a version is promoted due a Force certification,
+ * skipping other actions required if a previous certified version exists.
+ * @param resource
+ * @param user
+ * @param lifecycleChangeInfo
+ * @param inTransaction
+ * @param needLock
+ * @return
+ */
 	public Either<Resource, ResponseFormat> forceResourceCertification(Resource resource, User user, LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean inTransaction, boolean needLock) {
 		Either<Resource, ResponseFormat> result = null;
 		Either<ToscaElement, StorageOperationStatus> certifyResourceRes = null;
 		if(lifecycleChangeInfo.getAction() != LifecycleChanceActionEnum.CREATE_FROM_CSAR){
 			log.debug("Force certification is not allowed for the action {}. ", lifecycleChangeInfo.getAction().name());
+			result = Either.right(componentUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
+		}
+		if(!isFirstCertification(resource.getVersion())){
+			log.debug("Failed to perform a force certification of resource{}. Force certification is allowed for the first certification only. ", resource.getName());
 			result = Either.right(componentUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
 		}
 		// lock resource
@@ -510,6 +525,10 @@ public class LifecycleBusinessLogic {
 			}
 		}
 		return result;
+	}
+
+	public boolean isFirstCertification(String previousVersion) {
+		return previousVersion.split("\\.")[0].equals("0");
 	}
 
 }

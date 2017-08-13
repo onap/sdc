@@ -1196,7 +1196,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		if(subcategories != null){
 			return fetchByMainCategory(subcategories.left().value(), inTransaction, resourceType);
 		}
-		return fetchByResourceType(filters.get(FilterKeyEnum.RESOURCE_TYPE), inTransaction);
+		return fetchComponentMetaDataByResourceType(filters.get(FilterKeyEnum.RESOURCE_TYPE), inTransaction);
 	}
 	
 	private Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, StorageOperationStatus> getAllSubCategories(String categoryName) {
@@ -1320,14 +1320,14 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		return Either.left(components);
 	}
 	
-	private  Either<List<Component>, StorageOperationStatus> fetchByResourceType(String resourceType, boolean inTransaction) {
+	private  Either<List<Component>, StorageOperationStatus> fetchComponentMetaDataByResourceType(String resourceType, boolean inTransaction) {
 		List<Component> components = null;
 		StorageOperationStatus status;
 		Wrapper<StorageOperationStatus> statusWrapper = new Wrapper<>();
 		Either<List<Component>, StorageOperationStatus> result;
 		try {
-
-			Either<List<Component>, StorageOperationStatus> getResources = toscaOperationFacade.fetchByResourceType(resourceType); //titanGenericDao.getByCriteria(nodeType, props, clazz);
+			ComponentParametersView fetchUsersAndCategoriesFilter = new ComponentParametersView(Arrays.asList(ComponentFieldsEnum.USERS.getValue(), ComponentFieldsEnum.CATEGORIES.getValue()));
+			Either<List<Component>, StorageOperationStatus> getResources = toscaOperationFacade.fetchMetaDataByResourceType(resourceType, fetchUsersAndCategoriesFilter);
 			if (getResources.isRight()) {
 				status = getResources.right().value();
 				if(status != StorageOperationStatus.NOT_FOUND){
