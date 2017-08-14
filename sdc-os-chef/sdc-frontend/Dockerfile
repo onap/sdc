@@ -1,4 +1,4 @@
-FROM jetty:9.3.15-jre8
+FROM jetty:9.3-jre8
 
 ARG HTTP_PROXY
 ARG HTTPS_PROXY
