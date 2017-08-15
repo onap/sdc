@@ -1782,12 +1782,11 @@ public class ToscaOperationFacade {
         return (currentTemplateNameChecked != null && currentTemplateNameChecked.equalsIgnoreCase(templateNameCurrent)) ? Either.left(true) : Either.left(false);
     }
 
-    public Either<List<Component>, StorageOperationStatus> fetchByResourceType(String resourceType) {
-
+    public Either<List<Component>, StorageOperationStatus> fetchMetaDataByResourceType(String resourceType, ComponentParametersView filterBy) {
         Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
         props.put(GraphPropertyEnum.RESOURCE_TYPE, resourceType);
         props.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
-        Either<List<GraphVertex>, TitanOperationStatus> resourcesByTypeEither = titanDao.getByCriteria(null, props);
+        Either<List<GraphVertex>, TitanOperationStatus> resourcesByTypeEither = titanDao.getByCriteria(null, props, JsonParseFlagEnum.ParseMetadata);
 
         if (resourcesByTypeEither.isRight()) {
             return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(resourcesByTypeEither.right().value()));
@@ -1797,11 +1796,10 @@ public class ToscaOperationFacade {
         List<Component> components = new ArrayList<>();
 
         for (GraphVertex vertex : vertexList) {
-            components.add(getToscaElementByOperation(vertex).left().value());
+            components.add(getToscaElementByOperation(vertex, filterBy).left().value());
         }
 
         return Either.left(components);
-
     }
 
     public void commit() {

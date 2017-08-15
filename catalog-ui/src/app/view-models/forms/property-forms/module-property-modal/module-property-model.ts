@@ -86,7 +86,8 @@ export class ModulePropertyView extends PropertyFormBaseView {
         let property = _.find(this.selectedModule.properties, (property) => {
             return property.uniqueId === this.$scope.property.uniqueId;
         });
-        if (property.value !== this.$scope.property.value) {
+
+        if (!property.readonly && property.value !== this.$scope.property.value) {
             if (this.component.isResource()) {
                 (<Resource>this.component).updateResourceGroupProperties(this.selectedModule, [this.$scope.property]).then(onSuccess, onFailed); // for now we only update one property at a time
             }
@@ -101,6 +102,8 @@ export class ModulePropertyView extends PropertyFormBaseView {
             }
         } else {
             deferred.resolve(true);
+            this.$uibModalInstance.close();
+
         }
         return deferred.promise;
     }

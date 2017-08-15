@@ -4858,7 +4858,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		
 		Either<Resource, ResponseFormat> result = null;
 		try {
-			if(resource.getLifecycleState() != LifecycleStateEnum.CERTIFIED && forceCertificationAllowed){
+			if(resource.getLifecycleState() != LifecycleStateEnum.CERTIFIED && forceCertificationAllowed && lifecycleBusinessLogic.isFirstCertification(resource.getVersion())){
 				result = nodeForceCertification(resource, user, lifecycleChangeInfo, inTransaction, needLock);
 				if(result.isRight()){
 					return result;
