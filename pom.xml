@@ -419,6 +419,11 @@
 			<name>Snapshots Repository</name>
 			<url>${nexus.proxy}/content/repositories/snapshots/</url>
 		</repository>
+		<repository>
+			<id>ecomp-public</id>
+			<name>Public Repository</name>
+			<url>${nexus.proxy}/content/repositories/public/</url>
+		</repository>
 		<!-- LF repositories END-->
 	</repositories>
 
