@@ -1,0 +1,20 @@
+{
+  "name": "sdc-simulator",
+  "description": "Installation application - SDC_Simulator",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[sdc-simulator::SDC_Simulator_1_cleanup_jettydir]",
+    "recipe[sdc-simulator::SDC_Simulator_2_setup_configuration]",
+    "recipe[sdc-simulator::SDC_Simulator_7_locate_keystore]"
+  ],
+  "env_run_lists": {
+  }
+}
+
