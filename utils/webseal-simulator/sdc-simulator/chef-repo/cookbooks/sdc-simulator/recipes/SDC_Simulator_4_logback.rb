@@ -1,7 +1,10 @@
-#cookbook_file "/var/lib/jetty/config/catalog-fe/logback.xml" do
-#  source "FE-logback.xml"
-#  mode 0755
-#  owner "jetty"
-#  group "jetty"
-#end
- 
+jetty_base="/var/lib/jetty"
+
+
+cookbook_file "logback.xml" do
+   path "#{jetty_base}/config/sdc-simulator/logback.xml"
+   source "logback.xml"
+   owner "jetty"
+   group "jetty"
+   mode "0755"
+end

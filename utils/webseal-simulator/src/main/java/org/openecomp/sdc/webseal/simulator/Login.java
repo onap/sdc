@@ -112,8 +112,8 @@ public class Login extends HttpServlet {
 		System.out.println("Login -> doPOst userId=" + userId);
 		User user = getUser(userId, password);
 		if (user == null) {
-			request.setAttribute("message", "ERROR: userId or password incorect");
-			doGet(request, response);
+			response.sendError(500, "ERROR: userId or password incorect");
+//			doGet(request, response);
 		} else {
 			System.out.println("Login -> doPOst redirext to /sdc1 (to proxy)");
 			Cookie cookieUser = new Cookie("HTTP_IV_USER", user.getUserId());
