@@ -15,8 +15,7 @@ RUN curl -L https://www.opscode.com/chef/install.sh | bash
 
 RUN cp /usr/local/jetty/resources/log4j.properties /var/lib/jetty/resources/log4j.properties
 
-ADD onboarding-fe-__SDC-RELEASE__.war  /var/lib/jetty/webapps/
-ADD catalog-fe-__SDC-RELEASE__.war     /var/lib/jetty/webapps/
+ADD sdc-simulator-__SDC-RELEASE__.war  /var/lib/jetty/webapps/
 RUN chown -R jetty:jetty               /var/lib/jetty/webapps
 
 COPY startup.sh /root/
