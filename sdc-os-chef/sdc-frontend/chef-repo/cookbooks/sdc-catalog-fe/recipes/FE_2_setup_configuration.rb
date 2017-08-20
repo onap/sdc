@@ -1,4 +1,6 @@
 jetty_base="/var/lib/jetty"
+
+
 template "catalog-fe-config" do
    path "#{jetty_base}/config/catalog-fe/configuration.yaml"
    source "FE-configuration.yaml.erb"
