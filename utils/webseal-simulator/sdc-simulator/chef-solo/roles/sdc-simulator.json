@@ -12,9 +12,9 @@
   "run_list": [
     "recipe[sdc-simulator::SDC_Simulator_1_cleanup_jettydir]",
     "recipe[sdc-simulator::SDC_Simulator_2_setup_configuration]",
-    "recipe[sdc-simulator::SDC_Simulator_4_logback]",
-    "recipe[sdc-simulator::SDC_Simulator_6_locate_keystore]",
-    "recipe[sdc-simulator::SDC_Simulator_7_create_jetty_modules]"
+    "recipe[sdc-simulator::SDC_Simulator_3_logback]",
+    "recipe[sdc-simulator::SDC_Simulator_4_locate_keystore]",
+    "recipe[sdc-simulator::SDC_Simulator_5_create_jetty_modules]"
   ],
   "env_run_lists": {
   }
