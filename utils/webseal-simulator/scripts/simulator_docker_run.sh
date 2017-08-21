@@ -71,7 +71,7 @@ echo "${PREFIX}"
 dir_perms
 
 # SDC-Simulator
-docker run --detach --name sdc-simulator --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 256m --memory-swap=256m --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/WS/:/var/lib/jetty/logs --volume /data/environments:/root/chef-solo/environments --publish 8285:8080 ${PREFIX}/sdc-simulator:${RELEASE}
+docker run --detach --name sdc-sim --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 256m --memory-swap=256m --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/WS/:/var/lib/jetty/logs --volume /data/environments:/root/chef-solo/environments --publish 8285:8080 ${PREFIX}/sdc-simulator:${RELEASE}
 
 
 if [ $? -ne 0 ]; then
