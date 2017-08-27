@@ -70,12 +70,11 @@ class SoftwareProductComponentsListView extends React.Component {
 
 	renderComponentsListItem(component) {
 		let {id: componentId, name, displayName, description = ''} = component;
-		let {currentSoftwareProduct: {id, version}, onComponentSelect, isManual, isReadOnlyMode, onDeleteComponent} = this.props;
+		let {currentSoftwareProduct: {id, version}, onComponentSelect} = this.props;
 		return (
 			<ListEditorItemView
 				key={name + Math.floor(Math.random() * (100 - 1) + 1).toString()}
-				className='list-editor-item-view'
-				onDelete={isManual && !isReadOnlyMode ? () => onDeleteComponent(component, id, version) : false}
+				className='list-editor-item-view'				
 				onSelect={() => onComponentSelect({id, componentId, version})}>
 				<ListEditorItemViewField>
 					<div className='name'>{displayName}</div>

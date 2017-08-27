@@ -17,7 +17,7 @@
 import React from 'react';
 import _template from 'lodash/template';
 import _merge from 'lodash/merge';
-import d3 from 'd3';
+import * as d3 from 'd3';
 
 import Common from '../../common/Common';
 import Logger from '../../common/Logger';
@@ -57,6 +57,8 @@ export default class Diagram extends React.Component {
     };
 
     this.handleResize = this.handleResize.bind(this);
+    this.initialTransformX = 0;
+    this.initialTransformY = 0;
   }
 
   // ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -764,8 +766,14 @@ export default class Diagram extends React.Component {
   _initZoom(gContent, width, height) {
 
     const zoomed = function zoomed() {
+      if (!this.initialTransformX && !this.initialTransformY) {
+        this.initialTransformX = d3.event.transform.x;
+        this.initialTransformY = d3.event.transform.y;
+      }
+
       gContent.attr('transform',
-        `translate(${d3.event.translate})scale(${d3.event.scale})`);
+				`translate(${d3.event.transform.x - this.initialTransformX}, ${d3.event.transform.y
+				- this.initialTransformY})scale(${d3.event.transform.k}, ${d3.event.transform.k})`);
     };
 
     const viewWidth = this.state.width || this.options.svg.width;
@@ -803,12 +811,15 @@ export default class Diagram extends React.Component {
       gContent.attr('transform', `scale(${scale})`);
     }
 
-    const zoom = d3.behavior.zoom()
-      .scale(scale)
-      .scaleExtent([scaleMinimum, 10])
-      .translate(translate)
+    const zoom = d3.zoom()
       .on('zoom', zoomed);
+
     this.svg.call(zoom);
+    this.svg.call(zoom.scaleBy, scale);
+
+    gContent.attr('transform', `translate(${translate[0]}, ${translate[1]})`);
+    gContent.attr('transform', `scale(${scale})`);
+
   }
 
   // ///////////////////////////////////////////////////////////////////////////////////////////////
