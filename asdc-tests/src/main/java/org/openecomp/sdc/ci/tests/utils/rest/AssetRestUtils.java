@@ -424,9 +424,9 @@ public class AssetRestUtils extends BaseRestUtils {
 									.equals(resourceInstanceAssetStructure.getResourceVersion()));
 					assertTrue(
 							"Expected RI asset resourceType is " + componentInstance.getOriginType() + " actual: "
-									+ resourceInstanceAssetStructure.getResoucreType(),
+									+ resourceInstanceAssetStructure.getResourceType(),
 							componentInstance.getOriginType().toString()
-									.equals(resourceInstanceAssetStructure.getResoucreType()));
+									.equals(resourceInstanceAssetStructure.getResourceType()));
 					assertTrue(
 							"Expected RI asset resourceUUID is " + componentInstance.getComponentUid() + " actual: "
 									+ resourceInstanceAssetStructure.getResourceUUID(),
