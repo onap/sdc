@@ -455,9 +455,9 @@ public class AssetRestUtils extends BaseRestUtils {
 									.equals(resourceInstanceAssetStructure.getResourceVersion()));
 					assertTrue(
 							"Expected RI asset resourceType is " + componentInstance.getOriginType() + " actual: "
-									+ resourceInstanceAssetStructure.getResoucreType(),
+									+ resourceInstanceAssetStructure.getResourceType(),
 							componentInstance.getOriginType().toString()
-									.equals(resourceInstanceAssetStructure.getResoucreType()));
+									.equals(resourceInstanceAssetStructure.getResourceType()));
 					Resource resource = AtomicOperationUtils.getResourceObject(componentInstance.getComponentUid());
 					assertTrue("Expected RI asset resourceUUID is " + resource.getUUID() + " actual: " + resourceInstanceAssetStructure.getResourceUUID(),
 							resource.getUUID().equals(resourceInstanceAssetStructure.getResourceUUID()));

@@ -359,7 +359,7 @@ public class AssetMetadataConverter {
 			metadata.setResourceInstanceName(componentInstance.getName());
 			metadata.setResourceName(componentInstance.getComponentName());
 			metadata.setResourceVersion(componentInstance.getComponentVersion());
-			metadata.setResoucreType(componentInstance.getOriginType().getValue());
+			metadata.setResourceType(componentInstance.getOriginType().getValue());
 			
 			if(MapUtils.isNotEmpty(componentInstance.getDeploymentArtifacts())){
 				LinkedList<ArtifactMetadata> artifactMetaList = new LinkedList<>();

@@ -28,7 +28,7 @@ public class ResourceInstanceAssetStructure {
 	String resourceName;
 	String resourceInvariantUUID;
 	String resourceVersion;
-	String resoucreType;
+	String resourceType;
 	String resourceUUID;
 	List<ArtifactAssetStructure> artifacts;
 
@@ -37,14 +37,14 @@ public class ResourceInstanceAssetStructure {
 	}
 
 	public ResourceInstanceAssetStructure(String resourceInstanceName, String resourceName,
-			String resourceInvariantUUID, String resourceVersion, String resoucreType, String resourceUUID,
+			String resourceInvariantUUID, String resourceVersion, String resourceType, String resourceUUID,
 			List<ArtifactAssetStructure> artifacts) {
 		super();
 		this.resourceInstanceName = resourceInstanceName;
 		this.resourceName = resourceName;
 		this.resourceInvariantUUID = resourceInvariantUUID;
 		this.resourceVersion = resourceVersion;
-		this.resoucreType = resoucreType;
+		this.resourceType = resourceType;
 		this.resourceUUID = resourceUUID;
 		this.artifacts = artifacts;
 	}
@@ -81,12 +81,12 @@ public class ResourceInstanceAssetStructure {
 		this.resourceVersion = resourceVersion;
 	}
 
-	public String getResoucreType() {
-		return resoucreType;
+	public String getResourceType() {
+		return resourceType;
 	}
 
-	public void setResoucreType(String resoucreType) {
-		this.resoucreType = resoucreType;
+	public void setResourceType(String resourceType) {
+		this.resourceType = resourceType;
 	}
 
 	public String getResourceUUID() {
@@ -109,7 +109,7 @@ public class ResourceInstanceAssetStructure {
 	public String toString() {
 		return "ResourceInstanceAssetStructure [resourceInstanceName=" + resourceInstanceName + ", resourceName="
 				+ resourceName + ", resourceInvariantUUID=" + resourceInvariantUUID + ", resourceVersion="
-				+ resourceVersion + ", resoucreType=" + resoucreType + ", resourceUUID=" + resourceUUID + ", artifacts="
+				+ resourceVersion + ", resourceType=" + resourceType + ", resourceUUID=" + resourceUUID + ", artifacts="
 				+ artifacts + "]";
 	}
 

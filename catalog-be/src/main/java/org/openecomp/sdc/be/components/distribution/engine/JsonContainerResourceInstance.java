@@ -25,7 +25,7 @@ import java.util.List;
 import org.openecomp.sdc.be.model.ComponentInstance;
 
 public class JsonContainerResourceInstance {
-	private String resourceInstanceName, resourceName, resourceVersion, resoucreType, resourceUUID, resourceInvariantUUID, resourceCustomizationUUID, category, subcategory;
+	private String resourceInstanceName, resourceName, resourceVersion, resourceType, resourceUUID, resourceInvariantUUID, resourceCustomizationUUID, category, subcategory;
 	private List<ArtifactInfoImpl> artifacts;
 
 	public JsonContainerResourceInstance(ComponentInstance resourceInstance, String resourceType, List<ArtifactInfoImpl> artifacts) {
@@ -33,7 +33,7 @@ public class JsonContainerResourceInstance {
 		this.resourceInstanceName = resourceInstance.getName();
 		this.resourceName = resourceInstance.getComponentName();
 		this.resourceVersion = resourceInstance.getComponentVersion();
-		this.resoucreType = resourceType;
+		this.resourceType = resourceType;
 		this.resourceUUID = resourceInstance.getComponentUid();
 		this.artifacts = artifacts;
 		this.resourceCustomizationUUID = resourceInstance.getCustomizationUUID();
@@ -63,12 +63,12 @@ public class JsonContainerResourceInstance {
 		this.resourceVersion = resourceVersion;
 	}
 
-	public String getResoucreType() {
-		return resoucreType;
+	public String getResourceType() {
+		return resourceType;
 	}
 
-	public void setResoucreType(String resoucreType) {
-		this.resoucreType = resoucreType;
+	public void setResourceType(String resourceType) {
+		this.resourceType = resourceType;
 	}
 
 	public String getResourceUUID() {
@@ -121,7 +121,7 @@ public class JsonContainerResourceInstance {
 
 	@Override
 	public String toString() {
-		return "JsonContainerResourceInstance [resourceInstanceName=" + resourceInstanceName + ", resourceName=" + resourceName + ", resourceVersion=" + resourceVersion + ", resoucreType=" + resoucreType + ", resourceUUID=" + resourceUUID
+		return "JsonContainerResourceInstance [resourceInstanceName=" + resourceInstanceName + ", resourceName=" + resourceName + ", resourceVersion=" + resourceVersion + ", resourceType=" + resourceType + ", resourceUUID=" + resourceUUID
 				+ ", resourceInvariantUUID=" + resourceInvariantUUID + ", resourceCustomizationUUID=" + resourceCustomizationUUID + ", category=" + category + ", subcategory=" + subcategory + ", artifacts=" + artifacts + "]";
 	}
 	

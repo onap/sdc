@@ -157,7 +157,7 @@ public class ServiceDistributionArtifactsBuilder {
 		List<JsonContainerResourceInstance> ret = new ArrayList<JsonContainerResourceInstance>();
 		if (service.getComponentInstances() != null) {
 			for (ComponentInstance resourceInstance : service.getComponentInstances()) {
-				String resoucreType = resourceInstance.getOriginType().getValue();
+				String resourceType = resourceInstance.getOriginType().getValue();
 				List<ArtifactDefinition> artifactsDefList = getArtifactsWithPayload(resourceInstance);
 				List<ArtifactInfoImpl> artifacts = ArtifactInfoImpl.convertToArtifactInfoImpl(service, resourceInstance,
 						artifactsDefList);
@@ -197,7 +197,7 @@ public class ServiceDistributionArtifactsBuilder {
 					}
 				}
 
-				JsonContainerResourceInstance jsonContainer = new JsonContainerResourceInstance(resourceInstance, resoucreType,
+				JsonContainerResourceInstance jsonContainer = new JsonContainerResourceInstance(resourceInstance, resourceType,
 						artifacts);
 				jsonContainer.setResourceInvariantUUID(resourceInvariantUUID);
 				jsonContainer.setCategory(resourceCategory);
