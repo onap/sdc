@@ -340,6 +340,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
+				<module>build-tools</module>
 				<module>onboarding</module>
 				<module>security-utils</module>
 				<module>common-app-api</module>
