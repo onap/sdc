@@ -91,11 +91,6 @@
       z-index: 1;
       padding-right: 20px;
       .counter {
-        .svg-icon {
-          &.__exclamationTriangleLine {
-            fill :$orange;
-          }
-        }
         display: flex;
         &:first-child {
           margin-right: 20px;
@@ -220,7 +215,6 @@
         .svg-icon {
           width: 20px;
           height: 20px;
-          fill: $orange;
         }
       }
       .error-item-file-type {

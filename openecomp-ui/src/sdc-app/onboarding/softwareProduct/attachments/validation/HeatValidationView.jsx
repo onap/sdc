@@ -205,7 +205,7 @@ class HeatMessageBoard extends Component {
 				key={error.name + error.errorMessage + error.parentName + rand}
 				className='error-item' data-test-id='validation-error'>
 				{error.level === errorLevels.WARNING ?
-					<SVGIcon name='exclamationTriangleLine' iconClassName='large' color='warning' /> : <SVGIcon iconClassName='large' color='negative' /> }
+					<SVGIcon name='exclamationTriangleLine' iconClassName='large' color='warning' /> : <SVGIcon name='error' iconClassName='large' color='negative' /> }
 				<span className='error-item-file-type'>
 				{
 					(this.props.selectedNode === nodeFilters.ALL) ?
@@ -238,7 +238,7 @@ class ErrorsAndWarningsCount extends Component {
 		return (<div className='counters'>
 			{(errors.errorCount > 0) && <div className='counter'>
 				<SVGIcon name='error' color='negative' iconClassName={size}/>
-				<div className={'error-text ' + (size ? size : '')} data-test-id='validation-error-count'>={errors.errorCount}</div>
+				<div className={'error-text ' + (size ? size : '')} data-test-id='validation-error-count'>{errors.errorCount}</div>
 			</div>}
 			{(errors.warningCount > 0) && <div className='counter'>
 				<SVGIcon name='exclamationTriangleLine' iconClassName={size} color='warning'/>
