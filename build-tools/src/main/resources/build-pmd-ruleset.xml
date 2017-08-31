@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<ruleset name="SDC Essential Rule-set"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd http://pmd.sourceforge.net/ruleset/2.0.0 ">
+
+    <description>
+        Essential rules according to SonarQube. Note that it is impossible to make PMD rules exactly match the
+        SonarQube ones, but they will probably catch about 90% of violations before they get into the source control.
+        The advantage is that PMD can be ran locally on any development setup and does not require a license.
+    </description>
+
+    <!--
+        All available Java rule-sets: https://pmd.github.io/pmd-5.6.1/pmd-java/rules/index.html
+    -->
+
+    <!-- Blocker severity in SonarQube -->
+    <rule ref="rulesets/java/strictexception.xml/AvoidCatchingThrowable"/>
+    <rule ref="rulesets/java/empty.xml/EmptyCatchBlock">
+        <properties>
+            <property name="allowCommentedBlocks" value="true"/>
+        </properties>
+    </rule>
+
+    <!-- THERE IS NO GOOD RULE TO CATCH NULL DEREFERENCING IN PMD -->
+    <rule ref="rulesets/java/basic.xml/MisplacedNullCheck"/>
+    <rule ref="rulesets/java/basic.xml/BrokenNullCheck"/>
+
+
+    <rule ref="rulesets/java/design.xml/CloseResource">
+        <properties>
+            <property name="types"
+                      value="java.sql.Connection,java.sql.Statement,java.sql.ResultSet,java.io.OutputStream,java.net.URLConnection,java.io.InputStream,java.io.FileInputStream,java.io.FileOutputStream,java.util.zip.ZipOutputStream,java.util.zip.ZipInputStream,java.util.jar.JarInputStream,java.util.jar.JarOutputStream,java.io.BufferedReader,java.io.BufferedWriter"/>
+        </properties>
+    </rule>
+    <rule ref="rulesets/java/basic.xml/OverrideBothEqualsAndHashcode"/>
+
+    <!--
+        Critical severity in SonarQube. Should be empty until all Critical have been fixed.
+    -->
+
+</ruleset>
