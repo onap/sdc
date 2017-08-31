@@ -12,4 +12,11 @@ EOH
 not_if "ls /#{jetty_base}/start.d/https.ini"
 end
 
-
+template "ssl-ini" do
+   path "/#{jetty_base}/start.d/ssl.ini"
+   source "ssl-ini.erb"
+   owner "jetty"
+   group "jetty"
+   mode "0755"
+   variables :https_port => "#{node['BE'][:https_port]}"
+end

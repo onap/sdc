@@ -34,12 +34,12 @@ template "FE-https-ini" do
 end
 
 
-template "FE-ssl-ini" do
+template "ssl-ini" do
    path "/#{jetty_base}/start.d/ssl.ini"
-   source "FE-ssl-ini.erb"
+   source "ssl-ini.erb"
    owner "jetty"
    group "jetty"
    mode "0755"
-   variables :FE_https_port => "#{node['FE'][:https_port]}"
+   variables :https_port => "#{node['FE'][:https_port]}"
 end
 
