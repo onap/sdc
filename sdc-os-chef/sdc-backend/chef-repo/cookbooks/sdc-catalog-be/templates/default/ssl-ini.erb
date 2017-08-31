@@ -8,7 +8,7 @@
 # jetty.ssl.host=0.0.0.0
 
 ## Connector port to listen on
-jetty.ssl.port=<%= @FE_https_port %>
+jetty.ssl.port=<%= @https_port %>
 
 ## Connector idle timeout in milliseconds
 # jetty.ssl.idleTimeout=30000
@@ -49,6 +49,7 @@ jetty.ssl.port=<%= @FE_https_port %>
 
 ## Keystore password
 # jetty.sslContext.keyStorePassword=OBF:1vny1zlo1x8e1vnw1vn61x8g1zlu1vn4
+jetty.sslContext.keyStorePassword=OBF:1cp61iuj194s194u194w194y1is31cok
 
 ## Keystore type and provider
 # jetty.sslContext.keyStoreType=JKS
@@ -56,9 +57,11 @@ jetty.ssl.port=<%= @FE_https_port %>
 
 ## KeyManager password
 # jetty.sslContext.keyManagerPassword=OBF:1u2u1wml1z7s1z7a1wnl1u2g
+jetty.sslContext.keyManagerPassword=OBF:1cp61iuj194s194u194w194y1is31cok
 
 ## Truststore password
 # jetty.sslContext.trustStorePassword=OBF:1vny1zlo1x8e1vnw1vn61x8g1zlu1vn4
+jetty.sslContext.trustStorePassword=OBF:1cp61iuj194s194u194w194y1is31cok
 
 ## Truststore type and provider
 # jetty.sslContext.trustStoreType=JKS
@@ -81,3 +84,7 @@ jetty.ssl.port=<%= @FE_https_port %>
 
 ## Set the timeout (in seconds) of the SslSession cache timeout
 # jetty.sslContext.sslSessionTimeout=-1
+
+## Allow SSL renegotiation
+# jetty.sslContext.renegotiationAllowed=true
+# jetty.sslContext.renegotiationLimit=5
