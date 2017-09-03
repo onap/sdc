@@ -109,13 +109,13 @@ const UploadErrorList = ({items}) => {
 	let generator = entries(items);
 
 	let errors = [];
-	let i = 0;
 	for (let item of generator) {errors.push(
 		<div>
 			<div className='component-name-header'>{item.header}</div>
-			{item.list.map(error => <ErrorMessage key={i++} warning={error.level === 'WARNING'} error={error.message}/> )}
+			{item.list.map((error, i) => <ErrorMessage key={i} warning={error.level === 'WARNING'} error={error.message}/> )}
 		</div>
 	);}
+	
 	return (
 		<div>
 			{errors}
@@ -152,7 +152,10 @@ const ErrorHeader = ({errorType, collapsed, onClick}) => {
 const ErrorMessage = ({error, warning}) => {
 	return (
 		<ListGroupItem className='error-code-list-item'>
-			<SVGIcon name={warning ? 'warning' : 'error'} label={error} labelPosition='right' color={warning ? 'warning' : 'negative'} labelClassName='icon-label'/>
+			<SVGIcon 
+				name={warning ? 'exclamationTriangleLine' : 'error'} 								
+				color={warning ? 'warning' : 'negative'} />	
+			<span className='icon-label'>{error}</span>			
 		</ListGroupItem>
 	);
 };
