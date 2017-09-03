@@ -40,16 +40,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>activity-log-rest-types</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-zusammen-core</artifactId>
             <version>${project.version}</version>
-
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -68,6 +61,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>${mvn.jar.version}</version>
                 <configuration>
                     <archive>
                         <manifest>
