@@ -111,7 +111,7 @@
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>run build -- --version=${version}</arguments>
+                            <arguments>run build -- --version=${project.version}</arguments>
                         </configuration>
                     </execution>
                 </executions>

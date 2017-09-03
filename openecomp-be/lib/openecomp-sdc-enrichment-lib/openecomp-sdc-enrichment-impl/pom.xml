@@ -106,11 +106,6 @@
             <artifactId>openecomp-sdc-model-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.common</groupId>
-            <artifactId>openecomp-tosca-datatype</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

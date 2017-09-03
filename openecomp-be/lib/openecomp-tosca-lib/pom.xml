@@ -68,11 +68,6 @@
             <artifactId>openecomp-configuration-management-api</artifactId>
             <version>${openecomp.sdc.common.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.common</groupId>
-            <artifactId>openecomp-tosca-datatype</artifactId>
-            <version>${openecomp.sdc.common.version}</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
