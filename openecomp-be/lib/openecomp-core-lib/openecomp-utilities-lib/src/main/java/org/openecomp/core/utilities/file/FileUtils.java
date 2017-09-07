@@ -28,9 +28,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -40,38 +43,29 @@ import java.util.zip.ZipInputStream;
 public class FileUtils {
 
   /**
-   * Gets file input stream.
+   * Allows to consume an input stream open against a resource with a given file name.
    *
    * @param fileName the file name
-   * @return the file input stream
+   * @param function logic to be applied to the input stream
    */
-  public static InputStream getFileInputStream(String fileName) {
-    URL urlFile = FileUtils.class.getClassLoader().getResource(fileName);
-    InputStream is;
-    try {
-      assert urlFile != null;
-      is = urlFile.openStream();
-    } catch (IOException exception) {
-      throw new RuntimeException(exception);
-    }
-    return is;
+  public static <T> T readViaInputStream(String fileName, Function<InputStream, T> function) {
+    return readViaInputStream(FileUtils.class.getClassLoader().getResource(fileName), function);
   }
 
   /**
-   * Gets file input stream.
+   * Allows to consume an input stream open against a resource with a given URL.
    *
    * @param urlFile the url file
-   * @return the file input stream
+   * @param function logic to be applied to the input stream
    */
-  public static InputStream getFileInputStream(URL urlFile) {
-    InputStream is;
-    try {
-      assert urlFile != null;
-      is = urlFile.openStream();
+  public static <T> T readViaInputStream(URL urlFile, Function<InputStream, T> function) {
+
+    Objects.requireNonNull(urlFile);
+    try (InputStream is = urlFile.openStream()) {
+      return function.apply(is);
     } catch (IOException exception) {
       throw new RuntimeException(exception);
     }
-    return is;
   }
 
   /**
@@ -80,24 +74,23 @@ public class FileUtils {
    * @param fileName the file name
    * @return the file input streams
    */
-  public static List<InputStream> getFileInputStreams(String fileName) {
+  public static List<URL> getAllLocations(String fileName) {
+
+    List<URL> urls = new LinkedList<>();
     Enumeration<URL> urlFiles;
-    List<InputStream> streams = new ArrayList<>();
-    InputStream is;
-    URL url;
+
     try {
       urlFiles = FileUtils.class.getClassLoader().getResources(fileName);
       while (urlFiles.hasMoreElements()) {
-        url = urlFiles.nextElement();
-        is = url.openStream();
-        streams.add(is);
+        urls.add(urlFiles.nextElement());
       }
 
 
     } catch (IOException exception) {
       throw new RuntimeException(exception);
     }
-    return streams;
+
+    return urls.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(urls);
   }
 
   /**
@@ -210,25 +203,22 @@ public class FileUtils {
    * @throws IOException the io exception
    */
   public static FileContentHandler getFileContentMapFromZip(byte[] zipData) throws IOException {
-    ZipEntry zipEntry;
-    FileContentHandler mapFileContent = new FileContentHandler();
-    try {
-      ZipInputStream inputZipStream;
 
-      byte[] fileByteContent;
-      String currentEntryName;
-      inputZipStream = new ZipInputStream(new ByteArrayInputStream(zipData));
+    try (ZipInputStream inputZipStream = new ZipInputStream(new ByteArrayInputStream(zipData))) {
+
+      FileContentHandler mapFileContent = new FileContentHandler();
+
+      ZipEntry zipEntry;
 
       while ((zipEntry = inputZipStream.getNextEntry()) != null) {
-        currentEntryName = zipEntry.getName();
-        fileByteContent = FileUtils.toByteArray(inputZipStream);
-        mapFileContent.addFile(currentEntryName, fileByteContent);
+        mapFileContent.addFile(zipEntry.getName(), FileUtils.toByteArray(inputZipStream));
       }
+
+      return mapFileContent;
 
     } catch (RuntimeException exception) {
       throw new IOException(exception);
     }
-    return mapFileContent;
   }
 
 

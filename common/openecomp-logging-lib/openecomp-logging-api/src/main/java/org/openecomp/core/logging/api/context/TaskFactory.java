@@ -46,8 +46,8 @@ public class TaskFactory extends BaseFactory {
 
     try {
       service = locateService(ContextPropagationService.class);
-    } catch (Throwable throwable) {
-      error = new RuntimeException("Failed to instantiate task factory", throwable);
+    } catch (Exception e) {
+      error = new RuntimeException("Failed to instantiate task factory", e);
     }
 
     SERVICE = service;

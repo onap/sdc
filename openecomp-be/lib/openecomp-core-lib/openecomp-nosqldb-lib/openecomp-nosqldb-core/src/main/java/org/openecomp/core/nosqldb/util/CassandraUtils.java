@@ -23,7 +23,6 @@ package org.openecomp.core.nosqldb.util;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,10 +48,12 @@ public class CassandraUtils {
    * @return the statement
    */
   public static String getStatement(String statementName) {
+
     if (statementMap.size() == 0) {
-      InputStream statementJson = FileUtils.getFileInputStream(CASSANDRA_STATEMENT_DEFINITION_FILE);
-      statementMap = JsonUtil.json2Object(statementJson, Map.class);
+        statementMap = FileUtils.readViaInputStream(CASSANDRA_STATEMENT_DEFINITION_FILE,
+                stream -> JsonUtil.json2Object(stream, Map.class));
     }
+
     return statementMap.get(statementName);
   }
 

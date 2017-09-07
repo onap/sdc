@@ -34,6 +34,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.Properties;
@@ -604,8 +605,11 @@ public class ArtifactGenerationServiceTest {
         try {
             jaxbContext = JAXBContext.newInstance(Model.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            InputStream aaiModelStream = new ByteArrayInputStream(aaiModel.getBytes());
-            return (Model) unmarshaller.unmarshal(aaiModelStream);
+
+            try (InputStream aaiModelStream = new ByteArrayInputStream(aaiModel.getBytes())) {
+                return (Model) unmarshaller.unmarshal(aaiModelStream);
+            } catch (IOException e) { /* ignore */ }
+
         } catch (JAXBException e) {
             e.printStackTrace();
         }

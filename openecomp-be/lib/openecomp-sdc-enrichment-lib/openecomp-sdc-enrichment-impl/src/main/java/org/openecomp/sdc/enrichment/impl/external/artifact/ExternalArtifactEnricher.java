@@ -22,7 +22,6 @@ package org.openecomp.sdc.enrichment.impl.external.artifact;
 
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.inter.Enricher;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
@@ -30,7 +29,6 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 
-import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,11 +46,9 @@ public class ExternalArtifactEnricher extends Enricher {
   private static Logger logger = LoggerFactory.getLogger(ExternalArtifactEnricher.class);
 
   private static Collection<String> getExternalArtifactEnrichedImplClassesList() {
-    InputStream externalArtifactEnrichConfigurationJson =
-        FileUtils.getFileInputStream(EXTERNAL_ARTIFACT_ENRICH_CONF_FILE);
     @SuppressWarnings("unchecked")
-    Map<String, String> confFileAsMap =
-        JsonUtil.json2Object(externalArtifactEnrichConfigurationJson, Map.class);
+    Map<String, String> confFileAsMap = FileUtils.readViaInputStream(EXTERNAL_ARTIFACT_ENRICH_CONF_FILE,
+        stream -> JsonUtil.json2Object(stream, Map.class));
 
     return confFileAsMap.values();
   }

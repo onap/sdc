@@ -67,7 +67,10 @@ public class SampleJUnitTest extends TestCase {
         if (configLocation != null) {
             File file = new File(configLocation);
             if (file.exists()) {
-                properties.load(new FileInputStream(file));
+
+                try (InputStream fis = new FileInputStream(file)) {
+                    properties.load(fis);
+                }
             }
         }
     }
@@ -86,12 +89,9 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationSingleVFSingleVFModule() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_SingleVFVFMod.yml");
-            readPayload(inputArtifacts, fis1, "vf_vmme_template_SingleVFVFMod.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_SingleVFVFMod.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_SingleVFVFMod.yml");
-            readPayload(inputArtifacts, fis2, "service_vmme_template_SingleVFVFMod.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_SingleVFVFMod.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
@@ -124,8 +124,7 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationMissingVFInServiceTOSCA() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_MissingVFInServiceTOSCA.yml");
-            readPayload(inputArtifacts, fis2, "service_vmme_template_MissingVFInServiceTOSCA.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_MissingVFInServiceTOSCA.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
@@ -156,12 +155,9 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationVerifySameStaticWidgetsForAllServices() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_SameWidgets1.yml");
-            readPayload(inputArtifacts, fis1, "vf_vmme_template_SameWidgets1.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_SameWidgets1.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_SameWidget1.yml");
-            readPayload(inputArtifacts, fis2, "service_vmme_template_SameWidget1.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_SameWidget1.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
@@ -179,11 +175,9 @@ public class SampleJUnitTest extends TestCase {
 
 
             List<Artifact> inputArtifacts2 = new ArrayList();
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_SameWidgets2.yml");
-            readPayload(inputArtifacts2, fis3, "vf_vmme_template_SameWidgets2.yml");
+            readPayloadFromResource(inputArtifacts2, "vf_vmme_template_SameWidgets2.yml");
 
-            InputStream fis4 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_SameWidget2.yml");
-            readPayload(inputArtifacts2, fis4, "service_vmme_template_SameWidget2.yml");
+            readPayloadFromResource(inputArtifacts2, "service_vmme_template_SameWidget2.yml");
             ArtifactGenerationServiceImpl obj2 = new ArtifactGenerationServiceImpl();
 
             GenerationData data2 = obj2.generateArtifact(inputArtifacts2, generatorConfig,additionalParams);
@@ -230,12 +224,9 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
             String[] resourceFileList = {};
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_MulVFVFMod.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_MulVFVFMod.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_MulVFVFMod.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_MulVFVFMod.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_MulVFVFMod.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_MulVFVFMod.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -268,17 +259,13 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/CMAUI_VF.yaml");
-            readPayload(inputArtifacts,fis3, "CMAUI_VF.yaml");
+            readPayloadFromResource(inputArtifacts, "CMAUI_VF.yaml");
 
-            InputStream fis4 = SampleJUnitTest.class.getResourceAsStream("/ECA_OAM_VF.yaml");
-            readPayload(inputArtifacts,fis4, "ECA_OAM_VF.yaml");
+            readPayloadFromResource(inputArtifacts, "ECA_OAM_VF.yaml");
 
-            InputStream fis5 = SampleJUnitTest.class.getResourceAsStream("/MMSC_Sevice_07_25_16.yaml");
-            readPayload(inputArtifacts,fis5, "MMSC_Sevice_07_25_16.yaml");
+            readPayloadFromResource(inputArtifacts, "MMSC_Sevice_07_25_16.yaml");
 
-            InputStream fis6 = SampleJUnitTest.class.getResourceAsStream("/MMSC_VF.yaml");
-            readPayload(inputArtifacts,fis6, "MMSC_VF.yaml");
+            readPayloadFromResource(inputArtifacts, "MMSC_VF.yaml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -310,12 +297,9 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationDupVFUUID() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_DupVFUUID.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_DupVFUUID.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_DupVFUUID.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_DupVFUUID.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_DupVFUUID.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_DupVFUUID.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
@@ -346,12 +330,9 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationDupVFModUUID() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_DupVFModUUID.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_DupVFModUUID.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_DupVFModUUID.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_DupVFModUUID.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_DupVFModUUID.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_DupVFModUUID.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
@@ -381,12 +362,9 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationVerifyVFModWithoutVNFC() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_VerifyVFModWithoutVNFC.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_VerifyVFModWithoutVNFC.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_VerifyVFModWithoutVNFC.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_VerifyVFModWithoutVNFC.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_VerifyVFModWithoutVNFC.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_VerifyVFModWithoutVNFC.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
@@ -416,12 +394,9 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationVerifyVFModWithInvalidMember() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_VerifyVFModWithInvalidNo.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_VerifyVFModWithInvalidNo.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_VerifyVFModWithInvalidNo.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_VerifyVFModWithInvalidNo.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_VerifyVFModWithInvalidNo.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_VerifyVFModWithInvalidNo.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
@@ -451,12 +426,9 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationNullFields() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_NullFields.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_NullFields.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_NullFields.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_NullFields.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_NullFields.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_NullFields.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
 
             GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
@@ -477,17 +449,13 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/CMAUI_VFInvalidFormat.yaml");
-            readPayload(inputArtifacts,fis3, "CMAUI_VFInvalidFormat.yaml");
+            readPayloadFromResource(inputArtifacts, "CMAUI_VFInvalidFormat.yaml");
 
-            InputStream fis4 = SampleJUnitTest.class.getResourceAsStream("/ECA_OAM_VFInvalidFormat.yaml");
-            readPayload(inputArtifacts,fis4, "ECA_OAM_VFInvalidFormat.yaml");
+            readPayloadFromResource(inputArtifacts, "ECA_OAM_VFInvalidFormat.yaml");
 
-            InputStream fis5 = SampleJUnitTest.class.getResourceAsStream("/MMSC_Sevice_07_25_16InvalidFormat.yaml");
-            readPayload(inputArtifacts,fis5, "MMSC_Sevice_07_25_16InvalidFormat.yaml");
+            readPayloadFromResource(inputArtifacts, "MMSC_Sevice_07_25_16InvalidFormat.yaml");
 
-            InputStream fis6 = SampleJUnitTest.class.getResourceAsStream("/MMSC_VFInvalidFormat.yaml");
-            readPayload(inputArtifacts,fis6, "MMSC_VFInvalidFormat.yaml");
+            readPayloadFromResource(inputArtifacts, "MMSC_VFInvalidFormat.yaml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
 
@@ -507,12 +475,9 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationMulComp() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_MulComp.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_MulComp.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_MulComp.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_MulComp.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_MulComp.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_MulComp.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
@@ -543,15 +508,11 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_Orphan.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_Orphan.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_Orphan.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_Orphan.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_Orphan.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_Orphan.yml");
 
-            InputStream fis4 = SampleJUnitTest.class.getResourceAsStream("/ECA_OAM_VFOrphan.yaml");
-            readPayload(inputArtifacts,fis4, "ECA_OAM_VFOrphan.yaml");
+            readPayloadFromResource(inputArtifacts, "ECA_OAM_VFOrphan.yaml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -583,10 +544,7 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_MissingVFTemplate.yml");
-            readPayload(inputArtifacts,fis1, "service_vmme_template_MissingVFTemplate.yml");
-
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_MissingVFTemplate.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -618,17 +576,13 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/CMAUI_VFMissingVFModule.yaml");
-            readPayload(inputArtifacts,fis3, "CMAUI_VFMissingVFModule.yaml");
+            readPayloadFromResource(inputArtifacts, "CMAUI_VFMissingVFModule.yaml");
 
-            InputStream fis4 = SampleJUnitTest.class.getResourceAsStream("/ECA_OAM_VFMissingVFModule.yaml");
-            readPayload(inputArtifacts,fis4, "ECA_OAM_VFMissingVFModule.yaml");
+            readPayloadFromResource(inputArtifacts, "ECA_OAM_VFMissingVFModule.yaml");
 
-            InputStream fis5 = SampleJUnitTest.class.getResourceAsStream("/MMSC_Sevice_07_25_16MissingVFModule.yaml");
-            readPayload(inputArtifacts,fis5, "MMSC_Sevice_07_25_16MissingVFModule.yaml");
+            readPayloadFromResource(inputArtifacts, "MMSC_Sevice_07_25_16MissingVFModule.yaml");
 
-            InputStream fis6 = SampleJUnitTest.class.getResourceAsStream("/MMSC_VFMissingVFModule.yaml");
-            readPayload(inputArtifacts,fis6, "MMSC_VFMissingVFModule.yaml");
+            readPayloadFromResource(inputArtifacts, "MMSC_VFMissingVFModule.yaml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -680,12 +634,9 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_SingleVFVFMod.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_SingleVFVFMod.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_SingleVFVFMod.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_SingleVFVFMod.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_SingleVFVFMod.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_SingleVFVFMod.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
 
             GenerationData data = obj.generateArtifact(inputArtifacts, "",additionalParams);
@@ -705,15 +656,11 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/ServiceWithNodetemplate.yml");
-            readPayload(inputArtifacts,fis1, "ServiceWithNodetemplate.yml");
+            readPayloadFromResource(inputArtifacts, "ServiceWithNodetemplate.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/Resource0-template.yml");
-            readPayload(inputArtifacts,fis2, "Resource0-template.yml");
+            readPayloadFromResource(inputArtifacts, "Resource0-template.yml");
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/Resource1-template.yml");
-            readPayload(inputArtifacts,fis3, "Resource1-template.yml");
+            readPayloadFromResource(inputArtifacts, "Resource1-template.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -747,10 +694,7 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/Service0-template.yml");
-            readPayload(inputArtifacts,fis1, "Service0-template.yml");
-
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "Service0-template.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -784,10 +728,7 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/Service0-templateMoreThan256.yml");
-            readPayload(inputArtifacts,fis1, "Service0-templateMoreThan256.yml");
-
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "Service0-templateMoreThan256.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -825,17 +766,11 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_DiffVerOfSameVF.yml");
-            readPayload(inputArtifacts,fis1, "service_vmme_template_DiffVerOfSameVF.yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_DiffVerOfSameVF.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_DiffVerOfSameVF_1.yml");
-            readPayload(inputArtifacts,fis2, "vf_vmme_template_DiffVerOfSameVF_1.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_DiffVerOfSameVF_1.yml");
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_DiffVerOfSameVF_2.yml");
-            readPayload(inputArtifacts,fis3, "vf_vmme_template_DiffVerOfSameVF_2.yml");
-            fis3.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_DiffVerOfSameVF_2.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -869,13 +804,9 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_DiffVerOfSameVFModWithSameInvId.yml");
-            readPayload(inputArtifacts,fis1, "service_vmme_template_DiffVerOfSameVFModWithSameInvId.yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_DiffVerOfSameVFModWithSameInvId.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_DiffVerOfSameVFModWithSameInvId.yml");
-            readPayload(inputArtifacts,fis2, "vf_vmme_template_DiffVerOfSameVFModWithSameInvId.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_DiffVerOfSameVFModWithSameInvId.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -909,22 +840,13 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_WithL3Network.yml");
-            readPayload(inputArtifacts,fis1, "service_vmme_template_WithL3Network.yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_WithL3Network.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_WithL3Network.yml");
-            readPayload(inputArtifacts,fis2, "vf_vmme_template_WithL3Network.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_WithL3Network.yml");
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/resource-AllottedResource-template_WithL3Network.yml");
-            readPayload(inputArtifacts,fis3, "resource-AllottedResource-template_WithL3Network.yml");
-            fis3.close();
+            readPayloadFromResource(inputArtifacts, "resource-AllottedResource-template_WithL3Network.yml");
 
-            InputStream fis4 = SampleJUnitTest.class.getResourceAsStream
-                ("/resource-Extvl-template_WithL3Network.yml");
-            readPayload(inputArtifacts,fis4, "resource-Extvl-template_WithL3Network.yml");
-            fis4.close();
+            readPayloadFromResource(inputArtifacts, "resource-Extvl-template_WithL3Network.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -958,22 +880,13 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_WithDupL3Network.yml");
-            readPayload(inputArtifacts,fis1, "service_vmme_template_WithDupL3Network.yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_WithDupL3Network.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_WithDupL3Network.yml");
-            readPayload(inputArtifacts,fis2, "vf_vmme_template_WithDupL3Network.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_WithDupL3Network.yml");
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/resource-AllottedResource-template_WithDupL3Network.yml");
-            readPayload(inputArtifacts,fis3, "resource-AllottedResource-template_WithDupL3Network.yml");
-            fis3.close();
+            readPayloadFromResource(inputArtifacts, "resource-AllottedResource-template_WithDupL3Network.yml");
 
-            InputStream fis4 = SampleJUnitTest.class.getResourceAsStream
-                ("/resource-Extvl-template_WithDupL3Network.yml");
-            readPayload(inputArtifacts,fis4, "resource-Extvl-template_WithDupL3Network.yml");
-            fis4.close();
+            readPayloadFromResource(inputArtifacts, "resource-Extvl-template_WithDupL3Network.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -1007,17 +920,11 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_WithL3NetworkInVFMod.yml");
-            readPayload(inputArtifacts,fis1, "service_vmme_template_WithL3NetworkInVFMod.yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_WithL3NetworkInVFMod.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_WithL3NetworkInVFMod.yml");
-            readPayload(inputArtifacts,fis2, "vf_vmme_template_WithL3NetworkInVFMod.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_WithL3NetworkInVFMod.yml");
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/resource-AllottedResource-template_WithL3NetworkInVFMod.yml");
-            readPayload(inputArtifacts,fis3, "resource-AllottedResource-template_WithL3NetworkInVFMod.yml");
-            fis3.close();
+            readPayloadFromResource(inputArtifacts, "resource-AllottedResource-template_WithL3NetworkInVFMod.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -1051,28 +958,15 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_WithDiffVersionOfSameL3Network.yml");
-            readPayload(inputArtifacts,fis1, "service_vmme_template_WithDiffVersionOfSameL3Network.yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_WithDiffVersionOfSameL3Network.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_WithDiffVersionOfSameL3Network.yml");
-            readPayload(inputArtifacts,fis2, "vf_vmme_template_WithDiffVersionOfSameL3Network.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_WithDiffVersionOfSameL3Network.yml");
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/resource-AllottedResource-template_WithDiffVersionOfSameL3Network.yml");
-            readPayload(inputArtifacts,fis3, "resource-AllottedResource-template_WithDiffVersionOfSameL3Network.yml");
-            fis3.close();
+            readPayloadFromResource(inputArtifacts, "resource-AllottedResource-template_WithDiffVersionOfSameL3Network.yml");
 
-            InputStream fis4 = SampleJUnitTest.class.getResourceAsStream
-                ("/resource-Extvl-template_WithDiffVersionOfSameL3Network.yml");
-            readPayload(inputArtifacts,fis4, "resource-Extvl-template_WithDiffVersionOfSameL3Network.yml");
-            fis4.close();
+            readPayloadFromResource(inputArtifacts, "resource-Extvl-template_WithDiffVersionOfSameL3Network.yml");
 
-            InputStream fis5 = SampleJUnitTest.class.getResourceAsStream
-                ("/resource-Extvl-template_1_WithDiffVersionOfSameL3Network.yml");
-            readPayload(inputArtifacts,fis5,
-                "resource-Extvl-template_1_WithDiffVersionOfSameL3Network.yml");
-            fis5.close();
+            readPayloadFromResource(inputArtifacts, "resource-Extvl-template_1_WithDiffVersionOfSameL3Network.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -1105,15 +999,10 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationWithInvIdGreaterThanSpecifiedLimit() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_WithInvIdGreaterThanSpecifiedLimit.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_WithInvIdGreaterThanSpecifiedLimit" +
-                ".yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_WithInvIdGreaterThanSpecifiedLimit.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_WithInvIdGreaterThanSpecifiedLimit.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_WithInvIdGreaterThanSpecifiedLimit.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_WithInvIdGreaterThanSpecifiedLimit.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-            fis2.close();
 
             GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
             Assert.assertEquals(false,data.getErrorData().isEmpty());
@@ -1132,15 +1021,10 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationWithInvIdLesserThanSpecifiedLimit() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_WithInvIdLesserThanSpecifiedLimit.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_WithInvIdLesserThanSpecifiedLimit" +
-                ".yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_WithInvIdLesserThanSpecifiedLimit.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_WithInvIdLesserThanSpecifiedLimit.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_WithInvIdLesserThanSpecifiedLimit.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_WithInvIdLesserThanSpecifiedLimit.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-            fis2.close();
 
             GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
             Assert.assertEquals(false,data.getErrorData().isEmpty());
@@ -1162,14 +1046,9 @@ public class SampleJUnitTest extends TestCase {
         String configLoc = System.getProperty(ARTIFACTGENERATOR_CONFIG);
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_NoSystemPropConfigured.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_NoSystemPropConfigured" +
-                ".yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_NoSystemPropConfigured.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_NoSystemPropConfigured.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_NoSystemPropConfigured.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_NoSystemPropConfigured.yml");
 
             System.clearProperty(ARTIFACTGENERATOR_CONFIG);
 
@@ -1192,14 +1071,9 @@ public class SampleJUnitTest extends TestCase {
         String configLoc = System.getProperty(ARTIFACTGENERATOR_CONFIG);
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_NoSystemPropConfigured.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_NoSystemPropConfigured" +
-                ".yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_NoSystemPropConfigured.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_NoSystemPropConfigured.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_NoSystemPropConfigured.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_NoSystemPropConfigured.yml");
 
             System.setProperty(ARTIFACTGENERATOR_CONFIG,configLoc + File.separator + "testErrorWhenNoFileAtConfigLocation");
             Map<String, Model> outputArtifactMap = new HashMap<>();
@@ -1223,14 +1097,9 @@ public class SampleJUnitTest extends TestCase {
         loadConfig(ArtifactGenerationServiceTest.properties);
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_NoSystemPropConfigured.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_NoSystemPropConfigured" +
-                ".yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_NoSystemPropConfigured.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_NoSystemPropConfigured.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_NoSystemPropConfigured.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_NoSystemPropConfigured.yml");
 
             Map<String, Model> outputArtifactMap = new HashMap<>();
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
@@ -1254,14 +1123,9 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationWithUpdatedUUIDInConfig() throws Exception  {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_WithUpdatedUUIDInConfig.yml");
-            readPayload(inputArtifacts,fis1, "vf_vmme_template_WithUpdatedUUIDInConfig" +
-                ".yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_WithUpdatedUUIDInConfig.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_WithUpdatedUUIDInConfig.yml");
-            readPayload(inputArtifacts,fis2, "service_vmme_template_WithUpdatedUUIDInConfig.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_WithUpdatedUUIDInConfig.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
@@ -1301,12 +1165,9 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationVerifyMandatoryParameterServiceVersion() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_VerifyMandatoryParameterServiceVersion.yml");
-            readPayload(inputArtifacts, fis1, "vf_vmme_template_VerifyMandatoryParameterServiceVersion.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_VerifyMandatoryParameterServiceVersion.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_VerifyMandatoryParameterServiceVersion.yml");
-            readPayload(inputArtifacts, fis2, "service_vmme_template_VerifyMandatoryParameterServiceVersion.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_VerifyMandatoryParameterServiceVersion.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
 
             GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, new HashMap<String, String>());
@@ -1323,12 +1184,9 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationVerifyServiceVersionFormat() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_VerifyServiceVersionFormat.yml");
-            readPayload(inputArtifacts, fis1, "vf_vmme_template_VerifyServiceVersionFormat.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_VerifyServiceVersionFormat.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_VerifyServiceVersionFormat.yml");
-            readPayload(inputArtifacts, fis2, "service_vmme_template_VerifyServiceVersionFormat.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_VerifyServiceVersionFormat.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
 
             additionalParams.put(AdditionalParams.ServiceVersion.getName(),"1");
@@ -1363,12 +1221,9 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationVerifyServiceVersion() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_VerifyServiceVersion.yml");
-            readPayload(inputArtifacts, fis1, "vf_vmme_template_VerifyServiceVersion.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_VerifyServiceVersion.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_VerifyServiceVersion.yml");
-            readPayload(inputArtifacts, fis2, "service_vmme_template_VerifyServiceVersion.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_VerifyServiceVersion.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
@@ -1405,14 +1260,10 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationVerifyResourceVersionFormat() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_VerifyResourceVersionFormat.yml");
-            readPayload(inputArtifacts, fis1, "vf_vmme_template_VerifyResourceVersionFormat.yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_VerifyResourceVersionFormat.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_VerifyResourceVersionFormat1.yml");
-            readPayload(inputArtifacts, fis2, "service_vmme_template_VerifyResourceVersionFormat1.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_VerifyResourceVersionFormat1.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-            fis2.close();
 
             List<ToscaTemplate> toscas = new LinkedList();
             for (Artifact inputArtifact : inputArtifacts) {
@@ -1428,9 +1279,7 @@ public class SampleJUnitTest extends TestCase {
 
             inputArtifacts.remove(1);
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_VerifyResourceVersionFormat2.yml");
-            readPayload(inputArtifacts, fis3, "service_vmme_template_VerifyResourceVersionFormat2.yml");
-            fis3.close();
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_VerifyResourceVersionFormat2.yml");
             GenerationData data2 = obj.generateArtifact(inputArtifacts, generatorConfig,
                 additionalParams);
             List<Artifact> resultData2 = data2.getResultData();
@@ -1448,12 +1297,9 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationVerifyMandatoryParameterResourceVersion() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/vf_vmme_template_VerifyMandatoryParameterResourceVersion.yml");
-            readPayload(inputArtifacts, fis1, "vf_vmme_template_VerifyMandatoryParameterResourceVersion.yml");
+            readPayloadFromResource(inputArtifacts, "vf_vmme_template_VerifyMandatoryParameterResourceVersion.yml");
 
-            fis1.close();
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service_vmme_template_VerifyMandatoryParameterResourceVersion.yml");
-            readPayload(inputArtifacts, fis2, "service_vmme_template_VerifyMandatoryParameterResourceVersion.yml");
+            readPayloadFromResource(inputArtifacts, "service_vmme_template_VerifyMandatoryParameterResourceVersion.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
             for (Artifact inputArtifact : inputArtifacts) {
@@ -1474,13 +1320,9 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/service-ServiceWithAllottedResourceIpmux-template.yml");
-            readPayload(inputArtifacts, fis1, "service-ServiceWithAllottedResourceIpmux-template.yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "service-ServiceWithAllottedResourceIpmux-template.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/resource-AllottedResource-template_IpMux.yml");
-            readPayload(inputArtifacts, fis2, "resource-AllottedResource-template_IpMux.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "resource-AllottedResource-template_IpMux.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -1505,14 +1347,9 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream
-                ("/service-ServiceWithAllottedResourceIpmux-template_WithGroups.yml");
-            readPayload(inputArtifacts, fis1, "service-ServiceWithAllottedResourceIpmux-template_WithGroups.yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "service-ServiceWithAllottedResourceIpmux-template_WithGroups.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/resource-AllottedResource-template_IpMux_WithGroups.yml");
-            readPayload(inputArtifacts, fis2, "resource-AllottedResource-template_IpMux_WithGroups.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "resource-AllottedResource-template_IpMux_WithGroups.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -1545,17 +1382,11 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/service-ServiceWithAllottedResourcesIpMuxSameInvariant-template.yml");
-            readPayload(inputArtifacts, fis1, "service-ServiceWithAllottedResourcesIpMuxSameInvariant-template.yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "service-ServiceWithAllottedResourcesIpMuxSameInvariant-template.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/resource-AllottedResource1SameInvariant-IpMux-template.yml");
-            readPayload(inputArtifacts, fis2, "resource-AllottedResource1SameInvariant-IpMux-template.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "resource-AllottedResource1SameInvariant-IpMux-template.yml");
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/resource-AllottedResource2SameInvariant-IpMux-template.yml");
-            readPayload(inputArtifacts, fis3, "resource-AllottedResource2SameInvariant-IpMux-template.yml");
-            fis3.close();
+            readPayloadFromResource(inputArtifacts, "resource-AllottedResource2SameInvariant-IpMux-template.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -1589,13 +1420,9 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/service-ServiceWithAllottedResourcesIpMuxSameInvariantSameVers-template.yml");
-            readPayload(inputArtifacts, fis1, "service-ServiceWithAllottedResourcesIpMuxSameInvariantSameVers-template.yml");
-            fis1.close();
+            readPayloadFromResource(inputArtifacts, "service-ServiceWithAllottedResourcesIpMuxSameInvariantSameVers-template.yml");
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/resource-AllottedResourceSameInvariantSameVers-IpMux-template.yml");
-            readPayload(inputArtifacts, fis2, "resource-AllottedResourceSameInvariantSameVers-IpMux-template.yml");
-            fis2.close();
+            readPayloadFromResource(inputArtifacts, "resource-AllottedResourceSameInvariantSameVers-IpMux-template.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -1629,14 +1456,11 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service-Allottedipmux-template.yml");
-            readPayload(inputArtifacts, fis2, "service-Allottedipmux-template.yml");
+            readPayloadFromResource(inputArtifacts, "service-Allottedipmux-template.yml");
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/resource-IpMuxDemux-template.yml");
-            readPayload(inputArtifacts, fis1, "resource-IpMuxDemux-template.yml");
+            readPayloadFromResource(inputArtifacts, "resource-IpMuxDemux-template.yml");
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/resource-TunnelXconn-template.yml");
-            readPayload(inputArtifacts, fis3, "resource-TunnelXconn-template.yml");
+            readPayloadFromResource(inputArtifacts, "resource-TunnelXconn-template.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -1669,22 +1493,15 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service-SdWan-template_WithOutDepSerId.yml");
-            readPayload(inputArtifacts, fis2, "service-SdWan-template_WithOutDepSerId.yml");
+            readPayloadFromResource(inputArtifacts, "service-SdWan-template_WithOutDepSerId.yml");
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/resource-VhnfNonHeat-template_WithOutDepSerId.yml");
-            readPayload(inputArtifacts, fis1, "resource-VhnfNonHeat-template_WithOutDepSerId.yml");
+            readPayloadFromResource(inputArtifacts, "resource-VhnfNonHeat-template_WithOutDepSerId.yml");
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/resource-TunnelXconn-template_WithOutDepSerId.yml");
-            readPayload(inputArtifacts, fis3, "resource-TunnelXconn-template_WithOutDepSerId.yml");
+            readPayloadFromResource(inputArtifacts, "resource-TunnelXconn-template_WithOutDepSerId.yml");
 
-            InputStream fis4 = SampleJUnitTest.class.getResourceAsStream
-                ("/resource-ServiceAdmin-template_WithOutDepSerId.yml");
-            readPayload(inputArtifacts, fis4, "resource-ServiceAdmin-template_WithOutDepSerId.yml");
+            readPayloadFromResource(inputArtifacts, "resource-ServiceAdmin-template_WithOutDepSerId.yml");
 
-            InputStream fis5 = SampleJUnitTest.class.getResourceAsStream
-                ("/resource-IpMuxDemux-template_WithOutDepSerId.yml");
-            readPayload(inputArtifacts, fis5, "resource-IpMuxDemux-template_WithOutDepSerId.yml");
+            readPayloadFromResource(inputArtifacts, "resource-IpMuxDemux-template_WithOutDepSerId.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -1707,22 +1524,15 @@ public class SampleJUnitTest extends TestCase {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
 
-            InputStream fis2 = SampleJUnitTest.class.getResourceAsStream("/service-SdWan-template_AllRes_VF.yml");
-            readPayload(inputArtifacts, fis2, "service-SdWan-template_AllRes_VF.yml");
+            readPayloadFromResource(inputArtifacts, "service-SdWan-template_AllRes_VF.yml");
 
-            InputStream fis1 = SampleJUnitTest.class.getResourceAsStream("/resource-VhnfNonHeat-template_AllRes_VF.yml");
-            readPayload(inputArtifacts, fis1, "resource-VhnfNonHeat-template_AllRes_VF.yml");
+            readPayloadFromResource(inputArtifacts, "resource-VhnfNonHeat-template_AllRes_VF.yml");
 
-            InputStream fis3 = SampleJUnitTest.class.getResourceAsStream("/resource-TunnelXconn-template_AllRes_VF.yml");
-            readPayload(inputArtifacts, fis3, "resource-TunnelXconn-template_AllRes_VF.yml");
+            readPayloadFromResource(inputArtifacts, "resource-TunnelXconn-template_AllRes_VF.yml");
 
-            InputStream fis4 = SampleJUnitTest.class.getResourceAsStream
-                ("/resource-ServiceAdmin-template_AllRes_VF.yml");
-            readPayload(inputArtifacts, fis4, "resource-ServiceAdmin-template_AllRes_VF.yml");
+            readPayloadFromResource(inputArtifacts, "resource-ServiceAdmin-template_AllRes_VF.yml");
 
-            InputStream fis5 = SampleJUnitTest.class.getResourceAsStream
-                ("/resource-IpMuxDemux-template_AllRes_VF.yml");
-            readPayload(inputArtifacts, fis5, "resource-IpMuxDemux-template_AllRes_VF.yml");
+            readPayloadFromResource(inputArtifacts, "resource-IpMuxDemux-template_AllRes_VF.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
@@ -1802,4 +1612,10 @@ public class SampleJUnitTest extends TestCase {
         }
     }*/
 
+    private void readPayloadFromResource(List<Artifact> inputArtifacts, String fileName) throws IOException {
+
+        try (InputStream fis = SampleJUnitTest.class.getResourceAsStream("/" + fileName)) {
+            readPayload(inputArtifacts, fis, fileName);
+        }
+    }
 }

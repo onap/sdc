@@ -42,7 +42,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -159,8 +158,8 @@ public class MonitoringMibEnricherTest {
   }
 
   private ByteBuffer getMibByteBuffer(String fileName) {
-    InputStream mibFile = FileUtils.getFileInputStream(this.getClass().getResource(fileName));
-    byte[] mibBytes = FileUtils.toByteArray(mibFile);
+    byte[] mibBytes = FileUtils.readViaInputStream(this.getClass().getResource(fileName),
+            stream -> FileUtils.toByteArray(stream));
     return ByteBuffer.wrap(mibBytes);
   }
 

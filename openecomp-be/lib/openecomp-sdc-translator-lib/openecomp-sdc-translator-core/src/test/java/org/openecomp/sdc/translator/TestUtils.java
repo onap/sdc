@@ -97,10 +97,11 @@ public class TestUtils {
         Assert.fail("Invalid expected output files directory");
       }
       for (int i = 0; i < fileList.length; i++) {
-        InputStream serviceTemplateInputStream = FileUtils.getFileInputStream(TestUtils.class
-            .getClassLoader().getResource(baseDirPath + fileList[i]));
-        ServiceTemplate serviceTemplate = toscaExtensionYamlUtil.yamlToObject
-            (serviceTemplateInputStream, ServiceTemplate.class);
+
+        URL resource = TestUtils.class.getClassLoader().getResource(baseDirPath + fileList[i]);
+        ServiceTemplate serviceTemplate = FileUtils.readViaInputStream(resource,
+                        stream -> toscaExtensionYamlUtil.yamlToObject(stream, ServiceTemplate.class));
+
         serviceTemplateMap.put(fileList[i], serviceTemplate);
       }
     } catch (Exception e) {
