@@ -33,6 +33,8 @@ Example: set DOCKER_HOST=tcp://127.0.0.1:2375
 -- Check that WSSimulator.war exists after first step No.1 in webseal-simulator/sdc-simulator folder.
 3. Run `docker build -t openecomp/sdc-simulator:1.1-STAGING-latest <PATH/sdc-simulator>`
 Example: docker build -t openecomp/sdc-simulator:1.1-STAGING-latest /tmp/docker/sdc-simulator/
+-- If running behind a proxy:
+`docker build --build-arg http_proxy=http://URL:PORT --build-arg https_proxy=http://URL:PORT -t openecomp/sdc-simulator:1.1-STAGING-latest /tmp/docker/sdc-simulator/`
 4. Validate that images pushed to the local repo by executing `docker images`
 5. Copy the script /webseal-simulator/scripts/simulator_docker_run.sh to the docker engine environment and run: `simulator_docker_run.sh -r 1.1-STAGING-latest`
 6. Run `docker ps` to verify that sdc-simulator docker is up and running.
