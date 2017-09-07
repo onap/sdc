@@ -20,16 +20,12 @@
 
 package com.att.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import static org.junit.Assert.assertEquals;
-
 import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.core.validation.api.ValidationManager;
-import org.openecomp.core.validation.factory.ValidationManagerFactory;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
@@ -46,9 +42,9 @@ import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.model.GroupDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
-import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ConsolidationData;
@@ -61,7 +57,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,6 +65,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class BaseResourceTranslationTest {
@@ -280,14 +277,14 @@ public class BaseResourceTranslationTest {
       } else {
         Assert.fail("Invalid expected output files directory");
       }
+
       for (int i = 0; i < fileList.length; i++) {
-        InputStream serviceTemplateInputStream = FileUtils.getFileInputStream
-            (BaseResourceTranslationTest.class
-                .getClassLoader().getResource(baseDirPath + fileList[i]));
-        ServiceTemplate serviceTemplate = toscaExtensionYamlUtil.yamlToObject
-            (serviceTemplateInputStream, ServiceTemplate.class);
+        URL resource = BaseResourceTranslationTest.class.getClassLoader().getResource(baseDirPath + fileList[i]);
+        ServiceTemplate serviceTemplate = FileUtils.readViaInputStream(resource,
+                stream -> toscaExtensionYamlUtil.yamlToObject(stream, ServiceTemplate.class));
         serviceTemplateMap.put(fileList[i], serviceTemplate);
       }
+
     } catch (Exception e) {
       Assert.fail(e.getMessage());
     }

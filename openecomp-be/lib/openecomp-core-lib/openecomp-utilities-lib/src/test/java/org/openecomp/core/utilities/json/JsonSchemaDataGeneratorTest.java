@@ -28,14 +28,17 @@ import org.testng.annotations.Test;
 
 public class JsonSchemaDataGeneratorTest {
 
-  public static final String SCHEMA_WITHOUT_DEFAULTS = new String(
-      FileUtils.toByteArray(FileUtils.getFileInputStream("jsonUtil/json_schema/aSchema.json")));
-  public static final String SCHEMA_WITH_REFS_AND_DEFAULTS = new String(FileUtils.toByteArray(
-      FileUtils.getFileInputStream("jsonUtil/json_schema/schemaWithRefsAndDefaults.json")));
-  public static final String SCHEMA_WITH_INVALID_DEFAULT = new String(FileUtils.toByteArray(
-      FileUtils.getFileInputStream("jsonUtil/json_schema/schemaWithInvalidDefault.json")));
-  public static final String SCHEMA_NIC = new String(
-      FileUtils.toByteArray(FileUtils.getFileInputStream("jsonUtil/json_schema/nicSchema.json")));
+  public static final String SCHEMA_WITHOUT_DEFAULTS =
+          readFromFile("jsonUtil/json_schema/aSchema.json");
+
+  public static final String SCHEMA_WITH_REFS_AND_DEFAULTS =
+          readFromFile("jsonUtil/json_schema/schemaWithRefsAndDefaults.json");
+
+  public static final String SCHEMA_WITH_INVALID_DEFAULT =
+          readFromFile("jsonUtil/json_schema/schemaWithInvalidDefault.json");
+
+  public static final String SCHEMA_NIC =
+          readFromFile("jsonUtil/json_schema/nicSchema.json");
 
   @Test
   public void testSchemaWithoutDefaults() {
@@ -66,5 +69,9 @@ public class JsonSchemaDataGeneratorTest {
     System.out.println(data);
     JSONObject dataJson = new JSONObject(data);
     Assert.assertTrue(expectedData.similar(dataJson));
+  }
+
+  private static String readFromFile(String filename) {
+    return FileUtils.readViaInputStream(filename, stream -> new String(FileUtils.toByteArray(stream)));
   }
 }

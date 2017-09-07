@@ -59,26 +59,24 @@ public class CommonUtil {
   private static FileContentHandler getFileContentMapFromOrchestrationCandidateZipAndValidateNoFolders(
       byte[] uploadFileData)
       throws IOException {
-    ZipEntry zipEntry;
+
     List<String> folderList = new ArrayList<>();
     FileContentHandler mapFileContent = new FileContentHandler();
-    try {
-      ZipInputStream inputZipStream;
 
-      byte[] fileByteContent;
+    try (ZipInputStream inputZipStream = new ZipInputStream(new ByteArrayInputStream(uploadFileData))) {
+
       String currentEntryName;
-      inputZipStream = new ZipInputStream(new ByteArrayInputStream(uploadFileData));
+      ZipEntry zipEntry;
 
       while ((zipEntry = inputZipStream.getNextEntry()) != null) {
-        currentEntryName = zipEntry.getName();
-        // else, get the file content (as byte array) and save it in a map.
-        fileByteContent = FileUtils.toByteArray(inputZipStream);
 
+        currentEntryName = zipEntry.getName();
         int index = lastIndexFileSeparatorIndex(currentEntryName);
         if (index != -1) { //todo ?
           folderList.add(currentEntryName);
         } else {
-          mapFileContent.addFile(currentEntryName, fileByteContent);
+          // else, get the file content (as byte array) and save it in a map.
+          mapFileContent.addFile(currentEntryName, FileUtils.toByteArray(inputZipStream));
         }
       }
 

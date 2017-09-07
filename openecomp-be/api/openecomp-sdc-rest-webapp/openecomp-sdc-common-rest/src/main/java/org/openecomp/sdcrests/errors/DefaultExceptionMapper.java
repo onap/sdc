@@ -35,29 +35,25 @@ import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
   private static final String ERROR_CODES_TO_RESPONSE_STATUS_MAPPING_FILE =
       "errorCodesToResponseStatusMapping.json";
   @SuppressWarnings("unchecked")
   private static Map<String, String> errorCodeToResponseStatus =
-      JsonUtil.json2Object(FileUtils
-          .getFileInputStream(ERROR_CODES_TO_RESPONSE_STATUS_MAPPING_FILE), Map.class);
+          FileUtils.readViaInputStream(ERROR_CODES_TO_RESPONSE_STATUS_MAPPING_FILE,
+                  stream -> JsonUtil.json2Object(stream, Map.class));
+
   private static Logger logger = (Logger) LoggerFactory.getLogger(DefaultExceptionMapper.class);
 
   @Override
