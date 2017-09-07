@@ -25,7 +25,9 @@ import org.openecomp.core.factory.api.FactoriesConfiguration;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,12 +52,16 @@ public final class FactoriesConfigImpl implements FactoriesConfiguration {
   }
 
   private void init() {
-    List<InputStream> factoryConfigIsList = FileUtils.getFileInputStreams(FACTORY_CONFIG_FILE_NAME);
-    for (InputStream factoryConfigIs : factoryConfigIsList) {
-      factoryMap.putAll(JsonUtil.json2Object(factoryConfigIs, Map.class));
+
+    List<URL> factoryConfigUrlList = FileUtils.getAllLocations(FACTORY_CONFIG_FILE_NAME);
+    for (URL factoryConfigUrl : factoryConfigUrlList) {
+
+      try (InputStream stream = factoryConfigUrl.openStream()) {
+        factoryMap.putAll(JsonUtil.json2Object(stream, Map.class));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
-
-
 }
 

@@ -31,10 +31,14 @@ public class JsonUtilTest {
 
   @Test
   public void testValidJsonValidate() throws Exception {
-    String json =
-        new String(FileUtils.toByteArray(FileUtils.getFileInputStream("jsonUtil/json/a.json")));
-    String jsonSchema = new String(
-        FileUtils.toByteArray(FileUtils.getFileInputStream("jsonUtil/json_schema/aSchema.json")));
+
+
+
+    String json = FileUtils.readViaInputStream("jsonUtil/json/a.json",
+            stream -> new String(FileUtils.toByteArray(stream)));
+
+    String jsonSchema = FileUtils.readViaInputStream("jsonUtil/json_schema/aSchema.json",
+            stream -> new String(FileUtils.toByteArray(stream)));
 
     List<String> validationErrors = JsonUtil.validate(json, jsonSchema);
     Assert.assertNull(validationErrors);
@@ -42,10 +46,11 @@ public class JsonUtilTest {
 
   @Test
   public void testInValidJsonValidate() throws Exception {
-    String json = new String(
-        FileUtils.toByteArray(FileUtils.getFileInputStream("jsonUtil/json/a_invalid.json")));
-    String jsonSchema = new String(
-        FileUtils.toByteArray(FileUtils.getFileInputStream("jsonUtil/json_schema/aSchema.json")));
+
+    String json = FileUtils.readViaInputStream("jsonUtil/json/a_invalid.json",
+            stream -> new String(FileUtils.toByteArray(stream)));
+    String jsonSchema = FileUtils.readViaInputStream("jsonUtil/json_schema/aSchema.json",
+            stream -> new String(FileUtils.toByteArray(stream)));
 
     List<String> validationErrors = JsonUtil.validate(json, jsonSchema);
     Assert.assertNotNull(validationErrors);

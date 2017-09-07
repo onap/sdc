@@ -584,14 +584,19 @@ public class ConfigurationUtils {
           stmt.setString(i + 1, params[i]);
         }
       }
-      ResultSet rs = stmt.executeQuery();
-      while (rs.next()) {
-        coll.add(rs.getString(1));
+
+      try (ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+          coll.add(rs.getString(1));
+        }
       }
+
     } catch (Exception exception) {
       //exception.printStackTrace();
       return null;
     }
+
     return coll;
   }
 

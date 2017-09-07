@@ -27,7 +27,6 @@ import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 
 import java.util.Optional;
@@ -95,9 +94,10 @@ public class UniqueValueUtil {
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
-    if ((newValue != null && oldValue != null
-        && !newValue.toLowerCase().equals(oldValue.toLowerCase()))
-        || newValue == null || oldValue == null) {
+    boolean nonEqual = (newValue != null) && (oldValue != null)
+            && !newValue.toLowerCase().equals(oldValue.toLowerCase());
+
+    if (nonEqual || newValue == null || oldValue == null) {
       createUniqueValue(type, CommonMethods.concat(uniqueContext, new String[]{newValue}));
       deleteUniqueValue(type, CommonMethods.concat(uniqueContext, new String[]{oldValue}));
     }

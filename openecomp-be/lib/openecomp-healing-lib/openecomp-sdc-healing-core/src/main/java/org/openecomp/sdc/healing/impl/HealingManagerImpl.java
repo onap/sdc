@@ -20,20 +20,19 @@
 
 package org.openecomp.sdc.healing.impl;
 
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.healing.interfaces.Healer;
 import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.healing.types.HealCode;
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.healing.api.HealingManager;
+import org.openecomp.sdc.healing.interfaces.Healer;
+import org.openecomp.sdc.healing.types.HealCode;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 
-import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
@@ -77,8 +76,7 @@ public class HealingManagerImpl implements HealingManager {
   }
 
   private static Map<String, String> initHealers() {
-    InputStream healingConfigurationJson = FileUtils.getFileInputStream(HEALING_CONF_FILE);
-    return JsonUtil.json2Object(healingConfigurationJson, Map.class);
+    return FileUtils.readViaInputStream(HEALING_CONF_FILE, stream -> JsonUtil.json2Object(stream, Map.class));
   }
 
   private Healer getHealerImplInstance(String implClassName)

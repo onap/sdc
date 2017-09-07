@@ -41,8 +41,8 @@ public class LoggerFactory extends BaseFactory {
 
     try {
       service = locateService(LoggerCreationService.class);
-    } catch (Throwable throwable) {
-      new RuntimeException("Failed to instantiate logger factory", throwable).printStackTrace();
+    } catch (Exception e) {
+      new RuntimeException("Failed to instantiate logger factory", e).printStackTrace();
       // use the no-op service to prevent recursion in case of an attempt to log an exception as a
       // result of a logger initialization error
       service = new NoOpLoggerCreationService();

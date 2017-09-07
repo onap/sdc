@@ -21,14 +21,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 public class ProcessArtifactEnricherTest {
@@ -112,8 +110,8 @@ public class ProcessArtifactEnricherTest {
   }
 
   private ByteBuffer getMibByteBuffer(String fileName) {
-    InputStream mibFile = FileUtils.getFileInputStream(this.getClass().getResource(fileName));
-    byte[] mibBytes = FileUtils.toByteArray(mibFile);
+    byte[] mibBytes = FileUtils.readViaInputStream(this.getClass().getResource(fileName),
+            stream -> FileUtils.toByteArray(stream));
     return ByteBuffer.wrap(mibBytes);
   }
 }
