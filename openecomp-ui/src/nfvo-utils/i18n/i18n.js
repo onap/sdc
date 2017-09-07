@@ -14,14 +14,16 @@
  * permissions and limitations under the License.
  */
 import IntlObj from 'intl';
+import IntlMessageFormatObj from 'intl-messageformat';
 import IntlRelativeFormatObj from 'intl-relativeformat';
 import createFormatCacheObj from 'intl-format-cache';
 import i18nJson from 'i18nJson';
 /*
-	Intl libs are using out dated transpailer from ecmascript6.
-*  TODO: As soon as they fix it, remove this assignments!!!
-* */
+ Intl libs are using out dated transpailer from ecmascript6.
+ *  TODO: As soon as they fix it, remove this assignments!!!
+ * */
 var Intl               = window.Intl || IntlObj.default,
+	IntlMessageFormat  = IntlMessageFormatObj.default,
 	IntlRelativeFormat = IntlRelativeFormatObj.default,
 	createFormatCache  = createFormatCacheObj.default;
 
@@ -68,11 +70,15 @@ var i18n = {
 	dateRelative(date, options) {
 		return createFormatCache(IntlRelativeFormat)(this._locale, options).format(date);
 	},
-	message(messageId) {
+	message(messageId, options) {
+		let messageTxt = null;
 		if (i18nJson && i18nJson[messageId]) {
-			return i18nJson[messageId];
+			messageTxt = i18nJson[messageId];
+		} else {
+			messageTxt = String(messageId);
 		}
-		return messageId;
+		return createFormatCache(IntlMessageFormat)(messageTxt, this._locale).format(options);
+
 	},
 	getLocale() {
 		return this._locale;
