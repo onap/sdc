@@ -36,6 +36,8 @@ public class ConfigConstants {
   public static final String PREFIX_NODE_TYPE_VFC = PREFIX + ".nodeType.vfc";
   public static final String PREFIX_NODE_TYPE_NETWORK = PREFIX + ".nodeType.network";
   public static final String PREFIX_NODE_TYPE_CP = PREFIX + ".nodeType.connectionPoint";
+  public static final String PREFIX_NODE_TYPE_EXTERNAL_CP = PREFIX + ".nodeType"
+      + ".external.connectionPoint";
   public static final String PREFIX_NODE_TYPE_ABSTARCT = PREFIX + ".nodeType.abstract";
   public static final String PREFIX_NODE_TYPE_RULE = PREFIX + ".nodeType.rule";
 

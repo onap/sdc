@@ -1,0 +1,661 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested-pcm_v0.1
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+- openecomp_index:
+    file: openecomp/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.pcm_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_pcm_1port_0_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    port_pcm_1port_0_network_role_tag:
+      type: string
+      required: true
+    pcm_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM image name
+    port_pcm_2port_2_order:
+      type: integer
+      required: true
+    port_pcm_1port_0_subnetpoolid:
+      type: string
+      required: true
+    port_pcm_1port_0_order:
+      type: integer
+      required: true
+    port_pcm_2port_2_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_pcm_2port_2_subnetpoolid:
+      type: string
+      required: true
+    port_pcm_2port_2_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_pcm_2port_1_subnetpoolid:
+      type: string
+      required: true
+    port_pcm_2port_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_pcm_1port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_pcm_1port_0_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_pcm_2port_2_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    pcm_server_name:
+      label: PCRF CM server name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM server name
+    cps_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    port_pcm_2port_2_network_role:
+      type: string
+      required: true
+    oam_net_name:
+      label: OAM network name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network name
+    port_pcm_2port_2_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_pcm_1port_0_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_pcm_2port_1_network_role:
+      type: string
+      required: true
+    oam_net_gw:
+      label: CPS network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network gateway
+    packet_internal_network_name:
+      label: packet internal network name
+      hidden: false
+      immutable: false
+      type: string
+      description: name of the network
+    port_pcm_1port_0_network_role:
+      type: string
+      required: true
+    port_pcm_2port_1_network_role_tag:
+      type: string
+      required: true
+    security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+    cps_net_ip:
+      label: CPS network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network ip
+    port_pcm_2port_1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    pcm_flavor_name:
+      label: PCRF CM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF CM instance
+    port_pcm_2port_2_network_role_tag:
+      type: string
+      required: true
+    port_pcm_2port_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    pcm_vol:
+      label: CPS Cluman Cinder Volume
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS Cluman Cinder Volume
+    cps_net_name:
+      label: CPS network name
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network name
+    oam_net_ip:
+      label: OAM network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network ip
+    oam_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    port_pcm_2port_1_order:
+      type: integer
+      required: true
+    port_pcm_2port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+  node_templates:
+    server_pcm:
+      type: org.openecomp.resource.vfc.nodes.heat.pcm_server
+      properties:
+        flavor:
+          get_input: pcm_flavor_name
+        availability_zone:
+          get_input: availabilityzone_name
+        image:
+          get_input: pcm_image_name
+        config_drive: true
+        user_data_format: RAW
+        name:
+          get_input: pcm_server_name
+    packet_internal_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_internal_network_name
+    pcm_1port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input: port_pcm_1port_0_ip_requirements
+        security_groups:
+        - get_input: security_group_name
+        network_role:
+          get_input: port_pcm_1port_0_network_role
+        fixed_ips:
+        - ip_address:
+            get_input: cps_net_ip
+        subnetpoolid:
+          get_input: port_pcm_1port_0_subnetpoolid
+        mac_requirements:
+          get_input: port_pcm_1port_0_mac_requirements
+        exCP_naming:
+          get_input: port_pcm_1port_0_exCP_naming
+        vlan_requirements:
+          get_input: port_pcm_1port_0_vlan_requirements
+        network_role_tag:
+          get_input: port_pcm_1port_0_network_role_tag
+        network: packet_internal_network
+        order:
+          get_input: port_pcm_1port_0_order
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_pcm
+          relationship: tosca.relationships.network.BindsTo
+    pcm_3port_1:
+      type: org.openecomp.resource.cp.v2.extNeutronCP
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: oam_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
+        network:
+          get_input: oam_net_name
+      capabilities:
+      - port_mirroring:
+          properties:
+            connection_point:
+              nf_type: ''
+              nfc_type: ''
+              network_role: ''
+              pps_capacity: ''
+    pcm_2port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input: port_pcm_2port_2_ip_requirements
+        security_groups:
+        - get_input: security_group_name
+        network_role:
+          get_input: port_pcm_2port_2_network_role
+        fixed_ips:
+        - ip_address:
+            get_input: oam_net_ip
+        subnetpoolid:
+          get_input: port_pcm_2port_2_subnetpoolid
+        mac_requirements:
+          get_input: port_pcm_2port_2_mac_requirements
+        exCP_naming:
+          get_input: port_pcm_2port_2_exCP_naming
+        vlan_requirements:
+          get_input: port_pcm_2port_2_vlan_requirements
+        network_role_tag:
+          get_input: port_pcm_2port_2_network_role_tag
+        network: packet_internal_network
+        order:
+          get_input: port_pcm_2port_2_order
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
+    pcm_2port_1:
+      type: org.openecomp.resource.cp.v2.extNeutronCP
+      properties:
+        ip_requirements:
+          get_input: port_pcm_2port_1_ip_requirements
+        security_groups:
+        - get_input: security_group_name
+        network_role:
+          get_input: port_pcm_2port_1_network_role
+        fixed_ips:
+        - ip_address:
+            get_input: oam_net_ip
+        subnetpoolid:
+          get_input: port_pcm_2port_1_subnetpoolid
+        mac_requirements:
+          get_input: port_pcm_2port_1_mac_requirements
+        exCP_naming:
+          get_input: port_pcm_2port_1_exCP_naming
+        vlan_requirements:
+          get_input: port_pcm_2port_1_vlan_requirements
+        network_role_tag:
+          get_input: port_pcm_2port_1_network_role_tag
+        network:
+          get_input: oam_net_name
+        order:
+          get_input: port_pcm_2port_1_order
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_pcm
+          relationship: tosca.relationships.network.BindsTo
+      capabilities:
+      - port_mirroring:
+          properties:
+            connection_point:
+              nf_type: ''
+              nfc_type: server_pcm
+              network_role:
+                get_input: port_pcm_2port_1_network_role
+              pps_capacity: ''
+  groups:
+    nested-pcm_v0.1_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested-pcm_v0.1.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - server_pcm
+      - packet_internal_network
+      - pcm_1port_0
+      - pcm_3port_1
+      - pcm_2port_2
+      - pcm_2port_1
+  outputs:
+    server_pcm_id:
+      description: the pcm nova service id
+      value: server_pcm
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.pcm_server
+    capabilities:
+      binding_pcm_2port_1:
+      - pcm_2port_1
+      - binding
+      binding_pcm_2port_2:
+      - pcm_2port_2
+      - binding
+      cpu_server_pcm:
+      - server_pcm
+      - cpu
+      attachment_pcm_2port_1:
+      - pcm_2port_1
+      - attachment
+      network.outgoing.bytes.rate_pcm_2port_1:
+      - pcm_2port_1
+      - network.outgoing.bytes.rate
+      attachment_pcm_2port_2:
+      - pcm_2port_2
+      - attachment
+      network.outgoing.bytes.rate_pcm_2port_2:
+      - pcm_2port_2
+      - network.outgoing.bytes.rate
+      memory_server_pcm:
+      - server_pcm
+      - memory
+      disk.write.requests_server_pcm:
+      - server_pcm
+      - disk.write.requests
+      network.outpoing.packets_pcm_2port_2:
+      - pcm_2port_2
+      - network.outpoing.packets
+      network.incoming.bytes_pcm_2port_2:
+      - pcm_2port_2
+      - network.incoming.bytes
+      network.incoming.bytes_pcm_2port_1:
+      - pcm_2port_1
+      - network.incoming.bytes
+      feature_pcm_1port_0:
+      - pcm_1port_0
+      - feature
+      network.incoming.packets.rate_pcm_2port_1:
+      - pcm_2port_1
+      - network.incoming.packets.rate
+      network.outpoing.packets_pcm_2port_1:
+      - pcm_2port_1
+      - network.outpoing.packets
+      network.incoming.packets.rate_pcm_2port_2:
+      - pcm_2port_2
+      - network.incoming.packets.rate
+      disk.device.iops_server_pcm:
+      - server_pcm
+      - disk.device.iops
+      memory.resident_server_pcm:
+      - server_pcm
+      - memory.resident
+      end_point_packet_internal_network:
+      - packet_internal_network
+      - end_point
+      disk.device.write.requests_server_pcm:
+      - server_pcm
+      - disk.device.write.requests
+      feature_packet_internal_network:
+      - packet_internal_network
+      - feature
+      network.outgoing.packets.rate_pcm_2port_1:
+      - pcm_2port_1
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_pcm_2port_2:
+      - pcm_2port_2
+      - network.outgoing.packets.rate
+      disk.device.usage_server_pcm:
+      - server_pcm
+      - disk.device.usage
+      disk.allocation_server_pcm:
+      - server_pcm
+      - disk.allocation
+      network.incoming.packets_pcm_2port_1:
+      - pcm_2port_1
+      - network.incoming.packets
+      network.incoming.packets_pcm_2port_2:
+      - pcm_2port_2
+      - network.incoming.packets
+      network.incoming.bytes.rate_pcm_3port_1:
+      - pcm_3port_1
+      - network.incoming.bytes.rate
+      network.incoming.packets.rate_pcm_3port_1:
+      - pcm_3port_1
+      - network.incoming.packets.rate
+      attachment_packet_internal_network:
+      - packet_internal_network
+      - attachment
+      network.outpoing.packets_pcm_1port_0:
+      - pcm_1port_0
+      - network.outpoing.packets
+      disk.usage_server_pcm:
+      - server_pcm
+      - disk.usage
+      disk.device.write.bytes_server_pcm:
+      - server_pcm
+      - disk.device.write.bytes
+      disk.root.size_server_pcm:
+      - server_pcm
+      - disk.root.size
+      disk.ephemeral.size_server_pcm:
+      - server_pcm
+      - disk.ephemeral.size
+      disk.device.latency_server_pcm:
+      - server_pcm
+      - disk.device.latency
+      network.incoming.bytes_pcm_1port_0:
+      - pcm_1port_0
+      - network.incoming.bytes
+      binding_pcm_3port_1:
+      - pcm_3port_1
+      - binding
+      memory.usage_server_pcm:
+      - server_pcm
+      - memory.usage
+      network.outgoing.bytes.rate_pcm_3port_1:
+      - pcm_3port_1
+      - network.outgoing.bytes.rate
+      disk.read.requests_server_pcm:
+      - server_pcm
+      - disk.read.requests
+      disk.capacity_server_pcm:
+      - server_pcm
+      - disk.capacity
+      os_server_pcm:
+      - server_pcm
+      - os
+      network.outgoing.bytes_pcm_3port_1:
+      - pcm_3port_1
+      - network.outgoing.bytes
+      disk.read.bytes_server_pcm:
+      - server_pcm
+      - disk.read.bytes
+      disk.device.read.bytes_server_pcm:
+      - server_pcm
+      - disk.device.read.bytes
+      network.incoming.packets_pcm_1port_0:
+      - pcm_1port_0
+      - network.incoming.packets
+      feature_pcm_3port_1:
+      - pcm_3port_1
+      - feature
+      network.outgoing.packets.rate_pcm_3port_1:
+      - pcm_3port_1
+      - network.outgoing.packets.rate
+      endpoint_server_pcm:
+      - server_pcm
+      - endpoint
+      network.incoming.packets_pcm_3port_1:
+      - pcm_3port_1
+      - network.incoming.packets
+      disk.device.read.requests.rate_server_pcm:
+      - server_pcm
+      - disk.device.read.requests.rate
+      vcpus_server_pcm:
+      - server_pcm
+      - vcpus
+      disk.write.bytes_server_pcm:
+      - server_pcm
+      - disk.write.bytes
+      disk.iops_server_pcm:
+      - server_pcm
+      - disk.iops
+      network.incoming.bytes.rate_pcm_1port_0:
+      - pcm_1port_0
+      - network.incoming.bytes.rate
+      disk.read.bytes.rate_server_pcm:
+      - server_pcm
+      - disk.read.bytes.rate
+      network.outpoing.packets_pcm_3port_1:
+      - pcm_3port_1
+      - network.outpoing.packets
+      disk.device.allocation_server_pcm:
+      - server_pcm
+      - disk.device.allocation
+      link_packet_internal_network:
+      - packet_internal_network
+      - link
+      network.incoming.packets.rate_pcm_1port_0:
+      - pcm_1port_0
+      - network.incoming.packets.rate
+      feature_pcm_2port_1:
+      - pcm_2port_1
+      - feature
+      scalable_server_pcm:
+      - server_pcm
+      - scalable
+      network.outgoing.bytes.rate_pcm_1port_0:
+      - pcm_1port_0
+      - network.outgoing.bytes.rate
+      feature_pcm_2port_2:
+      - pcm_2port_2
+      - feature
+      network.outgoing.bytes_pcm_2port_1:
+      - pcm_2port_1
+      - network.outgoing.bytes
+      network.outgoing.bytes_pcm_2port_2:
+      - pcm_2port_2
+      - network.outgoing.bytes
+      disk.device.read.bytes.rate_server_pcm:
+      - server_pcm
+      - disk.device.read.bytes.rate
+      cpu_util_server_pcm:
+      - server_pcm
+      - cpu_util
+      attachment_pcm_1port_0:
+      - pcm_1port_0
+      - attachment
+      disk.write.requests.rate_server_pcm:
+      - server_pcm
+      - disk.write.requests.rate
+      network.incoming.bytes.rate_pcm_2port_2:
+      - pcm_2port_2
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_pcm_2port_1:
+      - pcm_2port_1
+      - network.incoming.bytes.rate
+      disk.device.write.bytes.rate_server_pcm:
+      - server_pcm
+      - disk.device.write.bytes.rate
+      host_server_pcm:
+      - server_pcm
+      - host
+      attachment_pcm_3port_1:
+      - pcm_3port_1
+      - attachment
+      network.outgoing.bytes_pcm_1port_0:
+      - pcm_1port_0
+      - network.outgoing.bytes
+      binding_pcm_1port_0:
+      - pcm_1port_0
+      - binding
+      cpu.delta_server_pcm:
+      - server_pcm
+      - cpu.delta
+      network.outgoing.packets.rate_pcm_1port_0:
+      - pcm_1port_0
+      - network.outgoing.packets.rate
+      binding_server_pcm:
+      - server_pcm
+      - binding
+      disk.device.capacity_server_pcm:
+      - server_pcm
+      - disk.device.capacity
+      instance_server_pcm:
+      - server_pcm
+      - instance
+      disk.device.write.requests.rate_server_pcm:
+      - server_pcm
+      - disk.device.write.requests.rate
+      network.incoming.bytes_pcm_3port_1:
+      - pcm_3port_1
+      - network.incoming.bytes
+      disk.latency_server_pcm:
+      - server_pcm
+      - disk.latency
+      disk.device.read.requests_server_pcm:
+      - server_pcm
+      - disk.device.read.requests
+      feature_server_pcm:
+      - server_pcm
+      - feature
+      disk.write.bytes.rate_server_pcm:
+      - server_pcm
+      - disk.write.bytes.rate
+      port_mirroring_pcm_3port_1:
+      - pcm_3port_1
+      - port_mirroring
+      port_mirroring_pcm_2port_1:
+      - pcm_2port_1
+      - port_mirroring
+    requirements:
+      binding_pcm_2port_2:
+      - pcm_2port_2
+      - binding
+      dependency_pcm_3port_1:
+      - pcm_3port_1
+      - dependency
+      dependency_pcm_2port_2:
+      - pcm_2port_2
+      - dependency
+      dependency_pcm_2port_1:
+      - pcm_2port_1
+      - dependency
+      local_storage_server_pcm:
+      - server_pcm
+      - local_storage
+      link_pcm_3port_1:
+      - pcm_3port_1
+      - link
+      dependency_packet_internal_network:
+      - packet_internal_network
+      - dependency
+      dependency_pcm_1port_0:
+      - pcm_1port_0
+      - dependency
+      dependency_server_pcm:
+      - server_pcm
+      - dependency
+      binding_pcm_3port_1:
+      - pcm_3port_1
+      - binding
+      link_pcm_2port_1:
+      - pcm_2port_1
+      - link

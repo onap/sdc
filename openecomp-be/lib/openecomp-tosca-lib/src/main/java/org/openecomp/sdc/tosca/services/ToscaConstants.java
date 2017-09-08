@@ -40,6 +40,7 @@ public class ToscaConstants {
   public static final String SCALABLE_CAPABILITY_ID = "scalable";
   public static final String ATTACHMENT_CAPABILITY_ID = "attachment";
   public static final String FEATURE_CAPABILITY_ID = "feature";
+  public static final String PORT_MIRRORING_CAPABILITY_ID = "port_mirroring";
 
   //General
   public static final String TOSCA_DEFINITIONS_VERSION = "tosca_simple_yaml_1_0_0";
@@ -62,6 +63,8 @@ public class ToscaConstants {
 
   public static final String PORT_FIXED_IPS = "fixed_ips";
   public static final String PORT_ALLOWED_ADDRESS_PAIRS = "allowed_address_pairs";
+  public static final String PORT_NETWORK_ROLE_PROPERTY_NAME = "network_role";
+  public static final String PORT_MIRRORING_CAPABILITY_CP_PROPERTY_NAME = "connection_point";
   public static final String MAC_ADDRESS = "mac_address";
 
   public static final String COMPUTE_IMAGE = "image";

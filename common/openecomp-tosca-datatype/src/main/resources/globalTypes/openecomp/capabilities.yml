@@ -98,3 +98,10 @@ capability_types:
         description: Runtime monitored value
         type: string
         status: SUPPORTED
+
+  # New capability types for Port Mirroring
+  org.openecomp.capabilities.PortMirroring:
+    derived_from: tosca.capabilities.Root
+    properties:
+      connection_point:
+        type: org.openecomp.datatypes.PortMirroringConnectionPointDescription

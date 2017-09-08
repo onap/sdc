@@ -137,7 +137,7 @@ public class ResourceWalker {
       }
     } else {
       try (FileInputStream stream = new FileInputStream(file)) {
-        handler.accept(file.getName(), stream);
+        handler.accept(file.getParentFile().getName() + "/" + file.getName(), stream);
       }
     }
   }
