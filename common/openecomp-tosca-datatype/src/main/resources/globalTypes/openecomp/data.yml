@@ -554,6 +554,18 @@ data_types:
         description: Hash type
         required: false
         default: md5
+        
+  # New data types for Port Mirroring
+  org.openecomp.datatypes.PortMirroringConnectionPointDescription:
+    properties:
+      nf_type:
+        type: string
+      nfc_type:
+        type: string
+      network_role:
+        type: string
+      pps_capacity:
+        type: string
 
   tosca.datatypes.nfv.RequestedAdditionalCapability:
     derived_from: tosca.datatypes.Root
@@ -575,6 +587,7 @@ data_types:
         entry_schema:
           type: string
         required: true
+
   tosca.datatypes.nfv.VirtualMemory:
     derived_from: tosca.datatypes.Root
     properties:

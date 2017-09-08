@@ -33,6 +33,8 @@ public class ToscaNodeType {
       config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_NODE_TYPE_VFC);
   public static String CP_NODE_TYPE_PREFIX =
       config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_NODE_TYPE_CP);
+  public static String EXTERNAL_CP_NODE_TYPE_PREFIX =
+      config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_NODE_TYPE_EXTERNAL_CP);
   public static String NETWORK_NODE_TYPE_PREFIX =
       config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_NODE_TYPE_NETWORK);
   public static String ABSTRACT_NODE_TYPE_PREFIX =
@@ -77,6 +79,10 @@ public class ToscaNodeType {
   public static String NETWORK_SUB_INTERFACE = CP_NODE_TYPE_PREFIX + "network.SubInterface";
   public static String CONTRAILV2_VLAN_SUB_INTERFACE = CP_NODE_TYPE_PREFIX
       + "heat.network.contrailV2.VLANSubInterface";
+  //Port Mirroring external node types
+  public static String EXTERNAL_CP = EXTERNAL_CP_NODE_TYPE_PREFIX + "extCP";
+  public static String EXTERNAL_CONTRAIL_PORT = EXTERNAL_CP_NODE_TYPE_PREFIX + "extContrailCP";
+  public static String EXTERNAL_NEUTRON_PORT = EXTERNAL_CP_NODE_TYPE_PREFIX + "extNeutronCP";
 
   public static String ABSTRACT_SUBSTITUTE = ABSTRACT_NODE_TYPE_PREFIX + "AbstractSubstitute";
   public static String VFC_ABSTRACT_SUBSTITUTE = ABSTRACT_NODE_TYPE_PREFIX + "VFC";

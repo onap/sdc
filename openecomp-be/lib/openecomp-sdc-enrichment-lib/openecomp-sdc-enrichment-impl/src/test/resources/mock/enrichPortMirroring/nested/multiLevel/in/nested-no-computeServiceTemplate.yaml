@@ -1,0 +1,252 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested-no-compute
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    cmaui_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    p2:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    cmaui_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+    cmaui_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    packet_internal_network_name:
+      hidden: false
+      immutable: false
+      type: string
+    packet_external_network_name:
+      hidden: false
+      immutable: false
+      type: string
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    cmaui_oam_ips:
+      hidden: false
+      immutable: false
+      type: string
+    net:
+      hidden: false
+      immutable: false
+      type: string
+  node_templates:
+    cmaui_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network: packet_external_network
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_external_network
+          relationship: tosca.relationships.network.LinksTo
+    packet_external_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_external_network_name
+    packet_internal_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_internal_network_name
+    cmaui_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network: packet_internal_network
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
+  groups:
+    nested-no-compute_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested-no-compute.yml
+        description: nested1
+      members:
+      - cmaui_port_2
+      - packet_external_network
+      - packet_internal_network
+      - cmaui_port_1
+  outputs:
+    no_compute_attr_1:
+      description: no_compute_attr_1
+      value: packet_external_network
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested-no-compute
+    capabilities:
+      network.incoming.packets_cmaui_port_2:
+      - cmaui_port_2
+      - network.incoming.packets
+      network.incoming.packets_cmaui_port_1:
+      - cmaui_port_1
+      - network.incoming.packets
+      network.incoming.packets.rate_cmaui_port_1:
+      - cmaui_port_1
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_cmaui_port_2:
+      - cmaui_port_2
+      - network.incoming.packets.rate
+      feature_cmaui_port_1:
+      - cmaui_port_1
+      - feature
+      feature_cmaui_port_2:
+      - cmaui_port_2
+      - feature
+      end_point_packet_internal_network:
+      - packet_internal_network
+      - end_point
+      link_packet_internal_network:
+      - packet_internal_network
+      - link
+      feature_packet_internal_network:
+      - packet_internal_network
+      - feature
+      end_point_packet_external_network:
+      - packet_external_network
+      - end_point
+      attachment_cmaui_port_2:
+      - cmaui_port_2
+      - attachment
+      network.outgoing.bytes_cmaui_port_2:
+      - cmaui_port_2
+      - network.outgoing.bytes
+      network.outgoing.packets.rate_cmaui_port_1:
+      - cmaui_port_1
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_cmaui_port_2:
+      - cmaui_port_2
+      - network.outgoing.packets.rate
+      network.outgoing.bytes_cmaui_port_1:
+      - cmaui_port_1
+      - network.outgoing.bytes
+      attachment_cmaui_port_1:
+      - cmaui_port_1
+      - attachment
+      binding_cmaui_port_1:
+      - cmaui_port_1
+      - binding
+      binding_cmaui_port_2:
+      - cmaui_port_2
+      - binding
+      network.incoming.bytes.rate_cmaui_port_1:
+      - cmaui_port_1
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_cmaui_port_2:
+      - cmaui_port_2
+      - network.incoming.bytes.rate
+      attachment_packet_internal_network:
+      - packet_internal_network
+      - attachment
+      network.outpoing.packets_cmaui_port_1:
+      - cmaui_port_1
+      - network.outpoing.packets
+      network.outpoing.packets_cmaui_port_2:
+      - cmaui_port_2
+      - network.outpoing.packets
+      network.outgoing.bytes.rate_cmaui_port_2:
+      - cmaui_port_2
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_cmaui_port_1:
+      - cmaui_port_1
+      - network.outgoing.bytes.rate
+      attachment_packet_external_network:
+      - packet_external_network
+      - attachment
+      network.incoming.bytes_cmaui_port_2:
+      - cmaui_port_2
+      - network.incoming.bytes
+      link_packet_external_network:
+      - packet_external_network
+      - link
+      feature_packet_external_network:
+      - packet_external_network
+      - feature
+      network.incoming.bytes_cmaui_port_1:
+      - cmaui_port_1
+      - network.incoming.bytes
+    requirements:
+      binding_cmaui_port_1:
+      - cmaui_port_1
+      - binding
+      binding_cmaui_port_2:
+      - cmaui_port_2
+      - binding
+      dependency_packet_internal_network:
+      - packet_internal_network
+      - dependency
+      dependency_cmaui_port_1:
+      - cmaui_port_1
+      - dependency
+      dependency_cmaui_port_2:
+      - cmaui_port_2
+      - dependency
+      dependency_packet_external_network:
+      - packet_external_network
+      - dependency
