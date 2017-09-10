@@ -94,8 +94,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataMana
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
-import org.openecomp.sdc.vendorsoftwareproduct.types.ComponentValidationResult;
-import org.openecomp.sdc.vendorsoftwareproduct.types.DeploymentFlavorValidationResult;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireValidationResult;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
@@ -130,7 +128,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -148,7 +145,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static final Logger logger =
-      LoggerFactory.getLogger(VendorSoftwareProductManagerImpl.class);
+          LoggerFactory.getLogger(VendorSoftwareProductManagerImpl.class);
 
   private OrchestrationTemplateDao orchestrationTemplateDao;
   private VendorSoftwareProductInfoDao vspInfoDao;
@@ -178,7 +175,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
    * @param enrichedServiceModelDao      the enriched service model dao
    * @param healingManager               the healing manager
    * @param licenseArtifactsService      the license artifacts service
-   * @param compositionEntityDataManager the composition entity data manager
    * @param informationArtifactGenerator the information artifact generator
    * @param packageInfoDao               the package info dao
    * @param activityLogManager           the activity log manager
@@ -186,21 +182,21 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
    * @param nicDao                       the nic dao
    */
   public VendorSoftwareProductManagerImpl(
-      VersioningManager versioningManager,
-      VendorSoftwareProductDao vendorSoftwareProductDao,
-      OrchestrationTemplateDao orchestrationTemplateDataDao,
-      VendorSoftwareProductInfoDao vspInfoDao,
-      VendorLicenseFacade vendorLicenseFacade,
-      ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao,
-      EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> enrichedServiceModelDao,
-      HealingManager healingManager,
-      VendorLicenseArtifactsService licenseArtifactsService,
-      InformationArtifactGenerator informationArtifactGenerator,
-      PackageInfoDao packageInfoDao,
-      ActivityLogManager activityLogManager,
-      DeploymentFlavorDao deploymentFlavorDao,
-      NicDao nicDao,
-      ManualVspToscaManager manualVspToscaManager) {
+          VersioningManager versioningManager,
+          VendorSoftwareProductDao vendorSoftwareProductDao,
+          OrchestrationTemplateDao orchestrationTemplateDataDao,
+          VendorSoftwareProductInfoDao vspInfoDao,
+          VendorLicenseFacade vendorLicenseFacade,
+          ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao,
+          EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> enrichedServiceModelDao,
+          HealingManager healingManager,
+          VendorLicenseArtifactsService licenseArtifactsService,
+          InformationArtifactGenerator informationArtifactGenerator,
+          PackageInfoDao packageInfoDao,
+          ActivityLogManager activityLogManager,
+          DeploymentFlavorDao deploymentFlavorDao,
+          NicDao nicDao,
+          ManualVspToscaManager manualVspToscaManager) {
     this.versioningManager = versioningManager;
     this.vendorSoftwareProductDao = vendorSoftwareProductDao;
     this.orchestrationTemplateDao = orchestrationTemplateDataDao;
@@ -222,11 +218,11 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   private void registerToVersioning() {
     vendorSoftwareProductDao.registerVersioning(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE);
     serviceModelDao.registerVersioning(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE);
     enrichedServiceModelDao.registerVersioning(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE);
   }
 
   @Override
@@ -235,13 +231,13 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Checkout_Entity.toString());
 
     Version newVersion = versioningManager
-        .checkout(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
-            vendorSoftwareProductId, user);
+            .checkout(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
+                    vendorSoftwareProductId, user);
 
     if (newVersion != null) {
       ActivityLogEntity activityLogEntity =
-          new ActivityLogEntity(vendorSoftwareProductId, String.valueOf(newVersion.getMajor() + 1),
-              ActivityType.CHECKOUT.toString(), user, true, "", "");
+              new ActivityLogEntity(vendorSoftwareProductId, String.valueOf(newVersion.getMajor() + 1),
+                      ActivityType.CHECKOUT.toString(), user, true, "", "");
       activityLogManager.addActionLog(activityLogEntity, user);
     }
 
@@ -255,18 +251,18 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     mdcDataDebugMessage.debugEntryMessage("VSP id", vendorSoftwareProductId);
 
     Version version =
-        getVersionInfo(vendorSoftwareProductId, VersionableEntityAction.Read, user)
-            .getActiveVersion();
+            getVersionInfo(vendorSoftwareProductId, VersionableEntityAction.Read, user)
+                    .getActiveVersion();
     String preVspName = vspInfoDao
-        .get(new VspDetails(vendorSoftwareProductId, version)).getName();
+            .get(new VspDetails(vendorSoftwareProductId, version)).getName();
 
     Version newVersion = versioningManager.undoCheckout(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
-        vendorSoftwareProductId, user);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
+            vendorSoftwareProductId, user);
 
     String postVspName = vspInfoDao
-        .get(new VspDetails(vendorSoftwareProductId, newVersion))
-        .getName();
+            .get(new VspDetails(vendorSoftwareProductId, newVersion))
+            .getName();
 
     updateUniqueName(preVspName, postVspName);
 
@@ -280,13 +276,13 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     mdcDataDebugMessage.debugEntryMessage("VSP id", vendorSoftwareProductId);
 
     Version newVersion = versioningManager.checkin(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
-        vendorSoftwareProductId, user, null);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
+            vendorSoftwareProductId, user, null);
 
     if (newVersion != null) {
       ActivityLogEntity activityLogEntity =
-          new ActivityLogEntity(vendorSoftwareProductId, String.valueOf(newVersion.getMajor() + 1),
-              ActivityType.CHECKIN.toString(), user, true, "", "");
+              new ActivityLogEntity(vendorSoftwareProductId, String.valueOf(newVersion.getMajor() + 1),
+                      ActivityType.CHECKIN.toString(), user, true, "", "");
       activityLogManager.addActionLog(activityLogEntity, user);
     }
 
@@ -303,53 +299,66 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     VspDetails vspDetails = getVsp(vspId, version, user);
     UploadDataEntity uploadData = orchestrationTemplateDao.getOrchestrationTemplate(vspId, version);
     ToscaServiceModel serviceModel =
-        serviceModelDao.getServiceModel(vspId, vspDetails.getVersion());
+            serviceModelDao.getServiceModel(vspId, vspDetails.getVersion());
 
     ValidationResponse validationResponse = new ValidationResponse();
     validationResponse
-        .setVspErrors(validateCompletedVendorSoftwareProduct(vspDetails, uploadData, serviceModel),
-            LoggerServiceName.Submit_VSP, LoggerTragetServiceName.SUBMIT_VSP);
+            .setVspErrors(validateCompletedVendorSoftwareProduct(vspDetails, uploadData, serviceModel),
+                    LoggerServiceName.Submit_VSP, LoggerTragetServiceName.SUBMIT_VSP);
 
     if (isCyclicDependencyInComponents(vspId, vspDetails.getVersion())) {
       Collection<ErrorCode> vspErrors = validationResponse.getVspErrors() == null
-          ? new ArrayList<>()
-          : validationResponse.getVspErrors();
+              ? new ArrayList<>()
+              : validationResponse.getVspErrors();
       vspErrors.add(ComponentDependencyModelErrorBuilder
-          .getcyclicDependencyComponentErrorBuilder());
+              .getcyclicDependencyComponentErrorBuilder());
       validationResponse.setVspErrors(vspErrors, LoggerServiceName.Submit_VSP,
-          LoggerTragetServiceName.SUBMIT_VSP);
+              LoggerTragetServiceName.SUBMIT_VSP);
     }
 
     validationResponse.setLicensingDataErrors(validateLicensingData(vspDetails));
     validationResponse
-        .setUploadDataErrors(validateUploadData(uploadData), LoggerServiceName.Submit_VSP,
-            LoggerTragetServiceName.SUBMIT_VSP);
+            .setUploadDataErrors(validateUploadData(uploadData), LoggerServiceName.Submit_VSP,
+                    LoggerTragetServiceName.SUBMIT_VSP);
 
     validationResponse.setQuestionnaireValidationResult(
-        validateQuestionnaire(vspDetails.getId(), vspDetails.getVersion(), vspDetails
-            .getOnboardingMethod()));
+            validateQuestionnaire(vspDetails.getId(), vspDetails.getVersion(), vspDetails
+                    .getOnboardingMethod()));
 
     if (vspDetails.getOnboardingMethod().equals("Manual")) {
-      validationResponse.setDeploymentFlavorValidationResult(
-          deploymentFlavorValidation(vspDetails.getId(), vspDetails.getVersion()));
-      validationResponse.setComponentValidationResult(
-          componentValidation(vspDetails.getId(), vspDetails.getVersion()));
+      Collection<ErrorCode> deploymentFlavourValidationErrList = deploymentFlavorValidation(vspDetails.getId(), vspDetails.getVersion());
+      if (validationResponse.getVspErrors() != null) {
+        if(deploymentFlavourValidationErrList != null)
+          validationResponse.getVspErrors().addAll(deploymentFlavourValidationErrList);
+      } else {
+        validationResponse.setVspErrors(deploymentFlavourValidationErrList, LoggerServiceName.Submit_VSP,
+                LoggerTragetServiceName.SUBMIT_VSP);
+      }
+
+      Set<CompositionEntityValidationData> compositionEntityValidationData = componentValidation(vspDetails.getId(), vspDetails.getVersion());
+      if (validationResponse.getQuestionnaireValidationResult() != null) {
+        if(!CollectionUtils.isEmpty(compositionEntityValidationData))
+          validationResponse.getQuestionnaireValidationResult().getValidationData().addAll(compositionEntityValidationData);
+      } else {
+        validationResponse.setQuestionnaireValidationResult(CollectionUtils.isEmpty(compositionEntityValidationData) ? null :
+                new QuestionnaireValidationResult(compositionEntityValidationData));
+      }
+
       //Generate Tosca service model for Manual Onboarding flow
       VspModelInfo vspModelInfo = manualVspToscaManager.gatherVspInformation(vspId, version, user);
       serviceModel = manualVspToscaManager.generateToscaModel(vspModelInfo);
     }
-
     validationResponse.setCompilationErrors(
-        compile(vspId, vspDetails.getVersion(), serviceModel),
-        LoggerServiceName.Submit_VSP, LoggerTragetServiceName.SUBMIT_VSP);
+            compile(vspId, vspDetails.getVersion(), serviceModel),
+            LoggerServiceName.Submit_VSP, LoggerTragetServiceName.SUBMIT_VSP);
 
     if (validationResponse.isValid()) {
       Version newVersion = versioningManager.submit(
-          VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
-          vspId, user, null);
+              VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
+              vspId, user, null);
       ActivityLogEntity activityLogEntity = new ActivityLogEntity(vspDetails.getId(), String
-          .valueOf(newVersion.getMajor()),
-          ActivityType.SUBMIT.toString(), user, true, "", "");
+              .valueOf(newVersion.getMajor()),
+              ActivityType.SUBMIT.toString(), user, true, "", "");
       activityLogManager.addActionLog(activityLogEntity, user);
     }
 
@@ -360,7 +369,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   private boolean isCyclicDependencyInComponents(String vendorSoftwareProductId,
                                                  Version version) {
     final Collection<ComponentDependencyModelEntity> componentDependencyModelEntities =
-        vendorSoftwareProductDao.listComponentDependencies(vendorSoftwareProductId, version);
+            vendorSoftwareProductDao.listComponentDependencies(vendorSoftwareProductId, version);
     ComponentDependencyTracker dependencyTracker = new ComponentDependencyTracker();
 
     for (ComponentDependencyModelEntity entity : componentDependencyModelEntities) {
@@ -369,76 +378,60 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     return dependencyTracker.isCyclicDependencyPresent();
   }
 
-  private DeploymentFlavorValidationResult deploymentFlavorValidation(String vspId,
-                                                                      Version version) {
+  private Collection<ErrorCode> deploymentFlavorValidation(String vspId,
+                                                           Version version) {
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
     Set<CompositionEntityValidationData> validationData = new HashSet<>();
+    Collection<ErrorCode> errorCodeList = new ArrayList<>();
     Collection<DeploymentFlavorEntity> deploymentFlavors =
-        vendorSoftwareProductDao.listDeploymentFlavors(vspId, version);
+            vendorSoftwareProductDao.listDeploymentFlavors(vspId, version);
     if (!CollectionUtils.isEmpty(deploymentFlavors)) {
       deploymentFlavors.forEach(deploymentFlavor -> {
         DeploymentFlavorEntity deployment = vendorSoftwareProductDao.getDeploymentFlavor(vspId,
-            version, deploymentFlavor.getId());
+                version, deploymentFlavor.getId());
         DeploymentFlavor deploymentlocalFlavor = deployment.getDeploymentFlavorCompositionData();
         if (deploymentlocalFlavor != null) {
           if (deploymentlocalFlavor.getFeatureGroupId() == null ) {
             ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder.
-                getFeatureGroupMandatoryErrorBuilder();
-            CompositionEntityValidationData compositionEntityValidationData = new
-                CompositionEntityValidationData(CompositionEntityType.deployment,
-                deploymentFlavor.getId());
-            compositionEntityValidationData.setEntityName(deploymentlocalFlavor.getModel());
-            List<String> errors = new ArrayList<>();
-            errors.add(deploymentFlavorErrorBuilder.message());
-            compositionEntityValidationData.setErrors(errors);
-            validationData.add(compositionEntityValidationData);
+                    getFeatureGroupMandatoryErrorBuilder(deploymentlocalFlavor.getModel());
+            errorCodeList.add(deploymentFlavorErrorBuilder);
           }
           List<ComponentComputeAssociation> componetComputeAssociations = new ArrayList<>();
           componetComputeAssociations = deploymentlocalFlavor.getComponentComputeAssociations();
           if (CollectionUtils.isEmpty(componetComputeAssociations)) {
             CompositionEntityValidationData compositionEntityValidationData = new
-                CompositionEntityValidationData(CompositionEntityType.deployment,deploymentFlavor
-                .getId());
+                    CompositionEntityValidationData(CompositionEntityType.deployment,deploymentFlavor
+                    .getId());
             compositionEntityValidationData.setEntityName(deployment
-                .getDeploymentFlavorCompositionData().getModel());
+                    .getDeploymentFlavorCompositionData().getModel());
             ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder
-                .getInvalidComponentComputeAssociationErrorBuilder();
-            List<String> errors = new ArrayList<>();
-            errors.add(deploymentFlavorErrorBuilder.message());
-            compositionEntityValidationData.setErrors(errors);
-            validationData.add(compositionEntityValidationData);
+                    .getInvalidComponentComputeAssociationErrorBuilder(deploymentlocalFlavor.getModel());
+
+            errorCodeList.add(deploymentFlavorErrorBuilder);
           } else {
             componetComputeAssociations.forEach(componetComputeAssociation -> {
               if (componetComputeAssociation == null
-                  || !(componetComputeAssociation.getComponentId() != null
+                      || !(componetComputeAssociation.getComponentId() != null
                       && componetComputeAssociation.getComputeFlavorId() != null)) {
                 CompositionEntityValidationData compositionEntityValidationData = new
-                    CompositionEntityValidationData(CompositionEntityType.deployment,
-                    deploymentFlavor.getId());
+                        CompositionEntityValidationData(CompositionEntityType.deployment,
+                        deploymentFlavor.getId());
                 compositionEntityValidationData.setEntityName(deployment
-                    .getDeploymentFlavorCompositionData().getModel());
+                        .getDeploymentFlavorCompositionData().getModel());
                 ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder
-                    .getInvalidComponentComputeAssociationErrorBuilder();
-                List<String> errors = new ArrayList<>();
-                errors.add(deploymentFlavorErrorBuilder.message());
-                compositionEntityValidationData.setErrors(errors);
-                validationData.add(compositionEntityValidationData);
+                        .getInvalidComponentComputeAssociationErrorBuilder(deploymentlocalFlavor.getModel());
+
+                errorCodeList.add(deploymentFlavorErrorBuilder);
               }
             });
           }
         }
       });
     }
-    if (CollectionUtils.isEmpty(validationData)) {
-      return null;
-    }
-    DeploymentFlavorValidationResult deploymentFlavorValidationResult = new
-        DeploymentFlavorValidationResult(validationData);
-    return deploymentFlavorValidationResult;
-
+    return errorCodeList;
   }
 
-  private ComponentValidationResult componentValidation(String vspId, Version version) {
+  private Set<CompositionEntityValidationData> componentValidation(String vspId, Version version) {
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
 
     Set<CompositionEntityValidationData> validationData = new HashSet<>();
@@ -450,12 +443,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
       });
     }
-    if (CollectionUtils.isEmpty(validationData)) {
-      return null;
-    }
-    ComponentValidationResult componentValidationResult =
-        new ComponentValidationResult(validationData);
-    return componentValidationResult;
+
+    return validationData;
   }
 
   private void validateNic(String vspId, Version version,
@@ -465,15 +454,15 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     if (CollectionUtils.isNotEmpty(nics)) {
       nics.forEach(nicEntity -> {
         NicEntity nic = nicDao.get(new NicEntity(vspId, version, component.getId(),
-            nicEntity.getId()));
+                nicEntity.getId()));
         NetworkType networkType = nic.getNicCompositionData().getNetworkType();
         String networkId = nic.getNicCompositionData().getNetworkId();
         if (networkType.equals(NetworkType.Internal) && networkId == null) {
           CompositionEntityValidationData compositionEntityValidationData = new
-              CompositionEntityValidationData(CompositionEntityType.nic, nic.getId());
+                  CompositionEntityValidationData(CompositionEntityType.nic, nic.getId());
           compositionEntityValidationData.setEntityName(nic.getNicCompositionData().getName());
           ErrorCode nicInternalNetworkErrorBuilder = NicInternalNetworkErrorBuilder
-              .getNicNullNetworkIdInternalNetworkIdErrorBuilder();
+                  .getNicNullNetworkIdInternalNetworkIdErrorBuilder();
           List<String> errors = new ArrayList<>();
           errors.add(nicInternalNetworkErrorBuilder.message());
           compositionEntityValidationData.setErrors(errors);
@@ -487,14 +476,14 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
                              Set<CompositionEntityValidationData> validationData,
                              ComponentEntity component) {
     Collection<ImageEntity> images = vendorSoftwareProductDao.listImages(vspId,version,
-        component.getId());
+            component.getId());
     if (CollectionUtils.isEmpty(images)) {
       CompositionEntityValidationData compositionEntityValidationData = new
-          CompositionEntityValidationData(component.getType(),component.getId());
+              CompositionEntityValidationData(component.getType(),component.getId());
       compositionEntityValidationData.setEntityName(component.getComponentCompositionData()
-          .getDisplayName());
+              .getDisplayName());
       ErrorCode vfcMissingImageErrorBuilder =
-          ComponentErrorBuilder.VfcMissingImageErrorBuilder();
+              ComponentErrorBuilder.VfcMissingImageErrorBuilder();
       List<String> errors = new ArrayList<>();
       errors.add(vfcMissingImageErrorBuilder.message());
       compositionEntityValidationData.setErrors(errors);
@@ -505,7 +494,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
 
   private List<ErrorCode> validateCompletedVendorSoftwareProduct(
-      VspDetails vspDetails, UploadDataEntity uploadData, Object serviceModel) {
+          VspDetails vspDetails, UploadDataEntity uploadData, Object serviceModel) {
 
     List<ErrorCode> errors = new ArrayList<>();
 
@@ -527,10 +516,10 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     if (vspDetails.getOnboardingMethod().equals("Manual")) {
       //Manual Onboarding specific validations
       Collection<DeploymentFlavorEntity> deploymentFlavorEntities = vendorSoftwareProductDao
-          .listDeploymentFlavors(vspDetails.getId(), vspDetails.getVersion());
+              .listDeploymentFlavors(vspDetails.getId(), vspDetails.getVersion());
       if (CollectionUtils.isEmpty(deploymentFlavorEntities) ) {
         ErrorCode vspMissingDeploymentFlavorErrorBuilder =
-            VendorSoftwareProductInvalidErrorBuilder.VspMissingDeploymentFlavorErrorBuilder();
+                VendorSoftwareProductInvalidErrorBuilder.VspMissingDeploymentFlavorErrorBuilder();
         errors.add(vspMissingDeploymentFlavorErrorBuilder);
       }
       errors.addAll(validateMandatoryLicenseFields(vspDetails));
@@ -539,10 +528,10 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       if (uploadData == null || uploadData.getContentData() == null || serviceModel == null) {
         errors.add(VendorSoftwareProductInvalidErrorBuilder
                 .VendorSoftwareProductMissingServiceModelErrorBuilder(vspDetails.getId(),
-                    vspDetails.getVersion()));
+                        vspDetails.getVersion()));
       }
       if (vspDetails.getVlmVersion() != null || vspDetails.getLicenseAgreement() != null
-          || vspDetails.getFeatureGroups() != null) {
+              || vspDetails.getFeatureGroups() != null) {
         errors.addAll(validateMandatoryLicenseFields(vspDetails));
       }
     }
@@ -553,7 +542,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     List<ErrorCode> errors = new ArrayList<>();
     if (vspDetails.getVlmVersion() == null) {
       errors.add(createMissingMandatoryFieldError(
-          "licensing version (in the format of: {integer}.{integer})"));
+              "licensing version (in the format of: {integer}.{integer})"));
     }
     if (vspDetails.getLicenseAgreement() == null) {
       errors.add(createMissingMandatoryFieldError("license agreement"));
@@ -572,13 +561,13 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     mdcDataDebugMessage.debugEntryMessage(null);
     mdcDataDebugMessage.debugExitMessage(null);
     return SchemaGenerator
-        .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.vsp, schemaInput);
+            .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.vsp, schemaInput);
   }
 
   private static void sortVspListByModificationTimeDescOrder(
-      List<VersionedVendorSoftwareProductInfo> vsps) {
+          List<VersionedVendorSoftwareProductInfo> vsps) {
     vsps.sort((o1, o2) -> o2.getVspDetails().getWritetimeMicroSeconds()
-        .compareTo(o1.getVspDetails().getWritetimeMicroSeconds()));
+            .compareTo(o1.getVspDetails().getWritetimeMicroSeconds()));
   }
 
 
@@ -591,21 +580,21 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     enrichedServiceModelDao.deleteAll(vendorSoftwareProductId, version);
 
     EnrichmentManager<ToscaServiceModel> enrichmentManager =
-        EnrichmentManagerFactory.getInstance().createInterface();
+            EnrichmentManagerFactory.getInstance().createInterface();
     enrichmentManager.init(vendorSoftwareProductId, version);
     enrichmentManager.setModel(serviceModel);
     Map<String, List<ErrorMessage>> enrichErrors = enrichmentManager.enrich();
 
     if (MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, enrichErrors))) {
       logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.ENRICHMENT_COMPLETED
-          + vendorSoftwareProductId);
+              + vendorSoftwareProductId);
     } else {
       enrichErrors.values().forEach(errorList ->
-          auditIfContainsErrors(errorList,vendorSoftwareProductId,AuditMessages.ENRICHMENT_ERROR));
+              auditIfContainsErrors(errorList,vendorSoftwareProductId,AuditMessages.ENRICHMENT_ERROR));
     }
 
     enrichedServiceModelDao
-        .storeServiceModel(vendorSoftwareProductId, version, enrichmentManager.getModel());
+            .storeServiceModel(vendorSoftwareProductId, version, enrichmentManager.getModel());
 
     return enrichErrors;
   }
@@ -614,15 +603,15 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspDetails.getId());
 
     if (vspDetails.getVendorId() == null || vspDetails.getVlmVersion() == null
-        || vspDetails.getLicenseAgreement() == null
-        || CollectionUtils.isEmpty(vspDetails.getFeatureGroups())) {
+            || vspDetails.getLicenseAgreement() == null
+            || CollectionUtils.isEmpty(vspDetails.getFeatureGroups())) {
       return null;
     }
 
     mdcDataDebugMessage.debugExitMessage("VSP id", vspDetails.getId());
     return vendorLicenseFacade
-        .validateLicensingData(vspDetails.getVendorId(), vspDetails.getVlmVersion(),
-            vspDetails.getLicenseAgreement(), vspDetails.getFeatureGroups());
+            .validateLicensingData(vspDetails.getVendorId(), vspDetails.getVlmVersion(),
+                    vspDetails.getLicenseAgreement(), vspDetails.getFeatureGroups());
   }
 
   @Override
@@ -637,8 +626,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     vspInfoDao.create(validationVsp);
     Version version = versioningManager.create(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
-        validationVsp.getId(), user);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
+            validationVsp.getId(), user);
     validationVsp.setVersion(version);
 
     createUniqueName(VALIDATION_VSP_NAME);
@@ -654,15 +643,15 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     vspInfoDao.create(vspDetails);//id will be set in the dao
     vspInfoDao.updateQuestionnaireData(vspDetails.getId(), null,
-        new JsonSchemaDataGenerator(getVspQuestionnaireSchema(null)).generateData());
+            new JsonSchemaDataGenerator(getVspQuestionnaireSchema(null)).generateData());
 
     Version version = versioningManager
-        .create(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
-            vspDetails.getId(), user);
+            .create(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
+                    vspDetails.getId(), user);
     vspDetails.setVersion(version);
     ActivityLogEntity activityLogEntity = new ActivityLogEntity(vspDetails.getId(), String
-        .valueOf(vspDetails.getVersion().getMajor() + 1),
-        ActivityType.CREATE_NEW.toString(), user, true, "", "");
+            .valueOf(vspDetails.getVersion().getMajor() + 1),
+            ActivityType.CREATE_NEW.toString(), user, true, "", "");
     activityLogManager.addActionLog(activityLogEntity, user);
     String vspName = vspDetails.getName();
     createUniqueName(vspName);
@@ -675,8 +664,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     mdcDataDebugMessage.debugEntryMessage(null);
 
     Map<String, VersionInfo> idToVersionsInfo = versioningManager.listEntitiesVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, user,
-        VersionableEntityAction.Read);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, user,
+            VersionableEntityAction.Read);
 
     List<VersionedVendorSoftwareProductInfo> vsps = new ArrayList<>();
     for (Map.Entry<String, VersionInfo> entry : idToVersionsInfo.entrySet()) {
@@ -702,10 +691,10 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         }
       } catch (RuntimeException rte) {
         logger.error(
-            "Error trying to retrieve vsp[" + entry.getKey() + "] version[" + version.toString
-                () + "] " +
-                "message:" + rte
-                .getMessage());
+                "Error trying to retrieve vsp[" + entry.getKey() + "] version[" + version.toString
+                        () + "] " +
+                        "message:" + rte
+                        .getMessage());
       }
     }
 
@@ -723,11 +712,11 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     VspDetails retrieved = vspInfoDao.get(vspDetails);
     if (!retrieved.getOnboardingMethod().equals(vspDetails.getOnboardingMethod())) {
       final ErrorCode onboardingMethodUpdateErrorCode = OnboardingMethodErrorBuilder
-          .getOnboardingUpdateError();
+              .getOnboardingUpdateError();
 
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.UPDATE_VSP, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), onboardingMethodUpdateErrorCode.message());
+              LoggerTragetServiceName.UPDATE_VSP, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), onboardingMethodUpdateErrorCode.message());
 
       throw new CoreException(onboardingMethodUpdateErrorCode);
     }
@@ -747,20 +736,20 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   private void updateDeploymentFlavor(VspDetails vspDetails, String user) {
     final List<String> featureGroups = vspDetails.getFeatureGroups();
-    if (featureGroups != null && !featureGroups.isEmpty() ) {
+    if (featureGroups != null) {
       final Collection<DeploymentFlavorEntity> deploymentFlavorEntities = deploymentFlavorDao
-          .list(new DeploymentFlavorEntity(vspDetails.getId(), vspDetails
-          .getVersion(), null));
+              .list(new DeploymentFlavorEntity(vspDetails.getId(), vspDetails
+                      .getVersion(), null));
       if (Objects.nonNull(deploymentFlavorEntities)) {
         deploymentFlavorEntities.forEach(deploymentFlavorEntity -> {
           final String featureGroupId =
-              deploymentFlavorEntity.getDeploymentFlavorCompositionData().getFeatureGroupId();
+                  deploymentFlavorEntity.getDeploymentFlavorCompositionData().getFeatureGroupId();
           if ( !featureGroups.contains(featureGroupId)) {
             DeploymentFlavor deploymentFlavorCompositionData =
-                deploymentFlavorEntity.getDeploymentFlavorCompositionData();
+                    deploymentFlavorEntity.getDeploymentFlavorCompositionData();
             deploymentFlavorCompositionData.setFeatureGroupId(null);
             deploymentFlavorEntity.setDeploymentFlavorCompositionData
-                (deploymentFlavorCompositionData);
+                    (deploymentFlavorCompositionData);
             vendorSoftwareProductDao.updateDeploymentFlavor(deploymentFlavorEntity);
           }
         });
@@ -776,8 +765,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     VspDetails vsp = vspInfoDao.get(new VspDetails(vspId, version));
     if (vsp == null) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_VSP, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Requested VSP not found");
+              LoggerTragetServiceName.GET_VSP, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), "Requested VSP not found");
       throw new CoreException(new VendorSoftwareProductNotFoundErrorBuilder(vspId).build());
     }
     vsp.setValidationData(orchestrationTemplateDao.getValidationData(vspId, version));
@@ -789,12 +778,12 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   @Override
   public Version callAutoHeal(String vspId, VersionInfo versionInfo,
                               VspDetails vendorSoftwareProductInfo, String user)
-      throws Exception {
+          throws Exception {
     switch (versionInfo.getStatus()) {
       case Locked:
         if (user.equals(versionInfo.getLockingUser())) {
           autoHeal(vspId, versionInfo.getActiveVersion(), vendorSoftwareProductInfo,
-              versionInfo.getLockingUser());
+                  versionInfo.getLockingUser());
         }
         return versionInfo.getActiveVersion();
       case Available:
@@ -830,12 +819,12 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
 
     MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-        LoggerTragetServiceName.DELETE_VSP, ErrorLevel.ERROR.name(),
-        LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Unsupported operation");
+            LoggerTragetServiceName.DELETE_VSP, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Unsupported operation");
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
 
     throw new UnsupportedOperationException(
-        VendorSoftwareProductConstants.UNSUPPORTED_OPERATION_ERROR);
+            VendorSoftwareProductConstants.UNSUPPORTED_OPERATION_ERROR);
   }
 
   @Override
@@ -845,8 +834,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     VersionInfo versionInfo = getVersionInfo(vspId, VersionableEntityAction.Read, user);
 
     version = VersionStatus.Locked.equals(versionInfo.getStatus())
-        ? versionInfo.getActiveVersion()
-        : checkout(vspId, user);
+            ? versionInfo.getActiveVersion()
+            : checkout(vspId, user);
     version.setStatus(VersionStatus.Locked);
 
     healingManager.healAll(getHealingParamsAsMap(vspId, version, user));
@@ -896,24 +885,24 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     if (version == null) {
       errorMessage = "Package not found";
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_TRANSLATED_FILE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), errorMessage);
+              LoggerTragetServiceName.GET_TRANSLATED_FILE, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), errorMessage);
       throw new CoreException(new PackageNotFoundErrorBuilder(vspId).build());
     } else if (!version.isFinal()) {
       errorMessage = "Invalid requested version";
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_VERSION_INFO, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), errorMessage);
+              LoggerTragetServiceName.GET_VERSION_INFO, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), errorMessage);
       throw new CoreException(new RequestedVersionInvalidErrorBuilder().build());
     }
 
     PackageInfo packageInfo =
-        packageInfoDao.get(new PackageInfo(vspId, version));
+            packageInfoDao.get(new PackageInfo(vspId, version));
     if (packageInfo == null) {
       errorMessage = "Package not found";
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_TRANSLATED_FILE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), errorMessage);
+              LoggerTragetServiceName.GET_TRANSLATED_FILE, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), errorMessage);
       throw new CoreException(new PackageNotFoundErrorBuilder(vspId, version).build());
     }
 
@@ -921,8 +910,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     if (translatedFileBuffer == null) {
       errorMessage = "Package not found";
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_TRANSLATED_FILE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), errorMessage);
+              LoggerTragetServiceName.GET_TRANSLATED_FILE, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), errorMessage);
       throw new CoreException(new PackageInvalidErrorBuilder(vspId, version).build());
     }
 
@@ -935,10 +924,10 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     } catch (IOException exception) {
       errorMessage = "Can't create package";
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_TRANSLATED_FILE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), errorMessage);
+              LoggerTragetServiceName.CREATE_TRANSLATED_FILE, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), errorMessage);
       throw new CoreException(new TranslationFileCreationErrorBuilder(vspId, version).build(),
-          exception);
+              exception);
     }
 
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
@@ -961,12 +950,12 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     try (final ZipOutputStream zos = new ZipOutputStream(baos);
          ZipInputStream zipStream = new ZipInputStream(
-             new ByteArrayInputStream(contentData.array()))) {
+                 new ByteArrayInputStream(contentData.array()))) {
       zos.write(contentData.array());
     } catch (IOException exception) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.GET_UPLOADED_HEAT, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't get uploaded HEAT");
+              LoggerTragetServiceName.GET_UPLOADED_HEAT, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't get uploaded HEAT");
       throw new CoreException(new FileCreationErrorBuilder(vspId).build(), exception);
     }
 
@@ -980,11 +969,11 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     if (!version.isFinal()) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_PACKAGE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't create package");
+              LoggerTragetServiceName.CREATE_PACKAGE, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't create package");
       throw new CoreException(
-          new CreatePackageForNonFinalVendorSoftwareProductErrorBuilder(vspId, version)
-              .build());
+              new CreatePackageForNonFinalVendorSoftwareProductErrorBuilder(vspId, version)
+                      .build());
     }
 
     ToscaServiceModel toscaServiceModel = enrichedServiceModelDao.getServiceModel(vspId, version);
@@ -994,13 +983,13 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     PackageInfo packageInfo = createPackageInfo(vspId, vspDetails);
 
     ToscaFileOutputServiceCsarImpl toscaServiceTemplateServiceCsar =
-        new ToscaFileOutputServiceCsarImpl();
+            new ToscaFileOutputServiceCsarImpl();
     FileContentHandler licenseArtifacts = licenseArtifactsService
-        .createLicenseArtifacts(vspDetails.getId(), vspDetails.getVendorId(), vlmVersion,
-            vspDetails.getFeatureGroups(), user);
+            .createLicenseArtifacts(vspDetails.getId(), vspDetails.getVendorId(), vlmVersion,
+                    vspDetails.getFeatureGroups(), user);
     //todo add tosca validation here
     packageInfo.setTranslatedFile(ByteBuffer.wrap(
-        toscaServiceTemplateServiceCsar.createOutputFile(toscaServiceModel, licenseArtifacts)));
+            toscaServiceTemplateServiceCsar.createOutputFile(toscaServiceModel, licenseArtifacts)));
 
     packageInfoDao.create(packageInfo);
 
@@ -1031,7 +1020,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     VspQuestionnaireEntity retrieved = vspInfoDao.getQuestionnaire(vspId, version);
     VersioningUtil.validateEntityExistence(retrieved, new VspQuestionnaireEntity(vspId, version),
-        VspDetails.ENTITY_TYPE);
+            VspDetails.ENTITY_TYPE);
 
     String questionnaireData = retrieved.getQuestionnaireData();
 
@@ -1056,7 +1045,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
 
   private Map<String, List<ErrorMessage>> validateUploadData(UploadDataEntity uploadData)
-      throws IOException {
+          throws IOException {
 
     Map<String, List<ErrorMessage>> validationErrors = new HashMap<>();
     if (uploadData == null || uploadData.getContentData() == null) {
@@ -1064,22 +1053,22 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     }
 
     FileContentHandler fileContentMap =
-        CommonUtil.validateAndUploadFileContent(uploadData.getContentData().array());
+            CommonUtil.validateAndUploadFileContent(uploadData.getContentData().array());
     //todo - check
     ValidationManager validationManager =
-        ValidationManagerUtil.initValidationManager(fileContentMap);
+            ValidationManagerUtil.initValidationManager(fileContentMap);
     validationErrors.putAll(validationManager.validate());
 
     return
-        MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, validationErrors))
-            ? null : validationErrors;
+            MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, validationErrors))
+                    ? null : validationErrors;
   }
 
   private VersionInfo getVersionInfo(String vendorSoftwareProductId, VersionableEntityAction action,
                                      String user) {
     return versioningManager.getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
-        vendorSoftwareProductId, user, action);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
+            vendorSoftwareProductId, user, action);
   }
 
 
@@ -1090,9 +1079,9 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     // The apis of CompositionEntityDataManager used here are stateful!
     // so, it must be re-created from scratch when it is used!
     CompositionEntityDataManager compositionEntityDataManager =
-        CompositionEntityDataManagerFactory.getInstance().createInterface();
+            CompositionEntityDataManagerFactory.getInstance().createInterface();
     compositionEntityDataManager
-        .addEntity(vspInfoDao.getQuestionnaire(vspId, version), null);
+            .addEntity(vspInfoDao.getQuestionnaire(vspId, version), null);
 
     Collection<NicEntity> nics = vendorSoftwareProductDao.listNicsByVsp(vspId, version);
 
@@ -1103,16 +1092,16 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       Nic nic = nicEntity.getNicCompositionData();
       if (nic != null && nic.getName() != null) {
         List<String> nicNames =
-            nicNamesByComponent.computeIfAbsent(nicEntity.getComponentId(), k -> new ArrayList<>());
+                nicNamesByComponent.computeIfAbsent(nicEntity.getComponentId(), k -> new ArrayList<>());
         nicNames.add(nic.getName());
       }
     }
 
     Collection<ComponentEntity> components =
-        vendorSoftwareProductDao.listComponentsCompositionAndQuestionnaire(vspId, version);
+            vendorSoftwareProductDao.listComponentsCompositionAndQuestionnaire(vspId, version);
     components.forEach(component -> compositionEntityDataManager.addEntity(component,
-        new ComponentQuestionnaireSchemaInput(nicNamesByComponent.get(component.getId()),
-            JsonUtil.json2Object(component.getQuestionnaireData(), Map.class))));
+            new ComponentQuestionnaireSchemaInput(nicNamesByComponent.get(component.getId()),
+                    JsonUtil.json2Object(component.getQuestionnaireData(), Map.class))));
 
     Collection<ComputeEntity> computes = vendorSoftwareProductDao.listComputesByVsp(vspId, version);
     computes.forEach(compute -> compositionEntityDataManager.addEntity(compute, null));
@@ -1123,7 +1112,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     }
 
     Map<CompositionEntityId, Collection<String>> errorsByEntityId =
-        compositionEntityDataManager.validateEntitiesQuestionnaire();
+            compositionEntityDataManager.validateEntitiesQuestionnaire();
     if (MapUtils.isNotEmpty(errorsByEntityId)) {
       compositionEntityDataManager.buildTrees();
       compositionEntityDataManager.addErrorsToTrees(errorsByEntityId);
@@ -1133,7 +1122,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
       mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
       return new QuestionnaireValidationResult(
-          compositionEntityDataManager.getAllErrorsByVsp(vspId));
+              compositionEntityDataManager.getAllErrorsByVsp(vspId));
     }
 
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
@@ -1154,11 +1143,11 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     File infoArtifactFile;
     try {
       infoArtifactAsByteBuffer = ByteBuffer.wrap(informationArtifactGenerator.generate(vspId,
-          version).getBytes());
+              version).getBytes());
 
       infoArtifactFile =
-          new File(
-              String.format(VendorSoftwareProductConstants.INFORMATION_ARTIFACT_NAME, vspName));
+              new File(
+                      String.format(VendorSoftwareProductConstants.INFORMATION_ARTIFACT_NAME, vspName));
       OutputStream out = new BufferedOutputStream(new FileOutputStream(infoArtifactFile));
       out.write(infoArtifactAsByteBuffer.array());
       out.close();
@@ -1172,18 +1161,18 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   void validateUniqueName(String vspName) {
     UniqueValueUtil.validateUniqueValue(
-        VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME, vspName);
+            VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME, vspName);
   }
 
   void createUniqueName(String vspName) {
     UniqueValueUtil.createUniqueValue(
-        VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME, vspName);
+            VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME, vspName);
   }
 
   void updateUniqueName(String oldVspName, String newVspName) {
     UniqueValueUtil.updateUniqueValue(
-        VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME,
-        oldVspName, newVspName);
+            VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME,
+            oldVspName, newVspName);
   }
 
   @Override
@@ -1197,7 +1186,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     errorList.forEach(errorMessage -> {
       if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
         logger.audit(AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(),
-            vspId));
+                vspId));
       }
     });
   }

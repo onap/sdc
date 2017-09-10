@@ -5,6 +5,85 @@ imports:
 - openecomp_heat_index:
     file: openecomp-heat/_index.yml
 node_types:
+  org.openecomp.resource.vfc.nodes.heat.pd_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    properties:
+      index_value:
+        type: integer
+        description: Index value of this substitution service template runtime instance
+        required: false
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      compute_pd_server_availability_zone:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      compute_pd_server_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      vm_image_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_pd01_port_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_pd01_port_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      compute_pd_server_user_data_format:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
   org.openecomp.resource.abstract.nodes.pd_server:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
@@ -420,6 +499,85 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+  org.openecomp.resource.vfc.nodes.heat.ps_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    properties:
+      compute_ps_server_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      compute_ps_server_availability_zone:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      compute_ps_server_user_data_format:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      index_value:
+        type: integer
+        description: Index value of this substitution service template runtime instance
+        required: false
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      port_pd01_port_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      vm_image_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_pd01_port_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_pd01_port_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
   org.openecomp.resource.abstract.nodes.oam_server:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
@@ -1250,3 +1408,82 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+  org.openecomp.resource.vfc.nodes.heat.oam_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    properties:
+      index_value:
+        type: integer
+        description: Index value of this substitution service template runtime instance
+        required: false
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      port_pd01_port_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      compute_oam_server_availability_zone:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_image_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_pd01_port_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_pd01_port_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      compute_oam_server_user_data_format:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      compute_oam_server_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements

@@ -79,12 +79,12 @@ import java.util.Set;
 public class CompositionEntityDataManagerImpl implements CompositionEntityDataManager {
 
   private static final String COMPOSITION_ENTITY_DATA_MANAGER_ERR =
-      "COMPOSITION_ENTITY_DATA_MANAGER_ERR";
+          "COMPOSITION_ENTITY_DATA_MANAGER_ERR";
   private static final String COMPOSITION_ENTITY_DATA_MANAGER_ERR_MSG =
-      "Invalid input: %s may not be null";
+          "Invalid input: %s may not be null";
 
   private static final Logger logger =
-      LoggerFactory.getLogger(CompositionEntityDataManagerImpl.class);
+          LoggerFactory.getLogger(CompositionEntityDataManagerImpl.class);
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
   private Map<CompositionEntityId, CompositionEntityData> entities = new HashMap<>();
@@ -132,27 +132,27 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
     if (entity == null) {
       throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
-              .withId(COMPOSITION_ENTITY_DATA_MANAGER_ERR).withMessage(
-              String.format(COMPOSITION_ENTITY_DATA_MANAGER_ERR_MSG, "composition entity"))
-              .build());
+              new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
+                      .withId(COMPOSITION_ENTITY_DATA_MANAGER_ERR).withMessage(
+                      String.format(COMPOSITION_ENTITY_DATA_MANAGER_ERR_MSG, "composition entity"))
+                      .build());
     }
     if (schemaTemplateContext == null) {
       throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
-              .withId(COMPOSITION_ENTITY_DATA_MANAGER_ERR).withMessage(
-              String.format(COMPOSITION_ENTITY_DATA_MANAGER_ERR_MSG, "schema template context"))
-              .build());
+              new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
+                      .withId(COMPOSITION_ENTITY_DATA_MANAGER_ERR).withMessage(
+                      String.format(COMPOSITION_ENTITY_DATA_MANAGER_ERR_MSG, "schema template context"))
+                      .build());
     }
 
     CompositionEntityValidationData validationData =
-        new CompositionEntityValidationData(entity.getType(), entity.getId());
+            new CompositionEntityValidationData(entity.getType(), entity.getId());
     String json =
-        schemaTemplateContext == SchemaTemplateContext.composition ? entity.getCompositionData()
-            : entity.getQuestionnaireData();
+            schemaTemplateContext == SchemaTemplateContext.composition ? entity.getCompositionData()
+                    : entity.getQuestionnaireData();
     validationData.setErrors(JsonUtil.validate(
-        json == null ? JsonUtil.object2Json(new Object()) : json,
-        generateSchema(schemaTemplateContext, entity.getType(), schemaTemplateInput)));
+            json == null ? JsonUtil.object2Json(new Object()) : json,
+            generateSchema(schemaTemplateContext, entity.getType(), schemaTemplateInput)));
 
     mdcDataDebugMessage.debugExitMessage(null);
     return validationData;
@@ -168,13 +168,13 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   public void addEntity(CompositionEntity entity, SchemaTemplateInput schemaTemplateInput) {
     if (entity == null) {
       throw new CoreException(
-          new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
-              .withId(COMPOSITION_ENTITY_DATA_MANAGER_ERR).withMessage(
-              String.format(COMPOSITION_ENTITY_DATA_MANAGER_ERR_MSG, "composition entity"))
-              .build());
+              new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
+                      .withId(COMPOSITION_ENTITY_DATA_MANAGER_ERR).withMessage(
+                      String.format(COMPOSITION_ENTITY_DATA_MANAGER_ERR_MSG, "composition entity"))
+                      .build());
     }
     entities.put(entity.getCompositionEntityId(),
-        new CompositionEntityData(entity, schemaTemplateInput));
+            new CompositionEntityData(entity, schemaTemplateInput));
   }
 
   /**
@@ -204,10 +204,10 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   @Override
   public void buildTrees() {
     Map<CompositionEntityId, CompositionEntityValidationData> entitiesValidationData =
-        new HashMap<>();
+            new HashMap<>();
     entities.entrySet().forEach(
-        entry -> addValidationDataEntity(entitiesValidationData, entry.getKey(),
-            entry.getValue().entity));
+            entry -> addValidationDataEntity(entitiesValidationData, entry.getKey(),
+                    entry.getValue().entity));
   }
 
   public Collection<CompositionEntityValidationData> getTrees() {
@@ -258,14 +258,14 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
     }
 
     Collection<CompositionEntityValidationData> subEntitiesValidationData =
-        entity.getSubEntitiesValidationData();
+            entity.getSubEntitiesValidationData();
     return !CollectionUtils.isEmpty(subEntitiesValidationData) &&
-        checkForErrorsInChildren(subEntitiesValidationData);
+            checkForErrorsInChildren(subEntitiesValidationData);
 
   }
 
   private boolean checkForErrorsInChildren(
-      Collection<CompositionEntityValidationData> subEntitiesValidationData) {
+          Collection<CompositionEntityValidationData> subEntitiesValidationData) {
     boolean result = false;
     for (CompositionEntityValidationData subEntity : subEntitiesValidationData) {
       if (CollectionUtils.isNotEmpty(subEntity.getErrors())) {
@@ -359,10 +359,10 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
     //component.setId(CommonMethods.nextUuId()); will be set by the dao
     component.setQuestionnaireData(
-        new JsonSchemaDataGenerator(
-            generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.component,
-                null))
-            .generateData());
+            new JsonSchemaDataGenerator(
+                    generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.component,
+                            null))
+                    .generateData());
 
     componentDao.create(component);
 
@@ -376,9 +376,9 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
     //nic.setId(CommonMethods.nextUuId()); will be set by the dao
     nic.setQuestionnaireData(
-        new JsonSchemaDataGenerator(
-            generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.nic, null))
-            .generateData());
+            new JsonSchemaDataGenerator(
+                    generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.nic, null))
+                    .generateData());
 
     nicDao.create(nic);
 
@@ -414,7 +414,7 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   public void getEntityListWithErrors(CompositionEntityValidationData entity,
                                       Set<CompositionEntityValidationData> compositionSet) {
     Collection<CompositionEntityValidationData> childNodes =
-        entity.getSubEntitiesValidationData();
+            entity.getSubEntitiesValidationData();
 
     if (CollectionUtils.isEmpty(childNodes)) {
       return;
@@ -432,7 +432,7 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   public void addNodeWithErrors(CompositionEntityValidationData node,
                                 Set<CompositionEntityValidationData> entitiesWithErrors) {
     CompositionEntityValidationData compositionNodeToAdd = new CompositionEntityValidationData(node
-        .getEntityType(), node.getEntityId());
+            .getEntityType(), node.getEntityId());
     compositionNodeToAdd.setErrors(node.getErrors());
     compositionNodeToAdd.setSubEntitiesValidationData(null);
 
@@ -445,9 +445,9 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
 
   private CompositionEntityData getCompositionEntityDataById(CompositionEntityValidationData
-                                                                 entity) {
+                                                                     entity) {
     for (Map.Entry<CompositionEntityId, CompositionEntityData> entityEntry : entities
-        .entrySet()) {
+            .entrySet()) {
       if (entityEntry.getKey().getId().equals(entity.getEntityId())) {
         return entityEntry.getValue();
       }
@@ -457,11 +457,11 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
 
   private void updateValidationCompositionEntityName(Set<CompositionEntityValidationData>
-                                                         compositionSet) {
+                                                             compositionSet) {
     for (CompositionEntityValidationData entity : compositionSet) {
       String compositionData = getCompositionDataAsString(entity);
       if (entity.getEntityType().equals(CompositionEntityType.vsp) ||
-          Objects.nonNull(compositionData)) {
+              Objects.nonNull(compositionData)) {
         entity.setEntityName(getEntityNameByEntityType(compositionData, entity));
       }
     }
@@ -488,12 +488,16 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
         Network network = JsonUtil.json2Object(compositionData, Network.class);
         return network.getName();
 
+      case image:
+        Image image = JsonUtil.json2Object(compositionData, Image.class);
+        return image.getFileName();
+
       case vsp:
         CompositionEntityData vspEntity = getCompositionEntityDataById(entity);
         VspQuestionnaireEntity vspQuestionnaireEntity = (VspQuestionnaireEntity) vspEntity.entity;
         VspDetails vspDetails =
-            vspInfoDao.get(new VspDetails(vspQuestionnaireEntity.getId(),
-                vspQuestionnaireEntity.getVersion()));
+                vspInfoDao.get(new VspDetails(vspQuestionnaireEntity.getId(),
+                        vspQuestionnaireEntity.getVersion()));
         return vspDetails.getName();
     }
 
@@ -509,7 +513,7 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
     if (hasChildren(node)) {
       Collection<CompositionEntityValidationData> subNodes =
-          new ArrayList<>(node.getSubEntitiesValidationData());
+              new ArrayList<>(node.getSubEntitiesValidationData());
       subNodes.forEach(subNode -> removeNodesWithoutErrors(subNode, node));
       node.setSubEntitiesValidationData(subNodes);
 
@@ -538,14 +542,14 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
 
   private void addValidationDataEntity(
-      Map<CompositionEntityId, CompositionEntityValidationData> entitiesValidationData,
-      CompositionEntityId entityId, CompositionEntity entity) {
+          Map<CompositionEntityId, CompositionEntityValidationData> entitiesValidationData,
+          CompositionEntityId entityId, CompositionEntity entity) {
     if (entitiesValidationData.containsKey(entityId)) {
       return;
     }
 
     CompositionEntityValidationData validationData =
-        new CompositionEntityValidationData(entity.getType(), entity.getId());
+            new CompositionEntityValidationData(entity.getType(), entity.getId());
     entitiesValidationData.put(entityId, validationData);
 
     CompositionEntityId parentEntityId = entityId.getParentId();
@@ -573,32 +577,40 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
 
     if (node.getSubEntitiesValidationData() != null) {
       node.getSubEntitiesValidationData()
-          .forEach(subNode -> addErrorsToTree(subNode, nodeId, errors));
+              .forEach(subNode -> addErrorsToTree(subNode, nodeId, errors));
     }
   }
 
   private Collection<String> validateQuestionnaire(CompositionEntityData compositionEntityData) {
     logger.debug(String.format("validateQuestionnaire start:  " +
-            "[entity.type]=%s, [entity.id]=%s, [entity.questionnaireString]=%s",
-        compositionEntityData.entity.getType().name(),
-        compositionEntityData.entity.getCompositionEntityId().toString(),
-        compositionEntityData.entity.getQuestionnaireData()));
+                    "[entity.type]=%s, [entity.id]=%s, [entity.questionnaireString]=%s",
+            compositionEntityData.entity.getType().name(),
+            compositionEntityData.entity.getCompositionEntityId().toString(),
+            compositionEntityData.entity.getQuestionnaireData()));
+
+    if(Objects.isNull(compositionEntityData.entity.getQuestionnaireData()) || !JsonUtil.isValidJson
+            (compositionEntityData.entity.getQuestionnaireData())){
+      List<String> errors = new ArrayList<>();
+      errors.add("Data is missing for the above " + compositionEntityData.entity.getType() +
+              ". Complete the mandatory fields and resubmit.");
+      return errors;
+    }
 
     return JsonUtil.validate(
-        compositionEntityData.entity.getQuestionnaireData() == null
-            ? JsonUtil.object2Json(new Object())
-            : compositionEntityData.entity.getQuestionnaireData(),
-        getSchema(compositionEntityData.entity.getType(), SchemaTemplateContext.questionnaire,
-            compositionEntityData.schemaTemplateInput));
+            compositionEntityData.entity.getQuestionnaireData() == null
+                    ? JsonUtil.object2Json(new Object())
+                    : compositionEntityData.entity.getQuestionnaireData(),
+            getSchema(compositionEntityData.entity.getType(), SchemaTemplateContext.questionnaire,
+                    compositionEntityData.schemaTemplateInput));
   }
 
   private String getSchema(CompositionEntityType compositionEntityType,
                            SchemaTemplateContext schemaTemplateContext,
                            SchemaTemplateInput schemaTemplateInput) {
     return schemaTemplateInput == null
-        ? nonDynamicSchemas.computeIfAbsent(compositionEntityType,
-        k -> generateSchema(schemaTemplateContext, compositionEntityType, null))
-        : generateSchema(schemaTemplateContext, compositionEntityType, schemaTemplateInput);
+            ? nonDynamicSchemas.computeIfAbsent(compositionEntityType,
+            k -> generateSchema(schemaTemplateContext, compositionEntityType, null))
+            : generateSchema(schemaTemplateContext, compositionEntityType, schemaTemplateInput);
   }
 
   private static class CompositionEntityData {
@@ -619,7 +631,7 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
                                   CompositionEntityType compositionEntityType,
                                   SchemaTemplateInput schemaTemplateInput) {
     return SchemaGenerator
-        .generate(schemaTemplateContext, compositionEntityType, schemaTemplateInput);
+            .generate(schemaTemplateContext, compositionEntityType, schemaTemplateInput);
   }
 
   @Override
@@ -638,9 +650,9 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
     image.setId(CommonMethods.nextUuId());
 
     image.setQuestionnaireData(
-        new JsonSchemaDataGenerator(SchemaGenerator
-            .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.image, null))
-            .generateData());
+            new JsonSchemaDataGenerator(SchemaGenerator
+                    .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.image, null))
+                    .generateData());
 
     imageDao.create(image);
     mdcDataDebugMessage.debugExitMessage(null, null);
@@ -650,23 +662,23 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   @Override
   public ComputeEntity createCompute(ComputeEntity compute) {
     mdcDataDebugMessage.debugEntryMessage("VSP id, component id", compute.getVspId(),
-        compute.getComponentId());
+            compute.getComponentId());
 
     compute.setId(CommonMethods.nextUuId());
     compute.setQuestionnaireData(
-        new JsonSchemaDataGenerator(SchemaGenerator
-            .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.compute,
-                null)).generateData());
+            new JsonSchemaDataGenerator(SchemaGenerator
+                    .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.compute,
+                            null)).generateData());
 
     computeDao.create(compute);
 
     mdcDataDebugMessage.debugExitMessage("VSP id, component id", compute.getVspId(),
-        compute.getComponentId());
+            compute.getComponentId());
     return compute;
   }
 
   public void saveComputesFlavorByComponent(String vspId, Version version, Component component, String
-      componentId) {
+          componentId) {
     if (CollectionUtils.isNotEmpty(component.getCompute())) {
       for (ComputeData flavor : component.getCompute()) {
         ComputeEntity computeEntity = new ComputeEntity(vspId, version, componentId, null);
@@ -677,7 +689,7 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   }
 
   public void saveImagesByComponent(String vspId, Version version, Component component, String
-      componentId) {
+          componentId) {
     if (CollectionUtils.isNotEmpty(component.getImages())) {
       for (Image img : component.getImages()) {
         ImageEntity imageEntity = new ImageEntity(vspId, version, componentId, null);

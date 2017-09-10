@@ -1,0 +1,35 @@
+{
+  "name": "vEP_JSA_Net",
+  "description": "Version 2.0 02-09-2016 (Authors: John Doe, user PROD)",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "base_cscf.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "base_cscf.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "base_cscf_volume.yaml",
+      "type": "HEAT_VOL",
+      "data": [
+        {
+          "file": "base_cscf_volume.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "nested_cscf.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "nested_tdcore.yaml",
+      "type": "HEAT"
+    }
+  ]
+}

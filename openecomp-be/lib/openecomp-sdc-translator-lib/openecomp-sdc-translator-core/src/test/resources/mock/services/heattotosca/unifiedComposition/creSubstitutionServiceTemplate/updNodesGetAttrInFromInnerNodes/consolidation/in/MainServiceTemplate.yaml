@@ -110,7 +110,7 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         network: Internal2-net
-        device_id: {get_attribute: [FSB2_template, device_id]}
+        device_id: {get_attribute: [FSB2_template, att]}
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -131,7 +131,7 @@ topology_template:
       properties:
         mac_address:
           get_input: fsb1-Internal1-mac
-        network: {get_attribute: [FSB2_Internal1, device_id]}
+        network: {get_attribute: [FSB2_Internal1, att]}
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -146,7 +146,7 @@ topology_template:
       properties:
         mac_address:
           get_input: fsb1-Internal1-mac
-        network: {get_attribute: [FSB2_Internal1, device_id]}
+        network: {get_attribute: [FSB2_Internal1, att]}
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable

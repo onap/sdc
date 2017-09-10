@@ -126,7 +126,7 @@ topology_template:
         network:
           get_attribute:
           - FSB1_FSB2_Internal
-          - device_id
+          - att
         mac_address:
           get_input: port_FSB1_Internal_mac_address
       requirements:
@@ -156,7 +156,7 @@ topology_template:
         device_id:
           get_attribute:
           - FSB1
-          - device_id
+          - att
         network:
           get_input:
           - port_FSB2_Internal_network

@@ -12,7 +12,6 @@ import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ImageManager;
-import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
@@ -45,9 +44,9 @@ public class ImageManagerImpl implements ImageManager {
   private CompositionEntityDataManager compositionEntityDataManager;
 
   public ImageManagerImpl(
-      VendorSoftwareProductInfoDao vspInfoDao,
-      ImageDao imageDao,
-      CompositionEntityDataManager compositionEntityDataManager
+          VendorSoftwareProductInfoDao vspInfoDao,
+          ImageDao imageDao,
+          CompositionEntityDataManager compositionEntityDataManager
 
   ) {
 
@@ -67,18 +66,17 @@ public class ImageManagerImpl implements ImageManager {
     if (!isManual) {
 
       ErrorCode errorCode = NotSupportedHeatOnboardMethodErrorBuilder
-          .getAddImageNotSupportedHeatOnboardMethodErrorBuilder();
+              .getAddImageNotSupportedHeatOnboardMethodErrorBuilder();
 
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.CREATE_IMAGE, ErrorLevel.ERROR.name(),
-          errorCode.id(), errorCode.message());
+              LoggerTragetServiceName.CREATE_IMAGE, ErrorLevel.ERROR.name(),
+              errorCode.id(), errorCode.message());
 
       throw new CoreException(errorCode);
     }
 
-    Collection<ImageEntity> vfcImageList = listImages(imageEntity.getVspId() ,
-        imageEntity.getVersion(), imageEntity.getComponentId());
-    validateVfcImage(isManual, imageEntity, vfcImageList, LoggerTragetServiceName.CREATE_IMAGE);
+    /*Collection<ImageEntity> vfcImageList = listImages(imageEntity.getVspId() ,
+        imageEntity.getVersion(), imageEntity.getComponentId());*/
     compositionEntityDataManager.createImage(imageEntity);
     return imageEntity;
   }
@@ -115,10 +113,10 @@ public class ImageManagerImpl implements ImageManager {
 
   @Override
   public CompositionEntityResponse<Image> getImage(String vspId, Version version, String
-      componentId, String imageId, String user) {
+          componentId, String imageId, String user) {
 
     mdcDataDebugMessage.debugEntryMessage("VSP id, componentId, image id", vspId, componentId,
-        imageId);
+            imageId);
 
     /*version = VersioningUtil
         .resolveVersion(version, getVersionInfo(vspId, VersionableEntityAction.Read, user));*/
@@ -139,14 +137,14 @@ public class ImageManagerImpl implements ImageManager {
     response.setSchema(getImageCompositionSchema(schemaInput));
 
     mdcDataDebugMessage.debugExitMessage("VSP id, componentId, image id", vspId, componentId,
-        imageId);
+            imageId);
 
     return response;
   }
 
   @Override
   public QuestionnaireResponse getImageQuestionnaire(String vspId, Version version, String
-      componentId, String imageId, String user) {
+          componentId, String imageId, String user) {
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
 
     /*version = VersioningUtil
@@ -168,9 +166,9 @@ public class ImageManagerImpl implements ImageManager {
 
   @Override
   public void deleteImage(String vspId, Version version, String componentId, String imageId, String
-      user) {
+          user) {
     mdcDataDebugMessage
-        .debugEntryMessage("VSP id, component id", vspId, componentId, imageId);
+            .debugEntryMessage("VSP id, component id", vspId, componentId, imageId);
 
     /*Version activeVersion =
         getVersionInfo(vspId, VersionableEntityAction.Write, user).getActiveVersion();
@@ -178,19 +176,19 @@ public class ImageManagerImpl implements ImageManager {
     ImageEntity imageEntity = getImageEntity(vspId, version, componentId, imageId);
     if (!vspInfoDao.isManual(vspId, version)) {
       final ErrorCode deleteImageErrorBuilder =
-          NotSupportedHeatOnboardMethodErrorBuilder
-              .getDelImageNotSupportedHeatOnboardMethodErrorBuilder();
+              NotSupportedHeatOnboardMethodErrorBuilder
+                      .getDelImageNotSupportedHeatOnboardMethodErrorBuilder();
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.DELETE_IMAGE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
-          deleteImageErrorBuilder.message());
+              LoggerTragetServiceName.DELETE_IMAGE, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
+              deleteImageErrorBuilder.message());
       throw new CoreException(deleteImageErrorBuilder);
     }
     if (imageEntity != null) {
       imageDao.delete(new ImageEntity(vspId, version, componentId, imageId));
     }
     mdcDataDebugMessage
-        .debugExitMessage("VSP id, component id", vspId, componentId, imageId);
+            .debugExitMessage("VSP id, component id", vspId, componentId, imageId);
   }
 
   private void validateHeatVspImageUpdate(String name, String value, String retrivedValue) {
@@ -198,12 +196,12 @@ public class ImageManagerImpl implements ImageManager {
     if(value != null && !value.equals(retrivedValue)) {
 
       final ErrorCode updateHeatImageErrorBuilder =
-          ImageErrorBuilder.getImageHeatReadOnlyErrorBuilder(name);
+              ImageErrorBuilder.getImageHeatReadOnlyErrorBuilder(name);
 
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.UPDATE_IMAGE, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
-          updateHeatImageErrorBuilder.message());
+              LoggerTragetServiceName.UPDATE_IMAGE, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
+              updateHeatImageErrorBuilder.message());
       throw new CoreException(updateHeatImageErrorBuilder);
     }
   }
@@ -211,33 +209,32 @@ public class ImageManagerImpl implements ImageManager {
   @Override
   public CompositionEntityValidationData updateImage(ImageEntity image, String user) {
     mdcDataDebugMessage
-        .debugEntryMessage("VSP id, component id", image.getVspId(), image.getComponentId(),
-            image.getId());
+            .debugEntryMessage("VSP id, component id", image.getVspId(), image.getComponentId(),
+                    image.getId());
 
     /*Version activeVersion =
         getVersionInfo(image.getVspId(), VersionableEntityAction.Write, user).getActiveVersion();
     image.setVersion(activeVersion);*/
     boolean isManual = vspInfoDao.isManual(image.getVspId(), image.getVersion());
     ImageEntity retrieved = getImageEntity(image.getVspId(), image.getVersion(), image.getComponentId(),
-        image.getId());
+            image.getId());
 
     if(!isManual) {
       final Image imageCompositionData = image.getImageCompositionData();
       final String fileName = imageCompositionData.getFileName();
       //final String format = imageCompositionData.getFormat();
       validateHeatVspImageUpdate("fileName", fileName, retrieved.getImageCompositionData()
-          .getFileName());
+              .getFileName());
       /*validateHeatVspImageUpdate("format", format, retrieved.getImageCompositionData()
           .getFormat());*/
     }
 
     Collection<ImageEntity> vfcImageList = listImages(image.getVspId() ,
-        image.getVersion(), image.getComponentId());
+            image.getVersion(), image.getComponentId());
 
     //Set to null so that retrieved object is equal to one in list and gets removed.
     retrieved.setQuestionnaireData(null);
     vfcImageList.remove(retrieved);
-    validateVfcImage(isManual, image, vfcImageList, LoggerTragetServiceName.UPDATE_IMAGE);
 
     //Set format to default value in order to handle FTL validation when image format is null
     /*if(image.getImageCompositionData().getFormat() == null)
@@ -247,23 +244,23 @@ public class ImageManagerImpl implements ImageManager {
     schemaInput.setImage(image.getImageCompositionData());
 
     CompositionEntityValidationData validationData = compositionEntityDataManager
-        .validateEntity(image, SchemaTemplateContext.composition, schemaInput);
+            .validateEntity(image, SchemaTemplateContext.composition, schemaInput);
     if (CollectionUtils.isEmpty(validationData.getErrors())) {
       imageDao.update(image);
     }
 
     mdcDataDebugMessage
-        .debugExitMessage("VSP id, component id", image.getVspId(), image.getComponentId(),
-            image.getId());
+            .debugExitMessage("VSP id, component id", image.getVspId(), image.getComponentId(),
+                    image.getId());
 
     return validationData;
   }
 
   @Override
   public void updateImageQuestionnaire(String vspId, Version version, String componentId, String
-      imageId, String questionnaireData, String user) {
+          imageId, String questionnaireData, String user) {
     mdcDataDebugMessage.debugEntryMessage("VSP id, component id, imageId", vspId, componentId,
-        imageId);
+            imageId);
 
     getImageEntity(vspId, version, componentId, imageId);
 
@@ -281,15 +278,15 @@ public class ImageManagerImpl implements ImageManager {
     } catch (IllegalArgumentException exception) {
       ErrorCode errorCode = ImageErrorBuilder.getInvalidImageFormatErrorBuilder();
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.UPDATE_IMAGE, ErrorLevel.ERROR.name(),
-          errorCode.id(), errorCode.message() );
+              LoggerTragetServiceName.UPDATE_IMAGE, ErrorLevel.ERROR.name(),
+              errorCode.id(), errorCode.message() );
       throw new CoreException(errorCode);
     }
 
     //Validate Format is read only for HEAT Onboarding
     if (!vspInfoDao.isManual(vspId, version)) {
       final QuestionnaireResponse imageQuestionnaire = getImageQuestionnaire(vspId, version,
-          componentId, imageId, user);
+              componentId, imageId, user);
       final String data = imageQuestionnaire.getData();
       if (data != null) {
         String retrivedFormat = JsonUtil.json2Object(data, ImageDetails.class).getFormat();
@@ -299,19 +296,19 @@ public class ImageManagerImpl implements ImageManager {
 
     if(!isImageVersionUnique(vspId, version, componentId, imageId, image, user))
     {
-        ErrorCode errorCode = ImageErrorBuilder.getDuplicateImageVersionErrorBuilder(image
-                .getVersion(), componentId);
+      ErrorCode errorCode = ImageErrorBuilder.getDuplicateImageVersionErrorBuilder(image
+              .getVersion(), componentId);
 
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-                LoggerTragetServiceName.UPDATE_IMAGE, ErrorLevel.ERROR.name(),
-                errorCode.id(),errorCode.message());
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+              LoggerTragetServiceName.UPDATE_IMAGE, ErrorLevel.ERROR.name(),
+              errorCode.id(),errorCode.message());
 
-        throw new CoreException(errorCode);
+      throw new CoreException(errorCode);
     }
 
     imageDao.updateQuestionnaireData(vspId, version, componentId, imageId, questionnaireData);
     mdcDataDebugMessage.debugExitMessage("VSP id, component id, imageId", vspId, componentId,
-        imageId);
+            imageId);
   }
 
   private boolean isImageVersionUnique(String vspId, Version version, String componentId, String imageId,
@@ -320,15 +317,15 @@ public class ImageManagerImpl implements ImageManager {
     boolean isPresent = true;
     if(image!=null && image.getVersion()!=null)
     {
-        Collection<ImageEntity> imageEntities = imageDao.list(new ImageEntity(vspId, version, componentId, null));
-        if(CollectionUtils.isNotEmpty(imageEntities))
-        {
-            imageEntities = imageEntities.stream().filter(imageEntity -> image.getVersion().trim().equalsIgnoreCase(
-                    getImageVersion(vspId, version, componentId, imageEntity, user))
-                    && !imageEntity.getId().equals(imageId)).collect(Collectors.toList());
+      Collection<ImageEntity> imageEntities = imageDao.list(new ImageEntity(vspId, version, componentId, null));
+      if(CollectionUtils.isNotEmpty(imageEntities))
+      {
+        imageEntities = imageEntities.stream().filter(imageEntity -> image.getVersion().trim().equalsIgnoreCase(
+                getImageVersion(vspId, version, componentId, imageEntity, user))
+                && !imageEntity.getId().equals(imageId)).collect(Collectors.toList());
 
-            isPresent = CollectionUtils.isEmpty(imageEntities);
-        }
+        isPresent = CollectionUtils.isEmpty(imageEntities);
+      }
     }
 
     return isPresent;
@@ -336,11 +333,11 @@ public class ImageManagerImpl implements ImageManager {
 
   private String getImageVersion(String vspId, Version version, String componentId, ImageEntity imageEntity, String user)
   {
-      QuestionnaireResponse imageQuestionnaire = getImageQuestionnaire(vspId, version,
-              componentId, imageEntity.getId(), user);
-      ImageDetails imageDetails = JsonUtil.json2Object(imageQuestionnaire.getData(), ImageDetails.class);
+    QuestionnaireResponse imageQuestionnaire = getImageQuestionnaire(vspId, version,
+            componentId, imageEntity.getId(), user);
+    ImageDetails imageDetails = JsonUtil.json2Object(imageQuestionnaire.getData(), ImageDetails.class);
 
-      return imageDetails==null?null:imageDetails.getVersion()!=null?imageDetails.getVersion().trim():null;
+    return imageDetails==null?null:imageDetails.getVersion()!=null?imageDetails.getVersion().trim():null;
   }
   private ImageEntity getImageEntity(String vspId, Version version, String componentId,
                                      String imageId) {
@@ -349,7 +346,7 @@ public class ImageManagerImpl implements ImageManager {
     ImageEntity imageEntity = imageDao.get(new ImageEntity(vspId, version, componentId, imageId));
 
     VersioningUtil.validateEntityExistence(imageEntity, new ImageEntity(vspId, version, componentId,
-        imageId), VspDetails.ENTITY_TYPE);
+            imageId), VspDetails.ENTITY_TYPE);
     return imageEntity;
   }
 
@@ -363,26 +360,12 @@ public class ImageManagerImpl implements ImageManager {
     return false;
   }
 
-  private void validateVfcImage(boolean isManual, ImageEntity image,
-                                Collection<ImageEntity> vfcImageList, String event) {
-    if (isImageNameDuplicate(vfcImageList,image.getImageCompositionData().getFileName())) {
-      ErrorCode errorCode = ImageErrorBuilder.getDuplicateImageNameErrorBuilder(image
-          .getImageCompositionData().getFileName(), image.getComponentId());
-
-      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              event, ErrorLevel.ERROR.name(),
-          errorCode.id(),errorCode.message());
-
-      throw new CoreException(errorCode);
-    }
-  }
-
   protected String getImageCompositionSchema(SchemaTemplateInput schemaInput) {
     mdcDataDebugMessage.debugEntryMessage(null, null);
     mdcDataDebugMessage.debugExitMessage(null, null);
     return SchemaGenerator
-        .generate(SchemaTemplateContext.composition, CompositionEntityType.image,
-            schemaInput);
+            .generate(SchemaTemplateContext.composition, CompositionEntityType.image,
+                    schemaInput);
   }
 
   protected String getImageQuestionnaireSchema(SchemaTemplateInput schemaInput) {
@@ -390,7 +373,7 @@ public class ImageManagerImpl implements ImageManager {
 
     mdcDataDebugMessage.debugExitMessage(null, null);
     return SchemaGenerator
-        .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.image,
-            schemaInput);
+            .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.image,
+                    schemaInput);
   }
 }

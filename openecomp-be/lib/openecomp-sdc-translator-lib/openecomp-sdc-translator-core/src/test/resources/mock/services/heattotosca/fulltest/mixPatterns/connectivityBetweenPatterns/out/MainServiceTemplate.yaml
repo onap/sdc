@@ -347,6 +347,28 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: nested_network
           relationship: tosca.relationships.network.LinksTo
+      - dependency_pcm_port_1:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - link_pcm_port_1:
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
+      - dependency_server_pcm:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - local_storage_server_pcm:
+          capability: tosca.capabilities.Attachment
+          node: tosca.nodes.BlockStorage
+          relationship: tosca.relationships.AttachesTo
+      - dependency_pcm_port_0:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - link_pcm_port_0:
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
     abstract_1c2_catalog_instance_0:
       type: org.openecomp.resource.abstract.nodes.1c2_catalog_instance
       directives:

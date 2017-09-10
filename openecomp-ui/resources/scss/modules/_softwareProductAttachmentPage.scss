@@ -1,27 +1,27 @@
 
 .vsp-attachments-view {
   position: relative;
-	#attachments-tabs {
-		.nav-tabs {
-			background-color: $tlv-gray;
-			box-shadow: none;
-			border-bottom: 1px solid $light-gray;
-			& > li {
-				& > a {
-					@extend .heading-2;
-					padding-left: 0;
-					padding-right: 0;
-					margin-right: 40px;
-				};
-				&.active > a {color: $blue;};
-			}
-		}
-	}
+  #attachments-tabs {
+    .nav-tabs {
+      background-color: $tlv-gray;
+      box-shadow: none;
+      border-bottom: 1px solid $light-gray;
+      & > li {
+        & > a {
+          @extend .heading-2;
+          padding-left: 0;
+          padding-right: 0;
+          margin-right: 40px;
+        };
+        &.active > a {color: $blue;};
+      }
+    }
+  }
   .attachments-view-controllers {
     position: absolute;
     right: 40px;
     top: 15px;
-		display: flex;
+    display: flex;
 
 
     .icon-component {

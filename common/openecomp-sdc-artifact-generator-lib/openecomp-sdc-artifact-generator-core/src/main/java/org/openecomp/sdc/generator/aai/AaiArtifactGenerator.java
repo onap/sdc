@@ -163,7 +163,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         log.warn(
             "Additional tosca file found with resource version id : "
                 + resourceUuId);
-        break;
+        continue;
       }
       //update resource version with version from service tosca
       String resourceVersion = resourcesVersion.get(resourceUuId);

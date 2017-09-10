@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.vendorlicense.healing.impl;
 
-import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
@@ -41,14 +40,23 @@ import java.util.UUID;
 
 public class SimpleHealingServiceImpl implements HealingService {
   private static final EntitlementPoolDao entitlementPoolDao =
-      EntitlementPoolDaoFactory.getInstance().createInterface();
+          EntitlementPoolDaoFactory.getInstance().createInterface();
   private static final LicenseKeyGroupDao licenseKeyGroupDao =
-      LicenseKeyGroupDaoFactory.getInstance().createInterface();
+          LicenseKeyGroupDaoFactory.getInstance().createInterface();
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
   @Override
   public VersionableEntity heal(VersionableEntity toHeal, String user) {
     return handleMissingVersionId(toHeal, user);
+  }
+
+  @Override
+  public void persistNoHealing(VersionableEntity alreadyHealed) {
+    if (alreadyHealed instanceof EntitlementPoolEntity) {
+      entitlementPoolDao.update((EntitlementPoolEntity) alreadyHealed);
+    } else if (alreadyHealed instanceof LicenseKeyGroupEntity) {
+      licenseKeyGroupDao.update((LicenseKeyGroupEntity) alreadyHealed);
+    }
   }
 
   private VersionableEntity handleMissingVersionId(VersionableEntity toHeal, String user) {
@@ -68,11 +76,10 @@ public class SimpleHealingServiceImpl implements HealingService {
       licenseKeyGroupDao.update((LicenseKeyGroupEntity) toHeal);
     } else {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-          LoggerTragetServiceName.SELF_HEALING, ErrorLevel.ERROR.name(),
-          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.UNSUPPORTED_OPERATION);
+              LoggerTragetServiceName.SELF_HEALING, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.UNSUPPORTED_OPERATION);
       throw new UnsupportedOperationException(
-          "Unsupported operation for 1610 release/1607->1610 migration.");
-      //todo maybe errorbuilder?
+              "Unsupported operation for 1610 release/1607->1610 migration.");
     }
 
     mdcDataDebugMessage.debugExitMessage(null, null);

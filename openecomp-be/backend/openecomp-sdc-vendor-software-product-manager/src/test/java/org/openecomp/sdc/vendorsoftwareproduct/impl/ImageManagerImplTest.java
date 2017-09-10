@@ -37,9 +37,9 @@ import static org.mockito.Mockito.verify;
 public class ImageManagerImplTest {
 
   private static final String IMAGE_NOT_EXIST_MSG =
-      "Vendor Software Product Image with Id image1 does not exist for Vendor Software Product with" +
-          " " +
-          "id VSP_ID and version 0.1";
+          "Vendor Software Product Image with Id image1 does not exist for Vendor Software Product with" +
+                  " " +
+                  "id VSP_ID and version 0.1";
 
   private static final String USER = "imageTestUser";
   private static final String VSP_ID = "VSP_ID";
@@ -66,7 +66,7 @@ public class ImageManagerImplTest {
   @Test
   public void testListWhenNone() {
     final Collection<ImageEntity> imageEntities =
-        imageManager.listImages(VSP_ID, VERSION, COMPONENT_ID, USER);
+            imageManager.listImages(VSP_ID, VERSION, COMPONENT_ID, USER);
     Assert.assertEquals(imageEntities.size(), 0);
   }
 
@@ -74,17 +74,17 @@ public class ImageManagerImplTest {
   public void testList() {
 
     doReturn(Arrays.asList(
-        createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID),
-        createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE2_ID)))
-        .when(imageDao).list(anyObject());
+            createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID),
+            createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE2_ID)))
+            .when(imageDao).list(anyObject());
 
 
     final Collection<ImageEntity> images =
-        imageManager.listImages(VSP_ID, VERSION, COMPONENT_ID, USER);
+            imageManager.listImages(VSP_ID, VERSION, COMPONENT_ID, USER);
     Assert.assertEquals(images.size(), 2);
     for (ImageEntity image : images) {
       Assert.assertEquals(image.getImageCompositionData().getFileName(),
-          IMAGE1_ID.equals(image.getId()) ? IMAGE1_ID+"_name" : IMAGE2_ID+"_name" );
+              IMAGE1_ID.equals(image.getId()) ? IMAGE1_ID+"_name" : IMAGE2_ID+"_name" );
     }
   }
 
@@ -92,7 +92,7 @@ public class ImageManagerImplTest {
   public void testCreateOnNotManualImage_negative() {
 
     testCreate_negative(new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, null), USER,
-        VendorSoftwareProductErrorCodes.ADD_IMAGE_NOT_ALLOWED_IN_HEAT_ONBOARDING);
+            VendorSoftwareProductErrorCodes.ADD_IMAGE_NOT_ALLOWED_IN_HEAT_ONBOARDING);
   }
 
   @Test
@@ -104,7 +104,7 @@ public class ImageManagerImplTest {
     verify(compositionEntityDataManagerMock).createImage(expected);
   }
 
-  @Test
+  /*@Test
   public void testCreateManualImageWithDuplicateName() {
     ImageEntity expected = createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
@@ -124,22 +124,22 @@ public class ImageManagerImplTest {
       Assert.assertEquals(VendorSoftwareProductErrorCodes.DUPLICATE_IMAGE_NAME_NOT_ALLOWED,
           ex.code().id());
     }
-  }
+  }*/
 
   @Test
   public void testUpdateNonExistingImageId_negative() {
     testUpdate_negative(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, USER,
-        VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
+            VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
   }
 
   @Test
   public void testUpdateImage() {
     doReturn(createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID))
-        .when(imageDao).get(anyObject());
+            .when(imageDao).get(anyObject());
 
     doReturn(new CompositionEntityValidationData(CompositionEntityType.image, IMAGE1_ID))
-        .when(compositionEntityDataManagerMock)
-        .validateEntity(anyObject(), anyObject(), anyObject());
+            .when(compositionEntityDataManagerMock)
+            .validateEntity(anyObject(), anyObject(), anyObject());
 
     ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
     Image imageData = new Image();
@@ -148,7 +148,7 @@ public class ImageManagerImplTest {
     imageEntity.setImageCompositionData(imageData);
 
     CompositionEntityValidationData validationData =
-        imageManager.updateImage(imageEntity, USER);
+            imageManager.updateImage(imageEntity, USER);
     Assert.assertTrue(validationData == null || validationData.getErrors() == null);
     verify(imageDao).update(imageEntity);
   }
@@ -156,16 +156,16 @@ public class ImageManagerImplTest {
   @Test
   public void testIllegalImageUpdate() {
     doReturn(createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID))
-        .when(imageDao).get(anyObject());
+            .when(imageDao).get(anyObject());
 
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
 
     CompositionEntityValidationData toBeReturned =
-        new CompositionEntityValidationData(CompositionEntityType.image, IMAGE1_ID);
+            new CompositionEntityValidationData(CompositionEntityType.image, IMAGE1_ID);
     toBeReturned.setErrors(Arrays.asList("error1", "error2"));
     doReturn(toBeReturned)
-        .when(compositionEntityDataManagerMock)
-        .validateEntity(anyObject(), anyObject(), anyObject());
+            .when(compositionEntityDataManagerMock)
+            .validateEntity(anyObject(), anyObject(), anyObject());
 
     ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
     Image imageData = new Image();
@@ -183,7 +183,7 @@ public class ImageManagerImplTest {
   @Test
   public void testUpdateHEATImageFileName() throws Exception {
     doReturn(createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID))
-        .when(imageDao).get(anyObject());
+            .when(imageDao).get(anyObject());
     ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
     Image imageData = new Image();
     imageData.setFileName(IMAGE1_ID + " name updated");
@@ -202,7 +202,7 @@ public class ImageManagerImplTest {
   @Test
   public void testGetNonExistingImageId_negative() {
     testGet_negative(VSP_ID, VERSION, COMPONENT_ID, "non existing image id", USER,
-        VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
+            VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
   }
 
   @Test
@@ -213,12 +213,12 @@ public class ImageManagerImplTest {
     doReturn(compositionSchema).when(imageManager).getImageCompositionSchema(anyObject());
 
     CompositionEntityResponse<Image> response =
-        imageManager.getImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, USER);
+            imageManager.getImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, USER);
     Assert.assertEquals(response.getId(), expected.getId());
     Assert.assertEquals(response.getData().getFileName(), expected.getImageCompositionData().
-        getFileName());
+            getFileName());
     Assert.assertEquals(response.getData().getDescription(), expected.getImageCompositionData().
-        getDescription());
+            getDescription());
     Assert.assertEquals(response.getSchema(), compositionSchema);
   }
 
@@ -227,13 +227,13 @@ public class ImageManagerImplTest {
     ImageEntity expected = createImage(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID);
     doReturn(expected).when(imageDao).get(anyObject());
     testDelete_negative(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, USER,
-        VendorSoftwareProductErrorCodes.DELETE_IMAGE_NOT_ALLOWED);
+            VendorSoftwareProductErrorCodes.DELETE_IMAGE_NOT_ALLOWED);
   }
 
   @Test
   public void testDeleteOnNotExistImage() {
     testDelete_negative(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, USER,
-        VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
+            VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
   }
 
   @Test
@@ -255,7 +255,7 @@ public class ImageManagerImplTest {
     doReturn(schema).when(imageManager).getImageQuestionnaireSchema(anyObject());
 
     QuestionnaireResponse questionnaire =
-        imageManager.getImageQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, USER);
+            imageManager.getImageQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, USER);
     Assert.assertNotNull(questionnaire);
     Assert.assertEquals(questionnaire.getData(), image.getQuestionnaireData());
     Assert.assertEquals(questionnaire.getSchema(), schema);
@@ -334,7 +334,7 @@ public class ImageManagerImplTest {
     String updJson = "{\"format\" :\"a22\"}";
     try {
       imageManager.updateImageQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, updJson,
-          USER);
+              USER);
       Assert.fail();
     }
     catch(CoreException ex) {
@@ -383,7 +383,7 @@ public class ImageManagerImplTest {
   }
 
   private void testUpdate_negative(String vspId, Version version, String componentId, String
-      imageId, String user, String expectedErrorCode) {
+          imageId, String user, String expectedErrorCode) {
     try {
       imageManager.updateImage(new ImageEntity(vspId, version, componentId, imageId), user);
       Assert.fail();

@@ -115,7 +115,7 @@ const UploadErrorList = ({items}) => {
 			{item.list.map((error, i) => <ErrorMessage key={i} warning={error.level === 'WARNING'} error={error.message}/> )}
 		</div>
 	);}
-	
+
 	return (
 		<div>
 			{errors}
@@ -152,10 +152,10 @@ const ErrorHeader = ({errorType, collapsed, onClick}) => {
 const ErrorMessage = ({error, warning}) => {
 	return (
 		<ListGroupItem className='error-code-list-item'>
-			<SVGIcon 
-				name={warning ? 'exclamationTriangleLine' : 'error'} 								
-				color={warning ? 'warning' : 'negative'} />	
-			<span className='icon-label'>{error}</span>			
+			<SVGIcon
+				name={warning ? 'exclamationTriangleLine' : 'error'}
+				color={warning ? 'warning' : 'negative'} />
+			<span className='icon-label'>{error}</span>
 		</ListGroupItem>
 	);
 };

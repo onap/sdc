@@ -32,7 +32,9 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
 
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private VendorLicenseManager vendorLicenseManager =
-      VendorLicenseManagerFactory.getInstance().createInterface();
+          VendorLicenseManagerFactory.getInstance().createInterface();
+
+  public static final String parent = "LicenseKeyGroup";
 
   @Override
   public Response createLimit(LimitRequestDto request,
@@ -48,15 +50,16 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
             (versionId), licenseKeyGroupId), user);
 
     LimitEntity limitEntity =
-        new MapLimitRequestDtoToLimitEntity()
-            .applyMapping(request, LimitEntity.class);
+            new MapLimitRequestDtoToLimitEntity()
+                    .applyMapping(request, LimitEntity.class);
     limitEntity.setEpLkgId(licenseKeyGroupId);
     limitEntity.setVendorLicenseModelId(vlmId);
+    limitEntity.setParent(parent);
 
     LimitEntity createdLimit = vendorLicenseManager.createLimit(limitEntity, user);
     MapLimitEntityToLimitCreationDto mapper = new MapLimitEntityToLimitCreationDto();
     LimitCreationDto createdLimitDto = mapper.applyMapping(createdLimit, LimitCreationDto
-        .class);
+            .class);
     /*StringWrapperResponse result =
         createdLimit != null ? new StringWrapperResponse(createdLimit.getId())
             : null;*/
@@ -65,24 +68,24 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
 
     //return Response.ok(result).build();
     return Response.ok(createdLimitDto != null ? createdLimitDto : null)
-        .build();
+            .build();
   }
 
   @Override
   public Response listLimits(String vlmId, String versionId, String licenseKeyGroupId, String
-      user) {
+          user) {
     mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId, "LKG id", licenseKeyGroupId);
 
     MdcUtil.initMdc(LoggerServiceName.List_EP.toString());
     vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, Version.valueOf
-        (versionId), licenseKeyGroupId), user);
+            (versionId), licenseKeyGroupId), user);
 
     Collection<LimitEntity> limits =
-        vendorLicenseManager.listLimits(vlmId, Version.valueOf(versionId), licenseKeyGroupId, user);
+            vendorLicenseManager.listLimits(vlmId, Version.valueOf(versionId), licenseKeyGroupId, user);
 
     GenericCollectionWrapper<LimitEntityDto> result = new GenericCollectionWrapper<>();
     MapLimitEntityToLimitDto outputMapper =
-        new MapLimitEntityToLimitDto();
+            new MapLimitEntityToLimitDto();
     for (LimitEntity limit : limits) {
       result.add(outputMapper.applyMapping(limit, LimitEntityDto.class));
     }
@@ -100,24 +103,25 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
                               String limitId,
                               String user) {
     mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId, "LKG id", licenseKeyGroupId, "limit Id",
-        limitId);
+            limitId);
 
     MdcUtil.initMdc(LoggerServiceName.Update_LIMIT.toString());
 
     vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, Version.valueOf
-        (versionId), licenseKeyGroupId), user);
+            (versionId), licenseKeyGroupId), user);
 
     LimitEntity limitEntity =
-        new MapLimitRequestDtoToLimitEntity()
-            .applyMapping(request, LimitEntity.class);
+            new MapLimitRequestDtoToLimitEntity()
+                    .applyMapping(request, LimitEntity.class);
     limitEntity.setEpLkgId(licenseKeyGroupId);
     limitEntity.setVendorLicenseModelId(vlmId);
     limitEntity.setId(limitId);
+    limitEntity.setParent(parent);
 
     vendorLicenseManager.updateLimit(limitEntity, user);
 
     mdcDataDebugMessage.debugExitMessage("VLM id", vlmId, "LKG id", licenseKeyGroupId, "limit Id",
-        limitId);
+            limitId);
 
     return Response.ok().build();
   }
@@ -134,20 +138,22 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
   public Response deleteLimit(String vlmId, String versionId, String licenseKeyGroupId,
                               String limitId, String user) {
     mdcDataDebugMessage.debugEntryMessage("VLM id, Verison Id, LKG id, Limit Id", vlmId, versionId,
-        licenseKeyGroupId, limitId);
+            licenseKeyGroupId, limitId);
 
     MdcUtil.initMdc(LoggerServiceName.Delete_LIMIT.toString());
     vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, Version.valueOf
-              (versionId), licenseKeyGroupId), user);
+            (versionId), licenseKeyGroupId), user);
 
     LimitEntity limitInput = new LimitEntity();
     limitInput.setVendorLicenseModelId(vlmId);
     limitInput.setEpLkgId(licenseKeyGroupId);
     limitInput.setId(limitId);
+    limitInput.setParent(parent);
+
     vendorLicenseManager.deleteLimit(limitInput, user);
 
     mdcDataDebugMessage.debugExitMessage("VLM id, Verison Id, LKG id, Limit Id", vlmId, versionId,
-        licenseKeyGroupId, limitId);
+            licenseKeyGroupId, limitId);
 
     return Response.ok().build();
   }
@@ -156,11 +162,11 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
   public Response getLimit( String vlmId, String versionId, String licenseKeyGroupId,
                             String limitId, String user) {
     mdcDataDebugMessage.debugEntryMessage("VLM id, LKG id, Limit Id", vlmId, licenseKeyGroupId,
-        limitId);
+            limitId);
 
     MdcUtil.initMdc(LoggerServiceName.Get_LIMIT.toString());
     vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, Version.valueOf
-        (versionId), licenseKeyGroupId), user);
+            (versionId), licenseKeyGroupId), user);
     LimitEntity epInput = new LimitEntity();
     epInput.setVendorLicenseModelId(vlmId);
     epInput.setVersion(Version.valueOf(versionId));
@@ -169,11 +175,11 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
     LimitEntity limit = vendorLicenseManager.getLimit(epInput, user);
 
     LimitEntityDto entitlementPoolEntityDto = limit == null ? null :
-        new MapLimitEntityToLimitDto()
-            .applyMapping(limit, LimitEntityDto.class);
+            new MapLimitEntityToLimitDto()
+                    .applyMapping(limit, LimitEntityDto.class);
 
     mdcDataDebugMessage.debugExitMessage("VLM id, LKG id, Limit Id", vlmId, licenseKeyGroupId,
-        limitId);
+            limitId);
 
     return Response.ok(entitlementPoolEntityDto).build();
   }

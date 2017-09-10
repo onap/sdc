@@ -61,6 +61,29 @@ topology_template:
         port_pd_server_port_1_mac_requirements:
           mac_count_required:
             is_required: false
+      requirements:
+      - dependency_pd_server_port_1:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - link_pd_server_port_1:
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
+      - dependency_pd_server_port_2:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - link_pd_server_port_2:
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
+      - dependency_server_pd:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - local_storage_server_pd:
+          capability: tosca.capabilities.Attachment
+          node: tosca.nodes.BlockStorage
+          relationship: tosca.relationships.AttachesTo
     test_nested_no_compute:
       type: org.openecomp.resource.abstract.nodes.heat.nested-no-compute
       directives:

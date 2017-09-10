@@ -130,6 +130,29 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
+      requirements:
+      - dependency_server_pd_pattern4:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - local_storage_server_pd_pattern4:
+          capability: tosca.capabilities.Attachment
+          node: tosca.nodes.BlockStorage
+          relationship: tosca.relationships.AttachesTo
+      - dependency_pd_server_pattern4_port_1:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - link_pd_server_pattern4_port_1:
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
+      - dependency_pd_server_pattern4_port_2:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - link_pd_server_pattern4_port_2:
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
     abstract_ps_server_main_1b:
       type: org.openecomp.resource.abstract.nodes.ps_server_main_1b
       directives:

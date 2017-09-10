@@ -154,6 +154,10 @@ topology_template:
           capability: tosca.capabilities.Node
           node: packet_mirror_network
           relationship: tosca.relationships.DependsOn
+      - dependency_server_pd_01_pd_server:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
       - link_pd_server_pd01_port_0:
           capability: tosca.capabilities.network.Linkable
           node: packet_mirror_network

@@ -91,6 +91,29 @@ topology_template:
           get_input:
           - pcm_server_names
           - 0
+      requirements:
+      - dependency_pcm_port_1:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - link_pcm_port_1:
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
+      - dependency_server_pcm:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - local_storage_server_pcm:
+          capability: tosca.capabilities.Attachment
+          node: tosca.nodes.BlockStorage
+          relationship: tosca.relationships.AttachesTo
+      - dependency_pcm_port_0:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - link_pcm_port_0:
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
     server_pcm_001:
       type: org.openecomp.resource.abstract.nodes.heat.pcm_server
       directives:
@@ -128,6 +151,29 @@ topology_template:
           get_input:
           - pcm_server_names
           - 0
+      requirements:
+      - dependency_pcm_port_1:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - link_pcm_port_1:
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
+      - dependency_server_pcm:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - local_storage_server_pcm:
+          capability: tosca.capabilities.Attachment
+          node: tosca.nodes.BlockStorage
+          relationship: tosca.relationships.AttachesTo
+      - dependency_pcm_port_0:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+      - link_pcm_port_0:
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
     compute_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:

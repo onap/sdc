@@ -1,32 +1,70 @@
 package org.openecomp.sdc.vendorsoftwareproduct;
 
-import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.core.utilities.json.JsonUtil;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.errors.ImageErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.errors.NotSupportedHeatOnboardMethodErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
-import org.openecomp.sdc.vendorsoftwareproduct.impl.VendorSoftwareProductManagerImpl;
-import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Image;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.image.ImageDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.ImageManagerImpl;
+import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.Collection;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 public class ImagesTest {
 
+    private static String VSP_ID = "VSP_ID";
+    private static String COMP_ID = "COMP_ID";
+    private static String ID = "ID";
+    private static String USER = "USER";
+    public static final Version VERSION01 = new Version(0, 1);
+
+    @Mock
+    private VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao;
+
+    @Mock
+    private CompositionEntityDataManager compositionEntityDataManager;
+
+    @InjectMocks
+    @Spy
+    private ImageManagerImpl imageManager;
+
+    @BeforeMethod
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void createImage()
+    {
+        ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION01, COMP_ID, ID);
+        doReturn(true).when(vendorSoftwareProductInfoDao).isManual(anyObject(), anyObject());
+
+        imageManager.createImage(imageEntity, USER);
+        verify(compositionEntityDataManager).createImage(imageEntity);
+    }
+
+    @Test
+    public void createImageHeat()
+    {
+        ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION01, COMP_ID, ID);
+        doReturn(false).when(vendorSoftwareProductInfoDao).isManual(anyObject(), anyObject());
+
+        try {
+            imageManager.createImage(imageEntity, USER);
+            Assert.fail();
+        } catch (CoreException exception) {
+            Assert.assertEquals(exception.code().id(), VendorSoftwareProductErrorCodes.ADD_IMAGE_NOT_ALLOWED_IN_HEAT_ONBOARDING);
+        }
+    }
   /*private static final String USER1 = "imageTestUser1";
   private static final String USER2 = "imageTestUser2";
   private static final Version VERSION01 = new Version(0, 1);

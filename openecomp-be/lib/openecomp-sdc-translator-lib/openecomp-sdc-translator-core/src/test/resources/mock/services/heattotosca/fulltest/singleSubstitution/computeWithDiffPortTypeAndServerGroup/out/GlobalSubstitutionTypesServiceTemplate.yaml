@@ -5,6 +5,103 @@ imports:
 - openecomp_heat_index:
     file: openecomp-heat/_index.yml
 node_types:
+  org.openecomp.resource.vfc.nodes.heat.smp:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    properties:
+      port_port_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_port_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      compute_smp_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_port_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      index_value:
+        type: integer
+        description: Index value of this substitution service template runtime instance
+        required: false
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      compute_smp_availability_zone:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_port_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      compute_smp_user_data_format:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_port_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      vm_image_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      compute_smp_metadata:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_port_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      port_port_replacement_policy:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_port_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      compute_smp_scheduler_hints:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
   org.openecomp.resource.abstract.nodes.smp:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:

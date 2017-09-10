@@ -2,7 +2,7 @@
   "name": "dox-ui",
   "version": "1.0.0",
   "description": "",
-  "author": "OPENECOMP",
+  "author": "ECOMP",
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "start": "gulp dev && webpack-dev-server --progress",
@@ -21,13 +21,12 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "core-js": "^2.4.0",
-    "d3": "^4.10.0",
+    "d3": "^3.5.16",
     "dox-sequence-diagram-ui": "file:../dox-sequence-diagram-ui",
     "intl": "^1.0.1",
     "intl-format-cache": "^2.0.5",
     "intl-messageformat": "^1.2.0",
     "intl-relativeformat": "^1.2.0",
-    "jquery": "^2.1.4",
     "lodash": "^4.13.1",
     "md5": "^2.1.0",
     "randomstring": "^1.1.5",

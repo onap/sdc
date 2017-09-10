@@ -32,7 +32,9 @@ import javax.ws.rs.core.Response;
 public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private VendorLicenseManager vendorLicenseManager =
-      VendorLicenseManagerFactory.getInstance().createInterface();
+          VendorLicenseManagerFactory.getInstance().createInterface();
+
+  public static final String parent = "EntitlementPool";
 
   @Override
   public Response createLimit(LimitRequestDto request,
@@ -44,18 +46,19 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
 
     MdcUtil.initMdc(LoggerServiceName.Create_LIMIT.toString());
     vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, Version.valueOf
-        (versionId), entitlementPoolId), user);
+            (versionId), entitlementPoolId), user);
 
     LimitEntity limitEntity =
-        new MapLimitRequestDtoToLimitEntity()
-            .applyMapping(request, LimitEntity.class);
+            new MapLimitRequestDtoToLimitEntity()
+                    .applyMapping(request, LimitEntity.class);
     limitEntity.setEpLkgId(entitlementPoolId);
     limitEntity.setVendorLicenseModelId(vlmId);
+    limitEntity.setParent(parent);
 
     LimitEntity createdLimit = vendorLicenseManager.createLimit(limitEntity, user);
     MapLimitEntityToLimitCreationDto mapper = new MapLimitEntityToLimitCreationDto();
     LimitCreationDto createdLimitDto = mapper.applyMapping(createdLimit, LimitCreationDto
-        .class);
+            .class);
 
     /*StringWrapperResponse result =
         createdLimit != null ? new StringWrapperResponse(createdLimit.getId())
@@ -65,24 +68,24 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
 
     //return Response.ok(result).build();
     return Response.ok(createdLimitDto != null ? createdLimitDto : null)
-        .build();
+            .build();
   }
 
   @Override
   public Response listLimits(String vlmId, String versionId, String entitlementPoolId, String
-      user) {
+          user) {
     mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId, "EP id", entitlementPoolId);
 
     MdcUtil.initMdc(LoggerServiceName.List_EP.toString());
     vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, Version.valueOf
-        (versionId), entitlementPoolId), user);
+            (versionId), entitlementPoolId), user);
 
     Collection<LimitEntity> limits =
-        vendorLicenseManager.listLimits(vlmId, Version.valueOf(versionId), entitlementPoolId, user);
+            vendorLicenseManager.listLimits(vlmId, Version.valueOf(versionId), entitlementPoolId, user);
 
     GenericCollectionWrapper<LimitEntityDto> result = new GenericCollectionWrapper<>();
     MapLimitEntityToLimitDto outputMapper =
-        new MapLimitEntityToLimitDto();
+            new MapLimitEntityToLimitDto();
     for (LimitEntity limit : limits) {
       result.add(outputMapper.applyMapping(limit, LimitEntityDto.class));
     }
@@ -96,12 +99,12 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
   public Response getLimit( String vlmId, String versionId, String entitlementPoolId,
                             String limitId, String user) {
     mdcDataDebugMessage.debugEntryMessage("VLM id, EP id, Limit Id", vlmId, entitlementPoolId,
-        limitId);
+            limitId);
 
     MdcUtil.initMdc(LoggerServiceName.Get_LIMIT.toString());
 
     vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, Version.valueOf
-        (versionId), entitlementPoolId), user);
+            (versionId), entitlementPoolId), user);
     LimitEntity epInput = new LimitEntity();
     epInput.setVendorLicenseModelId(vlmId);
     epInput.setVersion(Version.valueOf(versionId));
@@ -110,11 +113,11 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     LimitEntity limit = vendorLicenseManager.getLimit(epInput, user);
 
     LimitEntityDto entitlementPoolEntityDto = limit == null ? null :
-        new MapLimitEntityToLimitDto()
-            .applyMapping(limit, LimitEntityDto.class);
+            new MapLimitEntityToLimitDto()
+                    .applyMapping(limit, LimitEntityDto.class);
 
     mdcDataDebugMessage.debugExitMessage("VLM id, EP id, Limit Id", vlmId, entitlementPoolId,
-        limitId);
+            limitId);
 
     return Response.ok(entitlementPoolEntityDto).build();
   }
@@ -127,39 +130,40 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
                               String limitId,
                               String user) {
     mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId, "EP id", entitlementPoolId, "limit Id",
-        limitId);
+            limitId);
 
     MdcUtil.initMdc(LoggerServiceName.Update_LIMIT.toString());
 
     vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, Version.valueOf
-        (versionId), entitlementPoolId), user);
+            (versionId), entitlementPoolId), user);
 
     LimitEntity limitEntity =
-        new MapLimitRequestDtoToLimitEntity()
-            .applyMapping(request, LimitEntity.class);
+            new MapLimitRequestDtoToLimitEntity()
+                    .applyMapping(request, LimitEntity.class);
     limitEntity.setEpLkgId(entitlementPoolId);
     limitEntity.setVendorLicenseModelId(vlmId);
     limitEntity.setId(limitId);
+    limitEntity.setParent(parent);
 
     vendorLicenseManager.updateLimit(limitEntity, user);
 
     mdcDataDebugMessage.debugExitMessage("VLM id", vlmId, "EP id", entitlementPoolId, "limit Id",
-        limitId);
+            limitId);
 
     return Response.ok().build();
   }
 
   /**
-     * Delete entitlement pool.
-     *
-     * @param vlmId               the vlm id
-     * @param entitlementPoolId   the entitlement pool id
-     * @param limitId             the limitId
-     * @param user                the user
-     * @return the response
+   * Delete entitlement pool.
+   *
+   * @param vlmId               the vlm id
+   * @param entitlementPoolId   the entitlement pool id
+   * @param limitId             the limitId
+   * @param user                the user
+   * @return the response
    */
   public Response deleteLimit(String vlmId, String versionId, String entitlementPoolId,
-                               String limitId, String user) {
+                              String limitId, String user) {
     mdcDataDebugMessage.debugEntryMessage("VLM id, Verison Id, EP id, Limit Id", vlmId, versionId, entitlementPoolId, limitId);
 
     MdcUtil.initMdc(LoggerServiceName.Delete_LIMIT.toString());
@@ -170,6 +174,8 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     limitInput.setVendorLicenseModelId(vlmId);
     limitInput.setEpLkgId(entitlementPoolId);
     limitInput.setId(limitId);
+    limitInput.setParent(parent);
+
     vendorLicenseManager.deleteLimit(limitInput, user);
 
     mdcDataDebugMessage.debugExitMessage("VLM id, Verison Id, EP id, Limit Id", vlmId, versionId, entitlementPoolId, limitId);

@@ -169,10 +169,10 @@ public class VendorSoftwareProductManagerImplTest {
   @Test
   public void testListWhenNone() {
     doReturn(new HashMap<>()).when(versioningManagerMock).listEntitiesVersionInfo
-        (VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, USER1,
-            VersionableEntityAction.Read);
+            (VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, USER1,
+                    VersionableEntityAction.Read);
     List<VersionedVendorSoftwareProductInfo> vsps =
-        vendorSoftwareProductManager.listVsps(null, USER1);
+            vendorSoftwareProductManager.listVsps(null, USER1);
     Assert.assertEquals(vsps.size(), 0);
   }
 
@@ -191,16 +191,16 @@ public class VendorSoftwareProductManagerImplTest {
     vspsTobeReturned.put(vsp2id, versionInfo2);
 
     doReturn(vspsTobeReturned).when(versioningManagerMock).listEntitiesVersionInfo
-        (VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, USER1,
-            VersionableEntityAction.Read);
+            (VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, USER1,
+                    VersionableEntityAction.Read);
 
     VspDetails vsp1 = new VspDetails(vsp1id, VERSION01);
     vsp1.setWritetimeMicroSeconds(8L);
     doReturn(vsp1).when(vspInfoDaoMock)
-        .get(any(VspDetails.class));
+            .get(any(VspDetails.class));
 
     List<VersionedVendorSoftwareProductInfo> vsps =
-        vendorSoftwareProductManager.listVsps(null, USER1);
+            vendorSoftwareProductManager.listVsps(null, USER1);
     Assert.assertEquals(vsps.size(), 2);
   }
 
@@ -219,11 +219,11 @@ public class VendorSoftwareProductManagerImplTest {
     vspsTobeReturned.put(vsp2id, versionInfo2);
 
     doReturn(vspsTobeReturned).when(versioningManagerMock).listEntitiesVersionInfo
-        (VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, USER1,
-            VersionableEntityAction.Read);
+            (VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, USER1,
+                    VersionableEntityAction.Read);
 
     List<VersionedVendorSoftwareProductInfo> vsps =
-        vendorSoftwareProductManager.listVsps(VersionStatus.Final.name(), USER1);
+            vendorSoftwareProductManager.listVsps(VersionStatus.Final.name(), USER1);
     Assert.assertEquals(vsps.size(), 0);
   }
 
@@ -243,27 +243,27 @@ public class VendorSoftwareProductManagerImplTest {
     vspsTobeReturned.put(vsp2id, versionInfo2);
 
     doReturn(vspsTobeReturned).when(versioningManagerMock).listEntitiesVersionInfo
-        (VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, USER1,
-            VersionableEntityAction.Read);
+            (VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, USER1,
+                    VersionableEntityAction.Read);
 
     VspDetails vsp2 = new VspDetails(vsp2id, VERSION10);
     vsp2.setWritetimeMicroSeconds(8L);
     doReturn(vsp2).when(vspInfoDaoMock)
-        .get(any(VspDetails.class));
+            .get(any(VspDetails.class));
 
     List<VersionedVendorSoftwareProductInfo> vsps =
-        vendorSoftwareProductManager.listVsps(VersionStatus.Final.name(), USER1);
+            vendorSoftwareProductManager.listVsps(VersionStatus.Final.name(), USER1);
     Assert.assertEquals(vsps.size(), 1);
   }
 
   @Test(expectedExceptions = CoreException.class)
   public void testCreateWithExistingName_negative() {
     doThrow(new CoreException(
-        new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).build()))
-        .when(vendorSoftwareProductManager).validateUniqueName("Vsp1");
+            new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).build()))
+            .when(vendorSoftwareProductManager).validateUniqueName("Vsp1");
     VspDetails expectedVsp =
-        createVspDetails(null, null, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
-            "category", "subCategory", "123", null);
+            createVspDetails(null, null, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
+                    "category", "subCategory", "123", null);
 
     vendorSoftwareProductManager.createVsp(expectedVsp, USER1);
   }
@@ -274,11 +274,11 @@ public class VendorSoftwareProductManagerImplTest {
     doNothing().when(vendorSoftwareProductManager).createUniqueName("Vsp1");
     doReturn(VERSION01).when(versioningManagerMock).create(anyObject(), anyObject(), anyObject());
     doReturn("{}")
-        .when(vendorSoftwareProductManager).getVspQuestionnaireSchema(anyObject());
+            .when(vendorSoftwareProductManager).getVspQuestionnaireSchema(anyObject());
 
     VspDetails vspToCreate =
-        createVspDetails(null, null, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
-            "category", "subCategory", "123", null);
+            createVspDetails(null, null, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
+                    "category", "subCategory", "123", null);
 
     VspDetails vsp = vendorSoftwareProductManager.createVsp(vspToCreate, USER1);
 
@@ -297,21 +297,21 @@ public class VendorSoftwareProductManagerImplTest {
     VersionInfo versionInfo = new VersionInfo();
     versionInfo.setActiveVersion(VERSION01);
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        VersionableEntityAction.Write);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+            VersionableEntityAction.Write);
 
     VspDetails existingVsp =
-        createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-existingVsp", "vendorName", "vlm1Id",
-            "icon", "category", "subCategory", "123", null);
+            createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-existingVsp", "vendorName", "vlm1Id",
+                    "icon", "category", "subCategory", "123", null);
     VspDetails updatedVsp =
-        createVspDetails(VSP_ID, VERSION01, "Vsp1_updated", "Test-existingVsp", "vendorName",
-            "vlm1Id", "icon", "category", "subCategory", "123", null);
+            createVspDetails(VSP_ID, VERSION01, "Vsp1_updated", "Test-existingVsp", "vendorName",
+                    "vlm1Id", "icon", "category", "subCategory", "123", null);
     doReturn(existingVsp).when(vspInfoDaoMock)
-        .get(any(VspDetails.class));
+            .get(any(VspDetails.class));
     doThrow(new CoreException(
-        new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).build()))
-        .when(vendorSoftwareProductManager)
-        .updateUniqueName(existingVsp.getName(), updatedVsp.getName());
+            new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).build()))
+            .when(vendorSoftwareProductManager)
+            .updateUniqueName(existingVsp.getName(), updatedVsp.getName());
 
     vendorSoftwareProductManager.updateVsp(updatedVsp, USER1);
   }
@@ -321,21 +321,21 @@ public class VendorSoftwareProductManagerImplTest {
     VersionInfo versionInfo = new VersionInfo();
     versionInfo.setActiveVersion(VERSION01);
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        VersionableEntityAction.Write);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+            VersionableEntityAction.Write);
     VspDetails existingVsp =
-        createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
-            "category",
-            "subCategory", "456", null);
+            createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
+                    "category",
+                    "subCategory", "456", null);
     VspDetails updatedVsp =
-        createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
-            "category_updated",
-            "subCategory", "456", null);
+            createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
+                    "category_updated",
+                    "subCategory", "456", null);
     existingVsp.setWritetimeMicroSeconds(8L);
     doReturn(existingVsp).when(vspInfoDaoMock)
-        .get(any(VspDetails.class));
+            .get(any(VspDetails.class));
     doNothing().when(vendorSoftwareProductManager)
-        .updateUniqueName(existingVsp.getName(), updatedVsp.getName());
+            .updateUniqueName(existingVsp.getName(), updatedVsp.getName());
 
     vendorSoftwareProductManager.updateVsp(updatedVsp, USER1);
 
@@ -347,26 +347,26 @@ public class VendorSoftwareProductManagerImplTest {
     VersionInfo versionInfo = new VersionInfo();
     versionInfo.setActiveVersion(VERSION01);
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        VersionableEntityAction.Write);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+            VersionableEntityAction.Write);
     List<String> fgs = new ArrayList<String>();
     fgs.add("fg1"); fgs.add("fg2");
     VspDetails existingVsp =
-        createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
-            "category",
-            "subCategory", "456", fgs);
+            createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
+                    "category",
+                    "subCategory", "456", fgs);
 
     List<String> updFgs = new ArrayList<String>();
-    updFgs.add("fg2");
+    //updFgs.add("fg2");
     VspDetails updatedVsp =
-        createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
-            "category_updated",
-            "subCategory", "456", updFgs);
+            createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
+                    "category_updated",
+                    "subCategory", "456", updFgs);
     existingVsp.setWritetimeMicroSeconds(8L);
     doReturn(existingVsp).when(vspInfoDaoMock)
-        .get(any(VspDetails.class));
+            .get(any(VspDetails.class));
     doNothing().when(vendorSoftwareProductManager)
-        .updateUniqueName(existingVsp.getName(), updatedVsp.getName());
+            .updateUniqueName(existingVsp.getName(), updatedVsp.getName());
 
     DeploymentFlavorEntity dfEntity = new DeploymentFlavorEntity(VSP_ID,VERSION01,"DF_ID");
     DeploymentFlavor flavor = new DeploymentFlavor();
@@ -400,18 +400,18 @@ public class VendorSoftwareProductManagerImplTest {
     versionInfo.setStatus(VersionStatus.Locked);
     versionInfo.setLockingUser(USER1);
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        VersionableEntityAction.Read);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+            VersionableEntityAction.Read);
 
     VspDetails existingVsp =
-        createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
-            "category",
-            "subCategory", "456", null);
+            createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
+                    "category",
+                    "subCategory", "456", null);
     existingVsp.setWritetimeMicroSeconds(8L);
     doReturn(existingVsp).when(vspInfoDaoMock).get(any(VspDetails.class));
 
     VspDetails actualVsp =
-        vendorSoftwareProductManager.getVsp(VSP_ID, VERSION01, USER1);
+            vendorSoftwareProductManager.getVsp(VSP_ID, VERSION01, USER1);
 
     assertVspsEquals(actualVsp, existingVsp);
   }
@@ -424,37 +424,37 @@ public class VendorSoftwareProductManagerImplTest {
     versionInfo.setStatus(VersionStatus.Locked);
     versionInfo.setLockingUser(USER2);
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        VersionableEntityAction.Read);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+            VersionableEntityAction.Read);
 
     VspDetails existingVsp =
-        createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
-            "category",
-            "subCategory", "456", null);
+            createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
+                    "category",
+                    "subCategory", "456", null);
     existingVsp.setWritetimeMicroSeconds(8L);
     doReturn(existingVsp)
-        .when(vspInfoDaoMock).get(any(VspDetails.class));
+            .when(vspInfoDaoMock).get(any(VspDetails.class));
 
     VspDetails actualVsp =
-        vendorSoftwareProductManager.getVsp(VSP_ID, VERSION01, USER1);
+            vendorSoftwareProductManager.getVsp(VSP_ID, VERSION01, USER1);
 
     VspDetails expectedVsp =
-        vspInfoDaoMock
-            .get(new VspDetails(VSP_ID, VERSION01));
+            vspInfoDaoMock
+                    .get(new VspDetails(VSP_ID, VERSION01));
     assertVspsEquals(actualVsp, expectedVsp);
   }
 
   @Test
   public void testCheckin() {
     doReturn(VERSION01).when(versioningManagerMock)
-        .checkin(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
-            USER1, null);
+            .checkin(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
+                    USER1, null);
     Version version = vendorSoftwareProductManager.checkin(VSP_ID, USER1);
 
     Assert.assertEquals(version, VERSION01);
     verify(versioningManagerMock)
-        .checkin(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
-            USER1, null);
+            .checkin(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
+                    USER1, null);
     verify(activityLogManagerMock).addActionLog(activityLogEntityArg.capture(), eq(USER1));
     ActivityLogEntity activityLogEntity = activityLogEntityArg.getValue();
     Assert.assertEquals(activityLogEntity.getVersionId(), String.valueOf(VERSION01.getMajor() + 1));
@@ -464,14 +464,14 @@ public class VendorSoftwareProductManagerImplTest {
   @Test
   public void testCheckout() {
     doReturn(VERSION01).when(versioningManagerMock)
-        .checkout(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
-            USER1);
+            .checkout(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
+                    USER1);
     Version version = vendorSoftwareProductManager.checkout(VSP_ID, USER1);
 
     Assert.assertEquals(version, VERSION01);
     verify(versioningManagerMock)
-        .checkout(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
-            USER1);
+            .checkout(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
+                    USER1);
 
     verify(activityLogManagerMock).addActionLog(activityLogEntityArg.capture(), eq(USER1));
     ActivityLogEntity activityLogEntity = activityLogEntityArg.getValue();
@@ -486,11 +486,11 @@ public class VendorSoftwareProductManagerImplTest {
     VersionInfo versionInfo = new VersionInfo();
     versionInfo.setActiveVersion(existingVersion);
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
-        VSP_ID, USER1, VersionableEntityAction.Read);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
+            VSP_ID, USER1, VersionableEntityAction.Read);
 
     doReturn(VERSION01).when(versioningManagerMock).undoCheckout(VendorSoftwareProductConstants
-        .VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1);
+            .VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1);
 
     VspDetails vsp = new VspDetails(VSP_ID, existingVersion);
     vsp.setName("ExistingName");
@@ -552,22 +552,22 @@ public class VendorSoftwareProductManagerImplTest {
     VersionInfo versionInfo = new VersionInfo();
     versionInfo.setActiveVersion(VERSION01);
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
-        VSP_ID, USER1, VersionableEntityAction.Read);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
+            VSP_ID, USER1, VersionableEntityAction.Read);
 
     VspDetails vsp =
-        createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
-            "category", "subCategory", "licenseAgreementId",
-            Collections.singletonList("featureGroupId"));
+            createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
+                    "category", "subCategory", "licenseAgreementId",
+                    Collections.singletonList("featureGroupId"));
     doReturn(vsp).when(vspInfoDaoMock).get(anyObject());
     UploadDataEntity uploadData = new UploadDataEntity(VSP_ID, VERSION01);
     uploadData.setContentData(
-        ByteBuffer.wrap(FileUtils.toByteArray(getFileInputStream("/emptyComposition"))));
+            ByteBuffer.wrap(FileUtils.toByteArray(getFileInputStream("/emptyComposition"))));
     doReturn(uploadData).when(orchestrationTemplateDataDaoMock)
-        .getOrchestrationTemplate(anyObject(), anyObject());
+            .getOrchestrationTemplate(anyObject(), anyObject());
     doReturn(new ToscaServiceModel(new FileContentHandler(), new HashMap<>(),
-        "MainServiceTemplate.yaml"))
-        .when(serviceModelDaoMock).getServiceModel(VSP_ID, VERSION01);
+            "MainServiceTemplate.yaml"))
+            .when(serviceModelDaoMock).getServiceModel(VSP_ID, VERSION01);
 
     ValidationResponse validationResponse = vendorSoftwareProductManager.submit(VSP_ID, USER1);
     Assert.assertNotNull(validationResponse);
@@ -576,8 +576,8 @@ public class VendorSoftwareProductManagerImplTest {
     Assert.assertEquals(validationResponse.getLicensingDataErrors(), 1);
 
     verify(versioningManagerMock, never())
-        .submit(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
-            USER1, null);
+            .submit(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
+                    USER1, null);
 
     //TODO - check..
     verify(activityLogManagerMock, never()).addActionLog(any(ActivityLogEntity.class), eq(USER1));
@@ -590,20 +590,20 @@ public class VendorSoftwareProductManagerImplTest {
 
     EnrichmentManagerFactory.getInstance();
     AbstractFactoryBase
-        .registerFactory(EnrichmentManagerFactory.class, EnrichmentManagerFactoryImpl.class);
+            .registerFactory(EnrichmentManagerFactory.class, EnrichmentManagerFactoryImpl.class);
 
     VspDetails vsp =
-        createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
-            "category", "subCategory", "123", Collections.singletonList("fg1"));
+            createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
+                    "category", "subCategory", "123", Collections.singletonList("fg1"));
     doReturn(vsp).when(vspInfoDaoMock).get(anyObject());
     UploadDataEntity uploadData = new UploadDataEntity(VSP_ID, VERSION01);
     uploadData.setContentData(
-        ByteBuffer.wrap(FileUtils.toByteArray(getFileInputStream("/emptyComposition"))));
+            ByteBuffer.wrap(FileUtils.toByteArray(getFileInputStream("/emptyComposition"))));
     doReturn(uploadData).when(orchestrationTemplateDataDaoMock)
-        .getOrchestrationTemplate(anyObject(), anyObject());
+            .getOrchestrationTemplate(anyObject(), anyObject());
     doReturn(new ToscaServiceModel(new FileContentHandler(), new HashMap<>(),
-        "MainServiceTemplate.yaml"))
-        .when(serviceModelDaoMock).getServiceModel(VSP_ID, VERSION01);
+            "MainServiceTemplate.yaml"))
+            .when(serviceModelDaoMock).getServiceModel(VSP_ID, VERSION01);
 
     ValidationResponse validationResponse = vendorSoftwareProductManager.submit(VSP_ID, USER1);
     Assert.assertTrue(validationResponse.isValid());
@@ -613,8 +613,8 @@ public class VendorSoftwareProductManagerImplTest {
     Assert.assertNull(vsp2.getVersionInfo().getLockingUser());*/
 
     verify(versioningManagerMock)
-        .submit(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
-            USER1, null);
+            .submit(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
+                    USER1, null);
     verify(activityLogManagerMock).addActionLog(activityLogEntityArg.capture(), eq(USER1));
     ActivityLogEntity activityLogEntity = activityLogEntityArg.getValue();
     Assert.assertEquals(activityLogEntity.getVersionId(), String.valueOf(VERSION10.getMajor()));
@@ -633,11 +633,11 @@ public class VendorSoftwareProductManagerImplTest {
     VersionInfo versionInfo = new VersionInfo();
     versionInfo.setActiveVersion(VERSION10);
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        VersionableEntityAction.Read);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+            VersionableEntityAction.Read);
 
     doReturn(new ToscaServiceModel(new FileContentHandler(), new HashMap<>(), "")).when
-        (enrichedServiceModelDaoMock).getServiceModel(VSP_ID, VERSION10);
+            (enrichedServiceModelDaoMock).getServiceModel(VSP_ID, VERSION10);
 
     VspDetails vsp = new VspDetails(VSP_ID, VERSION10);
     vsp.setVendorId("vendorId");
@@ -646,8 +646,8 @@ public class VendorSoftwareProductManagerImplTest {
     doReturn(vsp).when(vspInfoDaoMock).get(any(VspDetails.class));
 
     doReturn(new FileContentHandler()).when(licenseArtifactsServiceMock)
-        .createLicenseArtifacts(VSP_ID, vsp.getVendorId(), VERSION10, vsp.getFeatureGroups(),
-            USER1);
+            .createLicenseArtifacts(VSP_ID, vsp.getVendorId(), VERSION10, vsp.getFeatureGroups(),
+                    USER1);
 
     PackageInfo packageInfo = vendorSoftwareProductManager.createPackage(VSP_ID, VERSION10, USER1);
     Assert.assertNotNull(packageInfo.getVspId());
@@ -659,7 +659,7 @@ public class VendorSoftwareProductManagerImplTest {
     InputStream zis = getFileInputStream("/vspmanager/zips/missingYml.zip");
 
     UploadFileResponse uploadFileResponse =
-        candidateManager.upload(VSP_ID, VERSION01, zis, USER1);
+            candidateManager.upload(VSP_ID, VERSION01, zis, USER1);
 
     Assert.assertEquals(uploadFileResponse.getErrors().size(), 0);
   }
@@ -671,8 +671,8 @@ public class VendorSoftwareProductManagerImplTest {
 
     try {
       candidateManager
-          .upload(VSP_ID, VERSION01,
-              url.openStream(), USER1);
+              .upload(VSP_ID, VERSION01,
+                      url.openStream(), USER1);
       candidateManager.process(VSP_ID, VERSION01, USER1);
     } catch (Exception ce) {
       Assert.assertEquals(ce.getMessage(), Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage());
@@ -783,15 +783,15 @@ public class VendorSoftwareProductManagerImplTest {
   }*/
 
   private List<String> getWantedFileNamesFromCsar(String pathInCsar)
-      throws IOException {
+          throws IOException {
     File translatedFile = vendorSoftwareProductManager.getTranslatedFile(VSP_ID, VERSION10, USER1);
 
     return getFileNamesFromFolderInCsar(translatedFile,
-        pathInCsar);
+            pathInCsar);
   }
 
   private List<String> getFileNamesFromFolderInCsar(File csar, String folderName)
-      throws IOException {
+          throws IOException {
     List<String> fileNames = new ArrayList<>();
 
     ZipInputStream zip = new ZipInputStream(new FileInputStream(csar));
@@ -823,7 +823,7 @@ public class VendorSoftwareProductManagerImplTest {
   }*/
 
   private void createPackageFromUpload(String vspId, String user, String filePath)
-      throws IOException {
+          throws IOException {
     uploadFileAndProcess(vspId, user, filePath);
     checkinSubmitCreatePackage(vspId, user);
   }
@@ -892,7 +892,7 @@ public class VendorSoftwareProductManagerImplTest {
     candidateManager.process(vspId, VERSION01, user);
 
     UploadDataEntity uploadData =
-        orchestrationTemplateDataDaoMock.getOrchestrationTemplate(vspId, version);
+            orchestrationTemplateDataDaoMock.getOrchestrationTemplate(vspId, version);
     Assert.assertNotNull(uploadData);
   }
 
@@ -914,7 +914,7 @@ public class VendorSoftwareProductManagerImplTest {
 
   private void assertVSPInWantedLocationInVSPList(String vspId, int location, String user) {
     List<VersionedVendorSoftwareProductInfo> vspList =
-        vendorSoftwareProductManager.listVsps(null, user);
+            vendorSoftwareProductManager.listVsps(null, user);
     Assert.assertEquals(vspList.get(location).getVspDetails().getId(), vspId);
   }
 
@@ -1013,24 +1013,24 @@ public class VendorSoftwareProductManagerImplTest {
     VersionInfo versionInfo = new VersionInfo();
     versionInfo.setActiveVersion(VERSION01);
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        action);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+            action);
   }
 
   private void mockVersioningEntityNotExist(VersionableEntityAction action, String vspId) {
     doThrow(new CoreException(new EntityNotExistErrorBuilder(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, vspId).build()))
-        .when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, vspId, USER1,
-        action);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, vspId).build()))
+            .when(versioningManagerMock).getEntityVersionInfo(
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, vspId, USER1,
+            action);
   }
 
   private void MockVersioningEntityLocked(VersionableEntityAction action) {
     doThrow(new CoreException(new EditOnEntityLockedByOtherErrorBuilder(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1)
-        .build()))
-        .when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER2,
-        action);
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1)
+            .build()))
+            .when(versioningManagerMock).getEntityVersionInfo(
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER2,
+            action);
   }
 }
