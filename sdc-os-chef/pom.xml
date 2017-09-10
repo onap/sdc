@@ -38,6 +38,16 @@
 										<include>**/default.rb</include>
 									</includes>
 								</fileset>
+								<!-- static configuration files -->
+								<fileset>	
+          							<directory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</directory>
+          							<includes>
+										<include>Artifact-Generator.properties</include>
+										<include>error-configuration.yaml</include>
+										<include>ecomp-error-configuration.yaml</include>
+										<include>logback.xml</include>
+									</includes>
+          						</fileset>
 							</filesets>
 						</configuration>
 					</execution>
@@ -109,6 +119,29 @@
 									</resources>
 								</configuration>
 							</execution>
+							
+							<execution>
+								<id>copy-static-configuration-files</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+								<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</outputDirectory>
+								<resources>
+									<resource>
+										<directory>${project.parent.basedir}/catalog-be/src/main/resources/config</directory>
+										<includes>
+											<include>Artifact-Generator.properties</include>
+											<include>error-configuration.yaml</include>
+											<include>ecomp-error-configuration.yaml</include>
+											<include>logback.xml</include>
+										</includes>
+									</resource>
+								</resources>
+								</configuration>
+							</execution>
+							
 							<execution>
 								<id>copy-resources-be</id>
 								<phase>validate</phase>
