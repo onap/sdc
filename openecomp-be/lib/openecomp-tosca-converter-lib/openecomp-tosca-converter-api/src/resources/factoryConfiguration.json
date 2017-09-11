@@ -1,0 +1,3 @@
+{
+  "org.openecomp.core.converter.factory.ToscaConverterFactory" : "org.openecomp.core.impl.factory.ToscaConverterFactoryImpl"
+}

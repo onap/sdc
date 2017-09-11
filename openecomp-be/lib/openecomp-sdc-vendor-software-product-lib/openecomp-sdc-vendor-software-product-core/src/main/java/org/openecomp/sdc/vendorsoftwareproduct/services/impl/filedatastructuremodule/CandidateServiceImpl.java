@@ -23,6 +23,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructurem
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -89,17 +90,17 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public Optional<ErrorMessage> validateNonEmptyFileToUpload(InputStream heatFileToUpload) {
+    public Optional<ErrorMessage> validateNonEmptyFileToUpload(InputStream fileToUpload) {
 
 
         mdcDataDebugMessage.debugEntryMessage(null);
 
-        if (Objects.isNull(heatFileToUpload)) {
+        if (Objects.isNull(fileToUpload)) {
             return Optional.of(new ErrorMessage(ErrorLevel.ERROR,
                 Messages.NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST.getErrorMessage()));
         } else {
             try {
-                int available = heatFileToUpload.available();
+                int available = fileToUpload.available();
                 if (available == 0) {
                     mdcDataDebugMessage.debugExitMessage(null);
                     return Optional.of(new ErrorMessage(ErrorLevel.ERROR,
@@ -321,10 +322,7 @@ public class CandidateServiceImpl implements CandidateService {
     public void updateCandidateUploadData(OrchestrationTemplateCandidateData uploadData,
                                           String itemId) {
         mdcDataDebugMessage.debugEntryMessage(null);
-
-        //vendorSoftwareProductDao.updateCandidateUploadData(uploadData);
         orchestrationTemplateCandidateDataDao.update(itemId, uploadData);
-
         mdcDataDebugMessage.debugExitMessage(null);
     }
 
@@ -393,11 +391,12 @@ public class CandidateServiceImpl implements CandidateService {
     public Optional<ByteArrayInputStream> fetchZipFileByteArrayInputStream(String vspId,
                                                                            OrchestrationTemplateCandidateData candidateDataEntity,
                                                                            String manifest,
+                                                                           OnboardingTypesEnum type,
                                                                            Map<String, List<ErrorMessage>> uploadErrors) {
         byte[] file;
         ByteArrayInputStream byteArrayInputStream = null;
         try {
-            file = replaceManifestInZip(candidateDataEntity.getContentData(), manifest, vspId);
+            file = replaceManifestInZip(candidateDataEntity.getContentData(), manifest, vspId, type);
             byteArrayInputStream = new ByteArrayInputStream(
                 Objects.isNull(file) ? candidateDataEntity.getContentData().array()
                     : file);
@@ -413,7 +412,8 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public byte[] replaceManifestInZip(ByteBuffer contentData, String manifest, String vspId)
+    public byte[] replaceManifestInZip(ByteBuffer contentData, String manifest, String vspId,
+                                       OnboardingTypesEnum type)
         throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -433,12 +433,12 @@ public class CandidateServiceImpl implements CandidateService {
                     }
                 } else {
                     manifestWritten = true;
-                    writeManifest(manifest, zos);
+                    writeManifest(manifest, type, zos);
                 }
                 zos.closeEntry();
             }
             if (!manifestWritten) {
-                writeManifest(manifest, zos);
+                writeManifest(manifest, type, zos);
                 zos.closeEntry();
             }
         }
@@ -451,7 +451,14 @@ public class CandidateServiceImpl implements CandidateService {
         return candidateServiceValidator.validateFileDataStructure(filesDataStructure);
     }
 
-    private void writeManifest(String manifest, ZipOutputStream zos) throws IOException {
+    private void writeManifest(String manifest,
+                               OnboardingTypesEnum type,
+                               ZipOutputStream zos) throws IOException {
+
+        if(isManifestNeedsToGetWritten(type)){
+            return;
+        }
+
         zos.putNextEntry(new ZipEntry(SdcCommon.MANIFEST_NAME));
         try (InputStream manifestStream = new ByteArrayInputStream(
             manifest.getBytes(StandardCharsets.UTF_8))) {
@@ -461,6 +468,10 @@ public class CandidateServiceImpl implements CandidateService {
                 zos.write(buf, 0, (len < buf.length) ? len : buf.length);
             }
         }
+    }
+
+    private boolean isManifestNeedsToGetWritten(OnboardingTypesEnum type) {
+        return type.equals(OnboardingTypesEnum.CSAR);
     }
 
     private void handleArtifactsFromTree(HeatStructureTree tree, FilesDataStructure structure) {

@@ -28,6 +28,14 @@ public enum Messages {
       "functionalities"),
 
   INVALID_ZIP_FILE("Invalid zip file"),
+  INVALID_CSAR_FILE("Invalid csar file"),
+  CSAR_FILE_NOT_FOUND("Each CSAR file must contain %s file."),
+  CSAR_DIRECTORIES_NOT_ALLOWED("Directory : %s , is not allowed."),
+  CSAR_FILES_NOT_ALLOWED("File : %s , are not allowed."),
+  MANIFEST_INVALID_LINE("Manifest contains invalid line : %s"),
+  MANIFEST_NO_METADATA("Manifest must contain metadata"),
+  MANIFEST_NO_SOURCES("Manifest must contain source"),
+  MANIFEST_PARSER_INTERNAL("Invalid manifest file"),
   FAILED_TO_TRANSLATE_ZIP_FILE("Failed to translate zip file"),
   ZIP_NOT_EXIST("Zip file doesn't exist"),
 
@@ -45,7 +53,7 @@ public enum Messages {
   NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST("no zip file was uploaded or zip file doesn't exist"),
   MAPPING_OBJECTS_FAILURE("Failed to map object %s to %s. Exception message: %s"),
   MORE_THEN_ONE_VOL_FOR_HEAT("heat contains more then one vol. selecting only first vol"),
-  ZIP_CONTENT_MAP("failed to load zip content"),
+  FILE_CONTENT_MAP("failed to load %s content"),
   CREATE_MANIFEST_FROM_ZIP("cannot create manifest from the attached zip file"),
   CANDIDATE_PROCESS_FAILED("Candidate zip file process failed"),
   FOUND_UNASSIGNED_FILES("cannot process zip since it has unassigned files"),
@@ -66,7 +74,9 @@ public enum Messages {
   INVALID_MANIFEST_FILE("invalid manifest file"),
   INVALID_FILE_TYPE("Missing or Unknown file type in Manifest"),
   ENV_NOT_ASSOCIATED_TO_HEAT("ENV file must be associated to a HEAT file"),
-
+  CSAR_MANIFEST_FILE_NOT_EXIST("CSAR manifest file does not exist"),
+  CSAR_FAILED_TO_READ("CSAR file is not readable"),
+  TOSCA_PARSING_FAILURE("Invalid tosca file. Error code : %s, Error message : %s/"),
   /* content errors*/
   INVALID_YAML_FORMAT("Invalid YAML format - %s"),
   INVALID_YAML_FORMAT_REASON("Invalid YAML format Problem - [%s]"),

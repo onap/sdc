@@ -89,16 +89,16 @@ function createErrorList(node, parent, deep = 0, errorList = []) {
 	return errorList;
 }
 
-const mapValidationDataToTree = validationData => {
-	let {heat, volume, network, artifacts, other} = validationData.importStructure || {};
+const mapValidationDataToTree = (validationData, packageName) => {
+	let {heat, nested, volume, network, artifacts, other} = validationData.importStructure || {};
 	return {
 		children: [
 			{
-				name: 'HEAT',
+				name: packageName,
 				expanded: true,
 				type: 'heat',
 				header: true,
-				children: (heat ? heat.map(mapHeatData) : [])
+				children: (heat ? heat.map(mapHeatData) : nested ? nested.map(mapHeatData) : [])
 			},
 			...(artifacts ? [{
 				name: 'artifacts',
@@ -165,7 +165,8 @@ export default (state = {attachmentsTree: {}}, action) => {
 	switch (action.type) {
 		case softwareProductsActionTypes.SOFTWARE_PRODUCT_LOADED:
 			let currentSoftwareProduct = action.response;
-			let attachmentsTree = currentSoftwareProduct.validationData ? mapValidationDataToTree(currentSoftwareProduct.validationData) : {};
+			const packageName = currentSoftwareProduct.networkPackageName;
+			let attachmentsTree = currentSoftwareProduct.validationData ? mapValidationDataToTree(currentSoftwareProduct.validationData, packageName) : {};
 			let errorList = createErrorList(attachmentsTree);
 			return {
 				...state,

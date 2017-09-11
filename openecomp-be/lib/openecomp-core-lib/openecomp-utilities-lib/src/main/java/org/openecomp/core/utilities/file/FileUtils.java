@@ -20,6 +20,7 @@
 
 package org.openecomp.core.utilities.file;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.tosca.services.YamlUtil;
@@ -193,6 +194,19 @@ public class FileUtils {
       return fileName;
     }
     return fileName.substring(0, fileName.lastIndexOf("."));
+  }
+
+  public static String getFileExtension(String filename) {
+      return FilenameUtils.getExtension(filename);
+  }
+
+  public static String getNetworkPackageName(String filename){
+    String[] split = filename.split("\\.");
+    String name = null;
+    if (split != null && split.length > 1){
+      name = split[0];
+    }
+    return name;
   }
 
   /**

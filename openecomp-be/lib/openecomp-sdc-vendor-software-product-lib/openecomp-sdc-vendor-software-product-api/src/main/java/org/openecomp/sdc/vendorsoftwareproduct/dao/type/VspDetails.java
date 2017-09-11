@@ -61,6 +61,11 @@ public class VspDetails implements VersionableEntity {
   private Long writetimeMicroSeconds;
 
   private String onboardingMethod;
+
+  private String onboardingOrigin;
+
+  private String networkPackageName;
+
   public VspDetails() {
   }
 
@@ -215,12 +220,29 @@ public class VspDetails implements VersionableEntity {
     this.oldVersion = oldVersion;
   }
 
+  public String getOnboardingOrigin() {
+    return onboardingOrigin;
+  }
+
+  public void setOnboardingOrigin(String onboardingOrigin) {
+    this.onboardingOrigin = onboardingOrigin;
+  }
+
   public String getOnboardingMethod() {
     return onboardingMethod;
   }
   public void setOnboardingMethod(String onboardingMethod) {
     this.onboardingMethod = onboardingMethod;
   }
+
+  public String getNetworkPackageName() {
+    return networkPackageName;
+  }
+
+  public void setNetworkPackageName(String networkPackageName) {
+    this.networkPackageName = networkPackageName;
+  }
+
   @Override
   public String toString() {
     return String.format(

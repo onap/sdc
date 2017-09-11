@@ -492,7 +492,8 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
           toscaServiceModel.getServiceTemplates().get(fetchFileNameForImport(importFile,
               serviceTemplate.getMetadata() == null ? null
                   : serviceTemplate.getMetadata().get("filename")));
-      if (filesScanned.contains(ToscaUtil.getServiceTemplateFileName(template))) {
+      if (Objects.isNull(template) ||
+          filesScanned.contains(ToscaUtil.getServiceTemplateFileName(template))) {
         continue;
       } else {
         filesScanned.add(ToscaUtil.getServiceTemplateFileName(template));

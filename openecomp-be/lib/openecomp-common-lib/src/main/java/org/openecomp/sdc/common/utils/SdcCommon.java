@@ -23,6 +23,7 @@ package org.openecomp.sdc.common.utils;
 public class SdcCommon {
 
   public static final String MANIFEST_NAME = "MANIFEST.json";
+  public static final String CSAR_MANIFEST_NAME = "MainServiceTemplate.mf";
   public static final String UPLOAD_FILE = "uploadFile";
   public static final String PROCESS_FILE = "Process File";
   public static final String ILLEGAL_MANIFEST = "Illegal manifest";

@@ -186,12 +186,12 @@ const OnboardingProcedure = ({onboardingMethod, onDataChanged, genericFieldInfo}
 		<GridSection title={i18n('Onboarding procedure')}>
 			<GridItem colSpan={4}>
 				<Input
-					label={i18n('HEAT file')}
+					label={i18n('Network Package')}
 					overlayPos='top'
 					isValid={genericFieldInfo.onboardingMethod.isValid}
-					checked={onboardingMethod === onboardingMethodConst.HEAT}
+					checked={onboardingMethod === onboardingMethodConst.NETWORK_PACKAGE}
 					errorText={genericFieldInfo.onboardingMethod.errorText}
-					onChange={() => onDataChanged({onboardingMethod:'HEAT'},SP_CREATION_FORM_NAME)}
+					onChange={() => onDataChanged({onboardingMethod: onboardingMethodConst.NETWORK_PACKAGE},SP_CREATION_FORM_NAME)}
 					type='radio'
 					data-test-id='new-vsp-creation-procedure-heat' />
 			</GridItem>
@@ -202,7 +202,7 @@ const OnboardingProcedure = ({onboardingMethod, onDataChanged, genericFieldInfo}
 					checked={onboardingMethod === onboardingMethodConst.MANUAL}
 					isValid={genericFieldInfo.onboardingMethod.isValid}
 					errorText={genericFieldInfo.onboardingMethod.errorText}
-					onChange={() => onDataChanged({onboardingMethod:'Manual'},SP_CREATION_FORM_NAME)}
+					onChange={() => onDataChanged({onboardingMethod: onboardingMethodConst.MANUAL},SP_CREATION_FORM_NAME)}
 					type='radio'
 					data-test-id='new-vsp-creation-procedure-manual' />
 			</GridItem>

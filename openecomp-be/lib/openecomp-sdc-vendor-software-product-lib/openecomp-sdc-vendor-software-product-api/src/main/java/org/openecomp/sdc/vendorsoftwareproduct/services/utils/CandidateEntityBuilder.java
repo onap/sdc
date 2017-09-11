@@ -75,6 +75,14 @@ public class CandidateEntityBuilder {
     return candidateDataEntity;
   }
 
+//  public OrchestrationTemplateCandidateData buildOrchestrationTemplateFromCsar(VspDetails vspDetails,
+//                                                                               byte[] uploadedFileData,
+//                                                                               FileContentHandler contentMap,
+//                                                                               Map<String, List<ErrorMessage>> uploadErrors,
+//                                                                               String user){
+//
+//  }
+
   private HeatStructureTree getHeatStructureTree(VspDetails vspDetails,
                                                  FileContentHandler contentMap,
                                                  AnalyzedZipHeatFiles analyzedZipHeatFiles) {

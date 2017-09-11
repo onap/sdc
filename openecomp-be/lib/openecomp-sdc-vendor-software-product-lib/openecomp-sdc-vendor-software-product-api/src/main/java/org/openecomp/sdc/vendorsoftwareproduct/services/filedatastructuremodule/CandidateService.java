@@ -21,9 +21,9 @@
 package org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule;
 
 import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CandidateDataEntityTo;
@@ -61,9 +61,12 @@ public interface CandidateService {
 
   Optional<ByteArrayInputStream> fetchZipFileByteArrayInputStream(String vspId,
                                                                   OrchestrationTemplateCandidateData candidateDataEntity,
-                                                                  String manifest, Map<String, List<ErrorMessage>> uploadErrors);
+                                                                  String manifest,
+                                                                  OnboardingTypesEnum type,
+                                                                  Map<String, List<ErrorMessage>> uploadErrors);
 
-  byte[] replaceManifestInZip(ByteBuffer contentData, String manifest, String vspId)
+  byte[] replaceManifestInZip(ByteBuffer contentData, String manifest, String vspId,
+                              OnboardingTypesEnum type)
       throws IOException;
 
   Optional<ManifestContent> createManifest(VspDetails vspDetails,

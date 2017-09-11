@@ -22,11 +22,10 @@ import TabulatedEditor from 'src/nfvo-components/editor/TabulatedEditor.jsx';
 import {enums} from 'sdc-app/onboarding/OnboardingConstants.js';
 import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
 
-import {navigationItems, mapScreenToNavigationItem, onboardingMethod as onboardingMethodTypes} from './SoftwareProductConstants.js';
+import {navigationItems, mapScreenToNavigationItem, onboardingMethod as onboardingMethodTypes, onboardingOriginTypes} from './SoftwareProductConstants.js';
 import SoftwareProductActionHelper from './SoftwareProductActionHelper.js';
 import SoftwareProductComponentsActionHelper from './components/SoftwareProductComponentsActionHelper.js';
 import SoftwareProductDependenciesActionHelper from './dependencies/SoftwareProductDependenciesActionHelper.js';
-import {doesHeatDataExist} from './attachments/SoftwareProductAttachmentsUtils.js';
 
 import HeatSetupActionHelper from './attachments/setup/HeatSetupActionHelper.js';
 import { actionsEnum as versionControllerActions } from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
@@ -86,7 +85,7 @@ const buildComponentNavigationBarGroups = ({componentId, meta}) => {
 
 const buildNavigationBarProps = ({softwareProduct, meta, screen, componentId, componentsList, mapOfExpandedIds}) => {
 	const {softwareProductEditor: {data: currentSoftwareProduct = {}}} = softwareProduct;
-	const {id, name, onboardingMethod} = currentSoftwareProduct;
+	const {id, name, onboardingMethod, onboardingOrigin} = currentSoftwareProduct;
 	const groups = [{
 		id: id,
 		name: name,
@@ -122,7 +121,7 @@ const buildNavigationBarProps = ({softwareProduct, meta, screen, componentId, co
 				id: navigationItems.ATTACHMENTS,
 				name: i18n('Attachments'),
 				disabled: false,
-				hidden: !doesHeatDataExist(meta.heatSetup),
+				hidden: onboardingOrigin === onboardingOriginTypes.NONE,
 				meta
 			}, {
 				id: navigationItems.ACTIVITY_LOG,
@@ -175,7 +174,7 @@ const buildVersionControllerProps = (softwareProduct) => {
 function buildMeta({softwareProduct, componentId, softwareProductDependencies}) {
 	const {softwareProductEditor, softwareProductComponents, softwareProductQuestionnaire, softwareProductAttachments} = softwareProduct;
 	const {data: currentSoftwareProduct = {}} = softwareProductEditor;
-	const {version} = currentSoftwareProduct;
+	const {version, onboardingOrigin} = currentSoftwareProduct;
 	const isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
 	const {qdata} = softwareProductQuestionnaire;
 	const {heatSetup, heatSetupCache} = softwareProductAttachments;
@@ -184,7 +183,7 @@ function buildMeta({softwareProduct, componentId, softwareProductDependencies}) 
 		const {componentEditor: {data: componentData = {} , qdata: componentQdata}} = softwareProductComponents;
 		currentComponentMeta = {componentData, componentQdata};
 	}
-	const meta = {softwareProduct: currentSoftwareProduct, qdata, version, heatSetup, heatSetupCache, isReadOnlyMode, currentComponentMeta, softwareProductDependencies};
+	const meta = {softwareProduct: currentSoftwareProduct, qdata, version, onboardingOrigin, heatSetup, heatSetupCache, isReadOnlyMode, currentComponentMeta, softwareProductDependencies};
 	return meta;
 }
 
@@ -280,7 +279,7 @@ const mapActionsToProps = (dispatch, {currentScreen: {screen, props: {softwarePr
 		},
 		onToggle: (groups, itemIdToExpand) => groups.map(({items}) => SoftwareProductActionHelper.toggleNavigationItems(dispatch, {items, itemIdToExpand})),
 		onNavigate: ({id, meta, version}) => {
-			let {heatSetup, heatSetupCache} = meta;
+			let {onboardingOrigin, heatSetup, heatSetupCache} = meta;
 			let heatSetupPopupPromise = screen === enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS ?
 								HeatSetupActionHelper.heatSetupLeaveConfirmation(dispatch, {softwareProductId, heatSetup, heatSetupCache}) :
 								Promise.resolve();
@@ -307,7 +306,12 @@ const mapActionsToProps = (dispatch, {currentScreen: {screen, props: {softwarePr
 						OnboardingActionHelper.navigateToSoftwareProductDependencies(dispatch, {softwareProductId, version});
 						break;
 					case navigationItems.ATTACHMENTS:
-						OnboardingActionHelper.navigateToSoftwareProductAttachments(dispatch, {softwareProductId, version});
+						if(onboardingOrigin === onboardingOriginTypes.ZIP) {
+							OnboardingActionHelper.navigateToSoftwareProductAttachmentsSetupTab(dispatch, {softwareProductId, version});
+						}
+						else if(onboardingOrigin === onboardingOriginTypes.CSAR) {
+							OnboardingActionHelper.navigateToSoftwareProductAttachmentsValidationTab(dispatch, {softwareProductId, version});
+						}
 						break;
 					case navigationItems.COMPONENTS:
 						OnboardingActionHelper.navigateToSoftwareProductComponents(dispatch, {softwareProductId, version});
@@ -334,9 +338,7 @@ const mapActionsToProps = (dispatch, {currentScreen: {screen, props: {softwarePr
 		case enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT:
 		case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_PROCESSES:
 		case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING:
-			props.onSave = () => {
-				return Promise.resolve();
-			};
+			props.onSave = () => Promise.resolve();
 			break;
 		default:
 			props.onSave = ({softwareProduct, qdata}) => SoftwareProductActionHelper.updateSoftwareProduct(dispatch, {softwareProduct, qdata});

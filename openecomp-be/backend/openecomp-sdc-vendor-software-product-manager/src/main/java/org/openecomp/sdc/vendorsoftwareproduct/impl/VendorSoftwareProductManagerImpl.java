@@ -22,6 +22,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.converter.datatypes.Constants;
 import org.openecomp.core.enrichment.api.EnrichmentManager;
 import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
@@ -31,6 +32,7 @@ import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonSchemaDataGenerator;
 import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.api.ValidationManager;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.activityLog.ActivityLogManager;
@@ -318,7 +320,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     validationResponse.setLicensingDataErrors(validateLicensingData(vspDetails));
     validationResponse
-            .setUploadDataErrors(validateUploadData(uploadData), LoggerServiceName.Submit_VSP,
+            .setUploadDataErrors(validateUploadData(uploadData,vspDetails), LoggerServiceName.Submit_VSP,
                     LoggerTragetServiceName.SUBMIT_VSP);
 
     validationResponse.setQuestionnaireValidationResult(
@@ -641,6 +643,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     validateUniqueName(vspDetails.getName());
 
+    vspDetails.setOnboardingOrigin(OnboardingTypesEnum.NONE.toString());
+
     vspInfoDao.create(vspDetails);//id will be set in the dao
     vspInfoDao.updateQuestionnaireData(vspDetails.getId(), null,
             new JsonSchemaDataGenerator(getVspQuestionnaireSchema(null)).generateData());
@@ -770,6 +774,14 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       throw new CoreException(new VendorSoftwareProductNotFoundErrorBuilder(vspId).build());
     }
     vsp.setValidationData(orchestrationTemplateDao.getValidationData(vspId, version));
+
+    if(Objects.isNull(vsp.getOnboardingOrigin())){
+      vsp.setOnboardingOrigin(OnboardingTypesEnum.ZIP.toString());
+    }
+
+    if(Objects.isNull(vsp.getNetworkPackageName())){
+      vsp.setNetworkPackageName("Upload File");
+    }
 
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
     return vsp;
@@ -1044,7 +1056,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   }
 
 
-  private Map<String, List<ErrorMessage>> validateUploadData(UploadDataEntity uploadData)
+  private Map<String, List<ErrorMessage>> validateUploadData(UploadDataEntity uploadData,
+                                                             VspDetails vspDetails)
           throws IOException {
 
     Map<String, List<ErrorMessage>> validationErrors = new HashMap<>();
@@ -1053,7 +1066,9 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     }
 
     FileContentHandler fileContentMap =
-            CommonUtil.validateAndUploadFileContent(uploadData.getContentData().array());
+            CommonUtil.validateAndUploadFileContent(OnboardingTypesEnum.getOnboardingTypesEnum
+                            (vspDetails.getOnboardingOrigin()),
+                    uploadData.getContentData().array());
     //todo - check
     ValidationManager validationManager =
             ValidationManagerUtil.initValidationManager(fileContentMap);

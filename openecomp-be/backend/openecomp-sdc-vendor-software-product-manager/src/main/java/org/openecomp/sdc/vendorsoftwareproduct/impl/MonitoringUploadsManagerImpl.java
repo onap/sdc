@@ -25,6 +25,7 @@ import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.activityLog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -44,6 +45,7 @@ import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentArtifactDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.MonitoringUploadErrorBuilder;
@@ -67,6 +69,7 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private ActivityLogManager activityLogManager;
   private ComponentArtifactDao componentArtifactDao;
+  private VendorSoftwareProductDao vendorSoftwareProductDao;
   private static final Logger logger =
       LoggerFactory.getLogger(VendorSoftwareProductManagerImpl.class);
 
@@ -253,7 +256,7 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
                                          Map<String, List<ErrorMessage>> errors) {
     FileContentHandler contentMap;
     try {
-      contentMap = CommonUtil.validateAndUploadFileContent(uploadedFileData);
+      contentMap = CommonUtil.validateAndUploadFileContent(OnboardingTypesEnum.ZIP, uploadedFileData);
       VendorSoftwareProductUtils.validateContentZipData(contentMap, errors);
     } catch (IOException exception) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,

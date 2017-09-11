@@ -27,6 +27,7 @@ import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.healing.interfaces.Healer;
@@ -49,7 +50,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
@@ -300,7 +300,8 @@ public class CompositionDataHealer implements Healer {
     FileContentHandler fileContentHandler;
     try {
       fileContentHandler =
-          CommonUtil.validateAndUploadFileContent(uploadData.getContentData().array());
+          CommonUtil.validateAndUploadFileContent(
+              OnboardingTypesEnum.ZIP, uploadData.getContentData().array());
       return HeatToToscaUtil.loadAndTranslateTemplateData(fileContentHandler);
     } catch (Exception e) {
       return null;

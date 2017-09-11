@@ -48,7 +48,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.Com
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.util.List;
@@ -112,7 +111,7 @@ public class QuestionnaireDataServiceTest {
   public void testQuestionnaireDataAfterIllegalUpload() {
     InputStream zipInputStream = uploadFileTest.getZipInputStream("/missingYml");
     UploadFileResponse uploadFileResponse = candidateManager
-        .upload(vspId, VERSION, zipInputStream, USER1);
+        .upload(vspId, VERSION, zipInputStream, USER1, "zip", "missingYml");
 
     InformationArtifactData informationArtifactData = questionnaireDataService
         .generateQuestionnaireDataForInformationArtifact(vspId, vspActiveVersion);
@@ -124,7 +123,7 @@ public class QuestionnaireDataServiceTest {
     InputStream zipInputStream = uploadFileTest.getZipInputStream(filePath);
     UploadFileResponse uploadFileResponse = candidateManager
         .upload(vspId, VERSION,
-            zipInputStream, USER1);
+            zipInputStream, USER1,"zip", "file");
     candidateManager.process(vspId, VERSION, USER1);
 
     Assert.assertTrue(MapUtils.isEmpty(
