@@ -20,6 +20,7 @@
 
     <properties>
         <!-- Maven plugin versions -->
+        <jacoco.version>0.7.9</jacoco.version>
         <mvn.assembly.version>2.1</mvn.assembly.version>
         <mvn.compiler.version>2.5.1</mvn.compiler.version>
         <mvn.deploy.version>2.4</mvn.deploy.version>
