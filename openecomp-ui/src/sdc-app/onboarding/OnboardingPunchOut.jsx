@@ -28,7 +28,6 @@ import Onboard from './onboard/Onboard.js';
 import LicenseModel from './licenseModel/LicenseModel.js';
 import LicenseModelOverview from './licenseModel/overview/LicenseModelOverview.js';
 import ActivityLog from 'sdc-app/common/activity-log/ActivityLog.js';
-import {doesHeatDataExist} from './softwareProduct/attachments/SoftwareProductAttachmentsUtils.js';
 
 import LicenseAgreementListEditor from './licenseModel/licenseAgreement/LicenseAgreementListEditor.js';
 import FeatureGroupListEditor from './licenseModel/featureGroups/FeatureGroupListEditor.js';
@@ -55,7 +54,8 @@ import SoftwareProductComponentsMonitoring from './softwareProduct/components/mo
 import {
 	navigationItems as SoftwareProductNavigationItems,
 	onboardingMethod as onboardingMethodTypes,
-	actionTypes as SoftwareProductActionTypes
+	actionTypes as SoftwareProductActionTypes,
+	onboardingOriginTypes
 } from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 
 import {statusEnum as VCItemStatus} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
@@ -314,7 +314,12 @@ export default class OnboardingPunchOut {
 							OnboardingActionHelper.navigateToSoftwareProductDetails(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
 							break;
 						case enums.BREADCRUMS.SOFTWARE_PRODUCT_ATTACHMENTS:
-							OnboardingActionHelper.navigateToSoftwareProductAttachments(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
+							if(softwareProduct.onboardingOrigin === onboardingOriginTypes.ZIP) {
+								OnboardingActionHelper.navigateToSoftwareProductAttachmentsSetupTab(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
+							}
+							else if(softwareProduct.onboardingOrigin === onboardingOriginTypes.CSAR) {
+								OnboardingActionHelper.navigateToSoftwareProductAttachmentsValidationTab(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
+							}
 							break;
 						case enums.BREADCRUMS.SOFTWARE_PRODUCT_PROCESSES:
 							OnboardingActionHelper.navigateToSoftwareProductProcesses(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
@@ -415,9 +420,9 @@ export default class OnboardingPunchOut {
 	handleStoreChange() {
 		let {currentScreen, licenseModelList, softwareProductList,
 			softwareProduct: {softwareProductEditor: {data = {onboardingMethod: ''}},
-				softwareProductComponents: {componentsList}, softwareProductAttachments: {heatSetup}}} = store.getState();
-		let {onboardingMethod} = data;
-		let breadcrumbsData = {onboardingMethod, currentScreen, licenseModelList, softwareProductList, componentsList, heatSetup};
+				softwareProductComponents: {componentsList}}} = store.getState();
+		let {onboardingMethod, onboardingOrigin} = data;
+		let breadcrumbsData = {onboardingMethod, currentScreen, licenseModelList, softwareProductList, componentsList, onboardingOrigin};
 		if (currentScreen.forceBreadCrumbsUpdate || !isEqual(breadcrumbsData, this.prevBreadcrumbsData) || this.breadcrumbsPrefixSelected) {
 			this.prevBreadcrumbsData = breadcrumbsData;
 			this.breadcrumbsPrefixSelected = false;
@@ -434,7 +439,7 @@ export default class OnboardingPunchOut {
 		}
 	}
 
-	buildBreadcrumbs({currentScreen: {screen, props}, onboardingMethod, licenseModelList, softwareProductList, componentsList, heatSetup}) {
+	buildBreadcrumbs({currentScreen: {screen, props}, onboardingMethod, licenseModelList, softwareProductList, componentsList, onboardingOrigin}) {
 		let screenToBreadcrumb;
 		switch (screen) {
 			case enums.SCREEN.ONBOARDING_CATALOG:
@@ -593,7 +598,7 @@ export default class OnboardingPunchOut {
 							key: enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENTS,
 							displayText: i18n('Components')
 						}].filter(item => {
-							let isHeatData = doesHeatDataExist(heatSetup);
+							let isHeatData = onboardingOrigin !== onboardingOriginTypes.NONE;
 							let isManualMode = onboardingMethod === onboardingMethodTypes.MANUAL;
 							switch (item.key) {
 								case enums.BREADCRUMS.SOFTWARE_PRODUCT_ATTACHMENTS:

@@ -39,6 +39,8 @@ public class MapVspDescriptionDtoToVspDetails extends MappingBase<VspDescription
     target.setVendorName(source.getVendorName());
     target.setVendorId(source.getVendorId());
     target.setOnboardingMethod(source.getOnboardingMethod());
+    target.setOnboardingOrigin(source.getOnboardingOrigin());
+    target.setNetworkPackageName(source.getNetworkPackageName());
 
     VersionDto vlmVersion = source.getLicensingVersion();
     if (vlmVersion != null) {

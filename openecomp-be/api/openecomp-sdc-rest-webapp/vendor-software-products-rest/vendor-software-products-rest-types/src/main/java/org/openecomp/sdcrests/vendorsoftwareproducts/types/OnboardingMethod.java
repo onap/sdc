@@ -1,6 +1,6 @@
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 public enum OnboardingMethod {
-  HEAT,
+  NetworkPackage,
   Manual;
 }

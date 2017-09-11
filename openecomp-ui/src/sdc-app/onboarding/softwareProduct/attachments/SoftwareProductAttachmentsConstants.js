@@ -13,7 +13,13 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+import keyMirror from 'nfvo-utils/KeyMirror.js';
+
 export const tabsMapping = {
 	SETUP: 1,
 	VALIDATION: 2
 };
+
+export const actionTypes = keyMirror({
+	SET_ACTIVE_TAB: null
+});

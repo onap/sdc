@@ -1,0 +1,26 @@
+{
+  "orchestration_impl": {
+    "zip": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationTemplateZipHandler"
+    },
+    "csar": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationTemplateCSARHandler"
+    }
+  },
+  "process_impl": {
+    "zip" : {
+      "enzble": true,
+      "implementationClass" : "org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process.OrchestrationTemplateProcessZipHandler"
+    },
+    "csar": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process.OrchestrationTemplateProcessCsarHandler"
+    }
+  },
+
+  "_config":{
+    "namespace": "orchestration"
+  }
+}

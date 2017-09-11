@@ -164,27 +164,29 @@
               color: $light-blue;
             }
           }
-          .software-product-landing-view-top-block-col-upl {
-            @extend .flex;
-            text-align: center;
-            flex-direction: column;
-            justify-content: center;
-            border: 2px dashed $light-gray;
-            margin-bottom: 20px;
-            @extend .body-1;
-            align-items: center;
-            .upload-btn {
-              padding: 15px 55px;
+        }
 
-            }
-            .drag-text {
-              color: $blue;
-              @extend .body-1-semibold;
-            }
-            .or-text {
-              margin-top: 10px;
-              margin-bottom: 10px;
-            }
+        .software-product-landing-view-top-block-col-upl {
+          @extend .flex;
+          height: 215px;
+          text-align: center;
+          flex-direction: column;
+          justify-content: center;
+          border: 2px dashed $light-gray;
+          margin-bottom: 20px;
+          @extend .body-1;
+          align-items: center;
+          .upload-btn {
+            padding: 15px 55px;
+
+          }
+          .drag-text {
+            color: $blue;
+            @extend .body-1-semibold;
+          }
+          .or-text {
+            margin-top: 10px;
+            margin-bottom: 10px;
           }
         }
       }

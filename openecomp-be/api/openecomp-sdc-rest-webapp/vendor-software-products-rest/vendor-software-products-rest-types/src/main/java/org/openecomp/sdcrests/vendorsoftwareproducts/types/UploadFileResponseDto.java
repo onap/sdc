@@ -32,6 +32,8 @@ import java.util.Map;
 public class UploadFileResponseDto {
   private Map<String, List<ErrorMessage>> errors;
   private UploadFileStatus status;
+  private String onboardingOrigin;
+  private String networkPackageName;
 
   public Map<String, List<ErrorMessage>> getErrors() {
     return errors;
@@ -49,4 +51,19 @@ public class UploadFileResponseDto {
     this.status = status;
   }
 
+  public String getOnboardingOrigin() {
+    return onboardingOrigin;
+  }
+
+  public void setOnboardingOrigin(String onboardingOrigin) {
+    this.onboardingOrigin = onboardingOrigin;
+  }
+
+  public String getNetworkPackageName() {
+    return networkPackageName;
+  }
+
+  public void setNetworkPackageName(String networkPackageName) {
+    this.networkPackageName = networkPackageName;
+  }
 }

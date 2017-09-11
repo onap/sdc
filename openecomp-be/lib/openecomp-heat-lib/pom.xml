@@ -16,6 +16,18 @@
     <dependencies>
         <dependency>
             <groupId>org.openecomp.sdc.common</groupId>
+            <artifactId>openecomp-configuration-management-core</artifactId>
+            <version>${openecomp.sdc.common.version}</version>
+            <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.common</groupId>
             <artifactId>openecomp-tosca-datatype</artifactId>
             <version>${openecomp.sdc.common.version}</version>
         </dependency>
@@ -51,5 +63,20 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${mvn.surefire.version}</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

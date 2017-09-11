@@ -23,6 +23,7 @@ package org.openecomp.sdcrests.vsp.rest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.openecomp.sdc.vendorsoftwareproduct.types.FileDataStructureDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
@@ -61,7 +62,7 @@ public interface OrchestrationTemplateCandidate extends VspEntities {
   Response upload(
       @PathParam("vspId") String vspId,
       @ApiParam(value = "Version Id") @PathParam("versionId") String versionId,
-      @Multipart("upload") InputStream heatFileToUpload,
+      @Multipart("upload") Attachment fileToUpload,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @GET

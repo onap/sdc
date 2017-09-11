@@ -36,13 +36,13 @@ describe('SoftwareProduct Attachments - View: ', function () {
 		let versionControllerData = VersionControllerUtilsFactory.build();
 
 		let softwareProductAttachments = {
+			attachmentsDetails: {activeTab: tabsMapping.SETUP},
 			heatSetup: {},
 			heatValidation: {
 				attachmentsTree,
 				errorList
 			},
-			heatSetupCache: {},
-			activeTab: tabsMapping.SETUP
+			heatSetupCache: {}
 		};
 		let data = defaultStoreFactory.build({softwareProduct: {softwareProductAttachments, softwareProductEditor: {data: {...versionControllerData}}}});
 		var result = mapStateToProps(data);
@@ -57,6 +57,7 @@ describe('SoftwareProduct Attachments - View: ', function () {
 		let versionControllerData = VersionControllerUtilsFactory.build();
 
 		let softwareProductAttachments = {
+			attachmentsDetails: {},
 			heatSetup: {},
 			heatValidation: {
 				attachmentsTree,

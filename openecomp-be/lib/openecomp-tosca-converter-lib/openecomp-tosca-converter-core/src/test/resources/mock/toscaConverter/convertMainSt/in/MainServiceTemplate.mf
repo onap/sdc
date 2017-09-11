@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+
+Name: Entry-Definitions
+Name: MainServiceTemplate.yaml
+
+Name: Definitions\GlobalSubstitutionTypesServiceTemplate.yaml
+
+Name: Artifacts\install.sh
+
+Name: Artifacts\create_stack.sh
+
+Name: Licenses\license.xml

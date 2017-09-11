@@ -15,6 +15,7 @@
  */
 import {combineReducers} from 'redux';
 import {actionTypes, PRODUCT_QUESTIONNAIRE} from './SoftwareProductConstants.js';
+import SoftwareProductAttachmentsReducer from './attachments/SoftwareProductAttachmentsReducer.js';
 import HeatValidationReducer from './attachments/validation/HeatValidationReducer.js';
 import HeatSetupReducer from './attachments/setup/HeatSetupReducer.js';
 import {actionTypes as heatSetupActionTypes} from './attachments/setup/HeatSetupConstants.js';
@@ -48,6 +49,7 @@ import {IMAGE_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components
 
 export default combineReducers({
 	softwareProductAttachments: combineReducers({
+		attachmentsDetails: SoftwareProductAttachmentsReducer,
 		heatValidation: HeatValidationReducer,
 		heatSetup: HeatSetupReducer,
 		heatSetupCache: (state = {}, action) => action.type === heatSetupActionTypes.FILL_HEAT_SETUP_CACHE ? action.payload : state

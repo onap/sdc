@@ -45,8 +45,10 @@ public class MapVersionedVendorSoftwareProductInfoToVspDetailsDto
     target.setSubCategory(vsp.getSubCategory());
     target.setVendorId(vsp.getVendorId());
     target.setVendorName(vsp.getVendorName());
+    target.setOnboardingOrigin(vsp.getOnboardingOrigin());
     target.setLicensingVersion(vsp.getVlmVersion() == null ? null : new VersionDto(vsp.getVlmVersion().toString(), vsp.getVlmVersion().toString()));
     target.setIsOldVersion("False");
+    target.setNetworkPackageName(vsp.getNetworkPackageName());
 
     if (vsp.getLicenseAgreement() != null || vsp.getFeatureGroups() != null) {
       LicensingData licensingData = new LicensingData();

@@ -39,7 +39,6 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
-import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
 import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
@@ -54,14 +53,10 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadDataEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.mock.EnrichmentManagerFactoryImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
@@ -92,7 +87,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -357,7 +351,7 @@ public class VendorSoftwareProductManagerImplTest {
                     "subCategory", "456", fgs);
 
     List<String> updFgs = new ArrayList<String>();
-    //updFgs.add("fg2");
+    updFgs.add("fg2");
     VspDetails updatedVsp =
             createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
                     "category_updated",
@@ -659,7 +653,7 @@ public class VendorSoftwareProductManagerImplTest {
     InputStream zis = getFileInputStream("/vspmanager/zips/missingYml.zip");
 
     UploadFileResponse uploadFileResponse =
-            candidateManager.upload(VSP_ID, VERSION01, zis, USER1);
+            candidateManager.upload(VSP_ID, VERSION01, zis, USER1, "zip", "missingYml");
 
     Assert.assertEquals(uploadFileResponse.getErrors().size(), 0);
   }
@@ -672,7 +666,7 @@ public class VendorSoftwareProductManagerImplTest {
     try {
       candidateManager
               .upload(VSP_ID, VERSION01,
-                      url.openStream(), USER1);
+                      url.openStream(), USER1, "zip", "notZipFile");
       candidateManager.process(VSP_ID, VERSION01, USER1);
     } catch (Exception ce) {
       Assert.assertEquals(ce.getMessage(), Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage());
@@ -680,107 +674,7 @@ public class VendorSoftwareProductManagerImplTest {
 
     verify(activityLogManagerMock, never()).addActionLog(any(ActivityLogEntity.class), eq(USER1));
   }
-/*
-  @Test
-  public void testEnrichModelInSubmit() {
-    UniqueValueUtil
-        .deleteUniqueValue(VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME,
-            "VSP_syb");
-    VspDetails vspDetails = vendorSoftwareProductManager.createVsp(
-        createVspDetails(null, null, "VSP_syb", "Test-vsp_syb", "vendorName", "vlm1Id", "icon",
-            "category", "subCategory", "456", null), USER1);
-    String id = vspDetails.getId();
 
-    //upload file
-    InputStream zis = getFileInputStream("/vspmanager/zips/fullComposition.zip");
-    candidateManager.upload(id, VERSION01, zis, USER1);
-    OrchestrationTemplateActionResponse uploadFileResponse =
-        candidateManager.process(id, VERSION01, USER1);
-
-    //check in
-    vendorSoftwareProductManager.checkin(id, USER1);
-    //submit
-    try {
-      ValidationResponse result = vendorSoftwareProductManager.submit(id, USER1);
-    } catch (IOException exception) {
-      Assert.fail();
-    }
-    VersionedVendorSoftwareProductInfo details =
-        vendorSoftwareProductManager.getVsp(id, null, USER1);
-    Collection<ComponentEntity> components =vendorSoftwareProductManager
-        .listComponents(id, details.getVersionInfo().getActiveVersion(), USER1);
-
-    ToscaServiceModel model =
-        (ToscaServiceModel) EnrichedServiceModelDaoFactory.getInstance().createInterface()
-            .getServiceModel(id, details.getVersionInfo().getActiveVersion());
-
-    Map<String, CapabilityDefinition> capabilities = new HashMap<>();
-    for (ComponentEntity component : components) {
-      model.getServiceTemplates().
-          entrySet().
-          stream().
-          filter(entryValue -> entryValue.getValue() != null &&
-              entryValue.getValue().getNode_types() != null &&
-              entryValue.getValue().
-                  getNode_types().
-                  containsKey(component.getComponentCompositionData().getName())).
-          forEach(entryValue -> entryValue.getValue().getNode_types().
-              values().
-              stream().
-              filter(type -> MapUtils.isNotEmpty(type.getCapabilities())).
-              forEach(type -> type.getCapabilities().
-                  entrySet().
-                  forEach(entry -> addCapability(entryValue.getKey(), capabilities, entry.getKey(),
-                      entry.getValue()))));
-
-    }
-
-    Assert.assertNotNull(capabilities);
-  }
-
-  @Test(dependsOnMethods = {"testCreatePackage"})
-  public void testEnrichedFilesDeletedOnNewUpload() throws IOException {
-    Version activeVersion;
-
-    createPackageFromUpload(VSP_ID, USER1, "/fullComposition");
-    activeVersion = vendorSoftwareProductManager.getVsp(VSP_ID, null, USER1).getVersionInfo()
-        .getActiveVersion();
-
-    List<ServiceArtifact> firstExternalArtifacts = enrichedServiceModelDaoMock
-        .getExternalArtifacts(VSP_ID, activeVersion);
-    ToscaServiceModel firstServiceModel = enrichedServiceModelDaoMock.getServiceModel(VSP_ID,
-        activeVersion);
-
-    createPackageFromUpload(VSP_ID, USER1, "/emptyComposition");
-    activeVersion = vendorSoftwareProductManager.getVsp(VSP_ID, null, USER1).getVersionInfo()
-        .getActiveVersion();
-
-    List<ServiceArtifact> secondExternalArtifacts = enrichedServiceModelDaoMock
-        .getExternalArtifacts(VSP_ID, activeVersion);
-    ToscaServiceModel secondServiceModel = enrichedServiceModelDaoMock.getServiceModel(VSP_ID,
-        activeVersion);
-
-    Assert.assertNotEquals(firstExternalArtifacts, secondExternalArtifacts);
-    Assert.assertNotEquals(firstServiceModel, secondServiceModel);
-
-  }
-
-  @Test(dependsOnMethods = {"testMibsDeletedInCsar"})
-  public void testServiceTemplatesAreDeletedInCsarOnNewUpload() throws IOException {
-    String nestedPath = "Definitions" + File.separator + "nested";
-
-    uploadFileAndProcess(VSP_ID, USER1, "/vspmanager/zips/fullCompositionNested.zip");
-    checkinSubmitCreatePackage(VSP_ID, USER1);
-    List<String> nestedFileNamesServiceTemplates =
-        getWantedFileNamesFromCsar(nestedPath);
-
-    uploadFileAndProcess(VSP_ID, USER1, "/vspmanager/zips/fullComposition.zip");
-    checkinSubmitCreatePackage(VSP_ID, USER1);
-    List<String> emptyNestedNamesList = getWantedFileNamesFromCsar(nestedPath);
-
-    Assert.assertEquals(emptyNestedNamesList.size(), 0);
-    Assert.assertNotEquals(emptyNestedNamesList.size(), nestedFileNamesServiceTemplates.size());
-  }*/
 
   private List<String> getWantedFileNamesFromCsar(String pathInCsar)
           throws IOException {
@@ -806,21 +700,6 @@ public class VendorSoftwareProductManagerImplTest {
 
     return fileNames;
   }
-  /*
-  //Disabled for sonar null pointer issue for componentEntities
-  private Pair<String, String> uploadMib(String vspId, String user, String filePath,
-                                         String fileName) {
-    List<ComponentEntity> componentEntities = null;
-    //(List<ComponentEntity>) vendorSoftwareProductManager.listComponents(vspId, null, user);
-    monitoringUploadsManager.upload(getFileInputStream(filePath),
-        fileName, vspId,
-        VERSION01, componentEntities.get(0).getId(), MonitoringUploadType.SNMP_POLL, user);
-    //TODO: add validate of addActionLog() func call
-
-    return new ImmutablePair<>(componentEntities.get(0).getId(),
-        componentEntities.get(0).getComponentCompositionData()
-            .getDisplayName());
-  }*/
 
   private void createPackageFromUpload(String vspId, String user, String filePath)
           throws IOException {
@@ -830,7 +709,7 @@ public class VendorSoftwareProductManagerImplTest {
 
   private void uploadFileAndProcess(String vspId, String user, String filePath) {
     vendorSoftwareProductManager.checkout(vspId, user);
-    candidateManager.upload(vspId, VERSION01, getFileInputStream(filePath), user);
+    candidateManager.upload(vspId, VERSION01, getFileInputStream(filePath), user, "zip", "file");
     candidateManager.process(vspId, VERSION01, user);
   }
 
@@ -888,7 +767,7 @@ public class VendorSoftwareProductManagerImplTest {
 */
 
   private void testLegalUpload(String vspId, Version version, InputStream upload, String user) {
-    candidateManager.upload(vspId, VERSION01, upload, USER1);
+    candidateManager.upload(vspId, VERSION01, upload, USER1, "zip", "file");
     candidateManager.process(vspId, VERSION01, user);
 
     UploadDataEntity uploadData =
@@ -919,23 +798,6 @@ public class VendorSoftwareProductManagerImplTest {
   }
 
 
-  //  private void assertInfoArtifactIsInRightPathInCsar(String vspId, String zipFileName)
-//      throws IOException {
-//    ZipInputStream inputZipStream = new ZipInputStream(new FileInputStream(new File(zipFileName)));
-//    boolean isInfoArtifactInZip = false;
-//
-//    ZipEntry zipEntry;
-//    while ((zipEntry = inputZipStream.getNextEntry()) != null) {
-//      String currentEntryName = zipEntry.getName();
-//      if(currentEntryName.equals("Artifacts\\Informative\\Guide\\VSP_" +
-//          vspId + "_Information.txt")){
-//        isInfoArtifactInZip = true;
-//        break;
-//      }
-//    }
-//
-//    Assert.assertTrue(isInfoArtifactInZip);
-//  }
   static VspDetails createVspDetails(String id, Version version, String name, String desc,
                                      String vendorName, String vlm, String icon,
                                      String category, String subCategory,
@@ -969,45 +831,7 @@ public class VendorSoftwareProductManagerImplTest {
     Assert.assertEquals(actual.getFeatureGroups(), expected.getFeatureGroups());
   }
 
-
-//    @Test
-//    public void testDownloadFile() throws IOException {
-//        VspDetails expectedVsp = VSPCommon.createVspDetails(null, null, String.format("VSP-test-%s", vlm1Id), "Test-vsp", "vendorName", "vlm1Id", "icon", "category", "subCategory", "123", null);
-//        VspDetails createdVsp = vendorSoftwareProductManager.createVsp(expectedVsp, USER1);
-//
-//        id005 = createdVsp.getId();
-//        Assert.assertNotNull(id005);
-//        Assert.assertNotNull(createdVsp.getVersion());
-//
-//        try (InputStream zipInputStream = new ZipFileUtils().getZipInputStream("/legalUploadWithWarning")) {
-//
-//            UploadFileResponse uploadFileResponse = vendorSoftwareProductManager.upload(id005, zipInputStream, USER1);
-//            vendorSoftwareProductManager.process(id005, USER1);
-//            Optional<File> fileCandidate = vendorSoftwareProductManager.get(id005, USER1);
-//
-//            File latestHeatPackage = fileCandidate.get();
-//
-//            zipInputStream.reset();
-//            byte[] uploaded = IOUtils.toByteArray(zipInputStream);
-//
-//            Optional<FileContentHandler> zipContentMap = vendorSoftwareProductManager.getZipContentMap(uploadFileResponse, uploaded);
-//            FileContentHandler fileContentHandler = new FileContentHandler();
-//            if(zipContentMap.isPresent()){
-//                 fileContentHandler = zipContentMap.get();
-//            }
-//
-//            uploaded = IOUtils.toByteArray(fileContentHandler.getFiles().values());
-//
-//            byte[] downloaded;
-//            try (BufferedInputStream fileStream = new BufferedInputStream(new FileInputStream(latestHeatPackage))) {
-//                downloaded = IOUtils.toByteArray(fileStream);
-//            }
-//
-//            Assert.assertTrue(Arrays.equals(uploaded, downloaded));
-//        }
-//    }
-
-  // todo ********************** move to common **************************************
+ // todo ********************** move to common **************************************
 
   private void mockVersioning(VersionableEntityAction action) {
     VersionInfo versionInfo = new VersionInfo();

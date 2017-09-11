@@ -1,0 +1,551 @@
+imports: 
+- openovnf__tosca.nodes.nfv.VNF.vPCRF.yaml
+- openonfv__tosca.capabilities.Scalable.yaml
+- openonfv__tosca.capabilities.nfv.Metric.yaml
+- openonfv__tosca.nodes.nfv.VnfVirtualLinkDesc.yaml
+- openonfv__tosca.capabilities.network.Bindable.yaml
+- openonfv__tosca.capabilities.Attachment.yaml
+- openonfv__tosca.capabilities.nfv.VirtualBindable.yaml
+- openonfv__tosca.capabilities.nfv.VirtualLinkable.yaml
+- openonfv__tosca.requirements.nfv.VirtualStorage.yaml
+- openonfv__tosca.nodes.nfv.VDU.VirtualStorage.yaml
+- openonfv__tosca.relationships.nfv.VirtualBindsTo.yaml
+- openonfv__tosca.nodes.nfv.VDU.Compute.yaml
+- openonfv__tosca.relationships.nfv.VirtualLinksTo.yaml
+- openonfv__tosca.capabilities.nfv.VirtualCompute.yaml
+- openonfv__tosca.capabilities.Container.yaml
+- openonfv__tosca.capabilities.nfv.VirtualStorage.yaml
+- openonfv__tosca.requirements.nfv.VirtualBinding.yaml
+- openonfv__tosca.capabilities.Endpoint.Admin.yaml
+- openonfv__tosca.capabilities.OperatingSystem.yaml
+- openonfv__tosca.nodes.nfv.VduCpd.yaml
+- openonfv__tosca.relationships.nfv.VDU.AttachedTo.yaml
+
+metadata:
+  vendor: Huawei
+  csarVersion: v1.0
+  csarProvider: Huawei
+  id: vPCRF_NF_HW
+  version: v1.0
+  csarType: NFAR
+  name: vPCRF
+  vnfdVersion: v1.0
+  vnfmType: hwvnfm
+
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.nat_fw:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+
+topology_template:
+  node_templates:
+    PUPDU_Storage:
+      attributes:
+        tosca_name: PUPDU_Storage
+      properties:
+        id: PUPDU_Storage
+        size_of_storage: 200G
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    USRSU:
+      attributes:
+        tosca_name: USRSU
+      capabilities:
+        virtual_compute:
+          properties:
+            virtual_memory:
+              virtual_mem_size: 24G
+            requested_additional_capabilities: {}
+            virtual_cpu:
+              num_virtual_cpu: 4
+      properties:
+        configurable_properties:
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: USRSU
+        descrption: the virtual machine of USRSU
+      requirements:
+      - virtual_storage:
+          capability: virtual_storage
+          node: USRSU_Storage
+      - local_storage:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VDU.Compute
+    USPID3_VduCpd_Fabric:
+      attributes:
+        tosca_name: USPID3_VduCpd_Fabric
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: USPID3
+      - virtual_link:
+          capability: virtual_linkable
+          node: Fabric
+      type: tosca.nodes.nfv.VduCpd
+    PUPDU_VduCpd_Base:
+      attributes:
+        tosca_name: PUPDU_VduCpd_Base
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: PUPDU
+      - virtual_link:
+          capability: virtual_linkable
+          node: Base
+      type: tosca.nodes.nfv.VduCpd
+    OMU_VduCpd_Fabric:
+      attributes:
+        tosca_name: OMU_VduCpd_Fabric
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: OMU
+      - virtual_link:
+          capability: virtual_linkable
+          node: Fabric
+      type: tosca.nodes.nfv.VduCpd
+    USPID3:
+      attributes:
+        tosca_name: USPID3
+      capabilities:
+        virtual_compute:
+          properties:
+            virtual_memory:
+              virtual_mem_size: 24G
+            requested_additional_capabilities: {}
+            virtual_cpu:
+              num_virtual_cpu: 4
+      properties:
+        configurable_properties:
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: USPID3
+        descrption: the virtual machine of USPID3
+      requirements:
+      - virtual_storage:
+          capability: virtual_storage
+          node: USPID3_Storage
+      - local_storage:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VDU.Compute
+    UPIRU_VduCpd_Base:
+      attributes:
+        tosca_name: UPIRU_VduCpd_Base
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: UPIRU
+      - virtual_link:
+          capability: virtual_linkable
+          node: Base
+      type: tosca.nodes.nfv.VduCpd
+    OMU2ManageNet:
+      attributes:
+        tosca_name: OMU2ManageNet
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          node: tosca.nodes.Root
+      - virtual_link:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    OMU_Storage:
+      attributes:
+        tosca_name: OMU_Storage
+      properties:
+        id: OMU_Storage
+        size_of_storage: 256G
+        rdma_enabled: false
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    UPSPU:
+      attributes:
+        tosca_name: UPSPU
+      capabilities:
+        virtual_compute:
+          properties:
+            virtual_memory:
+              virtual_mem_size: 24G
+            requested_additional_capabilities: {}
+            virtual_cpu:
+              num_virtual_cpu: 4
+      properties:
+        configurable_properties:
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: UPSPU
+        descrption: the virtual machine of UPSPU
+      requirements:
+      - virtual_storage:
+          capability: virtual_storage
+          node: UPSPU_Storage
+      - local_storage:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VDU.Compute
+    PUPDU_VduCpd_Fabric:
+      attributes:
+        tosca_name: PUPDU_VduCpd_Fabric
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: PUPDU
+      - virtual_link:
+          capability: virtual_linkable
+          node: Fabric
+      type: tosca.nodes.nfv.VduCpd
+    USPID2BossNet:
+      attributes:
+        tosca_name: USPID2BossNet
+      properties:
+        role: root
+        layer_protocol: ethernet
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: USPID3
+      - virtual_link:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    OMU_VduCpd_Base:
+      attributes:
+        tosca_name: OMU_VduCpd_Base
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: OMU
+      - virtual_link:
+          capability: virtual_linkable
+          node: Base
+      type: tosca.nodes.nfv.VduCpd
+    USPID3_Storage:
+      attributes:
+        tosca_name: USPID3_Storage
+      properties:
+        id: USPID3_Storage
+        size_of_storage: 300G
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    UPIRU2DataNet2:
+      attributes:
+        tosca_name: UPIRU2DataNet2
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: UPIRU
+      - virtual_link:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    USPID2ManageNet:
+      attributes:
+        tosca_name: USPID2ManageNet
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: USPID3
+      - virtual_link:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    UPIRU2DataNet3:
+      attributes:
+        tosca_name: UPIRU2DataNet3
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: UPIRU
+      - virtual_link:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    PUPDU2DataNet3:
+      attributes:
+        tosca_name: PUPDU2DataNet3
+      properties:
+        role: root
+        layer_protocol: ethernet
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: PUPDU
+      - virtual_link:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    USRSU2DataNet1:
+      attributes:
+        tosca_name: USRSU2DataNet1
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: USRSU
+      - virtual_link:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    USRSU2DataNet2:
+      attributes:
+        tosca_name: USRSU2DataNet2
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: USRSU
+      - virtual_link:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    UPIRU_Storage:
+      attributes:
+        tosca_name: UPIRU_Storage
+      properties:
+        id: UPIRU_Storage
+        size_of_storage: 4G
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    PUPDU2SignalNet1:
+      attributes:
+        tosca_name: PUPDU2SignalNet1
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: PUPDU
+      - virtual_link:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    UPIRU2DataNet1:
+      attributes:
+        tosca_name: UPIRU2DataNet1
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: UPIRU
+      - virtual_link:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    USPID3_VduCpd_Base:
+      attributes:
+        tosca_name: USPID3_VduCpd_Base
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: USPID3
+      - virtual_link:
+          capability: virtual_linkable
+          node: Base
+      type: tosca.nodes.nfv.VduCpd
+    Base:
+      attributes:
+        tosca_name: Base
+      properties:
+        vl_flavours:
+          flavours: test2
+        connectivity_type:
+          layer_protocol: ipv4
+          flow_pattern:
+      type: tosca.nodes.nfv.VnfVirtualLinkDesc
+    USRSU_Storage:
+      attributes:
+        tosca_name: USRSU_Storage
+      properties:
+        id: USRSU_Storage
+        size_of_storage: 200G
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    UPSPU_VduCpd_Base:
+      attributes:
+        tosca_name: UPSPU_VduCpd_Base
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: UPSPU
+      - virtual_link:
+          capability: virtual_linkable
+          node: Base
+      type: tosca.nodes.nfv.VduCpd
+    PUPDU:
+      attributes:
+        tosca_name: PUPDU
+      capabilities:
+        virtual_compute:
+          properties:
+            virtual_memory:
+              virtual_mem_size: 24G
+            requested_additional_capabilities: {}
+            virtual_cpu:
+              num_virtual_cpu: 4
+      properties:
+        configurable_properties:
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: PUPDU
+        descrption: the virtual machine of PUPDU
+      requirements:
+      - virtual_storage:
+          capability: virtual_storage
+          node: PUPDU_Storage
+      - local_storage:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VDU.Compute
+    USRSU_VduCpd_Base:
+      attributes:
+        tosca_name: USRSU_VduCpd_Base
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: USRSU
+      - virtual_link:
+          capability: virtual_linkable
+          node: Base
+      type: tosca.nodes.nfv.VduCpd
+    OMU:
+      attributes:
+        tosca_name: OMU
+      capabilities:
+        virtual_compute:
+          properties:
+            virtual_memory:
+              virtual_mem_size: 16G
+            requested_additional_capabilities: {}
+            virtual_cpu:
+              num_virtual_cpu: 4
+      properties:
+        configurable_properties:
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: OMU
+        descrption: the virtual machine of OMU
+      requirements:
+      - virtual_storage:
+          capability: virtual_storage
+          node: OMU_Storage
+      - local_storage:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VDU.Compute
+    UPIRU_VduCpd_Fabric:
+      attributes:
+        tosca_name: UPIRU_VduCpd_Fabric
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: UPIRU
+      - virtual_link:
+          capability: virtual_linkable
+          node: Fabric
+      type: tosca.nodes.nfv.VduCpd
+    UPSPU_Storage:
+      attributes:
+        tosca_name: UPSPU_Storage
+      properties:
+        id: UPSPU_Storage
+        size_of_storage: 4G
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    PUPDU2ManageNet:
+      attributes:
+        tosca_name: PUPDU2ManageNet
+      properties:
+        role: root
+        layer_protocol: ethernet
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: PUPDU
+      - virtual_link:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    USRSU_VduCpd_Fabric:
+      attributes:
+        tosca_name: USRSU_VduCpd_Fabric
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: USRSU
+      - virtual_link:
+          capability: virtual_linkable
+          node: Fabric
+      type: tosca.nodes.nfv.VduCpd
+    UPIRU2SignalNet1:
+      attributes:
+        tosca_name: UPIRU2SignalNet1
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: UPIRU
+      - virtual_link:
+          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    Fabric:
+      attributes:
+        tosca_name: Fabric
+      properties:
+        vl_flavours:
+          flavours: test1
+        connectivity_type:
+          layer_protocol: ipv4
+          flow_pattern:
+      type: tosca.nodes.nfv.VnfVirtualLinkDesc
+    UPSPU_VduCpd_Fabric:
+      attributes:
+        tosca_name: UPSPU_VduCpd_Fabric
+      properties:
+        role: root
+        layer_protocol: ipv4
+      requirements:
+      - virtual_binding:
+          capability: virtual_binding
+          node: UPSPU
+      - virtual_link:
+          capability: virtual_linkable
+          node: Fabric
+      type: tosca.nodes.nfv.VduCpd
+
+  substitution_mappings:
+    node_type: tosca.nodes.nfv.VNF.vPCRF
+tosca_definitions_version: tosca_simple_yaml_1_0

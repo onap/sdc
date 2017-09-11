@@ -8,6 +8,7 @@ import org.openecomp.core.model.dao.ServiceTemplateDaoInter;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.healing.interfaces.Healer;
@@ -53,7 +54,7 @@ public class HeatToToscaTranslationHealer implements Healer  {
     FileContentHandler fileContentHandler;
     TranslatorOutput translatorOutput;
     try {
-      fileContentHandler = CommonUtil.validateAndUploadFileContent(uploadData
+      fileContentHandler = CommonUtil.validateAndUploadFileContent(OnboardingTypesEnum.ZIP, uploadData
           .getContentData().array());
       translatorOutput =
           HeatToToscaUtil.loadAndTranslateTemplateData(fileContentHandler);

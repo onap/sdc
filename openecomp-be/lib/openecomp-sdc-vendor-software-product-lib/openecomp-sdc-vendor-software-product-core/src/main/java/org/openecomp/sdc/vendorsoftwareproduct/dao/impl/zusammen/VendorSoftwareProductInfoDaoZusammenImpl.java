@@ -200,6 +200,8 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
     info.addProperty(InfoPropertyName.featureGroups.name(), vspDetails.getFeatureGroups());
     info.addProperty(InfoPropertyName.oldVersion.name(), vspDetails.getOldVersion());
     info.addProperty(InfoPropertyName.onboardingMethod.name(), vspDetails.getOnboardingMethod());
+    info.addProperty(InfoPropertyName.obBoardingOrigin.name(), vspDetails.getOnboardingOrigin());
+    info.addProperty(InfoPropertyName.networkPackageName.name(), vspDetails.getNetworkPackageName());
   }
 
   private VspDetails mapInfoToVspDetails(String vspId, Version version, Info info,
@@ -215,6 +217,7 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
         Version.valueOf(info.getProperty(InfoPropertyName.vendorVersion.name())));
     vspDetails.setLicenseAgreement(info.getProperty(InfoPropertyName.licenseAgreement.name()));
     vspDetails.setFeatureGroups(info.getProperty(InfoPropertyName.featureGroups.name()));
+
     vspDetails.setWritetimeMicroSeconds(
         modificationTime == null ? creationTime.getTime() : modificationTime.getTime());
     vspDetails.setVersion(version);
@@ -223,7 +226,8 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
     //Boolean oldVersion = ind == null || "true".equals( ind.toLowerCase());
     vspDetails.setOldVersion(oldVersion);
     vspDetails.setOnboardingMethod(info.getProperty(InfoPropertyName.onboardingMethod.name()));
-
+    vspDetails.setOnboardingOrigin(info.getProperty(InfoPropertyName.obBoardingOrigin.name()));
+    vspDetails.setNetworkPackageName(info.getProperty(InfoPropertyName.networkPackageName.name()));
     return vspDetails;
   }
 
@@ -239,7 +243,9 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
     licenseAgreement,
     featureGroups,
     oldVersion,
-    onboardingMethod
+    onboardingMethod,
+    obBoardingOrigin,
+    networkPackageName
   }
 
 }

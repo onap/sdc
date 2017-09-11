@@ -23,6 +23,7 @@ import {errorLevels} from 'sdc-app/onboarding/softwareProduct/attachments/valida
 import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
 import HeatSetup from './setup/HeatSetup.js';
 import {doesHeatDataExist} from './SoftwareProductAttachmentsUtils.js';
+import SoftwareProductAttachmentsActionHelper from './SoftwareProductAttachmentsActionHelper.js';
 
 import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 
@@ -30,7 +31,7 @@ export const mapStateToProps = (state) => {
 	let {
 		softwareProduct: {
 			softwareProductEditor:{data: currentSoftwareProduct = {}},
-			softwareProductAttachments: {heatSetup, heatSetupCache, heatValidation : {errorList}}
+			softwareProductAttachments: {attachmentsDetails: {activeTab}, heatSetup, heatSetupCache, heatValidation : {errorList}}
 		}
 	} = state;
 
@@ -47,7 +48,7 @@ export const mapStateToProps = (state) => {
 
 	let isReadOnlyMode = currentSoftwareProduct && currentSoftwareProduct.version ?
 			VersionControllerUtils.isReadOnly(currentSoftwareProduct) : false;
-	let {version} = currentSoftwareProduct;
+	let {version, onboardingOrigin} = currentSoftwareProduct;
 	return {
 		isValidationAvailable: unassigned.length === 0 && modules.length > 0,
 		heatSetup,
@@ -56,7 +57,9 @@ export const mapStateToProps = (state) => {
 		goToOverview,
 		HeatSetupComponent: HeatSetup,
 		isReadOnlyMode,
-		version
+		version,
+		onboardingOrigin,
+		activeTab
 	};
 };
 
@@ -83,7 +86,8 @@ export const mapActionsToProps = (dispatch, {softwareProductId}) => {
 		onProcessAndValidate: ({heatData, heatDataCache, isReadOnlyMode, version}) => {
 			return HeatSetupActionHelper.processAndValidateHeat(dispatch,
 				{softwareProductId, heatData, heatDataCache, isReadOnlyMode, version});
-		}
+		},
+		setActiveTab: ({activeTab}) => SoftwareProductAttachmentsActionHelper.setActiveTab(dispatch, {activeTab})
 	};
 };
 

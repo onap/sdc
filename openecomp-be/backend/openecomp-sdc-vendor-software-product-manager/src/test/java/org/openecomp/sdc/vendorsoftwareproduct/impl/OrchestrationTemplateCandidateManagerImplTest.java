@@ -6,6 +6,7 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
@@ -23,7 +24,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.utils.ZipFileUtils;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -90,7 +90,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
 
     doReturn("{}").when(candidateServiceMock).createManifest(anyObject(), anyObject());
     doReturn(Optional.empty()).when(candidateServiceMock)
-        .fetchZipFileByteArrayInputStream(anyObject(), anyObject(), anyObject(), anyObject());
+        .fetchZipFileByteArrayInputStream(anyObject(), anyObject(), anyObject(), OnboardingTypesEnum.ZIP, anyObject());
 
 
     OrchestrationTemplateActionResponse response =
@@ -123,7 +123,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
 
     UploadFileResponse uploadFileResponse = candidateManager
         .upload(VSP_ID, VERSION01, new ZipFileUtils().getZipInputStream("/legalUploadWithWarning"),
-            USER1);
+            USER1, "zip", "legalUploadWithWarning");
     Assert.assertTrue(uploadFileResponse.getStatus() == UploadFileStatus.Success);
     Assert.assertTrue(
         uploadFileResponse.getErrors().get("uploadFile").get(0).getLevel() == ErrorLevel.WARNING);
@@ -136,7 +136,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
   public void testUploadWithManifest() {
     UploadFileResponse uploadFileResponse = candidateManager
         .upload(VSP_ID, VERSION01, new ZipFileUtils().getZipInputStream("/legalUploadWithWarning"),
-            USER1);
+            USER1, "zip", "legalUploadWithWarning");
     Assert.assertTrue(uploadFileResponse.getStatus() == UploadFileStatus.Success);
     Assert.assertTrue(
         uploadFileResponse.getErrors().get("uploadFile").get(0).getLevel() == ErrorLevel.WARNING);

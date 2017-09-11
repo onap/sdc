@@ -39,7 +39,7 @@ export const navigationItems = keyMirror({
 	GENERAL: 'general',
 	PROCESS_DETAILS: 'process-details',
 	DEPLOYMENT_FLAVORS: 'deployment-flavor',
-	NETWORKS: 'networks',	
+	NETWORKS: 'networks',
 	IMAGES: 'images',
 	ATTACHMENTS: 'attachments',
 	ACTIVITY_LOG: 'activity-log',
@@ -54,7 +54,13 @@ export const navigationItems = keyMirror({
 
 export const onboardingMethod = {
 	MANUAL: 'Manual',
-	HEAT: 'HEAT'
+	NETWORK_PACKAGE: 'NetworkPackage'
+};
+
+export const onboardingOriginTypes = {
+	NONE: 'none',
+	ZIP: 'zip',
+	CSAR: 'csar'
 };
 
 export const forms = keyMirror({

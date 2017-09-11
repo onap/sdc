@@ -20,7 +20,7 @@ import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseMod
 import LicenseAgreementActionHelper from 'sdc-app/onboarding/licenseModel/licenseAgreement/LicenseAgreementActionHelper.js';
 import FeatureGroupsActionHelper from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupsActionHelper.js';
 
-import {actionTypes} from './SoftwareProductConstants.js';
+import {actionTypes, onboardingOriginTypes, PRODUCT_QUESTIONNAIRE, forms} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
 import SoftwareProductComponentsActionHelper from './components/SoftwareProductComponentsActionHelper.js';
 import {actionsEnum as VersionControllerActionsEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
@@ -29,10 +29,10 @@ import {actionTypes as featureGroupsActionConstants} from 'sdc-app/onboarding/li
 import {actionTypes as licenseAgreementActionTypes} from 'sdc-app/onboarding/licenseModel/licenseAgreement/LicenseAgreementConstants.js';
 import {actionTypes as componentActionTypes} from './components/SoftwareProductComponentsConstants.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
-import {PRODUCT_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
 import {statusEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
+import {actionTypes as commonActionTypes} from 'sdc-app/common/reducers/PlainDataReducerConstants.js';
 
 function baseUrl() {
 	const restPrefix = Configuration.get('restPrefix');
@@ -59,7 +59,9 @@ function putSoftwareProduct(softwareProduct) {
 		licensingVersion: softwareProduct.licensingVersion && softwareProduct.licensingVersion.id ? softwareProduct.licensingVersion : {} ,
 		icon: softwareProduct.icon,
 		licensingData: softwareProduct.licensingData,
-		onboardingMethod: softwareProduct.onboardingMethod
+		onboardingMethod: softwareProduct.onboardingMethod,
+		networkPackageName: softwareProduct.networkPackageName,
+		onboardingOrigin: softwareProduct.onboardingOrigin
 	});
 }
 
@@ -267,7 +269,19 @@ const SoftwareProductActionHelper = {
 			.then(() => uploadFile(softwareProductId, formData, version))
 			.then(response => {
 				if (response.status === 'Success') {
-					OnboardingActionHelper.navigateToSoftwareProductAttachments(dispatch, {softwareProductId, version});
+					dispatch({
+						type: commonActionTypes.DATA_CHANGED,
+						deltaData: {onboardingOrigin: response.onboardingOrigin},
+						formName: forms.VENDOR_SOFTWARE_PRODUCT_DETAILS
+					});
+					switch(response.onboardingOrigin){
+						case onboardingOriginTypes.ZIP:
+							OnboardingActionHelper.navigateToSoftwareProductAttachmentsSetupTab(dispatch, {softwareProductId, version});
+							break;
+						case onboardingOriginTypes.CSAR:
+							OnboardingActionHelper.navigateToSoftwareProductAttachmentsValidationTab(dispatch, {softwareProductId, version});
+							break;
+					}
 				}
 				else {
 					throw new Error(parseUploadErrorMsg(response.errors));

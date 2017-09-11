@@ -53,7 +53,7 @@ export const mapStateToProps = ({softwareProduct, licenseModel: {licenseAgreemen
 			fullCategoryDisplayName
 		},
 		isReadOnlyMode,
-		componentsList,		
+		componentsList,
 		isManual: currentSoftwareProduct.onboardingMethod === onboardingMethod.MANUAL
 	};
 };
@@ -65,7 +65,6 @@ const mapActionsToProps = (dispatch, {version}) => {
 			licenseModelId,
 			version
 		}),
-		onAttachmentsSelect: ({id: softwareProductId}) => OnboardingActionHelper.navigateToSoftwareProductAttachments(dispatch, {softwareProductId, version}),
 		onUpload: (softwareProductId, formData) =>
 			SoftwareProductActionHelper.uploadFile(dispatch, {
 				softwareProductId,
@@ -98,7 +97,7 @@ const mapActionsToProps = (dispatch, {version}) => {
 			data: {
 				title: i18n('Upload Failed'),
 				confirmationButtonText: i18n('Continue'),
-				msg: i18n('no zip file was uploaded or zip file doesn\'t exist')
+				msg: i18n('no zip or csar file was uploaded or expected file doesn\'t exist')
 			}
 		}),
 		onComponentSelect: ({id: softwareProductId, componentId}) => {

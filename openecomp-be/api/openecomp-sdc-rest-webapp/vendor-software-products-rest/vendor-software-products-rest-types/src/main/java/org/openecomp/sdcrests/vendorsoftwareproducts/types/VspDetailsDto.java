@@ -41,7 +41,8 @@ public class VspDetailsDto extends VspDescriptionDto {
   private String lockingUser;
   private ValidationStructureList validationData;
   private String isOldVersion;
-
+  private String onboardingOrigin;
+  private String networkPackageName;
   public String getId() {
     return id;
   }
@@ -104,8 +105,21 @@ public class VspDetailsDto extends VspDescriptionDto {
 
   public void setValidationData(ValidationStructureList validationData) {
     this.validationData = validationData;
-
-
   }
 
+  public String getOnboardingOrigin() {
+    return onboardingOrigin;
+  }
+
+  public void setOnboardingOrigin(String onboardingOrigin) {
+    this.onboardingOrigin = onboardingOrigin;
+  }
+
+  public String getNetworkPackageName() {
+    return networkPackageName;
+  }
+
+  public void setNetworkPackageName(String networkPackageName) {
+    this.networkPackageName = networkPackageName;
+  }
 }
