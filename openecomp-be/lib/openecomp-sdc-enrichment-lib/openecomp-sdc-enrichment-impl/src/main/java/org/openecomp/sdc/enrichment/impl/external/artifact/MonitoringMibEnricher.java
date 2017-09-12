@@ -35,6 +35,8 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
+import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentArtifactDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
@@ -143,7 +145,9 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
     if (!artifact.isPresent()) {
       return;
     }
-    path = componentName + File.separator + ArtifactCategory.DEPLOYMENT.getDisplayName()
+    String unifiedComponentNodeType =
+        ToscaNodeType.ABSTRACT_NODE_TYPE_PREFIX + DataModelUtil.getNamespaceSuffix(componentName);
+    path = unifiedComponentNodeType + File.separator + ArtifactCategory.DEPLOYMENT.getDisplayName()
         + File.separator + type.name();
     MonitoringArtifactInfo monitoringArtifactInfo = new MonitoringArtifactInfo();
     monitoringArtifactInfo.setName(path);
