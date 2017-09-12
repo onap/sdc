@@ -1,4 +1,6 @@
 {
-    "run_list": [ "recipe[sdc-sanity::setup_sanity]" ]
+  "run_list": [
+    "role[sanityTests]"
+  ]
 }
 

@@ -1,0 +1,23 @@
+{
+  "name": "sanityTests",
+  "description": "Execute sanity tests",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[sdc-sanity::sanityTests_1_cleanup_jettydir]",
+    "recipe[sdc-sanity::sanityTests_2_setup_configuration]",
+    "recipe[sdc-sanity::sanityTests_3_sanity_execution]"
+//    "recipe[sdc-simulator::SDC_Simulator_3_logback]",
+//    "recipe[sdc-simulator::SDC_Simulator_4_locate_keystore]",
+//    "recipe[sdc-simulator::SDC_Simulator_5_create_jetty_modules]"
+  ],
+  "env_run_lists": {
+  }
+}
+
