@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationUtil.ORCHESTRATION_CONFIG_NAMESPACE;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationUtil.ORCHESTRATION_Impl_Key;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationUtil.ORCHESTRATION_IMPL_KEY;
 
 public class OrchestrationUploadFactory {
     private static Map<String, ImplementationConfiguration> fileHanlders;
@@ -17,7 +17,7 @@ public class OrchestrationUploadFactory {
     static {
         Configuration config = ConfigurationManager.lookup();
         fileHanlders = new ConcurrentHashMap<>(config.populateMap(ORCHESTRATION_CONFIG_NAMESPACE,
-                ORCHESTRATION_Impl_Key, ImplementationConfiguration.class));
+                ORCHESTRATION_IMPL_KEY, ImplementationConfiguration.class));
 
     }
 

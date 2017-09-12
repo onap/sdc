@@ -47,15 +47,9 @@ public class ToscaConvertorDefinitionsTest {
 
 
         assertNotNull(serviceTemplate.getNode_types());
-        assertEquals(7, serviceTemplate.getNode_types().size());
+        assertEquals(1, serviceTemplate.getNode_types().size());
         Set<String> keys = serviceTemplate.getNode_types().keySet();
-        assertTrue(keys.contains("tosca.nodes.nfv.ext.zte.VDU"));
-        assertTrue(keys.contains("tosca.nodes.nfv.ext.zte.CP"));
         assertTrue(keys.contains("tosca.nodes.nfv.ext.zte.VNF.vCSCF"));
-        assertTrue(keys.contains("tosca.nodes.nfv.ext.ImageFile"));
-        assertTrue(keys.contains("tosca.nodes.nfv.ext.LocalStorage"));
-        assertTrue(keys.contains("tosca.nodes.nfv.ext.zte.VNF"));
-        assertTrue(keys.contains("tosca.nodes.nfv.ext.zte.VL"));
     }
 
 

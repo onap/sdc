@@ -23,7 +23,7 @@ public class OrchestrationProcessFactory {
   static {
     Configuration config = ConfigurationManager.lookup();
     processImplMap = new ConcurrentHashMap<>(config.populateMap(ORCHESTRATION_CONFIG_NAMESPACE,
-        ConfigConstants.processImplKey, ImplementationConfiguration.class));
+        ConfigConstants.PROCESS_IMPL_KEY, ImplementationConfiguration.class));
 
   }
 

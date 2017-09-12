@@ -3,7 +3,6 @@ package org.openecomp.sdcrests.vsp.rest.services;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.logging.api.Logger;
@@ -34,7 +33,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
-import static org.openecomp.core.utilities.file.FileUtils.*;
+
+import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
+import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
 
 @Named
 @Service("orchestrationTemplateCandidate")
@@ -55,7 +56,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     UploadFileResponse uploadFileResponse = candidateManager
         .upload(vspId, resolveVspVersion(vspId, null, user, VersionableEntityAction
             .Write), fileToUpload.getObject(InputStream.class), user, getFileExtension(filename),
-            FileUtils.getNetworkPackageName(filename));
+            getNetworkPackageName(filename));
     UploadFileResponseDto uploadFileResponseDto = new MapUploadFileResponseToUploadFileResponseDto()
         .applyMapping(uploadFileResponse, UploadFileResponseDto.class);
 

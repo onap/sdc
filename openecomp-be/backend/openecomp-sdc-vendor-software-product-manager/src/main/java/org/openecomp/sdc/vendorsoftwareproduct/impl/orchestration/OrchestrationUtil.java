@@ -59,7 +59,7 @@ import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConst
 public class OrchestrationUtil {
 
     public static final String ORCHESTRATION_CONFIG_NAMESPACE = "orchestration";
-    public static final String ORCHESTRATION_Impl_Key = "orchestration_impl";
+    public static final String ORCHESTRATION_IMPL_KEY = "orchestration_impl";
 
 
     private static VendorSoftwareProductDao vendorSoftwareProductDao =
