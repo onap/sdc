@@ -372,7 +372,7 @@ public class LifecycleRestUtils extends BaseRestUtils {
 			String userRemarks, DistributionStatusEnum reqDistributionStatus) throws Exception {
 		String uniqueId = serviceDetails.getUniqueId();
 		Config config = Utils.getConfig();
-		String environmentName = "PROD-Andreys-Only";
+		String environmentName = "AUTO";
 //		String environmentName = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getEnvironments().get(0);
 		DistributionStatusEnum distributionStatusEnum = DistributionStatusEnum.findState(reqDistributionStatus.getValue());
 		switch(distributionStatusEnum){
