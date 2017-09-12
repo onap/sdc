@@ -22,6 +22,7 @@ package org.openecomp.sdc.healing.healers;
 
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -94,7 +95,7 @@ public class FileDataStructureHealer implements Healer {
     byte[] byteContentData = uploadData.getContentData().array();
     FileContentHandler fileContentHandler;
     try{
-      fileContentHandler = CommonUtil.validateAndUploadFileContent(byteContentData);
+      fileContentHandler = CommonUtil.validateAndUploadFileContent(OnboardingTypesEnum.ZIP, byteContentData);
       Map<String, List<ErrorMessage>> errors = new HashMap<>();
       OrchestrationTemplateCandidateData candidateDataEntity =
         new CandidateEntityBuilder(candidateService)

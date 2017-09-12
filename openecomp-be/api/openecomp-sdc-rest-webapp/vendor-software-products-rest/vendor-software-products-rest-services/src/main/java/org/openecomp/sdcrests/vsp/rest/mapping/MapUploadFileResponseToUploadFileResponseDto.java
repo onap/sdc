@@ -34,5 +34,7 @@ public class MapUploadFileResponseToUploadFileResponseDto
   public void doMapping(UploadFileResponse source, UploadFileResponseDto target) {
     target.setStatus(source.getStatus());
     target.setErrors(source.getErrors());
+    target.setOnboardingOrigin(source.getOnboardingType().toString());
+    target.setNetworkPackageName(source.getNetworkPackageName());
   }
 }

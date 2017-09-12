@@ -47,14 +47,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.VersionedVendorSoftwareProd
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.PackageInfoDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.ValidationResponseDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VersionSoftwareProductActionRequestDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspComputeDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspCreationDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.*;
 import org.openecomp.sdcrests.vsp.rest.VendorSoftwareProducts;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapComputeEntityToVspComputeDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapPackageInfoToPackageInfoDto;
@@ -100,9 +93,13 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
             + vspDescriptionDto.getName());
 
       VspCreationDto vspCreationDto = null;
-      switch (vspDescriptionDto.getOnboardingMethod()) {
-        case "HEAT":
-        case "Manual":
+      OnboardingMethod onboardingMethod = OnboardingMethod.valueOf(vspDescriptionDto.getOnboardingMethod());
+      if (onboardingMethod == null){
+        return handleUnkownOnboardingMethod();
+      }
+      switch (onboardingMethod) {
+        case NetworkPackage:
+        case Manual:
           VspDetails vspDetails = new MapVspDescriptionDtoToVspDetails().
               applyMapping(vspDescriptionDto, VspDetails.class);
 
@@ -112,16 +109,20 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
           vspCreationDto = mapping.applyMapping(vspDetails, VspCreationDto.class);
           break;
         default:
-          ErrorCode onboardingMethodUpdateErrorCode = OnboardingMethodErrorBuilder
-              .getInvalidOnboardingMethodErrorBuilder();
-          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
-              LoggerTragetServiceName.ADD_VSP, ErrorLevel.ERROR.name(),
-              LoggerErrorCode.DATA_ERROR.getErrorCode(), onboardingMethodUpdateErrorCode.message());
-          throw new CoreException(onboardingMethodUpdateErrorCode);
+          return handleUnkownOnboardingMethod();
       }
 
       return Response.ok(vspCreationDto).build();
     }
+
+  private Response handleUnkownOnboardingMethod() {
+    ErrorCode onboardingMethodUpdateErrorCode = OnboardingMethodErrorBuilder
+        .getInvalidOnboardingMethodErrorBuilder();
+    MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
+        LoggerTragetServiceName.ADD_VSP, ErrorLevel.ERROR.name(),
+        LoggerErrorCode.DATA_ERROR.getErrorCode(), onboardingMethodUpdateErrorCode.message());
+    throw new CoreException(onboardingMethodUpdateErrorCode);
+  }
 
   @Override
   public Response listVsps(String versionFilter, String user) {

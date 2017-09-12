@@ -30,6 +30,7 @@ public class AuditMessages {
   public static final String HEAT_VALIDATION_STARTED = "HEAT validation started. VSP Id: ";
   public static final String HEAT_VALIDATION_COMPLETED = "HEAT validation completed. VSP Id: ";
   public static final String HEAT_VALIDATION_ERROR = "HEAT validation error: %s. VSP Id: %s";
+  public static final String CSAR_VALIDATION_STARTED = "CSAR validation started. VSP Id: ";
   public static final String HEAT_TRANSLATION_STARTED = "HEAT translation started. VSP Id: ";
   public static final String HEAT_TRANSLATION_COMPLETED = "HEAT translation completed. VSP Id: ";
   public static final String ENRICHMENT_ERROR = "Enrichment error: %s. VSP Id: %s";

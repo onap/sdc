@@ -21,6 +21,7 @@
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
@@ -35,6 +36,8 @@ import java.util.Map;
 public class UploadFileResponse {
   private Map<String, List<ErrorMessage>> errors = new HashMap<>();
   private UploadFileStatus status = UploadFileStatus.Success;
+  private OnboardingTypesEnum onboardingType;
+  private String networkPackageName;
 
   public UploadFileStatus getStatus() {
     return status;
@@ -42,6 +45,22 @@ public class UploadFileResponse {
 
   public void setStatus(UploadFileStatus status) {
     this.status = status;
+  }
+
+  public OnboardingTypesEnum getOnboardingType() {
+    return onboardingType;
+  }
+
+  public void setOnboardingType(OnboardingTypesEnum onboardingTypesEnum) {
+    this.onboardingType = onboardingTypesEnum;
+  }
+
+  public String getNetworkPackageName() {
+    return networkPackageName;
+  }
+
+  public void setNetworkPackageName(String networkPackageName) {
+    this.networkPackageName = networkPackageName;
   }
 
   /**

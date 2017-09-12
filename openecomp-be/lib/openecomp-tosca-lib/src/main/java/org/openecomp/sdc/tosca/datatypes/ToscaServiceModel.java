@@ -33,6 +33,7 @@ import java.util.Map;
  */
 public class ToscaServiceModel implements AsdcModel {
   private FileContentHandler artifactFiles;
+  private FileContentHandler externalFiles;
   private Map<String, ServiceTemplate> serviceTemplates;
   private String entryDefinitionServiceTemplate;
 
@@ -54,6 +55,15 @@ public class ToscaServiceModel implements AsdcModel {
     this.entryDefinitionServiceTemplate = entryDefinitionServiceTemplate;
   }
 
+  public ToscaServiceModel(FileContentHandler artifactFiles,
+                           FileContentHandler externalFiles,
+                           Map<String, ServiceTemplate> serviceTemplates,
+                           String entryDefinitionServiceTemplate) {
+    this.artifactFiles = artifactFiles;
+    this.externalFiles = externalFiles;
+    this.serviceTemplates = serviceTemplates;
+    this.entryDefinitionServiceTemplate = entryDefinitionServiceTemplate;
+  }
 
   /**
    * Gets artifact files.
@@ -112,5 +122,13 @@ public class ToscaServiceModel implements AsdcModel {
    */
   public static ToscaServiceModel getClonedServiceModel(ToscaServiceModel toscaServiceModel) {
     return ToscaServiceModel.class.cast(DataModelUtil.getClonedObject(toscaServiceModel));
+  }
+
+  public FileContentHandler getExternalFiles() {
+    return externalFiles;
+  }
+
+  public void setExternalFiles(FileContentHandler externalFiles) {
+    this.externalFiles = externalFiles;
   }
 }

@@ -57,7 +57,6 @@ class SoftwareProductLandingPageView extends React.Component {
 		isReadOnlyMode: React.PropTypes.bool,
 		componentsList: React.PropTypes.arrayOf(ComponentPropType),
 		onDetailsSelect: React.PropTypes.func,
-		onAttachmentsSelect: React.PropTypes.func,
 		onUpload: React.PropTypes.func,
 		onUploadConfirmation: React.PropTypes.func,
 		onInvalidFileSizeUpload: React.PropTypes.func,
@@ -78,15 +77,13 @@ class SoftwareProductLandingPageView extends React.Component {
 					disableClick={true}
 					ref='fileInput'
 					name='fileInput'
-					accept='.zip'
+					accept='.zip, .csar'
 					disabled>
 					<div className='draggable-wrapper'>
 						<div className='software-product-landing-view-top'>
 							<div className='row'>
 								<ProductSummary currentSoftwareProduct={currentSoftwareProduct} onDetailsSelect={onDetailsSelect} />
-								{isManual ?
-									<div className='details-panel'/>
-									: this.renderProductDetails(currentSoftwareProduct, isReadOnlyMode)}
+								{this.renderProductDetails(isManual, isReadOnlyMode)}
 							</div>
 						</div>
 					</div>
@@ -106,34 +103,18 @@ class SoftwareProductLandingPageView extends React.Component {
 		}
 	}
 
-	renderProductDetails(currentSoftwareProduct, isReadOnlyMode) {
-		let {validationData} = currentSoftwareProduct;
-		let {onAttachmentsSelect} = this.props;
-		let details = {
-			heatTemplates: validationData ? '1' : '0',
-			images: '0',
-			otherArtifacts: '0'
-		};
-
+	renderProductDetails(isManual, isReadOnlyMode) {
 		return (
 			<div className='details-panel'>
-				<div className='software-product-landing-view-heading-title'>{i18n('Software Product Attachments')}</div>
-				<div className='software-product-landing-view-top-block'>
-					<div
-						className='software-product-landing-view-top-block-col'
-						onClick={() => onAttachmentsSelect(currentSoftwareProduct)}>
-						<div>
-							<div className='attachment-details'>{i18n('HEAT Templates')} (<span
-								className='attachment-details-count'>{details.heatTemplates}</span>)
-							</div>
-						</div>
+				{ !isManual && <div>
+					<div className='software-product-landing-view-heading-title'>{i18n('Software Product Attachments')}</div>
+						<DraggableUploadFileBox
+							dataTestId='upload-btn'
+							isReadOnlyMode={isReadOnlyMode}
+							className={classnames('software-product-landing-view-top-block-col-upl', {'disabled': isReadOnlyMode})}
+							onClick={() => this.refs.fileInput.open()}/>
 					</div>
-					<DraggableUploadFileBox
-						dataTestId='upload-btn'
-						isReadOnlyMode={isReadOnlyMode}
-						className={classnames('software-product-landing-view-top-block-col-upl', {'disabled': isReadOnlyMode})}
-						onClick={() => this.refs.fileInput.open()}/>
-				</div>
+				}
 			</div>
 		);
 	}

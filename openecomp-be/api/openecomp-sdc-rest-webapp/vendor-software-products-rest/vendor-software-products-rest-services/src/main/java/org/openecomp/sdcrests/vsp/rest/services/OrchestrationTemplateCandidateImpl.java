@@ -1,10 +1,11 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.common.errors.Messages;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.MdcUtil;
@@ -32,10 +33,8 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
+import static org.openecomp.core.utilities.file.FileUtils.*;
 
 @Named
 @Service("orchestrationTemplateCandidate")
@@ -48,31 +47,35 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
           LoggerFactory.getLogger(OrchestrationTemplateCandidateImpl.class);
 
   @Override
-  public Response upload(String vspId, String versionId, InputStream heatFileToUpload,
+  public Response upload(String vspId, String versionId, Attachment fileToUpload,
                          String user) {
     MdcUtil.initMdc(LoggerServiceName.Upload_File.toString());
     logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.UPLOAD_HEAT + vspId);
-
+    String filename = fileToUpload.getContentDisposition().getParameter("filename");
     UploadFileResponse uploadFileResponse = candidateManager
         .upload(vspId, resolveVspVersion(vspId, null, user, VersionableEntityAction
-            .Write), heatFileToUpload, user);
+            .Write), fileToUpload.getObject(InputStream.class), user, getFileExtension(filename),
+            FileUtils.getNetworkPackageName(filename));
     UploadFileResponseDto uploadFileResponseDto = new MapUploadFileResponseToUploadFileResponseDto()
         .applyMapping(uploadFileResponse, UploadFileResponseDto.class);
 
     return Response.ok(uploadFileResponseDto).build();
   }
 
+
+
   @Override
   public Response get(String vspId, String versionId, String user) throws IOException {
-    Optional<byte[]> zipFile =
-        candidateManager
-            .get(vspId, resolveVspVersion(vspId, null, user, VersionableEntityAction.Read), user);
+
+    Optional<Pair<String, byte[]>> zipFile = candidateManager
+        .get(vspId, resolveVspVersion(vspId, null, user, VersionableEntityAction.Read), user);
 
     if (!zipFile.isPresent()) {
       return Response.status(Response.Status.NOT_FOUND).build();
     }
-    Response.ResponseBuilder response = Response.ok(zipFile.get());
-    response.header("Content-Disposition", "attachment; filename=HeatCandidate.zip");
+    Response.ResponseBuilder response = Response.ok(zipFile.get().getRight());
+    String filename = "Candidate." + zipFile.get().getLeft();
+    response.header("Content-Disposition", "attachment; filename=" + filename);
     return response.build();
   }
 

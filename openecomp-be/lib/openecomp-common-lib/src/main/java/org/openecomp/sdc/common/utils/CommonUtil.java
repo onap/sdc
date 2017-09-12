@@ -22,8 +22,11 @@ package org.openecomp.sdc.common.utils;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -45,38 +48,54 @@ import java.util.zip.ZipInputStream;
 
 public class CommonUtil {
 
-  public static FileContentHandler validateAndUploadFileContent(byte[] uploadedFileData)
+  public static FileContentHandler validateAndUploadFileContent(OnboardingTypesEnum type,
+                                                                byte[] uploadedFileData)
       throws IOException {
-    return getFileContentMapFromOrchestrationCandidateZipAndValidateNoFolders(uploadedFileData);
+    return getFileContentMapFromOrchestrationCandidateZipAndValidateNoFolders(type, uploadedFileData);
   }
 
   /**
    * Gets files out of the zip AND validates zip is flat (no folders)
    *
+   *
+   * @param type
    * @param uploadFileData zip file
    * @return FileContentHandler if input is valid and has no folders
    */
   private static FileContentHandler getFileContentMapFromOrchestrationCandidateZipAndValidateNoFolders(
-      byte[] uploadFileData)
+      OnboardingTypesEnum type, byte[] uploadFileData)
       throws IOException {
+    Pair<FileContentHandler,List<String> > pair = getFileContentMapFromOrchestrationCandidateZip(uploadFileData);
 
+    if(type.equals(OnboardingTypesEnum.ZIP)) {
+      validateNoFolders(pair.getRight());
+    }
+
+    return pair.getLeft();
+  }
+
+  public static Pair<FileContentHandler,List<String> > getFileContentMapFromOrchestrationCandidateZip(
+          byte[] uploadFileData)
+          throws IOException {
+    ZipEntry zipEntry;
     List<String> folderList = new ArrayList<>();
     FileContentHandler mapFileContent = new FileContentHandler();
-
-    try (ZipInputStream inputZipStream = new ZipInputStream(new ByteArrayInputStream(uploadFileData))) {
-
+     try ( ByteArrayInputStream in = new ByteArrayInputStream(uploadFileData);
+          ZipInputStream inputZipStream = new ZipInputStream(in)){
+      byte[] fileByteContent;
       String currentEntryName;
-      ZipEntry zipEntry;
 
       while ((zipEntry = inputZipStream.getNextEntry()) != null) {
-
         currentEntryName = zipEntry.getName();
+        // else, get the file content (as byte array) and save it in a map.
+        fileByteContent = FileUtils.toByteArray(inputZipStream);
+
         int index = lastIndexFileSeparatorIndex(currentEntryName);
         if (index != -1) { //todo ?
           folderList.add(currentEntryName);
-        } else {
-          // else, get the file content (as byte array) and save it in a map.
-          mapFileContent.addFile(currentEntryName, FileUtils.toByteArray(inputZipStream));
+        }
+        if(isFile(currentEntryName)) {
+          mapFileContent.addFile(currentEntryName, fileByteContent);
         }
       }
 
@@ -84,9 +103,11 @@ public class CommonUtil {
       throw new IOException(exception);
     }
 
-    validateNoFolders(folderList);
+    return new ImmutablePair<>(mapFileContent,folderList);
+  }
 
-    return mapFileContent;
+  private static boolean isFile(String currentEntryName) {
+    return !(currentEntryName.endsWith("\\") || currentEntryName.endsWith("/"));
   }
 
   private static void validateNoFolders(List<String> folderList) {

@@ -93,9 +93,9 @@ function HeatFileTreeHeader(props) {
 		<div onClick={() => props.selectNode(nodeFilters.ALL)} className={classNames({'attachments-tree-header': true,
 			'header-selected' : props.selectedNode === nodeFilters.ALL})} data-test-id='validation-tree-header'>
 			<div className='tree-header-title' >
-				<SVGIcon name='zip' color={props.selectedNode === nodeFilters.ALL ? 'primary' : ''}  iconClassName='header-icon' />
+				{/*<SVGIcon name='zip' color={props.selectedNode === nodeFilters.ALL ? 'primary' : ''}  iconClassName='header-icon' />*/}
 				<span className={classNames({'tree-header-title-text' : true,
-					'tree-header-title-selected' : props.selectedNode === nodeFilters.ALL})}>{i18n(`HEAT${hasErrors ? ' (Draft)' : ''}`)}</span>
+					'tree-header-title-selected' : props.selectedNode === nodeFilters.ALL})}>{i18n(`${props.headerTitle} ${hasErrors ? '(Draft)' : ''}`)}</span>
 			</div>
 			<ErrorsAndWarningsCount errorList={props.errorList} size='large' />
 		</div>);
@@ -134,7 +134,7 @@ class HeatFileTree extends React.Component  {
 			<div key={node.name + rand} className={classNames({'tree-block-inside' : !node.header})}>
 				{
 					node.header ?
-					<HeatFileTreeHeader selectedNode={selectedNode} errorList={this.props.errorList} selectNode={(nodeName) => this.selectNode(nodeName)}  /> :
+					<HeatFileTreeHeader headerTitle={node.name} selectedNode={selectedNode} errorList={this.props.errorList} selectNode={(nodeName) => this.selectNode(nodeName)}  /> :
 					<HeatFileTreeRow toggleExpanded={this.props.toggleExpanded} node={node} path={path} selectedNode={selectedNode} selectNode={() => this.selectNode(node.name)} />
 				}
 				{

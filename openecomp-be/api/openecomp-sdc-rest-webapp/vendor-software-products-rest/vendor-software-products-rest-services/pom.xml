@@ -102,11 +102,11 @@
             <artifactId>woodstox-core-asl</artifactId>
             <version>${woodstox.version}</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-vendor-software-product-manager</artifactId>
             <version>${project.version}</version>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-multipart</artifactId>

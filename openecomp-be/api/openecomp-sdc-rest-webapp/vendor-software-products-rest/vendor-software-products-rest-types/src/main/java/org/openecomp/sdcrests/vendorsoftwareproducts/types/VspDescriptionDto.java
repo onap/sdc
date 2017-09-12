@@ -44,6 +44,8 @@ public class VspDescriptionDto {
 
   @NotNull
   private String onboardingMethod;
+  private String onboardingOrigin;
+  private String networkPackageName;
 
   public String getName() {
     return name;
@@ -123,5 +125,21 @@ public class VspDescriptionDto {
 
   public void setOnboardingMethod(String onboardingMethod) {
     this.onboardingMethod = onboardingMethod;
+  }
+
+  public String getOnboardingOrigin() {
+    return onboardingOrigin;
+  }
+
+  public void setOnboardingOrigin(String onboardingOrigin) {
+    this.onboardingOrigin = onboardingOrigin;
+  }
+
+  public String getNetworkPackageName() {
+    return networkPackageName;
+  }
+
+  public void setNetworkPackageName(String networkPackageName) {
+    this.networkPackageName = networkPackageName;
   }
 }

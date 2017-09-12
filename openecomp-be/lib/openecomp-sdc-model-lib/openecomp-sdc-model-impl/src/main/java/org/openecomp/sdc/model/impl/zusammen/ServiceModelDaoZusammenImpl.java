@@ -22,9 +22,9 @@ import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
+import org.openecomp.core.converter.datatypes.Constants;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;

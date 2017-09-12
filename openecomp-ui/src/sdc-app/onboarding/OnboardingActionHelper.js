@@ -31,11 +31,13 @@ import OnboardActionHelper from './onboard/OnboardActionHelper.js';
 import SoftwareProductComponentsMonitoringAction from './softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringActionHelper.js';
 import {actionTypes, enums} from './OnboardingConstants.js';
 import SoftwareProductComponentsImageActionHelper from './softwareProduct/components/images/SoftwareProductComponentsImageActionHelper.js';
-import {navigationItems as SoftwareProductNavigationItems, actionTypes as SoftwareProductActionTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
+import {navigationItems as SoftwareProductNavigationItems, actionTypes as SoftwareProductActionTypes, onboardingOriginTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 import ActivityLogActionHelper from 'sdc-app/common/activity-log/ActivityLogActionHelper.js';
 import licenseModelOverviewActionHelper from 'sdc-app/onboarding/licenseModel/overview/licenseModelOverviewActionHelper.js';
 import store from 'sdc-app/AppStore.js';
 import {selectedButton as licenseModelOverviewSelectedButton} from 'sdc-app/onboarding/licenseModel/overview/LicenseModelOverviewConstants.js';
+import {tabsMapping as attachmentsTabsMapping} from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsConstants.js';
+import SoftwareProductAttachmentsActionHelper from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsActionHelper.js';
 
 function setCurrentScreen(dispatch, screen, props = {}) {
 	dispatch({
@@ -165,7 +167,9 @@ export default {
 			SoftwareProductActionHelper.loadSoftwareProductDetailsData(dispatch, {licenseModelId, licensingVersion});
 
 			SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version: newVersion});
-			SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version: newVersion});
+			if(response[0].onboardingOrigin === onboardingOriginTypes.ZIP) {
+				SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version: newVersion});
+			}
 			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {softwareProductId, licenseModelId, version: newVersion});
 		});
 	},
@@ -175,9 +179,17 @@ export default {
 		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_DETAILS, {softwareProductId, version});
 	},
 
-	navigateToSoftwareProductAttachments(dispatch, {softwareProductId, version}) {
+	navigateToSoftwareProductAttachmentsSetupTab(dispatch, {softwareProductId, version}) {
 		SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version});
+		SoftwareProductAttachmentsActionHelper.setActiveTab(dispatch, {activeTab: attachmentsTabsMapping.SETUP});
 		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS, {softwareProductId, version});
+	},
+
+	navigateToSoftwareProductAttachmentsValidationTab(dispatch, {softwareProductId, version}) {
+		SoftwareProductActionHelper.processAndValidateHeatCandidate(dispatch, {softwareProductId, version}).then(() => {
+			SoftwareProductAttachmentsActionHelper.setActiveTab(dispatch, {activeTab: attachmentsTabsMapping.VALIDATION});
+			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS, {softwareProductId, version});
+		});
 	},
 
 	navigateToSoftwareProductProcesses(dispatch, {softwareProductId, version}) {

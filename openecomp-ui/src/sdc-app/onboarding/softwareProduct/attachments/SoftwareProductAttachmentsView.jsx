@@ -20,34 +20,34 @@ import {tabsMapping} from './SoftwareProductAttachmentsConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import HeatValidation from './validation/HeatValidation.js';
+import {onboardingOriginTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 
 class HeatScreenView extends Component {
 
 	static propTypes = {
 		isValidationAvailable: PropTypes.bool,
-		goToOverview: PropTypes.bool
-	};
-
-	state = {
-		activeTab: tabsMapping.SETUP
+		goToOverview: PropTypes.bool,
+		setActiveTab: PropTypes.function
 	};
 
 	render() {
-		let {isValidationAvailable, isReadOnlyMode, heatDataExist, onDownload, softwareProductId, onProcessAndValidate, heatSetup, HeatSetupComponent, onGoToOverview, version, ...other} = this.props;
+		let {isValidationAvailable, isReadOnlyMode, heatDataExist, onDownload, softwareProductId, onProcessAndValidate,
+			heatSetup, HeatSetupComponent, onGoToOverview, version, onboardingOrigin, activeTab, setActiveTab, ...other} = this.props;
+
 		return (
 			<div className='vsp-attachments-view'>
 				<div className='attachments-view-controllers'>
-					{(this.state.activeTab === tabsMapping.SETUP) &&
+					{(activeTab === tabsMapping.SETUP) &&
 						<SVGIcon
 							disabled={heatDataExist ? false : true}
 							name='download'
 							className='icon-component'
-							label={i18n('Download HEAT')}
+							label={i18n('Export Validation')}
 							labelPosition='right'
 							color='secondary'
 							onClick={heatDataExist ? () => onDownload({heatCandidate: heatSetup, isReadOnlyMode, version}) : undefined}
 							data-test-id='download-heat'/>}
-					{(this.state.activeTab === tabsMapping.VALIDATION && softwareProductId) &&
+					{(activeTab === tabsMapping.VALIDATION && softwareProductId) &&
 						<SVGIcon
 							disabled={this.props.goToOverview !== true}
 							onClick={this.props.goToOverview ? () => onGoToOverview({version}) : undefined}
@@ -60,7 +60,7 @@ class HeatScreenView extends Component {
 					<SVGIcon
 						name='upload'
 						className='icon-component'
-						label={i18n('Upload New HEAT')}
+						label={i18n('Upload New File')}
 						labelPosition='right'
 						color='secondary'
 						disabled={isReadOnlyMode}
@@ -70,20 +70,20 @@ class HeatScreenView extends Component {
 						ref='hiddenImportFileInput'
 						type='file'
 						name='fileInput'
-						accept='.zip'
+						accept='.zip, .csar'
 						onChange={evt => this.handleImport(evt)}/>
 				</div>
-				<Tabs id='attachments-tabs' activeKey={this.state.activeTab} onSelect={key => this.handleTabPress(key)}>
-					<Tab  eventKey={tabsMapping.SETUP} title='HEAT Setup'>
+				<Tabs id='attachments-tabs' activeKey={activeTab} onSelect={key => this.handleTabPress(key)}>
+					<Tab eventKey={tabsMapping.SETUP} title='Setup' disabled={onboardingOrigin === onboardingOriginTypes.CSAR}>
 						<HeatSetupComponent
 							heatDataExist={heatDataExist}
-							changeAttachmentsTab={tab => this.setState({activeTab: tab})}
+							changeAttachmentsTab={tab => setActiveTab({activeTab: tab})}
 							onProcessAndValidate={onProcessAndValidate}
 							softwareProductId={softwareProductId}
 							isReadOnlyMode={isReadOnlyMode}
 							version={version}/>
 					</Tab>
-					<Tab eventKey={tabsMapping.VALIDATION} title='Heat Validation' disabled={!isValidationAvailable}>
+					<Tab eventKey={tabsMapping.VALIDATION} title='Validation' disabled={!isValidationAvailable}>
 						<HeatValidation {...other}/>
 					</Tab>
 				</Tabs>
@@ -92,15 +92,15 @@ class HeatScreenView extends Component {
 	}
 
 	handleTabPress(key) {
-		let {heatSetup, heatSetupCache, onProcessAndValidate, isReadOnlyMode, version} = this.props;
+		let {heatSetup, heatSetupCache, onProcessAndValidate, isReadOnlyMode, version, setActiveTab} = this.props;
 		switch (key) {
 			case tabsMapping.VALIDATION:
 				onProcessAndValidate({heatData: heatSetup, heatDataCache: heatSetupCache, isReadOnlyMode, version}).then(
-					() => this.setState({activeTab: tabsMapping.VALIDATION})
+					() => setActiveTab({activeTab: tabsMapping.VALIDATION})
 				);
 				return;
 			case tabsMapping.SETUP:
-				this.setState({activeTab: tabsMapping.SETUP});
+				setActiveTab({activeTab: tabsMapping.SETUP});
 				return;
 		}
 	}
@@ -112,11 +112,13 @@ class HeatScreenView extends Component {
 		formData.append('upload', this.refs.hiddenImportFileInput.files[0]);
 		this.refs.hiddenImportFileInput.value = '';
 		this.props.onUpload(formData, version);
-		this.setState({activeTab: tabsMapping.SETUP});
 	}
 
 	save() {
-		return this.props.onSave(this.props.heatSetup, this.props.version);
+
+		return this.props.onboardingOrigin === onboardingOriginTypes.ZIP ?
+			this.props.onSave(this.props.heatSetup, this.props.version) :
+			Promise.resolve();
 	}
 
 }
