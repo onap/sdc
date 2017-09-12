@@ -39,24 +39,16 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.config.Config;
-
 import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
-import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
-
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.execute.devCI.ArtifactFromCsar;
-
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-
-import org.testng.Assert;
 
 import java.io.*;
 import java.nio.file.FileSystems;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -493,7 +485,7 @@ public class OnboardingUtils {
 		jObject.put("description", "new VSP description");
 		jObject.put("category", "resourceNewCategory.generic");
 		jObject.put("subCategory", "resourceNewCategory.generic.database");
-		jObject.put("onboardingMethod", "HEAT");
+		jObject.put("onboardingMethod", "NetworkPackage");
 		jObject.put("licensingVersion", jlicensingVersionObj);
 		jObject.put("vendorName", amdocsLicenseMembers.getVendorLicenseName());
 		jObject.put("vendorId", amdocsLicenseMembers.getVendorId());
