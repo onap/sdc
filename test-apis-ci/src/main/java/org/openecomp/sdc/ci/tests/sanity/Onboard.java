@@ -115,8 +115,8 @@ public class Onboard extends ComponentBaseTest {
 		ExtentTestActions.log(Status.INFO, String.format("Certify Service"));
 		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
-		ExtentTestActions.log(Status.INFO, String.format("Distribute Service"));
-		AtomicOperationUtils.distributeService(service, true);
+//		ExtentTestActions.log(Status.INFO, String.format("Distribute Service"));
+//		AtomicOperationUtils.distributeService(service, true);
 		
 		ExtentTestActions.log(Status.INFO, String.format("The onboarding %s test is passed ! ", vnfFile));
 	}

@@ -2,7 +2,7 @@
 
 
 function usage {
-    echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ]  [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -h|--help ]"
+    echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ]  [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -l|--local <Run-without-pull>] [ -s|--skipTests <Run-without-sanityDocker>] [ -h|--help ]"
 }
 
 
@@ -25,6 +25,7 @@ function dir_perms {
 
 RELEASE=latest
 LOCAL=false
+SKIPTESTS=false
 [ -f /opt/config/env_name.txt ] && DEP_ENV=$(cat /opt/config/env_name.txt) || DEP_ENV=__ENV-NAME__
 [ -f /opt/config/nexus_username.txt ] && NEXUS_USERNAME=$(cat /opt/config/nexus_username.txt)    || NEXUS_USERNAME=release
 [ -f /opt/config/nexus_password.txt ] && NEXUS_PASSWD=$(cat /opt/config/nexus_password.txt)      || NEXUS_PASSWD=sfWU3DFVdBr7GVxB85mTYgAW
@@ -47,6 +48,10 @@ while [ "$1" != "" ]; do
 		-l | --local )
 		shift
 		LOCAL=true
+		;;
+		-s | --skipTests )
+		shift
+		SKIPTESTS=true
 		;;
         -h | --help )
 			usage
@@ -157,3 +162,12 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# sanityDocker
+echo "docker run sdc-frontend..."
+if [ ${SKIPTESTS} = false ]; then
+echo "Triger sanity docker, please wait..."
+    if [ ${LOCAL} = false ]; then
+	   docker pull ${PREFIX}/sdc-sanity:${RELEASE}
+    fi
+	docker run --detach --name sdc-sanity --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 512m --memory-swap=512m --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/sdc-sanity/target:/var/lib/tests/target --volume /data/logs/sdc-sanity/ExtentReport:/var/lib/tests/ExtentReport --volume /data/environments:/root/chef-solo/environments --publish 9560:9560 ${PREFIX}/sdc-sanity:${RELEASE}
+fi
