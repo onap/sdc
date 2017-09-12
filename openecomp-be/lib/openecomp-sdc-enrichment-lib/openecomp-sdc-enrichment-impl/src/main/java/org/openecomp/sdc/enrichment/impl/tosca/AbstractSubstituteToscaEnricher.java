@@ -77,7 +77,7 @@ public class AbstractSubstituteToscaEnricher {
           if (toscaAnalyzerService.isTypeOf(nodeTemplate, VFC_ABSTRACT_SUBSTITUTE, serviceTemplate,
               toscaModel)) {
 
-            String componentDisplayName = getComponentDisplayName(nodeTemplateId);
+            String componentDisplayName = getComponentDisplayName(nodeTemplateId, nodeTemplate);
 
             setProperty(nodeTemplate, VM_TYPE_TAG, componentDisplayName);
 
@@ -157,7 +157,7 @@ public class AbstractSubstituteToscaEnricher {
           if (toscaAnalyzerService.isTypeOf(nodeTemplate, VFC_ABSTRACT_SUBSTITUTE, serviceTemplate,
               toscaModel)) {
 
-            String componentDisplayName = getComponentDisplayName(nodeTemplateId);
+            String componentDisplayName = getComponentDisplayName(nodeTemplateId, nodeTemplate);
 
             if (componentDisplayNameToNodeTempalteIds.containsKey(componentDisplayName)) {
               componentDisplayNameToNodeTempalteIds.get(componentDisplayName).add(nodeTemplateId);
@@ -206,12 +206,17 @@ public class AbstractSubstituteToscaEnricher {
       nodeTemplate.setRequirements(requirements);
   }
 
-  private String getComponentDisplayName(String nodeTemplateId ) {
+  private String getComponentDisplayName(String nodeTemplateId, NodeTemplate nodeTemplate) {
     String componentDisplayName = null;
     if (nodeTemplateId.contains(ABSTRACT_NODE_TEMPLATE_ID_PREFIX)) {
       String removedPrefix = nodeTemplateId.split(ABSTRACT_NODE_TEMPLATE_ID_PREFIX)[1];
       final String[] removedSuffix = removedPrefix.split("_\\d");
       componentDisplayName = removedSuffix[0];
+    } else {
+      final String type = nodeTemplate.getType();
+      final String[] splitted = type.split("\\.");
+      componentDisplayName = splitted[splitted.length - 1];
+
     }
     return componentDisplayName;
   }
