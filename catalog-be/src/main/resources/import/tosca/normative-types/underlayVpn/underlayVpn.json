@@ -1,0 +1,21 @@
+{
+  "payloadName": "underlayVpn.yml",
+  "contactId": "jh0003",
+  "name": "VL UNDERLAYVPN",
+  "description": "The node represents a underlay-vpn entity.",
+  "resourceIconPath": "network",
+  "resourceType": "VL",
+  "categories": [
+  {
+    "name": "Network Connectivity",
+    "subcategories": [
+      {
+        "name": "Virtual Links"
+      }
+    ]
+  }
+],
+  "tags": [
+    "VL UNDERLAYVPN"
+  ]
+}
