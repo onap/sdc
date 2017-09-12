@@ -70,7 +70,7 @@ public class ToscaConverterImpl implements ToscaConverter {
     private void handleMetadataFile(Map<String, byte[]> csarFiles) {
         byte[] bytes = csarFiles.remove(metadataFile);
         if (bytes != null) {
-            csarFiles.put(metadataFile + ".old", bytes);
+            csarFiles.put(metadataFile + ".original", bytes);
         }
     }
 
@@ -102,11 +102,16 @@ public class ToscaConverterImpl implements ToscaConverter {
         Collection<ServiceTemplate> globalServiceTemplates =
                 GlobalTypesGenerator.getGlobalTypesServiceTemplate().values();
         addGlobalServiceTemplates(globalServiceTemplates, serviceTemplates);
-        serviceTemplates.put(GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME, globalSubstitutionServiceTemplate);
         toscaServiceModel.setEntryDefinitionServiceTemplate(mainStName);
         toscaServiceModel.setServiceTemplates(serviceTemplates);
-        externalFilesHandler.addFile(metadataFile + ".old", csarFiles.get(metadataFile + ".old"));
+        externalFilesHandler.addFile(metadataFile + ".original",
+            csarFiles.get(metadataFile + ".original"));
         toscaServiceModel.setArtifactFiles(externalFilesHandler);
+
+        if(MapUtils.isNotEmpty(globalSubstitutionServiceTemplate.getNode_types())) {
+            serviceTemplates
+                .put(GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME, globalSubstitutionServiceTemplate);
+        }
     }
 
     private void addGlobalServiceTemplates(Collection<ServiceTemplate> globalServiceTemplates,
