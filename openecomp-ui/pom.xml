@@ -1,17 +1,188 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.att.asdc.onboarding</groupId>
+    <groupId>org.openecomp.sdc</groupId>
     <artifactId>onboarding-fe</artifactId>
     <name>onboarding-ui-war</name>
-    <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
+
+    <parent>
+        <groupId>org.openecomp.sdc</groupId>
+        <artifactId>sdc-onboarding</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+        <relativePath>../onboarding</relativePath>
+    </parent>
+
+    <properties>
+        <maven.war.plugin.version>3.0.0</maven.war.plugin.version>
+    </properties>
 
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.6.1</version>
+                <executions>
+                    <execution>
+                        <id>clean.dist.folder</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${basedir}/dist</directory>
+                                </fileset>
+                                <fileset>
+                                    <directory>${basedir}/node_modules</directory>
+                                </fileset>
+                                <fileset>
+                                    <directory>${basedir}/../dox-sequence-diagram-ui/dist
+                                    </directory>
+                                </fileset>
+                                <fileset>
+                                    <directory>${basedir}/../dox-sequence-diagram-ui/node_modules
+                                    </directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- ============================================= -->
+            <!-- Build the UI module node code -->
+            <!-- ============================================= -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.4</version>
+
+                <configuration>
+                    <installDirectory>${project.parent.parent.basedir}</installDirectory>
+                </configuration>
+
+                <executions>
+
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v6.9.5</nodeVersion>
+                            <npmVersion>3.10.10</npmVersion>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>npm set progress off</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>set progress=false</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>npm install in dox-sequence-diagram-ui</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>${project.basedir}/../dox-sequence-diagram-ui
+                            </workingDirectory>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+
+                    <!-- Fix jQuery dependency in restful-js -->
+                    <execution>
+                        <id>npm restful-js</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install restful-js</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm install restful-js dependencies</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>${project.basedir}/node_modules/restful-js
+                            </workingDirectory>
+                            <arguments>install --production</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>npm run build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build -- --version=${project.version}</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>repack war</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <tasks>
+                                <echo message="Building test environment"/>
+                                <unzip src="dist/onboarding.war" dest="${basedir}/target/dist">
+                                    <patternset>
+                                        <include name="**/*"/>
+                                    </patternset>
+                                </unzip>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>${maven.war.plugin.version}</version>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>${basedir}/target/dist</directory>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${maven.war.plugin.version}</version>
                 <configuration>
                     <webXml>webapp-onboarding\WEB-INF\web.xml</webXml>
                     <webResources>
@@ -26,129 +197,5 @@
             </plugin>
         </plugins>
     </build>
-
-
-    <profiles>
-
-        <profile>
-            <id>dox</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-
-            <properties>
-                <amdocs.repository.host>10.147.3.4</amdocs.repository.host>
-                <amdocs.repository.port>8081</amdocs.repository.port>
-                <amdocs.repository.address>${amdocs.repository.host}:${amdocs.repository.port}</amdocs.repository.address>
-                <amdocs.repository.updatePolicy.default>daily</amdocs.repository.updatePolicy.default>
-            </properties>
-            <repositories>
-
-                <repository>
-                    <id>Amdocs</id>
-                    <name>Amdocs public</name>
-                    <url>http://${amdocs.repository.address}:${amdocs.repository.port}/nexus/content/groups/public/</url>
-                    <releases>
-                        <enabled>true</enabled>
-                        <updatePolicy>${amdocs.repository.updatePolicy.default}</updatePolicy>
-                        <checksumPolicy>ignore</checksumPolicy>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                        <updatePolicy>${amdocs.repository.updatePolicy.default}</updatePolicy>
-                        <checksumPolicy>ignore</checksumPolicy>
-                    </snapshots>
-                </repository>
-
-                <repository>
-                    <id>snapshots</id>
-                    <name>Maven Snapshot Repository</name>
-                    <url>http://${amdocs.repository.address}/nexus/content/repositories/snapshots/</url>
-                    <releases>
-                        <enabled>false</enabled>
-                        <updatePolicy>${amdocs.repository.updatePolicy.default}</updatePolicy>
-                        <checksumPolicy>ignore</checksumPolicy>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                        <updatePolicy>${amdocs.repository.updatePolicy.default}</updatePolicy>
-                        <checksumPolicy>ignore</checksumPolicy>
-                    </snapshots>
-                </repository>
-
-            </repositories>
-
-            <distributionManagement>
-                <repository>
-                    <id>ASDC</id>
-                    <url>http://${amdocs.repository.address}/nexus/repository/D2-tlv-release</url>
-                </repository>
-                <snapshotRepository>
-                    <id>snapshots</id>
-                    <url>http://${amdocs.repository.address}/nexus/content/repositories/snapshots</url>
-                    <uniqueVersion>false</uniqueVersion>
-                </snapshotRepository>
-            </distributionManagement>
-
-        </profile>
-
-        <profile>
-            <id>att</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-
-            <properties>
-                <nexusServerName>mavencentral.it.att.com</nexusServerName>
-                <nexusServerPort>8084</nexusServerPort>
-                <nexus.release.repository>att-repository-releases</nexus.release.repository>
-                <nexus.snapshot.repository>att-repository-snapshots</nexus.snapshot.repository>
-                <nexus.id.release>nexus</nexus.id.release>
-                <nexus.id.snapshot>nexus</nexus.id.snapshot>
-            </properties>
-
-            <repositories>
-                <repository>
-                    <id>2020</id>
-                    <name>2020</name>
-                    <url>http://${nexusServerName}:${nexusServerPort}/nexus/content/groups/2020SAPC/</url>
-                    <layout>default</layout>
-                </repository>
-
-                <repository>
-                    <id>ATT public</id>
-                    <name>ATT public</name>
-                    <url>http://${nexusServerName}:${nexusServerPort}/nexus/content/groups/att-public-group/</url>
-                    <layout>default</layout>
-                </repository>
-
-            </repositories>
-
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>nexus</id>
-                    <name>Nexus repository</name>
-                    <url>http://${nexusServerName}:${nexusServerPort}/nexus/content/repositories/att-public-group</url>
-                    <layout>default</layout>
-                </pluginRepository>
-            </pluginRepositories>
-
-
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>${nexus.id.snapshot}</id>
-                    <name>att-repository-snapshots</name>
-                    <url>http://${nexusServerName}:${nexusServerPort}/nexus/content/repositories/${nexus.snapshot.repository}/</url>
-                </snapshotRepository>
-
-                <repository>
-                    <id>${nexus.id.release}</id>
-                    <name>att-repository-releases</name>
-                    <url>http://${nexusServerName}:${nexusServerPort}/nexus/content/repositories/${nexus.release.repository}/</url>
-                </repository>
-            </distributionManagement>
-
-        </profile>
-    </profiles>
 
 </project>

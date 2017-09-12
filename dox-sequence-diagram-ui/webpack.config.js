@@ -28,7 +28,7 @@ var config = {
 	},
 	eslint: {
 		failOnWarning: false,
-		failOnError: true,
+		failOnError: false,
 		configFile: 'eslintrc.json'
 	},
 	devtool: 'eval-source-map',
