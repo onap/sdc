@@ -320,9 +320,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.thinkaurelius.titan</groupId>
-			<artifactId>titan-cassandra</artifactId>
-			<!--<artifactId>asdc-titan-cassandra</artifactId>-->
+			<groupId>org.openecomp.sdc.sdc-titan-cassandra</groupId>
+  			<artifactId>sdc-titan-cassandra</artifactId>
 			<version>${titan.version}</version>
 			<scope>compile</scope>
 			<exclusions>

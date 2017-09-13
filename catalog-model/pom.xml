@@ -119,8 +119,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.thinkaurelius.titan</groupId>
-			<artifactId>titan-cassandra</artifactId>
+			<groupId>org.openecomp.sdc.sdc-titan-cassandra</groupId>
+  			<artifactId>sdc-titan-cassandra</artifactId>
 			<version>${titan.version}</version>
 			<scope>provided</scope>
 			<exclusions>
