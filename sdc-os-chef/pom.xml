@@ -153,10 +153,10 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>0.19.1</version>
+						<version>0.22.1</version>
 
 						<configuration>
-							<verbose>true</verbose>
+							<verbose>false</verbose>
 							<apiVersion>1.23</apiVersion>
 
 							<images>
@@ -258,11 +258,10 @@
                                 <id>clean-images</id>
                                 <phase>pre-clean</phase>
                                 <goals>
-                                <goal>remove</goal>
+                                	<goal>remove</goal>
                                 </goals>
                                 <configuration>
-                                <removeAll>true</removeAll>
-                                <image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana<!-- ,openecomp/sdc-sanity --></image>
+                                	<removeAll>true</removeAll>
                                 </configuration>
 							</execution>
 
@@ -282,7 +281,7 @@
 									<goal>push</goal>
                                 </goals>
                                 <configuration>
-                                <image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana<!-- ,openecomp/sdc-sanity --></image>
+                                	<image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana,openecomp/sdc-cassandra<!--,openecomp/sdc-sanity--></image>
                                 </configuration>
 							</execution>
 						</executions>
