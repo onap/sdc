@@ -31,6 +31,8 @@ import org.openecomp.core.model.dao.EnrichedServiceModelDao;
 import org.openecomp.core.model.types.ServiceArtifact;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
+import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
+import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentArtifactDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
@@ -51,11 +53,6 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 
-
-/**
- * @author shiria
- * @since November 06, 2016.
- */
 
 public class MonitoringMibEnricherTest {
   @Mock
@@ -89,15 +86,16 @@ public class MonitoringMibEnricherTest {
     monitoringMibEnricher.enrichComponent(componentEntity, vspId, version);
 
     String componentName = componentEntity.getComponentCompositionData().getName();
-
+    String unifiedComponentName =
+        ToscaNodeType.ABSTRACT_NODE_TYPE_PREFIX + DataModelUtil.getNamespaceSuffix(componentName);
     ArgumentCaptor<ServiceArtifact> expectedServiceArtifact =
         ArgumentCaptor.forClass(ServiceArtifact.class);
     Mockito.verify(enrichedServiceModelDaoMock, atLeastOnce())
         .storeExternalArtifact(expectedServiceArtifact.capture());
-    Assert
-        .assertEquals(expectedServiceArtifact.getValue().getName().startsWith(componentName), true);
+    Assert.assertEquals(expectedServiceArtifact.getValue().getName()
+        .startsWith(unifiedComponentName), true);
     Assert.assertEquals(expectedServiceArtifact.getValue().getName(),
-        componentName + File.separator + ArtifactCategory.DEPLOYMENT.getDisplayName() +
+        unifiedComponentName + File.separator + ArtifactCategory.DEPLOYMENT.getDisplayName() +
             File.separator + MonitoringUploadType.VES_EVENTS + File.separator + "mib1.yml");
 
   }
