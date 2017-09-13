@@ -1498,14 +1498,14 @@ public class ResourceBusinessLogicTest {
 		deploymentArtifactToUpdate.setArtifactName(deploymentArtifactToUpdateFileName);
 		deploymentArtifactToUpdate.setArtifactType("SNMP_POLL");
 		deploymentArtifactToUpdate.setPayload(oldPayloadData);
-		deploymentArtifactToUpdate.setArtifactChecksum(GeneralUtility.calculateMD5ByByteArray(oldPayloadData));
+		deploymentArtifactToUpdate.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
 		
 		ArtifactDefinition deploymentArtifactToDelete = new ArtifactDefinition();
 		deploymentArtifactToDelete.setMandatory(false);
 		deploymentArtifactToDelete.setArtifactName(deploymentArtifactToDeleteFileName);
 		deploymentArtifactToDelete.setArtifactType("SNMP_TRAP");
 		deploymentArtifactToDelete.setPayload(oldPayloadData);
-		deploymentArtifactToDelete.setArtifactChecksum(GeneralUtility.calculateMD5ByByteArray(oldPayloadData));
+		deploymentArtifactToDelete.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
 		
 		ArtifactDefinition deploymentArtifactToIgnore = new ArtifactDefinition();
 		
@@ -1520,14 +1520,14 @@ public class ResourceBusinessLogicTest {
 		artifactToUpdate.setArtifactName(artifactInfoToUpdateFileName);
 		artifactToUpdate.setArtifactType("SNMP_POLL");
 		artifactToUpdate.setPayload(oldPayloadData);
-		artifactToUpdate.setArtifactChecksum(GeneralUtility.calculateMD5ByByteArray(oldPayloadData));
+		artifactToUpdate.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
 		
 		ArtifactDefinition artifactToDelete = new ArtifactDefinition();
 		artifactToDelete.setMandatory(false);
 		artifactToDelete.setArtifactName(artifactInfoToDeleteFileName);
 		artifactToDelete.setArtifactType("SNMP_TRAP");
 		artifactToDelete.setPayload(oldPayloadData);
-		artifactToDelete.setArtifactChecksum(GeneralUtility.calculateMD5ByByteArray(oldPayloadData));
+		artifactToDelete.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
 		
 		ArtifactDefinition artifactToIgnore = new ArtifactDefinition();
 		

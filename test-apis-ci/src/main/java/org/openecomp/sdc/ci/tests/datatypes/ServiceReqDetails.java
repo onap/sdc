@@ -26,6 +26,43 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 
 public class ServiceReqDetails extends ComponentReqDetails {
+	
+	protected String serviceType;
+	protected String serviceRole;
+	protected String namingPolicy;
+	protected Boolean ecompGeneratedNaming;
+
+	public String getServiceType() {
+		return serviceType;
+	}
+
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	public String getServiceRole() {
+		return serviceRole;
+	}
+
+	public void setServiceRole(String serviceRole) {
+		this.serviceRole = serviceRole;
+	}
+
+	public String getNamingPolicy() {
+		return namingPolicy;
+	}
+
+	public void setNamingPolicy(String namingPolicy) {
+		this.namingPolicy = namingPolicy;
+	}
+
+	public Boolean getEcompGeneratedNaming() {
+		return ecompGeneratedNaming;
+	}
+
+	public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
+		this.ecompGeneratedNaming = ecompGeneratedNaming;
+	}
 
 	public ServiceReqDetails(String serviceName, String category, ArrayList<String> tags, String description,
 			String contactId, String icon) {

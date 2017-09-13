@@ -194,7 +194,7 @@ public class VfArtifacts extends SetupCDTest{
 			if (DeploymentArtifactPage.getArtifactType(deploymentArtifcatsList.get(i)).equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType())) {
 				DeploymentArtifactPage.clickDownloadEnvArtifact(deploymentArtifcatsList.get(i));
 				GeneralUIUtils.ultimateWait();
-				File latestFilefromDir = FileHandling.getLastModifiedFileFromDir(downloadDirPath);
+				File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir(downloadDirPath);
 				ArtifactUIUtils.compareYamlFilesByPattern(latestFilefromDir, currentZipEnvfiles.get(deploymentArtifcatsList.get(i)), PARAMETERS);
 				}
 		}
@@ -218,7 +218,7 @@ public class VfArtifacts extends SetupCDTest{
 			if (DeploymentArtifactPage.getArtifactType(deploymentArtifcatsList.get(i)).equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType())) {
 				DeploymentArtifactPage.clickDownloadEnvArtifact(deploymentArtifcatsList.get(i));
 				GeneralUIUtils.ultimateWait();
-				File latestFilefromDir = FileHandling.getLastModifiedFileFromDir(downloadDirPath);
+				File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir(downloadDirPath);
 				ArtifactUIUtils.compareYamlFilesByPattern(latestFilefromDir,currentZipEnvfiles.get(deploymentArtifcatsList.get(i)), PARAMETERS);
 			}
 		}
@@ -243,7 +243,7 @@ public class VfArtifacts extends SetupCDTest{
 			if (GeneralUIUtils.isElementVisibleByTestId(GeneralUIUtils.getDataTestIdAttributeValue(deploymentArtifcatsList.get(i)))) {
 				CompositionPage.clickDownloadEnvArtifactComposition(fileName).click();
 				GeneralUIUtils.ultimateWait();
-				File latestFilefromDir = FileHandling.getLastModifiedFileFromDir(downloadDirPath);
+				File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir(downloadDirPath);
 				ArtifactUIUtils.compareYamlFilesByPattern(latestFilefromDir,currentZipEnvfiles.get(fileName), PARAMETERS);
 			}
 		}
@@ -290,7 +290,7 @@ public class VfArtifacts extends SetupCDTest{
 				for (HeatParameterDataDefinition param : heatEnvUpdatedParameters.get(i).getHeatParameterDefinition()) {
 					mapExpectedProperties.put(param.getName(), ArtifactUIUtils.getValue(param));
 				}
-				ArtifactUIUtils.compareYamlParametersByPattern(mapExpectedProperties, FileHandling.getLastModifiedFileFromDir(downloadDirPath), PARAMETERS);
+				ArtifactUIUtils.compareYamlParametersByPattern(mapExpectedProperties, FileHandling.getLastModifiedFileNameFromDir(downloadDirPath), PARAMETERS);
 			}
         }
 	}
@@ -306,7 +306,7 @@ public class VfArtifacts extends SetupCDTest{
 		GeneralUIUtils.moveToStep(StepsEnum.DEPLOYMENT_ARTIFACT);
 		for(Entry<String, File> envFileEntry : generatedEnvFileList.entrySet()){
 			GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ArtifactPageEnum.DOWNLOAD_ARTIFACT_ENV.getValue()+envFileEntry.getKey());
-			ArtifactUIUtils.compareYamlFilesByPattern(envFileEntry.getValue(), FileHandling.getLastModifiedFileFromDir(), PARAMETERS);
+			ArtifactUIUtils.compareYamlFilesByPattern(envFileEntry.getValue(), FileHandling.getLastModifiedFileNameFromDir(), PARAMETERS);
 			if(true){
 				throw new SkipException("Test skipped, new artifact version design should be developed");
 			}
@@ -331,7 +331,7 @@ public class VfArtifacts extends SetupCDTest{
 		for(Entry<String, File> envFileEntry : generatedUpdatedEnvFileList.entrySet()){
 //			TODO test will pass on case all objects on deployment view are visible 
 			GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ArtifactPageEnum.DOWNLOAD_ARTIFACT_ENV.getValue()+envFileEntry.getKey());
-			ArtifactUIUtils.compareYamlFilesByPattern(envFileEntry.getValue(), FileHandling.getLastModifiedFileFromDir(), PARAMETERS);
+			ArtifactUIUtils.compareYamlFilesByPattern(envFileEntry.getValue(), FileHandling.getLastModifiedFileNameFromDir(), PARAMETERS);
 			if(true){
 				throw new SkipException("Test skipped, new artifact version design should be developed");
 			}
@@ -357,7 +357,7 @@ public class VfArtifacts extends SetupCDTest{
 		GeneralUIUtils.moveToStep(StepsEnum.DEPLOYMENT_ARTIFACT);
 		for(Entry<String, File> envFileEntry : generatedUpdatedSecondTimeEnvFileList.entrySet()){
 			GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ArtifactPageEnum.DOWNLOAD_ARTIFACT_ENV.getValue()+envFileEntry.getKey());
-			ArtifactUIUtils.compareYamlFilesByPattern(envFileEntry.getValue(), FileHandling.getLastModifiedFileFromDir(), PARAMETERS);
+			ArtifactUIUtils.compareYamlFilesByPattern(envFileEntry.getValue(), FileHandling.getLastModifiedFileNameFromDir(), PARAMETERS);
 			if(true){
 				throw new SkipException("Test skipped, new artifact version design should be developed");
 			}

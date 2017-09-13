@@ -264,11 +264,19 @@ public class FileHandling {
 	}
 	
 
-	public static synchronized File getLastModifiedFileFromDir() throws Exception{
-		return getLastModifiedFileFromDir(SetupCDTest.getWindowTest().getDownloadDirectory());
+	/**
+	 * @return last modified file name from default directory
+	 * @throws Exception
+	 */
+	public static synchronized File getLastModifiedFileNameFromDir() throws Exception{
+		return getLastModifiedFileNameFromDir(SetupCDTest.getWindowTest().getDownloadDirectory());
 	}
 	
-	public static synchronized File getLastModifiedFileFromDir(String dirPath){
+	/**
+	 * @param dirPath
+	 * @return last modified file name from dirPath directory
+	 */
+	public static synchronized File getLastModifiedFileNameFromDir(String dirPath){
 	    File dir = new File(dirPath);
 	    File[] files = dir.listFiles();
 	    if (files == null) {
@@ -397,7 +405,7 @@ public class FileHandling {
 	
 	public static String getMD5OfFile(File file) throws IOException {
 		String content = FileUtils.readFileToString(file);
-		String md5 = GeneralUtility.calculateMD5ByString(content);
+		String md5 = GeneralUtility.calculateMD5Base64EncodedByString(content);
 		return md5;
 	}
 	

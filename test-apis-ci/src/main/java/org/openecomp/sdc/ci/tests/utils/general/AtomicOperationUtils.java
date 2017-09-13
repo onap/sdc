@@ -39,6 +39,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.aspectj.apache.bcel.classfile.Code;
 import org.json.JSONException;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -50,6 +51,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.Urls;
+import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
@@ -67,6 +69,7 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
@@ -134,6 +137,25 @@ public final class AtomicOperationUtils {
 		}
 	}
 
+	public static Either<Resource, RestResponse> createResourceByResourceDetails(ResourceReqDetails resourceDetails, UserRoleEnum userRole, Boolean validateState) {
+		try {
+			User defaultUser = ElementFactory.getDefaultUser(userRole);
+			RestResponse resourceResp = ResourceRestUtils.createResource(resourceDetails, defaultUser);
+
+			if (validateState) {
+				assertTrue(resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
+			}
+
+			if (resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
+				Resource resourceResponseObject = ResponseParser.convertResourceResponseToJavaObject(resourceResp.getResponse());
+				return Either.left(resourceResponseObject);
+			}
+			return Either.right(resourceResp);
+		} catch (Exception e) {
+			throw new AtomicOperationException(e);
+		}
+	}
+	
 	public static Either<Resource, RestResponse> createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum resourceType, NormativeTypesEnum normativeTypes, ResourceCategoryEnum resourceCategory, UserRoleEnum userRole, Boolean validateState)
 			throws Exception {
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
@@ -206,6 +228,20 @@ public final class AtomicOperationUtils {
 		return Either.right(createServiceResp);
 	}
 
+	public static Either<Service, RestResponse> createCustomService(ServiceReqDetails serviceDetails, UserRoleEnum userRole, Boolean validateState) throws Exception {
+		User defaultUser = ElementFactory.getDefaultUser(userRole);
+		RestResponse createServiceResp = ServiceRestUtils.createService(serviceDetails, defaultUser);
+
+		if (validateState) {
+			assertTrue(createServiceResp.getErrorCode() == ServiceRestUtils.STATUS_CODE_CREATED);
+		}
+
+		if (createServiceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {
+			Service serviceResponseObject = ResponseParser.convertServiceResponseToJavaObject(createServiceResp.getResponse());
+			return Either.left(serviceResponseObject);
+		}
+		return Either.right(createServiceResp);
+	}
 	// *********** PRODUCT ****************
 
 	public static Either<Product, RestResponse> createDefaultProduct(UserRoleEnum userRole, Boolean validateState) throws Exception {
@@ -713,16 +749,21 @@ public final class AtomicOperationUtils {
 		}
 	}
 	
-	public static Either<String, RestResponse> getServiceToscaArtifactPayload(Service service, String artifactType) throws Exception {
+	public static Either<String, RestResponse> getComponenetArtifactPayload(Component component, String artifactType) throws Exception {
 
-		String url = String.format(Urls.UI_DOWNLOAD_SERVICE_ARTIFACT, "localhost", "8080", service.getUniqueId(), service.getToscaArtifacts().get(artifactType).getUniqueId());
-		String userId = service.getLastUpdaterUserId();
+		String url;
+		Config config = Utils.getConfig();
+		if(component.getComponentType().toString().toUpperCase().equals(ComponentTypeEnum.SERVICE.getValue().toUpperCase())){
+			url = String.format(Urls.UI_DOWNLOAD_SERVICE_ARTIFACT, config.getCatalogBeHost(), config.getCatalogBePort(), component.getUniqueId(), component.getToscaArtifacts().get(artifactType).getUniqueId());
+		}else{
+			url = String.format(Urls.UI_DOWNLOAD_RESOURCE_ARTIFACT, config.getCatalogBeHost(), config.getCatalogBePort(), component.getUniqueId(), component.getToscaArtifacts().get(artifactType).getUniqueId());
+		}
+		String userId = component.getLastUpdaterUserId();
 		Map<String, String> headersMap = new HashMap<String, String>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json");
 		headersMap.put(HttpHeaderEnum.CACHE_CONTROL.getValue(), "no-cache");
 		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), basicAuthentication);
 		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
-//		headersMap.put("X-ECOMP-InstanceID", "test");
 		if (userId != null) {
 			headersMap.put(HttpHeaderEnum.USER_ID.getValue(), userId);
 		}
@@ -735,4 +776,6 @@ public final class AtomicOperationUtils {
 
 	}
 
+	
+	
 }

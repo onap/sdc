@@ -633,7 +633,7 @@ public class CsarUtils {
 
 		for (ArtifactDefinition artDef : generatedArtifactsDefinitions) {
 			String data = gson.toJson(artDef);
-			String dataMD5 = GeneralUtility.calculateMD5ByString(data);
+			String dataMD5 = GeneralUtility.calculateMD5Base64EncodedByString(data);
 			String artifactUniqueId = null;
 
 			if ((operationType.getArtifactOperationEnum() == ArtifactOperationEnum.Update) || (operationType.getArtifactOperationEnum() == ArtifactOperationEnum.Delete)) {
@@ -941,7 +941,7 @@ public class CsarUtils {
 		artifact.setArtifactDisplayName(artifact.getArtifactName().lastIndexOf('.') > 0 ? artifact.getArtifactName().substring(0, artifact.getArtifactName().lastIndexOf('.')) : artifact.getArtifactName());
 		artifact.setArtifactLabel(ValidationUtils.normalizeArtifactLabel(artifact.getArtifactName()));
 		artifact.setDescription(ARTIFACT_CREATED_FROM_CSAR);
-		artifact.setArtifactChecksum(GeneralUtility.calculateMD5ByByteArray(entry.getValue()));
+		artifact.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(entry.getValue()));
 		return artifact;
 	}
 
@@ -971,7 +971,7 @@ public class CsarUtils {
 			this.artifactLabel = ValidationUtils.normalizeArtifactLabel(artifactName);
 			if (payloadData != null) {
 				this.payloadData = Base64.encodeBase64String(payloadData);
-				this.artifactChecksum = GeneralUtility.calculateMD5ByByteArray(payloadData);
+				this.artifactChecksum = GeneralUtility.calculateMD5Base64EncodedByByteArray(payloadData);
 			}
 			this.artifactUniqueId = artifactUniqueId;
 		}

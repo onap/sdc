@@ -107,7 +107,7 @@ public class Vf extends SetupCDTest {
 
 		// create Resource
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(resourceMetaData, getUser());
+		ResourceUIUtils.createVF(resourceMetaData, getUser());
 
 		// update Resource
 		ResourceReqDetails updatedResource = new ResourceReqDetails();
@@ -144,7 +144,7 @@ public class Vf extends SetupCDTest {
 	
 			reloginWithNewRole(UserRoleEnum.DESIGNER);
 			ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-			ResourceUIUtils.createResource(vfMetaData, getUser());
+			ResourceUIUtils.createVF(vfMetaData, getUser());
 	
 			DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
 			CanvasManager canvasManager = CanvasManager.getCanvasManager();
@@ -168,7 +168,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void addUpdateDeleteDeploymentArtifactToVfTest() throws Exception {
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 
 		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
 
@@ -199,7 +199,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void addUpdateDeleteInformationalArtifact() throws Exception {
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 
 		ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
 		
@@ -233,7 +233,7 @@ public class Vf extends SetupCDTest {
 			ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
 	
 			ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-			ResourceUIUtils.createResource(vfMetaData, getUser());
+			ResourceUIUtils.createVF(vfMetaData, getUser());
 	
 			ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 			CanvasManager vfCanvasManager = CanvasManager.getCanvasManager();
@@ -274,7 +274,7 @@ public class Vf extends SetupCDTest {
 			ResourceGeneralPage.clickSubmitForTestingButton(atomicResourceMetaData.getName());
 			
 			vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-			ResourceUIUtils.createResource(vfMetaData, getUser());
+			ResourceUIUtils.createVF(vfMetaData, getUser());
 			ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 			vfCanvasManager = CanvasManager.getCanvasManager();
 			CompositionPage.searchForElement(atomicResourceMetaData.getName());
@@ -314,7 +314,7 @@ public class Vf extends SetupCDTest {
 	@Test(enabled = false)
 	public void addUpdateDeleteSimplePropertiesToVfTest() throws Exception{
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 			
 		ResourceGeneralPage.getLeftMenu().moveToPropertiesScreen();
 		List<PropertyTypeEnum> propertyList = Arrays.asList(PropertyTypeEnum.STRING, PropertyTypeEnum.INTEGER);
@@ -340,7 +340,7 @@ public class Vf extends SetupCDTest {
 	@Test(enabled = false)
 	public void vfcInstancesInputScreenTest() throws Exception{
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 		CanvasManager vfCanvasManager = CanvasManager.getCanvasManager();
@@ -380,7 +380,7 @@ public class Vf extends SetupCDTest {
 	public void addAllInformationalArtifactPlaceholdersInVfTest() throws Exception{
 		
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 
 		ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
 		
@@ -394,7 +394,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void verifyToscaArtifactsExist() throws Exception{
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		final int numOfToscaArtifacts = 2;
 		ResourceGeneralPage.getLeftMenu().moveToToscaArtifactsScreen();
@@ -429,7 +429,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void vfCertificationTest() throws Exception{
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		String vfName = vfMetaData.getName();
 		
@@ -452,7 +452,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void deleteVfCheckedoutTest() throws Exception{
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		GeneralPageElements.clickTrashButtonAndConfirm();
 		
@@ -463,7 +463,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void revertVfMetadataTest() throws Exception{
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		ResourceReqDetails vfRevertDetails = new ResourceReqDetails();
 		vfRevertDetails.setName("ciUpdatedName");
@@ -482,7 +482,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void addDeploymentArtifactInCompositionScreenTest() throws Exception{
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 		
@@ -499,7 +499,7 @@ public class Vf extends SetupCDTest {
 	@Test(enabled = false)
 	public void addPropertyInCompositionScreenTest() throws Exception{
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 		
@@ -515,7 +515,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void addDeploymentArtifactAndVerifyInCompositionScreen() throws Exception{		
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
 
@@ -537,7 +537,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void checkoutVfTest() throws Exception{
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		ResourceGeneralPage.clickCheckinButton(vfMetaData.getName());
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
@@ -566,7 +566,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void deleteInstanceFromVfCanvas() throws Exception{
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 		CanvasManager vfCanvasManager = CanvasManager.getCanvasManager();
@@ -582,7 +582,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void changeInstanceNameInVfTest() throws Exception{
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
 		CanvasManager vfCanvasManager = CanvasManager.getCanvasManager();
@@ -605,7 +605,7 @@ public class Vf extends SetupCDTest {
 		ResourceGeneralPage.clickSubmitForTestingButton(atomicResourceMetaData.getName());
 		
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
 		CanvasManager canvasManager = CanvasManager.getCanvasManager();
 		CompositionPage.searchForElement(atomicResourceMetaData.getName());
@@ -628,7 +628,7 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void isDisabledAndReadOnlyInCheckin() throws Exception{
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		ResourceGeneralPage.clickCheckinButton(vfMetaData.getName());
 		GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
 		
@@ -660,7 +660,7 @@ public class Vf extends SetupCDTest {
 		OnboardingUtils.onboardAndValidate(FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		ResourceGeneralPage.getLeftMenu().moveToToscaArtifactsScreen();
 		GeneralUIUtils.clickOnElementByTestId(ToscaArtifactsScreenEnum.TOSCA_MODEL.getValue());
-		File latestFilefromDir = FileHandling.getLastModifiedFileFromDir();
+		File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
 		ToscaDefinition toscaDefinition = VfModuleVerificator.getToscaTemplate(latestFilefromDir.getAbsolutePath());
 		VfModuleVerificator.validateSpecificModulePropertiesFromFile(toscaDefinition);
 	}

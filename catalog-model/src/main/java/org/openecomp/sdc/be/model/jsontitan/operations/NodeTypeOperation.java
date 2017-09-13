@@ -54,6 +54,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -584,11 +585,11 @@ public class NodeTypeOperation extends ToscaElementOperation {
 						return Either.right(StorageOperationStatus.PARENT_RESOURCE_NOT_FOUND);
 					} else {
 						if (resources.size() > 1) {
-							log.error("Multiple parent resources called {} found in the graph.", parentResource);
-							return Either.right(StorageOperationStatus.MULTIPLE_PARENT_RESOURCE_FOUND);
+							return handleMultipleParent(parentResource, derivedResources, resources);
+						} else {
+							GraphVertex parentResourceData = resources.get(0);
+							derivedResources.add(parentResourceData);
 						}
-						GraphVertex parentResourceData = resources.get(0);
-						derivedResources.add(parentResourceData);
 					}
 
 				}
@@ -596,6 +597,47 @@ public class NodeTypeOperation extends ToscaElementOperation {
 			}
 		}
 		return Either.left(derivedResources);
+	}
+	
+	Either<List<GraphVertex>, StorageOperationStatus> handleMultipleParent(String parentResource, List<GraphVertex> derivedResource, List<GraphVertex> fetchedDerivedResources){
+		
+		Either<List<GraphVertex>, StorageOperationStatus> result = Either.left(derivedResource);
+		try{
+			fetchedDerivedResources.sort((d1,d2)->{
+				return new Double(Double.parseDouble((String)d1.getMetadataProperty(GraphPropertyEnum.VERSION)))
+						.compareTo(Double.parseDouble((String)d2.getMetadataProperty(GraphPropertyEnum.VERSION)));
+			});
+			
+			int actualHighestIndex = fetchedDerivedResources.size() - 1;
+			derivedResource.add(fetchedDerivedResources.get(actualHighestIndex));
+			fetchedDerivedResources.remove(actualHighestIndex);
+			
+			StorageOperationStatus status = fixMultipleParent(fetchedDerivedResources);
+			if(status != StorageOperationStatus.OK){
+				result = Either.right(status);
+			}
+		} catch (Exception e){
+			CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occured during handle multiple parent {}. Exception is  {}",
+					parentResource, e.getMessage());
+			result = Either.right(StorageOperationStatus.GENERAL_ERROR);
+		}
+		return result;
+	}
+
+	private StorageOperationStatus fixMultipleParent(List<GraphVertex> fetchedDerivedResources) {
+		StorageOperationStatus result = StorageOperationStatus.OK;
+		for(GraphVertex fetchedDerivedResource : fetchedDerivedResources){
+			fetchedDerivedResource.addMetadataProperty(GraphPropertyEnum.IS_HIGHEST_VERSION, false);
+			Either<GraphVertex, TitanOperationStatus> updateVertexRes = titanDao.updateVertex(fetchedDerivedResource);
+			if (updateVertexRes.isRight()) {
+				TitanOperationStatus titatStatus = updateVertexRes.right().value();
+				CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to set highest version of node type {} to false. Status is  {}",
+						fetchedDerivedResource.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME), titatStatus);
+				result = DaoStatusConverter.convertTitanStatusToStorageStatus(titatStatus);
+				break;
+			}
+		}
+		return result;
 	}
 
 	private GraphVertex fillMetadata(GraphVertex nodeTypeVertex, NodeType nodeType) {

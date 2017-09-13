@@ -381,9 +381,9 @@
 			
 			<properties>
 				<ecomp.version>1.2.7</ecomp.version>
-				<artifact-generator-api.version>1710.0.0-SNAPSHOT</artifact-generator-api.version>
-				<artifact-generator-core.version>1710.0.0-SNAPSHOT</artifact-generator-core.version>
-				<dox-common-lib.version>1710.0.0-SNAPSHOT</dox-common-lib.version>
+				<artifact-generator-api.version>1710.0.0</artifact-generator-api.version>
+				<artifact-generator-core.version>1710.0.0</artifact-generator-core.version>
+				<dox-common-lib.version>1710.0.0</dox-common-lib.version>
 				<sdc-tosca-parser.version>1.1.14</sdc-tosca-parser.version>
 			</properties>	
 			

@@ -29,12 +29,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Set;
 
-import org.openecomp.sdc.ci.tests.datatypes.enums.ToscaKeysEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaGroupsTopologyTemplateDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaImportsDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaInputsTopologyTemplateDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaMetadataDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaNodeTemplatesTopologyTemplateDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaParameterConstants;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaSubstitutionMappingsDefinition;
@@ -42,12 +43,10 @@ import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaTopologyTemplateDefinitio
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ImportRestUtils;
-import org.openecomp.sdc.ci.tests.utils.validation.CsarValidationUtils;
 import org.openecomp.sdc.common.rest.api.RestResponseAsByteArray;
 import org.openecomp.sdc.common.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
@@ -158,7 +157,9 @@ public class ToscaParserUtils {
     	toscaStructure.addTypeDescription(ToscaNodeTemplatesTopologyTemplateDefinition.getTypeDescription());
     	toscaStructure.addTypeDescription(ToscaGroupsTopologyTemplateDefinition.getTypeDescription());
     	toscaStructure.addTypeDescription(ToscaSubstitutionMappingsDefinition.getTypeDescription());
-    	
+    	toscaStructure.addTypeDescription(ToscaImportsDefinition.getTypeDescription());
+    	toscaStructure.addTypeDescription(ToscaMetadataDefinition.getTypeDescription());
+    	toscaStructure.addTypeDescription(ToscaInputsTopologyTemplateDefinition.getTypeDescription());
 //    	Skip properties which are found in YAML, but not found in POJO
     	PropertyUtils propertyUtils = new PropertyUtils();
     	propertyUtils.setSkipMissingProperties(true);

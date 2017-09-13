@@ -22,6 +22,7 @@ package org.openecomp.sdc.ci.tests.US;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,8 @@ import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaTopologyTemplateDefinitio
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
 import org.testng.Assert;
+
+import fj.data.Array;
 
 
 
@@ -195,8 +198,11 @@ public class Testing {
 //        }
         System.out.println("Finished");
         System.out.println("get service start " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+        
+        
+    
 	}
-	
+
 	
 	
 

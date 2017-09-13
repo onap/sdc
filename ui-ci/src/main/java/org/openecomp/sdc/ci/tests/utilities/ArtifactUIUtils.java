@@ -478,7 +478,7 @@ public final class ArtifactUIUtils {
 
 		String heatDisplayName = pairToUpdate.getHeatArtifactDisplayName();
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ArtifactPageEnum.DOWNLOAD_ARTIFACT_ENV.getValue()+heatDisplayName);
-		File latestFilefromDir = FileHandling.getLastModifiedFileFromDir();
+		File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
 		
 		String pattern = PARAMETERS;
 		Map<String, Object> mapUpdetedEnvFile = FileHandling.parseYamlFileToMapByPattern(updateEnvFile, pattern);

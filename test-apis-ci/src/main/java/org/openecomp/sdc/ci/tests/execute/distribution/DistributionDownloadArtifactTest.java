@@ -212,7 +212,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 		AssertJUnit.assertEquals(artifactDetails.getPayload(), Base64.encodeBase64String(actualContents.getBytes()));
 
 		// validating checksum
-		String actualPayloadChecksum = GeneralUtility.calculateMD5ByByteArray(actualContents.getBytes());
+		String actualPayloadChecksum = GeneralUtility.calculateMD5Base64EncodedByByteArray(actualContents.getBytes());
 		AssertJUnit.assertEquals(expectedPayloadChecksum, actualPayloadChecksum);
 
 		// validate audit
@@ -380,7 +380,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 
 		// validating checksum
 		byte[] bytes = actualContents.getBytes();
-		String actualPayloadChecksum = GeneralUtility.calculateMD5ByByteArray(bytes);
+		String actualPayloadChecksum = GeneralUtility.calculateMD5Base64EncodedByByteArray(bytes);
 		assertEquals(expectedPayloadChecksum, actualPayloadChecksum);
 
 		// validating valid zip

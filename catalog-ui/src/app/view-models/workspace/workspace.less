@@ -174,7 +174,7 @@
             height: calc(~'100% - @{action_nav_height}'); //composition is the only tab without a tab title. need to exclude from calculation.
         }
         .w-sdc-main-container-body-content {
-            height:calc(~'100% - @{action_nav_height} - @{tab_title}');
+            // height:calc(~'100% - @{action_nav_height} - @{tab_title}');
             align-items: center;
             padding: 0 100px 20px 100px;
             &.third-party {
@@ -186,6 +186,10 @@
                 right: 0;
                 bottom: 0;
             }
+        }
+        .w-sdc-main-container-body-content-wrapper {
+            overflow: auto;
+            height: calc(~'100% - @{action_nav_height}')
         }
     }
 }

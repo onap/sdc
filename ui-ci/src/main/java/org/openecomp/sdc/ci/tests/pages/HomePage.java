@@ -104,7 +104,7 @@ public class HomePage extends GeneralPageElements {
 	public static File downloadVspCsarToDefaultDirectory(String vspName) throws Exception {
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
 		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, "");
-		File latestFilefromDir = FileHandling.getLastModifiedFileFromDir();
+		File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
 		return latestFilefromDir;
 	}
 	
