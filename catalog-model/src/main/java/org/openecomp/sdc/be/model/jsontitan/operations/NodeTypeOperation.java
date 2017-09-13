@@ -36,6 +36,7 @@ import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
@@ -468,6 +469,19 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
 			ToscaDataDefinition.mergeDataMaps(capabiltiesAll, capabilties);
 		}
+		
+		capabiltiesAll.values().forEach(l -> {
+            l.getListToscaDataDefinition().forEach(c -> {
+                  List<String> capabilitySources = c.getCapabilitySources();
+                  if ( capabilitySources == null ){
+                        capabilitySources = new ArrayList<>();
+                  }
+                  capabilitySources.add((String) nodeType.getMetadataValue(JsonPresentationFields.TOSCA_RESOURCE_NAME));
+                  c.setCapabilitySources(capabilitySources);
+            });
+      });
+
+		
 		if (!capabiltiesAll.isEmpty()) {
 			Either<GraphVertex, StorageOperationStatus> assosiateElementToData = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.CAPABILTIES, EdgeLabelEnum.CAPABILITIES, capabiltiesAll);
 			if (assosiateElementToData.isRight()) {
