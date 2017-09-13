@@ -46,7 +46,25 @@ class Validator {
 			email: value => ValidatorJS.isEmail(value),
 			ip: value => ValidatorJS.isIP(value),
 			url: value => ValidatorJS.isURL(value),
-			alphanumericWithUnderscores: value => ValidatorJS.isAlphanumeric(value.replace(/_/g, ''))
+			alphanumericWithUnderscores: value => ValidatorJS.isAlphanumeric(value.replace(/_/g, '')),
+			requiredChoiceWithOther: (value, otherValue) => {
+				let chosen = value.choice;
+				// if we have an empty multiple select we have a problem since it's required
+				let validationFunc = this.globalValidationFunctions['required'];
+				if (value.choices) {
+					if (value.choices.length === 0) {
+						return  false;
+					} else {
+						// continuing validation with the first chosen value in case we have the 'Other' field
+						chosen = value.choices[0];
+					}
+				}
+				if (chosen !== otherValue) {
+					return validationFunc(chosen, true);
+				} else { // when 'Other' was chosen, validate other value
+					return validationFunc(value.other, true);
+				}
+			}
 		};
 	}
 
@@ -54,6 +72,7 @@ class Validator {
 		return {
 			required: () => i18n('Field is required'),
 			requiredChooseOption: () => i18n('Field should have one of these options'),
+			requiredChoiceWithOther: () => i18n('Field is required'),
 			maxLength: (value, maxLength) => i18n('Field value has exceeded it\'s limit, {maxLength}. current length: {length}', {
 				length: value.length,
 				maxLength
