@@ -89,29 +89,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-      requirements:
-      - dependency_cmaui_port_7:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_cmaui_port_7:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
-      - dependency_cmaui_port_8:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_cmaui_port_8:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
-      - dependency_server_cmaui:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - local_storage_server_cmaui:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
     abstract_cmaui:
       type: org.openecomp.resource.abstract.nodes.cmaui
       directives:

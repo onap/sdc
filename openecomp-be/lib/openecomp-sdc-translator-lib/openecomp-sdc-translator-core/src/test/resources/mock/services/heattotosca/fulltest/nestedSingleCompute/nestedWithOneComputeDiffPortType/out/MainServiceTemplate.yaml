@@ -181,29 +181,6 @@ topology_template:
           get_input: oam_net_mask
         oam_net_name:
           get_input: oam_net_name
-      requirements:
-      - dependency_server_pcm:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - local_storage_server_pcm:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
-      - dependency_pcm_1port_0:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_pcm_1port_0:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
-      - dependency_pcm_2port_1:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_pcm_2port_1:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
     packet_mirror_network:
       type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
       properties:
