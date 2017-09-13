@@ -1,0 +1,2045 @@
+## Copyright:: Nokia Corporation 2017
+## Note: Nokia VM HOT file for CFX
+## Name: "base_cscf.yaml"
+## Date: 20 Mar 2017
+## Kilo Version
+heat_template_version: 2015-04-30
+
+description: >
+  CFX-5000 N+K VNF HOT template for AT&T.
+
+parameters:
+
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+
+  vf_module_name:
+    type: string
+    description: Unique name for this VF Module instance
+
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance
+
+  cif_volume_id_0:
+        type: string
+        description: size of the cinder volume used for cif
+  cif_volume_id_1:
+        type: string
+        description: size of the cinder volume used for cif
+
+  oam_volume_id_0:
+        type: string
+        description: size of the cinder volume used for oam
+  oam_volume_id_1:
+        type: string
+        description: size of the cinder volume used for oam
+
+  oam_net_id:
+    type: string
+    description: Name/UUID of OAM network
+
+  ims_core_net_id:
+    type: string
+    description: Name/UUID of Core network
+
+  ims_li_v6_net_id:
+    type: string
+    description: Name/UUID of V6 LI network
+
+  availability_zone_0:
+    type: string
+    description: >
+      Availability zone  where the first node of a pair will be deployed.
+      Availability zone 0 and 1 can have same zone name if single zone is used.
+
+  availability_zone_1:
+    type: string
+    description: >
+      Availability zone  where the second node of a pair will be deployed.
+      Availability zone 0 and 1 can have same zone name if single zone is used.
+
+  oam_image_name:
+    type: string
+    description: OAM VM image name
+
+  cif_image_name:
+    type: string
+    description: CSCF CIF VM image name
+
+  lbd_image_name:
+    type: string
+    description: CSCF LBD VM image name
+
+  cdi_image_name:
+    type: string
+    description: CDI VM image name
+
+  cscf_image_name:
+    type: string
+    description: CSCF server VM image name
+
+  tdcore_image_name:
+    type: string
+    description: TDCORE VM image name
+
+  oam_flavor_name:
+    type: string
+    description: OAM VM flavor
+
+  cscf_flavor_name:
+    type: string
+    description: CSCF server VM flavor
+
+  cif_flavor_name:
+    type: string
+    description: CSCF CIF VM flavor
+
+  lbd_flavor_name:
+    type: string
+    description: CSCF LBD VM flavor
+
+  tdcore_flavor_name:
+    type: string
+    description: TDCORE VM flavor
+
+  cdi_flavor_name:
+    type: string
+    description: CDI VM flavor
+
+  cscf_zone_0_count:
+    type: number
+    description: >
+      Number of CSCF to be deployed on zone 0.
+      This parameter is used to scale the cscf instances.
+    constraints:
+        - range: { min: 0, max: 120 }
+
+  cscf_zone_1_count:
+    type: number
+    description: >
+      Number of CSCF to be deployed on zone 1.
+      This parameter is used to scale the cscf instances.
+    constraints:
+        - range: { min: 0, max: 120 }
+
+  tdcore_zone_0_count:
+    type: number
+    description: >
+      Number of TD Core VMs to be deployed zone 0.
+      This parameter is used to scale the TD Core instances.
+    constraints:
+        - range: { min: 0, max: 8 }
+
+  tdcore_zone_1_count:
+    type: number
+    description: >
+      Number of TD Core VMs to be deployed zone 1.
+      This parameter is used to scale the TD Core instances.
+    constraints:
+        - range: { min: 0, max: 8 }
+
+  vcscf_internal_netmask:
+    type: string
+    description: Netmask for Internal LAN
+
+  vcscf_internal_network_cidr:
+    type: string
+    description: CIDR for for Internal LAN
+
+  vcscf_internal_network_v6_cidr:
+    type: string
+    description: CIDR for for Internal LAN v6
+
+  vcscf_internal_dpdk_network_cidr:
+    type: string
+    description: CIDR for for Internal LAN DPDK
+
+  vcscf_oam_netmask:
+    type: string
+    description: Netmask for OAM LAN
+
+  vcscf_default_gateway:
+    type: string
+    description: Default gateway for OAM LAN
+
+  oam_oam_vip_0:
+    type: string
+    description: OAM CIPA IP of OAM unit
+
+  oam_oam_ip_0:
+    type: string
+    description: OAM IP of OAM01 instance
+
+  oam_oam_ip_1:
+    type: string
+    description: OAM IP of OAM02 instance
+
+  oam_oam_ip_2:
+    type: string
+    description: OAM IP of OAM03 instance
+
+  oam_internal_vip_0:
+    type: string
+    description: Internal CIPA IP of OAM unit
+
+  oam_internal_ip_0:
+    type: string
+    description: Internal IP of OAM01 instance
+
+  oam_internal_ip_1:
+    type: string
+    description: Internal IP of OAM01 instance
+
+  oam_internal_ip_2:
+    type: string
+    description: Internal IP of OAM01 instance
+
+  cscf_internal_zone_0_ips:
+    type: comma_delimited_list
+    description: "List of Internal Lan IPs for CSCF instances on zone 0"
+
+  cscf_internal_zone_0_v6_ips:
+    type: comma_delimited_list
+    description: "List of Internal Lan v6 IPs for CSCF instances on zone 0"
+
+  cscf_internal_zone_1_ips:
+    type: comma_delimited_list
+    description: "List of Internal Lan IPs for CSCF instances on zone 1"
+
+  cscf_internal_zone_1_v6_ips:
+    type: comma_delimited_list
+    description: "List of Internal Lan v6 IPs for CSCF instances on zone 1"
+
+  tdcore_internal_zone_0_ips:
+    type: comma_delimited_list
+    description: "List of Internal Lan IPs for TDCORE instances on zone 0"
+
+  tdcore_dpdk_zone_0_ips:
+    type: comma_delimited_list
+    description: "List of DPDK Lan IPs for TDCORE instances on zone 0"
+
+  tdcore_internal_zone_1_ips:
+    type: comma_delimited_list
+    description: "List of Internal Lan IPs for TDCORE instances on zone 1"
+
+  tdcore_dpdk_zone_1_ips:
+    type: comma_delimited_list
+    description: "List of DPDK Lan IPs for TDCORE instances on zone 1"
+
+  cif_internal_ip_0:
+    type: string
+    description: Internal IP of CIF01 instance
+
+  cif_internal_ip_1:
+    type: string
+    description: Internal IP of CIF02 instance
+
+  cif_internal_vip_0:
+    type: string
+    description: Internal CIPA IP of CIF
+
+  cif_internal_v6_ip_0:
+    type: string
+    description: Internal IP v6 of CIF01 instance
+
+  cif_internal_v6_ip_1:
+    type: string
+    description: Internal IP v6 of CIF02 instance
+
+  cif_oam_ip_0:
+    type: string
+    description: OAM IP of CIF01 instance
+
+  cif_oam_ip_1:
+    type: string
+    description: OAM IP of CIF02 instance
+
+  cif_oam_vip_0:
+    type: string
+    description: OAM CIPA IP of CIF
+
+  cif_ims_core_v6_ip_0:
+    type: string
+    description: IMS CORE v6 IP of CIF01 instance
+
+  cif_ims_core_v6_ip_1:
+    type: string
+    description: IMS CORE v6 IP of CIF02 instance
+
+  cif_ims_core_v6_vip_0:
+    type: string
+    description: IMS CORE v6 CIPA IP of CIF
+
+  cif_oam_ip_2:
+    type: string
+    description: OAM (LI-X1) v4 IP of CIF01 instance
+    
+  cif_oam_ip_3:
+    type: string
+    description: OAM (LI-X1) v4 IP of CIF02 instance
+
+  cif_oam_vip_1:
+    type: string
+    description: OAM (LI-X1) v4 CIPA of CIF
+    
+  cif_ims_li_v6_ip_0:
+    type: string
+    description: IMS LI v6 IP of CIF01 instance
+
+  cif_ims_li_v6_ip_1:
+    type: string
+    description: IMS LI v6 IP of CIF02 instance
+
+  cif_ims_li_v6_vip_0:
+    type: string
+    description: IMS LI CIPA v6 IP of CIF
+
+  lbd_internal_ip_0:
+    type: string
+    description: Internal IP of LBD01 instance
+
+  lbd_internal_ip_1:
+    type: string
+    description: Internal IP of LBD02 instance
+
+  lbd_internal_dpdk_ip_0:
+    type: string
+    description: Internal DPDK IP of LBD01 instance
+
+  lbd_internal_dpdk_ip_1:
+    type: string
+    description: Internal DPDK IP of LBD02 instance
+
+  lbd_internal_dpdk_vip_0:
+    type: string
+    description: Internal DPDK CIP IP of LBD
+
+  lbd_ims_core_v6_ip_0:
+    type: string
+    description: IMS CORE v6 IP of LBD01 instance
+
+  lbd_ims_core_v6_ip_1:
+    type: string
+    description: IMS CORE v6 IP of LBD02 instance
+
+  lbd_ims_core_v6_vip_0:
+    type: string
+    description: IMS CORE CIPA v6 IP of LBD
+
+  cdi_internal_ip_0:
+    type: string
+    description: Internal IP of CDI01 instance
+
+  cdi_internal_ip_1:
+    type: string
+    description: Internal IP of CDI02 instance
+
+  cdi_internal_v6_ip_0:
+    type: string
+    description: Internal v6 IP of CDI01 instance
+
+  cdi_internal_v6_ip_1:
+    type: string
+    description: Internal v6 IP of CDI02 instance
+
+  cdi_internal_v6_vip_0:
+    type: string
+    description: Internal v6 CIPA IP of CDI
+
+  cdi_ims_core_v6_ip_0:
+    type: string
+    description: IMS CORE LAN v6 IP of CDI01 instance
+
+  cdi_ims_core_v6_ip_1:
+    type: string
+    description: IMS CORE LAN v6 IP of CDI02 instance
+
+  cdi_ims_core_v6_vip_0:
+    type: string
+    description: IMS CORE LAN CIPA v6 IP of CDI
+
+  vcscf_name_delimeter:
+    type: string
+    description: 'delimeter used in concatenating different words while naming (ex: "-","_",".",...)'
+    constraints:
+      - allowed_values: [ '-', '', '_', '.']
+
+  oam_name_0:
+    type: string
+    description: OAM01 instance name
+
+  oam_name_1:
+    type: string
+    description: OAM02 instance name
+
+  oam_name_2:
+    type: string
+    description: OAM03 instance name
+
+  cif_name_0:
+    type: string
+    description: CIF01 instance name
+
+  cif_name_1:
+    type: string
+    description: CIF02 instance name
+
+  lbd_name_0:
+    type: string
+    description: LBD01 instance name
+
+  lbd_name_1:
+    type: string
+    description: LBD02 instance name
+
+  cdi_name_0:
+    type: string
+    description: CDI01 instance name
+
+  cdi_name_1:
+    type: string
+    description: CDI02 instance name
+
+  cscf_zone_0_names:
+    type: comma_delimited_list
+    description: "List of instance names for CSCF instances on zone 0"
+
+  cscf_zone_1_names:
+    type: comma_delimited_list
+    description: "List of instance names for CSCF instances on zone 1"
+
+  tdcore_zone_0_names:
+    type: comma_delimited_list
+    description: "List of instance names for TDCORE instances on zone 0"
+
+  tdcore_zone_1_names:
+    type: comma_delimited_list
+    description: "List of instance names for TDCORE instances on zone 1"
+
+  vcscf_release:
+    type: string
+    description: "IMS release"
+
+  vcscf_dn:
+    type: string
+    description: "DN name"
+
+  vcscf_du:
+    type: string
+    description: "DU name"
+
+  vcscf_cmrepo_address:
+    type: string
+    description: "CMRepo IP or FQDN"
+
+  vcscf_swrepo_address:
+    type: string
+    description: SWRepo IP or FQDN
+
+  vcscf_dns_address:
+    type: string
+    description: DNS server IP
+
+  vcscf_internal_network_mtu:
+    type: number
+    description: MTU for internal network interface (eth0)
+    constraints:
+      - range: { min: 1000, max: 9100 }
+
+  oam_uuid_0:
+    type: string
+    description: UUID generated by cmrepo for OAM01
+
+  oam_uuid_1:
+    type: string
+    description: UUID generated by cmrepo for OAM02
+
+  oam_uuid_2:
+    type: string
+    description: UUID generated by cmrepo for OAM03
+
+  cif_uuid_0:
+    type: string
+    description: UUID generated by cmrepo for CIF01
+
+  cif_uuid_1:
+    type: string
+    description: UUID generated by cmrepo for CIF02
+
+  lbd_uuid_0:
+    type: string
+    description: UUID generated by cmrepo for LBD01
+
+  lbd_uuid_1:
+    type: string
+    description: UUID generated by cmrepo for LBD02
+
+  cdi_uuid_0:
+    type: string
+    description: UUID generated by cmrepo for CDI01
+
+  cdi_uuid_1:
+    type: string
+    description: UUID generated by cmrepo for CDI02
+
+  cscf_zone_0_uuids:
+    type: comma_delimited_list
+    description: "List of UUIDs generated by cmrepo for CSCF instances on zone 0"
+
+  cscf_zone_1_uuids:
+    type: comma_delimited_list
+    description: "List of UUIDs generated by cmrepo for CSCF instances on zone 1"
+
+  tdcore_zone_0_uuids:
+    type: comma_delimited_list
+    description: "List of UUIDs generated by cmrepo for TDCORE instances on zone 0"
+
+  tdcore_zone_1_uuids:
+    type: comma_delimited_list
+    description: "List of UUIDs generated by cmrepo for TDCORE instances on zone 1"
+
+resources:
+
+  cscf_RSG:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: Allow all
+      name:
+        str_replace:
+          template: "$VNF$DELsecurity$DELgroup"
+          params:
+            $VNF: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      rules:
+        - { direction: ingress, ethertype: IPv4 }
+        - { direction: egress, ethertype: IPv4 }
+        - { direction: ingress, ethertype: IPv6 }
+        - { direction: egress, ethertype: IPv6 }
+
+  cscf_internal_network_0:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELinternal$DELnetwork
+          params:
+            $PREFIX: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      admin_state_up: True
+      shared: False
+
+  cscf_internal_subnet_0:
+    type: OS::Neutron::Subnet
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELinternal$DELsubnet
+          params:
+            $PREFIX: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      ip_version: 4
+      network: { get_resource: cscf_internal_network_0 }
+      cidr: { get_param: vcscf_internal_network_cidr }
+      enable_dhcp: False
+      gateway_ip: null
+
+  cscf_internal_subnet_v6_0:
+    type: OS::Neutron::Subnet
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELinternal$DELsubnetv6
+          params:
+            $PREFIX: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      ip_version: 6
+      network: { get_resource: cscf_internal_network_0 }
+      cidr: { get_param: vcscf_internal_network_v6_cidr }
+      enable_dhcp: False
+      gateway_ip: null
+
+  cscf_internal_dpdk_network_0:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELinternal$DELdpdk$DELnetwork
+          params:
+            $PREFIX: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      admin_state_up: True
+      shared: False
+
+  cscf_internal_dpdk_subnet_0:
+    type: OS::Neutron::Subnet
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELinternal$DELdpdk$DELsubnet
+          params:
+            $PREFIX: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_dpdk_network_0 }
+      cidr: { get_param: vcscf_internal_dpdk_network_cidr }
+      enable_dhcp: False
+      gateway_ip: null
+
+  cif_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: "$VNF$DELcif$DELgroup"
+          params:
+            $VNF: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      policies: ["anti-affinity"]
+
+  lbd_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: "$VNF$DELlbd$DELgroup"
+          params:
+            $VNF: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      policies: ["anti-affinity"]
+
+  cdi_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: "$VNF$DELcdi$DELgroup"
+          params:
+            $VNF: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      policies: ["anti-affinity"]
+
+  oam_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: "$VNF$DELoam$DELgroup"
+          params:
+            $VNF: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      policies: ["anti-affinity"]
+
+  tdcore_zone_0_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: "$VNF$DELtdcore$DELzone0$DELgroup"
+          params:
+            $VNF: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      policies: ["anti-affinity"]
+
+  tdcore_zone_1_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: "$VNF$DELtdcore$DELzone1$DELgroup"
+          params:
+            $VNF: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      policies: ["anti-affinity"]
+
+  cif_internal_vip_0_port:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_subnet_0
+    properties:
+      name:
+        str_replace:
+          template: $NAME$DELcif$DELinternal$DELvip
+          params:
+            $NAME: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_internal_vip_0 }
+
+  cif_oam_vip_1_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $NAME$DELcif$DELoam$DELvip0
+          params:
+            $NAME: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: oam_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_oam_vip_0 }
+
+  cif_ims_core_v6_vip_2_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $NAME$DELcif$DELims$DELcore$DELvip$DELv6
+          params:
+            $NAME: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: ims_core_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_ims_core_v6_vip_0 }
+        
+  cif_oam_vip_3_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $NAME$DELcif$DELoam$DELvip1
+          params:
+            $NAME: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: oam_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_oam_vip_1 }
+        
+  cif_ims_li_v6_vip_4_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $NAME$DELcif$DELims$DELli$DELvip$DELv6
+          params:
+            $NAME: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: ims_li_v6_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_ims_li_v6_vip_0 }
+
+  lbd_internal_dpdk_vip_1_port:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_dpdk_subnet_0
+    properties:
+      name:
+        str_replace:
+          template: $NAME$DELlbd$DELinternal$DELdpdk$DELvip
+          params:
+            $NAME: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_dpdk_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: lbd_internal_dpdk_vip_0 }
+
+  lbd_ims_core_v6_vip_2_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $NAME$DELlbd$DELims$DELcore$DELvip$DELv6
+          params:
+            $NAME: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: ims_core_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: lbd_ims_core_v6_vip_0 }
+
+  cdi_internal_v6_vip_0_port:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_subnet_v6_0
+    properties:
+      name:
+        str_replace:
+          template: $NAME$DELcdi$DELinternal$DELvip$DELv6
+          params:
+            $NAME: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cdi_internal_v6_vip_0 }
+
+  cdi_ims_core_v6_vip_1_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $NAME$DELcdi$DELims$DELdb$DELvip$DELv6
+          params:
+            $NAME: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: ims_core_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cdi_ims_core_v6_vip_0 }
+
+  oam_internal_vip_0_port:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_subnet_0
+    properties:
+      name:
+        str_replace:
+          template: $NAME$DELoam$DELinternal$DELvip
+          params:
+            $NAME: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: oam_internal_vip_0 }
+
+  oam_oam_vip_1_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $NAME$DELoam$DELoam$DELvip
+          params:
+            $NAME: { get_param: vnf_name }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: oam_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: oam_oam_vip_0 }
+
+  oam_internal_0_port_0:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_subnet_0
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth0
+          params:
+            $PREFIX: { get_param: oam_name_0 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: oam_internal_ip_0 }
+      allowed_address_pairs:
+        - ip_address: "0.0.0.0/1"
+        - ip_address: "128.0.0.0/1"
+        - ip_address: "::/1"
+        - ip_address: "8000::/1"
+
+  oam_oam_0_port_1:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth1
+          params:
+            $PREFIX: { get_param: oam_name_0 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: oam_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: oam_oam_ip_0 }
+      allowed_address_pairs:
+        - ip_address: { get_param: oam_oam_vip_0}
+
+
+  oam_server_0:
+    type: OS::Nova::Server
+    properties:
+      availability_zone: { get_param: availability_zone_0 }
+      scheduler_hints: { group: { get_resource: oam_server_group } }
+      name: { get_param: oam_name_0 }
+      flavor: { get_param: oam_flavor_name }
+      image: { get_param: oam_image_name }
+      metadata:
+        vm_role: oam
+        vnf_id: {get_param: vnf_id}
+        vnf_name: {get_param: vnf_name}
+        vf_module_id: {get_param: vf_module_id}
+        vf_module_name:   {get_param: vf_module_name}
+      networks:
+        - port:  { get_resource: oam_internal_0_port_0 }
+        - port:  { get_resource: oam_oam_0_port_1 }
+      block_device_mapping:
+        - device_name: vdb
+          volume_id: { get_param: oam_volume_id_0 }
+      config_drive: True
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            DN=$dn_name
+            DUName=$du_name
+            Uuid=$uuid
+            SwRepoIp=$swrepo_ip
+            CmRepoIp=$cmrepo_ip
+            OamDnsIp=$dns_ip
+            eth0_MTU=$mtu
+            UniqueId=$dn_name/$du_name/$release/$uuid
+            OamNetmask=$oam_netmask
+            OamIp=$oam_ip
+            OamCipa=$oam_cipa_ip
+            NodeCipa=$node_cipa_ip
+            Gateway=$gateway
+            OamGateway=$gateway
+            NodeIp=$node_ip
+            Netmask=$netmask
+            NodeType=OAM
+            DUType=CSCF
+            Release=$release
+            SwRepoPort=5571
+            CmRepoPort=8051
+            LbGroupId=1
+            HaGroupId=101
+            NodeName=$instance_name
+          params:
+            $dn_name: { get_param: vcscf_dn}
+            $du_name: { get_param: vcscf_du }
+            $uuid: { get_param: oam_uuid_0 }
+            $dns_ip: { get_param: vcscf_dns_address }
+            $cmrepo_ip: { get_param: vcscf_cmrepo_address }
+            $swrepo_ip: { get_param: vcscf_swrepo_address }
+            $release: { get_param: vcscf_release }
+            $mtu: { get_param: vcscf_internal_network_mtu }
+            $node_ip: { get_param: oam_internal_ip_0 }
+            $netmask: { get_param: vcscf_internal_netmask }
+            $gateway: { get_param:  vcscf_default_gateway}
+            $oam_ip: { get_param: oam_oam_ip_0 }
+            $oam_netmask: { get_param: vcscf_oam_netmask }
+            $node_cipa_ip: { get_param: oam_internal_vip_0 }
+            $oam_cipa_ip: { get_param: oam_oam_vip_0 }
+            $instance_name: { get_param: oam_name_0 }
+
+
+  oam_internal_1_port_0:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_subnet_0
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth0
+          params:
+            $PREFIX: { get_param: oam_name_1 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: oam_internal_ip_1 }
+      allowed_address_pairs:
+        - ip_address: "0.0.0.0/1"
+        - ip_address: "128.0.0.0/1"
+        - ip_address: "::/1"
+        - ip_address: "8000::/1"
+
+  oam_oam_1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth1
+          params:
+            $PREFIX: { get_param: oam_name_1 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: oam_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: oam_oam_ip_1 }
+      allowed_address_pairs:
+        - ip_address: { get_param: oam_oam_vip_0}
+
+
+  oam_server_1:
+    type: OS::Nova::Server
+    properties:
+      availability_zone: { get_param: availability_zone_1 }
+      scheduler_hints: { group: { get_resource: oam_server_group } }
+      name: { get_param: oam_name_1 }
+      flavor: { get_param: oam_flavor_name }
+      image: { get_param: oam_image_name }
+      metadata:
+        vm_role: oam
+        vnf_id: {get_param: vnf_id}
+        vnf_name: {get_param: vnf_name}
+        vf_module_id: {get_param: vf_module_id}
+        vf_module_name:   {get_param: vf_module_name}
+      networks:
+        - port:  { get_resource: oam_internal_1_port_0 }
+        - port:  { get_resource: oam_oam_1_port_1 }
+      block_device_mapping:
+        - device_name: vdb
+          volume_id: { get_param: oam_volume_id_1 }
+      config_drive: True
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            DN=$dn_name
+            DUName=$du_name
+            Uuid=$uuid
+            SwRepoIp=$swrepo_ip
+            CmRepoIp=$cmrepo_ip
+            OamDnsIp=$dns_ip
+            eth0_MTU=$mtu
+            UniqueId=$dn_name/$du_name/$release/$uuid
+            OamNetmask=$oam_netmask
+            OamIp=$oam_ip
+            OamCipa=$oam_cipa_ip
+            NodeCipa=$node_cipa_ip
+            Gateway=$gateway
+            OamGateway=$gateway
+            NodeIp=$node_ip
+            Netmask=$netmask
+            NodeType=OAM
+            DUType=CSCF
+            Release=$release
+            SwRepoPort=5571
+            CmRepoPort=8051
+            LbGroupId=1
+            HaGroupId=101
+            NodeName=$instance_name
+          params:
+            $dn_name: { get_param: vcscf_dn}
+            $du_name: { get_param: vcscf_du }
+            $uuid: { get_param: oam_uuid_1 }
+            $dns_ip: { get_param: vcscf_dns_address }
+            $cmrepo_ip: { get_param: vcscf_cmrepo_address }
+            $swrepo_ip: { get_param: vcscf_swrepo_address }
+            $release: { get_param: vcscf_release }
+            $mtu: { get_param: vcscf_internal_network_mtu }
+            $node_ip: { get_param: oam_internal_ip_1 }
+            $netmask: { get_param: vcscf_internal_netmask }
+            $gateway: { get_param:  vcscf_default_gateway}
+            $oam_ip: { get_param: oam_oam_ip_1 }
+            $oam_netmask: { get_param: vcscf_oam_netmask }
+            $node_cipa_ip: { get_param: oam_internal_vip_0 }
+            $oam_cipa_ip: { get_param: oam_oam_vip_0 }
+            $instance_name: { get_param: oam_name_1 }
+
+  oam_internal_2_port_0:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_subnet_0
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth0
+          params:
+            $PREFIX: { get_param: oam_name_2 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: oam_internal_ip_2 }
+      allowed_address_pairs:
+        - ip_address: "0.0.0.0/1"
+        - ip_address: "128.0.0.0/1"
+        - ip_address: "::/1"
+        - ip_address: "8000::/1"
+
+  oam_oam_2_port_1:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth1
+          params:
+            $PREFIX: { get_param: oam_name_2 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: oam_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: oam_oam_ip_2 }
+      allowed_address_pairs:
+        - ip_address: { get_param: oam_oam_vip_0}
+
+
+  oam_server_2:
+    type: OS::Nova::Server
+    properties:
+      availability_zone: { get_param: availability_zone_0 }
+      scheduler_hints: { group: { get_resource: oam_server_group } }
+      name: { get_param: oam_name_2 }
+      flavor: { get_param: oam_flavor_name }
+      image: { get_param: oam_image_name }
+      metadata:
+        vm_role: oam
+        vnf_id: {get_param: vnf_id}
+        vnf_name: {get_param: vnf_name}
+        vf_module_id: {get_param: vf_module_id}
+        vf_module_name:   {get_param: vf_module_name}
+      networks:
+        - port:  { get_resource: oam_internal_2_port_0 }
+        - port:  { get_resource: oam_oam_2_port_1 }
+      config_drive: True
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            DN=$dn_name
+            DUName=$du_name
+            Uuid=$uuid
+            SwRepoIp=$swrepo_ip
+            CmRepoIp=$cmrepo_ip
+            OamDnsIp=$dns_ip
+            eth0_MTU=$mtu
+            UniqueId=$dn_name/$du_name/$release/$uuid
+            OamNetmask=$oam_netmask
+            OamIp=$oam_ip
+            OamCipa=$oam_cipa_ip
+            NodeCipa=$node_cipa_ip
+            Gateway=$gateway
+            OamGateway=$gateway
+            NodeIp=$node_ip
+            Netmask=$netmask
+            NodeType=OAM
+            DUType=CSCF
+            Release=$release
+            SwRepoPort=5571
+            CmRepoPort=8051
+            LbGroupId=1
+            HaGroupId=101
+            NodeName=$instance_name
+          params:
+            $dn_name: { get_param: vcscf_dn}
+            $du_name: { get_param: vcscf_du }
+            $uuid: { get_param: oam_uuid_2 }
+            $dns_ip: { get_param: vcscf_dns_address }
+            $cmrepo_ip: { get_param: vcscf_cmrepo_address }
+            $swrepo_ip: { get_param: vcscf_swrepo_address }
+            $release: { get_param: vcscf_release }
+            $mtu: { get_param: vcscf_internal_network_mtu }
+            $node_ip: { get_param: oam_internal_ip_2 }
+            $netmask: { get_param: vcscf_internal_netmask }
+            $gateway: { get_param:  vcscf_default_gateway}
+            $oam_ip: { get_param: oam_oam_ip_2 }
+            $oam_netmask: { get_param: vcscf_oam_netmask }
+            $node_cipa_ip: { get_param: oam_internal_vip_0 }
+            $oam_cipa_ip: { get_param: oam_oam_vip_0 }
+            $instance_name: { get_param: oam_name_2 }
+
+
+  cif_internal_0_port_0:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_subnet_0
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth0
+          params:
+            $PREFIX: { get_param: cif_name_0 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_internal_ip_0 }
+        - ip_address: { get_param: cif_internal_v6_ip_0 }
+      allowed_address_pairs:
+        - ip_address: { get_param: cif_internal_vip_0 }
+
+  cif_oam_0_port_1:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth1
+          params:
+            $PREFIX: { get_param: cif_name_0 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: oam_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_oam_ip_0 }
+      allowed_address_pairs:
+        - ip_address: { get_param: cif_oam_vip_0}
+        
+  cif_ims_core_0_port_2:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth2
+          params:
+            $PREFIX: { get_param: cif_name_0 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: ims_core_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_ims_core_v6_ip_0 }
+      allowed_address_pairs:
+        - ip_address: { get_param: cif_ims_core_v6_vip_0}
+
+
+  cif_oam_0_port_3:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth3
+          params:
+            $PREFIX: { get_param: cif_name_0 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: oam_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_oam_ip_2 }
+      allowed_address_pairs:
+        - ip_address: { get_param: cif_oam_vip_1}
+        
+        
+  cif_ims_li_0_port_4:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth4
+          params:
+            $PREFIX: { get_param: cif_name_0 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: ims_li_v6_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_ims_li_v6_ip_0 }
+      allowed_address_pairs:
+        - ip_address: { get_param: cif_ims_li_v6_vip_0}
+
+  cif_server_0:
+    type: OS::Nova::Server
+    properties:
+      availability_zone: { get_param: availability_zone_0 }
+      scheduler_hints: { group: { get_resource: cif_server_group } }
+      name: { get_param: cif_name_0 }
+      flavor: { get_param: cif_flavor_name }
+      image: { get_param: cif_image_name }
+      metadata:
+        vnf_id: {get_param: vnf_id}
+        vm_role: cif
+        vnf_name: {get_param: vnf_name}
+        vf_module_id: {get_param: vf_module_id}
+        vf_module_name:   {get_param: vf_module_name}
+      networks:
+        - port: { get_resource: cif_internal_0_port_0 }
+        - port: { get_resource: cif_oam_0_port_1 }
+        - port: { get_resource: cif_ims_core_0_port_2 }
+        - port: { get_resource: cif_oam_0_port_3 }
+        - port: { get_resource: cif_ims_li_0_port_4 }
+      block_device_mapping:
+        - device_name: vdb
+          volume_id: { get_param: cif_volume_id_0 }
+      config_drive: True
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            DN=$dn_name
+            DUName=$du_name
+            Uuid=$uuid
+            SwRepoIp=$swrepo_ip
+            CmRepoIp=$cmrepo_ip
+            OamDnsIp=$dns_ip
+            eth0_MTU=$mtu
+            UniqueId=$dn_name/$du_name/$release/$uuid
+            OAMUnitInternalIp=$oam_unit_ip
+            NodeIp=$node_ip
+            Netmask=$netmask
+            Gateway=$oam_unit_ip
+            NodeType=CIF
+            DUType=CSCF
+            Release=$release
+            SwRepoPort=5571
+            CmRepoPort=8051
+            LbGroupId=1
+            HaGroupId=1
+            NodeName=$instance_name
+          params:
+            $dn_name: { get_param: vcscf_dn}
+            $du_name: { get_param: vcscf_du }
+            $cmrepo_ip: { get_param: vcscf_cmrepo_address }
+            $swrepo_ip: { get_param: vcscf_swrepo_address }
+            $oam_unit_ip: { get_param: oam_internal_vip_0 }
+            $netmask: { get_param: vcscf_internal_netmask }
+            $release: { get_param: vcscf_release }
+            $mtu: { get_param: vcscf_internal_network_mtu }
+            $dns_ip: { get_param: vcscf_dns_address }
+            $uuid: { get_param: cif_uuid_0 }
+            $node_ip: { get_param: cif_internal_ip_0 }
+            $instance_name: { get_param: cif_name_0 }
+
+  cif_internal_1_port_0:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_subnet_0
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth0
+          params:
+            $PREFIX: { get_param: cif_name_1 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_internal_ip_1 }
+        - ip_address: { get_param: cif_internal_v6_ip_1 }
+      allowed_address_pairs:
+        - ip_address: { get_param: cif_internal_vip_0 }
+
+
+  cif_oam_1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth1
+          params:
+            $PREFIX: { get_param: cif_name_1 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: oam_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_oam_ip_1 }
+      allowed_address_pairs:
+        - ip_address: { get_param: cif_oam_vip_0}
+
+  cif_ims_core_1_port_2:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth2
+          params:
+            $PREFIX: { get_param: cif_name_1 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: ims_core_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_ims_core_v6_ip_1 }
+      allowed_address_pairs:
+        - ip_address: { get_param: cif_ims_core_v6_vip_0}
+
+  cif_oam_1_port_3:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth3
+          params:
+            $PREFIX: { get_param: cif_name_0 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: oam_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_oam_ip_3 }
+      allowed_address_pairs:
+        - ip_address: { get_param: cif_oam_vip_1}
+        
+        
+  cif_ims_li_1_port_4:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth4
+          params:
+            $PREFIX: { get_param: cif_name_1 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: ims_li_v6_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cif_ims_li_v6_ip_1 }
+      allowed_address_pairs:
+        - ip_address: { get_param: cif_ims_li_v6_vip_0}
+
+  cif_server_1:
+    type: OS::Nova::Server
+    properties:
+      availability_zone: { get_param: availability_zone_1 }
+      scheduler_hints: { group: { get_resource: cif_server_group } }
+      name: { get_param: cif_name_1 }
+      flavor: { get_param: cif_flavor_name }
+      image: { get_param: cif_image_name }
+      metadata:
+        vnf_id: {get_param: vnf_id}
+        vm_role: cif
+        vnf_name: {get_param: vnf_name}
+        vf_module_id: {get_param: vf_module_id}
+        vf_module_name:   {get_param: vf_module_name}
+      networks:
+        - port: { get_resource: cif_internal_1_port_0 }
+        - port: { get_resource: cif_oam_1_port_1 }
+        - port: { get_resource: cif_ims_core_1_port_2 }
+        - port: { get_resource: cif_oam_1_port_3 }
+        - port: { get_resource: cif_ims_li_1_port_4 }
+      block_device_mapping:
+        - device_name: vdb
+          volume_id: { get_param: cif_volume_id_1 }
+      config_drive: True
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            DN=$dn_name
+            DUName=$du_name
+            Uuid=$uuid
+            SwRepoIp=$swrepo_ip
+            CmRepoIp=$cmrepo_ip
+            OamDnsIp=$dns_ip
+            eth0_MTU=$mtu
+            UniqueId=$dn_name/$du_name/$release/$uuid
+            OAMUnitInternalIp=$oam_unit_ip
+            NodeIp=$node_ip
+            Netmask=$netmask
+            Gateway=$oam_unit_ip
+            NodeType=CIF
+            DUType=CSCF
+            Release=$release
+            SwRepoPort=5571
+            CmRepoPort=8051
+            LbGroupId=1
+            HaGroupId=1
+            NodeName=$instance_name
+          params:
+            $dn_name: { get_param: vcscf_dn}
+            $du_name: { get_param: vcscf_du }
+            $cmrepo_ip: { get_param: vcscf_cmrepo_address }
+            $swrepo_ip: { get_param: vcscf_swrepo_address }
+            $oam_unit_ip: { get_param: oam_internal_vip_0 }
+            $netmask: { get_param: vcscf_internal_netmask }
+            $release: { get_param: vcscf_release }
+            $mtu: { get_param: vcscf_internal_network_mtu }
+            $dns_ip: { get_param: vcscf_dns_address }
+            $uuid: { get_param: cif_uuid_1 }
+            $node_ip: { get_param: cif_internal_ip_1 }
+            $instance_name: { get_param: cif_name_1 }
+
+  lbd_internal_0_port_0:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_subnet_0
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth0
+          params:
+            $PREFIX: { get_param: lbd_name_0 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: lbd_internal_ip_0 }
+
+  lbd_dpdk_0_port_1:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_dpdk_subnet_0
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth1
+          params:
+            $PREFIX: { get_param: lbd_name_0 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_dpdk_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: lbd_internal_dpdk_ip_0 }
+      allowed_address_pairs:
+        - ip_address: "0.0.0.0/1"
+        - ip_address: "128.0.0.0/1"
+        - ip_address: "::/1"
+        - ip_address: "8000::/1"
+
+  lbd_ims_core_0_port_2:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth2
+          params:
+            $PREFIX: { get_param: lbd_name_0 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: ims_core_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: lbd_ims_core_v6_ip_0 }
+      allowed_address_pairs:
+        - ip_address: { get_param: lbd_ims_core_v6_vip_0}
+
+  lbd_server_0:
+    type: OS::Nova::Server
+    properties:
+      availability_zone: { get_param: availability_zone_0 }
+      scheduler_hints: { group: { get_resource: lbd_server_group } }
+      name: { get_param: lbd_name_0 }
+      flavor: { get_param: lbd_flavor_name }
+      image: { get_param: lbd_image_name }
+      metadata:
+        vnf_id: {get_param: vnf_id}
+        vm_role: lbd
+        vnf_name: {get_param: vnf_name}
+        vf_module_id: {get_param: vf_module_id}
+        vf_module_name:   {get_param: vf_module_name}
+      networks:
+        - port: { get_resource: lbd_internal_0_port_0 }
+        - port: { get_resource: lbd_dpdk_0_port_1 }
+        - port: { get_resource: lbd_ims_core_0_port_2 }
+      config_drive: True
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            DN=$dn_name
+            DUName=$du_name
+            Uuid=$uuid
+            SwRepoIp=$swrepo_ip
+            CmRepoIp=$cmrepo_ip
+            OamDnsIp=$dns_ip
+            eth0_MTU=$mtu
+            eth1_MTU=$mtu
+            UniqueId=$dn_name/$du_name/$release/$uuid
+            OAMUnitInternalIp=$oam_unit_ip
+            NodeIp=$node_ip
+            Netmask=$netmask
+            Gateway=$oam_unit_ip
+            NodeType=L2TD
+            DUType=CSCF
+            Release=$release
+            SwRepoPort=5571
+            CmRepoPort=8051
+            LbGroupId=1
+            HaGroupId=1
+            NodeName=$instance_name
+          params:
+            $dn_name: { get_param: vcscf_dn}
+            $du_name: { get_param: vcscf_du }
+            $cmrepo_ip: { get_param: vcscf_cmrepo_address }
+            $swrepo_ip: { get_param: vcscf_swrepo_address }
+            $netmask: { get_param: vcscf_internal_netmask }
+            $release: { get_param: vcscf_release }
+            $mtu: { get_param: vcscf_internal_network_mtu }
+            $oam_unit_ip: { get_param: oam_internal_vip_0 }
+            $dns_ip: { get_param: vcscf_dns_address }
+            $uuid: { get_param: lbd_uuid_0 }
+            $node_ip: { get_param: lbd_internal_ip_0 }
+            $instance_name: { get_param: lbd_name_0 }
+
+  lbd_internal_1_port_0:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_subnet_0
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth0
+          params:
+            $PREFIX: { get_param: lbd_name_1 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: lbd_internal_ip_1 }
+
+  lbd_dpdk_1_port_1:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_dpdk_subnet_0
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth1
+          params:
+            $PREFIX: { get_param: lbd_name_1 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_dpdk_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: lbd_internal_dpdk_ip_1 }
+      allowed_address_pairs:
+        - ip_address: "0.0.0.0/1"
+        - ip_address: "128.0.0.0/1"
+        - ip_address: "::/1"
+        - ip_address: "8000::/1"
+
+  lbd_ims_core_1_port_2:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth2
+          params:
+            $PREFIX: { get_param: lbd_name_1 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: ims_core_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: lbd_ims_core_v6_ip_1 }
+      allowed_address_pairs:
+        - ip_address: { get_param: lbd_ims_core_v6_vip_0}
+
+  lbd_server_1:
+    type: OS::Nova::Server
+    properties:
+      availability_zone: { get_param: availability_zone_1 }
+      scheduler_hints: { group: { get_resource: lbd_server_group } }
+      name: { get_param: lbd_name_1 }
+      flavor: { get_param: lbd_flavor_name }
+      image: { get_param: lbd_image_name }
+      metadata:
+        vnf_id: {get_param: vnf_id}
+        vm_role: lbd
+        vnf_name: {get_param: vnf_name}
+        vf_module_id: {get_param: vf_module_id}
+        vf_module_name:   {get_param: vf_module_name}
+      networks:
+        - port: { get_resource: lbd_internal_1_port_0 }
+        - port: { get_resource: lbd_dpdk_1_port_1 }
+        - port: { get_resource: lbd_ims_core_1_port_2 }
+      config_drive: True
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            DN=$dn_name
+            DUName=$du_name
+            Uuid=$uuid
+            SwRepoIp=$swrepo_ip
+            CmRepoIp=$cmrepo_ip
+            OamDnsIp=$dns_ip
+            eth0_MTU=$mtu
+            eth1_MTU=$mtu
+            UniqueId=$dn_name/$du_name/$release/$uuid
+            OAMUnitInternalIp=$oam_unit_ip
+            NodeIp=$node_ip
+            Netmask=$netmask
+            Gateway=$oam_unit_ip
+            NodeType=L2TD
+            DUType=CSCF
+            Release=$release
+            SwRepoPort=5571
+            CmRepoPort=8051
+            LbGroupId=1
+            HaGroupId=1
+            NodeName=$instance_name
+          params:
+            $dn_name: { get_param: vcscf_dn}
+            $du_name: { get_param: vcscf_du }
+            $cmrepo_ip: { get_param: vcscf_cmrepo_address }
+            $swrepo_ip: { get_param: vcscf_swrepo_address }
+            $netmask: { get_param: vcscf_internal_netmask }
+            $release: { get_param: vcscf_release }
+            $mtu: { get_param: vcscf_internal_network_mtu }
+            $oam_unit_ip: { get_param: oam_internal_vip_0 }
+            $dns_ip: { get_param: vcscf_dns_address }
+            $uuid: { get_param: lbd_uuid_1 }
+            $node_ip: { get_param: lbd_internal_ip_1 }
+            $instance_name: { get_param: lbd_name_1 }
+
+  cdi_internal_0_port_0:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_subnet_0
+      - cscf_internal_subnet_v6_0
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth0
+          params:
+            $PREFIX: { get_param: cdi_name_0 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cdi_internal_ip_0 }
+        - ip_address: { get_param: cdi_internal_v6_ip_0 }
+      allowed_address_pairs:
+        - ip_address: "0.0.0.0/1"
+        - ip_address: "128.0.0.0/1"
+        - ip_address: "::/1"
+        - ip_address: "8000::/1"
+
+  cdi_ims_core_0_port_1:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth1
+          params:
+            $PREFIX: { get_param: cdi_name_0 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: ims_core_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips :
+        - ip_address: { get_param: cdi_ims_core_v6_ip_0 }
+      allowed_address_pairs:
+        - ip_address: { get_param: cdi_ims_core_v6_vip_0}
+
+  cdi_server_0:
+    type: OS::Nova::Server
+    properties:
+      availability_zone: { get_param: availability_zone_0 }
+      scheduler_hints: { group: { get_resource: cdi_server_group } }
+      name: { get_param: cdi_name_0 }
+      flavor: { get_param: cdi_flavor_name }
+      image: { get_param: cdi_image_name }
+      metadata:
+        vnf_id: {get_param: vnf_id}
+        vm_role: cdi
+        vnf_name: {get_param: vnf_name}
+        vf_module_id: {get_param: vf_module_id}
+        vf_module_name:   {get_param: vf_module_name}
+      networks:
+        - port: { get_resource: cdi_internal_0_port_0 }
+        - port: { get_resource: cdi_ims_core_0_port_1 }
+      config_drive: True
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            DN=$dn_name
+            DUName=$du_name
+            Uuid=$uuid
+            SwRepoIp=$swrepo_ip
+            CmRepoIp=$cmrepo_ip
+            OamDnsIp=$dns_ip
+            eth0_MTU=$mtu
+            UniqueId=$dn_name/$du_name/$release/$uuid
+            OAMUnitInternalIp=$oam_unit_ip
+            NodeIp=$node_ip
+            Netmask=$netmask
+            Gateway=$oam_unit_ip
+            NodeType=CDI
+            DUType=CSCF
+            Release=$release
+            SwRepoPort=5571
+            CmRepoPort=8051
+            LbGroupId=1
+            HaGroupId=1
+            NodeName=$instance_name
+          params:
+            $dn_name: { get_param: vcscf_dn}
+            $du_name: { get_param: vcscf_du }
+            $dns_ip: { get_param: vcscf_dns_address }
+            $cmrepo_ip: { get_param: vcscf_cmrepo_address }
+            $swrepo_ip: { get_param: vcscf_swrepo_address }
+            $oam_unit_ip: { get_param: oam_internal_vip_0 }
+            $netmask: { get_param: vcscf_internal_netmask }
+            $release: { get_param: vcscf_release }
+            $mtu: { get_param: vcscf_internal_network_mtu }
+            $node_ip: { get_param: cdi_internal_ip_0 }
+            $uuid: { get_param: cdi_uuid_0 }
+            $instance_name: { get_param: cdi_name_0 }
+
+  cdi_internal_1_port_0:
+    type: OS::Neutron::Port
+    depends_on:
+      - cscf_internal_subnet_0
+      - cscf_internal_subnet_v6_0
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth0
+          params:
+            $PREFIX: { get_param: cdi_name_1 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_resource: cscf_internal_network_0 }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips:
+        - ip_address: { get_param: cdi_internal_ip_1 }
+        - ip_address: { get_param: cdi_internal_v6_ip_1 }
+      allowed_address_pairs:
+        - ip_address: "0.0.0.0/1"
+        - ip_address: "128.0.0.0/1"
+        - ip_address: "::/1"
+        - ip_address: "8000::/1"
+
+  cdi_ims_core_1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $PREFIX$DELeth1
+          params:
+            $PREFIX: { get_param: cdi_name_1 }
+            $DEL: { get_param: vcscf_name_delimeter }
+      network: { get_param: ims_core_net_id }
+      security_groups:
+        - { get_resource: cscf_RSG }
+      fixed_ips :
+        - ip_address: { get_param: cdi_ims_core_v6_ip_1 }
+      allowed_address_pairs:
+        - ip_address: { get_param: cdi_ims_core_v6_vip_0}
+
+  cdi_server_1:
+    type: OS::Nova::Server
+    properties:
+      availability_zone: { get_param: availability_zone_1 }
+      scheduler_hints: { group: { get_resource: cdi_server_group } }
+      name: { get_param: cdi_name_1 }
+      flavor: { get_param: cdi_flavor_name }
+      image: { get_param: cdi_image_name }
+      metadata:
+        vnf_id: {get_param: vnf_id}
+        vm_role: cdi
+        vnf_name: {get_param: vnf_name}
+        vf_module_id: {get_param: vf_module_id}
+        vf_module_name:   {get_param: vf_module_name}
+      networks:
+        - port: { get_resource: cdi_internal_1_port_0 }
+        - port: { get_resource: cdi_ims_core_1_port_1 }
+      config_drive: True
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            DN=$dn_name
+            DUName=$du_name
+            Uuid=$uuid
+            SwRepoIp=$swrepo_ip
+            CmRepoIp=$cmrepo_ip
+            OamDnsIp=$dns_ip
+            eth0_MTU=$mtu
+            UniqueId=$dn_name/$du_name/$release/$uuid
+            OAMUnitInternalIp=$oam_unit_ip
+            NodeIp=$node_ip
+            Netmask=$netmask
+            Gateway=$oam_unit_ip
+            NodeType=CDI
+            DUType=CSCF
+            Release=$release
+            SwRepoPort=5571
+            CmRepoPort=8051
+            LbGroupId=1
+            HaGroupId=1
+            NodeName=$instance_name
+          params:
+            $dn_name: { get_param: vcscf_dn}
+            $du_name: { get_param: vcscf_du }
+            $dns_ip: { get_param: vcscf_dns_address }
+            $cmrepo_ip: { get_param: vcscf_cmrepo_address }
+            $swrepo_ip: { get_param: vcscf_swrepo_address }
+            $oam_unit_ip: { get_param: oam_internal_vip_0 }
+            $netmask: { get_param: vcscf_internal_netmask }
+            $release: { get_param: vcscf_release }
+            $mtu: { get_param: vcscf_internal_network_mtu }
+            $node_ip: { get_param: cdi_internal_ip_1 }
+            $uuid: { get_param: cdi_uuid_1 }
+            $instance_name: { get_param: cdi_name_1 }
+
+  tdcore_zone_0_RRG:
+    type: OS::Heat::ResourceGroup
+    depends_on:
+      - cscf_internal_subnet_0
+      - cscf_internal_dpdk_subnet_0
+    properties:
+      count: { get_param: tdcore_zone_0_count }
+      index_var: $INDEX
+      resource_def:
+        type: nested_tdcore.yaml
+        properties:
+          index: $INDEX
+          tdcore_server_group: { get_resource: tdcore_zone_0_server_group }
+          vnf_name: { get_param: vnf_name }
+          vcscf_name_delimeter: { get_param: vcscf_name_delimeter }
+          tdcore_flavor_name: { get_param: tdcore_flavor_name }
+          tdcore_image_name: { get_param: tdcore_image_name }
+          tdcore_security_group: { get_resource: cscf_RSG }
+          internal_net_id: { get_resource: cscf_internal_network_0 }
+          internal_dpdk_net_id: { get_resource: cscf_internal_dpdk_network_0 }
+          vcscf_dn: { get_param: vcscf_dn}
+          vcscf_du: { get_param: vcscf_du }
+          vcscf_cmrepo_address: { get_param: vcscf_cmrepo_address }
+          vcscf_swrepo_address: { get_param: vcscf_swrepo_address }
+          vcscf_gateway: { get_param: oam_internal_vip_0 }
+          vcscf_internal_netmask: { get_param: vcscf_internal_netmask }
+          vcscf_release: { get_param: vcscf_release }
+          vcscf_dns_address: { get_param: vcscf_dns_address }
+          vcscf_internal_network_mtu: { get_param: vcscf_internal_network_mtu }
+          vnf_id: {get_param: vnf_id}
+          vf_module_id: {get_param: vf_module_id}
+          vf_module_name: {get_param: vf_module_name}
+          availability_zone_0: { get_param: availability_zone_0 }
+          tdcore_internal_ips: { get_param: tdcore_internal_zone_0_ips }
+          tdcore_dpdk_ips: { get_param: tdcore_dpdk_zone_0_ips }
+          tdcore_names: { get_param: tdcore_zone_0_names }
+          tdcore_uuids: { get_param: tdcore_zone_0_uuids }
+
+  tdcore_zone_1_RRG:
+    type: OS::Heat::ResourceGroup
+    depends_on:
+      - cscf_internal_subnet_0
+      - cscf_internal_dpdk_subnet_0
+    properties:
+      count: { get_param: tdcore_zone_1_count }
+      index_var: $INDEX
+      resource_def:
+        type: nested_tdcore.yaml
+        properties:
+          index: $INDEX
+          tdcore_server_group: { get_resource: tdcore_zone_1_server_group }
+          vnf_name: { get_param: vnf_name }
+          vcscf_name_delimeter: { get_param: vcscf_name_delimeter }
+          tdcore_flavor_name: { get_param: tdcore_flavor_name }
+          tdcore_image_name: { get_param: tdcore_image_name }
+          tdcore_security_group: { get_resource: cscf_RSG }
+          internal_net_id: { get_resource: cscf_internal_network_0 }
+          internal_dpdk_net_id: { get_resource: cscf_internal_dpdk_network_0 }
+          vcscf_dn: { get_param: vcscf_dn}
+          vcscf_du: { get_param: vcscf_du }
+          vcscf_cmrepo_address: { get_param: vcscf_cmrepo_address }
+          vcscf_swrepo_address: { get_param: vcscf_swrepo_address }
+          vcscf_gateway: { get_param: oam_internal_vip_0 }
+          vcscf_internal_netmask: { get_param: vcscf_internal_netmask }
+          vcscf_release: { get_param: vcscf_release }
+          vcscf_dns_address: { get_param: vcscf_dns_address }
+          vcscf_internal_network_mtu: { get_param: vcscf_internal_network_mtu }
+          vnf_id: {get_param: vnf_id}
+          vf_module_id: {get_param: vf_module_id}
+          vf_module_name: {get_param: vf_module_name}
+          availability_zone_0: { get_param: availability_zone_1 }
+          tdcore_internal_ips: { get_param: tdcore_internal_zone_1_ips }
+          tdcore_dpdk_ips: { get_param: tdcore_dpdk_zone_1_ips }
+          tdcore_names: { get_param: tdcore_zone_1_names }
+          tdcore_uuids: { get_param: tdcore_zone_1_uuids }
+
+  cscf_zone_0_RRG:
+    type: OS::Heat::ResourceGroup
+    depends_on:
+      - cscf_internal_subnet_0
+      - cscf_internal_subnet_v6_0
+    properties:
+      count: { get_param: cscf_zone_0_count }
+      index_var: $INDEX
+      resource_def:
+        type: nested_cscf.yaml
+        properties:
+          index: $INDEX
+          vnf_name: { get_param: vnf_name }
+          vcscf_name_delimeter: { get_param: vcscf_name_delimeter }
+          cscf_flavor_name: { get_param: cscf_flavor_name }
+          cscf_image_name: { get_param: cscf_image_name }
+          cscf_security_group: { get_resource: cscf_RSG }
+          internal_net_id: { get_resource: cscf_internal_network_0 }
+          vcscf_dn: { get_param: vcscf_dn}
+          vcscf_du: { get_param: vcscf_du }
+          vcscf_cmrepo_address: { get_param: vcscf_cmrepo_address }
+          vcscf_swrepo_address: { get_param: vcscf_swrepo_address }
+          vcscf_gateway: { get_param: oam_internal_vip_0 }
+          vcscf_internal_netmask: { get_param: vcscf_internal_netmask }
+          vcscf_release: { get_param: vcscf_release }
+          vcscf_dns_address: { get_param: vcscf_dns_address }
+          vcscf_internal_network_mtu: { get_param: vcscf_internal_network_mtu }
+          vnf_id: {get_param: vnf_id}
+          vf_module_id: {get_param: vf_module_id}
+          vf_module_name: {get_param: vf_module_name}
+          availability_zone_0 : { get_param: availability_zone_0 }
+          cscf_internal_ips: { get_param: cscf_internal_zone_0_ips }
+          cscf_internal_v6_ips: { get_param: cscf_internal_zone_0_v6_ips }
+          cscf_names: { get_param: cscf_zone_0_names }
+          cscf_uuids: { get_param: cscf_zone_0_uuids }
+
+  cscf_zone_1_RRG:
+    type: OS::Heat::ResourceGroup
+    depends_on:
+      - cscf_internal_subnet_0
+      - cscf_internal_subnet_v6_0
+    properties:
+      count: { get_param: cscf_zone_1_count }
+      index_var: $INDEX
+      resource_def:
+        type: nested_cscf.yaml
+        properties:
+          index: $INDEX
+          vnf_name: { get_param: vnf_name }
+          vcscf_name_delimeter: { get_param: vcscf_name_delimeter }
+          cscf_flavor_name: { get_param: cscf_flavor_name }
+          cscf_image_name: { get_param: cscf_image_name }
+          cscf_security_group: { get_resource: cscf_RSG }
+          internal_net_id: { get_resource: cscf_internal_network_0 }
+          vcscf_dn: { get_param: vcscf_dn}
+          vcscf_du: { get_param: vcscf_du }
+          vcscf_cmrepo_address: { get_param: vcscf_cmrepo_address }
+          vcscf_swrepo_address: { get_param: vcscf_swrepo_address }
+          vcscf_gateway: { get_param: oam_internal_vip_0 }
+          vcscf_internal_netmask: { get_param: vcscf_internal_netmask }
+          vcscf_release: { get_param: vcscf_release }
+          vcscf_dns_address: { get_param: vcscf_dns_address }
+          vcscf_internal_network_mtu: { get_param: vcscf_internal_network_mtu }
+          vnf_id: {get_param: vnf_id}
+          vf_module_id: {get_param: vf_module_id}
+          vf_module_name: {get_param: vf_module_name}
+          cscf_internal_ips: { get_param: cscf_internal_zone_1_ips }
+          cscf_internal_v6_ips: { get_param: cscf_internal_zone_1_v6_ips }
+          cscf_names: { get_param: cscf_zone_1_names }
+          cscf_uuids: { get_param: cscf_zone_1_uuids }
+          availability_zone_0 : { get_param: availability_zone_1 }
+
+outputs:
+  internal_net_id:
+    description: internal network
+    value: {get_resource: cscf_internal_network_0}
+
+  internal_dpdk_net_id:
+    description: dpdk network
+    value: {get_resource: cscf_internal_dpdk_network_0}
+
+  cscf_security_group:
+    description: cscf security group
+    value: {get_resource: cscf_RSG}
+
+  tdcore_zone_0_server_group:
+    description: tdcore zone 0 server group name/id
+    value: {get_resource: tdcore_zone_0_server_group}
+
+  tdcore_zone_1_server_group:
+    description: tdcore zone 1 server group name/id
+    value: {get_resource: tdcore_zone_1_server_group}

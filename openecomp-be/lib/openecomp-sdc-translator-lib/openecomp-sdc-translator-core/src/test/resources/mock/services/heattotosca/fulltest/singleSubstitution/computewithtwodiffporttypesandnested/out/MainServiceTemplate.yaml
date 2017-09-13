@@ -450,33 +450,6 @@ topology_template:
         port_pcm_port_0_mac_requirements:
           mac_count_required:
             is_required: false
-      requirements:
-      - dependency_pcm_port_1:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_pcm_port_1:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
-      - dependency_server_pcm:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - local_storage_server_pcm:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
-      - dependency_pcm_port_0:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_pcm_port_0:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
-      - dependency_network:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
     abstract_pd_server:
       type: org.openecomp.resource.abstract.nodes.pd_server
       directives:

@@ -68,23 +68,23 @@ public class TranslationContext {
     Configuration config = ConfigurationManager.lookup();
     String propertyFileName = SdcCommon.HEAT_TO_TOSCA_MAPPING_CONF;
     translationMapping =
-            config.generateMap(ConfigConstants.MAPPING_NAMESPACE, ConfigConstants.RESOURCE_MAPPING_KEY);
+        config.generateMap(ConfigConstants.MAPPING_NAMESPACE, ConfigConstants.RESOURCE_MAPPING_KEY);
     try {
       globalServiceTemplates = GlobalTypesGenerator.getGlobalTypesServiceTemplate();
     } catch (Exception exc) {
       throw new RuntimeException("Failed to load GlobalTypes", exc);
     }
     nameExtractorImplMap = config.populateMap(ConfigConstants.TRANSLATOR_NAMESPACE,
-            ConfigConstants.NAMING_CONVENTION_EXTRACTOR_IMPL_KEY, ImplementationConfiguration.class);
+        ConfigConstants.NAMING_CONVENTION_EXTRACTOR_IMPL_KEY, ImplementationConfiguration.class);
     supportedConsolidationComputeResources = config.populateMap(ConfigConstants
-            .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
-            .SUPPORTED_CONSOLIDATION_COMPUTE_RESOURCES_KEY, ImplementationConfiguration.class);
+        .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
+        .SUPPORTED_CONSOLIDATION_COMPUTE_RESOURCES_KEY, ImplementationConfiguration.class);
     supportedConsolidationPortResources = config.populateMap(ConfigConstants
-            .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
-            .SUPPORTED_CONSOLIDATION_PORT_RESOURCES_KEY, ImplementationConfiguration.class);
+        .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
+        .SUPPORTED_CONSOLIDATION_PORT_RESOURCES_KEY, ImplementationConfiguration.class);
     enrichPortResourceProperties = config.getAsStringValues(ConfigConstants
-            .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
-            .ENRICH_PORT_RESOURCE_PROP);
+        .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
+        .ENRICH_PORT_RESOURCE_PROP);
 
   }
 
@@ -119,8 +119,10 @@ public class TranslationContext {
   private Map<String, UnifiedSubstitutionData> unifiedSubstitutionData = new HashMap<>();
   private Set<String> unifiedHandledServiceTemplates = new HashSet<>();
 
-  private Map<String, Map<RequirementAssignment, String>>
-          mapDependencySubMappingToRequirementAssignment = new HashMap<>();
+  private Map<String, Map<String, Map<String, Integer>>>
+      requirementIdAppearanceInNodeTemplate = new HashMap<>();
+
+  private Set<String> serviceTemplatesWithoutNodeTemplateSection = new HashSet<>();
 
   public static Map<String, ImplementationConfiguration>
   getSupportedConsolidationComputeResources() {
@@ -128,9 +130,9 @@ public class TranslationContext {
   }
 
   public static void setSupportedConsolidationComputeResources(
-          Map<String, ImplementationConfiguration> supportedConsolidationComputeResources) {
+      Map<String, ImplementationConfiguration> supportedConsolidationComputeResources) {
     TranslationContext.supportedConsolidationComputeResources =
-            supportedConsolidationComputeResources;
+        supportedConsolidationComputeResources;
   }
 
   public static Map<String, ImplementationConfiguration> getSupportedConsolidationPortResources() {
@@ -138,7 +140,7 @@ public class TranslationContext {
   }
 
   public static void setSupportedConsolidationPortResources(
-          Map<String, ImplementationConfiguration> supportedConsolidationPortResources) {
+      Map<String, ImplementationConfiguration> supportedConsolidationPortResources) {
     TranslationContext.supportedConsolidationPortResources = supportedConsolidationPortResources;
   }
 
@@ -150,7 +152,7 @@ public class TranslationContext {
    */
   public static NameExtractor getNameExtractorImpl(String extractorImplKey) {
     String nameExtractorImplClassName =
-            nameExtractorImplMap.get(extractorImplKey).getImplementationClass();
+        nameExtractorImplMap.get(extractorImplKey).getImplementationClass();
 
     return CommonMethods.newInstance(nameExtractorImplClassName, NameExtractor.class);
   }
@@ -160,7 +162,7 @@ public class TranslationContext {
   }
 
   public void setUnifiedSubstitutionData(
-          Map<String, UnifiedSubstitutionData> unifiedSubstitutionData) {
+      Map<String, UnifiedSubstitutionData> unifiedSubstitutionData) {
     this.unifiedSubstitutionData = unifiedSubstitutionData;
   }
 
@@ -170,14 +172,14 @@ public class TranslationContext {
                                      NodeTemplate nodeTemplate) {
     this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
     this.unifiedSubstitutionData
-            .get(serviceTemplateName)
-            .addCleanedNodeTemplate(nodeTemplateId, unifiedCompositionEntity, nodeTemplate);
+        .get(serviceTemplateName)
+        .addCleanedNodeTemplate(nodeTemplateId, unifiedCompositionEntity, nodeTemplate);
   }
 
   public NodeTemplate getCleanedNodeTemplate(String serviceTemplateName,
                                              String nodeTemplateId) {
     return this.unifiedSubstitutionData.get(serviceTemplateName)
-            .getCleanedNodeTemplate(nodeTemplateId);
+        .getCleanedNodeTemplate(nodeTemplateId);
   }
 
   public void addUnifiedNestedNodeTemplateId(String serviceTemplateName,
@@ -185,13 +187,13 @@ public class TranslationContext {
                                              String unifiedNestedNodeTemplateId) {
     this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
     this.unifiedSubstitutionData.get(serviceTemplateName)
-            .addUnifiedNestedNodeTemplateId(nestedNodeTemplateId, unifiedNestedNodeTemplateId);
+        .addUnifiedNestedNodeTemplateId(nestedNodeTemplateId, unifiedNestedNodeTemplateId);
   }
 
   public Optional<String> getUnifiedNestedNodeTemplateId(String serviceTemplateName,
                                                          String nestedNodeTemplateId) {
     return this.unifiedSubstitutionData.get(serviceTemplateName) == null ? Optional.empty()
-            : this.unifiedSubstitutionData.get(serviceTemplateName)
+        : this.unifiedSubstitutionData.get(serviceTemplateName)
             .getUnifiedNestedNodeTemplateId(nestedNodeTemplateId);
   }
 
@@ -200,13 +202,13 @@ public class TranslationContext {
                                          String unifiedNestedNodeTypeId) {
     this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
     this.unifiedSubstitutionData.get(serviceTemplateName)
-            .addUnifiedNestedNodeTypeId(nestedNodeTypeId, unifiedNestedNodeTypeId);
+        .addUnifiedNestedNodeTypeId(nestedNodeTypeId, unifiedNestedNodeTypeId);
   }
 
   public Optional<String> getUnifiedNestedNodeTypeId(String serviceTemplateName,
                                                      String nestedNodeTemplateId) {
     return this.unifiedSubstitutionData.get(serviceTemplateName) == null ? Optional.empty()
-            : this.unifiedSubstitutionData.get(serviceTemplateName)
+        : this.unifiedSubstitutionData.get(serviceTemplateName)
             .getUnifiedNestedNodeTypeId(nestedNodeTemplateId);
   }
 
@@ -263,12 +265,12 @@ public class TranslationContext {
   }
 
   public Set<String> getAllTranslatedResourceIdsFromDiffNestedFiles(String
-                                                                            nestedHeatFileNameToSkip){
+                                                                        nestedHeatFileNameToSkip){
     Set<String> allTranslatedResourceIds = new HashSet<>();
 
     this.translatedIds.entrySet().stream().filter(
-            heatFileNameToTranslatedIdsEntry -> !heatFileNameToTranslatedIdsEntry.getKey()
-                    .equals(nestedHeatFileNameToSkip)).forEach(heatFileNameToTranslatedIdsEntry -> {
+        heatFileNameToTranslatedIdsEntry -> !heatFileNameToTranslatedIdsEntry.getKey()
+            .equals(nestedHeatFileNameToSkip)).forEach(heatFileNameToTranslatedIdsEntry -> {
       allTranslatedResourceIds.addAll(heatFileNameToTranslatedIdsEntry.getValue().keySet());
     });
 
@@ -329,7 +331,7 @@ public class TranslationContext {
   public void addHeatSharedResourcesByParam(String parameterName, String resourceId,
                                             Resource resource) {
     this.addHeatSharedResourcesByParam(parameterName,
-            new TranslatedHeatResource(resourceId, resource));
+        new TranslatedHeatResource(resourceId, resource));
   }
 
   private void addHeatSharedResourcesByParam(String parameterName,
@@ -355,7 +357,7 @@ public class TranslationContext {
   }
 
   public void addUsedHeatPseudoParams(String heatFileName, String heatPseudoParam, String
-          translatedToscaParam) {
+      translatedToscaParam) {
     if (Objects.isNull(this.usedHeatPseudoParams.get(heatFileName))) {
       this.usedHeatPseudoParams.put(heatFileName, new HashMap<>());
     }
@@ -375,8 +377,8 @@ public class TranslationContext {
                                          String abstractNodeTemplateId) {
 
     Map<String, String> nodeAbstractNodeTemplateIdMap = this.getUnifiedSubstitutionData()
-            .computeIfAbsent(serviceTemplateFileName, k -> new UnifiedSubstitutionData())
-            .getNodesRelatedAbstractNode();
+        .computeIfAbsent(serviceTemplateFileName, k -> new UnifiedSubstitutionData())
+        .getNodesRelatedAbstractNode();
 
     if (nodeAbstractNodeTemplateIdMap == null) {
       nodeAbstractNodeTemplateIdMap = new HashMap<>();
@@ -384,13 +386,13 @@ public class TranslationContext {
 
     if(nodeAbstractNodeTemplateIdMap.containsKey(originalNodeTemplateId)){
       throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-              .withMessage("Resource with id "
-                      + originalNodeTemplateId + " occures more than once in different addOn files")
-              .build());
+          .withMessage("Resource with id "
+              + originalNodeTemplateId + " occures more than once in different addOn files")
+          .build());
     }
     nodeAbstractNodeTemplateIdMap.put(originalNodeTemplateId, abstractNodeTemplateId);
     this.getUnifiedSubstitutionData().get(serviceTemplateFileName).setNodesRelatedAbstractNode(
-            nodeAbstractNodeTemplateIdMap);
+        nodeAbstractNodeTemplateIdMap);
   }
 
   /**
@@ -403,23 +405,23 @@ public class TranslationContext {
    *                                                  service template
    */
   public void addSubstitutionServiceTemplateUnifiedSubstitutionData(
-          String serviceTemplateFileName,
-          String originalNodeTemplateId,
-          String substitutionServiceTemplateNodeTemplateId) {
+      String serviceTemplateFileName,
+      String originalNodeTemplateId,
+      String substitutionServiceTemplateNodeTemplateId) {
 
     Map<String, String> nodesRelatedSubstitutionServiceTemplateNodeTemplateIdMap = this
-            .getUnifiedSubstitutionData()
-            .computeIfAbsent(serviceTemplateFileName, k -> new UnifiedSubstitutionData())
-            .getNodesRelatedSubstitutionServiceTemplateNode();
+        .getUnifiedSubstitutionData()
+        .computeIfAbsent(serviceTemplateFileName, k -> new UnifiedSubstitutionData())
+        .getNodesRelatedSubstitutionServiceTemplateNode();
 
     if (nodesRelatedSubstitutionServiceTemplateNodeTemplateIdMap == null) {
       nodesRelatedSubstitutionServiceTemplateNodeTemplateIdMap = new HashMap<>();
     }
     nodesRelatedSubstitutionServiceTemplateNodeTemplateIdMap.put(originalNodeTemplateId,
-            substitutionServiceTemplateNodeTemplateId);
+        substitutionServiceTemplateNodeTemplateId);
     this.getUnifiedSubstitutionData().get(serviceTemplateFileName)
-            .setNodesRelatedSubstitutionServiceTemplateNode(
-                    nodesRelatedSubstitutionServiceTemplateNodeTemplateIdMap);
+        .setNodesRelatedSubstitutionServiceTemplateNode(
+            nodesRelatedSubstitutionServiceTemplateNodeTemplateIdMap);
   }
 
   /**
@@ -431,7 +433,7 @@ public class TranslationContext {
   public String getUnifiedAbstractNodeTemplateId(ServiceTemplate serviceTemplate,
                                                  String nodeTemplateId) {
     UnifiedSubstitutionData unifiedSubstitutionData =
-            this.unifiedSubstitutionData.get(ToscaUtil.getServiceTemplateFileName(serviceTemplate));
+        this.unifiedSubstitutionData.get(ToscaUtil.getServiceTemplateFileName(serviceTemplate));
     return unifiedSubstitutionData.getNodesRelatedAbstractNode().get(nodeTemplateId);
   }
 
@@ -445,26 +447,26 @@ public class TranslationContext {
   public String getUnifiedSubstitutionNodeTemplateId(ServiceTemplate serviceTemplate,
                                                      String nodeTemplateId) {
     UnifiedSubstitutionData unifiedSubstitutionData =
-            this.unifiedSubstitutionData.get(ToscaUtil.getServiceTemplateFileName(serviceTemplate));
+        this.unifiedSubstitutionData.get(ToscaUtil.getServiceTemplateFileName(serviceTemplate));
     return unifiedSubstitutionData.getNodesRelatedSubstitutionServiceTemplateNode()
-            .get(nodeTemplateId);
+        .get(nodeTemplateId);
   }
 
   public int getHandledNestedComputeNodeTemplateIndex(String serviceTemplateName,
                                                       String computeType) {
     return this.unifiedSubstitutionData.get(serviceTemplateName)
-            .getHandledNestedComputeNodeTemplateIndex(computeType);
+        .getHandledNestedComputeNodeTemplateIndex(computeType);
   }
 
   public void updateHandledComputeType(String serviceTemplateName,
                                        String handledComputeType,
                                        String nestedServiceTemplateFileName) {
     String globalSTName =
-            ToscaUtil.getServiceTemplateFileName(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME);
+        ToscaUtil.getServiceTemplateFileName(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME);
     this.unifiedSubstitutionData.putIfAbsent(
-            globalSTName, new UnifiedSubstitutionData());
+        globalSTName, new UnifiedSubstitutionData());
     this.unifiedSubstitutionData.get(globalSTName)
-            .addHandledComputeType(handledComputeType);
+        .addHandledComputeType(handledComputeType);
     this.unifiedSubstitutionData.get(globalSTName).addHandlesNestedServiceTemplate(nestedServiceTemplateFileName);
 
     this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
@@ -480,15 +482,15 @@ public class TranslationContext {
   public boolean isComputeTypeHandledInServiceTemplate(String serviceTemplateName,
                                                        String computeType) {
     return !Objects.isNull(this.unifiedSubstitutionData.get(serviceTemplateName))
-            && this.unifiedSubstitutionData.get(serviceTemplateName)
-            .isComputeTypeHandledInServiceTemplate(computeType);
+        && this.unifiedSubstitutionData.get(serviceTemplateName)
+        .isComputeTypeHandledInServiceTemplate(computeType);
   }
 
   public int getHandledNestedComputeNodeTemplateIndex(String serviceTemplateName,
                                                       String nestedServiceTemplateName,
                                                       String computeType){
     return this.unifiedSubstitutionData.get(serviceTemplateName)
-            .getHandledNestedComputeNodeTemplateIndex(computeType);
+        .getHandledNestedComputeNodeTemplateIndex(computeType);
   }
 
   public boolean isNestedServiceTemplateWasHandled(String serviceTemplateName,
@@ -497,13 +499,13 @@ public class TranslationContext {
       return false;
     }
     return this.unifiedSubstitutionData.get(serviceTemplateName)
-            .isNestedServiceTemplateWasHandled(nestedServiceTemplateFileName);
+        .isNestedServiceTemplateWasHandled(nestedServiceTemplateFileName);
   }
 
   public Set<String> getAllRelatedNestedNodeTypeIds(){
     String globalName = "GlobalSubstitutionTypes";
     if(Objects.isNull(this.unifiedSubstitutionData) ||
-            Objects.isNull(this.unifiedSubstitutionData.get(globalName))){
+        Objects.isNull(this.unifiedSubstitutionData.get(globalName))){
       return new HashSet<>();
     }
 
@@ -531,14 +533,14 @@ public class TranslationContext {
       return false;
     }
     return this.unifiedSubstitutionData.get(serviceTemplateName)
-            .isNestedNodeWasHandled(nestedNodeTemplateId);
+        .isNestedNodeWasHandled(nestedNodeTemplateId);
   }
 
   public void addNestedNodeAsHandled(String serviceTemplateName,
                                      String nestedNodeTemplateId) {
     this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
     this.unifiedSubstitutionData.get(serviceTemplateName)
-            .addHandledNestedNodes(nestedNodeTemplateId);
+        .addHandledNestedNodes(nestedNodeTemplateId);
   }
 
   public void updateUsedTimesForNestedComputeNodeType(String serviceTemplateName,
@@ -546,7 +548,7 @@ public class TranslationContext {
     this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
 
     this.unifiedSubstitutionData.get(serviceTemplateName)
-            .updateUsedTimesForNestedComputeNodeType(computeType);
+        .updateUsedTimesForNestedComputeNodeType(computeType);
   }
 
   public int getGlobalNodeTypeIndex(String serviceTemplateName,
@@ -555,7 +557,7 @@ public class TranslationContext {
       return 0;
     }
     return this.unifiedSubstitutionData.get(serviceTemplateName).getGlobalNodeTypeIndex
-            (computeType);
+        (computeType);
   }
 
   public void addNewPropertyIdToNodeTemplate(String serviceTemplateName,
@@ -563,7 +565,7 @@ public class TranslationContext {
                                              Object origPropertyValue){
     this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
     this.unifiedSubstitutionData.get(serviceTemplateName).addNewPropertyIdToNodeTemplate(
-            newPropertyId, origPropertyValue);
+        newPropertyId, origPropertyValue);
   }
 
   public Optional<Object> getNewPropertyInputParamId(String serviceTemplateName,
@@ -573,7 +575,7 @@ public class TranslationContext {
     }
 
     return this.unifiedSubstitutionData.get(serviceTemplateName).getNewPropertyInputParam
-            (newPropertyId);
+        (newPropertyId);
   }
 
   public Map<String, Object> getAllNewPropertyInputParamIdsPerNodeTenplateId(String serviceTemplateName){
@@ -585,27 +587,31 @@ public class TranslationContext {
 
   }
 
-  public void addSubMappingReqAssignment(String serviceTemplateName,
-                                         RequirementAssignment requirementAssignment,
-                                         String newReqId){
-    this.mapDependencySubMappingToRequirementAssignment
-            .putIfAbsent(serviceTemplateName, new HashMap<>());
-    this.mapDependencySubMappingToRequirementAssignment.get(serviceTemplateName)
-            .putIfAbsent(requirementAssignment, newReqId);
+  public void addServiceTemplateWithoutNodeTemplates(String serviceTemplateName){
+    this.serviceTemplatesWithoutNodeTemplateSection.add(serviceTemplateName);
   }
 
-  public Optional<String> getNewReqAssignmentDependencyId(String serviceTemplateName,
-                                                          RequirementAssignment requirementAssignment){
-    if(!this.mapDependencySubMappingToRequirementAssignment.containsKey(serviceTemplateName)){
-      return Optional.empty();
+  public boolean isServiceTemplateWithoutNodeTemplates(String serviceTemplateName){
+    return !Objects.isNull(serviceTemplateName) &&
+        this.serviceTemplatesWithoutNodeTemplateSection.contains(serviceTemplateName);
+  }
+
+  public void updateRequirementAssignmentIdIndex(String serviceTemplateName,
+                                                 String nodeTemplateId,
+                                                 String requirementId){
+    requirementIdAppearanceInNodeTemplate.putIfAbsent(serviceTemplateName, new HashMap<>());
+    requirementIdAppearanceInNodeTemplate
+        .get(serviceTemplateName).putIfAbsent(nodeTemplateId, new HashMap<>());
+
+    Map<String, Integer> requirementIdToAppearance =
+        requirementIdAppearanceInNodeTemplate.get(serviceTemplateName).get(nodeTemplateId);
+
+    if(requirementIdToAppearance.containsKey(requirementId)){
+      requirementIdToAppearance
+          .put(requirementId, requirementIdToAppearance.get(requirementId) + 1);
+    } else {
+      requirementIdToAppearance.put(requirementId, 0);
     }
-
-    Map<RequirementAssignment, String> requirementAssignmentMap =
-            this.mapDependencySubMappingToRequirementAssignment.get(serviceTemplateName);
-    return requirementAssignmentMap.containsKey
-            (requirementAssignment) ? Optional.of(requirementAssignmentMap.get(requirementAssignment)) :
-            Optional.empty();
   }
-
 
 }

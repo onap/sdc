@@ -694,3 +694,200 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+  org.openecomp.resource.vfc.nodes.heat.FSB1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    properties:
+      port_FSB1_Internal_mac_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB_OAM_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB1_Internal_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_FSB1_Internal_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      compute_FSB1_metadata:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB2_Internal_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_FSB2_Internal_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_FSB2_Internal_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB_OAM_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_FSB2_Internal_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB_OAM_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_FSB1_Internal_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB1_Internal_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_FSB2_Internal_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB1_Internal_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      port_FSB_OAM_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB_OAM_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_Internal_network_role:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB_OAM_subnetpoolid:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB_OAM_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      compute_FSB1_availability_zone:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_Internal_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      index_value:
+        type: integer
+        description: Index value of this substitution service template runtime instance
+        required: false
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      port_FSB_OAM_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_FSB2_Internal_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_FSB2_Internal_mac_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB2_Internal_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      port_FSB1_Internal_order:
+        type: integer
+        required: true
+        status: SUPPORTED
+      port_FSB_OAM_fixed_ips:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+      port_FSB2_Internal_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_Internal_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_FSB_OAM_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      compute_FSB1_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB2_Internal_network_role_tag:
+        type: string
+        required: true
+        status: SUPPORTED
+    attributes:
+      FSB1_FSB_OAM_status:
+        type: string
+        status: SUPPORTED
+      FSB1_FSB2_Internal_tenant_id:
+        type: string
+        status: SUPPORTED
+      FSB1_FSB1_Internal_network_id:
+        type: string
+        status: SUPPORTED
+      FSB1_accessIPv6:
+        type: string
+        status: SUPPORTED
+      FSB1_addresses:
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.novaServer.network.AddressInfo
+      FSB1_FSB2_Internal_network_id:
+        type: string
+        status: SUPPORTED
+      FSB1_FSB1_Internal_device_owner:
+        type: string
+        status: SUPPORTED
