@@ -179,22 +179,6 @@
                     </webResources>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>${maven.war.plugin.version}</version>
-                <configuration>
-                    <webXml>webapp-onboarding\WEB-INF\web.xml</webXml>
-                    <webResources>
-                        <resource>
-                            <directory>external-resources/healthcheck</directory>
-                            <includes>
-                                <include>v1.0/healthcheck</include>
-                            </includes>
-                        </resource>
-                    </webResources>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
