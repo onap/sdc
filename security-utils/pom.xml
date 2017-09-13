@@ -3,7 +3,6 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.openecomp.sdc</groupId>
 	<artifactId>security-utils</artifactId>
 
 	<parent>
