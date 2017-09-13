@@ -352,7 +352,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 			} else {
 				byte[] value = csarArtifact.left().value().getRight();
 				InputStream is = new ByteArrayInputStream(value);
-				String contenetMD5 = GeneralUtility.calculateMD5ByByteArray(value);
+				String contenetMD5 = GeneralUtility.calculateMD5Base64EncodedByByteArray(value);
 				Map<String, String> headers = new HashMap<>();
 				headers.put(Constants.CONTENT_DISPOSITION_HEADER, getContentDispositionValue(csarArtifact.left().value().getLeft()));
 				headers.put(Constants.MD5_HEADER, contenetMD5);

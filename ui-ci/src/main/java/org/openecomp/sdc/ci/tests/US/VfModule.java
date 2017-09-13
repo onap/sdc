@@ -85,7 +85,7 @@ public class VfModule extends SetupCDTest {
 		String vspName = createVendorSoftwareProduct.left;
 		//
 		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, createVendorSoftwareProduct.right.get("vspId"));
-		File latestFilefromDir = FileHandling.getLastModifiedFileFromDir();
+		File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
 		List<TypeHeatMetaDefinition> listTypeHeatMetaDefinition = CsarParserUtils.getListTypeHeatMetaDefinition(latestFilefromDir);
 		//
 		getExtendTest().log(Status.INFO, String.format("Searching for onboarded %s", vnfFile));
@@ -133,7 +133,7 @@ public class VfModule extends SetupCDTest {
 		GeneralUIUtils.clickOnElementByTestId("breadcrumbs-button-1");
 		ResourceGeneralPage.getLeftMenu().moveToToscaArtifactsScreen();
 		GeneralUIUtils.clickOnElementByTestId(ToscaArtifactsScreenEnum.TOSCA_TEMPLATE.getValue());
-		latestFilefromDir = FileHandling.getLastModifiedFileFromDir();
+		latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
 		
 //		verification
 		Service service = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), serviceMetadata.getVersion());

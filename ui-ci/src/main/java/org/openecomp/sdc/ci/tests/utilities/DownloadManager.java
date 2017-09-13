@@ -68,8 +68,11 @@ public class DownloadManager {
 	 * @param vspName
 	 * @throws Exception
 	 */
-	public static void downloadCsarByNameFromVSPRepository(String vspName, String vspId) throws Exception{
-	    FileHandling.cleanCurrentDownloadDir();
+	public static void downloadCsarByNameFromVSPRepository(String vspName, String vspId, Boolean isDelete) throws Exception{
+		
+		if(isDelete){
+			FileHandling.cleanCurrentDownloadDir();
+		}
 		HomePage.showVspRepository();
 		boolean vspFound = HomePage.searchForVSP(vspName);
 		if (vspFound){
@@ -86,6 +89,10 @@ public class DownloadManager {
             GeneralUIUtils.getElementsByCSS("div[class^='w-sdc-modal-close']").forEach(e -> e.click());
             GeneralUIUtils.ultimateWait();
 		}
+	}
+	
+	public static void downloadCsarByNameFromVSPRepository(String vspName, String vspId) throws Exception{
+		downloadCsarByNameFromVSPRepository(vspName, vspId, true);
 	}
 	
 //	AttFtpClient instance = AttFtpClient.getInstance();

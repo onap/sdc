@@ -166,7 +166,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 				} else {
 					Object representation = RepresentationUtils.toRepresentation(uploadArtifactEither.left().value());
 					Map<String, String> headers = new HashMap<>();
-					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByString((String) representation));
+					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
 					responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.OK));
 					response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers);
 				}
@@ -263,7 +263,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 				} else {
 					Object representation = RepresentationUtils.toRepresentation(uploadArtifactEither.left().value());
 					Map<String, String> headers = new HashMap<>();
-					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByString((String) representation));
+					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
 					responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
 				}
@@ -363,7 +363,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 				} else {
 					Object representation = RepresentationUtils.toRepresentation(uploadArtifactEither.left().value());
 					Map<String, String> headers = new HashMap<>();
-					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByString((String) representation));
+					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
 					responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
 				}
@@ -459,7 +459,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 				} else {
 					Object representation = RepresentationUtils.toRepresentation(uploadArtifactEither.left().value());
 					Map<String, String> headers = new HashMap<>();
-					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByString((String) representation));
+					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
 					responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
 				}
@@ -550,7 +550,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 				} else {
 					Object representation = RepresentationUtils.toRepresentation(uploadArtifactEither.left().value());
 					Map<String, String> headers = new HashMap<>();
-					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByString((String) representation));
+					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
 					responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
 				}
@@ -641,7 +641,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 				} else {
 					Object representation = RepresentationUtils.toRepresentation(uploadArtifactEither.left().value());
 					Map<String, String> headers = new HashMap<>();
-					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByString((String) representation));
+					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByString((String) representation));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
 					responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
 				}
@@ -719,7 +719,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 					byte[] value = downloadComponentArtifactEither.left().value();
 					InputStream is = new ByteArrayInputStream(value);
 					Map<String, String> headers = new HashMap<>();
-					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByByteArray(value));
+					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByByteArray(value));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
 					responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
 				}
@@ -800,7 +800,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 					byte[] value = downloadResourceArtifactEither.left().value();
 					InputStream is = new ByteArrayInputStream(value);
 					Map<String, String> headers = new HashMap<>();
-					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByByteArray(value));
+					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByByteArray(value));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
 					responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
 				}

@@ -35,17 +35,17 @@ public class ToscaGroupsTopologyTemplateDefinition {
 	private Map<String, Object> interfaces;
 	private List<String> members;
 //	private Map<String, String> metadata;
-	private ToscaGroupsMetadataDefinition metadata;
+	private ToscaServiceGroupsMetadataDefinition metadata;
 
 	public ToscaGroupsTopologyTemplateDefinition() {
 		super();
 	}
 
-	public ToscaGroupsMetadataDefinition getMetadata() {
+	public ToscaServiceGroupsMetadataDefinition getMetadata() {
 		return metadata;
 	}
 
-	public void setMetadata(ToscaGroupsMetadataDefinition metadata) {
+	public void setMetadata(ToscaServiceGroupsMetadataDefinition metadata) {
 		this.metadata = metadata;
 	}
 

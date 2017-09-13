@@ -65,6 +65,7 @@ export class ComponentMetadata {
     public namingPolicy: string;
     public serviceType:string;
     public serviceRole:string;
+    public environmentContext:string;
 
 
     //backend lifecycleState
@@ -101,7 +102,7 @@ export class ComponentMetadata {
         this.projectCode = response.projectCode;
         this.resourceType = response.resourceType;
         this.csarUUID = response.csarUUID;
-        this.csarVersion = response.version;
+        this.csarVersion = response.csarVersion;
         this.state = response.state;
         this.ecompGeneratedNaming = response.ecompGeneratedNaming;
         this.namingPolicy = response.namingPolicy;
@@ -109,6 +110,7 @@ export class ComponentMetadata {
         this.resourceVendorModelNumber = response.resourceVendorModelNumber;
         this.serviceType = response.serviceType;
         this.serviceRole = response.serviceRole;
+        this.environmentContext = response.environmentContext;
         return this;
     }
 

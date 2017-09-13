@@ -197,7 +197,7 @@ public class CatalogLeftPanelTest extends  SetupCDTest{
 	public void lastUpdatedResource() throws Exception{
 		// create resource 
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		ResourceGeneralPage.clickCheckinButton(vfMetaData.getName());
 		CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
@@ -210,7 +210,7 @@ public class CatalogLeftPanelTest extends  SetupCDTest{
 	public void fromCatalogCheckout() throws Exception{
 		// create resource 
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		ResourceGeneralPage.clickCheckinButton(vfMetaData.getName());
 		CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);

@@ -2207,5 +2207,13 @@ public class ToscaOperationFacade {
 	public StorageOperationStatus deleteComponentInstanceInputsFromTopologyTemplate(Component containerComponent, ComponentTypeEnum componentType, List<InputDefinition> inputsToDelete) {
 		return topologyTemplateOperation.deleteToscaDataElements(containerComponent.getUniqueId(), EdgeLabelEnum.INPUTS, inputsToDelete.stream().map(i -> i.getName()).collect(Collectors.toList()));
 	}
+	
+	public StorageOperationStatus deleteAllCalculatedCapabilitiesRequirements(String topologyTemplateId) {
+		StorageOperationStatus status = topologyTemplateOperation.removeToscaData(topologyTemplateId, EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES);
+		if(status == StorageOperationStatus.OK){
+			status = topologyTemplateOperation.removeToscaData(topologyTemplateId, EdgeLabelEnum.CALCULATED_REQUIREMENTS, VertexTypeEnum.CALCULATED_REQUIREMENTS);
+		}
+		return status;
+	}
 
 }

@@ -539,30 +539,41 @@ public final class ResourceUIUtils {
 		return getCreatedResource;
 	}
 
+	/**
+	 * @deprecated Use {@link #createVF(ResourceReqDetails,User)} instead
+	 */
 	public static  void createResource(ResourceReqDetails resource, User user) throws Exception {
+		createVF(resource, user);
+	}
+
+	public static  void createVF(ResourceReqDetails resource, User user) throws Exception {
 		ExtentTestActions.log(Status.INFO, "Going to create a new VF.");
+		createResource(resource, user,  DataTestIdEnum.Dashboard.BUTTON_ADD_VF);
+	}
+
+	public static void createResource(ResourceReqDetails resource, User user, DataTestIdEnum.Dashboard button) {
 		WebElement addVFButton = null;
         try {
 			GeneralUIUtils.ultimateWait();
 			try{
 				GeneralUIUtils.hoverOnAreaByClassName("w-sdc-dashboard-card-new");
-				addVFButton = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.BUTTON_ADD_VF.getValue());
+				addVFButton = GeneralUIUtils.getWebElementByTestID(button.getValue());
 			}
 			catch (Exception e){
 				File imageFilePath = GeneralUIUtils.takeScreenshot(null, SetupCDTest.getScreenshotFolder(), "Warning_" + resource.getName());
 				final String absolutePath = new File(SetupCDTest.getReportFolder()).toURI().relativize(imageFilePath.toURI()).getPath();
-				SetupCDTest.getExtendTest().log(Status.WARNING, "Add VF button is not visible after hover on import area of Home page, moving on ..." + SetupCDTest.getExtendTest().addScreenCaptureFromPath(absolutePath));
+				SetupCDTest.getExtendTest().log(Status.WARNING, "Add button is not visible after hover on import area of Home page, moving on ..." + SetupCDTest.getExtendTest().addScreenCaptureFromPath(absolutePath));
 				showButtonsADD();
-				addVFButton = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.BUTTON_ADD_VF.getValue());
+				addVFButton = GeneralUIUtils.getWebElementByTestID(button.getValue());
 			}
 			addVFButton.click();
 				GeneralUIUtils.ultimateWait();
 	        } 
         catch (Exception e ) {
-        	SetupCDTest.getExtendTest().log(Status.WARNING, String.format("Exeption catched on ADD VF button, retrying ... "));
+        	SetupCDTest.getExtendTest().log(Status.WARNING, String.format("Exeption catched on ADD button, retrying ... "));
         	GeneralUIUtils.hoverOnAreaByClassName("w-sdc-dashboard-card-new");
 			GeneralUIUtils.ultimateWait();
-			GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.Dashboard.BUTTON_ADD_VF.getValue()).click();
+			GeneralUIUtils.getWebElementByTestID(button.getValue()).click();
 			GeneralUIUtils.ultimateWait();
         }
 		fillResourceGeneralInformationPage(resource, user, true);
@@ -1139,5 +1150,10 @@ public final class ResourceUIUtils {
 		String customizationFoLogLocal = customizationFoLog != null ? customizationFoLog : "";
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on %s %s", textToClick, customizationFoLogLocal));
 		GeneralUIUtils.clickOnElementByText(textToClick);
+	}
+	
+	public static  void createPNF(ResourceReqDetails resource, User user) throws Exception {
+		ExtentTestActions.log(Status.INFO, "Going to create a new PNF.");
+		createResource(resource, user, DataTestIdEnum.Dashboard.BUTTON_ADD_PNF);
 	}
 }

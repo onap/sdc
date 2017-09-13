@@ -1616,7 +1616,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 		vfModuleArtifactDefinition.setArtifactName(currVF.getNormalizedName() + "_modules.json");
 		vfModuleArtifactDefinition.setPayloadData(vfModulePayloadString);
 		if (vfModulePayloadString != null) {
-			newCheckSum = GeneralUtility.calculateMD5ByByteArray(vfModulePayloadString.getBytes());
+			newCheckSum = GeneralUtility.calculateMD5Base64EncodedByByteArray(vfModulePayloadString.getBytes());
 		}
 		vfModuleArtifactDefinition.setArtifactChecksum(newCheckSum);
 

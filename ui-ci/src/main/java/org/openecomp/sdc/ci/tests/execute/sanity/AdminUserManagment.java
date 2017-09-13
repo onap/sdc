@@ -229,7 +229,7 @@ public class AdminUserManagment extends SetupCDTest {
 		reloginWithNewRole(UserRoleEnum.DESIGNER);
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 		ExtentTestActions.log(Status.INFO, "Creating a new VF named " + resourceMetaData.getName());
-		ResourceUIUtils.createResource(resourceMetaData, getUser());
+		ResourceUIUtils.createVF(resourceMetaData, getUser());
 		ResourceGeneralPage.clickSubmitForTestingButton(resourceMetaData.getName());
 		Resource resourceObjectByNameAndVersion = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
 		ExtentTestActions.log(Status.INFO, "Getting the VF to 'In Testing' state.");

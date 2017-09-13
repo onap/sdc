@@ -134,7 +134,7 @@ public class GeneralUtility {
 		return res;
 	}
 
-	public static String calculateMD5ByByteArray(byte[] payload) {
+	public static String calculateMD5Base64EncodedByByteArray(byte[] payload) {
 		String decodedMd5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(payload);
 		byte[] encodeMd5 = Base64.encodeBase64(decodedMd5.getBytes());
 		return new String(encodeMd5);
@@ -146,7 +146,7 @@ public class GeneralUtility {
 	 * @param data
 	 * @return
 	 */
-	public static String calculateMD5ByString(String data) {
+	public static String calculateMD5Base64EncodedByString(String data) {
 		String calculatedMd5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(data);
 
 		// encode base-64 result

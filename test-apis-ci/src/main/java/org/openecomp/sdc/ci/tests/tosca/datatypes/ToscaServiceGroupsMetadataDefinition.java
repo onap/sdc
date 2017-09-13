@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
-public class ToscaGroupsMetadataDefinition {
+public class ToscaServiceGroupsMetadataDefinition {
 
 	private String vfModuleModelName;
 	private String vfModuleModelInvariantUUID;
@@ -28,7 +28,7 @@ public class ToscaGroupsMetadataDefinition {
 	private String vfModuleModelUUID;
 	private String vfModuleModelVersion;
 	
-	public ToscaGroupsMetadataDefinition() {
+	public ToscaServiceGroupsMetadataDefinition() {
 		super();
 		// TODO Auto-generated constructor stub
 	}

@@ -293,7 +293,7 @@ public class ElementFactory {
 		tags.add("serviceTag1");
 		tags.add(serviceName);
 		String description = "service Description";
-		String icon = "myIcon";
+		String icon = "defaulticon";
 
 		ServiceReqDetails serviceDetails = new ServiceReqDetails(serviceName, category.getValue(), tags, description, contactId, icon);
 
@@ -979,7 +979,7 @@ public class ElementFactory {
 		return requirementDef;
 	}
 
-	private static String generateUUIDforSufix() {
+	public static String generateUUIDforSufix() {
 
 		String uniqueSufix = UUID.randomUUID().toString();
 		String[] split = uniqueSufix.split("-");

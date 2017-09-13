@@ -24,17 +24,13 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import java.awt.AWTException;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bouncycastle.util.encoders.Base64;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
@@ -42,21 +38,21 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.dataProvider.OnbordingDataProviders;
 import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
+import org.openecomp.sdc.ci.tests.utilities.OnboardingUtillViaApis;
 import org.openecomp.sdc.ci.tests.utilities.OnboardingUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.clearspring.analytics.util.Pair;
-import com.google.gson.Gson;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
@@ -66,11 +62,11 @@ public class OnboardViaApis{
 	
 
 	private static final String FULL_PATH = "C://tmp//CSARs//";
-	
+	protected static String filepath = FileHandling.getVnfRepositoryPath();
 	
 //-------------------------------------------------------------------------------------------------------
 	User sdncDesignerDetails1 = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-	ResourceReqDetails resourceDetails;
+//	ResourceReqDetails resourceDetails;
 	Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         
         
@@ -80,7 +76,7 @@ public class OnboardViaApis{
 		lc.getLogger("org.apache").setLevel(Level.OFF);
 		lc.getLogger("org.*").setLevel(Level.OFF);
 		lc.getLogger("org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest").setLevel(Level.OFF);
-		resourceDetails = ElementFactory.getDefaultResource();
+//		resourceDetails = ElementFactory.getDefaultResource();
 	}
 		
 	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")
@@ -95,7 +91,7 @@ public class OnboardViaApis{
 		timestamp = new Timestamp(System.currentTimeMillis());
 		System.err.println(timestamp + " Starting download service csar file: " + vnfFile);
 		File file = new File(fullFileName);
-		downloadToscaCsarToDirectory(service, file);
+		OnboardingUtillViaApis.downloadToscaCsarToDirectory(service, file);
 		timestamp = new Timestamp(System.currentTimeMillis());
 		System.err.println(timestamp + " Finished download service csar file: " + vnfFile);
 		System.out.println("end");
@@ -106,8 +102,6 @@ public class OnboardViaApis{
 	@Test
 	public void onboardingAndParser() throws Exception {
 		Service service = null;
-		String filepath = getFilePath();
-//		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
 		List<String> fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
 		String vnfFile = fileNamesFromFolder.get(7);
 		System.err.println(timestamp + " Starting test with VNF: " + vnfFile);
@@ -119,49 +113,19 @@ public class OnboardViaApis{
 //        convertServiceDistributionStatusToObject.
 	}
 	
-	public static String getFilePath() {
-		String filepath = System.getProperty("filepath");
-		if (filepath == null && System.getProperty("os.name").contains("Windows")) {
-			filepath = FileHandling.getResourcesFilesPath() +"VNFs";
-		}
-		
-		else if(filepath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
-				filepath = FileHandling.getBasePath() + File.separator + "Files" + File.separator +"VNFs";
-		}
-		return filepath;
-	}
 	
-	public static void downloadToscaCsarToDirectory(Service service, File file) {
-		try {
-			Either<String,RestResponse> serviceToscaArtifactPayload = AtomicOperationUtils.getServiceToscaArtifactPayload(service, "assettoscacsar");
-			if(serviceToscaArtifactPayload.left().value() != null){
-				Gson gson = new Gson();
-				@SuppressWarnings("unchecked")
-				Map<String, String> fromJson = gson.fromJson(serviceToscaArtifactPayload.left().value(), Map.class);
-				String string = fromJson.get("base64Contents").toString();
-				byte[] byteArray = Base64.decode(string.getBytes(StandardCharsets.UTF_8));
-				File downloadedFile = new File(file.getAbsolutePath());
-				FileOutputStream fos = new FileOutputStream(downloadedFile);
-				fos.write(byteArray);
-				fos.flush();
-				fos.close();
-			}
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+
 	
 	public Service runOnboardViaApisOnly(String filepath, String vnfFile) throws Exception, AWTException {
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		System.err.println(timestamp + " Starting onboard VNF: " + vnfFile);
-		Pair<String,Map<String,String>> onboardAndValidate = onboardAndValidateViaApi(filepath, vnfFile, sdncDesignerDetails1);
-		String vspName = onboardAndValidate.left;
+		Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = OnboardingUtillViaApis.createVspViaApis(filepath, vnfFile, sdncDesignerDetails1);
+		String vspName = createVendorSoftwareProduct.left;
+		VendorSoftwareProductObject vendorSoftwareProductObject = createVendorSoftwareProduct.right;
 		timestamp = new Timestamp(System.currentTimeMillis());
 		System.err.println(timestamp + " Finished onboard VNF: " + vnfFile);
-		Resource resource = AtomicOperationUtils.getResourceObject(resourceDetails.getUniqueId());
+		ResourceReqDetails resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(vendorSoftwareProductObject, vspName);
+		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails, vspName);
 		
 		AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
 		resource = AtomicOperationUtils.getResourceObject(resource.getUniqueId());
@@ -175,27 +139,9 @@ public class OnboardViaApis{
 	
 	
 	
-	public Pair<String, Map<String, String>> onboardAndValidateViaApi(String filepath, String vnfFile, User user) throws Exception {
-	
-		AmdocsLicenseMembers amdocsLicenseMembers = createVendorLicense(user);
-		Pair<String, Map<String, String>> createVendorSoftwareProduct = createVendorSoftwareProduct(vnfFile, filepath, user, amdocsLicenseMembers);
-		String vspName = createVendorSoftwareProduct.left;
-		List<String> tags = new ArrayList<>();
-		tags.add(vspName);
-		Map<String, String> map = createVendorSoftwareProduct.right;
-		
-		resourceDetails.setCsarUUID(map.get("vspId"));
-		resourceDetails.setCsarVersion("1.0");
-		resourceDetails.setName(vspName);
-		resourceDetails.setTags(tags);
-		resourceDetails.setResourceType(map.get("componentType"));
-		resourceDetails.setVendorName(map.get("vendorName"));
-		resourceDetails.setVendorRelease("1.0");
-		resourceDetails.setResourceType("VF");
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncDesignerDetails1);
-		
-		return createVendorSoftwareProduct;
-	}
+
+
+
 	
 	public static Pair<String, Map<String, String>> createVendorSoftwareProduct(String HeatFileName, String filepath, User user, AmdocsLicenseMembers amdocsLicenseMembers)
 			throws Exception {

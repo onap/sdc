@@ -36,7 +36,8 @@ public final class DataTestIdEnum {
 		IMPORT_VF("importVFbutton"), 
 		IMPORT_VFC_FILE("file-importVFCbutton"), 
 		IMPORT_VF_FILE("file-importVFbutton"),
-		BUTTON_ADD_PRODUCT("createProductButton");
+		BUTTON_ADD_PRODUCT("createProductButton"),
+		BUTTON_ADD_PNF("createPNFButton"), ;
 
 		private String value;
 

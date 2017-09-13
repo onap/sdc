@@ -20,8 +20,11 @@
 
 package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
+import org.yaml.snakeyaml.TypeDescription;
+
 public class ToscaImportsDefinition {
 
+	private String name;
 	private String file;
 	private String repository;
 	private String namespace_uri;
@@ -32,17 +35,21 @@ public class ToscaImportsDefinition {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ToscaImportsDefinition(String file, String repository, String namespace_uri, String namespace_prefix) {
+	public ToscaImportsDefinition(String name, String file, String repository, String namespace_uri, String namespace_prefix) {
 		super();
+		this.name = name;
 		this.file = file;
 		this.repository = repository;
 		this.namespace_uri = namespace_uri;
 		this.namespace_prefix = namespace_prefix;
 	}
 
-	@Override
-	public String toString() {
-		return "ToscaImportsDefinition [file=" + file + ", repository=" + repository + ", namespace_uri=" + namespace_uri + ", namespace_prefix=" + namespace_prefix + "]";
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getFile() {
@@ -76,6 +83,13 @@ public class ToscaImportsDefinition {
 	public void setNamespace_prefix(String namespace_prefix) {
 		this.namespace_prefix = namespace_prefix;
 	}
+
+	//gets Type description for Yaml snake
+	public static TypeDescription getTypeDescription(){
+        TypeDescription typeDescription = new TypeDescription(ToscaImportsDefinition.class);
+    	return typeDescription;
+	}
+
 	
 	
 }

@@ -81,7 +81,7 @@ public class RemoveRestrictionOfDeploymentArtifacts extends SetupCDTest {
 	@Test
 	public void createServiceWithInformationalArtifacts() throws Exception {
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(resourceMetaData, getUser());
+		ResourceUIUtils.createVF(resourceMetaData, getUser());
 		
 		ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
 				

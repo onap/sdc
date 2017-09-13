@@ -38,7 +38,7 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.ci.tests.datatypes.TypeHeatMetaDefinition;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaGroupsMetadataDefinition;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaServiceGroupsMetadataDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaGroupsTopologyTemplateDefinition;
 import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
 
@@ -75,7 +75,7 @@ public class VfModuleVerificator {
 		for (Map.Entry<String, ToscaGroupsTopologyTemplateDefinition> groupTopologyTemplateDefinition : groups.entrySet()) {
 			String key = groupTopologyTemplateDefinition.getKey();
 			GroupInstance groupInstanceObject = getGroupInstanceByKey(key, service);
-			ToscaGroupsMetadataDefinition metadata = groupTopologyTemplateDefinition.getValue().getMetadata();
+			ToscaServiceGroupsMetadataDefinition metadata = groupTopologyTemplateDefinition.getValue().getMetadata();
 			assertNotNull("groupInstanceObject is null", groupInstanceObject);
 			assertTrue("expected vfModuleModelName " + groupInstanceObject.getGroupName() + ", actual " + metadata.getVfModuleModelName(), groupInstanceObject.getGroupName().equals(metadata.getVfModuleModelName()));
 			assertTrue("expected vfModuleModelInvariantUUID " + groupInstanceObject.getInvariantUUID() + ", actual " + metadata.getVfModuleModelInvariantUUID(), groupInstanceObject.getInvariantUUID().equals(metadata.getVfModuleModelInvariantUUID()));

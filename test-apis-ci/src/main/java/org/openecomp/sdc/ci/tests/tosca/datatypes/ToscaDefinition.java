@@ -29,9 +29,7 @@ public class ToscaDefinition {
 
 	String tosca_definitions_version;
 	Map<String, String> metadata;
-//	Map<String, ToscaImportsDefinition> imports;
-//	TODO waiting for answer about imports representation
-	Object imports;
+	List<Map<String, ToscaImportsDefinition>> imports;
 	Map<String, ToscaNodeTypesDefinition> node_types;
 	ToscaTopologyTemplateDefinition topology_template;
 
@@ -39,9 +37,38 @@ public class ToscaDefinition {
 		super();
 	}
 
-	@Override
-	public String toString() {
-		return "ToscaDefinition [tosca_definitions_version=" + tosca_definitions_version + ", metadata=" + metadata + ", imports=" + imports + ", node_types=" + node_types + ", topology_template=" + topology_template + "]";
+
+
+	public ToscaDefinition(String tosca_definitions_version, Map<String, String> metadata, List<Map<String, ToscaImportsDefinition>> imports, Map<String, ToscaNodeTypesDefinition> node_types,
+			ToscaTopologyTemplateDefinition topology_template) {
+		super();
+		this.tosca_definitions_version = tosca_definitions_version;
+		this.metadata = metadata;
+		this.imports = imports;
+		this.node_types = node_types;
+		this.topology_template = topology_template;
+	}
+
+
+
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+
+
+
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
+	}
+
+
+
+	public List<Map<String, ToscaImportsDefinition>> getImports() {
+		return imports;
+	}
+
+	public void setImports(List<Map<String, ToscaImportsDefinition>> imports) {
+		this.imports = imports;
 	}
 
 	public String getTosca_definitions_version() {
@@ -52,41 +79,7 @@ public class ToscaDefinition {
 		this.tosca_definitions_version = tosca_definitions_version;
 	}
 
-	public Map<String, String> getMetadata() {
-		return metadata;
-	}
-
-	public void setMetadata(Map<String, String> metadata) {
-		this.metadata = metadata;
-	}
-
 	
-
-	
-//	public Map<String,ToscaImportsDefinition> getImports() {
-//		return (Map<String, ToscaImportsDefinition>) imports;
-//	}
-//
-//	public void setImports(Map<String,ToscaImportsDefinition> imports) {
-//		this.imports = imports;
-//	}
-//	
-//	public List<ToscaImportsDefinition> getImports() {
-//		return (List<ToscaImportsDefinition>) imports;
-//	}
-//
-//	public void setImports(List<ToscaImportsDefinition> imports) {
-//		this.imports = imports;
-//	}
-
-	public Object getImports() {
-		return imports;
-	}
-
-	public void setImports(Object imports) {
-		this.imports = imports;
-	}
-
 	public Map<String, ToscaNodeTypesDefinition> getNode_types() {
 		return node_types;
 	}
@@ -109,9 +102,7 @@ public class ToscaDefinition {
 	public static TypeDescription getTypeDescription(){
         TypeDescription typeDescription = new TypeDescription(ToscaDefinition.class);
         typeDescription.putMapPropertyType("metadata", String.class, String.class);
-//        TODO Andrey imports format
-        typeDescription.putMapPropertyType("imports", String.class, ToscaImportsDefinition.class);
-//        typeDescription.putListPropertyType("imports", List.class);
+        typeDescription.putListPropertyType("imports", Map.class);
         typeDescription.putMapPropertyType("node_types", String.class, ToscaNodeTypesDefinition.class);
     	return typeDescription;
 	}

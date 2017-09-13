@@ -56,6 +56,7 @@ import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.LifeCycleStateEnum;
+import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
@@ -520,21 +521,6 @@ public class OnboardingUtils {
 		return new Pair<RestResponse, Map<String, String>>(response, vspMetadta);
 	}
 	
-/*	public static RestResponse getVendorSoftwareProduct(Map vspObject, User user) throws Exception {
-		Config config = Utils.getConfig();
-		String url = String.format("http://%s:%s/onboarding-api/v1.0/vendor-software-products/" + vspObject.get("vspId"),
-				config.getCatalogBeHost(), config.getCatalogBePort());
-
-		String userId = user.getUserId();
-
-		Map<String, String> headersMap = prepareHeadersMap(userId);
-		HttpRequest http = new HttpRequest();
-
-		RestResponse response = http.httpsSendGet(url, headersMap);
-
-		return response;
-	}*/
-	
 	public static RestResponse validateUpload(String vspid, User user) throws Exception {
 		Config config = Utils.getConfig();
 		String url = String.format("http://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/0.1/orchestration-template-candidate/process",
@@ -748,7 +734,7 @@ public class OnboardingUtils {
 		String vspName = createVendorSoftwareProduct.left;
 		
 		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, createVendorSoftwareProduct.right.get("vspId"));
-		File latestFilefromDir = FileHandling.getLastModifiedFileFromDir();
+		File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
 		
 		ExtentTestActions.log(Status.INFO, String.format("Searching for onboarded %s", vnfFile));
 		HomePage.showVspRepository();
@@ -810,19 +796,19 @@ public class OnboardingUtils {
 
 }
 
-enum SnmpTypeEnum{
-	SNMP_POLL ("snmp"),
-	SNMP_TRAP ("snmp-trap");
+	enum SnmpTypeEnum{
+		SNMP_POLL ("snmp"),
+		SNMP_TRAP ("snmp-trap");
+		
+		private String value;
 	
-	private String value;
-
-	public String getValue() {
-		return value;
-	}
-
-	private SnmpTypeEnum(String value) {
-		this.value = value;
-	}
+		public String getValue() {
+			return value;
+		}
 	
+		private SnmpTypeEnum(String value) {
+			this.value = value;
+	}
 	
 }
+

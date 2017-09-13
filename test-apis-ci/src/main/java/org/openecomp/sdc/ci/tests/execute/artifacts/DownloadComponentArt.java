@@ -624,7 +624,7 @@ artifact.setArtifactLabel("configure");*/
 		httppost.addHeader(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
 		httppost.addHeader(HttpHeaderEnum.USER_ID.getValue(), sdncUserDetails.getUserId());
 		if (addMd5Header) {
-			httppost.addHeader(HttpHeaderEnum.Content_MD5.getValue(), GeneralUtility.calculateMD5ByString(jsonBody));
+			httppost.addHeader(HttpHeaderEnum.Content_MD5.getValue(), GeneralUtility.calculateMD5Base64EncodedByString(jsonBody));
 		}
 		StringEntity input = new StringEntity(jsonBody);
 		input.setContentType("application/json");

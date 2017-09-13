@@ -189,7 +189,7 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 				+ "  \"icon\": \"router\",\r\n" + "  \"tags\": [\r\n" + "    \"importResource4test\"\r\n" + "  ],\r\n"
 				+ "  \"payloadData\": \"" + encodedPayload + "\"\r\n" + "}";
 
-		String md5 = GeneralUtility.calculateMD5ByString(json);
+		String md5 = GeneralUtility.calculateMD5Base64EncodedByString(json);
 
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put(Constants.MD5_HEADER, md5);

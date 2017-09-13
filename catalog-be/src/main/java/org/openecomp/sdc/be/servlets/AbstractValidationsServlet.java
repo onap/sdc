@@ -458,7 +458,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 		if (recievedMD5 == null) {
 			isValid = false;
 		} else {
-			String calculateMD5 = GeneralUtility.calculateMD5ByString(resourceInfoJsonString);
+			String calculateMD5 = GeneralUtility.calculateMD5Base64EncodedByString(resourceInfoJsonString);
 			isValid = calculateMD5.equals(recievedMD5);
 		}
 		if (!isValid) {

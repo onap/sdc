@@ -187,7 +187,7 @@ public class CapabiltyRequirementConvertor {
 					String sourceCapName;
 					if(ToscaUtils.isComplexVfc(component)){
 						fullReqName = r.getName();
-						sourceCapName = getSourceCvfcDataTypeName(r.getName(), r.getOwnerName());
+						sourceCapName = r.getParentName();
 					} else {
 						fullReqName = getRequirementPath(r);
 						sourceCapName = getSubPathByFirstDelimiterAppearance(fullReqName);
@@ -203,13 +203,6 @@ public class CapabiltyRequirementConvertor {
 			log.debug("No Requirements for node type");
 		}
 		return toscaRequirements;
-	}
-
-	private String getSourceCvfcDataTypeName(String name, String ownerName) {
-		if(name.contains(ownerName)){
-			return name.substring(0, name.length() - ownerName.length() - 1);
-		}
-		return null;
 	}
 
 	private String getRequirementPath(RequirementDefinition r) {
@@ -275,7 +268,7 @@ public class CapabiltyRequirementConvertor {
 					String sourceReqName;
 					if(ToscaUtils.isComplexVfc(component)){
 						fullCapName = c.getName();
-						sourceReqName = getSourceCvfcDataTypeName(c.getName(), c.getOwnerName());
+						sourceReqName = c.getParentName();
 					} else {
 						fullCapName = getCapabilityPath(c);
 						sourceReqName = getSubPathByFirstDelimiterAppearance(fullCapName);

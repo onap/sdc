@@ -355,7 +355,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		}
 		byte[] decodedPayload = artifactDefinition.getPayloadData();
 		artifactDefinition.setEsId(artifactDefinition.getUniqueId());
-		artifactDefinition.setArtifactChecksum(GeneralUtility.calculateMD5ByByteArray(decodedPayload));
+		artifactDefinition.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(decodedPayload));
 		return lockComponentAndUpdateArtifact(component.getUniqueId(), artifactDefinition, AuditingActionEnum.ARTIFACT_PAYLOAD_UPDATE, artifactDefinition.getUniqueId(), user, component.getComponentType(), component, decodedPayload, null, null,
 				shouldLock, inTransaction);
 
@@ -1007,7 +1007,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 	private Either<Boolean, ResponseFormat> validateMd5(String origMd5, String originData, byte[] payload, ArtifactOperationInfo operation) {
 
 		if (origMd5 != null) {
-			String encodeBase64Str = GeneralUtility.calculateMD5ByString(originData);
+			String encodeBase64Str = GeneralUtility.calculateMD5Base64EncodedByString(originData);
 
 			if (false == encodeBase64Str.equals(origMd5)) {
 				log.debug("The calculated md5 is different then the received one");
@@ -2754,7 +2754,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 				return Either.right(responseFormat);
 			}
 
-			String checkSum = GeneralUtility.calculateMD5ByByteArray(decodedPayload);
+			String checkSum = GeneralUtility.calculateMD5Base64EncodedByByteArray(decodedPayload);
 			artifactInfo.setArtifactChecksum(checkSum);
 			log.trace("Calculated checksum, base64 payload: {},  checksum: {}", payload, checkSum);
 
@@ -3642,7 +3642,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
 				return Either.right(artifactDataRes.right().value());
 			}
-			String newCheckSum = GeneralUtility.calculateMD5ByByteArray(artifactData.getDataAsArray());
+			String newCheckSum = GeneralUtility.calculateMD5Base64EncodedByByteArray(artifactData.getDataAsArray());
 			String oldCheckSum;
 			String esArtifactId = artifactDefinition.getEsId();
 			Either<ESArtifactData, CassandraOperationStatus> artifactfromES;
@@ -3657,7 +3657,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 					return Either.right(componentsUtils.getResponseFormatByArtifactId(actionStatus, artifactDefinition.getArtifactDisplayName()));
 				}
 				esArtifactData = artifactfromES.left().value();
-				oldCheckSum = GeneralUtility.calculateMD5ByByteArray(esArtifactData.getDataAsArray());
+				oldCheckSum = GeneralUtility.calculateMD5Base64EncodedByByteArray(esArtifactData.getDataAsArray());
 			} else {
 				oldCheckSum = artifactDefinition.getArtifactChecksum();
 
@@ -4696,7 +4696,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		try {
 			for (ArtifactDefinition artifact : artifactsToHandle) {
 				originData = buildJsonStringForCsarVfcArtifact(artifact);
-				origMd5 = GeneralUtility.calculateMD5ByString(originData);
+				origMd5 = GeneralUtility.calculateMD5Base64EncodedByString(originData);
 				actionResult = handleArtifactRequest(component.getUniqueId(), user.getUserId(), componentType, operation, artifact.getUniqueId(), artifact, origMd5, originData, null, null, null, null, shouldLock, inTransaction);
 				if (actionResult.isRight()) {
 					log.debug("Failed to upload artifact to component with type {} and name {}. Status is {}. ", componentType, component.getName(), actionResult.right().value());

@@ -160,3 +160,4 @@ common/openecomp-sdc-artifact-generator-lib/openecomp-sdc-artifact-generator-cor
 /sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default/logback.xml
 
 /utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/files/default/logback.xml
+sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
