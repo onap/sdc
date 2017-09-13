@@ -22,6 +22,8 @@ package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
 import java.util.Map;
 
+import org.yaml.snakeyaml.TypeDescription;
+
 public class ToscaInputsTopologyTemplateDefinition {
 	
 	private Map<String,Map<String,Object>> inputs;
@@ -40,6 +42,10 @@ public class ToscaInputsTopologyTemplateDefinition {
 	}
 	
 	
-	
+	//gets Type description for Yaml snake
+	public static TypeDescription getTypeDescription(){
+        TypeDescription typeDescription = new TypeDescription(ToscaInputsTopologyTemplateDefinition.class);
+    	return typeDescription;
+	}
 
 }

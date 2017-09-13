@@ -188,7 +188,7 @@ public class Service extends SetupCDTest {
 	public void submitServiceForTestingWithNonCertifiedAsset() throws Exception{
 
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
-		ResourceUIUtils.createResource(atomicResourceMetaData, getUser());
+		ResourceUIUtils.createVF(atomicResourceMetaData, getUser());
 		ResourceGeneralPage.clickSubmitForTestingButton(atomicResourceMetaData.getName());
 		
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
@@ -496,7 +496,7 @@ public class Service extends SetupCDTest {
 
 
 	public CanvasElement createServiceWithRiArtifact(ResourceReqDetails atomicResourceMetaData, ServiceReqDetails serviceMetadata, ArtifactInfo artifact) throws Exception, AWTException {
-		ResourceUIUtils.createResource(atomicResourceMetaData, getUser());
+		ResourceUIUtils.createVF(atomicResourceMetaData, getUser());
 		ResourceGeneralPage.clickSubmitForTestingButton(atomicResourceMetaData.getName());
 		
 		ServiceUIUtils.createService(serviceMetadata, getUser());

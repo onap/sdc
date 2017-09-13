@@ -307,7 +307,7 @@ public class CustomizationUUID extends SetupCDTest {
 
 	public ResourceReqDetails createNewResourceWithArtifactSubmitForTesting() throws Exception {
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 
 		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
 

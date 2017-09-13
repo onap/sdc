@@ -57,7 +57,7 @@ public class Vf_Tests_UI extends SetupCDTest{
 	public void uploadHeatEnvVFLevel() throws Exception {
 		
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 	}
 	

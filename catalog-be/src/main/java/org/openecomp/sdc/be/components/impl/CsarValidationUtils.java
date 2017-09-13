@@ -307,7 +307,7 @@ public class CsarValidationUtils {
 			return Either.right(toscaYamlRes.right().value());
 		}
 
-		String newCheckSum = GeneralUtility.calculateMD5ByByteArray(toscaYamlRes.left().value().getRight().getBytes());
+		String newCheckSum = GeneralUtility.calculateMD5Base64EncodedByByteArray(toscaYamlRes.left().value().getRight().getBytes());
 		return Either.left(newCheckSum);
 
 	}

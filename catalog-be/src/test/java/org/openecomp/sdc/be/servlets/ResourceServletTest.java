@@ -229,7 +229,7 @@ public class ResourceServletTest extends JerseyTest {
 	}
 
 	private void setMD5OnRequest(boolean isValid, UploadResourceInfo json) {
-		String md5 = (isValid) ? GeneralUtility.calculateMD5ByString(gson.toJson(json)) : "stam=";
+		String md5 = (isValid) ? GeneralUtility.calculateMD5Base64EncodedByString(gson.toJson(json)) : "stam=";
 		when(request.getHeader(Constants.MD5_HEADER)).thenReturn(md5);
 
 	}

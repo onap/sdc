@@ -47,6 +47,7 @@ public class RequirementDataDefinition extends ToscaDataDefinition implements Se
 	public RequirementDataDefinition(RequirementDataDefinition other) {
 		this.setUniqueId(other.getUniqueId());
 		this.setName(other.getName());
+		this.setParentName(other.getParentName());
 		this.setCapability(other.getCapability());
 		this.setNode(other.getNode());
 		this.setRelationship(other.getRelationship());
@@ -77,6 +78,14 @@ public class RequirementDataDefinition extends ToscaDataDefinition implements Se
 
 	public void setName(String name) {
 		setToscaPresentationValue(JsonPresentationFields.NAME, name);
+	}
+	
+	public String getParentName() {
+		return (String) getToscaPresentationValue(JsonPresentationFields.PARENT_NAME);
+	}
+	
+	public void setParentName(String parentName) {
+		setToscaPresentationValue(JsonPresentationFields.PARENT_NAME, parentName);
 	}
 
 	/**

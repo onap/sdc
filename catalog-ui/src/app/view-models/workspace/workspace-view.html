@@ -70,10 +70,12 @@
 
                 </div>
             </div>
-            <div class="tab-title" data-ng-if="!isComposition && !isDeployment">
-                {{getTabTitle()}}
+            <div class="w-sdc-main-container-body-content-wrapper">
+                <div class="tab-title" data-ng-if="!isComposition && !isDeployment">
+                    {{getTabTitle()}}
+                </div>
+                <div class="w-sdc-main-container-body-content" data-ng-class="{'third-party':thirdParty}" data-ui-view></div>
             </div>
-            <div class="w-sdc-main-container-body-content" data-ng-class="{'third-party':thirdParty}" data-ui-view></div>
         </div>
     </div>
     <top-nav search-bind="search.filterTerm" hide-search="true" menu-model="breadcrumbsModel" version="{{version}}"></top-nav>

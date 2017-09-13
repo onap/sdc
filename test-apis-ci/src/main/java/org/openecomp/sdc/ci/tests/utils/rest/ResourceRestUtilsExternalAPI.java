@@ -48,7 +48,7 @@ public class ResourceRestUtilsExternalAPI extends BaseRestUtils {
 
 		Gson gson = new Gson();
 		String userBodyJson = gson.toJson(resourceDetails);
-		String calculateMD5 = GeneralUtility.calculateMD5ByString(userBodyJson);
+		String calculateMD5 = GeneralUtility.calculateMD5Base64EncodedByString(userBodyJson);
 		headersMap.put(HttpHeaderEnum.Content_MD5.getValue(), calculateMD5);
 		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
 		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");

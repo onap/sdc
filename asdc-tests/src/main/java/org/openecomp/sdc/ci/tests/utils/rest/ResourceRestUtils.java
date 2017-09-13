@@ -86,7 +86,7 @@ public class ResourceRestUtils extends BaseRestUtils {
 
 		Gson gson = new Gson();
 		String userBodyJson = gson.toJson(resourceDetails);
-		String calculateMD5 = GeneralUtility.calculateMD5ByString(userBodyJson);
+		String calculateMD5 = GeneralUtility.calculateMD5Base64EncodedByString(userBodyJson);
 		headersMap.put(HttpHeaderEnum.Content_MD5.getValue(), calculateMD5);
 		HttpRequest http = new HttpRequest();
 		// System.out.println(url);
@@ -508,7 +508,7 @@ public class ResourceRestUtils extends BaseRestUtils {
 
 		Gson gson = new Gson();
 		String userBodyJson = gson.toJson(resourceDetails);
-		String calculateMD5 = GeneralUtility.calculateMD5ByString(userBodyJson);
+		String calculateMD5 = GeneralUtility.calculateMD5Base64EncodedByString(userBodyJson);
 		headersMap.put(HttpHeaderEnum.Content_MD5.getValue(), calculateMD5);
 		HttpRequest http = new HttpRequest();
 		RestResponse updateResourceResponse = http.httpSendPut(url, userBodyJson, headersMap);

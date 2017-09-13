@@ -120,7 +120,7 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 		
 		ResourceGeneralPage.getLeftMenu().moveToToscaArtifactsScreen();
 		ToscaArtifactsPage.downloadCsar();
-		File latestFilefromDir = FileHandling.getLastModifiedFileFromDir();
+		File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
 		Map<String, Object> combineHeatArtifacstWithFolderArtifacsToMap = ArtifactFromCsar.getVFCArtifacts(latestFilefromDir.getAbsolutePath());
 		
 		compareArtifactFromFileStructureToArtifactsFromJavaObject(artifacts, combineHeatArtifacstWithFolderArtifacsToMap);

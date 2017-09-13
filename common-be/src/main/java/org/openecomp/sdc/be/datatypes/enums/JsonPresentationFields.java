@@ -134,7 +134,7 @@ public enum JsonPresentationFields {
 	RELATIONSHIP					("relationship", 				null),
 	VALID_SOURCE_TYPES				("validSourceTypes", 			null),
 	REQUIREMENT_ID					("requirementId", 				null),
-	
+	PARENT_NAME						("parentName", 					null),
 	//Relation
 	CAPABILTY_OWNER_ID				("capabilityOwnerId", 			null),
 	REQUIREMENT_OWNER_ID			("requirementOwnerId", 			null),

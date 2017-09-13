@@ -80,7 +80,7 @@ public class extendNode_TemplatePropertiesWithDefaultValues extends SetupCDTest 
 			ServiceUIUtils.createService(serviceMetadata, getUser());
 		} else {
 			ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-			ResourceUIUtils.createResource(resourceMetaData, getUser());
+			ResourceUIUtils.createVF(resourceMetaData, getUser());
 		}
 		
 		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();		
@@ -163,7 +163,7 @@ public class extendNode_TemplatePropertiesWithDefaultValues extends SetupCDTest 
 			ServiceUIUtils.createService(serviceMetadata, getUser());
 		} else {
 			ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-			ResourceUIUtils.createResource(resourceMetaData, getUser());
+			ResourceUIUtils.createVF(resourceMetaData, getUser());
 		}
 		
 		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();		

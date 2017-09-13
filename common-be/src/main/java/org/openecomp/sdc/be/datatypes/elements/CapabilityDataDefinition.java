@@ -52,6 +52,7 @@ public class CapabilityDataDefinition extends ToscaDataDefinition implements Ser
 		this.setType(a.getType());		
 		this.setDescription (  a.getDescription());
 		this.setName(  a.getName());
+		this.setParentName(  a.getParentName());
 		this.setValidSourceTypes( a.getValidSourceTypes());
 		this.setCapabilitySources( a.getCapabilitySources());
 		this.setOwnerId( a.getOwnerId());
@@ -127,6 +128,14 @@ public class CapabilityDataDefinition extends ToscaDataDefinition implements Ser
 
 	public void setName(String name) {
 		setToscaPresentationValue(JsonPresentationFields.NAME, name);
+	}
+	
+	public String getParentName() {
+		return (String) getToscaPresentationValue(JsonPresentationFields.PARENT_NAME);
+	}
+
+	public void setParentName(String parentName) {
+		setToscaPresentationValue(JsonPresentationFields.PARENT_NAME, parentName);
 	}
 
 	public String getType() {

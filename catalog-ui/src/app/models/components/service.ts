@@ -36,6 +36,7 @@ export class Service extends Component {
     public namingPolicy:string;
     public serviceType:string;
     public serviceRole:string;
+    public environmentContext:string;
 
     constructor(componentService:IServiceService, $q:ng.IQService, component?:Service) {
         super(componentService, $q, component);
@@ -47,6 +48,7 @@ export class Service extends Component {
             this.namingPolicy = component.namingPolicy;
             this.serviceType = component.serviceType;
             this.serviceRole = component.serviceRole;
+            this.environmentContext = component.environmentContext;
             if (component.categories && component.categories[0]) {
                 this.mainCategory = component.categories[0].name;
                 this.selectedCategory = this.mainCategory;
@@ -161,6 +163,7 @@ export class Service extends Component {
         this.namingPolicy = componentMetadata.namingPolicy;
         this.serviceType = componentMetadata.serviceType;
         this.serviceRole = componentMetadata.serviceRole;
+        this.environmentContext = componentMetadata.environmentContext;
         this.setComponentDisplayData();
     }
 

@@ -159,7 +159,8 @@ public abstract class SetupCDTest extends DriverFactory {
 	public void setBrowserBeforeTest(java.lang.reflect.Method method, ITestContext context) throws Exception {
 		
 		boolean emptyDataProvider = method.getAnnotation(Test.class).dataProvider().isEmpty();
-		if (emptyDataProvider) {
+		String className = method.getDeclaringClass().getName();
+		if (emptyDataProvider && !className.contains("ToscaValidationTest") ) {
 			System.out.println("ExtentReport instance started from BeforeMethod...");
 			String suiteName = ExtentManager.getSuiteName(context);
 			if (suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue())) {

@@ -1,17 +1,22 @@
 package org.openecomp.sdc.ci.tests.dataProvider;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.openecomp.sdc.ci.tests.execute.sanity.ToscaValidationTest;
+import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.OnboardingUtils;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Factory;
 
 public class OnbordingDataProviders {
 
 	protected static String filepath = FileHandling.getVnfRepositoryPath();
 	
+//	-----------------------dataProviders-----------------------------------------	
 	@DataProvider(name = "randomVNF_List", parallel = false)
 	private static final Object[][] randomVnfList() throws Exception {
 		int randomElementNumber = 3; //how many VNFs to onboard randomly
@@ -29,6 +34,13 @@ public class OnbordingDataProviders {
 		System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
 		return provideData(fileNamesFromFolder, filepath);
 	}
+	
+//	-----------------------factories-----------------------------------------
+	@Factory(dataProvider = "VNF_List")
+	public Object[] OnbordingDataProviders(String filepath, String vnfFile){
+		return new Object[] { new ToscaValidationTest(filepath, vnfFile)};
+	}
+	
 	
 	
 //	-----------------------methods-----------------------------------------

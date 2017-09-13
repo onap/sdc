@@ -35,7 +35,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.log4j.Logger;
@@ -60,7 +59,6 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.cassandra.CassandraUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.AutomationUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.CatalogRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.CategoryRestUtils;
@@ -71,13 +69,8 @@ import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.*;
 
-import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.thinkaurelius.titan.core.TitanFactory;
@@ -94,17 +87,16 @@ public abstract class ComponentBaseTest {
 	protected static Logger logger= Logger.getLogger(ComponentBaseTest.class);	
 	
 
-	// public ComponentBaseTest(TestName testName, String className) {
-	// super(testName, className);
-	// }
+//	 public ComponentBaseTest(TestName testName, String className) {
+//	 super(testName, className);
+//	 }
 
-	protected static ExtentReports extentReport;
-	public static final String REPORT_FOLDER = "./ExtentReport/";
+	protected static final String REPORT_FOLDER = "." + File.separator + "ExtentReport" + File.separator;
 	private static final String VERSIONS_INFO_FILE_NAME = "versions.info";
 	private static final String REPORT_FILE_NAME = "SDC_CI_Extent_Report.html";
 	protected static TitanGraph titanGraph;
-	private static Config myconfig;
 	public static Config config;
+	protected static ITestContext myContext;
 	
 	
 	
@@ -125,104 +117,45 @@ public abstract class ComponentBaseTest {
 		lc.getLogger("io.netty").setLevel(Level.INFO);
 		lc.getLogger("c.d").setLevel(Level.INFO);
 	}
+	
+	public static String getReportFolder() {
+		return REPORT_FOLDER;
+	}
 
 	@BeforeSuite(alwaysRun = true)
-	public static void openTitan(ITestContext context) throws Exception {
-				
-		logger.info("<<<BeforeSuite>>>");
-		myconfig = Utils.getConfig();
+	public void setupBeforeSuite(ITestContext context) throws Exception {
 		config = Utils.getConfig();
-
-		File dir = new File(REPORT_FOLDER);
-		try {
-			FileUtils.deleteDirectory(dir);
-		} catch (IOException e) {
-		}
-		dir.mkdir();
-		
-		System.out.println("BeforeSuite  - get reporter");
-		extentReport = ExtentManager.getReporter(REPORT_FOLDER + REPORT_FILE_NAME);
-		
-		String onboardVersion = AutomationUtils.getOnboardVersion();
-		String osVersion = AutomationUtils.getOSVersion();
-		String envData = myconfig.getUrl();
-		// TODO: uncomment config file
-//		extentReport.loadConfig(AutomationUtils.getConfigFile(CONFIG_FILE));
-		
-		extentReport.setSystemInfo("Onboard Version", onboardVersion);
-		extentReport.setSystemInfo("OS Version", osVersion);
-		extentReport.setSystemInfo("ExecutedOn", envData);
-		extentReport.setSystemInfo("SuiteName", context.getName());
-		AutomationUtils.createVersionsInfoFile(REPORT_FOLDER + VERSIONS_INFO_FILE_NAME, onboardVersion, osVersion, envData);
-
-		System.out.println("BeforeSuite - open titan");
-		openTitanLogic();
-		
-		System.out.println("BeforeSuite - createConsumer");
+		myContext=context;
+		ExtentManager.initReporter(getReportFolder(), REPORT_FILE_NAME, context);	
 		AtomicOperationUtils.createDefaultConsumer(true);
-		
-		System.out.println("BeforeSuite - performClean");
+		openTitanLogic();
 		performClean();
-	}
-
-	protected static void openTitanLogic() throws Exception {
-	
-		logger.trace(config.toString());
-		String titanConfigFilePath = myconfig.getTitanPropertiesFile();
-		titanGraph = TitanFactory.open(titanConfigFilePath);
-		assertNotNull(titanGraph);
-		
-	}
-	
-	@AfterClass(alwaysRun = true)
-	public synchronized static void cleanAfterClass() throws Exception{
-		
-//		System.out.println("<<<<<<<<class name>>>>>"+method.getDeclaringClass());
-//		System.out.println("<<<<<<<<class name>>>>>"+method.getName());
 		
 		
-		System.out.println("delete components AfterClass");
-		deleteCreatedComponents(getCatalogAsMap());
-//		extentReport.flush();
 
 	}
 	
-	@AfterSuite(alwaysRun = true)
-	public static void shutdownTitan() throws Exception {
-		
-		System.out.println("AfterSuite  - flush report");
-		extentReport.flush();
-		System.out.println("AfterSuite  - perform clean");
-		performClean();
-		System.out.println("AfterSuite  - close report");
-//		extentReport.close();
-		System.out.println("AfterSuite  - close titan");
-		shutdownTitanLogic();
-		System.out.println("AfterSuite  - suite ended");
-	}
-
-	protected static void shutdownTitanLogic() {
-		if (titanGraph.isOpen()) {
-			titanGraph.close();
-		}
-		CassandraUtils.close();
-	}
-
 	@BeforeMethod(alwaysRun = true)
-	public void beforeState(java.lang.reflect.Method method) throws Exception {
+	public void setBrowserBeforeTest(java.lang.reflect.Method method, ITestContext context) throws Exception {
 
-
-		ExtentTestManager.startTest(method.getName());
-		String[] parts = this.getClass().getName().toString().split("\\.");
-		String lastOne1 = parts[parts.length-1];
-		String lastOne2 = parts[parts.length-2];
-		getExtendTest().assignCategory(lastOne2 + "-" + lastOne1);
-		getExtendTest().log(Status.INFO, "Test started");
+      
+    boolean emptyDataProvider = method.getAnnotation(Test.class).dataProvider().isEmpty();
+	String className = method.getDeclaringClass().getName();
+		if (emptyDataProvider && !className.contains("ToscaValidationTest") ) {
+			System.out.println("ExtentReport instance started from BeforeMethod...");
+			String suiteName = ExtentManager.getSuiteName(context);
+			ExtentTestManager.startTest(method.getName());
+			ExtentTestManager.assignCategory(this.getClass());
+			
+		} else {
+			System.out.println("ExtentReport instance started from Test...");
+		}
+      
 
 	}
 	
 	@AfterMethod(alwaysRun = true)
-	public void afterState(ITestResult result) throws Exception {
+	public void quitAfterTest(ITestResult result, ITestContext context) throws Exception {
 
 		String testName = result.getName();
 		Throwable throwable = result.getThrowable();
@@ -248,8 +181,55 @@ public abstract class ComponentBaseTest {
 
 
 	   	ExtentTestManager.endTest();
-    	extentReport.flush();
+    	
 		
+	}
+
+	@AfterClass(alwaysRun = true)
+	public synchronized static void cleanAfterClass() throws Exception{
+
+//		System.out.println("<<<<<<<<class name>>>>>"+method.getDeclaringClass());
+//		System.out.println("<<<<<<<<class name>>>>>"+method.getName());
+
+
+		System.out.println("delete components AfterClass");
+		deleteCreatedComponents(getCatalogAsMap());
+//		extentReport.flush();
+
+	}
+	
+	@AfterSuite(alwaysRun = true)
+	public static void shutdownTitan() throws Exception {
+		
+		performClean();
+		shutdownTitanLogic();
+
+	}
+
+	protected static void openTitanLogic() throws Exception {
+	
+		logger.trace(config.toString());
+		String titanConfigFilePath = config.getTitanPropertiesFile();
+		titanGraph = TitanFactory.open(titanConfigFilePath);
+		assertNotNull(titanGraph);
+		
+	}
+
+
+	protected static void shutdownTitanLogic() {
+		if (titanGraph.isOpen()) {
+			titanGraph.close();
+		}
+		CassandraUtils.close();
+	}
+
+	
+
+	public void setLog(String fromDataProvider) {
+
+		String suiteName = ExtentManager.getSuiteName(myContext);
+		ExtentTestManager.startTest(Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
+		ExtentTestManager.assignCategory(this.getClass());
 
 	}
 

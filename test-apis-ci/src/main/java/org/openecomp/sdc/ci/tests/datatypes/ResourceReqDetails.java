@@ -35,14 +35,31 @@ public class ResourceReqDetails extends ComponentReqDetails {
 	Boolean isAbstract;
 	Boolean isHighestVersion;
 	String cost;
+
 	String licenseType;
 	String toscaResourceName;
+	String resourceVendorModelNumber;
 
 	private String resourceType = ResourceTypeEnum.VFC.toString(); // Default
 																	// value
 
 	public ResourceReqDetails() {
 		super();
+	}
+
+	public ResourceReqDetails(List<String> derivedFrom, String vendorName, String vendorRelease, Boolean isAbstract, Boolean isHighestVersion, String cost, String licenseType, String toscaResourceName, String resourceVendorModelNumber,
+			String resourceType) {
+		super();
+		this.derivedFrom = derivedFrom;
+		this.vendorName = vendorName;
+		this.vendorRelease = vendorRelease;
+		this.isAbstract = isAbstract;
+		this.isHighestVersion = isHighestVersion;
+		this.cost = cost;
+		this.licenseType = licenseType;
+		this.toscaResourceName = toscaResourceName;
+		this.resourceVendorModelNumber = resourceVendorModelNumber;
+		this.resourceType = resourceType;
 	}
 
 	public ResourceReqDetails(Resource resource) {
@@ -68,6 +85,7 @@ public class ResourceReqDetails extends ComponentReqDetails {
 		this.UUID = resource.getUUID();
 		this.categories = resource.getCategories();
 		this.importedToscaChecksum = resource.getImportedToscaChecksum();
+		this.resourceVendorModelNumber = resource.getResourceVendorModelNumber();
 
 	}
 
@@ -136,6 +154,13 @@ public class ResourceReqDetails extends ComponentReqDetails {
 		this.toscaResourceName = resourceName;
 	}
 
+	public String getResourceVendorModelNumber() {
+		return resourceVendorModelNumber;
+	}
+	
+	public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
+		this.resourceVendorModelNumber = resourceVendorModelNumber;
+	}
 	public String getToscaResourceName() {
 		return toscaResourceName;
 	}

@@ -364,5 +364,7 @@ public interface Urls {
 	final String ONBOARD_VERSION = "http://%s:%s/onboarding-api/docs/build-info.json";
 	final String OS_VERSION = "http://%s:%s/sdc2/rest/version";
 	
+//	amdocs APIs
+	final String GET_VENDOR_SOFTWARE_PRODUCT = "http://%s:%s/onboarding-api/v1.0/vendor-software-products/packages/%s";
 	
 }

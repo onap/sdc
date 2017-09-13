@@ -192,7 +192,7 @@ public class Categories extends SetupCDTest {
 		SubCategoryDefinition subCategoryDefinition = categoryDefinition.getSubcategories().get(0);
 		subCategoryDefinition.setName(newSubCategory);
 		
-		ResourceUIUtils.createResource(resourceMetaData, getUser());
+		ResourceUIUtils.createVF(resourceMetaData, getUser());
 		
 	
 	}

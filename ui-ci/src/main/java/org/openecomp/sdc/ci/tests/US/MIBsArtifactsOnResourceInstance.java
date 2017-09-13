@@ -133,7 +133,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
 	@DataProvider(name="mibsArtifacsOnResourceInstanceShouldOnlyHaveDownloadOption") 
 	public static Object[][] dataProviderMibsArtifacsOnResourceInstanceShouldOnlyHaveDownloadOption() {
 		return new Object[][] {
-			{"mibs1vFW_VFC.yml", ResourceTypeEnum.VFC},
+//			{"mibs1vFW_VFC.yml", ResourceTypeEnum.VFC},
 			// TODO: delete comment below when we will have support for VL on canvas
 //			{"mibs1VL.yml", ResourceTypeEnum.VL},
 			{"mibs1CP.yml", ResourceTypeEnum.CP}
@@ -145,9 +145,9 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
 	@Test(dataProvider="mibsArtifacsOnResourceInstanceShouldOnlyHaveDownloadOption")
 	public void mibsArtifacsOnResourceInstanceShouldOnlyHaveDownloadOption(String fileName, ResourceTypeEnum resourceTypeEnum) throws Exception {
 		
-		if(resourceTypeEnum.equals(ResourceTypeEnum.CP)){
-			throw new SkipException("Open bug 322930");			
-		}
+//		if(resourceTypeEnum.equals(ResourceTypeEnum.CP)){
+//			throw new SkipException("Open bug 322930");			
+//		}
 
 		setLog(fileName);
 		
@@ -174,7 +174,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
 		
 		// 4. Create VF.
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(vfMetaData, getUser());
+		ResourceUIUtils.createVF(vfMetaData, getUser());
 		
 		// 5. Click on composition.
 		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -212,7 +212,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
 
 		// 1. Create VF.
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(resourceMetaData, getUser());
+		ResourceUIUtils.createVF(resourceMetaData, getUser());
 			
 		// 2. Upload MIBs artifacts - SNMP_TRAP & SNMP_POLL.
 		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();

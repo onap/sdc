@@ -20,7 +20,7 @@
 
 'use strict';
 import {ModalsHandler, ValidationUtils, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, DEFAULT_ICON,
-    ResourceType} from "app/utils";
+    ResourceType, ComponentState} from "app/utils";
 import {CacheService, EventListenerService, ProgressService, OnboardingService} from "app/services";
 import {IAppConfigurtaion, IValidate, IMainCategory, Resource, ISubCategory,Service, ICsarComponent} from "app/models";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
@@ -41,6 +41,7 @@ export class componentCategories {//categories field bind to this obj in order t
     selectedCategory:string;
 }
 
+
 export interface IGeneralScope extends IWorkspaceViewModelScope {
     validation:Validation;
     editForm:ng.IFormController;
@@ -56,7 +57,7 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     browseFileLabel:string;
     componentCategories:componentCategories;
 
-    onToscaFileChange():void
+    onToscaFileChange():void;
     validateField(field:any):boolean;
     validateName(isInit:boolean):void;
     calculateUnique(mainCategory:string, subCategory:string):string; // Build unique string from main and sub category
@@ -146,21 +147,24 @@ export class GeneralViewModel {
             (<Resource>this.$scope.component).resourceType == ResourceType.VF &&
             (<Resource>this.$scope.component).csarUUID) {
             this.$scope.isShowOnboardingSelectionBrowse = true;
-            let onboardCsarFilesMap:Dictionary<string> = this.cacheService.get('onboardCsarFilesMap');
+            let onboardCsarFilesMap:Dictionary<Dictionary<string>> = this.cacheService.get('onboardCsarFilesMap');
             // The onboardCsarFilesMap in cache contains map of [packageId]:[vsp display name for brows]
             // if the map is empty - Do request to BE
             if(onboardCsarFilesMap) {
-                this.$scope.importedToscaBrowseFileText = onboardCsarFilesMap[(<Resource>this.$scope.component).csarUUID];
+                if (onboardCsarFilesMap[(<Resource>this.$scope.component).csarUUID]){
+                    this.$scope.importedToscaBrowseFileText = onboardCsarFilesMap[(<Resource>this.$scope.component).csarUUID][(<Resource>this.$scope.component).csarVersion];
+                }
             }
             if(!onboardCsarFilesMap || !this.$scope.importedToscaBrowseFileText){
 
                 let onSuccess = (vsps:Array<ICsarComponent>): void =>{
                     onboardCsarFilesMap = {};
                     _.each(vsps, (vsp:ICsarComponent)=>{
-                        onboardCsarFilesMap[vsp.packageId] = vsp.vspName + " (" + vsp.version + ")";
+                        onboardCsarFilesMap[vsp.packageId] = onboardCsarFilesMap[vsp.packageId] || {};
+                        onboardCsarFilesMap[vsp.packageId][vsp.version] = vsp.vspName + " (" + vsp.version + ")";
                     });
                     this.cacheService.set('onboardCsarFilesMap', onboardCsarFilesMap);
-                    this.$scope.importedToscaBrowseFileText = onboardCsarFilesMap[(<Resource>this.$scope.component).csarUUID];
+                    this.$scope.importedToscaBrowseFileText = onboardCsarFilesMap[(<Resource>this.$scope.component).csarUUID][(<Resource>this.$scope.component).csarVersion];
                 };
 
                 let onError = (): void =>{

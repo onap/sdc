@@ -53,7 +53,7 @@ public class NewArtifactTypeGuide extends SetupCDTest {
 		String filePath = FileHandling.getFilePath(folder);
 
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		ResourceUIUtils.createResource(resourceMetaData, getUser());
+		ResourceUIUtils.createVF(resourceMetaData, getUser());
 			
 		ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
 		
