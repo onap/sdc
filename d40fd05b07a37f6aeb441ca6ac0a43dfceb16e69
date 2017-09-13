@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_cc554cc7",
+        "filename": "catalog-be/src/main/resources/import/tosca/normative-types/underlayVpn/underlayVpn.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2017-09-13T08:36:32Z",
+      "side": 1,
+      "message": "good to add description as: Name of underlayervpn",
+      "range": {
+        "startLine": 39,
+        "startChar": 6,
+        "endLine": 41,
+        "endChar": 23
+      },
+      "revId": "d40fd05b07a37f6aeb441ca6ac0a43dfceb16e69",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_ac50c8d4",
+        "filename": "catalog-be/src/main/resources/import/tosca/normative-types/underlayVpn/underlayVpn.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2017-09-13T08:36:32Z",
+      "side": 1,
+      "message": "in case we are going to use this for underlayVpn vendor identification, then its better to elaborate \"description\" field here, considering same serviceType can be provided by different vendor.\nor in case the vendor field shown above will be used for that purpose, its better to add description there.",
+      "range": {
+        "startLine": 47,
+        "startChar": 7,
+        "endLine": 47,
+        "endChar": 40
+      },
+      "revId": "d40fd05b07a37f6aeb441ca6ac0a43dfceb16e69",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_8c5f44e5",
+        "filename": "catalog-be/src/main/resources/import/tosca/normative-types/underlayVpn/underlayVpn.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2017-09-13T08:36:32Z",
+      "side": 1,
+      "message": "should the mandatory required parameters true?",
+      "range": {
+        "startLine": 83,
+        "startChar": 8,
+        "endLine": 83,
+        "endChar": 23
+      },
+      "revId": "d40fd05b07a37f6aeb441ca6ac0a43dfceb16e69",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_ecbff0fa",
+        "filename": "catalog-be/src/main/resources/import/tosca/normative-types/underlayVpn/underlayVpn.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2017-09-13T08:36:32Z",
+      "side": 1,
+      "message": "for this its better to define valid_values like below:\nconstraints:\n  - valid_values: [\u0027ipv4\u0027,\u0027ipv6\u0027]",
+      "range": {
+        "startLine": 149,
+        "startChar": 6,
+        "endLine": 153,
+        "endChar": 23
+      },
+      "revId": "d40fd05b07a37f6aeb441ca6ac0a43dfceb16e69",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
