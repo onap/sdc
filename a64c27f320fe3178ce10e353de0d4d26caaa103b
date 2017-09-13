@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_2c02986f",
+        "filename": "common/openecomp-common-configuration-management/openecomp-configuration-management-cli/dependency-reduced-pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-09-13T10:17:22Z",
+      "side": 1,
+      "message": "This file should not be checked in.\nremove it .",
+      "revId": "a64c27f320fe3178ce10e353de0d4d26caaa103b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
