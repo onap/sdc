@@ -38,6 +38,7 @@ import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.activityLog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
 import org.openecomp.sdc.common.utils.CommonUtil;
@@ -136,6 +137,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -850,7 +852,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
             : checkout(vspId, user);
     version.setStatus(VersionStatus.Locked);
 
-    healingManager.healAll(getHealingParamsAsMap(vspId, version, user));
+    Optional<String> errorMessages =
+        healingManager.healAll(getHealingParamsAsMap(vspId, version, user));
 
     VspDetails vspDetails = new VspDetails(vspId, version);
     vspDetails.setOldVersion(null);
@@ -858,6 +861,11 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     logger.audit("Healed VSP " + vspDetails.getId());
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
+
+    if (errorMessages.isPresent()) {
+      throw new CoreException(new ErrorCode.ErrorCodeBuilder().withId("HEALING_ERROR")
+          .withCategory(ErrorCategory.APPLICATION).withMessage(errorMessages.get()).build());
+    }
   }
 
   private void autoHeal(String vspId, Version checkoutVersion, VspDetails vspDetails, String user) {
@@ -865,14 +873,20 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     checkoutVersion.setStatus(VersionStatus.Locked);
     Map<String, Object> healingParams = getHealingParamsAsMap(vspId, checkoutVersion, user);
-    healingManager.healAll(healingParams);
+
+    Optional<String> errorMessages = healingManager.healAll(healingParams);
+
     vspDetails.setVersion(checkoutVersion);
     vspDetails.setOldVersion(null);
     vspInfoDao.updateOldVersionIndication(vspDetails);
 
     logger.audit("Healed VSP " + vspDetails.getName());
-
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
+
+    if (errorMessages.isPresent()) {
+      throw new CoreException(new ErrorCode.ErrorCodeBuilder().withId("HEALING_ERROR")
+          .withCategory(ErrorCategory.APPLICATION).withMessage(errorMessages.get()).build());
+    }
   }
 
   private Map<String, Object> getHealingParamsAsMap(String vspId, Version version, String user) {
