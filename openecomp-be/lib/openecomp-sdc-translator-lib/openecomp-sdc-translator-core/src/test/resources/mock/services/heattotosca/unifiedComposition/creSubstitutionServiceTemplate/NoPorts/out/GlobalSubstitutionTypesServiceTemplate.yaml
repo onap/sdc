@@ -296,3 +296,36 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+  org.openecomp.resource.vfc.nodes.heat.FSB1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    properties:
+      compute_FSB1_metadata:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      compute_FSB1_availability_zone:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      index_value:
+        type: integer
+        description: Index value of this substitution service template runtime instance
+        required: false
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      compute_FSB1_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED

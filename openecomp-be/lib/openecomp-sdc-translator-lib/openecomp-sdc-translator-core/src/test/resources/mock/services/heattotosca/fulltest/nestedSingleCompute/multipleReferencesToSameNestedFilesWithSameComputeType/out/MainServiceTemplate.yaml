@@ -1060,19 +1060,8 @@ topology_template:
       requirements:
       - dependency_vson_server:
           capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
+          node: oam_net_security_group
           relationship: tosca.relationships.DependsOn
-      - local_storage_vson_server:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
-      - dependency_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
     vson_mgt_group:
       type: org.openecomp.resource.abstract.nodes.heat.vson_vm_2
       directives:
@@ -1137,22 +1126,6 @@ topology_template:
           get_input: oam_net_id
         vson_vm_names:
         - get_input: vson_mgt_name_0
-      requirements:
-      - dependency_vson_server:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - local_storage_vson_server:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
-      - dependency_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
     vson_dbs_volume_1:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -1235,22 +1208,6 @@ topology_template:
           get_input: oam_net_id
         vson_vm_names:
         - get_input: vson_dbc_name_0
-      requirements:
-      - dependency_vson_server:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - local_storage_vson_server:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
-      - dependency_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
     vson_dbs_volume_0:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -1330,22 +1287,6 @@ topology_template:
           get_input: oam_net_id
         vson_vm_names:
         - get_input: vson_clm_name_0
-      requirements:
-      - dependency_vson_server:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - local_storage_vson_server:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
-      - dependency_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
     vson_dcl_volume_2:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -1464,22 +1405,6 @@ topology_template:
           get_input: oam_net_id
         vson_vm_names:
         - get_input: vson_mdr_name_0
-      requirements:
-      - dependency_vson_server:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - local_storage_vson_server:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
-      - dependency_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
     vson_dbs_group:
       type: org.openecomp.resource.abstract.nodes.heat.vson_vm_1
       directives:
@@ -1552,22 +1477,6 @@ topology_template:
         vson_vm_names:
         - get_input: vson_dbs_name_0
         - get_input: vson_dbs_name_1
-      requirements:
-      - dependency_vson_server:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - local_storage_vson_server:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
-      - dependency_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
     vson_app_group:
       type: org.openecomp.resource.abstract.nodes.heat.vson_vm
       directives:
@@ -1642,22 +1551,6 @@ topology_template:
           get_input: oam_net_id
         vson_vm_names:
         - get_input: vson_app_name_0
-      requirements:
-      - dependency_vson_server:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - local_storage_vson_server:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
-      - dependency_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
     oam_net_security_group:
       type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
       properties:
@@ -1884,22 +1777,6 @@ topology_template:
           get_input: oam_net_id
         vson_vm_names:
         - get_input: vson_dbg_name_0
-      requirements:
-      - dependency_vson_server:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - local_storage_vson_server:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
-      - dependency_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
     vson_cll_group:
       type: org.openecomp.resource.abstract.nodes.heat.vson_vm_1
       directives:
@@ -1975,22 +1852,6 @@ topology_template:
         - get_input: vson_cll_name_0
         - get_input: vson_cll_name_1
         - get_input: vson_cll_name_2
-      requirements:
-      - dependency_vson_server:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - local_storage_vson_server:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
-      - dependency_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
     vson_app_volume_0:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -2069,22 +1930,6 @@ topology_template:
           get_input: oam_net_id
         vson_vm_names:
         - get_input: vson_mon_name_0
-      requirements:
-      - dependency_vson_server:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - local_storage_vson_server:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
-      - dependency_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
     vson_dcl_group:
       type: org.openecomp.resource.abstract.nodes.heat.vson_vm_1
       directives:
@@ -2161,22 +2006,6 @@ topology_template:
         - get_input: vson_dcl_name_0
         - get_input: vson_dcl_name_1
         - get_input: vson_dcl_name_2
-      requirements:
-      - dependency_vson_server:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - local_storage_vson_server:
-          capability: tosca.capabilities.Attachment
-          node: tosca.nodes.BlockStorage
-          relationship: tosca.relationships.AttachesTo
-      - dependency_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.Node
-          node: tosca.nodes.Root
-          relationship: tosca.relationships.DependsOn
-      - link_vson_server_oam_net_port_0:
-          capability: tosca.capabilities.network.Linkable
-          relationship: tosca.relationships.network.LinksTo
   groups:
     module_5_vson_dbg_volume_group:
       type: org.openecomp.groups.heat.HeatStack

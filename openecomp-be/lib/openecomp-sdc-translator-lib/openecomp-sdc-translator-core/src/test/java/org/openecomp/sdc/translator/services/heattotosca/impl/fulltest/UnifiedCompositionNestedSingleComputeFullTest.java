@@ -175,4 +175,14 @@ public class UnifiedCompositionNestedSingleComputeFullTest extends BaseFullTrans
 
         testTranslationWithInit();
     }
+
+    @Test
+    public void testDuplicateReq() throws IOException {
+        inputFilesPath =
+            "/mock/services/heattotosca/fulltest/nestedSingleCompute/duplicateReqs/in";
+        outputFilesPath =
+            "/mock/services/heattotosca/fulltest/nestedSingleCompute/duplicateReqs/out";
+
+        testTranslationWithInit();
+    }
 }

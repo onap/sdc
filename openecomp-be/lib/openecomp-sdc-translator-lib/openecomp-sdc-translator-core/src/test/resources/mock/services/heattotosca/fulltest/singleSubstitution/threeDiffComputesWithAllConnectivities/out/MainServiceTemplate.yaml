@@ -245,10 +245,6 @@ topology_template:
           capability: tosca.capabilities.Node
           node: packet_mirror_network
           relationship: tosca.relationships.DependsOn
-      - dependency_server_pd_01_pd_server:
-          capability: tosca.capabilities.Node
-          node: packet_mirror_network
-          relationship: tosca.relationships.DependsOn
     abstract_ps_server:
       type: org.openecomp.resource.abstract.nodes.ps_server
       directives:
@@ -298,10 +294,6 @@ topology_template:
           capability: tosca.capabilities.Node
           node: packet_mirror_network
           relationship: tosca.relationships.DependsOn
-      - dependency_server_ps_01_ps_server:
-          capability: tosca.capabilities.Node
-          node: packet_mirror_network
-          relationship: tosca.relationships.DependsOn
     abstract_oam_server:
       type: org.openecomp.resource.abstract.nodes.oam_server
       directives:
@@ -347,10 +339,6 @@ topology_template:
           - index_value
       requirements:
       - dependency_oam_server:
-          capability: tosca.capabilities.Node
-          node: packet_mirror_network
-          relationship: tosca.relationships.DependsOn
-      - dependency_server_oam_01_oam_server:
           capability: tosca.capabilities.Node
           node: packet_mirror_network
           relationship: tosca.relationships.DependsOn

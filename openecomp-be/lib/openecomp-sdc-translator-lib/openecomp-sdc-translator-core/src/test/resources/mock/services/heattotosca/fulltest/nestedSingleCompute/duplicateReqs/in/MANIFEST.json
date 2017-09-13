@@ -1,0 +1,36 @@
+{
+  "name": "shlomi_5068",
+  "description": "shlomi_5068",
+  "version": "1.0",
+  "data": [
+    {
+      "isBase": true,
+      "file": "base_cscf.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "base_cscf.env",
+          "type": "HEAT_ENV"
+        },
+        {
+          "file": "base_cscf_volume.yaml",
+          "type": "HEAT_VOL",
+          "data": [
+            {
+              "file": "base_cscf_volume.env",
+              "type": "HEAT_ENV"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "nested_tdcore.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "nested_cscf.yaml",
+      "type": "HEAT"
+    }
+  ]
+}
