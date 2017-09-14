@@ -7,7 +7,9 @@
   @import "components";
   @import "modules";
 }
-
+.browseVNF {
+	width: auto !important;
+}
 /* Out of namespace context for datepicker */
 div[data-reactroot].customized-date-picker-calendar {
   @import "common/variables";
