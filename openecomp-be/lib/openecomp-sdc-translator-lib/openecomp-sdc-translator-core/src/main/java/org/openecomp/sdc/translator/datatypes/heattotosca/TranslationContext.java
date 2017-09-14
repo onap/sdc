@@ -587,6 +587,15 @@ public class TranslationContext {
 
   }
 
+  public Set<String> getServiceTemplatesWithoutNodeTemplateSection() {
+    return serviceTemplatesWithoutNodeTemplateSection;
+  }
+
+  public void setServiceTemplatesWithoutNodeTemplateSection(
+      Set<String> serviceTemplatesWithoutNodeTemplateSection) {
+    this.serviceTemplatesWithoutNodeTemplateSection = serviceTemplatesWithoutNodeTemplateSection;
+  }
+
   public void addServiceTemplateWithoutNodeTemplates(String serviceTemplateName){
     this.serviceTemplatesWithoutNodeTemplateSection.add(serviceTemplateName);
   }

@@ -1,0 +1,3462 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: GlobalSubstitutionTypes
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.abstract.nodes.heat.module_1_perimeta_swmu_a_child:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vf_module_id:
+        type: string
+        description: Unique ID for this VF Module instance
+        required: true
+        status: SUPPORTED
+      ssc_a_name_0:
+        type: string
+        description: Name of Perimeta VM A instance
+        required: true
+        status: SUPPORTED
+      int_ha_network_plen:
+        type: float
+        description: Prefix length of subnet associated with internal HA network
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - 31
+      unused_port_net_id:
+        type: string
+        description: Service network unused port network UUID
+        required: true
+        status: SUPPORTED
+      perimeta_server_group:
+        type: string
+        description: Server group to use for these VMs
+        required: true
+        status: SUPPORTED
+      perimeta_config:
+        type: string
+        description: JSON orchestration template configuration for instance.
+        required: true
+        status: SUPPORTED
+      ssc_a_int_ha_ip_0:
+        type: string
+        description: Fixed IP address to use as HA IP of A instance.
+        required: true
+        status: SUPPORTED
+      vnf_name:
+        type: string
+        description: Unique name for this VNF instance
+        required: true
+        status: SUPPORTED
+      perimeta_untrusted_vlan_ids:
+        type: list
+        description: List of VLAN IDs to use on the untrusted/access network
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      int_ha_net_id:
+        type: string
+        description: HA network id
+        required: true
+        status: SUPPORTED
+      ssc_b_int_ha_ip_0:
+        type: string
+        description: Fixed IP address to use as HA IPs of B instance.
+        required: true
+        status: SUPPORTED
+      ssc_mgmt_vip_0:
+        type: string
+        description: Management virtual IP address.
+        required: true
+        status: SUPPORTED
+      ssc_a_trusted_ip_0:
+        type: string
+        description: Fixed IP address to use as Trusted/core fixed IPs of A instance.
+        required: true
+        status: SUPPORTED
+      perimeta_keypair:
+        type: string
+        description: Keypair to use for accessing this Perimeta instance
+        required: true
+        status: SUPPORTED
+      vnf_id:
+        type: string
+        description: VNF ID of this deployment
+        required: true
+        status: SUPPORTED
+      availability_zone_0:
+        type: string
+        description: Availability zone for A instances.
+        required: true
+        status: SUPPORTED
+      ssc_trusted_vip_0:
+        type: string
+        description: Trusted/core virtual IP address.
+        required: true
+        status: SUPPORTED
+      ssc_untrusted_vip_0:
+        type: string
+        description: Untrusted/access virtual IP address
+        required: true
+        status: SUPPORTED
+      perimeta_sec_groups:
+        type: list
+        description: List of security groups to add on trusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ssc_a_untrusted_v6_ip_0:
+        type: string
+        description: Fixed IP address to use as Untrusted/access alternate fixed IP of A instance.
+        required: true
+        status: SUPPORTED
+      perimeta_untrusted_num_vlans:
+        type: float
+        description: number of VLANs to connect to the untrusted/access interface
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 1
+          - 1001
+      ssc_rf_vip_0:
+        type: string
+        description: RF virtual IP address to use for SSC.
+        required: true
+        status: SUPPORTED
+      ssc_a_mgmt_ip_0:
+        type: string
+        description: Fixed IP address to use as management IP of A instance.
+        required: true
+        status: SUPPORTED
+      trusted_net_id:
+        type: string
+        description: Trusted/core network UUID
+        required: true
+        status: SUPPORTED
+      ssc_untrusted_parent_vip_0:
+        type: string
+        description: Untrusted/access parent virtual IP address
+        required: true
+        status: SUPPORTED
+      ssc_untrusted_v6_vip_0:
+        type: string
+        description: Untrusted/access alternate virtual IP address
+        required: true
+        status: SUPPORTED
+      ssc_a_rf_ip_0:
+        type: string
+        description: RF fixed IP address to use for SSC A.
+        required: true
+        status: SUPPORTED
+      vm_role:
+        type: string
+        description: Role of these VMs
+        required: true
+        status: SUPPORTED
+      ssc_a_untrusted_parent_ip_0:
+        type: string
+        description: Fixed IP address to use as Untrusted/access fixed IP of A parent instance.
+        required: true
+        status: SUPPORTED
+      perimeta_untrusted_vlan_networks:
+        type: list
+        description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ssc_a_untrusted_ip_0:
+        type: string
+        description: Fixed IP address to use as Untrusted/access fixed IP of A instance.
+        required: true
+        status: SUPPORTED
+      perimeta_image_name:
+        type: string
+        description: Glance image for Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_net_id:
+        type: string
+        description: Management network id
+        required: true
+        status: SUPPORTED
+      int_untrusted_parent_net_id:
+        type: string
+        description: internal Untrusted/access parent network id
+        required: true
+        status: SUPPORTED
+      perimeta_flavor_name:
+        type: string
+        description: Flavor to use for creating VM instances
+        required: true
+        status: SUPPORTED
+    requirements:
+    - dependency_perimeta_ssc_a_ha_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_ssc_a_ha_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_ssc_a_untrusted_parent_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_ssc_a_untrusted_parent_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_ssc_a_mgmt_1_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_ssc_a_mgmt_1_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_ssc_a_trusted_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_ssc_a_trusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_ssc_a_unused_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_ssc_a_unused_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_ssc_a_mgmt_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_ssc_a_mgmt_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_ssc_a_server_0:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - local_storage_perimeta_ssc_a_server_0:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      disk.ephemeral.size_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_ssc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_ssc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_ssc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_ssc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_ssc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      instance_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_ssc_a_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_ssc_a_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_a_mgmt_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_ssc_a_mgmt_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_ssc_a_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_ssc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_perimeta_ssc_a_server_0:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_ssc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.usage_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_ssc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.requests.rate_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_ssc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_ssc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_ssc_a_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_a_mgmt_1_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.bytes_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_ssc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_ssc_a_mgmt_1_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.bytes.rate_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.requests.rate_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_ssc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_ssc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_a_server_0:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.iops_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_ssc_a_mgmt_1_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_ssc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_ssc_a_trusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_ssc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_ssc_a_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_ssc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.capacity_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_perimeta_ssc_a_server_0:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.bytes.rate_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_ssc_a_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_ssc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_ssc_a_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_ssc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_ssc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu_util_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_ssc_a_untrusted_parent_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_ssc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.allocation_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.bytes_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_ssc_a_unused_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_a_trusted_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_ssc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_ssc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_ssc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.latency_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_ssc_a_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_ssc_a_server_0:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.requests_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_ssc_a_ha_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_perimeta_ssc_a_server_0:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.usage_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_a_untrusted_parent_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_ssc_a_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_a_ha_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu.delta_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.usage_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.iops_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_ssc_a_trusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_ssc_a_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_ssc_a_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.bytes.rate_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_ssc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_ssc_a_untrusted_parent_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      disk.root.size_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_ssc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_ssc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.allocation_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.requests_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests.rate_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_ssc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.bytes_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_ssc_a_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_ssc_a_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_ssc_a_unused_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_ssc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.requests_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_ssc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes.rate_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_a_unused_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_perimeta_ssc_a_server_0:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_ssc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_ssc_a_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_ssc_a_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_ssc_a_mgmt_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.capacity_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_ssc_a_ha_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      vcpus_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_ssc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_ssc_a_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.latency_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.resident_perimeta_ssc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_ssc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.module_1_perimeta_swmu_b_child:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vf_module_id:
+        type: string
+        description: Unique ID for this VF Module instance
+        required: true
+        status: SUPPORTED
+      int_ha_network_plen:
+        type: float
+        description: Prefix length of subnet associated with internal HA network
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - 31
+      unused_port_net_id:
+        type: string
+        description: Service network unused port network UUID
+        required: true
+        status: SUPPORTED
+      perimeta_server_group:
+        type: string
+        description: Server group to use for these VMs
+        required: true
+        status: SUPPORTED
+      ssc_b_name_0:
+        type: string
+        description: Name of Perimeta VM B instance
+        required: true
+        status: SUPPORTED
+      ssc_a_int_ha_ip_0:
+        type: string
+        description: Fixed IP address to use as HA IPs of A instance.
+        required: true
+        status: SUPPORTED
+      ssc_b_untrusted_ip_0:
+        type: string
+        description: Fixed IP address to use as Untrusted/access fixed IP of B instance.
+        required: true
+        status: SUPPORTED
+      ssc_b_mgmt_ip_0:
+        type: string
+        description: Fixed IP address to use as management IP of B instance.
+        required: true
+        status: SUPPORTED
+      ssc_b_untrusted_parent_ip_0:
+        type: string
+        description: Fixed IP address to use as Untrusted/access fixed IP of B parent instance.
+        required: true
+        status: SUPPORTED
+      vnf_name:
+        type: string
+        description: Unique name for this VNF instance
+        required: true
+        status: SUPPORTED
+      perimeta_untrusted_vlan_ids:
+        type: list
+        description: List of VLAN IDs to use on the untrusted/access network
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      int_ha_net_id:
+        type: string
+        description: HA network id
+        required: true
+        status: SUPPORTED
+      ssc_b_int_ha_ip_0:
+        type: string
+        description: Fixed IP address to use as HA IP of B instance.
+        required: true
+        status: SUPPORTED
+      ssc_mgmt_vip_0:
+        type: string
+        description: Management virtual IP address.
+        required: true
+        status: SUPPORTED
+      perimeta_keypair:
+        type: string
+        description: Keypair to use for accessing this Perimeta instance
+        required: true
+        status: SUPPORTED
+      vnf_id:
+        type: string
+        description: VNF ID of this deployment
+        required: true
+        status: SUPPORTED
+      availability_zone_1:
+        type: string
+        description: Availability zone for B instances.  May be the same as A instance.
+        required: true
+        status: SUPPORTED
+      ssc_trusted_vip_0:
+        type: string
+        description: Trusted/core virtual IP address.
+        required: true
+        status: SUPPORTED
+      ssc_untrusted_vip_0:
+        type: string
+        description: Untrusted/access virtual IP address
+        required: true
+        status: SUPPORTED
+      perimeta_sec_groups:
+        type: list
+        description: List of security groups to add on trusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_untrusted_num_vlans:
+        type: float
+        description: number of VLANs to connect to the untrusted/access interface
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 1
+          - 1001
+      ssc_rf_vip_0:
+        type: string
+        description: RF virtual IP address to use for SSC.
+        required: true
+        status: SUPPORTED
+      ssc_b_trusted_ip_0:
+        type: string
+        description: Fixed IP address to use as Trusted/core fixed IPs of B instance.
+        required: true
+        status: SUPPORTED
+      trusted_net_id:
+        type: string
+        description: Trusted/core network UUID
+        required: true
+        status: SUPPORTED
+      ssc_untrusted_parent_vip_0:
+        type: string
+        description: Untrusted/access parent virtual IP address
+        required: true
+        status: SUPPORTED
+      ssc_untrusted_v6_vip_0:
+        type: string
+        description: Untrusted/access alternate virtual IP address
+        required: true
+        status: SUPPORTED
+      ssc_b_untrusted_v6_ip_0:
+        type: string
+        description: Fixed IP address to use as Untrusted/access alternate fixed IP of B instance.
+        required: true
+        status: SUPPORTED
+      vm_role:
+        type: string
+        description: Role of these VMs
+        required: true
+        status: SUPPORTED
+      perimeta_untrusted_vlan_networks:
+        type: list
+        description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_image_name:
+        type: string
+        description: Glance image for Perimeta instance
+        required: true
+        status: SUPPORTED
+      ssc_b_rf_ip_0:
+        type: string
+        description: RF fixed IP address to use for SSC B.
+        required: true
+        status: SUPPORTED
+      mgmt_net_id:
+        type: string
+        description: Management network id
+        required: true
+        status: SUPPORTED
+      int_untrusted_parent_net_id:
+        type: string
+        description: internal Untrusted/access parent network id
+        required: true
+        status: SUPPORTED
+      perimeta_flavor_name:
+        type: string
+        description: Flavor to use for creating VM instances
+        required: true
+        status: SUPPORTED
+    requirements:
+    - dependency_perimeta_ssc_b_trusted_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_ssc_b_trusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_ssc_b_untrusted_parent_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_ssc_b_untrusted_parent_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_ssc_b_mgmt_1_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_ssc_b_mgmt_1_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_ssc_b_unused_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_ssc_b_unused_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_ssc_b_server_0:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - local_storage_perimeta_ssc_b_server_0:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_perimeta_ssc_b_mgmt_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_ssc_b_mgmt_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_ssc_b_ha_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_ssc_b_ha_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      host_perimeta_ssc_b_server_0:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_ssc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      vcpus_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_ssc_b_mgmt_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_ssc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_ssc_b_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_perimeta_ssc_b_server_0:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes.rate_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_ssc_b_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.bytes_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_ssc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_ssc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.allocation_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_ssc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests.rate_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_ssc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_ssc_b_trusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      disk.device.iops_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_ssc_b_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.usage_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_b_mgmt_1_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_ssc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_b_unused_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_perimeta_ssc_b_server_0:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_b_server_0:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.requests_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_ssc_b_mgmt_1_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu.delta_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_ssc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.requests_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.root.size_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_ssc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.resident_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_ssc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.ephemeral.size_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_ssc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      instance_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_ssc_b_untrusted_parent_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_ssc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_ssc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_ssc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_b_trusted_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_ssc_b_mgmt_1_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_ssc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.bytes_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_ssc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.latency_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_ssc_b_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_ssc_b_unused_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_ssc_b_ha_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_ssc_b_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_ssc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_ssc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.capacity_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_b_ha_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_ssc_b_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_ssc_b_untrusted_parent_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_ssc_b_server_0:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_perimeta_ssc_b_server_0:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.latency_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_ssc_b_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.bytes.rate_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.requests_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_b_untrusted_parent_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.usage_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_ssc_b_ha_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_ssc_b_trusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_ssc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.allocation_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_ssc_b_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_ssc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.iops_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.bytes_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_ssc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_ssc_b_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_ssc_b_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.requests.rate_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_ssc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_ssc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_ssc_b_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_ssc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_ssc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_ssc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.usage_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_ssc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_ssc_b_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_ssc_b_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_ssc_b_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_ssc_b_unused_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_ssc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_ssc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu_util_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.bytes.rate_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.capacity_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_ssc_b_mgmt_1_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_ssc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_ssc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.bytes.rate_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.requests.rate_perimeta_ssc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_ssc_b_mgmt_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_ssc_b_mgmt_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_ssc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_ssc_b_unused_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.module_2_perimeta_sw_a_child:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vf_module_id:
+        type: string
+        description: Unique ID for this VF Module instance
+        required: true
+        status: SUPPORTED
+      int_ha_network_plen:
+        type: float
+        description: Prefix length of subnet associated with internal HA network
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - 31
+      perimeta_config:
+        type: string
+        description: JSON orchestration template configuration for instance.
+        required: true
+        status: SUPPORTED
+      vnf_name:
+        type: string
+        description: Unique name for this VNF instance
+        required: true
+        status: SUPPORTED
+      perimeta_untrusted_vlan_ids:
+        type: list
+        description: List of VLAN IDs to use on the untrusted/access network
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      int_ha_net_id:
+        type: string
+        description: HA network id
+        required: true
+        status: SUPPORTED
+      perimeta_instance_index:
+        type: float
+        description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - 19
+      perimeta_keypair:
+        type: string
+        description: Keypair to use for accessing this Perimeta instance
+        required: true
+        status: SUPPORTED
+      perimeta_server_groups:
+        type: list
+        description: Server groups to use for these VMs
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vnf_id:
+        type: string
+        description: VNF ID of this deployment
+        required: true
+        status: SUPPORTED
+      availability_zone_0:
+        type: string
+        description: Availability zone for A instances.
+        required: true
+        status: SUPPORTED
+      rtp_msc_mgmt_vips:
+        type: list
+        description: List of management virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_sec_groups:
+        type: list
+        description: List of security groups to add on trusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      rtp_msc_untrusted_parent_vips:
+        type: list
+        description: List of Untrusted/access parent virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_untrusted_num_vlans:
+        type: float
+        description: number of VLANs to connect to the untrusted/access interface
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 1
+          - 1001
+      rtp_msc_a_int_ha_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      rtp_msc_a_untrusted_parent_ips:
+        type: list
+        description: List of fixed IP addresses to use as Untrusted/access parent fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      rtp_msc_a_trusted_ips:
+        type: list
+        description: List of fixed IP addresses to use as Trusted/core fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      rtp_msc_untrusted_vips:
+        type: list
+        description: List of Untrusted/access virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_net_id:
+        type: string
+        description: Trusted/core network UUID
+        required: true
+        status: SUPPORTED
+      rtp_msc_b_int_ha_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      rtp_msc_a_mgmt_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      rtp_msc_a_untrusted_ips:
+        type: list
+        description: List of fixed IP addresses to use as Untrusted/access fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_role:
+        type: string
+        description: Role of these VMs
+        required: true
+        status: SUPPORTED
+      rtp_msc_untrusted_v6_vips:
+        type: list
+        description: List of Untrusted/access alternate virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_untrusted_vlan_networks:
+        type: list
+        description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      rtp_msc_a_untrusted_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as Untrusted/access alternate fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_image_name:
+        type: string
+        description: Glance image for Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_net_id:
+        type: string
+        description: Management network id
+        required: true
+        status: SUPPORTED
+      int_untrusted_parent_net_id:
+        type: string
+        description: internal Untrusted/access parent network id
+        required: true
+        status: SUPPORTED
+      rtp_msc_a_names:
+        type: list
+        description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_flavor_name:
+        type: string
+        description: Flavor to use for creating VM instances
+        required: true
+        status: SUPPORTED
+      rtp_msc_trusted_vips:
+        type: list
+        description: List of Trusted/core virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+    requirements:
+    - dependency_perimeta_rtp_msc_a_trusted_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_rtp_msc_a_trusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_rtp_msc_a_ha_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_rtp_msc_a_ha_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_rtp_msc_a_server_0:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - local_storage_perimeta_rtp_msc_a_server_0:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_perimeta_rtp_msc_a_mgmt_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_rtp_msc_a_mgmt_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      attachment_perimeta_rtp_msc_a_ha_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.requests_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_rtp_msc_a_mgmt_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_rtp_msc_a_trusted_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.latency_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      vcpus_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.resident_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_rtp_msc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_rtp_msc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.capacity_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_rtp_msc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_rtp_msc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.bytes_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_rtp_msc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_perimeta_rtp_msc_a_server_0:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_rtp_msc_a_ha_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.allocation_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests.rate_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_rtp_msc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_rtp_msc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.iops_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_rtp_msc_a_mgmt_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_rtp_msc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_rtp_msc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.usage_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.bytes_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_rtp_msc_a_trusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_rtp_msc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.usage_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_rtp_msc_a_ha_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      disk.iops_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.allocation_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes.rate_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.capacity_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_rtp_msc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.ephemeral.size_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_rtp_msc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu_util_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_rtp_msc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_rtp_msc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_rtp_msc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_perimeta_rtp_msc_a_server_0:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_perimeta_rtp_msc_a_server_0:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.requests.rate_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_rtp_msc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_rtp_msc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_rtp_msc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.root.size_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_rtp_msc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.bytes.rate_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_rtp_msc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_perimeta_rtp_msc_a_server_0:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_rtp_msc_a_server_0:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_rtp_msc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_rtp_msc_a_server_0:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.requests.rate_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_rtp_msc_a_trusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      instance_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.bytes.rate_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_rtp_msc_a_mgmt_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      disk.latency_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_rtp_msc_a_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.bytes_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_rtp_msc_a_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.requests_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.bytes.rate_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_rtp_msc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.requests_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu.delta_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.usage_perimeta_rtp_msc_a_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.vlan_subinterface_dual:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      perimeta_parent_interface:
+        type: string
+        description: Parent Contrail interface
+        required: true
+        status: SUPPORTED
+      perimeta_v6_vip_0:
+        type: string
+        description: virtual IPv6 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+      perimeta_subinterface_name_prefix:
+        type: string
+        description: Combined with subinterface_instance_index, this is used as the name of the subinterface resource
+        required: true
+        status: SUPPORTED
+      perimeta_vlan_networks:
+        type: list
+        description: List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_subinterface_instance_index:
+        type: float
+        description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 1
+          - 1001
+      perimeta_ip_0:
+        type: string
+        description: IPv4 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+      perimeta_vip_0:
+        type: string
+        description: virtual IPv4 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+      perimeta_vlan_ids:
+        type: list
+        description: List of VLAN IDs to use for subinterfaces
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_mac_address:
+        type: string
+        description: MAC address to use for subinterface
+        required: true
+        status: SUPPORTED
+      perimeta_v6_ip_0:
+        type: string
+        description: IPv6 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+  org.openecomp.resource.abstract.nodes.heat.module_2_perimeta_sw_b_child:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vf_module_id:
+        type: string
+        description: Unique ID for this VF Module instance
+        required: true
+        status: SUPPORTED
+      int_ha_network_plen:
+        type: float
+        description: Prefix length of subnet associated with internal HA network
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - 31
+      rtp_msc_b_untrusted_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as Untrusted/access alternate fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      rtp_msc_b_mgmt_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vnf_name:
+        type: string
+        description: Unique name for this VNF instance
+        required: true
+        status: SUPPORTED
+      perimeta_untrusted_vlan_ids:
+        type: list
+        description: List of VLAN IDs to use on the untrusted/access network
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      rtp_msc_b_names:
+        type: list
+        description: List of names of Perimeta VM B instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      rtp_msc_b_untrusted_ips:
+        type: list
+        description: List of fixed IP addresses to use as Untrusted/access fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      int_ha_net_id:
+        type: string
+        description: HA network id
+        required: true
+        status: SUPPORTED
+      perimeta_instance_index:
+        type: float
+        description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - 19
+      perimeta_keypair:
+        type: string
+        description: Keypair to use for accessing this Perimeta instance
+        required: true
+        status: SUPPORTED
+      perimeta_server_groups:
+        type: list
+        description: Server groups to use for these VMs
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vnf_id:
+        type: string
+        description: VNF ID of this deployment
+        required: true
+        status: SUPPORTED
+      availability_zone_1:
+        type: string
+        description: Availability zone for B instances.  May be the same as A instance.
+        required: true
+        status: SUPPORTED
+      rtp_msc_mgmt_vips:
+        type: list
+        description: List of management virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_sec_groups:
+        type: list
+        description: List of security groups to add on trusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      rtp_msc_untrusted_parent_vips:
+        type: list
+        description: List of Untrusted/access parent virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_untrusted_num_vlans:
+        type: float
+        description: number of VLANs to connect to the untrusted/access interface
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 1
+          - 1001
+      rtp_msc_a_int_ha_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      rtp_msc_b_trusted_ips:
+        type: list
+        description: List of fixed IP addresses to use as Trusted/core fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      rtp_msc_untrusted_vips:
+        type: list
+        description: List of Untrusted/access virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_net_id:
+        type: string
+        description: Trusted/core network UUID
+        required: true
+        status: SUPPORTED
+      rtp_msc_b_int_ha_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_role:
+        type: string
+        description: Role of these VMs
+        required: true
+        status: SUPPORTED
+      rtp_msc_untrusted_v6_vips:
+        type: list
+        description: List of Untrusted/access alternate virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_untrusted_vlan_networks:
+        type: list
+        description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_image_name:
+        type: string
+        description: Glance image for Perimeta instance
+        required: true
+        status: SUPPORTED
+      rtp_msc_b_untrusted_parent_ips:
+        type: list
+        description: List of fixed IP addresses to use as Untrusted/access parent fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_net_id:
+        type: string
+        description: Management network id
+        required: true
+        status: SUPPORTED
+      int_untrusted_parent_net_id:
+        type: string
+        description: internal Untrusted/access parent network id
+        required: true
+        status: SUPPORTED
+      perimeta_flavor_name:
+        type: string
+        description: Flavor to use for creating VM instances
+        required: true
+        status: SUPPORTED
+      rtp_msc_trusted_vips:
+        type: list
+        description: List of Trusted/core virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+    requirements:
+    - dependency_perimeta_rtp_msc_b_trusted_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_rtp_msc_b_trusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_rtp_msc_b_mgmt_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_rtp_msc_b_mgmt_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_rtp_msc_b_server_0:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - local_storage_perimeta_rtp_msc_b_server_0:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_perimeta_rtp_msc_b_ha_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_rtp_msc_b_ha_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      attachment_perimeta_rtp_msc_b_mgmt_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.requests_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_rtp_msc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_rtp_msc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_rtp_msc_b_trusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.requests.rate_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_rtp_msc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_rtp_msc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.latency_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_rtp_msc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.requests_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.bytes.rate_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_rtp_msc_b_server_0:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_rtp_msc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.ephemeral.size_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_rtp_msc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_rtp_msc_b_ha_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.capacity_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_rtp_msc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.capacity_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_rtp_msc_b_ha_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      disk.device.usage_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.allocation_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests.rate_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_rtp_msc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.root.size_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu_util_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.latency_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_perimeta_rtp_msc_b_server_0:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes.rate_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_rtp_msc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.bytes_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_rtp_msc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_rtp_msc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.iops_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_rtp_msc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.bytes_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_rtp_msc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_rtp_msc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      instance_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.requests.rate_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_perimeta_rtp_msc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_rtp_msc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      vcpus_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.resident_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_perimeta_rtp_msc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_rtp_msc_b_mgmt_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_perimeta_rtp_msc_b_server_0:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_rtp_msc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_rtp_msc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.bytes_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.bytes.rate_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.usage_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      scalable_perimeta_rtp_msc_b_server_0:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu.delta_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.allocation_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.usage_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_rtp_msc_b_mgmt_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      host_perimeta_rtp_msc_b_server_0:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_perimeta_rtp_msc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_rtp_msc_b_trusted_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_rtp_msc_b_trusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_rtp_msc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_perimeta_rtp_msc_b_ha_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.iops_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.requests_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_perimeta_rtp_msc_b_ha_0_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_rtp_msc_b_server_0:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_perimeta_rtp_msc_b_trusted_0_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.bytes.rate_perimeta_rtp_msc_b_server_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED

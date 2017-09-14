@@ -1,0 +1,222 @@
+# Heat template which instantiates base resources for a Perimeta deployment,
+# namely.
+#  - keypair
+#  - security group
+#  - SSC server group
+#  - RTP MSC server group
+#  - Internal HA network
+#  - Internal unused network
+#  - Internal parent network for the untrusted VLANs
+#
+#  Template version 17.07.04 - 2017-09-01
+#
+#
+heat_template_version: 2014-10-16
+
+description: >
+  HOT template to instantiate base shared resources for a Perimeta deployment
+
+parameters:
+  vnf_name:
+    type: string
+    description: Unique name for this VNF instance
+  perimeta_ssh_key:
+    type: string
+    description: SSH public key
+  # Deployment scaling parameters
+  perimeta_max_rtp_msc_count:
+    type: number
+    description: Max number of RTP MSCs in a site.
+    constraints:
+    - range: { min: 0, max: 20 }
+      description: perimeta_max_rtp_msc_count must be between 0 and 20
+  # Internal high availability network parameters
+  perimeta_int_ha_net_prefix_v4:
+    type: string
+    description: IPv4 subnet prefix for internal HA network
+  perimeta_int_ha_net_prefix_len_v4:
+    type: number
+    description: Prefix length of subnet associated with internal HA network
+    constraints:
+    - range: { min: 0, max: 31 }
+      description: int_ha_net_plen must be between 0 and 31
+
+resources:
+  # Resource Security Group
+  shared_perimeta_rsg:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: Security Group for Perimeta networks
+      name:
+        str_replace:
+            template:  $VNF_NAME_shared_perimeta_RSG
+            params:
+              $VNF_NAME:  { get_param: vnf_name }
+      rules:
+        - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "tcp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 1}
+        - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "udp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 1}
+        - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "icmp", "ethertype": "IPv4"}
+        - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "icmp", "ethertype": "IPv6"}
+        - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "tcp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 1}
+        - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "udp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 1}
+        - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "tcp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 1}
+        - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "udp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 1}
+        - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "icmp", "ethertype": "IPv4"}
+        - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "icmp", "ethertype": "IPv6"}
+        - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "tcp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 1}
+        - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "udp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 1}
+
+  # Keypair for use by Perimeta instances.
+  shared_perimeta_keypair:
+    type: OS::Nova::KeyPair
+    properties:
+      name:
+        str_replace:
+          template: $VNF_NAME_key_pair
+          params:
+            $VNF_NAME: { get_param: vnf_name }
+      public_key: {get_param: perimeta_ssh_key}
+      save_private_key: false
+
+  # Create the server groups. We need one per pair of perimeta VFs in the site
+  # We only have one SSC
+  # We can have multiple RTP MSCs
+
+  shared_perimeta_ssc_server_gp:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+            template:  $VNF_NAME_shared_ssc_RSG_name_0
+            params:
+              $VNF_NAME:  { get_param: vnf_name }
+      policies: ['anti-affinity']
+
+
+  shared_perimeta_rtp_msc_server_gps:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: perimeta_max_rtp_msc_count }
+      resource_def:
+        type: OS::Nova::ServerGroup
+        properties:
+          name:
+            str_replace:
+                template:  $VNF_NAME_shared_rtp_msc_RSG_name_"%index%"
+                params:
+                  $VNF_NAME:  { get_param: vnf_name }
+          policies: ['anti-affinity']
+
+  # Internal HA network for deployment.
+  #   This is a private network with all instances on the same isolated L2
+  #   L2 subnet.  There is no requirement for routing in an IP sense which 
+  #   means that there is no need for a default gateway  
+  perimeta_internal_ha_ipam_net_0:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name:
+        str_replace:
+          template: $VF_NAME_int_ha_ipam_net_0
+          params:
+            $VF_NAME: { get_param: vnf_name }
+
+  shared_perimeta_internal_ha_net_0:
+    type: OS::ContrailV2::VirtualNetwork
+    depends_on: [ perimeta_internal_ha_ipam_net_0 ]
+    properties:
+      name:
+        str_replace:
+          template: $VF_NAME_int_ha_net_0
+          params:
+            $VF_NAME: { get_param: vnf_name }
+      virtual_network_properties:
+        virtual_network_properties_rpf: enable
+      is_shared: false
+      flood_unknown_unicast: true
+      network_ipam_refs:
+        - get_resource: perimeta_internal_ha_ipam_net_0
+      network_ipam_refs_data:
+        - network_ipam_refs_data_ipam_subnets:
+            - network_ipam_refs_data_ipam_subnets_subnet:
+                network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: perimeta_int_ha_net_prefix_v4 }
+                network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: perimeta_int_ha_net_prefix_len_v4 }
+              network_ipam_refs_data_ipam_subnets_enable_dhcp: false
+
+  # Internal unused network - required for unused ports on SSC.
+  shared_perimeta_unused_net_0:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        str_replace:
+          template: $VF_NAME_int_unused_net
+          params:
+            $VF_NAME: { get_param: vnf_name }
+
+  # A subnet is required for unused network but we just use arbitrary IP addresses
+  # as these will never be used.
+  shared_perimeta_unused_net_0_subnet:
+    type: OS::Neutron::Subnet
+    depends_on: [ shared_perimeta_unused_net_0 ]
+    properties:
+      network: { get_resource: shared_perimeta_unused_net_0 }
+      cidr: "10.0.0.0/29"
+      ip_version: 4
+      enable_dhcp: false
+      gateway_ip: ""
+
+  # Internal parent network - required for untrusted network to anchor the VLANs
+  shared_perimeta_int_untrusted_parent_net_0:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        str_replace:
+          template: $VF_NAME_int_untrusted_parent_net
+          params:
+            $VF_NAME: { get_param: vnf_name }
+
+  # A subnet is required for untrusted parent network but we just use arbitrary IP addresses
+  # as these will never be used to route traffic.
+  shared_perimeta_int_untrusted_parent_net_0_subnet:
+    type: OS::Neutron::Subnet
+    depends_on: [ shared_perimeta_int_untrusted_parent_net_0 ]
+    properties:
+      network: { get_resource: shared_perimeta_int_untrusted_parent_net_0 }
+      cidr: "11.0.0.0/24"
+      ip_version: 4
+      enable_dhcp: false
+      gateway_ip: ""
+
+outputs:
+
+  shared_perimeta_ssc_server_group:
+    description: Perimeta SSC Server group
+    value: { get_resource: shared_perimeta_ssc_server_gp}
+
+
+  shared_perimeta_rtp_msc_server_groups:
+    description: Perimeta RTP MSC Server groups
+    value: { list_join: [ ',' , { get_attr: [shared_perimeta_rtp_msc_server_gps, refs ] } ] }
+
+  shared_perimeta_keypair:
+    description: SSH keypair for deployment
+    value: { get_resource: shared_perimeta_keypair }
+
+  shared_perimeta_sec_groups:
+    description: List of security groups to use for all network interfaces
+    value: { get_resource: shared_perimeta_rsg }
+
+  shared_int_ha_net_id:
+    description: HA internal network for deployment
+    value: { get_resource: shared_perimeta_internal_ha_net_0 }
+
+  shared_int_ha_net_prefix_len_v4:
+    description: HA internal network IPv4 prefix length
+    value: { get_param: perimeta_int_ha_net_prefix_len_v4 }
+
+  shared_ssc_unused_net_id:
+    description: Unused internal network for deployment
+    value: { get_resource: shared_perimeta_unused_net_0 }
+
+  shared_int_untrusted_parent_net_id:
+    description: Internal untrusted parent network for deployment
+    value: { get_resource: shared_perimeta_int_untrusted_parent_net_0 }

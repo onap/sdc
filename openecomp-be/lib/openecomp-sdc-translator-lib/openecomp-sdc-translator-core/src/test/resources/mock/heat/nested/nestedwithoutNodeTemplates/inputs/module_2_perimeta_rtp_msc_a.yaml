@@ -1,0 +1,313 @@
+# Template for instantiating
+#  - 1 x HA RTP MSC pair - A instance
+#
+# During initial instantiation, the Perimeta A instance is configured with
+# minimal configuration, commissioned as an RTP MSC and started.  In addition, it
+# will attempt partnering with the B instance when it becomes availble.
+#
+# During healing, the Perimeta A instance is only configured with sufficient
+# configuration to allow partnering from the B instance (which will complete
+# the configuration).
+#
+# This template assumes that a base template stack has previously been
+# created so that deployment wide resources such as server-groups have been
+# defined.
+#
+# A perimeta deployment can support one or more RTP MSCs. The parameter
+# rtp_msc_a_index is used to make sure that the appropriate settings for this
+# RTP MSC are extracted from the various address and server group arrays.
+#
+heat_template_version: 2014-10-16
+
+description: >
+  HOT template to instantiate an A side Perimeta RTP MSC and optionally partner it with the corresponding B side
+
+parameters:
+  # General VNF parameters
+  vnf_name:
+    type: string
+    description: Unique name for this VNF instance
+  vnf_id:
+    type: string
+    description: ID of VNF
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance
+  # Availability zones
+  availability_zone_0:
+    type: string
+    description: Availability zone for A instances.
+  shared_perimeta_keypair:
+    type: string
+    description: Keypair to use for accessing this Perimeta instance
+  shared_perimeta_sec_groups:
+    type: comma_delimited_list
+    description: List of security groups to add on all interfaces.
+  shared_perimeta_rtp_msc_server_groups:
+    type: comma_delimited_list
+    description: Server group to use for these VMs
+  # Internal network parameters
+  shared_int_ha_net_id:
+    type: string
+    description: HA network id
+    constraints:
+    - custom_constraint: neutron.network
+
+  # Constraint below is copied from base module 
+  shared_int_ha_net_prefix_len_v4:
+    type: number
+    description: Prefix length of subnet associated with internal HA network 
+    constraints:
+    - range: { min: 0, max: 31 }
+      description: shared_int_ha_net_prefix_len_v4 must be between 0 and 31
+  # Management network parameters
+  mgmt_net_id:
+    type: string
+    description: Management network ID
+    constraints:
+    - custom_constraint: neutron.network
+  mgmt_net_plen:
+    type: number
+    description: Management network prefix length
+    constraints:
+    - range: { min: 0, max: 32 }
+      description: mgmt_net_plen must be between 0 and 32
+  mgmt_net_default_gateway:
+    type: string
+    description: Default gateway for management network
+  # Trusted/core network parameters
+  trusted_net_id:
+    type: string
+    description: Network ID of Trusted/core network.
+    constraints:
+    - custom_constraint: neutron.network
+  # untrusted parent network parameters
+  shared_int_untrusted_parent_net_id:
+    type: string
+    description: untrusted parent network id
+  # RTP MSC IP addresses on Untrusted/access parent network
+  rtp_msc_untrusted_parent_vips:
+    type: comma_delimited_list
+    description: List of virtual IPv4 addresses on Untrusted/access parent network for RTP MSC.
+  rtp_msc_a_untrusted_parent_ips:
+    type: comma_delimited_list
+    description: List of fixed IPv4 addresses on Untrusted/access parent network for RTP MSC A.
+  perimeta_untrusted_num_vlans:
+    type: number
+    description: number of VLANs to connect to the untrusted/access interface
+    constraints:
+    - range: { min: 1, max: 1001 }
+      description: perimeta_untrusted_num_vlans (number of VLANs to connect to the untrusted/access interface) must be between 1 and 1001
+  perimeta_untrusted_vlan_ids:
+    type: comma_delimited_list
+    description: List of VLAN IDs to use on the untrusted/access network
+  perimeta_untrusted_vlan_networks:
+    type: comma_delimited_list
+    description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+  # RTP MSC parameters
+  rtp_msc_flavor_name:
+    type: string
+    description: Flavor to use for creating RTP MSC VM instance
+    constraints:
+    - custom_constraint: nova.flavor
+  rtp_msc_image_name:
+    type: string
+    description: Glance image to use for launching RTP MSC Perimeta instances.
+    constraints:
+    - custom_constraint: glance.image
+  # Index of the instance to instantiate / heal. This is used to access the
+  # various address / name / server group arrays to extract the information
+  # specific to this server.
+  #
+  # The constraints need to be co-ordinated with the parameter
+  # perimeta_max_rtp_msc_count in the base template. Unfortunately we cannot
+  # use a get_param call to get a constraint so it has to be a number.
+  #
+  # We also need to account for the fact that arrays start at zero and we are
+  # specifying the index in this parameter so the maximum constraint is 1 less
+  # than the maximum in the base template
+  rtp_msc_a_index:
+    type: number
+    description: Index of RTP MSC to instantiate / heal.
+    constraints:
+    - range: { min: 0, max: 19 }
+      description: rtp_msc_a_index must be between 0 and 19
+  # Hostames of the VIP and servers
+  rtp_msc_vnfcnames:
+    type: comma_delimited_list
+    description: List of vnfc names of the RTP MSC. This is the name associated with the perimeta pair and corresponds to the VIP
+  rtp_msc_a_vnfcnames:
+    type: comma_delimited_list
+    description: List of vnfc names of the A of RTP MSC
+  rtp_msc_b_vnfcnames:
+    type: comma_delimited_list
+    description: List of vnfc names of VM B of RTP MSC
+  # RTP MSC names of the physical A instance
+  rtp_msc_a_names:
+    type: comma_delimited_list
+    description: List of names of VM A of RTP MSC
+  # RTP MSC IP addresses on management network
+  rtp_msc_mgmt_vips:
+    type: comma_delimited_list
+    description: List of management virtual IP addresses to use for RTP MSC.
+  rtp_msc_a_mgmt_ips:
+    type: comma_delimited_list
+    description: List of management fixed IP addresses to use for RTP MSC A.
+  rtp_msc_b_mgmt_ips:
+    type: comma_delimited_list
+    description: List of management fixed IP addresses to use for RTP MSC B.
+  # RTP MSC IP addresses on internal HA network
+  rtp_msc_a_int_ha_ips:
+    type: comma_delimited_list
+    description: List of HA fixed IP addresses to use for RTP MSC A.
+  rtp_msc_b_int_ha_ips:
+    type: comma_delimited_list
+    description: List of HA fixed IP addresses to use for RTP MSC B.
+  # RTP MSC IP addresses on Trusted/core network
+  rtp_msc_trusted_vips:
+    type: comma_delimited_list
+    description: List of virtual IPv4 addresses on Trusted/core network for RTP MSC.
+  rtp_msc_a_trusted_ips:
+    type: comma_delimited_list
+    description: List of fixed IPv4 addresses on Trusted/core network for RTP MSC A.
+  # RTP MSC IP addresses on Untrusted/access network
+  rtp_msc_untrusted_vips:
+    type: comma_delimited_list
+    description: List of virtual IPv4 addresses on Untrusted/access network for RTP MSC.
+  rtp_msc_untrusted_v6_vips:
+    type: comma_delimited_list
+    description: List of virtual IPv6 addresses on Untrusted/access network for RTP MSC.
+  rtp_msc_a_untrusted_ips:
+    type: comma_delimited_list
+    description: List of fixed IPv4 addresses on Untrusted/access network for RTP MSC A.
+  rtp_msc_a_untrusted_v6_ips:
+    type: comma_delimited_list
+    description: List of fixed IPv6 addresses on Untrusted/access network for RTP MSC A.
+  ntp_server_ip_addrs:
+    type: string
+    description: NTP server IPv4 addresses, separated by commas.  These must be accessible from the management network
+    constraints:
+    - allowed_pattern: "((?:\\d{1,3}\\.){3}\\d{1,3},)*((?:\\d{1,3}\\.){3}\\d{1,3})"
+      description: ntp_server_ip_addrs must be a comma separated list of IPv4 addresses (with no spaces)
+  # Healing or instantiating? Used to build the correct json file
+  rtp_msc_a_json_prefix:
+    type: string
+    description: Json prefix, used to create the correct json file depending on the operation being performed
+    constraints:
+    - allowed_values:
+      - " "
+      - "// healing, not required "
+      description: rtp_msc_a_json_prefix must be set to ' ' or '// healing, not required '
+  # Running V4.1 perimeta or greater. Used to ensure that newer json tags are
+  # not included if the server will not recognize them
+  rtp_msc_json_v41:
+    type: string
+    description: Json prefix, used to ensure that the json tags will be recognised by the server loading them
+    constraints:
+    - allowed_values:
+      - " "
+      - "// older perimeta, parameter not required "
+      description: rtp_msc_json_v41 must be set to ' ' or '//  older perimeta, parameter not required '
+  # Use Radius for user account authentication.
+  rtp_msc_json_use_radius_authentication:
+    type: string
+    description: Json prefix, used to indicate if user account authentication is done externally through Radius
+    constraints:
+    - allowed_values:
+      - " "
+      - "// not using Radius "
+      description: rtp_msc_json_use_radius_authentication must be set to ' ' or '//  not using Radius '
+  # Radius Server address configuration
+  rtp_msc_json_radius_servername:
+    type: string
+    description: IP Address or hostname of RADIUS server
+  # Radius Server port configuration
+  rtp_msc_json_radius_port:
+    type: number
+    description: Port to use to connect to RADIUS server
+    constraints:
+    - range: { min: 0, max: 65535 }
+      description: rtp_msc_json_radius_port must be between 0 and 65535
+  # Radius Server shared secret
+  rtp_msc_json_radius_secret:
+    type: string
+    description: Shared secret to use for the RADIUS Server
+  # Radius Server connection timeout
+  rtp_msc_json_radius_timeout:
+    type: number
+    description: Timeout for connect requests to RADIUS server
+    constraints:
+    - range: { min: 1, max: 60 }
+      description: rtp_msc_json_timeout must be between 1 and 60
+  # Radius Server default user authentication level
+  rtp_msc_json_radius_default:
+    type: string
+    description: Default authentication level for RADIUS users
+    constraints:
+    - allowed_values:
+      - "no-access"
+      - "read-only"
+      - "support"
+      - "restricted-admin"
+      - "admin"
+      description: rtp_msc_json_radius_default must be set to one of 'no-access', 'read-only', 'support', 'restricted-admin' or 'admin'
+
+resources:
+  # Perimeta RTP MSC
+  perimeta_rtp_msc_a:
+    type: module_2_perimeta_sw_a_child.yaml
+    properties:
+      vnf_name: { get_param: vnf_name }
+      vnf_id: { get_param: vnf_id }
+      vm_role: 'msc'
+      vf_module_id: { get_param: vf_module_id }
+      rtp_msc_a_names: { get_param: rtp_msc_a_names }
+      perimeta_instance_index: { get_param: rtp_msc_a_index }
+      perimeta_image_name: { get_param: rtp_msc_image_name }
+      perimeta_flavor_name: { get_param: rtp_msc_flavor_name }
+      perimeta_keypair: { get_param: shared_perimeta_keypair }
+      availability_zone_0: { get_param: availability_zone_0 }
+      mgmt_net_id: { get_param: mgmt_net_id }
+      rtp_msc_mgmt_vips: { get_param: rtp_msc_mgmt_vips }
+      rtp_msc_a_mgmt_ips: { get_param: rtp_msc_a_mgmt_ips }
+      perimeta_sec_groups: { get_param: shared_perimeta_sec_groups }
+      int_ha_net_id: { get_param: shared_int_ha_net_id }
+      int_ha_network_plen: { get_param: shared_int_ha_net_prefix_len_v4 }
+      rtp_msc_a_int_ha_ips: { get_param: rtp_msc_a_int_ha_ips }
+      rtp_msc_b_int_ha_ips: { get_param: rtp_msc_b_int_ha_ips }
+      trusted_net_id: { get_param: trusted_net_id }
+      rtp_msc_trusted_vips: { get_param: rtp_msc_trusted_vips }
+      rtp_msc_a_trusted_ips: { get_param: rtp_msc_a_trusted_ips }
+      rtp_msc_untrusted_vips: { get_param: rtp_msc_untrusted_vips }
+      rtp_msc_untrusted_v6_vips: { get_param: rtp_msc_untrusted_v6_vips }
+      rtp_msc_a_untrusted_ips: { get_param: rtp_msc_a_untrusted_ips }
+      rtp_msc_a_untrusted_v6_ips: { get_param: rtp_msc_a_untrusted_v6_ips }
+      int_untrusted_parent_net_id: { get_param: shared_int_untrusted_parent_net_id }
+      rtp_msc_untrusted_parent_vips: { get_param: rtp_msc_untrusted_parent_vips }
+      rtp_msc_a_untrusted_parent_ips: { get_param: rtp_msc_a_untrusted_parent_ips }
+      perimeta_untrusted_num_vlans: { get_param: perimeta_untrusted_num_vlans }
+      perimeta_untrusted_vlan_ids: { get_param: perimeta_untrusted_vlan_ids }
+      perimeta_untrusted_vlan_networks: { get_param: perimeta_untrusted_vlan_networks }
+      perimeta_server_groups: { get_param: shared_perimeta_rtp_msc_server_groups }
+      perimeta_config:
+        str_replace:
+          template: {get_file: rtp_msc_a_template.json}
+          params:
+                $HEALING_OR_INSTANTIATION: { get_param: rtp_msc_a_json_prefix }
+                $NTP_SERVER_IP_ADDRS: { get_param: ntp_server_ip_addrs }
+                $41ORABOVE: { get_param: rtp_msc_json_v41 }
+                $USERADIUSAUTH: { get_param: rtp_msc_json_use_radius_authentication }
+                $RADIUS_SERVERNAME: { get_param: rtp_msc_json_radius_servername }
+                $RADIUS_PORT: { get_param: rtp_msc_json_radius_port }
+                $RADIUS_SECRET: { get_param: rtp_msc_json_radius_secret }
+                $RADIUS_TIMEOUT: { get_param: rtp_msc_json_radius_timeout }
+                $RADIUS_DEFAULT: { get_param: rtp_msc_json_radius_default }
+                $LOCAL_MGMT_IP_ADDR: { get_param: [ rtp_msc_a_mgmt_ips, { get_param: rtp_msc_a_index } ] }
+                $REMOTE_MGMT_IP_ADDR: { get_param: [ rtp_msc_b_mgmt_ips, { get_param: rtp_msc_a_index } ] }
+                $MGMT_NETWORK_PLEN: { get_param: mgmt_net_plen }
+                $MGMT_NETWORK_DEFAULT_GATEWAY: { get_param: mgmt_net_default_gateway }
+                $VIRT_MGMT_IP_ADDR: { get_param: [ rtp_msc_mgmt_vips, { get_param: rtp_msc_a_index } ] }
+                $VM_NAME_A: { get_param: [ rtp_msc_a_vnfcnames, { get_param: rtp_msc_a_index } ] }
+                $VM_NAME_B: { get_param: [ rtp_msc_b_vnfcnames, { get_param: rtp_msc_a_index } ] }
+                $SYSTEM_NAME: { get_param: [ rtp_msc_vnfcnames, { get_param: rtp_msc_a_index } ] }
+                $COMPLETION_PARAMS: ''

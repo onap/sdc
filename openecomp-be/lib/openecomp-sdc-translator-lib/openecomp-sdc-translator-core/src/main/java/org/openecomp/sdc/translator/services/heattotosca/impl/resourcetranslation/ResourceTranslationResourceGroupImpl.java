@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBase {
@@ -72,7 +73,7 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
       logger.warn("Resource '" + translateTo.getResourceId() + "' of type'"
           + HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.getHeatResource()
           + "' with resourceDef which is not pointing to nested heat file is not supported and "
-               + "will be ignored in the translation ");
+          + "will be ignored in the translation ");
 
       mdcDataDebugMessage.debugExitMessage(null, null);
       return;
@@ -88,17 +89,19 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
                 translateTo.getHeatOrchestrationTemplate(), nestedResource,
                 translateTo.getResourceId(), translateTo.getContext());
     if (substitutionNodeTemplateId.isPresent()) {
-      NodeTemplate substitutionNodeTemplate = DataModelUtil
-          .getNodeTemplate(translateTo.getServiceTemplate(), substitutionNodeTemplateId.get());
-      Map serviceTemplateFilter = (Map<String, Object>) substitutionNodeTemplate.getProperties()
-          .get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
+      NodeTemplate substitutionNodeTemplate =
+          DataModelUtil.getNodeTemplate(translateTo.getServiceTemplate(), substitutionNodeTemplateId.get());
+      if(!Objects.isNull(substitutionNodeTemplate)) {
+        Map serviceTemplateFilter = (Map<String, Object>) substitutionNodeTemplate.getProperties()
+            .get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
 
-      populateServiceTemplateFilterProperties(translateTo, substitutionNodeTemplate,
-          serviceTemplateFilter);
-      handlingIndexVar(translateTo, substitutionNodeTemplate);
-      DataModelUtil
-          .addNodeTemplate(translateTo.getServiceTemplate(), substitutionNodeTemplateId.get(),
-              substitutionNodeTemplate);
+        populateServiceTemplateFilterProperties(translateTo, substitutionNodeTemplate,
+            serviceTemplateFilter);
+        handlingIndexVar(translateTo, substitutionNodeTemplate);
+        DataModelUtil
+            .addNodeTemplate(translateTo.getServiceTemplate(), substitutionNodeTemplateId.get(),
+                substitutionNodeTemplate);
+      }
     }
 
     mdcDataDebugMessage.debugExitMessage(null, null);

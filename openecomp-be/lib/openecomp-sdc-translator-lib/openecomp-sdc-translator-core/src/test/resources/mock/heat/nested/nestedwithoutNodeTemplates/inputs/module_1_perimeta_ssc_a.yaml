@@ -1,0 +1,322 @@
+# Template for instantiating
+#  - 1 x HA SSC pair - A instance
+#
+# During initial instantiation, the Perimeta A instance is configured with
+# minimal configuration, commissioned as an SSC and started.  In addition, it
+# will attempt partnering with the B instance when it becomes availble.
+#
+# During healing, the Perimeta A instance is only configured with sufficient
+# configuration to allow partnering from the B instance (which will complete
+# the configuration).
+#
+# This template assumes that a base template stack has previously been
+# created so that deployment wide resources such as server-groups have been
+# defined.
+#
+heat_template_version: 2014-10-16
+
+description: >
+  HOT template to instantiate an A side Perimeta SSC and optionally partner it with the corresponding B side
+
+parameters:
+  # General VNF parameters
+  vnf_name:
+    type: string
+    description: Unique name for this VNF instance
+  vnf_id:
+    type: string
+    description: ID of VNF
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance
+  # Availability zones
+  availability_zone_0:
+    type: string
+    description: Availability zone for A instances.
+  shared_perimeta_keypair:
+    type: string
+    description: Keypair to use for accessing this Perimeta instance
+  shared_perimeta_sec_groups:
+    type: comma_delimited_list
+    description: List of security groups to add on all interfaces.
+  shared_perimeta_ssc_server_group:
+    type: string
+    description: Server group to use for these VMs
+  # Internal network parameters
+  shared_int_ha_net_id:
+    type: string
+    description: HA network id
+    constraints:
+    - custom_constraint: neutron.network
+
+  # Constraint below is copied from base module 
+  shared_int_ha_net_prefix_len_v4:
+    type: number
+    description: Prefix length of subnet associated with internal HA network 
+    constraints:
+    - range: { min: 0, max: 31 }
+      description: shared_int_ha_net_prefix_len_v4 must be between 0 and 31
+  # Unused network parameters
+  #
+  # This is used for connecting the unused 4th SSC service interface.
+  shared_ssc_unused_net_id:
+    type: string
+    description: Unused network ID
+  # Management network parameters
+  mgmt_net_id:
+    type: string
+    description: Management network ID
+    constraints:
+    - custom_constraint: neutron.network
+  mgmt_net_plen:
+    type: number
+    description: Management network prefix length
+    constraints:
+    - range: { min: 0, max: 32 }
+      description: mgmt_net_plen must be between 0 and 32
+  mgmt_net_default_gateway:
+    type: string
+    description: Default gateway for management network
+  # Trusted/core network parameters
+  trusted_net_id:
+    type: string
+    description: Network ID of Trusted/core network.
+    constraints:
+    - custom_constraint: neutron.network
+  # untrusted parent network parameters
+  shared_int_untrusted_parent_net_id:
+    type: string
+    description: untrusted parent network id
+  # SSC IP addresses on Untrusted/access parent network
+  ssc_untrusted_parent_vip_0:
+    type: string
+    description: Virtual IPv4 address on Untrusted/access parent network for SSC.
+  ssc_a_untrusted_parent_ip_0:
+    type: string
+    description: Fixed IPv4 address on Untrusted/access parent network for SSC A.
+  perimeta_untrusted_num_vlans:
+    type: number
+    description: number of VLANs to connect to the untrusted/access interface
+    constraints:
+    - range: { min: 1, max: 1001 }
+      description: perimeta_untrusted_num_vlans (number of VLANs to connect to the untrusted/access interface) must be between 1 and 1001
+  perimeta_untrusted_vlan_ids:
+    type: comma_delimited_list
+    description: List of VLAN IDs to use on the untrusted/access network
+  perimeta_untrusted_vlan_networks:
+    type: comma_delimited_list
+    description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+  # SSC parameters
+  ssc_flavor_name:
+    type: string
+    description: Flavor to use for creating SSC VM instance
+    constraints:
+    - custom_constraint: nova.flavor
+  ssc_image_name:
+    type: string
+    description: Glance image to use for launching SSC Perimeta instances.
+    constraints:
+    - custom_constraint: glance.image
+  # Hostames of the VIP and servers
+  ssc_vnfcname_0:
+    type: string
+    description: Name of vnfc of SSC. This is the name associated with the perimeta pair and corresponds to the VIP
+    constraints:
+    - allowed_pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,31}$'
+      description: vnfc name must be 32 characters or less and a valid hostname.  Only alphanumeric characters plus hyphen are allowed.
+  ssc_a_vnfcname_0:
+    type: string
+    description: vnfc name of VM A of SSC
+    constraints:
+    - allowed_pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,31}$'
+      description: vnfc name must be 32 characters or less and a valid hostname.  Only alphanumeric characters plus hyphen are allowed.
+  ssc_b_vnfcname_0:
+    type: string
+    description: vnfc name of VM B of SSC
+    constraints:
+    - allowed_pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,31}$'
+      description: vnfc name must be 32 characters or less and a valid hostname.  Only alphanumeric characters plus hyphen are allowed.
+  # SSC names of the physical A instance
+  ssc_a_name_0:
+    type: string
+    description: Name of VM A of SSC
+    constraints:
+    - allowed_pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,29}$'
+      description: VM name must be 30 characters or less.  Only alphanumeric characters plus hyphen are allowed.
+  # SSC IP addresses on management network
+  ssc_mgmt_vip_0:
+    type: string
+    description: Management virtual IP address to use for SSC.
+  ssc_a_mgmt_ip_0:
+    type: string
+    description: Management fixed IP address to use for SSC A.
+  ssc_b_mgmt_ip_0:
+    type: string
+    description: Management fixed IP address to use for SSC B.
+  # SSC IP addresses on internal HA network
+  ssc_a_int_ha_ip_0:
+    type: string
+    description: HA fixed IP address to use for SSC A.
+  ssc_b_int_ha_ip_0:
+    type: string
+    description: HA fixed IP address to use for SSC B.
+  # SSC IP addresses on Trusted/core network
+  ssc_trusted_vip_0:
+    type: string
+    description: Virtual IPv4 address on Trusted/core network for SSC.
+  ssc_a_trusted_ip_0:
+    type: string
+    description: Fixed IPv4 address on Trusted/core network for SSC A.
+  # SSC IP addresses on Untrusted/access network
+  ssc_untrusted_vip_0:
+    type: string
+    description: Virtual IPv4 address on Untrusted/access network for SSC.
+  ssc_untrusted_v6_vip_0:
+    type: string
+    description: Virtual IPv6 address on Untrusted/access network for SSC.
+  ssc_a_untrusted_ip_0:
+    type: string
+    description: Fixed IPv4 address on Untrusted/access network for SSC A.
+  ssc_a_untrusted_v6_ip_0:
+    type: string
+    description: Fixed IPv6 address on Untrusted/access network for SSC A.
+  #
+  # RF virtual IPv4 address on management/Rf network for SSC.  
+  #
+  ssc_rf_vip_0:
+    type: string
+    description: RF virtual IP address to use for SSC.
+
+  ssc_a_rf_ip_0:
+    type: string
+    description: RF fixed IP address to use for SSC A.
+  ntp_server_ip_addrs:
+    type: string
+    description: NTP server IPv4 addresses, separated by commas.  These must be accessible from the management network
+    constraints:
+    - allowed_pattern: "((?:\\d{1,3}\\.){3}\\d{1,3},)*((?:\\d{1,3}\\.){3}\\d{1,3})"
+      description: ntp_server_ip_addrs must be a comma separated list of IPv4 addresses (with no spaces)
+  # Healing or instantiating? Used to build the correct json file
+  ssc_a_json_prefix:
+    type: string
+    description: Json prefix, used to create the correct json file depending on the operation being performed
+    constraints:
+    - allowed_values:
+      - " "
+      - "// healing, not required "
+      description: ssc_a_json_prefix must be set to ' ' or '// healing, not required '
+  # Running V4.1 perimeta or greater. Used to ensure that newer json tags are
+  # not included if the server will not recognize them
+  ssc_json_v41:
+    type: string
+    description: Json prefix, used to ensure that the json tags will be recognised by the server loading them
+    constraints:
+    - allowed_values:
+      - " "
+      - "// older perimeta, parameter not required "
+      description: ssc_json_v41 must be set to ' ' or '//  older perimeta, parameter not required '
+  # Use Radius for user account authentication.
+  ssc_json_use_radius_authentication:
+    type: string
+    description: Json prefix, used to indicate if user account authentication is done externally through Radius
+    constraints:
+    - allowed_values:
+      - " "
+      - "// not using Radius "
+      description: ssc_json_use_radius_authentication must be set to ' ' or '//  not using Radius '
+  # Radius Server address configuration
+  ssc_json_radius_servername:
+    type: string
+    description: IP Address or hostname of RADIUS server
+  # Radius Server port configuration
+  ssc_json_radius_port:
+    type: number
+    description: Port to use to connect to RADIUS server
+    constraints:
+    - range: { min: 0, max: 65535 }
+      description: ssc_json_radius_port must be between 0 and 65535
+  # Radius Server shared secret
+  ssc_json_radius_secret:
+    type: string
+    description: Shared secret to use for the RADIUS Server
+  # Radius Server connection timeout
+  ssc_json_radius_timeout:
+    type: number
+    description: Timeout for connect requests to RADIUS server
+    constraints:
+    - range: { min: 1, max: 60 }
+      description: ssc_json_timeout must be between 1 and 60
+  # Radius Server default user authentication level
+  ssc_json_radius_default:
+    type: string
+    description: Default authentication level for RADIUS users
+    constraints:
+    - allowed_values:
+      - "no-access"
+      - "read-only"
+      - "support"
+      - "restricted-admin"
+      - "admin"
+      description: ssc_json_radius_default must be set to one of 'no-access', 'read-only', 'support', 'restricted-admin' or 'admin'
+
+resources:
+  # Perimeta SSC
+  perimeta_ssc_a:
+    type: module_1_perimeta_swmu_a_child.yaml
+    properties:
+      vnf_name: { get_param: vnf_name }
+      vnf_id: { get_param: vnf_id }
+      vm_role: 'ssc'
+      vf_module_id: { get_param: vf_module_id }
+      ssc_a_name_0: { get_param: ssc_a_name_0 }
+      perimeta_image_name: { get_param: ssc_image_name }
+      perimeta_flavor_name: { get_param: ssc_flavor_name }
+      perimeta_keypair: { get_param: shared_perimeta_keypair }
+      availability_zone_0: { get_param: availability_zone_0 }
+      mgmt_net_id: { get_param: mgmt_net_id }
+      ssc_mgmt_vip_0: { get_param: ssc_mgmt_vip_0 }
+      ssc_a_mgmt_ip_0: { get_param: ssc_a_mgmt_ip_0 }
+      perimeta_sec_groups: { get_param: shared_perimeta_sec_groups }
+      int_ha_net_id: { get_param: shared_int_ha_net_id }
+      int_ha_network_plen: { get_param: shared_int_ha_net_prefix_len_v4 }
+      ssc_a_int_ha_ip_0: { get_param: ssc_a_int_ha_ip_0 }
+      ssc_b_int_ha_ip_0: { get_param: ssc_b_int_ha_ip_0 }
+      trusted_net_id: { get_param: trusted_net_id }
+      ssc_trusted_vip_0: { get_param: ssc_trusted_vip_0 }
+      ssc_a_trusted_ip_0: { get_param: ssc_a_trusted_ip_0 }
+      ssc_untrusted_vip_0: { get_param: ssc_untrusted_vip_0 }
+      ssc_untrusted_v6_vip_0: { get_param: ssc_untrusted_v6_vip_0 }
+      ssc_a_untrusted_ip_0: { get_param: ssc_a_untrusted_ip_0 }
+      ssc_a_untrusted_v6_ip_0: { get_param: ssc_a_untrusted_v6_ip_0 }
+      int_untrusted_parent_net_id: { get_param: shared_int_untrusted_parent_net_id }
+      ssc_untrusted_parent_vip_0: { get_param: ssc_untrusted_parent_vip_0 }
+      ssc_a_untrusted_parent_ip_0: { get_param: ssc_a_untrusted_parent_ip_0 }
+      perimeta_untrusted_num_vlans: { get_param: perimeta_untrusted_num_vlans }
+      perimeta_untrusted_vlan_ids: { get_param: perimeta_untrusted_vlan_ids }
+      perimeta_untrusted_vlan_networks: { get_param: perimeta_untrusted_vlan_networks }
+      perimeta_server_group: { get_param: shared_perimeta_ssc_server_group }
+      ssc_rf_vip_0: { get_param: ssc_rf_vip_0 }
+      ssc_a_rf_ip_0: { get_param: ssc_a_rf_ip_0 }
+      unused_port_net_id: { get_param: shared_ssc_unused_net_id }
+      perimeta_config:
+        str_replace:
+          template: {get_file: ssc_a_template.json}
+          params:
+                $HEALING_OR_INSTANTIATION: { get_param: ssc_a_json_prefix }
+                $NTP_SERVER_IP_ADDRS: { get_param: ntp_server_ip_addrs }
+                $41ORABOVE: { get_param: ssc_json_v41 }
+                $USERADIUSAUTH: { get_param: ssc_json_use_radius_authentication }
+                $RADIUS_SERVERNAME: { get_param: ssc_json_radius_servername }
+                $RADIUS_PORT: { get_param: ssc_json_radius_port }
+                $RADIUS_SECRET: { get_param: ssc_json_radius_secret }
+                $RADIUS_TIMEOUT: { get_param: ssc_json_radius_timeout }
+                $RADIUS_DEFAULT: { get_param: ssc_json_radius_default }
+                $LOCAL_MGMT_IP_ADDR: { get_param: ssc_a_mgmt_ip_0 }
+                $REMOTE_MGMT_IP_ADDR: { get_param: ssc_b_mgmt_ip_0 }
+                $MGMT_NETWORK_PLEN: { get_param: mgmt_net_plen }
+                $MGMT_NETWORK_DEFAULT_GATEWAY: { get_param: mgmt_net_default_gateway }
+                $VIRT_MGMT_IP_ADDR: { get_param: ssc_mgmt_vip_0 }
+                $VM_NAME_A: { get_param: ssc_a_vnfcname_0 }
+                $VM_NAME_B: { get_param: ssc_b_vnfcname_0 }
+                $SYSTEM_NAME: { get_param: ssc_vnfcname_0 }
+                $COMPLETION_PARAMS: ''

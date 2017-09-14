@@ -698,7 +698,7 @@ public class DataModelUtil {
    * @return the metadata
    */
   public static Map<String, String> createMetadata(String templateName, String templateVersion,
-                                        String templateAuthor) {
+                                                   String templateAuthor) {
 
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
@@ -1318,7 +1318,7 @@ public class DataModelUtil {
    * @return the relationship template
    */
   public static Map<String, RelationshipTemplate> getRelationshipTemplates(ServiceTemplate
-                                                                        serviceTemplate) {
+                                                                               serviceTemplate) {
     if (serviceTemplate == null
         || serviceTemplate.getTopology_template() == null
         || serviceTemplate.getTopology_template().getRelationship_templates() == null) {
@@ -1574,5 +1574,10 @@ public class DataModelUtil {
     }
 
     mdcDataDebugMessage.debugExitMessage(null, null);
+  }
+
+  public static boolean isNodeTemplateSectionMissingFromServiceTemplate(ServiceTemplate serviceTemplate){
+    return Objects.isNull(serviceTemplate.getTopology_template() )
+        || MapUtils.isEmpty(serviceTemplate.getTopology_template().getNode_templates());
   }
 }

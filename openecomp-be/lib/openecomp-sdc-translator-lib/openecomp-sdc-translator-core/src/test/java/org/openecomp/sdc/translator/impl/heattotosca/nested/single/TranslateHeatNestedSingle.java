@@ -20,21 +20,39 @@
 
 package org.openecomp.sdc.translator.impl.heattotosca.nested.single;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil;
 import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.BaseResourceTranslationTest;
 
+import java.io.IOException;
+
 public class TranslateHeatNestedSingle extends BaseResourceTranslationTest {
 
-  {
-    inputFilesPath = "/mock/heat/nested/single/inputs";
-    outputFilesPath = "/mock/heat/nested/single/expectedoutputfiles";
+  @Override
+  @Before
+  public void setUp() throws IOException {
+    // do not delete this function. it prevents the superclass setup from running
   }
+
 
   @Test
   public void testTranslate() throws Exception {
+    inputFilesPath = "/mock/heat/nested/single/inputs";
+    outputFilesPath = "/mock/heat/nested/single/expectedoutputfiles";
+
+    initTranslatorAndTranslate();
     testTranslation();
     validateNestedTemplateConsolidationData(TestConstants.TEST_SINGLE_NESTED_RESOURCE);
+  }
+
+  @Test
+  public void testTranslateNestedWithoutNodeTemplates() throws IOException {
+    inputFilesPath = "/mock/heat/nested/nestedwithoutNodeTemplates/inputs";
+    outputFilesPath = "/mock/heat/nested/nestedwithoutNodeTemplates/expectedoutputfiles";
+
+    initTranslatorAndTranslate();
+    testTranslation();
   }
 }

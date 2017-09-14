@@ -1,0 +1,86 @@
+{
+  "name": "xbi test TSBC 0905",
+  "description": "test",
+  "version": "0.1",
+  "data": [
+    {
+      "isBase": false,
+      "file": "module_2_perimeta_rtp_msc_b.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "module_2_perimeta_rtp_msc_b.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "isBase": false,
+      "file": "module_2_perimeta_rtp_msc_a.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "module_2_perimeta_rtp_msc_a.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "isBase": false,
+      "file": "module_1_perimeta_ssc_b.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "module_1_perimeta_ssc_b.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "isBase": false,
+      "file": "module_1_perimeta_ssc_a.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "module_1_perimeta_ssc_a.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "isBase": true,
+      "file": "base_perimeta_deployment_create.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "base_perimeta_deployment_create.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "module_2_perimeta_sw_b_child.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "vlan_subinterface_dual.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "module_2_perimeta_sw_a_child.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "module_1_perimeta_swmu_b_child.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "module_1_perimeta_swmu_a_child.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "custom.ini",
+      "type": "OTHER"
+    }
+  ]
+}

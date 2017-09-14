@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.logging.api.Logger;
@@ -31,11 +32,14 @@ import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.TranslationService;
+
+import java.util.Objects;
 
 public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
 
@@ -46,8 +50,9 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
   public void translate(TranslateTo translateTo) {
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
+    TranslationContext context = translateTo.getContext();
     FileData nestedFileData =
-        HeatToToscaUtil.getFileData(translateTo.getResource().getType(), translateTo.getContext());
+        HeatToToscaUtil.getFileData(translateTo.getResource().getType(), context);
     if (nestedFileData == null) {
       logger.warn("Nested File '" + translateTo.getResource().getType()
           + "' is not exist, therefore, the nested resource with the ID '"
@@ -58,7 +63,7 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
     String substitutionNodeTypeKey = ToscaNodeType.ABSTRACT_NODE_TYPE_PREFIX + "heat."
         + templateName;
 
-    if (!translateTo.getContext().getTranslatedServiceTemplates()
+    if (!context.getTranslatedServiceTemplates()
         .containsKey(translateTo.getResource().getType())) {
 
       //substitution service template
@@ -68,7 +73,7 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
       //global substitution service template
       ServiceTemplate globalSubstitutionServiceTemplate = new HeatToToscaUtil()
           .fetchGlobalSubstitutionServiceTemplate(translateTo.getServiceTemplate(),
-              translateTo.getContext());
+              context);
 
       //substitution node type
       NodeType substitutionNodeType = new ToscaAnalyzerServiceImpl()
@@ -78,14 +83,22 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
           substitutionNodeType);
       //substitution mapping
       HeatToToscaUtil
-          .handleSubstitutionMapping(translateTo.getContext(), substitutionNodeTypeKey,
+          .handleSubstitutionMapping(context, substitutionNodeTypeKey,
               nestedSubstitutionServiceTemplate, substitutionNodeType);
 
       //add new nested service template
-      translateTo.getContext().getTranslatedServiceTemplates()
+      context.getTranslatedServiceTemplates()
           .put(translateTo.getResource().getType(), nestedSubstitutionServiceTemplate);
     }
 
+    ServiceTemplate substitutionServiceTemplate = context.getTranslatedServiceTemplates()
+        .get(translateTo.getResource().getType());
+
+    if(DataModelUtil.isNodeTemplateSectionMissingFromServiceTemplate(substitutionServiceTemplate)){
+      handleSubstitutionServiceTemplateWithoutNodeTemplates(translateTo, context, templateName);
+      mdcDataDebugMessage.debugExitMessage(null, null);
+      return;
+    }
     NodeTemplate substitutionNodeTemplate =
         HeatToToscaUtil.createAbstractSubstitutionNodeTemplate(translateTo, templateName,
             substitutionNodeTypeKey);
@@ -98,6 +111,13 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
     ConsolidationDataUtil.updateNestedNodeTemplateId(translateTo);
 
     mdcDataDebugMessage.debugExitMessage(null, null);
+  }
+
+  private void handleSubstitutionServiceTemplateWithoutNodeTemplates(TranslateTo translateTo,
+                                                                     TranslationContext context,
+                                                                     String templateName) {
+    context.addServiceTemplateWithoutNodeTemplates(templateName);
+    context.getTranslatedServiceTemplates().remove(translateTo.getResource().getType());
   }
 
   private ServiceTemplate createSubstitutionServiceTemplate(TranslateTo translateTo,

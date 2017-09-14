@@ -1,0 +1,735 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: module_2_perimeta_sw_a_child
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.rtp_msc_a:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF Module instance
+    int_ha_network_plen:
+      hidden: false
+      immutable: false
+      type: float
+      description: Prefix length of subnet associated with internal HA network
+      constraints:
+      - in_range:
+        - 0
+        - 31
+    perimeta_config:
+      hidden: false
+      immutable: false
+      type: string
+      description: JSON orchestration template configuration for instance.
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VNF instance
+    perimeta_untrusted_vlan_ids:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of VLAN IDs to use on the untrusted/access network
+      entry_schema:
+        type: string
+    int_ha_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: HA network id
+    perimeta_instance_index:
+      hidden: false
+      immutable: false
+      type: float
+      description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+      constraints:
+      - in_range:
+        - 0
+        - 19
+    perimeta_keypair:
+      hidden: false
+      immutable: false
+      type: string
+      description: Keypair to use for accessing this Perimeta instance
+    perimeta_server_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: Server groups to use for these VMs
+      entry_schema:
+        type: string
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: VNF ID of this deployment
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Availability zone for A instances.
+    rtp_msc_mgmt_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of management virtual IP addresses for all instances.
+      entry_schema:
+        type: string
+    perimeta_sec_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of security groups to add on trusted interfaces.
+      entry_schema:
+        type: string
+    rtp_msc_untrusted_parent_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of Untrusted/access parent virtual IP addresses for all instances.
+      entry_schema:
+        type: string
+    perimeta_untrusted_num_vlans:
+      hidden: false
+      immutable: false
+      type: float
+      description: number of VLANs to connect to the untrusted/access interface
+      constraints:
+      - in_range:
+        - 1
+        - 1001
+    rtp_msc_a_int_ha_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IP addresses to use as HA IPs of A instances.
+      entry_schema:
+        type: string
+    rtp_msc_a_untrusted_parent_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IP addresses to use as Untrusted/access parent fixed IPs of A instances.
+      entry_schema:
+        type: string
+    rtp_msc_a_trusted_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IP addresses to use as Trusted/core fixed IPs of A instances.
+      entry_schema:
+        type: string
+    rtp_msc_untrusted_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of Untrusted/access virtual IP addresses for all instances.
+      entry_schema:
+        type: string
+    trusted_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Trusted/core network UUID
+    rtp_msc_b_int_ha_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IP addresses to use as HA IPs of B instances.
+      entry_schema:
+        type: string
+    rtp_msc_a_mgmt_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IP addresses to use as management IPs of A instances.
+      entry_schema:
+        type: string
+    rtp_msc_a_untrusted_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IP addresses to use as Untrusted/access fixed IPs of A instances.
+      entry_schema:
+        type: string
+    vm_role:
+      hidden: false
+      immutable: false
+      type: string
+      description: Role of these VMs
+    rtp_msc_untrusted_v6_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of Untrusted/access alternate virtual IP addresses for all instances.
+      entry_schema:
+        type: string
+    perimeta_untrusted_vlan_networks:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+      entry_schema:
+        type: string
+    rtp_msc_a_untrusted_v6_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IP addresses to use as Untrusted/access alternate fixed IPs of A instances.
+      entry_schema:
+        type: string
+    perimeta_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Glance image for Perimeta instance
+    mgmt_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Management network id
+    int_untrusted_parent_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: internal Untrusted/access parent network id
+    rtp_msc_a_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+      entry_schema:
+        type: string
+    perimeta_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for creating VM instances
+    rtp_msc_trusted_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of Trusted/core virtual IP addresses for all instances.
+      entry_schema:
+        type: string
+  node_templates:
+    perimeta_rtp_msc_a_trusted_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+          get_input: perimeta_sec_groups
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - rtp_msc_a_trusted_ips
+            - get_input: perimeta_instance_index
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        allowed_address_pairs:
+        - ip_address:
+            get_input:
+            - rtp_msc_trusted_vips
+            - get_input: perimeta_instance_index
+        name:
+          str_replace:
+            template: $VNF_NAME_$VM_trusted_port
+            params:
+              $VM:
+                get_input:
+                - rtp_msc_a_names
+                - get_input: perimeta_instance_index
+              $VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: trusted
+        network:
+          get_input: trusted_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: perimeta_rtp_msc_a_server_0
+          relationship: tosca.relationships.network.BindsTo
+    perimeta_rtp_msc_a_ha_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+          get_input: perimeta_sec_groups
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - rtp_msc_a_int_ha_ips
+            - get_input: perimeta_instance_index
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: $VNF_NAME_$VM_ha_port
+            params:
+              $VM:
+                get_input:
+                - rtp_msc_a_names
+                - get_input: perimeta_instance_index
+              $VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: int_ha
+        network:
+          get_input: int_ha_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: perimeta_rtp_msc_a_server_0
+          relationship: tosca.relationships.network.BindsTo
+    perimeta_rtp_msc_a_untrusted_parent_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+          get_input: perimeta_sec_groups
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - rtp_msc_a_untrusted_parent_ips
+            - get_input: perimeta_instance_index
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        allowed_address_pairs:
+        - ip_address:
+            get_input:
+            - rtp_msc_untrusted_parent_vips
+            - get_input: perimeta_instance_index
+        name:
+          str_replace:
+            template: $VNF_NAME_$VM_untrusted_parent_port
+            params:
+              $VM:
+                get_input:
+                - rtp_msc_a_names
+                - get_input: perimeta_instance_index
+              $VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: int_untrusted_parent
+        network:
+          get_input: int_untrusted_parent_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: perimeta_rtp_msc_a_server_0
+          relationship: tosca.relationships.network.BindsTo
+    perimeta_rtp_msc_a_server_0:
+      type: org.openecomp.resource.vfc.nodes.heat.rtp_msc_a
+      properties:
+        flavor:
+          get_input: perimeta_flavor_name
+        key_name:
+          get_input: perimeta_keypair
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: perimeta_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vm_role:
+            str_replace:
+              template: $ROLE_a
+              params:
+                $ROLE:
+                  get_input: vm_role
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+          msw_template_version: 17.07.04 - 2017-09-01
+        config_drive: true
+        personality:
+          /opt/MetaSwitch/init/custom.ini:
+            get_artifact:
+            - SELF
+            - custom
+        user_data_format: RAW
+        name:
+          get_input:
+          - rtp_msc_a_names
+          - get_input: perimeta_instance_index
+        scheduler_hints:
+          group:
+            get_input:
+            - perimeta_server_groups
+            - get_input: perimeta_instance_index
+      artifacts:
+        custom:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/custom.ini
+    perimeta_rtp_msc_a_mgmt_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+          get_input: perimeta_sec_groups
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - rtp_msc_a_mgmt_ips
+            - get_input: perimeta_instance_index
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        allowed_address_pairs:
+        - ip_address:
+            get_input:
+            - rtp_msc_mgmt_vips
+            - get_input: perimeta_instance_index
+        name:
+          str_replace:
+            template: $VNF_NAME_$VM_mgmt_0_port
+            params:
+              $VM:
+                get_input:
+                - rtp_msc_a_names
+                - get_input: perimeta_instance_index
+              $VNF_NAME:
+                get_input: vnf_name
+        network_role_tag: mgmt
+        network:
+          get_input: mgmt_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: perimeta_rtp_msc_a_server_0
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    module_2_perimeta_sw_a_child_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/module_2_perimeta_sw_a_child.yaml
+        description: |
+          HOT template to instantiate an A side Perimeta RTP MSC instance with 4 vNICs as part of a nested template
+      members:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - perimeta_rtp_msc_a_ha_0_port
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - perimeta_rtp_msc_a_server_0
+      - perimeta_rtp_msc_a_mgmt_0_port
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.module_2_perimeta_sw_a_child
+    capabilities:
+      attachment_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - attachment
+      disk.device.read.requests_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.device.read.requests
+      attachment_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - attachment
+      feature_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - feature
+      disk.device.latency_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.device.latency
+      vcpus_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - vcpus
+      memory.resident_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - memory.resident
+      binding_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - binding
+      network.outgoing.packets.rate_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - network.outgoing.packets.rate
+      network.incoming.bytes_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - network.incoming.bytes
+      attachment_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - attachment
+      cpu_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - cpu
+      disk.capacity_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.capacity
+      network.outgoing.bytes_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - network.outgoing.bytes
+      network.outgoing.bytes.rate_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - network.outgoing.bytes.rate
+      disk.read.bytes_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.read.bytes
+      network.outgoing.bytes.rate_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - network.outgoing.bytes.rate
+      network.outpoing.packets_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - network.outpoing.packets
+      os_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - os
+      feature_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - feature
+      network.incoming.packets_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - network.incoming.packets
+      disk.device.allocation_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.device.allocation
+      disk.write.requests.rate_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.write.requests.rate
+      network.incoming.bytes.rate_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - network.incoming.bytes.rate
+      network.incoming.bytes_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - network.incoming.bytes
+      disk.device.iops_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.device.iops
+      feature_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - feature
+      network.incoming.bytes_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - network.incoming.bytes
+      network.incoming.bytes.rate_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - network.incoming.bytes.rate
+      disk.device.usage_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.device.usage
+      disk.write.bytes_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.write.bytes
+      attachment_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - attachment
+      network.outgoing.bytes_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - network.outgoing.bytes
+      feature_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - feature
+      disk.usage_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.usage
+      binding_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - binding
+      disk.iops_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.iops
+      disk.allocation_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.allocation
+      disk.device.write.bytes.rate_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.device.write.bytes.rate
+      disk.device.capacity_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.device.capacity
+      network.outpoing.packets_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - network.outpoing.packets
+      disk.ephemeral.size_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.ephemeral.size
+      network.incoming.packets_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - network.incoming.packets
+      cpu_util_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - cpu_util
+      network.outgoing.bytes.rate_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - network.outgoing.bytes.rate
+      network.incoming.packets_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - network.incoming.packets
+      scalable_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - scalable
+      host_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - host
+      disk.device.read.requests.rate_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.device.read.requests.rate
+      network.incoming.packets.rate_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - network.incoming.packets.rate
+      network.outgoing.bytes_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - network.outgoing.bytes
+      network.outpoing.packets_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - network.outpoing.packets
+      network.outpoing.packets_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - network.outpoing.packets
+      network.incoming.bytes_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - network.incoming.bytes
+      disk.root.size_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.root.size
+      network.incoming.packets.rate_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - network.incoming.packets.rate
+      network.outgoing.packets.rate_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - network.outgoing.packets.rate
+      disk.write.bytes.rate_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.write.bytes.rate
+      network.outgoing.packets.rate_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - network.outgoing.packets.rate
+      endpoint_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - endpoint
+      feature_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - feature
+      network.incoming.packets_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - network.incoming.packets
+      binding_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - binding
+      disk.device.write.requests.rate_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.device.write.requests.rate
+      binding_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - binding
+      instance_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - instance
+      disk.read.bytes.rate_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.read.bytes.rate
+      binding_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - binding
+      disk.latency_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.latency
+      network.incoming.packets.rate_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - network.incoming.packets.rate
+      disk.device.read.bytes_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.device.read.bytes
+      network.outgoing.packets.rate_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - network.outgoing.packets.rate
+      disk.read.requests_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.read.requests
+      disk.device.read.bytes.rate_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.device.read.bytes.rate
+      disk.device.write.bytes_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.device.write.bytes
+      network.incoming.bytes.rate_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - network.incoming.bytes.rate
+      memory_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - memory
+      network.outgoing.bytes_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - network.outgoing.bytes
+      disk.device.write.requests_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.device.write.requests
+      disk.write.requests_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - disk.write.requests
+      cpu.delta_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - cpu.delta
+      memory.usage_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - memory.usage
+    requirements:
+      link_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - link
+      local_storage_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - local_storage
+      dependency_perimeta_rtp_msc_a_server_0:
+      - perimeta_rtp_msc_a_server_0
+      - dependency
+      dependency_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - dependency
+      dependency_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - dependency
+      dependency_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - dependency
+      link_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - link
+      link_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - link
+      link_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - link
+      dependency_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - dependency

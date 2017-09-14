@@ -1,0 +1,1302 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    ssc_a_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of VM A of SSC
+      constraints:
+      - pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,29}$'
+    mgmt_net_plen:
+      hidden: false
+      immutable: false
+      type: float
+      description: Management network prefix length
+      constraints:
+      - in_range:
+        - 0
+        - 32
+    ssc_b_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of VM B of SSC
+      constraints:
+      - pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,29}$'
+    ssc_b_untrusted_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv4 address on Untrusted/access network for SSC B.
+    ssc_b_untrusted_parent_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv4 address on Untrusted/access parent network for SSC B.
+    perimeta_untrusted_vlan_ids:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of VLAN IDs to use on the untrusted/access network
+      entry_schema:
+        type: string
+    ssc_json_radius_servername:
+      hidden: false
+      immutable: false
+      type: string
+      description: IP Address or hostname of RADIUS server
+    ssc_mgmt_vip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Management virtual IP address to use for SSC.
+    rtp_msc_json_use_radius_authentication:
+      hidden: false
+      immutable: false
+      type: string
+      description: Json prefix, used to indicate if user account authentication is done externally through Radius
+      constraints:
+      - valid_values:
+        - ' '
+        - '// not using Radius '
+    ssc_trusted_vip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Virtual IPv4 address on Trusted/core network for SSC.
+    ssc_untrusted_vip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Virtual IPv4 address on Untrusted/access network for SSC.
+    perimeta_untrusted_num_vlans:
+      hidden: false
+      immutable: false
+      type: float
+      description: number of VLANs to connect to the untrusted/access interface
+      constraints:
+      - in_range:
+        - 1
+        - 1001
+    rtp_msc_mgmt_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of management virtual IP addresses to use for RTP MSC.
+      entry_schema:
+        type: string
+    ssc_a_json_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: Json prefix, used to create the correct json file depending on the operation being performed
+      default: ' '
+      constraints:
+      - valid_values:
+        - ' '
+        - '// healing, not required '
+    rtp_msc_a_untrusted_parent_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IPv4 addresses on Untrusted/access parent network for RTP MSC A.
+      entry_schema:
+        type: string
+    ssc_b_trusted_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv4 address on Trusted/core network for SSC B.
+    shared_perimeta_ssc_server_group:
+      hidden: false
+      immutable: false
+      type: string
+      description: Server group to use for these VMs
+    ssc_json_radius_timeout:
+      hidden: false
+      immutable: false
+      type: float
+      description: Timeout for connect requests to RADIUS server
+      constraints:
+      - in_range:
+        - 1
+        - 60
+    rtp_msc_untrusted_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of virtual IPv4 addresses on Untrusted/access network for RTP MSC.
+      entry_schema:
+        type: string
+    rtp_msc_json_radius_servername:
+      hidden: false
+      immutable: false
+      type: string
+      description: IP Address or hostname of RADIUS server
+    rtp_msc_vnfcnames:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of vnfc names of the RTP MSC. This is the name associated with the perimeta pair and corresponds to the VIP
+      entry_schema:
+        type: string
+    ssc_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Glance image to use for launching SSC Perimeta instances.
+      default: ISBC_SBC_v4.0.40_SU12.qcow2
+      constraints: [
+        ]
+    perimeta_max_rtp_msc_count:
+      hidden: false
+      immutable: false
+      type: float
+      description: Max number of RTP MSCs in a site.
+      default: 8
+      constraints:
+      - in_range:
+        - 0
+        - 20
+    trusted_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network ID of Trusted/core network.
+      constraints: [
+        ]
+    ntp_server_ip_addrs:
+      hidden: false
+      immutable: false
+      type: string
+      description: NTP server IPv4 addresses, separated by commas.  These must be accessible from the management network
+      constraints:
+      - pattern: ((?:\d{1,3}\.){3}\d{1,3},)*((?:\d{1,3}\.){3}\d{1,3})
+    rtp_msc_json_radius_default:
+      hidden: false
+      immutable: false
+      type: string
+      description: Default authentication level for RADIUS users
+      constraints:
+      - valid_values:
+        - no-access
+        - read-only
+        - support
+        - restricted-admin
+        - admin
+    rtp_msc_a_vnfcnames:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of vnfc names of the A of RTP MSC
+      entry_schema:
+        type: string
+    ssc_b_untrusted_v6_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv6 address on Untrusted/access network for SSC B.
+    rtp_msc_b_index:
+      hidden: false
+      immutable: false
+      type: float
+      description: Index of RTP MSC to instantiate / heal.
+      constraints:
+      - in_range:
+        - 0
+        - 19
+    rtp_msc_untrusted_v6_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of virtual IPv6 addresses on Untrusted/access network for RTP MSC.
+      entry_schema:
+        type: string
+    shared_ssc_unused_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unused network ID
+    ssc_b_rf_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: RF fixed IP address to use for SSC B.
+    rtp_msc_b_untrusted_parent_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IPv4 addresses on Untrusted/access parent network for RTP MSC B.
+      entry_schema:
+        type: string
+    ssc_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for creating SSC VM instance
+      default: gv.c8r16d160
+      constraints: [
+        ]
+    mgmt_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Management network ID
+      constraints: [
+        ]
+    ssc_json_radius_secret:
+      hidden: false
+      immutable: false
+      type: string
+      description: Shared secret to use for the RADIUS Server
+    rtp_msc_a_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of names of VM A of RTP MSC
+      entry_schema:
+        type: string
+    shared_int_ha_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: HA network id
+      constraints: [
+        ]
+    ssc_vnfcname_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of vnfc of SSC. This is the name associated with the perimeta pair and corresponds to the VIP
+      constraints:
+      - pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,31}$'
+    rtp_msc_trusted_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of virtual IPv4 addresses on Trusted/core network for RTP MSC.
+      entry_schema:
+        type: string
+    rtp_msc_json_radius_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: Port to use to connect to RADIUS server
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF Module instance
+    ssc_json_radius_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: Port to use to connect to RADIUS server
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    rtp_msc_b_untrusted_v6_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IPv6 addresses on Untrusted/access network for RTP MSC B.
+      entry_schema:
+        type: string
+    rtp_msc_b_mgmt_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of management fixed IP addresses to use for RTP MSC B.
+      entry_schema:
+        type: string
+    ssc_a_int_ha_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: HA fixed IP address to use for SSC A.
+    ssc_b_mgmt_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Management fixed IP address to use for SSC B.
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VNF instance
+    rtp_msc_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for creating RTP MSC VM instance
+      default: gv.c8r16d160
+      constraints: [
+        ]
+    perimeta_int_ha_net_prefix_v4:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPv4 subnet prefix for internal HA network
+      default: 172.26.1.4
+    rtp_msc_b_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of names of VM B of RTP MSC
+      entry_schema:
+        type: string
+    rtp_msc_b_untrusted_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IPv4 addresses on Untrusted/access network for RTP MSC B.
+      entry_schema:
+        type: string
+    perimeta_ssh_key:
+      hidden: false
+      immutable: false
+      type: string
+      description: SSH public key
+      default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDXvSadEWp+nsz3gEAAAAAAAAAAbggQ3t06mqFIauHfUYMiKZ3EUX3jDFf/uGQoNsIZU6SNE/gl3tY4fFvO8Yzj8OY/vstHHvEadbY5aXNE6kd39ik20uRNbeZLT+pRllBwVKBSVnFqG3kBDvNWmBIenlPZzu3Ay0LYT/aDq6fZaz8Mqy8hzhpAAAAAAAAAAEmS/ESYY4UMs/aF2fVGmCLqudSjLpSsyD8lXag2dmeiT7cTdwRkgtDNTULXCPVucolVZwZF9BxXPNK++B+fL/ZY4MrXHXgZYGEElrMCFYkQFb3jQv3XQtxZ6gVByrzgGc9eiU7tkCgY2cVfb22iIs9n Generated-by-Nova
+    rtp_msc_a_index:
+      hidden: false
+      immutable: false
+      type: float
+      description: Index of RTP MSC to instantiate / heal.
+      constraints:
+      - in_range:
+        - 0
+        - 19
+    rtp_msc_json_v41:
+      hidden: false
+      immutable: false
+      type: string
+      description: Json prefix, used to ensure that the json tags will be recognised by the server loading them
+      default: ' '
+      constraints:
+      - valid_values:
+        - ' '
+        - '// older perimeta, parameter not required '
+    shared_perimeta_rtp_msc_server_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: Server group to use for these VMs
+      entry_schema:
+        type: string
+    rtp_msc_a_json_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: Json prefix, used to create the correct json file depending on the operation being performed
+      default: ' '
+      constraints:
+      - valid_values:
+        - ' '
+        - '// healing, not required '
+    ssc_b_int_ha_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: HA fixed IP address to use for SSC B.
+    rtp_msc_b_vnfcnames:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of vnfc names of VM B of RTP MSC
+      entry_schema:
+        type: string
+    ssc_a_trusted_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv4 address on Trusted/core network for SSC A.
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: ID of VNF
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Availability zone for A instances.
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Availability zone for B instances.
+    perimeta_int_ha_net_prefix_len_v4:
+      hidden: false
+      immutable: false
+      type: float
+      description: Prefix length of subnet associated with internal HA network
+      default: 26
+      constraints:
+      - in_range:
+        - 0
+        - 31
+    ssc_a_untrusted_v6_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv6 address on Untrusted/access network for SSC A.
+    rtp_msc_untrusted_parent_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of virtual IPv4 addresses on Untrusted/access parent network for RTP MSC.
+      entry_schema:
+        type: string
+    shared_int_ha_net_prefix_len_v4:
+      hidden: false
+      immutable: false
+      type: float
+      description: Prefix length of subnet associated with internal HA network
+      constraints:
+      - in_range:
+        - 0
+        - 31
+    ssc_rf_vip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: RF virtual IP address to use for SSC.
+    rtp_msc_a_int_ha_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of HA fixed IP addresses to use for RTP MSC A.
+      entry_schema:
+        type: string
+    shared_perimeta_keypair:
+      hidden: false
+      immutable: false
+      type: string
+      description: Keypair to use for accessing this Perimeta instance
+    shared_int_untrusted_parent_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: untrusted parent network id
+    ssc_a_vnfcname_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: vnfc name of VM A of SSC
+      constraints:
+      - pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,31}$'
+    rtp_msc_json_radius_secret:
+      hidden: false
+      immutable: false
+      type: string
+      description: Shared secret to use for the RADIUS Server
+    rtp_msc_b_trusted_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IPv4 addresses on Trusted/core network for RTP MSC B.
+      entry_schema:
+        type: string
+    rtp_msc_a_trusted_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IPv4 addresses on Trusted/core network for RTP MSC A.
+      entry_schema:
+        type: string
+    rtp_msc_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Glance image to use for launching RTP MSC Perimeta instances.
+      default: ISBC_SBC_v4.0.40_SU12.qcow2
+      constraints: [
+        ]
+    ssc_a_mgmt_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Management fixed IP address to use for SSC A.
+    ssc_untrusted_parent_vip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Virtual IPv4 address on Untrusted/access parent network for SSC.
+    rtp_msc_b_int_ha_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of HA fixed IP addresses to use for RTP MSC B.
+      entry_schema:
+        type: string
+    ssc_untrusted_v6_vip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Virtual IPv6 address on Untrusted/access network for SSC.
+    rtp_msc_a_mgmt_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of management fixed IP addresses to use for RTP MSC A.
+      entry_schema:
+        type: string
+    rtp_msc_a_untrusted_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IPv4 addresses on Untrusted/access network for RTP MSC A.
+      entry_schema:
+        type: string
+    ssc_a_rf_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: RF fixed IP address to use for SSC A.
+    ssc_json_use_radius_authentication:
+      hidden: false
+      immutable: false
+      type: string
+      description: Json prefix, used to indicate if user account authentication is done externally through Radius
+      constraints:
+      - valid_values:
+        - ' '
+        - '// not using Radius '
+    ssc_a_untrusted_parent_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv4 address on Untrusted/access parent network for SSC A.
+    perimeta_untrusted_vlan_networks:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+      entry_schema:
+        type: string
+    ssc_a_untrusted_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv4 address on Untrusted/access network for SSC A.
+    rtp_msc_a_untrusted_v6_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of fixed IPv6 addresses on Untrusted/access network for RTP MSC A.
+      entry_schema:
+        type: string
+    mgmt_net_default_gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: Default gateway for management network
+    rtp_msc_json_radius_timeout:
+      hidden: false
+      immutable: false
+      type: float
+      description: Timeout for connect requests to RADIUS server
+      constraints:
+      - in_range:
+        - 1
+        - 60
+    ssc_b_vnfcname_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: vnfc name of VM B of SSC
+      constraints:
+      - pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,31}$'
+    ssc_json_v41:
+      hidden: false
+      immutable: false
+      type: string
+      description: Json prefix, used to ensure that the json tags will be recognised by the server loading them
+      default: ' '
+      constraints:
+      - valid_values:
+        - ' '
+        - '// older perimeta, parameter not required '
+    ssc_json_radius_default:
+      hidden: false
+      immutable: false
+      type: string
+      description: Default authentication level for RADIUS users
+      constraints:
+      - valid_values:
+        - no-access
+        - read-only
+        - support
+        - restricted-admin
+        - admin
+    shared_perimeta_sec_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of security groups to add on all interfaces.
+      entry_schema:
+        type: string
+  node_templates:
+    perimeta_rtp_msc_a:
+      type: org.openecomp.resource.abstract.nodes.heat.module_2_perimeta_sw_a_child
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        int_ha_network_plen:
+          get_input: shared_int_ha_net_prefix_len_v4
+        perimeta_config:
+          str_replace:
+            template:
+              get_artifact:
+              - SELF
+              - rtp_msc_a_template
+            params:
+              $RADIUS_SERVERNAME:
+                get_input: rtp_msc_json_radius_servername
+              $REMOTE_MGMT_IP_ADDR:
+                get_input:
+                - rtp_msc_b_mgmt_ips
+                - get_input: rtp_msc_a_index
+              $VIRT_MGMT_IP_ADDR:
+                get_input:
+                - rtp_msc_mgmt_vips
+                - get_input: rtp_msc_a_index
+              $LOCAL_MGMT_IP_ADDR:
+                get_input:
+                - rtp_msc_a_mgmt_ips
+                - get_input: rtp_msc_a_index
+              $MGMT_NETWORK_DEFAULT_GATEWAY:
+                get_input: mgmt_net_default_gateway
+              $RADIUS_DEFAULT:
+                get_input: rtp_msc_json_radius_default
+              $COMPLETION_PARAMS: ''
+              $RADIUS_PORT:
+                get_input: rtp_msc_json_radius_port
+              $NTP_SERVER_IP_ADDRS:
+                get_input: ntp_server_ip_addrs
+              $HEALING_OR_INSTANTIATION:
+                get_input: rtp_msc_a_json_prefix
+              $RADIUS_SECRET:
+                get_input: rtp_msc_json_radius_secret
+              $RADIUS_TIMEOUT:
+                get_input: rtp_msc_json_radius_timeout
+              $41ORABOVE:
+                get_input: rtp_msc_json_v41
+              $SYSTEM_NAME:
+                get_input:
+                - rtp_msc_vnfcnames
+                - get_input: rtp_msc_a_index
+              $USERADIUSAUTH:
+                get_input: rtp_msc_json_use_radius_authentication
+              $MGMT_NETWORK_PLEN:
+                get_input: mgmt_net_plen
+              $VM_NAME_A:
+                get_input:
+                - rtp_msc_a_vnfcnames
+                - get_input: rtp_msc_a_index
+              $VM_NAME_B:
+                get_input:
+                - rtp_msc_b_vnfcnames
+                - get_input: rtp_msc_a_index
+        vnf_name:
+          get_input: vnf_name
+        perimeta_untrusted_vlan_ids:
+          get_input: perimeta_untrusted_vlan_ids
+        int_ha_net_id:
+          get_input: shared_int_ha_net_id
+        perimeta_instance_index:
+          get_input: rtp_msc_a_index
+        service_template_filter:
+          substitute_service_template: module_2_perimeta_sw_a_childServiceTemplate.yaml
+        perimeta_keypair:
+          get_input: shared_perimeta_keypair
+        perimeta_server_groups:
+          get_input: shared_perimeta_rtp_msc_server_groups
+        vnf_id:
+          get_input: vnf_id
+        availability_zone_0:
+          get_input: availability_zone_0
+        rtp_msc_mgmt_vips:
+          get_input: rtp_msc_mgmt_vips
+        perimeta_sec_groups:
+          get_input: shared_perimeta_sec_groups
+        rtp_msc_untrusted_parent_vips:
+          get_input: rtp_msc_untrusted_parent_vips
+        perimeta_untrusted_num_vlans:
+          get_input: perimeta_untrusted_num_vlans
+        rtp_msc_a_int_ha_ips:
+          get_input: rtp_msc_a_int_ha_ips
+        rtp_msc_a_untrusted_parent_ips:
+          get_input: rtp_msc_a_untrusted_parent_ips
+        rtp_msc_a_trusted_ips:
+          get_input: rtp_msc_a_trusted_ips
+        rtp_msc_untrusted_vips:
+          get_input: rtp_msc_untrusted_vips
+        trusted_net_id:
+          get_input: trusted_net_id
+        rtp_msc_b_int_ha_ips:
+          get_input: rtp_msc_b_int_ha_ips
+        rtp_msc_a_mgmt_ips:
+          get_input: rtp_msc_a_mgmt_ips
+        rtp_msc_a_untrusted_ips:
+          get_input: rtp_msc_a_untrusted_ips
+        vm_role: msc
+        rtp_msc_untrusted_v6_vips:
+          get_input: rtp_msc_untrusted_v6_vips
+        perimeta_untrusted_vlan_networks:
+          get_input: perimeta_untrusted_vlan_networks
+        rtp_msc_a_untrusted_v6_ips:
+          get_input: rtp_msc_a_untrusted_v6_ips
+        perimeta_image_name:
+          get_input: rtp_msc_image_name
+        mgmt_net_id:
+          get_input: mgmt_net_id
+        int_untrusted_parent_net_id:
+          get_input: shared_int_untrusted_parent_net_id
+        rtp_msc_a_names:
+          get_input: rtp_msc_a_names
+        perimeta_flavor_name:
+          get_input: rtp_msc_flavor_name
+        rtp_msc_trusted_vips:
+          get_input: rtp_msc_trusted_vips
+      requirements:
+      - link_perimeta_rtp_msc_a_ha_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: shared_perimeta_internal_ha_net_0
+          relationship: tosca.relationships.network.LinksTo
+      - link_perimeta_rtp_msc_a_untrusted_parent_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: shared_perimeta_int_untrusted_parent_net_0
+          relationship: tosca.relationships.network.LinksTo
+      artifacts:
+        rtp_msc_a_template:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/rtp_msc_a_template.json
+    shared_perimeta_internal_ha_net_0:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_ipam_refs_data:
+        - network_ipam_refs_data_ipam_subnets:
+          - network_ipam_refs_data_ipam_subnets_enable_dhcp: false
+            network_ipam_refs_data_ipam_subnets_subnet:
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+                get_input: perimeta_int_ha_net_prefix_len_v4
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+                get_input: perimeta_int_ha_net_prefix_v4
+        network_name:
+          str_replace:
+            template: $VF_NAME_int_ha_net_0
+            params:
+              $VF_NAME:
+                get_input: vnf_name
+        network_ipam_refs:
+        - UNSUPPORTED_RESOURCE_perimeta_internal_ha_ipam_net_0
+    perimeta_rtp_msc_b:
+      type: org.openecomp.resource.abstract.nodes.heat.module_2_perimeta_sw_b_child
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        int_ha_network_plen:
+          get_input: shared_int_ha_net_prefix_len_v4
+        rtp_msc_b_untrusted_v6_ips:
+          get_input: rtp_msc_b_untrusted_v6_ips
+        rtp_msc_b_mgmt_ips:
+          get_input: rtp_msc_b_mgmt_ips
+        vnf_name:
+          get_input: vnf_name
+        perimeta_untrusted_vlan_ids:
+          get_input: perimeta_untrusted_vlan_ids
+        rtp_msc_b_names:
+          get_input: rtp_msc_b_names
+        rtp_msc_b_untrusted_ips:
+          get_input: rtp_msc_b_untrusted_ips
+        int_ha_net_id:
+          get_input: shared_int_ha_net_id
+        perimeta_instance_index:
+          get_input: rtp_msc_b_index
+        service_template_filter:
+          substitute_service_template: module_2_perimeta_sw_b_childServiceTemplate.yaml
+        perimeta_keypair:
+          get_input: shared_perimeta_keypair
+        perimeta_server_groups:
+          get_input: shared_perimeta_rtp_msc_server_groups
+        vnf_id:
+          get_input: vnf_id
+        availability_zone_1:
+          get_input: availability_zone_1
+        rtp_msc_mgmt_vips:
+          get_input: rtp_msc_mgmt_vips
+        perimeta_sec_groups:
+          get_input: shared_perimeta_sec_groups
+        rtp_msc_untrusted_parent_vips:
+          get_input: rtp_msc_untrusted_parent_vips
+        perimeta_untrusted_num_vlans:
+          get_input: perimeta_untrusted_num_vlans
+        rtp_msc_a_int_ha_ips:
+          get_input: rtp_msc_a_int_ha_ips
+        rtp_msc_b_trusted_ips:
+          get_input: rtp_msc_b_trusted_ips
+        rtp_msc_untrusted_vips:
+          get_input: rtp_msc_untrusted_vips
+        trusted_net_id:
+          get_input: trusted_net_id
+        rtp_msc_b_int_ha_ips:
+          get_input: rtp_msc_b_int_ha_ips
+        vm_role: msc
+        rtp_msc_untrusted_v6_vips:
+          get_input: rtp_msc_untrusted_v6_vips
+        perimeta_untrusted_vlan_networks:
+          get_input: perimeta_untrusted_vlan_networks
+        perimeta_image_name:
+          get_input: rtp_msc_image_name
+        rtp_msc_b_untrusted_parent_ips:
+          get_input: rtp_msc_b_untrusted_parent_ips
+        mgmt_net_id:
+          get_input: mgmt_net_id
+        int_untrusted_parent_net_id:
+          get_input: shared_int_untrusted_parent_net_id
+        perimeta_flavor_name:
+          get_input: rtp_msc_flavor_name
+        rtp_msc_trusted_vips:
+          get_input: rtp_msc_trusted_vips
+      requirements:
+      - link_perimeta_rtp_msc_b_ha_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: shared_perimeta_internal_ha_net_0
+          relationship: tosca.relationships.network.LinksTo
+      - link_perimeta_rtp_msc_b_untrusted_parent_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: shared_perimeta_int_untrusted_parent_net_0
+          relationship: tosca.relationships.network.LinksTo
+    perimeta_ssc_a:
+      type: org.openecomp.resource.abstract.nodes.heat.module_1_perimeta_swmu_a_child
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        ssc_a_name_0:
+          get_input: ssc_a_name_0
+        int_ha_network_plen:
+          get_input: shared_int_ha_net_prefix_len_v4
+        perimeta_server_group:
+          get_input: shared_perimeta_ssc_server_group
+        unused_port_net_id:
+          get_input: shared_ssc_unused_net_id
+        perimeta_config:
+          str_replace:
+            template:
+              get_artifact:
+              - SELF
+              - ssc_a_template
+            params:
+              $RADIUS_SERVERNAME:
+                get_input: ssc_json_radius_servername
+              $REMOTE_MGMT_IP_ADDR:
+                get_input: ssc_b_mgmt_ip_0
+              $VIRT_MGMT_IP_ADDR:
+                get_input: ssc_mgmt_vip_0
+              $LOCAL_MGMT_IP_ADDR:
+                get_input: ssc_a_mgmt_ip_0
+              $MGMT_NETWORK_DEFAULT_GATEWAY:
+                get_input: mgmt_net_default_gateway
+              $RADIUS_DEFAULT:
+                get_input: ssc_json_radius_default
+              $COMPLETION_PARAMS: ''
+              $RADIUS_PORT:
+                get_input: ssc_json_radius_port
+              $NTP_SERVER_IP_ADDRS:
+                get_input: ntp_server_ip_addrs
+              $HEALING_OR_INSTANTIATION:
+                get_input: ssc_a_json_prefix
+              $RADIUS_SECRET:
+                get_input: ssc_json_radius_secret
+              $RADIUS_TIMEOUT:
+                get_input: ssc_json_radius_timeout
+              $41ORABOVE:
+                get_input: ssc_json_v41
+              $SYSTEM_NAME:
+                get_input: ssc_vnfcname_0
+              $USERADIUSAUTH:
+                get_input: ssc_json_use_radius_authentication
+              $MGMT_NETWORK_PLEN:
+                get_input: mgmt_net_plen
+              $VM_NAME_A:
+                get_input: ssc_a_vnfcname_0
+              $VM_NAME_B:
+                get_input: ssc_b_vnfcname_0
+        ssc_a_int_ha_ip_0:
+          get_input: ssc_a_int_ha_ip_0
+        vnf_name:
+          get_input: vnf_name
+        perimeta_untrusted_vlan_ids:
+          get_input: perimeta_untrusted_vlan_ids
+        int_ha_net_id:
+          get_input: shared_int_ha_net_id
+        ssc_b_int_ha_ip_0:
+          get_input: ssc_b_int_ha_ip_0
+        ssc_mgmt_vip_0:
+          get_input: ssc_mgmt_vip_0
+        service_template_filter:
+          substitute_service_template: module_1_perimeta_swmu_a_childServiceTemplate.yaml
+        ssc_a_trusted_ip_0:
+          get_input: ssc_a_trusted_ip_0
+        perimeta_keypair:
+          get_input: shared_perimeta_keypair
+        vnf_id:
+          get_input: vnf_id
+        availability_zone_0:
+          get_input: availability_zone_0
+        ssc_trusted_vip_0:
+          get_input: ssc_trusted_vip_0
+        ssc_untrusted_vip_0:
+          get_input: ssc_untrusted_vip_0
+        perimeta_sec_groups:
+          get_input: shared_perimeta_sec_groups
+        ssc_a_untrusted_v6_ip_0:
+          get_input: ssc_a_untrusted_v6_ip_0
+        perimeta_untrusted_num_vlans:
+          get_input: perimeta_untrusted_num_vlans
+        ssc_rf_vip_0:
+          get_input: ssc_rf_vip_0
+        ssc_a_mgmt_ip_0:
+          get_input: ssc_a_mgmt_ip_0
+        trusted_net_id:
+          get_input: trusted_net_id
+        ssc_untrusted_parent_vip_0:
+          get_input: ssc_untrusted_parent_vip_0
+        ssc_untrusted_v6_vip_0:
+          get_input: ssc_untrusted_v6_vip_0
+        ssc_a_rf_ip_0:
+          get_input: ssc_a_rf_ip_0
+        vm_role: ssc
+        ssc_a_untrusted_parent_ip_0:
+          get_input: ssc_a_untrusted_parent_ip_0
+        perimeta_untrusted_vlan_networks:
+          get_input: perimeta_untrusted_vlan_networks
+        ssc_a_untrusted_ip_0:
+          get_input: ssc_a_untrusted_ip_0
+        perimeta_image_name:
+          get_input: ssc_image_name
+        mgmt_net_id:
+          get_input: mgmt_net_id
+        int_untrusted_parent_net_id:
+          get_input: shared_int_untrusted_parent_net_id
+        perimeta_flavor_name:
+          get_input: ssc_flavor_name
+      requirements:
+      - link_perimeta_ssc_a_ha_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: shared_perimeta_internal_ha_net_0
+          relationship: tosca.relationships.network.LinksTo
+      - link_perimeta_ssc_a_untrusted_parent_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: shared_perimeta_int_untrusted_parent_net_0
+          relationship: tosca.relationships.network.LinksTo
+      - link_perimeta_ssc_a_unused_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: shared_perimeta_unused_net_0
+          relationship: tosca.relationships.network.LinksTo
+      artifacts:
+        ssc_a_template:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/ssc_a_template.json
+    shared_perimeta_rsg:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: $VNF_NAME_shared_perimeta_RSG
+            params:
+              $VNF_NAME:
+                get_input: vnf_name
+        description: Security Group for Perimeta networks
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 65535
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 65535
+          direction: egress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+        - protocol: icmp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          port_range_max: 65535
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          port_range_max: 65535
+          direction: egress
+          port_range_min: 1
+        - protocol: tcp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 65535
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 65535
+          direction: ingress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+        - protocol: icmp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          direction: ingress
+        - protocol: tcp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          port_range_max: 65535
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          port_range_max: 65535
+          direction: ingress
+          port_range_min: 1
+    shared_perimeta_unused_net_0:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        dhcp_enabled: false
+        ip_version: 4
+        network_name:
+          str_replace:
+            template: $VF_NAME_int_unused_net
+            params:
+              $VF_NAME:
+                get_input: vnf_name
+        subnets:
+          shared_perimeta_unused_net_0_subnet:
+            enable_dhcp: false
+            ip_version: 4
+            cidr: 10.0.0.0/29
+            gateway_ip: ''
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: shared_perimeta_unused_net_0
+          relationship: tosca.relationships.DependsOn
+    perimeta_ssc_b:
+      type: org.openecomp.resource.abstract.nodes.heat.module_1_perimeta_swmu_b_child
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        int_ha_network_plen:
+          get_input: shared_int_ha_net_prefix_len_v4
+        perimeta_server_group:
+          get_input: shared_perimeta_ssc_server_group
+        unused_port_net_id:
+          get_input: shared_ssc_unused_net_id
+        ssc_b_name_0:
+          get_input: ssc_b_name_0
+        ssc_a_int_ha_ip_0:
+          get_input: ssc_a_int_ha_ip_0
+        ssc_b_untrusted_ip_0:
+          get_input: ssc_b_untrusted_ip_0
+        ssc_b_mgmt_ip_0:
+          get_input: ssc_b_mgmt_ip_0
+        ssc_b_untrusted_parent_ip_0:
+          get_input: ssc_b_untrusted_parent_ip_0
+        vnf_name:
+          get_input: vnf_name
+        perimeta_untrusted_vlan_ids:
+          get_input: perimeta_untrusted_vlan_ids
+        int_ha_net_id:
+          get_input: shared_int_ha_net_id
+        ssc_b_int_ha_ip_0:
+          get_input: ssc_b_int_ha_ip_0
+        ssc_mgmt_vip_0:
+          get_input: ssc_mgmt_vip_0
+        service_template_filter:
+          substitute_service_template: module_1_perimeta_swmu_b_childServiceTemplate.yaml
+        perimeta_keypair:
+          get_input: shared_perimeta_keypair
+        vnf_id:
+          get_input: vnf_id
+        availability_zone_1:
+          get_input: availability_zone_1
+        ssc_trusted_vip_0:
+          get_input: ssc_trusted_vip_0
+        ssc_untrusted_vip_0:
+          get_input: ssc_untrusted_vip_0
+        perimeta_sec_groups:
+          get_input: shared_perimeta_sec_groups
+        perimeta_untrusted_num_vlans:
+          get_input: perimeta_untrusted_num_vlans
+        ssc_rf_vip_0:
+          get_input: ssc_rf_vip_0
+        ssc_b_trusted_ip_0:
+          get_input: ssc_b_trusted_ip_0
+        trusted_net_id:
+          get_input: trusted_net_id
+        ssc_untrusted_parent_vip_0:
+          get_input: ssc_untrusted_parent_vip_0
+        ssc_untrusted_v6_vip_0:
+          get_input: ssc_untrusted_v6_vip_0
+        ssc_b_untrusted_v6_ip_0:
+          get_input: ssc_b_untrusted_v6_ip_0
+        vm_role: ssc
+        perimeta_untrusted_vlan_networks:
+          get_input: perimeta_untrusted_vlan_networks
+        perimeta_image_name:
+          get_input: ssc_image_name
+        ssc_b_rf_ip_0:
+          get_input: ssc_b_rf_ip_0
+        mgmt_net_id:
+          get_input: mgmt_net_id
+        int_untrusted_parent_net_id:
+          get_input: shared_int_untrusted_parent_net_id
+        perimeta_flavor_name:
+          get_input: ssc_flavor_name
+      requirements:
+      - link_perimeta_ssc_b_untrusted_parent_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: shared_perimeta_int_untrusted_parent_net_0
+          relationship: tosca.relationships.network.LinksTo
+      - link_perimeta_ssc_b_unused_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: shared_perimeta_unused_net_0
+          relationship: tosca.relationships.network.LinksTo
+      - link_perimeta_ssc_b_ha_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: shared_perimeta_internal_ha_net_0
+          relationship: tosca.relationships.network.LinksTo
+    shared_perimeta_int_untrusted_parent_net_0:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        dhcp_enabled: false
+        ip_version: 4
+        network_name:
+          str_replace:
+            template: $VF_NAME_int_untrusted_parent_net
+            params:
+              $VF_NAME:
+                get_input: vnf_name
+        subnets:
+          shared_perimeta_int_untrusted_parent_net_0_subnet:
+            enable_dhcp: false
+            ip_version: 4
+            cidr: 11.0.0.0/24
+            gateway_ip: ''
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: shared_perimeta_int_untrusted_parent_net_0
+          relationship: tosca.relationships.DependsOn
+  groups:
+    base_perimeta_deployment_create_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_perimeta_deployment_create.yaml
+        description: |
+          HOT template to instantiate base shared resources for a Perimeta deployment
+      members:
+      - shared_perimeta_internal_ha_net_0
+      - shared_perimeta_rsg
+      - shared_perimeta_unused_net_0
+      - shared_perimeta_int_untrusted_parent_net_0
+    module_2_perimeta_rtp_msc_a_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/module_2_perimeta_rtp_msc_a.yaml
+        description: |
+          HOT template to instantiate an A side Perimeta RTP MSC and optionally partner it with the corresponding B side
+      members:
+      - perimeta_rtp_msc_a
+    module_1_perimeta_ssc_b_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/module_1_perimeta_ssc_b.yaml
+        description: "HOT template to instantiate an B side Perimeta SSC \n"
+      members:
+      - perimeta_ssc_b
+    shared_perimeta_ssc_server_gp_group:
+      type: tosca.groups.Root
+      members: [
+        ]
+    module_2_perimeta_rtp_msc_b_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/module_2_perimeta_rtp_msc_b.yaml
+        description: "HOT template to instantiate an B side Perimeta RTP MSC \n"
+      members:
+      - perimeta_rtp_msc_b
+    module_1_perimeta_ssc_a_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/module_1_perimeta_ssc_a.yaml
+        description: |
+          HOT template to instantiate an A side Perimeta SSC and optionally partner it with the corresponding B side
+      members:
+      - perimeta_ssc_a
+  outputs:
+    shared_int_ha_net_prefix_len_v4:
+      description: HA internal network IPv4 prefix length
+      value:
+        get_input: perimeta_int_ha_net_prefix_len_v4
+    shared_perimeta_keypair:
+      description: SSH keypair for deployment
+      value: UNSUPPORTED_RESOURCE_shared_perimeta_keypair
+    shared_perimeta_rtp_msc_server_groups:
+      description: Perimeta RTP MSC Server groups
+      value:
+        list_join:
+        - ','
+        - get_attr:
+          - shared_perimeta_rtp_msc_server_gps
+          - refs
+  policies:
+    shared_perimeta_ssc_server_gp_policy:
+      type: org.openecomp.policies.placement.Antilocate
+      properties:
+        name:
+          str_replace:
+            template: $VNF_NAME_shared_ssc_RSG_name_0
+            params:
+              $VNF_NAME:
+                get_input: vnf_name
+        container_type: host
+      targets:
+      - shared_perimeta_ssc_server_gp_group

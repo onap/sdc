@@ -1,0 +1,313 @@
+# Heat template which intstantiates an A side Perimeta SSC instance with
+# 6 vNICs. 
+#
+# This is designed to be included in a higher level template.
+#
+# This template puts the Perimeta configuration in place using userdata
+# injected via OpenStack's ConfigDrive mechanism.
+#
+# Host anti-affinity is achieved using different availability zones for
+# the Perimeta instance or server group anti-affinity if they are in the
+# same availability zone.
+#
+# Template requires Juno or above and has been tested on Kilo.
+#
+heat_template_version: 2014-10-16
+
+description: >
+  HOT template to instantiate an A side Perimeta SSC instance with 6 vNICs as part of a nested template
+
+parameters:
+  vnf_name:
+    type: string
+    description: Unique name for this VNF instance
+  vnf_id:
+    type: string
+    description: VNF ID of this deployment
+  vm_role:
+    type: string
+    description: Role of these VMs
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance
+  ssc_a_name_0:
+    type: string
+    description: Name of Perimeta VM A instance 
+  perimeta_image_name:
+    type: string
+    description: Glance image for Perimeta instance
+  perimeta_flavor_name:
+    type: string
+    description: Flavor to use for creating VM instances
+  perimeta_keypair:
+    type: string
+    description: Keypair to use for accessing this Perimeta instance
+  availability_zone_0:
+    # Can be commented out along with references if always using a single availability zone
+    type: string
+    description: Availability zone for A instances.
+  mgmt_net_id:
+    type: string
+    description: Management network id
+  ssc_mgmt_vip_0:
+    type: string
+    description: Management virtual IP address.
+  ssc_a_mgmt_ip_0:
+    type: string
+    description: Fixed IP address to use as management IP of A instance.
+  int_ha_net_id:
+    type: string
+    description: HA network id
+  int_ha_network_plen:
+  # Constraint copied from base module 
+    type: number
+    description: Prefix length of subnet associated with internal HA network 
+    constraints:
+    - range: { min: 0, max: 31 }
+      description: int_ha_network_plen must be between 0 and 31
+  ssc_a_int_ha_ip_0:
+    type: string
+    description: Fixed IP address to use as HA IP of A instance.
+  ssc_b_int_ha_ip_0:
+    type: string
+    description: Fixed IP address to use as HA IPs of B instance.
+  trusted_net_id:
+    type: string
+    description: Trusted/core network UUID
+  ssc_trusted_vip_0:
+    type: string
+    description: Trusted/core virtual IP address.
+  ssc_a_trusted_ip_0:
+    type: string
+    description: Fixed IP address to use as Trusted/core fixed IPs of A instance.
+  perimeta_sec_groups:
+    type: comma_delimited_list
+    description: List of security groups to add on trusted interfaces.
+  ssc_untrusted_vip_0:
+    type: string
+    description: Untrusted/access virtual IP address
+  ssc_untrusted_v6_vip_0:
+    type: string
+    description: Untrusted/access alternate virtual IP address
+  ssc_a_untrusted_ip_0:
+    type: string
+    description: Fixed IP address to use as Untrusted/access fixed IP of A instance.
+  ssc_a_untrusted_v6_ip_0:
+    type: string
+    description: Fixed IP address to use as Untrusted/access alternate fixed IP of A instance.
+  int_untrusted_parent_net_id:
+    type: string
+    description: internal Untrusted/access parent network id
+  ssc_untrusted_parent_vip_0:
+    type: string
+    description: Untrusted/access parent virtual IP address
+  ssc_a_untrusted_parent_ip_0:
+    type: string
+    description: Fixed IP address to use as Untrusted/access fixed IP of A parent instance.
+  perimeta_untrusted_num_vlans:
+    # constraint copied from parent module
+    type: number
+    description: number of VLANs to connect to the untrusted/access interface
+    constraints:
+    - range: { min: 1, max: 1001 }
+      description: perimeta_untrusted_num_vlans (number of VLANs to connect to the untrusted/access interface) must be between 1 and 1001
+  perimeta_untrusted_vlan_ids:
+    type: comma_delimited_list
+    description: List of VLAN IDs to use on the untrusted/access network
+  perimeta_untrusted_vlan_networks:
+    type: comma_delimited_list
+    description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+  unused_port_net_id:
+    type: string
+    description: Service network unused port network UUID
+  ssc_rf_vip_0:
+    type: string
+    description: RF virtual IP address to use for SSC.
+  ssc_a_rf_ip_0:
+    type: string
+    description: RF fixed IP address to use for SSC A.
+  perimeta_server_group:
+    type: string
+    description: Server group to use for these VMs
+  perimeta_config:
+    type: string
+    description: JSON orchestration template configuration for instance.
+
+resources:
+  # Perimeta management ports
+  perimeta_ssc_a_mgmt_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VNF_NAME_$VM_mgmt_0_port
+          params:
+            $VNF_NAME : { get_param: vnf_name }               
+            $VM: { get_param: ssc_a_name_0 }
+      network: { get_param: mgmt_net_id }
+      fixed_ips:
+        - ip_address: { get_param: ssc_a_mgmt_ip_0 }
+      security_groups: { get_param: perimeta_sec_groups }
+      allowed_address_pairs:
+        - ip_address: { get_param: ssc_mgmt_vip_0 }
+
+  # Perimeta HA ports
+  perimeta_ssc_a_ha_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VNF_NAME_$VM_ha_port
+          params:
+            $VNF_NAME : { get_param: vnf_name }               
+            $VM: { get_param: ssc_a_name_0 }
+      network: { get_param: int_ha_net_id }
+      fixed_ips:
+        - ip_address: { get_param: ssc_a_int_ha_ip_0 }
+      security_groups: { get_param: perimeta_sec_groups }
+
+  # Perimeta Trusted/core service network ports
+  #
+  # Dual stack core network 
+  # - if only IPv4 required comment out second entry in fixed_ips and allowed_addess_pairs parameters.
+  # - if only IPv6 required comment out first entry in fixed_ips and allowed_addess_pairs parameters.
+  perimeta_ssc_a_trusted_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VNF_NAME_$VM_trusted_port
+          params:
+            $VNF_NAME : { get_param: vnf_name }               
+            $VM: { get_param: ssc_a_name_0 }
+      network: { get_param: trusted_net_id }
+      fixed_ips:
+        - ip_address: { get_param: ssc_a_trusted_ip_0 }
+      security_groups: { get_param: perimeta_sec_groups }
+      allowed_address_pairs:
+        - ip_address: { get_param: ssc_trusted_vip_0 }
+
+  # Perimeta Untrusted/access service network ports
+  # VLAN being used on this service interface.  
+  # The parent network port is used to anchor the VLANs and is not used to 
+  # route actual traffic for the service interface. This means that we can  
+  # create a dummy network in the base module and use that instead of the  
+  # real untrusted network 
+
+  perimeta_ssc_a_untrusted_parent_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VNF_NAME_$VM_untrusted_parent_port
+          params:
+            $VNF_NAME : { get_param: vnf_name }               
+            $VM: { get_param: ssc_a_name_0 }
+      network: { get_param: int_untrusted_parent_net_id }
+      fixed_ips:
+        - ip_address: { get_param: ssc_a_untrusted_parent_ip_0 }
+      security_groups: { get_param: perimeta_sec_groups }
+      allowed_address_pairs:
+        - ip_address: { get_param: ssc_untrusted_parent_vip_0 }
+
+
+  # Contrail VLAN subinterfaces
+  perimeta_ssc_a_untrusted_0_vlan_ports:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: perimeta_untrusted_num_vlans }
+      resource_def:
+        type: vlan_subinterface_dual.yaml
+        properties:
+          perimeta_subinterface_instance_index: "%index%"
+          perimeta_subinterface_name_prefix:
+            str_replace:
+              template: $VNF_NAME_$VM_untrusted_port_vlan
+              params:
+                $VNF_NAME : { get_param: vnf_name }               
+                $VM: { get_param: ssc_a_name_0 }
+          perimeta_parent_interface: { get_resource: perimeta_ssc_a_untrusted_parent_0_port }
+          perimeta_mac_address: { get_attr: [ perimeta_ssc_a_untrusted_parent_0_port, mac_address ] }
+          perimeta_ip_0: { get_param: ssc_a_untrusted_ip_0 }
+          perimeta_v6_ip_0: { get_param: ssc_a_untrusted_v6_ip_0 }
+          perimeta_vip_0: { get_param: ssc_untrusted_vip_0 }
+          perimeta_v6_vip_0: { get_param: ssc_untrusted_v6_vip_0 }
+          perimeta_vlan_ids: { get_param: perimeta_untrusted_vlan_ids }
+          perimeta_vlan_networks: { get_param: perimeta_untrusted_vlan_networks }
+
+  # Perimeta Rf service network ports
+  #
+  # This uses the management network and is IPv4 only
+  perimeta_ssc_a_mgmt_1_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VNF_NAME_$VM_mgmt_1_port
+          params:
+            $VNF_NAME : { get_param: vnf_name }               
+            $VM: { get_param: ssc_a_name_0 }
+      network: { get_param: mgmt_net_id }
+      fixed_ips:
+        - ip_address: { get_param: ssc_a_rf_ip_0 }
+      security_groups: { get_param: perimeta_sec_groups }
+      allowed_address_pairs:
+        - ip_address: { get_param: ssc_rf_vip_0 }
+
+  # need the unused port to balance out the NICs
+  perimeta_ssc_a_unused_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VNF_NAME_$VM_unused_port
+          params:
+            $VNF_NAME : { get_param: vnf_name }               
+            $VM: { get_param: ssc_a_name_0 }
+      network: { get_param: unused_port_net_id }
+
+  # Add any additional service ports here.
+
+  perimeta_ssc_a_server_0:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: ssc_a_name_0 }
+      image: { get_param: perimeta_image_name }
+      flavor: { get_param: perimeta_flavor_name }
+      key_name: { get_param: perimeta_keypair }
+      scheduler_hints: { group: { get_param: perimeta_server_group } }
+      metadata:
+        'vnf_name': { get_param: vnf_name }
+        'vnf_id': { get_param: vnf_id }
+        'vm_role':
+            str_replace:
+              template: $ROLE_a
+              params:
+                $ROLE: { get_param: vm_role }
+        'vf_module_id': { get_param: vf_module_id }
+        'msw_template_version': '17.07.04 - 2017-09-01'
+      personality:
+        '/opt/MetaSwitch/init/custom.ini': { get_file: custom.ini }
+      networks:
+        - port: { get_resource: perimeta_ssc_a_mgmt_0_port }
+        - port: { get_resource: perimeta_ssc_a_ha_0_port }
+        - port: { get_resource: perimeta_ssc_a_trusted_0_port }
+        - port: { get_resource: perimeta_ssc_a_untrusted_parent_0_port }
+        - port: { get_resource: perimeta_ssc_a_mgmt_1_port }
+        - port: { get_resource: perimeta_ssc_a_unused_0_port }
+      availability_zone: { get_param: availability_zone_0 }
+      config_drive: True
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: { get_param: perimeta_config }
+          params:
+            $MGMT_MACADDR: { get_attr: [perimeta_ssc_a_mgmt_0_port, mac_address] }
+            $HA_MACADDR: { get_attr: [perimeta_ssc_a_ha_0_port, mac_address] }
+            $TRUSTED_MACADDR: { get_attr: [perimeta_ssc_a_trusted_0_port, mac_address] }
+            $UNTRUSTED_MACADDR: { get_attr: [perimeta_ssc_a_untrusted_parent_0_port, mac_address] } 
+            $SERV3_MACADDR: { get_attr: [perimeta_ssc_a_mgmt_1_port, mac_address] }
+            $SERV4_MACADDR: { get_attr: [perimeta_ssc_a_unused_0_port, mac_address] }
+            $LOCAL_HA_IP_ADDR: { get_param: ssc_a_int_ha_ip_0 }
+            $REMOTE_HA_IP_ADDR: { get_param: ssc_b_int_ha_ip_0 }
+            $HA_NETWORK_PLEN: { get_param: int_ha_network_plen }
