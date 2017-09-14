@@ -7,10 +7,7 @@ import com.amdocs.zusammen.sdk.collaboration.types.CollaborationElement;
 import org.openecomp.core.migration.store.ElementHandler;
 import org.openecomp.core.model.types.ServiceArtifact;
 import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.ElementPropertyName;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.ElementType;
 import org.openecomp.sdc.model.impl.zusammen.StructureElement;
-
 
 import java.util.HashSet;
 import java.util.List;

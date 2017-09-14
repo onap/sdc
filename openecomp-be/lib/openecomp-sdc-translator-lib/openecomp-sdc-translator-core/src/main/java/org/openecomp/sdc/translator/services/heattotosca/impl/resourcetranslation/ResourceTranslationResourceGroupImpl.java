@@ -21,7 +21,6 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
@@ -154,7 +153,7 @@ public class ResourceTranslationResourceGroupImpl extends ResourceTranslationBas
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
-    if (propertyValue instanceof String && propertyValue != null) {
+    if (propertyValue != null && propertyValue instanceof String) {
       if (propertyValue.equals(indexVarValue)) {
         return getNewIndexVarValue();
       }

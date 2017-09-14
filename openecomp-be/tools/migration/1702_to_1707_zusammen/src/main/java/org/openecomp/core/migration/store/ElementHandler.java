@@ -104,7 +104,7 @@ public class ElementHandler {
 
   private static Id getVersionId(String itemId, Version versionId) {
     VersionInfoEntity versionInfo =
-        MigrationMain.versionInfoMap.get(itemId);
+        MigrationMain.getVersionInfoMap().get(itemId);
     if (versionInfo == null) {
       return new Id(versionId.toString());
     }
@@ -121,7 +121,7 @@ public class ElementHandler {
 
   private static boolean isActiveVersion(String itemId, Version versionId) {
     VersionInfoEntity versionInfo =
-        MigrationMain.versionInfoMap.get(itemId);
+        MigrationMain.getVersionInfoMap().get(itemId);
     return versionInfo != null && versionInfo.getActiveVersion().equals(versionId);
   }
 

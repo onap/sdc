@@ -17,6 +17,8 @@ import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
@@ -37,6 +39,7 @@ import static java.util.Objects.nonNull;
 public class ValidationUtil {
 
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private final static Logger log = (Logger) LoggerFactory.getLogger(ValidationUtil.class.getName());
 
   public static void removeExposedResourcesCalledByGetResource(String fileName,
                                                                Set<String> actualExposedResources,
@@ -138,6 +141,7 @@ public class ValidationUtil {
         throw new Exception("The file '" + envFileName + "' has no content");
       }
     } catch (Exception exception) {
+      log.debug("",exception);
       mdcDataDebugMessage.debugExitMessage("file", envFileName);
       return null;
     }
@@ -186,6 +190,7 @@ public class ValidationUtil {
     try {
       manifestContent = JsonUtil.json2Object(manifest.get(), ManifestContent.class);
     } catch (Exception exception) {
+      log.debug("",exception);
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
           LoggerTragetServiceName.VALIDATE_MANIFEST_CONTENT, ErrorLevel.ERROR.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_MANIFEST);

@@ -25,6 +25,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
@@ -84,6 +86,7 @@ public class DataModelUtil {
    */
 
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final Logger logger = LoggerFactory.getLogger(DataModelUtil.class);
 
   /**
    * Add substitution mapping.
@@ -1442,9 +1445,11 @@ public class DataModelUtil {
       ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
       clonedObjectValue = objectInputStream.readObject();
     } catch (NotSerializableException ex) {
-      return getClonedObject(obj, obj.getClass());
+        logger.debug(ex.getMessage(), ex);
+        return getClonedObject(obj, obj.getClass());
     } catch (IOException | ClassNotFoundException ex) {
-      return null;
+        logger.debug(ex.getMessage(), ex);
+        return null;
     }
     return clonedObjectValue;
   }

@@ -67,7 +67,7 @@ public class ExternalArtifactEnricher extends Enricher {
                 externalArtifactEnricherInstance.enrich(this.data);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+          logger.debug("",e);
           logger.error(e.getMessage());
         }
 

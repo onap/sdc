@@ -55,7 +55,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class HeatValidator implements Validator {
-  public static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  public static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   protected static Logger logger = (Logger) LoggerFactory.getLogger(HeatValidator.class);
 
   private static void validateAllRequiredArtifactsExist(String fileName,
@@ -244,7 +244,7 @@ public class HeatValidator implements Validator {
       if (CollectionUtils.isNotEmpty(parametersNames)) {
         for (Map.Entry<String, Object> envEntry : envContent.getParameters().entrySet()) {
           String envParameter = envEntry.getKey();
-          if (!parametersNames.contains(envParameter)) {
+          if (parametersNames != null && !parametersNames.contains(envParameter)) {
             globalContext.addMessage(envFile, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                     .getErrorWithParameters(
                         Messages.ENV_INCLUDES_PARAMETER_NOT_IN_HEAT.getErrorMessage(), envFile,
@@ -278,7 +278,7 @@ public class HeatValidator implements Validator {
     Map<String, Parameter> parametersMap = heatOrchestrationTemplate.getParameters() == null ? null
         : heatOrchestrationTemplate.getParameters();
 
-    if (MapUtils.isNotEmpty(parametersMap)) {
+    if (parametersMap != null && MapUtils.isNotEmpty(parametersMap)) {
       for (Map.Entry<String, Parameter> parameterEntry : parametersMap.entrySet()) {
         Parameter parameter = parameterEntry.getValue();
         String parameterType = parameter.getType();
@@ -343,6 +343,7 @@ public class HeatValidator implements Validator {
     try {
       manifestContent = ValidationUtil.checkValidationPreCondition(globalContext);
     } catch (Exception exception) {
+      logger.debug("",exception);
       return;
     }
     String baseFileName;
@@ -370,7 +371,8 @@ public class HeatValidator implements Validator {
     Set<String> manifestArtifacts = ManifestUtil.getArtifacts(manifestContent);
 
     globalContext.getFiles().stream()
-        .filter(fileName -> manifestArtifacts.contains(fileName) && !artifacts.contains(fileName))
+        .filter(fileName -> isManifestArtifact(manifestArtifacts, fileName) &&
+            isNotArtifact(artifacts, fileName))
         .forEach(fileName -> globalContext.addMessage(fileName, ErrorLevel.WARNING,
             Messages.ARTIFACT_FILE_NOT_REFERENCED.getErrorMessage(),
             LoggerTragetServiceName.CHECK_FOR_ORPHAN_ARTIFACTS,
@@ -378,6 +380,14 @@ public class HeatValidator implements Validator {
 
     mdcDataDebugMessage.debugExitMessage(null, null);
 
+  }
+
+  private boolean isManifestArtifact(Set<String> manifestArtifacts, String fileName) {
+    return manifestArtifacts.contains(fileName);
+  }
+
+  private boolean isNotArtifact(Set<String> artifacts, String fileName) {
+    return !artifacts.contains(fileName);
   }
 
   private void validate(String fileName, String envFileName, String baseFileName,

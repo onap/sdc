@@ -21,12 +21,9 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao;
 
 import org.openecomp.core.dao.BaseDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.util.Collection;
 
 public interface NetworkDao extends VersionableDao, BaseDao<NetworkEntity> {
 

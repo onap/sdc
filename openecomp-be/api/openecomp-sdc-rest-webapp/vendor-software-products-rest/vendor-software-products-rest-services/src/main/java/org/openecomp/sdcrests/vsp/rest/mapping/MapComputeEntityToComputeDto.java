@@ -1,7 +1,6 @@
 package org.openecomp.sdcrests.vsp.rest.mapping;
 
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ListComputeResponse;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComputeDescription;

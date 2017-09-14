@@ -28,13 +28,13 @@ public class ToscaPolicyType {
 
   private static Configuration config = ConfigurationManager.lookup();
 
-  public static String POLICY_TYPE_PREFIX =
+  public static final String POLICY_TYPE_PREFIX =
       config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_POLICY_TYPE);
 
   //TOSCA native types
-  public static String NATIVE_PLACEMENT = "tosca.policy.placement";
+  public static final String NATIVE_PLACEMENT = "tosca.policy.placement";
 
   //Additional types
-  public static String PLACEMENT_ANTILOCATE = POLICY_TYPE_PREFIX + "placement.Antilocate";
-  public static String PLACEMENT_COLOCATE = POLICY_TYPE_PREFIX + "placement.Colocate";
+  public static final String PLACEMENT_ANTILOCATE = POLICY_TYPE_PREFIX + "placement.Antilocate";
+  public static final String PLACEMENT_COLOCATE = POLICY_TYPE_PREFIX + "placement.Colocate";
 }

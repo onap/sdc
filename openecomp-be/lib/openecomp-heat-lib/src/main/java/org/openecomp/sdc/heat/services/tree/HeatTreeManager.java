@@ -23,7 +23,6 @@ package org.openecomp.sdc.heat.services.tree;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -34,6 +33,7 @@ import org.openecomp.sdc.heat.datatypes.structure.Artifact;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -101,8 +101,12 @@ public class HeatTreeManager {
         .values().stream().filter(heatStructureTree -> tree.getHeat().contains(heatStructureTree))
         .forEach(heatStructureTree -> tree.getHeat().remove(heatStructureTree));
 
-    heatContentMap.getFileList().stream().filter(fileName -> !manifestFiles.contains(fileName))
+    heatContentMap.getFileList().stream().filter(fileName -> isNotInManifestFiles(fileName))
         .forEach(fileName -> addTreeOther(fileName));
+  }
+
+  private boolean isNotInManifestFiles(String fileName) {
+    return !manifestFiles.contains(fileName);
   }
 
   private void addTreeOther(String fileName) {
@@ -132,7 +136,9 @@ public class HeatTreeManager {
 
       Set<String> artifactSet = HeatTreeManagerUtil.getArtifactFiles(filename, hot, globalContext);
       addHeatArtifactFiles(fileHeatStructureTree, artifactSet);
-    } catch (Exception ignore) { /* invalid yaml no need to process reference */ }
+    } catch (Exception ignore) { /* invalid yaml no need to process reference */
+      logger.debug("",ignore);
+    }
   }
 
 

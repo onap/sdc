@@ -101,18 +101,18 @@ public class ActionTest {
   private static ActionManager actionManager = new ActionManagerImpl();
   private static ActionDao actionDao = ActionDaoFactory.getInstance().createInterface();
 
-  private static NoSqlDb noSqlDb;
+  private NoSqlDb noSqlDb;
 
-  private static String action1Id;
-  private static String action2Id;
+  private String action1Id;
+  private String action2Id;
 
-  private static String actionUUId;
-  private static Action testArtifactAction;
-  private static String expectedArtifactUUID;
-  private static ActionArtifact actionArtifact;
+  private String actionUUId;
+  private Action testArtifactAction;
+  private String expectedArtifactUUID;
+  private ActionArtifact actionArtifact;
   private Action deleteAction;
 
-  private static String testCreate() {
+  private String testCreate() {
     Action action1 = createAction(ACTION_1);
     Action actionCreated = actionManager.createAction(action1, USER1);
     action1Id = actionCreated.getActionInvariantUuId();
@@ -929,7 +929,8 @@ public class ActionTest {
     byte[] payload = new byte[(int) resourceFile.length()];
     try {
       fileInputStream = new FileInputStream(resourceFile);
-      fileInputStream.read(payload);
+      int count = 0;
+      count = fileInputStream.read(payload);
       fileInputStream.close();
       actionArtifact.setArtifact(payload);
       actionArtifact.setArtifactName(ACTION_TEST_ARTIFACT_FILE_NAME);
@@ -938,7 +939,7 @@ public class ActionTest {
       actionArtifact.setArtifactProtection(ActionArtifactProtection.readWrite.name());
     } catch (IOException exception) {
       logger.error(exception.getMessage());
-      exception.printStackTrace();
+      log.debug("",exception);
     }
 
     //Create action for artifact upload test
@@ -1167,7 +1168,8 @@ public class ActionTest {
     byte[] payload = new byte[(int) resourceFile.length()];
     try {
       fileInputStream = new FileInputStream(resourceFile);
-      fileInputStream.read(payload);
+      int count = 0;
+      count = fileInputStream.read(payload);
       fileInputStream.close();
       updatedArtifact.setArtifactUuId(
           generateActionArtifactUUID(testArtifactAction, ACTION_TEST_ARTIFACT_FILE_NAME));
@@ -1178,7 +1180,7 @@ public class ActionTest {
       updatedArtifact.setArtifactProtection(ActionArtifactProtection.readWrite.name());
     } catch (IOException exception) {
       logger.error(exception.getMessage());
-      exception.printStackTrace();
+      log.debug("",exception);
     }
 
     String actionInvarientUUID = testArtifactAction.getActionInvariantUuId();
@@ -1222,6 +1224,7 @@ public class ActionTest {
     try {
       actionManager.updateArtifact(artifactToUpdate, invariantUUID, USER1);
     } catch (ActionException actionException) {
+      log.debug("",actionException);
       Assert.assertEquals(actionException.getDescription(), ACTION_ARTIFACT_UPDATE_NAME_INVALID);
     }
   }
@@ -1236,6 +1239,7 @@ public class ActionTest {
     try {
       actionManager.updateArtifact(artifactToUpdate, invariantUUID, USER2);
     } catch (ActionException actionException) {
+      log.debug("",actionException);
       Assert
           .assertEquals(actionException.getErrorCode(), ACTION_EDIT_ON_ENTITY_LOCKED_BY_OTHER_USER);
       Assert.assertEquals(actionException.getDescription(),
@@ -1259,6 +1263,7 @@ public class ActionTest {
     try {
       actionManager.updateArtifact(artifactToUpdate, invariantUUID, USER1);
     } catch (ActionException actionExecption) {
+      log.debug("",actionExecption);
       Assert.assertEquals(actionExecption.getDescription(), ACTION_ARTIFACT_UPDATE_READ_ONLY_MSG);
     }
   }

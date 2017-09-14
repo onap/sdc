@@ -22,9 +22,6 @@ package org.openecomp.sdcrests.vendorlicense.types;
 
 import io.swagger.annotations.ApiModel;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
 

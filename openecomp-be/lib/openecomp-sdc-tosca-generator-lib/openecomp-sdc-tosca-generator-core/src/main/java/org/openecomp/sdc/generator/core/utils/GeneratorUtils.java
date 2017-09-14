@@ -18,12 +18,9 @@ import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
+import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
-import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
-import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,8 +34,8 @@ import java.util.Map;
  */
 public class GeneratorUtils {
 
-  public static List<String> supportedCapabilities = new ArrayList<>();
-  public static List<String> supportedRequirements = new ArrayList<>();
+  private static List<String> supportedCapabilities = new ArrayList<>();
+  private static List<String> supportedRequirements = new ArrayList<>();
   protected static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
   static {

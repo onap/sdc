@@ -26,6 +26,8 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -40,6 +42,8 @@ public class ChoiceOrOther<E extends Enum<E>> {
   public static final String CHOICE_OR_OTHER_INVALID_ENUM_MSG =
       "Enum used as part of ChoiceOrOther type must contain the value 'Other'";
   public static final String OTHER_ENUM_VALUE = "Other";
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   @Transient
   private E choice;
@@ -117,9 +121,11 @@ public class ChoiceOrOther<E extends Enum<E>> {
     try {
       choice = E.valueOf(enumClass, result);
     } catch (IllegalArgumentException exception) {
+      log.debug("",exception);
       try {
         choice = E.valueOf(enumClass, OTHER_ENUM_VALUE);
       } catch (IllegalArgumentException ex) {
+        log.debug("",ex);
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
             LoggerTragetServiceName.VALIDATE_CHOICE_VALUE, ErrorLevel.ERROR.name(),
             LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);

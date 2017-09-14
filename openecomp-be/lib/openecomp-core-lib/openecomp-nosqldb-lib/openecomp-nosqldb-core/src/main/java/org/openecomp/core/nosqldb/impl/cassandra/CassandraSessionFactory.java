@@ -20,12 +20,13 @@
 
 package org.openecomp.core.nosqldb.impl.cassandra;
 
-import com.google.common.base.Optional;
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.SSLOptions;
 import com.datastax.driver.core.Session;
+import com.google.common.base.Optional;
 import org.openecomp.core.nosqldb.util.CassandraUtils;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,11 +37,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.Objects;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 public class CassandraSessionFactory {
+
+  private static final Logger log = (Logger) LoggerFactory.getLogger
+      (CassandraSessionFactory.class.getName());
+
   public static Session getSession() {
     return ReferenceHolder.CASSANDRA;
   }
@@ -112,7 +116,7 @@ public class CassandraSessionFactory {
 
       ctx.init(null, tmf.getTrustManagers(), new SecureRandom());
     } catch (Exception exception) {
-      exception.printStackTrace();
+      log.debug("",exception);
     } finally {
       if (tsf != null) {
         tsf.close();

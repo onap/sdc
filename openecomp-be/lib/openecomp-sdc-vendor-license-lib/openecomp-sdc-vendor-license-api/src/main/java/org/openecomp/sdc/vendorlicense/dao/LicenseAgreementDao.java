@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.vendorlicense.dao;
 
-import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 

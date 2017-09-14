@@ -24,14 +24,16 @@ public class LicenseFlavor {
   public boolean equals(Object obj) {
     if (this == obj)
       return true;
-    if (getClass() != obj.getClass())
+    if (obj != null && getClass() != obj.getClass())
       return false;
     LicenseFlavor other = (LicenseFlavor) obj;
-    if (this.feature_group_uuid == null) {
-      if (other.feature_group_uuid != null)
+    if (other != null) {
+      if (this.feature_group_uuid == null) {
+        if (other.feature_group_uuid != null)
+          return false;
+      } else if (!feature_group_uuid.equals(other.feature_group_uuid))
         return false;
-    } else if (!feature_group_uuid.equals(other.feature_group_uuid))
-      return false;
+    }
     return true;
   }
 

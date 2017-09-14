@@ -53,6 +53,7 @@ public class ResourceBaseValidator implements Validator {
     try {
       manifestContent = ValidationUtil.checkValidationPreCondition(globalContext);
     } catch (Exception exception) {
+      logger.debug("",exception);
       return;
     }
 

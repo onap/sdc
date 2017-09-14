@@ -153,6 +153,7 @@ public class ResourceTranslationNeutronSubnetImpl extends ResourceTranslationBas
               Boolean booleanValue = HeatBoolean.eval(defaultVal);
               dhcpParameterDefinition.set_default(booleanValue);
             } catch (CoreException coreException) {
+              logger.debug("",coreException);
               //if value is not valid value for boolean set with dhcp_enabled default value = true
               dhcpParameterDefinition.set_default(true);
               logger.warn("Parameter '" + dhcpEnabledParameterName + "' used for "

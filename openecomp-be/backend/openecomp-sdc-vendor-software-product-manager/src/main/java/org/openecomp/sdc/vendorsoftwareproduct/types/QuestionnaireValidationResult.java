@@ -22,7 +22,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 
-import java.util.List;
 import java.util.Set;
 
 public class QuestionnaireValidationResult {

@@ -25,6 +25,8 @@ import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -64,6 +66,7 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
   private static final String META_FILE_DELIMITER = ":";
   private static final String SPACE = " ";
   private static final String FILE_SEPARATOR = File.separator;
+  private static final Logger logger = LoggerFactory.getLogger(ToscaFileOutputServiceCsarImpl.class);
 
 
   @Override
@@ -146,7 +149,7 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         try {
           zos.closeEntry();
         } catch (IOException ignore) {
-          //do nothing
+            logger.debug(ignore.getMessage(), ignore);
         }
       }
     }
@@ -169,7 +172,7 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         try {
           zos.closeEntry();
         } catch (IOException ignore) {
-          //do nothing
+            logger.debug(ignore.getMessage(), ignore);
         }
       }
     }

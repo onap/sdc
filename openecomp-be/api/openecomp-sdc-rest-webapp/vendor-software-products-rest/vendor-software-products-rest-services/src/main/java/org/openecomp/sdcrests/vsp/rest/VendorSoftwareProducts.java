@@ -20,15 +20,14 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
-import org.openecomp.sdc.vendorsoftwareproduct.types.FileDataStructureDto;
-import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.PackageInfoDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VersionSoftwareProductActionRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspComputeDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspCreationDto;
@@ -38,11 +37,8 @@ import org.springframework.validation.annotation.Validated;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -55,9 +51,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
 @Path("/v1.0/vendor-software-products")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

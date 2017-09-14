@@ -12,8 +12,6 @@ import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.api.ZusammenUtil;
 import org.openecomp.sdc.vendorlicense.dao.LimitDao;
 import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitType;
 import org.openecomp.sdc.versioning.dao.types.Version;

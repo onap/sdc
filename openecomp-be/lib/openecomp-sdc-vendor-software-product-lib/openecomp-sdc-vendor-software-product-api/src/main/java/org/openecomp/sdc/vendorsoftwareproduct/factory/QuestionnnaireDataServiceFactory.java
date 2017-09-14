@@ -22,7 +22,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.factory;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.questionnaire.QuestionnaireDataService;
 
 

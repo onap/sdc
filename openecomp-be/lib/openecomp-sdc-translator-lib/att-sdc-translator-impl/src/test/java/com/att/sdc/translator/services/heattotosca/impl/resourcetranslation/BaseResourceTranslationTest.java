@@ -36,6 +36,8 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestFile;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -85,6 +87,8 @@ public class BaseResourceTranslationTest {
 
   private final String MANIFEST_NAME = SdcCommon.MANIFEST_NAME;
   private String validationFilename = "validationOutput.json";
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   @Before
   public void setUp() throws IOException {
@@ -286,6 +290,7 @@ public class BaseResourceTranslationTest {
       }
 
     } catch (Exception e) {
+      log.debug("",e);
       Assert.fail(e.getMessage());
     }
     return serviceTemplateMap;

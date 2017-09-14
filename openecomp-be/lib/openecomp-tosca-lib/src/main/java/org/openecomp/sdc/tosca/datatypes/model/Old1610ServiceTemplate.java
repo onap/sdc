@@ -1,19 +1,5 @@
 package org.openecomp.sdc.tosca.datatypes.model;
 
-import org.openecomp.sdc.tosca.datatypes.model.ArtifactType;
-import org.openecomp.sdc.tosca.datatypes.model.CapabilityType;
-import org.openecomp.sdc.tosca.datatypes.model.DataType;
-import org.openecomp.sdc.tosca.datatypes.model.GroupType;
-import org.openecomp.sdc.tosca.datatypes.model.Import;
-import org.openecomp.sdc.tosca.datatypes.model.InterfaceType;
-import org.openecomp.sdc.tosca.datatypes.model.NodeType;
-import org.openecomp.sdc.tosca.datatypes.model.PolicyType;
-import org.openecomp.sdc.tosca.datatypes.model.RelationshipType;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.Template;
-import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
-
-import java.util.List;
 import java.util.Map;
 
 /**

@@ -225,6 +225,7 @@ public class HeatValidationService {
         throw new Exception("The file '" + nestedFileName + "' has no content");
       }
     } catch (Exception exception) {
+      logger.debug("",exception);
       mdcDataDebugMessage.debugExitMessage("file", parentFileName);
       return;
     }
@@ -242,6 +243,7 @@ public class HeatValidationService {
         throw new Exception("The file '" + parentFileName + "' has no content");
       }
     } catch (Exception exception) {
+      logger.debug("",exception);
       mdcDataDebugMessage.debugExitMessage("file", parentFileName);
       return;
     }
@@ -374,6 +376,7 @@ public class HeatValidationService {
       }
 
     } catch (Exception exception) {
+      logger.debug("",exception);
       logger.warn("HEAT Validator will not be executed on file " + nestedFileName
           + " due to illegal HEAT format");
 
@@ -462,6 +465,7 @@ public class HeatValidationService {
         throw new Exception("The file '" + resourceType + "' has no content");
       }
     } catch (Exception exception) {
+      logger.debug("",exception);
       return;
     }
     nestedOutputMap = nestedHeatOrchestrationTemplate.getOutputs();
@@ -511,6 +515,7 @@ public class HeatValidationService {
         throw new Exception("The file '" + envFileName + "' has no content");
       }
     } catch (Exception exception) {
+      logger.debug("",exception);
       mdcDataDebugMessage.debugExitMessage("env file", envFileName);
       return null;
     }

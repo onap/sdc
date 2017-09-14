@@ -2,13 +2,16 @@ package org.openecomp.sdc.translator.services.heattotosca.impl.fulltest;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.BaseFullTranslationTest;
 
 import java.io.IOException;
 
 public class UnifiedCompositionMixPatternFullTest extends BaseFullTranslationTest {
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   @Override
   @Before
@@ -55,6 +58,7 @@ public class UnifiedCompositionMixPatternFullTest extends BaseFullTranslationTes
     try {
       testTranslationWithInit();
     }catch(Exception e){
+      log.debug("",e);
       Assert.assertEquals(e.getMessage(), "Resource with id lb_0_int_oam_int_0_port occures more " +
           "than once in different addOn files");
     }

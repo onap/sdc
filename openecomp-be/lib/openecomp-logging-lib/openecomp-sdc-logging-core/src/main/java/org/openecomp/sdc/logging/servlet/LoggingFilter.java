@@ -21,6 +21,8 @@
 package org.openecomp.sdc.logging.servlet;
 
 import org.omg.CORBA.Request;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.slf4j.MDC;
 
 import javax.servlet.*;
@@ -60,6 +62,8 @@ public class LoggingFilter implements Filter {
     // should be cashed to avoid low-level call, but with a timeout to account for IP or FQDN changes
     private static final HostAddressCache HOST_ADDRESS = new HostAddressCache();
     private static final String UNKNOWN = "UNKNOWN";
+
+    private final static Logger log = (Logger) LoggerFactory.getLogger(LoggingFilter.class.getName());
 
     public void destroy() {
     }
@@ -128,6 +132,7 @@ public class LoggingFilter implements Filter {
                         lastUpdated.set(current); // set now to register the attempt even if failed
                         hostAddress = InetAddress.getLocalHost();
                     } catch (UnknownHostException e) {
+                        log.debug("",e);
                         hostAddress = null;
                     }
                 }

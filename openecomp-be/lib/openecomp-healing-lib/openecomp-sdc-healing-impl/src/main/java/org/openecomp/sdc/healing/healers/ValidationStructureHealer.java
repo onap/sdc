@@ -9,6 +9,8 @@ import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.structure.Artifact;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
@@ -34,6 +36,7 @@ public class ValidationStructureHealer implements Healer {
       VendorSoftwareProductInfoDaoFactory.getInstance().createInterface();
   private static final OrchestrationTemplateDao orchestrationTemplateDao =
       OrchestrationTemplateDaoFactory.getInstance().createInterface();
+  private static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
 
   @Override
   public Object heal(Map<String, Object> healingParams) throws Exception {
@@ -51,6 +54,7 @@ public class ValidationStructureHealer implements Healer {
           JsonUtil.json2Object(orchestrationTemplate.getValidationData(), OldValidationStructureTree
               .class);
     } catch (Exception e){
+      logger.debug("",e);
       return Optional.empty();
     }
 

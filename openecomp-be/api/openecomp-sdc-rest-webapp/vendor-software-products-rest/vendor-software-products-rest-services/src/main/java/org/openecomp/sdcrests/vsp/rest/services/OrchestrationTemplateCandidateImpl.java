@@ -27,12 +27,12 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapValidationResponseToDto;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 
 import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
 import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;

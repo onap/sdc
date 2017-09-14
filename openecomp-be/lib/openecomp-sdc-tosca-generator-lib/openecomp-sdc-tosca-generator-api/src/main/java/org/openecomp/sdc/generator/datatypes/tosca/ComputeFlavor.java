@@ -41,21 +41,23 @@ public class ComputeFlavor {
   public boolean equals(Object obj) {
     if (this == obj)
       return true;
-    if (getClass() != obj.getClass())
+    if (obj != null && getClass() != obj.getClass())
       return false;
     ComputeFlavor other = (ComputeFlavor) obj;
-    if (num_cpus != other.num_cpus)
-      return false;
-    if (this.disk_size == null) {
-      if (other.disk_size != null)
+    if(other != null) {
+      if (num_cpus != other.num_cpus)
         return false;
-    } else if (!disk_size.equals(other.disk_size))
-      return false;
-    if (this.mem_size == null) {
-      if (other.mem_size != null)
+      if (this.disk_size == null) {
+        if (other.disk_size != null)
+          return false;
+      } else if (!disk_size.equals(other.disk_size))
         return false;
-    } else if (!mem_size.equals(other.mem_size))
-      return false;
+      if (this.mem_size == null) {
+        if (other.mem_size != null)
+          return false;
+      } else if (!mem_size.equals(other.mem_size))
+        return false;
+    }
     return true;
   }
 

@@ -91,7 +91,6 @@ public class ElementImport {
             versionCassandraLoader.insertElementToVersion(elementEntity);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
-            ex.printStackTrace();
         }
     }
 

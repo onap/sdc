@@ -33,14 +33,13 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslatedHeatResource;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
-import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationEntityType;
+import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFactory;
 import org.openecomp.sdc.translator.services.heattotosca.helper.ResourceTranslationNeutronPortHelper;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

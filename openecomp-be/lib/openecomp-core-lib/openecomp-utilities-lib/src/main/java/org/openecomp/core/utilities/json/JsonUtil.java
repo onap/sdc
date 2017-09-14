@@ -117,6 +117,7 @@ public class JsonUtil {
         try {
           is.close();
         } catch (IOException ignore) {
+          logger.debug("",ignore);
           //do nothing
         }
       }
@@ -136,6 +137,7 @@ public class JsonUtil {
     try {
       return new JsonParser().parse(json).isJsonObject();
     } catch (JsonSyntaxException jse) {
+      logger.debug("",jse);
       return false;
     }
   }

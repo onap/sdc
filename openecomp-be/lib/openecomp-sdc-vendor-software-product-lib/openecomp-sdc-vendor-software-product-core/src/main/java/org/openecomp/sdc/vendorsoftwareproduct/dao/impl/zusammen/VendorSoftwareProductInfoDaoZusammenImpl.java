@@ -1,6 +1,5 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
@@ -22,7 +21,6 @@ import org.openecomp.sdc.versioning.types.VersionableEntityStoreType;
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareProductInfoDao {

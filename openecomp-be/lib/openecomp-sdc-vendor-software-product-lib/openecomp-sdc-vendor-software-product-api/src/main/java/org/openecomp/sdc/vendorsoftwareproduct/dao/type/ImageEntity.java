@@ -9,7 +9,6 @@ import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityId;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Image;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 @Table(keyspace = "dox", name = "vsp_component_image")

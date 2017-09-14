@@ -20,11 +20,8 @@
 
 package org.openecomp.core.model.dao;
 
-import org.openecomp.core.model.types.ServiceArtifact;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.util.List;
 
 public interface ServiceModelDao<M, E> extends VersionableDao {
 

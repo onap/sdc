@@ -47,6 +47,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.services.ManualVspDataCollectionS
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,15 @@ public class ManualVspToscaManagerImplTest {
   @Mock
   private ManualVspDataCollectionService manualVspDataCollectionServiceMock;
   /*
+
+  private static List<String> supportedCapabilities = new ArrayList<>();
+  private static List<String> supportedRequirements = new ArrayList<>();
+
+  static {
+    //TODO : Read from configuration
+    supportedCapabilities.addAll(Arrays.asList("host", "os", "endpoint", "scalable"));
+    supportedRequirements.addAll(Arrays.asList("link"));
+  }
 
   @Test
   public void testGatherVspInformationInvalidVsp() {
@@ -439,9 +449,9 @@ public class ManualVspToscaManagerImplTest {
 
   private void validateSubstitutionCapabilities(Map<String, List<String>> capabilities,
                                                 String componentName) {
-    List<String> supportedCapabilities = GeneratorUtils.supportedCapabilities;
-    Assert.assertEquals(supportedCapabilities.size(), capabilities.size());
-    for (String capability : supportedCapabilities) {
+    List<String> SupportedCapabilities = supportedCapabilities;
+    Assert.assertEquals(SupportedCapabilities.size(), capabilities.size());
+    for (String capability : SupportedCapabilities) {
       String expectedCapabilityId = capability + "_" + componentName;
       Assert.assertEquals(true, capabilities.containsKey(expectedCapabilityId));
       List<String> expectedCapabilityValue = new ArrayList<>(2);
@@ -454,10 +464,10 @@ public class ManualVspToscaManagerImplTest {
 
   private void validateSubstitutionRequirements(Map<String, List<String>> requirements,
                                                 List<Nic> nics) {
-    List<String> supportedRequirements = GeneratorUtils.supportedRequirements;
+    List<String> SupportedRequirements = supportedRequirements;
     for(Nic nic : nics) {
       String nicNodeTemplateId = nic.getName() + PORT_NODE_TEMPLATE_ID_SUFFIX;
-      for (String requirement : supportedRequirements) {
+      for (String requirement : SupportedRequirements) {
         String expectedRequirementId = requirement + "_" + nicNodeTemplateId;
         Assert.assertEquals(true, requirements.containsKey(expectedRequirementId));
         List<String> expectedRequirementValue = new ArrayList<>(2);
@@ -498,11 +508,11 @@ public class ManualVspToscaManagerImplTest {
 
     List<Map<String, RequirementDefinition>> requirements =
         deploymentFlavorNodeType.getRequirements();
-    List<String> supportedRequirements = GeneratorUtils.supportedRequirements;
+    List<String> SupportedRequirements = supportedRequirements;
     for (Nic nic : nics) {
       boolean found = false;
       String nicNodeTemplateId = nic.getName() + PORT_NODE_TEMPLATE_ID_SUFFIX;
-      for (String requirementId : supportedRequirements) {
+      for (String requirementId : SupportedRequirements) {
         String expectedRequirementId = requirementId + "_" + nicNodeTemplateId;
         for (Map<String, RequirementDefinition> requirement : requirements) {
           if (requirement.containsKey(expectedRequirementId)) {
@@ -515,8 +525,8 @@ public class ManualVspToscaManagerImplTest {
     }
 
     Map<String, CapabilityDefinition> capabilities = deploymentFlavorNodeType.getCapabilities();
-    List<String> supportedCapabilities = GeneratorUtils.supportedCapabilities;
-    for (String capabilityId : supportedCapabilities) {
+    List<String> SupportedCapabilities = supportedCapabilities;
+    for (String capabilityId : SupportedCapabilities) {
       String expectedCapabilityId = capabilityId + "_" + componentName;
       Assert.assertEquals (true, capabilities.containsKey(expectedCapabilityId));
     }

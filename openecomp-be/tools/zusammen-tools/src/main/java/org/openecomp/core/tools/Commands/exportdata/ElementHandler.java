@@ -94,7 +94,6 @@ public class ElementHandler {
 
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
-            ex.printStackTrace();
         }
 
     }

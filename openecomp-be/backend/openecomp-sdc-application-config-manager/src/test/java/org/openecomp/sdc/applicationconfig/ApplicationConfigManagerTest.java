@@ -24,6 +24,8 @@ import org.openecomp.core.utilities.applicationconfig.dao.type.ApplicationConfig
 import org.openecomp.core.utilities.applicationconfig.type.ConfigurationData;
 import org.openecomp.sdc.applicationconfig.impl.ApplicationConfigManagerImpl;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -46,6 +48,7 @@ public class ApplicationConfigManagerTest {
     try {
       applicationConfigManager.insertIntoTable(TEST_NAMESPACE_1, TEST_KEY, TEST_VALUE);
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.getMessage(),
           "Error occurred while loading questionnaire schema templates");
     }
@@ -66,11 +69,14 @@ public class ApplicationConfigManagerTest {
       ConfigurationData value =
           applicationConfigManager.getFromTable("not-existing-namespace", "not-existing-key");
     } catch (CoreException ce) {
+      log.debug("",ce);
       Assert.assertEquals(ce.getMessage(),
           "Configuration for namespace not-existing-namespace and key not-existing-key was not found");
     }
 
   }
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   @Test
   public void testGetList() {

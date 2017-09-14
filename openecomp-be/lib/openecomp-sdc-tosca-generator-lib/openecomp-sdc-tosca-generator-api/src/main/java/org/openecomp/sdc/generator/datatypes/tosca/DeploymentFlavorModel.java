@@ -53,29 +53,31 @@ public class DeploymentFlavorModel {
   public boolean equals(Object obj) {
     if (this == obj)
       return true;
-    if (getClass() != obj.getClass())
+    if (obj != null && getClass() != obj.getClass())
       return false;
     DeploymentFlavorModel other = (DeploymentFlavorModel) obj;
-    if (this.sp_part_number == null) {
-      if (other.sp_part_number != null)
+    if (other != null) {
+      if (this.sp_part_number == null) {
+        if (other.sp_part_number != null)
+          return false;
+      } else if (!sp_part_number.equals(other.sp_part_number))
         return false;
-    } else if (!sp_part_number.equals(other.sp_part_number))
-      return false;
-    if (this.vendor_info == null) {
-      if (other.vendor_info != null)
+      if (this.vendor_info == null) {
+        if (other.vendor_info != null)
+          return false;
+      } else if (!vendor_info.equals(other.vendor_info))
         return false;
-    } else if (!vendor_info.equals(other.vendor_info))
-      return false;
-    if (this.compute_flavor == null) {
-      if (other.compute_flavor != null)
+      if (this.compute_flavor == null) {
+        if (other.compute_flavor != null)
+          return false;
+      } else if (!compute_flavor.equals(other.compute_flavor))
         return false;
-    } else if (!compute_flavor.equals(other.compute_flavor))
-      return false;
-    if (this.license_flavor == null) {
-      if (other.license_flavor != null)
+      if (this.license_flavor == null) {
+        if (other.license_flavor != null)
+          return false;
+      } else if (!license_flavor.equals(other.license_flavor))
         return false;
-    } else if (!license_flavor.equals(other.license_flavor))
-      return false;
+    }
     return true;
   }
 

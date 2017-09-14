@@ -82,51 +82,53 @@ public class VspModelInfo {
     if (this == obj) {
       return true;
     }
-    if (getClass() != obj.getClass()) {
+    if (obj != null && getClass() != obj.getClass()) {
       return false;
     }
     VspModelInfo other = (VspModelInfo) obj;
-    if (this.releaseVendor == null) {
-      if (other.releaseVendor != null) {
+    if(other != null) {
+      if (this.releaseVendor == null) {
+        if (other.releaseVendor != null) {
+          return false;
+        }
+      } else if (!releaseVendor.equals(other.releaseVendor)) {
         return false;
       }
-    } else if (!releaseVendor.equals(other.releaseVendor)) {
-      return false;
-    }
-    if (this.components == null) {
-      if (other.components != null) {
+      if (this.components == null) {
+        if (other.components != null) {
+          return false;
+        }
+      } else if (!components.equals(other.components)) {
         return false;
       }
-    } else if (!components.equals(other.components)) {
-      return false;
-    }
-    if (this.allowedFlavors == null) {
-      if (other.allowedFlavors != null) {
+      if (this.allowedFlavors == null) {
+        if (other.allowedFlavors != null) {
+          return false;
+        }
+      } else if (!allowedFlavors.equals(other.allowedFlavors)) {
         return false;
       }
-    } else if (!allowedFlavors.equals(other.allowedFlavors)) {
-      return false;
-    }
-    if (this.multiFlavorVfcImages == null) {
-      if (other.multiFlavorVfcImages != null) {
+      if (this.multiFlavorVfcImages == null) {
+        if (other.multiFlavorVfcImages != null) {
+          return false;
+        }
+      } else if (!multiFlavorVfcImages.equals(other.multiFlavorVfcImages)) {
         return false;
       }
-    } else if (!multiFlavorVfcImages.equals(other.multiFlavorVfcImages)) {
-      return false;
-    }
-    if (this.multiFlavorVfcImages == null) {
-      if (other.multiFlavorVfcImages != null) {
+      if (this.multiFlavorVfcImages == null) {
+        if (other.multiFlavorVfcImages != null) {
+          return false;
+        }
+      } else if (!multiFlavorVfcImages.equals(other.multiFlavorVfcImages)) {
         return false;
       }
-    } else if (!multiFlavorVfcImages.equals(other.multiFlavorVfcImages)) {
-      return false;
-    }
-    if (this.nics == null) {
-      if (other.nics != null) {
+      if (this.nics == null) {
+        if (other.nics != null) {
+          return false;
+        }
+      } else if (!nics.equals(other.nics)) {
         return false;
       }
-    } else if (!nics.equals(other.nics)) {
-      return false;
     }
     return true;
   }

@@ -47,13 +47,12 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapCompositionEntityResponseToDto
 import org.openecomp.sdcrests.vsp.rest.mapping.MapCompositionEntityValidationDataToDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapQuestionnaireResponseToQuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
-import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-import java.util.Collection;
 
 @Named
 @Service("components")

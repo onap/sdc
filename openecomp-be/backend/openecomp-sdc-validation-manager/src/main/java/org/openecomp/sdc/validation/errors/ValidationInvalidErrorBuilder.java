@@ -53,13 +53,13 @@ public class ValidationInvalidErrorBuilder extends BaseErrorBuilder {
   }
 
   private String toString(Map<String, List<ErrorMessage>> errors) {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     errors.entrySet().stream()
         .forEach(entry -> singleErrorToString(sb, entry.getKey(), entry.getValue()));
     return sb.toString();
   }
 
-  private void singleErrorToString(StringBuffer sb, String fileName, List<ErrorMessage> errors) {
+  private void singleErrorToString(StringBuilder sb, String fileName, List<ErrorMessage> errors) {
     sb.append(System.lineSeparator());
     sb.append(fileName);
     sb.append(sb.append(": "));

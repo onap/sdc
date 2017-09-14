@@ -48,7 +48,7 @@ public class EnvironmentTest {
     } else {
       String heatResourceNameSuffix = heatResourceName.substring(lastIndexOfUnderscore + 1);
       try {
-        Integer.parseInt(heatResourceNameSuffix);
+        int heatResourceNameSuffixInt = Integer.parseInt(heatResourceNameSuffix);
         System.out.println(heatResourceName.substring(0, lastIndexOfUnderscore));
       } catch (NumberFormatException ignored) {
         System.out.println(heatResourceName);

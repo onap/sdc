@@ -25,7 +25,7 @@ public class ItemImport {
                 return;
             }
             String itemJson = new String(Files.readAllBytes(itemPath));
-            if (itemJson == null || itemJson.trim().isEmpty()) {
+            if (itemJson.trim().isEmpty()) {
                 return;
             }
             Item item = JsonUtil.json2Object(itemJson, Item.class);
@@ -35,7 +35,6 @@ public class ItemImport {
             System.out.println("Item Created :"+item.getInfo().getName()+" , "+item.getId());
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
-            ex.printStackTrace();
         }
     }
 

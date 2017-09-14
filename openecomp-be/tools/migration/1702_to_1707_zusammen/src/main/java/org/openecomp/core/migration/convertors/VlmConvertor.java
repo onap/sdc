@@ -5,9 +5,7 @@ import com.amdocs.zusammen.datatypes.item.Info;
 import com.amdocs.zusammen.datatypes.item.ItemVersionData;
 import com.amdocs.zusammen.plugin.statestore.cassandra.dao.types.ElementEntityContext;
 import com.amdocs.zusammen.sdk.collaboration.types.CollaborationElement;
-import org.openecomp.core.migration.loaders.VspInformation;
 import org.openecomp.core.migration.store.ElementHandler;
-import org.openecomp.sdc.vendorlicense.dao.impl.zusammen.VendorLicenseModelDaoZusammenImpl;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.StructureElement;
 

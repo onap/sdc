@@ -23,6 +23,8 @@ package org.openecomp.core.utilities.file;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 
 import java.io.ByteArrayInputStream;
@@ -42,6 +44,8 @@ import java.util.zip.ZipInputStream;
  * The type File utils.
  */
 public class FileUtils {
+
+  //private final static Logger log = (Logger) LoggerFactory.getLogger(FileUtils.class.getName());
 
   /**
    * Allows to consume an input stream open against a resource with a given file name.

@@ -24,7 +24,6 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.validation.ValidateString;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 public class NicRequestDto {
 

@@ -1,8 +1,6 @@
 package com.att.sdc.validation.impl.validators;
 
 import com.att.sdc.validation.datatypes.AttHeatResourceTypes;
-import com.att.sdc.validation.datatypes.AttValetGroupTypeValues;
-import org.openecomp.sdc.validation.Validator;
 import org.openecomp.core.validation.api.ValidationManager;
 import org.openecomp.core.validation.factory.ValidationManagerFactory;
 import org.openecomp.core.validation.types.GlobalValidationContext;

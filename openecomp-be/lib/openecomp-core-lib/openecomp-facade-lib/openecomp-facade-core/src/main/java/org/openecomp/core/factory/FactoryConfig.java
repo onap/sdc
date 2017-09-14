@@ -35,7 +35,6 @@ public final class FactoryConfig {
       INSTANCE = CommonMethods.newInstance(
           "org.openecomp.core.factory.FactoriesConfigImpl", FactoriesConfiguration.class);
     } catch (Exception exception) {
-      exception.printStackTrace();
       throw exception;
     }
   }

@@ -29,6 +29,7 @@ public class MapComponentDependencyModelRequestToEntity extends
       ComponentRelationType.valueOf(source.getRelationType());
       target.setRelation(source.getRelationType());
     } catch (IllegalArgumentException exception) {
+      logger.debug("",exception);
       ErrorCode errorCode =
           ComponentDependencyModelErrorBuilder.getInvalidRelationTypeErrorBuilder();
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,

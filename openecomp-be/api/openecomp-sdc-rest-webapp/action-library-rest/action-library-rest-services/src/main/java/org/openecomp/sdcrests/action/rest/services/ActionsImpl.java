@@ -830,7 +830,6 @@ public class ActionsImpl implements Actions {
                                                    HttpServletRequest servletRequest) {
     ListResponseWrapper responseList = null;
     Map<String, String> errorMap = validateRequestHeaders(servletRequest);
-    ;
     Map<String, String> queryParamErrors = validateQueryParam(componentID);
     errorMap.putAll(queryParamErrors);
     if (errorMap.isEmpty()) {
@@ -992,37 +991,36 @@ public class ActionsImpl implements Actions {
     if (StringUtils.isEmpty(requestJSON) || requestJSON.equals(REQUEST_EMPTY_BODY)) {
       requestBodyErrorMap.put(ACTION_INVALID_REQUEST_BODY_CODE, ACTION_REQUEST_BODY_EMPTY);
     } else {
-      switch (requestType) {
-        case ActionConstants.REQUEST_TYPE_CREATE_ACTION:
-        case ActionConstants.REQUEST_TYPE_UPDATE_ACTION:
-          //Semantic request specific validations
-          Action action = JsonUtil.json2Object(requestJSON, Action.class);
-          if (StringUtils.isEmpty(action.getName())) {
-            setErrorValue(ACTION_REQUEST_INVALID_GENERIC_CODE, ACTION_REQUEST_PARAM_NAME,
-                requestBodyErrorMap);
-          } else {
-            //Added check for action name not allowing whitespaces
-            if (action.getName().matches(whitespaceRegex)) {
-              requestBodyErrorMap
-                  .put(ACTION_ARTIFACT_INVALID_NAME_CODE, ACTION_REQUEST_INVALID_NAME);
-            }
-          }
+      if(requestType == ActionConstants.REQUEST_TYPE_CREATE_ACTION){
 
-          if (action.getSupportedModels() != null &&
-              !isIDPresentInMap(action.getSupportedModels(), SUPPORTED_MODELS_VERSION_ID)) {
-            setErrorValue(ACTION_REQUEST_INVALID_GENERIC_CODE,
-                ACTION_REQUEST_PARAM_SUPPORTED_MODELS, requestBodyErrorMap);
+      }
+      if(requestType == ActionConstants.REQUEST_TYPE_UPDATE_ACTION){
+        //Semantic request specific validations
+        Action action = JsonUtil.json2Object(requestJSON, Action.class);
+        if(StringUtils.isEmpty(action.getName())){
+          setErrorValue(ACTION_REQUEST_INVALID_GENERIC_CODE, ACTION_REQUEST_PARAM_NAME,
+              requestBodyErrorMap);
+        } else {
+          //Added check for action names not allowing whitespaces
+          if (action.getName().matches(whitespaceRegex)){
+            requestBodyErrorMap.put(ACTION_ARTIFACT_INVALID_NAME_CODE, ACTION_REQUEST_INVALID_NAME);
           }
-          if (action.getSupportedComponents() != null &&
-              !isIDPresentInMap(action.getSupportedComponents(), SUPPORTED_COMPONENTS_ID)) {
-            setErrorValue(ACTION_REQUEST_INVALID_GENERIC_CODE,
-                ACTION_REQUEST_PARAM_SUPPORTED_COMPONENTS, requestBodyErrorMap);
-          }
-          if (action.getArtifacts() != null) {
-            setErrorValue(ACTION_UPDATE_NOT_ALLOWED_CODE, ACTION_REQUEST_ARTIFACT_OPERATION_ALLOWED,
-                requestBodyErrorMap);
-          }
-          break;
+        }
+
+        if(action.getSupportedModels() != null && !isIDPresentInMap(action.getSupportedModels(),
+            SUPPORTED_MODELS_VERSION_ID)){
+          setErrorValue(ACTION_REQUEST_INVALID_GENERIC_CODE,
+              ACTION_REQUEST_PARAM_SUPPORTED_MODELS, requestBodyErrorMap);
+        }
+        if(action.getSupportedComponents() != null && !isIDPresentInMap(action
+            .getSupportedComponents(), SUPPORTED_COMPONENTS_ID)){
+          setErrorValue(ACTION_REQUEST_INVALID_GENERIC_CODE,
+              ACTION_REQUEST_PARAM_SUPPORTED_MODELS, requestBodyErrorMap);
+        }
+        if(action.getArtifacts() != null){
+          setErrorValue(ACTION_UPDATE_NOT_ALLOWED_CODE,
+              ACTION_REQUEST_ARTIFACT_OPERATION_ALLOWED, requestBodyErrorMap);
+        }
       }
 
     }
@@ -1037,11 +1035,8 @@ public class ActionsImpl implements Actions {
     if (errorMessage != null) {
       message = errorMessage + ", " + message;
     } else {
-      switch (key) {
-        case ACTION_REQUEST_INVALID_GENERIC_CODE:
-          message = ACTION_REQUEST_MISSING_MANDATORY_PARAM + message;
-          break;
-      }
+      if(key == ACTION_REQUEST_INVALID_GENERIC_CODE)
+        message = ACTION_REQUEST_MISSING_MANDATORY_PARAM + message;
     }
     errorMap.put(key, message);
   }

@@ -11,14 +11,12 @@ import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
 import org.openecomp.sdc.vendorlicense.types.VersionedVendorLicenseModel;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -55,6 +53,7 @@ public class VlmVersionHealer implements Healer {
       vendorLicenseModel =
           vendorLicenseFacade.getVendorLicenseModel(vspDetails.getVendorId(), null, user);
     } catch (Exception e){
+      logger.debug("" + e);
       logger.debug("No Vlm was found for Vsp " + vspDetails.getName());
       return Optional.empty();
     }

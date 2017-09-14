@@ -23,19 +23,18 @@ package org.openecomp.sdc.translator.services.heattotosca.helper;
 import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.common.utils.CommonUtil;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Output;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.ResourceFileDataAndIDs;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
-import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationBase;
 
 import java.util.ArrayList;

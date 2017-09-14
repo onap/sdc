@@ -638,7 +638,7 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
 
     NodeTemplate computeNodeTemplate = new NodeTemplate();
     computeNodeTemplate.setType(computeNodeTypeId);
-    if (!computeNodeTemplateProperties.isEmpty()) {
+    if (computeNodeTemplateProperties != null && !computeNodeTemplateProperties.isEmpty()) {
       computeNodeTemplate.setProperties(computeNodeTemplateProperties);
     }
     String computeNodeTemplateId = translateTo.getTranslatedId();

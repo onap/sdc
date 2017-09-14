@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.enrichment.impl.tosca;
 
-import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.inter.Enricher;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;

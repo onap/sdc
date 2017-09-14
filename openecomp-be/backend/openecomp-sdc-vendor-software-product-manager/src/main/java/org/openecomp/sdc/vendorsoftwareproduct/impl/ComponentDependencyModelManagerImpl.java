@@ -12,7 +12,6 @@ import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentDependencyModelManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
-import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.ComponentDependencyModelErrorBuilder;

@@ -3,7 +3,6 @@ package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorlicense.types.LimitEntityDto;
-import org.openecomp.sdcrests.vendorlicense.types.LimitRequestDto;
 
 public class MapLimitEntityToLimitDto extends MappingBase<LimitEntity, LimitEntityDto> {
 

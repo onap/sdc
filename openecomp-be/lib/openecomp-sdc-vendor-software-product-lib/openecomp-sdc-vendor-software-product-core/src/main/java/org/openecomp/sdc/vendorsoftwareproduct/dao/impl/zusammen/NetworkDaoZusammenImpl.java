@@ -14,7 +14,6 @@ import org.openecomp.core.zusammen.api.ZusammenUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collection;

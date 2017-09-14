@@ -26,7 +26,6 @@ import org.openecomp.sdc.health.HealthCheckManagerFactory;
 import org.openecomp.sdc.health.data.HealthCheckResult;
 import org.openecomp.sdc.health.data.HealthCheckStatus;
 import org.openecomp.sdc.health.data.HealthInfo;
-import org.openecomp.sdc.health.data.SiteMode;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.MdcUtil;
@@ -36,10 +35,10 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collection;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 
 @Named
 @Service("healthCheck")

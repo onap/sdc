@@ -48,7 +48,7 @@ import java.util.Optional;
 
 
 public class ContrailValidator implements Validator {
-  public static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  public static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   protected static Logger logger = (Logger) LoggerFactory.getLogger(ContrailValidator.class);
 
   @Override
@@ -59,6 +59,7 @@ public class ContrailValidator implements Validator {
     try {
       manifestContent = ValidationUtil.checkValidationPreCondition(globalContext);
     } catch (Exception exception) {
+      logger.debug("",exception);
       return;
     }
     Map<String, FileData.Type> fileTypeMap = ManifestUtil.getFileTypeMap(manifestContent);
@@ -148,6 +149,7 @@ public class ContrailValidator implements Validator {
       heatOrchestrationTemplate =
           new YamlUtil().yamlToObject(fileContent, HeatOrchestrationTemplate.class);
     } catch (Exception ignored) {
+      logger.debug("",ignored);
       // the HeatValidator should handle file that is failing to parse
       mdcDataDebugMessage.debugExitMessage("file", fileName);
       return Optional.empty();

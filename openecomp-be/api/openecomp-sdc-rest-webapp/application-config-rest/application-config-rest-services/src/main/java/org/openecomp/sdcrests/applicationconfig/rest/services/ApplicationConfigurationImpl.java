@@ -24,7 +24,6 @@ import org.openecomp.core.utilities.applicationconfig.dao.type.ApplicationConfig
 import org.openecomp.core.utilities.applicationconfig.type.ConfigurationData;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.applicationconfig.ApplicationConfigManager;
-import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerServiceName;

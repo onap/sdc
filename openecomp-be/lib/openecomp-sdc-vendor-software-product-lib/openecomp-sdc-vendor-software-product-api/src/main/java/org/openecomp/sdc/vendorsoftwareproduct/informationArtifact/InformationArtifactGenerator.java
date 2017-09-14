@@ -23,7 +23,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.informationArtifact;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 /**
  * @author katyr

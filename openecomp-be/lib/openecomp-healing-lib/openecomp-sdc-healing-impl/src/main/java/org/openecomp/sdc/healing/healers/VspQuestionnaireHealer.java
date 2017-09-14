@@ -23,9 +23,9 @@ package org.openecomp.sdc.healing.healers;
 import org.openecomp.core.utilities.json.JsonSchemaDataGenerator;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.healing.interfaces.Healer;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
@@ -43,6 +43,8 @@ public class VspQuestionnaireHealer implements Healer {
   private static final VendorSoftwareProductInfoDao vspInfoDao =
       VendorSoftwareProductInfoDaoFactory.getInstance().createInterface();
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   public VspQuestionnaireHealer() {
   }
@@ -80,6 +82,7 @@ public class VspQuestionnaireHealer implements Healer {
       questionnaireData = new JsonSchemaDataGenerator(generatedSchema).generateData();
       vspInfoDao.updateQuestionnaireData(vspId, version, questionnaireData);
     }catch(Exception e){
+      log.debug("", e);
       return Optional.empty();
     }
     mdcDataDebugMessage.debugExitMessage(null, null);

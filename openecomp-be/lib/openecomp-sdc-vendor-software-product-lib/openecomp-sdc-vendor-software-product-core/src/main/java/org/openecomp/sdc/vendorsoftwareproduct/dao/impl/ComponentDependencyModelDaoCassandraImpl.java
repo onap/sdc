@@ -13,8 +13,6 @@ import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.UniqueValueMetadata;

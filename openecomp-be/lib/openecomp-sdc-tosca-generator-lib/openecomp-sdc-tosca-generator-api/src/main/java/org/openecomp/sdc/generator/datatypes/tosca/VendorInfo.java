@@ -32,19 +32,21 @@ public class VendorInfo {
   public boolean equals(Object obj) {
     if (this == obj)
       return true;
-    if (getClass() != obj.getClass())
+    if (obj != null && getClass() != obj.getClass())
       return false;
     VendorInfo other = (VendorInfo) obj;
-    if (this.manufacturer_reference_number == null) {
-      if (other.manufacturer_reference_number != null)
+    if (other != null) {
+      if (this.manufacturer_reference_number == null) {
+        if (other.manufacturer_reference_number != null)
+          return false;
+      } else if (!manufacturer_reference_number.equals(other.manufacturer_reference_number))
         return false;
-    } else if (!manufacturer_reference_number.equals(other.manufacturer_reference_number))
-      return false;
-    if (this.vendor_model == null) {
-      if (other.vendor_model != null)
+      if (this.vendor_model == null) {
+        if (other.vendor_model != null)
+          return false;
+      } else if (!vendor_model.equals(other.vendor_model))
         return false;
-    } else if (!vendor_model.equals(other.vendor_model))
-      return false;
+    }
     return true;
   }
 

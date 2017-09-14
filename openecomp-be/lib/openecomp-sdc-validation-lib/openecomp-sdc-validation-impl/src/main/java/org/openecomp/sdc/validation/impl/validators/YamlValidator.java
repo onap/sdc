@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class YamlValidator implements Validator {
-  public static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  public static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static final Logger logger = (Logger) LoggerFactory.getLogger(YamlValidator.class);
 
   @Override

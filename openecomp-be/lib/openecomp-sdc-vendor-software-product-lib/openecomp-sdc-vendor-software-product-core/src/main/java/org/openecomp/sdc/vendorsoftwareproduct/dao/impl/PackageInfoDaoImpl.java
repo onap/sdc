@@ -29,7 +29,6 @@ import com.datastax.driver.mapping.annotations.Query;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
-import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;

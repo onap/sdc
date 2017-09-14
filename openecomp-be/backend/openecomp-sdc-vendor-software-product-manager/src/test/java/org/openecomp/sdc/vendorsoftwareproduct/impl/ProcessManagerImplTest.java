@@ -11,6 +11,8 @@ import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessType;
@@ -35,6 +37,7 @@ import static org.mockito.Matchers.eq;
 
 public class ProcessManagerImplTest {
 
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   private static final String USER1 = "processesTestUser";
   private static final String VSP_ID = "vsp";
@@ -315,6 +318,7 @@ public class ProcessManagerImplTest {
       processManager.getProcess(vspId, version, componentId, processId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -327,6 +331,7 @@ public class ProcessManagerImplTest {
           .updateProcess(new ProcessEntity(vspId, version, componentId, processId), user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -337,6 +342,7 @@ public class ProcessManagerImplTest {
       processManager.getProcessArtifact(vspId, version, componentId, processId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -350,6 +356,7 @@ public class ProcessManagerImplTest {
               vspId, version, componentId, processId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.error("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -360,6 +367,7 @@ public class ProcessManagerImplTest {
       processManager.deleteProcessArtifact(vspId, VERSION, componentId, processId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }

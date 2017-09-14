@@ -340,14 +340,15 @@ public class ConsolidationDataUtil {
     if(Objects.isNull(entityConsolidationData)){
       return;
     }
+    if (entityConsolidationData != null) {
+      if (entityConsolidationData.getNodesConnectedOut() == null) {
+        entityConsolidationData.setNodesConnectedOut(new HashMap<>());
+      }
 
-    if (entityConsolidationData.getNodesConnectedOut() == null) {
-      entityConsolidationData.setNodesConnectedOut(new HashMap<>());
+      entityConsolidationData.getNodesConnectedOut()
+          .computeIfAbsent(nodeTemplateId, k -> new ArrayList<>())
+          .add(requirementAssignmentData);
     }
-
-    entityConsolidationData.getNodesConnectedOut()
-        .computeIfAbsent(nodeTemplateId, k -> new ArrayList<>())
-        .add(requirementAssignmentData);
   }
 
   /**
@@ -398,14 +399,16 @@ public class ConsolidationDataUtil {
           serviceTemplate, translateTo.getHeatFileName(), dependentNodeTemplateId);
     }
 
-    if (entityConsolidationData.getNodesConnectedIn() == null) {
-      entityConsolidationData.setNodesConnectedIn(new HashMap<>());
+    if (entityConsolidationData != null) {
+      if (entityConsolidationData.getNodesConnectedIn() == null) {
+        entityConsolidationData.setNodesConnectedIn(new HashMap<>());
+      }
+
+      entityConsolidationData.getNodesConnectedIn()
+          .computeIfAbsent(sourceNodeTemplateId, k -> new ArrayList<>())
+          .add(requirementAssignmentData);
+
     }
-
-    entityConsolidationData.getNodesConnectedIn()
-        .computeIfAbsent(sourceNodeTemplateId, k -> new ArrayList<>())
-        .add(requirementAssignmentData);
-
   }
 
   /**

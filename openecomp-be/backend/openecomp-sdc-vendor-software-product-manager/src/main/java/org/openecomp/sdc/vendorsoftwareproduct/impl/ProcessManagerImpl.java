@@ -26,6 +26,8 @@ import org.openecomp.sdc.activityLog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
@@ -52,6 +54,8 @@ public class ProcessManagerImpl implements ProcessManager {
   private ActivityLogManager activityLogManager;
 
   private VendorSoftwareProductDao vendorSoftwareProductDao;
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   public ProcessManagerImpl(VendorSoftwareProductDao vendorSoftwareProductDao, ActivityLogManager activityLogManager) {
     this.vendorSoftwareProductDao = vendorSoftwareProductDao;
@@ -170,6 +174,7 @@ public class ProcessManagerImpl implements ProcessManager {
       fos.write(retrieved.getArtifact().array());
       fos.close();
     } catch (IOException exception) {
+      log.debug("", exception);
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.GET_PROCESS_ARTIFACT, ErrorLevel.ERROR.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't get process artifact");
@@ -216,6 +221,7 @@ public class ProcessManagerImpl implements ProcessManager {
     try {
       artifact = FileUtils.toByteArray(artifactFile);
     } catch (RuntimeException exception) {
+      log.debug("", exception);
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.UPLOAD_PROCESS_ARTIFACT, ErrorLevel.ERROR.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't upload process artifact");

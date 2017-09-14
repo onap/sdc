@@ -694,11 +694,13 @@ public class ActionManagerImpl implements ActionManager {
       String artifactName = artifactMetadata.getArtifactName();
       String generatedArtifactUuId = generateActionArtifactUuId(action, artifactName);
       if (generatedArtifactUuId.equals(artifactUuId)) {
-        ActionArtifactEntity artifactDeleteEntity =
-            new ActionArtifactEntity(artifact.getArtifactUuId(),
-                getEffectiveVersion(action.getVersion()));
-        actionLogPreProcessor(ActionSubOperation.DELETE_ACTION_ARTIFACT, TARGET_ENTITY_DB);
-        actionArtifactDao.delete(artifactDeleteEntity);
+        if (artifact != null) {
+          ActionArtifactEntity artifactDeleteEntity =
+              new ActionArtifactEntity(artifact.getArtifactUuId(),
+                  getEffectiveVersion(action.getVersion()));
+          actionLogPreProcessor(ActionSubOperation.DELETE_ACTION_ARTIFACT, TARGET_ENTITY_DB);
+          actionArtifactDao.delete(artifactDeleteEntity);
+        }
         actionLogPostProcessor(StatusCode.COMPLETE, null, "", false);
         log.metrics("");
       }
@@ -1041,12 +1043,10 @@ public class ActionManagerImpl implements ActionManager {
       action.setActionUuId(existingAction.getActionUuId());
     } catch (IllegalArgumentException iae) {
       String message = iae.getMessage();
-      switch (message) {
-        case VERSION_STRING_VIOLATION_MSG:
-          throw new ActionException(ACTION_UPDATE_NOT_ALLOWED_CODE, message);
-        default:
-          throw iae;
-      }
+      if(message == VERSION_STRING_VIOLATION_MSG)
+        throw new ActionException(ACTION_UPDATE_NOT_ALLOWED_CODE, message);
+      else
+        throw iae;
     }
   }
 

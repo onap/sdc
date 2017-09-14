@@ -5,6 +5,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
 import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao;
 import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao;
@@ -71,7 +73,7 @@ public class VendorLicenseFacadeImplTest {
     private VendorLicenseFacadeImpl vendorLicenseFacadeImpl;
 
     @BeforeMethod
-    public void setUp() throws Exception{
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
@@ -146,6 +148,7 @@ public class VendorLicenseFacadeImplTest {
             vendorLicenseFacadeImpl.submit(VLM_ID, USER);
             Assert.fail();
         } catch (CoreException exception) {
+            log.debug("",exception);
             org.testng.Assert.assertEquals(exception.code().message(), SUBMIT_UNCOMPLETED_VLM_MSG_LA_MISSING_FG.getErrorMessage());
         }
     }
@@ -177,6 +180,7 @@ public class VendorLicenseFacadeImplTest {
 
             Assert.fail();
         } catch (CoreException exception) {
+            log.debug("",exception);
             org.testng.Assert.assertEquals(exception.code().message(), SUBMIT_UNCOMPLETED_VLM_MSG_FG_MISSING_EP.getErrorMessage());
         }
     }
@@ -205,6 +209,7 @@ public class VendorLicenseFacadeImplTest {
             laField.set(null, licenseAgreementDao);
         } catch(NoSuchFieldException | IllegalAccessException e)
         {
+            log.debug("",e);
             org.testng.Assert.fail();
         }
     }

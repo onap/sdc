@@ -20,11 +20,6 @@
 
 package org.openecomp.sdc.logging.api.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
  * Created by TALIO on 12/26/2016.
  */

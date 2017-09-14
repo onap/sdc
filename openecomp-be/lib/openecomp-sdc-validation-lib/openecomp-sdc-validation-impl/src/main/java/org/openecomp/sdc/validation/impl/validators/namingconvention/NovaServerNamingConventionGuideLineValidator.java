@@ -564,11 +564,12 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
   private String getVmName(String nameToGetVmNameFrom, String stringToGetIndexOf) {
     int vmIndex =
         nameToGetVmNameFrom == null ? -1 : nameToGetVmNameFrom.indexOf(stringToGetIndexOf);
-    String vmName = vmIndex < 0 ? null
-        : trimNonAlphaNumericCharactersFromEndOfString(nameToGetVmNameFrom.substring(0, vmIndex));
-
+    String vmName = null;
+    if (nameToGetVmNameFrom != null) {
+      vmName = vmIndex < 0 ? null
+          : trimNonAlphaNumericCharactersFromEndOfString(nameToGetVmNameFrom.substring(0, vmIndex));
+    }
     return vmName;
-
   }
 
   private boolean isVmNameSync(List<String> namesToCompare) {

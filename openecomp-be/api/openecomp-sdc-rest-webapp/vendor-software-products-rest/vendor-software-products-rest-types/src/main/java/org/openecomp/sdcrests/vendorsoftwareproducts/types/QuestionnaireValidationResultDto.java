@@ -20,7 +20,6 @@
 
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
-import java.util.List;
 import java.util.Set;
 
 public class QuestionnaireValidationResultDto {

@@ -32,7 +32,7 @@ import java.util.List;
 
 public class NoSqlDbTest {
 
-  private static NoSqlDb noSqlDb;
+  private NoSqlDb noSqlDb;
 /*
 
   @Test

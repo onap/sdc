@@ -20,21 +20,14 @@
 
 package org.openecomp.core.migration.loaders;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.UDTMapper;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
-import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
 
 import java.util.Collection;
 

@@ -186,6 +186,7 @@ public class ServiceModelDaoZusammenImpl
       return new ToscaExtensionYamlUtil().
           yamlToObject(yamlContent, ServiceTemplate.class);
     }catch (Exception e){
+      logger.debug("",e);
       return null;
     }
   }

@@ -25,6 +25,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
@@ -48,6 +50,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class NetworkManagerImplTest {
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   private static final String USER1 = "networksTestUser1";
   private static final String USER2 = "networksTestUser2";
@@ -239,6 +243,7 @@ public class NetworkManagerImplTest {
       networkManager.createNetwork(network, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -249,6 +254,7 @@ public class NetworkManagerImplTest {
       networkManager.getNetwork(vspId, version, networkId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -259,6 +265,7 @@ public class NetworkManagerImplTest {
       networkManager.updateNetwork(new NetworkEntity(vspId, version, networkId), user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -269,6 +276,7 @@ public class NetworkManagerImplTest {
       networkManager.listNetworks(vspId, version, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -279,6 +287,7 @@ public class NetworkManagerImplTest {
       networkManager.deleteNetwork(vspId, version, networkId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }

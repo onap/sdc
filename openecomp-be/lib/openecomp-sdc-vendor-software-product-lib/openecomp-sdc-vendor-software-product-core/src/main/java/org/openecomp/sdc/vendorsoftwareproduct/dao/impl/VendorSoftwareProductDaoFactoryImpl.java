@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
 
-import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
 

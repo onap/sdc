@@ -1,7 +1,6 @@
 package org.openecomp.sdc.validation.impl.validators;
 
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.sdc.validation.Validator;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
@@ -11,12 +10,14 @@ import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
+import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.util.ValidationUtil;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -28,6 +29,8 @@ import java.util.Set;
 public class ForbiddenResourceGuideLineValidator implements Validator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static Set<String> forbiddenResources = new HashSet<>();
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   @Override
   public void init(Map<String, Object> properties) {
@@ -62,6 +65,7 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
     try {
       manifestContent = ValidationUtil.checkValidationPreCondition(globalContext);
     } catch (Exception exception) {
+      log.debug("",exception);
       return;
     }
 

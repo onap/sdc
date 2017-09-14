@@ -244,4 +244,31 @@ public class Action implements Comparable {
     return Integer.compare(objVersion.getMajor(), thisVersion.getMajor());
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    Action action = (Action) o;
+
+    if (!version.equals(action.version)) {
+      return false;
+    }
+    if (!name.equals(action.name)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = version.hashCode();
+    result = 31 * result + name.hashCode();
+    return result;
+  }
 }

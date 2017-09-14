@@ -26,6 +26,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
 import org.openecomp.sdc.vendorlicense.dao.LimitDao;
 import org.openecomp.sdc.vendorlicense.dao.types.*;
@@ -63,6 +65,8 @@ public class EntitlementPoolTest {
     private static String ep1_id = "ep1_id";
     private static String ep2_id = "ep2_id";
     public static final Version VERSION01 = new Version(0, 1);
+
+    private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
     @Mock
     private VendorLicenseFacade vendorLicenseFacade;
@@ -103,7 +107,7 @@ public class EntitlementPoolTest {
     }
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
@@ -264,6 +268,7 @@ public class EntitlementPoolTest {
             vendorLicenseManagerImpl.updateEntitlementPool(ep2, USER1);
             Assert.fail();
         } catch (CoreException exception) {
+            log.debug("",exception);
             Assert.assertEquals(exception.code().id(), VendorLicenseErrorCodes.DATE_RANGE_INVALID);
         }
     }
@@ -288,6 +293,7 @@ public class EntitlementPoolTest {
             vendorLicenseManagerImpl.updateEntitlementPool(ep2, USER1);
             Assert.fail();
         } catch (CoreException exception) {
+            log.debug("",exception);
             Assert.assertEquals(exception.code().id(), VendorLicenseErrorCodes.DATE_RANGE_INVALID);
         }
     }
@@ -451,6 +457,7 @@ public class EntitlementPoolTest {
             epField.set(null, entitlementPoolDao);
         } catch(NoSuchFieldException | IllegalAccessException e)
         {
+            log.debug("",e);
             Assert.fail();
         }
 
@@ -459,7 +466,7 @@ public class EntitlementPoolTest {
         verify(limitDao).delete(anyObject());
     }
 
-    @Test
+    @Test(expectedExceptions = CoreException.class)
     public void deleteEntitlementPoolInvalidTest() {
         try {
             Set<OperationalScope> opScopeChoices;
@@ -508,12 +515,14 @@ public class EntitlementPoolTest {
                 epField.set(null, entitlementPoolDao);
             } catch(NoSuchFieldException | IllegalAccessException e)
             {
+                log.debug("",e);
                 Assert.fail();
             }
 
             vendorLicenseManagerImpl.deleteEntitlementPool(entitlementPool, USER1);
         } catch (CoreException exception) {
             Assert.assertEquals(exception.code().id(), VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
+            throw exception;
         }
     } */
 

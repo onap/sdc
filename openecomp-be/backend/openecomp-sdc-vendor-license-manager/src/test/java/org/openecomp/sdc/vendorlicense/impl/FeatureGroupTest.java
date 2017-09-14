@@ -21,6 +21,9 @@
 
 package org.openecomp.sdc.vendorlicense.impl;
 
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doReturn;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -129,7 +132,7 @@ public class FeatureGroupTest {
     }
 
     @BeforeMethod
-    public void setUp() throws Exception{
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 

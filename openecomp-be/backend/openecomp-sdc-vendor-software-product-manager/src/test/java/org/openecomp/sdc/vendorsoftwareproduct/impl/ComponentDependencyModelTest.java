@@ -5,24 +5,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.vendorsoftwareproduct.ComponentDependencyModelManager;
-import org.openecomp.sdc.vendorsoftwareproduct.ComponentDependencyModelManagerFactory;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
-import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.ComponentDependencyModelErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -31,9 +24,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.mockito.Mockito.doReturn;
-
 public class ComponentDependencyModelTest {
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   @Spy
   @InjectMocks
@@ -90,7 +83,7 @@ public class ComponentDependencyModelTest {
         ComponentDependencyModelErrorBuilder.getNoSourceComponentErrorBuilder().id(),
         ComponentDependencyModelErrorBuilder.getNoSourceComponentErrorBuilder().message());
 
-    entities.removeAll(entities);
+    entities.clear();
     entities.add(createModelEntity("", sourceComp2Id));
     testCreate_negative(entities, vsp1Id, VERSION01, USER1,
         ComponentDependencyModelErrorBuilder.getNoSourceComponentErrorBuilder().id(),
@@ -142,6 +135,7 @@ public class ComponentDependencyModelTest {
         user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
       Assert.assertEquals(exception.getMessage(), expectedErrorMsg);
     }

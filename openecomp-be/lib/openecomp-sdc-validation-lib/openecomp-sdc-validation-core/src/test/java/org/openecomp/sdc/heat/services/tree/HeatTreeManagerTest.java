@@ -24,6 +24,8 @@ import org.openecomp.config.ConfigurationUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -37,6 +39,8 @@ import java.util.stream.Collectors;
 
 
 public class HeatTreeManagerTest {
+
+  private Logger logger = LoggerFactory.getLogger(HeatTreeManagerTest.class);
 
   @Test
   public void testHeatTreeCreation() {
@@ -66,7 +70,7 @@ public class HeatTreeManagerTest {
     try {
       return FileUtils.toByteArray(new FileInputStream(file));
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.debug("",e);
     }
 
     return new byte[0];

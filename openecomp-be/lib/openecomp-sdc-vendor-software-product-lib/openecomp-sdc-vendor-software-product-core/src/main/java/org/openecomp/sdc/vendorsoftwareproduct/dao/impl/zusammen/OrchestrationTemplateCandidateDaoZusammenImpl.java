@@ -16,7 +16,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateCandidat
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;

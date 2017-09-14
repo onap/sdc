@@ -142,7 +142,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductManager {
-  private static String VALIDATION_VSP_ID = "validationOnlyVspId";
+  private String VALIDATION_VSP_ID = "validationOnlyVspId";
   private static final String VALIDATION_VSP_NAME = "validationOnlyVspName";
   //private static final String VALIDATION_VSP_USER = "validationOnlyVspUser";
 
@@ -634,6 +634,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     try {
       validateUniqueName(VALIDATION_VSP_NAME);
     } catch (Exception ignored) {
+      logger.debug("",ignored);
       return VALIDATION_VSP_ID;
     }
     VspDetails validationVsp = new VspDetails();
@@ -707,6 +708,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
           vsps.add(new VersionedVendorSoftwareProductInfo(vsp, versionInfo));
         }
       } catch (RuntimeException rte) {
+        logger.debug("",rte);
         logger.error(
             "Error trying to retrieve vsp[" + entry.getKey() + "] version[" + version.toString
                 () + "] " +
@@ -829,6 +831,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
           createPackage(vspId, finalVersion, user);
           return finalVersion;
         } catch (IOException ex) {
+          logger.debug("",ex);
           throw new Exception(ex.getMessage());
         }
       default:

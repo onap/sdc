@@ -29,10 +29,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorlicense.dao.LimitDao;
 import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitType;
 import org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes;
@@ -52,9 +52,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
-
 public class LimitTest {
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   private  final String USER1 = "limitTestUser1";
   private  final String LT1_NAME = "LT1 name";
@@ -92,7 +92,7 @@ public class LimitTest {
   }
 
   @BeforeMethod
-  public void setUp() throws Exception {
+  public void setUp() {
     MockitoAnnotations.initMocks(this);
   }
 
@@ -150,6 +150,7 @@ public class LimitTest {
       vendorLicenseManagerImpl.updateLimit(limitEntity2,USER1);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(),
           VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
     }
@@ -195,6 +196,7 @@ public class LimitTest {
       vendorLicenseManagerImpl.updateLimit(limitEntity2,USER1);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(),
           VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
     }
@@ -254,6 +256,7 @@ public class LimitTest {
       Assert.fail();
     }
     catch (CoreException ex) {
+      log.debug("",ex);
       Assert.assertEquals(ex.code().id(),
           VendorLicenseErrorCodes.DUPLICATE_LIMIT_NAME_NOT_ALLOWED);
     }
@@ -272,6 +275,7 @@ public class LimitTest {
       vendorLicenseManagerImpl.getLimit(limit , USER1);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
     }
   }

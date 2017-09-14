@@ -26,13 +26,10 @@ import org.openecomp.sdc.heat.datatypes.model.Output;
 import org.openecomp.sdc.heat.datatypes.model.Parameter;
 import org.openecomp.sdc.tosca.datatypes.model.Constraint;
 import org.openecomp.sdc.tosca.datatypes.model.EntrySchema;
-import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.Template;
 import org.openecomp.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
-import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslationFactory;
 
 import java.util.ArrayList;

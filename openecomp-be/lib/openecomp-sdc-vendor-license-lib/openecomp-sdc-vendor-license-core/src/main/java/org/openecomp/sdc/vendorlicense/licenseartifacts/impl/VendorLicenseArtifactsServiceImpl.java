@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl;
 
+import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICENSE_MODEL_ARTIFACT_NAME_WITH_PATH;
+import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VNF_ARTIFACT_NAME_WITH_PATH;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;

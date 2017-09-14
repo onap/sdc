@@ -22,13 +22,15 @@ package org.openecomp.sdcrests.health.rest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.openecomp.sdcrests.health.types.HealthInfoDtos;
 import org.springframework.validation.annotation.Validated;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collection;
-import org.openecomp.sdcrests.health.types.HealthInfoDtos;
 
 @Path("/v1.0/healthcheck")
 @Produces(MediaType.APPLICATION_JSON)

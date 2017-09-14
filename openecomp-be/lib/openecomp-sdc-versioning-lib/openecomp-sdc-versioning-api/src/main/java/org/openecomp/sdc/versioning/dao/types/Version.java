@@ -22,9 +22,12 @@ package org.openecomp.sdc.versioning.dao.types;
 
 import com.datastax.driver.mapping.annotations.Transient;
 import com.datastax.driver.mapping.annotations.UDT;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 @UDT(name = "version", keyspace = "dox")
 public class Version {
+  private static final Logger logger = LoggerFactory.getLogger(Version.class);
   public static final String VERSION_STRING_VIOLATION_MSG =
       "Version string must be in the format of: {integer}.{integer}";
 
@@ -59,6 +62,7 @@ public class Version {
     try {
       version = new Version(Integer.parseInt(versionLevels[0]), Integer.parseInt(versionLevels[1]));
     } catch (Exception ex) {
+      logger.debug(ex.getMessage(), ex);
       throw new IllegalArgumentException(VERSION_STRING_VIOLATION_MSG);
     }
 

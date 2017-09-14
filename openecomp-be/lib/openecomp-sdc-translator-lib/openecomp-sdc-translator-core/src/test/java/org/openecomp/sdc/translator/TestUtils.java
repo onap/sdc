@@ -27,6 +27,8 @@ import org.junit.Assert;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.utils.SdcCommon;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.GroupDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
@@ -49,6 +51,8 @@ public class TestUtils {
   private static final String MANIFEST_NAME = SdcCommon.MANIFEST_NAME;
   private static String zipFilename = "VSP.zip";
   private static String validationFilename = "validationOutput.json";
+
+  private static Logger logger = (Logger) LoggerFactory.getLogger(TestUtils.class);
 
   private TestUtils() {
   }
@@ -105,6 +109,7 @@ public class TestUtils {
         serviceTemplateMap.put(fileList[i], serviceTemplate);
       }
     } catch (Exception e) {
+      logger.debug("",e);
       Assert.fail(e.getMessage());
     }
     return serviceTemplateMap;
@@ -162,6 +167,7 @@ public class TestUtils {
           try {
             yamlFile.close();
           } catch (IOException ignore) {
+            logger.debug("",ignore);
           }
         } catch (FileNotFoundException e) {
           throw e;
@@ -207,6 +213,7 @@ public class TestUtils {
         try {
           yamlFile.close();
         } catch (IOException ignore) {
+          logger.debug("",ignore);
         }
       } catch (FileNotFoundException e) {
         throw e;

@@ -21,6 +21,8 @@
 package org.openecomp.sdc.vendorsoftwareproduct.utils;
 
 import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -34,6 +36,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class VSPCommon {
+
+  private static final Logger log = (Logger) LoggerFactory.getLogger(VSPCommon.class.getName());
 
   public static VspDetails createVspDetails(String id, Version version, String name, String desc,
                                             String vendorName, String vlm, String icon,
@@ -92,7 +96,7 @@ public class VSPCommon {
         zos.write(data);
         zos.closeEntry();
       } catch (IOException exception) {
-        exception.printStackTrace();
+        log.debug("",exception);
       }
     }
   }
