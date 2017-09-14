@@ -11,6 +11,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
@@ -38,6 +40,9 @@ import java.util.Collection;
 import java.util.List;
 
 public class DeploymentFlavorManagerImplTest {
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+
   private static final String USER = "depFlavorTestUser";
   private static final String VSP_ID = "VSP_ID";
   private static final Version VERSION = new Version(0, 1);
@@ -108,6 +113,7 @@ public class DeploymentFlavorManagerImplTest {
       Assert.fail();
     }
     catch (CoreException ex) {
+      log.debug("",ex);
       Assert.assertEquals(VendorSoftwareProductErrorCodes.DUPLICATE_DEPLOYMENT_FLAVOR_MODEL_NOT_ALLOWED,
           ex.code().id());
     }
@@ -137,6 +143,7 @@ public class DeploymentFlavorManagerImplTest {
       Assert.fail();
     }
     catch (CoreException ex) {
+      log.debug("",ex);
       Assert.assertEquals(VendorSoftwareProductErrorCodes.FEATURE_GROUP_NOT_EXIST_FOR_VSP,
           ex.code().id());
     }
@@ -164,6 +171,7 @@ public class DeploymentFlavorManagerImplTest {
       deploymentFlavorManager.createDeploymentFlavor(expected, USER);
     }
     catch (CoreException ex) {
+      log.debug("",ex);
       Assert.assertEquals(VendorSoftwareProductErrorCodes.INVALID_COMPONENT_COMPUTE_ASSOCIATION,
           ex.code().id());
       Assert.assertEquals("Invalid request,for valid association please provide ComponentId for Compute Flavor",
@@ -198,6 +206,7 @@ public class DeploymentFlavorManagerImplTest {
       deploymentFlavorManager.createDeploymentFlavor(expected, USER);
     }
     catch (CoreException ex) {
+      log.debug("",ex);
       Assert.assertEquals(VendorSoftwareProductErrorCodes.INVALID_COMPUTE_FLAVOR_ID,
           ex.code().id());
     }
@@ -232,6 +241,7 @@ public class DeploymentFlavorManagerImplTest {
       deploymentFlavorManager.createDeploymentFlavor(expected, USER);
     }
     catch (CoreException ex) {
+      log.debug("",ex);
       Assert.assertEquals(VendorSoftwareProductErrorCodes.SAME_VFC_ASSOCIATION_MORE_THAN_ONCE_NOT_ALLOWED,
           ex.code().id());
     }
@@ -347,6 +357,7 @@ public class DeploymentFlavorManagerImplTest {
       deploymentFlavorManager.listDeploymentFlavors(vspId, version, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
       Assert.assertEquals(exception.getMessage(), expectedErrorMsg);
     }
@@ -358,6 +369,7 @@ public class DeploymentFlavorManagerImplTest {
       deploymentFlavorManager.createDeploymentFlavor(deploymentFlavorEntity, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -369,6 +381,7 @@ public class DeploymentFlavorManagerImplTest {
       deploymentFlavorManager.deleteDeploymentFlavor(vspId, version, deploymentFlavorId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -395,6 +408,7 @@ public class DeploymentFlavorManagerImplTest {
           .updateDeploymentFlavor(deploymentFlavorEntity, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -405,6 +419,7 @@ public class DeploymentFlavorManagerImplTest {
       deploymentFlavorManager.getDeploymentFlavor(vspId, version, deploymentFlavorId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }

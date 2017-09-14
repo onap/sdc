@@ -289,7 +289,7 @@ public class ResourceTranslationValetGroupAssignmentImpl extends ResourceTransla
       groupName = (String) groupNameProperty;
     }
 
-    if (!Strings.isNullOrEmpty(groupName)) {
+    if (groupName != null && !Strings.isNullOrEmpty(groupName)) {
       groupName = groupName.replace(" ", "_");
       resourceId += "_" + groupName;
 

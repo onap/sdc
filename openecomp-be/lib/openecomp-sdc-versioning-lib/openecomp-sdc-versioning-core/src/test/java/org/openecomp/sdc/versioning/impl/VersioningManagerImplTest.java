@@ -21,6 +21,10 @@
 package org.openecomp.sdc.versioning.impl;
 
 
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -29,7 +33,6 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.versioning.dao.VersionInfoDao;
 import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDao;
-import org.openecomp.sdc.versioning.dao.VersionableEntityDao;
 import org.openecomp.sdc.versioning.dao.types.UserCandidateVersion;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionInfoDeletedEntity;
@@ -43,12 +46,7 @@ import org.testng.annotations.Test;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
 
 public class VersioningManagerImplTest {
   private static final String USR1 = "usr1";

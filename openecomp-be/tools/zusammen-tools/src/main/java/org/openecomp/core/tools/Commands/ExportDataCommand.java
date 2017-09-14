@@ -1,5 +1,7 @@
 package org.openecomp.core.tools.Commands;
 
+import static java.nio.file.Files.createDirectories;
+
 import com.amdocs.zusammen.datatypes.SessionContext;
 import org.apache.commons.io.FileUtils;
 import org.openecomp.core.tools.Commands.exportdata.ElementHandler;
@@ -18,12 +20,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-
-import static java.nio.file.Files.createDirectories;
 public class ExportDataCommand {
     private static final Logger logger = LoggerFactory.getLogger(ExportDataCommand.class);
 
@@ -45,7 +43,6 @@ public class ExportDataCommand {
             FileUtils.forceDelete(rootDir.toFile());
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
-            ex.printStackTrace();
         }
 
     }

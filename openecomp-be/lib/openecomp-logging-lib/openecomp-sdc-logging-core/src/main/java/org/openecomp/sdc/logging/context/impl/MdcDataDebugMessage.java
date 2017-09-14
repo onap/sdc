@@ -33,7 +33,7 @@ import java.util.Map;
 
 public class MdcDataDebugMessage extends MdcData {
 
-  private static Logger logger;
+  private Logger logger;
   private static Map<String, String> mapExitOrEntryToMessage;
 
   static {

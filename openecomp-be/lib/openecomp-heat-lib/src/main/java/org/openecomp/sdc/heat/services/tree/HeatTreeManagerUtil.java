@@ -166,7 +166,7 @@ public class HeatTreeManagerUtil {
     Map<String, Object> resourceDefValueMap = resource.getProperties() == null ? null
         : (Map<String, Object>) resource.getProperties().get(
             PropertiesMapKeyTypes.RESOURCE_DEF.getKeyMap());
-    if (MapUtils.isNotEmpty(resourceDefValueMap)) {
+    if (MapUtils.isNotEmpty(resourceDefValueMap) && resourceDefValueMap != null) {
       Object resourceDefType = resourceDefValueMap.get("type");
       if (Objects.nonNull(resourceDefType)) {
         if (resourceDefType instanceof String) {

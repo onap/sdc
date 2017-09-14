@@ -15,6 +15,8 @@ import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.Validator;
@@ -35,6 +37,9 @@ import java.util.Objects;
  * Created by TALIO on 2/26/2017.
  */
 public class ValidationTestUtil {
+
+  private final static Logger log = (Logger) LoggerFactory.getLogger(ValidationTestUtil.class
+      .getName());
 
   public static GlobalValidationContext createGlobalContextFromPath(String path) {
     GlobalValidationContext globalValidationContext = new GlobalValidationContext();
@@ -71,7 +76,7 @@ public class ValidationTestUtil {
         fileContent = FileUtils.toByteArray(fis);
         contentMap.put(file.getName(), fileContent);
       } catch (IOException e) {
-        e.printStackTrace();
+        log.debug("",e);
       }
     }
     return contentMap;
@@ -178,6 +183,7 @@ public class ValidationTestUtil {
           CommonMethods.newInstance(validatorConf.getImplementationClass(), Validator.class);
       validator.init(validatorConf.getProperties());
     } catch (IllegalArgumentException iae) {
+      log.debug("",iae);
       return null;
     }
     return validator;

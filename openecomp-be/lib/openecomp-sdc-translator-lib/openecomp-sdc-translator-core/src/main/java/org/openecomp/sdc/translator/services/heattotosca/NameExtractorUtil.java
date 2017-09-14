@@ -20,13 +20,10 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
-import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedPropertyVal;
-import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
 import org.openecomp.sdc.translator.datatypes.heattotosca.PropertyRegexMatcher;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 

@@ -9,6 +9,8 @@ import org.openecomp.sdc.generator.datatypes.tosca.DeploymentFlavorModel;
 import org.openecomp.sdc.generator.datatypes.tosca.LicenseFlavor;
 import org.openecomp.sdc.generator.datatypes.tosca.MultiFlavorVfcImage;
 import org.openecomp.sdc.generator.datatypes.tosca.VendorInfo;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -70,6 +72,8 @@ public class ManualVspDataCollectionService {
       NicDaoFactory.getInstance().createInterface();
   private static final VendorLicenseFacade vendorLicenseFacade =
       VendorLicenseFacadeFactory.getInstance().createInterface();
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
 
   /**
@@ -312,26 +316,28 @@ public class ManualVspDataCollectionService {
       computeQuestionnaire = computeDao.getQuestionnaireData(vspId, version, componentId,
           computeFlavorId);
     } catch (Exception ex) {
+      log.debug("",ex);
       computeQuestionnaire = null;
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
           LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), "Failed to get compute questionnaire : "
               + ex.getMessage());
     }
-    if (Objects.nonNull(computeQuestionnaire)) {
+    if (computeQuestionnaire != null && Objects.nonNull(computeQuestionnaire)) {
       String computeQuestionnaireData = computeQuestionnaire.getQuestionnaireData();
       if (Objects.nonNull(computeQuestionnaireData)) {
         Compute compute;
         try {
           compute = JsonUtil.json2Object(computeQuestionnaireData, Compute.class);
         } catch (Exception ex) {
+          log.debug("",ex);
           compute = null;
           MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
               LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
               LoggerErrorCode.DATA_ERROR.getErrorCode(), "Unable to parse compute questionnaire : "
                   + ex.getMessage());
         }
-        if (Objects.nonNull(compute.getVmSizing())) {
+        if (compute != null && Objects.nonNull(compute.getVmSizing())) {
           computeFlavor = new ComputeFlavor();
           if (Objects.nonNull(compute.getVmSizing().getNumOfCPUs())) {
             computeFlavor.setNum_cpus(compute.getVmSizing().getNumOfCPUs());
@@ -392,13 +398,14 @@ public class ManualVspDataCollectionService {
             imageDetails = JsonUtil.json2Object(imageQuestionnaireDataEntity
                 .getQuestionnaireData(), ImageDetails.class);
           } catch (Exception ex) {
+            log.debug("",ex);
             imageDetails = null;
             MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
                 LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
                 LoggerErrorCode.DATA_ERROR.getErrorCode(), "Unable to parse image questionnaire : "
                     + ex.getMessage());
           }
-          if (Objects.nonNull(imageDetails)
+          if (imageDetails != null && Objects.nonNull(imageDetails)
               && Objects.nonNull(imageDetails.getVersion())) {
             //Image version is used as a key for the image block
             //So excluding the population if questionnaire data is absent or invalid

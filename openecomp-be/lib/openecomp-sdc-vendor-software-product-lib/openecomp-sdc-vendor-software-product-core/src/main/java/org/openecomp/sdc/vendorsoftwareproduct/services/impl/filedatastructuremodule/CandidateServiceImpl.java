@@ -107,6 +107,7 @@ public class CandidateServiceImpl implements CandidateService {
                         Messages.NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST.getErrorMessage()));
                 }
             } catch (IOException e) {
+                logger.debug(e.getMessage(), e);
                 mdcDataDebugMessage.debugExitMessage(null);
                 return Optional.of(new ErrorMessage(ErrorLevel.ERROR,
                     Messages.NO_ZIP_FILE_WAS_UPLOADED_OR_ZIP_NOT_EXIST.getErrorMessage()));
@@ -141,10 +142,14 @@ public class CandidateServiceImpl implements CandidateService {
                 (SdcCommon.MANIFEST_NAME));
         List<String> structureArtifacts = structure.getArtifacts();
         structureArtifacts.addAll(fileDataStructureFromManifest.getArtifacts().stream().filter
-            (artifact -> !structureArtifacts.contains(artifact)).collect((Collectors.toList())));
+            (artifact -> isNotStrctureArtifact(structureArtifacts, artifact)).collect((Collectors.toList())));
         handleArtifactsFromTree(tree, structure);
 
         return JsonUtil.object2Json(structure);
+    }
+
+    private boolean isNotStrctureArtifact(List<String> structureArtifacts, String artifact) {
+        return !structureArtifacts.contains(artifact);
     }
 
     @Override

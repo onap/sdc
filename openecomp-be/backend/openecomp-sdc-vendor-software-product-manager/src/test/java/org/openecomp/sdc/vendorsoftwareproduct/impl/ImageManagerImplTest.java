@@ -3,16 +3,19 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
@@ -31,10 +34,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
 public class ImageManagerImplTest {
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   private static final String IMAGE_NOT_EXIST_MSG =
           "Vendor Software Product Image with Id image1 does not exist for Vendor Software Product with" +
@@ -194,6 +196,7 @@ public class ImageManagerImplTest {
       imageManager.updateImage(imageEntity, USER);
     }
     catch (CoreException ex) {
+      log.debug("",ex);
       Assert.assertEquals(ex.code().id(), VendorSoftwareProductErrorCodes.UPDATE_IMAGE_NOT_ALLOWED);
     }
 
@@ -267,7 +270,6 @@ public class ImageManagerImplTest {
     String json = "{\"md5\" :\"FFDSD33SS\"}";
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
     doReturn(new ImageEntity()).when(imageDao).get(anyObject());
-
     imageManager.updateImageQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, json, USER);
     verify(imageDao).updateQuestionnaireData(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, json);
   }
@@ -292,6 +294,7 @@ public class ImageManagerImplTest {
         imageManager.updateImageQuestionnaire(VSP_ID, VERSION, COMPONENT_ID, IMAGE1_ID, json, USER);
         Assert.fail();
     } catch (CoreException exception) {
+        log.debug("",exception);
         Assert.assertEquals(exception.code().id(), VendorSoftwareProductErrorCodes.DUPLICATE_IMAGE_VERSION_NOT_ALLOWED);
 
     }
@@ -318,6 +321,7 @@ public class ImageManagerImplTest {
       Assert.fail();
     }
     catch(CoreException ex) {
+      log.debug("",ex);
       Assert.assertEquals(ex.code().id(), VendorSoftwareProductErrorCodes.UPDATE_IMAGE_NOT_ALLOWED);
     }
   }
@@ -338,6 +342,7 @@ public class ImageManagerImplTest {
       Assert.fail();
     }
     catch(CoreException ex) {
+      log.debug("",ex);
       Assert.assertEquals(ex.code().id(), VendorSoftwareProductErrorCodes.VFC_IMAGE_INVALID_FORMAT);
     }
   }
@@ -348,6 +353,7 @@ public class ImageManagerImplTest {
       imageManager.listImages(vspId, version, componentId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
       Assert.assertEquals(exception.getMessage(), expectedErrorMsg);
     }
@@ -358,6 +364,7 @@ public class ImageManagerImplTest {
       imageManager.createImage(image, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -369,6 +376,7 @@ public class ImageManagerImplTest {
       imageManager.deleteImage(vspId, version, componentId, nicId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -388,6 +396,7 @@ public class ImageManagerImplTest {
       imageManager.updateImage(new ImageEntity(vspId, version, componentId, imageId), user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }

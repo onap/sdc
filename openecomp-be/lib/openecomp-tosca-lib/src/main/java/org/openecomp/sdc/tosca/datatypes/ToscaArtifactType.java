@@ -29,9 +29,9 @@ public class ToscaArtifactType {
 
   private static Configuration config = ConfigurationManager.lookup();
 
-  public static String ARTIFACT_TYPE_PREFIX =
+  public static final String ARTIFACT_TYPE_PREFIX =
       config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_ARTIFACT_TYPE);
 
-  public static String NATIVE_DEPLOYMENT = "tosca.artifacts.Deployment";
+  public static final String NATIVE_DEPLOYMENT = "tosca.artifacts.Deployment";
 
 }

@@ -27,13 +27,14 @@ import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.model.types.ServiceTemplate;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
 import org.openecomp.sdc.tosca.datatypes.model.Old1610ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import sun.misc.IOUtils;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -47,6 +48,8 @@ public class AbstractServiceModelDao implements VersionableDao {
 
   protected ServiceTemplateDaoInter templateDao;
   protected ServiceArtifactDaoInter artifactDao;
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   @Override
   public void registerVersioning(String versionableEntityType) {
@@ -170,6 +173,7 @@ public class AbstractServiceModelDao implements VersionableDao {
       return new ToscaExtensionYamlUtil().yamlToObject(serviceTemplateContent,
           org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate.class);
     }catch (Exception e){
+      log.debug("",e);
       System.out.println("Found vsp with old-versioned tosca service template");
       Old1610ServiceTemplate old1610ServiceTemplate =
           new ToscaExtensionYamlUtil().yamlToObject(serviceTemplateContent,

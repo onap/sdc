@@ -20,6 +20,8 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.GENERAL_COMPONENT_ID;
+
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -35,8 +37,6 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.GENERAL_COMPONENT_ID;
 
 @Named
 @Service("processes")

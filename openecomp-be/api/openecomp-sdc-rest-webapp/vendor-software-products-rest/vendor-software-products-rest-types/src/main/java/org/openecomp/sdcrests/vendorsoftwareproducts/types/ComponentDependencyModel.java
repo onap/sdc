@@ -1,8 +1,6 @@
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 
-import org.hibernate.validator.constraints.NotBlank;
-
 public class ComponentDependencyModel {
 
   private String sourceId;

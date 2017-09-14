@@ -21,11 +21,6 @@
 package org.openecomp.sdc.translator.services.heattotosca;
 
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public interface NameExtractor {
 

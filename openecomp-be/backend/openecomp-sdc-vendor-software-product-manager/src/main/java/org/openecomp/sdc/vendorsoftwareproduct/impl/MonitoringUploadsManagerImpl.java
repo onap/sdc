@@ -73,6 +73,8 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
   private static final Logger logger =
       LoggerFactory.getLogger(VendorSoftwareProductManagerImpl.class);
 
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+
   MonitoringUploadsManagerImpl(ComponentArtifactDao componentArtifactDao,
                                ActivityLogManager activityLogManager) {
     this.componentArtifactDao = componentArtifactDao;
@@ -145,6 +147,7 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
             uploadedFileData);
 
       } catch (Exception exception) {
+        log.debug("", exception);
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
             LoggerTragetServiceName.UPLOAD_MONITORING_FILE, ErrorLevel.ERROR.name(),
             LoggerErrorCode.DATA_ERROR.getErrorCode(), "Invalid " + type.toString() + "zip file");
@@ -259,6 +262,7 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
       contentMap = CommonUtil.validateAndUploadFileContent(OnboardingTypesEnum.ZIP, uploadedFileData);
       VendorSoftwareProductUtils.validateContentZipData(contentMap, errors);
     } catch (IOException exception) {
+      log.debug("", exception);
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.VALIDATE_MONITORING_FILE, ErrorLevel.ERROR.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), "Invalid Monitoring zip file");

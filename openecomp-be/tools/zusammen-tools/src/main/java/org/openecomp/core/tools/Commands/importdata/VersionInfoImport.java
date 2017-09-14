@@ -26,7 +26,7 @@ public class VersionInfoImport {
                 return;
             }
             String versionInfoJson = new String(Files.readAllBytes(versionInfoFilePath));
-            if (versionInfoJson == null || versionInfoJson.trim().isEmpty()) {
+            if (versionInfoJson.trim().isEmpty()) {
                 return;
             }
             VersionInfoEntity versionInfoEntity = JsonUtil.json2Object(versionInfoJson, VersionInfoEntity.class);

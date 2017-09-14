@@ -3,9 +3,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.dao.errors;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
-import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.text.MessageFormat;
 
 public class VendorSoftwareProductCreationFailedBuilder {
   private static final String VSP_CREATION_FAILED = "Failed to create VSP; %s";

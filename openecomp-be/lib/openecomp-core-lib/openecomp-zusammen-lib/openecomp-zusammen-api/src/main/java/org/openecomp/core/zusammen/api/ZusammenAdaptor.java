@@ -12,7 +12,6 @@ import com.amdocs.zusammen.datatypes.item.Item;
 import com.amdocs.zusammen.datatypes.item.ItemVersion;
 import com.amdocs.zusammen.datatypes.item.ItemVersionData;
 import com.amdocs.zusammen.datatypes.itemversion.Tag;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.Collection;
 import java.util.Optional;

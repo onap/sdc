@@ -54,29 +54,31 @@ public class MultiFlavorVfcImage {
   public boolean equals(Object obj) {
     if (this == obj)
       return true;
-    if (getClass() != obj.getClass())
+    if (obj != null && getClass() != obj.getClass())
       return false;
     MultiFlavorVfcImage other = (MultiFlavorVfcImage) obj;
-    if (this.file_name == null) {
-      if (other.file_name != null)
+    if (other != null) {
+      if (this.file_name == null) {
+        if (other.file_name != null)
+          return false;
+      } else if (!file_name.equals(other.file_name))
         return false;
-    } else if (!file_name.equals(other.file_name))
-      return false;
-    if (this.file_hash == null) {
-      if (other.file_hash != null)
+      if (this.file_hash == null) {
+        if (other.file_hash != null)
+          return false;
+      } else if (!file_hash.equals(other.file_hash))
         return false;
-    } else if (!file_hash.equals(other.file_hash))
-      return false;
-    if (this.file_hash_type == null) {
-      if (other.file_hash_type != null)
+      if (this.file_hash_type == null) {
+        if (other.file_hash_type != null)
+          return false;
+      } else if (!file_hash_type.equals(other.file_hash_type))
         return false;
-    } else if (!file_hash_type.equals(other.file_hash_type))
-      return false;
-    if (this.software_version == null) {
-      if (other.software_version != null)
+      if (this.software_version == null) {
+        if (other.software_version != null)
+          return false;
+      } else if (!software_version.equals(other.software_version))
         return false;
-    } else if (!software_version.equals(other.software_version))
-      return false;
+    }
     return true;
   }
 

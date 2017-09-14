@@ -16,9 +16,9 @@ import java.util.*;
 public class ResetOldVersion {
 
 
-  public static Map<String, List<String>> itemVersionMap = new HashMap<>();
+  private static Map<String, List<String>> itemVersionMap = new HashMap<>();
 
-  public static int count =0;
+  private static int count =0;
   public static void reset(SessionContext context, String oldVersion,String emptyOldVersion) {
 
 

@@ -27,6 +27,8 @@ import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.healing.interfaces.Healer;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFactory;
@@ -50,6 +52,8 @@ public class FileDataStructureHealer implements Healer {
   private static CandidateService candidateService =
       CandidateServiceFactory.getInstance().createInterface();
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   public FileDataStructureHealer() {
   }
@@ -104,6 +108,7 @@ public class FileDataStructureHealer implements Healer {
 
       healingResult = getFileDataStructureFromJson(candidateDataEntity.getFilesDataStructure());
     }catch (Exception e){
+      log.debug("", e);
       return Optional.empty();
     }
 

@@ -122,12 +122,15 @@ public class ServiceModelDaoFactoryTest {
     Assert.assertTrue(model instanceof ToscaServiceModel);
     if (model instanceof ToscaServiceModel) {
 
-      artifact001 =
-          (String) ((ToscaServiceModel) model).getArtifactFiles().getFileList().toArray()[0];
+      setArtifact((ToscaServiceModel) model);
     }
   }
 
-
+  private static void setArtifact(ToscaServiceModel model)
+  {
+    artifact001 =
+            (String) (model).getArtifactFiles().getFileList().toArray()[0];
+  }
   private ToscaServiceModel getToscaServiceModel() {
 
     Map<String, ServiceTemplate> serviceTemplates = getServiceTemplates(baseServiceTemplateName);

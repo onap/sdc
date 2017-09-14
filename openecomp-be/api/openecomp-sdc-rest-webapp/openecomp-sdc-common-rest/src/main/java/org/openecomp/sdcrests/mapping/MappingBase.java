@@ -29,6 +29,9 @@ import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
 
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+
 /**
  * Base class for all mapping classes. Mapping classes will perform data mapping from source object
  *  to target object Base class provides following<br>  <ol>  <li>provides life cycle of
@@ -51,6 +54,8 @@ public abstract class MappingBase<S, T> {
    * @param clazz  : target <code>Class</code> for mapping
    * @return <code>T</code> - instance of type <code>T</code>
    */
+
+  private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   public final T applyMapping(final S source, Class<T> clazz) {
     T target = (T) instantiateTarget(clazz);

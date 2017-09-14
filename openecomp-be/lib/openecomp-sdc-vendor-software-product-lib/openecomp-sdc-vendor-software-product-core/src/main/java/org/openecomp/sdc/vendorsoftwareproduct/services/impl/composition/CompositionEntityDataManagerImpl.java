@@ -273,7 +273,7 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
         return true;
       }
 
-      result = result || isThereErrorsInSubTree(subEntity);
+      result = isThereErrorsInSubTree(subEntity) || result;
       if (result) {
         return true;
       }

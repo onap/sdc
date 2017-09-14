@@ -20,6 +20,8 @@
 
 package org.openecomp.core.nosqldb.util;
 
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 
 import java.io.FileInputStream;
@@ -57,6 +59,8 @@ public class ConfigurationManager {
   private static final String cassandraTruststorePasswordKey = "truststorePassword";
   private static ConfigurationManager instance = null;
   private final LinkedHashMap<String, Object> cassandraConfiguration;
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
 
   private ConfigurationManager() {
@@ -227,7 +231,7 @@ public class ConfigurationManager {
     try {
       is = new FileInputStream(file);
     } catch (FileNotFoundException exception) {
-      exception.printStackTrace();
+      log.debug("",exception);
     }
     return is;
   }

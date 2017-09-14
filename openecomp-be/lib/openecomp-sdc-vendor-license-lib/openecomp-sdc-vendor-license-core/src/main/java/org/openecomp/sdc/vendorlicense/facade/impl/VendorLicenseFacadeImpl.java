@@ -30,6 +30,8 @@ import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
@@ -89,6 +91,7 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
       licenseKeyGroupDao = LicenseKeyGroupDaoFactory.getInstance().createInterface();
   private static final LimitDao limitDao = LimitDaoFactory.getInstance().createInterface();
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   /**
    * Instantiates a new Vendor license facade.
@@ -409,6 +412,7 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
         return Collections.singletonList(new RequestedVersionInvalidErrorBuilder().build());
       }
     } catch (CoreException exception) {
+      log.debug("",exception);
       return Collections.singletonList(exception.code());
     }
 
@@ -417,6 +421,7 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
     try {
       getLicenseAgreement(vlmId, licenseAgreementId, version);
     } catch (CoreException exception) {
+      log.debug("",exception);
       errorMessages.add(exception.code());
     }
 
@@ -433,6 +438,7 @@ public class VendorLicenseFacadeImpl implements VendorLicenseFacade {
               version).build());
         }
       } catch (CoreException exception) {
+        log.debug("",exception);
         errorMessages.add(exception.code());
       }
     }

@@ -31,7 +31,7 @@ import java.util.function.Predicate;
 
 public class FileData {
 
-  public static Set<Type> heatFileTypes =
+  protected static final Set<Type> heatFileTypes =
       new HashSet<>(Arrays.asList(Type.HEAT, Type.HEAT_NET, Type.HEAT_VOL));
   private Boolean isBase;
   private String file;

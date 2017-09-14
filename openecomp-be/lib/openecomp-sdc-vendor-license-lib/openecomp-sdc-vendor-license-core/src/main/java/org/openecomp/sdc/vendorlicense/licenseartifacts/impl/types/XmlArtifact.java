@@ -23,6 +23,8 @@ package org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -34,6 +36,7 @@ import org.openecomp.sdc.vendorlicense.errors.JsonErrorBuilder;
 public abstract class XmlArtifact {
 
   XmlMapper xmlMapper = new XmlMapper();
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   abstract void initMapper();
 
@@ -49,6 +52,7 @@ public abstract class XmlArtifact {
     try {
       xml = xmlMapper.writeValueAsString(this);
     } catch (com.fasterxml.jackson.core.JsonProcessingException exception) {
+      log.debug("",exception);
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.WRITE_ARTIFACT_XML, ErrorLevel.ERROR.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_JSON);

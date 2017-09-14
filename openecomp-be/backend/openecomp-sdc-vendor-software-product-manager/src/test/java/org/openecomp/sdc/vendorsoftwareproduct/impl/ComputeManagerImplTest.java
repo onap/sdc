@@ -1,30 +1,33 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import org.junit.runner.RunWith;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
-import org.openecomp.sdc.vendorsoftwareproduct.ComputeManager;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.errors.DuplicateComputeInComponentErrorBuilder;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
-import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ListComputeResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.*;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComputeData;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
 import org.testng.Assert;
@@ -36,13 +39,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class ComputeManagerImplTest {
+
+    private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
     private static final String COMPUTE_NOT_EXIST_MSG =
             "Vendor Software Product COMPUTE with Id compute1 does not exist for Vendor Software Product with " +
@@ -153,6 +152,7 @@ public class ComputeManagerImplTest {
             Assert.fail();
         }
         catch (CoreException ex) {
+          log.debug("",ex);
             Assert.assertEquals(VendorSoftwareProductErrorCodes.DUPLICATE_COMPUTE_NAME_NOT_ALLOWED,
                     ex.code().id());
         }
@@ -227,6 +227,7 @@ public class ComputeManagerImplTest {
             computeManager.updateCompute(computeEntity, USER);
         }
         catch (CoreException ex) {
+          log.debug("",ex);
             Assert.assertEquals(ex.code().id(), VendorSoftwareProductErrorCodes.UPDATE_COMPUTE_NOT_ALLOWED);
         }
 
@@ -315,6 +316,7 @@ public class ComputeManagerImplTest {
             computeManager.deleteCompute(vspId, version, componentId, computeId, user);
             Assert.fail();
         } catch (CoreException exception) {
+          log.debug("",exception);
             Assert.assertEquals(exception.code().id(), expectedErrorCode);
         }
     }
@@ -325,6 +327,7 @@ public class ComputeManagerImplTest {
           computeManager.getCompute(vspId, version, componentId, computeId, user);
           Assert.fail();
       } catch (CoreException exception) {
+        log.debug("",exception);
           Assert.assertEquals(exception.code().id(), expectedErrorCode);
       }
   }
@@ -335,6 +338,7 @@ public class ComputeManagerImplTest {
             computeManager.listCompute(vspId, version, componentId, user);
             Assert.fail();
         } catch (CoreException exception) {
+          log.debug("",exception);
             Assert.assertEquals(exception.code().id(), expectedErrorCode);
             Assert.assertEquals(exception.getMessage(), expectedErrorMsg);
         }
@@ -348,6 +352,7 @@ public class ComputeManagerImplTest {
     computeManager.updateCompute(new ComputeEntity(vspId, version, componentId, computeId), user);
     Assert.fail();
   } catch (CoreException exception) {
+    log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -357,6 +362,7 @@ public class ComputeManagerImplTest {
             computeManager.createCompute(computeEntity1, user);
             Assert.fail();
         } catch (CoreException exception) {
+          log.debug("",exception);
             Assert.assertEquals(exception.code().id(), expectedErrorCode);
         }
     }

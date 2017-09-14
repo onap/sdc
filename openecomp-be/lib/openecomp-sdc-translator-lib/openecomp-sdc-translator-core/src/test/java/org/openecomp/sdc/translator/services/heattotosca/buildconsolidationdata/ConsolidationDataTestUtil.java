@@ -125,11 +125,14 @@ public class ConsolidationDataTestUtil {
     }
     for(String consolidatedKey : consolidatedMap.keySet()){
       List<String> consolidatedList = consolidatedMap.get(consolidatedKey);
-      List<String> expectedList = expectedMap.get(consolidatedKey);
-      if(expectedList == null ){
-        Assert.fail();
-      } if(!CollectionUtils.isEqualCollection(consolidatedList,expectedList)){
-        Assert.fail();
+      if (expectedMap != null) {
+        List<String> expectedList = expectedMap.get(consolidatedKey);
+        if (expectedList == null) {
+          Assert.fail();
+        }
+        if (!CollectionUtils.isEqualCollection(consolidatedList, expectedList)) {
+          Assert.fail();
+        }
       }
     }
   }

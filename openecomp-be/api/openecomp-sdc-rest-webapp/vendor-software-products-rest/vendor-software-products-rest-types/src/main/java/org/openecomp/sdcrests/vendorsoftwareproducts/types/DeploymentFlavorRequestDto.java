@@ -5,7 +5,6 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
 
 import java.util.List;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class DeploymentFlavorRequestDto {

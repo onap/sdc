@@ -2,9 +2,6 @@ package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
 public class ImageRequestDto implements CompositionDataEntityDto {
 
   @NotBlank(message = "is mandatory and should not be empty")

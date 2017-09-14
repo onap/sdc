@@ -21,7 +21,6 @@
 package org.openecomp.sdcrests.validation.rest;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.springframework.validation.annotation.Validated;
 

@@ -31,6 +31,8 @@ import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.healing.interfaces.Healer;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
@@ -91,6 +93,8 @@ public class CompositionDataHealer implements Healer {
       CompositionDataExtractorFactory.getInstance().createInterface();
   private static CompositionEntityDataManager compositionEntityDataManager =
       CompositionEntityDataManagerFactory.getInstance().createInterface();
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   public CompositionDataHealer() {
   }
@@ -288,6 +292,7 @@ public class CompositionDataHealer implements Healer {
       serviceModelDao.storeServiceModel(vspId, version,
           translatorOutput.getToscaServiceModel());
     } catch (Exception e) {
+      log.debug("", e);
       return Optional.empty();
     }
 
@@ -304,6 +309,7 @@ public class CompositionDataHealer implements Healer {
               OnboardingTypesEnum.ZIP, uploadData.getContentData().array());
       return HeatToToscaUtil.loadAndTranslateTemplateData(fileContentHandler);
     } catch (Exception e) {
+      log.debug("", e);
       return null;
     }
   }

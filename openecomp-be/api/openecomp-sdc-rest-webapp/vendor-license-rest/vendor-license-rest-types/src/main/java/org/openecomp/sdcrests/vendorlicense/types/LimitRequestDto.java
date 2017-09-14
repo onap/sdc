@@ -2,10 +2,7 @@ package org.openecomp.sdcrests.vendorlicense.types;
 
 import io.swagger.annotations.ApiModel;
 import org.hibernate.validator.constraints.NotBlank;
-import org.openecomp.sdc.vendorlicense.dao.types.LimitType;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @ApiModel(value = "LimitRequest")

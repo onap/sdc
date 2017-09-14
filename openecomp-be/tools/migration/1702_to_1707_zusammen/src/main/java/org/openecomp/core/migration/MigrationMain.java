@@ -70,7 +70,7 @@ public class MigrationMain {
   private static Logger logger = LoggerFactory.getLogger(MigrationMain.class);
   private static int status = 0;
 
-  public static Map<String, VersionInfoEntity> versionInfoMap = new HashMap<>();
+  private static Map<String, VersionInfoEntity> versionInfoMap = new HashMap<>();
 
   public static void main(String[] args) {
     CassandraElementRepository cassandraElementRepository = new CassandraElementRepository();
@@ -116,8 +116,7 @@ public class MigrationMain {
       convertVsp(context, itemCassandraDao, versionCassandraDao, cassandraElementRepository);
       printMessage(logger, "Converted VSPs\n");
     } catch (Exception e) {
-      printMessage(logger, "Could not perform migration for VSPs ,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
 
@@ -125,9 +124,7 @@ public class MigrationMain {
       convertOrchestrationTemplateCandidate(context, cassandraElementRepository);
       printMessage(logger, "Converted OrchestrationTemplateCandidates\n");
     } catch (Exception e) {
-      printMessage(logger,
-          "Could not perform migration for OrchestrationTemplateCandidates ,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
 
@@ -136,61 +133,49 @@ public class MigrationMain {
       convertComponent(context, cassandraElementRepository);
       printMessage(logger, "Converted Components\n");
     } catch (Exception e) {
-      printMessage(logger,
-          "Could not perform migration for Components ,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
     try {
       convertNic(context, cassandraElementRepository);
       printMessage(logger, "Converted Nics\n");
     } catch (Exception e) {
-      printMessage(logger, "Could not perform migration for Nics ,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
     try {
       convertNetwork(context, cassandraElementRepository);
       printMessage(logger, "Converted Networks\n");
     } catch (Exception e) {
-      printMessage(logger,
-          "Could not perform migration for Networks ,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
     try {
       convertMibs(context, cassandraElementRepository);
       printMessage(logger, "Converted MIBs\n");
     } catch (Exception e) {
-      printMessage(logger, "Could not perform migration for MIBs,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
     try {
       convertServiceArtifact(context, cassandraElementRepository);
       printMessage(logger, "Converted Service Artifacts\n");
     } catch (Exception e) {
-      printMessage(logger,
-          "Could not perform migration for Service Artifacts,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
     try {
       convertServiceTemplate(context, cassandraElementRepository);
       printMessage(logger, "Converted Service Templates\n");
     } catch (Exception e) {
-      printMessage(logger,
-          "Could not perform migration for Service Templates,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
     try {
       convertProcesses(context, cassandraElementRepository);
       printMessage(logger, "Converted Processes\n");
     } catch (Exception e) {
-      printMessage(logger,
-          "Could not perform migration for Processes,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
 
@@ -199,40 +184,35 @@ public class MigrationMain {
       convertVlm(context, itemCassandraDao, versionCassandraDao, cassandraElementRepository);
       printMessage(logger, "Converted VLMs\n");
     } catch (Exception e) {
-      printMessage(logger, "Could not perform migration for VLMs,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
     try {
       convertLKG(context, cassandraElementRepository);
       printMessage(logger, "Converted LKGs\n");
     } catch (Exception e) {
-      printMessage(logger, "Could not perform migration for LKGs,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
     try {
       convertFeatureGroup(context, cassandraElementRepository);
       printMessage(logger, "Converted Feature Groups\n");
     } catch (Exception e) {
-      printMessage(logger, "Could not perform migration for Feature Groups,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
     try {
       convertEP(context, cassandraElementRepository);
       printMessage(logger, "Converted EPs\n");
     } catch (Exception e) {
-      printMessage(logger, "Could not perform migration for EPs,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
     try {
       convertLicenseAgreement(context, cassandraElementRepository);
       printMessage(logger, "Converted License Agreements\n");
     } catch (Exception e) {
-      printMessage(logger, "Could not perform migration for License Agreements,the error is :");
-      e.printStackTrace();
+      logger.debug(e.getMessage(), e);
       status = -1;
     }
   }
@@ -482,5 +462,8 @@ public class MigrationMain {
         .getViewableVersions().contains(versionId));
   }
 
-
+  public static Map<String, VersionInfoEntity> getVersionInfoMap()
+  {
+    return versionInfoMap;
+  }
 }

@@ -21,23 +21,20 @@
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
 import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
-import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.AggregationFunctionForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.EntitlementMetricForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.EntitlementTimeForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.OperationalScopeForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
-import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitForXml;
 
 import java.util.Collection;
 import java.util.Set;

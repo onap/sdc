@@ -22,7 +22,6 @@ package org.openecomp.sdc.translator.impl.heattotosca.nested.single;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil;
 import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.BaseResourceTranslationTest;
 

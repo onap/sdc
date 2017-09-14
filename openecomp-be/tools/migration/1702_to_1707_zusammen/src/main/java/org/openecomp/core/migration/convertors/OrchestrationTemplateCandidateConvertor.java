@@ -1,25 +1,17 @@
 package org.openecomp.core.migration.convertors;
 
 import com.amdocs.zusammen.datatypes.item.ElementContext;
-import com.amdocs.zusammen.datatypes.item.Info;
-import com.amdocs.zusammen.datatypes.item.ItemVersionData;
 import com.amdocs.zusammen.plugin.statestore.cassandra.dao.types.ElementEntityContext;
 import com.amdocs.zusammen.sdk.collaboration.types.CollaborationElement;
 import org.openecomp.core.migration.MigrationMain;
-import org.openecomp.core.migration.loaders.VspInformation;
 import org.openecomp.core.migration.store.ElementHandler;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.ElementPropertyName;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.StructureElement;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateDataEntity;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class OrchestrationTemplateCandidateConvertor {
 

@@ -37,11 +37,16 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+
 public class ImageManagerImpl implements ImageManager {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private VendorSoftwareProductInfoDao vspInfoDao;
   private ImageDao imageDao;
   private CompositionEntityDataManager compositionEntityDataManager;
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   public ImageManagerImpl(
           VendorSoftwareProductInfoDao vspInfoDao,
@@ -276,6 +281,7 @@ public class ImageManagerImpl implements ImageManager {
         final ImageFormat imageFormat = ImageFormat.valueOf(format);
       }
     } catch (IllegalArgumentException exception) {
+      log.debug("", exception);
       ErrorCode errorCode = ImageErrorBuilder.getInvalidImageFormatErrorBuilder();
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
               LoggerTragetServiceName.UPDATE_IMAGE, ErrorLevel.ERROR.name(),

@@ -51,8 +51,10 @@ class VspZusammenUtil {
       if (Objects.isNull(head)) {
         head = father = element;
       } else {
-        father.getSubElements().add(element);
-        father = element;
+        if (father != null) {
+          father.getSubElements().add(element);
+          father = element;
+        }
       }
     }
 

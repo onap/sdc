@@ -1,7 +1,6 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 
-import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.logging.context.MdcUtil;
 import org.openecomp.sdc.logging.types.LoggerServiceName;
@@ -9,39 +8,30 @@ import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ImageManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ImageManagerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Image;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ImageData;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityValidationDataDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ImageCreationDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ImageDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ImageRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
 import org.openecomp.sdcrests.vsp.rest.Images;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapCompositionEntityResponseToDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapCompositionEntityValidationDataToDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapImageDataToImageDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapImageEntityToImageCreationDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapImageEntityToImageDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapImageRequestDtoToImageEntity;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapQuestionnaireResponseToQuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.core.Response;
 
 

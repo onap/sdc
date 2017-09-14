@@ -391,6 +391,7 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
           try {
             value= (String) inputEntry.getValue().get_default();
           } catch (Exception e) {
+            logger.debug(e.getMessage(), e);
             value = inputEntry.getValue().get_default().toString();
           }
         return value;

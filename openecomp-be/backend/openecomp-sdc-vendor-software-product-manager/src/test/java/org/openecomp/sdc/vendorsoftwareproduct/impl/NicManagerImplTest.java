@@ -1,16 +1,22 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
@@ -29,13 +35,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 public class NicManagerImplTest {
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+
   private static final String NIC_NOT_EXIST_MSG =
       "Vendor Software Product NIC with Id nic1 does not exist for Vendor Software Product with " +
           "id VSP_ID and version 0.1";
@@ -129,6 +132,7 @@ public class NicManagerImplTest {
     try {
       NicEntity created = nicManager.createNic(nicEntity,USER);
     }  catch (CoreException exception) {
+      log.debug("",exception);
             Assert.assertEquals(VendorSoftwareProductErrorCodes.NIC_NAME_FORMAT_NOT_ALLOWED,
               exception.code().id());
     }
@@ -154,6 +158,7 @@ public class NicManagerImplTest {
     try {
       NicEntity created = nicManager.createNic(nicEntity,USER);
     }  catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals("Invalid request, NIC with name "+ nic.getName() +
           " already exist for component with ID "+ nicEntity.getComponentId() +".",
           exception.code().message());
@@ -176,6 +181,7 @@ public class NicManagerImplTest {
     try {
       NicEntity created = nicManager.createNic(nicEntity,USER);
     }  catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals("Invalid request,NetworkId not allowed for External Networks",
           exception.code().message());
       Assert.assertEquals(VendorSoftwareProductErrorCodes.NETWORKID_NOT_ALLOWED_FOR_EXTERNAL_NETWORK,
@@ -198,6 +204,7 @@ public class NicManagerImplTest {
     try {
       NicEntity created = nicManager.createNic(nicEntity,USER);
     }  catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals("Invalid request, Network Description not allowed for Internal Networks",
           exception.code().message());
       Assert.assertEquals(VendorSoftwareProductErrorCodes
@@ -344,6 +351,7 @@ public class NicManagerImplTest {
       Assert.fail();
     }
     catch (CoreException ex) {
+      log.debug("",ex);
       Assert.assertEquals(VendorSoftwareProductErrorCodes.NIC_NAME_FORMAT_NOT_ALLOWED,
               ex.code().id());
     }
@@ -442,6 +450,7 @@ public class NicManagerImplTest {
       nicManager.createNic(nic, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -452,6 +461,7 @@ public class NicManagerImplTest {
       nicManager.getNic(vspId, version, componentId, nicId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -462,6 +472,7 @@ public class NicManagerImplTest {
       nicManager.updateNic(new NicEntity(vspId, version, componentId, nicId), user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -473,6 +484,7 @@ public class NicManagerImplTest {
       nicManager.deleteNic(vspId, version, componentId, nicId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }

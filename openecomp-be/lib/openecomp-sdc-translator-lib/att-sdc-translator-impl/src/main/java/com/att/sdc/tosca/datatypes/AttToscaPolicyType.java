@@ -10,12 +10,14 @@ import org.openecomp.sdc.tosca.services.ConfigConstants;
 public class AttToscaPolicyType {
   private static Configuration config = ConfigurationManager.lookup();
 
-  public static String POLICY_TYPE_PREFIX =
+  public static final String POLICY_TYPE_PREFIX =
       config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_POLICY_TYPE);
 
 
-  public static String PLACEMENT_VALET_AFFINITY = POLICY_TYPE_PREFIX + "placement.valet.Affinity";
-  public static String PLACEMENT_VALET_EXCLUSIVITY =
+  public static final String PLACEMENT_VALET_AFFINITY = POLICY_TYPE_PREFIX + "placement.valet" +
+      ".Affinity";
+  public static final String PLACEMENT_VALET_EXCLUSIVITY =
       POLICY_TYPE_PREFIX + "placement.valet.Exclusivity";
-  public static String PLACEMENT_VALET_DIVERSITY = POLICY_TYPE_PREFIX + "placement.valet.Diversity";
+  public static final String PLACEMENT_VALET_DIVERSITY = POLICY_TYPE_PREFIX + "placement.valet" +
+      ".Diversity";
 }

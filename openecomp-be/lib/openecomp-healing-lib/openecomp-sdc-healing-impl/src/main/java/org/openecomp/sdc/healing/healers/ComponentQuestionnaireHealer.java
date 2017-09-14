@@ -12,8 +12,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
@@ -178,8 +176,7 @@ public class ComponentQuestionnaireHealer implements Healer {
 
       JsonObject computeQuestionnaireJsonObject = new JsonObject();
       computeQuestionnaireJsonObject.add(VM_SIZING, vmSizing);
-      String computeQuestionnaire = computeQuestionnaireJsonObject != null ?
-          computeQuestionnaireJsonObject.toString() : null;
+      String computeQuestionnaire = computeQuestionnaireJsonObject.toString();
       computeDao.updateQuestionnaireData(computeEntity.getVspId(), computeEntity.getVersion(),
           computeEntity.getComponentId(), computeEntity.getId(), computeQuestionnaire);
       compute.remove(VM_SIZING);

@@ -21,16 +21,14 @@
 package org.openecomp.sdc.translator.services.heattotosca.helper;
 
 import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.heat.datatypes.HeatBoolean;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
-import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.translator.datatypes.heattotosca.PropertyRegexMatcher;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.services.heattotosca.ConfigConstants;
 import org.openecomp.sdc.translator.services.heattotosca.NameExtractor;
-import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -127,17 +125,17 @@ public class ContrailTranslationHelper {
             tokenPropertyValue.get("token").add(stringWithToken);
           } else if (refParameter instanceof String) {
             if (includeBooleanValue) {
-              StringBuffer booleanBuffer = new StringBuffer();
+              StringBuilder booleanBuilder = new StringBuilder();
               String[] booleanValueList = ((String) refParameter).split(tokenChar);
               for (int i = 0; i < booleanValueList.length; i++) {
                 if (i == 0) {
-                  booleanBuffer.append(HeatBoolean.eval(booleanValueList[i]));
+                  booleanBuilder.append(HeatBoolean.eval(booleanValueList[i]));
                 } else {
-                  booleanBuffer.append(tokenChar);
-                  booleanBuffer.append(HeatBoolean.eval(booleanValueList[i]));
+                  booleanBuilder.append(tokenChar);
+                  booleanBuilder.append(HeatBoolean.eval(booleanValueList[i]));
                 }
               }
-              tokenPropertyValue.get("token").add(booleanBuffer.toString());
+              tokenPropertyValue.get("token").add(booleanBuilder.toString());
             } else {
               tokenPropertyValue.get("token").add(refParameter);
             }

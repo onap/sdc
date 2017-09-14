@@ -51,7 +51,6 @@ public class VersionHandler {
             write(versionFilePath, versionJson.getBytes());
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
-            ex.printStackTrace();
         }
 
     }
@@ -68,7 +67,6 @@ public class VersionHandler {
             }
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
-            ex.printStackTrace();
         }
 
     }

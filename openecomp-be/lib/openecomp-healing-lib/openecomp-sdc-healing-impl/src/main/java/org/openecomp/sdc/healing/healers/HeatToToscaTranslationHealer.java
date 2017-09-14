@@ -12,6 +12,8 @@ import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.healing.interfaces.Healer;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
@@ -33,6 +35,8 @@ public class HeatToToscaTranslationHealer implements Healer  {
   public static final ServiceTemplateDaoInter
       templateDao = ServiceTemplateDaoFactory.getInstance().createInterface();
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   public HeatToToscaTranslationHealer(){
 
@@ -58,24 +62,25 @@ public class HeatToToscaTranslationHealer implements Healer  {
           .getContentData().array());
       translatorOutput =
           HeatToToscaUtil.loadAndTranslateTemplateData(fileContentHandler);
-    }catch (Exception e){
+    } catch (Exception e) {
+      log.debug("", e);
       return Optional.empty();
     }
 
-    if(Objects.isNull(translatorOutput)){
+    if (Objects.isNull(translatorOutput)) {
       return Optional.empty();
-    }
+    } else {
 
-    if (translatorOutput != null && translatorOutput.getToscaServiceModel() == null) {
-      return Optional.empty();
-    }
+      if (translatorOutput.getToscaServiceModel() == null) {
+        return Optional.empty();
+      }
       //templateDao.deleteAll(vspId, version);
-    serviceModelDao.deleteAll(vspId,version);
-    serviceModelDao.storeServiceModel(vspId, version,
-        translatorOutput.getToscaServiceModel());
-    mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
+      serviceModelDao.deleteAll(vspId, version);
+      serviceModelDao.storeServiceModel(vspId, version, translatorOutput.getToscaServiceModel());
+      mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
 
-    return translatorOutput;
+      return translatorOutput;
+    }
 
   }
 }

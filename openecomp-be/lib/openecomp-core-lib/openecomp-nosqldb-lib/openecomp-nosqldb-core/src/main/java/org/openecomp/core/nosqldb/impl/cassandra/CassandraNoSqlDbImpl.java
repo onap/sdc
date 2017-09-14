@@ -28,6 +28,8 @@ import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,6 +39,8 @@ class CassandraNoSqlDbImpl implements NoSqlDb {
     private final Session session;
     private final String keySpace;
     private final MappingManager mappingManager;
+
+    private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
 
     public CassandraNoSqlDbImpl(Session session) {
@@ -109,6 +113,7 @@ class CassandraNoSqlDbImpl implements NoSqlDb {
                     .collect(Collectors.toSet());
             return versions.stream().collect(Collectors.joining(","));
         } catch (Exception e){
+            log.debug("",e);
             return "Failed to retrieve version";
         }
     }

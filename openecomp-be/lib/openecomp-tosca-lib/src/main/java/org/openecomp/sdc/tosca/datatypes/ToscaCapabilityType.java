@@ -29,26 +29,26 @@ public class ToscaCapabilityType {
 
   private static Configuration config = ConfigurationManager.lookup();
 
-  public static String CAPABILITY_PREFIX =
+  public static final String CAPABILITY_PREFIX =
       config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_CAPABILITY_TYPE);
 
   //TOSCA native types
-  public static String NATIVE_ROOT = "tosca.capabilities.Root";
-  public static String NATIVE_NODE = "tosca.capabilities.Node";
-  public static String NATIVE_CONTAINER = "tosca.capabilities.Container";
-  public static String NATIVE_COMPUTE = "tosca.capabilities.Compute";
-  public static String NATIVE_NETWORK_BINDABLE = "tosca.capabilities.network.Bindable";
-  public static String NATIVE_SCALABLE = "tosca.capabilities.Scalable";
-  public static String NATIVE_OPERATING_SYSTEM = "tosca.capabilities.OperatingSystem";
-  public static String NATIVE_ENDPOINT_ADMIN = "tosca.capabilities.Endpoint.Admin";
-  public static String NATIVE_ATTACHMENT = "tosca.capabilities.Attachment";
-  public static String NATIVE_NETWORK_LINKABLE = "tosca.capabilities.network.Linkable";
-  public static String NATIVE_NFV_METRIC = "tosca.capabilities.nfv.Metric";
+  public static final String NATIVE_ROOT = "tosca.capabilities.Root";
+  public static final String NATIVE_NODE = "tosca.capabilities.Node";
+  public static final String NATIVE_CONTAINER = "tosca.capabilities.Container";
+  public static final String NATIVE_COMPUTE = "tosca.capabilities.Compute";
+  public static final String NATIVE_NETWORK_BINDABLE = "tosca.capabilities.network.Bindable";
+  public static final String NATIVE_SCALABLE = "tosca.capabilities.Scalable";
+  public static final String NATIVE_OPERATING_SYSTEM = "tosca.capabilities.OperatingSystem";
+  public static final String NATIVE_ENDPOINT_ADMIN = "tosca.capabilities.Endpoint.Admin";
+  public static final String NATIVE_ATTACHMENT = "tosca.capabilities.Attachment";
+  public static final String NATIVE_NETWORK_LINKABLE = "tosca.capabilities.network.Linkable";
+  public static final String NATIVE_NFV_METRIC = "tosca.capabilities.nfv.Metric";
 
   //Additional types
-  public static String METRIC = CAPABILITY_PREFIX + "Metric";
-  public static String METRIC_CEILOMETER = CAPABILITY_PREFIX + "metric.Ceilometer";
-  public static String METRIC_SNMP_TRAP = CAPABILITY_PREFIX + "metric.SnmpTrap";
-  public static String METRIC_SNMP_POLLING = CAPABILITY_PREFIX + "metric.SnmpPolling";
+  public static final String METRIC = CAPABILITY_PREFIX + "Metric";
+  public static final String METRIC_CEILOMETER = CAPABILITY_PREFIX + "metric.Ceilometer";
+  public static final String METRIC_SNMP_TRAP = CAPABILITY_PREFIX + "metric.SnmpTrap";
+  public static final String METRIC_SNMP_POLLING = CAPABILITY_PREFIX + "metric.SnmpPolling";
 
 }

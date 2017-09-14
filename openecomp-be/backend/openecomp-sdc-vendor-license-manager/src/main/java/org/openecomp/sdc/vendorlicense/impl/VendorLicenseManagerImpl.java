@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.vendorlicense.impl;
 
+import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE;
+
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.activityLog.ActivityLogManager;
 import org.openecomp.sdc.activityLog.ActivityLogManagerFactory;
@@ -77,13 +79,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE;
 
 public class VendorLicenseManagerImpl implements VendorLicenseManager {
   private VersioningManager versioningManager;

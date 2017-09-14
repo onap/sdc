@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.utils;
 
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,6 +36,7 @@ import java.util.zip.ZipOutputStream;
  * @since November 08, 2016
  */
 public class ZipFileUtils {
+  private static final Logger log = (Logger) LoggerFactory.getLogger(ZipFileUtils.class.getName());
   public InputStream getZipInputStream(String name) {
     URL url = getClass().getResource(name);
     File templateDir = new File(url.getFile());
@@ -44,7 +48,7 @@ public class ZipFileUtils {
     try {
       zos.close();
     } catch (IOException exception) {
-      exception.printStackTrace();
+      log.debug("",exception);
     }
     return new ByteArrayInputStream(baos.toByteArray());
   }

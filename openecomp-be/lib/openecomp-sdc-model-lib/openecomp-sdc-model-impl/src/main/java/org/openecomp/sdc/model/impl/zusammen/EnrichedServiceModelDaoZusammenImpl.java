@@ -14,7 +14,6 @@ import org.openecomp.core.zusammen.api.ZusammenUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class EnrichedServiceModelDaoZusammenImpl extends ServiceModelDaoZusammenImpl implements
     EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> {

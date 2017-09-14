@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.tosca;
 
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
@@ -35,6 +37,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestUtil {
+
+  private static final Logger logger = LoggerFactory.getLogger(TestUtil.class);
 
   public static ToscaServiceModel loadToscaServiceModel(String serviceTemplatesPath,
                                                         String globalServiceTemplatesPath,
@@ -84,6 +88,7 @@ public class TestUtil {
         try {
           yamlFile.close();
         } catch (IOException ignore) {
+            logger.debug(ignore.getMessage(), ignore);
         }
       } catch (FileNotFoundException e) {
         throw e;

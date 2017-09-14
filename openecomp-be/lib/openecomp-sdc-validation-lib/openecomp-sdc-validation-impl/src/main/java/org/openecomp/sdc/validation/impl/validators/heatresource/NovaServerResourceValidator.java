@@ -90,25 +90,26 @@ public class NovaServerResourceValidator implements ResourceValidator {
       return;
     }
 
-    for (Object serverGroupValue : schedulerHintsMap.values()) {
-      if(!(serverGroupValue instanceof Map)){
-        continue;
-      }
-      Map<String, Object> currentServerMap = (Map<String, Object>) serverGroupValue;
-      String serverResourceName =
-          currentServerMap == null ? null : (String) currentServerMap
-              .get(ResourceReferenceFunctions.GET_RESOURCE.getFunction());
-      Resource serverResource =
-          serverResourceName == null || resourcesMap == null ? null
-              : resourcesMap.get(serverResourceName);
+    if (schedulerHintsMap != null) {
+      for (Object serverGroupValue : schedulerHintsMap.values()) {
+        if (!(serverGroupValue instanceof Map)) {
+          continue;
+        }
+        Map<String, Object> currentServerMap = (Map<String, Object>) serverGroupValue;
+        String serverResourceName = (String) currentServerMap
+                .get(ResourceReferenceFunctions.GET_RESOURCE.getFunction());
+        Resource serverResource =
+            serverResourceName == null || resourcesMap == null ? null
+                : resourcesMap.get(serverResourceName);
 
-      if (serverResource != null && !serverResource.getType()
-          .equals(HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource())) {
-        globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.SERVER_NOT_DEFINED_FROM_NOVA.getErrorMessage(),
-                    serverResourceName, resourceEntry.getKey()),
-            LoggerTragetServiceName.VALIDATE_SERVER_GROUP_EXISTENCE,
-            LoggerErrorDescription.SERVER_NOT_DEFINED_NOVA);
+        if (serverResource != null && !serverResource.getType()
+            .equals(HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource())) {
+          globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+                  .getErrorWithParameters(Messages.SERVER_NOT_DEFINED_FROM_NOVA.getErrorMessage(),
+                      serverResourceName, resourceEntry.getKey()),
+              LoggerTragetServiceName.VALIDATE_SERVER_GROUP_EXISTENCE,
+              LoggerErrorDescription.SERVER_NOT_DEFINED_NOVA);
+        }
       }
     }
 

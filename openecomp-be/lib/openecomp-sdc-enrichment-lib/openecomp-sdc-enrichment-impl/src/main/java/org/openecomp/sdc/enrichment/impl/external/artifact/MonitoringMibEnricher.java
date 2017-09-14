@@ -34,6 +34,8 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
@@ -61,6 +63,7 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
   private ComponentArtifactDao componentArtifactDao;
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
   /**
    * Enrich map.
    *
@@ -225,6 +228,7 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
       mibs = FileUtils
           .getFileContentMapFromZip(FileUtils.toByteArray(monitoringArtifactInfo.getContent()));
     } catch (IOException ioException) {
+      log.debug("",ioException);
       ErrorMessage.ErrorMessageUtil
           .addMessage(mibServiceArtifact.getName() + "." + type.name(), errors)
           .add(new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_ZIP_FILE.getErrorMessage()));

@@ -20,6 +20,9 @@
 
 package org.openecomp.server.filters;
 
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Base64;
@@ -35,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ActionAuthenticationFilter implements Filter {
 
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
   private boolean runningOnLocal = true;
 
   @Override
@@ -58,6 +62,7 @@ public class ActionAuthenticationFilter implements Filter {
           String decodedCredentials = new String(Base64.getDecoder().decode(base64Credentials));
           username = decodedCredentials.substring(0, decodedCredentials.indexOf(":"));
         } catch (Exception exception) {
+          log.debug("",exception);
           setResponseStatus((HttpServletResponse) arg1, HttpServletResponse.SC_FORBIDDEN);
           return;
         }
@@ -82,6 +87,7 @@ public class ActionAuthenticationFilter implements Filter {
                     .valueOf(username.substring(username.indexOf("-") + 1).toUpperCase());
                 return userPrivilege.ordinal() >= requiredPrivilege.ordinal();
               } catch (Exception exception) {
+                log.debug("",exception);
                 return false;
               }
             }

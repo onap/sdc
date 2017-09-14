@@ -25,8 +25,6 @@ import static org.junit.Assert.assertEquals;
 import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
 import org.junit.Before;
-import org.openecomp.config.api.Configuration;
-import org.openecomp.config.api.ConfigurationManager;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.translator.factory.HeatToToscaTranslatorFactory;
@@ -45,7 +43,6 @@ import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.TestUtils;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
-import org.openecomp.sdc.translator.services.heattotosca.ConfigConstants;
 
 import java.io.BufferedInputStream;
 import java.io.File;

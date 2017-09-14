@@ -6,6 +6,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.NicManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
@@ -35,6 +37,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class ComponentManagerImplTest {
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+
   private static final String COMP_NOT_EXIST_MSG =
       "Vendor Software Product Component with Id 1 does not exist for Vendor Software Product with id VSP_ID and version 0.1";
   private static final String USER = "componentsTestUser";
@@ -140,6 +145,7 @@ public class ComponentManagerImplTest {
     try {
       ComponentEntity created = componentManager.createComponent(expected, USER);
     }  catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals("Creation of only one VFC per VSP allowed.", exception.code().message());
       Assert.assertEquals(VendorSoftwareProductErrorCodes.VSP_VFC_COUNT_EXCEED,
           exception.code().id());
@@ -189,6 +195,7 @@ public class ComponentManagerImplTest {
     try {
       CompositionEntityValidationData created = componentManager.updateComponent(expected, USER);
     }  catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals("VFC with specified name already present in given VSP.",
           exception.code().message());
       Assert.assertEquals(VendorSoftwareProductErrorCodes.VSP_VFC_DUPLICATE_NAME,
@@ -426,6 +433,7 @@ public class ComponentManagerImplTest {
       componentManager.createComponent(component, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -436,6 +444,7 @@ public class ComponentManagerImplTest {
       componentManager.getComponent(vspId, version, componentId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -447,6 +456,7 @@ public class ComponentManagerImplTest {
           .updateComponent(new ComponentEntity(vspId, version, componentId), user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -457,6 +467,7 @@ public class ComponentManagerImplTest {
       componentManager.listComponents(vspId, version, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -467,6 +478,7 @@ public class ComponentManagerImplTest {
       componentManager.deleteComponents(vspId, version, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -477,6 +489,7 @@ public class ComponentManagerImplTest {
       componentManager.deleteComponent(vspId, version, componentId, user);
       Assert.fail();
     } catch (CoreException exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }

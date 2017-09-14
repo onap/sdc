@@ -40,6 +40,8 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.healing.api.HealingManager;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
@@ -101,6 +103,9 @@ import static org.mockito.Mockito.verify;
 
 
 public class VendorSoftwareProductManagerImplTest {
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+
   private static final String INVALID_VERSION_MSG = "Invalid requested version.";
 
   private static String VSP_ID = "vspId";
@@ -669,6 +674,7 @@ public class VendorSoftwareProductManagerImplTest {
                       url.openStream(), USER1, "zip", "notZipFile");
       candidateManager.process(VSP_ID, VERSION01, USER1);
     } catch (Exception ce) {
+      log.debug("",ce);
       Assert.assertEquals(ce.getMessage(), Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage());
     }
 
@@ -688,14 +694,19 @@ public class VendorSoftwareProductManagerImplTest {
           throws IOException {
     List<String> fileNames = new ArrayList<>();
 
-    ZipInputStream zip = new ZipInputStream(new FileInputStream(csar));
-    ZipEntry ze;
+    FileInputStream fileInputStream = new FileInputStream(csar);
+    try {
+      ZipInputStream zip = new ZipInputStream(fileInputStream);
+      ZipEntry ze;
 
-    while ((ze = zip.getNextEntry()) != null) {
-      String name = ze.getName();
-      if (name.contains(folderName)) {
-        fileNames.add(name);
+      while ((ze = zip.getNextEntry()) != null) {
+        String name = ze.getName();
+        if (name.contains(folderName)) {
+          fileNames.add(name);
+        }
       }
+    }finally {
+      fileInputStream.close();
     }
 
     return fileNames;

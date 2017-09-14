@@ -24,7 +24,7 @@ package org.openecomp.sdc.action;
 public class ActionConstants {
 
   //
-  public static final long MAX_ACTION_ARTIFACT_SIZE = 20 * 1024 * 1024; //20 MB
+  public static final long MAX_ACTION_ARTIFACT_SIZE = 20 * 1024 * 1024L; //20 MB
   //REST layer constants
   public static final String X_OPEN_ECOMP_INSTANCE_ID_HEADER_PARAM = "X-OPEN-ECOMP-InstanceID";
   public static final String X_OPEN_ECOMP_REQUEST_ID_HEADER_PARAM = "X-OPEN-ECOMP-RequestID";

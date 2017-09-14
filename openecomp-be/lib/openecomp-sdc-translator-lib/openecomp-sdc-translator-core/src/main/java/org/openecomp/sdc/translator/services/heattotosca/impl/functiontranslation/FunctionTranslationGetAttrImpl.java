@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
@@ -323,7 +324,7 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
     if (attributeParamList.size() < 3) {
       return null;
     }
-    StringBuffer attributeFullPath = new StringBuffer();
+    StringBuilder attributeFullPath = new StringBuilder();
     attributeFullPath.append(attributeParamList.get(1));
     for (int j = 2; j <= attributeIndex; j++) {
       if (isInteger(attributeParamList.get(j))) {
@@ -340,10 +341,15 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
       return false;
     }
 
-    try {
+    /*try {
       Integer.parseInt(String.valueOf(inputNumber));
       return true;
     } catch (NumberFormatException exception) {
+      return false;
+    }*/
+    if(StringUtils.isNumeric(String.valueOf(inputNumber))){
+      return true;
+    } else {
       return false;
     }
   }

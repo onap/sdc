@@ -22,15 +22,15 @@ package org.openecomp.sdc.enrichment.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import org.openecomp.core.enrichment.api.EnrichmentManager;
 import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
 import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
-import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
-import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -52,6 +52,9 @@ import java.util.zip.ZipInputStream;
 
 
 public class EnrichmentManagerImplTest {
+
+  private final static Logger log = (Logger) LoggerFactory.getLogger
+      (EnrichmentManagerImplTest.class.getName());
 
 
   private static ToscaServiceModel loadToscaServiceModel(String serviceTemplatesPath,
@@ -103,6 +106,7 @@ public class EnrichmentManagerImplTest {
           try {
             yamlFile.close();
           } catch (IOException ignore) {
+            log.debug("",ignore);
           }
         } catch (FileNotFoundException e) {
           throw e;

@@ -30,7 +30,6 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapComputeEntityToComputeCreation
 import org.openecomp.sdcrests.vsp.rest.mapping.MapComputeEntityToComputeDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapQuestionnaireResponseToQuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 

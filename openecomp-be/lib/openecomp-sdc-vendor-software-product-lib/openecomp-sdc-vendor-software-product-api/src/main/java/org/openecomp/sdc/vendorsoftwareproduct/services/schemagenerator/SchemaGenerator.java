@@ -25,6 +25,8 @@ import freemarker.template.TemplateException;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateInput;
@@ -35,6 +37,7 @@ import java.io.Writer;
 
 public class SchemaGenerator {
   public static final String SCHEMA_GENERATION_ERROR = "SCHEMA_GENERATION_ERROR";
+  private final static Logger log = (Logger) LoggerFactory.getLogger(SchemaGenerator.class.getName());
 
   /**
    * Generate string.
@@ -56,6 +59,7 @@ public class SchemaGenerator {
       schemaTemplate.process(input, writer);
       return writer.toString();
     } catch (IOException | TemplateException exception) {
+      log.debug("",exception);
       throw new CoreException(
           new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
               .withId(SCHEMA_GENERATION_ERROR).withMessage(exception.getMessage()).build());

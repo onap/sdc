@@ -45,7 +45,7 @@ import java.util.Optional;
 
 
 public class ManifestValidator implements Validator {
-  public static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  public static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static Logger logger = (Logger) LoggerFactory.getLogger(YamlValidator.class);
 
   @Override
@@ -65,6 +65,7 @@ public class ManifestValidator implements Validator {
         throw new Exception("The manifest file '" + SdcCommon.MANIFEST_NAME + "' has no content");
       }
     } catch (Exception re) {
+      logger.debug("",re);
       globalContext.addMessage(SdcCommon.MANIFEST_NAME, ErrorLevel.ERROR,
           Messages.INVALID_MANIFEST_FILE.getErrorMessage(),
           LoggerTragetServiceName.VALIDATE_MANIFEST_CONTENT,
@@ -80,7 +81,7 @@ public class ManifestValidator implements Validator {
             LoggerTragetServiceName.VALIDATE_FILE_IN_ZIP, LoggerErrorDescription.MISSING_FILE));
 
     globalContext.getFileContextMap().keySet().stream().filter(name ->
-        !manifestFiles.contains(name) && !SdcCommon.MANIFEST_NAME.equals(name)
+        isNotManifestFiles(manifestFiles, name) && isNotManifestName(name)
     ).forEach(name ->
         globalContext.addMessage(name, ErrorLevel.WARNING,
             Messages.MISSING_FILE_IN_MANIFEST.getErrorMessage(),
@@ -88,6 +89,14 @@ public class ManifestValidator implements Validator {
     );
 
     mdcDataDebugMessage.debugExitMessage(null, null);
+  }
+
+  private boolean isNotManifestFiles(List<String> manifestFiles, String name) {
+    return !manifestFiles.contains(name);
+  }
+
+  private boolean isNotManifestName(String name) {
+    return !SdcCommon.MANIFEST_NAME.equals(name);
   }
 
 

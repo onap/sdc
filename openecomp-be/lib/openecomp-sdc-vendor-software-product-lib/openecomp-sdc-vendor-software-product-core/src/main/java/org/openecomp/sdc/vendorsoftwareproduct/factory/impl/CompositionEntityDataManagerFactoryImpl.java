@@ -21,15 +21,11 @@
 package org.openecomp.sdc.vendorsoftwareproduct.factory.impl;
 
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;

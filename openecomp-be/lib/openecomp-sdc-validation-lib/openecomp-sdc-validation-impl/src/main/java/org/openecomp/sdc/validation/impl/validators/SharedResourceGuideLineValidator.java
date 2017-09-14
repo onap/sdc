@@ -1,6 +1,8 @@
 package org.openecomp.sdc.validation.impl.validators;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
@@ -26,7 +28,8 @@ import java.util.Set;
  * Created by TALIO on 2/15/2017.
  */
 public class SharedResourceGuideLineValidator implements Validator {
-  public static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  public static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   @Override
   public void validate(GlobalValidationContext globalContext) {
@@ -34,6 +37,7 @@ public class SharedResourceGuideLineValidator implements Validator {
     try {
       manifestContent = ValidationUtil.checkValidationPreCondition(globalContext);
     } catch (Exception exception) {
+      log.debug("",exception);
       return;
     }
 

@@ -24,19 +24,21 @@ public class ImportCommand {
             if (zippedFile == null){
                 logger.error("Import must have a valid file as an input.");
             }
-            zippedFile = zippedFile.replaceAll("\\r", "");
-            if(filterItem != null) {
-                filterItem = filterItem.replaceAll("\\r", "");
+            if (zippedFile != null) {
+                zippedFile = zippedFile.replaceAll("\\r", "");
+                if (filterItem != null) {
+                    filterItem = filterItem.replaceAll("\\r", "");
+                }
+                Path rootDir = Paths.get(ImportProperties.ROOT_DIRECTORY);
+                ExportDataCommand.initDir(rootDir);
+                ZipUtils.unzip(Paths.get(zippedFile), rootDir);
+                TreeWalker.walkFiles(context, rootDir, filterItem);
+                FileUtils.forceDelete(rootDir.toFile()); // clear all unzip data at the end.
             }
-            Path rootDir = Paths.get(ImportProperties.ROOT_DIRECTORY);
-            ExportDataCommand.initDir(rootDir);
-            ZipUtils.unzip(Paths.get(zippedFile), rootDir);
-            TreeWalker.walkFiles(context, rootDir, filterItem);
 
-            FileUtils.forceDelete(rootDir.toFile()); // clear all unzip data at the end.
+
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
-            ex.printStackTrace();
         }
     }
 

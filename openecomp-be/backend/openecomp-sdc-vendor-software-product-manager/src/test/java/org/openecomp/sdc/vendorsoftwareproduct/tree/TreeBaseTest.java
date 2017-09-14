@@ -22,6 +22,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.tree;
 
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -31,6 +33,8 @@ import java.net.URL;
  * Created by SHALOMB on 6/8/2016.
  */
 public class TreeBaseTest {
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   String INPUT_DIR;
 
@@ -44,18 +48,21 @@ public class TreeBaseTest {
     try {
       inputDir = new File(url.toURI());
     } catch (URISyntaxException exception) {
-      exception.printStackTrace();
+      log.debug("",exception);
     }
-    File[] files = inputDir.listFiles();
-    for (File inputFile : files) {
-      try {
-        heatTreeManager.addFile(inputFile.getName(), FileUtils.loadFileToInputStream(
-            INPUT_DIR.replace("/", File.separator) + File.separator + inputFile.getName()));
-      } catch (Exception e) {
-        e.printStackTrace();
-        throw e;
+
+    if(inputDir != null) {
+      File[] files = inputDir.listFiles();
+      for (File inputFile : files) {
+        try {
+          heatTreeManager.addFile(inputFile.getName(), FileUtils.loadFileToInputStream(
+              INPUT_DIR.replace("/", File.separator) + File.separator + inputFile.getName()));
+        } catch (Exception e) {
+          throw e;
+        }
       }
     }
     return heatTreeManager;
+
   }
 }

@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 public class HeatResourceValidator extends ResourceBaseValidator {
@@ -48,7 +47,7 @@ public class HeatResourceValidator extends ResourceBaseValidator {
     try {
       manifestContent = ValidationUtil.checkValidationPreCondition(globalContext);
     } catch (Exception exception) {
-
+      logger.debug("",exception);
     }
     Set<String> baseFiles = ManifestUtil.getBaseFiles(manifestContent);
     String baseFileName = CollectionUtils.isEmpty(baseFiles) ? null : baseFiles.iterator().next();

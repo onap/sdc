@@ -22,7 +22,7 @@ package org.openecomp.sdc.common.errors;
 
 public class CoreException extends RuntimeException {
 
-  private ErrorCode errorCode;
+  private final ErrorCode errorCode;
 
   public CoreException(ErrorCode errorCode) {
     this(errorCode, null);

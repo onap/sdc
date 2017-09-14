@@ -30,6 +30,8 @@ import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -48,6 +50,11 @@ public class ApplicationConfigImplDaoTest {
   private static ApplicationConfig applicationConfig =
       ApplicationConfigFactory.getInstance().createInterface();
 
+  private final static Logger log = (Logger) LoggerFactory.getLogger
+      (ApplicationConfigImplDaoTest.class.getName());
+
+  private final Logger logger = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+
   @BeforeClass
   public static void init() {
     try {
@@ -64,6 +71,7 @@ public class ApplicationConfigImplDaoTest {
       applicationConfigDao.create(applicationConfigEntity3);
 
     } catch (Exception e) {
+      log.debug("",e);
       throw new CoreException(new ErrorCode.ErrorCodeBuilder().
           withCategory(ErrorCategory.APPLICATION).
           withId(SCHEMA_GENERATOR_INITIALIZATION_ERROR).
@@ -91,6 +99,7 @@ public class ApplicationConfigImplDaoTest {
     try {
       applicationConfig.getConfigurationData("test - namespace", "aaa");
     } catch (CoreException ce) {
+      logger.debug("", ce);
       Assert.assertEquals(ce.getMessage(),
           "Configuration for namespace test - namespace and key aaa was not found");
     }

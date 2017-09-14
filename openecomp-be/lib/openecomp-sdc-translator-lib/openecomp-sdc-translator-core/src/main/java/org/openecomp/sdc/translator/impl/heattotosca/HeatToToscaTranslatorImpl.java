@@ -21,8 +21,6 @@
 package org.openecomp.sdc.translator.impl.heattotosca;
 
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.config.api.Configuration;
-import org.openecomp.config.api.ConfigurationManager;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileUtils;
@@ -32,7 +30,6 @@ import org.openecomp.core.validation.factory.ValidationManagerFactory;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
-import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
@@ -40,7 +37,6 @@ import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestFile;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
-import org.openecomp.sdc.translator.services.heattotosca.ConfigConstants;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationService;
 import org.openecomp.sdc.translator.services.heattotosca.TranslationService;
 import org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionManager;

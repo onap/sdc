@@ -23,7 +23,6 @@ package org.openecomp.sdcrests.activitylog.rest.mapping;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdcrests.activitylog.types.ActivityLogDto;
 import org.openecomp.sdcrests.activitylog.types.ActivityStatus;
-import org.openecomp.sdcrests.activitylog.types.ActivityType;
 import org.openecomp.sdcrests.mapping.MappingBase;
 
 public class MapActivityLogEntityToActivityLogDto extends MappingBase<ActivityLogEntity, ActivityLogDto> {

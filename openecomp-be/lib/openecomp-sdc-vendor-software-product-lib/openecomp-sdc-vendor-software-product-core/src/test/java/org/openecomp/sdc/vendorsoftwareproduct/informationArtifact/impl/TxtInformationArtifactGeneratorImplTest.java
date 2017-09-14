@@ -21,6 +21,11 @@
 package org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.impl;
 
 
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.impl.TxtInformationArtifactConstants.HEADER;
+import static org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.impl.TxtInformationArtifactConstants.VFC_COMPUTE_CPU_OVER_SUBSCRIPTION;
+
 import org.junit.Assert;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -36,8 +41,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.com
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.general.Hypervisor;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.general.Recovery;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.network.NetworkCapacity;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.storage.Backup;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.storage.Storage;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic.IpConfiguration;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic.Network;
 import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic.NicQuestionnaire;
@@ -50,15 +53,9 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import javax.annotation.processing.SupportedAnnotationTypes;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.impl.TxtInformationArtifactConstants.HEADER;
-import static org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.impl.TxtInformationArtifactConstants.VFC_COMPUTE_CPU_OVER_SUBSCRIPTION;
 
 public class TxtInformationArtifactGeneratorImplTest {
 

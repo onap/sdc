@@ -28,14 +28,14 @@ public class ToscaGroupType {
 
   private static Configuration config = ConfigurationManager.lookup();
 
-  public static String GROUP_TYPE_PREFIX =
+  public static final String GROUP_TYPE_PREFIX =
       config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_GROUP_TYPE);
 
   //TOSCA native types
-  public static String NATIVE_ROOT = "tosca.groups.Root";
+  public static final String NATIVE_ROOT = "tosca.groups.Root";
 
   //Additional types
-  public static String HEAT_STACK = GROUP_TYPE_PREFIX + "heat.HeatStack";
+  public static final String HEAT_STACK = GROUP_TYPE_PREFIX + "heat.HeatStack";
 
 
 }

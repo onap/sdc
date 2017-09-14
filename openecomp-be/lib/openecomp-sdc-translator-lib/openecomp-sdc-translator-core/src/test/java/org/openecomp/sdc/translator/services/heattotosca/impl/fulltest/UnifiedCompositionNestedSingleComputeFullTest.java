@@ -1,7 +1,6 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.fulltest;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.BaseFullTranslationTest;
 

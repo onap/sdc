@@ -76,7 +76,6 @@ public class ItemHandler {
             write(itemFilePath, itemJson.getBytes());
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
-            ex.printStackTrace();
         }
 
     }

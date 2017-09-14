@@ -5,6 +5,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentArtifactDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.MonitoringUploadStatus;
@@ -26,6 +28,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class MonitoringUploadsManagerImplTest {
+
+  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   private static final String USER1 = "ComponentsUploadTestUser";
   private static final String COMPONENT_ID = "COMPONENT_ID";
@@ -66,6 +70,7 @@ public class MonitoringUploadsManagerImplTest {
               MonitoringUploadType.VES_EVENTS, USER1);
       Assert.fail();
     } catch (Exception exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.getMessage(), "Invalid zip file");
     }
   }
@@ -80,6 +85,7 @@ public class MonitoringUploadsManagerImplTest {
               MonitoringUploadType.SNMP_TRAP, USER1);
       Assert.fail();
     } catch (Exception exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.getMessage(), "Zip file should not contain folders");
     }
   }
@@ -94,6 +100,7 @@ public class MonitoringUploadsManagerImplTest {
               MonitoringUploadType.VES_EVENTS, USER1);
       Assert.fail();
     } catch (Exception exception) {
+      log.debug("",exception);
       Assert.assertEquals(exception.getMessage(),
           "Wrong VES EVENT Artifact was uploaded - all files contained in Artifact must be YAML " +
               "files (using .yaml/.yml extensions)");
@@ -157,7 +164,7 @@ public class MonitoringUploadsManagerImplTest {
     try {
       return url.openStream();
     } catch (IOException exception) {
-      exception.printStackTrace();
+      log.debug("",exception);
       return null;
     }
   }
