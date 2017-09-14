@@ -67,9 +67,9 @@ public class SubEntitiesQuestionnaireHealer implements Healer {
         : (Version) healingParams.get(SdcCommon.VERSION);
 
     Collection<ComponentEntity> componentEntities =
-
         componentDao.listCompositionAndQuestionnaire(vspId, version);
-    networkDao.list(new NetworkEntity(vspId, version,null));
+
+    networkDao.list(new NetworkEntity(vspId, version, null));
 
     Collection<NicEntity> nicEntities = vendorSoftwareProductDao.listNicsByVsp(vspId, version);
 
@@ -90,7 +90,8 @@ public class SubEntitiesQuestionnaireHealer implements Healer {
 
     for (Object entity : compositionEntities) {
       CompositionEntity compositionEntity = (CompositionEntity) entity;
-      if (Objects.isNull(compositionEntity.getQuestionnaireData())) {
+      if (Objects.isNull(compositionEntity.getQuestionnaireData()) ||
+          "".equals(compositionEntity.getQuestionnaireData())) {
         compositionEntity.setVersion(newVersion);
         updateNullQuestionnaire(compositionEntity, type);
       }

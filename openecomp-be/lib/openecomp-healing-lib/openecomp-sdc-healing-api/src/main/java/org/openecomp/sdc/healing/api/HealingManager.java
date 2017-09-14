@@ -23,6 +23,7 @@ package org.openecomp.sdc.healing.api;
 import org.openecomp.sdc.healing.types.HealCode;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by Talio on 11/29/2016.
@@ -30,5 +31,5 @@ import java.util.Map;
 public interface HealingManager {
     Object heal(HealCode code, Map<String, Object> healParameters);
 
-    void healAll(Map<String, Object> healParameters);
+    Optional<String> healAll(Map<String, Object> healParameters);
 }

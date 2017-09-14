@@ -51,14 +51,12 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Component;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityId;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComputeData;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Image;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.NetworkType;
@@ -69,6 +67,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -82,6 +81,8 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
           "COMPOSITION_ENTITY_DATA_MANAGER_ERR";
   private static final String COMPOSITION_ENTITY_DATA_MANAGER_ERR_MSG =
           "Invalid input: %s may not be null";
+  private static final String MISSING_OR_INVALID_QUESTIONNAIRE_MSG =
+      "Data is missing/invalid for this %s. Please refill and resubmit.";
 
   private static final Logger logger =
           LoggerFactory.getLogger(CompositionEntityDataManagerImpl.class);
@@ -105,7 +106,7 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
                                           NicDao nicDao, NetworkDao networkDao,
                                           ImageDao imageDao, ComputeDao computeDao,
                                           DeploymentFlavorDao deploymentFlavorDao,
-                                          VendorSoftwareProductDao vendorSoftwareProductDao ) {
+                                          VendorSoftwareProductDao vendorSoftwareProductDao) {
     this.vspInfoDao = vspInfoDao;
     this.componentDao = componentDao;
     this.nicDao = nicDao;
@@ -588,12 +589,10 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
             compositionEntityData.entity.getCompositionEntityId().toString(),
             compositionEntityData.entity.getQuestionnaireData()));
 
-    if(Objects.isNull(compositionEntityData.entity.getQuestionnaireData()) || !JsonUtil.isValidJson
-            (compositionEntityData.entity.getQuestionnaireData())){
-      List<String> errors = new ArrayList<>();
-      errors.add("Data is missing for the above " + compositionEntityData.entity.getType() +
-              ". Complete the mandatory fields and resubmit.");
-      return errors;
+    if (Objects.isNull(compositionEntityData.entity.getQuestionnaireData()) ||
+        !JsonUtil.isValidJson(compositionEntityData.entity.getQuestionnaireData())) {
+      return Collections.singletonList(String
+          .format(MISSING_OR_INVALID_QUESTIONNAIRE_MSG, compositionEntityData.entity.getType()));
     }
 
     return JsonUtil.validate(
@@ -677,8 +676,8 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
     return compute;
   }
 
-  public void saveComputesFlavorByComponent(String vspId, Version version, Component component, String
-          componentId) {
+  public void saveComputesFlavorByComponent(String vspId, Version version, Component component,
+                                            String componentId) {
     if (CollectionUtils.isNotEmpty(component.getCompute())) {
       for (ComputeData flavor : component.getCompute()) {
         ComputeEntity computeEntity = new ComputeEntity(vspId, version, componentId, null);

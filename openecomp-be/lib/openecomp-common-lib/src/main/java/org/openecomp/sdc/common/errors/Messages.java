@@ -22,7 +22,7 @@ package org.openecomp.sdc.common.errors;
 
 
 public enum Messages {
-  CANT_LOAD_CLASS("Can't load class %s. Error: %s"),
+  CANT_LOAD_HEALING_CLASS("Can't load healing class %s."),
 
   VERSION_UPGRADE("Item %s is of old version. A check out was made in order to get new " +
       "functionalities"),

@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.healing.impl;
 
+import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.common.errors.Messages;
@@ -33,8 +34,10 @@ import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by Talio on 11/29/2016.
@@ -45,34 +48,53 @@ public class HealingManagerImpl implements HealingManager {
 
   @Override
   public Object heal(HealCode code, Map<String, Object> healParameters) {
-    String implClassName = healerCodeToImplClass.get(code.name());
-    try {
-      Healer healerImpl = getHealerImplInstance(implClassName);
-      return healerImpl.heal(healParameters);
+    ArrayList<String> healingFailureMessages = new ArrayList<>();
 
+    Object result =
+        heal(healParameters, healerCodeToImplClass.get(code.name()), healingFailureMessages);
+
+    if (!healingFailureMessages.isEmpty()) {
+      throw new RuntimeException(CommonMethods.listToSeparatedString(healingFailureMessages, '\n'));
+    }
+    return result;
+  }
+
+  @Override
+  public Optional<String> healAll(Map<String, Object> healParameters) {
+    ArrayList<String> healingFailureMessages = new ArrayList<>();
+
+    for (String implClassName : healerCodeToImplClass.values()) {
+      heal(healParameters, implClassName, healingFailureMessages);
+    }
+
+    return healingFailureMessages.isEmpty() ? Optional.empty()
+        : Optional.of(CommonMethods.listToSeparatedString(healingFailureMessages, '\n'));
+  }
+
+  private Object heal(Map<String, Object> healParameters, String healerImplClassName,
+                      ArrayList<String> healingFailureMessages) {
+    Healer healerImpl;
+    try {
+      healerImpl = getHealerImplInstance(healerImplClassName);
     } catch (Exception e) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.SELF_HEALING, ErrorLevel.ERROR.name(), LoggerErrorCode
               .DATA_ERROR.getErrorCode(), LoggerErrorDescription.CANT_HEAL);
-      throw new RuntimeException(String.format(Messages.CANT_LOAD_CLASS.getErrorMessage(),
-          implClassName, e.getMessage()));
+      healingFailureMessages
+          .add(String.format(Messages.CANT_LOAD_HEALING_CLASS.getErrorMessage(),
+              healerImplClassName));
+      return null;
     }
-  }
 
-  @Override
-  public void healAll(Map<String, Object> healParameters) {
-    for (String implClassName : healerCodeToImplClass.values()) {
-      try {
-        Healer healerImpl = getHealerImplInstance(implClassName);
-        healerImpl.heal(healParameters);
-      } catch (Exception e) {
-        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-            LoggerTragetServiceName.SELF_HEALING, ErrorLevel.ERROR.name(), LoggerErrorCode
-                .DATA_ERROR.getErrorCode(), LoggerErrorDescription.CANT_HEAL);
-        throw new RuntimeException(String.format(Messages.CANT_LOAD_CLASS.getErrorMessage(),
-            implClassName, e.getMessage()));
-      }
+    try {
+      return healerImpl.heal(healParameters);
+    } catch (Exception e) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.SELF_HEALING, ErrorLevel.ERROR.name(), LoggerErrorCode
+              .DATA_ERROR.getErrorCode(), LoggerErrorDescription.CANT_HEAL);
+      healingFailureMessages.add(e.getMessage());
     }
+    return null;
   }
 
   private static Map<String, String> initHealers() {
@@ -80,10 +102,8 @@ public class HealingManagerImpl implements HealingManager {
   }
 
   private Healer getHealerImplInstance(String implClassName)
-      throws ClassNotFoundException, NoSuchMethodException, InstantiationException,
-      IllegalAccessException, java.lang.reflect.InvocationTargetException {
-    Class<?> clazz = Class.forName(implClassName);
-    Constructor<?> constructor = clazz.getConstructor();
-    return (Healer) constructor.newInstance();
+      throws InstantiationException, IllegalAccessException, InvocationTargetException,
+      NoSuchMethodException, ClassNotFoundException {
+    return (Healer) Class.forName(implClassName).getConstructor().newInstance();
   }
 }
