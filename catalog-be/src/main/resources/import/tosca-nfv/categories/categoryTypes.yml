@@ -1,0 +1,10 @@
+resources:
+  Nfvo:
+    name: "Nfvo"
+    subcategories: 
+      Infrastructure:
+          name: "Infrastructure"
+          icons: ['connector']
+      Network_Elements:
+          name: "Network Elements"
+          icons: ['network', 'connector']
