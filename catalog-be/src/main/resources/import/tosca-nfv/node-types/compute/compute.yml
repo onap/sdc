@@ -1,0 +1,126 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+artifact_types:
+  tosca.artifacts.nfv.SwImage:
+    derived_from: tosca.artifacts.Deployment.Image
+    properties:
+      name:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      checksum:
+        type: string
+        required: true
+      container_format:
+        type: string
+        required: true
+      disk_format:
+        type: string
+        required: true
+      min_disk:
+        type: scalar-unit.size
+        required: true
+      min_ram:
+        type: scalar-unit.size
+        required: false
+      size:
+        type: scalar-unit.size
+        required: true
+      sw_image:
+        type: string
+        required: true
+      operating_system:
+        type: string
+        required: false
+      supported_virtualisation_environments:
+        type: list
+        entry_schema:
+          type: string
+        required: false
+
+
+relationship_types:
+  tosca.relationships.nfv.VirtualBindsTo:
+    derived_from: tosca.relationships.DependsOn
+    valid_target_types: [ tosca.capabilities.nfv.VirtualBindable]
+
+  tosca.relationships.nfv.VirtualLinksTo:
+    derived_from: tosca.relationships.Root
+
+  tosca.relationships.nfv.VDU.AttachedTo:
+    derived_from: tosca.relationships.Root
+
+  tosca.relationships.nfv.Monitor:
+    derived_from: tosca.relationships.Root
+
+node_types: 
+  tosca.nodes.nfv.VDU.Compute:
+    derived_from: tosca.nodes.Compute
+    properties:
+      name:
+        type: string
+        required: true
+      description:
+        type: string
+        required: true
+      boot_order:
+        type: list # explicit index (boot index) not necessary, contrary to IFA011
+        entry_schema:
+          type: string
+        required: false
+      nfvi_constraints:
+        type: list
+        entry_schema:
+          type: string
+        required: false
+      configurable_properties:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.nfv.VnfcConfigurableProperties
+        required: true
+    attributes:
+      private_address:
+        status: deprecated
+      public_address:
+        status: deprecated
+      networks:
+        status: deprecated
+      ports:
+        status: deprecated
+    capabilities:
+      virtual_compute: 
+        type: tosca.capabilities.nfv.VirtualCompute
+      virtual_binding: 
+        type: tosca.capabilities.nfv.VirtualBindable
+      #monitoring_parameter:
+        # modeled as ad hoc (named) capabilities in VDU node template
+        # for example:
+    #capabilities:
+      #  cpu_load: tosca.capabilities.nfv.Metric
+      # memory_usage: tosca.capabilities.nfv.Metric
+      # host: #Editor note: FFS. How this capabilities should be used in NFV Profile
+      #   type: tosca.capabilities.Container
+      #   valid_source_types: [tosca.nodes.SoftwareComponent]
+      #   occurrences: [0, UNBOUNDED]  
+      # endpoint: 
+      #   occurrences: [0, 0]
+      # os: 
+      #   occurrences: [0, 0]  
+      # scalable: #Editor note: FFS. How this capabilities should be used in NFV Profile
+      #   type: tosca.capabilities.Scalable
+      # binding: 
+      #   occurrences: [0, UNBOUNDED]
+    requirements:
+    - virtual_storage:
+        capability: tosca.capabilities.nfv.VirtualStorage
+        relationship: tosca.relationships.nfv.VDU.AttachedTo
+        node: tosca.nodes.nfv.VDU.VirtualStorage
+        occurences: [ 0, UNBOUNDED ]
+    # - local_storage: #For NFV Profile, this requirement is deprecated.
+    #     occurrences: [0, 0]  
+    artifacts:
+    - sw_image:
+        file: 
+        type: tosca.artifacts.nfv.SwImage

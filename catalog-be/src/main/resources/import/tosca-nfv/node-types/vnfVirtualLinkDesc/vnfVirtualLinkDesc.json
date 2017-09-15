@@ -1,0 +1,20 @@
+{
+  "payloadName": "vnfVirtualLinkDesc.yml",
+  "contactId": "jh0003",
+  "name": "VnfVirtualLinkDesc",
+  "description": "VnfVirtualLinkDesc desc.",
+  "resourceIconPath": "network",
+  "resourceType": "VL",
+  "categories": [
+  {
+    "name": "Nfvo",
+    "subcategories": [
+      {
+        "name": "Infrastructure"
+      }
+    ]
+  }],
+  "tags": [
+    "VnfVirtualLinkDesc"
+  ]
+}

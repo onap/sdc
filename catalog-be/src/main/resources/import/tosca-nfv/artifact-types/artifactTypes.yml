@@ -1,0 +1,38 @@
+tosca.artifacts.nfv.SwImage:
+  derived_from: tosca.artifacts.Deployment.Image
+  properties:
+    name:
+      type: string
+      required: true
+    version:
+      type: string
+      required: true
+    checksum:
+      type: string
+      required: true
+    container_format:
+      type: string
+      required: true
+    disk_format:
+      type: string
+      required: true
+    min_disk:
+      type: scalar-unit.size # Number
+      required: true
+    min_ram:
+      type: scalar-unit.size # Number
+      required: false
+    size:
+      type: scalar-unit.size # Number
+      required: true
+    sw_image:
+      type: string
+      required: true
+    operating_system:
+      type: string
+      required: false
+    supported_virtualisation_environments:
+      type: list
+      entry_schema:
+        type: string
+      required: false

@@ -1,0 +1,24 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+node_types: 
+  tosca.nodes.nfv.VDU.VirtualStorage: 
+    derived_from: tosca.nodes.Root
+    properties:
+      #id:
+        # node name
+      type_of_storage:
+        type: string
+        required: true 
+      size_of_storage:
+        type: scalar-unit.size
+        required: true
+      rdma_enabled:
+        type: boolean
+        required: false
+    capabilities:
+      virtual_storage:
+        type: tosca.capabilities.nfv.VirtualStorage
+    artifacts:
+    - sw_image:
+        file: 
+        type: tosca.artifacts.Deployment.Image

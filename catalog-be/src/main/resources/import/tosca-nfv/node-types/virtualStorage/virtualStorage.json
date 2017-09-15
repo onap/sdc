@@ -1,0 +1,20 @@
+{
+  "payloadName": "virtualStorage.yml",
+  "contactId": "jh0003",
+  "name": "VirtualStorage",
+  "description": "VirtualStorage desc.",
+  "resourceIconPath": "objectStorage",
+  "resourceType": "VFC",
+  "categories": [
+  {
+    "name": "Nfvo",
+    "subcategories": [
+      {
+        "name": "Infrastructure"
+      }
+    ]
+  }],
+  "tags": [
+    "VirtualStorage"
+  ]
+}
