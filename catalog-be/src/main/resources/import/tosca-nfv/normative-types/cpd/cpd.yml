@@ -1,0 +1,24 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+node_types: 
+  tosca.nodes.nfv.Cpd:
+    derived_from: tosca.nodes.Root 
+    properties:
+      layer_protocol:
+        type: string
+        constraints:
+          - valid_values: [ethernet, mpls, odu2, ipv4, ipv6, pseudo_wire ]
+        required: true
+      role: #Name in ETSI NFV IFA011 v0.7.3 cpRole
+        type: string
+        constraints:
+          - valid_values: [ root, leaf ]
+        required: false
+      description:
+        type: string
+        required: false
+      address_data:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.nfv.AddressData
+        required: false
