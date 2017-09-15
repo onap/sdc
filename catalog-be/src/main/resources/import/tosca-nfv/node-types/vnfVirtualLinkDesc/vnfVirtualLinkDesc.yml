@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+node_types: 
+  tosca.nodes.nfv.VnfVirtualLinkDesc:
+    derived_from: tosca.nodes.Root
+    properties:
+      connectivity_type:
+        type: tosca.datatypes.nfv.ConnectivityType
+        required: true
+      description:
+        type: string
+        required: false
+      test_access:
+        type: list
+        entry_schema:
+          type: string
+        required: false
+      vl_flavours:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.nfv.VlFlavour
+        required: true
+    capabilities:
+      #monitoring_parameters:
+        # modeled as ad hoc (named) capabilities in node template
+      virtual_linkable:
+        type: tosca.capabilities.nfv.VirtualLinkable

@@ -1,0 +1,27 @@
+tosca.capabilities.nfv.VirtualBindable:
+  derived_from: tosca.capabilities.Node
+
+tosca.capabilities.nfv.VirtualLinkable:
+  derived_from: tosca.capabilities.Node
+
+tosca.capabilities.nfv.VirtualStorage:
+  derived_from: tosca.capabilities.Node
+
+tosca.capabilities.nfv.Metric:
+  derived_from: tosca.capabilities.Endpoint
+
+
+tosca.capabilities.nfv.VirtualCompute:
+  derived_from: tosca.capabilities.Root
+  properties:
+    requested_additional_capabilities:
+      type: map
+      entry_schema:
+         type: tosca.datatypes.nfv.RequestedAdditionalCapability
+      required: false
+    virtual_memory:
+      type: tosca.datatypes.nfv.VirtualMemory
+      required: true
+    virtual_cpu:
+      type: tosca.datatypes.nfv.VirtualCpu
+      required: true

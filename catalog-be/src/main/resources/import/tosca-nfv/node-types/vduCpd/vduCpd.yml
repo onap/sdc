@@ -1,0 +1,23 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+node_types: 
+  tosca.nodes.nfv.VduCpd:
+    derived_from: tosca.nodes.nfv.Cpd 
+    properties:
+      bitrate_requirement:
+        type: integer
+        required: false
+      virtual_network_interface_requirements:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements
+        required: false
+    requirements:
+    - virtual_link:
+        capability: tosca.capabilities.nfv.VirtualLinkable
+        relationship: tosca.relationships.nfv.VirtualLinksTo
+        node: tosca.nodes.nfv.VnfVirtualLinkDesc
+    - virtual_binding:
+        capability: tosca.capabilities.nfv.VirtualBindable
+        relationship: tosca.relationships.nfv.VirtualBindsTo
+        node: tosca.nodes.nfv.VDU.Compute
