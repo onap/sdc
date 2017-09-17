@@ -1,0 +1,21 @@
+{
+  "payloadName": "overlayTunnel.yml",
+  "contactId": "jh0003",
+  "name": "VL OVERLAYTUNNEL",
+  "description": "The node represents a overlay tunnel entity.",
+  "resourceIconPath": "network",
+  "resourceType": "VL",
+  "categories": [
+    {
+      "name": "Network Connectivity",
+      "subcategories": [
+        {
+          "name": "Virtual Links"
+        }
+      ]
+    }
+  ],
+  "tags": [
+    "VL OVERLAYTUNNEL"
+  ]
+}

@@ -1,0 +1,135 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+description: overlay L3 vpn type definitions
+
+# *****************************************************************************
+# overlay tunnel type definitions
+# *****************************************************************************
+
+metadata:
+    id: : overlayTunnelDefinition
+    version: 0.1
+    vendor: ONAP
+    template_author: ONAP
+
+# *****************************************************************************
+# node types
+# *****************************************************************************
+
+node_types:
+
+    # *****************************************************************************
+    #            Overlay tunnel service
+    # *****************************************************************************
+
+    org.openecomp.resource.vl.overlaytunnel:
+        derived_from: tosca.nodes.Root
+        description: >-
+            This entity represents abstract overlay tunnel end point.
+        properties:
+            id:
+                type: string
+                description: Identifier of the Tunnel Endpoint node.
+                required: false
+            template_name:
+                type: string
+                required: false
+            version:
+                type: string
+                required: false
+            name:
+                type: string
+                description: Overlay tunnel name used by for reference by the administrator.
+                required: false
+            description:
+                type: string
+                description: Additional comments/information about overlay tunnel.
+                required: false
+            tunnelType:
+                type: string
+                constraints:
+                      - valid_values: ['L3-DCI','L2-DCI']
+                description: type defines if the overlay tunnel is L3-DCI tunnel or L2-DCI tunnel.
+                required: true
+            site1_id:
+                type: string
+                description: Identifier of first DCI overlay tunnel endpoint. This could be IP address of domain controller.
+                required: true
+            site1_description:
+                type: string
+                description: Additional comments/information about overlay tunnel. Description can also be used to identify domain controller.
+                required: false
+            site1_routerId:
+                type: string
+                description: Identifier of router connected to L3 tunnel end point, while configuring L3-DCI tunnel.
+                required: false
+            site1_importRT1:
+                type: string
+                description: List of Route targets imported by the local router.
+                required: false
+            site1_exportRT1:
+                type: string
+                description: List of Route targets exported by the local router.
+                required: false
+            site1_vni:
+                type: integer
+                description: VXLAN ID
+                required: false
+            site1_fireWallEnable:
+                type: boolean
+                required: false
+                description: Identifies if a firewall exists in the path of overlay tunnel.
+                default: false
+            site1_fireWallId:
+                type: string
+                description: Identifier of Firewall that is in overlay tunnel path
+                required: false
+            site1_localNetworkAll:
+                type: boolean
+                description: Identifies whether all the local networks associate with the tunnel or not.
+                required: false
+                default: 'false'
+            site2_id:
+                type: string
+                description: Identifier of second DCI overlay tunnel endpoint. This could be IP address of domain controller.
+                required: true
+            site2_description:
+                type: string
+                description: Additional comments/information about overlay tunnel. Description can also be used to identify domain controller.
+                required: false
+            site2_routerId:
+                type: string
+                description: Identifier of router connected to L3 tunnel end point, while configuring L3-DCI tunnel.
+                required: false
+            site2_importRT1:
+                type: string
+                description: List of Route targets imported by the local router.
+                required: false
+            site2_exportRT1:
+                type: string
+                description: List of Route targets exported by the local router.
+                required: false
+            site2_vni:
+                type: integer
+                description: VXLAN ID
+                required: false
+            site2_fireWallEnable:
+                type: boolean
+                required: false
+                description: Identifies if a firewall exists in the path of overlay tunnel.
+                default: false
+            site2_fireWallId:
+                type: string
+                description: Identifier of Firewall that is in overlay tunnel path
+                required: false
+            site2_localNetworkAll:
+                type: boolean
+                description: Identifies whether all the local networks associate with the tunnel or not.
+                required: false
+                default: false
+        requirements:
+            - virtualLink:
+                capability: tosca.capabilities.network.Linkable
+                relationship: tosca.relationships.network.LinksTo
+        capabilities:
+            virtual_linkable:
+            type: tosca.capabilities.network.Linkable
