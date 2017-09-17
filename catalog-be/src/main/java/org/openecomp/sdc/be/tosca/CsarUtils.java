@@ -137,19 +137,26 @@ public class CsarUtils {
 	private static final String TOSCA_META_PATH_FILE_NAME = "TOSCA-Metadata/TOSCA.meta";
 	private static final String TOSCA_META_VERSION = "1.0";
 	private static final String CSAR_VERSION = "1.1";
+	public static final String ARTIFACTS = "Artifacts";
+	public static final String DEFINITION = "Definitions";
+	public static final String DEL_PATTERN = "([/\\\\]+)";
 	private static String versionFirstThreeOctates;
 	
-	public static final String VFC_NODE_TYPE_ARTIFACTS_PATH_PATTERN = ARTIFACTS_PATH + ImportUtils.Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + "([\\d\\w\\_\\-\\.\\s]+)(/)([\\d\\w\\_\\-\\.\\s]+)(/)([\\d\\w\\_\\-\\.\\s\\/]+)";
+	public static final String VFC_NODE_TYPE_ARTIFACTS_PATH_PATTERN = ARTIFACTS + DEL_PATTERN + 
+																	ImportUtils.Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + 
+																	"([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
+																	"([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN + 
+																	"([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN;
 
-	public static final String VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN = ARTIFACTS_PATH +
+	public static final String VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN = ARTIFACTS + DEL_PATTERN+
 	// Artifact Group (i.e Deployment/Informational)
-			"([\\w\\_\\-\\.\\s]+)(/)" +
+			"([\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
 			// Artifact Type
-			"([\\w\\_\\-\\.\\s]+)(/)" +
+			"([\\w\\_\\-\\.\\s]+)"  + DEL_PATTERN +
 			// Artifact Any File Name
 			".+";
 	public static final String VALID_ENGLISH_ARTIFACT_NAME = "([\\w\\_\\-\\.\\s]+)";
-    public static final String SERVICE_TEMPLATE_PATH_PATTERN = Constants.SERVICE_TEMPLATES_CONTAINING_FOLDER +
+    public static final String SERVICE_TEMPLATE_PATH_PATTERN = DEFINITION + DEL_PATTERN+
             // Service Template File Name
             "([\\w\\_\\-\\.\\s]+)";
 
