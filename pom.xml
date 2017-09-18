@@ -407,6 +407,7 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<modules>
+				<module>build-tools</module>
 				<module>onboarding</module>
 			</modules>
 		</profile>
