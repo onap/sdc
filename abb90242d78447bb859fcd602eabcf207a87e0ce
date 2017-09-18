@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_7508522d",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/action-library-rest/action-library-rest-services/src/main/java/org/openecomp/sdcrests/action/rest/services/ActionsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 997,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-09-18T08:55:21Z",
+      "side": 1,
+      "message": "merge this 2 if clauses with ||",
+      "range": {
+        "startLine": 994,
+        "startChar": 6,
+        "endLine": 997,
+        "endChar": 68
+      },
+      "revId": "abb90242d78447bb859fcd602eabcf207a87e0ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_9869abc0",
+        "filename": "openecomp-be/backend/openecomp-sdc-action-manager/src/main/java/org/openecomp/sdc/action/impl/ActionManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1049,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-09-18T08:55:21Z",
+      "side": 1,
+      "message": "surround if/else with curly braces",
+      "range": {
+        "startLine": 1046,
+        "startChar": 6,
+        "endLine": 1049,
+        "endChar": 18
+      },
+      "revId": "abb90242d78447bb859fcd602eabcf207a87e0ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_385e3f13",
+        "filename": "openecomp-be/backend/openecomp-sdc-action-manager/src/test/java/org/openecomp/sdc/action/ActionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1337,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-09-18T08:55:21Z",
+      "side": 1,
+      "message": "this class content is remarked. do not make changes\\refactoring on remarked code",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1337,
+        "endChar": 1
+      },
+      "revId": "abb90242d78447bb859fcd602eabcf207a87e0ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_189dbbbc",
+        "filename": "openecomp-be/backend/openecomp-sdc-application-config-manager/src/test/java/org/openecomp/sdc/applicationconfig/ApplicationConfigManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-09-18T08:55:21Z",
+      "side": 1,
+      "message": "do not make changes to remarked code",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 1
+      },
+      "revId": "abb90242d78447bb859fcd602eabcf207a87e0ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_58ba2324",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-license-manager/src/test/java/org/openecomp/sdc/vendorlicense/LimitTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-09-18T08:55:21Z",
+      "side": 1,
+      "message": "there is no use of this line",
+      "range": {
+        "startLine": 199,
+        "startChar": 6,
+        "endLine": 199,
+        "endChar": 30
+      },
+      "revId": "abb90242d78447bb859fcd602eabcf207a87e0ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_38b51f31",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-license-manager/src/test/java/org/openecomp/sdc/vendorlicense/LimitTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-09-18T08:55:21Z",
+      "side": 1,
+      "message": "there is no use of this line",
+      "range": {
+        "startLine": 259,
+        "startChar": 6,
+        "endLine": 259,
+        "endChar": 23
+      },
+      "revId": "abb90242d78447bb859fcd602eabcf207a87e0ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_18849b5c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-license-manager/src/test/java/org/openecomp/sdc/vendorlicense/LimitTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-09-18T08:55:21Z",
+      "side": 1,
+      "message": "there is no use of this line",
+      "range": {
+        "startLine": 278,
+        "startChar": 6,
+        "endLine": 278,
+        "endChar": 30
+      },
+      "revId": "abb90242d78447bb859fcd602eabcf207a87e0ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_b880ef46",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-license-manager/src/test/java/org/openecomp/sdc/vendorlicense/VendorLicenseFacadeImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-09-18T08:55:21Z",
+      "side": 1,
+      "message": "do not make changes on remarked code",
+      "range": {
+        "startLine": 43,
+        "startChar": 4,
+        "endLine": 43,
+        "endChar": 6
+      },
+      "revId": "abb90242d78447bb859fcd602eabcf207a87e0ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_58910398",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-license-manager/src/test/java/org/openecomp/sdc/vendorlicense/impl/EntitlementPoolTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 527,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-09-18T08:55:21Z",
+      "side": 1,
+      "message": "do make make changes on remarked code",
+      "range": {
+        "startLine": 469,
+        "startChar": 4,
+        "endLine": 527,
+        "endChar": 8
+      },
+      "revId": "abb90242d78447bb859fcd602eabcf207a87e0ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
