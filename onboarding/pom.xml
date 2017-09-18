@@ -34,10 +34,11 @@
         <mvn.swagger.version>3.1.0</mvn.swagger.version>
         <mvn.war.version>2.1.1</mvn.war.version>
 
-	<!-- Onboarding artifacts version -->
+        <!-- Onboarding artifacts version -->
         <openecomp.sdc.common.version>1.1.0-SNAPSHOT</openecomp.sdc.common.version>
 
         <!-- Onboarding 3rd party versions -->
+        <jtosca.version>1.1.10-SNAPSHOT</jtosca.version>
         <aspectj.version>1.8.9</aspectj.version>
         <bsh.version>2.0b5</bsh.version>
         <cassandra.version>2.1.9</cassandra.version>
