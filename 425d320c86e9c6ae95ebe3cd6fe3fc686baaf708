@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_b8246faf",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1098,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-09-18T08:47:41Z",
+      "side": 1,
+      "message": "equalsIgnoreCase(OnboardingTypesEnum.ZIP.name())?",
+      "range": {
+        "startLine": 1098,
+        "startChar": 8,
+        "endLine": 1098,
+        "endChar": 18
+      },
+      "revId": "425d320c86e9c6ae95ebe3cd6fe3fc686baaf708",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
