@@ -849,6 +849,7 @@ org.openecomp.datatypes.Root:
   properties:
     supplemental_data:
       type: map
+      required: false
       entry_schema:
         description: > 
            A placeholder for missing properties that would be included in future ecomp model versions.
