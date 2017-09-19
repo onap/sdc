@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>org.openecomp.sdc</groupId>
 		<artifactId>sdc-main</artifactId>
-		<version>1.1.0-SNAPSHOT</version>
+		<version>1.2.0-SNAPSHOT</version>
 	</parent>
 
 
@@ -204,7 +204,7 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
+											<tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -219,7 +219,7 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
+											<tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -234,7 +234,7 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
+											<tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -249,7 +249,7 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
+											<tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -264,7 +264,7 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
+											<tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
