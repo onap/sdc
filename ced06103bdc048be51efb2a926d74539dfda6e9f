@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_611c0f14",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-09-19T15:10:06Z",
+      "side": 1,
+      "message": "Please run analysis on this code.",
+      "revId": "ced06103bdc048be51efb2a926d74539dfda6e9f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_211607f2",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-09-19T15:10:06Z",
+      "side": 1,
+      "message": "Please clean this up.",
+      "revId": "ced06103bdc048be51efb2a926d74539dfda6e9f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_6191af51",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-09-19T15:10:06Z",
+      "side": 1,
+      "message": "This looks like it should be a constant",
+      "revId": "ced06103bdc048be51efb2a926d74539dfda6e9f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_61e3ef05",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-09-19T15:10:06Z",
+      "side": 1,
+      "message": "There are six(!) levels of nesting here. Please split into methods and think how you can make this code easier to read. For example, you could invert the condition and return immediately if \u0027requirements\u0027 is null.",
+      "revId": "ced06103bdc048be51efb2a926d74539dfda6e9f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_e18c7f37",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-09-19T15:10:06Z",
+      "side": 1,
+      "message": "Don\u0027t perform indexOf() here - you checked if the string starts with \u0027abstractLinkRequirementIdPrefix\u0027 a few lines above, and you know the length of the prefix, so you can calculate the position of \u0027_\u0027. The code will be clearer and faster. Compare it to something like requirmentId.substring(PREFIX.length + 1)) - it\u0027s clear that you want everything after the prefix.",
+      "revId": "ced06103bdc048be51efb2a926d74539dfda6e9f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}

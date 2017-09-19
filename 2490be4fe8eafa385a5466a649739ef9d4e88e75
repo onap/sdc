@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_e130ff9f",
+        "filename": "common/openecomp-tosca-datatype/src/main/resources/globalTypes/openecomp/nodes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1108,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-09-19T15:10:06Z",
+      "side": 0,
+      "message": "Are you sure this section should be removed?",
+      "revId": "2490be4fe8eafa385a5466a649739ef9d4e88e75",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
