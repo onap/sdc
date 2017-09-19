@@ -21,9 +21,11 @@ import {TabsForm as Form} from 'nfvo-components/input/validation/Form.jsx';
 import Tabs from 'nfvo-components/input/validation/Tabs.jsx';
 import Tab from 'sdc-ui/lib/react/Tab.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
+import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
 import DualListboxView from 'nfvo-components/input/dualListbox/DualListboxView.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Validator from 'nfvo-utils/Validator.js';
+import {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
 
 import {enums as LicenseAgreementEnums, optionsInputValues as LicenseAgreementOptionsInputValues, LA_EDITOR_FORM} from './LicenseAgreementConstants.js';
 
@@ -43,7 +45,7 @@ const LicenseAgreementPropType = React.PropTypes.shape({
 });
 
 
-const GeneralTabContent = ({data, genericFieldInfo, onDataChanged, validateName, validateLTChoice}) => {
+const GeneralTabContent = ({data, genericFieldInfo, onDataChanged, validateName}) => {
 	let {name, description, requirementsAndConstrains, licenseTerm} = data;
 	return (
 		<GridSection>
@@ -67,24 +69,22 @@ const GeneralTabContent = ({data, genericFieldInfo, onDataChanged, validateName,
 					data-test-id='create-la-requirements-constants'
 					name='license-agreement-requirements-and-constraints'
 					type='textarea'/>
-				<Input
+				<InputOptions
+					onInputChange={()=>{}}
+					isMultiSelect={false}
+					onEnumChange={licenseTerm => onDataChanged({licenseTerm:{choice: licenseTerm, other: ''}},
+						LA_EDITOR_FORM)}
+					onOtherChange={licenseTerm => onDataChanged({licenseTerm:{choice: optionInputOther.OTHER,
+						other: licenseTerm}}, LA_EDITOR_FORM)}
 					label={i18n('License Term')}
-					type='select'
-					value={licenseTerm && licenseTerm.choice}
+					data-test-id='create-la-license-term'
 					isRequired={true}
-					onChange={e => {
-						const selectedIndex = e.target.selectedIndex;
-						const licenseTerm = e.target.options[selectedIndex].value;
-						onDataChanged({licenseTerm:{choice: licenseTerm, other: ''}}, LA_EDITOR_FORM, { licenseTerm: validateLTChoice });
-					}}
+					type='select'
+					selectedEnum={licenseTerm && licenseTerm.choice}
+					otherValue={licenseTerm && licenseTerm.other}
+					values={LicenseAgreementOptionsInputValues.LICENSE_MODEL_TYPE}
 					isValid={genericFieldInfo.licenseTerm.isValid}
-					errorText={genericFieldInfo.licenseTerm.errorText}
-					className='input-options-select'
-					groupClassName='bootstrap-input-options'
-					data-test-id='create-la-license-term' >
-					{LicenseAgreementOptionsInputValues.LICENSE_MODEL_TYPE.map(mtype =>
-						<option key={mtype.enum} value={mtype.enum}>{`${mtype.title}`}</option>)}
-				</Input>
+					errorText={genericFieldInfo.licenseTerm.errorText} />
 			</GridItem>
 			<GridItem colSpan={2} stretch>
 				<Input
@@ -151,7 +151,7 @@ class LicenseAgreementEditorView extends React.Component {
 							data-test-id='general-tab'
 							title={i18n('General')}>
 								<fieldset disabled={isReadOnlyMode}>
-									<GeneralTabContent data={data} genericFieldInfo={genericFieldInfo} onDataChanged={onDataChanged} validateLTChoice={(value)=>this.validateLTChoice(value)}
+									<GeneralTabContent data={data} genericFieldInfo={genericFieldInfo} onDataChanged={onDataChanged}
 										   validateName={(value)=>this.validateName(value)}/>
 								</fieldset>
 						</Tab>
@@ -181,12 +181,6 @@ class LicenseAgreementEditorView extends React.Component {
 		this.props.onSubmit({licenseAgreement, previousLicenseAgreement});
 	}
 
-	validateLTChoice(value) {
-		if (!value.choice) {
-			return {isValid: false, errorText: i18n('Field is required')};
-		}
-		return {isValid: true, errorText: ''};
-	}
 
 	validateName(value) {
 		const {data: {id}, LANames} = this.props;

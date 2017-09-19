@@ -16,7 +16,7 @@
 import {actionTypes} from './PlainDataReducerConstants.js';
 import Validator from 'nfvo-utils/Validator.js';
 import forOwn from 'lodash/forOwn.js';
-import {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
+import {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
 
 function updateDataAndValidateReducer(state = {}, action) {
 	let genericFieldInfoCopy;

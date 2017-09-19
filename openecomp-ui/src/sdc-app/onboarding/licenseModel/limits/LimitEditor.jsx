@@ -7,7 +7,7 @@ import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import {LIMITS_FORM_NAME, selectValues} from './LimitEditorConstants.js';
 import Button from 'sdc-ui/lib/react/Button.js';
 import Validator from 'nfvo-utils/Validator.js';
-import {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
+import {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
 import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
 
 const LimitPropType = React.PropTypes.shape({
@@ -96,9 +96,9 @@ class LimitEditor extends React.Component {
 								isMultiSelect={false}
 								isRequired={true}
 								onEnumChange={metric => onDataChanged({metric:{choice: metric, other: ''}},
-									LIMITS_FORM_NAME, {metric: this.validateChoiceWithOther})}
+									LIMITS_FORM_NAME)}
 								onOtherChange={metric => onDataChanged({metric:{choice: optionInputOther.OTHER,
-									other: metric}}, LIMITS_FORM_NAME, {metric: this.validateChoiceWithOther})}
+									other: metric}}, LIMITS_FORM_NAME)}
 								label={i18n('Metric')}
 								data-test-id='limit-editor-metric'
 								type='select'
@@ -196,23 +196,6 @@ class LimitEditor extends React.Component {
 		{isValid: false, errorText: i18n('Limit by the name \'' + value + '\' already exists. Limit name must be unique')};
 	}
 
-	validateChoiceWithOther(value) {
-		let chosen = value.choice;
-		// if we have an empty multiple select we have a problem since it's required
-		if (value.choices) {
-			if (value.choices.length === 0) {
-				return  Validator.validate('field', '', [{type: 'required', data: true}]);
-			} else {
-				// continuing validation with the first chosen value in case we have the 'Other' field
-				chosen = value.choices[0];
-			}
-		}
-		if (chosen !== optionInputOther.OTHER) {
-			return  Validator.validate('field', chosen, [{type: 'required', data: true}]);
-		} else { // when 'Other' was chosen, validate other value
-			return  Validator.validate('field', value.other, [{type: 'required', data: true}]);
-		}
-	}
 
 	submit() {
 		if (!this.props.formReady) {

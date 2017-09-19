@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import {actionTypes, defaultState, LA_EDITOR_FORM, enums as LicenseAgreementEnums} from './LicenseAgreementConstants.js';
+import {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
 
 export default (state = {}, action) => {
 	switch (action.type) {
@@ -38,7 +39,7 @@ export default (state = {}, action) => {
 					'licenseTerm' : {
 						isValid: true,
 						errorText: '',
-						validations: [{type: 'required', data: true}],
+						validations: [{type: 'required', data: true}, {type: 'requiredChoiceWithOther', data: optionInputOther.OTHER}],
 						tabId: LicenseAgreementEnums.SELECTED_LICENSE_AGREEMENT_TAB.GENERAL
 					},
 					'name' : {

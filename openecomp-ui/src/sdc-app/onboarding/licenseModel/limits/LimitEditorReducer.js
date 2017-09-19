@@ -15,6 +15,7 @@
  */
 
 import {actionTypes, LIMITS_FORM_NAME, defaultState} from './LimitEditorConstants.js';
+import {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
 
 export default (state = {}, action) => {
 	switch (action.type) {
@@ -38,7 +39,7 @@ export default (state = {}, action) => {
 					'metric' : {
 						isValid: true,
 						errorText: '',
-						validations: []
+						validations: [{type: 'required', data: true}, {type: 'requiredChoiceWithOther', data: optionInputOther.OTHER}]
 					},
 					'value' : {
 						isValid: true,
