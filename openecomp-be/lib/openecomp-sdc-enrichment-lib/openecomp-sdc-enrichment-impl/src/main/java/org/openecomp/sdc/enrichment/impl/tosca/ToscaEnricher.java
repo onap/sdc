@@ -37,6 +37,7 @@ public class ToscaEnricher extends Enricher {
   public Map<String, List<ErrorMessage>> enrich() {
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
     errors.putAll(enrichAbstractSubstitute());
+    errors.putAll(enrichPortMirroring());
 
     return errors;
   }
@@ -52,6 +53,16 @@ public class ToscaEnricher extends Enricher {
     enrichErrors = abstractSubstituteToscaEnricher.enrich(toscaModel, data.getKey(),
         data.getVersion());
 
+    mdcDataDebugMessage.debugExitMessage(null, null);
+    return enrichErrors;
+  }
+
+  private Map<String, List<ErrorMessage>> enrichPortMirroring() {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+    Map<String, List<ErrorMessage>> enrichErrors;
+    ToscaServiceModel toscaModel = (ToscaServiceModel) model;
+    PortMirroringEnricher portMirroringEnricher = new PortMirroringEnricher();
+    enrichErrors = portMirroringEnricher.enrich(toscaModel);
     mdcDataDebugMessage.debugExitMessage(null, null);
     return enrichErrors;
   }

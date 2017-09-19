@@ -148,3 +148,10 @@ capability_types:
 
   tosca.capabilities.nfv.ext.LocalAttachment:
     derived_from: tosca.capabilities.Root
+  # New capability types for Port Mirroring
+  org.openecomp.capabilities.PortMirroring:
+    derived_from: tosca.capabilities.Root
+    properties:
+      connection_point:
+        type: org.openecomp.datatypes.PortMirroringConnectionPointDescription
+        required: true
