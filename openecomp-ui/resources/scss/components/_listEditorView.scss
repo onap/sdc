@@ -59,7 +59,7 @@
       .list-editor-item-view-content {
         padding: 10px 28px;
         display: flex;
-        flex: 1 1 auto;
+        flex: 1 1;
         .list-editor-item-view-field {
           flex: 1 1;
           color: $black;
@@ -67,6 +67,11 @@
           @include ellipsis;
           overflow-wrap: break-word;
           white-space: initial;
+
+          .description {
+            @include multiline-ellipsis(1.3em, 3);
+          }
+
           .number-field {
             align-content: center;
           }
