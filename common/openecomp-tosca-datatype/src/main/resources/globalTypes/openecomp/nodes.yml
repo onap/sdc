@@ -1104,3 +1104,26 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
+
+  tosca.nodes.nfv.VnfVirtualLinkDesc:
+    capabilities:
+      monitoring_parameters:
+        type: tosca.capabilities.nfv.Metric
+      virtual_linkable:
+        type: tosca.capabilities.nfv.VirtualLinkable
+    derived_from: tosca.nodes.Root
+    properties:
+      vl_flavours:
+        entry_schema:
+          type: string
+        type: map
+      description:
+        required: false
+        type: string
+      test_access:
+        entry_schema:
+          type: string
+        required: false
+        type: list
+      connectivity_type:
+        type: tosca.datatypes.nfv.ConnectivityType
