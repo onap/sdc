@@ -7,19 +7,19 @@ function usage {
 
 
 function cleanup {
-	echo "performing old dockers cleanup"
-	docker_ids=`docker ps -a | egrep -v "openecomp/sdc-simulator" | egrep "ecomp-nexus:${PORT}/sdc|sdc|Exit" | awk '{print $1}'`
-	for X in ${docker_ids}
-	do
-	   docker rm -f ${X}
-	done
+    echo "performing old dockers cleanup"
+    docker_ids=`docker ps -a | egrep -v "openecomp/sdc-simulator" | egrep "ecomp-nexus:${PORT}/sdc|sdc|Exit" | awk '{print $1}'`
+    for X in ${docker_ids}
+    do
+       docker rm -f ${X}
+    done
 }
 
 
 function dir_perms {
-	mkdir -p /data/logs/BE/ASDC/ASDC-BE
-	mkdir -p /data/logs/FE/ASDC/ASDC-FE
-	chmod -R 777 /data/logs
+    mkdir -p /data/logs/BE/ASDC/ASDC-BE
+    mkdir -p /data/logs/FE/ASDC/ASDC-FE
+    chmod -R 777 /data/logs
 }
 
 
@@ -38,27 +38,27 @@ while [ "$1" != "" ]; do
             RELEASE=${1}
             ;;
         -e | --environment )
-			shift
+            shift
             DEP_ENV=${1}
             ;;
-		-p | --port )
+        -p | --port )
             shift
             PORT=${1}
-			;;
-		-l | --local )
-		shift
-		LOCAL=true
-		;;
-		-s | --skipTests )
-		shift
-		SKIPTESTS=true
-		;;
+            ;;
+        -l | --local )
+            shift
+            LOCAL=true
+            ;;
+        -s | --skipTests )
+            shift
+            SKIPTESTS=true
+            ;;
         -h | --help )
-			usage
+            usage
             exit
             ;;
         * ) 
-    		usage
+            usage
             exit 1
     esac
     shift
@@ -74,26 +74,31 @@ export IP=`ifconfig eth0 | awk -F: '/inet addr/ {gsub(/ .*/,"",$2); print $2}'`
 export PREFIX=${NEXUS_DOCKER_REPO}'/openecomp'
 
 if [ ${LOCAL} = true ]; then
-	PREFIX='openecomp'
+    PREFIX='openecomp'
 fi
 
 echo ""
 
 # Elastic-Search
 echo "docker run sdc-elasticsearch..."
+image_name="${PREFIX}/base_sdc-elasticsearch:${RELEASE}"
 if [ ${LOCAL} = false ]; then
-	echo "pulling code"
-	docker pull ${PREFIX}/sdc-elasticsearch:${RELEASE}
+    image_name="${PREFIX}/sdc-elasticsearch:${RELEASE}"
+    echo "pulling code $image_name"
+    docker pull ${image_name}
 fi
-docker run --detach --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 1g --memory-swap=1g --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro -e ES_HEAP_SIZE=1024M --volume /data/ES:/usr/share/elasticsearch/data --volume /data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 ${PREFIX}/sdc-elasticsearch:${RELEASE}
+docker run --detach --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 1g --memory-swap=1g --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro -e ES_HEAP_SIZE=1024M --volume /data/ES:/usr/share/elasticsearch/data --volume /data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 ${image_name}
 
 
 # cassandra
 echo "docker run sdc-cassandra..."
+image_name="${PREFIX}/base_sdc-cassandra:${RELEASE}"
 if [ ${LOCAL} = false ]; then
-	docker pull ${PREFIX}/sdc-cassandra:${RELEASE}
+    image_name="${PREFIX}/sdc-cassandra:${RELEASE}"
+    echo "pulling code $image_name"
+    docker pull ${image_name}
 fi
-docker run --detach --name sdc-cs --env RELEASE="${RELEASE}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/CS:/var/lib/cassandra --volume /data/environments:/root/chef-solo/environments --publish 9042:9042 --publish 9160:9160 ${PREFIX}/sdc-cassandra:${RELEASE}
+docker run --detach --name sdc-cs --env RELEASE="${RELEASE}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/CS:/var/lib/cassandra --volume /data/environments:/root/chef-solo/environments --publish 9042:9042 --publish 9160:9160 ${image_name}
 
 
 echo "please wait while CS is starting..."
@@ -109,19 +114,25 @@ echo -e ""
 
 # kibana
 echo "docker run sdc-kibana..."
+image_name="${PREFIX}/base_sdc-kibana:${RELEASE}"
 if [ ${LOCAL} = false ]; then
-	docker pull ${PREFIX}/sdc-kibana:${RELEASE}
+     image_name="${PREFIX}/sdc-kibana:${RELEASE}"
+     echo "pulling code $image_name"
+     docker pull ${image_name}
 fi
-docker run --detach --name sdc-kbn --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 2g --memory-swap=2g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/environments:/root/chef-solo/environments --publish 5601:5601 ${PREFIX}/sdc-kibana:${RELEASE}
+docker run --detach --name sdc-kbn --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 2g --memory-swap=2g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/environments:/root/chef-solo/environments --publish 5601:5601 ${image_name}
 
 dir_perms
 
 # Back-End
 echo "docker run sdc-backend..."
+image_name="${PREFIX}/base_sdc-backend:${RELEASE}"
 if [ ${LOCAL} = false ]; then
-	docker pull ${PREFIX}/sdc-backend:${RELEASE}
+     image_name="${PREFIX}/sdc-backend:${RELEASE}"
+     echo "pulling code $image_name"
+     docker pull ${image_name}
 fi
-docker run --detach --name sdc-BE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 4g --memory-swap=4g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/BE/:/var/lib/jetty/logs  --volume /data/environments:/root/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${PREFIX}/sdc-backend:${RELEASE}
+docker run --detach --name sdc-BE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 4g --memory-swap=4g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/BE/:/var/lib/jetty/logs  --volume /data/environments:/root/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${image_name}
 
 echo "please wait while BE is starting..."
 echo ""
@@ -137,10 +148,13 @@ echo -e ""
 
 # Front-End
 echo "docker run sdc-frontend..."
+image_name="${PREFIX}/base_sdc-frontend:${RELEASE}"
 if [ ${LOCAL} = false ]; then
-	docker pull ${PREFIX}/sdc-frontend:${RELEASE}
+	image_name="${PREFIX}/sdc-frontend:${RELEASE}"
+	echo "pulling code $image_name"
+	docker pull ${image_name}
 fi
-docker run --detach --name sdc-FE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 2g --memory-swap=2g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro  --volume /data/logs/FE/:/var/lib/jetty/logs --volume /data/environments:/root/chef-solo/environments --publish 9443:9443 --publish 8181:8181 ${PREFIX}/sdc-frontend:${RELEASE}
+docker run --detach --name sdc-FE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 2g --memory-swap=2g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro  --volume /data/logs/FE/:/var/lib/jetty/logs --volume /data/environments:/root/chef-solo/environments --publish 9443:9443 --publish 8181:8181 ${image_name}
 
 
 
