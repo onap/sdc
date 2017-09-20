@@ -1,43 +1,45 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<artifactId>sdc-os-chef</artifactId>
+    <artifactId>sdc-os-chef</artifactId>
 
-	<parent>
-		<groupId>org.openecomp.sdc</groupId>
-		<artifactId>sdc-main</artifactId>
+    <parent>
+        <groupId>org.openecomp.sdc</groupId>
+        <artifactId>sdc-main</artifactId>
 		<version>1.1.0-SNAPSHOT</version>
-	</parent>
+    </parent>
 
 
-	<properties>
-		<docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
-		<docker.latest.tag>${project.version}-latest</docker.latest.tag>
-	</properties>
+    <properties>
+        <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
+        <docker.latest.tag>${project.version}-latest</docker.latest.tag>
+    </properties>
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.0.0</version>
-				<executions>
-					<execution>
-						<id>clean.tosca.chef.os.folder</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>clean</goal>
-						</goals>
-						<configuration>
-							<filesets>
-								<fileset>
-									<directory>${project.basedir}\sdc-cassandra\chef-repo\cookbooks\cassandra-actions\attributes\</directory>
-									<followSymlinks>false</followSymlinks>
-									<includes>
-										<include>**/default.rb</include>
-									</includes>
-								</fileset>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>clean.tosca.chef.os.folder</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>
+                                        ${project.basedir}\sdc-cassandra\chef-repo\cookbooks\cassandra-actions\attributes\
+                                    </directory>
+                                    <followSymlinks>false</followSymlinks>
+                                    <includes>
+                                        <include>**/default.rb</include>
+                                    </includes>
+                                </fileset>
 								<!-- static configuration files -->
 								<fileset>	
           							<directory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</directory>
@@ -48,77 +50,83 @@
 										<include>logback.xml</include>
 									</includes>
           						</fileset>
-							</filesets>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>ru.yaal.maven</groupId>
-				<artifactId>write-text-files-maven-plugin</artifactId>
-				<version>1.1</version>
-				<configuration>
-					<charset>UTF-8</charset>
-					<files>
-						<file>
-							<path>${project.basedir}\sdc-cassandra\chef-repo\cookbooks\cassandra-actions\attributes\default.rb</path>
-							<lines>
-								<line>normal['version'] = "${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"</line>
-							</lines>
-						</file>
-					</files>
-				</configuration>
-				<executions>
-					<execution>
-						<id>write-text-files</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>write-text-files</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>ru.yaal.maven</groupId>
+                <artifactId>write-text-files-maven-plugin</artifactId>
+                <version>1.1</version>
+                <configuration>
+                    <charset>UTF-8</charset>
+                    <files>
+                        <file>
+                            <path>
+                                ${project.basedir}\sdc-cassandra\chef-repo\cookbooks\cassandra-actions\attributes\default.rb
+                            </path>
+                            <lines>
+                                <line>normal['version'] =
+                                    "${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"
+                                </line>
+                            </lines>
+                        </file>
+                    </files>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>write-text-files</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>write-text-files</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-	<profiles>
-		<profile>
-			<id>docker-staging</id>
-			<properties>
-				<docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>
-				<docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
-			</properties>
-		</profile>
+    <profiles>
+        <profile>
+            <id>docker-staging</id>
+            <properties>
+                <docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>
+                <docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
+            </properties>
+        </profile>
 
-		<profile>
-			<id>docker</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>3.0.2</version>
-						<executions>
-							<execution>
-								<id>copy-resources-apidocs</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${basedir}/sdc-backend</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.parent.basedir}/openecomp-be/tools/swagger-ui/api-docs</directory>
-											<includes>
-												<include>api-docs.war</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
+        <profile>
+            <id>docker</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.0.2</version>
+                        <executions>
+                            <execution>
+                                <id>copy-resources-apidocs</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/sdc-backend</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>
+                                                ${project.parent.basedir}/openecomp-be/tools/swagger-ui/api-docs
+                                            </directory>
+                                            <includes>
+                                                <include>api-docs.war</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
 							
 							<execution>
 								<id>copy-static-configuration-files</id>
@@ -142,185 +150,224 @@
 								</configuration>
 							</execution>
 							
-							<execution>
-								<id>copy-resources-be</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${basedir}/sdc-backend</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.parent.basedir}/openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/target</directory>
-											<includes>
-												<include>onboarding-be-${project.version}.war</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy-resources-fe</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${basedir}/sdc-frontend</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.parent.basedir}/openecomp-ui/target</directory>
-											<includes>
-												<include>onboarding-fe-${project.version}.war</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
+                            <execution>
+                                <id>copy-resources-be</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/sdc-backend</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>
+                                                ${project.parent.basedir}/openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/target
+                                            </directory>
+                                            <includes>
+                                                <include>onboarding-be-${project.version}.war</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-resources-fe</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/sdc-frontend</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/openecomp-ui/target</directory>
+                                            <includes>
+                                                <include>onboarding-fe-${project.version}.war</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-tests-suites</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/test-apis-ci/src/main/resources/ci/testSuites</directory>
+                                            <includes>
+                                                <include>*</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-resources-test-apis-ci</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/sdc-sanity</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/test-apis-ci/target</directory>
+                                            <includes>
+                                                <include>test-apis-ci-${project.version}-jar-with-dependencies.jar</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
 
 
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>0.19.1</version>
 
-					<plugin>
-						<groupId>io.fabric8</groupId>
-						<artifactId>docker-maven-plugin</artifactId>
-						<version>0.22.1</version>
+                        <configuration>
+                            <verbose>true</verbose>
+                            <apiVersion>1.23</apiVersion>
 
-						<configuration>
-							<verbose>false</verbose>
-							<apiVersion>1.23</apiVersion>
+                            <images>
 
-							<images>
+                                <!-- Build backend image -->
+                                <image>
+                                    <name>openecomp/sdc-backend</name>
+                                    <alias>sdc-backend</alias>
+                                    <build>
+                                        <cleanup>try</cleanup>
+                                        <dockerFileDir>${project.basedir}/sdc-backend</dockerFileDir>
+                                        <tags>
+                                            <tag>${docker.tag}</tag>
+                                            <tag>${docker.latest.tag}</tag><tag>$sedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+                                        </tags>
+                                    </build>
+                                </image>
 
-								<!-- Build backend image -->
-								<image>
-									<name>openecomp/sdc-backend</name>
-									<alias>sdc-backend</alias>
-									<build>
-										<cleanup>try</cleanup>
-										<dockerFileDir>${project.basedir}/sdc-backend</dockerFileDir>
-										<tags>
-											<tag>${docker.tag}</tag>
-											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
-										</tags>
-									</build>
-								</image>
+                                <!-- Build frontend image -->
+                                <image>
+                                    <name>openecomp/sdc-frontend</name>
+                                    <alias>sdc-frontend</alias>
+                                    <build>
+                                        <cleanup>try</cleanup>
+                                        <dockerFileDir>${project.basedir}/sdc-frontend</dockerFileDir>
+                                        <tags>
+                                            <tag>${docker.tag}</tag>
+                                            <tag>${docker.latest.tag}</tag>
+                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+                                        </tags>
+                                    </build>
+                                </image>
 
-								<!-- Build frontend image -->
-								<image>
-									<name>openecomp/sdc-frontend</name>
-									<alias>sdc-frontend</alias>
-									<build>
-										<cleanup>try</cleanup>
-										<dockerFileDir>${project.basedir}/sdc-frontend</dockerFileDir>
-										<tags>
-											<tag>${docker.tag}</tag>
-											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
-										</tags>
-									</build>
-								</image>
+                                <!-- Build elastic search image -->
+                                <image>
+                                    <name>openecomp/sdc-elasticsearch</name>
+                                    <alias>sdc-elasticsearch</alias>
+                                    <build>
+                                        <cleanup>try</cleanup>
+                                        <dockerFileDir>${project.basedir}/sdc-elasticsearch</dockerFileDir>
+                                        <tags>
+                                            <tag>${docker.tag}</tag>
+                                            <tag>${docker.latest.tag}</tag>
+                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+                                        </tags>
+                                    </build>
+                                </image>
 
-								<!-- Build elastic search image -->
-								<image>
-									<name>openecomp/sdc-elasticsearch</name>
-									<alias>sdc-elasticsearch</alias>
-									<build>
-										<cleanup>try</cleanup>
-										<dockerFileDir>${project.basedir}/sdc-elasticsearch</dockerFileDir>
-										<tags>
-											<tag>${docker.tag}</tag>
-											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
-										</tags>
-									</build>
-								</image>
+                                <!-- Build kibana image -->
+                                <image>
+                                    <name>openecomp/sdc-kibana</name>
+                                    <alias>sdc-kibana</alias>
+                                    <build>
+                                        <cleanup>try</cleanup>
+                                        <dockerFileDir>${project.basedir}/sdc-kibana</dockerFileDir>
+                                        <tags>
+                                            <tag>${docker.tag}</tag>
+                                            <tag>${docker.latest.tag}</tag>
+                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+                                        </tags>
+                                    </build>
+                                </image>
 
-								<!-- Build kibana image -->
-								<image>
-									<name>openecomp/sdc-kibana</name>
-									<alias>sdc-kibana</alias>
-									<build>
-										<cleanup>try</cleanup>
-										<dockerFileDir>${project.basedir}/sdc-kibana</dockerFileDir>
-										<tags>
-											<tag>${docker.tag}</tag>
-											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
-										</tags>
-									</build>
-								</image>
+                                <!-- Build cassandra image -->
+                                <image>
+                                    <name>openecomp/sdc-cassandra</name>
+                                    <alias>sdc-cassandra</alias>
+                                    <build>
+                                        <cleanup>try</cleanup>
+                                        <dockerFileDir>${project.basedir}/sdc-cassandra</dockerFileDir>
+                                        <tags>
+                                            <tag>${docker.tag}</tag>
+                                            <tag>${docker.latest.tag}</tag>
+                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+                                        </tags>
+                                    </build>
+                                </image>
 
-								<!-- Build cassandra image -->
-								<image>
-									<name>openecomp/sdc-cassandra</name>
-									<alias>sdc-cassandra</alias>
-									<build>
-										<cleanup>try</cleanup>
-										<dockerFileDir>${project.basedir}/sdc-cassandra</dockerFileDir>
-										<tags>
-											<tag>${docker.tag}</tag>
-											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
-										</tags>
-									</build>
-								</image>
+                                <!-- Build sanity image -->
+                                <image>
+                                    <name>openecomp/sdc-sanity</name>
+                                    <alias>sdc-sanity</alias>
+                                    <build>
+                                        <cleanup>try</cleanup>
+                                        <dockerFileDir>${project.basedir}/sdc-sanity</dockerFileDir>
+                                        <tags>
+                                            <tag>${docker.tag}</tag>
+                                            <tag>${docker.latest.tag}</tag>
+                                            <tag>1.1-STAGING-latest</tag>
+                                        </tags>
+                                    </build>
+                                </image>
 
-								<!-- Build sanity image -->
-								<!-- <image>
-									<name>openecomp/sdc-sanity</name>
-									<alias>sdc-sanity</alias>
-									<build>
-										<cleanup>try</cleanup>
-										<dockerFileDir>${project.basedir}/sdc-sanity</dockerFileDir>
-										<tags>
-											<tag>${docker.tag}</tag>
-											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
-										</tags>
-									</build>
-								</image> -->
-
-							</images>
-						</configuration>
-						<executions>
-							<execution>
+                            </images>
+                        </configuration>
+                        <executions>
+                            <execution>
                                 <id>clean-images</id>
                                 <phase>pre-clean</phase>
                                 <goals>
-                                	<goal>remove</goal>
+                                    <goal>remove</goal>
                                 </goals>
                                 <configuration>
-                                	<removeAll>true</removeAll>
+                                    <removeAll>true</removeAll>
+                                    <image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana,openecomp/sdc-sanity<!-- ,openecomp/sdc-sanity --></image>
                                 </configuration>
-							</execution>
+                            </execution>
 
-							<execution>
-								<id>generate-images</id>
-								<phase>package</phase>
-								<goals>
-									<goal>build</goal>
-								</goals>
-							</execution>
+                            <execution>
+                                <id>generate-images</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
 
-							<execution>
+                            <execution>
                                 <id>push-images</id>
                                 <phase>deploy</phase>
                                 <goals>
-									<goal>build</goal>
-									<goal>push</goal>
+                                    <goal>build</goal>
+                                    <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                	<image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana,openecomp/sdc-cassandra<!--,openecomp/sdc-sanity--></image>
+                                    <image>
+                                        openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana,openecomp/sdc-sanity<!-- ,openecomp/sdc-sanity --></image>
                                 </configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
