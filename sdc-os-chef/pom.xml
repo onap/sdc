@@ -191,7 +191,7 @@
 						<configuration>
 							<verbose>false</verbose>
 							<apiVersion>1.23</apiVersion>
-
+							<registry>nexus3.onap.org:10003</registry>
 							<images>
 
 								<!-- Build backend image -->

@@ -4776,68 +4776,105 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	@SuppressWarnings("unchecked")
 	private Either<Map<String, List<UploadCapInfo>>, ResponseFormat> createCapModuleFromYaml(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
-		Map<String, List<UploadCapInfo>> moduleCap = new HashMap<String, List<UploadCapInfo>>();
+		Map<String, List<UploadCapInfo>> moduleCap = new HashMap<>();
 		Either<Map<String, List<UploadCapInfo>>, ResponseFormat> response = Either.left(moduleCap);
-		Either<List<Object>, ResultStatusEnum> toscaRequirements = ImportUtils.findFirstToscaListElement(nodeTemplateJsonMap, ToscaTagNamesEnum.CAPABILITIES);
-		if (toscaRequirements.isLeft()) {
-			List<Object> jsonCapabilities = toscaRequirements.left().value();
-
-			for (Object jsonCapObj : jsonCapabilities) {
-				// Requirement
-				Map<String, Object> capJsonWrapper = (Map<String, Object>) jsonCapObj;
-				String capName = capJsonWrapper.keySet().iterator().next();
-				Either<UploadCapInfo, ResponseFormat> eitherCap = createModuleNodeTemplateCap(capJsonWrapper.get(capName));
+		Either<List<Object>, ResultStatusEnum> capabilitiesListRes = ImportUtils.findFirstToscaListElement(nodeTemplateJsonMap, ToscaTagNamesEnum.CAPABILITIES);
+		if (capabilitiesListRes.isLeft()) {
+			for (Object jsonCapObj : capabilitiesListRes.left().value()) {
+				String key = ((Map<String, Object>) jsonCapObj).keySet().iterator().next();
+				Object capJson = ((Map<String, Object>) jsonCapObj).get(key);
+				Either<UploadCapInfo, ResponseFormat> eitherCap = addModuleNodeTemplateCap(nodeTemplateInfo, moduleCap, capJson, key);
 				if (eitherCap.isRight()) {
-					log.info("error when creating Requirement:{}, for node:{}", capName, nodeTemplateInfo);
 					return Either.right(eitherCap.right().value());
-				} else {
-					UploadCapInfo requirementDef = eitherCap.left().value();
-					requirementDef.setName(capName);
-					if (moduleCap.containsKey(capName)) {
-						moduleCap.get(capName).add(requirementDef);
-					} else {
-						List<UploadCapInfo> list = new ArrayList<UploadCapInfo>();
-						list.add(requirementDef);
-						moduleCap.put(capName, list);
+				}
+			}
+		} else {
+			Either<Map<String, Object>, ResultStatusEnum> capabilitiesMapRes = ImportUtils.findFirstToscaMapElement(nodeTemplateJsonMap, ToscaTagNamesEnum.CAPABILITIES);
+			if (capabilitiesMapRes.isLeft()) {
+				for (Map.Entry<String, Object> entry : capabilitiesMapRes.left().value().entrySet()) {
+					String capName = entry.getKey();
+					Object capJson = entry.getValue();
+					Either<UploadCapInfo, ResponseFormat> eitherCap = addModuleNodeTemplateCap(nodeTemplateInfo, moduleCap, capJson, capName);
+					if (eitherCap.isRight()) {
+						return Either.right(eitherCap.right().value());
 					}
 				}
 			}
 		}
 		return response;
 	}
-
+	
+	private Either<UploadCapInfo, ResponseFormat> addModuleNodeTemplateCap(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, List<UploadCapInfo>> moduleCap, Object capJson, String key) {
+		
+		Either<UploadCapInfo, ResponseFormat> eitherCap = createModuleNodeTemplateCap(capJson);
+		if (eitherCap.isRight()) {
+			log.info("error when creating Capability:{}, for node:{}", key, nodeTemplateInfo);
+			return Either.right(eitherCap.right().value());
+		} else {
+			UploadCapInfo capabilityDef = eitherCap.left().value();
+			capabilityDef.setKey(key);
+			if (moduleCap.containsKey(key)) {
+				moduleCap.get(key).add(capabilityDef);
+			} else {
+				List<UploadCapInfo> list = new ArrayList<UploadCapInfo>();
+				list.add(capabilityDef);
+				moduleCap.put(key, list);
+			}
+		}
+		return Either.left( eitherCap.left().value());
+	}
+	
 	@SuppressWarnings("unchecked")
 	private Either<Map<String, List<UploadReqInfo>>, ResponseFormat> createReqModuleFromYaml(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
 		Map<String, List<UploadReqInfo>> moduleRequirements = new HashMap<String, List<UploadReqInfo>>();
 		Either<Map<String, List<UploadReqInfo>>, ResponseFormat> response = Either.left(moduleRequirements);
-		Either<List<Object>, ResultStatusEnum> toscaRequirements = ImportUtils.findFirstToscaListElement(nodeTemplateJsonMap, ToscaTagNamesEnum.REQUIREMENTS);
-		if (toscaRequirements.isLeft()) {
-			List<Object> jsonRequirements = toscaRequirements.left().value();
-
-			for (Object jsonRequirementObj : jsonRequirements) {
-				// Requirement
-				Map<String, Object> requirementJsonWrapper = (Map<String, Object>) jsonRequirementObj;
-				String requirementName = requirementJsonWrapper.keySet().iterator().next();
-				Either<UploadReqInfo, ResponseFormat> eitherRequirement = createModuleNodeTemplateReg(requirementJsonWrapper.get(requirementName));
-				if (eitherRequirement.isRight()) {
-					log.info("error when creating Requirement:{}, for node:{}", requirementName, nodeTemplateInfo);
-					return Either.right(eitherRequirement.right().value());
-				} else {
-					UploadReqInfo requirementDef = eitherRequirement.left().value();
-					requirementDef.setName(requirementName);
-					if (moduleRequirements.containsKey(requirementName)) {
-						moduleRequirements.get(requirementName).add(requirementDef);
-					} else {
-						List<UploadReqInfo> list = new ArrayList<UploadReqInfo>();
-						list.add(requirementDef);
-						moduleRequirements.put(requirementName, list);
+		Either<List<Object>, ResultStatusEnum> requirementsListRes = ImportUtils.findFirstToscaListElement(nodeTemplateJsonMap, ToscaTagNamesEnum.REQUIREMENTS);
+		
+		if (requirementsListRes.isLeft()) {
+			for (Object jsonReqObj : requirementsListRes.left().value()) {
+				String reqName = ((Map<String, Object>) jsonReqObj).keySet().iterator().next();
+				Object reqJson = ((Map<String, Object>) jsonReqObj).get(reqName);
+				Either<UploadReqInfo, ResponseFormat> eitherCap = addModuleNodeTemplateReq(nodeTemplateInfo, moduleRequirements, reqJson, reqName);
+				if (eitherCap.isRight()) {
+					return Either.right(eitherCap.right().value());
+				}
+			}
+		} else {
+			Either<Map<String,Object>, ResultStatusEnum> requirementsMapRes = ImportUtils.findFirstToscaMapElement(nodeTemplateJsonMap, ToscaTagNamesEnum.REQUIREMENTS);
+			if (requirementsMapRes.isLeft()) {
+				for (Map.Entry<String, Object>  entry: requirementsMapRes.left().value().entrySet()) {
+					String reqName = entry.getKey();
+					Object reqJson = entry.getValue();
+					Either<UploadReqInfo, ResponseFormat> eitherCap = addModuleNodeTemplateReq(nodeTemplateInfo, moduleRequirements, reqJson, reqName);
+					if (eitherCap.isRight()) {
+						return Either.right(eitherCap.right().value());
 					}
 				}
 			}
 		}
 		return response;
 	}
+	
+	private Either<UploadReqInfo, ResponseFormat> addModuleNodeTemplateReq(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, List<UploadReqInfo>> moduleRequirements, Object requirementJson, String requirementName) {
 
+		Either<UploadReqInfo, ResponseFormat> eitherRequirement = createModuleNodeTemplateReg(requirementJson);
+		if (eitherRequirement.isRight()) {
+			log.info("error when creating Requirement:{}, for node:{}", requirementName, nodeTemplateInfo);
+			return Either.right(eitherRequirement.right().value());
+		} else {
+			UploadReqInfo requirementDef = eitherRequirement.left().value();
+			requirementDef.setName(requirementName);
+			if (moduleRequirements.containsKey(requirementName)) {
+				moduleRequirements.get(requirementName).add(requirementDef);
+			} else {
+				List<UploadReqInfo> list = new ArrayList<UploadReqInfo>();
+				list.add(requirementDef);
+				moduleRequirements.put(requirementName, list);
+			}
+		}
+		return Either.left(eitherRequirement.left().value());
+	}
+	
 	@SuppressWarnings("unchecked")
 	private Either<UploadCapInfo, ResponseFormat> createModuleNodeTemplateCap(Object capObject) {
 		UploadCapInfo capTemplateInfo = new UploadCapInfo();
