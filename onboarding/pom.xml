@@ -35,7 +35,7 @@
         <mvn.war.version>2.1.1</mvn.war.version>
 
         <!-- Onboarding artifacts version -->
-        <openecomp.sdc.common.version>1.1.0-SNAPSHOT</openecomp.sdc.common.version>
+        <openecomp.sdc.common.version>${project.version}</openecomp.sdc.common.version>
 
         <!-- Onboarding 3rd party versions -->
         <jtosca.version>1.1.10-SNAPSHOT</jtosca.version>

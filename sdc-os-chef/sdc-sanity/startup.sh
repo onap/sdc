@@ -6,13 +6,15 @@ chef-solo -c solo.rb -E ${CHEFNAME}
 
 rc=$?
 
-if [[ $rc != 0 ]]; then
-   echo "Sanity failed !!!"
-   exit $rc
-else
-   echo "completed successfully :-)"
-   exit 0
-fi
+#if [[ $rc != 0 ]]; then
+#   echo "Sanity failed !!!"
+#   exit $rc
+#else
+#   echo "completed successfully :-)"
+#   exit 0
+#fi
 
-#/docker-entrypoint.sh 
+while true; do sleep 2; done
+
+##/docker-entrypoint.sh
 
