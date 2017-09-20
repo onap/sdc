@@ -1,0 +1,15 @@
+{
+	"payloadName": "vduCompute.yml",
+	"contactId": "jh0003",
+	"name": "VDU Compute",
+	"description": "VDU Compute",
+	"resourceIconPath": "compute",
+	"resourceType": "VFC",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+	"tags": ["VDU Compute"]
+}

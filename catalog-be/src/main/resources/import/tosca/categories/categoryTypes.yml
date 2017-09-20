@@ -11,12 +11,6 @@ services:
     VoIP_Call_Control:
       name: "VoIP Call Control"
       icons: ['call_controll']
-    E2E_Service:
-      name: "E2E Service"
-      icons: ['network_l_1-3']
-    Network_Service:
-      name: "Network Service"
-      icons: ['network_l_1-3']
 resources:
   NetworkLayer23:
     name: "Network L2-3"
@@ -143,10 +137,7 @@ resources:
           icons: ['service_admin']  
       ContrailRoute:
           name: "Contrail Route"
-          icons: ['contrail_route']
+          icons: ['contrail_route']          
       SecurityZone:
           name: "Security Zone"
-          icons: ['security_zone']
-      NetworkService:
-          name: "Network Service"
-          icons: ['network']
+          icons: ['security_zone']          

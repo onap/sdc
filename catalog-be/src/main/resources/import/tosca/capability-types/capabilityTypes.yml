@@ -117,8 +117,6 @@ tosca.capabilities.Scalable:
       type: integer
 tosca.capabilities.network.Bindable:
   derived_from: tosca.capabilities.Node
-
-
 tosca.capabilities.Container.Docker:
   derived_from: tosca.capabilities.Container
   properties:
@@ -204,3 +202,24 @@ org.openecomp.capabilities.metric.SnmpTrap:
       description: Object Id of the metric
       required: true
       status: SUPPORTED
+#ONAP types
+tosca.capabilities.nfv.VirtualStorage:
+    derived_from: tosca.capabilities.Root
+tosca.capabilities.nfv.VirtualCompute:
+  derived_from: tosca.capabilities.Root
+  properties:
+    requested_additional_capabilities:
+      type: map
+      entry_schema:
+         type: tosca.datatypes.nfv.RequestedAdditionalCapability
+      required: false
+    virtual_memory:
+      type: tosca.datatypes.nfv.VirtualMemory
+      required: true
+    virtual_cpu:
+      type: tosca.datatypes.nfv.VirtualCpu
+      required: true
+tosca.capabilities.nfv.VirtualBindable:
+  derived_from: tosca.capabilities.Root
+tosca.capabilities.nfv.VirtualLinkable:
+  derived_from: tosca.capabilities.Root
