@@ -22,6 +22,30 @@
       "revId": "4625fc4601f05c4051f20cdf269b16d11652321a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_634c0f43",
+        "filename": "onboarding/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-09-20T11:03:23Z",
+      "side": 1,
+      "message": "I don\u0027t see why, if you want to create decoupling between the versions of different parts of the project. Anyway I\u0027m abandoning since you\u0027ve already fixed it in another commit.",
+      "parentUuid": "9a437d4f_685f4c42",
+      "range": {
+        "startLine": 38,
+        "startChar": 38,
+        "endLine": 38,
+        "endChar": 52
+      },
+      "revId": "4625fc4601f05c4051f20cdf269b16d11652321a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
