@@ -45,6 +45,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.VersionedVendorSoftwareProductInfo;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.*;
@@ -86,34 +87,34 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
   private ActivityLogManager activityLogManager =
       ActivityLogManagerFactory.getInstance().createInterface();
 
-    @Override
-    public Response createVsp(VspDescriptionDto vspDescriptionDto, String user) {
-        MdcUtil.initMdc(LoggerServiceName.Create_VSP.toString());
-        logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VSP
-            + vspDescriptionDto.getName());
+  @Override
+  public Response createVsp(VspDescriptionDto vspDescriptionDto, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Create_VSP.toString());
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VSP
+        + vspDescriptionDto.getName());
 
-      VspCreationDto vspCreationDto = null;
-      OnboardingMethod onboardingMethod = OnboardingMethod.valueOf(vspDescriptionDto.getOnboardingMethod());
-      if (onboardingMethod == null){
-        return handleUnkownOnboardingMethod();
-      }
-      switch (onboardingMethod) {
-        case NetworkPackage:
-        case Manual:
-          VspDetails vspDetails = new MapVspDescriptionDtoToVspDetails().
-              applyMapping(vspDescriptionDto, VspDetails.class);
-
-          vspDetails = vendorSoftwareProductManager.createVsp(vspDetails, user);
-
-          MapVspDetailsToVspCreationDto mapping = new MapVspDetailsToVspCreationDto();
-          vspCreationDto = mapping.applyMapping(vspDetails, VspCreationDto.class);
-          break;
-        default:
-          return handleUnkownOnboardingMethod();
-      }
-
-      return Response.ok(vspCreationDto).build();
+    VspCreationDto vspCreationDto = null;
+    OnboardingMethod onboardingMethod = OnboardingMethod.valueOf(vspDescriptionDto.getOnboardingMethod());
+    if (onboardingMethod == null){
+      return handleUnkownOnboardingMethod();
     }
+    switch (onboardingMethod) {
+      case NetworkPackage:
+      case Manual:
+        VspDetails vspDetails = new MapVspDescriptionDtoToVspDetails().
+            applyMapping(vspDescriptionDto, VspDetails.class);
+
+        vspDetails = vendorSoftwareProductManager.createVsp(vspDetails, user);
+
+        MapVspDetailsToVspCreationDto mapping = new MapVspDetailsToVspCreationDto();
+        vspCreationDto = mapping.applyMapping(vspDetails, VspCreationDto.class);
+        break;
+      default:
+        return handleUnkownOnboardingMethod();
+    }
+
+    return Response.ok(vspCreationDto).build();
+  }
 
   private Response handleUnkownOnboardingMethod() {
     ErrorCode onboardingMethodUpdateErrorCode = OnboardingMethodErrorBuilder
@@ -363,14 +364,14 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         vendorSoftwareProductManager.getInformationArtifact(vspId,
             resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), user);
 
-        Response.ResponseBuilder response = Response.ok(textInformationArtifact);
-        if (textInformationArtifact == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        response
-                .header("Content-Disposition", "attachment; filename=" + textInformationArtifact.getName());
-        return response.build();
+    Response.ResponseBuilder response = Response.ok(textInformationArtifact);
+    if (textInformationArtifact == null) {
+      return Response.status(Response.Status.NOT_FOUND).build();
     }
+    response
+        .header("Content-Disposition", "attachment; filename=" + textInformationArtifact.getName());
+    return response.build();
+  }
 
   public Response listCompute(String vspId, String version, String user) {
 
@@ -386,8 +387,69 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     return Response.ok(results).build();
   }
 
-  private void printAuditForErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
+  @Override
+  public Response reSubmitAll(String user) throws IOException {
+    MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Re_Submit_ALL_Final_VSPs.toString());
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.RESUBMIT_ALL_FINAL_VSPS);
 
+
+    List<VersionedVendorSoftwareProductInfo> vspList =
+        vendorSoftwareProductManager.listVsps(null, user);
+
+    for (VersionedVendorSoftwareProductInfo versionVspInfo : vspList) {
+      String vspId = versionVspInfo.getVspDetails().getId();
+      if (versionVspInfo.getVersionInfo().getStatus().equals(VersionStatus.Final)) {
+        final Version latestFinalVersion =
+            getVersionInfo(vspId, VersionableEntityAction.Read, user).getLatestFinalVersion();
+        if (latestFinalVersion != null) {
+          reSubmit(vspId, user);
+        }
+      }
+    }
+
+    return Response.ok().build();
+  }
+
+  @Override
+  public Response reSubmit(String vspId, String user)
+      throws IOException {
+    MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Checkout_VSP.toString());
+    vendorSoftwareProductManager.checkout(vspId, user);
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CHECK_OUT_VSP + vspId);
+
+    MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Checkin_VSP.toString());
+    vendorSoftwareProductManager.checkin(vspId, user);
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CHECK_IN_VSP + vspId);
+
+    MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Submit_VSP.toString());
+    ValidationResponse validationResponse = vendorSoftwareProductManager.submit(vspId, user);
+    if (!validationResponse.isValid()) {
+      logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP_FAIL + vspId);
+      logAuditErrors(vspId, validationResponse);
+
+      return Response.status(Response.Status.EXPECTATION_FAILED).entity(
+          new MapValidationResponseToDto()
+              .applyMapping(validationResponse, ValidationResponseDto.class)).build();
+    }
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP + vspId);
+
+
+    return Response.ok().build();
+  }
+
+  private void logAuditErrors(String vspId, ValidationResponse validationResponse) {
+    if (validationResponse.getVspErrors() != null) {
+      validationResponse.getVspErrors().forEach(errorCode -> logger.audit(AuditMessages
+          .AUDIT_MSG + String.format(SUBMIT_VSP_ERROR, errorCode.message(), vspId)));
+    }
+    if (validationResponse.getUploadDataErrors() != null) {
+      validationResponse.getUploadDataErrors().values().forEach(errorMessages
+          -> VendorSoftwareProductsImpl.printAuditForErrors(errorMessages, vspId,
+          SUBMIT_VSP_ERROR));
+    }
+  }
+
+  private static void printAuditForErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
     errorList.forEach(errorMessage -> {
       if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
         logger.audit(AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(),

@@ -15,6 +15,8 @@ public class AuditMessages {
   public static final String CREATE_VSP = "Create VSP. VSP Name: ";
   public static final String CHECK_IN_VSP = "Check in VSP. VSP Id: ";
   public static final String CHECK_OUT_VSP = "Check out VSP. VSP Id: ";
+  public static final String RESUBMIT_ALL_FINAL_VSPS = "Check out, check in and submit all " +
+      "submitted VSPs, see ids below ";
   public static final String SUBMIT_VSP = "Submit VSP. VSP Id: ";
   public static final String SUBMIT_VSP_FAIL = "Submit VSP failed!. VSP Id: ";
   public static final String SUBMIT_VSP_ERROR = "Submit VSP error: %s. VSP Id: %s";

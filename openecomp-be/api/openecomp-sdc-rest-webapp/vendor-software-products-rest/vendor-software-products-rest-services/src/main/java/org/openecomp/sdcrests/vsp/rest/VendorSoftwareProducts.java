@@ -20,9 +20,6 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -35,8 +32,6 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.validation.IsValidJson;
 import org.springframework.validation.annotation.Validated;
 
-import java.io.File;
-import java.io.IOException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -51,6 +46,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
 @Path("/v1.0/vendor-software-products")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -206,4 +206,20 @@ public interface VendorSoftwareProducts extends VspEntities {
                        @PathParam("versionId") String versionId,
                        @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                            String user);
+
+  @PUT
+  @Path("/reSubmitAll")
+  @ApiOperation(value = "Performs check out, check in and submit for ALL submitted VSPs", notes
+      = "Please note - only submitted VSPs will be processed")
+  Response reSubmitAll(@NotNull(message = USER_MISSING_ERROR_MSG)
+                       @HeaderParam(USER_ID_HEADER_PARAM) String user) throws IOException;
+
+  @PUT
+  @Path("/{vspId}/reSubmit")
+  @ApiOperation(value = "Performs check out, check in and submit for a specific Vendor Software " +
+      "Product")
+  Response reSubmit(@PathParam("vspId") String vspId,
+                    @NotNull(message = USER_MISSING_ERROR_MSG)
+                    @HeaderParam(USER_ID_HEADER_PARAM) String user)
+      throws IOException;
 }
