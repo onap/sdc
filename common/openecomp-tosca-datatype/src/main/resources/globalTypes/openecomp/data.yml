@@ -92,7 +92,7 @@ data_types:
         type: string
         status: SUPPORTED
         required: true
-        
+
   org.openecomp.datatypes.EcompHoming:
     derived_from: org.openecomp.datatypes.Root
     properties:
@@ -468,7 +468,7 @@ data_types:
         description: Referenc to naming policy that OPENECOMP will use when the name is auto-generated
         type: string
         required: false
-                
+
   org.openecomp.datatypes.Naming:
     derived_from: org.openecomp.datatypes.Root
     properties:
@@ -478,7 +478,7 @@ data_types:
         type: boolean
         default: true
         required: true
-  
+
   org.openecomp.datatypes.EcompGeneratedNaming:
     derived_from: org.openecomp.datatypes.Naming
     properties:
@@ -486,7 +486,7 @@ data_types:
         description: Referenc to naming policy that OPENECOMP will use when the name is auto-generated
         type: string
         required: false
-                                
+
   org.openecomp.datatypes.UserDefinedNaming:
     derived_from: org.openecomp.datatypes.Naming
     properties:
@@ -554,6 +554,18 @@ data_types:
         description: Hash type
         required: false
         default: md5
+
+  # New data types for Port Mirroring
+  org.openecomp.datatypes.PortMirroringConnectionPointDescription:
+    properties:
+      nf_type:
+        type: string
+      nfc_type:
+        type: string
+      network_role:
+        type: string
+      pps_capacity:
+        type: string
 
   tosca.datatypes.nfv.RequestedAdditionalCapability:
     derived_from: tosca.datatypes.Root

@@ -37,6 +37,7 @@ import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
 import org.openecomp.sdc.tosca.datatypes.model.AttributeDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.CapabilityAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityType;
 import org.openecomp.sdc.tosca.datatypes.model.Constraint;
@@ -152,6 +153,47 @@ public class DataModelUtil {
 
     serviceTemplate.getTopology_template().getSubstitution_mappings().getRequirements()
         .put(substitutionMappingRequirementId, substitutionMappingRequirementList);
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
+  }
+
+  /**
+   * Add substitution mapping capability.
+   *
+   * @param serviceTemplate                   the service template
+   * @param substitutionMappingCapabilityId   the substitution mapping capability id
+   * @param substitutionMappingCapabilityList the substitution mapping capability list
+   */
+  public static void addSubstitutionMappingCapability(ServiceTemplate serviceTemplate,
+                                                      String substitutionMappingCapabilityId,
+                                                      List<String> substitutionMappingCapabilityList) {
+
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    if (serviceTemplate == null) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
+      throw new CoreException(
+          new InvalidAddActionNullEntityErrorBuilder("Substitution Mapping Capabilities",
+              "Service Template").build());
+    }
+
+    if (serviceTemplate.getTopology_template() == null) {
+      serviceTemplate.setTopology_template(new TopologyTemplate());
+    }
+    if (serviceTemplate.getTopology_template().getSubstitution_mappings() == null) {
+      serviceTemplate.getTopology_template().setSubstitution_mappings(new SubstitutionMapping());
+    }
+    if (serviceTemplate.getTopology_template().getSubstitution_mappings().getCapabilities()
+        == null) {
+      serviceTemplate.getTopology_template().getSubstitution_mappings()
+          .setCapabilities(new HashMap<>());
+    }
+
+    serviceTemplate.getTopology_template().getSubstitution_mappings().getCapabilities()
+        .putIfAbsent(substitutionMappingCapabilityId, substitutionMappingCapabilityList);
 
     mdcDataDebugMessage.debugExitMessage(null, null);
   }
@@ -1445,11 +1487,11 @@ public class DataModelUtil {
       ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
       clonedObjectValue = objectInputStream.readObject();
     } catch (NotSerializableException ex) {
-        logger.debug(ex.getMessage(), ex);
-        return getClonedObject(obj, obj.getClass());
+      logger.debug(ex.getMessage(), ex);
+      return getClonedObject(obj, obj.getClass());
     } catch (IOException | ClassNotFoundException ex) {
-        logger.debug(ex.getMessage(), ex);
-        return null;
+      logger.debug(ex.getMessage(), ex);
+      return null;
     }
     return clonedObjectValue;
   }
@@ -1508,6 +1550,30 @@ public class DataModelUtil {
 
     mdcDataDebugMessage.debugExitMessage(null, null);
     return substitutionMapping;
+  }
+
+  /**
+   * Add node template capability.
+   *
+   * @param nodeTemplate         the node template
+   * @param capabilityId         the capability id
+   * @param capabilityProperties the capability properties
+   * @param capabilityAttributes the capability attributes
+   */
+  public static void addNodeTemplateCapability(NodeTemplate nodeTemplate, String capabilityId,
+                                               Map<String, Object> capabilityProperties,
+                                               Map<String, Object> capabilityAttributes) {
+    List<Map<String, CapabilityAssignment>> capabilities = nodeTemplate.getCapabilities();
+    if (Objects.isNull(capabilities)) {
+      capabilities = new ArrayList<>();
+    }
+    CapabilityAssignment capabilityAssignment = new CapabilityAssignment();
+    capabilityAssignment.setProperties(capabilityProperties);
+    capabilityAssignment.setAttributes(capabilityAttributes);
+    Map<String, CapabilityAssignment> nodeTemplateCapability = new HashMap<>();
+    nodeTemplateCapability.put(capabilityId, capabilityAssignment);
+    capabilities.add(nodeTemplateCapability);
+    nodeTemplate.setCapabilities(capabilities);
   }
 
   private static Map<String, List<String>> manageRequirementMapping(
