@@ -70,6 +70,7 @@ public enum LoggerServiceName {
   Undo_Checkout_VSP,
   Submit_VSP,
   Update_VSP,
+  Re_Submit_ALL_Final_VSPs,
   Create_Package,
   List_VSP,
   Upload_File,
