@@ -22,9 +22,19 @@ package org.openecomp.sdc.be.model;
 
 public abstract class UploadInfo {
 
+	private String key;
+	
 	private String type;
 
 	private String name;
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
 
 	public String getType() {
 		return type;
