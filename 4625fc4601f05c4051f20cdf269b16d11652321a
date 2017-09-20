@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_685f4c42",
+        "filename": "onboarding/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 69
+      },
+      "writtenOn": "2017-09-20T10:52:47Z",
+      "side": 1,
+      "message": "thsi should be project version\nsince we are using one version for the whole project we should not hard code any version except the main one.",
+      "range": {
+        "startLine": 38,
+        "startChar": 38,
+        "endLine": 38,
+        "endChar": 52
+      },
+      "revId": "4625fc4601f05c4051f20cdf269b16d11652321a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
