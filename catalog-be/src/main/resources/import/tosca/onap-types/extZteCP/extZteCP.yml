@@ -1,0 +1,76 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  tosca.nodes.nfv.ext.zte.CP: 
+    derived_from: tosca.nodes.Root
+    properties: 
+      guest_os_mtu: 
+        type: integer
+        required: false
+      bandwidth: 
+        type: integer
+        required: false
+      interface_name: 
+        type: string
+        required: false
+      allowed_address_pairs: 
+        type: list
+        required: false
+        entry_schema: 
+          type: tosca.datatypes.nfv.ext.AddressPairs
+      ip_address: 
+        type: string
+        required: false
+      bond: 
+        type: string
+        required: false
+      proxiedVNFs: 
+        type: list
+        required: false
+        entry_schema: 
+          type: string
+      sfc_encapsulation: 
+        type: string
+        required: false
+      floating_ip_address: 
+        type: tosca.datatypes.nfv.ext.FloatingIP
+        required: false
+      service_ip_address: 
+        required: false
+        type: string
+      mac_address: 
+        type: string
+        required: false
+      proxiedVNFtype: 
+        type: string
+        required: false
+      macbond: 
+        type: string
+        required: false
+      vnic_type: 
+        type: string
+        required: false
+      direction: 
+        type: string
+        required: false
+      order: 
+        type: integer
+        required: false
+    requirements: 
+    - forwarder: 
+        capability: tosca.capabilities.nfv.Forwarder
+        occurrences: 
+        - 0
+        - UNBOUNDED
+    - virtualbinding: 
+        capability: tosca.capabilities.nfv.VirtualBindable
+        occurrences: 
+        - 0
+        - UNBOUNDED
+    - virtualLink: 
+        capability: tosca.capabilities.nfv.VirtualBindable
+        occurrences: 
+        - 0
+        - UNBOUNDED
+    capabilities: 
+      forwarder: 
+        type: tosca.capabilities.nfv.Forwarder

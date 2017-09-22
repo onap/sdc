@@ -1,0 +1,15 @@
+{
+	"payloadName": "extZteVDU.yml",
+	"contactId": "jh0003",
+	"name": "Ext Zte VDU",
+	"description": "Ext Zte VDU",
+	"resourceIconPath": "compute",
+	"resourceType": "VFC",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+	"tags": ["Ext Zte VDU"]
+}

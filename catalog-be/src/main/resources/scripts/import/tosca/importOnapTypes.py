@@ -19,40 +19,12 @@ import importCommon
 #																																		       #	
 ################################################################################################################################################
 
-def importHeatTypes(beHost, bePort, adminUser, fileDir, updateversion):
+def importOnapTypes(beHost, bePort, adminUser, fileDir, updateversion):
 	
-	heatTypes = [ "globalNetwork",
-				  "globalPort",
-				  "globalCompute",
-				  "volume",
-				  "cinderVolume",
-				  "contrailVirtualNetwork",
-				  "neutronNet",
-				  "neutronPort",
-				  "novaServer",
-				  "extVl",
-				  "internalVl",
-				  "extCp",
-				  "vl",
-				  "eline",
-				  "abstractSubstitute",
-				  "Generic_VFC", 
-				  "Generic_VF",
-				  "Generic_PNF",
-				  "Generic_Service",
-				  "contrailNetworkRules",
-				  "contrailPort",
-				  "contrailV2NetworkRules",
-				  "contrailV2VirtualNetwork",
-				  "securityRules",
-				  "contrailAbstractSubstitute",
-				  "contrailCompute",
-				  "contrailV2VirtualMachineInterface",
-				  "subInterface",
-				  "contrailV2VLANSubInterface",
-				  "multiFlavorVFC",
-				  "vnfConfiguration",
-				  "underlayVpn"
+	onapTypes = [ "vduCompute",
+				  "vduCpd",
+				  "vduVirtualStorage",
+				  "vnfVirtualLinkDesc"
 				  ]
 		
 	responseCodes = [200, 201]
@@ -61,11 +33,11 @@ def importHeatTypes(beHost, bePort, adminUser, fileDir, updateversion):
 		responseCodes = [200, 201, 409]
 		
         results = []
-        for heatType in heatTypes:
-                result = createNormativeType(beHost, bePort, adminUser, fileDir, heatType, updateversion)
+        for onapType in onapTypes:
+                result = createNormativeType(beHost, bePort, adminUser, fileDir, onapType, updateversion)
                 results.append(result)
                 if ( result[1] == None or result[1] not in responseCodes) :
-			print "Failed creating heat type " + heatType + ". " + str(result[1]) 				
+			print "Failed creating heat type " + onapType + ". " + str(result[1]) 				
 	return results	
 
 
@@ -104,7 +76,7 @@ def main(argv):
 		usage()
 		sys.exit(3)
 
-	results = importHeatTypes(beHost, bePort, adminUser, "../../../import/tosca/heat-types/", updateversion)
+	results = importOnapTypes(beHost, bePort, adminUser, "../../../import/tosca/onap-types/", updateversion)
 
 	print "-----------------------------"
 	for result in results:

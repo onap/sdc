@@ -1,0 +1,66 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+    derived_from: tosca.nodes.Root
+    properties: 
+      manual_scale_select_vim: 
+        type: boolean
+        required: false
+      vdu_type: 
+        type: string
+        required: false
+      watchdog: 
+        type: tosca.datatypes.nfv.ext.zte.WatchDog
+        required: false
+      name: 
+        type: string
+        required: false
+      local_affinity_antiaffinity_rule: 
+        type: tosca.datatypes.nfv.ext.LocalAffinityOrAntiAffinityRule
+        required: false
+      support_scaling: 
+        type: boolean
+        required: false
+      storage_policy: 
+        type: string
+        required: false
+      key_vdu: 
+        type: boolean
+        required: false
+      location_info: 
+        type: tosca.datatypes.nfv.ext.LocationInfo
+        required: false
+      inject_data_list: 
+        type: list
+        required: false
+        entry_schema: 
+          type: tosca.datatypes.nfv.ext.InjectData
+    requirements: 
+    - guest_os: 
+        capability: tosca.capabilities.nfv.ext.GuestOs
+        occurrences: 
+        - 0
+        - UNBOUNDED
+    - local_storage: 
+        capability: tosca.capabilities.nfv.ext.LocalAttachment
+        occurrences: 
+        - 0
+        - UNBOUNDED
+    - volume_storage: 
+        capability: tosca.capabilities.Attachment
+        occurrences: 
+        - 0
+        - UNBOUNDED
+    - dependency: 
+        capability: tosca.capabilities.Node
+        occurrences: 
+        - 0
+        - UNBOUNDED
+    capabilities: 
+      scalable: 
+        type: tosca.capabilities.Scalable
+      monitoring_parameter: 
+        type: tosca.capabilities.nfv.Metric
+      nfv_compute: 
+        type: tosca.capabilities.nfv.ext.Compute.Container.Architecture
+      virtualbinding: 
+        type: tosca.capabilities.nfv.VirtualBindable

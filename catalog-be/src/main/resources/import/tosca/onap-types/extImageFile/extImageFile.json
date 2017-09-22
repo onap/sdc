@@ -1,0 +1,15 @@
+{
+	"payloadName": "extImageFile.yml",
+	"contactId": "jh0003",
+	"name": "Ext Image File",
+	"description": "Ext Image File",
+	"resourceIconPath": "default",
+	"resourceType": "VFC",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+	"tags": ["Ext Image File"]
+}

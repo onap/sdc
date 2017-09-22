@@ -8,6 +8,7 @@ import time
 from importNormativeElements import * 
 from importNormativeTypes import importNormativeTypes
 from importHeatTypes import importHeatTypes
+from importOnapTypes import importOnapTypes
 from importNormativeCapabilities import importNormativeCapabilities
 from importCategoryTypes import importCategories
 from importNormativeInterfaceLifecycleTypes import importNormativeInterfaceLifecycleType
@@ -120,6 +121,10 @@ def main(argv):
 
 	fileLocation = baseFileLocation + "heat-types/"
 	resultsHeat = importHeatTypes(beHost, bePort, adminUser, fileLocation, updateversion)
+	handleResults(resultsHeat, updateversion)
+	
+	fileLocation = baseFileLocation + "onap-types/"
+	resultsHeat = importOnapTypes(beHost, bePort, adminUser, fileLocation, updateversion)
 	handleResults(resultsHeat, updateversion)
   
 	fileLocation = baseFileLocation + "group-types/"

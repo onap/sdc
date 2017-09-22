@@ -248,7 +248,7 @@
                                         <dockerFileDir>${project.basedir}/sdc-backend</dockerFileDir>
                                         <tags>
                                             <tag>${docker.tag}</tag>
-                                            <tag>${docker.latest.tag}</tag><tag>$sedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
+                                            <tag>${docker.latest.tag}</tag>
                                             <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
                                         </tags>
                                     </build>
