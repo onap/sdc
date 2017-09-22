@@ -177,6 +177,20 @@
 		</pluginManagement>
 
 		<plugins>
+
+			<!-- Staging Plugin -->
+			<plugin>
+				 <groupId>org.sonatype.plugins</groupId>
+				 <artifactId>nexus-staging-maven-plugin</artifactId>
+				 <version>1.6.7</version>
+				 <extensions>true</extensions>
+				 <configuration>
+						 <nexusUrl>${nexus.proxy}</nexusUrl>
+						 <stagingProfileId>${staging.profile.id}</stagingProfileId>
+						 <serverId>ecomp-staging</serverId>
+				 </configuration>
+			</plugin>
+
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.19.1</version>
@@ -384,12 +398,8 @@
 				<artifact-generator-core.version>1710.0.0</artifact-generator-core.version>
 				<dox-common-lib.version>1710.0.0</dox-common-lib.version>
 				<sdc-tosca-parser.version>1.1.14</sdc-tosca-parser.version>
-			</properties>	
-			
-			
+			</properties>
 		</profile>
-		
-
 
 		<profile>
 			<id>onboarding</id>
