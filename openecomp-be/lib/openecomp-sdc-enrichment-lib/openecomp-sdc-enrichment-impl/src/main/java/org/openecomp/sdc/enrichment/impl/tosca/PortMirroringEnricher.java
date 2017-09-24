@@ -50,21 +50,21 @@ public class PortMirroringEnricher {
    * @param toscaServiceModel the tosca service model
    * @return the map          Error descriptor map
    */
-  public Map<String,List<ErrorMessage>> enrich(ToscaServiceModel toscaServiceModel) {
+  public Map<String, List<ErrorMessage>> enrich(ToscaServiceModel toscaServiceModel) {
     mdcDataDebugMessage.debugEntryMessage(null);
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
-      Map<String, ServiceTemplate> serviceTemplates = toscaServiceModel.getServiceTemplates();
-      serviceTemplates.entrySet().stream()
-          //Skipping the service templates which do not contain topology template
-          .filter(serviceTemplateEntry -> serviceTemplateEntry.getValue()
-              .getTopology_template() != null)
-          .forEach(serviceTemplateEntry ->
-              //Collect all the ports across all the service templates
-              collectPorts(serviceTemplateEntry.getValue()));
-      //Collect External ports from the list of all ports collected above
-      filterExternalPorts(toscaServiceModel);
-      //Handle external port changes
-      handleExternalPorts(toscaServiceModel);
+    Map<String, ServiceTemplate> serviceTemplates = toscaServiceModel.getServiceTemplates();
+    serviceTemplates.entrySet().stream()
+        //Skipping the service templates which do not contain topology template
+        .filter(serviceTemplateEntry -> serviceTemplateEntry.getValue()
+            .getTopology_template() != null)
+        .forEach(serviceTemplateEntry ->
+            //Collect all the ports across all the service templates
+            collectPorts(serviceTemplateEntry.getValue()));
+    //Collect External ports from the list of all ports collected above
+    filterExternalPorts(toscaServiceModel);
+    //Handle external port changes
+    handleExternalPorts(toscaServiceModel);
     mdcDataDebugMessage.debugExitMessage(null);
     return errors;
   }
@@ -192,30 +192,33 @@ public class PortMirroringEnricher {
     }
   }
 
-  private void handleExternalPortProperties(NodeTemplate portNodeTemplate){
+  private void handleExternalPortProperties(NodeTemplate portNodeTemplate) {
 
     ServiceTemplate serviceTemplate = globalTypesServiceTemplate.get("openecomp/nodes.yml");
     String externalPortType = portNodeTemplate.getType();
     Map<String, PropertyDefinition> globalTypesportProperties = new HashMap<>();
-    globalTypesportProperties.putAll(serviceTemplate.getNode_types().get("org.openecomp.resource.cp.nodes.network.Port").getProperties());
-    globalTypesportProperties.putAll(serviceTemplate.getNode_types().get(externalPortType).getProperties());
+    globalTypesportProperties.putAll(
+        serviceTemplate.getNode_types().get("org.openecomp.resource.cp.nodes.network.Port")
+            .getProperties());
+    globalTypesportProperties
+        .putAll(serviceTemplate.getNode_types().get(externalPortType).getProperties());
 
     Map<String, Object> properties = portNodeTemplate.getProperties();
     Map<String, Object> filteredProperties = new HashMap<>();
 
-    if(MapUtils.isEmpty(properties)){
+    if (MapUtils.isEmpty(properties)) {
       return;
     }
 
-    for(Map.Entry<String, Object> propertyEntry: properties.entrySet()){
-      if(globalTypesportProperties.containsKey(propertyEntry.getKey())){
+    for (Map.Entry<String, Object> propertyEntry : properties.entrySet()) {
+      if (globalTypesportProperties.containsKey(propertyEntry.getKey())) {
         filteredProperties.put(propertyEntry.getKey(), propertyEntry.getValue());
       }
     }
 
-    if(!MapUtils.isEmpty(filteredProperties)) {
+    if (!MapUtils.isEmpty(filteredProperties)) {
       portNodeTemplate.setProperties(filteredProperties);
-    }else{
+    } else {
       portNodeTemplate.setProperties(null);
     }
 
