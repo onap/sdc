@@ -1,0 +1,308 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_pd_server_3
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+- openecomp_index:
+    file: openecomp/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.pd_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    compute_pd_server_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_pd_server_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd01_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    port_pd01_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    vm_image_name:
+      type: string
+      required: true
+    port_pd01_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_pd01_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd01_port_order:
+      type: integer
+      required: true
+    port_pd01_port_subnetpoolid:
+      type: string
+      required: true
+    port_pd01_port_network_role:
+      type: string
+      required: true
+    port_pd01_port_network_role_tag:
+      type: string
+      required: true
+    port_pd01_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    compute_pd_server_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    pd_server:
+      type: org.openecomp.resource.vfc.nodes.heat.pd_server
+      properties:
+        availability_zone:
+          get_input:
+          - compute_pd_server_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_pd_server_name
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_pd_server_user_data_format
+          - index_value
+    pd_server_pd01_port:
+      type: org.openecomp.resource.cp.v2.extNeutronCP
+      properties:
+        ip_requirements:
+          get_input: port_pd01_port_ip_requirements
+        network_role:
+          get_input: port_pd01_port_network_role
+        subnetpoolid:
+          get_input: port_pd01_port_subnetpoolid
+        mac_requirements:
+          get_input: port_pd01_port_mac_requirements
+        exCP_naming:
+          get_input: port_pd01_port_exCP_naming
+        vlan_requirements:
+          get_input: port_pd01_port_vlan_requirements
+        network_role_tag:
+          get_input: port_pd01_port_network_role_tag
+        order:
+          get_input: port_pd01_port_order
+        network:
+          get_input:
+          - port_pd01_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pd_server
+          relationship: tosca.relationships.network.BindsTo
+      capabilities:
+      - port_mirroring:
+          properties:
+            connection_point:
+              nf_type: ''
+              nfc_type: pd_server
+              network_role:
+                get_input: port_pd01_port_network_role
+              pps_capacity: ''
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.pd_server_3
+    capabilities:
+      scalable_pd_server:
+      - pd_server
+      - scalable
+      disk.read.bytes.rate_pd_server:
+      - pd_server
+      - disk.read.bytes.rate
+      memory.usage_pd_server:
+      - pd_server
+      - memory.usage
+      memory_pd_server:
+      - pd_server
+      - memory
+      disk.device.usage_pd_server:
+      - pd_server
+      - disk.device.usage
+      network.outgoing.packets.rate_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.outgoing.packets.rate
+      os_pd_server:
+      - pd_server
+      - os
+      disk.write.bytes.rate_pd_server:
+      - pd_server
+      - disk.write.bytes.rate
+      network.incoming.bytes_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.incoming.bytes
+      cpu_pd_server:
+      - pd_server
+      - cpu
+      cpu_util_pd_server:
+      - pd_server
+      - cpu_util
+      disk.device.write.requests.rate_pd_server:
+      - pd_server
+      - disk.device.write.requests.rate
+      disk.read.bytes_pd_server:
+      - pd_server
+      - disk.read.bytes
+      disk.device.read.bytes.rate_pd_server:
+      - pd_server
+      - disk.device.read.bytes.rate
+      network.outgoing.bytes_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.outgoing.bytes
+      disk.iops_pd_server:
+      - pd_server
+      - disk.iops
+      memory.resident_pd_server:
+      - pd_server
+      - memory.resident
+      cpu.delta_pd_server:
+      - pd_server
+      - cpu.delta
+      network.incoming.packets.rate_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.incoming.packets.rate
+      vcpus_pd_server:
+      - pd_server
+      - vcpus
+      disk.device.write.bytes.rate_pd_server:
+      - pd_server
+      - disk.device.write.bytes.rate
+      disk.device.write.requests_pd_server:
+      - pd_server
+      - disk.device.write.requests
+      endpoint_pd_server:
+      - pd_server
+      - endpoint
+      attachment_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - attachment
+      disk.capacity_pd_server:
+      - pd_server
+      - disk.capacity
+      disk.device.allocation_pd_server:
+      - pd_server
+      - disk.device.allocation
+      disk.allocation_pd_server:
+      - pd_server
+      - disk.allocation
+      binding_pd_server:
+      - pd_server
+      - binding
+      disk.read.requests_pd_server:
+      - pd_server
+      - disk.read.requests
+      feature_pd_server:
+      - pd_server
+      - feature
+      disk.usage_pd_server:
+      - pd_server
+      - disk.usage
+      binding_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - binding
+      disk.write.bytes_pd_server:
+      - pd_server
+      - disk.write.bytes
+      network.incoming.bytes.rate_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.incoming.bytes.rate
+      network.incoming.packets_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.incoming.packets
+      disk.device.read.requests.rate_pd_server:
+      - pd_server
+      - disk.device.read.requests.rate
+      disk.root.size_pd_server:
+      - pd_server
+      - disk.root.size
+      disk.device.read.bytes_pd_server:
+      - pd_server
+      - disk.device.read.bytes
+      disk.device.write.bytes_pd_server:
+      - pd_server
+      - disk.device.write.bytes
+      disk.device.read.requests_pd_server:
+      - pd_server
+      - disk.device.read.requests
+      instance_pd_server:
+      - pd_server
+      - instance
+      host_pd_server:
+      - pd_server
+      - host
+      network.outpoing.packets_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.outpoing.packets
+      disk.write.requests.rate_pd_server:
+      - pd_server
+      - disk.write.requests.rate
+      disk.ephemeral.size_pd_server:
+      - pd_server
+      - disk.ephemeral.size
+      disk.write.requests_pd_server:
+      - pd_server
+      - disk.write.requests
+      feature_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - feature
+      disk.device.latency_pd_server:
+      - pd_server
+      - disk.device.latency
+      disk.latency_pd_server:
+      - pd_server
+      - disk.latency
+      disk.device.capacity_pd_server:
+      - pd_server
+      - disk.device.capacity
+      network.outgoing.bytes.rate_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.outgoing.bytes.rate
+      disk.device.iops_pd_server:
+      - pd_server
+      - disk.device.iops
+      port_mirroring_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - port_mirroring
+    requirements:
+      local_storage_pd_server:
+      - pd_server
+      - local_storage
+      link_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - link
+      dependency_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - dependency
+      dependency_pd_server:
+      - pd_server
+      - dependency

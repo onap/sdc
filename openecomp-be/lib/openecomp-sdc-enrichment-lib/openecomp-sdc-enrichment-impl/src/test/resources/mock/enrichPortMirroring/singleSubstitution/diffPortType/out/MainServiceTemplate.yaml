@@ -1,0 +1,341 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+- openecomp_index:
+    file: openecomp/_index.yml
+topology_template:
+  inputs:
+    pd_flavor_name:
+      label: PD flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PD instance
+      default: m3.xlarge
+    dummy_net_name_1:
+      label: csb ineternal cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal cidr
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+      default: nova
+    template_PortTuple_LB1:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    lb_st_interface_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    oam_sec_group_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    virtual_ip_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    nems_traffic_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    packet_internal_network_name:
+      label: packet internal network name
+      hidden: false
+      immutable: false
+      type: string
+      description: name of the network
+    oam_flavor_name:
+      label: OAM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of OAM instance
+      default: m3.xlarge
+    pd_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PD image name
+      default: MOG_BASE_8.0
+    packet_mirror_network_name:
+      label: packet mirror network name
+      hidden: false
+      immutable: false
+      type: string
+      description: name of the network
+      default: packet-net-1
+    pd_server_names:
+      label: PD server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PD instance
+      default:
+      - ZRDM1MOGX01MPD001
+      - ZRDM1MOGX01MPD002
+      entry_schema:
+        type: string
+    pd01_volume_type:
+      label: volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: volume type
+      default: volume_type_1
+    jsa_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    pd_port_fixed_ips_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    parent_interface:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    virtual_ipv6_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    mac_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    pd01_cinder_volume_size:
+      label: volume size
+      hidden: false
+      immutable: false
+      type: string
+      description: volume size
+      default: 1024
+    pd_port_fixed_ips_subnet:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    oam_net_name:
+      label: oam network name
+      hidden: false
+      immutable: false
+      type: string
+      description: name of the oam network
+      default: oam_protected_net_0
+    lb_st_interface_vlan_tag_oam:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+  node_templates:
+    packet_mirror_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_mirror_network_name
+    jsa_net4:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_name:
+          get_input: nems_traffic_name
+    pd01_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: pd01_volume_type
+        size: '(get_input : pd01_cinder_volume_size) * 1024'
+    abstract_pd_server:
+      type: org.openecomp.resource.abstract.nodes.pd_server
+      directives:
+      - substitutable
+      properties:
+        port_pd01_port_replacement_policy:
+        - AUTO
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_template_VMInt_OAM_lb_internal_VMI_name:
+        - template_VMInt_OAM_lb_NAME
+        port_pd01_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pd_image_name
+        port_pd03_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_template_VMInt_OAM_lb_internal_VMI_virtual_network_refs:
+        - - get_attribute:
+            - jsa_net4
+            - fq_name
+        port_pd03_port_replacement_policy:
+        - AUTO
+        port_pd02_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pd03_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_template_VMInt_OAM_lb_internal_VMI_virtual_machine_interface_mac_addresses:
+        - - get_input: mac_address
+        port_template_VMInt_OAM_lb_internal_VMI_port_tuple_refs:
+        - - get_input: template_PortTuple_LB1
+        port_pd02_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_template_VMInt_OAM_lb_internal_VMI_security_group_refs:
+        - - get_input: oam_sec_group_name
+        compute_pd_server_contrail_service_instance_ind:
+        - true
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 0
+        port_pd02_port_replacement_policy:
+        - AUTO
+        port_pd01_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        compute_pd_server_user_data_format:
+        - RAW
+        port_pd01_port_network:
+        - packet_mirror_network
+        port_pd02_port_network:
+        - packet_internal_network
+        service_template_filter:
+          substitute_service_template: Nested_pd_serverServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - dependency_pd_server:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+      - link_pd_server_pd01_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_mirror_network
+          relationship: tosca.relationships.network.LinksTo
+      - link_pd_server_pd02_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
+      - link_pd_server_template_VMInt_OAM_lb_internal_VMI:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net4
+          relationship: tosca.relationships.network.LinksTo
+      - local_storage_pd_server:
+          capability: tosca.capabilities.Attachment
+          node: pd01_volume
+          relationship: pd01_volume_attachment
+    pd04_port_0:
+      type: org.openecomp.resource.cp.v2.extNeutronCP
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+      capabilities:
+      - port_mirroring:
+          properties:
+            connection_point:
+              nf_type: ''
+              nfc_type: ''
+              network_role: ''
+              pps_capacity: ''
+    template_VMInt_OAM_lb_external_VMI:
+      type: org.openecomp.resource.cp.v2.extContrailCP
+      capabilities:
+      - port_mirroring:
+          properties:
+            connection_point:
+              nf_type: ''
+              nfc_type: ''
+              network_role: ''
+              pps_capacity: ''
+    pd05_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network: packet_mirror_network
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_mirror_network
+          relationship: tosca.relationships.network.LinksTo
+    packet_internal_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_internal_network_name
+  relationship_templates:
+    pd01_volume_attachment:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: pd01_volume
+        instance_uuid: abstract_pd_server
+  groups:
+    hot-mog-0108-bs1271_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-mog-0108-bs1271.yml
+        description: heat template that creates MOG stack
+      members:
+      - packet_mirror_network
+      - jsa_net4
+      - pd01_volume
+      - packet_internal_network
+      - pd04_port_0
+      - template_VMInt_OAM_lb_external_VMI
+      - pd05_port_0
+      - abstract_pd_server
