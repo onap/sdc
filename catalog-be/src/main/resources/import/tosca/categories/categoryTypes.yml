@@ -87,6 +87,9 @@ resources:
       Rules:
           name: "Rules"
           icons: ['networkrules','securityrules']
+      NetworkService:
+          name: "Network Service"
+          icons: ['network']
   NetworkConnectivity:
     name: "Network Connectivity"
     subcategories:
@@ -147,6 +150,3 @@ resources:
       SecurityZone:
           name: "Security Zone"
           icons: ['security_zone']
-      NetworkService:
-          name: "Network Service"
-          icons: ['network']
