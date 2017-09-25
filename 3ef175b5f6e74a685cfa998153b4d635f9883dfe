@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "9a437d4f_66a88677",
+        "filename": "catalog-be/src/main/resources/import/tosca/heat-types/underlayVpn/underlayVpn.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 187
+      },
+      "writtenOn": "2017-09-25T02:41:04Z",
+      "side": 1,
+      "message": "Should be \u0027underlayVpn.yml\u0027, not \u0027extZteVL.yml\u0027",
+      "range": {
+        "startLine": 2,
+        "startChar": 17,
+        "endLine": 2,
+        "endChar": 29
+      },
+      "revId": "3ef175b5f6e74a685cfa998153b4d635f9883dfe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a437d4f_26903e49",
         "filename": "catalog-be/src/main/resources/import/tosca/onap-types/extZteVDU/extZteVDU.yml",
         "patchSetId": 1
