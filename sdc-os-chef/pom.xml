@@ -224,6 +224,30 @@
                                     </resources>
                                 </configuration>
                             </execution>
+                              <execution>
+                                <id>copy-resources-cassandra</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/openecomp-be</directory>
+                                            <includes>
+                                                <include>tools/build/**</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/openecomp-be</directory>
+                                            <includes>
+                                                <include>tools/install/**</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
 

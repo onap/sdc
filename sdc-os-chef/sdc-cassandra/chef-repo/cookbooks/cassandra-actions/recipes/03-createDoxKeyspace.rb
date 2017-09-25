@@ -9,17 +9,20 @@ template "/tmp/create_dox_keyspace.sh" do
 end
 
 
-cookbook_file "/tmp/create_dox_db.cql" do
-  sensitive true
-  source "create_dox_db.cql"
-  mode 0755 
+remote_directory '/tmp/tools' do
+  source 'tools'
+  mode '0755'
+  action :create
 end
 
-cookbook_file "/tmp/alter_dox_db.cql" do
-  sensitive true
-  source "alter_dox_db.cql"
-  mode 0755 
-end
+
+bash "onboard-db-schema-creation" do
+   ignore_failure true
+   code <<-EOH
+     cd /tmp/tools/build/scripts
+     chmod +x onboard-db-schema-creation.sh
+     /tmp/tools/build/scripts/onboard-db-schema-creation.sh
+   EOH
 
 
 bash "create-DOX-schema" do
