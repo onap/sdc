@@ -4,5 +4,7 @@
 	"build": "dev",
 	"appContextPath" : "/onboarding",
 	"defaultRestPrefix": "/onboarding-api",
-	"defaultRestATTPrefix": "/sdc1/feProxy/rest"
+	"defaultRestATTPrefix": "/sdc1/feProxy/rest",
+	"marketPlaceUrl": "http://192.168.4.42:8072", 
+	"showBrowseVNF" : false
 }
