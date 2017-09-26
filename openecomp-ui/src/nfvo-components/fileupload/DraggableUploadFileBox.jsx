@@ -27,20 +27,40 @@
  * https://github.com/JedWatson/react-select
  */
 import React, {Component} from 'react';
+import Configuration from 'sdc-app/config/Configuration.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Button from 'sdc-ui/lib/react/Button.js';
 
+function VNFBrowse({onBrowseVNF}) {
+	if(!Configuration.get('showBrowseVNF')) {
+		return (
+			<div/>
+		);
+	}
+	else {
+		return (
+			<div>
+				<div className='or-text'>{i18n('or')}</div>
+	            <Button className='browseVNF' type='button' btnType='outline' onClick={onBrowseVNF}>{i18n('Browse')}</Button>
+			</div>
+		);
+	}
+}
+
 class DraggableUploadFileBox extends Component {
 	render() {
-		let {className, onClick, dataTestId, isReadOnlyMode} = this.props;
+		let {className, onClick, onBrowseVNF, dataTestId, isReadOnlyMode} = this.props;
 		return (
 			<div
 				className={`${className}${isReadOnlyMode ? ' disabled' : ''}`}>
 				<div className={`${'drag-text'}${isReadOnlyMode ? ' disabled' : ''}`}>{i18n('Drag & drop for upload')}</div>
 				<div className='or-text'>{i18n('or')}</div>
 				<Button type='button' data-test-id={dataTestId} btnType='outline' onClick={onClick} disabled={isReadOnlyMode === true}>{i18n('Select File')}</Button>
+
+				<VNFBrowse onBrowseVNF={onBrowseVNF}/>
 			</div>
 		);
+		
 	}
 }
 export default DraggableUploadFileBox;

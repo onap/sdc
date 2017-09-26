@@ -326,5 +326,6 @@
   "Persistent Storage/Volume Size (GB)": "Persistent Storage/Volume Size (GB)",
   "I/O Operations (per second)": "I/O Operations (per second)",
   "CPU Oversubscription Ratio": "CPU Oversubscription Ratio",
-  "Memory - RAM": "Memory - RAM"
+  "Memory - RAM": "Memory - RAM",
+  "VNF List Title": "VNF List"
 }
