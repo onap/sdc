@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_01c3da89",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-09-26T12:09:57Z",
+      "side": 1,
+      "message": "1. Add null check for nodeType (although if it can\u0027t be null according to the business logic). The business logic can be change and then this function can get NPE\n\n2. extract all the if condition to a function with a meaningful name",
+      "range": {
+        "startLine": 287,
+        "startChar": 4,
+        "endLine": 289,
+        "endChar": 58
+      },
+      "revId": "d4d54ea7d2b33a41b7c56703d8f742b53636d067",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
