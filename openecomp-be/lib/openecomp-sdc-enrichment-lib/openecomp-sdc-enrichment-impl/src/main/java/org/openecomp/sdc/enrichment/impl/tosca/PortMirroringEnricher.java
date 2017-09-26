@@ -1,5 +1,9 @@
 package org.openecomp.sdc.enrichment.impl.tosca;
 
+import static org.openecomp.sdc.tosca.services.DataModelUtil.getClonedObject;
+import static org.openecomp.sdc.tosca.services.ToscaConstants.PORT_MIRRORING_CAPABILITY_CP_PROPERTY_NAME;
+import static org.openecomp.sdc.tosca.services.ToscaConstants.PORT_MIRRORING_CAPABILITY_ID;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -27,10 +31,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.tosca.services.DataModelUtil.getClonedObject;
-import static org.openecomp.sdc.tosca.services.ToscaConstants.PORT_MIRRORING_CAPABILITY_CP_PROPERTY_NAME;
-import static org.openecomp.sdc.tosca.services.ToscaConstants.PORT_MIRRORING_CAPABILITY_ID;
 
 public class PortMirroringEnricher {
   //Map of service template file name and map of all port node template ids, node template
@@ -75,7 +75,8 @@ public class PortMirroringEnricher {
     if (Objects.nonNull(nodeTemplates)) {
       //Get all concrete port node templates from the service template
       Map<String, NodeTemplate> serviceTemplatePortNodeTemplates = nodeTemplates.entrySet().stream()
-          .filter(nodeTemplateEntry -> isPortNodeTemplate(nodeTemplateEntry.getValue()))
+          .filter(nodeTemplateEntry -> (Objects.nonNull(nodeTemplateEntry.getValue()))
+              && (isPortNodeTemplate(nodeTemplateEntry.getValue().getType())))
           .collect(Collectors.toMap(nodeTemplateEntry -> nodeTemplateEntry.getKey(),
               nodeTemplateEntry -> nodeTemplateEntry.getValue()));
 
@@ -281,15 +282,14 @@ public class PortMirroringEnricher {
     imports.add(openecompIndexImport);
   }
 
-  private boolean isPortNodeTemplate(NodeTemplate nodeTemplate) {
-    String nodeType = nodeTemplate.getType();
+  private boolean isPortNodeTemplate(String nodeType) {
     //Check if node corresponds to a concrete port node
-    if (nodeType.equals(ToscaNodeType.NEUTRON_PORT)
-        || nodeType.equals(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE)
-        || nodeType.equals(ToscaNodeType.CONTRAIL_PORT)
-        || nodeType.equals(ToscaNodeType.NETWORK_PORT)
-        || nodeType.equals(ToscaNodeType.NATIVE_NETWORK_PORT)) {
-      return true;
+    if (Objects.nonNull(nodeType)) {
+      if (nodeType.equals(ToscaNodeType.NEUTRON_PORT)
+          || nodeType.equals(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE)
+          || nodeType.equals(ToscaNodeType.CONTRAIL_PORT)) {
+        return true;
+      }
     }
     return false;
   }
