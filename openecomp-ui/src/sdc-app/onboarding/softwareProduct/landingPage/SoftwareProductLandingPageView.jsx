@@ -104,6 +104,7 @@ class SoftwareProductLandingPageView extends React.Component {
 	}
 
 	renderProductDetails(isManual, isReadOnlyMode) {
+		let {onBrowseVNF} = this.props;
 		return (
 			<div className='details-panel'>
 				{ !isManual && <div>
@@ -112,7 +113,7 @@ class SoftwareProductLandingPageView extends React.Component {
 							dataTestId='upload-btn'
 							isReadOnlyMode={isReadOnlyMode}
 							className={classnames('software-product-landing-view-top-block-col-upl', {'disabled': isReadOnlyMode})}
-							onClick={() => this.refs.fileInput.open()}/>
+							onClick={() => this.refs.fileInput.open()} onBrowseVNF={() => onBrowseVNF()}/>
 					</div>
 				}
 			</div>
