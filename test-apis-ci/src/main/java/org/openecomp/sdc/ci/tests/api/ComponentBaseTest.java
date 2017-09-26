@@ -123,21 +123,20 @@ public abstract class ComponentBaseTest {
 	public void setBrowserBeforeTest(java.lang.reflect.Method method, ITestContext context) throws Exception {
 
 
-		    String suiteName = ExtentManager.getSuiteName(context);
-			ExtentTestManager.startTest(method.getName());
-			ExtentTestManager.assignCategory(this.getClass());
-      
-//    boolean emptyDataProvider = method.getAnnotation(Test.class).dataProvider().isEmpty();
-//	String className = method.getDeclaringClass().getName();
-//		if (emptyDataProvider)  {
-//			System.out.println("ExtentReport instance started from BeforeMethod...");
-//			String suiteName = ExtentManager.getSuiteName(context);
+//		    String suiteName = ExtentManager.getSuiteName(context);
 //			ExtentTestManager.startTest(method.getName());
 //			ExtentTestManager.assignCategory(this.getClass());
-//
-//		} else {
-//			System.out.println("ExtentReport instance started from Test...");
-//		}
+
+		boolean emptyDataProvider = method.getAnnotation(Test.class).dataProvider().isEmpty();
+		String className = method.getDeclaringClass().getName();
+		if (!method.getName().equals("onboardVNFShotFlow"))  {
+			System.out.println("ExtentReport instance started from BeforeMethod...");
+			ExtentTestManager.startTest(method.getName());
+			ExtentTestManager.assignCategory(this.getClass());
+
+		} else {
+			System.out.println("ExtentReport instance started from Test...");
+		}
       
 
 	}
@@ -176,13 +175,8 @@ public abstract class ComponentBaseTest {
 	@AfterClass(alwaysRun = true)
 	public synchronized static void cleanAfterClass() throws Exception{
 
-//		System.out.println("<<<<<<<<class name>>>>>"+method.getDeclaringClass());
-//		System.out.println("<<<<<<<<class name>>>>>"+method.getName());
-
-
 		System.out.println("delete components AfterClass");
 		deleteCreatedComponents(getCatalogAsMap());
-//		extentReport.flush();
 
 	}
 	
