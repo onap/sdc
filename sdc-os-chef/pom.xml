@@ -40,16 +40,20 @@
                                         <include>**/default.rb</include>
                                     </includes>
                                 </fileset>
-								<!-- static configuration files -->
-								<fileset>	
-          							<directory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</directory>
-          							<includes>
-										<include>Artifact-Generator.properties</include>
-										<include>error-configuration.yaml</include>
-										<include>ecomp-error-configuration.yaml</include>
-										<include>logback.xml</include>
-									</includes>
-          						</fileset>
+                                    <!-- static configuration files -->
+                                    <fileset>	
+                                        <directory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</directory>
+                                        <includes>
+                                        <include>Artifact-Generator.properties</include>
+                                        <include>error-configuration.yaml</include>
+                                        <include>ecomp-error-configuration.yaml</include>
+                                        <include>logback.xml</include>
+                                    </includes>
+                                </fileset>
+                                <fileset>
+                                    <directory>${project.basedir}/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/tools</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
                             </filesets>
                         </configuration>
                     </execution>
@@ -224,6 +228,34 @@
                                     </resources>
                                 </configuration>
                             </execution>
+                            
+                            
+                            <execution>
+                                <id>copy-resources-openecomp-be-tools</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/openecomp-be</directory>
+                                            <includes>
+                                                <include>tools/build/**</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/openecomp-be</directory>
+                                            <includes>
+                                                <include>tools/install/**</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            
+                            
                         </executions>
                     </plugin>
 
@@ -236,7 +268,7 @@
                         <configuration>
                             <verbose>true</verbose>
                             <apiVersion>1.23</apiVersion>
-							<registry>nexus3.onap.org:10003</registry>
+                            <registry>nexus3.onap.org:10003</registry>
                             <images>
 
                                 <!-- Build backend image -->
