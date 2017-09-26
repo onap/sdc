@@ -286,9 +286,7 @@ public class PortMirroringEnricher {
     //Check if node corresponds to a concrete port node
     if (nodeType.equals(ToscaNodeType.NEUTRON_PORT)
         || nodeType.equals(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE)
-        || nodeType.equals(ToscaNodeType.CONTRAIL_PORT)
-        || nodeType.equals(ToscaNodeType.NETWORK_PORT)
-        || nodeType.equals(ToscaNodeType.NATIVE_NETWORK_PORT)) {
+        || nodeType.equals(ToscaNodeType.CONTRAIL_PORT)) {
       return true;
     }
     return false;
