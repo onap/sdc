@@ -284,11 +284,32 @@ public class PortMirroringEnricher {
   private boolean isPortNodeTemplate(NodeTemplate nodeTemplate) {
     String nodeType = nodeTemplate.getType();
     //Check if node corresponds to a concrete port node
-    if (nodeType.equals(ToscaNodeType.NEUTRON_PORT)
-        || nodeType.equals(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE)
-        || nodeType.equals(ToscaNodeType.CONTRAIL_PORT)
-        || nodeType.equals(ToscaNodeType.NETWORK_PORT)
-        || nodeType.equals(ToscaNodeType.NATIVE_NETWORK_PORT)) {
+    if (Objects.nonNull(nodeType)) {
+      if (isNeutronPort(nodeType)
+          || isContrailPort(nodeType)
+          || isContrailVmi(nodeType)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private boolean isNeutronPort(String nodeType) {
+    if (nodeType.equals(ToscaNodeType.NEUTRON_PORT)) {
+      return true;
+    }
+    return false;
+  }
+
+  private boolean isContrailPort(String nodeType) {
+    if (nodeType.equals(ToscaNodeType.CONTRAIL_PORT)) {
+      return true;
+    }
+    return false;
+  }
+
+  private boolean isContrailVmi(String nodeType) {
+    if (nodeType.equals(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE)) {
       return true;
     }
     return false;
