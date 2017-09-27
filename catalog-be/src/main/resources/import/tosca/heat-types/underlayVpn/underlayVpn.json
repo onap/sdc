@@ -1,15 +1,15 @@
 {
-	"payloadName": "extZteVL.yml",
+	"payloadName": "underlayVpn.yml",
 	"contactId": "jh0003",
-	"name": "ext ZTE VL",
-	"description": "Ext ZTE VL",
+	"name": "VL UNDERLAYVPN",
+	"description": "The node represents a underlay vpn entity",
 	"resourceIconPath": "network",
 	"resourceType": "VL",
 	"categories": [{
 		"name": "Generic",
 		"subcategories": [{
-			"name": "Network Elements"
+			"name": "Virtual Links"
 		}]
 	}],
-	"tags": ["ext ZTE VL"]
+	"tags": ["VL UNDERLAYVPN"]
 }
