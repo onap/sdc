@@ -19,11 +19,6 @@ export default (state = [], action) => {
 	switch (action.type) {
 		case licenseAgreementActionTypes.LICENSE_AGREEMENT_LIST_LOADED:
 			return [...action.response.results];
-		case licenseAgreementActionTypes.ADD_LICENSE_AGREEMENT:
-			return [...state, action.licenseAgreement];
-		case licenseAgreementActionTypes.EDIT_LICENSE_AGREEMENT:
-			const indexForEdit = state.findIndex(licenseAgreement => licenseAgreement.id === action.licenseAgreement.id);
-			return [...state.slice(0, indexForEdit), action.licenseAgreement, ...state.slice(indexForEdit + 1)];
 		case licenseAgreementActionTypes.DELETE_LICENSE_AGREEMENT:
 			return state.filter(licenseAgreement => licenseAgreement.id !== action.licenseAgreementId);
 		default:

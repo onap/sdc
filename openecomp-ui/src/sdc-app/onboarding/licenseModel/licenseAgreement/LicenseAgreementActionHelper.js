@@ -83,21 +83,13 @@ export default {
 	saveLicenseAgreement(dispatch, {licenseModelId, previousLicenseAgreement, licenseAgreement, version}) {
 		if (previousLicenseAgreement) {
 			return putLicenseAgreement(licenseModelId, previousLicenseAgreement, licenseAgreement, version).then(() => {
-				dispatch({
-					type: licenseAgreementActionTypes.EDIT_LICENSE_AGREEMENT,
-					licenseAgreement
-				});
+				this.fetchLicenseAgreementList(dispatch, {licenseModelId, version});
 			});
 		}
 		else {
-			return postLicenseAgreement(licenseModelId, licenseAgreement, version).then(response => {
-				dispatch({
-					type: licenseAgreementActionTypes.ADD_LICENSE_AGREEMENT,
-					licenseAgreement: {
-						...licenseAgreement,
-						id: response.value
-					}
-				});
+			return postLicenseAgreement(licenseModelId, licenseAgreement, version).then(() => {
+				this.fetchLicenseAgreementList(dispatch, {licenseModelId, version});
+				FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {licenseModelId, version});
 			});
 		}
 	},
