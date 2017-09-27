@@ -93,7 +93,9 @@ describe('License Agreement Module Tests', () => {
 			id: licenseAgreementIdFromResponse
 		});
 		deepFreeze(licenseAgreementAfterAdd);
+		const licenseAgreementList = [licenseAgreementAfterAdd];
 
+		const featureGroupsList = licenseAgreementList.featureGroupsIds;
 		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseAgreement.licenseAgreementList', [licenseAgreementAfterAdd]);
 
 		mockRest.addHandler('post', ({options, data, baseUrl}) => {
@@ -104,7 +106,18 @@ describe('License Agreement Module Tests', () => {
 				value: licenseAgreementIdFromResponse
 			};
 		});
-
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-agreements`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: licenseAgreementList};
+		});
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/feature-groups`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: featureGroupsList};
+		});
 		return LicenseAgreementActionHelper.saveLicenseAgreement(store.dispatch, {
 			licenseAgreement: licenseAgreementToAdd,
 			licenseModelId: LICENSE_MODEL_ID,
@@ -151,7 +164,18 @@ describe('License Agreement Module Tests', () => {
 			expect(data).toEqual(LicenseAgreementPutFactoryRequest);
 			expect(options).toEqual(undefined);
 		});
-
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-agreements`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: [licenseAgreementUpdateData]};
+		});
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/feature-groups`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: newFeatureGroupsIds};
+		});
 		return LicenseAgreementActionHelper.saveLicenseAgreement(store.dispatch, {
 			licenseModelId: LICENSE_MODEL_ID,
 			version,

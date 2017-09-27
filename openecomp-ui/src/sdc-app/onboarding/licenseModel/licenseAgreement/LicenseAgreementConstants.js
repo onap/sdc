@@ -19,8 +19,6 @@ import InputOptions, {other as optionInputOther} from 'nfvo-components/input/val
 
 export const actionTypes = keyMirror({
 	LICENSE_AGREEMENT_LIST_LOADED: null,
-	ADD_LICENSE_AGREEMENT: null,
-	EDIT_LICENSE_AGREEMENT: null,
 	DELETE_LICENSE_AGREEMENT: null,
 
 	licenseAgreementEditor: {
