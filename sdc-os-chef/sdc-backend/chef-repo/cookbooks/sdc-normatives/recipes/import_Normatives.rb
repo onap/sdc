@@ -10,7 +10,7 @@ bash "import-normatives" do
     tar xvfz /tmp/normatives.tar.gz
     cd normatives/scripts/import/tosca/
     /bin/chmod +x importNormativeAll.py
-    python importNormativeAll.py -i "#{node['HOST_IP']}" --debug=true > /var/lib/jetty/logs/importNormativeAll.log
+    python importNormativeAll.py -i localhost --debug=true > /var/lib/jetty/logs/importNormativeAll.log
   EOH
 end
 
