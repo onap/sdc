@@ -1,0 +1,56 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  tosca.nodes.nfv.VduCpd:
+    derived_from: tosca.nodes.Root
+    properties:
+      virtual_network_interface_requirements:
+        type: list
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements
+      role:
+        type: string
+        required: false
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - root
+          - leaf
+      bitrate_requirement:
+        type: integer
+        required: false
+        status: SUPPORTED
+      description:
+        type: string
+        required: false
+        status: SUPPORTED
+      layer_protocol:
+        type: string
+        required: true
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - ethernet
+          - mpls
+          - odu2
+          - ipv4
+          - ipv6
+          - pseudo_wire
+      address_data:
+        type: list
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: tosca.datatype.nfv.AddressData
+    requirements:
+    - virtual_binding:
+        capability: tosca.capabilities.nfv.VirtualBindable
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - virtual_link:
+        capability: tosca.capabilities.nfv.VirtualBindable
+        occurrences:
+        - 0
+        - UNBOUNDED

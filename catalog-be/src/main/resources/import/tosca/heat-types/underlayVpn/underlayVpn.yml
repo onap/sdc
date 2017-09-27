@@ -1,0 +1,160 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+# *****************************************************************************
+# underlay vpn type definitions
+# *****************************************************************************
+
+metadata:
+  version: 0.1
+  vendor: ONAP
+  template_author: ONAP
+
+# *****************************************************************************
+# node types
+# *****************************************************************************
+    
+node_types:
+    
+  # ***************************************************************************** 
+  #            Underlayvpn Node Types
+  # *****************************************************************************
+  org.openecomp.resource.vl.underlayvpn:
+    derived_from: tosca.nodes.Root
+    description: undelay vpn type definitions	
+    properties:
+      id:
+        type: string
+        required: false
+      template_name:
+        type: string
+        required: false
+      version:
+        type: string
+        required: false
+      vendor:
+        type: string
+        required: false
+      template_author:
+        type: string
+        required: false
+      name:
+        type: string
+        required: false
+      description:
+        type: string
+        required: false
+      serviceType:    
+        type: string
+        description: type of VPN service
+        required: false
+        default: 'l3vpn_sptn'
+      topology:
+        type: string
+        description: type of VPN topology
+        constraints:
+          - valid_values: ['full-mesh','point_to_multipoint','point_to_point','singlePoint','hubspoke','hubspoke_via_hubce','hubspoke_disjoint','ADD_DROP_Z']
+        required: false
+        default: 'full-mesh'
+      technology:
+        type: string
+        description: type of VPN technology
+        constraints:
+          - valid_values: ['mpls','rosen multivpn','vxlan overlay l3vpn','eth over sdh','vlan']
+        required: false
+        default: 'mpls'
+      site1_name:       
+        type: string
+        description: name of first site
+        required: false
+      site2_name:       
+        type: string
+        description: name of second site
+        required: false
+      sna1_name:
+        type: string
+        description: name of site network accesses associated with the site1
+        required: false
+      sna2_name:
+        type: string
+        description: name of site network accesses associated with the site2  
+        required: false
+      pe1_id:    
+        type: string
+        description: id of provider edge1, it can be name or ip or uuid 
+        required: false
+      pe2_id:    
+        type: string
+        description: id of provider edge2, it can be name or ip or uuid 
+        required: false
+      ac1_id:
+        type: string
+        description: id of attachment circuit1, it can be port name or uuid    
+        required: false
+      ac1_svlan:
+        type: integer
+        description: ac1 svlan
+        required: false
+      ac1_ip:
+        type: string
+        description: ip of ac1, only for layer3 vpn, it should contain mask
+        required: false
+      ac1_peer_ip:
+        type: string
+        description: ip of ac1 peer CE tp, only for layer3 vpn, it should contain mask
+        required: false
+      ac1_route:
+        type: string
+        description: route configure of ac1, only for layer3 vpn    
+        required: false
+      ac1_protocol:
+        type: string
+        description: routing protocol type of ac1, only for layer3 vpn    
+        constraints:
+          - valid_values: ['STATIC','OSPF','ISIS','BGP','other']
+        required: false    
+      ac1_protocol_bgp_as:
+        type: string
+        description: autonomous-system number of ac1, , only required for ebgp protocol
+        required: false                    
+      ac2_id:
+        type: string
+        description: id of attachment circuit2, it can be port name or uuid  
+        required: false    
+      ac2_svlan:
+        type: integer
+        description: ac2 svlan
+        required: false    
+      ac2_ip:
+        type: string
+        description: ip of ac2, only for layer3 vpn, it should contain mask
+        required: false    
+      ac2_peer_ip:
+        type: string
+        description: ip of ac2 peer CE tp, only for layer3 vpn, it should contain mask
+        required: false    
+      ac2_route:
+        type: string
+        description: route configure of ac2, only for layer3 vpn
+        required: false    
+      ac2_protocol:
+        type: string
+        description: routing protocol type of ac2, only for layer3 vpn   
+        constraints:
+          - valid_values: ['STATIC','OSPF','ISIS','BGP','other']        
+        default: 'STATIC'    
+        required: false    
+      ac2_protocol_bgp_as:
+        type: string
+        description: autonomous-system number of ac2, , only required for ebgp protocol        
+        required: false    
+      af_type:
+        type: string
+        description: address family type
+        default: 'ipv4'
+        required: false
+    requirements:
+    - virtualLink:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+    capabilities:
+      virtual_linkable:
+        type: tosca.capabilities.network.Linkable

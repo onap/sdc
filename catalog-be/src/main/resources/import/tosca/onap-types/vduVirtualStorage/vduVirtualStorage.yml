@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  tosca.nodes.nfv.VDU.VirtualStorage:
+    derived_from: tosca.nodes.Root
+    properties:
+      id:
+        type: string
+        required: true
+        status: SUPPORTED
+      size_of_storage:
+        type: string
+        required: true
+        status: SUPPORTED
+      rdma_enabled:
+        type: boolean
+        required: false
+        status: SUPPORTED
+      type_of_storage:
+        type: string
+        required: true
+        status: SUPPORTED
+    capabilities:
+      virtual_storage:
+        type: tosca.capabilities.nfv.VirtualStorage
+        occurrences:
+        - 1
+        - UNBOUNDED

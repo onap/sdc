@@ -85,6 +85,10 @@ def main(argv):
 	fileLocation = baseFileLocation + "heat-types/"
 	resultsHeat = importHeatTypes(beHost, bePort, adminUser, fileLocation, updateversion)
 	handleResults(resultsHeat, updateversion)
+	
+	fileLocation = baseFileLocation + "onap-types/"
+	resultsOnap = importOnapTypes(beHost, bePort, adminUser, fileLocation, updateversion)
+	handleResults(resultsOnap, updateversion)
 
 	errorAndExit(0, None)	
 

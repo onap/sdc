@@ -1,0 +1,25 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  tosca.nodes.nfv.ext.ImageFile: 
+    derived_from: tosca.nodes.Root
+    properties: 
+      file_url: 
+        type: string
+        required: false
+      container_type: 
+        type: string
+        required: false
+      name: 
+        type: string
+        required: false
+      disk_format: 
+        type: string
+        required: false
+      version: 
+        type: string
+        required: false
+    capabilities: 
+      guest_os: 
+        type: tosca.capabilities.nfv.ext.GuestOs
+      image_fle: 
+        type: tosca.capabilities.nfv.ext.ImageFile
