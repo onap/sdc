@@ -26,7 +26,7 @@ python /root/chef-solo/cookbooks/sdc-normatives/files/default/check_Backend_Heal
 # executing the normatives
 cd /root/chef-solo
 check_normative="/tmp/check_normative.out"
-curl -s -X GET -H "Content-Type: application/json;charset=UTF-8" -H "USER_ID: jh0003" -H "X-ECOMP-RequestID: cbe744a0-037b-458f-aab5-df6e543c4090" -H "Cache-Control: no-cache" -H "Postman-Token: af08ca1c-302f-1431-404f-ed84246e07c9" "http://${HOST_IP}:8080/sdc2/rest/v1/screen" > ${check_normative}
+curl -s -X GET -H "Content-Type: application/json;charset=UTF-8" -H "USER_ID: jh0003" -H "X-ECOMP-RequestID: cbe744a0-037b-458f-aab5-df6e543c4090" -H "Cache-Control: no-cache" -H "Postman-Token: af08ca1c-302f-1431-404f-ed84246e07c9" "http://localhost:8080/sdc2/rest/v1/screen" > ${check_normative}
 
 echo "normal['HOST_IP'] = \"${HOST_IP}\"" > /root/chef-solo/cookbooks/sdc-normatives/attributes/default.rb
 resources_len=`cat ${check_normative}| jq '.["resources"]|length'`

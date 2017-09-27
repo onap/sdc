@@ -11,6 +11,7 @@ from importPolicyTypes import importPolicyTypes
 from importGroupTypes import importGroupTypes
 from importNormativeCapabilities import importNormativeCapabilities
 from importNormativeInterfaceLifecycleTypes import importNormativeInterfaceLifecycleType
+from importOnapTypes import importOnapTypes
 
 
 from importCommon import *
@@ -112,7 +113,11 @@ def main(argv):
 
 	resultsHeat = upgradeTypesPerConfigFile(beHost, bePort, adminUser, baseFileLocation, updateversion)
 	handleResults(resultsHeat, 'false')
-
+	
+	fileLocation = baseFileLocation + "onap-types/"
+	resultsHeat = importOnapTypes(beHost, bePort, adminUser, fileLocation, updateversion)
+	handleResults(resultsHeat, updateversion)
+	
 	errorAndExit(0, None)
 
 if __name__ == "__main__":
