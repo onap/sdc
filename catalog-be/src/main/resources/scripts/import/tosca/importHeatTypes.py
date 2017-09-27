@@ -52,7 +52,8 @@ def importHeatTypes(beHost, bePort, adminUser, fileDir, updateversion):
 				  "contrailV2VLANSubInterface",
 				  "multiFlavorVFC",
 				  "vnfConfiguration",
-				  "underlayVpn"
+				  "underlayVpn",
+				  "overlayTunnel"
 				  ]
 		
 	responseCodes = [200, 201]
