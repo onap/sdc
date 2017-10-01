@@ -23,8 +23,7 @@ node_types:
 
     org.openecomp.resource.vl.overlaytunnel:
         derived_from: tosca.nodes.Root
-        description: >-
-            This entity represents abstract overlay tunnel end point.
+        description: This entity represents abstract overlay tunnel end point.
         properties:
             id:
                 type: string
