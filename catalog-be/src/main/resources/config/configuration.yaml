@@ -322,6 +322,12 @@ serviceDeploymentArtifacts:
             - xml 
     OTHER:
         acceptedTypes:
+        
+#PLAN
+    PLAN:
+        acceptedTypes:
+            - xml
+			
 
 resourceDeploymentArtifacts:
     HEAT:
@@ -439,6 +445,11 @@ resourceDeploymentArtifacts:
     SNMP_TRAP:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
+        
+#PLAN
+    PLAN:
+        acceptedTypes:
+            - xml
 
 resourceInstanceDeploymentArtifacts:
     HEAT_ENV:
@@ -476,6 +487,11 @@ resourceInstanceDeploymentArtifacts:
     SNMP_TRAP:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
+        
+#PLAN
+    PLAN:
+        acceptedTypes:
+            - xml
 
 resourceInformationalArtifacts:
     CHEF:
