@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_f70bd87a",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1834,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-02T11:24:40Z",
+      "side": 1,
+      "message": "delete unused code",
+      "range": {
+        "startLine": 1833,
+        "startChar": 1,
+        "endLine": 1834,
+        "endChar": 25
+      },
+      "revId": "cd7d6f8aa395f3f14b0b4083c043be217ff25e16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_d70e948b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1855,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-02T11:24:40Z",
+      "side": 1,
+      "message": "delete unused code",
+      "range": {
+        "startLine": 1854,
+        "startChar": 6,
+        "endLine": 1855,
+        "endChar": 34
+      },
+      "revId": "cd7d6f8aa395f3f14b0b4083c043be217ff25e16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
