@@ -7,7 +7,7 @@ imports:
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 node_types:
-  org.openecomp.resource.vfc.nodes.heat.compute:
+  org.openecomp.resource.vfc.compute.nodes.heat.compute:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
@@ -74,7 +74,7 @@ topology_template:
       required: true
   node_templates:
     compute:
-      type: org.openecomp.resource.vfc.nodes.heat.compute
+      type: org.openecomp.resource.vfc.compute.nodes.heat.compute
       properties:
         flavor:
           get_input: vm_flavor_name

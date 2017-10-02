@@ -351,6 +351,23 @@ public class DataModelUtil {
     mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
+  public static void removeNodeType(ServiceTemplate serviceTemplate,
+                                    String nodeTypeId){
+    if (serviceTemplate == null) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.ADD_ENTITIES_TO_TOSCA, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_ADD_ACTION);
+      throw new CoreException(
+          new InvalidAddActionNullEntityErrorBuilder("Node Type", "Service Template").build());
+    }
+    if (serviceTemplate.getNode_types() == null) {
+      serviceTemplate.setNode_types(new HashMap<>());
+    }
+    serviceTemplate.getNode_types().remove(nodeTypeId);
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
+  }
+
   /**
    * Add relationship template.
    *

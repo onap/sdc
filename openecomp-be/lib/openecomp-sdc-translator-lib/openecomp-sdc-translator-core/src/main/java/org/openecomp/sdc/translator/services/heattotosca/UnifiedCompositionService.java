@@ -193,11 +193,6 @@ public class UnifiedCompositionService {
         handleSubstitutionGlobalNodeType(serviceTemplate, substitutionServiceTemplate,
             context, unifiedCompositionData, substitutionNodeTypeId, index);
 
-    ServiceTemplate globalSubstitutionServiceTemplate =
-        HeatToToscaUtil.fetchGlobalSubstitutionServiceTemplate(serviceTemplate, context);
-    addComputeNodeTypeToGlobalST(computeNodeType, serviceTemplate,
-        globalSubstitutionServiceTemplate, substitutionGlobalNodeType);
-
     HeatToToscaUtil.handleSubstitutionMapping(context,
         substitutionNodeTypeId,
         substitutionServiceTemplate, substitutionGlobalNodeType);
@@ -206,18 +201,6 @@ public class UnifiedCompositionService {
     return Optional.of(substitutionServiceTemplate);
   }
 
-  private void addComputeNodeTypeToGlobalST(String computeNodeType,
-                                            ServiceTemplate serviceTemplate,
-                                            ServiceTemplate globalSubstitutionServiceTemplate,
-                                            NodeType substitutionGlobalNodeType) {
-    NodeType nodeType = DataModelUtil.getNodeType(serviceTemplate, computeNodeType);
-    NodeType clonedNT =
-        (NodeType) DataModelUtil.getClonedObject(substitutionGlobalNodeType, NodeType.class);
-    clonedNT.setDerived_from(nodeType.getDerived_from());
-    DataModelUtil
-        .addNodeType(globalSubstitutionServiceTemplate, computeNodeType,
-            clonedNT);
-  }
 
   /**
    * Create abstract substitute node template that can be substituted by the input
@@ -339,6 +322,28 @@ public class UnifiedCompositionService {
     }
     if (MapUtils.isEmpty(serviceTemplate.getNode_types())) {
       serviceTemplate.setNode_types(null);
+    }
+  }
+
+  public void updateSubstitutionNodeTypePrefix(ServiceTemplate substitutionServiceTemplate){
+    Map<String, NodeTemplate> node_templates =
+        substitutionServiceTemplate.getTopology_template().getNode_templates();
+
+    for(Map.Entry<String,NodeTemplate> nodeTemplateEntry : node_templates.entrySet()){
+      String nodeTypeId = nodeTemplateEntry.getValue().getType();
+      NodeType origNodeType = substitutionServiceTemplate.getNode_types().get(nodeTypeId);
+      if(Objects.nonNull(origNodeType)
+          && nodeTypeId.startsWith(ToscaNodeType.VFC_TYPE_PREFIX)
+          && origNodeType.getDerived_from().equals(ToscaNodeType.NOVA_SERVER)){
+        substitutionServiceTemplate.getNode_types().remove(nodeTypeId);
+
+        String newNodeTypeId =
+            nodeTypeId.replace(ToscaNodeType.VFC_TYPE_PREFIX, ToscaNodeType.COMPUTE_TYPE_PREFIX);
+        nodeTemplateEntry.getValue().setType(newNodeTypeId);
+        DataModelUtil
+            .addNodeTemplate(substitutionServiceTemplate, nodeTemplateEntry.getKey(), nodeTemplateEntry.getValue());
+        substitutionServiceTemplate.getNode_types().put(newNodeTypeId, origNodeType);
+      }
     }
   }
 
@@ -510,8 +515,6 @@ public class UnifiedCompositionService {
     NodeType nestedNodeType =
         DataModelUtil.getNodeType(globalSubstitutionServiceTemplate, nodeTypeId);
     nestedNodeType.setProperties(nodeTypePropertiesDefinition);
-    addComputeNodeTypeToGlobalST(nestedServiceTemplate.getNode_types().keySet().iterator().next()
-        , nestedServiceTemplate, globalSubstitutionServiceTemplate, nestedNodeType);
   }
 
   private String updateNodeTypeId(String nodeTypeId, String newNestedNodeTypeId,
@@ -1814,14 +1817,13 @@ public class UnifiedCompositionService {
         unifiedCompositionDataList, context);
     ServiceTemplate globalSubstitutionServiceTemplate =
         HeatToToscaUtil.fetchGlobalSubstitutionServiceTemplate(serviceTemplate, context);
-    return handleComputeNodeType(serviceTemplate, substitutionServiceTemplate, globalSubstitutionServiceTemplate,
+    return handleComputeNodeType(serviceTemplate, substitutionServiceTemplate,
         computeTemplateConsolidationData);
   }
 
   private String handleComputeNodeType(
       ServiceTemplate serviceTemplate,
       ServiceTemplate substitutionServiceTemplate,
-      ServiceTemplate globalSubstitutionServiceTemplate,
       ComputeTemplateConsolidationData computeTemplateConsolidationData) {
     NodeTemplate computeNodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate,
         computeTemplateConsolidationData.getNodeTemplateId());
@@ -1830,13 +1832,13 @@ public class UnifiedCompositionService {
         DataModelUtil.getNodeType(serviceTemplate, computeNodeTypeId);
     DataModelUtil
         .addNodeType(substitutionServiceTemplate, computeNodeTypeId, computeNodeType);
-//    NodeType globalNodeType = new ToscaAnalyzerServiceImpl()
-//        .createInitSubstitutionNodeType(substitutionServiceTemplate,
-//            computeNodeType.getDerived_from());
-//    DataModelUtil
-//        .addNodeType(globalSubstitutionServiceTemplate, computeNodeTypeId, globalNodeType);
 
     return computeNodeTypeId;
+  }
+
+  private String getComputeNodeType(String nodeType){
+    String computeTypeSuffix = getComputeTypeSuffix(nodeType);
+    return ToscaNodeType.COMPUTE_TYPE_PREFIX + "." + computeTypeSuffix;
   }
 
   private void handleComputeNodeTemplate(ServiceTemplate serviceTemplate,
@@ -1876,6 +1878,17 @@ public class UnifiedCompositionService {
               .getServiceTemplateFileName(serviceTemplate), data.getNodeTemplateId(),
           newComputeTemplateId);
     }
+  }
+
+  private void updateComputeNodeType(ServiceTemplate serviceTemplate,
+                                     String nodeTemplateId,
+                                     NodeTemplate newComputeNodeTemplate) {
+    String computeNodeType = getComputeNodeType(newComputeNodeTemplate.getType());
+    NodeType origNodeType = serviceTemplate.getNode_types().get(newComputeNodeTemplate.getType());
+    DataModelUtil.removeNodeType(serviceTemplate, newComputeNodeTemplate.getType());
+    DataModelUtil.addNodeType(serviceTemplate, computeNodeType, origNodeType);
+    newComputeNodeTemplate.setType(computeNodeType);
+    DataModelUtil.addNodeTemplate(serviceTemplate, nodeTemplateId, newComputeNodeTemplate);
   }
 
   private List<EntityConsolidationData> getComputeConsolidationDataList(

@@ -7,7 +7,7 @@ imports:
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 node_types:
-  org.openecomp.resource.vfc.nodes.heat.cmaui_1c1_main:
+  org.openecomp.resource.vfc.compute.nodes.heat.cmaui_1c1_main:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
@@ -113,7 +113,7 @@ topology_template:
           node: cmaui_1c1_main
           relationship: tosca.relationships.network.BindsTo
     cmaui_1c1_main:
-      type: org.openecomp.resource.vfc.nodes.heat.cmaui_1c1_main
+      type: org.openecomp.resource.vfc.compute.nodes.heat.cmaui_1c1_main
       properties:
         availability_zone:
           get_input:

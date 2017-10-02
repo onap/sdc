@@ -38,6 +38,7 @@ public class UnifiedCompositionNestedSingleCompute implements UnifiedComposition
               unifiedCompositionDataList.get(i), context);
       unifiedCompositionService
           .cleanUnifiedNestedEntities(serviceTemplate, unifiedCompositionDataList.get(i), context);
+      unifiedCompositionService.updateSubstitutionNodeTypePrefix(nestedServiceTemplate);
     }
   }
 }
