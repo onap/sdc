@@ -94,5 +94,7 @@ public class ToscaNodeType {
   public static final String MULTIFLAVOR_VFC_NODE_TYPE = ABSTRACT_NODE_TYPE_PREFIX + "MultiFlavorVFC";
   public static final String MULTIDEPLOYMENTFLAVOR_NODE_TYPE = ABSTRACT_NODE_TYPE_PREFIX
       + "MultiDeploymentFlavor.CVFC";
+  public static final String COMPUTE_TYPE_PREFIX = "org.openecomp.resource.vfc.compute.nodes.heat";
+  public static final String VFC_TYPE_PREFIX = "org.openecomp.resource.vfc.nodes.heat";
 }
 

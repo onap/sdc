@@ -66,9 +66,11 @@ public class UnifiedCompositionSingleSubstitution implements UnifiedComposition 
       unifiedCompositionService
           .cleanUnifiedCompositionEntities(serviceTemplate, singleSubstitutionUnifiedList, context);
 
+      unifiedCompositionService.updateSubstitutionNodeTypePrefix(substitutionServiceTemplate.get());
     }
 
     unifiedCompositionService
         .cleanNodeTypes(serviceTemplate, unifiedCompositionDataList, context);
+
   }
 }

@@ -7,7 +7,7 @@ imports:
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 node_types:
-  org.openecomp.resource.vfc.nodes.heat.vson_vm:
+  org.openecomp.resource.vfc.compute.nodes.heat.vson_vm:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
@@ -193,7 +193,7 @@ topology_template:
         type: string
   node_templates:
     vson_server:
-      type: org.openecomp.resource.vfc.nodes.heat.vson_vm
+      type: org.openecomp.resource.vfc.compute.nodes.heat.vson_vm
       properties:
         flavor:
           get_input: vson_vm_flavor_name

@@ -62,5 +62,6 @@ public class UnifiedCompositionCatalogInstance implements UnifiedComposition {
     }
 
     unifiedCompositionService.cleanNodeTypes(serviceTemplate, unifiedComposotionDataList, context);
+    unifiedCompositionService.updateSubstitutionNodeTypePrefix(substitutionServiceTemplate.get());
   }
 }

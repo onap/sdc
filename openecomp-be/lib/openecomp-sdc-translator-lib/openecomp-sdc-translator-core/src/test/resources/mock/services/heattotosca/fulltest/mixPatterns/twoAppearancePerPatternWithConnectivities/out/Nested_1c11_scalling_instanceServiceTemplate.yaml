@@ -7,7 +7,7 @@ imports:
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 node_types:
-  org.openecomp.resource.vfc.nodes.heat.1c11_scalling_instance:
+  org.openecomp.resource.vfc.compute.nodes.heat.1c11_scalling_instance:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
@@ -89,7 +89,7 @@ topology_template:
       required: true
   node_templates:
     1c11_scalling_instance:
-      type: org.openecomp.resource.vfc.nodes.heat.1c11_scalling_instance
+      type: org.openecomp.resource.vfc.compute.nodes.heat.1c11_scalling_instance
       properties:
         availability_zone:
           get_input:

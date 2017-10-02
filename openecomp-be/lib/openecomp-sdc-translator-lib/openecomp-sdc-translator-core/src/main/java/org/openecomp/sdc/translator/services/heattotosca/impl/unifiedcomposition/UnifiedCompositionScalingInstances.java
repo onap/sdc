@@ -49,5 +49,7 @@ public class UnifiedCompositionScalingInstances implements UnifiedComposition {
         .cleanUnifiedCompositionEntities(serviceTemplate, unifiedCompositionDataList, context);
 
     unifiedCompositionService.cleanNodeTypes(serviceTemplate, unifiedCompositionDataList, context);
+
+    unifiedCompositionService.updateSubstitutionNodeTypePrefix(substitutionServiceTemplate.get());
   }
 }

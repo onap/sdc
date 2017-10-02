@@ -1,0 +1,610 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_lbd
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.compute.nodes.heat.lbd:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_lbd_internal_1_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_lbd_ims_core_1_port_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
+    compute_lbd_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_lbd_config_drive:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
+    port_lbd_internal_1_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_lbd_dpdk_1_port_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
+    port_lbd_ims_core_1_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_lbd_ims_core_1_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_lbd_dpdk_1_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_lbd_dpdk_1_port_subnetpoolid:
+      type: string
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    port_lbd_internal_1_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_lbd_ims_core_1_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    compute_lbd_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_lbd_internal_1_port_network_role_tag:
+      type: string
+      required: true
+    port_lbd_internal_1_port_order:
+      type: integer
+      required: true
+    port_lbd_internal_1_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_lbd_internal_1_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_lbd_ims_core_1_port_subnetpoolid:
+      type: string
+      required: true
+    vm_image_name:
+      type: string
+      required: true
+    port_lbd_dpdk_1_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_lbd_ims_core_1_port_order:
+      type: integer
+      required: true
+    port_lbd_dpdk_1_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_lbd_ims_core_1_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_lbd_dpdk_1_port_order:
+      type: integer
+      required: true
+    port_lbd_ims_core_1_port_network_role:
+      type: string
+      required: true
+    port_lbd_internal_1_port_subnetpoolid:
+      type: string
+      required: true
+    port_lbd_ims_core_1_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_lbd_ims_core_1_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_lbd_internal_1_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_lbd_ims_core_1_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_lbd_dpdk_1_port_network_role_tag:
+      type: string
+      required: true
+    compute_lbd_scheduler_hints:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_lbd_dpdk_1_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_lbd_dpdk_1_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_lbd_dpdk_1_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_lbd_ims_core_1_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_lbd_internal_1_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_lbd_internal_1_port_network_role:
+      type: string
+      required: true
+    port_lbd_dpdk_1_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    compute_lbd_metadata:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_lbd_internal_1_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_lbd_dpdk_1_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    compute_lbd_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_lbd_ims_core_1_port_network_role_tag:
+      type: string
+      required: true
+    port_lbd_dpdk_1_port_network_role:
+      type: string
+      required: true
+  node_templates:
+    lbd_lbd_ims_core_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_requirements:
+          get_input: port_lbd_ims_core_1_port_mac_requirements
+        allowed_address_pairs:
+          get_input: port_lbd_ims_core_1_port_allowed_address_pairs
+        order:
+          get_input: port_lbd_ims_core_1_port_order
+        security_groups:
+          get_input:
+          - port_lbd_ims_core_1_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_lbd_ims_core_1_port_exCP_naming
+        vlan_requirements:
+          get_input: port_lbd_ims_core_1_port_vlan_requirements
+        ip_requirements:
+          get_input: port_lbd_ims_core_1_port_ip_requirements
+        network_role_tag:
+          get_input: port_lbd_ims_core_1_port_network_role_tag
+        network_role:
+          get_input: port_lbd_ims_core_1_port_network_role
+        subnetpoolid:
+          get_input: port_lbd_ims_core_1_port_subnetpoolid
+        fixed_ips:
+          get_input: port_lbd_ims_core_1_port_fixed_ips
+        name:
+          get_input:
+          - port_lbd_ims_core_1_port_name
+          - index_value
+        network:
+          get_input:
+          - port_lbd_ims_core_1_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lbd
+          relationship: tosca.relationships.network.BindsTo
+    lbd_lbd_dpdk_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_requirements:
+          get_input: port_lbd_dpdk_1_port_mac_requirements
+        allowed_address_pairs:
+          get_input: port_lbd_dpdk_1_port_allowed_address_pairs
+        order:
+          get_input: port_lbd_dpdk_1_port_order
+        security_groups:
+          get_input:
+          - port_lbd_dpdk_1_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_lbd_dpdk_1_port_exCP_naming
+        vlan_requirements:
+          get_input: port_lbd_dpdk_1_port_vlan_requirements
+        ip_requirements:
+          get_input: port_lbd_dpdk_1_port_ip_requirements
+        network_role_tag:
+          get_input: port_lbd_dpdk_1_port_network_role_tag
+        network_role:
+          get_input: port_lbd_dpdk_1_port_network_role
+        subnetpoolid:
+          get_input: port_lbd_dpdk_1_port_subnetpoolid
+        fixed_ips:
+          get_input: port_lbd_dpdk_1_port_fixed_ips
+        name:
+          get_input:
+          - port_lbd_dpdk_1_port_name
+          - index_value
+        network:
+          get_input:
+          - port_lbd_dpdk_1_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lbd
+          relationship: tosca.relationships.network.BindsTo
+    lbd_lbd_internal_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_requirements:
+          get_input: port_lbd_internal_1_port_mac_requirements
+        order:
+          get_input: port_lbd_internal_1_port_order
+        security_groups:
+          get_input:
+          - port_lbd_internal_1_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_lbd_internal_1_port_exCP_naming
+        vlan_requirements:
+          get_input: port_lbd_internal_1_port_vlan_requirements
+        ip_requirements:
+          get_input: port_lbd_internal_1_port_ip_requirements
+        network_role_tag:
+          get_input: port_lbd_internal_1_port_network_role_tag
+        network_role:
+          get_input: port_lbd_internal_1_port_network_role
+        fixed_ips:
+          get_input: port_lbd_internal_1_port_fixed_ips
+        subnetpoolid:
+          get_input: port_lbd_internal_1_port_subnetpoolid
+        name:
+          get_input:
+          - port_lbd_internal_1_port_name
+          - index_value
+        network:
+          get_input:
+          - port_lbd_internal_1_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lbd
+          relationship: tosca.relationships.network.BindsTo
+    lbd:
+      type: org.openecomp.resource.vfc.compute.nodes.heat.lbd
+      properties:
+        availability_zone:
+          get_input:
+          - compute_lbd_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        metadata:
+          get_input:
+          - compute_lbd_metadata
+          - index_value
+        config_drive:
+          get_input:
+          - compute_lbd_config_drive
+          - index_value
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_lbd_name
+          - index_value
+        scheduler_hints:
+          get_input:
+          - compute_lbd_scheduler_hints
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_lbd_user_data_format
+          - index_value
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.lbd
+    capabilities:
+      disk.ephemeral.size_lbd:
+      - lbd
+      - disk.ephemeral.size
+      disk.write.requests.rate_lbd:
+      - lbd
+      - disk.write.requests.rate
+      disk.write.bytes.rate_lbd:
+      - lbd
+      - disk.write.bytes.rate
+      instance_lbd:
+      - lbd
+      - instance
+      disk.device.iops_lbd:
+      - lbd
+      - disk.device.iops
+      network.outgoing.packets.rate_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - network.outgoing.packets.rate
+      host_lbd:
+      - lbd
+      - host
+      disk.device.capacity_lbd:
+      - lbd
+      - disk.device.capacity
+      cpu_util_lbd:
+      - lbd
+      - cpu_util
+      disk.device.read.requests_lbd:
+      - lbd
+      - disk.device.read.requests
+      attachment_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - attachment
+      memory.usage_lbd:
+      - lbd
+      - memory.usage
+      binding_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - binding
+      network.outpoing.packets_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - network.outpoing.packets
+      network.outgoing.bytes_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - network.outgoing.bytes
+      network.incoming.packets_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - network.incoming.packets
+      disk.read.requests_lbd:
+      - lbd
+      - disk.read.requests
+      feature_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - feature
+      network.incoming.bytes_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - network.incoming.bytes
+      cpu.delta_lbd:
+      - lbd
+      - cpu.delta
+      memory_lbd:
+      - lbd
+      - memory
+      disk.write.bytes_lbd:
+      - lbd
+      - disk.write.bytes
+      scalable_lbd:
+      - lbd
+      - scalable
+      network.incoming.bytes.rate_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - network.incoming.bytes.rate
+      network.outgoing.bytes.rate_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - network.outgoing.bytes.rate
+      network.incoming.packets.rate_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - network.incoming.packets.rate
+      disk.device.read.requests.rate_lbd:
+      - lbd
+      - disk.device.read.requests.rate
+      network.outgoing.bytes_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - network.outgoing.bytes
+      disk.root.size_lbd:
+      - lbd
+      - disk.root.size
+      vcpus_lbd:
+      - lbd
+      - vcpus
+      disk.allocation_lbd:
+      - lbd
+      - disk.allocation
+      disk.device.write.requests_lbd:
+      - lbd
+      - disk.device.write.requests
+      os_lbd:
+      - lbd
+      - os
+      disk.latency_lbd:
+      - lbd
+      - disk.latency
+      network.incoming.packets_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - network.incoming.packets
+      memory.resident_lbd:
+      - lbd
+      - memory.resident
+      disk.read.bytes.rate_lbd:
+      - lbd
+      - disk.read.bytes.rate
+      network.incoming.bytes.rate_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - network.incoming.bytes.rate
+      network.outgoing.bytes.rate_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - network.outgoing.bytes.rate
+      disk.read.bytes_lbd:
+      - lbd
+      - disk.read.bytes
+      network.outgoing.packets.rate_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - network.outgoing.packets.rate
+      network.outgoing.bytes_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - network.outgoing.bytes
+      network.incoming.packets.rate_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - network.incoming.packets.rate
+      network.outpoing.packets_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - network.outpoing.packets
+      attachment_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - attachment
+      feature_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - feature
+      cpu_lbd:
+      - lbd
+      - cpu
+      feature_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - feature
+      endpoint_lbd:
+      - lbd
+      - endpoint
+      disk.device.read.bytes.rate_lbd:
+      - lbd
+      - disk.device.read.bytes.rate
+      disk.device.write.bytes.rate_lbd:
+      - lbd
+      - disk.device.write.bytes.rate
+      disk.iops_lbd:
+      - lbd
+      - disk.iops
+      network.outgoing.packets.rate_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - network.outgoing.packets.rate
+      disk.device.usage_lbd:
+      - lbd
+      - disk.device.usage
+      binding_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - binding
+      disk.usage_lbd:
+      - lbd
+      - disk.usage
+      disk.device.read.bytes_lbd:
+      - lbd
+      - disk.device.read.bytes
+      disk.write.requests_lbd:
+      - lbd
+      - disk.write.requests
+      attachment_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - attachment
+      disk.device.write.bytes_lbd:
+      - lbd
+      - disk.device.write.bytes
+      network.outgoing.bytes.rate_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - network.outgoing.bytes.rate
+      disk.capacity_lbd:
+      - lbd
+      - disk.capacity
+      feature_lbd:
+      - lbd
+      - feature
+      network.incoming.bytes.rate_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - network.incoming.bytes.rate
+      disk.device.latency_lbd:
+      - lbd
+      - disk.device.latency
+      network.incoming.packets_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - network.incoming.packets
+      disk.device.write.requests.rate_lbd:
+      - lbd
+      - disk.device.write.requests.rate
+      binding_lbd:
+      - lbd
+      - binding
+      network.incoming.packets.rate_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - network.incoming.packets.rate
+      network.outpoing.packets_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - network.outpoing.packets
+      binding_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - binding
+      network.incoming.bytes_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - network.incoming.bytes
+      network.incoming.bytes_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - network.incoming.bytes
+      disk.device.allocation_lbd:
+      - lbd
+      - disk.device.allocation
+    requirements:
+      dependency_lbd:
+      - lbd
+      - dependency
+      local_storage_lbd:
+      - lbd
+      - local_storage
+      dependency_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - dependency
+      dependency_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - dependency
+      link_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - link
+      link_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - link
+      link_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - link
+      dependency_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - dependency

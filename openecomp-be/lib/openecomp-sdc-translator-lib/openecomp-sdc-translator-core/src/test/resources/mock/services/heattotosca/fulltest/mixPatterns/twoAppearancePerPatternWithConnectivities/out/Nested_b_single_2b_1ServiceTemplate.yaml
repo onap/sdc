@@ -7,7 +7,7 @@ imports:
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 node_types:
-  org.openecomp.resource.vfc.nodes.heat.b_single_2b:
+  org.openecomp.resource.vfc.compute.nodes.heat.b_single_2b:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
@@ -112,7 +112,7 @@ topology_template:
         type: org.openecomp.datatypes.network.VlanRequirements
   node_templates:
     b_single_2b:
-      type: org.openecomp.resource.vfc.nodes.heat.b_single_2b
+      type: org.openecomp.resource.vfc.compute.nodes.heat.b_single_2b
       properties:
         availability_zone:
           get_input:

@@ -7,7 +7,7 @@ imports:
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 node_types:
-  org.openecomp.resource.vfc.nodes.heat.1c2_catalog_instance:
+  org.openecomp.resource.vfc.compute.nodes.heat.1c2_catalog_instance:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
@@ -117,7 +117,7 @@ topology_template:
         type: json
   node_templates:
     1c2_catalog_instance:
-      type: org.openecomp.resource.vfc.nodes.heat.1c2_catalog_instance
+      type: org.openecomp.resource.vfc.compute.nodes.heat.1c2_catalog_instance
       properties:
         availability_zone:
           get_input:
