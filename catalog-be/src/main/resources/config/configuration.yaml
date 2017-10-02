@@ -133,6 +133,7 @@ artifactTypes:
    - SNMP_POLL
    - SNMP_TRAP
    - GUIDE
+   - PLAN
 
 licenseTypes:
    - User
@@ -327,7 +328,6 @@ serviceDeploymentArtifacts:
     PLAN:
         acceptedTypes:
             - xml
-			
 
 resourceDeploymentArtifacts:
     HEAT:
