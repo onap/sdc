@@ -5,11 +5,11 @@ description: overlay L3 vpn type definitions
 # overlay tunnel type definitions
 # *****************************************************************************
 
-metadata:
-    id: : overlayTunnelDefinition
-    version: 0.1
-    vendor: ONAP
-    template_author: ONAP
+#metadata:
+#    id: : overlayTunnelDefinition
+#    version: 0.1
+#    vendor: ONAP
+#    template_author: ONAP
 
 # *****************************************************************************
 # node types
