@@ -1,9 +1,11 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
+description: underlay L3 vpn type definitions
 # *****************************************************************************
 # underlay vpn type definitions
 # *****************************************************************************
 
 metadata:
+  id: underlayVpnDefinition
   version: 0.1
   vendor: ONAP
   template_author: ONAP
@@ -19,7 +21,7 @@ node_types:
   # *****************************************************************************
   org.openecomp.resource.vl.underlayvpn:
     derived_from: tosca.nodes.Root
-    description: undelay vpn type definitions	
+    description: undelay vpn type definitions
     properties:
       id:
         type: string
