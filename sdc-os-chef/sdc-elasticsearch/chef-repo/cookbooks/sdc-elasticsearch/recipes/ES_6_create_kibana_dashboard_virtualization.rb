@@ -29,6 +29,11 @@ ruby_block "check_ElasticSearch_Cluster_Health" do
    retry_delay 2
 end
 
+bash "echo status" do
+   code <<-EOH
+     echo "DOCKER STARTED"
+   EOH
+end
 
 bash "create Kibana dashboard" do
     code <<-EOH
@@ -41,7 +46,6 @@ bash "create Kibana dashboard" do
     EOH
 end
 
-
 bash "create Kibana visualization" do
     code <<-EOH
         for file in /root/chef-solo/cookbooks/sdc-elasticsearch/files/default/visualization_*.json; do 
@@ -52,6 +56,3 @@ bash "create Kibana visualization" do
         done 
     EOH
 end
-
-
-

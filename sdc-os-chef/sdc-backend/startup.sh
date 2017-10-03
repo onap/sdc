@@ -39,3 +39,5 @@ fi
 
 while true; do sleep 2; done
 
+echo "###### DOCKER STARTED #####"
+

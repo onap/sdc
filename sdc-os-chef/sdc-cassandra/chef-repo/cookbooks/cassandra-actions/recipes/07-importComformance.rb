@@ -18,6 +18,11 @@ bash "import-Comformance" do
     ./sdcSchemaFileImport.sh ${tosca_dir} #{cl_release} ${cl_version} ${conf_dir} 
   EOH
 end
+bash "echo status" do
+   code <<-EOH
+     echo "DOCKER STARTED"
+   EOH
+end
 
 
 
