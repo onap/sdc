@@ -147,7 +147,7 @@ docker run --detach --name sdc-FE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}"
 # running healthCheck scripts
 echo "Running health checks, please wait..."
 echo ""
-c=25 # seconds to wait
+c=30 # seconds to wait
 REWRITE="\e[45D\e[1A\e[K"
 while [ $c -gt 0 ]; do
     c=$((c-1))
