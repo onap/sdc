@@ -119,22 +119,19 @@ public class HeatTreeManager {
   }
 
 
-  private void handleHeatContentReference(String filename, HeatStructureTree fileHeatStructureTree,
+  private void handleHeatContentReference(HeatStructureTree fileHeatStructureTree,
                                           GlobalValidationContext globalContext) {
 
     String fileName = fileHeatStructureTree.getFileName();
-    InputStream fileContent = this.heatContentMap.getFileContent(fileName);
-    if (fileContent == null) {
-      return; // file exist in manifest but does not exist in zip
-    }
-    try {
+
+    try (InputStream fileContent = this.heatContentMap.getFileContent(fileName)) {
       HeatOrchestrationTemplate hot =
           new YamlUtil().yamlToObject(fileContent, HeatOrchestrationTemplate.class);
 
-      Set<String> nestedSet = HeatTreeManagerUtil.getNestedFiles(filename, hot, globalContext);
+      Set<String> nestedSet = HeatTreeManagerUtil.getNestedFiles(fileName, hot, globalContext);
       addHeatNestedFiles(fileHeatStructureTree, nestedSet);
 
-      Set<String> artifactSet = HeatTreeManagerUtil.getArtifactFiles(filename, hot, globalContext);
+      Set<String> artifactSet = HeatTreeManagerUtil.getArtifactFiles(fileName, hot, globalContext);
       addHeatArtifactFiles(fileHeatStructureTree, artifactSet);
     } catch (Exception ignore) { /* invalid yaml no need to process reference */
       logger.debug("",ignore);
@@ -224,7 +221,7 @@ public class HeatTreeManager {
         fileHeatStructureTree.setFileName(fileName);
         fileHeatStructureTree.setBase(fileData.getBase());
         fileHeatStructureTree.setType(type);
-        handleHeatContentReference(null, fileHeatStructureTree, null);
+        handleHeatContentReference(fileHeatStructureTree, null);
         parentHeatStructureTree.addHeatToHeatList(fileHeatStructureTree);
         if (fileData.getData() != null) {
           scanTree(fileName, fileData.getData());
@@ -244,6 +241,7 @@ public class HeatTreeManager {
           if (fileData.getData() != null) {
             scanTree(fileName, fileData.getData());
           }
+          handleHeatContentReference(childHeatStructureTree, null);
 
         } else if (FileData.Type.HEAT_VOL.equals(type)) {
           //parentHeatStructureTree.addVolumeFileToVolumeList(childHeatStructureTree);
@@ -251,6 +249,7 @@ public class HeatTreeManager {
           if (fileData.getData() != null) {
             scanTree(fileName, fileData.getData());
           }
+          handleHeatContentReference(childHeatStructureTree, null);
         } else if (FileData.Type.HEAT_ENV.equals(type)) {
           if (parentHeatStructureTree != null && parentHeatStructureTree.getFileName() != null) {
             parentHeatStructureTree.setEnv(childHeatStructureTree);

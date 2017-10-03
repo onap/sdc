@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileUtils;
@@ -48,6 +49,7 @@ import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
+import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
@@ -213,15 +215,52 @@ public class TranslationService {
       groupDefinition.getProperties().put(Constants.DESCRIPTION_PROPERTY_NAME, hotDescription);
     }
     groupDefinition.setMembers(new ArrayList<>());
-    Map<String, Set<String>> heatStackGroupMembers = context.getHeatStackGroupMembers();
-    if (heatStackGroupMembers.get(fileName) == null) {
+    Set<String> heatStackGroupMembersIds = getHeatStackGroupMembers(fileName,
+        serviceTemplate, context);
+    if (CollectionUtils.isEmpty(heatStackGroupMembersIds)) {
       return; //not creating a group when no resources are present in the heat input
     }
-    groupDefinition.getMembers().addAll(heatStackGroupMembers.get(fileName));
+    groupDefinition.getMembers().addAll(heatStackGroupMembersIds);
     DataModelUtil
         .addGroupDefinitionToTopologyTemplate(serviceTemplate, heatStackGroupId, groupDefinition);
 
     mdcDataDebugMessage.debugExitMessage(null, null);
+  }
+
+  private Set<String> getHeatStackGroupMembers(String heatFileName,
+                                                            ServiceTemplate serviceTemplate,
+                                                            TranslationContext context){
+
+    Map<String, Set<String>> heatStackGroupMembers = context.getHeatStackGroupMembers();
+    Set<String> groupMembers = MapUtils.isEmpty(heatStackGroupMembers) ? new HashSet<>()
+        : heatStackGroupMembers.get(heatFileName);
+
+    if(CollectionUtils.isEmpty(groupMembers)){
+      return new HashSet<>();
+    }
+
+    Set<String> updatedMembersIds = new HashSet<>();
+
+    groupMembers.forEach(member -> {
+      if (Objects.nonNull(DataModelUtil.getNodeTemplate(serviceTemplate, member))) {
+        updatedMembersIds.add(member);
+      } else {
+        updateSubstitutableGroupMemberId(heatFileName, serviceTemplate, updatedMembersIds);
+      }
+    });
+
+    return updatedMembersIds;
+  }
+
+  private void updateSubstitutableGroupMemberId(String heatFileName,
+                                                ServiceTemplate serviceTemplate,
+                                                Set<String> updatedMembersIds) {
+    Optional<String> substitutableGroupMemberId =
+        ToscaUtil.getSubstitutableGroupMemberId(heatFileName, serviceTemplate);
+
+    if (substitutableGroupMemberId.isPresent()) {
+      updatedMembersIds.add(substitutableGroupMemberId.get());
+    }
   }
 
   private void translateInputParameters(ServiceTemplate serviceTemplate,

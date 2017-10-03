@@ -86,6 +86,7 @@ import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypes
 import org.openecomp.sdc.translator.services.heattotosca.helper.FunctionTranslationHelper;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -135,11 +136,15 @@ public class HeatToToscaUtil {
       return translatorOutput;
     }
 
-    InputStream structureFile = getHeatStructureTreeFile(fileNameContentMap);
-    heatToToscaTranslator.addExternalArtifacts(SdcCommon.HEAT_META, structureFile);
+    try (InputStream structureFile = getHeatStructureTreeFile(fileNameContentMap)) {
+      heatToToscaTranslator.addExternalArtifacts(SdcCommon.HEAT_META, structureFile);
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
-    return heatToToscaTranslator.translate();
+      mdcDataDebugMessage.debugExitMessage(null, null);
+      return heatToToscaTranslator.translate();
+    } catch (IOException e) {
+      // rethrow as a RuntimeException to keep the signature backward compatible
+      throw new RuntimeException(e);
+    }
   }
 
 
