@@ -20,10 +20,15 @@
 
 package org.openecomp.sdc.tosca.services;
 
+import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -50,7 +55,7 @@ public class ToscaUtil {
   /**
    * Gets service template file name.
    *
-   * @param metaData the file name
+   * @param metadata the file name
    * @return the service template file name
    */
   public static String getServiceTemplateFileName(Map<String, String> metadata) {
@@ -61,6 +66,38 @@ public class ToscaUtil {
     }
     return UUID.randomUUID().toString() + "ServiceTemplate.yaml";
 
+  }
+
+  public static Optional<String> getSubstitutableGroupMemberId(String heatFileName,
+                                                         ServiceTemplate serviceTemplate){
+    Map<String, NodeTemplate> node_templates =
+        serviceTemplate.getTopology_template().getNode_templates();
+
+    if(MapUtils.isEmpty(node_templates)){
+      return Optional.empty();
+    }
+
+    String heatFileNameWithoutExt = FileUtils.getFileWithoutExtention(heatFileName);
+
+    for(Map.Entry<String, NodeTemplate> nodeTemplateEntry : node_templates.entrySet()){
+      Map<String, Object> properties =
+          nodeTemplateEntry.getValue().getProperties() == null ? new HashMap<>() :
+              nodeTemplateEntry.getValue().getProperties();
+
+      Map<String, Object> serviceTemplateFilter =
+          properties.containsKey(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME)?
+              (Map<String, Object>) properties.get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME) : new HashMap<>();
+
+      String subServiceTemplateName =
+          (String) serviceTemplateFilter.get(ToscaConstants.SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME);
+
+      if(Objects.nonNull(subServiceTemplateName)
+          && subServiceTemplateName.startsWith(heatFileNameWithoutExt)){
+        return Optional.of(nodeTemplateEntry.getKey());
+      }
+    }
+
+    return Optional.empty();
   }
 
 

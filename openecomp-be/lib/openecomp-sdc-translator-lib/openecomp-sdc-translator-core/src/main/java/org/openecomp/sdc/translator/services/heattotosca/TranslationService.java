@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileUtils;
@@ -41,6 +42,7 @@ import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaGroupType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.GroupDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
@@ -48,6 +50,7 @@ import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
+import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
@@ -213,7 +216,9 @@ public class TranslationService {
       groupDefinition.getProperties().put(Constants.DESCRIPTION_PROPERTY_NAME, hotDescription);
     }
     groupDefinition.setMembers(new ArrayList<>());
-    Map<String, Set<String>> heatStackGroupMembers = context.getHeatStackGroupMembers();
+    Map<String, Set<String>> heatStackGroupMembers = getHeatStackGroupMembers(fileName,
+        serviceTemplate, context);
+    //Map<String, Set<String>> heatStackGroupMembers = context.getHeatStackGroupMembers();
     if (heatStackGroupMembers.get(fileName) == null) {
       return; //not creating a group when no resources are present in the heat input
     }
@@ -223,6 +228,72 @@ public class TranslationService {
 
     mdcDataDebugMessage.debugExitMessage(null, null);
   }
+
+  private Map<String, Set<String>> getHeatStackGroupMembers(String heatFileName,
+                                                            ServiceTemplate serviceTemplate,
+                                                            TranslationContext context){
+    Map<String, Set<String>> updatedHeatStackGroupMembers = new HashMap<>();
+    Set<String> updatedMebmersIds = new HashSet<>();
+    Map<String, Set<String>> heatStackGroupMembers = context.getHeatStackGroupMembers();
+
+    Set<String> groupMembers = heatStackGroupMembers.get(heatFileName);
+    if(CollectionUtils.isEmpty(groupMembers)){
+      return updatedHeatStackGroupMembers;
+    }
+
+    String memberId;
+
+    for(String member : groupMembers){
+      NodeTemplate nodeTemplate = DataModelUtil.getNodeTemplate(serviceTemplate, member);
+      if(Objects.nonNull(nodeTemplate)){
+        updatedMebmersIds.add(member);
+        memberId = member;
+      } else {
+        Optional<String> substitutableGroupMemberId =
+            ToscaUtil.getSubstitutableGroupMemberId(heatFileName, serviceTemplate);
+
+        if(substitutableGroupMemberId.isPresent()){
+          updatedMebmersIds.add(substitutableGroupMemberId.get());
+          memberId = substitutableGroupMemberId.get();
+        }
+      }
+    }
+
+    updatedHeatStackGroupMembers.put(heatFileName, updatedMebmersIds);
+    return updatedHeatStackGroupMembers;
+  }
+
+//  private Optional<String> getSubstitutableGroupMemberId(String heatFileName,
+//                                               ServiceTemplate serviceTemplate){
+//    Map<String, NodeTemplate> node_templates =
+//        serviceTemplate.getTopology_template().getNode_templates();
+//
+//    if(MapUtils.isEmpty(node_templates)){
+//      return Optional.empty();
+//    }
+//
+//    String heatFileNameWithoutExt = FileUtils.getFileWithoutExtention(heatFileName);
+//
+//    for(Map.Entry<String, NodeTemplate> nodeTemplateEntry : node_templates.entrySet()){
+//      Map<String, Object> properties =
+//          nodeTemplateEntry.getValue().getProperties() == null ? new HashMap<>() :
+//              nodeTemplateEntry.getValue().getProperties();
+//
+//      Map<String, Object> serviceTemplateFilter =
+//          properties.containsKey(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME)?
+//          (Map<String, Object>) properties.get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME) : new HashMap<>();
+//
+//      String subServiceTemplateName =
+//          (String) serviceTemplateFilter.get(ToscaConstants.SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME);
+//
+//      if(Objects.nonNull(subServiceTemplateName)
+//          && subServiceTemplateName.startsWith(heatFileNameWithoutExt)){
+//        return Optional.of(nodeTemplateEntry.getKey());
+//      }
+//    }
+//
+//    return Optional.empty();
+//  }
 
   private void translateInputParameters(ServiceTemplate serviceTemplate,
                                         HeatOrchestrationTemplate heatOrchestrationTemplate,

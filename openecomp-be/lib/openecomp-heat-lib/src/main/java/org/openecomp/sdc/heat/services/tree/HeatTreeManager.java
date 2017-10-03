@@ -131,10 +131,10 @@ public class HeatTreeManager {
       HeatOrchestrationTemplate hot =
           new YamlUtil().yamlToObject(fileContent, HeatOrchestrationTemplate.class);
 
-      Set<String> nestedSet = HeatTreeManagerUtil.getNestedFiles(filename, hot, globalContext);
+      Set<String> nestedSet = HeatTreeManagerUtil.getNestedFiles(fileName, hot, globalContext);
       addHeatNestedFiles(fileHeatStructureTree, nestedSet);
 
-      Set<String> artifactSet = HeatTreeManagerUtil.getArtifactFiles(filename, hot, globalContext);
+      Set<String> artifactSet = HeatTreeManagerUtil.getArtifactFiles(fileName, hot, globalContext);
       addHeatArtifactFiles(fileHeatStructureTree, artifactSet);
     } catch (Exception ignore) { /* invalid yaml no need to process reference */
       logger.debug("",ignore);
@@ -244,6 +244,7 @@ public class HeatTreeManager {
           if (fileData.getData() != null) {
             scanTree(fileName, fileData.getData());
           }
+          handleHeatContentReference(null, childHeatStructureTree, null);
 
         } else if (FileData.Type.HEAT_VOL.equals(type)) {
           //parentHeatStructureTree.addVolumeFileToVolumeList(childHeatStructureTree);
@@ -251,6 +252,7 @@ public class HeatTreeManager {
           if (fileData.getData() != null) {
             scanTree(fileName, fileData.getData());
           }
+          handleHeatContentReference(null, childHeatStructureTree, null);
         } else if (FileData.Type.HEAT_ENV.equals(type)) {
           if (parentHeatStructureTree != null && parentHeatStructureTree.getFileName() != null) {
             parentHeatStructureTree.setEnv(childHeatStructureTree);
