@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_6bc26154",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T11:01:08Z",
+      "side": 1,
+      "message": "How will this affect the client code? Is it prepared to handle an IOException?",
+      "revId": "98f39d6fc3af5cbbc5d7f5e1eab55791244ccafb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_8bc7c563",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T11:01:08Z",
+      "side": 1,
+      "message": "There\u0027s not much to do if you can\u0027t close the InputStream here. so try { fileContent.close() } catch (IOException ignored) { /* ignore */ } would be perfectly fine. Better yet, use the Java 7 try-with-resource construct: try (InputStream fileContent \u003d ....) { ... }",
+      "revId": "98f39d6fc3af5cbbc5d7f5e1eab55791244ccafb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_2ba8d98b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-api/src/main/java/org/openecomp/core/translator/api/HeatToToscaTranslator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T11:01:08Z",
+      "side": 1,
+      "message": "Changing interfaces in this way are dangerous. Please avoid breaking \"contracts\".",
+      "revId": "98f39d6fc3af5cbbc5d7f5e1eab55791244ccafb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_0babd589",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T11:01:08Z",
+      "side": 1,
+      "message": "This will be never reached if any of the above fail. You should have wrap it in try/finally or better yet in try (InputStream structureFile \u003d ....) { .... }",
+      "revId": "98f39d6fc3af5cbbc5d7f5e1eab55791244ccafb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_cb982d7a",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T11:01:08Z",
+      "side": 1,
+      "message": "This is a bad practice. You\u0027re throwing an exception anyway, and letting the application know an error happened. It will be handled somewhere else, so the log message here will be confusing. The right thing to do is to pass the original exception to the CoreException as a cause. Like this: String errorMessage \u003d new ErrorCodeBuilder()....build(); throw new CoreException(errroMessage, ioe);",
+      "revId": "98f39d6fc3af5cbbc5d7f5e1eab55791244ccafb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_6b702140",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T11:01:08Z",
+      "side": 1,
+      "message": "Return here, don\u0027t create an empty set only to return later if groupMembers is empty. You already know the method cannot proceed.",
+      "revId": "98f39d6fc3af5cbbc5d7f5e1eab55791244ccafb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_4b8c3d36",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T11:01:08Z",
+      "side": 1,
+      "message": "Collections.emptySet()",
+      "revId": "98f39d6fc3af5cbbc5d7f5e1eab55791244ccafb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_cb294de7",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/DataModelUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T11:01:08Z",
+      "side": 1,
+      "message": "It\u0027s a new public method and should be unit-tested.",
+      "revId": "98f39d6fc3af5cbbc5d7f5e1eab55791244ccafb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_4b167da9",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/DataModelUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T11:01:08Z",
+      "side": 1,
+      "message": "Does it make sense to leave the returned map mutable? How will the program behave if you populate it by reference? If it\u0027s just a way to let the client code know that the node templates doesn\u0027t contain any values - return Collections.emptyMap();",
+      "revId": "98f39d6fc3af5cbbc5d7f5e1eab55791244ccafb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_ab24c90c",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/ToscaUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T11:01:08Z",
+      "side": 1,
+      "message": "Public method should be unit-tested.",
+      "revId": "98f39d6fc3af5cbbc5d7f5e1eab55791244ccafb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_2b19f9d6",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/ToscaUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T11:01:08Z",
+      "side": 1,
+      "message": "Collections.emptyMap()",
+      "revId": "98f39d6fc3af5cbbc5d7f5e1eab55791244ccafb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_0b0cf592",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/ToscaUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T11:01:08Z",
+      "side": 1,
+      "message": "Collections.emptyMap()",
+      "revId": "98f39d6fc3af5cbbc5d7f5e1eab55791244ccafb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
