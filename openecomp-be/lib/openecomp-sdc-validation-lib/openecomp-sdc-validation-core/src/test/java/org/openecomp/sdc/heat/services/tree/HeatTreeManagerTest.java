@@ -43,7 +43,7 @@ public class HeatTreeManagerTest {
   private Logger logger = LoggerFactory.getLogger(HeatTreeManagerTest.class);
 
   @Test
-  public void testHeatTreeCreation() {
+  public void testHeatTreeCreation() throws IOException {
 
     FileContentHandler fileContentMap = new FileContentHandler();
     URL url = this.getClass().getResource("/heatTreeValidationOutput");
