@@ -11,7 +11,6 @@ bash "upgrade-normatives" do
     cd normatives/scripts/import/tosca/
     /bin/chmod +x upgradeNormative.py importGroupTypes.py
     python upgradeNormative.py -i localhost --debug=true > /var/lib/jetty/logs/upgradeNormative.log
-    python importGroupTypes.py -i localhost > /var/lib/jetty/logs/importGroupTypes.log
   EOH
 end
 
