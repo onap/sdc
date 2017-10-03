@@ -1,0 +1,299 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_cbe02d2b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "Issue-ID, without spaces.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_6b5ca119",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "May fileHeatStructureTree be null here? If so, throw  a NullPointerException with a meaningful message.",
+      "range": {
+        "startLine": 125,
+        "startChar": 0,
+        "endLine": 125,
+        "endChar": 1
+      },
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_ab6609eb",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "Close InputStream, the interface doesn\u0027t tell you where it comes from. It it were backed by a file, you would have left that file open.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_2b7b398d",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "It looks like the similarity of variable names already caused confusion. So please make the difference more noticeable to avoid it in the future. On the other hand the filename parameter isn\u0027t used at all after the change - it\u0027s a private method, remove it altogether.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_0b6e35c9",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "Here, why pass null if you\u0027re not using this parameter anyway?",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_4b9f9db5",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "Why is this line needed? Please delete it.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_eba77109",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "It\u0027s recommended to limit the size of a collection if you know it. In this case it\u0027s know how large the set can be - not larger than groupMembers.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_cb994dc5",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "May groupMembers be null? Consider checking for null.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_cbb26d4b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "If the condition is met, the method returns without ever using the variables declared and allocated above. It\u0027s a best practice to declare variables and instantiate object only when you need them, right before you need them.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_2ba219fd",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "Don\u0027t create empty collections if you\u0027re not going to populate them. Use Collections.emptySet()/emptyMap() etc. It is more efficient and immutable, so you will know if you try to put something into it by mistake.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_ab94c98a",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "I would like this code simplified. See if you can use Java APIs for working with collections to do so, or structure the code differently. Java 8 stream API comes to mind.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_4b867d67",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "If I understand correctly, updatedHeatStackGroupMembers can be either empty or of size 1. Why a map is needed here at all? Can\u0027t just updatedMemberIds be returned? And you mapping it to heatFileName which is known and isn\u0027t changing.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_0b7cf570",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/TranslationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "Please remove the commented method.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_8b8fc574",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/ToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "This method is too large. Please simplify.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_6b8a6165",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/ToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "It must follow Java naming conventions for variable names. Camel case \"nodeTemplate\" instead of \"node_template\".",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_2bf0d9fc",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/ToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "If any of these is null causes a NullPointerException, it will be difficult to figure out which one.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_0bf3d50a",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/ToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-03T07:17:07Z",
+      "side": 1,
+      "message": "Please simplify the code.",
+      "revId": "ca6bdce3bd2080590a7f2e625768ce3a06bdddbc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
