@@ -46,6 +46,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class HeatToToscaTranslatorImpl implements HeatToToscaTranslator {
 
@@ -116,9 +117,11 @@ public class HeatToToscaTranslatorImpl implements HeatToToscaTranslator {
     }
 
     translatorOutput = translationService.translateHeatFiles(translationContext);
-    ToscaServiceModel unifiedToscaServiceModel = unifiedCompositionManager
+    Optional<ToscaServiceModel> unifiedComposition = unifiedCompositionManager
         .createUnifiedComposition(translatorOutput.getToscaServiceModel(), translationContext);
-    translatorOutput.setToscaServiceModel(unifiedToscaServiceModel);
+    if (unifiedComposition.isPresent()) {
+      translatorOutput.setToscaServiceModel(unifiedComposition.get());
+    }
     return translatorOutput;
   }
 

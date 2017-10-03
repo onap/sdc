@@ -603,6 +603,7 @@ public class CandidateServiceImpl implements CandidateService {
             handleArtifactsFromTree(volume, structure);
             module.setVol(volume.getFileName());
             handleEnv(module, volume, true, structure);
+            addNestedToFileDataStructure(volume, structure);
         }
 
         mdcDataDebugMessage.debugExitMessage(null);
