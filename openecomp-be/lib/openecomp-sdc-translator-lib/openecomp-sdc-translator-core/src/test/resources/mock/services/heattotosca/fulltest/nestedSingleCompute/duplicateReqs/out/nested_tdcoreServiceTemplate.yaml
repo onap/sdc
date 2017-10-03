@@ -1,0 +1,563 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested_tdcore
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.compute.nodes.heat.tdcore:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF Module instance
+    internal_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: internal network name/uuid
+    vcscf_release:
+      hidden: false
+      immutable: false
+      type: string
+      description: IMS release
+    tdcore_security_group:
+      hidden: false
+      immutable: false
+      type: string
+      description: security group
+    tdcore_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of instance names for TDCORE instances
+      entry_schema:
+        type: string
+    port_tdcore_dpdk_0_port_1_network_role_tag:
+      type: string
+      required: true
+    port_tdcore_dpdk_0_port_1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_tdcore_internal_0_port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    vcscf_gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM unit virtual ip
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VF instance
+    port_tdcore_internal_0_port_0_network_role:
+      type: string
+      required: true
+    port_tdcore_dpdk_0_port_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    vf_module_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VF Module instance
+    internal_dpdk_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: internal dpdk network name/uuid
+    port_tdcore_dpdk_0_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_tdcore_dpdk_0_port_1_order:
+      type: integer
+      required: true
+    port_tdcore_internal_0_port_0_order:
+      type: integer
+      required: true
+    vcscf_swrepo_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: SWRepo IP or FQDN
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF instance
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Availability zone name.
+    port_tdcore_dpdk_0_port_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    tdcore_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name
+    tdcore_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: image name
+    vcscf_cmrepo_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: CMRepo IP or FQDN
+    vcscf_dns_address:
+      hidden: false
+      immutable: false
+      type: string
+      description: DNS server IP
+    vcscf_internal_network_mtu:
+      hidden: false
+      immutable: false
+      type: float
+      description: MTU for internal network interface (eth0)
+      constraints:
+      - in_range:
+        - 1000
+        - 9100
+    port_tdcore_dpdk_0_port_1_network_role:
+      type: string
+      required: true
+    tdcore_server_group:
+      hidden: false
+      immutable: false
+      type: string
+      description: server group name/id
+    index:
+      hidden: false
+      immutable: false
+      type: float
+      description: index
+      constraints:
+      - in_range:
+        - 0
+        - 7
+    vcscf_internal_netmask:
+      hidden: false
+      immutable: false
+      type: string
+      description: internal netmask
+    port_tdcore_internal_0_port_0_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    vcscf_name_delimeter:
+      hidden: false
+      immutable: false
+      type: string
+      description: 'delimeter used in concatenating different words while naming (ex:
+        "-","_",".",...)'
+      constraints:
+      - valid_values:
+        - '-'
+        - ''
+        - _
+        - .
+    tdcore_internal_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of Internal Lan IPs for TDCORE instances
+      entry_schema:
+        type: string
+    tdcore_dpdk_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of DPDK Lan IPs for TDCORE instances
+      entry_schema:
+        type: string
+    tdcore_uuids:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of UUIDs generated by cmrepo for TDCORE instances
+      entry_schema:
+        type: string
+    vcscf_dn:
+      hidden: false
+      immutable: false
+      type: string
+      description: DN name
+    port_tdcore_internal_0_port_0_network_role_tag:
+      type: string
+      required: true
+    port_tdcore_internal_0_port_0_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_tdcore_internal_0_port_0_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    vcscf_du:
+      hidden: false
+      immutable: false
+      type: string
+      description: DU name
+    port_tdcore_dpdk_0_port_1_subnetpoolid:
+      type: string
+      required: true
+    port_tdcore_internal_0_port_0_subnetpoolid:
+      type: string
+      required: true
+  node_templates:
+    tdcore_internal_0_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input: port_tdcore_internal_0_port_0_ip_requirements
+        security_groups:
+        - get_input: tdcore_security_group
+        network_role:
+          get_input: port_tdcore_internal_0_port_0_network_role
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - tdcore_internal_ips
+            - get_input: index
+        subnetpoolid:
+          get_input: port_tdcore_internal_0_port_0_subnetpoolid
+        mac_requirements:
+          get_input: port_tdcore_internal_0_port_0_mac_requirements
+        name:
+          str_replace:
+            template: $PREFIX$DELeth0
+            params:
+              $PREFIX:
+                get_input:
+                - tdcore_names
+                - get_input: index
+              $DEL:
+                get_input: vcscf_name_delimeter
+        exCP_naming:
+          get_input: port_tdcore_internal_0_port_0_exCP_naming
+        vlan_requirements:
+          get_input: port_tdcore_internal_0_port_0_vlan_requirements
+        network_role_tag:
+          get_input: port_tdcore_internal_0_port_0_network_role_tag
+        network:
+          get_input: internal_net_id
+        order:
+          get_input: port_tdcore_internal_0_port_0_order
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: tdcore_server_0
+          relationship: tosca.relationships.network.BindsTo
+    tdcore_dpdk_0_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        subnetpoolid:
+          get_input: port_tdcore_dpdk_0_port_1_subnetpoolid
+        allowed_address_pairs:
+        - ip_address: 0.0.0.0/1
+        - ip_address: 128.0.0.0/1
+        - ip_address: ::/1
+        - ip_address: 8000::/1
+        network:
+          get_input: internal_dpdk_net_id
+        ip_requirements:
+          get_input: port_tdcore_dpdk_0_port_1_ip_requirements
+        security_groups:
+        - get_input: tdcore_security_group
+        network_role:
+          get_input: port_tdcore_dpdk_0_port_1_network_role
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - tdcore_dpdk_ips
+            - get_input: index
+        mac_requirements:
+          get_input: port_tdcore_dpdk_0_port_1_mac_requirements
+        name:
+          str_replace:
+            template: $PREFIX$DELeth1
+            params:
+              $PREFIX:
+                get_input:
+                - tdcore_names
+                - get_input: index
+              $DEL:
+                get_input: vcscf_name_delimeter
+        exCP_naming:
+          get_input: port_tdcore_dpdk_0_port_1_exCP_naming
+        vlan_requirements:
+          get_input: port_tdcore_dpdk_0_port_1_vlan_requirements
+        network_role_tag:
+          get_input: port_tdcore_dpdk_0_port_1_network_role_tag
+        order:
+          get_input: port_tdcore_dpdk_0_port_1_order
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: tdcore_server_0
+          relationship: tosca.relationships.network.BindsTo
+    tdcore_server_0:
+      type: org.openecomp.resource.vfc.compute.nodes.heat.tdcore
+      properties:
+        flavor:
+          get_input: tdcore_flavor_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: tdcore_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vm_role: tdcore
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        config_drive: true
+        user_data_format: RAW
+        name:
+          get_input:
+          - tdcore_names
+          - get_input: index
+        scheduler_hints:
+          group:
+            get_input: tdcore_server_group
+  groups:
+    nested_tdcore_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested_tdcore.yaml
+        description: IMS TDCORE VM
+      members:
+      - tdcore_internal_0_port_0
+      - tdcore_dpdk_0_port_1
+      - tdcore_server_0
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.tdcore
+    capabilities:
+      feature_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - feature
+      disk.write.requests.rate_tdcore_server_0:
+      - tdcore_server_0
+      - disk.write.requests.rate
+      disk.device.write.bytes_tdcore_server_0:
+      - tdcore_server_0
+      - disk.device.write.bytes
+      feature_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - feature
+      network.incoming.packets.rate_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - network.incoming.packets.rate
+      binding_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - binding
+      network.outgoing.bytes.rate_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - network.outgoing.bytes.rate
+      scalable_tdcore_server_0:
+      - tdcore_server_0
+      - scalable
+      network.incoming.packets_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - network.incoming.packets
+      vcpus_tdcore_server_0:
+      - tdcore_server_0
+      - vcpus
+      disk.allocation_tdcore_server_0:
+      - tdcore_server_0
+      - disk.allocation
+      network.incoming.bytes_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - network.incoming.bytes
+      network.outpoing.packets_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - network.outpoing.packets
+      memory.resident_tdcore_server_0:
+      - tdcore_server_0
+      - memory.resident
+      attachment_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - attachment
+      disk.root.size_tdcore_server_0:
+      - tdcore_server_0
+      - disk.root.size
+      host_tdcore_server_0:
+      - tdcore_server_0
+      - host
+      instance_tdcore_server_0:
+      - tdcore_server_0
+      - instance
+      disk.device.read.bytes.rate_tdcore_server_0:
+      - tdcore_server_0
+      - disk.device.read.bytes.rate
+      disk.latency_tdcore_server_0:
+      - tdcore_server_0
+      - disk.latency
+      disk.write.bytes_tdcore_server_0:
+      - tdcore_server_0
+      - disk.write.bytes
+      disk.iops_tdcore_server_0:
+      - tdcore_server_0
+      - disk.iops
+      disk.write.requests_tdcore_server_0:
+      - tdcore_server_0
+      - disk.write.requests
+      endpoint_tdcore_server_0:
+      - tdcore_server_0
+      - endpoint
+      disk.device.read.requests_tdcore_server_0:
+      - tdcore_server_0
+      - disk.device.read.requests
+      disk.device.write.requests_tdcore_server_0:
+      - tdcore_server_0
+      - disk.device.write.requests
+      network.outgoing.packets.rate_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - network.outgoing.packets.rate
+      disk.ephemeral.size_tdcore_server_0:
+      - tdcore_server_0
+      - disk.ephemeral.size
+      disk.read.requests_tdcore_server_0:
+      - tdcore_server_0
+      - disk.read.requests
+      network.outgoing.bytes_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - network.outgoing.bytes
+      memory_tdcore_server_0:
+      - tdcore_server_0
+      - memory
+      disk.device.write.bytes.rate_tdcore_server_0:
+      - tdcore_server_0
+      - disk.device.write.bytes.rate
+      disk.write.bytes.rate_tdcore_server_0:
+      - tdcore_server_0
+      - disk.write.bytes.rate
+      disk.device.capacity_tdcore_server_0:
+      - tdcore_server_0
+      - disk.device.capacity
+      network.outpoing.packets_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - network.outpoing.packets
+      disk.device.read.requests.rate_tdcore_server_0:
+      - tdcore_server_0
+      - disk.device.read.requests.rate
+      network.outgoing.bytes_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - network.outgoing.bytes
+      disk.read.bytes.rate_tdcore_server_0:
+      - tdcore_server_0
+      - disk.read.bytes.rate
+      network.incoming.packets.rate_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - network.incoming.packets.rate
+      memory.usage_tdcore_server_0:
+      - tdcore_server_0
+      - memory.usage
+      os_tdcore_server_0:
+      - tdcore_server_0
+      - os
+      disk.device.iops_tdcore_server_0:
+      - tdcore_server_0
+      - disk.device.iops
+      network.incoming.bytes_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - network.incoming.bytes
+      binding_tdcore_server_0:
+      - tdcore_server_0
+      - binding
+      disk.device.read.bytes_tdcore_server_0:
+      - tdcore_server_0
+      - disk.device.read.bytes
+      cpu.delta_tdcore_server_0:
+      - tdcore_server_0
+      - cpu.delta
+      network.outgoing.packets.rate_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - network.outgoing.packets.rate
+      network.incoming.bytes.rate_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - network.incoming.bytes.rate
+      disk.usage_tdcore_server_0:
+      - tdcore_server_0
+      - disk.usage
+      network.outgoing.bytes.rate_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - network.outgoing.bytes.rate
+      binding_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - binding
+      cpu_tdcore_server_0:
+      - tdcore_server_0
+      - cpu
+      feature_tdcore_server_0:
+      - tdcore_server_0
+      - feature
+      disk.device.write.requests.rate_tdcore_server_0:
+      - tdcore_server_0
+      - disk.device.write.requests.rate
+      attachment_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - attachment
+      disk.capacity_tdcore_server_0:
+      - tdcore_server_0
+      - disk.capacity
+      network.incoming.bytes.rate_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - network.incoming.bytes.rate
+      disk.device.allocation_tdcore_server_0:
+      - tdcore_server_0
+      - disk.device.allocation
+      disk.device.usage_tdcore_server_0:
+      - tdcore_server_0
+      - disk.device.usage
+      disk.read.bytes_tdcore_server_0:
+      - tdcore_server_0
+      - disk.read.bytes
+      disk.device.latency_tdcore_server_0:
+      - tdcore_server_0
+      - disk.device.latency
+      cpu_util_tdcore_server_0:
+      - tdcore_server_0
+      - cpu_util
+      network.incoming.packets_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - network.incoming.packets
+    requirements:
+      link_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - link
+      link_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - link
+      dependency_tdcore_server_0:
+      - tdcore_server_0
+      - dependency
+      dependency_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - dependency
+      dependency_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - dependency
+      local_storage_tdcore_server_0:
+      - tdcore_server_0
+      - local_storage

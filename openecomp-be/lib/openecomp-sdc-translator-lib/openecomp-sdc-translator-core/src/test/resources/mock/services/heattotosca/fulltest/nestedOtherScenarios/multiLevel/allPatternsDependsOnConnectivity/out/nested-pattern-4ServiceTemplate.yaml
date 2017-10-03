@@ -7,7 +7,7 @@ imports:
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 node_types:
-  org.openecomp.resource.vfc.nodes.heat.pd_server_pattern4:
+  org.openecomp.resource.vfc.compute.nodes.heat.pd_server_pattern4:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
@@ -122,7 +122,7 @@ topology_template:
         type: string
   node_templates:
     server_pd_pattern4:
-      type: org.openecomp.resource.vfc.nodes.heat.pd_server_pattern4
+      type: org.openecomp.resource.vfc.compute.nodes.heat.pd_server_pattern4
       properties:
         flavor:
           get_input: pd_server_pattern4_flavor

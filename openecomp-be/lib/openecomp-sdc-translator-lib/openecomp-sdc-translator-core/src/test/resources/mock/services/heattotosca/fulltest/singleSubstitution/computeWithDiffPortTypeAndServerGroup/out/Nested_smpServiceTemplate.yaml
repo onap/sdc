@@ -7,7 +7,7 @@ imports:
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 node_types:
-  org.openecomp.resource.vfc.nodes.heat.smp:
+  org.openecomp.resource.vfc.compute.nodes.heat.smp:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
@@ -121,7 +121,7 @@ topology_template:
           node: smp
           relationship: tosca.relationships.network.BindsTo
     smp:
-      type: org.openecomp.resource.vfc.nodes.heat.smp
+      type: org.openecomp.resource.vfc.compute.nodes.heat.smp
       properties:
         availability_zone:
           get_input:

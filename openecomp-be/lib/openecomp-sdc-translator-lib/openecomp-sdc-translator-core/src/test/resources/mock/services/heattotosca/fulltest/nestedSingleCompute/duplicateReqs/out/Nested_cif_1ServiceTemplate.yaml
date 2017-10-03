@@ -1,0 +1,881 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_cif_1
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.compute.nodes.heat.cif:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_cif_oam_1_port_1_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cif_ims_core_1_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_cif_oam_1_port_3_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_cif_oam_1_port_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_cif_oam_1_port_3_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cif_internal_1_port_subnetpoolid:
+      type: string
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    port_cif_oam_1_port_3_subnetpoolid:
+      type: string
+      required: true
+    vm_image_name:
+      type: string
+      required: true
+    compute_cif_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cif_oam_1_port_3_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
+    port_cif_oam_1_port_1_subnetpoolid:
+      type: string
+      required: true
+    compute_cif_scheduler_hints:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_cif_ims_li_1_port_order:
+      type: integer
+      required: true
+    port_cif_oam_1_port_3_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_cif_internal_1_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_cif_oam_1_port_1_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cif_internal_1_port_order:
+      type: integer
+      required: true
+    port_cif_ims_core_1_port_network_role_tag:
+      type: string
+      required: true
+    port_cif_ims_li_1_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_cif_ims_li_1_port_subnetpoolid:
+      type: string
+      required: true
+    port_cif_ims_li_1_port_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
+    port_cif_internal_1_port_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
+    port_cif_oam_1_port_3_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_cif_metadata:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_cif_ims_li_1_port_network_role:
+      type: string
+      required: true
+    port_cif_ims_core_1_port_order:
+      type: integer
+      required: true
+    port_cif_oam_1_port_3_order:
+      type: integer
+      required: true
+    port_cif_internal_1_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_cif_internal_1_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_cif_oam_1_port_1_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_cif_internal_1_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cif_ims_core_1_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cif_oam_1_port_3_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_cif_ims_li_1_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_cif_oam_1_port_3_network_role:
+      type: string
+      required: true
+    port_cif_internal_1_port_network_role:
+      type: string
+      required: true
+    port_cif_oam_1_port_1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_cif_oam_1_port_1_order:
+      type: integer
+      required: true
+    port_cif_ims_core_1_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_cif_ims_core_1_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_cif_oam_1_port_1_network_role:
+      type: string
+      required: true
+    port_cif_internal_1_port_network_role_tag:
+      type: string
+      required: true
+    compute_cif_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cif_oam_1_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    compute_cif_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cif_oam_1_port_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_cif_internal_1_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_cif_ims_li_1_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cif_internal_1_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cif_ims_li_1_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_cif_ims_li_1_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_cif_internal_1_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_cif_ims_li_1_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_cif_ims_li_1_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_cif_ims_core_1_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_cif_ims_core_1_port_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
+    port_cif_oam_1_port_1_network_role_tag:
+      type: string
+      required: true
+    port_cif_oam_1_port_3_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_cif_ims_core_1_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_cif_ims_li_1_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cif_ims_core_1_port_subnetpoolid:
+      type: string
+      required: true
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_cif_internal_1_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_cif_ims_core_1_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_cif_config_drive:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
+    port_cif_oam_1_port_3_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_cif_oam_1_port_3_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_cif_ims_li_1_port_network_role_tag:
+      type: string
+      required: true
+    port_cif_ims_core_1_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_cif_oam_1_port_1_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_cif_oam_1_port_1_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
+    port_cif_ims_core_1_port_network_role:
+      type: string
+      required: true
+    port_cif_oam_1_port_3_network_role_tag:
+      type: string
+      required: true
+  node_templates:
+    cif:
+      type: org.openecomp.resource.vfc.compute.nodes.heat.cif
+      properties:
+        availability_zone:
+          get_input:
+          - compute_cif_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        metadata:
+          get_input:
+          - compute_cif_metadata
+          - index_value
+        config_drive:
+          get_input:
+          - compute_cif_config_drive
+          - index_value
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_cif_name
+          - index_value
+        scheduler_hints:
+          get_input:
+          - compute_cif_scheduler_hints
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_cif_user_data_format
+          - index_value
+    cif_cif_ims_li_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_requirements:
+          get_input: port_cif_ims_li_1_port_mac_requirements
+        allowed_address_pairs:
+          get_input: port_cif_ims_li_1_port_allowed_address_pairs
+        order:
+          get_input: port_cif_ims_li_1_port_order
+        security_groups:
+          get_input:
+          - port_cif_ims_li_1_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_cif_ims_li_1_port_exCP_naming
+        vlan_requirements:
+          get_input: port_cif_ims_li_1_port_vlan_requirements
+        ip_requirements:
+          get_input: port_cif_ims_li_1_port_ip_requirements
+        network_role_tag:
+          get_input: port_cif_ims_li_1_port_network_role_tag
+        network_role:
+          get_input: port_cif_ims_li_1_port_network_role
+        subnetpoolid:
+          get_input: port_cif_ims_li_1_port_subnetpoolid
+        fixed_ips:
+          get_input: port_cif_ims_li_1_port_fixed_ips
+        name:
+          get_input:
+          - port_cif_ims_li_1_port_name
+          - index_value
+        network:
+          get_input:
+          - port_cif_ims_li_1_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cif
+          relationship: tosca.relationships.network.BindsTo
+    cif_cif_internal_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_requirements:
+          get_input: port_cif_internal_1_port_mac_requirements
+        allowed_address_pairs:
+          get_input: port_cif_internal_1_port_allowed_address_pairs
+        order:
+          get_input: port_cif_internal_1_port_order
+        security_groups:
+          get_input:
+          - port_cif_internal_1_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_cif_internal_1_port_exCP_naming
+        vlan_requirements:
+          get_input: port_cif_internal_1_port_vlan_requirements
+        ip_requirements:
+          get_input: port_cif_internal_1_port_ip_requirements
+        network_role_tag:
+          get_input: port_cif_internal_1_port_network_role_tag
+        network_role:
+          get_input: port_cif_internal_1_port_network_role
+        subnetpoolid:
+          get_input: port_cif_internal_1_port_subnetpoolid
+        fixed_ips:
+          get_input: port_cif_internal_1_port_fixed_ips
+        name:
+          get_input:
+          - port_cif_internal_1_port_name
+          - index_value
+        network:
+          get_input:
+          - port_cif_internal_1_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cif
+          relationship: tosca.relationships.network.BindsTo
+    cif_cif_oam_1_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_requirements:
+          get_input: port_cif_oam_1_port_1_mac_requirements
+        allowed_address_pairs:
+          get_input: port_cif_oam_1_port_1_allowed_address_pairs
+        order:
+          get_input: port_cif_oam_1_port_1_order
+        security_groups:
+          get_input:
+          - port_cif_oam_1_port_1_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_cif_oam_1_port_1_exCP_naming
+        vlan_requirements:
+          get_input: port_cif_oam_1_port_1_vlan_requirements
+        ip_requirements:
+          get_input: port_cif_oam_1_port_1_ip_requirements
+        network_role_tag:
+          get_input: port_cif_oam_1_port_1_network_role_tag
+        network_role:
+          get_input: port_cif_oam_1_port_1_network_role
+        subnetpoolid:
+          get_input: port_cif_oam_1_port_1_subnetpoolid
+        fixed_ips:
+          get_input: port_cif_oam_1_port_1_fixed_ips
+        name:
+          get_input:
+          - port_cif_oam_1_port_1_name
+          - index_value
+        network:
+          get_input:
+          - port_cif_oam_1_port_1_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cif
+          relationship: tosca.relationships.network.BindsTo
+    cif_cif_ims_core_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_requirements:
+          get_input: port_cif_ims_core_1_port_mac_requirements
+        allowed_address_pairs:
+          get_input: port_cif_ims_core_1_port_allowed_address_pairs
+        order:
+          get_input: port_cif_ims_core_1_port_order
+        security_groups:
+          get_input:
+          - port_cif_ims_core_1_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_cif_ims_core_1_port_exCP_naming
+        vlan_requirements:
+          get_input: port_cif_ims_core_1_port_vlan_requirements
+        ip_requirements:
+          get_input: port_cif_ims_core_1_port_ip_requirements
+        network_role_tag:
+          get_input: port_cif_ims_core_1_port_network_role_tag
+        network_role:
+          get_input: port_cif_ims_core_1_port_network_role
+        subnetpoolid:
+          get_input: port_cif_ims_core_1_port_subnetpoolid
+        fixed_ips:
+          get_input: port_cif_ims_core_1_port_fixed_ips
+        name:
+          get_input:
+          - port_cif_ims_core_1_port_name
+          - index_value
+        network:
+          get_input:
+          - port_cif_ims_core_1_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cif
+          relationship: tosca.relationships.network.BindsTo
+    cif_cif_oam_1_port_3:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_requirements:
+          get_input: port_cif_oam_1_port_3_mac_requirements
+        allowed_address_pairs:
+          get_input: port_cif_oam_1_port_3_allowed_address_pairs
+        order:
+          get_input: port_cif_oam_1_port_3_order
+        security_groups:
+          get_input:
+          - port_cif_oam_1_port_3_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_cif_oam_1_port_3_exCP_naming
+        vlan_requirements:
+          get_input: port_cif_oam_1_port_3_vlan_requirements
+        ip_requirements:
+          get_input: port_cif_oam_1_port_3_ip_requirements
+        network_role_tag:
+          get_input: port_cif_oam_1_port_3_network_role_tag
+        network_role:
+          get_input: port_cif_oam_1_port_3_network_role
+        subnetpoolid:
+          get_input: port_cif_oam_1_port_3_subnetpoolid
+        fixed_ips:
+          get_input: port_cif_oam_1_port_3_fixed_ips
+        name:
+          get_input:
+          - port_cif_oam_1_port_3_name
+          - index_value
+        network:
+          get_input:
+          - port_cif_oam_1_port_3_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cif
+          relationship: tosca.relationships.network.BindsTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.cif_1
+    capabilities:
+      binding_cif:
+      - cif
+      - binding
+      cpu_util_cif:
+      - cif
+      - cpu_util
+      disk.device.read.requests_cif:
+      - cif
+      - disk.device.read.requests
+      disk.device.write.bytes_cif:
+      - cif
+      - disk.device.write.bytes
+      disk.latency_cif:
+      - cif
+      - disk.latency
+      feature_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - feature
+      os_cif:
+      - cif
+      - os
+      memory.usage_cif:
+      - cif
+      - memory.usage
+      attachment_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - attachment
+      network.incoming.bytes.rate_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - network.incoming.bytes.rate
+      network.incoming.packets_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - network.incoming.packets
+      feature_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - feature
+      network.incoming.packets_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - network.incoming.packets
+      instance_cif:
+      - cif
+      - instance
+      network.incoming.bytes.rate_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - network.incoming.bytes.rate
+      network.outgoing.bytes_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - network.outgoing.bytes
+      network.outgoing.bytes_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - network.outgoing.bytes
+      network.outgoing.bytes_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - network.outgoing.bytes
+      disk.allocation_cif:
+      - cif
+      - disk.allocation
+      network.outgoing.bytes.rate_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - network.outgoing.bytes.rate
+      network.incoming.packets.rate_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - network.incoming.packets.rate
+      disk.device.iops_cif:
+      - cif
+      - disk.device.iops
+      feature_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - feature
+      disk.root.size_cif:
+      - cif
+      - disk.root.size
+      disk.device.write.requests_cif:
+      - cif
+      - disk.device.write.requests
+      feature_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - feature
+      memory.resident_cif:
+      - cif
+      - memory.resident
+      network.incoming.bytes.rate_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - network.incoming.bytes.rate
+      binding_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - binding
+      network.outgoing.bytes_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - network.outgoing.bytes
+      attachment_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - attachment
+      network.incoming.packets.rate_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - network.incoming.packets.rate
+      network.incoming.bytes_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - network.incoming.bytes
+      network.incoming.bytes_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - network.incoming.bytes
+      attachment_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - attachment
+      disk.usage_cif:
+      - cif
+      - disk.usage
+      disk.write.bytes.rate_cif:
+      - cif
+      - disk.write.bytes.rate
+      network.incoming.bytes_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - network.incoming.bytes
+      host_cif:
+      - cif
+      - host
+      disk.ephemeral.size_cif:
+      - cif
+      - disk.ephemeral.size
+      disk.write.requests.rate_cif:
+      - cif
+      - disk.write.requests.rate
+      cpu.delta_cif:
+      - cif
+      - cpu.delta
+      disk.read.bytes_cif:
+      - cif
+      - disk.read.bytes
+      network.incoming.packets.rate_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - network.incoming.packets.rate
+      network.outgoing.packets.rate_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - network.outgoing.packets.rate
+      scalable_cif:
+      - cif
+      - scalable
+      disk.device.read.requests.rate_cif:
+      - cif
+      - disk.device.read.requests.rate
+      binding_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - binding
+      feature_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - feature
+      binding_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - binding
+      disk.device.allocation_cif:
+      - cif
+      - disk.device.allocation
+      disk.device.read.bytes.rate_cif:
+      - cif
+      - disk.device.read.bytes.rate
+      vcpus_cif:
+      - cif
+      - vcpus
+      disk.device.write.bytes.rate_cif:
+      - cif
+      - disk.device.write.bytes.rate
+      network.outgoing.packets.rate_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - network.outgoing.packets.rate
+      network.incoming.bytes.rate_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - network.incoming.bytes.rate
+      endpoint_cif:
+      - cif
+      - endpoint
+      network.incoming.packets.rate_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - network.incoming.packets.rate
+      disk.device.usage_cif:
+      - cif
+      - disk.device.usage
+      disk.iops_cif:
+      - cif
+      - disk.iops
+      disk.read.bytes.rate_cif:
+      - cif
+      - disk.read.bytes.rate
+      network.outpoing.packets_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - network.outpoing.packets
+      attachment_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - attachment
+      network.outgoing.packets.rate_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - network.outgoing.packets.rate
+      network.incoming.bytes_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - network.incoming.bytes
+      network.outgoing.packets.rate_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - network.outgoing.packets.rate
+      disk.write.requests_cif:
+      - cif
+      - disk.write.requests
+      binding_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - binding
+      memory_cif:
+      - cif
+      - memory
+      disk.read.requests_cif:
+      - cif
+      - disk.read.requests
+      network.outgoing.packets.rate_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - network.outgoing.packets.rate
+      network.outgoing.bytes.rate_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - network.outgoing.bytes.rate
+      disk.write.bytes_cif:
+      - cif
+      - disk.write.bytes
+      network.outpoing.packets_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - network.outpoing.packets
+      disk.capacity_cif:
+      - cif
+      - disk.capacity
+      network.outgoing.bytes.rate_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - network.outgoing.bytes.rate
+      network.outpoing.packets_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - network.outpoing.packets
+      disk.device.capacity_cif:
+      - cif
+      - disk.device.capacity
+      network.outpoing.packets_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - network.outpoing.packets
+      network.incoming.packets.rate_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - network.incoming.packets.rate
+      binding_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - binding
+      network.incoming.packets_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - network.incoming.packets
+      cpu_cif:
+      - cif
+      - cpu
+      network.incoming.bytes_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - network.incoming.bytes
+      network.outgoing.bytes_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - network.outgoing.bytes
+      disk.device.read.bytes_cif:
+      - cif
+      - disk.device.read.bytes
+      disk.device.latency_cif:
+      - cif
+      - disk.device.latency
+      network.outgoing.bytes.rate_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - network.outgoing.bytes.rate
+      network.incoming.packets_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - network.incoming.packets
+      disk.device.write.requests.rate_cif:
+      - cif
+      - disk.device.write.requests.rate
+      network.outpoing.packets_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - network.outpoing.packets
+      feature_cif:
+      - cif
+      - feature
+      attachment_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - attachment
+      network.incoming.bytes.rate_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - network.incoming.bytes.rate
+      network.incoming.packets_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - network.incoming.packets
+    requirements:
+      dependency_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - dependency
+      dependency_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - dependency
+      dependency_cif:
+      - cif
+      - dependency
+      dependency_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - dependency
+      local_storage_cif:
+      - cif
+      - local_storage
+      link_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - link
+      link_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - link
+      dependency_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - dependency
+      dependency_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - dependency
+      link_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - link
+      link_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - link
+      link_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - link
