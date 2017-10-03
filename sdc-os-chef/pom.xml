@@ -67,9 +67,7 @@
                                 ${project.basedir}\sdc-cassandra\chef-repo\cookbooks\cassandra-actions\attributes\default.rb
                             </path>
                             <lines>
-                                <line>normal['version'] =
-                                    "${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"
-                                </line>
+                                <line>normal['version'] ="${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"</line>
                             </lines>
                         </file>
                     </files>
