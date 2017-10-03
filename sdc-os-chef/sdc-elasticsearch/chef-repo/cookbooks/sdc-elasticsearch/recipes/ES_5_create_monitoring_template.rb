@@ -20,6 +20,12 @@ ruby_block "check_ElasticSearch_Cluster_Health" do
    retry_delay 2
 end
 
+bash "echo status" do
+   code <<-EOH
+     echo "DOCKER STARTED"
+   EOH
+end
+
 bash "create monitoring mapping" do
 	code <<-EOH	
 		curl -i -X PUT -d '{ "order": 1, "template": "monitoring_events-*", "settings": {}, "mappings":

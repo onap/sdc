@@ -43,3 +43,9 @@ template "ssl-ini" do
    variables :https_port => "#{node['FE'][:https_port]}"
 end
 
+bash "echo status" do
+   code <<-EOH
+     echo "###### DOCKER STARTED #####"
+   EOH
+end
+

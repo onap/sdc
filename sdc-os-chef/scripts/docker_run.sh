@@ -22,6 +22,37 @@ function dir_perms {
 	chmod -R 777 /data/logs
 }
 
+function monitor_docker {
+
+echo monitor $1 Docker
+
+TIME_OUT=180
+INTERVAL=20
+TIME=0
+while [ "$TIME" -lt "$TIME_OUT" ]; do
+
+MATCH=`docker logs --tail 30 $1 | grep "DOCKER STARTED"`
+echo MATCH is -- $MATCH
+
+if [ -n "$MATCH" ]
+ then
+    echo DOCKER start finished in $TIME seconds
+    break
+  fi
+
+  echo Sleep: $INTERVAL seconds before testing if $1 DOCKER is up. Total wait time up now is: $TIME seconds. Timeout is: $TIME_OUT seconds
+  sleep $INTERVAL
+  TIME=$(($TIME+$INTERVAL))
+done
+
+if [ "$TIME" -ge "$TIME_OUT" ]
+ then
+   echo -e "\e[1;31mTIME OUT: DOCKER was NOT fully started in $TIME_OUT seconds... Could cause problems ...\e[0m"
+fi
+
+
+}
+
 
 RELEASE=latest
 LOCAL=false
@@ -57,7 +88,7 @@ while [ "$1" != "" ]; do
 			usage
             exit
             ;;
-        * ) 
+        * )
     		usage
             exit 1
     esac
@@ -97,15 +128,16 @@ docker run --detach --name sdc-cs --env RELEASE="${RELEASE}" --env ENVNAME="${DE
 
 
 echo "please wait while CS is starting..."
-echo ""
-c=120 # seconds to wait
-REWRITE="\e[25D\e[1A\e[K"
-while [ $c -gt 0 ]; do
-    c=$((c-1))
-    sleep 1
-    echo -e "${REWRITE}$c"
-done
-echo -e ""
+monitor_docker sdc-cs
+#echo ""
+#c=120 # seconds to wait
+#REWRITE="\e[25D\e[1A\e[K"
+#while [ $c -gt 0 ]; do
+#    c=$((c-1))
+#    sleep 1
+#    echo -e "${REWRITE}$c"
+#done
+#echo -e "
 
 # kibana
 echo "docker run sdc-kibana..."
@@ -124,15 +156,18 @@ fi
 docker run --detach --name sdc-BE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 4g --memory-swap=4g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/BE/:/var/lib/jetty/logs  --volume /data/environments:/root/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${PREFIX}/sdc-backend:${RELEASE}
 
 echo "please wait while BE is starting..."
-echo ""
-c=45 # seconds to wait
-REWRITE="\e[45D\e[1A\e[K"
-while [ $c -gt 0 ]; do
-    c=$((c-1))
-    sleep 1
-    echo -e "${REWRITE}$c"
-done
-echo -e ""
+monitor_docker sdc-BE
+#echo ""
+#c=45 # seconds to wait
+#REWRITE="\e[45D\e[1A\e[K"
+#while [ $c -gt 0 ]; do
+#    c=$((c-1))
+#    sleep 1
+#    echo -e "${REWRITE}$c"
+#done
+#echo -e ""
+
+
 
 
 # Front-End
@@ -141,6 +176,10 @@ if [ ${LOCAL} = false ]; then
 	docker pull ${PREFIX}/sdc-frontend:${RELEASE}
 fi
 docker run --detach --name sdc-FE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 2g --memory-swap=2g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro  --volume /data/logs/FE/:/var/lib/jetty/logs --volume /data/environments:/root/chef-solo/environments --publish 9443:9443 --publish 8181:8181 ${PREFIX}/sdc-frontend:${RELEASE}
+
+echo "docker run sdc-frontend..."
+monitor_docker sdc-FE
+
 
 
 
