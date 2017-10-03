@@ -20,10 +20,12 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.Environment;
@@ -41,6 +43,7 @@ import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaGroupType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.GroupDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
@@ -48,6 +51,7 @@ import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
+import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
@@ -57,6 +61,7 @@ import org.openecomp.sdc.translator.services.heattotosca.errors.ResourceNotFound
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaParameterConverter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -108,18 +113,24 @@ public class TranslationService {
       }
     }
 
-    ToscaServiceModel toscaServiceModel =
-        HeatToToscaUtil.createToscaServiceModel(mainServiceTemplate, translationContext);
+    try {
+      ToscaServiceModel toscaServiceModel =
+          HeatToToscaUtil.createToscaServiceModel(mainServiceTemplate, translationContext);
 
-    TranslatorOutput translatorOutput = new TranslatorOutput();
-    //Keeping a copy of tosca service model after first stage of translation for extraction of
-    // composition data
-    translatorOutput.setNonUnifiedToscaServiceModel(
-        ToscaServiceModel.getClonedServiceModel(toscaServiceModel));
-    translatorOutput.setToscaServiceModel(toscaServiceModel);
+      TranslatorOutput translatorOutput = new TranslatorOutput();
+      //Keeping a copy of tosca service model after first stage of translation for extraction of
+      // composition data
+      translatorOutput.setNonUnifiedToscaServiceModel(
+          ToscaServiceModel.getClonedServiceModel(toscaServiceModel));
+      translatorOutput.setToscaServiceModel(toscaServiceModel);
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
-    return translatorOutput;
+      mdcDataDebugMessage.debugExitMessage(null, null);
+      return translatorOutput;
+    } catch (IOException ioe){
+      ErrorCode error = new ErrorCode.ErrorCodeBuilder().withMessage("Cannot create Tosca " +
+          "service model. reason : " + ioe.getMessage()).build();
+      throw new CoreException(error, ioe);
+    }
   }
 
   private ServiceTemplate createMainServiceTemplate(TranslationContext translationContext) {
@@ -213,15 +224,52 @@ public class TranslationService {
       groupDefinition.getProperties().put(Constants.DESCRIPTION_PROPERTY_NAME, hotDescription);
     }
     groupDefinition.setMembers(new ArrayList<>());
-    Map<String, Set<String>> heatStackGroupMembers = context.getHeatStackGroupMembers();
-    if (heatStackGroupMembers.get(fileName) == null) {
+    Set<String> heatStackGroupMembersIds = getHeatStackGroupMembers(fileName,
+        serviceTemplate, context);
+    if (CollectionUtils.isEmpty(heatStackGroupMembersIds)) {
       return; //not creating a group when no resources are present in the heat input
     }
-    groupDefinition.getMembers().addAll(heatStackGroupMembers.get(fileName));
+    groupDefinition.getMembers().addAll(heatStackGroupMembersIds);
     DataModelUtil
         .addGroupDefinitionToTopologyTemplate(serviceTemplate, heatStackGroupId, groupDefinition);
 
     mdcDataDebugMessage.debugExitMessage(null, null);
+  }
+
+  private Set<String> getHeatStackGroupMembers(String heatFileName,
+                                                            ServiceTemplate serviceTemplate,
+                                                            TranslationContext context){
+
+    Map<String, Set<String>> heatStackGroupMembers = context.getHeatStackGroupMembers();
+    Set<String> groupMembers = MapUtils.isEmpty(heatStackGroupMembers) ? new HashSet<>()
+        : heatStackGroupMembers.get(heatFileName);
+
+    if(CollectionUtils.isEmpty(groupMembers)){
+      return new HashSet<>();
+    }
+
+    Set<String> updatedMembersIds = new HashSet<>();
+
+    groupMembers.forEach(member -> {
+      if (Objects.nonNull(DataModelUtil.getNodeTemplate(serviceTemplate, member))) {
+        updatedMembersIds.add(member);
+      } else {
+        updateSubstitutableGroupMemberId(heatFileName, serviceTemplate, updatedMembersIds);
+      }
+    });
+
+    return updatedMembersIds;
+  }
+
+  private void updateSubstitutableGroupMemberId(String heatFileName,
+                                                ServiceTemplate serviceTemplate,
+                                                Set<String> updatedMembersIds) {
+    Optional<String> substitutableGroupMemberId =
+        ToscaUtil.getSubstitutableGroupMemberId(heatFileName, serviceTemplate);
+
+    if (substitutableGroupMemberId.isPresent()) {
+      updatedMembersIds.add(substitutableGroupMemberId.get());
+    }
   }
 
   private void translateInputParameters(ServiceTemplate serviceTemplate,
