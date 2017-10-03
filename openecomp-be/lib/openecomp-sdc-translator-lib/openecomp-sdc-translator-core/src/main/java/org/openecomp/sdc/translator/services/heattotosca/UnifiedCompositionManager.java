@@ -11,6 +11,7 @@ import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.FileNestedConsolidationData;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -38,7 +39,8 @@ public class UnifiedCompositionManager {
    * @return the tosca service model
    */
   public ToscaServiceModel createUnifiedComposition(ToscaServiceModel toscaServiceModel,
-                                                    TranslationContext translationContext) {
+                                                    TranslationContext translationContext)
+      throws IOException {
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
     Map<String, ServiceTemplate> serviceTemplates = toscaServiceModel.getServiceTemplates();

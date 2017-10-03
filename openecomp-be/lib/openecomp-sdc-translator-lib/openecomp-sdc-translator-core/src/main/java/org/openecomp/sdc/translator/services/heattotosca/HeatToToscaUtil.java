@@ -86,6 +86,7 @@ import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypes
 import org.openecomp.sdc.translator.services.heattotosca.helper.FunctionTranslationHelper;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -114,7 +115,7 @@ public class HeatToToscaUtil {
    * @return the translator output
    */
   public static TranslatorOutput loadAndTranslateTemplateData(
-      FileContentHandler fileNameContentMap) {
+      FileContentHandler fileNameContentMap) throws IOException {
     mdcDataDebugMessage.debugEntryMessage(null, null);
     HeatToToscaTranslator heatToToscaTranslator =
         HeatToToscaTranslatorFactory.getInstance().createInterface();
@@ -139,11 +140,13 @@ public class HeatToToscaUtil {
     heatToToscaTranslator.addExternalArtifacts(SdcCommon.HEAT_META, structureFile);
 
     mdcDataDebugMessage.debugExitMessage(null, null);
+    structureFile.close();
     return heatToToscaTranslator.translate();
   }
 
 
-  private static InputStream getHeatStructureTreeFile(FileContentHandler fileNameContentMap) {
+  private static InputStream getHeatStructureTreeFile(FileContentHandler fileNameContentMap)
+      throws IOException {
     HeatTreeManager heatTreeManager = HeatTreeManagerUtil.initHeatTreeManager(fileNameContentMap);
     heatTreeManager.createTree();
     HeatStructureTree tree = heatTreeManager.getTree();
@@ -1432,7 +1435,8 @@ public class HeatToToscaUtil {
 
   public static ToscaServiceModel createToscaServiceModel(ServiceTemplate
                                                               entryDefinitionServiceTemplate,
-                                                          TranslationContext translationContext) {
+                                                          TranslationContext translationContext)
+      throws IOException {
 
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
@@ -1443,7 +1447,8 @@ public class HeatToToscaUtil {
         ToscaUtil.getServiceTemplateFileName(entryDefinitionServiceTemplate));
   }
 
-  private static FileContentHandler getCsarArtifactFiles(TranslationContext translationContext) {
+  private static FileContentHandler getCsarArtifactFiles(TranslationContext translationContext)
+      throws IOException {
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
 

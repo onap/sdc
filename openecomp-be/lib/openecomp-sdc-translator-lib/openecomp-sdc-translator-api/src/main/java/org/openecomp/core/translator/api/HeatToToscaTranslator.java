@@ -24,6 +24,7 @@ package org.openecomp.core.translator.api;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ public interface HeatToToscaTranslator {
   //             value - the error code
   Map<String, List<ErrorMessage>> validate();
 
-  TranslatorOutput translate();
+  TranslatorOutput translate() throws IOException;
 
   void addExternalArtifacts(String name, byte[] content);
 

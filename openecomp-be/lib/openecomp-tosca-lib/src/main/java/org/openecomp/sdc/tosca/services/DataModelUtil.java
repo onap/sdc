@@ -198,6 +198,16 @@ public class DataModelUtil {
     mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
+  public static Map<String, NodeTemplate> getNodeTemplates(ServiceTemplate serviceTemplate){
+    if (Objects.isNull(serviceTemplate)
+        || Objects.isNull(serviceTemplate.getTopology_template())
+        || MapUtils.isEmpty(serviceTemplate.getTopology_template().getNode_templates())){
+      return new HashMap<>();
+    }
+
+    return serviceTemplate.getTopology_template().getNode_templates();
+  }
+
   /**
    * Add node template.
    *

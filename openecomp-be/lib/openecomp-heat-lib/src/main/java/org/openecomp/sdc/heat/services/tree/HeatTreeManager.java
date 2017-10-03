@@ -35,6 +35,7 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,7 +79,7 @@ public class HeatTreeManager {
   /**
    * Create tree.
    */
-  public void createTree() {
+  public void createTree() throws IOException {
     if (manifest == null) {
       logger.error("Missing manifest file in the zip.");
       return;
@@ -119,8 +120,9 @@ public class HeatTreeManager {
   }
 
 
-  private void handleHeatContentReference(String filename, HeatStructureTree fileHeatStructureTree,
-                                          GlobalValidationContext globalContext) {
+  private void handleHeatContentReference(HeatStructureTree fileHeatStructureTree,
+                                          GlobalValidationContext globalContext)
+      throws IOException {
 
     String fileName = fileHeatStructureTree.getFileName();
     InputStream fileContent = this.heatContentMap.getFileContent(fileName);
@@ -131,13 +133,15 @@ public class HeatTreeManager {
       HeatOrchestrationTemplate hot =
           new YamlUtil().yamlToObject(fileContent, HeatOrchestrationTemplate.class);
 
-      Set<String> nestedSet = HeatTreeManagerUtil.getNestedFiles(filename, hot, globalContext);
+      Set<String> nestedSet = HeatTreeManagerUtil.getNestedFiles(fileName, hot, globalContext);
       addHeatNestedFiles(fileHeatStructureTree, nestedSet);
 
-      Set<String> artifactSet = HeatTreeManagerUtil.getArtifactFiles(filename, hot, globalContext);
+      Set<String> artifactSet = HeatTreeManagerUtil.getArtifactFiles(fileName, hot, globalContext);
       addHeatArtifactFiles(fileHeatStructureTree, artifactSet);
     } catch (Exception ignore) { /* invalid yaml no need to process reference */
       logger.debug("",ignore);
+    } finally {
+      fileContent.close();
     }
   }
 
@@ -196,7 +200,7 @@ public class HeatTreeManager {
    * @param parent the parent
    * @param data   the data
    */
-  public void scanTree(String parent, List<FileData> data) {
+  public void scanTree(String parent, List<FileData> data) throws IOException {
     String fileName;
     FileData.Type type;
     HeatStructureTree parentHeatStructureTree;
@@ -224,7 +228,7 @@ public class HeatTreeManager {
         fileHeatStructureTree.setFileName(fileName);
         fileHeatStructureTree.setBase(fileData.getBase());
         fileHeatStructureTree.setType(type);
-        handleHeatContentReference(null, fileHeatStructureTree, null);
+        handleHeatContentReference(fileHeatStructureTree, null);
         parentHeatStructureTree.addHeatToHeatList(fileHeatStructureTree);
         if (fileData.getData() != null) {
           scanTree(fileName, fileData.getData());
@@ -244,6 +248,7 @@ public class HeatTreeManager {
           if (fileData.getData() != null) {
             scanTree(fileName, fileData.getData());
           }
+          handleHeatContentReference(childHeatStructureTree, null);
 
         } else if (FileData.Type.HEAT_VOL.equals(type)) {
           //parentHeatStructureTree.addVolumeFileToVolumeList(childHeatStructureTree);
@@ -251,6 +256,7 @@ public class HeatTreeManager {
           if (fileData.getData() != null) {
             scanTree(fileName, fileData.getData());
           }
+          handleHeatContentReference(childHeatStructureTree, null);
         } else if (FileData.Type.HEAT_ENV.equals(type)) {
           if (parentHeatStructureTree != null && parentHeatStructureTree.getFileName() != null) {
             parentHeatStructureTree.setEnv(childHeatStructureTree);

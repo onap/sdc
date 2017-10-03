@@ -42,6 +42,7 @@ import org.openecomp.sdc.translator.services.heattotosca.TranslationService;
 import org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionManager;
 import org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionService;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -101,7 +102,7 @@ public class HeatToToscaTranslatorImpl implements HeatToToscaTranslator {
   }
 
   @Override
-  public TranslatorOutput translate() {
+  public TranslatorOutput translate() throws IOException {
     TranslationService translationService = new TranslationService();
     TranslatorOutput translatorOutput = new TranslatorOutput();
     UnifiedCompositionManager unifiedCompositionManager = new UnifiedCompositionManager(new
