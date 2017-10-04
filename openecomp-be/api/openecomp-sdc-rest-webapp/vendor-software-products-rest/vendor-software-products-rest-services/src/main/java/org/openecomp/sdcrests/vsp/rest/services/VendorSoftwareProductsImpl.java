@@ -48,7 +48,15 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.*;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.OnboardingMethod;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.PackageInfoDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.ValidationResponseDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VersionSoftwareProductActionRequestDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspComputeDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspCreationDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
 import org.openecomp.sdcrests.vsp.rest.VendorSoftwareProducts;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapComputeEntityToVspComputeDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapPackageInfoToPackageInfoDto;
@@ -69,6 +77,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import static org.openecomp.sdc.logging.messages.AuditMessages.SUBMIT_VSP_ERROR;
 
@@ -94,8 +103,9 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         + vspDescriptionDto.getName());
 
     VspCreationDto vspCreationDto = null;
-    OnboardingMethod onboardingMethod = OnboardingMethod.valueOf(vspDescriptionDto.getOnboardingMethod());
-    if (onboardingMethod == null){
+    OnboardingMethod onboardingMethod =
+        OnboardingMethod.valueOf(vspDescriptionDto.getOnboardingMethod());
+    if (onboardingMethod == null) {
       return handleUnkownOnboardingMethod();
     }
     switch (onboardingMethod) {
@@ -155,7 +165,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     VersionInfo versionInfo = getVersionInfo(vspId, VersionableEntityAction.Read, user);
 
-    //
+
     if (vspDetails.getOldVersion() != null && !"".equals(vspDetails.getOldVersion())) {
       if (Version.valueOf(versionId).equals(versionInfo.getActiveVersion())) {
         try {
@@ -393,47 +403,80 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.RESUBMIT_ALL_FINAL_VSPS);
 
 
+    int healingCounter = 0;
+    int failedCounter = 0;
+    int nullOnboardingMethodCounter = 0;
+    int finalVersionCounter=0;
+
     List<VersionedVendorSoftwareProductInfo> vspList =
         vendorSoftwareProductManager.listVsps(null, user);
+    try {
 
-    for (VersionedVendorSoftwareProductInfo versionVspInfo : vspList) {
-      String vspId = versionVspInfo.getVspDetails().getId();
-      if (versionVspInfo.getVersionInfo().getStatus().equals(VersionStatus.Final)) {
-        final Version latestFinalVersion =
-            getVersionInfo(vspId, VersionableEntityAction.Read, user).getLatestFinalVersion();
-        if (latestFinalVersion != null) {
-          reSubmit(vspId, user);
+      logger.info("Total number of Vsps: " + vspList.size() + "\n");
+      logger.info("Performing healing & resubmit for All non-Manual Vsps in submitted status.\n");
+
+      for (VersionedVendorSoftwareProductInfo versionVspInfo : vspList) {
+        String vspId = versionVspInfo.getVspDetails().getId();
+        if (versionVspInfo.getVersionInfo().getStatus().equals(VersionStatus.Final)) {
+          finalVersionCounter ++;
+          final Version latestFinalVersion =
+              getVersionInfo(vspId, VersionableEntityAction.Read, user).getLatestFinalVersion();
+          final String onboardingMethod = versionVspInfo.getVspDetails().getOnboardingMethod();
+          if (Objects.isNull(onboardingMethod)) {
+            nullOnboardingMethodCounter++;
+          }
+          if ((Objects.nonNull(latestFinalVersion) && Objects.nonNull(versionVspInfo
+              .getVspDetails()))) {
+            if (Objects.isNull(onboardingMethod) || !onboardingMethod.equals("Manual")) {
+              reSubmit(vspId, user, latestFinalVersion.toString());
+              healingCounter++;
+            }
+          }
         }
       }
+    } catch (Exception e) {
+      logger.error("Failed during resubmitAll", e);
+      failedCounter++;
     }
+
+    logger.info("\n***Finished attempted healing & resubmit for " + healingCounter + " Vsps out " +
+        "of total # of " + finalVersionCounter + " submitted VSPs. See other details below & " +
+        "please check the error " +
+        "log for additional failures***");
+    logger.info("\n Failed during resubmitAll: " + failedCounter);
+    logger.info("Vsps with null onboarding method prior to healing:" + nullOnboardingMethodCounter);
+
 
     return Response.ok().build();
   }
 
   @Override
-  public Response reSubmit(String vspId, String user)
-      throws IOException {
-    MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Checkout_VSP.toString());
-    vendorSoftwareProductManager.checkout(vspId, user);
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CHECK_OUT_VSP + vspId);
+  public Response reSubmit(String vspId, String user,
+                           String latestFinalVersion) {
+    String startMessage = "Starting on healing & resubmit for Vsp id[ " + vspId + " ]";
+    long startTime = System.currentTimeMillis();
+    System.out.println(startMessage);
+    logger.info(startMessage);
+    VspDetails vspDetails =
+        vendorSoftwareProductManager
+            .getVsp(vspId,
+                resolveVspVersion(vspId, latestFinalVersion, user, VersionableEntityAction.Read),
+                user);
 
-    MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Checkin_VSP.toString());
-    vendorSoftwareProductManager.checkin(vspId, user);
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CHECK_IN_VSP + vspId);
-
-    MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Submit_VSP.toString());
-    ValidationResponse validationResponse = vendorSoftwareProductManager.submit(vspId, user);
-    if (!validationResponse.isValid()) {
-      logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP_FAIL + vspId);
-      logAuditErrors(vspId, validationResponse);
-
-      return Response.status(Response.Status.EXPECTATION_FAILED).entity(
-          new MapValidationResponseToDto()
-              .applyMapping(validationResponse, ValidationResponseDto.class)).build();
+    try {
+      vendorSoftwareProductManager.healAndAdvanceFinalVersion(vspId, vspDetails, user);
+    } catch (Exception e) {
+      logger.error("Failed during healAndAdvanceFinalVersion , Vsp Id[ " + vspId + " ]:", e);
     }
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP + vspId);
 
+    long endTime = System.currentTimeMillis();
+    long seconds = (endTime - startTime) / 1000;
 
+    final String completedMessage = "Completed healing & resubmit for Vsp id[ " + vspId + " ], " +
+        "duration : "
+        + seconds + " seconds";
+    logger.info(completedMessage);
+    System.out.println(completedMessage);
     return Response.ok().build();
   }
 
@@ -449,7 +492,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
   }
 
-  private static void printAuditForErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
+  private static void printAuditForErrors(List<ErrorMessage> errorList, String vspId,
+                                          String auditType) {
     errorList.forEach(errorMessage -> {
       if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
         logger.audit(AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(),

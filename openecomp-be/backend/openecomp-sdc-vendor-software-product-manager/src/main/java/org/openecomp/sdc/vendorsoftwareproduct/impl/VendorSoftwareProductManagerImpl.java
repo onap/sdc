@@ -634,7 +634,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     try {
       validateUniqueName(VALIDATION_VSP_NAME);
     } catch (Exception ignored) {
-      logger.debug("",ignored);
+      logger.debug("", ignored);
       return VALIDATION_VSP_ID;
     }
     VspDetails validationVsp = new VspDetails();
@@ -708,7 +708,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
           vsps.add(new VersionedVendorSoftwareProductInfo(vsp, versionInfo));
         }
       } catch (RuntimeException rte) {
-        logger.debug("",rte);
+        logger.debug("", rte);
         logger.error(
             "Error trying to retrieve vsp[" + entry.getKey() + "] version[" + version.toString
                 () + "] " +
@@ -789,13 +789,14 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       throw new CoreException(new VendorSoftwareProductNotFoundErrorBuilder(vspId).build());
     }
     vsp.setValidationData(orchestrationTemplateDao.getValidationData(vspId, version));
+    if (!vsp.getOnboardingMethod().equals("Manual")) {
+      if (Objects.isNull(vsp.getOnboardingOrigin())) {
+        vsp.setOnboardingOrigin(OnboardingTypesEnum.ZIP.toString());
+      }
 
-    if (Objects.isNull(vsp.getOnboardingOrigin())) {
-      vsp.setOnboardingOrigin(OnboardingTypesEnum.ZIP.toString());
-    }
-
-    if (Objects.isNull(vsp.getNetworkPackageName())) {
-      vsp.setNetworkPackageName("Upload File");
+      if (Objects.isNull(vsp.getNetworkPackageName())) {
+        vsp.setNetworkPackageName("Upload File");
+      }
     }
 
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
@@ -818,22 +819,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         autoHeal(vspId, checkoutVersion, vendorSoftwareProductInfo, user);
         return checkin(vspId, user);
       case Final:
-        Version checkoutFinalVersion = checkout(vspId, user);
-        autoHeal(vspId, checkoutFinalVersion, vendorSoftwareProductInfo, user);
-        Version checkinFinalVersion = checkin(vspId, user);
-        ValidationResponse response = submit(vspId, user);
-        if (!response.isValid()) {
-          return checkout(vspId, user);
-        }
-
-        try {
-          Version finalVersion = checkinFinalVersion.calculateNextFinal();
-          createPackage(vspId, finalVersion, user);
-          return finalVersion;
-        } catch (IOException ex) {
-          logger.debug("",ex);
-          throw new Exception(ex.getMessage());
-        }
+        return healAndAdvanceFinalVersion(vspId, vendorSoftwareProductInfo, user);
       default:
         //do nothing
         break;
@@ -841,7 +827,37 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     return versionInfo.getActiveVersion();
   }
 
-  @Override
+  public Version healAndAdvanceFinalVersion(String vspId, VspDetails vendorSoftwareProductInfo,
+                                            String user) {
+    Version checkoutFinalVersion = checkout(vspId, user);
+    try {
+      autoHeal(vspId, checkoutFinalVersion, vendorSoftwareProductInfo, user);
+    } catch (Exception e) {
+      logger.error("Failed during autoHeal , Vsp Id[ " + vspId + " ]" ,e);
+    }
+    Version checkinFinalVersion = checkin(vspId, user);
+    ValidationResponse response = null;
+    try {
+      response = submit(vspId, user);
+    } catch (IOException e) {
+      logger.error("Failed during submit package post-autoHeal , Vsp Id[ " + vspId + " ]",e);
+
+    }
+    if ((response!=null && !response.isValid())) {
+      return checkout(vspId, user);
+    }
+
+    try {
+      Version finalVersion = checkinFinalVersion.calculateNextFinal();
+      createPackage(vspId, finalVersion, user);
+      return finalVersion;
+    } catch (IOException ex) {
+      logger.error("Failed during create package post-autoHeal , Vsp Id[ " + vspId + " ]",ex);
+      return null;
+
+    }
+  }
+
 
   public void deleteVsp(String vspId, String user) {
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
@@ -869,6 +885,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     Optional<String> errorMessages =
         healingManager.healAll(getHealingParamsAsMap(vspId, version, user));
 
+//    version.setStatus(VersionStatus.Available);
     VspDetails vspDetails = new VspDetails(vspId, version);
     vspDetails.setOldVersion(null);
     vspInfoDao.updateOldVersionIndication(vspDetails);

@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-public interface  VendorSoftwareProductManager {
+public interface VendorSoftwareProductManager {
 
   Version checkout(String vendorSoftwareProductId, String user);
 
@@ -78,4 +78,8 @@ public interface  VendorSoftwareProductManager {
   String fetchValidationVsp(String user);
 
   Collection<ComputeEntity> getComputeByVsp(String vspId, Version version, String user);
+
+  Version healAndAdvanceFinalVersion(String vspId, VspDetails vendorSoftwareProductInfo,
+                                     String user) ;
+
 }
