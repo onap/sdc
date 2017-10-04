@@ -166,3 +166,5 @@ sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
 
 
 /common/openecomp-common-configuration-management/openecomp-configuration-management-cli/dependency-reduced-pom.xml
+
+/sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/tools/*

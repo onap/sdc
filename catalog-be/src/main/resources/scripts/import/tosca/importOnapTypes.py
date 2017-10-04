@@ -21,7 +21,12 @@ import importCommon
 
 def importOnapTypes(beHost, bePort, adminUser, fileDir, updateversion):
 	
-	onapTypes = [ "vduCompute",
+	onapTypes = [ "extImageFile",
+	              "extLocalStorage",
+	              "extZteCP",
+	              "extZteVDU",
+	              "extZteVL",
+	              "vduCompute",
 				  "vduCpd",
 				  "vduVirtualStorage",
 				  "vnfVirtualLinkDesc"
