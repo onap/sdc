@@ -1,5 +1,6 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
-node_types: 
+node_types:
+  tosca.nodes.nfv.ext.zte.VDU:
     derived_from: tosca.nodes.Root
     properties: 
       manual_scale_select_vim: 
