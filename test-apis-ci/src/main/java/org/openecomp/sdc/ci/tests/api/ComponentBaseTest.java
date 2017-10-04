@@ -129,6 +129,7 @@ public abstract class ComponentBaseTest {
 
 		boolean emptyDataProvider = method.getAnnotation(Test.class).dataProvider().isEmpty();
 		String className = method.getDeclaringClass().getName();
+		System.out.println(" method.getName() " + method.getName());
 		if (!method.getName().equals("onboardVNFShotFlow"))  {
 			System.out.println("ExtentReport instance started from BeforeMethod...");
 			ExtentTestManager.startTest(method.getName());
