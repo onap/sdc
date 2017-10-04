@@ -611,41 +611,6 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeScope>compile</includeScope>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-installed</id>
-						<phase>install</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>${project.artifactId}</artifactId>
-									<version>${project.version}</version>
-									<type>${project.packaging}</type>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-backend/</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
 				<groupId>com.jcabi</groupId>
 				<artifactId>jcabi-maven-plugin</artifactId>
 				<version>${jcabi.plugin.version}</version>
@@ -662,25 +627,6 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.6</version>
 				<executions>
-					<execution>
-						<id>copy-normatives</id>
-						<phase>install</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-normatives/files/default</outputDirectory>
-							<resources>
-								<resource>
-									<directory>./target</directory>
-									<includes>
-										<include>normatives.tar.gz</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					
           			<execution>
             			<id>copy-tosca-folder</id>
             			<!-- here the phase you need -->
