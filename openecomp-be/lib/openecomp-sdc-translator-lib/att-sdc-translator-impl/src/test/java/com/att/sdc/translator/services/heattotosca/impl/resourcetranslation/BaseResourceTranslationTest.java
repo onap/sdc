@@ -88,7 +88,7 @@ public class BaseResourceTranslationTest {
   private final String MANIFEST_NAME = SdcCommon.MANIFEST_NAME;
   private String validationFilename = "validationOutput.json";
 
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+  //private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   @Before
   public void setUp() throws IOException {
@@ -290,7 +290,7 @@ public class BaseResourceTranslationTest {
       }
 
     } catch (Exception e) {
-      log.debug("",e);
+      //log.debug("",e);
       Assert.fail(e.getMessage());
     }
     return serviceTemplateMap;
