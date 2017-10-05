@@ -163,7 +163,6 @@
                     <includes>
                         <include>test/core/unittest/offline/**</include>
                     </includes>
-                    <skipTests>true</skipTests>
                     <systemProperties>
                         <property>
                             <name>buildNumber</name>

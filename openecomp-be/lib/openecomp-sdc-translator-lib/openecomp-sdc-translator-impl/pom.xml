@@ -59,7 +59,6 @@
                     <systemPropertyVariables>
                         <config.location>${project.basedir}/configuration</config.location>
                     </systemPropertyVariables>
-					<skipTests>true</skipTests>
                 </configuration>
             </plugin>
         </plugins>
