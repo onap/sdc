@@ -45,10 +45,17 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.VersionedVendorSoftwareProductInfo;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.*;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.OnboardingMethod;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.PackageInfoDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.ValidationResponseDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VersionSoftwareProductActionRequestDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspComputeDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspCreationDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
 import org.openecomp.sdcrests.vsp.rest.VendorSoftwareProducts;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapComputeEntityToVspComputeDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapPackageInfoToPackageInfoDto;
@@ -69,6 +76,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import static org.openecomp.sdc.logging.messages.AuditMessages.SUBMIT_VSP_ERROR;
 
@@ -94,8 +102,9 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         + vspDescriptionDto.getName());
 
     VspCreationDto vspCreationDto = null;
-    OnboardingMethod onboardingMethod = OnboardingMethod.valueOf(vspDescriptionDto.getOnboardingMethod());
-    if (onboardingMethod == null){
+    OnboardingMethod onboardingMethod =
+        OnboardingMethod.valueOf(vspDescriptionDto.getOnboardingMethod());
+    if (onboardingMethod == null) {
       return handleUnkownOnboardingMethod();
     }
     switch (onboardingMethod) {
@@ -155,7 +164,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     VersionInfo versionInfo = getVersionInfo(vspId, VersionableEntityAction.Read, user);
 
-    //
+
     if (vspDetails.getOldVersion() != null && !"".equals(vspDetails.getOldVersion())) {
       if (Version.valueOf(versionId).equals(versionInfo.getActiveVersion())) {
         try {
@@ -393,63 +402,77 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.RESUBMIT_ALL_FINAL_VSPS);
 
 
-    List<VersionedVendorSoftwareProductInfo> vspList =
-        vendorSoftwareProductManager.listVsps(null, user);
+    int healingCounter = 0;
+    int failedCounter = 0;
 
-    for (VersionedVendorSoftwareProductInfo versionVspInfo : vspList) {
-      String vspId = versionVspInfo.getVspDetails().getId();
-      if (versionVspInfo.getVersionInfo().getStatus().equals(VersionStatus.Final)) {
+    List<VersionedVendorSoftwareProductInfo> vspList =
+        vendorSoftwareProductManager.listVsps("Final", user);
+    try {
+
+      logger.info("Total number of Vsps: " + vspList.size() + "\n");
+      System.out.println("Total number of Vsps: " + vspList.size() + "\n");
+      logger.info("Performing healing & resubmit for All non-Manual Vsps in submitted status.\n");
+
+      for (VersionedVendorSoftwareProductInfo versionVspInfo : vspList) {
+        final VspDetails vspDetails = versionVspInfo.getVspDetails();
+        String vspId = vspDetails.getId();
         final Version latestFinalVersion =
             getVersionInfo(vspId, VersionableEntityAction.Read, user).getLatestFinalVersion();
-        if (latestFinalVersion != null) {
-          reSubmit(vspId, user);
+        final String onboardingMethod = vspDetails.getOnboardingMethod();
+
+        if (Objects.nonNull(latestFinalVersion)) {
+          if (Objects.isNull(onboardingMethod) || !onboardingMethod.equals("Manual")) {
+            reSubmit(vspDetails, user);
+            healingCounter++;
+          }
         }
+
       }
+    } catch (Exception e) {
+      logger.error("Failed during resubmitAll", e);
+      failedCounter++;
     }
 
-    return Response.ok().build();
-  }
-
-  @Override
-  public Response reSubmit(String vspId, String user)
-      throws IOException {
-    MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Checkout_VSP.toString());
-    vendorSoftwareProductManager.checkout(vspId, user);
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CHECK_OUT_VSP + vspId);
-
-    MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Checkin_VSP.toString());
-    vendorSoftwareProductManager.checkin(vspId, user);
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CHECK_IN_VSP + vspId);
-
-    MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Submit_VSP.toString());
-    ValidationResponse validationResponse = vendorSoftwareProductManager.submit(vspId, user);
-    if (!validationResponse.isValid()) {
-      logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP_FAIL + vspId);
-      logAuditErrors(vspId, validationResponse);
-
-      return Response.status(Response.Status.EXPECTATION_FAILED).entity(
-          new MapValidationResponseToDto()
-              .applyMapping(validationResponse, ValidationResponseDto.class)).build();
-    }
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VSP + vspId);
+    final String finishedMsg =
+        "\n***Finished attempted healing & resubmit for " + healingCounter + " Vsps out " +
+            "of total # of " + vspList.size() + " submitted VSPs. See other details below & " +
+            "please check the error " +
+            "log for additional failures***";
+    logger.info(finishedMsg);
+    System.out.println(finishedMsg);
+    logger.info("\n Failed during resubmitAll: " + failedCounter);
 
 
     return Response.ok().build();
   }
 
-  private void logAuditErrors(String vspId, ValidationResponse validationResponse) {
-    if (validationResponse.getVspErrors() != null) {
-      validationResponse.getVspErrors().forEach(errorCode -> logger.audit(AuditMessages
-          .AUDIT_MSG + String.format(SUBMIT_VSP_ERROR, errorCode.message(), vspId)));
+
+  private void reSubmit(VspDetails vspDetails, String user) {
+    final String vspId = vspDetails.getId();
+    String startMessage = "Starting on healing & resubmit for Vsp id[ " + vspId + " ]";
+    long startTime = System.currentTimeMillis();
+    System.out.println(startMessage);
+    logger.info(startMessage);
+    vspDetails.setOldVersion("true");
+
+    try {
+      vendorSoftwareProductManager.healAndAdvanceFinalVersion(vspId, vspDetails, user);
+    } catch (Exception e) {
+      logger.error("Failed during healAndAdvanceFinalVersion , Vsp Id[" + vspId + " ]:", e);
     }
-    if (validationResponse.getUploadDataErrors() != null) {
-      validationResponse.getUploadDataErrors().values().forEach(errorMessages
-          -> VendorSoftwareProductsImpl.printAuditForErrors(errorMessages, vspId,
-          SUBMIT_VSP_ERROR));
-    }
+
+    long endTime = System.currentTimeMillis();
+    long seconds = (endTime - startTime) / 1000;
+
+    final String completedMessage = "Completed healing & resubmit for Vsp id[ " + vspId + " ], " +
+        "duration : "
+        + seconds + " seconds";
+    logger.info(completedMessage);
+    System.out.println(completedMessage);
   }
 
-  private static void printAuditForErrors(List<ErrorMessage> errorList, String vspId, String auditType) {
+  private static void printAuditForErrors(List<ErrorMessage> errorList, String vspId,
+                                          String auditType) {
     errorList.forEach(errorMessage -> {
       if (errorMessage.getLevel().equals(ErrorLevel.ERROR)) {
         logger.audit(AuditMessages.AUDIT_MSG + String.format(auditType, errorMessage.getMessage(),

@@ -209,17 +209,19 @@ public interface VendorSoftwareProducts extends VspEntities {
 
   @PUT
   @Path("/reSubmitAll")
-  @ApiOperation(value = "Performs check out, check in and submit for ALL submitted VSPs", notes
+  @ApiOperation(value = "Performs healing ,check out, check in and submit for Network Package " +
+      "Based VSPs",
+      notes
       = "Please note - only submitted VSPs will be processed")
   Response reSubmitAll(@NotNull(message = USER_MISSING_ERROR_MSG)
                        @HeaderParam(USER_ID_HEADER_PARAM) String user) throws IOException;
 
-  @PUT
-  @Path("/{vspId}/reSubmit")
-  @ApiOperation(value = "Performs check out, check in and submit for a specific Vendor Software " +
-      "Product")
-  Response reSubmit(@PathParam("vspId") String vspId,
-                    @NotNull(message = USER_MISSING_ERROR_MSG)
-                    @HeaderParam(USER_ID_HEADER_PARAM) String user)
-      throws IOException;
+//  @PUT
+//  @Path("/{vspId}/reSubmit/{versionId}")
+//  @ApiOperation(value = "Performs check out, check in and submit for a specific Vendor Software " +
+//      "Product")
+//  Response reSubmit(@PathParam("vspId") String vspId,
+//                    @NotNull(message = USER_MISSING_ERROR_MSG)
+//                    @HeaderParam(USER_ID_HEADER_PARAM) String user, @PathParam("versionId") String versionId)
+//      throws IOException;
 }
