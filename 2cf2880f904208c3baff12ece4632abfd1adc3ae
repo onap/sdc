@@ -1,0 +1,271 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a2585a7_cd3da9bd",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/VendorSoftwareProducts.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "Please remove commented out code",
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_6d74759c",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 412,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "Consider logging both infos in one call. Also please use format patterns with placeholders instead of concatenating strings. Example: logger.info(\"Total number of VSPs: {}\", vspList.size());\n\nIs there a chance to get a null here? If vspList is null, this line will fail with a NullPointerException.",
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_4d79b992",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "Please avoid printing to System.out in production code.",
+      "range": {
+        "startLine": 413,
+        "startChar": 22,
+        "endLine": 413,
+        "endChar": 23
+      },
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_ed6745e9",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "This should be simplified. It\u0027s not clear what happens if latestFinalVersion is null. Do nothing?",
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_0d73b1b2",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 424,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "This can be simplified: if !\"Manual\".equals(onboardinMethod). \"Manual\" should be a constant. Also does it make sense to use equalsIgnoreCase() here?",
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_2d6e6dca",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "This catch is too inclusive, IMO. The failedCounter will increase no matter what kind of error occurs - a bad input, a connectivity issue, or an unexpected output due to corrupt data or a code mistake.",
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_cd6489e7",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 441,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "Please consolidate the two calls to info() and use a formatted pattern with placeholders to fill in the message.",
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_ad613dd5",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 442,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "Please avoid System.out.print* in production code",
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_8d5e8111",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "Please don\u0027t use System.out.println here.",
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_6d9b55ca",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 461,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "It seems the exception should be allowed to be thrown here. If the code remains as is, the method will just fail silently. The log message won\u0027t help much because the client code will proceed without knowing the method has done nothing.\n\nIf the reason is to log the completeMessage even in a case of failure, you should use try/finally.",
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_4da099f4",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "See my earlier comments on logging and System.out",
+      "range": {
+        "startLine": 471,
+        "startChar": 0,
+        "endLine": 471,
+        "endChar": 1
+      },
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_2da54d04",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 834,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "Is this intentional? The method fails but is still allowed to proceed.",
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_0daa91d4",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 841,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "This doesn\u0027t seem right. Don\u0027t rely on the response being null to know if an exception was thrown.",
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_edae25e7",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 844,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "It is not clear what should be done if response is null or invalid. Ignore it and skip checkout()? But try to createPackage anyway. If so, please consider explaining it in a comment.",
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_cdab69d5",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 854,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-08T07:56:13Z",
+      "side": 1,
+      "message": "This is a public method, but it returns null if failed. It\u0027s hard for a client code to know if any error occurred, because null can be interpreted in different ways.",
+      "revId": "2cf2880f904208c3baff12ece4632abfd1adc3ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
