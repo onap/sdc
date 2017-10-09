@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a2585a7_509a7215",
+        "filename": "common/openecomp-sdc-artifact-generator-lib/openecomp-sdc-artifact-generator-api/src/main/java/org/openecomp/sdc/generator/aai/model/PnfResource.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-09T09:42:19Z",
+      "side": 1,
+      "message": "set as import",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 44
+      },
+      "revId": "14e1daaddad9320927890bdee4c6d2853a12c67d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_309fe605",
+        "filename": "common/openecomp-sdc-artifact-generator-lib/openecomp-sdc-artifact-generator-api/src/main/java/org/openecomp/sdc/generator/aai/model/PnfWidget.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-09T09:42:19Z",
+      "side": 1,
+      "message": "set as import",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 44
+      },
+      "revId": "14e1daaddad9320927890bdee4c6d2853a12c67d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
