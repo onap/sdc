@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+//import org.apache.log4j.Logger;
 
 public class ResourceTranslationValetGroupAssignmentImplTest
     extends BaseResourceTranslationTest {
@@ -73,6 +74,13 @@ public class ResourceTranslationValetGroupAssignmentImplTest
         "/mock/services/heattotosca/attValetGroupAssignment/complexOnlyGroup/inputfiles";
     outputFilesPath =
         "/mock/services/heattotosca/attValetGroupAssignment/complexOnlyGroup/expectedoutputfiles";
+
+/*    String[] loggers = { "org.apache.commons.dbcp2"};
+    for (String logger : loggers) {
+      org.apache.log4j.Logger logSuppress = org.apache.log4j.Logger.getLogger(logger);
+      logSuppress.setLevel(org.apache.log4j.Level.OFF);
+    }*/
+
     initTranslatorAndTranslate();
     testTranslation();
     validateComputeTemplateConsolidationData();
