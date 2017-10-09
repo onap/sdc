@@ -211,13 +211,13 @@ class HeatMessageBoard extends Component {
 					(this.props.selectedNode === nodeFilters.ALL) ?
 						<span>
 							<span className='error-file-name'>
-								{i18n(`${error.name}`)}
+								{error.name}
 							</span>
 							<span>
-								{i18n(error.errorMessage)}
+								{error.errorMessage}
 							</span>
 						</span> :
-						i18n(error.errorMessage)
+						error.errorMessage
 				}
 				</span>
 			</div>
