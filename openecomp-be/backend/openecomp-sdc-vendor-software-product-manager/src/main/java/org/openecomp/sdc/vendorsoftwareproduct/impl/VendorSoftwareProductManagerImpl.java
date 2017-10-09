@@ -634,7 +634,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     try {
       validateUniqueName(VALIDATION_VSP_NAME);
     } catch (Exception ignored) {
-      logger.debug("",ignored);
+      logger.debug("", ignored);
       return VALIDATION_VSP_ID;
     }
     VspDetails validationVsp = new VspDetails();
@@ -708,7 +708,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
           vsps.add(new VersionedVendorSoftwareProductInfo(vsp, versionInfo));
         }
       } catch (RuntimeException rte) {
-        logger.debug("",rte);
+        logger.debug("", rte);
         logger.error(
             "Error trying to retrieve vsp[" + entry.getKey() + "] version[" + version.toString
                 () + "] " +
@@ -789,8 +789,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       throw new CoreException(new VendorSoftwareProductNotFoundErrorBuilder(vspId).build());
     }
     vsp.setValidationData(orchestrationTemplateDao.getValidationData(vspId, version));
-
-    if (Objects.isNull(vsp.getOnboardingOrigin())) {
+    if (Objects.isNull(vsp.getOnboardingOrigin())) { //todo should this only be done for non-Manual?
       vsp.setOnboardingOrigin(OnboardingTypesEnum.ZIP.toString());
     }
 
@@ -818,22 +817,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         autoHeal(vspId, checkoutVersion, vendorSoftwareProductInfo, user);
         return checkin(vspId, user);
       case Final:
-        Version checkoutFinalVersion = checkout(vspId, user);
-        autoHeal(vspId, checkoutFinalVersion, vendorSoftwareProductInfo, user);
-        Version checkinFinalVersion = checkin(vspId, user);
-        ValidationResponse response = submit(vspId, user);
-        if (!response.isValid()) {
-          return checkout(vspId, user);
-        }
-
-        try {
-          Version finalVersion = checkinFinalVersion.calculateNextFinal();
-          createPackage(vspId, finalVersion, user);
-          return finalVersion;
-        } catch (IOException ex) {
-          logger.debug("",ex);
-          throw new Exception(ex.getMessage());
-        }
+        return healAndAdvanceFinalVersion(vspId, vendorSoftwareProductInfo, user);
       default:
         //do nothing
         break;
@@ -841,8 +825,27 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     return versionInfo.getActiveVersion();
   }
 
-  @Override
+  public Version healAndAdvanceFinalVersion(String vspId, VspDetails vendorSoftwareProductInfo,
+                                            String user) throws IOException {
 
+    Version checkoutFinalVersion = checkout(vspId, user);
+    autoHeal(vspId, checkoutFinalVersion, vendorSoftwareProductInfo, user);
+    Version checkinFinalVersion = checkin(vspId, user);
+
+    ValidationResponse response = Objects.requireNonNull(submit(vspId, user),
+        "Null response not expected");
+
+    if (!response.isValid()) {
+      return checkout(vspId, user);
+    }
+
+    Version finalVersion = checkinFinalVersion.calculateNextFinal();
+    createPackage(vspId, finalVersion, user);
+    return finalVersion;
+
+  }
+
+  @Override
   public void deleteVsp(String vspId, String user) {
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
 
