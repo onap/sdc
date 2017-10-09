@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a2585a7_10cf4ab2",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-09T06:36:41Z",
+      "side": 1,
+      "message": "remove remarked code",
+      "range": {
+        "startLine": 144,
+        "startChar": 12,
+        "endLine": 148,
+        "endChar": 23
+      },
+      "revId": "ed640f61e44fa70e54032480a34fcf877a2eed48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_50d5d241",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/att-sdc-translator-impl/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-09T06:36:41Z",
+      "side": 1,
+      "message": "remove remarked code",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 25
+      },
+      "revId": "ed640f61e44fa70e54032480a34fcf877a2eed48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_90e33a33",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/att-sdc-translator-impl/src/test/java/com/att/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseResourceTranslationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-09T06:36:41Z",
+      "side": 1,
+      "message": "remove remarked code",
+      "range": {
+        "startLine": 91,
+        "startChar": 2,
+        "endLine": 91,
+        "endChar": 91
+      },
+      "revId": "ed640f61e44fa70e54032480a34fcf877a2eed48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_70d0ce53",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/att-sdc-translator-impl/src/test/java/com/att/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseResourceTranslationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-09T06:36:41Z",
+      "side": 1,
+      "message": "remove remarked code",
+      "range": {
+        "startLine": 293,
+        "startChar": 5,
+        "endLine": 293,
+        "endChar": 24
+      },
+      "revId": "ed640f61e44fa70e54032480a34fcf877a2eed48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_f0dcbe76",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/att-sdc-translator-impl/src/test/java/com/att/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationValetGroupAssignmentImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-09T06:36:41Z",
+      "side": 1,
+      "message": "remove remarked code",
+      "range": {
+        "startLine": 27,
+        "startChar": 1,
+        "endLine": 27,
+        "endChar": 33
+      },
+      "revId": "ed640f61e44fa70e54032480a34fcf877a2eed48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_b0e63643",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/att-sdc-translator-impl/src/test/java/com/att/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationValetGroupAssignmentImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-09T06:36:41Z",
+      "side": 1,
+      "message": "remove remarked code",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 7
+      },
+      "revId": "ed640f61e44fa70e54032480a34fcf877a2eed48",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
