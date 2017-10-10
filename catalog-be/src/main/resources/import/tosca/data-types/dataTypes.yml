@@ -120,6 +120,36 @@ tosca.datatypes.network.PortSpec:
       constraints:
         - in_range: [ 1, 65535 ]
 
+tosca.datatypes.network.DciNetworkInfo:
+  derived_from: tosca.datatypes.Root
+  properties:
+    network_names:
+      type: list
+      entry_schema:
+        type: string
+      required: false
+    routerId:
+      type: string
+      required: false
+    importRT:
+      type: string
+      required: true
+    exportRT:
+      type: string
+      required: true
+    vni:
+      type: integer
+      required: true
+    fireWallEnable:
+      type: boolean
+      required: false
+    fireWallId:
+      type: string
+      required: false
+    localNetworkAll:
+      type: boolean
+      required: false
+
 ###################new Data Types Onboarding Integration##########################
 
 org.openecomp.datatypes.heat.network.AddressPair:
