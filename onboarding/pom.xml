@@ -112,7 +112,7 @@
                 <executions>
                     <execution>
                         <id>jxr-generation</id>
-                        <phase>validate</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>jxr</goal>
                             <goal>test-jxr</goal>
@@ -135,7 +135,7 @@
                 <executions>
                     <execution>
                         <id>pmd-check</id>
-                        <phase>validate</phase>
+                        <phase>verify</phase>
                         <goals>
                             <!-- violations fail build -->
                             <goal>check</goal>
