@@ -328,6 +328,9 @@ serviceDeploymentArtifacts:
     PLAN:
         acceptedTypes:
             - xml
+        validForResourceTypes:
+            - VF
+            - VFC
 
 resourceDeploymentArtifacts:
     HEAT:
