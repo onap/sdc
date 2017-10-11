@@ -1869,26 +1869,24 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		log.debug("************* Going to create all nodes {}", yamlName);
 		Either<Map<String, Resource>, ResponseFormat> createdResourcesFromdNodeTypeMap = this.handleNodeTypes(yamlName, resource, topologyTemplateYaml, false, nodeTypesArtifactsToCreate, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeName);
-		log.debug("************* Finished to create all nodes {}", yamlName);
 		if (createdResourcesFromdNodeTypeMap.isRight()) {
 			log.debug("failed to resources from node types status is {}", createdResourcesFromdNodeTypeMap.right().value());
 			return Either.right(createdResourcesFromdNodeTypeMap.right().value());
 		}
+		log.debug("************* Finished to create all nodes {}", yamlName);
 
 		log.debug("************* Going to create all resource instances {}", yamlName);
 		createResourcesInstancesEither = createResourceInstances(csarInfo.getModifier(), yamlName, resource, uploadComponentInstanceInfoMap, true, false, csarInfo.getCreatedNodes());
 
-		log.debug("************* Finished to create all resource instances {}", yamlName);
 		if (createResourcesInstancesEither.isRight()) {
 			log.debug("failed to create resource instances status is {}", createResourcesInstancesEither.right().value());
 			result = createResourcesInstancesEither;
 			return createResourcesInstancesEither;
 		}
+		log.debug("************* Finished to create all resource instances for {}", yamlName);
 		resource = createResourcesInstancesEither.left().value();
 		log.debug("************* Going to create all relations {}", yamlName);
 		createResourcesInstancesEither = createResourceInstancesRelations(csarInfo.getModifier(), yamlName, resource, uploadComponentInstanceInfoMap);
-
-		log.debug("************* Finished to create all relations {}", yamlName);
 
 		if (createResourcesInstancesEither.isRight()) {
 			log.debug("failed to create relation between resource instances status is {}", createResourcesInstancesEither.right().value());
@@ -1897,6 +1895,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		} else {
 			resource = createResourcesInstancesEither.left().value();
 		}
+		log.debug("************* Finished to create all relations {}", yamlName);
 
 		log.debug("************* Going to create positions {}", yamlName);
 		Either<List<ComponentInstance>, ResponseFormat> eitherSetPosition = compositionBusinessLogic.setPositionsForComponentInstances(resource, csarInfo.getModifier().getUserId());
@@ -4318,7 +4317,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			Map<String, Resource> nodeNamespaceMap) {
 
 		Either<Resource, ResponseFormat> eitherResource = null;
-		log.debug("createResourceInstances is {} - going to create resource instanse from CSAR", yamlName);
+		log.debug("{} - going to create resource instanse from CSAR", yamlName);
 		if (uploadResInstancesMap == null || uploadResInstancesMap.isEmpty()) {
 			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE);
 
@@ -4333,13 +4332,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		Iterator<Entry<String, UploadComponentInstanceInfo>> nodesInfoValue = uploadResInstancesMap.entrySet().iterator();
 		Map<ComponentInstance, Resource> resourcesInstancesMap = new HashMap<>();
 		while (nodesInfoValue.hasNext()) {
-			log.debug("*************Going to create  resource instances {}", yamlName);
+			log.debug("*************Going to create  resource instances from {}", yamlName);
 			Entry<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoEntry = nodesInfoValue.next();
 			UploadComponentInstanceInfo uploadComponentInstanceInfo = uploadComponentInstanceInfoEntry.getValue();
 
 			// updating type if the type is node type name - we need to take the
 			// updated name
-			log.debug("*************Going to create  resource instances {}", uploadComponentInstanceInfo.getName());
+			log.debug("*************Going to create  resource instance {}", uploadComponentInstanceInfo.getName());
 			if (nodeNamespaceMap.containsKey(uploadComponentInstanceInfo.getType())) {
 				uploadComponentInstanceInfo.setType(nodeNamespaceMap.get(uploadComponentInstanceInfo.getType()).getToscaResourceName());
 			}
@@ -4368,7 +4367,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			}
 			//***********************
 			if (!existingnodeTypeMap.containsKey(uploadComponentInstanceInfo.getType())) {
-				log.debug("createResourceInstances - not found lates version for resource instance with name {} and type ", uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
+				log.debug("createResourceInstances - not found latest version for resource instance with name {} and type ", uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
 				ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
 				return Either.right(responseFormat);
 			}
@@ -4434,14 +4433,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	
 	
 	private Either<Resource, ResponseFormat> validateResourceInstanceBeforeCreate(String yamlName, UploadComponentInstanceInfo uploadComponentInstanceInfo, Map<String, Resource> nodeNamespaceMap) {
-		log.debug("validateResourceInstanceBeforeCreate - going to validate resource instance with name {} and type before create", uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
+		log.debug("going to validate resource instance with name {} and type {} before create", uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
 		Resource refResource = null;
 		if (nodeNamespaceMap.containsKey(uploadComponentInstanceInfo.getType())) {
 			refResource = nodeNamespaceMap.get(uploadComponentInstanceInfo.getType());
 		} else {
 			Either<Resource, StorageOperationStatus> findResourceEither = toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(uploadComponentInstanceInfo.getType());
 			if (findResourceEither.isRight()) {
-				log.debug("validateResourceInstanceBeforeCreate - not found lates version for resource instance with name {} and type ", uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
+				log.debug("not found lates version for resource instance with name {} and type {}", uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
 				ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(findResourceEither.right().value()));
 				return Either.right(responseFormat);
 			}
@@ -4450,16 +4449,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 		String componentState = refResource.getComponentMetadataDefinition().getMetadataDataDefinition().getState();
 		if (componentState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name())) {
-			log.debug("validateResourceInstanceBeforeCreate - component instance of component {} can not be created because the component is in an illegal state {}.", refResource.getName(), componentState);
+			log.debug("component instance of component {} can not be created because the component is in an illegal state {}.", refResource.getName(), componentState);
 			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.ILLEGAL_COMPONENT_STATE, refResource.getComponentType().getValue(), refResource.getName(), componentState);
 			return Either.right(responseFormat);
 		}
 
 		if (!ToscaUtils.isAtomicType(refResource) && refResource.getResourceType() != ResourceTypeEnum.CVFC) {
-			log.debug("validateResourceInstanceBeforeCreate -  ref resource type is  ", refResource.getResourceType());
+			log.debug("ref resource type is  {}", refResource.getResourceType());
 			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
 			return Either.right(responseFormat);
 		}
+		log.debug("validate resource instance with name {} and type {} before create, successful",uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
 		return Either.left(refResource);
 	}
 
