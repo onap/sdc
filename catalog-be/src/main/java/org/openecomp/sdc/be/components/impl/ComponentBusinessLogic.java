@@ -38,11 +38,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.*;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapReqDef;
@@ -686,8 +682,11 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 	}
 
 	public Either<ImmutablePair<String, byte[]>, ResponseFormat> getToscaModelByComponentUuid(ComponentTypeEnum componentType, String uuid, EnumMap<AuditingFieldsKeysEnum, Object> additionalParam) {
-		
-		Either<List<Component>, StorageOperationStatus> latestVersionEither = toscaOperationFacade.getComponentListByUuid(uuid, null);
+
+		Map<GraphPropertyEnum, Object> additionalPropertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+		additionalPropertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
+
+		Either<List<Component>, StorageOperationStatus> latestVersionEither = toscaOperationFacade.getComponentListByUuid(uuid, additionalPropertiesToMatch);
 		
 		if (latestVersionEither.isRight()) {
 			ResponseFormat response = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(latestVersionEither.right().value(), componentType));
