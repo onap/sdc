@@ -126,7 +126,7 @@ artifactTypes:
    - SNMP_POLL
    - SNMP_TRAP
    - GUIDE
-
+   - PLAN
 
 licenseTypes:
    - User
@@ -305,6 +305,11 @@ serviceDeploymentArtifacts:
     OTHER:
         acceptedTypes:
 
+#PLAN
+    PLAN:
+        acceptedTypes:
+            - xml
+
 resourceDeploymentArtifacts:
     HEAT:
         acceptedTypes:
@@ -422,6 +427,14 @@ resourceDeploymentArtifacts:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
 
+#PLAN
+    PLAN:
+        acceptedTypes:
+            - xml
+        validForResourceTypes:
+            - VF
+            - VFC
+
 resourceInstanceDeploymentArtifacts:
     HEAT_ENV:
         acceptedTypes:
@@ -458,6 +471,11 @@ resourceInstanceDeploymentArtifacts:
     SNMP_TRAP:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
+
+#PLAN
+    PLAN:
+        acceptedTypes:
+            - xml
 
 resourceInformationalArtifacts:
     CHEF:
