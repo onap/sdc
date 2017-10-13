@@ -19,7 +19,6 @@
         <module>openecomp-sdc-translator-sdk</module>
         <module>openecomp-sdc-translator-core</module>
         <module>openecomp-sdc-translator-impl</module>
-        <module>att-sdc-translator-impl</module>
     </modules>
 
     <dependencies>
