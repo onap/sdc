@@ -36,7 +36,7 @@ public class ToscaConverterImpl implements ToscaConverter {
 
     @Override
     public ToscaServiceModel convert(FileContentHandler fileContentHandler)
-            throws IOException {
+        throws IOException {
         Map<String, byte[]> csarFiles = new HashMap<>(fileContentHandler.getFiles());
         ToscaServiceModel toscaServiceModel = new ToscaServiceModel();
         Map<String, ServiceTemplate> serviceTemplates = new HashMap<>();
@@ -88,9 +88,9 @@ public class ToscaConverterImpl implements ToscaConverter {
             }
         } catch (YAMLException ye) {
             throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-                    .withMessage("Invalid YAML content in file " + key + ". reason - "
-                            + ye.getMessage())
-                    .withCategory(ErrorCategory.APPLICATION).build());
+                .withMessage("Invalid YAML content in file " + key + ". reason - "
+                    + ye.getMessage())
+                .withCategory(ErrorCategory.APPLICATION).build());
         }
     }
 
@@ -100,7 +100,7 @@ public class ToscaConverterImpl implements ToscaConverter {
                                          GlobalSubstitutionServiceTemplate globalSubstitutionServiceTemplate,
                                          Map<String, byte[]> csarFiles) {
         Collection<ServiceTemplate> globalServiceTemplates =
-                GlobalTypesGenerator.getGlobalTypesServiceTemplate().values();
+            GlobalTypesGenerator.getGlobalTypesServiceTemplate().values();
         addGlobalServiceTemplates(globalServiceTemplates, serviceTemplates);
         toscaServiceModel.setEntryDefinitionServiceTemplate(mainStName);
         toscaServiceModel.setServiceTemplates(serviceTemplates);
@@ -125,10 +125,10 @@ public class ToscaConverterImpl implements ToscaConverter {
                                        String fileName, Map<String, byte[]> csarFiles,
                                        Map<String, ServiceTemplate> serviceTemplates) {
         Optional<ServiceTemplate> serviceTemplate =
-                getServiceTemplateFromCsar(fileName, csarFiles);
+            getServiceTemplateFromCsar(fileName, csarFiles);
         serviceTemplate.ifPresent(
-                serviceTemplate1 -> addServiceTemplate(serviceTemplateName, serviceTemplate1,
-                        serviceTemplates));
+            serviceTemplate1 -> addServiceTemplate(serviceTemplateName, serviceTemplate1,
+                serviceTemplates));
     }
 
     private void addServiceTemplate(String serviceTemplateName,
@@ -160,7 +160,7 @@ public class ToscaConverterImpl implements ToscaConverter {
         ServiceTemplate serviceTemplate = new ServiceTemplate();
         try {
             ServiceTemplateReaderService readerService =
-                    new ServiceTemplateReaderServiceImpl(fileContent);
+                new ServiceTemplateReaderServiceImpl(fileContent);
             convertMetadata(serviceTemplateName, serviceTemplate, readerService);
             convertToscaVersion(serviceTemplate, readerService);
             convertImports(serviceTemplate);
@@ -169,9 +169,9 @@ public class ToscaConverterImpl implements ToscaConverter {
 
         } catch (YAMLException ye) {
             throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-                    .withMessage("Invalid YAML content in file" + serviceTemplateName + ". reason - "
-                            + ye.getMessage())
-                    .withCategory(ErrorCategory.APPLICATION).build());
+                .withMessage("Invalid YAML content in file" + serviceTemplateName + ". reason - "
+                    + ye.getMessage())
+                .withCategory(ErrorCategory.APPLICATION).build());
         }
 
 
@@ -187,7 +187,7 @@ public class ToscaConverterImpl implements ToscaConverter {
     private void convertImports(ServiceTemplate serviceTemplate) {
         serviceTemplate.setImports(new ArrayList<>());
         serviceTemplate.getImports()
-                .add(createImportMap(openecompHeatIndex, "openecomp-heat/_index.yml"));
+            .add(createImportMap(openecompHeatIndex, "openecomp-heat/_index.yml"));
         serviceTemplate.getImports().add(createImportMap(globalSubstitution, globalStName));
 
     }
@@ -210,7 +210,7 @@ public class ToscaConverterImpl implements ToscaConverter {
         if (MapUtils.isNotEmpty(metadataToConvert)) {
             for (Map.Entry<String, Object> metadataEntry : metadataToConvert.entrySet()) {
                 if (Objects.isNull(metadataEntry.getValue()) ||
-                        !(metadataEntry.getValue() instanceof String)) {
+                    !(metadataEntry.getValue() instanceof String)) {
                     continue;
                 }
                 finalMetadata.put(metadataEntry.getKey(), (String) metadataEntry.getValue());
@@ -229,9 +229,9 @@ public class ToscaConverterImpl implements ToscaConverter {
 
         for (Map.Entry<String, Object> nodeTypeEntry : nodeTypes.entrySet()) {
             DataModelUtil
-                    .addNodeType(serviceTemplate, nodeTypeEntry.getKey(),
-                            (NodeType) createObjectFromClass(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(),
-                                    NodeType.class));
+                .addNodeType(serviceTemplate, nodeTypeEntry.getKey(),
+                    (NodeType) createObjectFromClass(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(),
+                        NodeType.class));
         }
     }
 
@@ -265,10 +265,10 @@ public class ToscaConverterImpl implements ToscaConverter {
 
         for (Map.Entry<String, Object> entry : mapToConvert.entrySet()) {
             ParameterDefinition parameterDefinition =
-                    (ParameterDefinition) createObjectFromClass(
-                            entry.getKey(), entry.getValue(), ParameterDefinition.class);
+                (ParameterDefinition) createObjectFromClass(
+                    entry.getKey(), entry.getValue(), ParameterDefinition.class);
             addToServiceTemplateAccordingToSection(
-                    serviceTemplate, inputsOrOutputs, entry.getKey(), parameterDefinition);
+                serviceTemplate, inputsOrOutputs, entry.getKey(), parameterDefinition);
         }
     }
 
@@ -279,11 +279,11 @@ public class ToscaConverterImpl implements ToscaConverter {
         switch (inputsOrOutputs) {
             case inputs:
                 DataModelUtil
-                        .addInputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
+                    .addInputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
                 break;
             case outputs:
                 DataModelUtil
-                        .addOutputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
+                    .addOutputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
         }
     }
 
@@ -315,15 +315,15 @@ public class ToscaConverterImpl implements ToscaConverter {
 
         substitutionMapping.setNode_type((String) substitutionMappings.get(nodeType));
         substitutionMapping.setCapabilities(
-                convertSubstitutionMappingsSections((Map<String, Object>) substitutionMappings.get(capabilities)));
+            convertSubstitutionMappingsSections((Map<String, Object>) substitutionMappings.get(capabilities)));
         substitutionMapping.setRequirements(
-                convertSubstitutionMappingsSections((Map<String, Object>) substitutionMappings.get(requirements)));
+            convertSubstitutionMappingsSections((Map<String, Object>) substitutionMappings.get(requirements)));
 
         return substitutionMapping;
     }
 
     private Map<String, List<String>> convertSubstitutionMappingsSections(
-            Map<String, Object> sectionToConvert) {
+        Map<String, Object> sectionToConvert) {
         Map<String, List<String>> convertedSection = new HashMap<>();
         if (MapUtils.isEmpty(sectionToConvert)) {
             return null;
@@ -345,7 +345,7 @@ public class ToscaConverterImpl implements ToscaConverter {
             return CsarFileTypes.globalServiceTemplate;
         } else if (isDefinitions(fileName)) {
             return CsarFileTypes.definitionsFile;
-        } else if (isMetadataFile(metadataFile)) {
+        } else if (isMetadataFile(fileName)) {
             return CsarFileTypes.toscaMetadata;
         }
         return CsarFileTypes.externalFile;
@@ -373,14 +373,14 @@ public class ToscaConverterImpl implements ToscaConverter {
         nodeTemplate.setDescription((String) nodeTemplateAsMap.get("description"));
         nodeTemplate.setDirectives((List<String>) nodeTemplateAsMap.get("directives"));
         nodeTemplate.setInterfaces(
-                (Map<String, InterfaceDefinition>) nodeTemplateAsMap.get("interfaces"));
+            (Map<String, InterfaceDefinition>) nodeTemplateAsMap.get("interfaces"));
         nodeTemplate.setNode_filter((NodeFilter) nodeTemplateAsMap.get("node_filter"));
         nodeTemplate.setProperties((Map<String, Object>) nodeTemplateAsMap.get("properties"));
         nodeTemplate.setRequirements(
-                (List<Map<String, RequirementAssignment>>) nodeTemplateAsMap.get("requirements"));
+            (List<Map<String, RequirementAssignment>>) nodeTemplateAsMap.get("requirements"));
         nodeTemplate.setType((String) nodeTemplateAsMap.get("type"));
         nodeTemplate.setCapabilities(
-                convertCapabilities((Map<String, Object>) nodeTemplateAsMap.get("capabilities")));
+            convertCapabilities((Map<String, Object>) nodeTemplateAsMap.get("capabilities")));
 
         return nodeTemplate;
     }
@@ -393,8 +393,8 @@ public class ToscaConverterImpl implements ToscaConverter {
         for (Map.Entry<String, Object> capabilityAssignmentEntry : capabilities.entrySet()) {
             Map<String, CapabilityAssignment> tempMap = new HashMap<>();
             tempMap.put(capabilityAssignmentEntry.getKey(),
-                    (CapabilityAssignment) createObjectFromClass
-                            (capabilityAssignmentEntry.getKey(), capabilityAssignmentEntry.getValue(), CapabilityAssignment.class));
+                (CapabilityAssignment) createObjectFromClass
+                    (capabilityAssignmentEntry.getKey(), capabilityAssignmentEntry.getValue(), CapabilityAssignment.class));
             convertedCapabilities.add(tempMap);
         }
         return convertedCapabilities;
@@ -408,8 +408,9 @@ public class ToscaConverterImpl implements ToscaConverter {
         } catch (Exception e) {
             //todo - return error to user?
             throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-                    .withCategory(ErrorCategory.APPLICATION)
-                    .withMessage("Can't create Node Type from " + nodeTypeId).build());
+                .withCategory(ErrorCategory.APPLICATION)
+                .withMessage("Can't create " + classToCreate.getSimpleName() + " from " +
+                    nodeTypeId).build());
         }
     }
 
