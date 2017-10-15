@@ -10,7 +10,8 @@ bash "upgrade-normatives" do
     tar xvfz /tmp/normatives.tar.gz
     cd normatives/scripts/import/tosca/
     /bin/chmod +x upgradeNormative.py importGroupTypes.py
-    python upgradeNormative.py -i localhost --debug=true > /var/lib/jetty/logs/upgradeNormative.log
+# add --debug=true to the importNormativeAll.py arguments to enable debug
+    python upgradeNormative.py -i localhost > /var/lib/jetty/logs/upgradeNormative.log
   EOH
 end
 
