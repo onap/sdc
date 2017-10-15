@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_863acd34",
+        "filename": "sdc-os-chef/sdc-elasticsearch/chef-repo/cookbooks/sdc-elasticsearch/recipes/ES_6_create_kibana_dashboard_virtualization.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 345
+      },
+      "writtenOn": "2017-10-15T12:09:36Z",
+      "side": 1,
+      "message": "This file is missing in the container. Where should it come from?\n\nThanks,\nYury.",
+      "range": {
+        "startLine": 1,
+        "startChar": 15,
+        "endLine": 1,
+        "endChar": 78
+      },
+      "revId": "5571a86069aa180b87e090bc7fb07059ff4e21cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
