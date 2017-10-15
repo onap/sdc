@@ -17,7 +17,6 @@
     <modules>
         <module>openecomp-configuration-management-api</module>
         <module>openecomp-configuration-management-core</module>
-        <module>openecomp-configuration-management-cli</module>
         <module>openecomp-configuration-management-test</module>
     </modules>
 
