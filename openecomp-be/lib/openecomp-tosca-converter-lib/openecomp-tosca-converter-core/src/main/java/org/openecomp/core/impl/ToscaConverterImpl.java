@@ -345,7 +345,7 @@ public class ToscaConverterImpl implements ToscaConverter {
             return CsarFileTypes.globalServiceTemplate;
         } else if (isDefinitions(fileName)) {
             return CsarFileTypes.definitionsFile;
-        } else if (isMetadataFile(metadataFile)) {
+        } else if (isMetadataFile(fileName)) {
             return CsarFileTypes.toscaMetadata;
         }
         return CsarFileTypes.externalFile;
@@ -409,7 +409,8 @@ public class ToscaConverterImpl implements ToscaConverter {
             //todo - return error to user?
             throw new CoreException(new ErrorCode.ErrorCodeBuilder()
                     .withCategory(ErrorCategory.APPLICATION)
-                    .withMessage("Can't create Node Type from " + nodeTypeId).build());
+                    .withMessage("Can't create " + classToCreate.getSimpleName() + " from " +
+                        nodeTypeId).build());
         }
     }
 
