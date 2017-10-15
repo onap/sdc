@@ -4,6 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sdc-os-chef</artifactId>
+    <packaging>pom</packaging>
+    
 
     <parent>
         <groupId>org.openecomp.sdc</groupId>
@@ -32,24 +34,47 @@
                         <configuration>
                             <filesets>
                                 <fileset>
-                                    <directory>
-                                        ${project.basedir}\sdc-cassandra\chef-repo\cookbooks\cassandra-actions\attributes\
-                                    </directory>
+                                    <directory>${project.basedir}\sdc-cassandra\chef-repo\cookbooks\cassandra-actions\attributes\</directory>
                                     <followSymlinks>false</followSymlinks>
                                     <includes>
                                         <include>**/default.rb</include>
                                     </includes>
                                 </fileset>
-								<!-- static configuration files -->
-								<fileset>	
-          							<directory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</directory>
-          							<includes>
+                                <!-- static configuration files -->
+                               	<fileset>	
+                               		<directory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</directory>
+                               		<followSymlinks>false</followSymlinks>
+                                   	<includes>
 										<include>Artifact-Generator.properties</include>
 										<include>error-configuration.yaml</include>
 										<include>ecomp-error-configuration.yaml</include>
 										<include>logback.xml</include>
 									</includes>
           						</fileset>
+                                <!-- BE WAR's -->
+                                <fileset>	
+	                                <directory>${project.parent.basedir}/sdc-os-chef/sdc-backend</directory>
+	                                <followSymlinks>false</followSymlinks>
+                                    <includes>
+    	                               	<include>*.war</include>
+                                   	</includes>
+                               	</fileset>
+                               	<!-- FE WAR's -->
+                                <fileset>	
+	                                <directory>${project.parent.basedir}/sdc-os-chef/sdc-frontend/</directory>
+	                                <followSymlinks>false</followSymlinks>
+                                    <includes>
+    	                               	<include>*.war</include>
+                                   	</includes>
+                               	</fileset>
+                                	<fileset>
+                                    <directory>${project.basedir}/sdc-backend/chef-repo/cookbooks/sdc-normatives/files/default</directory>
+									<followSymlinks>false</followSymlinks>
+                                    <includes>
+    	                               	<include>normatives.tar.gz</include>
+                                   	</includes>
+                                </fileset>
+                                
                             </filesets>
                         </configuration>
                     </execution>
@@ -157,6 +182,12 @@
                                 <configuration>
                                     <outputDirectory>${basedir}/sdc-backend</outputDirectory>
                                     <resources>
+                                    	<resource>
+                                            <directory>${project.parent.basedir}/catalog-be/target</directory>
+                                            <includes>
+                                                <include>catalog-be-${project.version}.war</include>
+                                            </includes>
+                                        </resource>
                                         <resource>
                                             <directory>
                                                 ${project.parent.basedir}/openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/target
@@ -168,6 +199,7 @@
                                     </resources>
                                 </configuration>
                             </execution>
+                            
                             <execution>
                                 <id>copy-resources-fe</id>
                                 <phase>validate</phase>
@@ -177,6 +209,12 @@
                                 <configuration>
                                     <outputDirectory>${basedir}/sdc-frontend</outputDirectory>
                                     <resources>
+                                    	<resource>
+                                        	<directory>${project.parent.basedir}/catalog-fe/target</directory>
+                                            <includes>
+                                               	<include>catalog-fe-${project.version}.war</include>
+                                            </includes>
+                                        </resource>
                                         <resource>
                                             <directory>${project.parent.basedir}/openecomp-ui/target</directory>
                                             <includes>
@@ -186,6 +224,7 @@
                                     </resources>
                                 </configuration>
                             </execution>
+                            
                             <execution>
                                 <id>copy-tests-suites</id>
                                 <phase>validate</phase>
@@ -222,6 +261,24 @@
                                     </resources>
                                 </configuration>
                             </execution>
+                            <execution>
+								<id>copy-normatives</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-normatives/files/default</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${project.parent.basedir}/catalog-be/target</directory>
+											<includes>
+												<include>normatives.tar.gz</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
                         </executions>
                     </plugin>
 

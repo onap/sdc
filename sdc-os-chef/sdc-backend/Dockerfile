@@ -4,8 +4,6 @@ COPY chef-solo /root/chef-solo/
 
 COPY chef-repo/cookbooks/. /root/chef-solo/cookbooks/
 
-#RUN python /root/chef-solo/cookbooks/sdc-normatives/files/default/get-pip.py
-
 ADD onboarding-be-*.war        ${JETTY_BASE}/webapps/
 
 ADD catalog-be-*.war           ${JETTY_BASE}/webapps/
