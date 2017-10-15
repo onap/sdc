@@ -10,7 +10,8 @@ bash "import-normatives" do
     tar xvfz /tmp/normatives.tar.gz
     cd normatives/scripts/import/tosca/
     /bin/chmod +x importNormativeAll.py
-    python importNormativeAll.py -i localhost --debug=true > /var/lib/jetty/logs/importNormativeAll.log
+# add --debug=true to the importNormativeAll.py arguments to enable debug
+    python importNormativeAll.py -i localhost > /var/lib/jetty/logs/importNormativeAll.log
   EOH
 end
 
