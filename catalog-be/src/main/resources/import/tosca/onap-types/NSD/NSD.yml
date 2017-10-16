@@ -1,0 +1,41 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  org.openecomp.resource.vfc.NSD:
+    derived_from: tosca.nodes.Root
+    description: ECOMP Allotted Resource base type all other allotted resources node types derive from
+    properties:
+      nsd_id:
+        type: string
+        required: true
+        description: ID of the NSD
+      nsd_designer:
+        type: string
+        required: true
+        description: Designer of the NSD
+      nsd_version:
+        type: string
+        required: true
+        description: Version of the NSD
+      nsd_name:
+        type: string
+        required: true
+        description: Name of the NSD
+      providing_service_uuid:
+        type: string
+        required: true
+        description: The depending service uuid in order to map the allotted resource to the specific service version
+      providing_service_invariant_uuid:
+        type: string
+        required: true
+        description: The depending service invariant uuid in order to map the allotted resource to the specific service version
+      providing_service_name:
+        type: string
+        required: true
+        description: The depending service name in order to map the allotted resource to the specific service version
+    requirements:
+    - virtualLink:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+    capabilities:
+      virtual_linkable:
+        type: tosca.capabilities.network.Linkable

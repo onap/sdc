@@ -1,0 +1,36 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+node_types:
+  org.openecomp.resource.vl.GenericNeutronNet:
+    derived_from: org.openecomp.resource.vl.extVL
+    description: Generic Neutron Network
+    properties:
+      network_role:
+        type: string
+        description: |
+          Unique label that defines the role that this network performs. example: vce oam network, vnat sr-iov1 network
+      network_assignments:
+        type: org.openecomp.datatypes.network.NetworkAssignments
+      network_flows:
+        type: org.openecomp.datatypes.network.NetworkFlows
+      network_scope:
+        type: string
+      network_ecomp_naming:
+        type: org.openecomp.datatypes.EcompNaming
+      network_type:
+        type: string
+        description: ECOMP supported network types.
+        default: NEUTRON
+      provider_network:
+        type: org.openecomp.datatypes.network.ProviderNetwork
+      network_technology:
+        type: string
+        description: ECOMP supported network technology
+        default: NEUTRON
+      network_homing:
+        type: org.openecomp.datatypes.EcompHoming
+    capabilities:
+      virtual_linkable:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
