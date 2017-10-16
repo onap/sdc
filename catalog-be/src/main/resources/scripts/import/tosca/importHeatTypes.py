@@ -53,7 +53,8 @@ def importHeatTypes(beHost, bePort, adminUser, fileDir, updateversion):
 				  "multiFlavorVFC",
 				  "vnfConfiguration",
 				  "underlayVpn",
-				  "overlayTunnel"
+				  "overlayTunnel",
+				  "genericNeutronNet"
 				  ]
 		
 	responseCodes = [200, 201]

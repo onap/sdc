@@ -1,0 +1,21 @@
+{
+  "payloadName": "genericNeutronNet.yml",
+  "contactId": "jh0003",
+  "name": "Generic NeutronNet",
+  "description": "Generic NeutronNet",
+  "resourceIconPath": "network",
+  "resourceType": "VL",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Network Elements"
+      }
+    ]
+  }
+],
+  "tags": [
+    "Generic NeutronNet"
+  ]
+}
