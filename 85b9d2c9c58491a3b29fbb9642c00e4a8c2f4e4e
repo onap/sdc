@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_5c0cb242",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-16T11:15:54Z",
+      "side": 1,
+      "message": "change the validation. \"Manual\".equals(vspDetails.....)",
+      "range": {
+        "startLine": 332,
+        "startChar": 8,
+        "endLine": 333,
+        "endChar": 60
+      },
+      "revId": "85b9d2c9c58491a3b29fbb9642c00e4a8c2f4e4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_3c09e631",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 532,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-16T11:15:54Z",
+      "side": 1,
+      "message": "change the validation. \"Manual\".equals(vspDetails.....)",
+      "range": {
+        "startLine": 531,
+        "startChar": 8,
+        "endLine": 532,
+        "endChar": 60
+      },
+      "revId": "85b9d2c9c58491a3b29fbb9642c00e4a8c2f4e4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_1c062a21",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 735,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-16T11:15:54Z",
+      "side": 1,
+      "message": "change the validation. \"Manual\".equals(vspDetails.....)",
+      "range": {
+        "startLine": 734,
+        "startChar": 8,
+        "endLine": 735,
+        "endChar": 83
+      },
+      "revId": "85b9d2c9c58491a3b29fbb9642c00e4a8c2f4e4e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
