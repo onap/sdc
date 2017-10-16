@@ -4,5 +4,7 @@
 	"build": "dev",
 	"appContextPath" : "/onboarding",
 	"defaultRestPrefix": "/onboarding-api",
-	"defaultRestATTPrefix": "/sdc1/feProxy/rest"
+	"defaultRestATTPrefix": "/sdc1/feProxy/rest",
+	"marketPlaceUrl": "vnfsdk.repo.api.onap.org:8702",
+	"showBrowseVNF" : false
 }
