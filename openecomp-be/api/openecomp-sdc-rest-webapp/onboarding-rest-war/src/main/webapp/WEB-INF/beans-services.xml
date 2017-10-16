@@ -76,6 +76,7 @@
             <ref bean="deploymentFlavors"/>
 	        <ref bean="images"/>
             <ref bean="orchestrationTemplateCandidate"/>
+	    <ref bean="vnfPackageRepository"/>
             <ref bean="componentDependencyModel"/>
             <ref bean="activityLog"/>
             <ref bean="healthCheck"/>
