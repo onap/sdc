@@ -47,6 +47,8 @@ import {COMPONENTS_QUESTIONNAIRE, COMPONENTS_COMPUTE_QUESTIONNAIRE} from 'sdc-ap
 import {NIC_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNetworkConstants.js';
 import {IMAGE_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/images/SoftwareProductComponentsImageConstants.js';
 
+import VNFImportReducer from './vnfMarketPlace/VNFImportReducer.js';
+
 export default combineReducers({
 	softwareProductAttachments: combineReducers({
 		attachmentsDetails: SoftwareProductAttachmentsReducer,
@@ -98,5 +100,6 @@ export default combineReducers({
 		}
 		return state;
 	},
-	softwareProductQuestionnaire: createJSONSchemaReducer(PRODUCT_QUESTIONNAIRE)
+	softwareProductQuestionnaire: createJSONSchemaReducer(PRODUCT_QUESTIONNAIRE),
+	VNFMarketPlaceImport: VNFImportReducer
 });
