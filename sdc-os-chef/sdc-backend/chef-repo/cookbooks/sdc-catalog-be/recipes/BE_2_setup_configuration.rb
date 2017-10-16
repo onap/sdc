@@ -51,3 +51,16 @@ cookbook_file "ArtifactGenerator" do
    group "jetty"
    mode "0755"
 end
+
+
+template "VnfrepoConfiguration" do
+   path "/#{jetty_base}/config/onboarding-be/config-vnfsdk.yaml"
+   source "BE-vnfrepo-configuration.yaml.erb"
+   owner "jetty"
+   group "jetty"
+   mode "0755"
+   variables({
+      :VNFREPO_IP   => node['VnfRepo']['vnfRepoHost'],
+      :VNFREPO_PORT => node['VnfRepo']['vnfRepoPort']
+   })
+end

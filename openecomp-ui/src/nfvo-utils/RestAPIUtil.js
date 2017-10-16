@@ -55,6 +55,10 @@ class RestAPIUtil extends RestfulAPI {
 	applySecurity(options, data) {
 		let headers = options.headers || (options.headers = {});
 
+		if (options.isAnonymous) {
+			return;
+		}
+
 		let authToken = localStorage.getItem(STORAGE_AUTH_KEY);
 		if (authToken) {
 			headers[AUTHORIZATION_HEADER] = authToken;

@@ -48,6 +48,10 @@ function uploadFile(vspId, formData, version) {
 
 }
 
+function uploadVNFFile(csarId, softwareProductId, version) {
+	return RestAPIUtil.post(`${baseUrl()}${softwareProductId}/versions/${version.id}/vnfrepository/vnfpackage/${csarId}/import`);
+}
+
 function putSoftwareProduct(softwareProduct) {
 	return RestAPIUtil.put(`${baseUrl()}${softwareProduct.id}/versions/${softwareProduct.version.id}`, {
 		name: softwareProduct.name,
@@ -267,6 +271,45 @@ const SoftwareProductActionHelper = {
 
 		Promise.resolve()
 			.then(() => uploadFile(softwareProductId, formData, version))
+			.then(response => {
+				if (response.status === 'Success') {
+					dispatch({
+						type: commonActionTypes.DATA_CHANGED,
+						deltaData: {onboardingOrigin: response.onboardingOrigin},
+						formName: forms.VENDOR_SOFTWARE_PRODUCT_DETAILS
+					});
+					switch(response.onboardingOrigin){
+						case onboardingOriginTypes.ZIP:
+							OnboardingActionHelper.navigateToSoftwareProductAttachmentsSetupTab(dispatch, {softwareProductId, version});
+							break;
+						case onboardingOriginTypes.CSAR:
+							OnboardingActionHelper.navigateToSoftwareProductAttachmentsValidationTab(dispatch, {softwareProductId, version});
+							break;
+					}
+				}
+				else {
+					throw new Error(parseUploadErrorMsg(response.errors));
+				}
+			})
+			.catch(error => {
+				dispatch({
+					type: modalActionTypes.GLOBAL_MODAL_ERROR,
+					data: {
+						title: failedNotificationTitle,
+						msg: error.message
+					}
+				});
+			});
+	},
+
+	uploadVNFFile(dispatch, {csarId, failedNotificationTitle, softwareProductId, version}) {
+		dispatch({
+			type: HeatSetupActions.FILL_HEAT_SETUP_CACHE,
+			payload: {}
+		});
+
+		Promise.resolve()
+			.then(() => uploadVNFFile(csarId, softwareProductId, version))
 			.then(response => {
 				if (response.status === 'Success') {
 					dispatch({
