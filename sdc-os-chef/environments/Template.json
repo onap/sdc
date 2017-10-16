@@ -36,6 +36,10 @@
             "BE": "yyy",
             "FE": "yyy",
             "ES": "yyy"
+        },
+        "VnfRepo": {
+            "vnfRepoPort": "8702",
+            "vnfRepoHost": "yyy"
         }
     },
     "override_attributes": {
