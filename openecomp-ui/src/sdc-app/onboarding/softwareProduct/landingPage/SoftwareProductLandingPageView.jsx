@@ -19,7 +19,7 @@ import Dropzone from 'react-dropzone';
 
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
+import VnfRepositorySearchBox from 'nfvo-components/fileupload/VnfRepositorySearchBox.jsx';
 
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import SoftwareProductComponentsList from '../components/SoftwareProductComponentsList.js';
@@ -104,15 +104,16 @@ class SoftwareProductLandingPageView extends React.Component {
 	}
 
 	renderProductDetails(isManual, isReadOnlyMode) {
+		let {onBrowseVNF, currentSoftwareProduct} = this.props;
 		return (
 			<div className='details-panel'>
 				{ !isManual && <div>
 					<div className='software-product-landing-view-heading-title'>{i18n('Software Product Attachments')}</div>
-						<DraggableUploadFileBox
+						<VnfRepositorySearchBox
 							dataTestId='upload-btn'
 							isReadOnlyMode={isReadOnlyMode}
 							className={classnames('software-product-landing-view-top-block-col-upl', {'disabled': isReadOnlyMode})}
-							onClick={() => this.refs.fileInput.open()}/>
+							onClick={() => this.refs.fileInput.open()} onBrowseVNF={() => onBrowseVNF(currentSoftwareProduct)}/>
 					</div>
 				}
 			</div>
