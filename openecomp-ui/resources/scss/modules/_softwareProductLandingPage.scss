@@ -187,7 +187,41 @@
           .or-text {
             margin-top: 10px;
             margin-bottom: 10px;
+            color: $light-gray;
           }
+          .upload {
+            width: 50%;
+          }
+          .vnfRepo {
+            width: 50%;
+            cursor: pointer;
+            .searchRepo-text {
+              color: $blue;
+              @extend .body-1-semibold;
+              width: 72px;
+              line-height: 24px;
+              margin-left: auto;
+              margin-right: auto;
+            }
+            .svg-icon-wrapper {
+              .svg-icon.__search {
+                width: 34px;
+                height: 34px;
+                margin-top: 10px;
+              }
+              &.__positive {
+                fill: $blue;
+                color: $blue;
+              }
+            }
+          }
+          .verticalLine {
+            height: 90%;
+            border-left: 1px solid $light-gray;
+          }
+        }
+        .showVnf {
+          flex-direction: row;
         }
       }
     }

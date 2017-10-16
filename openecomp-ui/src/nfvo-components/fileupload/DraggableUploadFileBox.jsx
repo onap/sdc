@@ -13,19 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-/**
- * The HTML structure here is aligned with bootstrap HTML structure for form elements.
- * In this way we have proper styling and it is aligned with other form elements on screen.
- *
- * Select and MultiSelect options:
- *
- * label - the label to be shown which paired with the input
- *
- * all other "react-select" props - as documented on
- * http://jedwatson.github.io/react-select/
- * or
- * https://github.com/JedWatson/react-select
- */
+
 import React, {Component} from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Button from 'sdc-ui/lib/react/Button.js';

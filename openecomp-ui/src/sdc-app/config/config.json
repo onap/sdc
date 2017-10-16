@@ -4,5 +4,6 @@
 	"build": "dev",
 	"appContextPath" : "/onboarding",
 	"defaultRestPrefix": "/onboarding-api",
-	"defaultRestATTPrefix": "/sdc1/feProxy/rest"
+	"defaultRestATTPrefix": "/sdc1/feProxy/rest",
+	"showBrowseVNF" : true
 }
