@@ -4264,7 +4264,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return Either.left(validRegDef);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Either<ParsedToscaYamlInfo, ResponseFormat> parseResourceInfoFromYaml(String yamlFileName, Resource resource, String resourceYml, Map<String, String> createdNodesToscaResourceNames, Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName) {
 
 		Map<String, Object> mappedToscaTemplate;
@@ -4356,15 +4355,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 			ComponentTypeEnum containerComponentType = resource.getComponentType();
 			NodeTypeEnum containerNodeType = containerComponentType.getNodeType();
-
-			if (containerNodeType.equals(NodeTypeEnum.Resource) && uploadComponentInstanceInfo.getCapabilities() != null) {
-				Either<Map<String, List<CapabilityDefinition>>, ResponseFormat> getValidComponentInstanceCapabilitiesRes = getValidComponentInstanceCapabilities(refResource.getCapabilities(), uploadComponentInstanceInfo.getCapabilities());
+			//************
+			if (containerNodeType.equals(NodeTypeEnum.Resource) && MapUtils.isNotEmpty(uploadComponentInstanceInfo.getCapabilities()) && MapUtils.isNotEmpty(refResource.getCapabilities())) {
+				setCapabilityNamesTypes(refResource.getCapabilities(), uploadComponentInstanceInfo.getCapabilities());
+				Either<Map<String, List<CapabilityDefinition>>, ResponseFormat> getValidComponentInstanceCapabilitiesRes = getValidComponentInstanceCapabilities(refResource.getUniqueId(), refResource.getCapabilities(), uploadComponentInstanceInfo.getCapabilities());
 				if (getValidComponentInstanceCapabilitiesRes.isRight()) {
 					return Either.right(getValidComponentInstanceCapabilitiesRes.right().value());
 				} else {
 					componentInstance.setCapabilities(getValidComponentInstanceCapabilitiesRes.left().value());
 				}
 			}
+			//***********************
 			if (!existingnodeTypeMap.containsKey(uploadComponentInstanceInfo.getType())) {
 				log.debug("createResourceInstances - not found latest version for resource instance with name {} and type ", uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
 				ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
@@ -4416,7 +4417,21 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		return Either.left(eitherGerResource.left().value());
 	}
+	
+	private void setCapabilityNamesTypes(Map<String, List<CapabilityDefinition>> originCapabilities, Map<String, List<UploadCapInfo>> uploadedCapabilities) {
+		for(Entry<String, List<UploadCapInfo>> currEntry : uploadedCapabilities.entrySet()){
+			if(originCapabilities.containsKey(currEntry.getKey())){
+				currEntry.getValue().stream().forEach(cap -> cap.setType(currEntry.getKey()));
+			}
+		}
+	
+		for(Map.Entry<String, List<CapabilityDefinition>> capabilities : originCapabilities.entrySet()){
+			capabilities.getValue().stream().forEach(cap -> {if(uploadedCapabilities.containsKey(cap.getName())){uploadedCapabilities.get(cap.getName()).stream().forEach(c -> {c.setName(cap.getName());c.setType(cap.getType());});};});
+		}		   
+	}
 
+	
+	
 	private Either<Resource, ResponseFormat> validateResourceInstanceBeforeCreate(String yamlName, UploadComponentInstanceInfo uploadComponentInstanceInfo, Map<String, Resource> nodeNamespaceMap) {
 		log.debug("going to validate resource instance with name {} and type {} before create", uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
 		Resource refResource = null;
@@ -7058,7 +7073,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return null;
 	}
 
-	private Either<Map<String, List<CapabilityDefinition>>, ResponseFormat> getValidComponentInstanceCapabilities(Map<String, List<CapabilityDefinition>> defaultCapabilities, Map<String, List<UploadCapInfo>> uploadedCapabilities) {
+	private Either<Map<String, List<CapabilityDefinition>>, ResponseFormat> getValidComponentInstanceCapabilities(String resourceId, Map<String, List<CapabilityDefinition>> defaultCapabilities, Map<String, List<UploadCapInfo>> uploadedCapabilities) {
 		ResponseFormat responseFormat;
 		Map<String, List<CapabilityDefinition>> validCapabilitiesMap = new HashMap<>();
 
@@ -7068,14 +7083,33 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, capabilityType);
 				return Either.right(responseFormat);
 			} else {
-				CapabilityDefinition delaultCapability = defaultCapabilities.get(capabilityType).get(0);
-				Either<Boolean, String> validationRes = validateUniquenessUpdateUploadedComponentInstanceCapability(delaultCapability, uploadedCapabilitiesEntry.getValue().get(0));
-				if (validationRes.isRight()) {
-					responseFormat = componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NAME_ALREADY_EXISTS, validationRes.right().value());
+				CapabilityDefinition defaultCapability;
+				if(CollectionUtils.isNotEmpty(defaultCapabilities.get(capabilityType).get(0).getProperties())){
+					defaultCapability = defaultCapabilities.get(capabilityType).get(0);
+				} else {
+					Either<Component, StorageOperationStatus> getFullComponentRes = toscaOperationFacade.getToscaFullElement(resourceId);
+					if(getFullComponentRes.isRight()){
+						log.debug("Failed to get full component {}. Status is {}. ", resourceId, getFullComponentRes.right().value());
+						responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_FOUND, resourceId);
+						return Either.right(responseFormat);
+					}
+					defaultCapability = getFullComponentRes.left().value().getCapabilities().get(capabilityType).get(0);
+				}
+				if(CollectionUtils.isEmpty(defaultCapability.getProperties()) && CollectionUtils.isNotEmpty(uploadedCapabilitiesEntry.getValue().get(0).getProperties())){
+					log.debug("Failed to validate capability {} of component {}. Property list is empty. ", defaultCapability.getName(), resourceId);
+					log.debug("Failed to update capability property values. Property list of fetched capability {} is empty. ", defaultCapability.getName());
+					responseFormat = componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, resourceId);
 					return Either.right(responseFormat);
 				}
+				if(CollectionUtils.isNotEmpty(defaultCapability.getProperties()) && CollectionUtils.isNotEmpty(uploadedCapabilitiesEntry.getValue().get(0).getProperties())){
+					Either<Boolean, String> validationRes = validateUniquenessUpdateUploadedComponentInstanceCapability(defaultCapability, uploadedCapabilitiesEntry.getValue().get(0));
+					if (validationRes.isRight()) {
+						responseFormat = componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NAME_ALREADY_EXISTS, validationRes.right().value());
+						return Either.right(responseFormat);
+					}
+				}
 				List<CapabilityDefinition> validCapabilityList = new ArrayList<>();
-				validCapabilityList.add(delaultCapability);
+				validCapabilityList.add(defaultCapability);
 				validCapabilitiesMap.put(uploadedCapabilitiesEntry.getKey(), validCapabilityList);
 			}
 		}
