@@ -35,9 +35,10 @@
             "providedBy": {
               "type": "string",
               "enum": [
+                "AIC",
                 "Vendor"
               ],
-              "default": "Vendor"
+              "default": "AIC"
             }
           },
           "additionalProperties": false
