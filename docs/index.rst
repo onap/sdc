@@ -5,6 +5,14 @@ SDC Documentation
 
 .. toctree::
    :maxdepth: 2
-
-	releases/index
-	onap-developer/index
+   
+   administration.rst
+   architecture.rst
+   configuration.rst
+   consumedapis.rst
+   delivery.rst
+   humaninterfaces.rst
+   installation.rst
+   logging.rst
+   offeredapis.rst
+   release-notes.rst
