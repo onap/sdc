@@ -23,6 +23,7 @@ import NICCreation from 'sdc-app/onboarding/softwareProduct/components/network/N
 import SoftwareProductComponentsNICEditor from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNICEditor.js';
 import ComponentCreation from 'sdc-app/onboarding/softwareProduct/components/creation/SoftwareProductComponentCreation.js';
 import SoftwareProductDeploymentEditor from 'sdc-app/onboarding/softwareProduct/deployment/editor/SoftwareProductDeploymentEditor.js';
+import VNFImport from 'sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImport.js';
 
 export const modalContentMapper = {
 	SOFTWARE_PRODUCT_CREATION: 'SOFTWARE_PRODUCT_CREATION',
@@ -33,7 +34,8 @@ export const modalContentMapper = {
 	NIC_CREATION: 'NIC_CREATION',
 	COMPONENT_CREATION: 'COMPONENT_CREATION',
 	SOFTWARE_PRODUCT_COMPONENT_IMAGE_EDITOR : 'SOFTWARE_PRODUCT_COMPONENT_IMAGE_EDITOR',
-	DEPLOYMENT_FLAVOR_EDITOR: 'DEPLOYMENT_FLAVOR_EDITOR'
+	DEPLOYMENT_FLAVOR_EDITOR: 'DEPLOYMENT_FLAVOR_EDITOR',
+	VNF_IMPORT: 'VNF_IMPORT'
 };
 
 export const modalContentComponents = {
@@ -45,5 +47,6 @@ export const modalContentComponents = {
 	NIC_CREATION: NICCreation,
 	COMPONENT_CREATION: ComponentCreation,
 	SOFTWARE_PRODUCT_COMPONENT_IMAGE_EDITOR : SoftwareProductComponentImageEditor,
-	DEPLOYMENT_FLAVOR_EDITOR: SoftwareProductDeploymentEditor
+	DEPLOYMENT_FLAVOR_EDITOR: SoftwareProductDeploymentEditor,
+	VNF_IMPORT: VNFImport
 };
