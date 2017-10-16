@@ -6,5 +6,5 @@ SDC Documentation
 .. toctree::
    :maxdepth: 2
 
-	releases/index
-	onap-developer/index
+   releases/index
+   onap-developer/index
