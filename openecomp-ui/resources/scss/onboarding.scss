@@ -18,20 +18,27 @@ div[data-reactroot].customized-date-picker-calendar {
   .react-datepicker__triangle {
       margin-top: 0px;
   }
-  .react-datepicker__navigation--previous {
-      border: none;
-      width: 12px;
-      height: 12px;
-      margin-top: 2px;
-      content: url(../../node_modules/sdc-ui/assets/icons/angleLeft.svg);
+  .react-datepicker__navigation--previous::before, .react-datepicker__navigation--next::before {
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    position: absolute;
+    top: -4px;
   }
-  .react-datepicker__navigation--next {
-      border: none;
-      width: 12px;
-      height: 12px;
-      margin-top: 2px;
-      content: url(../../node_modules/sdc-ui/assets/icons/angleRight.svg);
+  .react-datepicker__navigation--previous::before {
+    left: 0;
+    content: url(../../node_modules/sdc-ui/assets/icons/angleLeft.svg);
   }
+  .react-datepicker__navigation--next::before {
+    right: 0;
+    content: url(../../node_modules/sdc-ui/assets/icons/angleRight.svg);
+  }
+
+  .react-datepicker__navigation--previous, .react-datepicker__navigation--next {
+      border: none;
+  }
+
+
   .react-datepicker__month-container {
 		.react-datepicker__header {
 			background-color: $background-gray;
