@@ -21,6 +21,7 @@ import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/Soft
 import LandingPageView from './SoftwareProductLandingPageView.jsx';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 import {onboardingMethod} from '../SoftwareProductConstants.js';
+import VNFImportActionHelper from '../vnfMarketPlace/VNFImportActionHelper.js';
 
 export const mapStateToProps = ({softwareProduct, licenseModel: {licenseAgreement}}) => {
 	let {softwareProductEditor: {data:currentSoftwareProduct = {}}, softwareProductComponents, softwareProductCategories = []} = softwareProduct;
@@ -104,7 +105,11 @@ const mapActionsToProps = (dispatch, {version}) => {
 			OnboardingActionHelper.navigateToSoftwareProductComponentGeneralAndUpdateLeftPanel(dispatch, {softwareProductId, componentId, version });
 		},
 		/** for the next version */
-		onAddComponent: () => SoftwareProductActionHelper.addComponent(dispatch)
+		onAddComponent: () => SoftwareProductActionHelper.addComponent(dispatch),
+
+		onBrowseVNF: (currentSoftwareProduct) => {
+			VNFImportActionHelper.open(dispatch, currentSoftwareProduct);
+		}
 	};
 };
 
