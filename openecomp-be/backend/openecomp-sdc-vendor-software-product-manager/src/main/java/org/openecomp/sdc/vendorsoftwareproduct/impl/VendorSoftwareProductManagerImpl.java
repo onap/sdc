@@ -329,7 +329,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         validateQuestionnaire(vspDetails.getId(), vspDetails.getVersion(), vspDetails
             .getOnboardingMethod()));
 
-    if (vspDetails.getOnboardingMethod().equals("Manual")) {
+    if (Objects.nonNull(vspDetails.getOnboardingMethod())
+        && vspDetails.getOnboardingMethod().equals("Manual")) {
       Collection<ErrorCode> deploymentFlavourValidationErrList =
           deploymentFlavorValidation(vspDetails.getId(), vspDetails.getVersion());
       if (validationResponse.getVspErrors() != null) {
@@ -527,7 +528,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     if (vspDetails.getSubCategory() == null) {
       errors.add(createMissingMandatoryFieldError("sub category"));
     }
-    if (vspDetails.getOnboardingMethod().equals("Manual")) {
+    if (Objects.nonNull(vspDetails.getOnboardingMethod())
+        && vspDetails.getOnboardingMethod().equals("Manual")) {
       //Manual Onboarding specific validations
       Collection<DeploymentFlavorEntity> deploymentFlavorEntities = vendorSoftwareProductDao
           .listDeploymentFlavors(vspDetails.getId(), vspDetails.getVersion());
@@ -729,7 +731,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspDetails.getId());
 
     VspDetails retrieved = vspInfoDao.get(vspDetails);
-    if (!retrieved.getOnboardingMethod().equals(vspDetails.getOnboardingMethod())) {
+    if (Objects.nonNull(retrieved.getOnboardingMethod())
+        && !retrieved.getOnboardingMethod().equals(vspDetails.getOnboardingMethod())) {
       final ErrorCode onboardingMethodUpdateErrorCode = OnboardingMethodErrorBuilder
           .getOnboardingUpdateError();
 
