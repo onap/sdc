@@ -109,7 +109,7 @@
 		<sonar.exclusions>**/scripts/**/*</sonar.exclusions>
 		<sonar.test.exclusions>**/test/**/*,**/tests/**/*</sonar.test.exclusions>
 		<sonar.inclusions>app/**/*.js,server-mock/**/*.js,src/**/*.js,src/main/**/*.java</sonar.inclusions>
-		<sonar.branch>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</sonar.branch>
+		<sonar.branch>${project.version}</sonar.branch>
 
 		<!--nexus-->
 		<nexus.proxy>https://nexus.onap.org</nexus.proxy>
