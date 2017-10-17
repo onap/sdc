@@ -2,6 +2,57 @@
   "comments": [
     {
       "key": {
+        "uuid": "1a2f8d8d_f5d7f1eb",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2017-10-17T06:51:12Z",
+      "side": 1,
+      "message": "Please fix static codestyle issues as they appear in the difference when actually they are not related to the functional fix.",
+      "revId": "e25a4ae1df2a32cc53d98882ac8a7bfb9e9f9573",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_15c4bd3e",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2017-10-17T06:51:12Z",
+      "side": 1,
+      "message": "The changes seem to override the previous commit. Please revert them accordingly.",
+      "revId": "e25a4ae1df2a32cc53d98882ac8a7bfb9e9f9573",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_75b541cc",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1631
+      },
+      "writtenOn": "2017-10-17T06:51:12Z",
+      "side": 1,
+      "message": "The changes seem to override the previous commit. Please revert them accordingly.",
+      "revId": "e25a4ae1df2a32cc53d98882ac8a7bfb9e9f9573",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a2f8d8d_d50515c3",
         "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
         "patchSetId": 1
