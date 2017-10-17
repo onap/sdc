@@ -1,0 +1,395 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_75d661c7",
+        "filename": "openecomp-ui/resources/scss/modules/_softwareProductLandingPage.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "change to variable $light-gray",
+      "range": {
+        "startLine": 190,
+        "startChar": 12,
+        "endLine": 190,
+        "endChar": 27
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_55db65ed",
+        "filename": "openecomp-ui/resources/scss/modules/_softwareProductLandingPage.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "change to variable $blue",
+      "range": {
+        "startLine": 213,
+        "startChar": 0,
+        "endLine": 214,
+        "endChar": 31
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_35d8d9ee",
+        "filename": "openecomp-ui/resources/scss/modules/_softwareProductLandingPage.scss",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "change to variable",
+      "range": {
+        "startLine": 220,
+        "startChar": 35,
+        "endLine": 220,
+        "endChar": 42
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_f5e1319b",
+        "filename": "openecomp-ui/src/nfvo-components/fileupload/DraggableUploadFileBox.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "not compatible with other upload boxes that send classNames\n- check component monitoring page\n- check component process editor page\n- check product process editor page",
+      "range": {
+        "startLine": 35,
+        "startChar": 2,
+        "endLine": 35,
+        "endChar": 56
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_70030f74",
+        "filename": "openecomp-ui/src/nfvo-components/fileupload/VnfRepositorySearchBox.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "this is not set to disabled when in readonly (checked in) mode",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 9
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_b5f3a972",
+        "filename": "openecomp-ui/src/nfvo-components/fileupload/VnfRepositorySearchBox.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "you took this off",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 60,
+        "endChar": 26
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_35ffb936",
+        "filename": "openecomp-ui/src/sdc-app/config/config.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "cannot be hardcoded URL.\ni suggest maybe a domain that can be redirected in host file",
+      "range": {
+        "startLine": 8,
+        "startChar": 1,
+        "endLine": 8,
+        "endChar": 45
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_15fcbd3d",
+        "filename": "openecomp-ui/src/sdc-app/config/config.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "how would this be changed? there is only one build for the war file.",
+      "range": {
+        "startLine": 9,
+        "startChar": 1,
+        "endLine": 9,
+        "endChar": 24
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_f5f8114b",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/SoftwareProductReducer.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "this should be a regular reducer, there is no data that is being edited and validated",
+      "range": {
+        "startLine": 104,
+        "startChar": 1,
+        "endLine": 104,
+        "endChar": 63
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_30f6a7d8",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/landingPage/SoftwareProductLandingPageView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "shows vertical line when VNF is set to false",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 116,
+        "endChar": 107
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_959f8d03",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportActionHelper.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "use nfvo-utils/RestAPIUtil.js and you will not have to deal with catching errors and the download of the binary file",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 33
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_75a42157",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportActionHelper.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "use the RestAPIUtil and you will have support for binary downloads.\nlook at the code for downloadHeatFile, you can send a parameter to for binaries and see how the file is received.\nno need for XMLHttpRequest here, duplicating code and having different impls for the same thing.",
+      "range": {
+        "startLine": 52,
+        "startChar": 0,
+        "endLine": 71,
+        "endChar": 1
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_558925c9",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportActionHelper.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "use RestApiUtil and look at the upload of the heat file.\nno need to handle errors, this is already covered.",
+      "range": {
+        "startLine": 82,
+        "startChar": 1,
+        "endLine": 82,
+        "endChar": 28
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_358699ba",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportActionHelper.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "don\u0027t understand how you would get to this code",
+      "range": {
+        "startLine": 100,
+        "startChar": 0,
+        "endLine": 115,
+        "endChar": 4
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_15939dfb",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportConstants.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "don\u0027t see the need for this.",
+      "range": {
+        "startLine": 25,
+        "startChar": 1,
+        "endLine": 25,
+        "endChar": 13
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_f58ff1ca",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportReducer.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "vendor id is not a softwareproduct?\ndo you use this anywhere?",
+      "range": {
+        "startLine": 26,
+        "startChar": 4,
+        "endLine": 26,
+        "endChar": 51
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_303c672f",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportView.jsx",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-17T10:41:19Z",
+      "side": 1,
+      "message": "please remove",
+      "range": {
+        "startLine": 164,
+        "startChar": 2,
+        "endLine": 164,
+        "endChar": 43
+      },
+      "revId": "e1cbf3d289aeca3c59d037164684abbb5e415a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
