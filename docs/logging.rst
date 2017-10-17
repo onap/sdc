@@ -1,9 +1,17 @@
 .. This work is licensed under a Creative Commons Attribution 4.0 International License.
 .. http://creativecommons.org/licenses/by/4.0
 
-Logging & Diagnostic Information
---------------------------------
-Description on how to interact with and diagnose problems with the components as delivered.
+Logging
+=======
+
+.. note::
+   * This section is used to describe the informational or diagnostic messages emitted from 
+     a software component and the methods or collecting them.
+   
+   * This section is typically: provided for a platform-component and sdk; and
+     referenced in developer and user guides
+   
+   * This note must be removed after content has been added.
 
 +--------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 | Server | Location                                 | Type                | Description                                                                                                                                                                               | Rolling             |
@@ -36,3 +44,11 @@ Description on how to interact with and diagnose problems with the components as
 |        |                                          |                     | To allow this logger set this property to true                                                                                                                                            |                     |
 |        |                                          |                     | This log holds all the logging output of the application.                                                                                                                                 |                     |
 +--------+------------------------------------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+
+
+Where to Access Information
+---------------------------
+
+
+Error / Warning Messages
+------------------------
