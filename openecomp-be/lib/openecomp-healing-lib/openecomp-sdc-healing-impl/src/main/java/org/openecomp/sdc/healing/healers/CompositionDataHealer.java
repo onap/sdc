@@ -21,6 +21,8 @@
 package org.openecomp.sdc.healing.healers;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.dao.ServiceModelDaoFactory;
 import org.openecomp.core.model.types.ServiceElement;
@@ -114,72 +116,35 @@ public class CompositionDataHealer implements Healer {
     Collection<NetworkEntity> networkEntities =
         networkDao.list(new NetworkEntity(vspId, version, null));
 
-    Optional<ToscaServiceModel> serviceModelForHealing = getServiceModelForHealing(vspId, version);
+    Optional<Pair<ToscaServiceModel, ToscaServiceModel>> serviceModels =
+        getServiceModelForHealing(vspId, version);
     CompositionData compositionData = null;
-    if (!doesVspNeedCompositionDataHealing(vspId, version, componentEntities, networkEntities,
-        nicEntities)) {
+    if (!doesVspNeedCompositionDataHealing(componentEntities, networkEntities, nicEntities)) {
       updateComponentsDisplayNames(componentEntities);
       mdcDataDebugMessage.debugExitMessage(null, null);
-      //return Optional.empty();
     } else {
-      if (!serviceModelForHealing.isPresent()) {
+      if (!serviceModels.isPresent()) {
         mdcDataDebugMessage.debugExitMessage(null, null);
         return Optional.empty();
       }
-      compositionData = healCompositionData(vspId, version, serviceModelForHealing);
+      compositionData = healCompositionData(vspId, version, serviceModels);
     }
-    compositionData =
-        getCompositionDataForHealing(vspId, version, serviceModelForHealing.get());
-    HealNfodData(vspId, version, compositionData);
+
+    if(serviceModels.isPresent()) {
+      compositionData =
+          getCompositionDataForHealing(vspId, version, serviceModels.get());
+      HealNfodData(vspId, version, compositionData);
+    }
     mdcDataDebugMessage.debugExitMessage(null, null);
-    return Optional.of(compositionData);
-  }
-
-  private boolean doesVspNeedCompositionDataHealing(String vspId, Version version,
-                                                    Collection<ComponentEntity> componentEntities,
-                                                    Collection<NetworkEntity> networkEntities,
-                                                    Collection<NicEntity> nicEntities) {
-
-    return (CollectionUtils.isEmpty(componentEntities) && CollectionUtils.isEmpty(nicEntities) &&
-        CollectionUtils.isEmpty(networkEntities) );
-
-//    mdcDataDebugMessage.debugEntryMessage(null, null);
-//
-////    ToscaServiceModel toscaServiceModel;
-//
-//    ByteBuffer contentData = uploadData.getContentData();
-//    FileContentHandler fileContentHandler = CommonUtil.validateAndUploadFileContent(uploadData
-//        .getContentData().array());
-//
-//
-//
-//    TranslatorOutput translatorOutput =
-//        HeatToToscaUtil.loadAndTranslateTemplateData(fileContentHandler);
-//    ToscaServiceModel toscaServiceModel = translatorOutput.getToscaServiceModel();
-//
-////    toscaServiceModel = enrichedServiceModelDao.getServiceModel(vspId, version);
-//
-//    mdcDataDebugMessage.debugExitMessage(null, null);
-//    return toscaServiceModel;
-
+    return Optional.ofNullable(compositionData);
   }
 
   private void HealNfodData(String vspId, Version version, CompositionData compositionData) {
     Collection<ComponentEntity> componentEntities;
-    /*componentEntities =
-        vendorSoftwareProductDao.listComponents(vspId, version);*/
     componentEntities = componentDao.list(new ComponentEntity(vspId, version, null));
-
-    /*Collection<ComputeEntity> computeEntities=vendorSoftwareProductDao.listComputesByVsp(vspId,
-        version);
-    Collection<ImageEntity> imageEntities =vendorSoftwareProductDao.listImagesByVsp(vspId, version);
-    Collection<DeploymentFlavorEntity> deploymentFlavorEntities =vendorSoftwareProductDao
-        .listDeploymentFlavors(vspId, version);*/
 
     Collection<ComputeEntity> computeEntities = computeDao.listByVsp(vspId, version);
     Collection<ImageEntity> imageEntities = imageDao.listByVsp(vspId, version);
-    //Collection<DeploymentFlavorEntity> deploymentFlavorEntities = deloymentFlavorDao.list(new
-        //DeploymentFlavorEntity(vspId, version, null));
 
     if (CollectionUtils.isEmpty(computeEntities) && CollectionUtils.isEmpty(imageEntities)) {
       for (Component component : compositionData.getComponents()) {
@@ -198,18 +163,18 @@ public class CompositionDataHealer implements Healer {
       }
 
     }
-
-    /*if (CollectionUtils.isEmpty(deploymentFlavorEntities)) {
-      compositionEntityDataManager.saveDeploymentFlavors(vspId,version,compositionData);
-    }*/
   }
 
   private CompositionData healCompositionData(String vspId, Version version,
-                                              Optional<ToscaServiceModel> serviceModelForHealing) {
-    ToscaServiceModel toscaServiceModel = serviceModelForHealing.get();
-    CompositionData compositionData =
-        getCompositionDataForHealing(vspId, version, toscaServiceModel);
-    compositionEntityDataManager.saveCompositionData(vspId, version, compositionData);
+                                              Optional<Pair<ToscaServiceModel, ToscaServiceModel>> serviceModels) {
+    CompositionData compositionData = null;
+
+    if(serviceModels.isPresent()) {
+      Pair<ToscaServiceModel, ToscaServiceModel> toscaServiceModels = serviceModels.get();
+      compositionData =
+          getCompositionDataForHealing(vspId, version, toscaServiceModels);
+      compositionEntityDataManager.saveCompositionData(vspId, version, compositionData);
+    }
     return compositionData;
   }
 
@@ -222,19 +187,16 @@ public class CompositionDataHealer implements Healer {
   }
 
   private CompositionData getCompositionDataForHealing(String vspId, Version version,
-                                                       ToscaServiceModel toscaServiceModel) {
+                                                       Pair<ToscaServiceModel, ToscaServiceModel> toscaServiceModels) {
     mdcDataDebugMessage.debugEntryMessage(null);
 
-    if (Objects.isNull(toscaServiceModel)) {
+    if (Objects.isNull(toscaServiceModels)) {
       return null;
     }
 
-    CompositionData compositionData = new CompositionData();
-    if (Objects.nonNull(toscaServiceModel)) {
-      compositionData = compositionDataExtractor
-          .extractServiceCompositionData(toscaServiceModel);
-      serviceModelDao.storeServiceModel(vspId, version, toscaServiceModel);
-    }
+    CompositionData compositionData = compositionDataExtractor
+        .extractServiceCompositionData(toscaServiceModels.getRight());
+    serviceModelDao.storeServiceModel(vspId, version, toscaServiceModels.getLeft());
 
     mdcDataDebugMessage.debugExitMessage(null);
     return compositionData;
@@ -269,12 +231,12 @@ public class CompositionDataHealer implements Healer {
 
   }
 
-  private Optional<ToscaServiceModel> getServiceModelForHealing(String vspId, Version version)
+  private Optional<Pair<ToscaServiceModel, ToscaServiceModel>> getServiceModelForHealing(String
+                                                                                             vspId, Version
+                                                                                             version)
       throws IOException {
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
 
-    /*UploadDataEntity uploadData =
-        vendorSoftwareProductDao.getUploadData(new UploadDataEntity(vspId, version));*/
     UploadDataEntity uploadData =
         orchestrationTemplateDataDao.getOrchestrationTemplate(vspId, version);
 
@@ -297,7 +259,8 @@ public class CompositionDataHealer implements Healer {
     }
 
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
-    return Optional.of(translatorOutput.getToscaServiceModel());
+    return Optional.of(new ImmutablePair<>(translatorOutput.getToscaServiceModel(), translatorOutput
+        .getNonUnifiedToscaServiceModel()));
   }
 
   private TranslatorOutput getTranslatorOutputForHealing(UploadDataEntity uploadData) {
