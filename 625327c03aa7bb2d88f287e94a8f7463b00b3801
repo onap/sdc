@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_f0eedfb3",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/CompositionDataHealer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-17T10:03:51Z",
+      "side": 1,
+      "message": "Optional should not be a parameter function. Move the isPresent condition to the calling method",
+      "range": {
+        "startLine": 169,
+        "startChar": 46,
+        "endLine": 172,
+        "endChar": 35
+      },
+      "revId": "625327c03aa7bb2d88f287e94a8f7463b00b3801",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
