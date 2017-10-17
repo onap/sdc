@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_d50515c3",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-17T06:10:07Z",
+      "side": 1,
+      "message": "nodeTemaplate can be null and there is no null check. Add Null check",
+      "range": {
+        "startLine": 289,
+        "startChar": 22,
+        "endLine": 289,
+        "endChar": 44
+      },
+      "revId": "e25a4ae1df2a32cc53d98882ac8a7bfb9e9f9573",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_752b0131",
+        "filename": "openecomp-be/lib/openecomp-sdc-enrichment-lib/openecomp-sdc-enrichment-impl/src/main/java/org/openecomp/sdc/enrichment/impl/tosca/PortMirroringEnricher.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-17T06:10:07Z",
+      "side": 1,
+      "message": "1. Null check for nodeType.\n2. this condition is starting to be too long.\n\nyou can achieve both corrections if you\u0027ll add a set of this string(or a function that return this set) to ToscaNodeType and then ask for contains for nodeType",
+      "range": {
+        "startLine": 291,
+        "startChar": 4,
+        "endLine": 295,
+        "endChar": 64
+      },
+      "revId": "e25a4ae1df2a32cc53d98882ac8a7bfb9e9f9573",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
