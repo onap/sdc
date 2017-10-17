@@ -212,6 +212,10 @@
                                 <fixcrlf srcdir="./" eol="unix"
                                          includes="zusammenMainTool.sh"/>
                             </tasks>
+                            <tasks>
+                                <replace file="src/main/resources/zusammenMainTool.sh" token="1.0-SNAPSHOT" value="${project.version}"/>
+                            </tasks>
+
                         </configuration>
                         <goals>
                             <goal>run</goal>
