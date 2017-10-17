@@ -1,0 +1,225 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_d5dd1516",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-17T07:27:12Z",
+      "side": 1,
+      "message": "Please don\u0027t expose mutable, not thread-safe static fields.",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_75ec21c8",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-17T07:27:12Z",
+      "side": 1,
+      "message": "Please add a space after the comma for readability.",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_35ce995b",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-17T07:27:12Z",
+      "side": 1,
+      "message": "Please use constants wherever possible.",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_b57e09e3",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-17T07:27:12Z",
+      "side": 1,
+      "message": "This is very difficult to understand. There are two nested forEach() expressions. Please simplify.",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_95830dcc",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-17T07:27:12Z",
+      "side": 1,
+      "message": "Please add a space after the comma.",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_f5737113",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-17T07:27:12Z",
+      "side": 1,
+      "message": "This looks identical to the above. Can it be made a function, and called once with \u0027itemVersionMap\u0027 and then with \u0027itemChangeRefMap\u0027?",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_755f8173",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-17T07:27:12Z",
+      "side": 1,
+      "message": "Does it make sense to use String.format() here?",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_b565e946",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-17T07:27:12Z",
+      "side": 1,
+      "message": "Please make oldVersion a constant.",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_955aed81",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-17T07:27:12Z",
+      "side": 1,
+      "message": "Please add spaces where needed according to the coding conventions.",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_154efdc1",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/ElementHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-17T07:27:12Z",
+      "side": 1,
+      "message": "Please space after the comma",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_f54a51ab",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/ElementHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-17T07:27:12Z",
+      "side": 1,
+      "message": "Please spaces where needed - before/after (, ), {, } etc.",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_d5c75511",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/VspGeneralLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-17T07:27:12Z",
+      "side": 1,
+      "message": "Spaces, please",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_95d1cdcf",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/VspGeneralLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-17T07:27:12Z",
+      "side": 1,
+      "message": "Please define (or use if already exist) constants for \"name\" and \"General\"",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
