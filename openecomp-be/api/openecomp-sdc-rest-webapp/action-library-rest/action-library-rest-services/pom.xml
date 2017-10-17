@@ -125,7 +125,6 @@
                     <includes>
                         <include>test/core/unittest/offline/**</include>
                     </includes>
-                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
             <!-- Error codes generator plugin -->

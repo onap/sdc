@@ -78,7 +78,6 @@
                 <configuration>
                     <useSystemClassLoader>false</useSystemClassLoader>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
         </plugins>
