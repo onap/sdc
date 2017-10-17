@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "1a2f8d8d_75ed418b",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2017-10-17T10:52:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a2f8d8d_75ec21c8",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a2f8d8d_35ce995b",
         "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
         "patchSetId": 1
@@ -47,6 +65,24 @@
       "writtenOn": "2017-10-17T07:27:12Z",
       "side": 1,
       "message": "Please use constants wherever possible.",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_5502453f",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2017-10-17T10:52:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a2f8d8d_35ce995b",
       "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -87,6 +123,24 @@
     },
     {
       "key": {
+        "uuid": "1a2f8d8d_55b0058b",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2017-10-17T10:52:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a2f8d8d_95830dcc",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a2f8d8d_f5737113",
         "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
         "patchSetId": 1
@@ -98,6 +152,24 @@
       "writtenOn": "2017-10-17T07:27:12Z",
       "side": 1,
       "message": "This looks identical to the above. Can it be made a function, and called once with \u0027itemVersionMap\u0027 and then with \u0027itemChangeRefMap\u0027?",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_75bb0173",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2017-10-17T10:52:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a2f8d8d_f5737113",
       "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -121,6 +193,24 @@
     },
     {
       "key": {
+        "uuid": "1a2f8d8d_357459ce",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2017-10-17T10:52:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a2f8d8d_755f8173",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a2f8d8d_b565e946",
         "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
         "patchSetId": 1
@@ -132,6 +222,24 @@
       "writtenOn": "2017-10-17T07:27:12Z",
       "side": 1,
       "message": "Please make oldVersion a constant.",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_d54ab582",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/ResetOldVersion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2017-10-17T10:52:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a2f8d8d_b565e946",
       "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -200,6 +308,24 @@
       "writtenOn": "2017-10-17T07:27:12Z",
       "side": 1,
       "message": "Spaces, please",
+      "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_3509f931",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/VspGeneralLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2017-10-17T10:52:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a2f8d8d_d5c75511",
       "revId": "f2efa8b46ed86b76925adeddceba7489c87cbe30",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
