@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_b0ccd736",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/CompositionDataHealer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-17T10:32:45Z",
+      "side": 1,
+      "message": "serviceModel.get() can cause NPE if serviceModelsisNull.\n\nyou should do :\ncompositionData \u003d serviceModels.isPresent() ?\n : healCompositionData(vspId, version, serviceModels.get()) : null;\n\nThis will be aligned to your previous commit intention",
+      "range": {
+        "startLine": 130,
+        "startChar": 60,
+        "endLine": 130,
+        "endChar": 73
+      },
+      "revId": "9b9a95743ea465c2a58d0ea1602d50a7947e6318",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
