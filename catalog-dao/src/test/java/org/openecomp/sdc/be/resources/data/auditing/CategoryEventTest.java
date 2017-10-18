@@ -3,10 +3,7 @@ package org.openecomp.sdc.be.resources.data.auditing;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
-
 
 public class CategoryEventTest {
 
@@ -14,7 +11,6 @@ public class CategoryEventTest {
 		return new CategoryEvent();
 	}
 
-	
 	@Test
 	public void testFillFields() throws Exception {
 		CategoryEvent testSubject;
@@ -24,7 +20,6 @@ public class CategoryEventTest {
 		testSubject.fillFields();
 	}
 
-	
 	@Test
 	public void testGetTimebaseduuid() throws Exception {
 		CategoryEvent testSubject;
@@ -35,7 +30,6 @@ public class CategoryEventTest {
 		result = testSubject.getTimebaseduuid();
 	}
 
-	
 	@Test
 	public void testSetTimebaseduuid() throws Exception {
 		CategoryEvent testSubject;
@@ -46,7 +40,6 @@ public class CategoryEventTest {
 		testSubject.setTimebaseduuid(timebaseduuid);
 	}
 
-	
 	@Test
 	public void testGetAction() throws Exception {
 		CategoryEvent testSubject;
@@ -57,7 +50,6 @@ public class CategoryEventTest {
 		result = testSubject.getAction();
 	}
 
-	
 	@Test
 	public void testSetAction() throws Exception {
 		CategoryEvent testSubject;
@@ -68,7 +60,6 @@ public class CategoryEventTest {
 		testSubject.setAction(action);
 	}
 
-	
 	@Test
 	public void testGetStatus() throws Exception {
 		CategoryEvent testSubject;
@@ -79,7 +70,6 @@ public class CategoryEventTest {
 		result = testSubject.getStatus();
 	}
 
-	
 	@Test
 	public void testSetStatus() throws Exception {
 		CategoryEvent testSubject;
@@ -90,7 +80,6 @@ public class CategoryEventTest {
 		testSubject.setStatus(status);
 	}
 
-	
 	@Test
 	public void testGetDesc() throws Exception {
 		CategoryEvent testSubject;
@@ -101,7 +90,6 @@ public class CategoryEventTest {
 		result = testSubject.getDesc();
 	}
 
-	
 	@Test
 	public void testSetDesc() throws Exception {
 		CategoryEvent testSubject;
@@ -112,7 +100,6 @@ public class CategoryEventTest {
 		testSubject.setDesc(desc);
 	}
 
-	
 	@Test
 	public void testGetCategoryName() throws Exception {
 		CategoryEvent testSubject;
@@ -123,7 +110,6 @@ public class CategoryEventTest {
 		result = testSubject.getCategoryName();
 	}
 
-	
 	@Test
 	public void testSetCategoryName() throws Exception {
 		CategoryEvent testSubject;
@@ -134,7 +120,6 @@ public class CategoryEventTest {
 		testSubject.setCategoryName(categoryName);
 	}
 
-	
 	@Test
 	public void testGetSubCategoryName() throws Exception {
 		CategoryEvent testSubject;
@@ -145,7 +130,6 @@ public class CategoryEventTest {
 		result = testSubject.getSubCategoryName();
 	}
 
-	
 	@Test
 	public void testSetSubCategoryName() throws Exception {
 		CategoryEvent testSubject;
@@ -156,7 +140,6 @@ public class CategoryEventTest {
 		testSubject.setSubCategoryName(subCategoryName);
 	}
 
-	
 	@Test
 	public void testGetGroupingName() throws Exception {
 		CategoryEvent testSubject;
@@ -167,7 +150,6 @@ public class CategoryEventTest {
 		result = testSubject.getGroupingName();
 	}
 
-	
 	@Test
 	public void testSetGroupingName() throws Exception {
 		CategoryEvent testSubject;
@@ -178,7 +160,6 @@ public class CategoryEventTest {
 		testSubject.setGroupingName(groupingName);
 	}
 
-	
 	@Test
 	public void testGetTimestamp1() throws Exception {
 		CategoryEvent testSubject;
@@ -189,7 +170,6 @@ public class CategoryEventTest {
 		result = testSubject.getTimestamp1();
 	}
 
-	
 	@Test
 	public void testSetTimestamp1() throws Exception {
 		CategoryEvent testSubject;
@@ -200,7 +180,6 @@ public class CategoryEventTest {
 		testSubject.setTimestamp1(timestamp1);
 	}
 
-	
 	@Test
 	public void testGetModifier() throws Exception {
 		CategoryEvent testSubject;
@@ -211,7 +190,6 @@ public class CategoryEventTest {
 		result = testSubject.getModifier();
 	}
 
-	
 	@Test
 	public void testSetModifier() throws Exception {
 		CategoryEvent testSubject;
@@ -222,7 +200,6 @@ public class CategoryEventTest {
 		testSubject.setModifier(modifier);
 	}
 
-	
 	@Test
 	public void testGetServiceInstanceId() throws Exception {
 		CategoryEvent testSubject;
@@ -233,7 +210,6 @@ public class CategoryEventTest {
 		result = testSubject.getServiceInstanceId();
 	}
 
-	
 	@Test
 	public void testSetServiceInstanceId() throws Exception {
 		CategoryEvent testSubject;
@@ -244,7 +220,6 @@ public class CategoryEventTest {
 		testSubject.setServiceInstanceId(serviceInstanceId);
 	}
 
-	
 	@Test
 	public void testGetResourceType() throws Exception {
 		CategoryEvent testSubject;
@@ -255,7 +230,6 @@ public class CategoryEventTest {
 		result = testSubject.getResourceType();
 	}
 
-	
 	@Test
 	public void testSetResourceType() throws Exception {
 		CategoryEvent testSubject;
@@ -266,7 +240,6 @@ public class CategoryEventTest {
 		testSubject.setResourceType(resourceType);
 	}
 
-	
 	@Test
 	public void testGetRequestId() throws Exception {
 		CategoryEvent testSubject;
@@ -277,7 +250,6 @@ public class CategoryEventTest {
 		result = testSubject.getRequestId();
 	}
 
-	
 	@Test
 	public void testSetRequestId() throws Exception {
 		CategoryEvent testSubject;
