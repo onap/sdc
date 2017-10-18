@@ -1,9 +1,6 @@
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
-
 
 public class AuditingGenericEventTest {
 
@@ -11,7 +8,6 @@ public class AuditingGenericEventTest {
 		return new AuditingGenericEvent();
 	}
 
-	
 	@Test
 	public void testGetRequestId() throws Exception {
 		AuditingGenericEvent testSubject;
@@ -22,7 +18,6 @@ public class AuditingGenericEventTest {
 		result = testSubject.getRequestId();
 	}
 
-	
 	@Test
 	public void testSetRequestId() throws Exception {
 		AuditingGenericEvent testSubject;
@@ -33,7 +28,6 @@ public class AuditingGenericEventTest {
 		testSubject.setRequestId(requestId);
 	}
 
-	
 	@Test
 	public void testGetServiceInstanceId() throws Exception {
 		AuditingGenericEvent testSubject;
@@ -44,7 +38,6 @@ public class AuditingGenericEventTest {
 		result = testSubject.getServiceInstanceId();
 	}
 
-	
 	@Test
 	public void testSetServiceInstanceId() throws Exception {
 		AuditingGenericEvent testSubject;
@@ -55,7 +48,6 @@ public class AuditingGenericEventTest {
 		testSubject.setServiceInstanceId(serviceInstanceId);
 	}
 
-	
 	@Test
 	public void testGetAction() throws Exception {
 		AuditingGenericEvent testSubject;
@@ -66,7 +58,6 @@ public class AuditingGenericEventTest {
 		result = testSubject.getAction();
 	}
 
-	
 	@Test
 	public void testSetAction() throws Exception {
 		AuditingGenericEvent testSubject;
@@ -77,7 +68,6 @@ public class AuditingGenericEventTest {
 		testSubject.setAction(action);
 	}
 
-	
 	@Test
 	public void testGetStatus() throws Exception {
 		AuditingGenericEvent testSubject;
@@ -88,7 +78,6 @@ public class AuditingGenericEventTest {
 		result = testSubject.getStatus();
 	}
 
-	
 	@Test
 	public void testSetStatus() throws Exception {
 		AuditingGenericEvent testSubject;
@@ -99,7 +88,6 @@ public class AuditingGenericEventTest {
 		testSubject.setStatus(status);
 	}
 
-	
 	@Test
 	public void testGetDesc() throws Exception {
 		AuditingGenericEvent testSubject;
@@ -110,7 +98,6 @@ public class AuditingGenericEventTest {
 		result = testSubject.getDesc();
 	}
 
-	
 	@Test
 	public void testSetDesc() throws Exception {
 		AuditingGenericEvent testSubject;
@@ -121,7 +108,6 @@ public class AuditingGenericEventTest {
 		testSubject.setDesc(desc);
 	}
 
-	
 	@Test
 	public void testFillFields() throws Exception {
 		AuditingGenericEvent testSubject;

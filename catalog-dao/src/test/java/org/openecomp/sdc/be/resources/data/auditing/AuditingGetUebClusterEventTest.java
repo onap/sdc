@@ -3,10 +3,7 @@ package org.openecomp.sdc.be.resources.data.auditing;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
-
 
 public class AuditingGetUebClusterEventTest {
 
@@ -14,7 +11,6 @@ public class AuditingGetUebClusterEventTest {
 		return new AuditingGetUebClusterEvent();
 	}
 
-	
 	@Test
 	public void testFillFields() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -24,7 +20,6 @@ public class AuditingGetUebClusterEventTest {
 		testSubject.fillFields();
 	}
 
-	
 	@Test
 	public void testGetConsumerId() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -35,7 +30,6 @@ public class AuditingGetUebClusterEventTest {
 		result = testSubject.getConsumerId();
 	}
 
-	
 	@Test
 	public void testSetConsumerId() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -46,7 +40,6 @@ public class AuditingGetUebClusterEventTest {
 		testSubject.setConsumerId(consumerId);
 	}
 
-	
 	@Test
 	public void testGetTimebaseduuid() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -57,7 +50,6 @@ public class AuditingGetUebClusterEventTest {
 		result = testSubject.getTimebaseduuid();
 	}
 
-	
 	@Test
 	public void testSetTimebaseduuid() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -68,7 +60,6 @@ public class AuditingGetUebClusterEventTest {
 		testSubject.setTimebaseduuid(timebaseduuid);
 	}
 
-	
 	@Test
 	public void testGetTimestamp1() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -79,7 +70,6 @@ public class AuditingGetUebClusterEventTest {
 		result = testSubject.getTimestamp1();
 	}
 
-	
 	@Test
 	public void testSetTimestamp1() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -90,7 +80,6 @@ public class AuditingGetUebClusterEventTest {
 		testSubject.setTimestamp1(timestamp1);
 	}
 
-	
 	@Test
 	public void testGetRequestId() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -101,7 +90,6 @@ public class AuditingGetUebClusterEventTest {
 		result = testSubject.getRequestId();
 	}
 
-	
 	@Test
 	public void testSetRequestId() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -112,7 +100,6 @@ public class AuditingGetUebClusterEventTest {
 		testSubject.setRequestId(requestId);
 	}
 
-	
 	@Test
 	public void testGetServiceInstanceId() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -123,7 +110,6 @@ public class AuditingGetUebClusterEventTest {
 		result = testSubject.getServiceInstanceId();
 	}
 
-	
 	@Test
 	public void testSetServiceInstanceId() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -134,7 +120,6 @@ public class AuditingGetUebClusterEventTest {
 		testSubject.setServiceInstanceId(serviceInstanceId);
 	}
 
-	
 	@Test
 	public void testGetAction() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -145,7 +130,6 @@ public class AuditingGetUebClusterEventTest {
 		result = testSubject.getAction();
 	}
 
-	
 	@Test
 	public void testSetAction() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -156,7 +140,6 @@ public class AuditingGetUebClusterEventTest {
 		testSubject.setAction(action);
 	}
 
-	
 	@Test
 	public void testGetStatus() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -167,7 +150,6 @@ public class AuditingGetUebClusterEventTest {
 		result = testSubject.getStatus();
 	}
 
-	
 	@Test
 	public void testSetStatus() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -178,7 +160,6 @@ public class AuditingGetUebClusterEventTest {
 		testSubject.setStatus(status);
 	}
 
-	
 	@Test
 	public void testGetDesc() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -189,7 +170,6 @@ public class AuditingGetUebClusterEventTest {
 		result = testSubject.getDesc();
 	}
 
-	
 	@Test
 	public void testSetDesc() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
@@ -200,7 +180,6 @@ public class AuditingGetUebClusterEventTest {
 		testSubject.setDesc(desc);
 	}
 
-	
 	@Test
 	public void testToString() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
