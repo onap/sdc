@@ -83,7 +83,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 			// Get the resource from DB
 			Either<Resource, StorageOperationStatus> status = toscaOperationFacade.getToscaElement(resourceId);
 			if (status.isRight()) {
-				return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
+				return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
 			}
 			Resource resource = status.left().value();
 
@@ -151,7 +151,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 		// Get the resource from DB
 		Either<Resource, StorageOperationStatus> status = toscaOperationFacade.getToscaElement(resourceId);
 		if (status.isRight()) {
-			return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
+			return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
 		}
 		Resource resource = status.left().value();
 
@@ -195,7 +195,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 			// Get the resource from DB
 			Either<Resource, StorageOperationStatus> eitherResource = toscaOperationFacade.getToscaElement(resourceId);
 			if (eitherResource.isRight()) {
-				return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
+				return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
 			}
 			Resource resource = eitherResource.left().value();
 
@@ -273,7 +273,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 			// Get the resource from DB
 			Either<Resource, StorageOperationStatus> eitherResource = toscaOperationFacade.getToscaElement(resourceId);
 			if (eitherResource.isRight()) {
-				return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
+				return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
 			}
 			Resource resource = eitherResource.left().value();
 

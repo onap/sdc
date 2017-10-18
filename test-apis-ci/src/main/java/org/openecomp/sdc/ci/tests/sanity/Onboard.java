@@ -32,7 +32,7 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.ExtentTestActions;
-import org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders;
+import org.openecomp.sdc.ci.tests.dataProviders.OnboardingDataProviders;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
@@ -78,7 +78,7 @@ public class Onboard extends ComponentBaseTest {
 	}
 	
 
-	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")
+	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "VNF_List")
 	public void onboardVNFShotFlow(String filepath, String vnfFile) throws Exception, Throwable {
 		setLog(vnfFile);
 		System.out.println("print - >" + makeDistributionValue);

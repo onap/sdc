@@ -212,5 +212,5 @@ echo "Triger sanity docker, please wait..."
     if [ ${LOCAL} = false ]; then
 	   docker pull ${PREFIX}/sdc-sanity:${RELEASE}
     fi
-	docker run --detach --name sdc-sanity --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 512m --memory-swap=512m --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/sdc-sanity/target:/var/lib/tests/target --volume /data/logs/sdc-sanity/ExtentReport:/var/lib/tests/ExtentReport --volume /data/environments:/root/chef-solo/environments --publish 9560:9560 ${PREFIX}/sdc-sanity:${RELEASE}
+	docker run --detach --name sdc-sanity --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 1g --memory-swap=1g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/sdc-sanity/target:/var/lib/tests/target --volume /data/logs/sdc-sanity/ExtentReport:/var/lib/tests/ExtentReport --volume /data/environments:/root/chef-solo/environments --publish 9560:9560 ${PREFIX}/sdc-sanity:${RELEASE}
 fi
