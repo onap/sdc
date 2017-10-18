@@ -78,7 +78,19 @@
                                     <directory>${project.basedir}/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/tools</directory>
                                     <followSymlinks>false</followSymlinks>
                                 </fileset>
-                                
+                                <!-- Sanity jar -->
+                                <fileset>
+                                    <directory>${project.basedir}/sdc-sanity</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                    <includes>
+    	                               	<include>*.jar</include>
+                                   	</includes>
+                                </fileset>
+                                <!-- Sanity test suites -->
+                                <fileset>
+                                    <directory>${project.basedir}/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
                             </filesets>
                         </configuration>
                     </execution>
@@ -410,7 +422,7 @@
                                         <tags>
                                             <tag>${docker.tag}</tag>
                                             <tag>${docker.latest.tag}</tag>
-                                            <tag>1.1-STAGING-latest</tag>
+                                            <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</tag>
                                         </tags>
                                     </build>
                                 </image>

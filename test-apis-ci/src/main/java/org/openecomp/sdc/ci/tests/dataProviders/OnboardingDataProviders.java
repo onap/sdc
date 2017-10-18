@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class OnbordingDataProviders {
+public class OnboardingDataProviders {
 
 	protected static String filepath = FileHandling.getVnfRepositoryPath();
 	

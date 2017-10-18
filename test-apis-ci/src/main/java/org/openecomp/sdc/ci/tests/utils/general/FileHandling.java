@@ -20,25 +20,37 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
-import org.apache.commons.io.FileUtils;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
-import org.openecomp.sdc.ci.tests.config.Config;
+import static org.testng.AssertJUnit.assertTrue;
 
-import org.openecomp.sdc.common.util.GeneralUtility;
-import org.yaml.snakeyaml.Yaml;
-
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import static org.testng.AssertJUnit.assertTrue;
+import org.apache.commons.io.FileUtils;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
+import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.common.util.GeneralUtility;
+import org.yaml.snakeyaml.Yaml;
+
+import com.aventstack.extentreports.Status;
 
 public class FileHandling {
 
@@ -173,9 +185,9 @@ public class FileHandling {
 	}
 
 	public static List<String> filterFileNamesListFromFolder(String filepath, String extension) {
+		List<String> filenames = new ArrayList<String>();
 		try {
 			File dir = new File(filepath);
-			List<String> filenames = new ArrayList<String>();
 			
 			FilenameFilter extensionFilter = new FilenameFilter() {
 				public boolean accept(File dir, String name) {
@@ -193,7 +205,7 @@ public class FileHandling {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return filenames;
 	}
 	
 	public static String[] getArtifactsFromZip(String filepath, String zipFilename){
@@ -233,7 +245,9 @@ public class FileHandling {
 //	}
 	
 	public static List<String> getZipFileNamesFromFolder(String filepath) {
-		return filterFileNamesListFromFolder(filepath, ".zip");
+		List<String> fileNamesListFromFolder = filterFileNamesListFromFolder(filepath, ".zip");
+		fileNamesListFromFolder.addAll(filterFileNamesListFromFolder(filepath, ".csar"));
+		return fileNamesListFromFolder;
 	}
 
 	public static int countFilesInZipFile(String[] artifactsArr, String reqExtension){

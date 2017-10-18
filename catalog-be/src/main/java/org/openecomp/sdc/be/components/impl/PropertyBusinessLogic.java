@@ -121,7 +121,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 			// Get the resource from DB
 			Either<Resource, StorageOperationStatus> status = toscaOperationFacade.getToscaElement(resourceId);
 			if (status.isRight()) {
-				result = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
+				result = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
 				return result;
 			}
 			Resource resource = status.left().value();
@@ -219,7 +219,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 		// Get the resource from DB
 		Either<Resource, StorageOperationStatus> status =  toscaOperationFacade.getToscaElement(resourceId);
 		if (status.isRight()) {
-			return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
+			return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
 		}
 		Resource resource = status.left().value();
 
@@ -271,7 +271,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 			// Get the resource from DB
 			Either<Resource, StorageOperationStatus> getResourceRes = toscaOperationFacade.getToscaElement(resourceId);
 			if (getResourceRes.isRight()) {
-				result = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
+				result = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
 				return result;
 			}
 			Resource resource = getResourceRes.left().value();
@@ -321,7 +321,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 
 		Either<Resource, StorageOperationStatus> status = toscaOperationFacade.getToscaElement(resourceId);
 		if (status.isRight()) {
-			return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
+			return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
 		}
 		Resource resource = status.left().value();
 
