@@ -7519,7 +7519,7 @@ Consumer credentials
 Description
 ~~~~~~~~~~~
 
-Returns created ECOMP consumer credentials
+Returns created ONAP consumer credentials
 
 Parameters
 ~~~~~~~~~~
@@ -7675,8 +7675,8 @@ Tags
 
 -  Consumer Servlet
 
-Retrieve ecomp portal menu - MOC
---------------------------------
+Retrieve ONAP portal menu - MOC
+-------------------------------
 
 ::
 
@@ -7685,7 +7685,7 @@ Retrieve ecomp portal menu - MOC
 Description
 ~~~~~~~~~~~
 
-Retrieve ecomp portal menu
+Retrieve ONAP portal menu
 
 Responses
 ~~~~~~~~~
@@ -7694,7 +7694,7 @@ Responses
 | HTTP    | Description                                        | Schema         |
 | Code    |                                                    |                |
 +=========+====================================================+================+
-| **200** | Retrieve ecomp portal menu                         | No Content     |
+| **200** | Retrieve ONAP portal menu                          | No Content     |
 +---------+----------------------------------------------------+----------------+
 
 Consumes
