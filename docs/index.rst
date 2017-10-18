@@ -10,9 +10,9 @@ SDC Documentation
    architecture.rst
    configuration.rst
    consumedapis.rst
+   offeredapis.rst
    delivery.rst
    humaninterfaces.rst
    installation.rst
    logging.rst
-   offeredapis.rst
    release-notes.rst
