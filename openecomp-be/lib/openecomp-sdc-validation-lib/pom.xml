@@ -19,7 +19,6 @@
         <module>openecomp-sdc-validation-core</module>
         <module>openecomp-sdc-validation-impl</module>
         <module>openecomp-sdc-validation-sdk</module>
-        <module>att-sdc-validation-impl</module>
     </modules>
 
 </project>
