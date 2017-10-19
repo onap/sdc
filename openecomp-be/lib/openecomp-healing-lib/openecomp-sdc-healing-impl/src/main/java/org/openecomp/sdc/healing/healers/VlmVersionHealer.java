@@ -1,5 +1,6 @@
 package org.openecomp.sdc.healing.healers;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.healing.interfaces.Healer;
 import org.openecomp.sdc.logging.api.Logger;
@@ -15,6 +16,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.types.VersionInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +62,7 @@ public class VlmVersionHealer implements Healer {
 
     VendorLicenseModelEntity vlm = vendorLicenseModel.getVendorLicenseModel();
     String vlmId = vlm.getId();
-    Version vlmVersion = vlm.getVersion();
+    Version vlmVersion = getLatestFinalVlmVersion(vendorLicenseModel.getVersionInfo());
 
     List<LicenseAgreementEntity> laList =
         new ArrayList<>(
@@ -68,12 +70,19 @@ public class VlmVersionHealer implements Healer {
 
 
     vspDetails.setVlmVersion(vlmVersion);
-    vspDetails.setLicenseAgreement(laList.get(0).getId());
-    vspDetails.setFeatureGroups(new ArrayList<>(laList.get(0).getFeatureGroupIds()));
+
+    if(CollectionUtils.isNotEmpty(laList)) {
+      vspDetails.setLicenseAgreement(laList.get(0).getId());
+      vspDetails.setFeatureGroups(new ArrayList<>(laList.get(0).getFeatureGroupIds()));
+    }
 
     vspInfoDao.update(vspDetails);
-
     return vspDetails;
 
+  }
+
+  private Version getLatestFinalVlmVersion(VersionInfo versionInfo){
+    return versionInfo.getActiveVersion().isFinal() ? versionInfo.getActiveVersion()
+        : versionInfo.getLatestFinalVersion();
   }
 }

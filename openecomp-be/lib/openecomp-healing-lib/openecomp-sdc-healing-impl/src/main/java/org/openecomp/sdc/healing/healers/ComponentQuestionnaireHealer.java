@@ -19,6 +19,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class ComponentQuestionnaireHealer implements Healer {
@@ -59,8 +60,10 @@ public class ComponentQuestionnaireHealer implements Healer {
     Collection<ComponentEntity> componentEntities =
         componentDao.list(new ComponentEntity(vspId, version, null));
     componentEntities.forEach(componentEntity -> {
-      String questionnaire = componentDao.getQuestionnaireData(vspId, version, componentEntity
-          .getId()).getQuestionnaireData();
+      ComponentEntity componentQuestionnaireData =
+          componentDao.getQuestionnaireData(vspId, version, componentEntity.getId());
+      String questionnaire = Objects.isNull(componentQuestionnaireData) ? null
+      : componentQuestionnaireData.getQuestionnaireData();
 
       if (questionnaire != null) {
         JsonParser jsonParser = new JsonParser();
@@ -97,7 +100,6 @@ public class ComponentQuestionnaireHealer implements Healer {
    * Move Disk Atributes from genral/image/  to genral/disk in component questionnaire itself
    * @param json
    * @param diskAttrName
-   * @param diskJsonObject
    * @return
    */
   private void processDiskAttribute(JsonObject json, String diskAttrName) {
