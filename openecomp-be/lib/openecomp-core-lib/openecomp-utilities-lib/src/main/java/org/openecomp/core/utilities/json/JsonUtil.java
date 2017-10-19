@@ -32,8 +32,11 @@ import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.core.utilities.deserializers.RequirementDefinitionDeserializer;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -86,7 +89,12 @@ public class JsonUtil {
     T typ;
     try {
       try (Reader br = new StringReader(json)) {
-        typ = new Gson().fromJson(br, classOfT);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(RequirementDefinition.class, new
+            RequirementDefinitionDeserializer());
+        final Gson gson = gsonBuilder.create();
+
+        typ = gson.fromJson(br, classOfT);
       } catch (IOException exception) {
         throw exception;
       }
