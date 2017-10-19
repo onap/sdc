@@ -1,7 +1,6 @@
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.model.Component;
 
 /**
  * Created by chaya on 7/5/2017.

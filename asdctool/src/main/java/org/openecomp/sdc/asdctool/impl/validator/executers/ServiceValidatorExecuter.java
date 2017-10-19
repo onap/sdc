@@ -1,13 +1,14 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openecomp.sdc.asdctool.impl.validator.tasks.ServiceValidationTask;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.*;
 
 /**
  * Created by chaya on 7/4/2017.

@@ -1,6 +1,12 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.openecomp.sdc.asdctool.impl.validator.tasks.TopologyTemplateValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
@@ -12,12 +18,11 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import fj.data.Either;
 
 /**
  * Created by chaya on 7/3/2017.

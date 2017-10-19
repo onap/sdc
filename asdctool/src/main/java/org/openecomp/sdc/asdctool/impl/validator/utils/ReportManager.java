@@ -1,14 +1,18 @@
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import org.apache.commons.lang.text.StrBuilder;
-import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import org.apache.commons.lang.text.StrBuilder;
+import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
 /**
  * Created by chaya on 7/5/2017.
