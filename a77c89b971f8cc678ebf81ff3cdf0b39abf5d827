@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "1a2f8d8d_641a2c19",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/deserializers/RequirementDefinitionDeserializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-19T13:27:37Z",
+      "side": 1,
+      "message": "You can make the deserializer even more robust if you find a way to ask the parser if it\u0027s been configured to fail on unknown properties or ignore them.",
+      "parentUuid": "1a2f8d8d_040b68d7",
+      "revId": "a77c89b971f8cc678ebf81ff3cdf0b39abf5d827",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a2f8d8d_c41440f7",
         "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/deserializers/RequirementDefinitionDeserializer.java",
         "patchSetId": 1
