@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_646c6c9d",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/deserializers/RequirementDefinitionDeserializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-19T13:20:01Z",
+      "side": 1,
+      "message": "May this return null? You check JSON elements for null in setRequirementValues(), but not here. Why?",
+      "revId": "a77c89b971f8cc678ebf81ff3cdf0b39abf5d827",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_040b68d7",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/deserializers/RequirementDefinitionDeserializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-19T13:20:01Z",
+      "side": 1,
+      "message": "Is it OK to ignore non-primitives here? If so, please add a comment. In general, I don\u0027t suggest putting any business logic here, but only make sure the syntax isn\u0027t broken and matches the requested Java type.",
+      "revId": "a77c89b971f8cc678ebf81ff3cdf0b39abf5d827",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_c41440f7",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/deserializers/RequirementDefinitionDeserializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-19T13:20:01Z",
+      "side": 1,
+      "message": "since the allocated size of \u0027fixedOccurences\u0027 is 2, you will get an ArrayIndexOutOfBounds if \u0027occurences\u0027 is larger for some reason. Please consider throwing a meaningful exception according to Gson guidelines. Alternatively, ignore anything beyond the first two elements silently, but try to avoid unexpected failures.\n\nAnd what if \u0027occurences\u0027 is empty? Null? Size of 1? Should \u0027fixedOccurences\u0027 remain { null, null } in this case?\n\nIf your goal is to convert the input \"as is\", consider Object[] fixedOccurrences \u003d new Object[occurences.size()]; or rather the right size - given you skip non-primitives.",
+      "revId": "a77c89b971f8cc678ebf81ff3cdf0b39abf5d827",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_64034cb9",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-utilities-lib/src/main/java/org/openecomp/core/utilities/json/JsonUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-19T13:20:01Z",
+      "side": 1,
+      "message": "Consider refactoring so that Gson/GsonBuilder is a static final. To my knowledge creating and initializing an instance every time is an unnecessary overhead. Pleas consult Gson documentation.",
+      "revId": "a77c89b971f8cc678ebf81ff3cdf0b39abf5d827",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_242d4447",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/test/java/org/openecomp/core/converter/impl/ToscaConverterImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-19T13:20:01Z",
+      "side": 1,
+      "message": "Please test more combinations of occurrences. Write negative tests, too.",
+      "revId": "a77c89b971f8cc678ebf81ff3cdf0b39abf5d827",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
