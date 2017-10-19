@@ -1,14 +1,18 @@
 package org.openecomp.core.converter.impl;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.core.converter.ToscaConverter;
 import org.openecomp.core.impl.ToscaConverterImpl;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
+import org.openecomp.sdc.tosca.datatypes.model.NodeType;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.tosca.services.YamlUtil;
@@ -56,6 +60,17 @@ public class ToscaConverterImplTest {
 
     checkSTResults(expectedOutserviceTemplates, null, mainSt);
   }
+
+  @Test
+  public void testOccurencesAppearAsInt(){
+    NodeType nodeType = JsonUtil.json2Object(
+        "{derived_from=tosca.nodes.Root, description=MME_VFC, properties={vendor={type=string, default=ERICSSON}, csarVersion={type=string, default=v1.0}, csarProvider={type=string, default=ERICSSON}, id={type=string, default=vMME}, version={type=string, default=v1.0}, csarType={type=string, default=NFAR}}, requirements=[{virtualLink={occurrences=[0, UNBOUNDED], capability=tosca.capabilities.network.Linkable}}]}",
+        NodeType.class);
+
+    List<Map<String, RequirementDefinition>> requirements = nodeType.getRequirements();
+    Assert.assertEquals(requirements.get(0).get("virtualLink").getOccurrences()[0], 0);
+  }
+
 
 
 
