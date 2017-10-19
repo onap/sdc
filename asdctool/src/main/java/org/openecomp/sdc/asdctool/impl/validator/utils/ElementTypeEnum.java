@@ -1,9 +1,9 @@
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import org.openecomp.sdc.asdctool.impl.validator.executers.VfValidatorExecuter;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.openecomp.sdc.asdctool.impl.validator.executers.VfValidatorExecuter;
 
 /**
  * Created by chaya on 7/4/2017.

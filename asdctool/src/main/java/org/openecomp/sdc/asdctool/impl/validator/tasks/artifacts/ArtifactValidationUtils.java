@@ -1,6 +1,11 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
@@ -14,7 +19,7 @@ import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import fj.data.Either;
 
 /**
  * Created by chaya on 7/6/2017.

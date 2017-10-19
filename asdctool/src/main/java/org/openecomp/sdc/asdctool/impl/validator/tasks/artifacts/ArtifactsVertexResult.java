@@ -1,9 +1,9 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
-import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;
 
 /**
  * Created by chaya on 7/25/2017.
