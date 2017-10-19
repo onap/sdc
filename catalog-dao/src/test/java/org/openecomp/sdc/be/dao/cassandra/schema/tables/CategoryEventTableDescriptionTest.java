@@ -40,15 +40,6 @@ public class CategoryEventTableDescriptionTest {
 	}
 
 	
-	@Test
-	public void testGetColumnDescription() throws Exception {
-		CategoryEventTableDescription testSubject;
-		Map<String, ImmutablePair<DataType, Boolean>> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getColumnDescription();
-	}
 
 	
 	@Test
