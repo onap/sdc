@@ -35,6 +35,8 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.tinkerpop.gremlin.structure.T;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.client.ClientConfig;
@@ -55,15 +57,18 @@ import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.servlets.TypesUploadServlet;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerTwoParam;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
+
+import com.google.common.base.Equivalence.Wrapper;
+import com.google.common.base.Supplier;
 
 import fj.data.Either;
 
@@ -83,7 +88,8 @@ public class TypesUploadServletTest extends JerseyTest {
 	@BeforeClass
 	public static void setup() {
 		ExternalConfiguration.setAppName("catalog-be");
-		when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
+		when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
+				.thenReturn(webAppContextWrapper);
 		when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
 		when(webApplicationContext.getBean(CapabilityTypeImportManager.class)).thenReturn(importManager);
 		when(webApplicationContext.getBean(ServletUtils.class)).thenReturn(servletUtils);
@@ -106,11 +112,13 @@ public class TypesUploadServletTest extends JerseyTest {
 		List<CapabilityTypeDefinition> emptyList = new ArrayList<CapabilityTypeDefinition>();
 		Either<List<CapabilityTypeDefinition>, ResponseFormat> either = Either.left(emptyList);
 		when(importManager.createCapabilityTypes(Mockito.anyString())).thenReturn(either);
-		FileDataBodyPart filePart = new FileDataBodyPart("capabilityTypeZip", new File("src/test/resources/types/capabilityTypes.zip"));
+		FileDataBodyPart filePart = new FileDataBodyPart("capabilityTypeZip",
+				new File("src/test/resources/types/capabilityTypes.zip"));
 		MultiPart multipartEntity = new FormDataMultiPart();
 		multipartEntity.bodyPart(filePart);
 
-		Response response = target().path("/v1/catalog/uploadType/capability").request(MediaType.APPLICATION_JSON).post(Entity.entity(multipartEntity, MediaType.MULTIPART_FORM_DATA), Response.class);
+		Response response = target().path("/v1/catalog/uploadType/capability").request(MediaType.APPLICATION_JSON)
+				.post(Entity.entity(multipartEntity, MediaType.MULTIPART_FORM_DATA), Response.class);
 
 		assertTrue(response.getStatus() == HttpStatus.CREATED_201.getStatusCode());
 
@@ -137,7 +145,8 @@ public class TypesUploadServletTest extends JerseyTest {
 				when(request.getSession()).thenReturn(session);
 				when(session.getServletContext()).thenReturn(servletContext);
 				String appConfigDir = "src/test/resources/config/catalog-be";
-				ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+				ConfigurationSource configurationSource = new FSConfigurationSource(
+						ExternalConfiguration.getChangeListener(), appConfigDir);
 				ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 				for (String mandatoryHeader : configurationManager.getConfiguration().getIdentificationHeaderFields()) {
 
@@ -145,10 +154,96 @@ public class TypesUploadServletTest extends JerseyTest {
 
 				}
 
-				when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
+				when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
+						.thenReturn(configurationManager);
 			}
 		});
 
 		return resourceConfig;
 	}
+
+	private TypesUploadServlet createTestSubject() {
+		return new TypesUploadServlet();
+	}
+
+	
+	@Test
+	public void testUploadCapabilityType() throws Exception {
+		TypesUploadServlet testSubject;
+		File file = null;
+		HttpServletRequest request = null;
+		String creator = "";
+		Response result;
+
+		// default test
+		testSubject = createTestSubject();
+	}
+
+	
+	@Test
+	public void testUploadInterfaceLifecycleType() throws Exception {
+		TypesUploadServlet testSubject;
+		File file = null;
+		HttpServletRequest request = null;
+		String creator = "";
+		Response result;
+
+		// default test
+		testSubject = createTestSubject();
+	}
+
+	
+	@Test
+	public void testUploadCategories() throws Exception {
+		TypesUploadServlet testSubject;
+		File file = null;
+		HttpServletRequest request = null;
+		String creator = "";
+		Response result;
+
+		// default test
+		testSubject = createTestSubject();
+	}
+
+	
+	@Test
+	public void testUploadDataTypes() throws Exception {
+		TypesUploadServlet testSubject;
+		File file = null;
+		HttpServletRequest request = null;
+		String creator = "";
+		Response result;
+
+		// default test
+		testSubject = createTestSubject();
+	}
+
+	
+	@Test
+	public void testUploadGroupTypes() throws Exception {
+		TypesUploadServlet testSubject;
+		File file = null;
+		HttpServletRequest request = null;
+		String creator = "";
+		Response result;
+
+		// default test
+		testSubject = createTestSubject();
+	}
+
+	
+	@Test
+	public void testUploadPolicyTypes() throws Exception {
+		TypesUploadServlet testSubject;
+		File file = null;
+		HttpServletRequest request = null;
+		String creator = "";
+		Response result;
+
+		// default test
+		testSubject = createTestSubject();
+	}
+
+	
+	
 }
