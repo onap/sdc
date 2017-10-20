@@ -51,6 +51,7 @@ import org.openecomp.sdc.be.auditing.api.IAuditingManager;
 import org.openecomp.sdc.be.auditing.impl.AuditingLogFormatUtil;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -62,25 +63,32 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
+import org.openecomp.sdc.be.info.MergedArtifactInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentMetadataDefinition;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.CsarInfo;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadCapInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
@@ -121,6 +129,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.att.nsa.cambria.test.support.CambriaBatchingPublisherMock.Entry;
+import com.google.common.base.Equivalence.Wrapper;
+import com.netflix.astyanax.connectionpool.Operation;
 
 import fj.data.Either;
 
@@ -2225,5 +2235,143 @@ public class ResourceBusinessLogicTest {
 		testSubject.setCacheManagerOperation(cacheManagerOperation);
 	}
 
+	
+	@Test
+	public void testGetElementDao_1() throws Exception {
+	ResourceBusinessLogic testSubject;IElementOperation result;
+	
+	// default test
+	testSubject=createTestSubject();result=testSubject.getElementDao();
+	}
+
+	
+	@Test
+	public void testGetAllCertifiedResources() throws Exception {
+	ResourceBusinessLogic testSubject;boolean getAbstract = false;
+	HighestFilterEnum highestFilter = null;
+	String userId = "";
+	Either<List<Resource>,ResponseFormat> result;
+	
+	// default test
+	}
+
+	
+	@Test
+	public void testValidateResourceNameExists() throws Exception {
+	ResourceBusinessLogic testSubject;String resourceName = "";
+	ResourceTypeEnum resourceTypeEnum = null;
+	String userId = "";
+	Either<Map<String,Boolean>,ResponseFormat> result;
+	
+	// default test
+	}
+
+	
+	@Test
+	public void testCreateResource() throws Exception {
+	ResourceBusinessLogic testSubject;Resource resource = null;
+	AuditingActionEnum auditingAction = null;
+	User user = null;
+	Map<String,byte[]> csarUIPayload = null;
+	String payloadName = "";
+	Either<Resource,ResponseFormat> result;
+	
+	// test 1
+	testSubject=createTestSubject();payloadName = null;
+	
+	// test 2
+	testSubject=createTestSubject();payloadName = "";
+	}
+
+	
+	@Test
+	public void testValidateAndUpdateResourceFromCsar() throws Exception {
+	ResourceBusinessLogic testSubject;Resource resource = null;
+	User user = null;
+	Map<String,byte[]> csarUIPayload = null;
+	String payloadName = "";
+	String resourceUniqueId = "";
+	Either<Resource,ResponseFormat> result;
+	
+	// test 1
+	testSubject=createTestSubject();payloadName = null;
+	
+	// test 2
+	testSubject=createTestSubject();payloadName = "";
+	}
+
+	
+
+
+	
+
+
+
+
+	
+	
+	@Test
+	public void testCreateResourceFromCsar() throws Exception {
+	ResourceBusinessLogic testSubject;Resource resource = null;
+	User user = null;
+	Either<Map<String,byte[]>,StorageOperationStatus> csarUIPayload = null;
+	String csarUUID = "";
+	Either<Resource,ResponseFormat> result;
+	
+	// test 1
+	testSubject=createTestSubject();csarUIPayload = null;
+	}
+
+	
+
+
+	
+	
+	
+	@Test
+	public void testCreateResourcesFromYamlNodeTypesList() throws Exception {
+	ResourceBusinessLogic testSubject;String yamlName = "";
+	Resource resource = null;
+	Map<String,Object> mappedToscaTemplate = null;
+	boolean needLock = false;
+	Map<String,EnumMap<ArtifactOperationEnum,List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = null;
+	List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = null;
+	Map<String,NodeTypeInfo> nodeTypesInfo = null;
+	CsarInfo csarInfo = null;
+	Either<Map<String,Resource>,ResponseFormat> result;
+	
+	// default test
+	}
+
+	
+
+
+
+	
+	@Test
+	public void testValidateResourceCreationFromNodeType() throws Exception {
+	ResourceBusinessLogic testSubject;Resource resource = null;
+	User creator = null;
+	Either<Boolean,ResponseFormat> result;
+	
+	// default test
+	}
+
+	
+	@Test
+	public void testCreateResourceFromNodeType() throws Exception {
+	ResourceBusinessLogic testSubject;String nodeTypeYaml = "";
+	UploadResourceInfo resourceMetaData = null;
+	User creator = null;
+	boolean isInTransaction = false;
+	boolean needLock = false;
+	Map<ArtifactOperationEnum,List<ArtifactDefinition>> nodeTypeArtifactsToHandle = null;
+	List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = null;
+	boolean forceCertificationAllowed = false;
+	CsarInfo csarInfo = null;
+	Either<ImmutablePair<Resource,ActionStatus>,ResponseFormat> result;
+	
+	// default test
+	}
 
 }
