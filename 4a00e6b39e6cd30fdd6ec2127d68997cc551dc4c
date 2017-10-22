@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_8cce5a82",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-plugin/src/main/java/org/openecomp/core/zusammen/plugin/collaboration/ElementCollaborationStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-22T21:11:33Z",
+      "side": 1,
+      "message": "change to Objects.isNull()",
+      "range": {
+        "startLine": 47,
+        "startChar": 59,
+        "endLine": 47,
+        "endChar": 96
+      },
+      "revId": "4a00e6b39e6cd30fdd6ec2127d68997cc551dc4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_6ccb2e73",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-plugin/src/main/java/org/openecomp/core/zusammen/plugin/collaboration/ElementCollaborationStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-22T21:11:33Z",
+      "side": 1,
+      "message": "extract to a new function to generate the message. it is too hard to read",
+      "range": {
+        "startLine": 44,
+        "startChar": 35,
+        "endLine": 50,
+        "endChar": 51
+      },
+      "revId": "4a00e6b39e6cd30fdd6ec2127d68997cc551dc4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_4cc87274",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-plugin/src/main/java/org/openecomp/core/zusammen/plugin/collaboration/VersionCollaborationStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-22T21:11:33Z",
+      "side": 1,
+      "message": "extract a new function",
+      "range": {
+        "startLine": 42,
+        "startChar": 3,
+        "endLine": 47,
+        "endChar": 5
+      },
+      "revId": "4a00e6b39e6cd30fdd6ec2127d68997cc551dc4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_2cc5265b",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-plugin/src/main/java/org/openecomp/core/zusammen/plugin/collaboration/VersionCollaborationStore.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-22T21:11:33Z",
+      "side": 1,
+      "message": "extract a new function",
+      "range": {
+        "startLine": 53,
+        "startChar": 4,
+        "endLine": 58,
+        "endChar": 5
+      },
+      "revId": "4a00e6b39e6cd30fdd6ec2127d68997cc551dc4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
