@@ -24,10 +24,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -44,15 +44,15 @@ import javax.management.ObjectName;
  */
 public final class ConfigurationChangeNotifier {
 
-  private HashMap<String, List<NotificationData>> store = new HashMap<>();
-  private ScheduledExecutorService executor =
+  private final HashMap<String, List<NotificationData>> store = new HashMap<>();
+  private final ScheduledExecutorService executor =
       Executors.newScheduledThreadPool(5, ConfigurationUtils.getThreadFactory());
-  private ExecutorService notificationExcecutor =
+  private final ExecutorService notificationExecutor =
       Executors.newCachedThreadPool(ConfigurationUtils.getThreadFactory());
-  private Map<String, WatchService> watchServiceCollection =
+  private final Map<String, WatchService> watchServiceCollection =
       Collections.synchronizedMap(new HashMap<>());
 
-  {
+  static {
     if (!Thread.currentThread().getStackTrace()[2].getClassName()
         .equals(ConfigurationImpl.class.getName())) {
       throw new RuntimeException("Illegal access.");
@@ -66,13 +66,13 @@ public final class ConfigurationChangeNotifier {
    */
   public ConfigurationChangeNotifier(Map<String, AggregateConfiguration> inMemoryConfig) {
     executor.scheduleWithFixedDelay(() -> this
-        .pollFilesystemAndUpdateConfigurationIfREquired(inMemoryConfig,
+        .pollFilesystemAndUpdateConfigurationIfRequired(inMemoryConfig,
             System.getProperty("config.location"), false), 1, 1, TimeUnit.MILLISECONDS);
     executor.scheduleWithFixedDelay(() -> this
-        .pollFilesystemAndUpdateConfigurationIfREquired(inMemoryConfig,
+        .pollFilesystemAndUpdateConfigurationIfRequired(inMemoryConfig,
             System.getProperty("tenant.config.location"), true), 1, 1, TimeUnit.MILLISECONDS);
     executor.scheduleWithFixedDelay(() -> this
-        .pollFilesystemAndUpdateNodeSpecificConfigurationIfREquired(
+        .pollFilesystemAndUpdateNodeSpecificConfigurationIfRequired(
             System.getProperty("node.config.location")), 1, 1, TimeUnit.MILLISECONDS);
   }
 
@@ -91,13 +91,13 @@ public final class ConfigurationChangeNotifier {
   }
 
   /**
-   * Poll filesystem and update configuration if r equired.
+   * Poll filesystem and update configuration if required.
    *
    * @param inMemoryConfig   the in memory config
    * @param location         the location
    * @param isTenantLocation the is tenant location
    */
-  public void pollFilesystemAndUpdateConfigurationIfREquired(
+  public void pollFilesystemAndUpdateConfigurationIfRequired(
       Map<String, AggregateConfiguration> inMemoryConfig, String location,
       boolean isTenantLocation) {
     try {
@@ -132,20 +132,19 @@ public final class ConfigurationChangeNotifier {
               updateConfigurationValues(tenantNamespaceArray[0], tenantNamespaceArray[1], map);
             }
           } else {
-            Iterator<String> repoKeys = inMemoryConfig.keySet().iterator();
-            while (repoKeys.hasNext()) {
-              repositoryKey = repoKeys.next();
+            for (String s : inMemoryConfig.keySet()) {
+              repositoryKey = s;
               AggregateConfiguration config = inMemoryConfig.get(repositoryKey);
               if (config.containsConfig(file)) {
                 LinkedHashMap origConfig = ConfigurationUtils.toMap(config.getFinalConfiguration());
                 config.removeConfig(file);
                 LinkedHashMap latestConfig =
-                    ConfigurationUtils.toMap(config.getFinalConfiguration());
+                        ConfigurationUtils.toMap(config.getFinalConfiguration());
                 Map map = ConfigurationUtils.diff(origConfig, latestConfig);
                 String[] tenantNamespaceArray =
-                    repositoryKey.split(Constants.KEY_ELEMENTS_DELEMETER);
+                        repositoryKey.split(Constants.KEY_ELEMENTS_DELEMETER);
                 updateConfigurationValues(tenantNamespaceArray[0], tenantNamespaceArray[1],
-                    map);
+                        map);
               }
             }
           }
@@ -169,17 +168,17 @@ public final class ConfigurationChangeNotifier {
   }
 
   /**
-   * Poll filesystem and update node specific configuration if r equired.
+   * Poll filesystem and update node specific configuration if required.
    *
    * @param location the location
    */
-  public void pollFilesystemAndUpdateNodeSpecificConfigurationIfREquired(String location) {
+  public void pollFilesystemAndUpdateNodeSpecificConfigurationIfRequired(String location) {
     try {
       Set<Path> paths = watchForChange(location);
       if (paths != null) {
         for (Path path : paths) {
           File file = path.toAbsolutePath().toFile();
-          String repositoryKey = null;
+          String repositoryKey;
           if (ConfigurationUtils.isConfig(file)) {
             repositoryKey = ConfigurationUtils.getConfigurationRepositoryKey(file);
             ConfigurationRepository.lookup().populateOverrideConfigurtaion(repositoryKey, file);
@@ -188,7 +187,7 @@ public final class ConfigurationChangeNotifier {
           }
         }
       }
-    } catch (Throwable exception) {
+    } catch (Exception exception) {
       exception.printStackTrace();
     }
   }
@@ -241,7 +240,7 @@ public final class ConfigurationChangeNotifier {
 
   private void triggerScanning(String key) {
     if (store.get(key) != null) {
-      notificationExcecutor.submit(() -> scanForChanges(key));
+      notificationExecutor.submit(() -> scanForChanges(key));
     } else {
       throw new IllegalArgumentException("Notification service for " + key + " is suspended.");
     }
@@ -250,11 +249,9 @@ public final class ConfigurationChangeNotifier {
   private void scanForChanges(String key) {
     List<NotificationData> list = store.get(key);
     if (list != null) {
-      int size = list.size();
-      for (int i = 0; i < size; i++) {
-        NotificationData notificationData = list.get(i);
+      for (NotificationData notificationData : list) {
         if (notificationData.isChanged()) {
-          notificationExcecutor.submit(() -> sendNotification(notificationData));
+          notificationExecutor.submit(() -> sendNotification(notificationData));
         }
       }
     }
@@ -321,24 +318,24 @@ public final class ConfigurationChangeNotifier {
   /**
    * The type Notification data.
    */
-  class NotificationData {
+  static class NotificationData {
 
     /**
      * The Tenant.
      */
-    String tenant;
+    final String tenant;
     /**
      * The Namespace.
      */
-    String namespace;
+    final String namespace;
     /**
      * The Key.
      */
-    String key;
+    final String key;
     /**
      * The Myself.
      */
-    ConfigurationChangeListener myself;
+    final ConfigurationChangeListener myself;
     /**
      * The Current value.
      */
@@ -381,8 +378,17 @@ public final class ConfigurationChangeNotifier {
         return false;
       }
       NotificationData nd = (NotificationData) obj;
-      return tenant.equals(nd.tenant) && namespace.equals(nd.namespace) && key.equals(nd.key)
-          && myself.equals(nd.myself);
+      return Objects.equals(tenant, nd.tenant)
+              && Objects.equals(namespace, nd.namespace)
+              && Objects.equals(key, nd.key)
+              && Objects.equals(myself, nd.myself)
+              && Objects.equals(currentValue, nd.currentValue) // it's either String or List<String>
+              && isArray == nd.isArray;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(tenant, namespace, key, myself, currentValue, isArray);
     }
 
     /**
@@ -424,7 +430,7 @@ public final class ConfigurationChangeNotifier {
       Method method = null;
       Vector<Object> parameters = null;
       try {
-        Object latestValue = null;
+        Object latestValue;
         if (isArray) {
           latestValue = ConfigurationManager.lookup().getAsStringValues(tenant, namespace, key);
         } else {

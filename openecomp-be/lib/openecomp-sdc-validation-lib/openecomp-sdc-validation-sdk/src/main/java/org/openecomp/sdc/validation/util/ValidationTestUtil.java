@@ -25,6 +25,7 @@ import org.testng.Assert;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
@@ -55,8 +56,6 @@ public class ValidationTestUtil {
 
   private static Map<String, byte[]> getContentMapByPath(String path) {
     Map<String, byte[]> contentMap = new HashMap<>();
-    byte[] fileContent;
-    FileInputStream fis;
     URL url = ValidationTestUtil.class.getResource(path);
     File pathFile = new File(url.getFile());
     File[] files;
@@ -71,13 +70,13 @@ public class ValidationTestUtil {
     }
 
     for (File file : files) {
-      try {
-        fis = new FileInputStream(file);
-        fileContent = FileUtils.toByteArray(fis);
-        contentMap.put(file.getName(), fileContent);
+
+      try (FileInputStream fis = new FileInputStream(file)) {
+        contentMap.put(file.getName(), FileUtils.toByteArray(fis));
       } catch (IOException e) {
-        log.debug("",e);
+        throw new RuntimeException("Failed to read file: " + file, e);
       }
+
     }
     return contentMap;
   }

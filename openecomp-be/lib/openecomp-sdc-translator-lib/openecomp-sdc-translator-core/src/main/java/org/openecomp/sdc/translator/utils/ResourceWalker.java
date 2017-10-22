@@ -40,8 +40,7 @@ public class ResourceWalker {
       Exception {
     Map<String, String> filesContent = new HashMap<>();
     traverse(resourceDirectoryToStart, (fileName, stream) -> {
-      BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-      try {
+      try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
         filesContent.put(fileName, IOUtils.toString(reader));
       } catch (IOException exception) {
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
