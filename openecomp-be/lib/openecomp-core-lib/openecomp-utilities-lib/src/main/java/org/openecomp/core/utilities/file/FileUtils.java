@@ -28,6 +28,7 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -54,7 +55,16 @@ public class FileUtils {
    * @param function logic to be applied to the input stream
    */
   public static <T> T readViaInputStream(String fileName, Function<InputStream, T> function) {
-    return readViaInputStream(FileUtils.class.getClassLoader().getResource(fileName), function);
+
+    Objects.requireNonNull(fileName);
+
+    // the leading slash doesn't make sense and doesn't work when used with a class loader
+    URL resource = FileUtils.class.getClassLoader().getResource(fileName.startsWith("/") ? fileName.substring(1) : fileName);
+    if (resource == null) {
+      throw new IllegalArgumentException("Resource not found: " + fileName);
+    }
+
+    return readViaInputStream(resource, function);
   }
 
   /**
