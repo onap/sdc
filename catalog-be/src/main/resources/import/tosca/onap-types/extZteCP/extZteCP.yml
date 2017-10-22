@@ -67,7 +67,7 @@ node_types:
         - 0
         - UNBOUNDED
     - virtualLink: 
-        capability: tosca.capabilities.nfv.VirtualBindable
+        capability: tosca.capabilities.nfv.VirtualLinkable
         occurrences: 
         - 0
         - UNBOUNDED

@@ -3,7 +3,7 @@
 	"contactId": "jh0003",
 	"name": "Ext Local Storage",
 	"description": "Ext Local Storage",
-	"resourceIconPath": "default",
+	"resourceIconPath": "objectStorage",
 	"resourceType": "VFC",
 	"categories": [{
 		"name": "Generic",
