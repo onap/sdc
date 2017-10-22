@@ -274,8 +274,9 @@ const mapActionsToProps = (dispatch, {currentScreen: {screen, props: {softwarePr
 
 	const props = {
 		onVersionSwitching: (version, meta) => {
+			const screenToLoad = !currentComponentId ? screen : enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS;
 			SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {softwareProductId, version});
-			props.onNavigate({id: getActiveNavigationId(screen, currentComponentId), meta, version});
+			props.onNavigate({id: getActiveNavigationId(screenToLoad), meta, version});
 		},
 		onToggle: (groups, itemIdToExpand) => groups.map(({items}) => SoftwareProductActionHelper.toggleNavigationItems(dispatch, {items, itemIdToExpand})),
 		onNavigate: ({id, meta, version}) => {
