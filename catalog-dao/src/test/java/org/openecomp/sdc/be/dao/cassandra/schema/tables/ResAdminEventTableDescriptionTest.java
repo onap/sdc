@@ -40,15 +40,7 @@ public class ResAdminEventTableDescriptionTest {
 	}
 
 	
-	@Test
-	public void testGetColumnDescription() throws Exception {
-		ResAdminEventTableDescription testSubject;
-		Map<String, ImmutablePair<DataType, Boolean>> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getColumnDescription();
-	}
 
 	
 	@Test

@@ -40,15 +40,7 @@ public class DistribStatusEventTableDescTest {
 	}
 
 	
-	@Test
-	public void testGetColumnDescription() throws Exception {
-		DistribStatusEventTableDesc testSubject;
-		Map<String, ImmutablePair<DataType, Boolean>> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getColumnDescription();
-	}
 
 	
 	@Test
