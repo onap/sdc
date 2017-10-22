@@ -114,7 +114,7 @@ function objToString(obj) {
 			}
 		}
 	}
-	return str;
+	return str.replace(/\n$/, '');
 }
 
 function parseUploadErrorMsg(error) {
@@ -124,7 +124,7 @@ function parseUploadErrorMsg(error) {
 			message += objToString(error[key]) + '\n';
 		}
 	}
-	return message;
+	return message.replace(/\n$/, '');
 }
 
 function fetchSoftwareProductCategories(dispatch) {

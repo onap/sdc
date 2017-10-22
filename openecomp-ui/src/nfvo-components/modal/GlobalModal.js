@@ -112,7 +112,10 @@ export class  GlobalModalView extends React.Component {
 					<Modal.Title>{title}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					{ComponentToRender ? <ComponentToRender {...modalComponentProps}/> :  msg}
+					{ComponentToRender ?
+						<ComponentToRender {...modalComponentProps}/> :
+						<div> {msg && msg.split('\n').map(txt => <span> {txt} <br/> </span>)} </div>
+					}
 				</Modal.Body>
 				{(onConfirmed || onDeclined || type !== typeEnum.DEFAULT) &&
 						<ModalFooter
