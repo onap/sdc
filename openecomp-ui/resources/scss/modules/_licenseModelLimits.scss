@@ -38,23 +38,30 @@
 				.list-editor-item-view-content {
 					padding-left: 0;
 				}
-				.svg-icon-wrapper.trashO {
-					margin-bottom: 0;
+
+				.svg-icon {
+					margin-top: 10px;
 					margin-right: 50px;
-					.svg-icon {
-						fill: $gray;
-						height: 16px;
-						width: 16px;
-						&:hover {
-								fill: $dark-gray;
-							}
-					}
+					fill: $gray;
+					&:hover {
+							fill: $dark-gray;
+						}
 				}
+
 				&.selectable {
 					&:hover {
+						.list-editor-item-view-field {
+							.text.description, .text-name {
+								&:after {
+									background-color: darken($tlv-light-gray, 4%);
+								}
+							}
+
+						}
 						background-color: darken($tlv-light-gray, 4%);
 						cursor: pointer;
 					}
+
 				}
 				&:hover {
 					border-color: transparent;
@@ -65,20 +72,20 @@
 						display: flex;
     				align-items: center;
 						white-space: nowrap;
-						
+
 						&.limit-name {
 							.text.name {
 								@extend .body-1-semibold;
 								color: $blue;
 								text-transform: uppercase;
-								padding: 0px 10px;
+								margin-left : 45px;
 							}
 							
 							border-right: 1px solid $light-gray;
 							margin-right: 22px;
 							flex: 0.4;
 							display: flex;
-							justify-content: center;
+							justify-content: left;
 						}
 
 						&.limit-description {
@@ -90,10 +97,15 @@
 							max-width: 300px;
 						}
 
+
 						.text.description, .text.name {
 							overflow: hidden;
 							text-overflow: ellipsis;
 							white-space: nowrap;
+							&:after {
+								background: $tlv-light-gray;
+							}
+
 						}
 					}
 
