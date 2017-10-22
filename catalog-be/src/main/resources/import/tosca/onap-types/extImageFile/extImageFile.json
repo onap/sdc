@@ -3,7 +3,7 @@
 	"contactId": "jh0003",
 	"name": "Ext Image File",
 	"description": "Ext Image File",
-	"resourceIconPath": "default",
+	"resourceIconPath": "defaulticon",
 	"resourceType": "VFC",
 	"categories": [{
 		"name": "Generic",
