@@ -22,5 +22,5 @@ else
 fi
 echo "Configuration file location:  ${CONF_FILE_LOCATION}"
 
-java -Dlog.home=/apps/jetty/base/be/logs -Dconfiguration.yaml=${CONF_FILE_LOCATION}  -jar openecomp-zusammen-tools-1.0-SNAPSHOT.jar org.openecomp.core.tools.main.ZusammenMainTool $1 $2 $3 $4 $5 $6
+java -Dlog.home=/apps/jetty/base/be/logs -Dconfiguration.yaml=${CONF_FILE_LOCATION}  -jar openecomp-zusammen-tools-1.2.0-SNAPSHOT.jar org.openecomp.core.tools.main.ZusammenMainTool $1 $2 $3 $4 $5 $6
 STATUS="${?}" echo "${STATUS}"

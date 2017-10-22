@@ -24,14 +24,15 @@ import java.io.Serializable;
 
 public enum ActivityType implements Serializable {
 
-    CREATE_NEW("Create New"),
-    CHECKOUT("Check Out"),
-    CHECKIN("Check In"),
-    UPLOAD_HEAT("Upload Heat"),
+  CREATE_NEW("Create New"),
+  CHECKOUT("Check Out"),
+  UNDO_CHECKOUT("Undo Check Out"),
+  CHECKIN("Check In"),
+  UPLOAD_HEAT("Upload Heat"),
   UPLOAD_MONITORING_FILE("Upload Monitoring File"),
-    SUBMIT("Submit");
+  SUBMIT("Submit");
 
-    // after collaboration will be added - this will be added:
+  // after collaboration will be added - this will be added:
     /*
     CREATE_NEW,
     COMMIT,
@@ -39,14 +40,14 @@ public enum ActivityType implements Serializable {
     REMOVE_PERMISSION,
     */
 
-    private String name;
+  private String name;
 
-    ActivityType(String name) {
-        this.name = name;
-    }
+  ActivityType(String name) {
+    this.name = name;
+  }
 
-    @Override
-    public String toString() {
-        return name;
-    }
+  @Override
+  public String toString() {
+    return name;
+  }
 }

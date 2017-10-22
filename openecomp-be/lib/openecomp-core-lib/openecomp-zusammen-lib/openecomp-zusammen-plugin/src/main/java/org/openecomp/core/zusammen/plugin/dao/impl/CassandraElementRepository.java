@@ -16,12 +16,6 @@
 
 package org.openecomp.core.zusammen.plugin.dao.impl;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Param;
-import com.datastax.driver.mapping.annotations.Query;
-import com.google.gson.reflect.TypeToken;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.Namespace;
 import com.amdocs.zusammen.datatypes.SessionContext;
@@ -29,6 +23,12 @@ import com.amdocs.zusammen.datatypes.item.Info;
 import com.amdocs.zusammen.datatypes.item.Relation;
 import com.amdocs.zusammen.plugin.statestore.cassandra.dao.types.ElementEntityContext;
 import com.amdocs.zusammen.utils.fileutils.json.JsonUtil;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.mapping.annotations.Accessor;
+import com.datastax.driver.mapping.annotations.Param;
+import com.datastax.driver.mapping.annotations.Query;
+import com.google.gson.reflect.TypeToken;
 import org.openecomp.core.zusammen.plugin.dao.ElementRepository;
 import org.openecomp.core.zusammen.plugin.dao.types.ElementEntity;
 
@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -50,10 +49,15 @@ public class CassandraElementRepository implements ElementRepository {
                                         ElementEntityContext elementContext) {
     Set<String> elementIds = getVersionElementIds(context, elementContext);
 
-    return elementIds.stream()
-        .map(elementId -> get(context, elementContext, new ElementEntity(new Id(elementId))).get())
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
+    Collection<ElementEntity> elements = new ArrayList<>();
+    for (String elementId : elementIds) {
+      elements.add(get(context, elementContext, new ElementEntity(new Id(elementId)))
+          .orElseThrow(() -> new IllegalStateException(String.format(
+              "List version elements error: " +
+                  "element %s, which appears as an element of item %s version %s, does not exist",
+              elementId, elementContext.getItemId().getValue(), getVersionId(elementContext)))));
+    }
+    return elements;
   }
 
   @Override

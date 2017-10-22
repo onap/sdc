@@ -11,12 +11,11 @@ import org.openecomp.core.zusammen.plugin.dao.ElementRepository;
 import org.openecomp.core.zusammen.plugin.dao.ElementRepositoryFactory;
 import org.openecomp.core.zusammen.plugin.dao.types.ElementEntity;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import static org.openecomp.core.zusammen.plugin.ZusammenPluginUtil.getCollaborationElement;
 import static org.openecomp.core.zusammen.plugin.ZusammenPluginUtil.getSpaceName;
 
 
@@ -33,14 +32,26 @@ public class ElementCollaborationStore {
     }
 
     ElementRepository elementRepository = getElementRepository(context);
-    return elementRepository.get(context, elementEntityContext, new ElementEntity(elementId))
-        .map(ElementEntity::getSubElementIds).orElse(new HashSet<>()).stream()
-        .map(subElementId -> elementRepository
-            .get(context, elementEntityContext, new ElementEntity(subElementId)).get())
-        .filter(Objects::nonNull)
-        .map(subElement -> ZusammenPluginUtil
-            .getCollaborationElement(elementEntityContext, subElement))
-        .collect(Collectors.toList());
+    String elementIdValue = elementId.getValue();
+    Collection<CollaborationElement> subElements = new ArrayList<>();
+
+    Optional<ElementEntity> element =
+        elementRepository.get(context, elementEntityContext, new ElementEntity(elementId));
+    if (element.isPresent() && element.get().getSubElementIds() != null) {
+      for (Id subElementId : element.get().getSubElementIds()) {
+        ElementEntity subElement =
+            elementRepository.get(context, elementEntityContext, new ElementEntity(subElementId))
+                .orElseThrow(() -> new IllegalStateException(String.format(
+                    "List sub elements error: item %s, version %s - " +
+                        "element %s, which appears as sub element of element %s, does not exist",
+                    elementContext.getItemId().getValue(), elementContext.getChangeRef() == null
+                        ? elementContext.getVersionId().getValue()
+                        : elementContext.getChangeRef(),
+                    subElementId, elementIdValue)));
+        subElements.add(getCollaborationElement(elementEntityContext, subElement));
+      }
+    }
+    return subElements;
   }
 
   public CollaborationElement getElement(SessionContext context, ElementContext elementContext,
@@ -49,8 +60,7 @@ public class ElementCollaborationStore {
         new ElementEntityContext(ZusammenPluginUtil.getPrivateSpaceName(context), elementContext);
     return getElementRepository(context)
         .get(context, elementEntityContext, new ElementEntity(elementId))
-        .map(elementEntity -> ZusammenPluginUtil
-            .getCollaborationElement(elementEntityContext, elementEntity))
+        .map(elementEntity -> getCollaborationElement(elementEntityContext, elementEntity))
         .orElse(null);
   }
 
@@ -78,7 +88,7 @@ public class ElementCollaborationStore {
         ZusammenPluginUtil.getElementEntity(element));
   }
 
-  public boolean checkHealth(SessionContext sessionContext){
+  public boolean checkHealth(SessionContext sessionContext) {
     return getElementRepository(sessionContext).checkHealth(sessionContext);
   }
 

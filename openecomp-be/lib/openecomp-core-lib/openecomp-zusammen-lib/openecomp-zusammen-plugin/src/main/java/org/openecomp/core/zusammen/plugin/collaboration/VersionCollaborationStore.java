@@ -15,6 +15,7 @@ import org.openecomp.core.zusammen.plugin.dao.types.ElementEntity;
 
 import java.util.Collection;
 
+import static org.openecomp.core.zusammen.plugin.ZusammenPluginConstants.ROOT_ELEMENTS_PARENT_ID;
 import static org.openecomp.core.zusammen.plugin.ZusammenPluginUtil.getSpaceName;
 
 public class VersionCollaborationStore {
@@ -25,43 +26,46 @@ public class VersionCollaborationStore {
       throw new UnsupportedOperationException(
           "In this plugin implementation tag is supported only on versionId");
     }
-    copyElements(context, getSpaceName(context, Space.PRIVATE), itemId, versionId, tag.getName());
+    String space = getSpaceName(context, Space.PRIVATE);
+    ElementEntityContext targetContext = new ElementEntityContext(space, itemId, versionId);
+    targetContext.setChangeRef(tag.getName());
+    copyElements(context, new ElementEntityContext(space, itemId, versionId), targetContext);
   }
 
   public CollaborationMergeChange resetItemVersionHistory(SessionContext context, Id itemId,
                                                           Id versionId, String changeRef) {
     ElementRepository elementRepository = getElementRepository(context);
-    ElementEntityContext elementContext =
-        new ElementEntityContext(getSpaceName(context, Space.PRIVATE), itemId, versionId);
-
     CollaborationMergeChange resetChange = new CollaborationMergeChange();
 
-    Collection<ElementEntity> versionElements = elementRepository.list(context, elementContext);
-    versionElements.stream()
-        .map(elementEntity ->
-            convertElementEntityToElementChange(elementEntity, elementContext, Action.DELETE))
-        .forEach(resetChange.getChangedElements()::add);
+    ElementEntityContext versionContext =
+        new ElementEntityContext(getSpaceName(context, Space.PRIVATE), itemId, versionId);
+    Collection<ElementEntity> versionElements = elementRepository.list(context, versionContext);
+    for (ElementEntity element : versionElements) {
+      elementRepository.delete(context, versionContext, new ElementEntity(element.getId()));
+      resetChange.getChangedElements()
+          .add(convertElementEntityToElementChange(element, versionContext, Action.DELETE));
+    }
+    elementRepository.delete(context, versionContext, new ElementEntity(ROOT_ELEMENTS_PARENT_ID));
 
-    elementContext.setChangeRef(changeRef);
-    Collection<ElementEntity> changeRefElements = elementRepository.list(context, elementContext);
-    changeRefElements.stream()
-        .map(elementEntity ->
-            convertElementEntityToElementChange(elementEntity, elementContext, Action.CREATE))
-        .forEach(resetChange.getChangedElements()::add);
-
+    ElementEntityContext changeRefContext =
+        new ElementEntityContext(getSpaceName(context, Space.PRIVATE), itemId, versionId);
+    changeRefContext.setChangeRef(changeRef);
+    Collection<ElementEntity> changeRefElements = elementRepository.list(context, changeRefContext);
+    for (ElementEntity element : changeRefElements) {
+      elementRepository.create(context, versionContext, element);
+      resetChange.getChangedElements()
+          .add(convertElementEntityToElementChange(element, versionContext, Action.CREATE));
+    }
     return resetChange; // TODO: 4/19/2017 version change...
   }
 
-  private void copyElements(SessionContext context, String space, Id itemId, Id sourceVersionId,
-                            String targetTag) {
+  private void copyElements(SessionContext context, ElementEntityContext sourceContext,
+                            ElementEntityContext targetContext) {
     ElementRepository elementRepository = getElementRepository(context);
-    ElementEntityContext elementContext = new ElementEntityContext(space, itemId, sourceVersionId);
 
-    Collection<ElementEntity> versionElements = elementRepository.list(context, elementContext);
-
-    elementContext.setChangeRef(targetTag);
+    Collection<ElementEntity> versionElements = elementRepository.list(context, sourceContext);
     versionElements
-        .forEach(elementEntity -> elementRepository.create(context, elementContext, elementEntity));
+        .forEach(elementEntity -> elementRepository.create(context, targetContext, elementEntity));
   }
 
   private CollaborationElementChange convertElementEntityToElementChange(
