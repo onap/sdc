@@ -1,26 +1,30 @@
 package org.openecomp.core.converter.impl;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.core.converter.ToscaConverter;
 import org.openecomp.core.impl.ToscaConverterImpl;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
+import org.openecomp.sdc.tosca.datatypes.model.NodeType;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -33,7 +37,10 @@ import static org.openecomp.core.converter.datatypes.Constants.mainStName;
 
 public class ToscaConverterImplTest {
 
-  private static ToscaConverter toscaConverter = new ToscaConverterImpl();
+  private static final ToscaConverter toscaConverter = new ToscaConverterImpl();
+  private static final String VIRTUAL_LINK = "virtualLink";
+  private static final String UNBOUNDED = "UNBOUNDED";
+
   private static String inputFilesPath;
   private static String outputFilesPath;
   private static Map<String, ServiceTemplate> expectedOutserviceTemplates;
@@ -57,7 +64,72 @@ public class ToscaConverterImplTest {
     checkSTResults(expectedOutserviceTemplates, null, mainSt);
   }
 
+  @Test
+  public void testOccurrencesUpperString() {
+    Object[] occurrences = buildOccurrences("0", UNBOUNDED);
+    Assert.assertEquals(occurrences[0], 0);
+    Assert.assertEquals(occurrences[1], UNBOUNDED);
+  }
 
+  @Test
+  public void testOccurrencesAsInts() {
+    Object[] occurrences = buildOccurrences("0", "1");
+    Assert.assertEquals(occurrences[0], 0);
+    Assert.assertEquals(occurrences[1], 1);
+  }
+
+  @Test
+  public void testOccurrencesAsStrings() {
+    String test = "TEST_A";
+    Object[] occurrences = buildOccurrences(UNBOUNDED, test);
+    Assert.assertEquals(occurrences[0], UNBOUNDED);
+    Assert.assertEquals(occurrences[1], test);
+  }
+
+  @Test
+  public void testOccurrencesLowerString() {
+    Object[] occurrences = buildOccurrences(UNBOUNDED, "100");
+    Assert.assertEquals(occurrences[0], UNBOUNDED);
+    Assert.assertEquals(occurrences[1], 100);
+  }
+
+  @Test
+  public void testOccurrencesEmpty() {
+    Object[] occurrences = buildOccurrences();
+    Assert.assertEquals(occurrences.length, 0);
+  }
+
+  @Test
+  public void testOccurrencesMany() {
+    String test = "TEST_B";
+    Object[] occurrences = buildOccurrences("1", "2", test);
+    Assert.assertEquals(occurrences[0], 1);
+    Assert.assertEquals(occurrences[1], 2);
+    Assert.assertEquals(occurrences[2], test);
+  }
+
+  @Test
+  public void testDefaultOccurrences() {
+    Object[] occurrences = buildOccurrences((List<String>) null);
+    Assert.assertEquals(1, occurrences[0]);
+    Assert.assertEquals(1, occurrences[1]);
+  }
+
+  private Object[] buildOccurrences(String... bounds) {
+    return buildOccurrences(Arrays.asList(bounds));
+  }
+
+  private Object[] buildOccurrences(List<String> bounds) {
+    NodeType nodeType = JsonUtil.json2Object("{derived_from=tosca.nodes.Root, description=MME_VFC, " +
+            "properties={vendor={type=string, default=ERICSSON}, " +
+            "csarVersion={type=string, default=v1.0}, csarProvider={type=string, default=ERICSSON}, " +
+            "id={type=string, default=vMME}, version={type=string, default=v1.0}, csarType={type=string, default=NFAR}}, " +
+            "requirements=[{virtualLink={" +
+            (bounds == null ? "" : "occurrences=[" + String.join(", ", bounds) +   "], ") +
+            "capability=tosca.capabilities.network.Linkable}}]}", NodeType.class);
+    List<Map<String, RequirementDefinition>> requirements = nodeType.getRequirements();
+    return requirements.get(0).get(VIRTUAL_LINK).getOccurrences();
+  }
 
   private FileContentHandler createFileContentHandlerFromInput(String inputFilesPath)
       throws IOException {
@@ -141,10 +213,6 @@ public class ToscaConverterImplTest {
           yamlFile.close();
         } catch (IOException ignore) {
         }
-      } catch (FileNotFoundException e) {
-        throw e;
-      } catch (IOException e) {
-        throw e;
       }
     }
   }
