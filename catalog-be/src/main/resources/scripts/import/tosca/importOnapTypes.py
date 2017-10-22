@@ -30,7 +30,8 @@ def importOnapTypes(beHost, bePort, adminUser, fileDir, updateversion):
 				  "vduCpd",
 				  "vduVirtualStorage",
 				  "vnfVirtualLinkDesc",
-				  "NSD"
+				  "NSD",
+				  "VDU"
 				  ]
 		
 	responseCodes = [200, 201]
