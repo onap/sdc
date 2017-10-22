@@ -1,7 +1,14 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import fj.data.Either;
-import org.apache.cassandra.cql3.CQL3Type;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -21,10 +28,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import fj.data.Either;
 
 /**
  * Created by chaya on 6/12/2017.

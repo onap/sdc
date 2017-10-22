@@ -1,11 +1,12 @@
 package org.openecomp.sdc.asdctool.impl.validator.executers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openecomp.sdc.asdctool.impl.validator.tasks.VfValidationTask;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.*;
 
 /**
  * Created by chaya on 7/3/2017.

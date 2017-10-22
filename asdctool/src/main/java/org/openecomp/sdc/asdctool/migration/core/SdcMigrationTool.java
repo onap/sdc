@@ -1,5 +1,7 @@
 package org.openecomp.sdc.asdctool.migration.core;
 
+import java.util.List;
+
 import org.openecomp.sdc.asdctool.migration.core.execution.MigrationExecutionResult;
 import org.openecomp.sdc.asdctool.migration.core.execution.MigrationExecutorImpl;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
@@ -8,8 +10,6 @@ import org.openecomp.sdc.asdctool.migration.resolver.MigrationResolver;
 import org.openecomp.sdc.asdctool.migration.service.SdcRepoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 public class SdcMigrationTool {
 
