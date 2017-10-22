@@ -33,6 +33,7 @@
         <mvn.surefire.version>2.19.1</mvn.surefire.version>
         <mvn.swagger.version>3.1.0</mvn.swagger.version>
         <mvn.war.version>2.1.1</mvn.war.version>
+        <mvn.antrun.version>1.8</mvn.antrun.version>
 
         <!-- Onboarding artifacts version -->
         <openecomp.sdc.common.version>${project.version}</openecomp.sdc.common.version>
