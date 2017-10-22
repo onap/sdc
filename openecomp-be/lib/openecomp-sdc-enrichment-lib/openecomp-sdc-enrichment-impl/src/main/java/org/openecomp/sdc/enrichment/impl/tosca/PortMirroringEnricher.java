@@ -9,27 +9,34 @@ import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.impl.tosca.model.PortMirroringConnectionPointDescription;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
+import org.openecomp.sdc.tosca.datatypes.model.NodeType;
 import org.openecomp.sdc.tosca.datatypes.model.PropertyDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
+import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
+import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PortMirroringEnricher {
@@ -186,40 +193,40 @@ public class PortMirroringEnricher {
             addPortMirroringSubstitutionMappingCapability(serviceTemplate,
                 externalPortNodeTemplateId);
           }
-          handleExternalPortProperties(externalNodeTemplate.getValue());
+          handleExternalPortProperties(externalNodeTemplate.getValue(), serviceTemplate, toscaServiceModel);
         }
         addGlobalTypeImport(serviceTemplate);
       }
     }
   }
 
-  private void handleExternalPortProperties(NodeTemplate portNodeTemplate) {
+  private void handleExternalPortProperties(NodeTemplate portNodeTemplate,
+                                            ServiceTemplate serviceTemplate,
+                                            ToscaServiceModel toscaServiceModel){
 
-    ServiceTemplate serviceTemplate = globalTypesServiceTemplate.get("openecomp/nodes.yml");
+    ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
     String externalPortType = portNodeTemplate.getType();
     Map<String, PropertyDefinition> globalTypesportProperties = new HashMap<>();
-    globalTypesportProperties.putAll(
-        serviceTemplate.getNode_types().get("org.openecomp.resource.cp.nodes.network.Port")
-            .getProperties());
-    globalTypesportProperties
-        .putAll(serviceTemplate.getNode_types().get(externalPortType).getProperties());
+    NodeType flatNodeType =
+        (NodeType) toscaAnalyzerService.getFlatEntity(ToscaElementTypes.NODE_TYPE, externalPortType, serviceTemplate, toscaServiceModel);
+    globalTypesportProperties.putAll(flatNodeType.getProperties());
 
     Map<String, Object> properties = portNodeTemplate.getProperties();
     Map<String, Object> filteredProperties = new HashMap<>();
 
-    if (MapUtils.isEmpty(properties)) {
+    if(MapUtils.isEmpty(properties)){
       return;
     }
 
-    for (Map.Entry<String, Object> propertyEntry : properties.entrySet()) {
-      if (globalTypesportProperties.containsKey(propertyEntry.getKey())) {
+    for(Map.Entry<String, Object> propertyEntry: properties.entrySet()){
+      if(globalTypesportProperties.containsKey(propertyEntry.getKey())){
         filteredProperties.put(propertyEntry.getKey(), propertyEntry.getValue());
       }
     }
 
-    if (!MapUtils.isEmpty(filteredProperties)) {
+    if(!MapUtils.isEmpty(filteredProperties)) {
       portNodeTemplate.setProperties(filteredProperties);
-    } else {
+    }else{
       portNodeTemplate.setProperties(null);
     }
 
@@ -284,14 +291,15 @@ public class PortMirroringEnricher {
 
   private boolean isPortNodeTemplate(String nodeType) {
     //Check if node corresponds to a concrete port node
-    if (Objects.nonNull(nodeType)) {
-      if (nodeType.equals(ToscaNodeType.NEUTRON_PORT)
-          || nodeType.equals(ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE)
-          || nodeType.equals(ToscaNodeType.CONTRAIL_PORT)) {
-        return true;
-      }
-    }
-    return false;
+    Set<String> portNodeTypes = getPortNodeTypes();
+    return Objects.nonNull(nodeType)
+        && portNodeTypes.contains(nodeType);
+  }
+
+  private Set<String> getPortNodeTypes(){
+    return new HashSet<>(Arrays.asList(ToscaNodeType.NEUTRON_PORT,
+        ToscaNodeType.CONTRAILV2_VIRTUAL_MACHINE_INTERFACE,
+        ToscaNodeType.CONTRAIL_PORT));
   }
 
   private boolean isSubstitutableNodeTemplate(NodeTemplate nodeTemplate) {
