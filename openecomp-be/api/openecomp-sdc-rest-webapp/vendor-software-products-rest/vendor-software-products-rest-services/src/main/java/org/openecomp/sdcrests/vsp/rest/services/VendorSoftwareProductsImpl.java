@@ -405,58 +405,101 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     List<VersionedVendorSoftwareProductInfo> vspList = Objects.requireNonNull(
         vendorSoftwareProductManager.listVsps(VersionStatus.Final.name(), user));
+    int skippedCounter = 0;
+    final int vspListSizeBefore = vspList.size();
+
+    for (VersionedVendorSoftwareProductInfo versionVspInfo : vspList) {
+      final VspDetails vspDetails = versionVspInfo.getVspDetails();
+      final String vspId = vspDetails.getId();
+      final Version latestFinalVersion =
+          getVersionInfo(vspId, VersionableEntityAction.Read, user).getLatestFinalVersion();
+
+      if (latestFinalVersion.getStatus().equals(VersionStatus.Locked)) {
+        logger.info("Skipping processing VSP name [{}]/id [{}] due to status LOCKED", vspDetails
+                .getName(),
+            vspId);
+        skippedCounter++;
+        vspList.remove(versionVspInfo);
+      }
+    }
+
+    logger.info("Removed {} VSPs out of {} from processing due to status LOCKED", skippedCounter,
+        vspListSizeBefore);
 
     int healingCounter = 0;
     int failedCounter = 0;
+    int totalCounter = 0;
 
-    try {
 
-      logger.info("Total number of VSPs: {}. Performing healing and " +
-          "resubmit for all non-Manual VSPs in submitted status.\n No need to pre-set oldVersion " +
-          "field", vspList.size());
+    final int vspListSize = vspList.size();
+    logger.info("Total number of VSPs: {}. Performing healing and " +
+        "resubmit for all non-Manual VSPs in submitted status.\n No need to pre-set oldVersion " +
+        "field", vspListSize);
 
-      for (VersionedVendorSoftwareProductInfo versionVspInfo : vspList) {
-
+    for (VersionedVendorSoftwareProductInfo versionVspInfo : vspList) {
+      try {
+        totalCounter++;
+        final Version activeVersion = versionVspInfo.getVersionInfo().getActiveVersion();
         final VspDetails vspDetails = versionVspInfo.getVspDetails();
         final String vspId = vspDetails.getId();
         final Version latestFinalVersion =
             getVersionInfo(vspId, VersionableEntityAction.Read, user).getLatestFinalVersion();
 
+        final String vspName = vspDetails.getName();
+        logger.info("VSP Name {}, VSP id [{}], Active Version {} , Active Version Status {}," +
+                "Latest Final Version {} ,  " +
+                "Latest Final Version Status {}", vspName, vspId, activeVersion
+                .toString(),
+            activeVersion.getStatus(), latestFinalVersion.toString(),
+            latestFinalVersion.getStatus());
+
         if (Objects.nonNull(latestFinalVersion) &&
             (!OnboardingMethod.Manual.name().equals(vspDetails.getOnboardingMethod()))) {
-          reSubmit(vspDetails, user);
+          reSubmit(vspDetails, user, totalCounter, vspListSize);
           healingCounter++;
         }
+      } catch (Exception e) {
+        failedCounter++;
       }
-
-    } catch (Exception e) {
-      logger.error("Failed during resubmitAll", e);
-      failedCounter++;
-    } finally {
-      logger.info("Finished attempted healing and resubmit for {} VSPs out " +
-              "of total # of {} submitted VSPs. Failure count during resubmitAll: {}",
-          healingCounter, vspList.size(), failedCounter);
     }
+
+    logger.info("Total VSPs processed {}. Completed running healing and resubmit for {} VSPs out" +
+            " " +
+            "of total # of {} submitted VSPs.  Failures count during resubmitAll: {}",
+        totalCounter, healingCounter, vspListSize, failedCounter);
 
 
     return Response.ok().build();
   }
 
 
-  private void reSubmit(VspDetails vspDetails, String user) throws IOException {
+  private void reSubmit(VspDetails vspDetails, String user, int currentCount, int total) throws
+      Exception {
 
     final String vspId = vspDetails.getId();
-    long startTime = System.currentTimeMillis();
-    logger.info("Starting on healing and resubmit for VSP id[{}]", vspId);
+    final String vspName = vspDetails.getName();
+    final Version versionBefore = vspDetails.getVersion();
+    Version finalVersion;
+
+    logger.info("Starting on healing and resubmit for VSP [{}], #{} out of total {}", vspName,
+        currentCount, total);
     vspDetails.setOldVersion("true");
 
-    vendorSoftwareProductManager.healAndAdvanceFinalVersion(vspId, vspDetails, user);
+    try {
+      finalVersion =
+          vendorSoftwareProductManager.healAndAdvanceFinalVersion(vspId, vspDetails, user);
 
-    long endTime = System.currentTimeMillis();
-    long seconds = (endTime - startTime) / 1000;
+    } catch (Exception e) {
 
-    logger.info("Completed healing and resubmit for VSP id [{}], duration: {} seconds",
-        vspId, seconds);
+      logger.error("Failed during resubmit, VSP [{}] , version before:{}, version after:{}, " +
+              "status after:{}, with exception:{}",
+          vspName, versionBefore.toString(), vspDetails.getVersion().toString(), vspDetails
+              .getVersion().getStatus().name(), e.getMessage());
+      throw e;
+    }
+
+    logger.info("Completed healing and resubmit for VSP [{}], version before:{}, version after:" +
+        " {}", vspName, versionBefore.toString(), finalVersion);
   }
 
   private static void printAuditForErrors(List<ErrorMessage> errorList, String vspId,

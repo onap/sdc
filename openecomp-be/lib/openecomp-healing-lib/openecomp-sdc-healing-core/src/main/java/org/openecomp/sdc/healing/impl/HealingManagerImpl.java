@@ -92,7 +92,7 @@ public class HealingManagerImpl implements HealingManager {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.SELF_HEALING, ErrorLevel.ERROR.name(), LoggerErrorCode
               .DATA_ERROR.getErrorCode(), LoggerErrorDescription.CANT_HEAL);
-      healingFailureMessages.add(e.getMessage());
+      healingFailureMessages.add(e.getMessage() + " ,healer name :" + healerImplClassName);
     }
     return null;
   }
