@@ -340,7 +340,8 @@ public class CandidateServiceImpl implements CandidateService {
         Optional<String> jsonFileDataStructure =
             orchestrationTemplateCandidateDataDao.getStructure(vspId, version);
 
-        if (jsonFileDataStructure.isPresent()) {
+        if (jsonFileDataStructure.isPresent()
+            && JsonUtil.isValidJson(jsonFileDataStructure.get())) {
             mdcDataDebugMessage.debugExitMessage("VSP Id", vspId);
             return Optional
                 .of(JsonUtil.json2Object(jsonFileDataStructure.get(), FilesDataStructure.class));

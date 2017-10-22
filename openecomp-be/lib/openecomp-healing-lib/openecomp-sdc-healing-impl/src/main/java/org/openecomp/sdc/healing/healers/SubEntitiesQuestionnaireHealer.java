@@ -55,6 +55,9 @@ public class SubEntitiesQuestionnaireHealer implements Healer {
   private static NicDao nicDao = NicDaoFactory.getInstance().createInterface();
   private static NetworkDao networkDao = NetworkDaoFactory.getInstance().createInterface();
 
+  private static String emptyString = "";
+  private static String emptyJson = "{}";
+
   @Override
   public Object heal(Map<String, Object> healingParams) throws Exception {
 
@@ -90,14 +93,19 @@ public class SubEntitiesQuestionnaireHealer implements Healer {
 
     for (Object entity : compositionEntities) {
       CompositionEntity compositionEntity = (CompositionEntity) entity;
-      if (Objects.isNull(compositionEntity.getQuestionnaireData()) ||
-          "".equals(compositionEntity.getQuestionnaireData())) {
+      if (isQuestionnaireNeedsToGetHealed(compositionEntity)) {
         compositionEntity.setVersion(newVersion);
         updateNullQuestionnaire(compositionEntity, type);
       }
     }
 
     mdcDataDebugMessage.debugExitMessage(null);
+  }
+
+  private boolean isQuestionnaireNeedsToGetHealed(CompositionEntity compositionEntity) {
+    return Objects.isNull(compositionEntity.getQuestionnaireData())
+        || emptyString.equals(compositionEntity.getQuestionnaireData())
+        || emptyJson.equals(compositionEntity.getQuestionnaireData());
   }
 
   private void updateNullQuestionnaire(CompositionEntity entity,

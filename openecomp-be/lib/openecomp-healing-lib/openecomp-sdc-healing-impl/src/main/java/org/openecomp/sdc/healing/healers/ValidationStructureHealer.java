@@ -48,6 +48,11 @@ public class ValidationStructureHealer implements Healer {
     UploadDataEntity orchestrationTemplate =
         orchestrationTemplateDao.getOrchestrationTemplate(vspId, version);
 
+    if(Objects.isNull(orchestrationTemplate.getValidationData())
+        || !JsonUtil.isValidJson(orchestrationTemplate.getValidationData())){
+      return Optional.empty();
+    }
+
     OldValidationStructureTree oldValidationStructureTree;
     try{
       oldValidationStructureTree =
