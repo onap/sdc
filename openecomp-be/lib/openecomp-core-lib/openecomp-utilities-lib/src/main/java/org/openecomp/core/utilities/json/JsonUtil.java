@@ -32,8 +32,11 @@ import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.core.utilities.deserializers.RequirementDefinitionDeserializer;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,6 +54,15 @@ import java.util.stream.Collectors;
  */
 public class JsonUtil {
   private static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
+  private static final GsonBuilder gsonBuilder;
+  private static final Gson gson;
+
+  static {
+    gsonBuilder = new GsonBuilder();
+    gsonBuilder.registerTypeAdapter(RequirementDefinition.class, new
+        RequirementDefinitionDeserializer());
+    gson = gsonBuilder.create();
+  }
 
   /**
    * Object 2 json string.
@@ -86,7 +98,7 @@ public class JsonUtil {
     T typ;
     try {
       try (Reader br = new StringReader(json)) {
-        typ = new Gson().fromJson(br, classOfT);
+        typ = gson.fromJson(br, classOfT);
       } catch (IOException exception) {
         throw exception;
       }
