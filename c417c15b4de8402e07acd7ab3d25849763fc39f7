@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_c220ab9d",
+        "filename": "openecomp-ui/src/sdc-app/config/config.json",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-23T11:05:13Z",
+      "side": 1,
+      "message": "Please discuss with Michael. We need to see how to handle this.",
+      "range": {
+        "startLine": 8,
+        "startChar": 1,
+        "endLine": 8,
+        "endChar": 51
+      },
+      "revId": "c417c15b4de8402e07acd7ab3d25849763fc39f7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_8241833b",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/SoftwareProductReducer.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-23T11:05:13Z",
+      "side": 1,
+      "message": "do not need comma",
+      "range": {
+        "startLine": 104,
+        "startChar": 1,
+        "endLine": 104,
+        "endChar": 40
+      },
+      "revId": "c417c15b4de8402e07acd7ab3d25849763fc39f7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_a2aa3fd2",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportActionHelper.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-23T11:05:13Z",
+      "side": 1,
+      "message": "are we sure this is always http and will not be https?",
+      "range": {
+        "startLine": 27,
+        "startChar": 9,
+        "endLine": 27,
+        "endChar": 14
+      },
+      "revId": "c417c15b4de8402e07acd7ab3d25849763fc39f7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_626577e0",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportActionHelper.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-23T11:05:13Z",
+      "side": 1,
+      "message": "use RestApiUtil\nsee my mail on the change you need for the anonymous call",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 5
+      },
+      "revId": "c417c15b4de8402e07acd7ab3d25849763fc39f7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_c2a54b05",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportActionHelper.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-23T11:05:13Z",
+      "side": 1,
+      "message": "use RestApiUtil\nsee my mail on the change you need for the anonymous call",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 1
+      },
+      "revId": "c417c15b4de8402e07acd7ab3d25849763fc39f7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
