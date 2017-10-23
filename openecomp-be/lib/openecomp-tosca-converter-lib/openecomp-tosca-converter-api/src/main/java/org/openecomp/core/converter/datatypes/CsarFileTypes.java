@@ -5,5 +5,6 @@ public enum  CsarFileTypes {
   globalServiceTemplate,
   externalFile,
   toscaMetadata,
-  definitionsFile,;
+  definitionsFile,
+  Artifacts;
 }
