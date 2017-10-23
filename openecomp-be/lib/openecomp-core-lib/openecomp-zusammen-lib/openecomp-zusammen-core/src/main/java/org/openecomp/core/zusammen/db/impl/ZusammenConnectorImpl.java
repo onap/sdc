@@ -60,13 +60,12 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
 
   @Override
   public Collection<Item> listItems(SessionContext context) {
-    Response<Collection<Item>> response =
-        itemAdaptorFactory.createInterface(context).list(context);
-    if (response.isSuccessful()) {
-      return response.getValue();
-    } else {
-      return null;
+    Response<Collection<Item>> response = itemAdaptorFactory.createInterface(context).list(context);
+    if (!response.isSuccessful()) {
+      throw new RuntimeException(
+          "Failed to list Items. message:" + response.getReturnCode().toString());
     }
+    return response.getValue();
   }
 
   @Override
@@ -76,7 +75,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
       return response.getValue();
     } else {
       throw new RuntimeException(
-          "failed to create Item. message:" + response.getReturnCode().getMessage());
+          "failed to create Item. message:" + response.getReturnCode().toString());
     }
   }
 
@@ -87,7 +86,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
 
     if (!response.isSuccessful()) {
       throw new RuntimeException("failed to update Item . ItemId:" + itemId + "" +
-          " message:" + response.getReturnCode().getMessage());
+          " message:" + response.getReturnCode().toString());
     }
   }
 
@@ -98,7 +97,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     if (!versions.isSuccessful()) {
       logErrorMessageToMdc(ItemElementLoggerTargetServiceName.ITEM_VERSION_RETRIEVAL, versions
           .getReturnCode());
-      throw new RuntimeException(versions.getReturnCode().getMessage()); // TODO: 3/26/2017
+      throw new RuntimeException(versions.getReturnCode().toString()); // TODO: 3/26/2017
     }
     return versions.getValue();
   }
@@ -114,7 +113,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
       throw new RuntimeException("failed to create Item Version. ItemId:" + itemId + " based " +
           "on:" + baseVersionId +
           " message:" + response
-          .getReturnCode().getMessage());
+          .getReturnCode().toString());
     }
   }
 
@@ -126,7 +125,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     if (!response.isSuccessful()) {
       throw new RuntimeException(
           String.format("failed to create Item Version. ItemId: %s, versionId: %s, message: %s",
-              itemId.getValue(), versionId.getValue(), response.getReturnCode().getMessage()));
+              itemId.getValue(), versionId.getValue(), response.getReturnCode().toString()));
     }
   }
 
@@ -151,7 +150,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
       throw new RuntimeException(String.format(
           "failed to reset Item Version back to %s. ItemId: %s, versionId: %s, message: %s",
           changeRef, itemId.getValue(), versionId.getValue(),
-          response.getReturnCode().getMessage()));
+          response.getReturnCode().toString()));
     }
   }
 
@@ -166,7 +165,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     } else {
       logErrorMessageToMdc(ItemElementLoggerTargetServiceName.ELEMENT_GET_BY_PROPERTY,
           elementInfosResponse.getReturnCode());
-      throw new RuntimeException(elementInfosResponse.getReturnCode().getMessage());
+      throw new RuntimeException(elementInfosResponse.getReturnCode().toString());
     }
   }
 
@@ -187,11 +186,15 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
   @Override
   public Optional<Element> saveElement(SessionContext context, ElementContext elementContext,
                                        ZusammenElement element, String message) {
-    Response<Element> saveResponse = elementAdaptorFactory.createInterface(context)
+    Response<Element> response = elementAdaptorFactory.createInterface(context)
         .save(context, elementContext, element, message);
-    return saveResponse.isSuccessful()
-        ? Optional.of(saveResponse.getValue())
-        : Optional.empty(); // TODO: 3/21/2017 error?
+    if (!response.isSuccessful()) {
+      throw new RuntimeException(String
+          .format("Failed to save element %s. ItemId: %s, versionId: %s, message: %s",
+              element.getElementId().getValue(), elementContext.getItemId().getValue(),
+              elementContext.getVersionId().getValue(), response.getReturnCode().toString()));
+    }
+    return Optional.of(response.getValue());
   }
 
   private void logErrorMessageToMdc(ItemElementLoggerTargetServiceName

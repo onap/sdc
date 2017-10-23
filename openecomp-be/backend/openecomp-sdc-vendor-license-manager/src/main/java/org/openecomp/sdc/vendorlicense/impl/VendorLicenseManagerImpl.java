@@ -24,7 +24,6 @@ import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICE
 
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.activityLog.ActivityLogManager;
-import org.openecomp.sdc.activityLog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -41,17 +40,11 @@ import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
-import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao;
-import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao;
-import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
-import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.LimitDao;
-import org.openecomp.sdc.vendorlicense.dao.LimitDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDao;
-import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
@@ -64,10 +57,8 @@ import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.vendorlicense.errors.InvalidDateErrorBuilder;
 import org.openecomp.sdc.vendorlicense.errors.LimitErrorBuilder;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
-import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
 import org.openecomp.sdc.vendorlicense.types.VersionedVendorLicenseModel;
 import org.openecomp.sdc.versioning.VersioningManager;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
@@ -151,6 +142,12 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
 
     Version newVersion = versioningManager
             .undoCheckout(VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE, vendorLicenseModelId, user);
+
+    ActivityLogEntity activityLogEntity =
+        new ActivityLogEntity(vendorLicenseModelId, String.valueOf(newVersion.getMajor() + 1),
+            ActivityType.UNDO_CHECKOUT.toString(), user, true, "", "");
+    activityLogManager.addActionLog(activityLogEntity, user);
+
     vendorLicenseFacade.updateVlmLastModificationTime(vendorLicenseModelId, newVersion);
 
     mdcDataDebugMessage.debugExitMessage("VLM id", vendorLicenseModelId);

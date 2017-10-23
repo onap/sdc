@@ -14,7 +14,10 @@ import org.openecomp.core.zusammen.plugin.dao.ElementRepositoryFactory;
 import org.openecomp.core.zusammen.plugin.dao.types.ElementEntity;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.openecomp.core.zusammen.plugin.ZusammenPluginConstants.ROOT_ELEMENTS_PARENT_ID;
 import static org.openecomp.core.zusammen.plugin.ZusammenPluginUtil.getSpaceName;
 
 public class VersionCollaborationStore {
@@ -25,46 +28,74 @@ public class VersionCollaborationStore {
       throw new UnsupportedOperationException(
           "In this plugin implementation tag is supported only on versionId");
     }
-    copyElements(context, getSpaceName(context, Space.PRIVATE), itemId, versionId, tag.getName());
+    String space = getSpaceName(context, Space.PRIVATE);
+    ElementEntityContext targetContext = new ElementEntityContext(space, itemId, versionId);
+    targetContext.setChangeRef(tag.getName());
+    copyElements(context, new ElementEntityContext(space, itemId, versionId), targetContext,
+        getElementRepository(context));
   }
 
   public CollaborationMergeChange resetItemVersionHistory(SessionContext context, Id itemId,
                                                           Id versionId, String changeRef) {
     ElementRepository elementRepository = getElementRepository(context);
-    ElementEntityContext elementContext =
-        new ElementEntityContext(getSpaceName(context, Space.PRIVATE), itemId, versionId);
 
-    CollaborationMergeChange resetChange = new CollaborationMergeChange();
+    String spaceName = getSpaceName(context, Space.PRIVATE);
+    ElementEntityContext versionContext = new ElementEntityContext(spaceName, itemId, versionId);
 
-    Collection<ElementEntity> versionElements = elementRepository.list(context, elementContext);
-    versionElements.stream()
-        .map(elementEntity ->
-            convertElementEntityToElementChange(elementEntity, elementContext, Action.DELETE))
-        .forEach(resetChange.getChangedElements()::add);
+    Collection<ElementEntity> deletedElements =
+        deleteElements(context, versionContext, elementRepository);
 
-    elementContext.setChangeRef(changeRef);
-    Collection<ElementEntity> changeRefElements = elementRepository.list(context, elementContext);
-    changeRefElements.stream()
-        .map(elementEntity ->
-            convertElementEntityToElementChange(elementEntity, elementContext, Action.CREATE))
-        .forEach(resetChange.getChangedElements()::add);
+    ElementEntityContext changeRefContext = new ElementEntityContext(spaceName, itemId, versionId);
+    changeRefContext.setChangeRef(changeRef);
 
-    return resetChange; // TODO: 4/19/2017 version change...
+    Collection<ElementEntity> createdElements =
+        copyElements(context, changeRefContext, versionContext, elementRepository);
+
+    // TODO: 4/19/2017 version change...
+    return createCollaborationMergeChange(versionContext, deletedElements, createdElements);
   }
 
-  private void copyElements(SessionContext context, String space, Id itemId, Id sourceVersionId,
-                            String targetTag) {
-    ElementRepository elementRepository = getElementRepository(context);
-    ElementEntityContext elementContext = new ElementEntityContext(space, itemId, sourceVersionId);
-
-    Collection<ElementEntity> versionElements = elementRepository.list(context, elementContext);
-
-    elementContext.setChangeRef(targetTag);
-    versionElements
-        .forEach(elementEntity -> elementRepository.create(context, elementContext, elementEntity));
+  private Collection<ElementEntity> deleteElements(SessionContext context,
+                                                   ElementEntityContext elementContext,
+                                                   ElementRepository elementRepository) {
+    Collection<ElementEntity> elements = elementRepository.list(context, elementContext);
+    elements.forEach(element -> elementRepository
+        .delete(context, elementContext, new ElementEntity(element.getId())));
+    elementRepository.delete(context, elementContext, new ElementEntity(ROOT_ELEMENTS_PARENT_ID));
+    return elements;
   }
 
-  private CollaborationElementChange convertElementEntityToElementChange(
+  private Collection<ElementEntity> copyElements(SessionContext context,
+                                                 ElementEntityContext sourceElementContext,
+                                                 ElementEntityContext targetElementContext,
+                                                 ElementRepository elementRepository) {
+    Collection<ElementEntity> elements = elementRepository.list(context, sourceElementContext);
+    elements.forEach(elementEntity ->
+        elementRepository.create(context, targetElementContext, elementEntity));
+    return elements;
+  }
+
+  private CollaborationMergeChange createCollaborationMergeChange(
+      ElementEntityContext versionContext,
+      Collection<ElementEntity> deletedElements,
+      Collection<ElementEntity> createdElements) {
+    CollaborationMergeChange mergeChange = new CollaborationMergeChange();
+    mergeChange.getChangedElements().addAll(
+        convertToCollaborationElementChanges(versionContext, deletedElements, Action.DELETE));
+    mergeChange.getChangedElements().addAll(
+        convertToCollaborationElementChanges(versionContext, createdElements, Action.CREATE));
+    return mergeChange;
+  }
+
+  private List<CollaborationElementChange> convertToCollaborationElementChanges(
+      ElementEntityContext elementContext, Collection<ElementEntity> changedElements,
+      Action action) {
+    return changedElements.stream()
+        .map(element -> convertToCollaborationElementChange(element, elementContext, action))
+        .collect(Collectors.toList());
+  }
+
+  private CollaborationElementChange convertToCollaborationElementChange(
       ElementEntity elementEntity, ElementEntityContext elementContext, Action action) {
     CollaborationElementChange elementChange = new CollaborationElementChange();
     elementChange
