@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_67cea95c",
+        "filename": "common/openecomp-common-configuration-management/openecomp-configuration-management-core/src/main/java/org/openecomp/config/impl/ConfigurationChangeNotifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-23T09:06:45Z",
+      "side": 1,
+      "message": "change to configKey",
+      "range": {
+        "startLine": 135,
+        "startChar": 24,
+        "endLine": 135,
+        "endChar": 25
+      },
+      "revId": "e68d82451d52859e7d0945b9ce4d8317295e955a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_27d8a11c",
+        "filename": "common/openecomp-common-configuration-management/openecomp-configuration-management-core/src/main/java/org/openecomp/config/impl/ConfigurationChangeNotifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-23T09:06:45Z",
+      "side": 1,
+      "message": "repositoryKey variable is unnecessary. replace with inline use or at least put it at the right scope",
+      "range": {
+        "startLine": 181,
+        "startChar": 10,
+        "endLine": 184,
+        "endChar": 96
+      },
+      "revId": "e68d82451d52859e7d0945b9ce4d8317295e955a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_67f58982",
+        "filename": "common/openecomp-common-configuration-management/openecomp-configuration-management-core/src/main/java/org/openecomp/config/impl/ConfigurationChangeNotifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-23T09:06:45Z",
+      "side": 1,
+      "message": "change to list.stream and use filter instead of if",
+      "range": {
+        "startLine": 252,
+        "startChar": 6,
+        "endLine": 255,
+        "endChar": 9
+      },
+      "revId": "e68d82451d52859e7d0945b9ce4d8317295e955a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
