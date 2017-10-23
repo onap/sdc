@@ -70,7 +70,7 @@ public class ConsumerServlet extends BeGenericServlet {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Consumer credentials", httpMethod = "POST", notes = "Returns created ECOMP consumer credentials", response = Response.class)
+	@ApiOperation(value = "Consumer credentials", httpMethod = "POST", notes = "Returns created ONAP consumer credentials", response = Response.class)
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "Consumer credentials created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
 	public Response createConsumer(@ApiParam(value = "Consumer Object to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
