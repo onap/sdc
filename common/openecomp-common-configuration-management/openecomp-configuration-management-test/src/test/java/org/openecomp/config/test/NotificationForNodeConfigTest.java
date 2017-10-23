@@ -25,7 +25,7 @@ import java.util.Properties;
 public class NotificationForNodeConfigTest {
     public final static String NAMESPACE = "NotificationForNodeConfig";
 
-    public String updatedValue = null;
+    private String updatedValue = null;
 
     @Before
     public void setUp() throws IOException {
@@ -42,10 +42,10 @@ public class NotificationForNodeConfigTest {
         Properties props = new Properties();
         props.setProperty(ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH, "30");
         props.setProperty("_config.namespace",NAMESPACE);
-        File f = new File(TestUtil.jsonSchemaLoc+"config.properties");
-        OutputStream out = new FileOutputStream( f );
-        props.store(out, "Node Config Property");
-        out.close();
+        File f = new File(TestUtil.jsonSchemaLoc + "config.properties");
+        try (OutputStream out = new FileOutputStream(f)) {
+            props.store(out, "Node Config Property");
+        }
 
         Thread.sleep(35000);
 
@@ -55,9 +55,9 @@ public class NotificationForNodeConfigTest {
         config.addConfigurationChangeListener(NAMESPACE, ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH, new NodePropValListener());
 
         props.setProperty(ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH, "80");
-        out = new FileOutputStream( f );
-        props.store(out, "Updated Node Config Property");
-        out.close();
+        try (OutputStream out = new FileOutputStream(f)) {
+            props.store(out, "Updated Node Config Property");
+        }
 
         Thread.sleep(35000);
 
@@ -79,7 +79,7 @@ public class NotificationForNodeConfigTest {
         TestUtil.cleanUp();
         File f = new File(TestUtil.jsonSchemaLoc+"config.properties");
         if(f.exists()) {
-            boolean isDeleted = f.delete();
+            f.delete();
         }
     }
 }

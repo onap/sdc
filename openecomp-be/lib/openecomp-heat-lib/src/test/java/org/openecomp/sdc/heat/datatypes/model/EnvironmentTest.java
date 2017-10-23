@@ -23,16 +23,18 @@ package org.openecomp.sdc.heat.datatypes.model;
 import org.junit.Test;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 public class EnvironmentTest {
 
   @Test
-  public void testYamlToServiceTemplateObj() {
+  public void testYamlToServiceTemplateObj() throws IOException {
     YamlUtil yamlUtil = new YamlUtil();
-    InputStream yamlFile = yamlUtil.loadYamlFileIs("/mock/model/envSettings.env");
-    Environment envVars = yamlUtil.yamlToObject(yamlFile, Environment.class);
-    envVars.toString();
+    try (InputStream yamlFile = yamlUtil.loadYamlFileIs("/mock/model/envSettings.env")) {
+      Environment envVars = yamlUtil.yamlToObject(yamlFile, Environment.class);
+      envVars.toString();
+    }
   }
 
   @Test
@@ -46,9 +48,8 @@ public class EnvironmentTest {
     if (heatResourceName.length() == lastIndexOfUnderscore) {
       System.out.println(heatResourceName);
     } else {
-      String heatResourceNameSuffix = heatResourceName.substring(lastIndexOfUnderscore + 1);
+
       try {
-        int heatResourceNameSuffixInt = Integer.parseInt(heatResourceNameSuffix);
         System.out.println(heatResourceName.substring(0, lastIndexOfUnderscore));
       } catch (NumberFormatException ignored) {
         System.out.println(heatResourceName);

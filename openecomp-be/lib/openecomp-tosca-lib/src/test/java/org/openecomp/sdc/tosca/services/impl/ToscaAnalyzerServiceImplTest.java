@@ -78,9 +78,9 @@ public class ToscaAnalyzerServiceImplTest {
   public ExpectedException thrown = ExpectedException.none();
 
   @Mock
-  NodeTemplate nodeTemplateMock;
+  private NodeTemplate nodeTemplateMock;
   @Mock
-  ToscaServiceModel toscaServiceModelMock;
+  private ToscaServiceModel toscaServiceModelMock;
 
   @BeforeClass
   public static void onlyOnceSetUp() throws IOException {
@@ -97,27 +97,29 @@ public class ToscaAnalyzerServiceImplTest {
   @Test
   public void testGetRequirements() throws Exception {
     ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-    InputStream yamlFile = toscaExtensionYamlUtil
-        .loadYamlFileIs("/mock/analyzerService/NestedServiceTemplateReqTest.yaml");
-    ServiceTemplate
-        serviceTemplateFromYaml =
-        toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+    try (InputStream yamlFile = toscaExtensionYamlUtil
+        .loadYamlFileIs("/mock/analyzerService/NestedServiceTemplateReqTest.yaml")) {
 
-    NodeTemplate port_0 =
-        serviceTemplateFromYaml.getTopology_template().getNode_templates().get("cmaui_port_0");
-    List<RequirementAssignment> reqList =
-        toscaAnalyzerService.getRequirements(port_0, ToscaConstants.BINDING_REQUIREMENT_ID);
-    assertEquals(1, reqList.size());
+      ServiceTemplate
+              serviceTemplateFromYaml =
+              toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
 
-    reqList.clear();
-    NodeTemplate port_1 =
-        serviceTemplateFromYaml.getTopology_template().getNode_templates().get("cmaui1_port_1");
-    reqList = toscaAnalyzerService.getRequirements(port_1, ToscaConstants.LINK_REQUIREMENT_ID);
-    assertEquals(2, reqList.size());
+      NodeTemplate port_0 =
+              serviceTemplateFromYaml.getTopology_template().getNode_templates().get("cmaui_port_0");
+      List<RequirementAssignment> reqList =
+              toscaAnalyzerService.getRequirements(port_0, ToscaConstants.BINDING_REQUIREMENT_ID);
+      assertEquals(1, reqList.size());
 
-    reqList.clear();
-    reqList = toscaAnalyzerService.getRequirements(port_0, ToscaConstants.LINK_REQUIREMENT_ID);
-    assertEquals(0, reqList.size());
+      reqList.clear();
+      NodeTemplate port_1 =
+              serviceTemplateFromYaml.getTopology_template().getNode_templates().get("cmaui1_port_1");
+      reqList = toscaAnalyzerService.getRequirements(port_1, ToscaConstants.LINK_REQUIREMENT_ID);
+      assertEquals(2, reqList.size());
+
+      reqList.clear();
+      reqList = toscaAnalyzerService.getRequirements(port_0, ToscaConstants.LINK_REQUIREMENT_ID);
+      assertEquals(0, reqList.size());
+    }
   }
 
   @Test
@@ -171,44 +173,46 @@ public class ToscaAnalyzerServiceImplTest {
         .getSubstituteServiceTemplateName("invalid1", invalidSubstitutableNodeTemplate1);
     assertEquals(false, substituteServiceTemplateName.isPresent());
 
-    if (substitutableNodeTemplate.isPresent()) {
-      NodeTemplate invalidSubstitutableNodeTemplate2 = substitutableNodeTemplate.get();
+    substitutableNodeTemplate.ifPresent(nodeTemplate -> {
+      NodeTemplate invalidSubstitutableNodeTemplate2 = nodeTemplate;
       Object serviceTemplateFilter = invalidSubstitutableNodeTemplate2.getProperties()
-          .get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
+              .get(ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME);
       ((Map) serviceTemplateFilter).clear();
       toscaAnalyzerService
-          .getSubstituteServiceTemplateName("invalid2", invalidSubstitutableNodeTemplate2);
+              .getSubstituteServiceTemplateName("invalid2", invalidSubstitutableNodeTemplate2);
 
-    }
+    });
   }
 
 
   @Test
   public void testGetSubstitutableNodeTemplates() throws Exception {
     ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-    InputStream yamlFile = toscaExtensionYamlUtil
-        .loadYamlFileIs("/mock/analyzerService/ServiceTemplateSubstituteTest.yaml");
-    ServiceTemplate serviceTemplateFromYaml =
-        toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+    try (InputStream yamlFile = toscaExtensionYamlUtil
+        .loadYamlFileIs("/mock/analyzerService/ServiceTemplateSubstituteTest.yaml")) {
+      ServiceTemplate serviceTemplateFromYaml =
+              toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
 
-    Map<String, NodeTemplate> substitutableNodeTemplates =
-        toscaAnalyzerService.getSubstitutableNodeTemplates(serviceTemplateFromYaml);
-    assertEquals(2, substitutableNodeTemplates.size());
-    assertNotNull(substitutableNodeTemplates.get("test_nested1"));
-    assertNotNull(substitutableNodeTemplates.get("test_nested2"));
+      Map<String, NodeTemplate> substitutableNodeTemplates =
+              toscaAnalyzerService.getSubstitutableNodeTemplates(serviceTemplateFromYaml);
+      assertEquals(2, substitutableNodeTemplates.size());
+      assertNotNull(substitutableNodeTemplates.get("test_nested1"));
+      assertNotNull(substitutableNodeTemplates.get("test_nested2"));
 
-    ServiceTemplate emptyServiceTemplate = new ServiceTemplate();
-    emptyServiceTemplate.setTopology_template(new TopologyTemplate());
-    substitutableNodeTemplates =
-        toscaAnalyzerService.getSubstitutableNodeTemplates(emptyServiceTemplate);
-    assertEquals(0, substitutableNodeTemplates.size());
+      ServiceTemplate emptyServiceTemplate = new ServiceTemplate();
+      emptyServiceTemplate.setTopology_template(new TopologyTemplate());
+      substitutableNodeTemplates =
+              toscaAnalyzerService.getSubstitutableNodeTemplates(emptyServiceTemplate);
+      assertEquals(0, substitutableNodeTemplates.size());
+    }
 
-    yamlFile = toscaExtensionYamlUtil
-        .loadYamlFileIs("/mock/analyzerService/NestedServiceTemplateReqTest.yaml");
-    serviceTemplateFromYaml = toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
-    substitutableNodeTemplates =
-        toscaAnalyzerService.getSubstitutableNodeTemplates(serviceTemplateFromYaml);
-    assertEquals(0, substitutableNodeTemplates.size());
+    try (InputStream yamlFile = toscaExtensionYamlUtil
+              .loadYamlFileIs("/mock/analyzerService/NestedServiceTemplateReqTest.yaml")) {
+      ServiceTemplate serviceTemplateFromYaml = toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+      Map<String, NodeTemplate> substitutableNodeTemplates =
+              toscaAnalyzerService.getSubstitutableNodeTemplates(serviceTemplateFromYaml);
+      assertEquals(0, substitutableNodeTemplates.size());
+    }
   }
 
   @Test
@@ -217,35 +221,36 @@ public class ToscaAnalyzerServiceImplTest {
     thrown.expectMessage(
         "Invalid Tosca model data, missing 'Node Template' entry for 'Node Template' id cmaui_port_9");
     ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-    InputStream yamlFile = toscaExtensionYamlUtil
-        .loadYamlFileIs("/mock/analyzerService/NestedServiceTemplateReqTest.yaml");
-    ServiceTemplate nestedServiceTemplateFromYaml =
-        toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+    try (InputStream yamlFile = toscaExtensionYamlUtil
+        .loadYamlFileIs("/mock/analyzerService/NestedServiceTemplateReqTest.yaml")) {
+      ServiceTemplate nestedServiceTemplateFromYaml =
+              toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
 
-    Optional<Map.Entry<String, NodeTemplate>> mappedNodeTemplate = toscaAnalyzerService
-        .getSubstitutionMappedNodeTemplateByExposedReq("NestedServiceTemplateSubstituteTest.yaml",
-            nestedServiceTemplateFromYaml, "local_storage_server_cmaui");
-    assertEquals(true, mappedNodeTemplate.isPresent());
-    if (mappedNodeTemplate.isPresent()) {
-      assertEquals("server_cmaui", mappedNodeTemplate.get().getKey());
-      assertNotNull(mappedNodeTemplate.get().getValue());
+      Optional<Map.Entry<String, NodeTemplate>> mappedNodeTemplate = toscaAnalyzerService
+              .getSubstitutionMappedNodeTemplateByExposedReq("NestedServiceTemplateSubstituteTest.yaml",
+                      nestedServiceTemplateFromYaml, "local_storage_server_cmaui");
+      assertEquals(true, mappedNodeTemplate.isPresent());
+      mappedNodeTemplate.ifPresent(stringNodeTemplateEntry -> {
+        assertEquals("server_cmaui", stringNodeTemplateEntry.getKey());
+        assertNotNull(stringNodeTemplateEntry.getValue());
+      });
+
+      mappedNodeTemplate = toscaAnalyzerService
+              .getSubstitutionMappedNodeTemplateByExposedReq("NestedServiceTemplateSubstituteTest.yaml",
+                      nestedServiceTemplateFromYaml, "link_cmaui_port_invalid");
+      assertEquals(true, mappedNodeTemplate.isPresent());
+      mappedNodeTemplate.ifPresent(stringNodeTemplateEntry -> {
+        assertEquals("server_cmaui", stringNodeTemplateEntry.getKey());
+        assertNotNull(stringNodeTemplateEntry.getValue());
+      });
+
+      ServiceTemplate mainServiceTemplate = toscaServiceModel.getServiceTemplates()
+              .get(toscaServiceModel.getEntryDefinitionServiceTemplate());
+      mappedNodeTemplate = toscaAnalyzerService.getSubstitutionMappedNodeTemplateByExposedReq(
+              toscaServiceModel.getEntryDefinitionServiceTemplate(), mainServiceTemplate,
+              "local_storage_server_cmaui");
+      assertEquals(false, mappedNodeTemplate.isPresent());
     }
-
-    mappedNodeTemplate = toscaAnalyzerService
-        .getSubstitutionMappedNodeTemplateByExposedReq("NestedServiceTemplateSubstituteTest.yaml",
-            nestedServiceTemplateFromYaml, "link_cmaui_port_invalid");
-    assertEquals(true, mappedNodeTemplate.isPresent());
-    if (mappedNodeTemplate.isPresent()) {
-      assertEquals("server_cmaui", mappedNodeTemplate.get().getKey());
-      assertNotNull(mappedNodeTemplate.get().getValue());
-    }
-
-    ServiceTemplate mainServiceTemplate = toscaServiceModel.getServiceTemplates()
-        .get(toscaServiceModel.getEntryDefinitionServiceTemplate());
-    mappedNodeTemplate = toscaAnalyzerService.getSubstitutionMappedNodeTemplateByExposedReq(
-        toscaServiceModel.getEntryDefinitionServiceTemplate(), mainServiceTemplate,
-        "local_storage_server_cmaui");
-    assertEquals(false, mappedNodeTemplate.isPresent());
   }
 
   @Test
@@ -283,14 +288,15 @@ public class ToscaAnalyzerServiceImplTest {
     thrown.expectMessage(
         "Invalid Tosca model data, missing 'Node Template' entry for 'Node Template' id cmaui_port_9");
     ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-    InputStream yamlFile = toscaExtensionYamlUtil
-        .loadYamlFileIs("/mock/analyzerService/NestedServiceTemplateReqTest.yaml");
-    ServiceTemplate nestedServiceTemplateFromYaml =
-        toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+    try (InputStream yamlFile = toscaExtensionYamlUtil
+        .loadYamlFileIs("/mock/analyzerService/NestedServiceTemplateReqTest.yaml")) {
+      ServiceTemplate nestedServiceTemplateFromYaml =
+              toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
 
-    toscaAnalyzerService
-        .getSubstitutionMappedNodeTemplateByExposedReq("NestedServiceTemplateSubstituteTest.yaml",
-            nestedServiceTemplateFromYaml, "link_cmaui_port_invalid");
+      toscaAnalyzerService
+              .getSubstitutionMappedNodeTemplateByExposedReq("NestedServiceTemplateSubstituteTest.yaml",
+                      nestedServiceTemplateFromYaml, "link_cmaui_port_invalid");
+    }
   }
 
   @Test

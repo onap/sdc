@@ -40,9 +40,9 @@ public class ValidateNodeConfigTest {
         props.setProperty(ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH, "56");
         props.setProperty("_config.namespace","ValidateNodeConfig");
         File f = new File(TestUtil.jsonSchemaLoc+"config.properties");
-        OutputStream out = new FileOutputStream( f );
-        props.store(out, "Node Config Property");
-        out.close();
+        try (OutputStream out = new FileOutputStream(f)) {
+            props.store(out, "Node Config Property");
+        }
 
         System.out.println(System.getProperty("node.config.location"));
 
@@ -73,7 +73,7 @@ public class ValidateNodeConfigTest {
         TestUtil.cleanUp();
         File f = new File(TestUtil.jsonSchemaLoc+"config.properties");
         if(f.exists()) {
-            boolean isDeleted = f.delete();
+            f.delete();
         }
     }
 

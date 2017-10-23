@@ -51,10 +51,10 @@ public class NodeSpecificCLITest {
         Properties props = new Properties();
         props.setProperty(ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH, "50");
         props.setProperty("_config.namespace",NAMESPACE);
-        File f = new File(TestUtil.jsonSchemaLoc+"config.properties");
-        OutputStream out = new FileOutputStream( f );
-        props.store(out, "Node Config Property");
-        out.close();
+        File f = new File(TestUtil.jsonSchemaLoc + "config.properties");
+        try (OutputStream out = new FileOutputStream(f)) {
+            props.store(out, "Node Config Property");
+        }
 
         Thread.sleep(35000);
 
@@ -86,7 +86,7 @@ public class NodeSpecificCLITest {
 
         //Verify maxlength on other nodes by deleting node specific configuration
         if(f.exists()) {
-            boolean isDeleted = f.delete();
+            f.delete();
         }
 
         Thread.sleep(35000);
@@ -103,7 +103,7 @@ public class NodeSpecificCLITest {
         TestUtil.cleanUp();
         File f = new File(TestUtil.jsonSchemaLoc+"config.properties");
         if(f.exists()) {
-            boolean isDeleted = f.delete();
+            f.delete();
         }
     }
 

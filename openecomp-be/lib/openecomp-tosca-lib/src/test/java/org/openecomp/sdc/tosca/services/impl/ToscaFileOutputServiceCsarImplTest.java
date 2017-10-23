@@ -41,7 +41,7 @@ import java.util.zip.ZipFile;
 
 public class ToscaFileOutputServiceCsarImplTest {
 
-  private ToscaFileOutputServiceCsarImpl toscaFileOutputServiceCSARImpl =
+  private final ToscaFileOutputServiceCsarImpl toscaFileOutputServiceCSARImpl =
       new ToscaFileOutputServiceCsarImpl();
 
   @Test
@@ -112,21 +112,22 @@ public class ToscaFileOutputServiceCsarImplTest {
 
     String resultFileName = "resultFile.zip";
     File file = new File(resultFileName);
-    FileOutputStream fos = new FileOutputStream(file);
-    fos.write(csarFile);
-    fos.close();
-
-    ZipFile zipFile = new ZipFile(resultFileName);
-
-    Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-    int count = 0;
-    while (entries.hasMoreElements()) {
-      count++;
-      entries.nextElement();
+    try (FileOutputStream fos = new FileOutputStream(file)) {
+      fos.write(csarFile);
     }
-    Assert.assertEquals(7, count);
-    zipFile.close();
+
+    try (ZipFile zipFile = new ZipFile(resultFileName)) {
+
+      Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+      int count = 0;
+      while (entries.hasMoreElements()) {
+        count++;
+        entries.nextElement();
+      }
+      Assert.assertEquals(7, count);
+    }
+
     Files.delete(Paths.get(file.getPath()));
   }
 
@@ -150,21 +151,22 @@ public class ToscaFileOutputServiceCsarImplTest {
 
     String resultFileName = "resultFile.zip";
     File file = new File(resultFileName);
-    FileOutputStream fos = new FileOutputStream(file);
-    fos.write(csarFile);
-    fos.close();
-
-    ZipFile zipFile = new ZipFile(resultFileName);
-
-    Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-    int count = 0;
-    while (entries.hasMoreElements()) {
-      count++;
-      entries.nextElement();
+    try (FileOutputStream fos = new FileOutputStream(file)) {
+      fos.write(csarFile);
     }
-    Assert.assertEquals(2, count);
-    zipFile.close();
+
+    try (ZipFile zipFile = new ZipFile(resultFileName)) {
+
+      Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+      int count = 0;
+      while (entries.hasMoreElements()) {
+        count++;
+        entries.nextElement();
+      }
+      Assert.assertEquals(2, count);
+    }
+
     Files.delete(Paths.get(file.getPath()));
   }
 }

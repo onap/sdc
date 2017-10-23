@@ -26,6 +26,7 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,12 +38,13 @@ public class HeatOrchestrationTemplateTest {
   private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
   @Test
-  public void testYamlToServiceTemplateObj() {
+  public void testYamlToServiceTemplateObj() throws IOException {
     YamlUtil yamlUtil = new YamlUtil();
-    InputStream yamlFile = yamlUtil.loadYamlFileIs("/mock/model/testHeat.yml");
-    HeatOrchestrationTemplate heatOrchestrationTemplate =
-        yamlUtil.yamlToObject(yamlFile, HeatOrchestrationTemplate.class);
-    heatOrchestrationTemplate.toString();
+    try (InputStream yamlFile = yamlUtil.loadYamlFileIs("/mock/model/testHeat.yml")) {
+      HeatOrchestrationTemplate heatOrchestrationTemplate =
+              yamlUtil.yamlToObject(yamlFile, HeatOrchestrationTemplate.class);
+      heatOrchestrationTemplate.toString();
+    }
   }
 
   @Test
