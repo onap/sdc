@@ -2,7 +2,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.openecomp.sdc</groupId>
     <artifactId>sdc-onboarding</artifactId>
     <packaging>pom</packaging>
 
@@ -108,7 +107,7 @@
                 <artifactId>maven-jxr-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
-                    <skip>${skipSA}</skip>
+                    <skip>${pmd.skip}</skip>
                 </configuration>
                 <executions>
                     <execution>
@@ -126,9 +125,10 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>3.8</version>
                 <configuration>
-                    <skip>${skipSA}</skip>
+                    <skip>${pmd.skip}</skip>
                     <aggregate>false</aggregate>
-                    <targetJdk>${maven.compiler.target}</targetJdk>
+                    <includeTests>${pmd.include.tests}</includeTests>
+                    <printFailingErrors>true</printFailingErrors>
                     <rulesets>
                         <ruleset>build-pmd-ruleset.xml</ruleset>
                     </rulesets>
