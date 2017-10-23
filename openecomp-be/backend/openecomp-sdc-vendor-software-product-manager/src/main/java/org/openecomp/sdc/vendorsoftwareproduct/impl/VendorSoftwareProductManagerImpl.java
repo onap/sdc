@@ -256,6 +256,12 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     Version version =
         getVersionInfo(vendorSoftwareProductId, VersionableEntityAction.Read, user)
             .getActiveVersion();
+
+    ActivityLogEntity activityLogEntity =
+        new ActivityLogEntity(vendorSoftwareProductId, String.valueOf(version.getMajor() + 1),
+            ActivityType.UNDO_CHECKOUT.toString(), user, true, "", "");
+    activityLogManager.addActionLog(activityLogEntity, user);
+
     String preVspName = vspInfoDao
         .get(new VspDetails(vendorSoftwareProductId, version)).getName();
 
@@ -407,8 +413,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
                 getFeatureGroupMandatoryErrorBuilder(deploymentlocalFlavor.getModel());
             errorCodeList.add(deploymentFlavorErrorBuilder);
           }
-          List<ComponentComputeAssociation> componetComputeAssociations = new ArrayList<>();
-          componetComputeAssociations = deploymentlocalFlavor.getComponentComputeAssociations();
+          List<ComponentComputeAssociation> componetComputeAssociations =
+              deploymentlocalFlavor.getComponentComputeAssociations();
           if (CollectionUtils.isEmpty(componetComputeAssociations)) {
             CompositionEntityValidationData compositionEntityValidationData = new
                 CompositionEntityValidationData(CompositionEntityType.deployment, deploymentFlavor

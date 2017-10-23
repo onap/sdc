@@ -492,10 +492,11 @@ public class VersioningManagerImpl implements VersioningManager {
     versionInfoEntity.setActiveVersion(userCandidateVersion.getVersion());
     versionInfoEntity.getViewableVersions().add(versionInfoEntity.getActiveVersion());
     versionInfoEntity.setStatus(VersionStatus.Available);
-    versionInfoDao.update(versionInfoEntity);
 
     closeVersionOnEntity(versionInfoEntity.getEntityType(), versionInfoEntity.getEntityId(),
         versionInfoEntity.getActiveVersion());
+
+    versionInfoDao.update(versionInfoEntity);
 
     return versionInfoEntity.getActiveVersion();
   }
