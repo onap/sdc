@@ -62,20 +62,19 @@ import java.util.zip.ZipInputStream;
  */
 public class UploadValidationManagerImpl implements UploadValidationManager {
 
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
 
 
   private static FileContentHandler getFileContentMapFromZip(byte[] uploadFileData)
       throws IOException, CoreException {
+
     ZipEntry zipEntry;
     List<String> folderList = new ArrayList<>();
     FileContentHandler mapFileContent = new FileContentHandler();
-    try {
-      ZipInputStream inputZipStream;
+    try (ZipInputStream inputZipStream = new ZipInputStream(new ByteArrayInputStream(uploadFileData))) {
 
       byte[] fileByteContent;
       String currentEntryName;
-      inputZipStream = new ZipInputStream(new ByteArrayInputStream(uploadFileData));
 
       while ((zipEntry = inputZipStream.getNextEntry()) != null) {
         currentEntryName = zipEntry.getName();
@@ -130,7 +129,7 @@ public class UploadValidationManagerImpl implements UploadValidationManager {
       throws IOException {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, (String[]) null);
 
     ValidationFileResponse validationFileResponse = new ValidationFileResponse();
 
@@ -150,15 +149,12 @@ public class UploadValidationManagerImpl implements UploadValidationManager {
       Map<String, List<ErrorMessage>> errors = validateHeatUploadData(content);
       tree = HeatTreeManagerUtil.initHeatTreeManager(content);
       tree.createTree();
+
       if (MapUtils.isNotEmpty(errors)) {
-
-
         tree.addErrors(errors);
         validationStructureList.setImportStructure(tree.getTree());
-        //validationFileResponse.setStatus(ValidationFileStatus.Failure);
-      } else {
-        //validationFileResponse.setStatus(ValidationFileStatus.Success);
       }
+
     } else {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
           LoggerTragetServiceName.VALIDATE_FILE_TYPE, ErrorLevel.ERROR.name(),
@@ -167,12 +163,11 @@ public class UploadValidationManagerImpl implements UploadValidationManager {
     }
     validationFileResponse.setValidationData(validationStructureList);
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, (String[]) null);
     return validationFileResponse;
   }
 
-  private Map<String, List<ErrorMessage>> validateHeatUploadData(FileContentHandler fileContentMap)
-      throws IOException {
+  private Map<String, List<ErrorMessage>> validateHeatUploadData(FileContentHandler fileContentMap) {
     ValidationManager validationManager =
         ValidationManagerUtil.initValidationManager(fileContentMap);
     return validationManager.validate();

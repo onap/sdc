@@ -41,22 +41,18 @@ public class ToscaConverterImplTest {
   private static final String VIRTUAL_LINK = "virtualLink";
   private static final String UNBOUNDED = "UNBOUNDED";
 
-  private static String inputFilesPath;
-  private static String outputFilesPath;
-  private static Map<String, ServiceTemplate> expectedOutserviceTemplates;
-
 
   @Test
   public void testConvertMainSt() throws IOException {
-    inputFilesPath = "/mock/toscaConverter/convertMainSt/in";
-    outputFilesPath = "/mock/toscaConverter/convertMainSt/out";
+    String inputFilesPath = "/mock/toscaConverter/convertMainSt/in";
+    String outputFilesPath = "/mock/toscaConverter/convertMainSt/out";
 
     FileContentHandler fileContentHandler =
         createFileContentHandlerFromInput(inputFilesPath);
 
-    expectedOutserviceTemplates = new HashMap<>();
+    Map<String, ServiceTemplate> expectedOutserviceTemplates = new HashMap<>();
     loadServiceTemplates(outputFilesPath, new ToscaExtensionYamlUtil(),
-        expectedOutserviceTemplates);
+            expectedOutserviceTemplates);
 
     ToscaServiceModel toscaServiceModel = toscaConverter.convert(fileContentHandler);
     ServiceTemplate mainSt = toscaServiceModel.getServiceTemplates().get(mainStName);
@@ -201,18 +197,15 @@ public class ToscaConverterImplTest {
 
   private static void addServiceTemplateFiles(Map<String, ServiceTemplate> serviceTemplates,
                                               File[] files,
-                                              ToscaExtensionYamlUtil toscaExtensionYamlUtil)
-      throws IOException {
+                                              ToscaExtensionYamlUtil toscaExtensionYamlUtil) throws IOException {
+
     for (File file : files) {
+
       try (InputStream yamlFile = new FileInputStream(file)) {
         ServiceTemplate serviceTemplateFromYaml =
             toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
         createConcreteRequirementObjectsInServiceTemplate(serviceTemplateFromYaml, toscaExtensionYamlUtil);
         serviceTemplates.put(file.getName(), serviceTemplateFromYaml);
-        try {
-          yamlFile.close();
-        } catch (IOException ignore) {
-        }
       }
     }
   }

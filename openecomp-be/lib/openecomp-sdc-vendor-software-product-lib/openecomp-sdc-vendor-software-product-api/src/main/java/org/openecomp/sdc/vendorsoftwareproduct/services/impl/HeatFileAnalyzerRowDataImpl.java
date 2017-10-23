@@ -53,7 +53,7 @@ public class HeatFileAnalyzerRowDataImpl implements HeatFileAnalyzer {
   private static final String DESCRIPTION = "DESCRIPTION";
   private static final String NESTED_PATTERN = "NESTED_PATTERN";
 
-  private Map<String, Pattern> patterns;
+  private final Map<String, Pattern> patterns;
 
   public HeatFileAnalyzerRowDataImpl() {
     patterns = new HashMap<>();
@@ -72,16 +72,17 @@ public class HeatFileAnalyzerRowDataImpl implements HeatFileAnalyzer {
       throws IOException {
     AnalyzedZipHeatFiles analyzedZipHeatFiles = new AnalyzedZipHeatFiles();
 
-    BufferedReader bfReader;
     for (Map.Entry<String, byte[]> fileData : files.entrySet()) {
       String fileName = fileData.getKey();
       if (!HeatFileAnalyzer.isYamlFile(fileName)) {
         analyzedZipHeatFiles.addOtherNonModuleFile(fileName);
         continue;
       }
+
       boolean foundHeatIdentifier = false;
-      try (InputStream is = new ByteArrayInputStream(fileData.getValue())) {
-        bfReader = new BufferedReader(new InputStreamReader(is));
+      try (InputStream is = new ByteArrayInputStream(fileData.getValue());
+           BufferedReader bfReader = new BufferedReader(new InputStreamReader(is))) {
+
         String line;
         boolean isResourcesSection = false;
         Set<String> nestedFilesNames = new HashSet<>();
@@ -108,11 +109,9 @@ public class HeatFileAnalyzerRowDataImpl implements HeatFileAnalyzer {
         }
         analyzedZipHeatFiles.addNestedFiles(fetchFileNamesToReturn(nestedFilesNames,
             foundHeatIdentifier));
-        if (Objects.nonNull(bfReader)) {
-          bfReader.close();
-        }
       }
     }
+
     return analyzedZipHeatFiles;
   }
 
