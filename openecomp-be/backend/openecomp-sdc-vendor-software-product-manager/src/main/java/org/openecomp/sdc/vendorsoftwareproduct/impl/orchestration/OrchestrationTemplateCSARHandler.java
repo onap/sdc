@@ -22,10 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
-import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.*;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.ELIGBLE_FOLDERS;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.ELIGIBLE_FILES;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME;
+
 public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateHandler
         implements OrchestrationTemplateFileHandler {
 
@@ -59,14 +62,22 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
     }
 
     private void validateManifest(UploadFileResponse uploadFileResponse, FileContentHandler contentMap) {
+
         if (!validateFileExist(uploadFileResponse, contentMap, MAIN_SERVICE_TEMPLATE_MF_FILE_NAME)){
             return;
         }
-        InputStream fileContent = contentMap.getFileContent(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME);
-        OnboardingManifest onboardingManifest = new OnboardingManifest(fileContent);
-        if (!onboardingManifest.isValid()){
-            onboardingManifest.getErrors().forEach(error -> uploadFileResponse.addStructureError(
-                    SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, error)));
+
+        try (InputStream fileContent = contentMap.getFileContent(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME)) {
+
+            OnboardingManifest onboardingManifest = new OnboardingManifest(fileContent);
+            if (!onboardingManifest.isValid()) {
+                onboardingManifest.getErrors().forEach(error -> uploadFileResponse.addStructureError(
+                        SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, error)));
+            }
+
+        } catch (IOException e) {
+            // convert to runtime to keep the throws unchanged
+            throw new RuntimeException("Failed to validate manifest", e);
         }
     }
 
@@ -79,8 +90,6 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
                             SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR,
                                     getErrorWithParameters(Messages.CSAR_FILES_NOT_ALLOWED.getErrorMessage(),
                                             unwantedFile))));
-
-          ;
         }
     }
 
@@ -97,14 +106,11 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
     }
     private boolean filterFiles(String inFileName) {
         boolean valid = ELIGIBLE_FILES.stream().anyMatch(fileName -> fileName.equals(inFileName));
-        if (valid){
-            return !valid;
-        }
-        return filterFolders(inFileName);
+        return !valid && filterFolders(inFileName);
     }
 
     private boolean filterFolders(String fileName) {
-        return !ELIGBLE_FOLDERS.stream().anyMatch(dirName -> fileName.startsWith(dirName));
+        return ELIGBLE_FOLDERS.stream().noneMatch(fileName::startsWith);
     }
 
     private boolean validateFileExist(UploadFileResponse uploadFileResponse, FileContentHandler contentMap, String fileName) {

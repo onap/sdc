@@ -557,15 +557,13 @@ public class ActionsImpl implements Actions {
           ACTION_REQUEST_MISSING_MANDATORY_PARAM + ARTIFACT_FILE);
     }
 
-    InputStream artifactInputStream = null;
-    try {
-      artifactInputStream = artifactToUpload.getDataHandler().getInputStream();
+    try (InputStream artifactInputStream = artifactToUpload.getDataHandler().getInputStream()) {
+      payload = FileUtils.toByteArray(artifactInputStream);
     } catch (IOException exception) {
       LOGGER.error(ACTION_ARTIFACT_READ_FILE_ERROR, exception);
       throw new ActionException(ACTION_INTERNAL_SERVER_ERR_CODE, ACTION_ARTIFACT_READ_FILE_ERROR);
     }
 
-    payload = FileUtils.toByteArray(artifactInputStream);
     //Validate Artifact size
     if (payload != null && payload.length > MAX_ACTION_ARTIFACT_SIZE) {
       throw new ActionException(ACTION_ARTIFACT_TOO_BIG_ERROR_CODE, ACTION_ARTIFACT_TOO_BIG_ERROR);
@@ -761,15 +759,14 @@ public class ActionsImpl implements Actions {
     }
 
     if (artifactToUpdate != null) {
-      InputStream artifactInputStream = null;
-      try {
-        artifactInputStream = artifactToUpdate.getDataHandler().getInputStream();
+
+      try (InputStream artifactInputStream = artifactToUpdate.getDataHandler().getInputStream()) {
+        payload = FileUtils.toByteArray(artifactInputStream);
       } catch (IOException exception) {
         LOGGER.error(ACTION_ARTIFACT_READ_FILE_ERROR, exception);
         throw new ActionException(ACTION_INTERNAL_SERVER_ERR_CODE, ACTION_ARTIFACT_READ_FILE_ERROR);
       }
 
-      payload = FileUtils.toByteArray(artifactInputStream);
       //Validate Artifact size
       if (payload != null && payload.length > MAX_ACTION_ARTIFACT_SIZE) {
         throw new ActionException(ACTION_ARTIFACT_TOO_BIG_ERROR_CODE,
