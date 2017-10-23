@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_e21727a2",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/impl/ToscaConverterImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-23T13:07:33Z",
+      "side": 1,
+      "message": "this function is unnecessary. From the calling method(line 57) call getConcreteArtifactFileName and then add to artifacts. it should look like:\nartifacts.addFile(getConcreteArtifactFileName(fileEntry.getKey()), fileEntry.getValue());",
+      "range": {
+        "startLine": 70,
+        "startChar": 4,
+        "endLine": 74,
+        "endChar": 5
+      },
+      "revId": "53e086b513ffe5a8c05b2845a704755f41b8ca0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_c20c2b97",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/impl/ToscaConverterImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-23T13:07:33Z",
+      "side": 1,
+      "message": "unused parameter",
+      "range": {
+        "startLine": 104,
+        "startChar": 47,
+        "endLine": 104,
+        "endChar": 65
+      },
+      "revId": "53e086b513ffe5a8c05b2845a704755f41b8ca0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
