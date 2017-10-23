@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "1a2f8d8d_0238f39e",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/VspGeneralLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 2119
+      },
+      "writtenOn": "2017-10-23T14:58:30Z",
+      "side": 1,
+      "message": "If info is null then we will get out of the function at line 121",
+      "parentUuid": "1a2f8d8d_e74f3991",
+      "range": {
+        "startLine": 124,
+        "startChar": 16,
+        "endLine": 124,
+        "endChar": 21
+      },
+      "revId": "13944a62b7eb253823c1ee523eedbb7248e7023b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a2f8d8d_47816d8e",
         "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/VspGeneralLoader.java",
         "patchSetId": 1
