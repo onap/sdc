@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_27a78151",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/VspGeneralLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-23T10:08:37Z",
+      "side": 1,
+      "message": "don\u0027t use import *. you are using only 4 imports out of java.util package",
+      "range": {
+        "startLine": 10,
+        "startChar": 17,
+        "endLine": 10,
+        "endChar": 18
+      },
+      "revId": "13944a62b7eb253823c1ee523eedbb7248e7023b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_e74f3991",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/VspGeneralLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-23T10:08:37Z",
+      "side": 1,
+      "message": "is there a guarantee that value is not null?",
+      "range": {
+        "startLine": 124,
+        "startChar": 16,
+        "endLine": 124,
+        "endChar": 21
+      },
+      "revId": "13944a62b7eb253823c1ee523eedbb7248e7023b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_675b4955",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/VspGeneralLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-23T10:08:37Z",
+      "side": 1,
+      "message": "is there a guarantee that info is not null?",
+      "range": {
+        "startLine": 124,
+        "startChar": 29,
+        "endLine": 124,
+        "endChar": 33
+      },
+      "revId": "13944a62b7eb253823c1ee523eedbb7248e7023b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_47816d8e",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/VspGeneralLoader.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-23T10:08:37Z",
+      "side": 1,
+      "message": "change the function name and phrase it as a question",
+      "range": {
+        "startLine": 141,
+        "startChar": 25,
+        "endLine": 141,
+        "endChar": 36
+      },
+      "revId": "13944a62b7eb253823c1ee523eedbb7248e7023b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
