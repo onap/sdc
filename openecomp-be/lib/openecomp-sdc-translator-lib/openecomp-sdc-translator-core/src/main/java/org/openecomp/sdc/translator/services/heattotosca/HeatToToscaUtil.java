@@ -119,9 +119,12 @@ public class HeatToToscaUtil {
     mdcDataDebugMessage.debugEntryMessage(null, null);
     HeatToToscaTranslator heatToToscaTranslator =
         HeatToToscaTranslatorFactory.getInstance().createInterface();
-    InputStream fileContent = fileNameContentMap.getFileContent(SdcCommon.MANIFEST_NAME);
 
-    heatToToscaTranslator.addManifest(SdcCommon.MANIFEST_NAME, FileUtils.toByteArray(fileContent));
+    try (InputStream fileContent = fileNameContentMap.getFileContent(SdcCommon.MANIFEST_NAME)) {
+      heatToToscaTranslator.addManifest(SdcCommon.MANIFEST_NAME, FileUtils.toByteArray(fileContent));
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to read manifest", e);
+    }
 
     fileNameContentMap.getFileList().stream()
         .filter(fileName -> !(fileName.equals(SdcCommon.MANIFEST_NAME))).forEach(
@@ -143,7 +146,7 @@ public class HeatToToscaUtil {
       return heatToToscaTranslator.translate();
     } catch (IOException e) {
       // rethrow as a RuntimeException to keep the signature backward compatible
-      throw new RuntimeException(e);
+      throw new RuntimeException("Failed to read Heat template tree", e);
     }
   }
 
