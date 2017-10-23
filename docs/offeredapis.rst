@@ -1,13 +1,14 @@
 .. This work is licensed under a Creative Commons Attribution 4.0 International License.
 .. http://creativecommons.org/licenses/by/4.0
 
-Offered APIs
-============
+=============
+Offered API’s
+=============
 
-:Date:   2017-10-18
+:Date:   2017-10-23
 
 .. contents::
-   :depth: 3
+   :depth: 4
 ..
 
 Overview
@@ -7519,7 +7520,7 @@ Consumer credentials
 Description
 ~~~~~~~~~~~
 
-Returns created ECOMP consumer credentials
+Returns created ONAP consumer credentials
 
 Parameters
 ~~~~~~~~~~
@@ -7675,8 +7676,8 @@ Tags
 
 -  Consumer Servlet
 
-Retrieve ecomp portal menu - MOC
---------------------------------
+Retrieve ONAP portal menu - MOC
+-------------------------------
 
 ::
 
@@ -7685,7 +7686,7 @@ Retrieve ecomp portal menu - MOC
 Description
 ~~~~~~~~~~~
 
-Retrieve ecomp portal menu
+Retrieve ONAP portal menu
 
 Responses
 ~~~~~~~~~
@@ -7694,7 +7695,7 @@ Responses
 | HTTP    | Description                                        | Schema         |
 | Code    |                                                    |                |
 +=========+====================================================+================+
-| **200** | Retrieve ecomp portal menu                         | No Content     |
+| **200** | Retrieve ONAP portal menu                          | No Content     |
 +---------+----------------------------------------------------+----------------+
 
 Consumes
