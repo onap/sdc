@@ -29,6 +29,7 @@ import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -43,11 +44,12 @@ public class ValidationManagerUtil {
    * @param errors         the errors
    */
   public static void handleMissingManifest(FileContentHandler fileContentMap,
-                                           Map<String, List<ErrorMessage>> errors) {
-    InputStream manifest = fileContentMap.getFileContent(SdcCommon.MANIFEST_NAME);
-    if (manifest == null) {
-      ErrorMessage.ErrorMessageUtil.addMessage(SdcCommon.MANIFEST_NAME, errors)
-          .add(new ErrorMessage(ErrorLevel.ERROR, Messages.MANIFEST_NOT_EXIST.getErrorMessage()));
+                                           Map<String, List<ErrorMessage>> errors) throws IOException {
+    try (InputStream manifest = fileContentMap.getFileContent(SdcCommon.MANIFEST_NAME)) {
+      if (manifest == null) {
+        ErrorMessage.ErrorMessageUtil.addMessage(SdcCommon.MANIFEST_NAME, errors)
+                .add(new ErrorMessage(ErrorLevel.ERROR, Messages.MANIFEST_NOT_EXIST.getErrorMessage()));
+      }
     }
   }
 

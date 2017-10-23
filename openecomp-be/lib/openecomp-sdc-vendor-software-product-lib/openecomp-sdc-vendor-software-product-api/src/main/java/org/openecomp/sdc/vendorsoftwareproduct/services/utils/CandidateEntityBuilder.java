@@ -38,6 +38,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.services.impl.HeatFileAnalyzerRow
 import org.openecomp.sdc.vendorsoftwareproduct.types.CandidateDataEntityTo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.AnalyzedZipHeatFiles;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +46,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class CandidateEntityBuilder {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  private CandidateService candidateService;
+
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
+
+  private final CandidateService candidateService;
 
   public CandidateEntityBuilder(CandidateService candidateService) {
     this.candidateService = candidateService;
@@ -57,35 +60,28 @@ public class CandidateEntityBuilder {
       Map<String, List<ErrorMessage>> uploadErrors, String user) throws Exception {
     //mdcDataDebugMessage.debugEntryMessage("VSP Id", vspDetails.getId());
 
-    InputStream zipFileManifest = contentMap.getFileContent(SdcCommon.MANIFEST_NAME);
-    HeatFileAnalyzer heatFileAnalyzer = new HeatFileAnalyzerRowDataImpl();
-    AnalyzedZipHeatFiles analyzedZipHeatFiles =
-        heatFileAnalyzer.analyzeFilesNotEligibleForModulesFromFileAnalyzer(contentMap.getFiles());
-    HeatStructureTree tree = getHeatStructureTree(vspDetails, contentMap, analyzedZipHeatFiles);
+    try (InputStream zipFileManifest = contentMap.getFileContent(SdcCommon.MANIFEST_NAME)) {
+      HeatFileAnalyzer heatFileAnalyzer = new HeatFileAnalyzerRowDataImpl();
+      AnalyzedZipHeatFiles analyzedZipHeatFiles =
+              heatFileAnalyzer.analyzeFilesNotEligibleForModulesFromFileAnalyzer(contentMap.getFiles());
+      HeatStructureTree tree = getHeatStructureTree(vspDetails, contentMap, analyzedZipHeatFiles);
 
-    CandidateDataEntityTo candidateDataEntityTo =
-        new CandidateDataEntityTo(vspDetails.getId(), user, uploadedFileData, tree, contentMap,
-            vspDetails.getVersion());
-    candidateDataEntityTo.setErrors(uploadErrors);
-    OrchestrationTemplateCandidateData candidateDataEntity =
-        candidateService.createCandidateDataEntity(candidateDataEntityTo, zipFileManifest,
-            analyzedZipHeatFiles);
+      CandidateDataEntityTo candidateDataEntityTo =
+              new CandidateDataEntityTo(vspDetails.getId(), user, uploadedFileData, tree, contentMap,
+                      vspDetails.getVersion());
+      candidateDataEntityTo.setErrors(uploadErrors);
+      OrchestrationTemplateCandidateData candidateDataEntity =
+              candidateService.createCandidateDataEntity(candidateDataEntityTo, zipFileManifest,
+                      analyzedZipHeatFiles);
 
-    mdcDataDebugMessage.debugExitMessage("VSP Id", vspDetails.getId());
-    return candidateDataEntity;
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("VSP Id", vspDetails.getId());
+      return candidateDataEntity;
+    }
   }
-
-//  public OrchestrationTemplateCandidateData buildOrchestrationTemplateFromCsar(VspDetails vspDetails,
-//                                                                               byte[] uploadedFileData,
-//                                                                               FileContentHandler contentMap,
-//                                                                               Map<String, List<ErrorMessage>> uploadErrors,
-//                                                                               String user){
-//
-//  }
 
   private HeatStructureTree getHeatStructureTree(VspDetails vspDetails,
                                                  FileContentHandler contentMap,
-                                                 AnalyzedZipHeatFiles analyzedZipHeatFiles) {
+                                                 AnalyzedZipHeatFiles analyzedZipHeatFiles) throws IOException {
     addManifestToFileContentMapIfNotExist(vspDetails, contentMap, analyzedZipHeatFiles);
     HeatTreeManager heatTreeManager = HeatTreeManagerUtil.initHeatTreeManager(contentMap);
     heatTreeManager.createTree();
@@ -94,22 +90,24 @@ public class CandidateEntityBuilder {
 
   private void addManifestToFileContentMapIfNotExist(VspDetails vspDetails,
                                                      FileContentHandler fileContentHandler,
-                                                     AnalyzedZipHeatFiles analyzedZipHeatFiles) {
-    mdcDataDebugMessage.debugEntryMessage("VSP Id", vspDetails.getId());
+                                                     AnalyzedZipHeatFiles analyzedZipHeatFiles) throws IOException {
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("VSP Id", vspDetails.getId());
 
-    InputStream manifest = fileContentHandler.getFileContent(SdcCommon.MANIFEST_NAME);
-    if (Objects.isNull(manifest)) {
-      Optional<ManifestContent> manifestContentOptional =
-          candidateService.createManifest(vspDetails, fileContentHandler, analyzedZipHeatFiles);
-      if (!manifestContentOptional.isPresent()) {
-        throw new RuntimeException(Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage());
+    try (InputStream manifest = fileContentHandler.getFileContent(SdcCommon.MANIFEST_NAME)) {
+
+      if (Objects.isNull(manifest)) {
+        Optional<ManifestContent> manifestContentOptional =
+                candidateService.createManifest(vspDetails, fileContentHandler, analyzedZipHeatFiles);
+        if (!manifestContentOptional.isPresent()) {
+          throw new RuntimeException(Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage());
+        }
+        ManifestContent manifestContent = manifestContentOptional.get();
+        fileContentHandler.addFile(
+                SdcCommon.MANIFEST_NAME,
+                String.valueOf(JsonUtil.sbObject2Json(manifestContent)).getBytes());
       }
-      ManifestContent manifestContent = manifestContentOptional.get();
-      fileContentHandler.addFile(
-          SdcCommon.MANIFEST_NAME,
-          String.valueOf(JsonUtil.sbObject2Json(manifestContent)).getBytes());
+    } finally {
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("VSP Id", vspDetails.getId());
     }
-
-    mdcDataDebugMessage.debugExitMessage("VSP Id", vspDetails.getId());
   }
 }
