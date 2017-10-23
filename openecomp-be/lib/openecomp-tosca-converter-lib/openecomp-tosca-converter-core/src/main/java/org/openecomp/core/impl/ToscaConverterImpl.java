@@ -54,7 +54,8 @@ public class ToscaConverterImpl implements ToscaConverter {
                     break;
 
                 case externalFile:
-                    artifacts.addFile(fileEntry.getKey(), fileEntry.getValue());
+                    artifacts.addFile(
+                        getConcreteArtifactFileName(fileEntry.getKey()), fileEntry.getValue());
                     break;
 
                 case definitionsFile:
@@ -92,6 +93,17 @@ public class ToscaConverterImpl implements ToscaConverter {
                             + ye.getMessage())
                     .withCategory(ErrorCategory.APPLICATION).build());
         }
+    }
+
+    private String getConcreteArtifactFileName(String fileName){
+        int artifactIndex = fileName.indexOf(CsarFileTypes.Artifacts.name());
+        if(artifactIndex < 0){
+            return fileName;
+        }
+
+        int artifactDirectoryIndex =
+            artifactIndex + CsarFileTypes.Artifacts.name().length() + 1;
+        return fileName.substring(artifactDirectoryIndex);
     }
 
     private void updateToscaServiceModel(ToscaServiceModel toscaServiceModel,
