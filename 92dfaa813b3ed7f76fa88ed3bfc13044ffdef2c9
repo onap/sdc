@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_e2e287d4",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/impl/ToscaConverterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-23T12:36:19Z",
+      "side": 1,
+      "message": "make this function to return a String(\"fileNameWithoutArtifactPrefix) and call the addFile from outside the function.",
+      "range": {
+        "startLine": 97,
+        "startChar": 3,
+        "endLine": 99,
+        "endChar": 66
+      },
+      "revId": "92dfaa813b3ed7f76fa88ed3bfc13044ffdef2c9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_02deb311",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/impl/ToscaConverterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-10-23T12:36:19Z",
+      "side": 1,
+      "message": "is fileName always contains the Artifacts.name? are you sure rhere is no need to check a case that it does\u0027t containt it?",
+      "range": {
+        "startLine": 100,
+        "startChar": 8,
+        "endLine": 101,
+        "endChar": 58
+      },
+      "revId": "92dfaa813b3ed7f76fa88ed3bfc13044ffdef2c9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
