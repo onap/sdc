@@ -3,6 +3,8 @@ package org.openecomp.sdc.common.rest.api;
 import javax.annotation.Generated;
 
 import org.junit.Test;
+import java.util.*;
+import org.junit.Assert;
 
 
 public class RestResponseAsByteArrayTest {

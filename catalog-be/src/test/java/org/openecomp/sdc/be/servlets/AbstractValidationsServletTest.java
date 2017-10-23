@@ -20,31 +20,51 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import fj.data.Either;
-import org.apache.commons.codec.binary.Base64;
-import org.junit.Before;
-import org.junit.Test;
-import org.openecomp.sdc.be.model.UploadResourceInfo;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.openecomp.sdc.exception.ResponseFormat;
-import org.slf4j.Logger;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
-import javax.ws.rs.core.Response;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.tinkerpop.gremlin.structure.T;
+import org.glassfish.grizzly.servlet.ServletUtils;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.UploadResourceInfo;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.servlets.ResourceUploadServlet.ResourceAuthorityTypeEnum;
+import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.slf4j.Logger;
+
+import com.google.common.base.Supplier;
+import com.google.gson.Gson;
+
+import aj.org.objectweb.asm.Type;
+import fj.data.Either;
 
 public class AbstractValidationsServletTest {
-	private static AbstractValidationsServlet servlet = new AbstractValidationsServlet() {};
+	private static AbstractValidationsServlet servlet = new AbstractValidationsServlet() {
+	};
 
 	private static final String BASIC_TOSCA_TEMPLATE = "tosca_definitions_version: tosca_simple_yaml_%s";
 
@@ -53,6 +73,7 @@ public class AbstractValidationsServletTest {
 		servlet.initLog(mock(Logger.class));
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetScarFromPayload() {
@@ -71,10 +92,12 @@ public class AbstractValidationsServletTest {
 			resourceInfo.setPayloadName(payloadName);
 			resourceInfo.setPayloadData(payloadData);
 			Method privateMethod = null;
-			privateMethod = AbstractValidationsServlet.class.getDeclaredMethod("getScarFromPayload", UploadResourceInfo.class);
+			privateMethod = AbstractValidationsServlet.class.getDeclaredMethod("getScarFromPayload",
+					UploadResourceInfo.class);
 			privateMethod.setAccessible(true);
 			returnValue = (Either<Map<String, byte[]>, ResponseFormat>) privateMethod.invoke(servlet, resourceInfo);
-		} catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		assertTrue(returnValue.isLeft());
@@ -87,13 +110,12 @@ public class AbstractValidationsServletTest {
 		Stream.of("1_0", "1_0_0", "1_1", "1_1_0").forEach(this::testValidToscaVersion);
 	}
 
-
-	private void testValidToscaVersion(String version)  {
+	private void testValidToscaVersion(String version) {
 		Wrapper<Response> responseWrapper = new Wrapper<>();
-		servlet.validatePayloadIsTosca(responseWrapper, new UploadResourceInfo(), new User(), String.format(BASIC_TOSCA_TEMPLATE, version));
+		servlet.validatePayloadIsTosca(responseWrapper, new UploadResourceInfo(), new User(),
+				String.format(BASIC_TOSCA_TEMPLATE, version));
 		assertTrue(responseWrapper.isEmpty());
 	}
 
-
-
+	
 }

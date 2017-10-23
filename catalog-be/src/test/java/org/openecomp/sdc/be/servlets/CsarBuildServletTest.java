@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 
 import ch.qos.logback.classic.Logger;
+import java.util.*;
+import org.junit.Assert;
 
 
 public class CsarBuildServletTest {

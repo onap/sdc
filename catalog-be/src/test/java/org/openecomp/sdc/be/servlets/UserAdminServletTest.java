@@ -30,19 +30,21 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Response;
 
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.servlets.UserAdminServlet;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.UserRoleEnum;
@@ -75,7 +77,8 @@ public class UserAdminServletTest extends JerseyTest {
 		ExternalConfiguration.setAppName("catalog-be");
 
 		when(session.getServletContext()).thenReturn(servletContext);
-		when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
+		when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
+				.thenReturn(webAppContextWrapper);
 		when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
 
 		when(webApplicationContext.getBean(UserBusinessLogic.class)).thenReturn(userAdminManager);
@@ -97,26 +100,52 @@ public class UserAdminServletTest extends JerseyTest {
 	}
 
 	/*
-	 * @Test public void deactivateUserSuccessfullyTest(){ String userToDeleteUserId = "admin1"; User adminUser = new User(); adminUser.setUserId(ADMIN_ATT_UID); Either<User, ActionStatus> eitherActiveUser = buildEitherUser(userToDeleteUserId, true);
-	 * User userToDelete = eitherActiveUser.left().value(); doReturn(eitherActiveUser).when(userAdminManager).getUser( userToDeleteUserId);
+	 * @Test public void deactivateUserSuccessfullyTest(){ String
+	 * userToDeleteUserId = "admin1"; User adminUser = new User();
+	 * adminUser.setUserId(ADMIN_ATT_UID); Either<User, ActionStatus>
+	 * eitherActiveUser = buildEitherUser(userToDeleteUserId, true); User
+	 * userToDelete = eitherActiveUser.left().value();
+	 * doReturn(eitherActiveUser).when(userAdminManager).getUser(
+	 * userToDeleteUserId);
 	 * 
-	 * Either<User, ActionStatus> eitherInactiveUser = buildEitherUser(userToDeleteUserId, false); doReturn(eitherInactiveUser).when(userAdminManager).deActivateUser( adminUser, userToDelete.getUserId());
+	 * Either<User, ActionStatus> eitherInactiveUser =
+	 * buildEitherUser(userToDeleteUserId, false);
+	 * doReturn(eitherInactiveUser).when(userAdminManager).deActivateUser(
+	 * adminUser, userToDelete.getUserId());
 	 * 
 	 * 
-	 * Response response = target().path("/v1/user/"+userToDeleteUserId).request().delete(); assertTrue(response.getStatus() == HttpStatus.OK.value()); verify(userAdminManager, times(1)).deActivateUser(adminUser, userToDelete.getUserId()); }
+	 * Response response =
+	 * target().path("/v1/user/"+userToDeleteUserId).request().delete();
+	 * assertTrue(response.getStatus() == HttpStatus.OK.value());
+	 * verify(userAdminManager, times(1)).deActivateUser(adminUser,
+	 * userToDelete.getUserId()); }
 	 * 
 	 * 
-	 * @Test public void forceDeleteUserSuccessfullyTest(){ String userToDeleteUserId = "admin1"; when(request.getHeader(User.FORCE_DELETE_HEADER_FLAG)).thenReturn(User. FORCE_DELETE_HEADER_FLAG);
+	 * @Test public void forceDeleteUserSuccessfullyTest(){ String
+	 * userToDeleteUserId = "admin1";
+	 * when(request.getHeader(User.FORCE_DELETE_HEADER_FLAG)).thenReturn(User.
+	 * FORCE_DELETE_HEADER_FLAG);
 	 * 
 	 * User adminUser = new User(); adminUser.setUserId(ADMIN_ATT_UID);
 	 * 
-	 * Either<User, ActionStatus> eitherActiveUser = buildEitherUser(userToDeleteUserId, true); User userToDelete = eitherActiveUser.left().value(); doReturn(eitherActiveUser).when(userAdminManager).getUser( userToDeleteUserId);
+	 * Either<User, ActionStatus> eitherActiveUser =
+	 * buildEitherUser(userToDeleteUserId, true); User userToDelete =
+	 * eitherActiveUser.left().value();
+	 * doReturn(eitherActiveUser).when(userAdminManager).getUser(
+	 * userToDeleteUserId);
 	 * 
-	 * Either<User, ActionStatus> eitherUser = buildEitherUser(userToDeleteUserId, true); doReturn(eitherUser).when(userAdminManager).deleteUser(userToDelete. getUserId());
+	 * Either<User, ActionStatus> eitherUser =
+	 * buildEitherUser(userToDeleteUserId, true);
+	 * doReturn(eitherUser).when(userAdminManager).deleteUser(userToDelete.
+	 * getUserId());
 	 * 
 	 * 
-	 * Response response = target().path("/v1/user/"+userToDeleteUserId).request().delete(); assertTrue(response.getStatus() == HttpStatus.OK.value()); verify(userAdminManager, times(0)).deActivateUser(adminUser, userToDelete.getUserId());
-	 * verify(userAdminManager, times(1)).deleteUser(userToDelete.getUserId()); }
+	 * Response response =
+	 * target().path("/v1/user/"+userToDeleteUserId).request().delete();
+	 * assertTrue(response.getStatus() == HttpStatus.OK.value());
+	 * verify(userAdminManager, times(0)).deActivateUser(adminUser,
+	 * userToDelete.getUserId()); verify(userAdminManager,
+	 * times(1)).deleteUser(userToDelete.getUserId()); }
 	 */
 
 	@Override
@@ -143,6 +172,119 @@ public class UserAdminServletTest extends JerseyTest {
 			user.setStatus(UserStatusEnum.INACTIVE);
 		}
 		return Either.left(user);
+	}
+
+	private UserAdminServlet createTestSubject() {
+		return new UserAdminServlet();
+	}
+
+	
+	@Test
+	public void testGet() throws Exception {
+		UserAdminServlet testSubject;
+		String userId = "";
+		HttpServletRequest request = null;
+		Response result;
+
+		// default test
+		testSubject = createTestSubject();
+	}
+
+	
+	@Test
+	public void testGetRole() throws Exception {
+		UserAdminServlet testSubject;
+		String userId = "";
+		HttpServletRequest request = null;
+		Response result;
+
+		// default test
+		testSubject = createTestSubject();
+	}
+
+	
+	@Test
+	public void testUpdateUserRole() throws Exception {
+		UserAdminServlet testSubject;
+		String userIdUpdateUser = "";
+		HttpServletRequest request = null;
+		String data = "";
+		String modifierUserId = "";
+		Response result;
+
+		// default test
+		testSubject = createTestSubject();
+	}
+
+	
+	@Test
+	public void testCreateUser() throws Exception {
+		UserAdminServlet testSubject;
+		HttpServletRequest request = null;
+		String newUserData = "";
+		String modifierAttId = "";
+		Response result;
+
+		// default test
+		testSubject = createTestSubject();
+	}
+
+	
+	@Test
+	public void testAuthorize() throws Exception {
+		UserAdminServlet testSubject;
+		HttpServletRequest request = null;
+		String userId = "";
+		String firstName = "";
+		String lastName = "";
+		String email = "";
+		Response result;
+
+		// default test
+		testSubject = createTestSubject();
+	}
+
+	
+	@Test
+	public void testGetAdminsUser() throws Exception {
+		UserAdminServlet testSubject;
+		String userId = "";
+		HttpServletRequest request = null;
+		Response result;
+
+		// default test
+		testSubject = createTestSubject();
+	}
+
+	
+	@Test
+	public void testGetUsersList() throws Exception {
+		UserAdminServlet testSubject;
+		HttpServletRequest request = null;
+		String userId = "";
+		String roles = "";
+		Response result;
+
+		// test 1
+		testSubject = createTestSubject();
+		roles = null;
+
+		// test 2
+		testSubject = createTestSubject();
+		roles = "";
+	}
+
+	
+	@Test
+	public void testDeActivateUser() throws Exception {
+		UserAdminServlet testSubject;
+		String userId = "";
+		HttpServletRequest request = null;
+		String userIdHeader = "";
+		Response result;
+
+		// default test
+		testSubject = createTestSubject();
 	}
 
 }
