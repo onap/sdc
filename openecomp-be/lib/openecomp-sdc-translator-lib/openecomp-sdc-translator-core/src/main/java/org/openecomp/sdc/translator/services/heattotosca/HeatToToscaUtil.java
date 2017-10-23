@@ -1161,46 +1161,7 @@ public class HeatToToscaUtil {
     ConsolidationEntityType sourceEntityType = dependencyEntity.getSourceEntityType();
     ConsolidationEntityType targetEntityType = dependencyEntity.getTargetEntityType();
 
-    //Ignore Compute->Port, Compute->volume, Compute->Compute and Compute->VFC Nested relationships
-    if (sourceEntityType == ConsolidationEntityType.COMPUTE) {
-      if (targetEntityType == ConsolidationEntityType.COMPUTE
-          || targetEntityType == ConsolidationEntityType.VOLUME
-          || targetEntityType == ConsolidationEntityType.PORT
-          || targetEntityType == ConsolidationEntityType.VFC_NESTED) {
-        return false;
-      }
-    }
-    //Ignore Port->Compute, Port->volume, Port->Port and Port->VFC Nested relationships
-    if (sourceEntityType == ConsolidationEntityType.PORT) {
-      if (targetEntityType == ConsolidationEntityType.COMPUTE
-          || targetEntityType == ConsolidationEntityType.VOLUME
-          || targetEntityType == ConsolidationEntityType.PORT
-          || targetEntityType == ConsolidationEntityType.VFC_NESTED) {
-        return false;
-      }
-    }
-
-    //Ignore Volume->Compute, Volume->Volume, Volume->Port and Volume->VFC Nested relationships
-    if (sourceEntityType == ConsolidationEntityType.VOLUME) {
-      if (targetEntityType == ConsolidationEntityType.COMPUTE
-          || targetEntityType == ConsolidationEntityType.VOLUME
-          || targetEntityType == ConsolidationEntityType.PORT
-          || targetEntityType == ConsolidationEntityType.VFC_NESTED) {
-        return false;
-      }
-    }
-
-    //Ignore VFC Nested->Compute, VFC Nested->Volume, VFC Nested->Port and
-    // VFC Nested->VFC Nested relationships
-    if (sourceEntityType == ConsolidationEntityType.VFC_NESTED) {
-      if (targetEntityType == ConsolidationEntityType.COMPUTE
-          || targetEntityType == ConsolidationEntityType.VOLUME
-          || targetEntityType == ConsolidationEntityType.PORT
-          || targetEntityType == ConsolidationEntityType.VFC_NESTED) {
-        return false;
-      }
-    }
-    return true;
+    return ConsolidationTypesConnectivity.isDependsOnRelationshipValid(sourceEntityType, targetEntityType);
   }
 
   private static Map<String, Object> managerSubstitutionNodeTemplateProperties(
