@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_e2bba7c2",
+        "filename": "openecomp-ui/src/sdc-app/config/config.json",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-23T12:32:26Z",
+      "side": 1,
+      "message": "hardcoded port",
+      "range": {
+        "startLine": 8,
+        "startChar": 44,
+        "endLine": 8,
+        "endChar": 49
+      },
+      "revId": "96a0fb89f5e29058cc14ca98a7e3c4b7fd055ece",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_c2b0abdf",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportActionHelper.js",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-10-23T12:32:26Z",
+      "side": 1,
+      "message": "hardcoded protocol",
+      "range": {
+        "startLine": 27,
+        "startChar": 9,
+        "endLine": 27,
+        "endChar": 16
+      },
+      "revId": "96a0fb89f5e29058cc14ca98a7e3c4b7fd055ece",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
