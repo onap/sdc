@@ -25,7 +25,7 @@ import java.util.Properties;
 public class UnregisterNotificationTest {
     public final static String NAMESPACE = "UnregisterNotification";
 
-    public String updatedValue = null;
+    private String updatedValue = null;
 
     @Before
     public void setUp() throws IOException {
@@ -70,9 +70,9 @@ public class UnregisterNotificationTest {
         props.setProperty("_config.namespace",NAMESPACE);
         props.setProperty("_config.mergeStrategy","override");
         File f = new File(TestUtil.jsonSchemaLoc+"config.properties");
-        OutputStream out = new FileOutputStream( f );
-        props.store(out, "Override Config Property at Conventional Resource");
-        out.close();
+        try (OutputStream out = new FileOutputStream(f)) {
+            props.store(out, "Override Config Property at Conventional Resource");
+        }
     }
 
     private class PropertyListener implements ConfigurationChangeListener {
@@ -88,7 +88,7 @@ public class UnregisterNotificationTest {
         TestUtil.cleanUp();
         File f = new File(TestUtil.jsonSchemaLoc+"config.properties");
         if(f.exists()) {
-            boolean isDeleted = f.delete();
+            f.delete();
         }
     }
 }

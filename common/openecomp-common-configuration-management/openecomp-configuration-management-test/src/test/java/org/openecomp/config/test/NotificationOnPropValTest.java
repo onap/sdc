@@ -25,7 +25,7 @@ public class NotificationOnPropValTest {
 
     public final static String NAMESPACE = "NotificationOnPropVal";
 
-    public String updatedValue = null;
+    private String updatedValue = null;
 
     @Before
     public void setUp() throws IOException {
@@ -45,10 +45,10 @@ public class NotificationOnPropValTest {
         props.setProperty(ConfigTestConstant.ARTIFACT_NAME_MAXLENGTH, "20");
         props.setProperty("_config.namespace",NAMESPACE);
         props.setProperty("_config.mergeStrategy","override");
-        File f = new File(TestUtil.jsonSchemaLoc+"config.properties");
-        OutputStream out = new FileOutputStream( f );
-        props.store(out, "Override Config Property at Conventional Resource");
-        out.close();
+        File f = new File(TestUtil.jsonSchemaLoc + "config.properties");
+        try (OutputStream out = new FileOutputStream(f)) {
+            props.store(out, "Override Config Property at Conventional Resource");
+        }
 
         Thread.sleep(35000);
 
@@ -70,7 +70,7 @@ public class NotificationOnPropValTest {
         TestUtil.cleanUp();
         File f = new File(TestUtil.jsonSchemaLoc+"config.properties");
         if(f.exists()) {
-            boolean isDeleted = f.delete();
+            f.delete();
         }
     }
 }

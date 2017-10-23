@@ -33,10 +33,10 @@ public class ConfigSourceLocationTest {
         Properties props = new Properties();
         props.setProperty("maxCachedBufferSize", "1024");
         props.setProperty("artifact.maxsize", "1024");
-        File f = new File(TestUtil.jsonSchemaLoc+"config.properties");
-        OutputStream out = new FileOutputStream( f );
-        props.store(out, "Config Property at Conventional Resource");
-        out.close();
+        File f = new File(TestUtil.jsonSchemaLoc + "config.properties");
+        try (OutputStream out = new FileOutputStream(f)) {
+            props.store(out, "Config Property at Conventional Resource");
+        }
     }
 
     @Test
