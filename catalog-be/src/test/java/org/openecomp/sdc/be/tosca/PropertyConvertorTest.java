@@ -1,71 +1,102 @@
 package org.openecomp.sdc.be.tosca;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Generated;
-
+import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 
 import fj.data.Either;
 
 public class PropertyConvertorTest {
+    private PropertyDefinition property;
+    Map<String, DataTypeDefinition> dataTypes;
 
-	private PropertyConvertor createTestSubject() {
-		return new PropertyConvertor();
-	}
+    @Before
+    public void setUp(){
+        property = new PropertyDefinition();
+        property.setName("myProperty");
+        property.setType(ToscaPropertyType.INTEGER.getType());
+        dataTypes = new HashMap<String, DataTypeDefinition>();
+        dataTypes.put(property.getName(), new DataTypeDefinition());
+    }
 
-	
-	@Test
-	public void testGetInstance() throws Exception {
-		PropertyConvertor result;
 
-		// default test
-		result = PropertyConvertor.getInstance();
-	}
+    @Test
+    public void convertPropertyWhenValueAndDefaultNull() {
+        assertNull(PropertyConvertor.getInstance().convertProperty(dataTypes, property, false));
+    }
 
-	
-	@Test
-	public void testConvertProperties() throws Exception {
-		PropertyConvertor testSubject;
-		Component component = null;
-		ToscaNodeType toscaNodeType = null;
-		Map<String, DataTypeDefinition> dataTypes = null;
-		Either<ToscaNodeType, ToscaError> result;
+    @Test
+    public void convertPropertyWhenValueNullAndDefaultNotEmpty() {
+        final String def = "1";
+        property.setDefaultValue(def);
+        ToscaProperty result = PropertyConvertor.getInstance().convertProperty(dataTypes, property, false);
+        assertNotNull(result);
+        assertEquals(Integer.valueOf(def).intValue(), result.getDefaultp());
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.convertProperties(component, toscaNodeType, dataTypes);
-	}
+    @Test
+    public void convertPropertiesWhenValueAndDefaultNullInOne() {
+        PropertyDefinition property1 = new PropertyDefinition();
+        property1.setName("otherProperty");
+        property1.setType(ToscaPropertyType.INTEGER.getType());
+        property1.setDefaultValue("2");
+        dataTypes.put(property1.getName(), new DataTypeDefinition());
+        Resource resource = new Resource();
+        List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+        properties.add(property);
+        properties.add(property1);
+        resource.setProperties(properties);
+        Either<ToscaNodeType, ToscaError> result = PropertyConvertor.getInstance().convertProperties(resource, new ToscaNodeType(), dataTypes);
+        assertTrue(result.isLeft());
+        assertEquals(1, result.left().value().getProperties().size());
+    }
 
-	
-	@Test
-	public void testConvertProperty() throws Exception {
-		PropertyConvertor testSubject;
-		Map<String, DataTypeDefinition> dataTypes = null;
-		PropertyDefinition property = null;
-		boolean isCapabiltyProperty = false;
-		ToscaProperty result;
+    @Test
+    public void convertPropertiesWhenValueAndDefaultExist() {
+        PropertyDefinition property1 = new PropertyDefinition();
+        property1.setName("otherProperty");
+        property1.setType(ToscaPropertyType.INTEGER.getType());
+        property1.setDefaultValue("2");
+        property.setDefaultValue("1");
+        dataTypes.put(property1.getName(), new DataTypeDefinition());
+        Resource resource = new Resource();
+        List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+        properties.add(property);
+        properties.add(property1);
+        resource.setProperties(properties);
+        Either<ToscaNodeType, ToscaError> result = PropertyConvertor.getInstance().convertProperties(resource, new ToscaNodeType(), dataTypes);
+        assertTrue(result.isLeft());
+        assertEquals(2, result.left().value().getProperties().size());
+    }
 
-		// default test
-		testSubject = createTestSubject();
-	}
-
-	
-	@Test
-	public void testConvertToToscaObject() throws Exception {
-		PropertyConvertor testSubject;
-		String propertyType = "";
-		String value = "";
-		String innerType = "";
-		Map<String, DataTypeDefinition> dataTypes = null;
-		Object result;
-
-		// default test
-		testSubject = createTestSubject();
-	}
+    @Test
+    public void convertPropertiesWhenValueAndDefaultNullInAll() {
+        PropertyDefinition property1 = new PropertyDefinition();
+        property1.setName("otherProperty");
+        property1.setType(ToscaPropertyType.INTEGER.getType());
+        dataTypes.put(property1.getName(), new DataTypeDefinition());
+        Resource resource = new Resource();
+        List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+        properties.add(property);
+        properties.add(property1);
+        resource.setProperties(properties);
+        Either<ToscaNodeType, ToscaError> result = PropertyConvertor.getInstance().convertProperties(resource, new ToscaNodeType(), dataTypes);
+        assertTrue(result.isLeft());
+        assertNull(result.left().value().getProperties());
+    }
 }

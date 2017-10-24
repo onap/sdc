@@ -35,7 +35,7 @@ public class DataTypePropertyConverter {
      */
     public String getDataTypePropertiesDefaultValuesRec(String propertyDataType, Map<String, DataTypeDefinition> dataTypes) {
         JsonObject defaultValues = getDataTypePropsDefaultValuesRec(propertyDataType, dataTypes);
-        return !defaultValues.isJsonNull() ? gson.toJson(defaultValues) : null;
+        return !JsonUtils.isJsonNullOrEmpty(defaultValues) ? gson.toJson(defaultValues) : null;
     }
 
     /**

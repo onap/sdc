@@ -74,7 +74,9 @@ public class PropertyConvertor {
 				props.stream().filter(p -> p.getOwnerId() == null || p.getOwnerId().equals(component.getUniqueId())).forEach(property -> {
 					ToscaProperty prop = convertProperty(dataTypes, property, false);
 
-					properties.put(property.getName(), prop);
+					if (prop != null) {
+					    properties.put(property.getName(), prop);
+                    }
 				});
 				if (!properties.isEmpty()) {
 					toscaNodeType.setProperties(properties);
@@ -98,13 +100,17 @@ public class PropertyConvertor {
 		}
 		log.trace("try to convert property {} from type {} with default value [{}]", property.getName(), property.getType(), property.getDefaultValue());
 		prop.setDefaultp(convertToToscaObject(property.getType(), property.getDefaultValue(), innerType, dataTypes));
+		
+		if (prop.getDefaultp() == null) {
+		    return null;
+        }
 		prop.setType(property.getType());
-		prop.setDescription(property.getDescription());
-		if (isCapabiltyProperty) {
-			prop.setStatus(property.getStatus());
-			prop.setRequired(property.isRequired());
-		}
-		return prop;
+        prop.setDescription(property.getDescription());
+        if (isCapabiltyProperty) {
+            prop.setStatus(property.getStatus());
+            prop.setRequired(property.isRequired());
+        }
+        return prop;
 	}
 
 	public Object convertToToscaObject(String propertyType, String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
