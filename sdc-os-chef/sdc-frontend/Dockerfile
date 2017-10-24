@@ -10,10 +10,14 @@ ADD onboarding*.war         ${JETTY_BASE}/webapps/
 
 ADD catalog-fe-*.war        ${JETTY_BASE}/webapps/
 
+USER root
+
 RUN chown -R jetty:jetty    ${JETTY_BASE}/webapps
 
 COPY startup.sh /root/
 
 RUN chmod 770 /root/startup.sh
+
+USER jetty
 
 ENTRYPOINT [ "/root/startup.sh" ]
