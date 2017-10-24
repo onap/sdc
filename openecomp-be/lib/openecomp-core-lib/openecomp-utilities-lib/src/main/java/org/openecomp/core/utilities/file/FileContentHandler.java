@@ -23,10 +23,13 @@ package org.openecomp.core.utilities.file;
 import org.apache.commons.collections4.MapUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 public class FileContentHandler {
 
@@ -45,12 +48,31 @@ public class FileContentHandler {
       return null;
     }
 
-    ByteArrayInputStream is = new ByteArrayInputStream(content);
-    return is;
+    return new ByteArrayInputStream(content);
   }
 
-  public void addFile(String fileName, byte[] contect) {
-    files.put(fileName, contect);
+  /**
+   * Applies a business logic to a file's content while taking care of all retrieval logic.
+   *
+   * @param fileName name of a file inside this content handler.
+   * @param processor the business logic to work on the file's input stream, which may not be set
+   *                  (check the {@link Optional} if no such file can be found
+   * @param <T> return type, may be {@link java.lang.Void}
+   *
+   * @return result produced by the processor
+   */
+  public <T> T processFileContent(String fileName, Function<Optional<InputStream>, T> processor) {
+
+    // do not throw IOException to mimic the existing uses of getFileContent()
+    try (InputStream contentInputStream = getFileContent(fileName)) {
+      return processor.apply(Optional.ofNullable(contentInputStream));
+    } catch (IOException e) {
+      throw new ProcessingException("Failed to process file: " + fileName, e);
+    }
+  }
+
+  public void addFile(String fileName, byte[] content) {
+    files.put(fileName, content);
   }
 
   public void addFile(String fileName, InputStream is) {
@@ -93,5 +115,27 @@ public class FileContentHandler {
 
   public boolean containsFile(String fileName) {
     return files.containsKey(fileName);
+  }
+
+  /**
+   * An application-specific runtime exception
+   */
+  private static class ProcessingException extends RuntimeException {
+
+    public ProcessingException() {
+      super();
+    }
+
+    public ProcessingException(String message) {
+      super(message);
+    }
+
+    public ProcessingException(Throwable cause) {
+      super(cause);
+    }
+
+    public ProcessingException(String msg, Throwable cause) {
+      super(msg, cause);
+    }
   }
 }
