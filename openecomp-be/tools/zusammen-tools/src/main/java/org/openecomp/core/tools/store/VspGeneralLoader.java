@@ -2,6 +2,7 @@ package org.openecomp.core.tools.store;
 
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
+import com.amdocs.zusammen.datatypes.item.Info;
 import com.amdocs.zusammen.plugin.statestore.cassandra.dao.types.ElementEntityContext;
 import org.openecomp.core.zusammen.plugin.dao.impl.CassandraElementRepository;
 import org.openecomp.core.zusammen.plugin.dao.types.ElementEntity;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Objects;
 
 public class VspGeneralLoader {
 
@@ -114,16 +116,20 @@ public class VspGeneralLoader {
         if(changeRef!= null){
           subElementContext.setChangeRef(changeRef);
         }
-        Optional<ElementEntity> subElementEntity =
+        Optional<ElementEntity> subElementEntityOptional =
                 cassandraElementRepository.get(context, subElementContext,
                         new ElementEntity(subelementId));
-        if (subElementEntity.isPresent()) {
+        if (subElementEntityOptional.isPresent()) {
+          Info info = subElementEntityOptional.get().getInfo();
+          if (isValid(name, info)) {
+            return false;
+          }
           if (NAME.equals(name)) {
-            if (value.equals(subElementEntity.get().getInfo().getName())) {
+            if (value.equals(info.getName())) {
               return true;
             }
           }
-          if (value.equals(subElementEntity.get().getInfo().getProperty(name))) {
+          if (value.equals(info.getProperty(name))) {
             return true;
           }
         }
@@ -134,6 +140,10 @@ public class VspGeneralLoader {
     return null;
 
 
+  }
+
+  private static boolean isValid(String name, Info info) {
+    return Objects.isNull(info)|| Objects.isNull(info.getProperty(name));
   }
 
 
