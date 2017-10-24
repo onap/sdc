@@ -17,7 +17,7 @@
             "private": "eth1"
         },
 		"ECompP": {
-		    "ecomp_rest_url": "http://portal.api.simpledemo.openecomp.org:8989/ECOMPPORTAL/auxapi",
+		    "ecomp_rest_url": "http://portal.api.simpledemo.onap.org:8989/ONAPPORTAL/auxapi",
             "ueb_url_list": "10.0.11.1,10.0.11.1", 
             "app_secret": "XftIATw9Jr3VzAcPqt3NnJOu", 
             "app_key": "x9UfO7JsDn8BESVX", 
