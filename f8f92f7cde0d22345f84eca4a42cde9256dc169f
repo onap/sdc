@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "1a2f8d8d_e73f3424",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/MonitoringUploadsManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-24T13:40:35Z",
+      "side": 1,
+      "message": "Good catch! Thanks!",
+      "parentUuid": "1a2f8d8d_a7f24c98",
+      "revId": "f8f92f7cde0d22345f84eca4a42cde9256dc169f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a2f8d8d_672c6403",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/utils/ZipFileUtils.java",
         "patchSetId": 1
@@ -47,6 +65,24 @@
       "writtenOn": "2017-10-24T13:31:55Z",
       "side": 1,
       "message": "Is it a good practice to return an Input Stream?",
+      "revId": "f8f92f7cde0d22345f84eca4a42cde9256dc169f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_874630be",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/utils/ZipFileUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-24T13:40:35Z",
+      "side": 1,
+      "message": "No, it\u0027s not. Unfortunately, removing this one would require too many changes.",
+      "parentUuid": "1a2f8d8d_672c6403",
       "revId": "f8f92f7cde0d22345f84eca4a42cde9256dc169f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
