@@ -26,6 +26,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
 import java.util.List;
+import java.util.Objects;
 
 
 public class VspDetails implements VersionableEntity {
@@ -225,7 +226,8 @@ public class VspDetails implements VersionableEntity {
   }
 
   public void setOnboardingOrigin(String onboardingOrigin) {
-    this.onboardingOrigin = onboardingOrigin;
+    this.onboardingOrigin = Objects.isNull(onboardingOrigin) ? null
+        : onboardingOrigin.toLowerCase();
   }
 
   public String getOnboardingMethod() {
