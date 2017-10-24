@@ -4,13 +4,4 @@
 Consumed APIs
 =============
 
-.. note::
-   * This section is used to reference APIs that a software component depends on
-     and uses from other sources.  
-   
-   * Consumed APIs should be a specific link to the offered APIs from another component
-     or external source.
-
-   * This note must be removed after content has been added.
-
-
+SDC Project does not consume any APIs form other sources therfore this section is currently empty
