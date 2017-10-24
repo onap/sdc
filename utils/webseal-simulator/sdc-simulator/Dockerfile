@@ -14,9 +14,6 @@ RUN chown -R jetty:jetty               		${JETTY_BASE}/webapps
 
 COPY startup.sh /root/
 
-
-RUN chmod 770 /root/startup.sh
-
-USER jetty
+RUN chmod 777 /root/startup.sh
 
 ENTRYPOINT [ "/root/startup.sh" ]
