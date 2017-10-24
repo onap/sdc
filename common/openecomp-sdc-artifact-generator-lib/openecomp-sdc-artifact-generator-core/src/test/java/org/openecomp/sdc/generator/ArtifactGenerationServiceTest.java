@@ -73,9 +73,9 @@ public class ArtifactGenerationServiceTest {
   private static final String aaiArtifactType = ArtifactType.AAI.name();
   private static final String aaiArtifactGroupType = GroupType.DEPLOYMENT.name();
   private static final String generatorConfig = "{\"artifactTypes\": [\"OTHER\",\"AAI\"]}";
-  Properties properties = new Properties();
-  Map<String, String> additionalParams = new HashMap();
- Map<String, String> resourcesVersion = new HashMap<>();
+  private final Properties properties = new Properties();
+  private final Map<String, String> additionalParams = new HashMap<>();
+  private final Map<String, String> resourcesVersion = new HashMap<>();
 
   @BeforeSuite
   public void loadProperties() throws Exception{
@@ -87,7 +87,7 @@ public class ArtifactGenerationServiceTest {
   public void testArtifactGeneration() {
     // Sunny day scenario service with VF anf vfmodule
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
+
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "aai/";
@@ -112,7 +112,7 @@ public class ArtifactGenerationServiceTest {
 
         Assert.assertEquals(resultData.size(),5);  //  1-service,1-VF-resource,1-vfmodule and 2
         // others
-        outputArtifactMap = populateAAIGeneratedModelStore(resultData);
+        Map<String, Model> outputArtifactMap = populateAAIGeneratedModelStore(resultData);
         testServiceTosca(toscas, outputArtifactMap);
         testResourceTosca(toscas.iterator(), outputArtifactMap);
       } else {
@@ -129,7 +129,6 @@ public class ArtifactGenerationServiceTest {
     // Sunny day scenario service with VF and extra widget like CP anf vf has vfmodule without
     // member
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "testWidgetinServiceTosca/";
@@ -142,7 +141,7 @@ public class ArtifactGenerationServiceTest {
         List<Artifact> resultData = data.getResultData();
         Assert.assertEquals(resultData.size(),5);  //  1-service,1-VF-resource,1-vfmodule and 2
         // others
-        outputArtifactMap = populateAAIGeneratedModelStore(resultData);
+        Map<String, Model> outputArtifactMap = populateAAIGeneratedModelStore(resultData);
         testServiceTosca(toscas, outputArtifactMap);
         testResourceTosca(toscas.iterator(), outputArtifactMap);
       } else {
@@ -159,7 +158,6 @@ public class ArtifactGenerationServiceTest {
     // Sunny day scenario service with VF and extra widget like CP anf vf has vfmodule without
     // member
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "testSameVLdifferentVersion/";
@@ -172,7 +170,7 @@ public class ArtifactGenerationServiceTest {
         List<Artifact> resultData = data.getResultData();
         Assert.assertEquals(resultData.size(),8);
         // others
-        outputArtifactMap = populateAAIGeneratedModelStore(resultData);
+        Map<String, Model> outputArtifactMap = populateAAIGeneratedModelStore(resultData);
         testServiceTosca(toscas, outputArtifactMap);
         testResourceTosca(toscas.iterator(), outputArtifactMap);
       } else {
@@ -188,7 +186,6 @@ public class ArtifactGenerationServiceTest {
   public void testArtifactGenerationAllottedResourceAndL3Network() {
     // Sunny day scenario service with allotted resource and L3-network
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "aai2/";
@@ -203,7 +200,7 @@ public class ArtifactGenerationServiceTest {
         Assert.assertEquals(resultData.size(),5);
         // and 2
         // others
-        outputArtifactMap = populateAAIGeneratedModelStore(resultData);
+        Map<String, Model> outputArtifactMap = populateAAIGeneratedModelStore(resultData);
         testServiceTosca(toscas, outputArtifactMap);
         testResourceTosca(toscas.iterator(), outputArtifactMap);
       } else {
@@ -248,7 +245,6 @@ public class ArtifactGenerationServiceTest {
   public void testWhenOnlyServToscaNoResTosca() {
     try {
       //Testing only service tosca no resource Tosca
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       String aaiResourceBasePaths = "testArtifactGeneration4/";
       List<Artifact> inputArtifacts = init(aaiResourceBasePaths);
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
@@ -261,7 +257,7 @@ public class ArtifactGenerationServiceTest {
         }
       }
       Assert.assertEquals(resultData.size(),3);  //  1-service and 2-Others
-      outputArtifactMap = populateAAIGeneratedModelStore(resultData);
+      Map<String, Model> outputArtifactMap = populateAAIGeneratedModelStore(resultData);
       testServiceTosca(toscas, outputArtifactMap);
     } catch (Exception e) {
       Assert.fail(e.getMessage());
@@ -286,7 +282,6 @@ public class ArtifactGenerationServiceTest {
   public void testWhenExtraResToscaNotPartOfServ() {
     try {
       // Valid scenario with extra resource tosca which is not part of Service
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       String aaiResourceBasePaths = "testArtifactGeneration6/";
       List<Artifact> inputArtifacts = init(aaiResourceBasePaths);
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
@@ -299,7 +294,7 @@ public class ArtifactGenerationServiceTest {
         }
       }
       Assert.assertEquals(resultData.size(),3);  //  1-service and 2 Others
-      outputArtifactMap = populateAAIGeneratedModelStore(resultData);
+      Map<String, Model> outputArtifactMap = populateAAIGeneratedModelStore(resultData);
       testServiceTosca(toscas, outputArtifactMap);
     } catch (Exception e) {
       Assert.fail(e.getMessage());
@@ -397,13 +392,8 @@ public class ArtifactGenerationServiceTest {
     try {
       //mandatory attribute <vfModuleModelInvariantUUID> missing
       List<Artifact> inputArtifacts = new ArrayList<>();
-      InputStream fis1 = ArtifactGenerationServiceTest.class.getResourceAsStream("/service_vmme_template_ModInvUUID.yml");
-      readPayload(inputArtifacts,fis1, "service_vmme_template_ModInvUUID.yml");
-      fis1.close();
-
-      InputStream fis2 = ArtifactGenerationServiceTest.class.getResourceAsStream("/vf_vmme_template_ModInvUUID.yml");
-      readPayload(inputArtifacts,fis2, "vf_vmme_template_ModInvUUID.yml");
-      fis2.close();
+      readPayloadFromResource(inputArtifacts, "service_vmme_template_ModInvUUID.yml");
+      readPayloadFromResource(inputArtifacts, "vf_vmme_template_ModInvUUID.yml");
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
       Assert.assertEquals(
@@ -415,7 +405,7 @@ public class ArtifactGenerationServiceTest {
     }
   }
 
-  public static void readPayload(List<Artifact> inputArtifacts,InputStream fis, String fileName) throws
+  public static void readPayload(List<Artifact> inputArtifacts, InputStream fis, String fileName) throws
       IOException {
     byte[] payload = new byte[fis.available()];
     fis.read(payload);
@@ -435,13 +425,9 @@ public class ArtifactGenerationServiceTest {
     try {
       //invalid id since not of length 36 for  <vfModuleModelInvariantUUID>
       List<Artifact> inputArtifacts = new ArrayList<>();
-      InputStream fis1 = ArtifactGenerationServiceTest.class.getResourceAsStream("/service_vmme_template_InvalidVfModInvUuIdAttr.yml");
-      readPayload(inputArtifacts,fis1, "service_vmme_template_InvalidVfModInvUuIdAttr.yml");
-      fis1.close();
+      readPayloadFromResource(inputArtifacts, "service_vmme_template_InvalidVfModInvUuIdAttr.yml");
 
-      InputStream fis2 = ArtifactGenerationServiceTest.class.getResourceAsStream("/vf_vmme_template_InvalidVfModInvUuIdAttr.yml");
-      readPayload(inputArtifacts,fis2, "vf_vmme_template_InvalidVfModInvUuIdAttr.yml");
-      fis2.close();
+      readPayloadFromResource(inputArtifacts, "vf_vmme_template_InvalidVfModInvUuIdAttr.yml");
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
       Assert.assertEquals(
@@ -458,13 +444,9 @@ public class ArtifactGenerationServiceTest {
     try {
       //mandatory attribute <vfModuleModelName> missing
       List<Artifact> inputArtifacts = new ArrayList<>();
-      InputStream fis1 = ArtifactGenerationServiceTest.class.getResourceAsStream("/service_vmme_template_ModelName.yml");
-      readPayload(inputArtifacts,fis1, "service_vmme_template_ModelName.yml");
-      fis1.close();
+      readPayloadFromResource(inputArtifacts, "service_vmme_template_ModelName.yml");
 
-      InputStream fis2 = ArtifactGenerationServiceTest.class.getResourceAsStream("/vf_vmme_template_ModelName.yml");
-      readPayload(inputArtifacts,fis2, "vf_vmme_template_ModelName.yml");
-      fis2.close();
+      readPayloadFromResource(inputArtifacts, "vf_vmme_template_ModelName.yml");
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
       Assert.assertEquals(
@@ -497,13 +479,9 @@ public class ArtifactGenerationServiceTest {
     try {
       //mandatory attribute <vfModuleModelUUID> missing in Artifact
       List<Artifact> inputArtifacts = new ArrayList<>();
-      InputStream fis1 = ArtifactGenerationServiceTest.class.getResourceAsStream("/service_vmme_template_ModelUUID.yml");
-      readPayload(inputArtifacts,fis1, "service_vmme_template_ModelUUID.yml");
-      fis1.close();
+      readPayloadFromResource(inputArtifacts, "service_vmme_template_ModelUUID.yml");
 
-      InputStream fis2 = ArtifactGenerationServiceTest.class.getResourceAsStream("/vf_vmme_template_ModelUUID.yml");
-      readPayload(inputArtifacts,fis2, "vf_vmme_template_ModelUUID.yml");
-      fis2.close();
+      readPayloadFromResource(inputArtifacts, "vf_vmme_template_ModelUUID.yml");
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
       Assert.assertEquals(
@@ -521,13 +499,9 @@ public class ArtifactGenerationServiceTest {
     try {
       //invalid id since not of length 36 for  <vfModuleModelUUID>
       List<Artifact> inputArtifacts = new ArrayList<>();
-      InputStream fis1 = ArtifactGenerationServiceTest.class.getResourceAsStream("/service_vmme_template_InvalidVfModUuIdAttr.yml");
-      readPayload(inputArtifacts,fis1, "service_vmme_template_InvalidVfModUuIdAttr.yml");
-      fis1.close();
+      readPayloadFromResource(inputArtifacts, "service_vmme_template_InvalidVfModUuIdAttr.yml");
 
-      InputStream fis2 = ArtifactGenerationServiceTest.class.getResourceAsStream("/vf_vmme_template_InvalidVfModUuIdAttr.yml");
-      readPayload(inputArtifacts,fis2, "vf_vmme_template_InvalidVfModUuIdAttr.yml");
-      fis2.close();
+      readPayloadFromResource(inputArtifacts, "vf_vmme_template_InvalidVfModUuIdAttr.yml");
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
       Assert.assertEquals(
@@ -544,13 +518,9 @@ public class ArtifactGenerationServiceTest {
     try {
       //mandatory attribute <vfModuleModelVersion> missing
       List<Artifact> inputArtifacts = new ArrayList<>();
-      InputStream fis1 = ArtifactGenerationServiceTest.class.getResourceAsStream("/service_vmme_template_ModelVersion.yml");
-      readPayload(inputArtifacts,fis1, "service_vmme_template_ModelVersion.yml");
-      fis1.close();
+      readPayloadFromResource(inputArtifacts, "service_vmme_template_ModelVersion.yml");
 
-      InputStream fis2 = ArtifactGenerationServiceTest.class.getResourceAsStream("/vf_vmme_template_ModelVersion.yml");
-      readPayload(inputArtifacts,fis2, "vf_vmme_template_ModelVersion.yml");
-      fis2.close();
+      readPayloadFromResource(inputArtifacts, "vf_vmme_template_ModelVersion.yml");
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
       Assert.assertEquals(
@@ -567,9 +537,7 @@ public class ArtifactGenerationServiceTest {
     String configLoc = System.getProperty("artifactgenerator.config");
     try {
       System.clearProperty("artifactgenerator.config");
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-      List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "aai/";
       List<Artifact> inputArtifacts = init(aaiResourceBasePaths);
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
@@ -599,17 +567,14 @@ public class ArtifactGenerationServiceTest {
           .getName();
       String assertMsg = ArtifactType.AAI.name() + ".model-version-id." +Widget.getWidget
           (Widget.Type.SERVICE).getName();
-      OutputStream fos = new FileOutputStream(new File(configLoc));
-      String serviceWidgetId = properties.getProperty(serviceWidgetName);
 
       //Remove property from Artifact-Generator.properties
       properties.remove(serviceWidgetName);
-      properties.store(fos,null);
-      fos.close();
+      try (OutputStream fos = new FileOutputStream(new File(configLoc))) {
+        properties.store(fos,null);
+      }
 
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-      List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "aai/";
       List<Artifact> inputArtifacts = init(aaiResourceBasePaths);
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
@@ -634,9 +599,7 @@ public class ArtifactGenerationServiceTest {
     String configLoc = System.getProperty("artifactgenerator.config");
     try {
       System.setProperty("artifactgenerator.config",configLoc + File.separator + "testErrorWhenNoFileAtConfigLocation");
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-      List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "aai/";
       List<Artifact> inputArtifacts = init(aaiResourceBasePaths);
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
@@ -656,9 +619,7 @@ public class ArtifactGenerationServiceTest {
     //  scenario service with VF anf vfmodule but no service version in additional parameter
     try {
       additionalParams.clear();
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-      List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "aai/";
       List<Artifact> inputArtifacts = init(aaiResourceBasePaths);
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
@@ -678,7 +639,6 @@ public class ArtifactGenerationServiceTest {
     // Sunny day scenario service with VF anf vfmodule and service version as adiitional parameter
     try {
       additionalParams.put(AdditionalParams.ServiceVersion.getName(),"9.0");
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "aai/";
@@ -703,7 +663,7 @@ public class ArtifactGenerationServiceTest {
 
         Assert.assertEquals(resultData.size(),5);  //  1-service,1-VF-resource,1-vfmodule and 2
         // others
-        outputArtifactMap = populateAAIGeneratedModelStore(resultData);
+        Map<String, Model> outputArtifactMap = populateAAIGeneratedModelStore(resultData);
         testServiceTosca(toscas, outputArtifactMap);
         testResourceTosca(toscas.iterator(), outputArtifactMap);
       } else {
@@ -722,9 +682,7 @@ public class ArtifactGenerationServiceTest {
   public void testErrorWhenInvalidServiceVersion() {
     //  scenario service with VF anf vfmodule but invalid service version in additional parameter
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-      List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "aai/";
       List<Artifact> inputArtifacts = init(aaiResourceBasePaths);
 
@@ -785,9 +743,7 @@ public class ArtifactGenerationServiceTest {
   public void testErrorWhenNoResourceVersion() {
     //  scenario service with VF but missing resource version in service tosca
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-      List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "testErrorWhenNoResourceVersion/";
       List<Artifact> inputArtifacts = init(aaiResourceBasePaths);
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
@@ -803,9 +759,7 @@ public class ArtifactGenerationServiceTest {
   public void testErrorWhenInvalidResourceVersion1() {
     //  scenario service with VF but invalid resource version 0.0 in service tosca
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-      List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "testErrorWhenInvalidResourceVersion1/";
       List<Artifact> inputArtifacts = init(aaiResourceBasePaths);
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
@@ -821,9 +775,7 @@ public class ArtifactGenerationServiceTest {
   public void testErrorWhenInvalidResourceVersion2() {
     //  scenario service with VF but invalid resource version 1 in service tosca
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-      List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "testErrorWhenInvalidResourceVersion2/";
       List<Artifact> inputArtifacts = init(aaiResourceBasePaths);
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
@@ -838,7 +790,6 @@ public class ArtifactGenerationServiceTest {
   @Test
   public void testArtifactGenerationAllottedResourceWithIpMuxAndTunnelXConn() {
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "testArtifactGeneration15/";
@@ -851,7 +802,7 @@ public class ArtifactGenerationServiceTest {
         List<Artifact> resultData = data.getResultData();
 
         Assert.assertEquals(resultData.size(),5);
-        outputArtifactMap = populateAAIGeneratedModelStore(resultData);
+        Map<String, Model> outputArtifactMap = populateAAIGeneratedModelStore(resultData);
         testServiceTosca(toscas, outputArtifactMap);
         testResourceTosca(toscas.iterator(), outputArtifactMap);
       } else {
@@ -866,9 +817,7 @@ public class ArtifactGenerationServiceTest {
 //  @Test
   public void testErrorWhenAllottedResourceWithOutProvidingServiceId() {
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-      List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "testErrorWhenAllottedResourceWithOutDependingServiceId/";
       List<Artifact> inputArtifacts = init(aaiResourceBasePaths);
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
@@ -883,9 +832,7 @@ public class ArtifactGenerationServiceTest {
   @Test
   public void testArtifactGenerationWithoutAllottedResource() {
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-      List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "testArtifactGeneration16/";
       List<Artifact> inputArtifacts = init(aaiResourceBasePaths);
       GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
@@ -900,7 +847,6 @@ public class ArtifactGenerationServiceTest {
   @Test
   public void testArtifactGenerationAllottedResourceIpmuxSameInvariantDiffVersion() {
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "testArtifactGeneration17/";
@@ -913,7 +859,7 @@ public class ArtifactGenerationServiceTest {
         List<Artifact> resultData = data.getResultData();
 
         Assert.assertEquals(resultData.size(),5);
-        outputArtifactMap = populateAAIGeneratedModelStore(resultData);
+        Map<String, Model> outputArtifactMap = populateAAIGeneratedModelStore(resultData);
         testServiceTosca(toscas, outputArtifactMap);
         testResourceTosca(toscas.iterator(), outputArtifactMap);
       } else {
@@ -928,7 +874,6 @@ public class ArtifactGenerationServiceTest {
   @Test
   public void testArtifactGenerationAllottedResourceIpmuxSameInvariantSameVersion() {
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "testArtifactGeneration18/";
@@ -942,7 +887,7 @@ public class ArtifactGenerationServiceTest {
 
 
         Assert.assertEquals(resultData.size(),4);
-        outputArtifactMap = populateAAIGeneratedModelStore(resultData);
+        Map<String, Model> outputArtifactMap = populateAAIGeneratedModelStore(resultData);
         testServiceTosca(toscas, outputArtifactMap);
         testResourceTosca(toscas.iterator(), outputArtifactMap);
       } else {
@@ -957,7 +902,6 @@ public class ArtifactGenerationServiceTest {
   @Test
   public void testArtifactGenerationAllottedResourceIpmuxWithGroups() {
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "testAllotedResourceWithDependingSerWithGroups/";
@@ -970,7 +914,7 @@ public class ArtifactGenerationServiceTest {
         List<Artifact> resultData = data.getResultData();
 
         Assert.assertEquals(resultData.size(),5);
-        outputArtifactMap = populateAAIGeneratedModelStore(resultData);
+        Map<String, Model> outputArtifactMap = populateAAIGeneratedModelStore(resultData);
         testServiceTosca(toscas, outputArtifactMap);
         testResourceTosca(toscas.iterator(), outputArtifactMap);
       } else {
@@ -985,7 +929,6 @@ public class ArtifactGenerationServiceTest {
   @Test
   public void testArtifactGenerationAllottedResourceWithVF() {
     try {
-      Map<String, Model> outputArtifactMap = new HashMap<>();
       ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
       List<ToscaTemplate> toscas = new LinkedList<>();
       String aaiResourceBasePaths = "testArtifactGenerationAllottedResourceWithVF/";
@@ -998,7 +941,7 @@ public class ArtifactGenerationServiceTest {
         List<Artifact> resultData = data.getResultData();
 
         Assert.assertEquals(resultData.size(),7);
-        outputArtifactMap = populateAAIGeneratedModelStore(resultData);
+        Map<String, Model> outputArtifactMap = populateAAIGeneratedModelStore(resultData);
         testServiceTosca(toscas, outputArtifactMap);
         testResourceTosca(toscas.iterator(), outputArtifactMap);
       } else {
@@ -1500,7 +1443,7 @@ nodeProperties = node.getProperties();
     return matchedModelElements;
   }
 
-  private Map<String, Model> populateAAIGeneratedModelStore(List<Artifact> resultData) {
+  private Map<String, Model> populateAAIGeneratedModelStore(List<Artifact> resultData) throws IOException {
     Map<String, Model> outputArtifactMap = new HashMap<>();
     for (Artifact outputArtifact : resultData) {
       if (outputArtifact.getType().equals(ArtifactType.MODEL_INVENTORY_PROFILE.name())) {
@@ -1513,16 +1456,21 @@ nodeProperties = node.getProperties();
     return outputArtifactMap;
   }
 
-  private Model getUnmarshalledArtifactModel(String aaiModel) {
-    JAXBContext jaxbContext;
+  private Model getUnmarshalledArtifactModel(String aaiModel) throws IOException {
+
     try {
-      jaxbContext = JAXBContext.newInstance(Model.class);
+
+      JAXBContext jaxbContext = JAXBContext.newInstance(Model.class);
       Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-      InputStream aaiModelStream = new ByteArrayInputStream(aaiModel.getBytes());
-      return (Model) unmarshaller.unmarshal(aaiModelStream);
+
+      try (InputStream aaiModelStream = new ByteArrayInputStream(aaiModel.getBytes())) {
+        return (Model) unmarshaller.unmarshal(aaiModelStream);
+      }
+
     } catch (JAXBException e) {
       e.printStackTrace();
     }
+
     return null;
   }
 
@@ -1567,20 +1515,6 @@ nodeProperties = node.getProperties();
     return null;
   }
 
-
-  private ToscaTemplate getResourceTosca(List<ToscaTemplate> input) {
-    Iterator<ToscaTemplate> iter = input.iterator();
-    while (iter.hasNext()) {
-      ToscaTemplate tosca = iter.next();
-      if (!tosca.isService()) {
-        iter.remove();
-        return tosca;
-      }
-    }
-    return null;
-  }
-
-
   private Map<String, String> getVFModuleMetadataTosca(ToscaTemplate toscaTemplate,
                                                        String vfModuleModelUUID) {
     Map<String, GroupDefinition> groupDefinitionMap =
@@ -1589,7 +1523,7 @@ nodeProperties = node.getProperties();
     for (Map.Entry<String, GroupDefinition> e : groupDefinitionMap.entrySet()) {
       if (e.getValue().getType().contains("org.openecomp.groups.VfModule")) {
         String uuid = e.getValue().getMetadata().get("vfModuleModelUUID");
-        if (uuid == vfModuleModelUUID) {
+        if (Objects.equals(uuid, vfModuleModelUUID)) {
           vfModuleModelMetadata = e.getValue().getMetadata();
           vfModuleModelMetadata.put("vf_module_description",
               (String) e.getValue().getProperties().get("vf_module_description"));
@@ -1606,17 +1540,15 @@ nodeProperties = node.getProperties();
     Map<String, NodeTemplate> nodeTemplateMaps =
         toscaTemplate.getTopology_template().getNode_templates();
     Map<String, Object> vfModuleMembers = new LinkedHashMap<>();
-    List<String> vfModuleModelMetadata = new ArrayList<>();
+    List<String> vfModuleModelMetadata;
     for (Map.Entry<String, GroupDefinition> e : groupDefinitionMap.entrySet()) {
       if (e.getValue().getType().contains("org.openecomp.groups.VfModule")) {
         String uuid = e.getValue().getMetadata().get("vfModuleModelUUID");
-        if (uuid == vfModuleModelUUID) {
+        if (Objects.equals(uuid, vfModuleModelUUID)) {
           vfModuleModelMetadata = e.getValue().getMembers();
           if (vfModuleModelMetadata !=null) {
-            Iterator itr = vfModuleModelMetadata.iterator();
-            while (itr.hasNext()) {
-              Object obj = itr.next();
-              NodeTemplate nodeTemplate = nodeTemplateMaps.get(obj);
+            for (Object key : vfModuleModelMetadata) {
+              NodeTemplate nodeTemplate = nodeTemplateMaps.get(key);
               String nodetype = null;
               if (nodeTemplate != null) {
                 nodetype = nodeTemplate.getType();
@@ -1624,7 +1556,7 @@ nodeProperties = node.getProperties();
               if (nodetype != null) {
                 String widgetType = membersType(nodetype);
                 if (widgetType != null) {
-                  vfModuleMembers.put(widgetType, obj);
+                  vfModuleMembers.put(widgetType, key);
                 }
               }
             }
@@ -1686,24 +1618,24 @@ nodeProperties = node.getProperties();
         Assert.fail("Invalid resource directory");
       }
 
-      for (int i = 0; i < resourceFileList.length; i++) {
-        byte[] payload = null;
+      for (String aResourceFileList : resourceFileList) {
         File resourceFile = new File(
-            this.getClass().getClassLoader().getResource(aaiResourceBasePaths + resourceFileList[i])
-                .getPath());
-        FileInputStream fileInputStream;
+                this.getClass().getClassLoader().getResource(aaiResourceBasePaths + aResourceFileList)
+                        .getPath());
+
         //convert service tosca file into array of bytes
-        payload = new byte[(int) resourceFile.length()];
-        fileInputStream = new FileInputStream(resourceFile);
-        fileInputStream.read(payload);
-        fileInputStream.close();
+        byte[] payload = new byte[(int) resourceFile.length()];
+        try (FileInputStream fileInputStream = new FileInputStream(resourceFile)) {
+          fileInputStream.read(payload);
+        }
+
         String checksum = GeneratorUtil.checkSum(payload);
         byte[] encodedPayload = GeneratorUtil.encode(payload);
         Artifact artifact =
-            new Artifact(aaiArtifactType, aaiArtifactGroupType, checksum, encodedPayload);
-        artifact.setName(resourceFileList[i]);
-        artifact.setLabel(resourceFileList[i]);
-        artifact.setDescription(resourceFileList[i]);
+                new Artifact(aaiArtifactType, aaiArtifactGroupType, checksum, encodedPayload);
+        artifact.setName(aResourceFileList);
+        artifact.setLabel(aResourceFileList);
+        artifact.setDescription(aResourceFileList);
         artifact.setVersion("1.0");
         inputArtifacts1.add(artifact);
 
@@ -1740,6 +1672,12 @@ nodeProperties = node.getProperties();
       } else if("VL".equals(toscaTemplate.getMetadata().get("type"))){
         testL3NetworkResourceTosca(outputArtifactMap, toscaTemplate);
       }
+    }
+  }
+
+  private void readPayloadFromResource(List<Artifact> inputArtifacts, String file) throws IOException {
+    try (InputStream stream = ArtifactGenerationServiceTest.class.getResourceAsStream("/" + file)) {
+      readPayload(inputArtifacts, stream, file);
     }
   }
 }

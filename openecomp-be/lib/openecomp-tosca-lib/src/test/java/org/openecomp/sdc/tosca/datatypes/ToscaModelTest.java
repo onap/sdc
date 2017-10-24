@@ -46,6 +46,7 @@ import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -271,27 +272,29 @@ public class ToscaModelTest {
 
 
   @Test
-  public void testYamlToServiceTemplateObj() {
-    InputStream yamlFile = new YamlUtil().loadYamlFileIs("/mock/model/serviceTemplate.yaml");
-    ServiceTemplate serviceTemplateFromYaml =
-        new YamlUtil().yamlToObject(yamlFile, ServiceTemplate.class);
-    Assert.assertNotNull(serviceTemplateFromYaml);
+  public void testYamlToServiceTemplateObj() throws IOException {
+    try (InputStream yamlFile = new YamlUtil().loadYamlFileIs("/mock/model/serviceTemplate.yaml")) {
+      ServiceTemplate serviceTemplateFromYaml =
+              new YamlUtil().yamlToObject(yamlFile, ServiceTemplate.class);
+      Assert.assertNotNull(serviceTemplateFromYaml);
+    }
   }
 
 
   @Test
-  public void testYamlToServiceTemplateIncludingHeatExtend() {
+  public void testYamlToServiceTemplateIncludingHeatExtend() throws IOException {
     ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-    InputStream yamlFile =
-        toscaExtensionYamlUtil.loadYamlFileIs("/mock/model/serviceTemplateHeatExtend.yaml");
-    ServiceTemplate serviceTemplateFromYaml =
-        toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
-    ParameterDefinitionExt parameterDefinitionExt =
-        (ParameterDefinitionExt) serviceTemplateFromYaml.getTopology_template().getInputs()
-            .get("inParam1");
-    Assert.assertNotNull(parameterDefinitionExt.getLabel());
-    String backToYamlString = toscaExtensionYamlUtil.objectToYaml(serviceTemplateFromYaml);
-    Assert.assertNotNull(backToYamlString);
+    try (InputStream yamlFile =
+        toscaExtensionYamlUtil.loadYamlFileIs("/mock/model/serviceTemplateHeatExtend.yaml")) {
+      ServiceTemplate serviceTemplateFromYaml =
+              toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
+      ParameterDefinitionExt parameterDefinitionExt =
+              (ParameterDefinitionExt) serviceTemplateFromYaml.getTopology_template().getInputs()
+                      .get("inParam1");
+      Assert.assertNotNull(parameterDefinitionExt.getLabel());
+      String backToYamlString = toscaExtensionYamlUtil.objectToYaml(serviceTemplateFromYaml);
+      Assert.assertNotNull(backToYamlString);
+    }
   }
 
 }
