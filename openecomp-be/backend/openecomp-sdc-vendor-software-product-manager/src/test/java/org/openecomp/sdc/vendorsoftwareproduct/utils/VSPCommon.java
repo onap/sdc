@@ -21,8 +21,6 @@
 package org.openecomp.sdc.vendorsoftwareproduct.utils;
 
 import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -36,8 +34,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class VSPCommon {
-
-  private static final Logger log = (Logger) LoggerFactory.getLogger(VSPCommon.class.getName());
 
   public static VspDetails createVspDetails(String id, Version version, String name, String desc,
                                             String vendorName, String vlm, String icon,
@@ -86,18 +82,18 @@ public class VSPCommon {
       }
     } else {
 
-      try {
         if (!path.isEmpty()) {
           path += File.separator;
         }
-        zos.putNextEntry(new ZipEntry(path + file.getName()));
-        InputStream is = new FileInputStream(file);
-        byte[] data = FileUtils.toByteArray(is);
-        zos.write(data);
-        zos.closeEntry();
-      } catch (IOException exception) {
-        log.debug("",exception);
-      }
+
+        try (InputStream is = new FileInputStream(file)) {
+          zos.putNextEntry(new ZipEntry(path + file.getName()));
+          byte[] data = FileUtils.toByteArray(is);
+          zos.write(data);
+          zos.closeEntry();
+        } catch (IOException exception) {
+          throw new RuntimeException("Failed to create Zip entry for file: " + file, exception);
+        }
     }
   }
 

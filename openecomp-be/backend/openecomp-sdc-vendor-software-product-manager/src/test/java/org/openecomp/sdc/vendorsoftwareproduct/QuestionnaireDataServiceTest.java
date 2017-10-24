@@ -49,6 +49,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
@@ -81,7 +82,7 @@ public class QuestionnaireDataServiceTest {
   @InjectMocks
   private OrchestrationTemplateCandidateManagerImpl candidateManager;
 
-  private UploadFileTest uploadFileTest = new UploadFileTest();
+  private final UploadFileTest uploadFileTest = new UploadFileTest();
 
   private static String vspId;
   private static Version vspActiveVersion;
@@ -93,7 +94,7 @@ public class QuestionnaireDataServiceTest {
   }
 
   // TODO: 3/15/2017 fix and enable   //@Test
-  public void testQuestionnaireDataAfterLegalUploadWithComposition() {
+  public void testQuestionnaireDataAfterLegalUploadWithComposition() throws IOException {
     InformationArtifactData informationArtifactData =
         uploadFileAndValidateInformationArtifactData("/fullComposition", 5);
 
@@ -102,16 +103,18 @@ public class QuestionnaireDataServiceTest {
 
 
   // TODO: 3/15/2017 fix and enable   //@Test
-  public void testQuestionnaireDataAfterLegalUploadEmptyComposition() {
+  public void testQuestionnaireDataAfterLegalUploadEmptyComposition() throws IOException {
     uploadFileAndValidateInformationArtifactData("/emptyComposition", 0);
   }
 
 
   // TODO: 3/15/2017 fix and enable   //@Test
-  public void testQuestionnaireDataAfterIllegalUpload() {
-    InputStream zipInputStream = uploadFileTest.getZipInputStream("/missingYml");
-    UploadFileResponse uploadFileResponse = candidateManager
-        .upload(vspId, VERSION, zipInputStream, USER1, "zip", "missingYml");
+  public void testQuestionnaireDataAfterIllegalUpload() throws IOException {
+
+    try (InputStream zipInputStream = uploadFileTest.getZipInputStream("/missingYml")) {
+      UploadFileResponse uploadFileResponse = candidateManager
+              .upload(vspId, VERSION, zipInputStream, USER1, "zip", "missingYml");
+    }
 
     InformationArtifactData informationArtifactData = questionnaireDataService
         .generateQuestionnaireDataForInformationArtifact(vspId, vspActiveVersion);
@@ -119,15 +122,18 @@ public class QuestionnaireDataServiceTest {
   }
 
   private InformationArtifactData uploadFileAndValidateInformationArtifactData(String filePath,
-                                                                               int listSizeToCheck) {
-    InputStream zipInputStream = uploadFileTest.getZipInputStream(filePath);
-    UploadFileResponse uploadFileResponse = candidateManager
-        .upload(vspId, VERSION,
-            zipInputStream, USER1,"zip", "file");
-    candidateManager.process(vspId, VERSION, USER1);
+                                                                               int listSizeToCheck) throws IOException {
 
-    Assert.assertTrue(MapUtils.isEmpty(
-        MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, uploadFileResponse.getErrors())));
+    try (InputStream zipInputStream = uploadFileTest.getZipInputStream(filePath)) {
+      UploadFileResponse uploadFileResponse = candidateManager
+              .upload(vspId, VERSION,
+                      zipInputStream, USER1, "zip", "file");
+
+      candidateManager.process(vspId, VERSION, USER1);
+
+      Assert.assertTrue(MapUtils.isEmpty(
+              MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, uploadFileResponse.getErrors())));
+    }
 
     InformationArtifactData informationArtifactData = questionnaireDataService
         .generateQuestionnaireDataForInformationArtifact(vspId, vspActiveVersion);
