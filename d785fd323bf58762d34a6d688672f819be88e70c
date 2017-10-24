@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_e77734d3",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-24T15:04:43Z",
+      "side": 1,
+      "message": "Please consolidate these two into a single call. No reason to call twice, and also you probably won\u0027t want them appear separated by other messages in the log.",
+      "revId": "d785fd323bf58762d34a6d688672f819be88e70c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_674b4488",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 430,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-24T15:04:43Z",
+      "side": 1,
+      "message": "Please adhere to the coding conventions regarding spaces. It should be \"counter + 1\"",
+      "revId": "d785fd323bf58762d34a6d688672f819be88e70c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
