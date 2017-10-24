@@ -104,12 +104,12 @@ import static org.mockito.Mockito.verify;
 
 public class VendorSoftwareProductManagerImplTest {
 
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+  private static final Logger LOG = LoggerFactory.getLogger(VendorSoftwareProductManagerImplTest.class);
 
   private static final String INVALID_VERSION_MSG = "Invalid requested version.";
 
-  private static String VSP_ID = "vspId";
-  private static String VERSION_ID = "versionId";
+  private static final String VSP_ID = "vspId";
+  private static final String VERSION_ID = "versionId";
   public static final Version VERSION01 = new Version(0, 1);
   private static final Version VERSION10 = new Version(1, 0);
   private static final String USER1 = "vspTestUser1";
@@ -348,14 +348,14 @@ public class VendorSoftwareProductManagerImplTest {
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
             VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
             VersionableEntityAction.Write);
-    List<String> fgs = new ArrayList<String>();
+    List<String> fgs = new ArrayList<>();
     fgs.add("fg1"); fgs.add("fg2");
     VspDetails existingVsp =
             createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
                     "category",
                     "subCategory", "456", fgs);
 
-    List<String> updFgs = new ArrayList<String>();
+    List<String> updFgs = new ArrayList<>();
     updFgs.add("fg2");
     VspDetails updatedVsp =
             createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
@@ -372,7 +372,7 @@ public class VendorSoftwareProductManagerImplTest {
     flavor.setFeatureGroupId("fg1");
     dfEntity.setDeploymentFlavorCompositionData(flavor);
 
-    List<DeploymentFlavorEntity> dfList = new ArrayList<DeploymentFlavorEntity>();
+    List<DeploymentFlavorEntity> dfList = new ArrayList<>();
     dfList.add(dfEntity);
 
     doReturn(dfList).when(deploymentFlavorDaoMock).list(anyObject());
@@ -561,7 +561,7 @@ public class VendorSoftwareProductManagerImplTest {
     doReturn(vsp).when(vspInfoDaoMock).get(anyObject());
     UploadDataEntity uploadData = new UploadDataEntity(VSP_ID, VERSION01);
     uploadData.setContentData(
-            ByteBuffer.wrap(FileUtils.toByteArray(getFileInputStream("/emptyComposition"))));
+            ByteBuffer.wrap(getBytes("/emptyComposition")));
     doReturn(uploadData).when(orchestrationTemplateDataDaoMock)
             .getOrchestrationTemplate(anyObject(), anyObject());
     doReturn(new ToscaServiceModel(new FileContentHandler(), new HashMap<>(),
@@ -597,7 +597,7 @@ public class VendorSoftwareProductManagerImplTest {
     doReturn(vsp).when(vspInfoDaoMock).get(anyObject());
     UploadDataEntity uploadData = new UploadDataEntity(VSP_ID, VERSION01);
     uploadData.setContentData(
-            ByteBuffer.wrap(FileUtils.toByteArray(getFileInputStream("/emptyComposition"))));
+            ByteBuffer.wrap(getBytes("/emptyComposition")));
     doReturn(uploadData).when(orchestrationTemplateDataDaoMock)
             .getOrchestrationTemplate(anyObject(), anyObject());
     doReturn(new ToscaServiceModel(new FileContentHandler(), new HashMap<>(),
@@ -654,27 +654,28 @@ public class VendorSoftwareProductManagerImplTest {
 
   // TODO: 3/15/2017 fix and enable
   //@Test(dependsOnMethods = {"testListFinals"})
-  public void testUploadFileMissingFile() {
-    InputStream zis = getFileInputStream("/vspmanager/zips/missingYml.zip");
+  public void testUploadFileMissingFile() throws IOException {
 
-    UploadFileResponse uploadFileResponse =
-            candidateManager.upload(VSP_ID, VERSION01, zis, USER1, "zip", "missingYml");
+    try (InputStream zis = this.getClass().getResourceAsStream("/vspmanager/zips/missingYml.zip")) {
+      UploadFileResponse uploadFileResponse =
+              candidateManager.upload(VSP_ID, VERSION01, zis, USER1, "zip", "missingYml");
 
-    Assert.assertEquals(uploadFileResponse.getErrors().size(), 0);
+      Assert.assertEquals(uploadFileResponse.getErrors().size(), 0);
+    }
   }
 
   // TODO: 3/15/2017 fix and enable
   //@Test(dependsOnMethods = {"testUploadFileMissingFile"})
   public void testUploadNotZipFile() throws IOException {
+
     URL url = this.getClass().getResource("/notZipFile");
 
-    try {
+    try (InputStream inputStream = url.openStream()) {
       candidateManager
               .upload(VSP_ID, VERSION01,
-                      url.openStream(), USER1, "zip", "notZipFile");
+                      inputStream, USER1, "zip", "notZipFile");
       candidateManager.process(VSP_ID, VERSION01, USER1);
     } catch (Exception ce) {
-      log.debug("",ce);
       Assert.assertEquals(ce.getMessage(), Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage());
     }
 
@@ -692,11 +693,12 @@ public class VendorSoftwareProductManagerImplTest {
 
   private List<String> getFileNamesFromFolderInCsar(File csar, String folderName)
           throws IOException {
+
     List<String> fileNames = new ArrayList<>();
 
-    FileInputStream fileInputStream = new FileInputStream(csar);
-    try {
-      ZipInputStream zip = new ZipInputStream(fileInputStream);
+    try (FileInputStream fileInputStream = new FileInputStream(csar);
+         ZipInputStream zip = new ZipInputStream(fileInputStream)) {
+
       ZipEntry ze;
 
       while ((ze = zip.getNextEntry()) != null) {
@@ -705,8 +707,6 @@ public class VendorSoftwareProductManagerImplTest {
           fileNames.add(name);
         }
       }
-    }finally {
-      fileInputStream.close();
     }
 
     return fileNames;
@@ -718,10 +718,13 @@ public class VendorSoftwareProductManagerImplTest {
     checkinSubmitCreatePackage(vspId, user);
   }
 
-  private void uploadFileAndProcess(String vspId, String user, String filePath) {
+  private void uploadFileAndProcess(String vspId, String user, String filePath) throws IOException {
     vendorSoftwareProductManager.checkout(vspId, user);
-    candidateManager.upload(vspId, VERSION01, getFileInputStream(filePath), user, "zip", "file");
-    candidateManager.process(vspId, VERSION01, user);
+
+    try (InputStream inputStream = this.getClass().getResourceAsStream(filePath)) {
+      candidateManager.upload(vspId, VERSION01, inputStream, user, "zip", "file");
+      candidateManager.process(vspId, VERSION01, user);
+    }
   }
 
   private void checkinSubmitCreatePackage(String vspId, String user) throws IOException {
@@ -792,13 +795,10 @@ public class VendorSoftwareProductManagerImplTest {
     capabilities.put(entryValueKey + "_" + key, value);
   }
 
-  public InputStream getFileInputStream(String fileName) {
+  private byte[] getBytes(String fileName) throws IOException {
     URL url = this.getClass().getResource(fileName);
-    try {
-      return url.openStream();
-    } catch (IOException exception) {
-      exception.printStackTrace();
-      return null;
+    try (InputStream inputStream = url.openStream()) {
+      return FileUtils.toByteArray(inputStream);
     }
   }
 
