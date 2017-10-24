@@ -18,6 +18,4 @@ COPY startup.sh /root/
 
 RUN chmod 770 /root/startup.sh
 
-USER jetty
-
 ENTRYPOINT [ "/root/startup.sh" ]
