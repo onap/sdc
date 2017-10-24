@@ -78,6 +78,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.openecomp.sdc.logging.messages.AuditMessages.SUBMIT_VSP_ERROR;
 
@@ -403,59 +404,31 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     MDC.put(LoggerConstants.SERVICE_NAME, LoggerServiceName.Re_Submit_ALL_Final_VSPs.toString());
     logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.RESUBMIT_ALL_FINAL_VSPS);
 
-    List<VersionedVendorSoftwareProductInfo> vspList = Objects.requireNonNull(
-        vendorSoftwareProductManager.listVsps(VersionStatus.Final.name(), user));
-    int skippedCounter = 0;
-    final int vspListSizeBefore = vspList.size();
+    List<VersionedVendorSoftwareProductInfo> latestFinalVsps = Objects
+        .requireNonNull(vendorSoftwareProductManager.listVsps(VersionStatus.Final.name(), user));
 
-    for (VersionedVendorSoftwareProductInfo versionVspInfo : vspList) {
-      final VspDetails vspDetails = versionVspInfo.getVspDetails();
-      final String vspId = vspDetails.getId();
-      final Version latestFinalVersion =
-          getVersionInfo(vspId, VersionableEntityAction.Read, user).getLatestFinalVersion();
+    List<VersionedVendorSoftwareProductInfo> nonLockedLatestFinalVsps = latestFinalVsps.stream()
+        .filter(vsp ->
+            !isVspLocked(vsp.getVspDetails().getId(), vsp.getVspDetails().getName(), user))
+        .collect(Collectors.toList());
 
-      if (latestFinalVersion.getStatus().equals(VersionStatus.Locked)) {
-        logger.info("Skipping processing VSP name [{}]/id [{}] due to status LOCKED", vspDetails
-                .getName(),
-            vspId);
-        skippedCounter++;
-        vspList.remove(versionVspInfo);
-      }
-    }
+    logger.info("Removed {} VSPs out of {} from processing due to status LOCKED",
+        latestFinalVsps.size() - nonLockedLatestFinalVsps.size(), latestFinalVsps.size());
 
-    logger.info("Removed {} VSPs out of {} from processing due to status LOCKED", skippedCounter,
-        vspListSizeBefore);
+    logger.info("Total number of VSPs: {}. Performing healing and " +
+        "resubmit for all non-Manual VSPs in submitted status.\n No need to pre-set oldVersion " +
+        "field", nonLockedLatestFinalVsps.size());
 
     int healingCounter = 0;
     int failedCounter = 0;
-    int totalCounter = 0;
-
-
-    final int vspListSize = vspList.size();
-    logger.info("Total number of VSPs: {}. Performing healing and " +
-        "resubmit for all non-Manual VSPs in submitted status.\n No need to pre-set oldVersion " +
-        "field", vspListSize);
-
-    for (VersionedVendorSoftwareProductInfo versionVspInfo : vspList) {
+    for (int counter = 0; counter < nonLockedLatestFinalVsps.size(); counter++) {
+      VersionedVendorSoftwareProductInfo versionVspInfo = nonLockedLatestFinalVsps.get(counter);
       try {
-        totalCounter++;
-        final Version activeVersion = versionVspInfo.getVersionInfo().getActiveVersion();
         final VspDetails vspDetails = versionVspInfo.getVspDetails();
-        final String vspId = vspDetails.getId();
-        final Version latestFinalVersion =
-            getVersionInfo(vspId, VersionableEntityAction.Read, user).getLatestFinalVersion();
-
-        final String vspName = vspDetails.getName();
-        logger.info("VSP Name {}, VSP id [{}], Active Version {} , Active Version Status {}," +
-                "Latest Final Version {} ,  " +
-                "Latest Final Version Status {}", vspName, vspId, activeVersion
-                .toString(),
-            activeVersion.getStatus(), latestFinalVersion.toString(),
-            latestFinalVersion.getStatus());
-
-        if (Objects.nonNull(latestFinalVersion) &&
-            (!OnboardingMethod.Manual.name().equals(vspDetails.getOnboardingMethod()))) {
-          reSubmit(vspDetails, user, totalCounter, vspListSize);
+        if (!OnboardingMethod.Manual.name().equals(vspDetails.getOnboardingMethod())) {
+          logger.info("Starting on healing and resubmit for VSP [{}], #{} out of total {}",
+              vspDetails.getName(), counter+1, nonLockedLatestFinalVsps.size());
+          reSubmit(vspDetails, user);
           healingCounter++;
         }
       } catch (Exception e) {
@@ -464,42 +437,44 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     logger.info("Total VSPs processed {}. Completed running healing and resubmit for {} VSPs out" +
-            " " +
-            "of total # of {} submitted VSPs.  Failures count during resubmitAll: {}",
-        totalCounter, healingCounter, vspListSize, failedCounter);
-
+            " of total # of {} submitted VSPs.  Failures count during resubmitAll: {}",
+        nonLockedLatestFinalVsps.size(), healingCounter, latestFinalVsps.size(), failedCounter);
 
     return Response.ok().build();
   }
 
+  private boolean isVspLocked(String vspId, String vspName, String user) {
+    final VersionInfo versionInfo = getVersionInfo(vspId, VersionableEntityAction.Read, user);
 
-  private void reSubmit(VspDetails vspDetails, String user, int currentCount, int total) throws
-      Exception {
+    if (versionInfo.getStatus().equals(VersionStatus.Locked)) {
+      logger.info("VSP name [{}]/id [{}] status is LOCKED", vspName, vspId);
+      return true;
+    }
+    logger.info("VSP Name {}, VSP id [{}], Active Version {} , Status {}, Latest Final Version {}",
+        vspName, vspId, versionInfo.getActiveVersion().toString(), versionInfo.getStatus(),
+        versionInfo.getLatestFinalVersion().toString());
+    return false;
+  }
 
-    final String vspId = vspDetails.getId();
-    final String vspName = vspDetails.getName();
+
+  private void reSubmit(VspDetails vspDetails, String user) throws Exception {
     final Version versionBefore = vspDetails.getVersion();
-    Version finalVersion;
-
-    logger.info("Starting on healing and resubmit for VSP [{}], #{} out of total {}", vspName,
-        currentCount, total);
     vspDetails.setOldVersion("true");
 
+    Version finalVersion;
     try {
       finalVersion =
-          vendorSoftwareProductManager.healAndAdvanceFinalVersion(vspId, vspDetails, user);
-
+          vendorSoftwareProductManager.healAndAdvanceFinalVersion(vspDetails.getId(), vspDetails, user);
     } catch (Exception e) {
-
       logger.error("Failed during resubmit, VSP [{}] , version before:{}, version after:{}, " +
               "status after:{}, with exception:{}",
-          vspName, versionBefore.toString(), vspDetails.getVersion().toString(), vspDetails
+          vspDetails.getName(), versionBefore.toString(), vspDetails.getVersion().toString(), vspDetails
               .getVersion().getStatus().name(), e.getMessage());
       throw e;
     }
 
     logger.info("Completed healing and resubmit for VSP [{}], version before:{}, version after:" +
-        " {}", vspName, versionBefore.toString(), finalVersion);
+        " {}", vspDetails.getName(), versionBefore.toString(), finalVersion);
   }
 
   private static void printAuditForErrors(List<ErrorMessage> errorList, String vspId,

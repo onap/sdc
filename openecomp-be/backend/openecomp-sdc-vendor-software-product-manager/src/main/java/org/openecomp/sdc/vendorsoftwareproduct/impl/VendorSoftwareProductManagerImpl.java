@@ -832,21 +832,20 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   public Version healAndAdvanceFinalVersion(String vspId, VspDetails vendorSoftwareProductInfo,
                                             String user) throws IOException {
 
-    Version checkoutFinalVersion = checkout(vspId, user);
-    autoHeal(vspId, checkoutFinalVersion, vendorSoftwareProductInfo, user);
-    Version checkinFinalVersion = checkin(vspId, user);
+    Version checkoutVersion = checkout(vspId, user);
+    autoHeal(vspId, checkoutVersion, vendorSoftwareProductInfo, user);
+    Version checkinVersion = checkin(vspId, user);
 
     ValidationResponse response = Objects.requireNonNull(submit(vspId, user),
         "Null response not expected");
 
     if (!response.isValid()) {
-      return checkout(vspId, user);
+      return checkinVersion;
     }
 
-    Version finalVersion = checkinFinalVersion.calculateNextFinal();
+    Version finalVersion = checkinVersion.calculateNextFinal();
     createPackage(vspId, finalVersion, user);
     return finalVersion;
-
   }
 
   @Override
