@@ -3,9 +3,12 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 import org.openecomp.config.api.Configuration;
 import org.openecomp.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.errors.OrchestrationTemplateFileExtensionErrorBuilder;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationUtil.ORCHESTRATION_CONFIG_NAMESPACE;
@@ -22,7 +25,14 @@ public class OrchestrationUploadFactory {
     }
 
     public static final OrchestrationTemplateFileHandler createOrchestrationTemplateFileHandler(String filePrefix) {
-        ImplementationConfiguration orchestrationTemplateFileHandler = fileHanlders.get(filePrefix);
+        String fileExtension = filePrefix.toLowerCase();
+        ImplementationConfiguration orchestrationTemplateFileHandler = fileHanlders.get(fileExtension);
+
+        if(Objects.isNull(orchestrationTemplateFileHandler)){
+            throw new CoreException(new OrchestrationTemplateFileExtensionErrorBuilder
+                ().build());
+        }
+
         return  CommonMethods.newInstance(orchestrationTemplateFileHandler.getImplementationClass(),
                         OrchestrationTemplateFileHandler.class);
     }
