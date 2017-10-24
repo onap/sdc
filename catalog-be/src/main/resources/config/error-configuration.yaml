@@ -411,6 +411,7 @@ errors:
         message: "Error: Invalid Content. Missing Capability Type '%1'.",
         messageId: "SVC4115"
     }
+#-----------SVC4116---------------------------
     RESOURCE_INSTANCE_BAD_REQUEST: {
         code: 400,
         message: "Error: Invalid Content.",
@@ -1186,7 +1187,6 @@ errors:
         message: "Error: Invalid occurrences format.",
         messageId: "SVC4585"
     }
-#---------SVC4586------------------------------
 #---------SVC4586------------------------------
     INVALID_SERVICE_API_URL: {
         code: 400,
