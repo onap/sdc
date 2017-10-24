@@ -127,4 +127,6 @@ public class VendorSoftwareProductErrorCodes {
   public static final String DELETE_IMAGE_NOT_ALLOWED = "DELETE_IMAGE_NOT_ALLOWED";
   public static final String UPDATE_IMAGE_NOT_ALLOWED = "UPDATE_IMAGE_NOT_ALLOWED";
 
+  public static final String INVALID_EXTENSION = "INVALID_EXTENSION";
+
 }
