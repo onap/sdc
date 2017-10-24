@@ -252,21 +252,6 @@
 							</descriptorRefs>
 						</configuration>
 					</execution>
-					
-					<!---->
-					<!--<execution>-->
-						<!--<id>tarball</id>-->
-						<!--<phase>package</phase>-->
-						<!--<goals>-->
-							<!--<goal>single</goal>-->
-						<!--</goals>-->
-						<!--<configuration>-->
-							<!--<finalName>${project.artifactId}-${full.release.version}${build.type}</finalName>-->
-							<!--<appendAssemblyId>false</appendAssemblyId>-->
-							<!--<descriptor>${project.basedir}/tarball.xml</descriptor>-->
-							<!--<attach>false</attach>-->
-						<!--</configuration>-->
-					<!--</execution>-->
 				</executions>
 			</plugin>
 
