@@ -54,5 +54,8 @@ public class JsonUtils {
 	public static boolean isEmptyJson(JsonElement json) {
 		return json.isJsonPrimitive() ? false : JsonUtils.isEmptyJson(json.getAsJsonObject());
 	}
-
+	
+	public static boolean isJsonNullOrEmpty(JsonObject json) {
+		return json.isJsonNull() || isEmptyJson(json);
+	}
 }
