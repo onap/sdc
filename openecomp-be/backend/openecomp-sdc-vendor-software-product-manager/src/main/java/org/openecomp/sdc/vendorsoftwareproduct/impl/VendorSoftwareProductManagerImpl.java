@@ -1102,7 +1102,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
                 (vspDetails.getOnboardingOrigin()),
             uploadData.getContentData().array());
 
-    if (vspDetails.getOnboardingOrigin().equals(OnboardingTypesEnum.ZIP.name().toLowerCase())) {
+    if (CommonUtil.isFileOriginFromZip(vspDetails.getOnboardingOrigin())) {
       ValidationManager validationManager =
           ValidationManagerUtil.initValidationManager(fileContentMap);
       validationErrors.putAll(validationManager.validate());

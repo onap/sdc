@@ -30,6 +30,7 @@ import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.activityLog.ActivityLogManager;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -258,20 +259,20 @@ public class OrchestrationTemplateCandidateManagerImpl
     OnboardingTypesEnum type =
         OnboardingTypesEnum.getOnboardingTypesEnum(vspDetails.getOnboardingOrigin());
 
-    if(vspDetails.getOnboardingOrigin().equals(OnboardingTypesEnum.ZIP.toString())) {
+    if(CommonUtil.isFileOriginFromZip(vspDetails.getOnboardingOrigin())) {
       FilesDataStructure structure = JsonUtil
           .json2Object(candidateDataEntity.get().getFilesDataStructure(), FilesDataStructure.class);
       String manifest = candidateService.createManifest(vspDetails, structure);
 
       mdcDataDebugMessage
           .debugExitMessage("VSP id", vspId);
-      return Optional.ofNullable(
+      return Optional.of(
           new ImmutablePair<>(OnboardingTypesEnum.ZIP.toString(),candidateService
               .replaceManifestInZip(candidateDataEntity.get().getContentData(),
               manifest, vspId, type)));
     }
 
-    return Optional.ofNullable(
+    return Optional.of(
         new ImmutablePair<>(vspDetails.getOnboardingOrigin(),candidateDataEntity.get()
             .getContentData().array()));
   }

@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -67,7 +68,7 @@ public class CommonUtil {
       throws IOException {
     Pair<FileContentHandler,List<String> > pair = getFileContentMapFromOrchestrationCandidateZip(uploadFileData);
 
-    if(type.equals(OnboardingTypesEnum.ZIP)) {
+    if(isFileOriginFromZip(type.toString())) {
       validateNoFolders(pair.getRight());
     }
 
@@ -133,7 +134,7 @@ public class CommonUtil {
     return -1;
   }
 
-  public static boolean validateFilesExtensions(Set<String> allowedExtensions, FileContentHandler
+  private static boolean validateFilesExtensions(Set<String> allowedExtensions, FileContentHandler
       files) {
     for (String fileName : files.getFileList()) {
       if (!allowedExtensions.contains(FilenameUtils.getExtension(fileName))) {
@@ -146,5 +147,10 @@ public class CommonUtil {
   public static boolean validateAllFilesYml(FileContentHandler files) {
     Set<String> allowedExtensions = new HashSet<>(Arrays.asList("yml", "yaml"));
     return validateFilesExtensions(allowedExtensions, files);
+  }
+
+  public static boolean isFileOriginFromZip(String fileOrigin){
+   return Objects.nonNull(fileOrigin)
+        && fileOrigin.toLowerCase().equals(OnboardingTypesEnum.ZIP.toString());
   }
 }

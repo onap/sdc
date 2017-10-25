@@ -20,13 +20,11 @@ public enum OnboardingTypesEnum {
         if (inStr == null) {
             return null;
         }
+
         Optional<OnboardingTypesEnum>  onboardingTypesOptional =  asList(OnboardingTypesEnum.values()).stream()
-                .filter(onboardingTypesEnum -> onboardingTypesEnum.toString().equals(inStr)).findAny();
-       if( onboardingTypesOptional.isPresent()){
-          return onboardingTypesOptional.get();
-       }else {
-           return null;
-       }
+                .filter(onboardingTypesEnum -> onboardingTypesEnum.toString().equals(inStr.toLowerCase()))
+            .findAny();
+      return onboardingTypesOptional.orElse(null);
     }
 
 }

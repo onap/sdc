@@ -28,11 +28,11 @@ public class OrchestrationProcessFactory {
   }
 
   public static Optional<OrchestrationTemplateProcessHandler> getInstance(String filePrefix) {
-    filePrefix = filePrefix == null ? null : filePrefix.toLowerCase().trim();
     if (filePrefix == null) {
       return Optional.empty();
     }
 
+    filePrefix = filePrefix.toLowerCase().trim();
     OnboardingTypesEnum onboardingTypesEnum = OnboardingTypesEnum.getOnboardingTypesEnum(filePrefix);
     if (onboardingTypesEnum == null) {
       return Optional.empty();

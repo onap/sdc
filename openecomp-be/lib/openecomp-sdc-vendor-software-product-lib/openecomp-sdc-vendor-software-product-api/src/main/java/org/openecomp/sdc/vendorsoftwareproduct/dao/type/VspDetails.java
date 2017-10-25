@@ -226,8 +226,7 @@ public class VspDetails implements VersionableEntity {
   }
 
   public void setOnboardingOrigin(String onboardingOrigin) {
-    this.onboardingOrigin = Objects.isNull(onboardingOrigin) ? null
-        : onboardingOrigin.toLowerCase();
+    this.onboardingOrigin = onboardingOrigin;
   }
 
   public String getOnboardingMethod() {
