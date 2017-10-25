@@ -3648,12 +3648,13 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 			Either<ESArtifactData, CassandraOperationStatus> artifactfromES;
 			ESArtifactData esArtifactData;
 			if (esArtifactId != null && !esArtifactId.isEmpty() && artifactDefinition.getPayloadData() == null) {
+				log.debug("Try to fetch artifact from cassandra with id : {}", esArtifactId);
 				artifactfromES = artifactCassandraDao.getArtifact(esArtifactId);
 				if (artifactfromES.isRight()) {
 					CassandraOperationStatus resourceUploadStatus = artifactfromES.right().value();
 					StorageOperationStatus storageResponse = DaoStatusConverter.convertCassandraStatusToStorageStatus(resourceUploadStatus);
 					ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(storageResponse);
-					log.debug("Error when getting artifact from ES, error: {}", actionStatus.name());
+					log.debug("Error when getting artifact from ES, error: {} esid : {}", actionStatus.name(), esArtifactId);
 					return Either.right(componentsUtils.getResponseFormatByArtifactId(actionStatus, artifactDefinition.getArtifactDisplayName()));
 				}
 				esArtifactData = artifactfromES.left().value();

@@ -146,7 +146,8 @@ public class CsarUtils {
 																	ImportUtils.Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + 
 																	"([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
 																	"([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN + 
-																	"([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN;
+																	"([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
+																	"([\\d\\w\\_\\-\\.\\s]+)";
 
 	public static final String VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN = ARTIFACTS + DEL_PATTERN+
 	// Artifact Group (i.e Deployment/Informational)

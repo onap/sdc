@@ -1120,7 +1120,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 					Map<String, GroupInstanceDataDefinition> groupInstanceToCreate = new HashMap<>();
 					for(GroupDataDefinition group:filteredGroups){
 						CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "create new groupInstance  {} ", group.getName());
-						GroupInstanceDataDefinition groupInstance = buildGroupInstanceDataDefinition(group, vfInst);
+						GroupInstanceDataDefinition groupInstance = buildGroupInstanceDataDefinition(group, vfInst, instDeplArtifMap);
 						List<String> artifactsUid = new ArrayList<>();
 						List<String> artifactsId = new ArrayList<>();
 						for (ArtifactDataDefinition artifact : instDeplArtifMap.values()) {

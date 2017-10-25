@@ -1655,17 +1655,15 @@ public class ResourceBusinessLogicTest {
 		deploymentArtifactToUpdate.setArtifactName(deploymentArtifactToUpdateFileName);
 		deploymentArtifactToUpdate.setArtifactType("SNMP_POLL");
 		deploymentArtifactToUpdate.setPayload(oldPayloadData);
-		deploymentArtifactToUpdate
-				.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
-
+		deploymentArtifactToUpdate.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
+		
 		ArtifactDefinition deploymentArtifactToDelete = new ArtifactDefinition();
 		deploymentArtifactToDelete.setMandatory(false);
 		deploymentArtifactToDelete.setArtifactName(deploymentArtifactToDeleteFileName);
 		deploymentArtifactToDelete.setArtifactType("SNMP_TRAP");
 		deploymentArtifactToDelete.setPayload(oldPayloadData);
-		deploymentArtifactToDelete
-				.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
-
+		deploymentArtifactToDelete.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
+		
 		ArtifactDefinition deploymentArtifactToIgnore = new ArtifactDefinition();
 
 		deploymentArtifacts.put(ValidationUtils.normalizeArtifactLabel(deploymentArtifactToUpdate.getArtifactName()),

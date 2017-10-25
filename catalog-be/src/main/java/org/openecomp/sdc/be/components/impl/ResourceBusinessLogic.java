@@ -917,6 +917,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				vfcToscaNames.put(nodeType.getKey(), toscaResourceName);
 			}
 		}
+		for(NodeTypeInfo cvfc : nodeTypesInfo.values()){
+			vfcToscaNames.put(cvfc.getType(), buildNestedToscaResourceName(ResourceTypeEnum.CVFC.name(), vfResourceName, cvfc.getType()));
+		}
 		return vfcToscaNames;
 	}
 
@@ -1461,7 +1464,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		String nameWithouNamespacePrefix = nodeName.substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
 		String[] findTypes = nameWithouNamespacePrefix.split("\\.");
 		String resourceType = findTypes[0];
-		return resourceVfName + "-" + nameWithouNamespacePrefix.substring(resourceType.length() + 1) + "Cvfc";
+		String resourceName = resourceVfName + "-" + nameWithouNamespacePrefix.substring(resourceType.length() + 1);
+		return  addCvfcSuffixToResourceName(resourceName);
 	}
 
 	private Either<Resource, ResponseFormat> createResourceAndRIsFromYaml(String yamlName, Resource resource, ParsedToscaYamlInfo parsedToscaYamlInfo, AuditingActionEnum actionEnum, boolean isNormative,
@@ -1987,6 +1991,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			if (eitherCreateResult.isRight()) {
 				return Either.right(eitherCreateResult.right().value());
 			}
+			resource = eitherCreateResult.left().value();
 
 			Either<ImmutablePair<String, String>, ResponseFormat> artifacsMetaCsarStatus = CsarValidationUtils.getArtifactsMeta(csarInfo.getCsar(), csarInfo.getCsarUUID(), componentsUtils);
 			if (artifacsMetaCsarStatus.isLeft()) {
@@ -2895,7 +2900,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				}
 			}
 			if (resStatus == null) {
-				resStatus = Either.left(resource);
+				Either<Resource, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaElement(resource.getUniqueId());
+				resStatus = toscaElement.bimap(resourceResponse -> resourceResponse,
+											   storageResponse -> componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(storageResponse), resource));
 			}
 		} catch (Exception e) {
 			resStatus = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -6209,11 +6216,23 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	 *
 	 * return Either.left(true); }
 	 */
+	private boolean isResourceNameEquals(Resource currentResource, Resource updateInfoResource) {
+		String resourceNameUpdated = updateInfoResource.getName();
+		String resourceNameCurrent = currentResource.getName();
+		if (resourceNameCurrent.equals(resourceNameUpdated))
+			return true;
+		// In case of CVFC type we should support the case of old VF with CVFC instances that were created without the "Cvfc" suffix
+		return (currentResource.getResourceType().equals(ResourceTypeEnum.CVFC)
+				&& resourceNameUpdated.equals(addCvfcSuffixToResourceName(resourceNameCurrent)));
+	}
+
+	private String addCvfcSuffixToResourceName(String resourceName) {
+		return resourceName+"Cvfc";
+	}
 
 	private Either<Boolean, ResponseFormat> validateResourceName(Resource currentResource, Resource updateInfoResource, boolean hasBeenCertified) {
 		String resourceNameUpdated = updateInfoResource.getName();
-		String resourceNameCurrent = currentResource.getName();
-		if (!resourceNameCurrent.equals(resourceNameUpdated)) {
+		if (!isResourceNameEquals(currentResource, updateInfoResource)) {
 			if (!hasBeenCertified) {
 				Either<Boolean, ResponseFormat> validateResourceNameResponse = validateComponentName(null, updateInfoResource, null);
 				if (validateResourceNameResponse.isRight()) {
@@ -6229,7 +6248,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				currentResource.setNormalizedName(ValidationUtils.normaliseComponentName(resourceNameUpdated));
 				currentResource.setSystemName(ValidationUtils.convertToSystemName(resourceNameUpdated));
 
-			} else {
+			} else if(currentResource.getResourceType() != ResourceTypeEnum.CVFC) {
 				log.info("Resource name: {}, cannot be updated once the resource has been certified once.", resourceNameUpdated);
 				ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NAME_CANNOT_BE_CHANGED);
 				return Either.right(errorResponse);
