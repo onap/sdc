@@ -14,7 +14,7 @@ rc=$?
 #   exit 0
 #fi
 
-while true; do sleep 2; done
+#while true; do sleep 2; done
 
 ##/docker-entrypoint.sh
 
