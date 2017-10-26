@@ -114,7 +114,9 @@ export class  GlobalModalView extends React.Component {
 				<Modal.Body>
 					{ComponentToRender ?
 						<ComponentToRender {...modalComponentProps}/> :
-						<div> {msg && msg.split('\n').map(txt => <span> {txt} <br/> </span>)} </div>
+						msg && typeof msg === 'string' ?
+							<div> {msg.split('\n').map(txt => <span> {txt} <br/> </span>)} </div> :
+							msg
 					}
 				</Modal.Body>
 				{(onConfirmed || onDeclined || type !== typeEnum.DEFAULT) &&
