@@ -17,16 +17,16 @@ function cleanup {
 
 
 function dir_perms {
-	mkdir -p /data/logs/BE/ASDC/ASDC-BE
-	mkdir -p /data/logs/FE/ASDC/ASDC-FE
+	mkdir -p /data/logs/BE/SDC/SDC-BE
+	mkdir -p /data/logs/FE/SDC/SDC-FE
 	chmod -R 777 /data/logs
 }
 
 function monitor_docker {
 
 echo monitor $1 Docker
-
-TIME_OUT=180
+sleep 5
+TIME_OUT=600
 INTERVAL=20
 TIME=0
 while [ "$TIME" -lt "$TIME_OUT" ]; do
