@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_009a2163",
+        "filename": "sdc-os-chef/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-26T11:03:44Z",
+      "side": 1,
+      "message": "In some editors the file appears garbled because of the tabs. Please replace them with spaces.",
+      "revId": "98c098fbcd6907922fef91a1466f3845726c56a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_20bcfdba",
+        "filename": "sdc-os-chef/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-26T11:03:44Z",
+      "side": 1,
+      "message": "Does it make sense to expose credentials in a public repo? Either the access if free and then doesn\u0027t require a password, or it\u0027s restricted and then the password should be kept a secret.",
+      "revId": "98c098fbcd6907922fef91a1466f3845726c56a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
