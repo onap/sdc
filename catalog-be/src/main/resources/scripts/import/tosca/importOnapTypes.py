@@ -26,12 +26,12 @@ def importOnapTypes(beHost, bePort, adminUser, fileDir, updateversion):
 	              "extZteCP",
 	              "extZteVDU",
 	              "extZteVL",
+	              "NSD",
+				  "VDU",
 	              "vduCompute",
 				  "vduCpd",
 				  "vduVirtualStorage",
-				  "vnfVirtualLinkDesc",
-				  "NSD",
-				  "VDU"
+				  "vnfVirtualLinkDesc"
 				  ]
 		
 	responseCodes = [200, 201]
