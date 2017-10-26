@@ -44,7 +44,8 @@ const mapActionsToProps = (dispatch, {licenseModelId}) => {
 			type: globalMoadlActions.GLOBAL_MODAL_WARNING,
 			data:{
 				msg: generateConfirmationMsg(featureGroup),
-				title: i18n('Warning'),
+				confirmationButtonText: i18n('Delete'),
+				title: i18n('Delete'),
 				onConfirmed: ()=>FeatureGroupsActionHelper.deleteFeatureGroup(dispatch, {featureGroupId: featureGroup.id, licenseModelId, version})
 			}
 		}),

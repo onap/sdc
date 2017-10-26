@@ -45,7 +45,7 @@ const mapActionsToProps = (dispatch) => {
 			data:{
 				msg: i18n(`Are you sure you want to delete ${limit.name}?`),
 				confirmationButtonText: i18n('Delete'),
-				title: i18n('Warning'),
+				title: i18n('Delete'),
 				onConfirmed: ()=> LicenseKeyGroupsActionHelper.deleteLimit(dispatch, {limit, licenseKeyGroup: parent, licenseModelId, version}).then(() => 
 					selectedLimit === limit.id && onCloseLimitEditor()
 				)
