@@ -336,9 +336,11 @@
                             <apiVersion>1.23</apiVersion>
                             <registry>nexus3.onap.org:10003</registry>
                             <authConfig>
-      							<username>docker</username>
-      							<password>docker</password>
-    						</authConfig>                            
+                                <pull>
+      					<username>docker</username>
+      					<password>docker</password>
+      				</pull>
+    			    </authConfig>                            
                             <images>
 
                                 <!-- Build backend image -->
