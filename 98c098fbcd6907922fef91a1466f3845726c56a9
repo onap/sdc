@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a2f8d8d_60c1e52d",
+        "filename": "sdc-os-chef/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2017-10-26T11:08:58Z",
+      "side": 1,
+      "message": "Will fix that.",
+      "parentUuid": "1a2f8d8d_009a2163",
+      "revId": "98c098fbcd6907922fef91a1466f3845726c56a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a2f8d8d_20bcfdba",
         "filename": "sdc-os-chef/pom.xml",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2017-10-26T11:03:44Z",
       "side": 1,
       "message": "Does it make sense to expose credentials in a public repo? Either the access if free and then doesn\u0027t require a password, or it\u0027s restricted and then the password should be kept a secret.",
+      "revId": "98c098fbcd6907922fef91a1466f3845726c56a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_80c4d140",
+        "filename": "sdc-os-chef/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1341
+      },
+      "writtenOn": "2017-10-26T11:08:58Z",
+      "side": 1,
+      "message": "I\u0027ve asked linux foundation before adding it to here and they approved.\n\nThis is instead of defining it on each of the users settings.xml file",
+      "parentUuid": "1a2f8d8d_20bcfdba",
       "revId": "98c098fbcd6907922fef91a1466f3845726c56a9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
