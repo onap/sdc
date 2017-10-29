@@ -26,7 +26,7 @@ function monitor_docker {
 
 echo monitor $1 Docker
 sleep 5
-TIME_OUT=240
+TIME_OUT=600
 INTERVAL=20
 TIME=0
 while [ "$TIME" -lt "$TIME_OUT" ]; do
