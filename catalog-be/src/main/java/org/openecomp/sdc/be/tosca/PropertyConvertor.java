@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
-import fj.data.Either;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -41,10 +41,12 @@ import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+
+import fj.data.Either;
 
 public class PropertyConvertor {
 	private static PropertyConvertor instance;
@@ -72,12 +74,8 @@ public class PropertyConvertor {
 
 				// take only the properties of this resource
 				props.stream().filter(p -> p.getOwnerId() == null || p.getOwnerId().equals(component.getUniqueId())).forEach(property -> {
-					ToscaProperty prop = convertProperty(dataTypes, property, false);
-
-					if (prop != null) {
-					    properties.put(property.getName(), prop);
-                    }
-				});
+                    properties.put(property.getName(), convertProperty(dataTypes, property, false));
+ 				});
 				if (!properties.isEmpty()) {
 					toscaNodeType.setProperties(properties);
 				}
@@ -99,10 +97,9 @@ public class PropertyConvertor {
 			prop.setEntry_schema(eschema);
 		}
 		log.trace("try to convert property {} from type {} with default value [{}]", property.getName(), property.getType(), property.getDefaultValue());
-		prop.setDefaultp(convertToToscaObject(property.getType(), property.getDefaultValue(), innerType, dataTypes));
-		
-		if (prop.getDefaultp() == null) {
-		    return null;
+        Object convertedObj = convertToToscaObject(property.getType(), property.getDefaultValue(), innerType, dataTypes);
+        if (convertedObj != null) {
+            prop.setDefaultp(convertedObj);
         }
 		prop.setType(property.getType());
         prop.setDescription(property.getDescription());
@@ -111,6 +108,7 @@ public class PropertyConvertor {
             prop.setRequired(property.isRequired());
         }
         return prop;
+
 	}
 
 	public Object convertToToscaObject(String propertyType, String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
@@ -120,7 +118,6 @@ public class PropertyConvertor {
 			if(StringUtils.isEmpty(value)){
 				return null;
 			}
-
 		}
 		try {
 			ToscaMapValueConverter mapConverterInst = ToscaMapValueConverter.getInstance();
