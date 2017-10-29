@@ -15,6 +15,7 @@
  */
 import React from 'react';
 import Input from 'nfvo-components/input/validation/Input.jsx';
+import i18n from 'nfvo-utils/i18n/i18n.js';
 
 class LicenseModelDescriptionEdit extends React.Component {
 	render() {
@@ -33,8 +34,8 @@ class LicenseModelDescriptionEdit extends React.Component {
 					type='textarea'/>
 				<div className='buttons-row'>
 					<div className='buttons-wrapper'>
-						<div onClick={() => this.onClose()} className='description-button' data-test-id='vlm-summary-vendor-desc-cancel-btn'>cancel</div>
-						<div onClick={() => this.submit()}  className={saveButtonClassName} data-test-id='vlm-summary-vendor-desc-save-btn'>save</div>
+						<div onClick={() => this.submit()}  className={saveButtonClassName} data-test-id='vlm-summary-vendor-desc-save-btn'>{i18n('Save')}</div>
+						<div onClick={() => this.onClose()} className='description-button' data-test-id='vlm-summary-vendor-desc-cancel-btn'>{i18n('Cancel')}</div>
 					</div>
 				</div>
 			</div>

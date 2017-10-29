@@ -153,6 +153,12 @@ $lkg-ep-color: $light-blue;
             position: relative;
             left: -12px;
           }
+          .validation-error-message.tooltip {
+            z-index: 1000;
+            .tooltip-inner {
+              background-color: $red;
+            }
+          }
         }
       }
       .summary-count-list {

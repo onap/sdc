@@ -33,7 +33,7 @@ export default {
 	editDescriptionClose(dispatch) {
 		dispatch({
 			type: actionTypes.LM_DATA_CHANGED,
-			description: false
+			description: undefined
 		});
 	}
 };
