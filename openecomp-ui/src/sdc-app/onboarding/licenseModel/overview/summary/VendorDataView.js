@@ -26,8 +26,8 @@ import LicenseModelDescriptionEdit from './LicenseModelDescriptionEdit.jsx';
 import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import {VLM_DESCRIPTION_FORM} from '../LicenseModelOverviewConstants.js';
 
-export const mapStateToProps = ({licenseModel: {licenseModelEditor: {data}, licenseModelOverview: {descriptionEditor: {data: descriptionData, genericFieldInfo} }}}) => {
-	let description = (descriptionData && descriptionData.description) ? descriptionData.description : null;
+export const mapStateToProps = ({licenseModel: {licenseModelEditor: {data}, licenseModelOverview: {descriptionEditor: {data: descriptionData = {}, genericFieldInfo} }}}) => {
+	let {description} = descriptionData;
 	let isReadOnlyMode = VersionControllerUtils.isReadOnly(data);
 	return {
 		data,
@@ -57,10 +57,14 @@ export class VendorDataView extends Component {
 				<div className='vendor-title'>vendor</div>
 				<div className='vendor-name' data-test-id='vlm-summary-vendor-name'>{vendorName}</div>
 				{
-					description && !isReadOnlyMode ? this.renderDescriptionEdit() : this.renderDescription()
+					description !== undefined && !isReadOnlyMode ? this.renderDescriptionEdit() : this.renderDescription()
 				}
 			</div>
 		);
+	}
+
+	componentWillUnmount() {
+		this.props.onCancel();
 	}
 
 
