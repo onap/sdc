@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,9 @@ public class PropertyConvertorTest {
 
     @Test
     public void convertPropertyWhenValueAndDefaultNull() {
-        assertNull(PropertyConvertor.getInstance().convertProperty(dataTypes, property, false));
+        ToscaProperty prop = PropertyConvertor.getInstance().convertProperty(dataTypes, property, false);
+        assertNotNull(prop);
+        assertNull(prop.getDefaultp());
     }
 
     @Test
@@ -63,7 +66,15 @@ public class PropertyConvertorTest {
         resource.setProperties(properties);
         Either<ToscaNodeType, ToscaError> result = PropertyConvertor.getInstance().convertProperties(resource, new ToscaNodeType(), dataTypes);
         assertTrue(result.isLeft());
-        assertEquals(1, result.left().value().getProperties().size());
+        assertEquals(2, result.left().value().getProperties().size());
+        int cnt = 0;
+        for (Iterator<ToscaProperty> it = result.left().value().getProperties().values().iterator(); it.hasNext(); ) {
+            ToscaProperty prop = it.next();
+            if (prop.getDefaultp() == null) {
+                cnt++;
+            }
+        }
+        assertEquals(1, cnt);
     }
 
     @Test
@@ -82,6 +93,10 @@ public class PropertyConvertorTest {
         Either<ToscaNodeType, ToscaError> result = PropertyConvertor.getInstance().convertProperties(resource, new ToscaNodeType(), dataTypes);
         assertTrue(result.isLeft());
         assertEquals(2, result.left().value().getProperties().size());
+        for (Iterator<ToscaProperty> it = result.left().value().getProperties().values().iterator(); it.hasNext(); ) {
+            ToscaProperty prop = it.next();
+            assertNotNull(prop.getDefaultp());
+        }
     }
 
     @Test
@@ -97,6 +112,10 @@ public class PropertyConvertorTest {
         resource.setProperties(properties);
         Either<ToscaNodeType, ToscaError> result = PropertyConvertor.getInstance().convertProperties(resource, new ToscaNodeType(), dataTypes);
         assertTrue(result.isLeft());
-        assertNull(result.left().value().getProperties());
-    }
+        assertEquals(2, result.left().value().getProperties().size());
+        for (Iterator<ToscaProperty> it = result.left().value().getProperties().values().iterator(); it.hasNext(); ) {
+            ToscaProperty prop = it.next();
+            assertNull(prop.getDefaultp());
+        }
+     }
 }
