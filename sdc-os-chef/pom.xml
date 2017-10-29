@@ -337,10 +337,10 @@
                             <registry>nexus3.onap.org:10003</registry>
                             <authConfig>
                                 <pull>
-      					<username>docker</username>
-      					<password>docker</password>
-      				</pull>
-    			    </authConfig>                            
+      					            <username>docker</username>
+      					            <password>docker</password>
+      				            </pull>
+    			            </authConfig>
                             <images>
 
                                 <!-- Build backend image -->
@@ -460,7 +460,6 @@
                                 <id>push-images</id>
                                 <phase>deploy</phase>
                                 <goals>
-                                    <goal>build</goal>
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
