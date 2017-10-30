@@ -1,0 +1,38 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  org.openecomp.resource.vfc.AllottedResource:
+    derived_from: tosca.nodes.Root
+    description: ECOMP Allotted Resource base type all other allotted resources node types derive from
+    properties:
+      providing_service_uuid:
+        type: string
+        required: true
+        description: The depending service uuid in order to map the allotted resource to the specific service version
+      providing_service_invariant_uuid:
+        type: string
+        required: true
+        description: The depending service invariant uuid in order to map the allotted resource to the specific service version
+      providing_service_name:
+        type: string
+        required: true
+        description: The depending service name in order to map the allotted resource to the specific service version
+      role:
+        type: string
+        required: true
+        description: Unique label that defines the role that this allotted resource performs
+      min_instances:
+        type: integer
+        default: 1
+      max_instances:
+        type: integer
+        default: 1
+      target_network_role:
+        type: string
+        required: true
+        description: Target network role
+    requirements:
+    - service_dependency:
+        capability: org.openecomp.capabilities.AllottedResource
+        relationship: tosca.relationships.DependsOn
+        node: tosca.services.Root
+
