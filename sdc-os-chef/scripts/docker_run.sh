@@ -201,9 +201,9 @@ echo -e ""
 
 /data/scripts/docker_health.sh
 
-if [ $? -ne 0 ]; then
-    exit 1
-fi
+#if [ $? -ne 0 ]; then
+#    exit 1
+#fi
 
 # sanityDocker
 echo "docker run sdc-frontend..."
