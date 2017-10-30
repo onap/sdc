@@ -1,0 +1,20 @@
+{
+  "payloadName": "allottedResource.yml",
+  "contactId": "jh0003",
+  "name": "AllottedResource",
+  "description": "Allotted Resource base type all other allotted resources node types derive from",
+  "resourceIconPath": "defaulticon",
+  "categories": [
+  {
+    "name": "Allotted Resource",
+    "subcategories": [
+      {
+        "name": "Allotted Resource"
+      }
+    ]
+  }
+],
+  "tags": [
+    "AllottedResource"
+  ]
+}
