@@ -5,28 +5,9 @@
 Configuration
 =============
 
-.. note::
-   * This section is used to describe the options a software component offers for configuration.
-
-   * Configuration is typically: provided for platform-component and sdk projects;
-     and referenced in developer and user guides.
-   
-   * This note must be removed after content has been added.
-
-
-
-Example ...
-
-You can provide the following in ``basic.conf``
-
-``host=ADDRESS``
-  The address of the host
-
-``port=PORT``
-  The port used for signaling
-
-  Optional. Default: ``8080``
-
+.. contents::
+   :depth: 3
+..
 
 Global Configuration
 ====================
@@ -112,57 +93,77 @@ environment.json
 Backend Configurations
 ======================
 
-BE-configoration.yaml
+BE-configuration.yaml
 ---------------------
 
 ::
 
+    # Request headers for identification of the user that made the request
     identificationHeaderFields:
     - HTTP_IV_USER
     - HTTP_CSP_FIRSTNAME
     - HTTP_CSP_LASTNAME
     - HTTP_IV_REMOTE_ADDRESS
     - HTTP_CSP_WSTYPE
-
-    # catalog backend hostname
+    
+    # Catalog backend hostname
     beFqdn: <%= @host_ip %>
     
-    # catalog backend http port
+    # Catalog backend http port
     beHttpPort: <%= @catalog_port %>
     
-    # catalog backend http context
+    # Catalog backend http context
     beContext: /sdc/rest/config/get
     
-    # catalog backend protocol
+    # Catalog backend protocol
     beProtocol: http
     
-    # catalog backend ssl port
+    # Catalog backend ssl port
     beSslPort: <%= @ssl_port %>
+    
+    # Catalog backend configuration vesrion
     version: 1.0
+    
+    # Catalog backend configuration release date
     released: 2012-11-30
+    
+    # Catalog tosca current conformance version
     toscaConformanceLevel: 4.0
+    
+    # Catalog minimum tosca conformance version
     minToscaConformanceLevel: 3.0
     
+    # Titan configuration file location
     titanCfgFile: /var/lib/jetty/config/catalog-be/titan.properties
+    
+    # Does titan holds the persistency data in memory
     titanInMemoryGraph: false
+    
+    # The timeout for titan to lock on an object in a transaction
     titanLockTimeout: 1800
-    # The interval to try and reconnect to titan DB when it is down during ASDC startup:
+    
+    # The interval to try and reconnect to titan DB when it is down during SDC startup
     titanReconnectIntervalInSeconds: 3
     
-    # The read timeout towards Titan DB when health check is invoked:
+    # The read timeout towards Titan DB when health check is invoked
     titanHealthCheckReadTimeout: 1
     
-    # The interval to try and reconnect to Elasticsearch when it is down during ASDC startup:
+    # The interval to try and reconnect to Elasticsearch when it is down during SDC startup
     esReconnectIntervalInSeconds: 3
+    
+    # The interval to try and reconnect to UEB health check when it is down during SDC startup
     uebHealthCheckReconnectIntervalInSeconds: 15
+    
+    # The read timeout towards UEB when helath check is invoked
     uebHealthCheckReadTimeout: 4
     
-    # Protocols
+    # Protocols being used in SDC
     protocols:
         - http
         - https
     
     # Default imports
+    # Under each import there is the file the data will be imported from
     defaultImports:
         - nodes:
             file: nodes.yml
@@ -178,20 +179,40 @@ BE-configoration.yaml
             file: policies.yml
     
     # Users
+    **Is this neccessary**
     users:
         tom: passwd
         bob: passwd
     
     cassandraConfig:
+        # Cassandra hostname
         cassandraHosts: <%= @cassandra_ip %>
+        
+        # Cassandra local data center name
         localDataCenter: <%= @DC_NAME %>
+        
+        # The read timeout towards Cassandra when health check is invoked
         reconnectTimeout : 30000
+        
+        # Should an authentication be used when accessing Cassandra
         authenticate: true
+        
+        # Username for accessing Cassandra
         username: asdc_user
+        
+        # Password for accessing Cassnadra
         password: {{cassandra_password}}
+        
+        # Does an ssl should be used
         ssl: false
+        
+        # Location of .truststore file
         truststorePath : /config/.truststore
+        
+        # The .truststore file password
         truststorePassword : Aa123456
+        
+        # Keyspaces configuration for Cassandra
         keySpaces:
             - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
             - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
@@ -199,8 +220,10 @@ BE-configoration.yaml
             - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
             - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
     
+    **Commented out. Is this neccessary** 
     #Application-specific settings of ES
     elasticSearch:
+        
         # Mapping of index prefix to time-based frame. For example, if below is configured:
         #
         # - indexPrefix: auditingevents
@@ -215,13 +238,13 @@ BE-configoration.yaml
         # Legal values for creationPeriod - year, month, day, hour, minute, none (meaning no time-based behaviour).
         #
         # If no creationPeriod is configured for indexPrefix, default behavour is creationPeriod: month.
+        indicesTimeFrequency:
+            - indexPrefix: auditingevents
+              creationPeriod: month
+            - indexPrefix: monitoring_events
+              creationPeriod: month
     
-    indicesTimeFrequency:
-        - indexPrefix: auditingevents
-          creationPeriod: month
-        - indexPrefix: monitoring_events
-          creationPeriod: month
-    
+    # Artifact types placeholder
     artifactTypes:
         - CHEF
         - PUPPET
@@ -246,6 +269,7 @@ BE-configoration.yaml
         - GUIDE
         - PLAN
     
+    # License types placeholder
     licenseTypes:
         - User
         - Installation
@@ -261,6 +285,7 @@ BE-configoration.yaml
         - Abstract
         - CVFC
     
+    **Commented out. is this neccessary**
     # validForResourceTypes usage
     #     validForResourceTypes:
     #        - VF
@@ -268,6 +293,13 @@ BE-configoration.yaml
     
     deploymentResourceArtifacts:
     
+    # Deployment resource instance artifacts placeholders
+    # For each artifact the following properties exists:
+    # 
+    # displayName - The display name of the artifact
+    # type - The type of the artifact
+    # description - The description of the artifact
+    # fileExtension - The file extension of the artifact file for uploading
     deploymentResourceInstanceArtifacts:
         heatEnv:
             displayName: "HEAT ENV"
@@ -280,7 +312,14 @@ BE-configoration.yaml
             description: "VF Auto-generated HEAT Environment deployment artifact"
             fileExtension: "env"
     
-    #tosca artifacts placeholders
+    # Tosca artifacts placeholders
+    # For each artifact there is a template and a scar.
+    # For each one the following properties exists:
+    # 
+    # artifactName - The suffix of the artifact file
+    # displayName - The display name of the artifact
+    # type - The type of the artifact
+    # description - The description of the artifact
     toscaArtifacts:
         assetToscaTemplate:
             artifactName: -template.yml
@@ -293,11 +332,19 @@ BE-configoration.yaml
             type: TOSCA_CSAR
             description: TOSCA definition package of the asset
     
-    #Informational artifacts placeHolder
+    # Resource category to exclude
     excludeResourceCategory:
         - Generic
+    
+    # Resource type to exclude
     excludeResourceType:
         - PNF
+    
+    # Informational resource artifacts placeHolder
+    # For each artifact the following properties exists:
+    # 
+    # displayName - The display name of the artifact
+    # type - The type of the artifact
     informationalResourceArtifacts:
         features:
             displayName: Features
@@ -321,8 +368,14 @@ BE-configoration.yaml
         displayName: Resource Security Template
         type: OTHER
     
+    # Service category to exclude
     excludeServiceCategory:
     
+    # Informational service artifacts placeHolder
+    # For each artifact the following properties exists:
+    # 
+    # displayName - The display name of the artifact
+    # type - The type of the artifact
     informationalServiceArtifacts:
         serviceArtifactPlan:
             displayName: Service Artifact Plan
@@ -364,6 +417,11 @@ BE-configoration.yaml
             displayName: Service Security Template
             type: OTHER
     
+    # Service api artifacts placeHolder
+    # For each artifact the following properties exists:
+    # 
+    # displayName - The display name of the artifact
+    # type - The type of the artifact
     serviceApiArtifacts:
         configuration:
             displayName: Configuration
@@ -384,14 +442,20 @@ BE-configoration.yaml
             displayName: Testing
             type: OTHER
     
+    **Need to add data**
     additionalInformationMaxNumberOfKeys: 50
     
+    **Need to add data**
     systemMonitoring:
         enabled: false
         isProxy: false
         probeIntervalInSeconds: 15
     defaultHeatArtifactTimeoutMinutes: 60
     
+    # Service deployment artifacts placeHolder
+    # For each artifact the following properties exists:
+    # 
+    # acceptedTypes - File types that can be uploaded as each artifact
     serviceDeploymentArtifacts:
         YANG_XML:
             acceptedTypes:
@@ -427,6 +491,12 @@ BE-configoration.yaml
             acceptedTypes:
                 - xml
     
+    # Resource deployment artifacts placeHolder
+    # For each artifact the following properties exists:
+    # 
+    # acceptedTypes - File types that can be uploaded as each artifact
+    # validForRespurceTypes - Resource types that support each artifact. 
+    # If left empty it means all resource types are valid
     resourceDeploymentArtifacts:
         HEAT:
             acceptedTypes:
@@ -552,6 +622,12 @@ BE-configoration.yaml
                 - VF
                 - VFC
     
+    # Resource instance deployment artifacts placeHolder
+    # For each artifact the following properties exists:
+    # 
+    # acceptedTypes - File types that can be uploaded as each artifact
+    # validForRespurceTypes - Resource types that support each artifact. 
+    # If left empty it means all resource types are valid
     resourceInstanceDeploymentArtifacts:
         HEAT_ENV:
             acceptedTypes:
@@ -594,6 +670,12 @@ BE-configoration.yaml
             acceptedTypes:
                 - xml
     
+    # Resource informational artifacts placeHolder
+    # For each artifact the following properties exists:
+    # 
+    # acceptedTypes - File types that can be uploaded as each artifact
+    # validForRespurceTypes - Resource types that support each artifact. 
+    # If left empty it means all resource types are valid
     resourceInformationalArtifacts:
         CHEF:
             acceptedTypes:
@@ -652,28 +734,42 @@ BE-configoration.yaml
     
     capabilitiesToConsumeBeforeCert:
     
+    **Need to add data**
     unLoggedUrls:
        - /sdc2/rest/healthCheck
     
+    **Need to add data**
     cleanComponentsConfiguration:
         cleanIntervalInMinutes: 1440
         componentsToClean:
            - Resource
            - Service
     
+    **Need to add data**
     artifactsIndex: resources
     
+    **Need to add data**
     heatEnvArtifactHeader: ""
     heatEnvArtifactFooter: ""
     
     onboarding:
+        
+        # Onboarding protocol
         protocol: http
+        
+        # Onboarding backend hostname
         host: <%= @host_ip %>
+        
+        # Onboarding backend http port
         port: <%= @catalog_port %>
+        
+        # The url that being used when downloading CSARs
         downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
+        
+        # Url for onboarding health check
         healthCheckUri: "/onboarding-api/v1.0/healthcheck"
     
-    
+    **Need to add data**
     #GSS IDNS
     switchoverDetector:
         gBeFqdn:
@@ -692,12 +788,14 @@ BE-configoration.yaml
           beSet: { changePriorityUrl: "", changePriorityBody: '{"name":"","uri":"","no_ad_redirection":false,"v4groups":{"failover_groups":["","","failover_policy":["FAILALL"]},"comment":"","intended_app_proto":"DNS"}'}
           feSet: { changePriorityUrl: "", changePriorityBody: '{"name":"","uri":"","no_ad_redirection":false,"v4groups":{"failover_groups":["",""],"failover_policy":["FAILALL"]},"comment":"","intended_app_proto":"DNS"}'}
     
+    **Need to add data**
     applicationL1Cache:
         datatypes:
             enabled: true
             firstRunDelay: 10
             pollIntervalInSec: 60
     
+    **Need to add data**
     applicationL2Cache:
         enabled: false
         catalogL1Cache:
@@ -710,11 +808,14 @@ BE-configoration.yaml
             waitOnShutDownInMinutes: 10
             numberOfCacheWorkers: 4
     
+    **Need to add data**
     toscaValidators:
         stringMaxLength: 2500
     
+    # Should audit be disabled
     disableAudit: false
     
+    **Need to add data**
     vfModuleProperties:
         min_vf_module_instances:
             forBaseModule: 1
@@ -729,6 +830,7 @@ BE-configoration.yaml
             forBaseModule: Base
             forNonBaseModule: Expansion
     
+    # For each generic node type defining it's coresponding class
     genericAssetNodeTypes:
         VFC: org.openecomp.resource.abstract.nodes.VFC
         CVFC: org.openecomp.resource.abstract.nodes.VFC
@@ -742,51 +844,80 @@ BE-distribution-engine-configuration.yaml
 
 ::
 
+    # UEB servers list
     uebServers:
         <% node['UEB']['fqdn'].each do |conn| -%>
             - <%= conn %>
         <% end -%>
     
+    # UEB public key
     uebPublicKey: <%= node['UEB']['PublicKey'] %>
+    
+    # UEB secret key
     uebSecretKey: <%= node['UEB']['SecretKey'] %>
     
+    # Topic name for receiving distribution notification
     distributionNotifTopicName:  SDC-DISTR-NOTIF-TOPIC
+    
+    # Topic name for distribution status
     distributionStatusTopicName: SDC-DISTR-STATUS-TOPIC
     
+    # Distibution initializtion retry interval time
     initRetryIntervalSec: 5
+    
+    # Distribution initializtion maximum interval time
     initMaxIntervalSec: 60
     
+    **Need to add data**
     distribNotifServiceArtifactTypes:
         info:
             - MURANO-PKG
     
+    **Need to add data**
     distribNotifResourceArtifactTypes:
         lifecycle:
             - HEAT
             - DG-XML
     
+    # Distribution environments
     environments:
         - <%= node.chef_environment %>
     
     distributionStatusTopic:
+        
+        # Distribution status polling interval
         pollingIntervalSec: 60
+        
+        # Distribution status fetch time
         fetchTimeSec: 15
+        
+        # Distribution status consumer group
         consumerGroup: sdc-<%= node.chef_environment %>
+        
+        # Distribution status consumer id
         consumerId: sdc-<%= node.chef_environment %>1
     
-    
     distributionNotificationTopic:
+        
+        # Minimum pool size for distribution notifications
         minThreadPoolSize: 0
+        
+        # Maximum pool size for distribution notifications
         maxThreadPoolSize: 10
+        
+        # Maximum waiting time after sending a notification
         maxWaitingAfterSendingSeconds: 5
     
+    **Need to add data**
     createTopic:
         partitionCount: 1
         replicationCount: 1
     
+    # STarting the distribution engine
     startDistributionEngine: true
     
     #This is false by default, since ONAP Dmaap currently doesn't support https
+    # Does https should be used with Dmaap
     useHttpsWithDmaap: false
 
 
@@ -796,9 +927,17 @@ BE-onboarding-configuration.yaml
 ::
 
     notifications:
+        
+        # Backend onboarding notifications polling interval in milliseconds
         pollingIntervalMsec: 2000
+        
+        # Backend onboarding notifications selection size
         selectionSize: 100
+        
+        # Backend onboarding norifications backend hostname
         beHost: <%= @catalog_ip %>
+        
+        # Backend onboarding notifications backend http port
         beHttpPort: <%= @catalog_port %>
 
 
@@ -807,29 +946,60 @@ BE-titan.properties
 
 ::
 
+    # Titan storage backend
     storage.backend=cassandra
+    
+    # Titan storage hostname
     storage.hostname=<%= @CASSANDRA_IP %>
+    
+    # Titan storage port]
     storage.port=9160
+    
+    # Titan storage username
     storage.username=<%= @CASSANDRA_USR %>
+    
+    # Titan storage password
     storage.password=<%= @CASSANDRA_PWD %>
+    
+    # Titan storage connection timeout
     storage.connection-timeout=10000
+    
+    # Titan cassandra keyspace name
     storage.cassandra.keyspace=sdctitan
     
+    # Is Titan cassandra ssl is enabled
     storage.cassandra.ssl.enabled=false
+    
+    # Titan cassandra ssl truststore file location
     storage.cassandra.ssl.truststore.location=/var/lib/jetty/config/.truststore
+    
+    # Titan cassandra ssl truststore file password
     storage.cassandra.ssl.truststore.password=Aa123456
     
+    # Does titan should use cache
     cache.db-cache = false
+    
+    **Need to add data**
     cache.db-cache-clean-wait = 20
     cache.db-cache-time = 180000
     cache.db-cache-size = 0.5
     
+    # Titan cassandra read consistency level
     storage.cassandra.read-consistency-level=LOCAL_QUORUM
+    
+    # Titan cassandra write consistency level
     storage.cassandra.write-consistency-level=LOCAL_QUORUM
+    
+    # Titan cassandra replication strategy class name
     storage.cassandra.replication-strategy-class=org.apache.cassandra.locator.NetworkTopologyStrategy
+    
+    # Titan cassandra replication startegy options
     storage.cassandra.replication-strategy-options=<%= @DC_NAME %>,<%= @rep_factor %>
+    
+    # Titan cassandra local data center name
     storage.cassandra.astyanax.local-datacenter=<%= @DC_NAME %>
     
+    **Need to add data**
     storage.lock.retries=5
     storage.lock.wait-time=500
 
@@ -842,40 +1012,51 @@ FE-configuration.yaml
 
 ::
 
-    # Needed for logging purposes. To be populated by DevOps - currently dummy
+    # Catalog frontend hostname
     feFqdn: <%= @fe_host_ip %>
     
-    # catalog backend hostname
+    # Catalog backend hostname
     beHost: <%= @be_host_ip %>
     
-    # catalog backend http port
+    # Catalog backend http port
     beHttpPort: <%= @catalog_port %>
     
-    # catalog backend http context
+    # Catalog backend http context
     beContext: /sdc2/rest/v1/catalog/upload/resources
     
-    # catalog backend protocol
+    # Catalog backend protocol
     beProtocol: http
     
-    # catalog backend ssl port
+    # Catalog backend ssl port
     beSslPort: <%= @ssl_port %>
     
-    # threadpool size for handling requests
+    # Threadpool size for handling requests
     threadpoolSize: 50
     
-    # request processing timeout (seconds)
+    # Request processing timeout (seconds)
     requestTimeout: 10
     
+    # Health check timeout in milliseconds
     healthCheckSocketTimeoutInMs: 5000
     
+    # Health check inteval in seconds
     healthCheckIntervalInSeconds: 5
     
     onboarding:
+        
+        # Onboarding protocol
         protocol: http
+        
+        # Onboarding frontend hostname
         host: <%= @fe_host_ip %>
+        
+        # Onboarding frontend port
         port: 8181
+        
+        # Onboarding frontend health check url
         healthCheckUri: "/onboarding/v1.0/healthcheck"
     
+    # Request headers for identification of the user that made the request
     identificationHeaderFields: 
         -
             - &HTTP_IV_USER HTTP_IV_USER
@@ -890,6 +1071,7 @@ FE-configuration.yaml
             - &HTTP_CSP_WSTYPE HTTP_CSP_WSTYPE
             - &csp-wstype csp-wstype
     
+    # Optional request headers
     optionalHeaderFields:
         -
             - &HTTP_CSP_FIRSTNAME HTTP_CSP_FIRSTNAME
@@ -904,7 +1086,10 @@ FE-configuration.yaml
             - &HTTP_CSP_EMAIL HTTP_CSP_EMAIL
             - &csp-email csp-email
     
+    # Frontend configuration version
     version: 1.0
+    
+    # Frontend configuration release date
     released: 2012-11-30
     
     # Connection parameters
@@ -912,19 +1097,24 @@ FE-configuration.yaml
         url: jdbc:mysql://localhost:3306/db
         poolSize: 17
     
-    # Protocols
+    # Protocols being used in SDC
     protocols:
         - http
         - https
     
-    
+    **Need to add data**
     systemMonitoring:
         enabled: false
         isProxy: true
         probeIntervalInSeconds: 15
     
+    # Kibana hostname
     kibanaHost: localhost
+    
+    # Kibana http port
     kibanaPort: 5601
+    
+    # Kibana usage protocol
     kibanaProtocol: http
 
 
@@ -934,7 +1124,15 @@ FE-onboarding-configuration.yaml
 ::
 
     notifications:
+        
+        # Frontend onboarding notifications polling interval in milliseconds
         pollingIntervalMsec: 2000
+        
+        # Frontend onboarding notifications selection size
         selectionSize: 100
+        
+        # Frontend onboarding norifications backend hostname
         beHost: <%= @catalog_ip %>
+        
+        # Frontend onboarding notifications backend http port
         beHttpPort: <%= @catalog_port %>
