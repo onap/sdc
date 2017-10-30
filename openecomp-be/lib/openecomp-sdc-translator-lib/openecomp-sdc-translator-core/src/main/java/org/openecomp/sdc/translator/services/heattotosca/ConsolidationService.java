@@ -24,6 +24,7 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.RequirementAssignmentData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.TypeComputeConsolidationData;
+import org.openecomp.sdc.translator.services.heattotosca.errors.DuplicateResourceIdsInDifferentFilesErrorBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -637,20 +638,16 @@ public class ConsolidationService {
     NodeTemplate startingPortNodeTemplate = nodeTemplates.get(portNodeTemplateIdList.get(0));
 
     if (Objects.isNull(startingPortNodeTemplate)) {
-      throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-          .withMessage("Resource with id "
-              + portNodeTemplateIdList.get(0) + " occures more than once in different addOn files")
-          .build());
+      throw new CoreException(
+          new DuplicateResourceIdsInDifferentFilesErrorBuilder(portNodeTemplateIdList.get(0)).build());
     }
 
     for (int i = 1; i < portNodeTemplateIdList.size(); i++) {
       NodeTemplate portNodeTemplate = nodeTemplates.get(portNodeTemplateIdList.get(i));
 
       if (Objects.isNull(portNodeTemplate)) {
-        throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-            .withMessage("Resource with id "
-                + portNodeTemplateIdList.get(i) + " occures more than once in different addOn "
-                + "files").build());
+        throw new CoreException(
+            new DuplicateResourceIdsInDifferentFilesErrorBuilder(portNodeTemplateIdList.get(i)).build());
       }
 
       if (!isPropertySimilarBetweenNodeTemplates(propertyToCheck, portNodeTemplateIdList, nodeTemplates)) {
@@ -695,9 +692,8 @@ public class ConsolidationService {
     for (int i = 1; i < entityNodeTemplateIds.size(); i++) {
       NodeTemplate currentNodeTemplate = idToNodeTemplate.get(entityNodeTemplateIds.get(i));
       if (Objects.isNull(currentNodeTemplate)) {
-        throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-            .withMessage("Resource with id "
-                + entityNodeTemplateIds.get(i) + " occures more than once in different addOn files").build());
+        throw new CoreException(
+            new DuplicateResourceIdsInDifferentFilesErrorBuilder(entityNodeTemplateIds.get(i)).build());
       }
       if(propertyExistCondition != isPropertyExistInNodeTemplate(propertyToCheck, currentNodeTemplate)){
         return false;

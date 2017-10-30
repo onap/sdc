@@ -31,6 +31,7 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.PortTemplateConsolidationData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.RequirementAssignmentData;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.TypeComputeConsolidationData;
+import org.openecomp.sdc.translator.services.heattotosca.errors.DuplicateResourceIdsInDifferentFilesErrorBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -154,10 +155,7 @@ public class ConsolidationDataUtil {
 
     if(isNestedResourceIdOccuresInDifferentNestedFiles(context, nestedHeatFileName,
         nestedNodeTemplateId)){
-      throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-          .withMessage("Resource with id "
-              + nestedNodeTemplateId + " occures more than once in different addOn "
-              + "files").build());
+      throw new CoreException(new DuplicateResourceIdsInDifferentFilesErrorBuilder(nestedNodeTemplateId).build());
     }
 
     ConsolidationData consolidationData = context.getConsolidationData();
