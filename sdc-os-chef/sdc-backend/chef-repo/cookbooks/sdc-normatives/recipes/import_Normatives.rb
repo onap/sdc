@@ -11,7 +11,7 @@ bash "import-normatives" do
     cd normatives/scripts/import/tosca/
     /bin/chmod +x importNormativeAll.py
 # add --debug=true to the importNormativeAll.py arguments to enable debug
-    python importNormativeAll.py -i localhost > /var/lib/jetty/logs/importNormativeAll.log
+    python importNormativeAll.py --debug=true -i localhost > /var/lib/jetty/logs/importNormativeAll.log
   EOH
 end
 
