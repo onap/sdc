@@ -562,6 +562,12 @@ data_types:
         type: string
         status: SUPPORTED
         required: false
+      subnet_id:
+        type: string
+        description: Subnet in which to allocate the IP address for this port
+        required: false
+        status: SUPPORTED
+
 
   org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties:
     derived_from: tosca.datatypes.Root
