@@ -430,7 +430,6 @@
                                 <id>push-images</id>
                                 <phase>deploy</phase>
                                 <goals>
-                                    <goal>build</goal>
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
