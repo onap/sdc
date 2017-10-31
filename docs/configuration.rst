@@ -18,14 +18,22 @@ environment.json
 ::
 
     {
+        # Environment name
         "name": "xxx",
+        
+        # Environment description
         "description": "OpenSource-xxx",
+        
+        # Chef properties
         "cookbook_versions": {
             "Deploy-SDandC": "= 1.0.0"
         },
         "json_class": "Chef::Environment",
         "chef_type": "environment",
+        
         "default_attributes": {
+        
+            # IPs used for docker configuration
             "CS_VIP": "yyy",
             "BE_VIP": "yyy",
             "FE_VIP": "yyy",
@@ -34,6 +42,8 @@ environment.json
                 "application": "eth0",
                 "private": "eth1"
             },
+            
+            # Configuration parameters used in portal properties 
             "ECompP": {
                 "ecomp_rest_url": "http://portal.api.simpledemo.onap.org:8989/ONAPPORTAL/auxapi",
                 "ueb_url_list": "10.0.11.1,10.0.11.1",
@@ -44,11 +54,15 @@ environment.json
                 "app_topic_name": "ECOMP-PORTAL-OUTBOX-SDC1",
                 "decryption_key": "AGLDdG4D04BKm2IxIWEr8o=="
             },
+            
+            # Configuration parameters used by SDC to work with Dmaap
             "UEB": {
                 "PublicKey": "iPIxkpAMI8qTcQj8",
                 "SecretKey": "Ehq3WyT4bkif4zwgEbvshGal",
                 "fqdn": ["10.0.11.1", "10.0.11.1"]
             },
+            
+            # IPs used for docker configuration
             "Nodes": {
                 "CS": "yyy",
                 "BE": "yyy",
@@ -57,6 +71,8 @@ environment.json
             }
         },
         "override_attributes": {
+             
+            # FE and BE listening ports
             "FE": {
                 "http_port": "8181",
                 "https_port": "9443"
@@ -65,6 +81,8 @@ environment.json
                 "http_port": "8080",
                 "https_port": "8443"
             },
+            
+            # Elasticsearch configuration
             "elasticsearch": {
                 "cluster_name": "SDC-ES-",
                 "ES_path_home": "/usr/share/elasticsearch",
@@ -72,6 +90,8 @@ environment.json
                 "num_of_replicas": "0",
                 "num_of_shards": "1"
             },
+            
+            # Cassandra configuration
             "cassandra": {
                 "concurrent_reads": "32",
                 "num_tokens": "256",
@@ -179,7 +199,7 @@ BE-configuration.yaml
             file: policies.yml
     
     # Users
-    **Is this neccessary**
+    # Deprecated. Will be removed in future releases
     users:
         tom: passwd
         bob: passwd
@@ -220,8 +240,7 @@ BE-configuration.yaml
             - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
             - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
     
-    **Commented out. Is this neccessary** 
-    #Application-specific settings of ES
+    # Application-specific settings of ES
     elasticSearch:
         
         # Mapping of index prefix to time-based frame. For example, if below is configured:
@@ -275,7 +294,7 @@ BE-configuration.yaml
         - Installation
         - CPU
     
-    #Deployment artifacts placeHolder
+    # Resource types placeholder
     resourceTypes: &allResourceTypes
         - VFC
         - CP
@@ -285,12 +304,7 @@ BE-configuration.yaml
         - Abstract
         - CVFC
     
-    **Commented out. is this neccessary**
-    # validForResourceTypes usage
-    #     validForResourceTypes:
-    #        - VF
-    #        - VL
-    
+    #Deployment resource artifacts placeHolder
     deploymentResourceArtifacts:
     
     # Deployment resource instance artifacts placeholders
@@ -442,14 +456,21 @@ BE-configuration.yaml
             displayName: Testing
             type: OTHER
     
-    **Need to add data**
+    # The maximum number of keys permited for additional information on service
     additionalInformationMaxNumberOfKeys: 50
     
-    **Need to add data**
+    # Collect process statistics
     systemMonitoring:
+        
+        # Should monitoring be enabled
         enabled: false
+        
+        # In case of going through the FE server proxy the information to the BE
         isProxy: false
+        
+        # What is the interval of the statistics collection
         probeIntervalInSeconds: 15
+    
     defaultHeatArtifactTimeoutMinutes: 60
     
     # Service deployment artifacts placeHolder
@@ -728,27 +749,34 @@ BE-configuration.yaml
                 - VFC
                 - CVFC
     
+    # Resource informational deployment artifact placeholder
     resourceInformationalDeployedArtifacts:
     
+    # Requirements needed to be fulfilled before certificattion
     requirementsToFulfillBeforeCert:
     
+    # Capabillities needed to be fulfilled before certificattion
     capabilitiesToConsumeBeforeCert:
     
-    **Need to add data**
+    # Urls that should not be logged
     unLoggedUrls:
        - /sdc2/rest/healthCheck
     
-    **Need to add data**
+    # When component is being set as deleted those are the clean configurations
     cleanComponentsConfiguration:
+        
+        # The interval to check for deleted components to clean
         cleanIntervalInMinutes: 1440
+        
+        # The components types to delete
         componentsToClean:
            - Resource
            - Service
     
-    **Need to add data**
+    # Deprecated. Will be removed in future releases
     artifactsIndex: resources
     
-    **Need to add data**
+    # Used to add header and footer to heatENV files generated by SDC
     heatEnvArtifactHeader: ""
     heatEnvArtifactFooter: ""
     
@@ -769,8 +797,9 @@ BE-configuration.yaml
         # Url for onboarding health check
         healthCheckUri: "/onboarding-api/v1.0/healthcheck"
     
-    **Need to add data**
+    
     #GSS IDNS
+    # Switchover configuration is used for geo redundency to provide automatic failovers
     switchoverDetector:
         gBeFqdn:
         gFeFqdn:
@@ -788,14 +817,14 @@ BE-configuration.yaml
           beSet: { changePriorityUrl: "", changePriorityBody: '{"name":"","uri":"","no_ad_redirection":false,"v4groups":{"failover_groups":["","","failover_policy":["FAILALL"]},"comment":"","intended_app_proto":"DNS"}'}
           feSet: { changePriorityUrl: "", changePriorityBody: '{"name":"","uri":"","no_ad_redirection":false,"v4groups":{"failover_groups":["",""],"failover_policy":["FAILALL"]},"comment":"","intended_app_proto":"DNS"}'}
     
-    **Need to add data**
+    # Cache for datatypes. Improving run times for data type search
     applicationL1Cache:
         datatypes:
             enabled: true
             firstRunDelay: 10
             pollIntervalInSec: 60
     
-    **Need to add data**
+    # Deprecated. Will be removed in future releases
     applicationL2Cache:
         enabled: false
         catalogL1Cache:
@@ -808,14 +837,14 @@ BE-configuration.yaml
             waitOnShutDownInMinutes: 10
             numberOfCacheWorkers: 4
     
-    **Need to add data**
+    # Validators for tosca properties
     toscaValidators:
         stringMaxLength: 2500
     
     # Should audit be disabled
     disableAudit: false
     
-    **Need to add data**
+    # VF module validations properties
     vfModuleProperties:
         min_vf_module_instances:
             forBaseModule: 1
@@ -868,12 +897,12 @@ BE-distribution-engine-configuration.yaml
     # Distribution initializtion maximum interval time
     initMaxIntervalSec: 60
     
-    **Need to add data**
+    # Deprecated. Will be removed in future releases
     distribNotifServiceArtifactTypes:
         info:
             - MURANO-PKG
     
-    **Need to add data**
+    # Deprecated. Will be removed in future releases
     distribNotifResourceArtifactTypes:
         lifecycle:
             - HEAT
@@ -908,7 +937,7 @@ BE-distribution-engine-configuration.yaml
         # Maximum waiting time after sending a notification
         maxWaitingAfterSendingSeconds: 5
     
-    **Need to add data**
+    # Deprecated. Will be removed in future releases
     createTopic:
         partitionCount: 1
         replicationCount: 1
@@ -979,9 +1008,13 @@ BE-titan.properties
     # Does titan should use cache
     cache.db-cache = false
     
-    **Need to add data**
+    # How long in milliseconds should the cache keep entries before flushing them
     cache.db-cache-clean-wait = 20
+    
+    # Default experation time in milliseconds for entries in the cache
     cache.db-cache-time = 180000
+    
+    # Size of titan database cache
     cache.db-cache-size = 0.5
     
     # Titan cassandra read consistency level
@@ -999,8 +1032,10 @@ BE-titan.properties
     # Titan cassandra local data center name
     storage.cassandra.astyanax.local-datacenter=<%= @DC_NAME %>
     
-    **Need to add data**
+    # Number of times the system attempts to acquire a lock before giving up and throwing an exception
     storage.lock.retries=5
+    
+    # Number of milliseconds the system waits for a lock application to be acknowledged by the storage backend
     storage.lock.wait-time=500
 
 
@@ -1102,10 +1137,16 @@ FE-configuration.yaml
         - http
         - https
     
-    **Need to add data**
+    # Collect process statistics
     systemMonitoring:
+        
+        # Should monitoring be enabled
         enabled: false
+        
+        # In case of going through the FE server proxy the information to the BE
         isProxy: true
+        
+        # What is the interval of the statistics collection
         probeIntervalInSeconds: 15
     
     # Kibana hostname
