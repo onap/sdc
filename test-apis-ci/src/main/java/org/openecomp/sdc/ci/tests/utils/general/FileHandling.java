@@ -390,6 +390,15 @@ public class FileHandling {
 //
 //		}
 //	}
+
+	public static String getCreateDirByName(String dirName) {
+		File dir = new File(dirName);
+		dir.mkdir();
+		if(!dir.exists()) {
+		}
+
+		return dir.getPath();
+	}
 	
 	public static boolean isFileDownloaded(String downloadPath, String fileName) {
 		boolean flag = false;

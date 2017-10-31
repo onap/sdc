@@ -28,6 +28,7 @@ import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanVertex;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.log4j.Logger;
@@ -48,6 +49,7 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.cassandra.CassandraUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openecomp.sdc.ci.tests.utils.general.FileHandling;
 import org.openecomp.sdc.ci.tests.utils.rest.*;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
@@ -186,6 +188,10 @@ public abstract class ComponentBaseTest {
 		
 		performClean();
 		shutdownTitanLogic();
+		String basePath = FileHandling.getBasePath();
+		String csarDir = FileHandling.getCreateDirByName("outputCsar");
+		FileUtils.cleanDirectory(new File(csarDir));
+
 
 	}
 
