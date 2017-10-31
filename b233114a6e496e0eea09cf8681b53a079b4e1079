@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_8ccbdea4",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/errors/DuplicateResourceIdsInDifferentFilesErrorBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-31T13:32:35Z",
+      "side": 1,
+      "message": "Please write unit tests for this class.",
+      "revId": "b233114a6e496e0eea09cf8681b53a079b4e1079",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_ecb4a236",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/errors/DuplicateResourceIdsInDifferentFilesErrorBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-31T13:32:35Z",
+      "side": 1,
+      "message": "Please make the class final. FYI please see SDC-560 for general problems with this implementation pattern.",
+      "revId": "b233114a6e496e0eea09cf8681b53a079b4e1079",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_4cde166f",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/errors/DuplicateResourceIdsInDifferentFilesErrorBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-31T13:32:35Z",
+      "side": 1,
+      "message": "Should be \"occurs\".",
+      "revId": "b233114a6e496e0eea09cf8681b53a079b4e1079",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_acd45a47",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/errors/DuplicateResourceIdsInDifferentFilesErrorBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-31T13:32:35Z",
+      "side": 1,
+      "message": "This is a constant - must be \"static final\".",
+      "revId": "b233114a6e496e0eea09cf8681b53a079b4e1079",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_0c56ced2",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/errors/DuplicateResourceIdsInDifferentFilesErrorBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-31T13:32:35Z",
+      "side": 1,
+      "message": "Please follow the coding conventions - there should be a space before {",
+      "revId": "b233114a6e496e0eea09cf8681b53a079b4e1079",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_6cf792f6",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/errors/DuplicateResourceIdsInDifferentFilesErrorBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-10-31T13:32:35Z",
+      "side": 1,
+      "message": "Since getErrorCodeBuilder() returns the same object (there is no reason for it to do otherwise), this code can be significantly simplified by introducing a local variable of type ErrorCode.ErrorCodeBuilder. It can be simplified even further using the fluent API, which ErrorCode.ErrorCodeBuilder supports. See getErrorCodeBuilder().withId(TranslatorErrorCodes.DUPLICATE_RESOURCE_ID_IN_DIFFERENT_FILES).withCategory(ErrorCategory.APPLICATION).withMessage(String.format(DUPLICATE_RESOURCE_ID_MSG, resourceId));",
+      "revId": "b233114a6e496e0eea09cf8681b53a079b4e1079",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
