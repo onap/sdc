@@ -26,10 +26,7 @@ import static org.testng.AssertJUnit.assertTrue;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.apache.http.HttpEntity;
@@ -62,6 +59,7 @@ import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
+import org.openecomp.sdc.ci.tests.utils.general.FileHandling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +103,9 @@ public class AssetRestUtils extends BaseRestUtils {
 		String url = String.format(Urls.GET_TOSCA_MODEL, config.getCatalogBeHost(), config.getCatalogBePort(),
 				assetType.getValue(), uuid);
 		HttpGet httpGet = new HttpGet(url);
-		File myFile = new File("tmpCSAR");
+
+		String csarDir = FileHandling.getCreateDirByName("outputCsar");
+		File myFile = new File(csarDir+ File.separator + "tmpCSAR" + getShortUUID()+".csar");
 
 		
 		httpGet.addHeader(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
@@ -123,7 +123,9 @@ public class AssetRestUtils extends BaseRestUtils {
 	    }
 		return myFile;
 	}
-	
+
+
+
 	public static RestResponse getRestResponseComponentToscaModel(AssetTypeEnum assetType, String uuid) throws IOException {
 		Config config = Utils.getConfig();
 		
@@ -621,6 +623,9 @@ public class AssetRestUtils extends BaseRestUtils {
 			return ComponentTypeEnum.RESOURCE;
 		}
 		return null;
+	}
+	private static String getShortUUID() {
+		return UUID.randomUUID().toString().split("-")[0];
 	}
 	
 }
