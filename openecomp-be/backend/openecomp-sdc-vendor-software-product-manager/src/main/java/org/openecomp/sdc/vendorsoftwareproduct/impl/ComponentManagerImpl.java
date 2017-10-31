@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.VFC_NODE_TYPE_PREFIX;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -59,6 +57,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.COMPUTE_TYPE_PREFIX;
 
 public class ComponentManagerImpl implements ComponentManager {
   private static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
@@ -154,9 +154,8 @@ public class ComponentManagerImpl implements ComponentManager {
   }
 
   private void updateComponentName(ComponentEntity component) {
-    final String NAME_PREFIX = VFC_NODE_TYPE_PREFIX + "heat.";
     ComponentData data = component.getComponentCompositionData();
-    data.setName(NAME_PREFIX + data.getDisplayName());
+    data.setName(COMPUTE_TYPE_PREFIX + data.getDisplayName());
     component.setComponentCompositionData(data);
   }
 
@@ -209,19 +208,22 @@ public class ComponentManagerImpl implements ComponentManager {
     ComponentEntity retrieved =
         getComponent(component.getVspId(), component.getVersion(), component.getId());
 
-    if (vspInfoDao.isManual(component.getVspId(), component.getVersion())) {
+    boolean isManual = vspInfoDao.isManual(component.getVspId(), component.getVersion());
+    if (isManual) {
       validateComponentUpdateManual(component, retrieved, user);
     }
 
 
     ComponentCompositionSchemaInput schemaInput = new ComponentCompositionSchemaInput();
-    schemaInput.setManual(vspInfoDao.isManual(component.getVspId(), component.getVersion()));
+    schemaInput.setManual(isManual);
     schemaInput.setComponent(retrieved.getComponentCompositionData());
 
     CompositionEntityValidationData validationData = compositionEntityDataManager
         .validateEntity(component, SchemaTemplateContext.composition, schemaInput);
     if (CollectionUtils.isEmpty(validationData.getErrors())) {
-      updateComponentName(component);
+      if(isManual) {
+        updateComponentName(component);
+      }
       componentDao.update(component);
       //componentDao.updateVspLatestModificationTime(component.getVspId(), component.getVersion());
     }
@@ -265,7 +267,7 @@ public class ComponentManagerImpl implements ComponentManager {
     }
     if (!isVfcNameUnique(vspComponentList,  component.getComponentCompositionData()
         .getDisplayName())) {
-       final String VSP_VFC_DUPLICATE_NAME_MSG = "VFC with specified name "
+      final String VSP_VFC_DUPLICATE_NAME_MSG = "VFC with specified name "
           + "already present in given VSP.";
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.UPDATE_COMPONENT, ErrorLevel.ERROR.name(),
