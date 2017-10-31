@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.VFC_NODE_TYPE_PREFIX;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -59,6 +57,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.tosca.datatypes.ToscaNodeType.COMPUTE_TYPE_PREFIX;
 
 public class ComponentManagerImpl implements ComponentManager {
   private static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
@@ -154,9 +154,8 @@ public class ComponentManagerImpl implements ComponentManager {
   }
 
   private void updateComponentName(ComponentEntity component) {
-    final String NAME_PREFIX = VFC_NODE_TYPE_PREFIX + "heat.";
     ComponentData data = component.getComponentCompositionData();
-    data.setName(NAME_PREFIX + data.getDisplayName());
+    data.setName(COMPUTE_TYPE_PREFIX + data.getDisplayName());
     component.setComponentCompositionData(data);
   }
 
@@ -209,21 +208,23 @@ public class ComponentManagerImpl implements ComponentManager {
     ComponentEntity retrieved =
         getComponent(component.getVspId(), component.getVersion(), component.getId());
 
-    if (vspInfoDao.isManual(component.getVspId(), component.getVersion())) {
+    boolean isManual = vspInfoDao.isManual(component.getVspId(), component.getVersion());
+    if (isManual) {
       validateComponentUpdateManual(component, retrieved, user);
     }
 
 
     ComponentCompositionSchemaInput schemaInput = new ComponentCompositionSchemaInput();
-    schemaInput.setManual(vspInfoDao.isManual(component.getVspId(), component.getVersion()));
+    schemaInput.setManual(isManual);
     schemaInput.setComponent(retrieved.getComponentCompositionData());
 
     CompositionEntityValidationData validationData = compositionEntityDataManager
         .validateEntity(component, SchemaTemplateContext.composition, schemaInput);
     if (CollectionUtils.isEmpty(validationData.getErrors())) {
-      updateComponentName(component);
+      if (isManual) {
+        updateComponentName(component);
+      }
       componentDao.update(component);
-      //componentDao.updateVspLatestModificationTime(component.getVspId(), component.getVersion());
     }
     mdcDataDebugMessage.debugExitMessage("VSP id, component id", component.getVspId(),
         component.getId());
@@ -233,28 +234,8 @@ public class ComponentManagerImpl implements ComponentManager {
 
   private void validateComponentUpdateManual(ComponentEntity component, ComponentEntity
       retrieved, String user) {
-    Collection<ComponentEntity> vspComponentList = listComponents(component.getVspId()
-        , component.getVersion(), user);
-    //Removing check from name as we will ignore passed value
-    // and re-genarate new name from displayName
-    //    List<String> invalidParameters = new LinkedList<>();
-    //    if (!component.getComponentCompositionData().getName().equals(retrieved
-    //        .getComponentCompositionData().getName())) {
-    //      invalidParameters.add(NAME);
-    //    }
-    //    if (!invalidParameters.isEmpty()) {
-    //      String msg = String.format(VFC_ATTRIBUTE_UPDATE_NOT_ALLOWED_MSG, StringUtils
-    //          .join(invalidParameters, ", "));
-    //      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-    //          LoggerTragetServiceName.UPDATE_COMPONENT, ErrorLevel.ERROR.name(),
-    //          LoggerErrorCode.DATA_ERROR.getErrorCode(), msg);
-    //
-    //      throw new CoreException(
-    //          new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
-    //              .withId(VendorSoftwareProductErrorCodes.VFC_ATTRIBUTE_UPDATE_NOT_ALLOWED)
-    //              .withMessage(msg).build());
-    //    }
-
+    Collection<ComponentEntity> vspComponentList =
+        listComponents(component.getVspId(), component.getVersion(), user);
     //VFC name should be unique within VSP
     //Removing VFC with same ID from list to avoid self compare
     for(ComponentEntity ce : vspComponentList) {
@@ -265,8 +246,6 @@ public class ComponentManagerImpl implements ComponentManager {
     }
     if (!isVfcNameUnique(vspComponentList,  component.getComponentCompositionData()
         .getDisplayName())) {
-       final String VSP_VFC_DUPLICATE_NAME_MSG = "VFC with specified name "
-          + "already present in given VSP.";
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.UPDATE_COMPONENT, ErrorLevel.ERROR.name(),
           LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Component with same name already " +
@@ -274,7 +253,7 @@ public class ComponentManagerImpl implements ComponentManager {
       throw new CoreException(
           new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION)
               .withId(VendorSoftwareProductErrorCodes.VSP_VFC_DUPLICATE_NAME)
-              .withMessage(VSP_VFC_DUPLICATE_NAME_MSG).build());
+              .withMessage("VFC with specified name already present in given VSP.").build());
 
     }
   }
