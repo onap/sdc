@@ -188,9 +188,9 @@ public abstract class ComponentBaseTest {
 		
 		performClean();
 		shutdownTitanLogic();
-		String basePath = FileHandling.getBasePath();
-		String csarDir = FileHandling.getCreateDirByName("outputCsar");
-		FileUtils.cleanDirectory(new File(csarDir));
+//		String basePath = FileHandling.getBasePath();
+//		String csarDir = FileHandling.getCreateDirByName("outputCsar");
+//		FileUtils.cleanDirectory(new File(csarDir));
 
 
 	}
