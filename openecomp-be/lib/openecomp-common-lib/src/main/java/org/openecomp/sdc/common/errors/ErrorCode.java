@@ -32,6 +32,20 @@ public class ErrorCode implements Serializable {
 
   protected ErrorCode() {
   }
+
+  public ErrorCode(String id){
+        this.id=id;
+    }
+
+  public void setMessage(String message) {
+        this.message = message;
+    }
+  public String getMessage() {
+        return message;
+    }
+  public String getId() {
+        return id;
+    }
   /*
     For backward compatibility only - will be removed soon
   */

@@ -29,7 +29,7 @@ public class ContrailServiceTemplateNamingConventionValidatorTest {
     Assert.assertEquals(
         messages.get(messages.keySet().iterator().next()).getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Service Template naming convention in Image and Flavor properties is not consistent in Resource, Resource ID service_template");
+        "WARNING: [NST1]:Service Template naming convention in Image and Flavor properties is not consistent in Resource, Resource ID service_template");
   }
 
   @Test
@@ -41,9 +41,9 @@ public class ContrailServiceTemplateNamingConventionValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 2);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Service Template 'image_name' Parameter Name not aligned with Guidelines, Parameter Name [st_imaage_name], Resource ID [service_template]. As a result, VF/VFC Profile may miss this information");
+        "WARNING: [NST3]:Service Template 'image_name' Parameter Name not aligned with Guidelines, Parameter Name [st_imaage_name], Resource ID [service_template]. As a result, VF/VFC Profile may miss this information");
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(1).getMessage(),
-        "WARNING: Service Template 'flavor' Parameter Name not aligned with Guidelines, Parameter Name [st_flavaor_name], Resource ID [service_template]. As a result, VF/VFC Profile may miss this information");
+        "WARNING: [NST3]:Service Template 'flavor' Parameter Name not aligned with Guidelines, Parameter Name [st_flavaor_name], Resource ID [service_template]. As a result, VF/VFC Profile may miss this information");
   }
 
   @Test

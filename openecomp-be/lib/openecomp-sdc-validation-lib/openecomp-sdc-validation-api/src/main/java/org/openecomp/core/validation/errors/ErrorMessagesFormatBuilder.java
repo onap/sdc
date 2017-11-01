@@ -21,10 +21,15 @@
 package org.openecomp.core.validation.errors;
 
 
+import org.openecomp.sdc.common.errors.ErrorCode;
+
 public class ErrorMessagesFormatBuilder {
   public static String getErrorWithParameters(String error, String... params) {
-    return String.format(error, params);
+      return String.format(error, params);
   }
 
+  public static String getErrorWithParameters(ErrorCode errorCode,  String... params) {
+        return "[" + errorCode.getId()+ "]:" +String.format(errorCode.getMessage(), params);
+  }
 
 }
