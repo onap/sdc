@@ -164,7 +164,7 @@ public class ValidationUtil {
             fileName,
             ErrorLevel.WARNING,
             ErrorMessagesFormatBuilder.getErrorWithParameters(
-                Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
+                Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),globalContext.getValidatorIdentifier(),
                 getMessagePartAccordingToResourceType(resourceEntry), propertyName, propertyValue,
                 resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,

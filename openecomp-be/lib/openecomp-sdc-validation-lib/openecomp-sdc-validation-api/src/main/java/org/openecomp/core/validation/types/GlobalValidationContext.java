@@ -41,8 +41,17 @@ public class GlobalValidationContext {
   private static Logger logger = (Logger) LoggerFactory.getLogger(GlobalValidationContext.class);
   private Map<String, FileValidationContext> fileContextMap = new HashMap<>();
   private Map<String, MessageContainer> messageContainerMap = new HashMap<>();
+  private String validatorIdentifier;
 
-  /**
+    public String getValidatorIdentifier() {
+        return validatorIdentifier;
+    }
+
+    public void setValidatorIdentifier(String validatorIdentifier) {
+        this.validatorIdentifier = validatorIdentifier;
+    }
+
+    /**
    * Add message.
    *
    * @param fileName the file name

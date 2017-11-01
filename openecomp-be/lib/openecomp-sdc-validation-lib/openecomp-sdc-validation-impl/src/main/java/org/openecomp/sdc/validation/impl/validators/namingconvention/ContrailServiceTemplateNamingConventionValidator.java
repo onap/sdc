@@ -30,7 +30,9 @@ import static java.util.Objects.nonNull;
  */
 public class ContrailServiceTemplateNamingConventionValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
+  private static final String  ERROR_CODE_NST1="[NST1]:";
+  private static final String  ERROR_CODE_NST2="[NST2]:";
+  private static final String  ERROR_CODE_NST3="[NST3]:";
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
@@ -127,7 +129,9 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
       globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
               .getErrorWithParameters(
                   Messages.CONTRAIL_VM_TYPE_NAME_NOT_ALIGNED_WITH_NAMING_CONVENSION
-                      .getErrorMessage(), resourceEntry.getKey()),
+                      .getErrorMessage(),
+                      ERROR_CODE_NST1,
+                      resourceEntry.getKey()),
           LoggerTragetServiceName.VALIDATE_CONTRAIL_VM_NAME,
           LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
       return true;
@@ -145,7 +149,7 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
     Object nameValue =
         propertiesMap.get(propertyName) == null ? null : propertiesMap.get(propertyName);
     String[] regexList = new String[]{propertyNameAndRegex.getValue()};
-
+    globalContext.setValidatorIdentifier(ERROR_CODE_NST3);
     if (nonNull(nameValue)) {
       if (nameValue instanceof Map) {
         if (ValidationUtil.validateMapPropertyValue(fileName, resourceEntry, globalContext,
@@ -157,7 +161,7 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
         globalContext.addMessage(
             fileName,
             ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(), propertyName,
+                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),ERROR_CODE_NST2, propertyName,
                     resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
             LoggerErrorDescription.MISSING_GET_PARAM);
@@ -189,7 +193,7 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
         globalContext.addMessage(
             fileName,
             ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(), propertyName,
+                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),ERROR_CODE_NST3, propertyName,
                     resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_VM_SYNC_IN_IMAGE_FLAVOR,
             LoggerErrorDescription.MISSING_GET_PARAM);

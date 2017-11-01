@@ -34,7 +34,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Missing VNF_ID in Metadata property, Resource ID [FSB2]");
+        "WARNING: [NNS3]: Missing VNF_ID in Metadata property, Resource ID [FSB2]");
   }
 
   @Test
@@ -52,9 +52,9 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 3);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Server 'Availability Zone' Parameter Name not aligned with Guidelines, Parameter Name [availability_zone_a], Resource ID [FSB2]. As a result, VF/VFC Profile may miss this information");
+        "WARNING: [NNS5]: Server 'Availability Zone' Parameter Name not aligned with Guidelines, Parameter Name [availability_zone_a], Resource ID [FSB2]. As a result, VF/VFC Profile may miss this information");
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(1).getMessage(),
-        "WARNING: Server 'Availability Zone' Parameter Name not aligned with Guidelines, Parameter Name [availability_zone], Resource ID [FSB3]. As a result, VF/VFC Profile may miss this information");
+        "WARNING: [NNS5]: Server 'Availability Zone' Parameter Name not aligned with Guidelines, Parameter Name [availability_zone], Resource ID [FSB3]. As a result, VF/VFC Profile may miss this information");
   }
 
   @Test
@@ -72,9 +72,9 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 2);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Server 'flavor' Parameter Name not aligned with Guidelines, Parameter Name [fsb2-flavor], Resource ID [FSB2]. As a result, VF/VFC Profile may miss this information");
+        "WARNING: [NNS13]: Server 'flavor' Parameter Name not aligned with Guidelines, Parameter Name [fsb2-flavor], Resource ID [FSB2]. As a result, VF/VFC Profile may miss this information");
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(1).getMessage(),
-        "WARNING: Server 'image' Parameter Name not aligned with Guidelines, Parameter Name [fsb2-image], Resource ID [FSB3]. As a result, VF/VFC Profile may miss this information");
+        "WARNING: [NNS13]: Server 'image' Parameter Name not aligned with Guidelines, Parameter Name [fsb2-image], Resource ID [FSB3]. As a result, VF/VFC Profile may miss this information");
   }
 
   @Test
@@ -92,7 +92,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: A resource is connected twice to the same network role, Network Role [FSB2], Resource ID [Internal1]");
+        "WARNING: [NNS12]: A resource is connected twice to the same network role, Network Role [FSB2], Resource ID [Internal1]");
   }
 
   @Test
@@ -110,7 +110,7 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 2);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Server 'name' Parameter Name not aligned with Guidelines, Parameter Name [pcrf_pps_server_4], Resource ID [FSB2]. As a result, VF/VFC Profile may miss this information");
+        "WARNING: [NNS10]: Server 'name' Parameter Name not aligned with Guidelines, Parameter Name [pcrf_pps_server_4], Resource ID [FSB2]. As a result, VF/VFC Profile may miss this information");
   }
 
   @Test
@@ -124,14 +124,13 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
 
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 4);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Server 'name' Parameter Name not aligned with Guidelines, Parameter Name [CE_server_name], Resource ID [FSB2_legal_2]. As a result, VF/VFC Profile may miss this information");
+        "WARNING: [NNS10]: Server 'name' Parameter Name not aligned with Guidelines, Parameter Name [CE_server_name], Resource ID [FSB2_legal_2]. As a result, VF/VFC Profile may miss this information");
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(1).getMessage(),
-        "WARNING: Server 'flavor' Parameter Name not aligned with Guidelines, Parameter Name [fsb_flavor_names], Resource ID [FSB2_legal_3]. As a result, VF/VFC Profile may miss this information");
+        "WARNING: [NNS13]: Server 'flavor' Parameter Name not aligned with Guidelines, Parameter Name [fsb_flavor_names], Resource ID [FSB2_legal_3]. As a result, VF/VFC Profile may miss this information");
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(2).getMessage(),
-        "WARNING: Nova Server naming convention in image, flavor and name properties is not consistent, Resource ID [FSB2_illegal_1]");
+        "WARNING: [NNS11]: Nova Server naming convention in image, flavor and name properties is not consistent, Resource ID [FSB2_illegal_1]");
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(3).getMessage(),
-        "WARNING: Nova Server naming convention in image, flavor and name properties is not consistent, Resource ID [FSB2_illegal_2]");
-
+        "WARNING: [NNS11]: Nova Server naming convention in image, flavor and name properties is not consistent, Resource ID [FSB2_illegal_2]");
   }
 
   @Test
@@ -146,9 +145,9 @@ public class NovaServerNamingConventionGuideLineValidatorTest {
     Assert.assertEquals(messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().size(), 2);
     Assert.assertEquals(
         messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Server 'Availability Zone' Parameter Name not aligned with Guidelines, Parameter Name [availability_zone_name], Resource ID [availability_zone_illegal_name_1]. As a result, VF/VFC Profile may miss this information");
+        "WARNING: [NNS5]: Server 'Availability Zone' Parameter Name not aligned with Guidelines, Parameter Name [availability_zone_name], Resource ID [availability_zone_illegal_name_1]. As a result, VF/VFC Profile may miss this information");
     Assert.assertEquals(
         messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().get(1).getMessage(),
-        "WARNING: Server 'Availability Zone' Parameter Name not aligned with Guidelines, Parameter Name [availability_zone], Resource ID [availability_zone_illegal_name_2]. As a result, VF/VFC Profile may miss this information");
+        "WARNING: [NNS5]: Server 'Availability Zone' Parameter Name not aligned with Guidelines, Parameter Name [availability_zone], Resource ID [availability_zone_illegal_name_2]. As a result, VF/VFC Profile may miss this information");
   }
 }

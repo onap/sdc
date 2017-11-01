@@ -22,6 +22,8 @@ import static java.util.Objects.nonNull;
  */
 public class ContrailServiceInstanceNamingConventionValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final String  ERROR_CODE_NSI1="[NSI1]:";
+  private static final String  ERROR_CODE_NSI2="[NSI2]:";
 
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
@@ -58,6 +60,7 @@ public class ContrailServiceInstanceNamingConventionValidator implements Resourc
                 fileName,
                 ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
                     Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
+                            ERROR_CODE_NSI1,
                     ValidationUtil.getMessagePartAccordingToResourceType(resourceEntry),
                     "Availability Zone",
                     availabilityZoneName, resourceEntry.getKey()),
@@ -70,6 +73,7 @@ public class ContrailServiceInstanceNamingConventionValidator implements Resourc
             fileName,
             ErrorLevel.WARNING, ErrorMessagesFormatBuilder
                 .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),
+                        ERROR_CODE_NSI2,
                     "availability_zone", resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
             LoggerErrorDescription.MISSING_GET_PARAM);

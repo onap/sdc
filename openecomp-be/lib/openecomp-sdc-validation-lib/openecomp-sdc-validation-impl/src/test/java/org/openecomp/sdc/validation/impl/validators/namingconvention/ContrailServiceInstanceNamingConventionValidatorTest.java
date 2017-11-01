@@ -27,7 +27,7 @@ public class ContrailServiceInstanceNamingConventionValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Service Instance 'Availability Zone' Parameter Name not aligned with Guidelines, Parameter Name [availability_zone_1a], Resource ID [service_instance_1]. As a result, VF/VFC Profile may miss this information");
+        "WARNING: [NSI1]: Service Instance 'Availability Zone' Parameter Name not aligned with Guidelines, Parameter Name [availability_zone_1a], Resource ID [service_instance_1]. As a result, VF/VFC Profile may miss this information");
   }
 
   @Test
