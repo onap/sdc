@@ -1,7 +1,7 @@
 package org.openecomp.sdc.translator.services.heattotosca;
 
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
@@ -34,7 +34,6 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.services.heattotosca.errors.DuplicateResourceIdsInDifferentFilesErrorBuilder;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -524,26 +523,32 @@ public class ConsolidationDataUtil {
    * @return the port type
    */
   public static String getPortType(String portNodeTemplateId) {
-    String[] portSplitArr = portNodeTemplateId.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
-    String finalValue = "";
-    if (NumberUtils.isNumber(portSplitArr[portSplitArr.length - 1])) {
-      for (String id : portSplitArr) {
-        finalValue = finalValue + id;
+    if(StringUtils.isNotBlank(portNodeTemplateId))
+    {
+      if(portNodeTemplateId.substring(portNodeTemplateId.length()-2, portNodeTemplateId.length()).matches("_\\d")){
+        portNodeTemplateId = portNodeTemplateId.substring(0, portNodeTemplateId.length() - 2);
       }
-      while (finalValue.length() > 0) {
-        if (Character.isLetter(finalValue.charAt(finalValue.length() - 1))) {
-          break;
-        }
-        finalValue = finalValue.substring(0, finalValue.length() - 1);
+      else if(portNodeTemplateId.substring(portNodeTemplateId.length() - 1, portNodeTemplateId.length()).matches("\\d"))
+      {
+        portNodeTemplateId = portNodeTemplateId.substring(0, portNodeTemplateId.length() - 1);
       }
-    } else {
-      for (String id : portSplitArr) {
-        if (!NumberUtils.isNumber(id)) {
-          finalValue = finalValue + id;
+
+      int index = portNodeTemplateId.indexOf("_");
+      if(index > 0 && portNodeTemplateId.length()>= index+2 && portNodeTemplateId.substring(index+1, index+3).matches("\\d_"))
+      {
+        portNodeTemplateId = portNodeTemplateId.substring(0, index)+portNodeTemplateId.substring(index+2, portNodeTemplateId.length());
+      }
+      else if(index==0)
+      {
+        index = portNodeTemplateId.indexOf("_", portNodeTemplateId.indexOf("_")+1);
+        if(index > 0 && portNodeTemplateId.length()>= index+2 && portNodeTemplateId.substring(index+1, index+3).matches("\\d_"))
+        {
+          portNodeTemplateId = portNodeTemplateId.substring(0, index)+portNodeTemplateId.substring(index+2, portNodeTemplateId.length());
         }
       }
     }
-    return finalValue;
+
+    return portNodeTemplateId;
   }
 
   /**

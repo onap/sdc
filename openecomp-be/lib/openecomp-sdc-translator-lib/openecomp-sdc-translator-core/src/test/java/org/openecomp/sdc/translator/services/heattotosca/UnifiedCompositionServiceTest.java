@@ -86,7 +86,7 @@ public class UnifiedCompositionServiceTest {
     portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
     portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
     portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>("FSB1_OAM", "FSB1_OAM"));
 
     loadInputAndOutputData();
     UnifiedCompositionData unifiedCompositionData =
@@ -116,7 +116,7 @@ public class UnifiedCompositionServiceTest {
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
     portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
     portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>("FSB1_OAM", "FSB1_OAM"));
 
     loadInputAndOutputData();
     UnifiedCompositionData unifiedCompositionData =
@@ -215,7 +215,7 @@ public class UnifiedCompositionServiceTest {
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
     portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
     portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>("FSB1_OAM", "FSB1_OAM"));
 
     loadInputAndOutputData();
     UnifiedCompositionData unifiedCompositionData =
@@ -248,7 +248,7 @@ public class UnifiedCompositionServiceTest {
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
     portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
     portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>("FSB1_OAM", "FSB1_OAM"));
     addPortDataToCompositionData(portTypeToIdList, data);
 
     List<UnifiedCompositionData> unifiedCompositionDataList = new LinkedList<>();
@@ -386,7 +386,7 @@ public class UnifiedCompositionServiceTest {
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
     portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
     portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>("FSB1_OAM", "FSB1_OAM"));
     addPortDataToCompositionData(portTypeToIdList, data);
 
     List<UnifiedCompositionData> unifiedCompositionDataList = new LinkedList<>();
@@ -498,7 +498,7 @@ public class UnifiedCompositionServiceTest {
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
     portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
     portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>("FSB1_OAM", "FSB1_OAM"));
     addPortDataToCompositionData(portTypeToIdList, data);
 
     List<UnifiedCompositionData> unifiedCompositionDataList = new LinkedList<>();
@@ -638,7 +638,7 @@ public class UnifiedCompositionServiceTest {
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
     portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
     portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>("FSB1_OAM", "FSB1_OAM"));
 
     loadInputAndOutputData();
     UnifiedCompositionData unifiedCompositionData =
@@ -710,7 +710,7 @@ public class UnifiedCompositionServiceTest {
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
     portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
     portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>("FSB1_OAM", "FSB1_OAM"));
 
     loadInputAndOutputData();
     UnifiedCompositionData unifiedCompositionData =
@@ -785,7 +785,7 @@ public class UnifiedCompositionServiceTest {
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
     portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
     portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>("FSB1_OAM", "FSB1_OAM"));
 
     loadInputAndOutputData();
     UnifiedCompositionData unifiedCompositionData =

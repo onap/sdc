@@ -1,0 +1,410 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_2c2_catalog_instance_1
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.compute.nodes.heat.2c2_catalog_instance:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    compute_2c2_catalog_instance_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1c201_port_02_order:
+      type: integer
+      required: true
+    port_2c202_port_02_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_2c202_port_02_order:
+      type: integer
+      required: true
+    port_1c201_port_02_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_1c201_port_02_network_role_tag:
+      type: string
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    vm_image_name:
+      type: string
+      required: true
+    port_1c201_port_02_subnetpoolid:
+      type: string
+      required: true
+    compute_2c2_catalog_instance_scheduler_hints:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_2c2_catalog_instance_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1c201_port_02_network_role:
+      type: string
+      required: true
+    port_2c202_port_02_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_2c202_port_02_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_1c201_port_02_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_1c201_port_02_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    compute_2c2_catalog_instance_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1c201_port_02_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_2c202_port_02_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_1c201_port_02_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_2c202_port_02_network_role_tag:
+      type: string
+      required: true
+    port_2c202_port_02_subnetpoolid:
+      type: string
+      required: true
+    port_2c202_port_02_network_role:
+      type: string
+      required: true
+    port_2c202_port_02_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    2c2_catalog_instance:
+      type: org.openecomp.resource.vfc.compute.nodes.heat.2c2_catalog_instance
+      properties:
+        availability_zone:
+          get_input:
+          - compute_2c2_catalog_instance_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_2c2_catalog_instance_name
+          - index_value
+        scheduler_hints:
+          get_input:
+          - compute_2c2_catalog_instance_scheduler_hints
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_2c2_catalog_instance_user_data_format
+          - index_value
+    2c2_catalog_instance_1c201_port_02:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        exCP_naming:
+          get_input: port_1c201_port_02_exCP_naming
+        vlan_requirements:
+          get_input: port_1c201_port_02_vlan_requirements
+        ip_requirements:
+          get_input: port_1c201_port_02_ip_requirements
+        network_role_tag:
+          get_input: port_1c201_port_02_network_role_tag
+        mac_requirements:
+          get_input: port_1c201_port_02_mac_requirements
+        order:
+          get_input: port_1c201_port_02_order
+        network_role:
+          get_input: port_1c201_port_02_network_role
+        subnetpoolid:
+          get_input: port_1c201_port_02_subnetpoolid
+        network:
+          get_input:
+          - port_1c201_port_02_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: 2c2_catalog_instance
+          relationship: tosca.relationships.network.BindsTo
+    2c2_catalog_instance_2c202_port_02:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        exCP_naming:
+          get_input: port_2c202_port_02_exCP_naming
+        vlan_requirements:
+          get_input: port_2c202_port_02_vlan_requirements
+        ip_requirements:
+          get_input: port_2c202_port_02_ip_requirements
+        network_role_tag:
+          get_input: port_2c202_port_02_network_role_tag
+        mac_requirements:
+          get_input: port_2c202_port_02_mac_requirements
+        order:
+          get_input: port_2c202_port_02_order
+        network_role:
+          get_input: port_2c202_port_02_network_role
+        subnetpoolid:
+          get_input: port_2c202_port_02_subnetpoolid
+        network:
+          get_input:
+          - port_2c202_port_02_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: 2c2_catalog_instance
+          relationship: tosca.relationships.network.BindsTo
+  outputs:
+    2c2_catalog_instance_instance_name:
+      type: string
+      value:
+        get_attribute:
+        - 2c2_catalog_instance
+        - instance_name
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.2c2_catalog_instance_1
+    capabilities:
+      instance_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - instance
+      network.incoming.bytes.rate_2c2_catalog_instance_1c201_port_02:
+      - 2c2_catalog_instance_1c201_port_02
+      - network.incoming.bytes.rate
+      disk.write.bytes_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.write.bytes
+      disk.capacity_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.capacity
+      network.outgoing.bytes_2c2_catalog_instance_1c201_port_02:
+      - 2c2_catalog_instance_1c201_port_02
+      - network.outgoing.bytes
+      disk.device.read.bytes.rate_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.device.read.bytes.rate
+      disk.read.bytes_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.read.bytes
+      disk.write.requests.rate_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.write.requests.rate
+      disk.device.read.bytes_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.device.read.bytes
+      disk.device.allocation_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.device.allocation
+      network.incoming.packets_2c2_catalog_instance_2c202_port_02:
+      - 2c2_catalog_instance_2c202_port_02
+      - network.incoming.packets
+      scalable_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - scalable
+      disk.device.read.requests_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.device.read.requests
+      binding_2c2_catalog_instance_1c201_port_02:
+      - 2c2_catalog_instance_1c201_port_02
+      - binding
+      network.outgoing.packets.rate_2c2_catalog_instance_2c202_port_02:
+      - 2c2_catalog_instance_2c202_port_02
+      - network.outgoing.packets.rate
+      disk.root.size_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.root.size
+      disk.device.write.requests_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.device.write.requests
+      network.incoming.packets.rate_2c2_catalog_instance_2c202_port_02:
+      - 2c2_catalog_instance_2c202_port_02
+      - network.incoming.packets.rate
+      host_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - host
+      disk.allocation_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.allocation
+      disk.device.write.requests.rate_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.device.write.requests.rate
+      os_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - os
+      disk.device.write.bytes.rate_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.device.write.bytes.rate
+      attachment_2c2_catalog_instance_1c201_port_02:
+      - 2c2_catalog_instance_1c201_port_02
+      - attachment
+      feature_2c2_catalog_instance_2c202_port_02:
+      - 2c2_catalog_instance_2c202_port_02
+      - feature
+      disk.latency_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.latency
+      disk.iops_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.iops
+      endpoint_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - endpoint
+      vcpus_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - vcpus
+      network.outpoing.packets_2c2_catalog_instance_2c202_port_02:
+      - 2c2_catalog_instance_2c202_port_02
+      - network.outpoing.packets
+      network.incoming.bytes_2c2_catalog_instance_1c201_port_02:
+      - 2c2_catalog_instance_1c201_port_02
+      - network.incoming.bytes
+      disk.device.iops_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.device.iops
+      network.outgoing.bytes.rate_2c2_catalog_instance_1c201_port_02:
+      - 2c2_catalog_instance_1c201_port_02
+      - network.outgoing.bytes.rate
+      disk.device.latency_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.device.latency
+      disk.read.bytes.rate_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.read.bytes.rate
+      memory.usage_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - memory.usage
+      network.outgoing.bytes_2c2_catalog_instance_2c202_port_02:
+      - 2c2_catalog_instance_2c202_port_02
+      - network.outgoing.bytes
+      network.incoming.bytes.rate_2c2_catalog_instance_2c202_port_02:
+      - 2c2_catalog_instance_2c202_port_02
+      - network.incoming.bytes.rate
+      disk.write.bytes.rate_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.write.bytes.rate
+      disk.device.capacity_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.device.capacity
+      disk.read.requests_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.read.requests
+      network.incoming.packets_2c2_catalog_instance_1c201_port_02:
+      - 2c2_catalog_instance_1c201_port_02
+      - network.incoming.packets
+      binding_2c2_catalog_instance_2c202_port_02:
+      - 2c2_catalog_instance_2c202_port_02
+      - binding
+      network.outgoing.packets.rate_2c2_catalog_instance_1c201_port_02:
+      - 2c2_catalog_instance_1c201_port_02
+      - network.outgoing.packets.rate
+      cpu_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - cpu
+      disk.ephemeral.size_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.ephemeral.size
+      disk.device.write.bytes_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.device.write.bytes
+      memory.resident_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - memory.resident
+      feature_2c2_catalog_instance_1c201_port_02:
+      - 2c2_catalog_instance_1c201_port_02
+      - feature
+      attachment_2c2_catalog_instance_2c202_port_02:
+      - 2c2_catalog_instance_2c202_port_02
+      - attachment
+      disk.device.usage_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.device.usage
+      cpu_util_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - cpu_util
+      network.incoming.bytes_2c2_catalog_instance_2c202_port_02:
+      - 2c2_catalog_instance_2c202_port_02
+      - network.incoming.bytes
+      disk.usage_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.usage
+      network.incoming.packets.rate_2c2_catalog_instance_1c201_port_02:
+      - 2c2_catalog_instance_1c201_port_02
+      - network.incoming.packets.rate
+      network.outgoing.bytes.rate_2c2_catalog_instance_2c202_port_02:
+      - 2c2_catalog_instance_2c202_port_02
+      - network.outgoing.bytes.rate
+      feature_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - feature
+      disk.write.requests_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.write.requests
+      cpu.delta_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - cpu.delta
+      binding_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - binding
+      memory_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - memory
+      disk.device.read.requests.rate_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - disk.device.read.requests.rate
+      network.outpoing.packets_2c2_catalog_instance_1c201_port_02:
+      - 2c2_catalog_instance_1c201_port_02
+      - network.outpoing.packets
+    requirements:
+      dependency_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - dependency
+      link_2c2_catalog_instance_2c202_port_02:
+      - 2c2_catalog_instance_2c202_port_02
+      - link
+      dependency_2c2_catalog_instance_1c201_port_02:
+      - 2c2_catalog_instance_1c201_port_02
+      - dependency
+      local_storage_2c2_catalog_instance:
+      - 2c2_catalog_instance
+      - local_storage
+      dependency_2c2_catalog_instance_2c202_port_02:
+      - 2c2_catalog_instance_2c202_port_02
+      - dependency
+      link_2c2_catalog_instance_1c201_port_02:
+      - 2c2_catalog_instance_1c201_port_02
+      - link

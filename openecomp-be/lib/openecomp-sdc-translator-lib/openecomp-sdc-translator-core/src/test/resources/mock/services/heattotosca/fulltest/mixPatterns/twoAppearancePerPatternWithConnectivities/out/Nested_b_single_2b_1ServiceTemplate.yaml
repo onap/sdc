@@ -11,13 +11,21 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_1b_t1_port_order:
-      type: integer
-      required: true
-    port_1b_t1_port_network_role:
+    port_1b_t1_port_0_subnetpoolid:
       type: string
       required: true
-    port_1b_t1_port_exCP_naming:
+    port_1b_t2_port_0_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_1b_t2_port_0_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1b_t2_port_0_network_role_tag:
+      type: string
+      required: true
+    port_1b_t1_port_0_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
     vm_flavor_name:
@@ -28,12 +36,15 @@ topology_template:
       required: true
       entry_schema:
         type: json
-    port_1b_t1_port_ip_requirements:
+    port_1b_t2_port_0_vlan_requirements:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
+        type: org.openecomp.datatypes.network.VlanRequirements
     vm_image_name:
+      type: string
+      required: true
+    port_1b_t1_port_0_network_role:
       type: string
       required: true
     compute_b_single_2b_scheduler_hints:
@@ -41,28 +52,26 @@ topology_template:
       required: true
       entry_schema:
         type: json
-    port_1b_t2_port_network_role:
-      type: string
+    port_1b_t1_port_0_vlan_requirements:
+      type: list
       required: true
-    port_1b_t2_port_order:
-      type: integer
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_1b_t1_port_0_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-    port_1b_t2_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
+    port_1b_t1_port_0_ip_requirements:
+      type: list
       required: true
-    port_1b_t2_port_network_role_tag:
-      type: string
-      required: true
-    port_1b_t2_port_subnetpoolid:
-      type: string
-      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
     compute_b_single_2b_availability_zone:
       type: list
       required: true
       entry_schema:
         type: string
-    port_1b_t2_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
+    port_1b_t1_port_0_order:
+      type: integer
       required: true
     index_value:
       type: integer
@@ -71,16 +80,6 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_1b_t2_port_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_1b_t2_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
     compute_b_single_2b_name:
       type: list
       required: true
@@ -91,25 +90,26 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_1b_t1_port_network_role_tag:
-      type: string
-      required: true
-    port_1b_t1_port_subnetpoolid:
-      type: string
-      required: true
-    port_1b_t1_port_mac_requirements:
+    port_1b_t2_port_0_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
-    port_1b_t2_port_network:
+    port_1b_t2_port_0_network_role:
+      type: string
+      required: true
+    port_1b_t1_port_0_network_role_tag:
+      type: string
+      required: true
+    port_1b_t2_port_0_subnetpoolid:
+      type: string
+      required: true
+    port_1b_t2_port_0_ip_requirements:
       type: list
       required: true
       entry_schema:
-        type: string
-    port_1b_t1_port_vlan_requirements:
-      type: list
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_1b_t2_port_0_order:
+      type: integer
       required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
   node_templates:
     b_single_2b:
       type: org.openecomp.resource.vfc.compute.nodes.heat.b_single_2b
@@ -138,25 +138,25 @@ topology_template:
           get_input:
           - compute_b_single_2b_user_data_format
           - index_value
-    b_single_2b_1b_t1_port:
+    b_single_2b_1b_t1_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         exCP_naming:
-          get_input: port_1b_t1_port_exCP_naming
+          get_input: port_1b_t1_port_0_exCP_naming
         vlan_requirements:
-          get_input: port_1b_t1_port_vlan_requirements
+          get_input: port_1b_t1_port_0_vlan_requirements
         ip_requirements:
-          get_input: port_1b_t1_port_ip_requirements
+          get_input: port_1b_t1_port_0_ip_requirements
         network_role_tag:
-          get_input: port_1b_t1_port_network_role_tag
+          get_input: port_1b_t1_port_0_network_role_tag
         mac_requirements:
-          get_input: port_1b_t1_port_mac_requirements
+          get_input: port_1b_t1_port_0_mac_requirements
         order:
-          get_input: port_1b_t1_port_order
+          get_input: port_1b_t1_port_0_order
         network_role:
-          get_input: port_1b_t1_port_network_role
+          get_input: port_1b_t1_port_0_network_role
         subnetpoolid:
-          get_input: port_1b_t1_port_subnetpoolid
+          get_input: port_1b_t1_port_0_subnetpoolid
         network:
           get_attribute:
           - b_single_2b
@@ -166,28 +166,28 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: b_single_2b
           relationship: tosca.relationships.network.BindsTo
-    b_single_2b_1b_t2_port:
+    b_single_2b_1b_t2_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         exCP_naming:
-          get_input: port_1b_t2_port_exCP_naming
+          get_input: port_1b_t2_port_0_exCP_naming
         vlan_requirements:
-          get_input: port_1b_t2_port_vlan_requirements
+          get_input: port_1b_t2_port_0_vlan_requirements
         ip_requirements:
-          get_input: port_1b_t2_port_ip_requirements
+          get_input: port_1b_t2_port_0_ip_requirements
         network_role_tag:
-          get_input: port_1b_t2_port_network_role_tag
+          get_input: port_1b_t2_port_0_network_role_tag
         mac_requirements:
-          get_input: port_1b_t2_port_mac_requirements
+          get_input: port_1b_t2_port_0_mac_requirements
         order:
-          get_input: port_1b_t2_port_order
+          get_input: port_1b_t2_port_0_order
         network_role:
-          get_input: port_1b_t2_port_network_role
+          get_input: port_1b_t2_port_0_network_role
         subnetpoolid:
-          get_input: port_1b_t2_port_subnetpoolid
+          get_input: port_1b_t2_port_0_subnetpoolid
         network:
           get_input:
-          - port_1b_t2_port_network
+          - port_1b_t2_port_0_network
           - index_value
       requirements:
       - binding:
@@ -207,15 +207,24 @@ topology_template:
       disk.usage_b_single_2b:
       - b_single_2b
       - disk.usage
-      network.incoming.bytes.rate_b_single_2b_1b_t2_port:
-      - b_single_2b_1b_t2_port
+      network.incoming.bytes.rate_b_single_2b_1b_t2_port_0:
+      - b_single_2b_1b_t2_port_0
       - network.incoming.bytes.rate
-      network.outgoing.bytes.rate_b_single_2b_1b_t2_port:
-      - b_single_2b_1b_t2_port
+      network.outgoing.packets.rate_b_single_2b_1b_t1_port_0:
+      - b_single_2b_1b_t1_port_0
+      - network.outgoing.packets.rate
+      network.incoming.bytes.rate_b_single_2b_1b_t1_port_0:
+      - b_single_2b_1b_t1_port_0
+      - network.incoming.bytes.rate
+      network.outgoing.bytes.rate_b_single_2b_1b_t1_port_0:
+      - b_single_2b_1b_t1_port_0
       - network.outgoing.bytes.rate
-      attachment_b_single_2b_1b_t2_port:
-      - b_single_2b_1b_t2_port
-      - attachment
+      network.outgoing.packets.rate_b_single_2b_1b_t2_port_0:
+      - b_single_2b_1b_t2_port_0
+      - network.outgoing.packets.rate
+      network.outgoing.bytes.rate_b_single_2b_1b_t2_port_0:
+      - b_single_2b_1b_t2_port_0
+      - network.outgoing.bytes.rate
       disk.write.bytes.rate_b_single_2b:
       - b_single_2b
       - disk.write.bytes.rate
@@ -225,30 +234,36 @@ topology_template:
       cpu.delta_b_single_2b:
       - b_single_2b
       - cpu.delta
+      network.incoming.bytes_b_single_2b_1b_t1_port_0:
+      - b_single_2b_1b_t1_port_0
+      - network.incoming.bytes
+      network.incoming.bytes_b_single_2b_1b_t2_port_0:
+      - b_single_2b_1b_t2_port_0
+      - network.incoming.bytes
       host_b_single_2b:
       - b_single_2b
       - host
       disk.device.write.requests_b_single_2b:
       - b_single_2b
       - disk.device.write.requests
-      network.incoming.packets.rate_b_single_2b_1b_t2_port:
-      - b_single_2b_1b_t2_port
-      - network.incoming.packets.rate
       disk.read.bytes_b_single_2b:
       - b_single_2b
       - disk.read.bytes
       disk.device.iops_b_single_2b:
       - b_single_2b
       - disk.device.iops
+      network.incoming.packets.rate_b_single_2b_1b_t2_port_0:
+      - b_single_2b_1b_t2_port_0
+      - network.incoming.packets.rate
       disk.ephemeral.size_b_single_2b:
       - b_single_2b
       - disk.ephemeral.size
-      network.incoming.bytes.rate_b_single_2b_1b_t1_port:
-      - b_single_2b_1b_t1_port
-      - network.incoming.bytes.rate
-      network.incoming.bytes_b_single_2b_1b_t1_port:
-      - b_single_2b_1b_t1_port
-      - network.incoming.bytes
+      attachment_b_single_2b_1b_t2_port_0:
+      - b_single_2b_1b_t2_port_0
+      - attachment
+      feature_b_single_2b_1b_t1_port_0:
+      - b_single_2b_1b_t1_port_0
+      - feature
       disk.write.requests.rate_b_single_2b:
       - b_single_2b
       - disk.write.requests.rate
@@ -261,66 +276,54 @@ topology_template:
       disk.write.requests_b_single_2b:
       - b_single_2b
       - disk.write.requests
-      network.outgoing.packets.rate_b_single_2b_1b_t2_port:
-      - b_single_2b_1b_t2_port
-      - network.outgoing.packets.rate
       disk.capacity_b_single_2b:
       - b_single_2b
       - disk.capacity
       disk.device.read.bytes_b_single_2b:
       - b_single_2b
       - disk.device.read.bytes
-      network.incoming.packets.rate_b_single_2b_1b_t1_port:
-      - b_single_2b_1b_t1_port
-      - network.incoming.packets.rate
-      attachment_b_single_2b_1b_t1_port:
-      - b_single_2b_1b_t1_port
-      - attachment
+      network.outpoing.packets_b_single_2b_1b_t1_port_0:
+      - b_single_2b_1b_t1_port_0
+      - network.outpoing.packets
+      network.outgoing.bytes_b_single_2b_1b_t1_port_0:
+      - b_single_2b_1b_t1_port_0
+      - network.outgoing.bytes
       disk.write.bytes_b_single_2b:
       - b_single_2b
       - disk.write.bytes
-      network.incoming.packets_b_single_2b_1b_t2_port:
-      - b_single_2b_1b_t2_port
-      - network.incoming.packets
+      binding_b_single_2b_1b_t1_port_0:
+      - b_single_2b_1b_t1_port_0
+      - binding
       vcpus_b_single_2b:
       - b_single_2b
       - vcpus
       disk.device.read.requests.rate_b_single_2b:
       - b_single_2b
       - disk.device.read.requests.rate
-      binding_b_single_2b_1b_t2_port:
-      - b_single_2b_1b_t2_port
-      - binding
       instance_b_single_2b:
       - b_single_2b
       - instance
-      network.outpoing.packets_b_single_2b_1b_t2_port:
-      - b_single_2b_1b_t2_port
-      - network.outpoing.packets
       disk.device.read.requests_b_single_2b:
       - b_single_2b
       - disk.device.read.requests
+      network.incoming.packets_b_single_2b_1b_t1_port_0:
+      - b_single_2b_1b_t1_port_0
+      - network.incoming.packets
+      network.incoming.packets_b_single_2b_1b_t2_port_0:
+      - b_single_2b_1b_t2_port_0
+      - network.incoming.packets
       disk.device.latency_b_single_2b:
       - b_single_2b
       - disk.device.latency
-      network.outgoing.bytes_b_single_2b_1b_t2_port:
-      - b_single_2b_1b_t2_port
-      - network.outgoing.bytes
       disk.device.allocation_b_single_2b:
       - b_single_2b
       - disk.device.allocation
       disk.latency_b_single_2b:
       - b_single_2b
       - disk.latency
-      feature_b_single_2b_1b_t1_port:
-      - b_single_2b_1b_t1_port
-      - feature
       disk.device.read.bytes.rate_b_single_2b:
       - b_single_2b
       - disk.device.read.bytes.rate
-      network.outpoing.packets_b_single_2b_1b_t1_port:
-      - b_single_2b_1b_t1_port
-      - network.outpoing.packets
       disk.device.write.bytes.rate_b_single_2b:
       - b_single_2b
       - disk.device.write.bytes.rate
@@ -330,24 +333,18 @@ topology_template:
       memory_b_single_2b:
       - b_single_2b
       - memory
-      network.outgoing.packets.rate_b_single_2b_1b_t1_port:
-      - b_single_2b_1b_t1_port
-      - network.outgoing.packets.rate
       binding_b_single_2b:
       - b_single_2b
       - binding
-      network.incoming.packets_b_single_2b_1b_t1_port:
-      - b_single_2b_1b_t1_port
-      - network.incoming.packets
-      network.outgoing.bytes_b_single_2b_1b_t1_port:
-      - b_single_2b_1b_t1_port
-      - network.outgoing.bytes
-      binding_b_single_2b_1b_t1_port:
-      - b_single_2b_1b_t1_port
-      - binding
-      feature_b_single_2b_1b_t2_port:
-      - b_single_2b_1b_t2_port
+      feature_b_single_2b_1b_t2_port_0:
+      - b_single_2b_1b_t2_port_0
       - feature
+      attachment_b_single_2b_1b_t1_port_0:
+      - b_single_2b_1b_t1_port_0
+      - attachment
+      network.incoming.packets.rate_b_single_2b_1b_t1_port_0:
+      - b_single_2b_1b_t1_port_0
+      - network.incoming.packets.rate
       os_b_single_2b:
       - b_single_2b
       - os
@@ -381,34 +378,37 @@ topology_template:
       disk.device.write.requests.rate_b_single_2b:
       - b_single_2b
       - disk.device.write.requests.rate
+      network.outgoing.bytes_b_single_2b_1b_t2_port_0:
+      - b_single_2b_1b_t2_port_0
+      - network.outgoing.bytes
+      binding_b_single_2b_1b_t2_port_0:
+      - b_single_2b_1b_t2_port_0
+      - binding
       cpu_b_single_2b:
       - b_single_2b
       - cpu
       disk.read.bytes.rate_b_single_2b:
       - b_single_2b
       - disk.read.bytes.rate
-      network.incoming.bytes_b_single_2b_1b_t2_port:
-      - b_single_2b_1b_t2_port
-      - network.incoming.bytes
-      network.outgoing.bytes.rate_b_single_2b_1b_t1_port:
-      - b_single_2b_1b_t1_port
-      - network.outgoing.bytes.rate
+      network.outpoing.packets_b_single_2b_1b_t2_port_0:
+      - b_single_2b_1b_t2_port_0
+      - network.outpoing.packets
     requirements:
       local_storage_b_single_2b:
       - b_single_2b
       - local_storage
+      link_b_single_2b_1b_t2_port_0:
+      - b_single_2b_1b_t2_port_0
+      - link
       dependency_b_single_2b:
       - b_single_2b
       - dependency
-      link_b_single_2b_1b_t2_port:
-      - b_single_2b_1b_t2_port
+      link_b_single_2b_1b_t1_port_0:
+      - b_single_2b_1b_t1_port_0
       - link
-      link_b_single_2b_1b_t1_port:
-      - b_single_2b_1b_t1_port
-      - link
-      dependency_b_single_2b_1b_t2_port:
-      - b_single_2b_1b_t2_port
+      dependency_b_single_2b_1b_t2_port_0:
+      - b_single_2b_1b_t2_port_0
       - dependency
-      dependency_b_single_2b_1b_t1_port:
-      - b_single_2b_1b_t1_port
+      dependency_b_single_2b_1b_t1_port_0:
+      - b_single_2b_1b_t1_port_0
       - dependency

@@ -1,0 +1,637 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_plt
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.compute.nodes.heat.plt:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_plt_oam_0_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_plt_oam_0_port_subnetpoolid:
+      type: string
+      required: true
+    port_plt_internal_0_port_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
+    port_plt_oam_0_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_plt_config_drive:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
+    port_plt_data_0_port_subnetpoolid:
+      type: string
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    port_plt_internal_0_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_plt_data_0_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    vm_image_name:
+      type: string
+      required: true
+    compute_plt_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_oam_0_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_internal_0_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_plt_internal_0_port_network_role_tag:
+      type: string
+      required: true
+    port_plt_oam_0_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_plt_data_0_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_plt_data_0_port_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
+    port_plt_internal_0_port_subnetpoolid:
+      type: string
+      required: true
+    port_plt_data_0_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_plt_internal_0_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_plt_metadata:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_plt_data_0_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_plt_internal_0_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_plt_data_0_port_order:
+      type: integer
+      required: true
+    port_plt_data_0_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_plt_data_0_port_network_role_tag:
+      type: string
+      required: true
+    port_plt_internal_0_port_order:
+      type: integer
+      required: true
+    port_plt_internal_0_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_plt_oam_0_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_plt_oam_0_port_network_role_tag:
+      type: string
+      required: true
+    port_plt_internal_0_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_oam_0_port_order:
+      type: integer
+      required: true
+    compute_plt_image_update_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_oam_0_port_network_role:
+      type: string
+      required: true
+    port_plt_oam_0_port_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
+    port_plt_data_0_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_data_0_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_plt_internal_0_port_network_role:
+      type: string
+      required: true
+    compute_plt_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_internal_0_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_data_0_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_data_0_port_network_role:
+      type: string
+      required: true
+    port_plt_internal_0_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_plt_oam_0_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_oam_0_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_data_0_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_oam_0_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    compute_plt_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_plt_oam_0_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+  node_templates:
+    plt_plt_internal_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy:
+          get_input:
+          - port_plt_internal_0_port_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_plt_internal_0_port_mac_requirements
+        allowed_address_pairs:
+          get_input: port_plt_internal_0_port_allowed_address_pairs
+        order:
+          get_input: port_plt_internal_0_port_order
+        security_groups:
+          get_input:
+          - port_plt_internal_0_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_plt_internal_0_port_exCP_naming
+        vlan_requirements:
+          get_input: port_plt_internal_0_port_vlan_requirements
+        ip_requirements:
+          get_input: port_plt_internal_0_port_ip_requirements
+        network_role_tag:
+          get_input: port_plt_internal_0_port_network_role_tag
+        network_role:
+          get_input: port_plt_internal_0_port_network_role
+        subnetpoolid:
+          get_input: port_plt_internal_0_port_subnetpoolid
+        name:
+          get_input:
+          - port_plt_internal_0_port_name
+          - index_value
+        network:
+          get_input:
+          - port_plt_internal_0_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: plt
+          relationship: tosca.relationships.network.BindsTo
+    plt_plt_data_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy:
+          get_input:
+          - port_plt_data_0_port_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_plt_data_0_port_mac_requirements
+        allowed_address_pairs:
+          get_input: port_plt_data_0_port_allowed_address_pairs
+        order:
+          get_input: port_plt_data_0_port_order
+        security_groups:
+          get_input:
+          - port_plt_data_0_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_plt_data_0_port_exCP_naming
+        vlan_requirements:
+          get_input: port_plt_data_0_port_vlan_requirements
+        ip_requirements:
+          get_input: port_plt_data_0_port_ip_requirements
+        network_role_tag:
+          get_input: port_plt_data_0_port_network_role_tag
+        network_role:
+          get_input: port_plt_data_0_port_network_role
+        subnetpoolid:
+          get_input: port_plt_data_0_port_subnetpoolid
+        fixed_ips:
+          get_input: port_plt_data_0_port_fixed_ips
+        name:
+          get_input:
+          - port_plt_data_0_port_name
+          - index_value
+        network:
+          get_input:
+          - port_plt_data_0_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: plt
+          relationship: tosca.relationships.network.BindsTo
+    plt:
+      type: org.openecomp.resource.vfc.compute.nodes.heat.plt
+      properties:
+        availability_zone:
+          get_input:
+          - compute_plt_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        metadata:
+          get_input:
+          - compute_plt_metadata
+          - index_value
+        config_drive:
+          get_input:
+          - compute_plt_config_drive
+          - index_value
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_plt_name
+          - index_value
+        image_update_policy:
+          get_input:
+          - compute_plt_image_update_policy
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_plt_user_data_format
+          - index_value
+    plt_plt_oam_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy:
+          get_input:
+          - port_plt_oam_0_port_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_plt_oam_0_port_mac_requirements
+        allowed_address_pairs:
+          get_input: port_plt_oam_0_port_allowed_address_pairs
+        order:
+          get_input: port_plt_oam_0_port_order
+        security_groups:
+          get_input:
+          - port_plt_oam_0_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_plt_oam_0_port_exCP_naming
+        vlan_requirements:
+          get_input: port_plt_oam_0_port_vlan_requirements
+        ip_requirements:
+          get_input: port_plt_oam_0_port_ip_requirements
+        network_role_tag:
+          get_input: port_plt_oam_0_port_network_role_tag
+        network_role:
+          get_input: port_plt_oam_0_port_network_role
+        subnetpoolid:
+          get_input: port_plt_oam_0_port_subnetpoolid
+        fixed_ips:
+          get_input: port_plt_oam_0_port_fixed_ips
+        name:
+          get_input:
+          - port_plt_oam_0_port_name
+          - index_value
+        network:
+          get_input:
+          - port_plt_oam_0_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: plt
+          relationship: tosca.relationships.network.BindsTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.plt
+    capabilities:
+      network.outgoing.bytes.rate_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - network.outgoing.bytes.rate
+      disk.device.usage_plt:
+      - plt
+      - disk.device.usage
+      disk.iops_plt:
+      - plt
+      - disk.iops
+      disk.read.bytes.rate_plt:
+      - plt
+      - disk.read.bytes.rate
+      disk.device.allocation_plt:
+      - plt
+      - disk.device.allocation
+      disk.device.write.bytes.rate_plt:
+      - plt
+      - disk.device.write.bytes.rate
+      disk.read.bytes_plt:
+      - plt
+      - disk.read.bytes
+      network.incoming.packets_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - network.incoming.packets
+      disk.capacity_plt:
+      - plt
+      - disk.capacity
+      disk.write.bytes_plt:
+      - plt
+      - disk.write.bytes
+      disk.device.read.bytes.rate_plt:
+      - plt
+      - disk.device.read.bytes.rate
+      endpoint_plt:
+      - plt
+      - endpoint
+      disk.read.requests_plt:
+      - plt
+      - disk.read.requests
+      network.outpoing.packets_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - network.outpoing.packets
+      disk.device.write.requests.rate_plt:
+      - plt
+      - disk.device.write.requests.rate
+      attachment_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - attachment
+      feature_plt:
+      - plt
+      - feature
+      cpu_plt:
+      - plt
+      - cpu
+      disk.write.requests_plt:
+      - plt
+      - disk.write.requests
+      network.incoming.packets.rate_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - network.incoming.packets.rate
+      disk.device.write.bytes_plt:
+      - plt
+      - disk.device.write.bytes
+      network.outgoing.bytes_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - network.outgoing.bytes
+      network.outpoing.packets_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - network.outpoing.packets
+      network.incoming.bytes_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - network.incoming.bytes
+      network.outgoing.packets.rate_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - network.outgoing.packets.rate
+      network.incoming.bytes_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - network.incoming.bytes
+      network.incoming.bytes_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - network.incoming.bytes
+      attachment_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - attachment
+      binding_plt:
+      - plt
+      - binding
+      network.incoming.bytes.rate_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - network.incoming.bytes.rate
+      disk.device.read.bytes_plt:
+      - plt
+      - disk.device.read.bytes
+      disk.device.latency_plt:
+      - plt
+      - disk.device.latency
+      network.incoming.packets.rate_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - network.incoming.packets.rate
+      network.outgoing.bytes_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - network.outgoing.bytes
+      binding_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - binding
+      feature_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - feature
+      instance_plt:
+      - plt
+      - instance
+      disk.latency_plt:
+      - plt
+      - disk.latency
+      disk.write.bytes.rate_plt:
+      - plt
+      - disk.write.bytes.rate
+      disk.ephemeral.size_plt:
+      - plt
+      - disk.ephemeral.size
+      cpu_util_plt:
+      - plt
+      - cpu_util
+      binding_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - binding
+      memory.usage_plt:
+      - plt
+      - memory.usage
+      attachment_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - attachment
+      network.incoming.packets_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - network.incoming.packets
+      disk.device.capacity_plt:
+      - plt
+      - disk.device.capacity
+      binding_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - binding
+      disk.device.read.requests_plt:
+      - plt
+      - disk.device.read.requests
+      memory.resident_plt:
+      - plt
+      - memory.resident
+      network.outgoing.packets.rate_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - network.outgoing.packets.rate
+      scalable_plt:
+      - plt
+      - scalable
+      network.incoming.packets.rate_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - network.incoming.packets.rate
+      network.outgoing.packets.rate_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - network.outgoing.packets.rate
+      network.incoming.bytes.rate_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - network.incoming.bytes.rate
+      disk.usage_plt:
+      - plt
+      - disk.usage
+      feature_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - feature
+      network.incoming.bytes.rate_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - network.incoming.bytes.rate
+      memory_plt:
+      - plt
+      - memory
+      disk.root.size_plt:
+      - plt
+      - disk.root.size
+      network.outgoing.bytes_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - network.outgoing.bytes
+      cpu.delta_plt:
+      - plt
+      - cpu.delta
+      disk.device.write.requests_plt:
+      - plt
+      - disk.device.write.requests
+      feature_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - feature
+      network.outgoing.bytes.rate_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - network.outgoing.bytes.rate
+      disk.device.read.requests.rate_plt:
+      - plt
+      - disk.device.read.requests.rate
+      network.outpoing.packets_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - network.outpoing.packets
+      os_plt:
+      - plt
+      - os
+      network.outgoing.bytes.rate_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - network.outgoing.bytes.rate
+      network.incoming.packets_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - network.incoming.packets
+      disk.allocation_plt:
+      - plt
+      - disk.allocation
+      host_plt:
+      - plt
+      - host
+      vcpus_plt:
+      - plt
+      - vcpus
+      disk.device.iops_plt:
+      - plt
+      - disk.device.iops
+      disk.write.requests.rate_plt:
+      - plt
+      - disk.write.requests.rate
+    requirements:
+      local_storage_plt:
+      - plt
+      - local_storage
+      link_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - link
+      dependency_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - dependency
+      dependency_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - dependency
+      link_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - link
+      dependency_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - dependency
+      link_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - link
+      dependency_plt:
+      - plt
+      - dependency

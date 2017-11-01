@@ -35,6 +35,16 @@ public class UnifiedCompositionCatalogInstanceFullTest extends BaseFullTranslati
   }
 
   @Test
+  public void testComputeWithTwoSamePortTypesWithDiffPropVal() throws IOException {
+    inputFilesPath =
+            "/mock/services/heattotosca/fulltest/catalogInstances/computewithtwosameporttypes/in";
+    outputFilesPath =
+            "/mock/services/heattotosca/fulltest/catalogInstances/computewithtwosameporttypes/out";
+
+    testTranslationWithInit();
+  }
+
+  @Test
   public void testThreeNovaSameTypeDiffImageName() throws IOException {
     inputFilesPath =
         "/mock/services/heattotosca/fulltest/catalogInstances/threeComputesSameTypeDiffImageName/in";

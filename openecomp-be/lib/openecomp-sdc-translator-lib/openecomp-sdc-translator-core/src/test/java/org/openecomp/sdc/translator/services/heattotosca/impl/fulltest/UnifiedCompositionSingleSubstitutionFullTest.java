@@ -35,6 +35,36 @@ public class UnifiedCompositionSingleSubstitutionFullTest extends BaseFullTransl
   }
 
   @Test
+  public void testComputeWithTwoSamePortTypes2() throws IOException {
+    inputFilesPath =
+            "/mock/services/heattotosca/fulltest/singleSubstitution/computewithtwosameporttypes2/in";
+    outputFilesPath =
+            "/mock/services/heattotosca/fulltest/singleSubstitution/computewithtwosameporttypes2/out";
+
+    testTranslationWithInit();
+  }
+
+  @Test
+  public void testComputeWithTwoSamePortTypes3() throws IOException {
+    inputFilesPath =
+            "/mock/services/heattotosca/fulltest/singleSubstitution/computewithtwosameporttypes3/in";
+    outputFilesPath =
+            "/mock/services/heattotosca/fulltest/singleSubstitution/computewithtwosameporttypes3/out";
+
+    testTranslationWithInit();
+  }
+
+  @Test
+  public void testComputeWithTwoSamePortTypes4() throws IOException {
+    inputFilesPath =
+            "/mock/services/heattotosca/fulltest/singleSubstitution/computewithtwosameporttypes4/in";
+    outputFilesPath =
+            "/mock/services/heattotosca/fulltest/singleSubstitution/computewithtwosameporttypes4/out";
+
+    testTranslationWithInit();
+  }
+
+  @Test
   public void testComputeWithTwoDifferentPortTypesAndNested() throws IOException {
     inputFilesPath =
         "/mock/services/heattotosca/fulltest/singleSubstitution/computewithtwodiffporttypesandnested/in";

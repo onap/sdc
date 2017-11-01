@@ -11,21 +11,17 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_ps_server_nested_b_port_replacement_policy:
-      type: list
+    port_ps_server_nested2_1b_port_network_role_tag:
+      type: string
       required: true
-      entry_schema:
-        type: string
-    port_ps_server_nested_b_port_ip_requirements:
+    port_ps_server_nested2_1b_port_ip_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
-    port_ps_server_nested_b_port_network:
-      type: list
+    port_ps_server_nested2_1b_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
       required: true
-      entry_schema:
-        type: string
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -38,10 +34,12 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_ps_server_nested_b_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
     compute_ps_server_nested2_1b_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_ps_server_nested2_1b_port_replacement_policy:
       type: list
       required: true
       entry_schema:
@@ -49,69 +47,37 @@ topology_template:
     vm_flavor_name:
       type: string
       required: true
-    port_ps_server_nested_b_port_fixed_ips:
+    port_ps_server_nested2_1b_port_network:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-    port_ps_server_nested_b_port_subnetpoolid:
-      type: string
-      required: true
-    port_ps_server_nested_b_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
-    vm_image_name:
-      type: string
-      required: true
-    port_ps_server_nested_b_port_vlan_requirements:
+        type: string
+    port_ps_server_nested2_1b_port_vlan_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.VlanRequirements
-    port_ps_server_nested_b_port_network_role:
+    port_ps_server_nested2_1b_port_network_role:
       type: string
       required: true
-    port_ps_server_nested_b_port_network_role_tag:
+    vm_image_name:
       type: string
       required: true
-    port_ps_server_nested_b_port_order:
+    port_ps_server_nested2_1b_port_order:
       type: integer
       required: true
+    port_ps_server_nested2_1b_port_subnetpoolid:
+      type: string
+      required: true
+    port_ps_server_nested2_1b_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_ps_server_nested2_1b_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
   node_templates:
-    ps_server_nested2_1b_ps_server_nested_b_port:
-      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
-      properties:
-        exCP_naming:
-          get_input: port_ps_server_nested_b_port_exCP_naming
-        replacement_policy:
-          get_input:
-          - port_ps_server_nested_b_port_replacement_policy
-          - index_value
-        vlan_requirements:
-          get_input: port_ps_server_nested_b_port_vlan_requirements
-        ip_requirements:
-          get_input: port_ps_server_nested_b_port_ip_requirements
-        network_role_tag:
-          get_input: port_ps_server_nested_b_port_network_role_tag
-        mac_requirements:
-          get_input: port_ps_server_nested_b_port_mac_requirements
-        order:
-          get_input: port_ps_server_nested_b_port_order
-        network_role:
-          get_input: port_ps_server_nested_b_port_network_role
-        subnetpoolid:
-          get_input: port_ps_server_nested_b_port_subnetpoolid
-        fixed_ips:
-          get_input: port_ps_server_nested_b_port_fixed_ips
-        network:
-          get_input:
-          - port_ps_server_nested_b_port_network
-          - index_value
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: ps_server_nested2_1b
-          relationship: tosca.relationships.network.BindsTo
     ps_server_nested2_1b:
       type: org.openecomp.resource.vfc.compute.nodes.heat.ps_server_nested2_1b
       properties:
@@ -127,30 +93,55 @@ topology_template:
           get_input:
           - compute_ps_server_nested2_1b_name
           - index_value
+    ps_server_nested2_1b_ps_server_nested2_1b_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        exCP_naming:
+          get_input: port_ps_server_nested2_1b_port_exCP_naming
+        replacement_policy:
+          get_input:
+          - port_ps_server_nested2_1b_port_replacement_policy
+          - index_value
+        vlan_requirements:
+          get_input: port_ps_server_nested2_1b_port_vlan_requirements
+        ip_requirements:
+          get_input: port_ps_server_nested2_1b_port_ip_requirements
+        network_role_tag:
+          get_input: port_ps_server_nested2_1b_port_network_role_tag
+        mac_requirements:
+          get_input: port_ps_server_nested2_1b_port_mac_requirements
+        order:
+          get_input: port_ps_server_nested2_1b_port_order
+        network_role:
+          get_input: port_ps_server_nested2_1b_port_network_role
+        subnetpoolid:
+          get_input: port_ps_server_nested2_1b_port_subnetpoolid
+        fixed_ips:
+          get_input: port_ps_server_nested2_1b_port_fixed_ips
+        network:
+          get_input:
+          - port_ps_server_nested2_1b_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ps_server_nested2_1b
+          relationship: tosca.relationships.network.BindsTo
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.ps_server_nested2_1b
     capabilities:
       disk.device.read.bytes.rate_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.device.read.bytes.rate
-      network.incoming.packets.rate_ps_server_nested2_1b_ps_server_nested_b_port:
-      - ps_server_nested2_1b_ps_server_nested_b_port
-      - network.incoming.packets.rate
       disk.iops_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.iops
       vcpus_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - vcpus
-      network.outgoing.packets.rate_ps_server_nested2_1b_ps_server_nested_b_port:
-      - ps_server_nested2_1b_ps_server_nested_b_port
-      - network.outgoing.packets.rate
       instance_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - instance
-      network.incoming.packets_ps_server_nested2_1b_ps_server_nested_b_port:
-      - ps_server_nested2_1b_ps_server_nested_b_port
-      - network.incoming.packets
       disk.usage_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.usage
@@ -163,6 +154,9 @@ topology_template:
       disk.read.bytes_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.read.bytes
+      network.incoming.packets_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
+      - network.incoming.packets
       disk.device.allocation_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.device.allocation
@@ -172,9 +166,6 @@ topology_template:
       memory.resident_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - memory.resident
-      network.outpoing.packets_ps_server_nested2_1b_ps_server_nested_b_port:
-      - ps_server_nested2_1b_ps_server_nested_b_port
-      - network.outpoing.packets
       disk.ephemeral.size_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.ephemeral.size
@@ -193,45 +184,57 @@ topology_template:
       disk.read.bytes.rate_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.read.bytes.rate
+      network.incoming.bytes_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
+      - network.incoming.bytes
       scalable_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - scalable
       disk.write.requests.rate_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.write.requests.rate
+      network.outgoing.bytes.rate_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
+      - network.outgoing.bytes.rate
+      network.outgoing.packets.rate_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
+      - network.outgoing.packets.rate
+      network.outpoing.packets_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
+      - network.outpoing.packets
       cpu_util_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - cpu_util
-      network.outgoing.bytes_ps_server_nested2_1b_ps_server_nested_b_port:
-      - ps_server_nested2_1b_ps_server_nested_b_port
-      - network.outgoing.bytes
+      network.incoming.bytes.rate_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
+      - network.incoming.bytes.rate
       disk.read.requests_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.read.requests
+      network.outgoing.bytes_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
+      - network.outgoing.bytes
       disk.write.requests_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.write.requests
       memory_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - memory
-      binding_ps_server_nested2_1b_ps_server_nested_b_port:
-      - ps_server_nested2_1b_ps_server_nested_b_port
-      - binding
       disk.device.read.requests.rate_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.device.read.requests.rate
       disk.device.latency_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.device.latency
-      feature_ps_server_nested2_1b_ps_server_nested_b_port:
-      - ps_server_nested2_1b_ps_server_nested_b_port
-      - feature
-      network.incoming.bytes_ps_server_nested2_1b_ps_server_nested_b_port:
-      - ps_server_nested2_1b_ps_server_nested_b_port
-      - network.incoming.bytes
+      network.incoming.packets.rate_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
+      - network.incoming.packets.rate
       disk.latency_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.latency
+      feature_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
+      - feature
       disk.device.write.requests.rate_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.device.write.requests.rate
@@ -253,18 +256,12 @@ topology_template:
       disk.root.size_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.root.size
-      network.incoming.bytes.rate_ps_server_nested2_1b_ps_server_nested_b_port:
-      - ps_server_nested2_1b_ps_server_nested_b_port
-      - network.incoming.bytes.rate
       disk.device.write.requests_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.device.write.requests
       disk.device.iops_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.device.iops
-      attachment_ps_server_nested2_1b_ps_server_nested_b_port:
-      - ps_server_nested2_1b_ps_server_nested_b_port
-      - attachment
       os_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - os
@@ -277,15 +274,18 @@ topology_template:
       cpu_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - cpu
+      binding_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
+      - binding
+      attachment_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
+      - attachment
       disk.device.read.requests_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.device.read.requests
       disk.device.write.bytes.rate_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.device.write.bytes.rate
-      network.outgoing.bytes.rate_ps_server_nested2_1b_ps_server_nested_b_port:
-      - ps_server_nested2_1b_ps_server_nested_b_port
-      - network.outgoing.bytes.rate
     requirements:
       local_storage_ps_server_nested2_1b:
       - ps_server_nested2_1b
@@ -293,9 +293,9 @@ topology_template:
       dependency_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - dependency
-      link_ps_server_nested2_1b_ps_server_nested_b_port:
-      - ps_server_nested2_1b_ps_server_nested_b_port
-      - link
-      dependency_ps_server_nested2_1b_ps_server_nested_b_port:
-      - ps_server_nested2_1b_ps_server_nested_b_port
+      dependency_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
       - dependency
+      link_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
+      - link

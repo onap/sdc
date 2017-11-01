@@ -11,31 +11,24 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_1c1_t1_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
+    port_1c1_t1_port_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
     compute_1c12_scalling_instance_scheduler_hints:
       type: list
       required: true
       entry_schema:
         type: json
-    port_1c1_t1_port_fixed_ips:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
     compute_1c12_scalling_instance_name:
       type: list
       required: true
       entry_schema:
         type: string
-    port_1c1_t1_port_vlan_requirements:
-      type: list
+    port_1c1_t1_port_1_subnetpoolid:
+      type: string
       required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_1c1_t1_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
+    port_1c1_t1_port_1_network_role_tag:
+      type: string
       required: true
     index_value:
       type: integer
@@ -44,78 +37,85 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
+    port_1c1_t1_port_1_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     vm_flavor_name:
       type: string
+      required: true
+    port_1c1_t1_port_1_order:
+      type: integer
       required: true
     compute_1c12_scalling_instance_user_data_format:
       type: list
       required: true
       entry_schema:
         type: string
-    port_1c1_t1_port_ip_requirements:
+    port_1c1_t1_port_1_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_1c1_t1_port_1_network_role:
+      type: string
+      required: true
+    port_1c1_t1_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    vm_image_name:
+      type: string
+      required: true
+    port_1c1_t1_port_1_ip_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
-    vm_image_name:
-      type: string
-      required: true
-    port_1c1_t1_port_name:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_1c1_t1_port_subnetpoolid:
-      type: string
-      required: true
-    port_1c1_t1_port_network_role_tag:
-      type: string
-      required: true
-    port_1c1_t1_port_network_role:
-      type: string
+    port_1c1_t1_port_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
       required: true
     compute_1c12_scalling_instance_availability_zone:
       type: list
       required: true
       entry_schema:
         type: string
-    port_1c1_t1_port_network:
+    port_1c1_t1_port_1_network:
       type: list
       required: true
       entry_schema:
         type: string
-    port_1c1_t1_port_order:
-      type: integer
-      required: true
   node_templates:
-    1c12_scalling_instance_1c1_t1_port:
+    1c12_scalling_instance_1c1_t1_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         exCP_naming:
-          get_input: port_1c1_t1_port_exCP_naming
+          get_input: port_1c1_t1_port_1_exCP_naming
         vlan_requirements:
-          get_input: port_1c1_t1_port_vlan_requirements
+          get_input: port_1c1_t1_port_1_vlan_requirements
         ip_requirements:
-          get_input: port_1c1_t1_port_ip_requirements
+          get_input: port_1c1_t1_port_1_ip_requirements
         network_role_tag:
-          get_input: port_1c1_t1_port_network_role_tag
+          get_input: port_1c1_t1_port_1_network_role_tag
         mac_requirements:
-          get_input: port_1c1_t1_port_mac_requirements
+          get_input: port_1c1_t1_port_1_mac_requirements
         order:
-          get_input: port_1c1_t1_port_order
+          get_input: port_1c1_t1_port_1_order
         network_role:
-          get_input: port_1c1_t1_port_network_role
+          get_input: port_1c1_t1_port_1_network_role
         subnetpoolid:
-          get_input: port_1c1_t1_port_subnetpoolid
+          get_input: port_1c1_t1_port_1_subnetpoolid
         fixed_ips:
-          get_input: port_1c1_t1_port_fixed_ips
+          get_input: port_1c1_t1_port_1_fixed_ips
         name:
           get_input:
-          - port_1c1_t1_port_name
+          - port_1c1_t1_port_1_name
           - index_value
         network:
           get_input:
-          - port_1c1_t1_port_network
+          - port_1c1_t1_port_1_network
           - index_value
       requirements:
       - binding:
@@ -146,11 +146,11 @@ topology_template:
           - compute_1c12_scalling_instance_user_data_format
           - index_value
   outputs:
-    1c12_scalling_instance_1c1_t1_port_tenant_id:
+    1c12_scalling_instance_1c1_t1_port_1_tenant_id:
       type: string
       value:
         get_attribute:
-        - 1c12_scalling_instance_1c1_t1_port
+        - 1c12_scalling_instance_1c1_t1_port_1
         - tenant_id
     1c12_scalling_instance_instance_name:
       type: string
@@ -161,30 +161,27 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.1c12_scalling_instance
     capabilities:
+      network.outgoing.bytes_1c12_scalling_instance_1c1_t1_port_1:
+      - 1c12_scalling_instance_1c1_t1_port_1
+      - network.outgoing.bytes
       cpu_1c12_scalling_instance:
       - 1c12_scalling_instance
       - cpu
       disk.device.write.bytes_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.device.write.bytes
-      network.incoming.bytes.rate_1c12_scalling_instance_1c1_t1_port:
-      - 1c12_scalling_instance_1c1_t1_port
-      - network.incoming.bytes.rate
       disk.usage_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.usage
       disk.device.read.requests_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.device.read.requests
-      feature_1c12_scalling_instance_1c1_t1_port:
-      - 1c12_scalling_instance_1c1_t1_port
-      - feature
+      network.incoming.packets_1c12_scalling_instance_1c1_t1_port_1:
+      - 1c12_scalling_instance_1c1_t1_port_1
+      - network.incoming.packets
       disk.device.latency_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.device.latency
-      network.outgoing.bytes_1c12_scalling_instance_1c1_t1_port:
-      - 1c12_scalling_instance_1c1_t1_port
-      - network.outgoing.bytes
       cpu_util_1c12_scalling_instance:
       - 1c12_scalling_instance
       - cpu_util
@@ -209,27 +206,21 @@ topology_template:
       disk.device.allocation_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.device.allocation
-      binding_1c12_scalling_instance_1c1_t1_port:
-      - 1c12_scalling_instance_1c1_t1_port
-      - binding
-      network.incoming.packets_1c12_scalling_instance_1c1_t1_port:
-      - 1c12_scalling_instance_1c1_t1_port
-      - network.incoming.packets
-      attachment_1c12_scalling_instance_1c1_t1_port:
-      - 1c12_scalling_instance_1c1_t1_port
-      - attachment
       disk.latency_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.latency
-      network.incoming.bytes_1c12_scalling_instance_1c1_t1_port:
-      - 1c12_scalling_instance_1c1_t1_port
-      - network.incoming.bytes
       memory_1c12_scalling_instance:
       - 1c12_scalling_instance
       - memory
       host_1c12_scalling_instance:
       - 1c12_scalling_instance
       - host
+      network.outgoing.bytes.rate_1c12_scalling_instance_1c1_t1_port_1:
+      - 1c12_scalling_instance_1c1_t1_port_1
+      - network.outgoing.bytes.rate
+      network.incoming.bytes.rate_1c12_scalling_instance_1c1_t1_port_1:
+      - 1c12_scalling_instance_1c1_t1_port_1
+      - network.incoming.bytes.rate
       cpu.delta_1c12_scalling_instance:
       - 1c12_scalling_instance
       - cpu.delta
@@ -242,21 +233,27 @@ topology_template:
       disk.write.requests.rate_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.write.requests.rate
+      binding_1c12_scalling_instance_1c1_t1_port_1:
+      - 1c12_scalling_instance_1c1_t1_port_1
+      - binding
       disk.write.bytes.rate_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.write.bytes.rate
+      network.incoming.packets.rate_1c12_scalling_instance_1c1_t1_port_1:
+      - 1c12_scalling_instance_1c1_t1_port_1
+      - network.incoming.packets.rate
       disk.write.requests_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.write.requests
-      network.outgoing.bytes.rate_1c12_scalling_instance_1c1_t1_port:
-      - 1c12_scalling_instance_1c1_t1_port
-      - network.outgoing.bytes.rate
       disk.ephemeral.size_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.ephemeral.size
       disk.device.read.requests.rate_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.device.read.requests.rate
+      network.incoming.bytes_1c12_scalling_instance_1c1_t1_port_1:
+      - 1c12_scalling_instance_1c1_t1_port_1
+      - network.incoming.bytes
       instance_1c12_scalling_instance:
       - 1c12_scalling_instance
       - instance
@@ -269,6 +266,9 @@ topology_template:
       disk.device.iops_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.device.iops
+      network.outgoing.packets.rate_1c12_scalling_instance_1c1_t1_port_1:
+      - 1c12_scalling_instance_1c1_t1_port_1
+      - network.outgoing.packets.rate
       feature_1c12_scalling_instance:
       - 1c12_scalling_instance
       - feature
@@ -284,21 +284,15 @@ topology_template:
       vcpus_1c12_scalling_instance:
       - 1c12_scalling_instance
       - vcpus
-      network.incoming.packets.rate_1c12_scalling_instance_1c1_t1_port:
-      - 1c12_scalling_instance_1c1_t1_port
-      - network.incoming.packets.rate
+      feature_1c12_scalling_instance_1c1_t1_port_1:
+      - 1c12_scalling_instance_1c1_t1_port_1
+      - feature
       disk.device.write.requests.rate_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.device.write.requests.rate
-      network.outgoing.packets.rate_1c12_scalling_instance_1c1_t1_port:
-      - 1c12_scalling_instance_1c1_t1_port
-      - network.outgoing.packets.rate
       disk.device.write.requests_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.device.write.requests
-      network.outpoing.packets_1c12_scalling_instance_1c1_t1_port:
-      - 1c12_scalling_instance_1c1_t1_port
-      - network.outpoing.packets
       disk.allocation_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.allocation
@@ -311,22 +305,28 @@ topology_template:
       memory.resident_1c12_scalling_instance:
       - 1c12_scalling_instance
       - memory.resident
+      network.outpoing.packets_1c12_scalling_instance_1c1_t1_port_1:
+      - 1c12_scalling_instance_1c1_t1_port_1
+      - network.outpoing.packets
       disk.read.bytes.rate_1c12_scalling_instance:
       - 1c12_scalling_instance
       - disk.read.bytes.rate
       memory.usage_1c12_scalling_instance:
       - 1c12_scalling_instance
       - memory.usage
+      attachment_1c12_scalling_instance_1c1_t1_port_1:
+      - 1c12_scalling_instance_1c1_t1_port_1
+      - attachment
     requirements:
-      dependency_1c12_scalling_instance_1c1_t1_port:
-      - 1c12_scalling_instance_1c1_t1_port
-      - dependency
       local_storage_1c12_scalling_instance:
       - 1c12_scalling_instance
       - local_storage
+      link_1c12_scalling_instance_1c1_t1_port_1:
+      - 1c12_scalling_instance_1c1_t1_port_1
+      - link
       dependency_1c12_scalling_instance:
       - 1c12_scalling_instance
       - dependency
-      link_1c12_scalling_instance_1c1_t1_port:
-      - 1c12_scalling_instance_1c1_t1_port
-      - link
+      dependency_1c12_scalling_instance_1c1_t1_port_1:
+      - 1c12_scalling_instance_1c1_t1_port_1
+      - dependency

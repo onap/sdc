@@ -1,0 +1,632 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_app
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.compute.nodes.heat.app:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_app_data_0_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    compute_app_scheduler_hints:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_app_internal_0_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_app_data_0_port_network_role:
+      type: string
+      required: true
+    port_app_oam_0_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_app_oam_0_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_flavor_name:
+      type: string
+      required: true
+    port_app_data_0_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    vm_image_name:
+      type: string
+      required: true
+    port_app_oam_0_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_app_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_app_config_drive:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
+    port_app_oam_0_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_app_data_0_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_app_data_0_port_network_role_tag:
+      type: string
+      required: true
+    port_app_oam_0_port_network_role_tag:
+      type: string
+      required: true
+    port_app_data_0_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_app_data_0_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_app_internal_0_port_network_role_tag:
+      type: string
+      required: true
+    port_app_oam_0_port_network_role:
+      type: string
+      required: true
+    compute_app_metadata:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_app_data_0_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_app_internal_0_port_network_role:
+      type: string
+      required: true
+    port_app_internal_0_port_subnetpoolid:
+      type: string
+      required: true
+    port_app_internal_0_port_allowed_address_pairs:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.network.AddressPair
+    port_app_data_0_port_subnetpoolid:
+      type: string
+      required: true
+    port_app_oam_0_port_subnetpoolid:
+      type: string
+      required: true
+    port_app_internal_0_port_order:
+      type: integer
+      required: true
+    port_app_internal_0_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_app_data_0_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_app_oam_0_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_app_oam_0_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_app_internal_0_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_app_data_0_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_app_oam_0_port_order:
+      type: integer
+      required: true
+    port_app_internal_0_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_app_internal_0_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_app_internal_0_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_app_data_0_port_order:
+      type: integer
+      required: true
+    port_app_oam_0_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_app_internal_0_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_app_oam_0_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_app_data_0_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_app_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_app_oam_0_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_app_internal_0_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_app_image_update_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_app_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    app:
+      type: org.openecomp.resource.vfc.compute.nodes.heat.app
+      properties:
+        availability_zone:
+          get_input:
+          - compute_app_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        metadata:
+          get_input:
+          - compute_app_metadata
+          - index_value
+        config_drive:
+          get_input:
+          - compute_app_config_drive
+          - index_value
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_app_name
+          - index_value
+        image_update_policy:
+          get_input:
+          - compute_app_image_update_policy
+          - index_value
+        scheduler_hints:
+          get_input:
+          - compute_app_scheduler_hints
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_app_user_data_format
+          - index_value
+    app_app_internal_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy:
+          get_input:
+          - port_app_internal_0_port_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_app_internal_0_port_mac_requirements
+        allowed_address_pairs:
+          get_input: port_app_internal_0_port_allowed_address_pairs
+        order:
+          get_input: port_app_internal_0_port_order
+        security_groups:
+          get_input:
+          - port_app_internal_0_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_app_internal_0_port_exCP_naming
+        vlan_requirements:
+          get_input: port_app_internal_0_port_vlan_requirements
+        ip_requirements:
+          get_input: port_app_internal_0_port_ip_requirements
+        network_role_tag:
+          get_input: port_app_internal_0_port_network_role_tag
+        network_role:
+          get_input: port_app_internal_0_port_network_role
+        subnetpoolid:
+          get_input: port_app_internal_0_port_subnetpoolid
+        name:
+          get_input:
+          - port_app_internal_0_port_name
+          - index_value
+        network:
+          get_input:
+          - port_app_internal_0_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: app
+          relationship: tosca.relationships.network.BindsTo
+    app_app_oam_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy:
+          get_input:
+          - port_app_oam_0_port_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_app_oam_0_port_mac_requirements
+        order:
+          get_input: port_app_oam_0_port_order
+        security_groups:
+          get_input:
+          - port_app_oam_0_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_app_oam_0_port_exCP_naming
+        vlan_requirements:
+          get_input: port_app_oam_0_port_vlan_requirements
+        ip_requirements:
+          get_input: port_app_oam_0_port_ip_requirements
+        network_role_tag:
+          get_input: port_app_oam_0_port_network_role_tag
+        network_role:
+          get_input: port_app_oam_0_port_network_role
+        subnetpoolid:
+          get_input: port_app_oam_0_port_subnetpoolid
+        fixed_ips:
+          get_input: port_app_oam_0_port_fixed_ips
+        name:
+          get_input:
+          - port_app_oam_0_port_name
+          - index_value
+        network:
+          get_input:
+          - port_app_oam_0_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: app
+          relationship: tosca.relationships.network.BindsTo
+    app_app_data_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy:
+          get_input:
+          - port_app_data_0_port_replacement_policy
+          - index_value
+        mac_requirements:
+          get_input: port_app_data_0_port_mac_requirements
+        order:
+          get_input: port_app_data_0_port_order
+        security_groups:
+          get_input:
+          - port_app_data_0_port_security_groups
+          - index_value
+        exCP_naming:
+          get_input: port_app_data_0_port_exCP_naming
+        vlan_requirements:
+          get_input: port_app_data_0_port_vlan_requirements
+        ip_requirements:
+          get_input: port_app_data_0_port_ip_requirements
+        network_role_tag:
+          get_input: port_app_data_0_port_network_role_tag
+        network_role:
+          get_input: port_app_data_0_port_network_role
+        subnetpoolid:
+          get_input: port_app_data_0_port_subnetpoolid
+        fixed_ips:
+          get_input: port_app_data_0_port_fixed_ips
+        name:
+          get_input:
+          - port_app_data_0_port_name
+          - index_value
+        network:
+          get_input:
+          - port_app_data_0_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: app
+          relationship: tosca.relationships.network.BindsTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.app
+    capabilities:
+      disk.device.write.requests_app:
+      - app
+      - disk.device.write.requests
+      feature_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - feature
+      disk.device.capacity_app:
+      - app
+      - disk.device.capacity
+      disk.root.size_app:
+      - app
+      - disk.root.size
+      disk.device.iops_app:
+      - app
+      - disk.device.iops
+      network.incoming.packets.rate_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - network.incoming.packets.rate
+      network.incoming.bytes.rate_app_app_data_0_port:
+      - app_app_data_0_port
+      - network.incoming.bytes.rate
+      network.incoming.bytes_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - network.incoming.bytes
+      network.incoming.packets.rate_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - network.incoming.packets.rate
+      cpu.delta_app:
+      - app
+      - cpu.delta
+      host_app:
+      - app
+      - host
+      disk.write.bytes.rate_app:
+      - app
+      - disk.write.bytes.rate
+      disk.write.requests.rate_app:
+      - app
+      - disk.write.requests.rate
+      disk.device.latency_app:
+      - app
+      - disk.device.latency
+      disk.ephemeral.size_app:
+      - app
+      - disk.ephemeral.size
+      network.outgoing.bytes_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - network.outgoing.bytes
+      disk.device.write.requests.rate_app:
+      - app
+      - disk.device.write.requests.rate
+      disk.device.read.bytes_app:
+      - app
+      - disk.device.read.bytes
+      binding_app_app_data_0_port:
+      - app_app_data_0_port
+      - binding
+      disk.device.read.requests.rate_app:
+      - app
+      - disk.device.read.requests.rate
+      vcpus_app:
+      - app
+      - vcpus
+      disk.device.read.requests_app:
+      - app
+      - disk.device.read.requests
+      feature_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - feature
+      cpu_util_app:
+      - app
+      - cpu_util
+      endpoint_app:
+      - app
+      - endpoint
+      network.incoming.packets.rate_app_app_data_0_port:
+      - app_app_data_0_port
+      - network.incoming.packets.rate
+      disk.iops_app:
+      - app
+      - disk.iops
+      disk.device.write.bytes_app:
+      - app
+      - disk.device.write.bytes
+      disk.read.bytes.rate_app:
+      - app
+      - disk.read.bytes.rate
+      disk.latency_app:
+      - app
+      - disk.latency
+      memory.usage_app:
+      - app
+      - memory.usage
+      attachment_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - attachment
+      os_app:
+      - app
+      - os
+      network.incoming.packets_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - network.incoming.packets
+      network.incoming.packets_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - network.incoming.packets
+      network.outgoing.bytes.rate_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - network.outgoing.bytes.rate
+      memory_app:
+      - app
+      - memory
+      disk.read.requests_app:
+      - app
+      - disk.read.requests
+      network.outpoing.packets_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - network.outpoing.packets
+      network.incoming.bytes_app_app_data_0_port:
+      - app_app_data_0_port
+      - network.incoming.bytes
+      disk.write.bytes_app:
+      - app
+      - disk.write.bytes
+      disk.allocation_app:
+      - app
+      - disk.allocation
+      network.outgoing.bytes_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - network.outgoing.bytes
+      attachment_app_app_data_0_port:
+      - app_app_data_0_port
+      - attachment
+      network.incoming.bytes.rate_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - network.incoming.bytes.rate
+      network.outgoing.packets.rate_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - network.outgoing.packets.rate
+      network.incoming.bytes.rate_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - network.incoming.bytes.rate
+      memory.resident_app:
+      - app
+      - memory.resident
+      network.outgoing.packets.rate_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - network.outgoing.packets.rate
+      network.outgoing.bytes.rate_app_app_data_0_port:
+      - app_app_data_0_port
+      - network.outgoing.bytes.rate
+      cpu_app:
+      - app
+      - cpu
+      feature_app_app_data_0_port:
+      - app_app_data_0_port
+      - feature
+      disk.usage_app:
+      - app
+      - disk.usage
+      feature_app:
+      - app
+      - feature
+      disk.read.bytes_app:
+      - app
+      - disk.read.bytes
+      scalable_app:
+      - app
+      - scalable
+      network.outgoing.packets.rate_app_app_data_0_port:
+      - app_app_data_0_port
+      - network.outgoing.packets.rate
+      disk.device.read.bytes.rate_app:
+      - app
+      - disk.device.read.bytes.rate
+      disk.device.allocation_app:
+      - app
+      - disk.device.allocation
+      binding_app:
+      - app
+      - binding
+      disk.device.write.bytes.rate_app:
+      - app
+      - disk.device.write.bytes.rate
+      binding_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - binding
+      disk.device.usage_app:
+      - app
+      - disk.device.usage
+      network.outpoing.packets_app_app_data_0_port:
+      - app_app_data_0_port
+      - network.outpoing.packets
+      network.outgoing.bytes_app_app_data_0_port:
+      - app_app_data_0_port
+      - network.outgoing.bytes
+      network.incoming.bytes_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - network.incoming.bytes
+      disk.write.requests_app:
+      - app
+      - disk.write.requests
+      binding_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - binding
+      instance_app:
+      - app
+      - instance
+      attachment_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - attachment
+      network.incoming.packets_app_app_data_0_port:
+      - app_app_data_0_port
+      - network.incoming.packets
+      network.outpoing.packets_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - network.outpoing.packets
+      disk.capacity_app:
+      - app
+      - disk.capacity
+    requirements:
+      link_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - link
+      dependency_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - dependency
+      dependency_app:
+      - app
+      - dependency
+      dependency_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - dependency
+      local_storage_app:
+      - app
+      - local_storage
+      link_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - link
+      link_app_app_data_0_port:
+      - app_app_data_0_port
+      - link
+      dependency_app_app_data_0_port:
+      - app_app_data_0_port
+      - dependency
