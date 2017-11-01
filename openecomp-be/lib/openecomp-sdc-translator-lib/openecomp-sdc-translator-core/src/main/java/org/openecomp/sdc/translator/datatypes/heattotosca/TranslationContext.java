@@ -25,14 +25,12 @@ import org.openecomp.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestFile;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslatedHeatResource;
@@ -42,6 +40,7 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.services.heattotosca.ConfigConstants;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.NameExtractor;
+import org.openecomp.sdc.translator.services.heattotosca.errors.DuplicateResourceIdsInDifferentFilesErrorBuilder;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 
 import java.io.InputStream;
@@ -385,10 +384,7 @@ public class TranslationContext {
     }
 
     if(nodeAbstractNodeTemplateIdMap.containsKey(originalNodeTemplateId)){
-      throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-          .withMessage("Resource with id "
-              + originalNodeTemplateId + " occures more than once in different addOn files")
-          .build());
+      throw new CoreException(new DuplicateResourceIdsInDifferentFilesErrorBuilder(originalNodeTemplateId).build());
     }
     nodeAbstractNodeTemplateIdMap.put(originalNodeTemplateId, abstractNodeTemplateId);
     this.getUnifiedSubstitutionData().get(serviceTemplateFileName).setNodesRelatedAbstractNode(
