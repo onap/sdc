@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_655e8578",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T16:52:57Z",
+      "side": 1,
+      "message": "Please simplify the code. The method is too long, there are many nested if/else if/else block that are very difficult to follow.\n\nAlso, please follow the coding conventions. We place \"{\" on the same line as the related construct, and spaces before \"{\" and \"(\"",
+      "revId": "34fcee8b1c0792eff742a327836051a994822b7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_25507d5d",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 543,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T16:52:57Z",
+      "side": 1,
+      "message": "\"_\", \"\\\\d_\" and all other literals that are used multiple times should be made constants.",
+      "revId": "34fcee8b1c0792eff742a327836051a994822b7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_054fc1be",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionServiceTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T16:52:57Z",
+      "side": 1,
+      "message": "Looks like a lot of copy-cat code here. Please extract the same code as a method.\n\nUsing constants in the path literals will reduce a chance of spelling mistake. Please refactor.",
+      "revId": "34fcee8b1c0792eff742a327836051a994822b7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_e54955b8",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/fulltest/UnifiedCompositionCatalogInstanceFullTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T16:52:57Z",
+      "side": 1,
+      "message": "Please avoid using mutable/re-assignable data members in tests. Since each test here relies on inputFilesPath and outputFilesPath, they cannot run in parallel. Please refactor.",
+      "revId": "34fcee8b1c0792eff742a327836051a994822b7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_85d291d0",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/fulltest/UnifiedCompositionCatalogInstanceFullTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T16:52:57Z",
+      "side": 1,
+      "message": "Example:\n\nString basePath \u003d \"/mock/services/heattotosca/fulltest/catalogInstances/computewithtwosameporttypes/\";\ninputFilesPath \u003d basePath + IN_SUFFIX;\noutputFilesPath \u003d basePath + OUT_SUFFIX;\n\nOr even better:\ntestTranslationWithInit(\"/mock/services/heattotosca/fulltest/catalogInstances/computewithtwosameporttypes/\");",
+      "revId": "34fcee8b1c0792eff742a327836051a994822b7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
