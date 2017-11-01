@@ -23,7 +23,11 @@ package org.openecomp.core.validation.errors;
 
 public class ErrorMessagesFormatBuilder {
   public static String getErrorWithParameters(String error, String... params) {
-    return String.format(error, params);
+    try {
+      return String.format(error, params);
+    }catch (Exception e){
+        return String.format(error.substring(3),params);
+    }
   }
 
 

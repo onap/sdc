@@ -30,7 +30,9 @@ import static java.util.Objects.nonNull;
  */
 public class ContrailServiceTemplateNamingConventionValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
+  private static final String  ERROR_CODE_I1="[I-1] :";
+  private static final String  ERROR_CODE_I2="[I-2] :";
+  private static final String  ERROR_CODE_I3="[I-2] :";
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
@@ -127,7 +129,9 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
       globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
               .getErrorWithParameters(
                   Messages.CONTRAIL_VM_TYPE_NAME_NOT_ALIGNED_WITH_NAMING_CONVENSION
-                      .getErrorMessage(), resourceEntry.getKey()),
+                      .getErrorMessage(),
+                      ERROR_CODE_I1,
+                      resourceEntry.getKey()),
           LoggerTragetServiceName.VALIDATE_CONTRAIL_VM_NAME,
           LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
       return true;
@@ -157,7 +161,7 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
         globalContext.addMessage(
             fileName,
             ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(), propertyName,
+                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),ERROR_CODE_I2, propertyName,
                     resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
             LoggerErrorDescription.MISSING_GET_PARAM);
@@ -189,7 +193,7 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
         globalContext.addMessage(
             fileName,
             ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(), propertyName,
+                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),ERROR_CODE_I3, propertyName,
                     resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_VM_SYNC_IN_IMAGE_FLAVOR,
             LoggerErrorDescription.MISSING_GET_PARAM);

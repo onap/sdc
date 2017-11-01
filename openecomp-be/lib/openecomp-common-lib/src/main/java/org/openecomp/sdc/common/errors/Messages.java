@@ -112,7 +112,7 @@ public enum Messages {
       "Wrong value type assigned to a nested input parameter, nested resource [%s],"
           + " property name [%s], nested file [%s]"),
   NOVA_NAME_IMAGE_FLAVOR_NOT_CONSISTENT(
-      "Nova Server naming convention in image, flavor and name properties is not "
+      "%s Nova Server naming convention in image, flavor and name properties is not "
           + "consistent, Resource ID [%s]"),
   RESOURCE_GROUP_INVALID_INDEX_VAR(
       "Wrong value assigned to a ResourceGroup index_var property (functions are not allowed"
@@ -121,12 +121,12 @@ public enum Messages {
 
   /* warnings */
   REFERENCED_RESOURCE_NOT_FOUND("Referenced resource - %s not found"),
-  MISSING_GET_PARAM("Missing get_param in %s, Resource Id [%s]"),
+  MISSING_GET_PARAM("%s Missing get_param in %s, Resource Id [%s]"),
 
   /*OPENECOMP Guide lines*/
-  MISSING_NOVA_SERVER_METADATA("Missing Nova Server Metadata property, Resource ID [%s]"),
-  MISSING_NOVA_SERVER_VNF_ID("Missing VNF_ID in Metadata property, Resource ID [%s]"),
-  MISSING_NOVA_SERVER_VF_MODULE_ID("Missing VF_MODULE_ID in Metadata property, Resource id [%s]"),
+  MISSING_NOVA_SERVER_METADATA("%s Missing Nova Server Metadata property, Resource ID [%s]"),
+  MISSING_NOVA_SERVER_VNF_ID("%s Missing VNF_ID in Metadata property, Resource ID [%s]"),
+  MISSING_NOVA_SERVER_VF_MODULE_ID("%s Missing VF_MODULE_ID in Metadata property, Resource id [%s]"),
   NETWORK_PARAM_NOT_ALIGNED_WITH_GUIDE_LINE(
       "Network Parameter Name not aligned with Guidelines, Parameter Name [%s] Resource ID [%s]"),
   MISSIN_BASE_HEAT_FILE(
@@ -135,19 +135,19 @@ public enum Messages {
   RESOURCE_NOT_DEFINED_IN_OUTPUT(
       "Resource is not defined as output and thus cannot be Shared, Resource ID [%s]"),
   RESOURCE_CONNECTED_TO_TWO_EXTERNAL_NETWORKS_WITH_SAME_ROLE(
-      "A resource is connected twice to the same network role, Network Role [%s],"
+      "%s A resource is connected twice to the same network role, Network Role [%s],"
           + " Resource ID [%s]"),
   VOLUME_HEAT_NOT_EXPOSED("Volume is not defined as output and thus cannot be attached %s"),
   FORBIDDEN_RESOURCE_IN_USE("%s is in use, Resource ID [%s]"),
   PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES(
-      "%s '%s' Parameter Name not aligned with Guidelines, Parameter Name [%s], Resource ID [%s]."
+      "%s %s '%s' Parameter Name not aligned with Guidelines, Parameter Name [%s], Resource ID [%s]."
           + " As a result, VF/VFC Profile may miss this information"),
   /* Contrail validator messages*/
   MERGE_OF_CONTRAIL2_AND_CONTRAIL3_RESOURCES(
       "HEAT Package includes both Contrail 2 and Contrail 3 resources. "
           + "Contrail 2 resources can be found in %s. Contrail 3 resources can be found in %s"),
   CONTRAIL_VM_TYPE_NAME_NOT_ALIGNED_WITH_NAMING_CONVENSION(
-      "Service Template naming convention in Image and Flavor "
+      "%s Service Template naming convention in Image and Flavor "
           + "properties is not consistent in Resource, Resource ID %s");
 
   private String errorMessage;

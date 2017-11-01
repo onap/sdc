@@ -29,7 +29,7 @@ public class ContrailServiceTemplateNamingConventionValidatorTest {
     Assert.assertEquals(
         messages.get(messages.keySet().iterator().next()).getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Service Template naming convention in Image and Flavor properties is not consistent in Resource, Resource ID service_template");
+        "WARNING: [I-1] : Service Template naming convention in Image and Flavor properties is not consistent in Resource, Resource ID service_template");
   }
 
   @Test

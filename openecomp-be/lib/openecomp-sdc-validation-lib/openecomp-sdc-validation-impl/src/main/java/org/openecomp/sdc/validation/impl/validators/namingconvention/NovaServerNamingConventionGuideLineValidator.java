@@ -37,6 +37,20 @@ import java.util.TreeMap;
 
 public class NovaServerNamingConventionGuideLineValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final String  ERROR_CODE_K1="[K-1] :";
+  private static final String  ERROR_CODE_K2="[K-2] :";
+  private static final String  ERROR_CODE_K3="[K-3] :";
+  private static final String  ERROR_CODE_K4="[K-4] :";
+  private static final String  ERROR_CODE_K5="[K-5] :";
+  private static final String  ERROR_CODE_K6="[K-6] :";
+  private static final String  ERROR_CODE_K7="[K-7] :";
+  private static final String  ERROR_CODE_K8="[K-8] :";
+  private static final String  ERROR_CODE_K9="[K-9] :";
+  private static final String  ERROR_CODE_K10="[K-10] :";
+  private static final String  ERROR_CODE_K11="[K-11] :";
+  private static final String  ERROR_CODE_K12="[K-12] :";
+  private static final String  ERROR_CODE_K13="[K-13] :";
+
 
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
@@ -109,7 +123,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
             fileName,
             ErrorLevel.WARNING,
             ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_NOVA_SERVER_METADATA.getErrorMessage(),
+                .getErrorWithParameters(Messages.MISSING_NOVA_SERVER_METADATA.getErrorMessage(),ERROR_CODE_K1,
                     resourceId),
             LoggerTragetServiceName.VALIDATE_NOVA_META_DATA_NAME,
             LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
@@ -137,7 +151,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
               fileName,
               ErrorLevel.WARNING,
               ErrorMessagesFormatBuilder.getErrorWithParameters(
-                  Messages.MISSING_NOVA_SERVER_VF_MODULE_ID.getErrorMessage(), resourceId),
+                  Messages.MISSING_NOVA_SERVER_VF_MODULE_ID.getErrorMessage(),ERROR_CODE_K2, resourceId),
               LoggerTragetServiceName.VALIDATE_NOVA_META_DATA_NAME,
               LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
         }
@@ -145,7 +159,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
           globalValidationContext.addMessage(
               fileName, ErrorLevel.WARNING,
               ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(Messages.MISSING_NOVA_SERVER_VNF_ID.getErrorMessage(),
+                  .getErrorWithParameters(Messages.MISSING_NOVA_SERVER_VNF_ID.getErrorMessage(),ERROR_CODE_K3,
                       resourceId),
               LoggerTragetServiceName.VALIDATE_NOVA_META_DATA_NAME,
               LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
@@ -193,7 +207,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                     ErrorLevel.WARNING,
                     ErrorMessagesFormatBuilder.getErrorWithParameters(
                         Messages.RESOURCE_CONNECTED_TO_TWO_EXTERNAL_NETWORKS_WITH_SAME_ROLE
-                            .getErrorMessage(), resourceId, role),
+                            .getErrorMessage(),ERROR_CODE_K13, resourceId, role),
                     LoggerTragetServiceName.VALIDATE_RESOURCE_NETWORK_UNIQUE_ROLW,
                     LoggerErrorDescription.RESOURCE_UNIQUE_NETWORK_ROLE);
               } else {
@@ -249,7 +263,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
           fileName,
           ErrorLevel.WARNING,
           ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),
+              .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),ERROR_CODE_K4,
                   "network or network_id", resourceId),
           LoggerTragetServiceName.VALIDATE_RESOURCE_NETWORK_UNIQUE_ROLW,
           LoggerErrorDescription.MISSING_GET_PARAM);
@@ -286,7 +300,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
             globalContext.addMessage(
                 fileName,
                 ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
-                    Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
+                    Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),ERROR_CODE_K5,
                     ValidationUtil.getMessagePartAccordingToResourceType(resourceEntry),
                     "Availability Zone",
                     availabilityZoneName, resourceEntry.getKey()),
@@ -298,7 +312,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
         globalContext.addMessage(
             fileName,
             ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),
+                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),ERROR_CODE_K6,
                     "availability_zone", resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
             LoggerErrorDescription.MISSING_GET_PARAM);
@@ -395,7 +409,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
       globalContext.addMessage(
           fileName,
           ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),
+              .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),ERROR_CODE_K7,
                   "nova server name", resourceEntry.getKey()),
           LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
           LoggerErrorDescription.MISSING_GET_PARAM);
@@ -425,7 +439,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
         globalContext.addMessage(
             fileName,
             ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(), propertyName,
+                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),ERROR_CODE_K8, propertyName,
                     resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
             LoggerErrorDescription.MISSING_GET_PARAM);
@@ -485,7 +499,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
             globalContext.addMessage(
                 fileName,
                 ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
-                    Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(), "Server",
+                    Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),ERROR_CODE_K9, "Server",
                     "Name", novaServerNameEnvValue.toString(), resourceEntry.getKey()),
                 LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
                 LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
@@ -506,7 +520,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
           fileName,
           ErrorLevel.WARNING,
           ErrorMessagesFormatBuilder.getErrorWithParameters(
-              Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(), "Server",
+              Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),ERROR_CODE_K10, "Server",
               "name", getParamNameList.toString(), resourceEntry.getKey()),
           LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
           LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
@@ -524,7 +538,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
           fileName,
           ErrorLevel.WARNING,
           ErrorMessagesFormatBuilder.getErrorWithParameters(
-              Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(), "Server",
+              Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),ERROR_CODE_K11, "Server",
               "name", novaName, resourceEntry.getKey()),
           LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
           LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
@@ -553,7 +567,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
           fileName,
           ErrorLevel.WARNING,
           ErrorMessagesFormatBuilder.getErrorWithParameters(
-              Messages.NOVA_NAME_IMAGE_FLAVOR_NOT_CONSISTENT.getErrorMessage(),
+              Messages.NOVA_NAME_IMAGE_FLAVOR_NOT_CONSISTENT.getErrorMessage(),ERROR_CODE_K12,
               resourceEntry.getKey()),
           LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
           LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
