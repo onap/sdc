@@ -45,7 +45,8 @@ const mapActionsToProps = (dispatch, {licenseModelId}) => {
 			type: globalMoadlActions.GLOBAL_MODAL_WARNING,
 			data:{
 				msg: i18n(`Are you sure you want to delete "${licenseAgreement.name}"?`),
-				title: i18n('Warning'),
+				confirmationButtonText: i18n('Delete'),
+				title: i18n('Delete'),
 				onConfirmed: ()=>LicenseAgreementActionHelper.deleteLicenseAgreement(dispatch, {licenseModelId, licenseAgreementId: licenseAgreement.id, version})
 			}
 		})

@@ -42,8 +42,9 @@ const mapActionsToProps = (dispatch, {licenseModelId, version}) => {
 		onDeleteLicenseKeyGroupClick: licenseKeyGroup => dispatch({
 			type: globalMoadlActions.GLOBAL_MODAL_WARNING,
 			data:{
-				msg: generateConfirmationMsg(licenseKeyGroup),				
-				title: i18n('Warning'),				
+				msg: generateConfirmationMsg(licenseKeyGroup),
+				confirmationButtonText: i18n('Delete'),
+				title: i18n('Delete'),
 				onConfirmed: ()=>LicenseKeyGroupsActionHelper.deleteLicenseKeyGroup(dispatch, {licenseModelId, licenseKeyGroupId:licenseKeyGroup.id, version})
 			}
 		})

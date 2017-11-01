@@ -43,8 +43,9 @@ const mapActionsToProps = (dispatch, {licenseModelId, version}) => {
 		onDeleteEntitlementPool: entitlementPool => dispatch({
 			type: globalMoadlActions.GLOBAL_MODAL_WARNING,
 			data:{
-				msg: generateConfirmationMsg(entitlementPool),				
-				title: i18n('Warning'),				
+				msg: generateConfirmationMsg(entitlementPool),
+				confirmationButtonText: i18n('Delete'),
+				title: i18n('Delete'),
 				onConfirmed: ()=>EntitlementPoolsActionHelper.deleteEntitlementPool(dispatch, {
 					licenseModelId,
 					entitlementPoolId: entitlementPool.id,
