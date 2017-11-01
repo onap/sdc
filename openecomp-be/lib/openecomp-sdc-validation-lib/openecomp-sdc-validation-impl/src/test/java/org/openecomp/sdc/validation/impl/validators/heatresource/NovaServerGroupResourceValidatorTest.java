@@ -30,7 +30,7 @@ public class NovaServerGroupResourceValidatorTest {
     Assert.assertEquals(messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(
         messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: Wrong policy in server group - pcrf_server_policies_1");
+        "ERROR: E-2 : Wrong policy in server group - pcrf_server_policies_1");
   }
 
   @Test
@@ -45,7 +45,7 @@ public class NovaServerGroupResourceValidatorTest {
     Assert.assertEquals(messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(
         messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: ServerGroup not in use, Resource Id [not_used_server_group]");
+        "WARNING: E-4 : ServerGroup not in use, Resource Id [not_used_server_group]");
 
   }
 }

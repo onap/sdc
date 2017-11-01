@@ -21,6 +21,9 @@ import java.util.Map;
  * Created by TALIO on 2/27/2017.
  */
 public class NeutronSecurityGroupResourceValidator implements ResourceValidator {
+
+  private static String ERROR_CODE_D1 = "D-1";
+
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
@@ -53,6 +56,7 @@ public class NeutronSecurityGroupResourceValidator implements ResourceValidator 
           ErrorMessagesFormatBuilder
               .getErrorWithParameters(
                   Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
+                  ERROR_CODE_D1,
                   ValidatorConstants.Security_Group, resourceEntry.getKey()),
           LoggerTragetServiceName.VALIDATE_ALL_SERVER_GROUP_OR_SECURITY_GROUP_IN_USE,
           LoggerErrorDescription.SERVER_GROUP_SECURITY_GROUP_NOT_IN_USE);

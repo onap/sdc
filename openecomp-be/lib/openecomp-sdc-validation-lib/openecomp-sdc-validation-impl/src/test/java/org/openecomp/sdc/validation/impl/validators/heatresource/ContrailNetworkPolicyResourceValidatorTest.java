@@ -31,6 +31,6 @@ public class ContrailNetworkPolicyResourceValidatorTest {
     Assert.assertEquals(messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(
         messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: NetworkPolicy not in use, Resource Id [not_used_server_pcrf_policy]");
+        "WARNING: A-2 : NetworkPolicy not in use, Resource Id [not_used_server_pcrf_policy]");
   }
 }

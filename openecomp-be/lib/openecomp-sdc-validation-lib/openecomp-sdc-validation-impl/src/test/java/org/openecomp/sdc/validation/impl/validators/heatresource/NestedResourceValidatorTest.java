@@ -29,28 +29,28 @@ public class NestedResourceValidatorTest {
     Assert.assertEquals(messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(
         messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: Nested files loop - [hot-nimbus-psm_v1.0.yaml -- nested-psm_v1.0.yaml -- nested-points-to-hot-nimbus-psm.yaml -- hot-nimbus-psm_v1.0.yaml]");
+        "ERROR: B-2 : Nested files loop - [hot-nimbus-psm_v1.0.yaml -- nested-psm_v1.0.yaml -- nested-points-to-hot-nimbus-psm.yaml -- hot-nimbus-psm_v1.0.yaml]");
 
     Assert.assertEquals(
         messages.get("nested-points-to-hot-nimbus-psm.yaml").getErrorMessageList().size(), 2);
     Assert.assertEquals(
         messages.get("nested-points-to-hot-nimbus-psm.yaml").getErrorMessageList().get(0)
             .getMessage(),
-        "ERROR: Nested files loop - [nested-points-to-hot-nimbus-psm.yaml -- hot-nimbus-psm_v1.0.yaml -- nested-psm_v1.0.yaml -- nested-points-to-hot-nimbus-psm.yaml]");
+        "ERROR: B-2 : Nested files loop - [nested-points-to-hot-nimbus-psm.yaml -- hot-nimbus-psm_v1.0.yaml -- nested-psm_v1.0.yaml -- nested-points-to-hot-nimbus-psm.yaml]");
     Assert.assertEquals(
         messages.get("nested-points-to-hot-nimbus-psm.yaml").getErrorMessageList().get(1)
             .getMessage(),
-        "ERROR: Nested files loop - [nested-points-to-hot-nimbus-psm.yaml -- nested-psm_v1.0.yaml -- nested-points-to-hot-nimbus-psm.yaml]");
+        "ERROR: B-2 : Nested files loop - [nested-points-to-hot-nimbus-psm.yaml -- nested-psm_v1.0.yaml -- nested-points-to-hot-nimbus-psm.yaml]");
 
     Assert.assertEquals(messages.get("yaml-point-to-itself.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(
         messages.get("yaml-point-to-itself.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: Nested files loop - [yaml-point-to-itself.yaml -- yaml-point-to-itself.yaml]");
+        "ERROR: B-2 : Nested files loop - [yaml-point-to-itself.yaml -- yaml-point-to-itself.yaml]");
 
     Assert.assertEquals(messages.get("nested-psm_v1.0.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(
         messages.get("nested-psm_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: Nested files loop - [nested-psm_v1.0.yaml -- nested-points-to-hot-nimbus-psm.yaml -- hot-nimbus-psm_v1.0.yaml -- nested-psm_v1.0.yaml]");
+        "ERROR: B-2 : Nested files loop - [nested-psm_v1.0.yaml -- nested-points-to-hot-nimbus-psm.yaml -- hot-nimbus-psm_v1.0.yaml -- nested-psm_v1.0.yaml]");
   }
 
   @Test

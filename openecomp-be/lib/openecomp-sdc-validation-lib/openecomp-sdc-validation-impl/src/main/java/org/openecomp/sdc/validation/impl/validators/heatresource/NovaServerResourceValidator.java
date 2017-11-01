@@ -25,6 +25,9 @@ import java.util.Map;
 public class NovaServerResourceValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
+  private static String ERROR_CODE_G1 = "G-1";
+  private static String ERROR_CODE_G2 = "G-2";
+
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
 
@@ -64,6 +67,7 @@ public class NovaServerResourceValidator implements ResourceValidator {
         && propertiesMap.get(PropertiesMapKeyTypes.FLAVOR.getKeyMap()) == null) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
               .getErrorWithParameters(Messages.MISSING_IMAGE_AND_FLAVOR.getErrorMessage(),
+                  ERROR_CODE_G1,
                   resourceEntry.getKey()),
           LoggerTragetServiceName.VALIDATE_ASSIGNED_VALUES_FOR_NOVA_IMAGE_FLAVOR,
           LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
@@ -106,6 +110,7 @@ public class NovaServerResourceValidator implements ResourceValidator {
             .equals(HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource())) {
           globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                   .getErrorWithParameters(Messages.SERVER_NOT_DEFINED_FROM_NOVA.getErrorMessage(),
+                      ERROR_CODE_G2,
                       serverResourceName, resourceEntry.getKey()),
               LoggerTragetServiceName.VALIDATE_SERVER_GROUP_EXISTENCE,
               LoggerErrorDescription.SERVER_NOT_DEFINED_NOVA);

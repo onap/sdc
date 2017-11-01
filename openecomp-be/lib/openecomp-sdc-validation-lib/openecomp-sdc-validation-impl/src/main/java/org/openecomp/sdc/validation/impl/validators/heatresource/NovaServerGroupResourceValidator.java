@@ -26,6 +26,11 @@ import java.util.Objects;
 public class NovaServerGroupResourceValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
+  private static String ERROR_CODE_E1 = "E-1";
+  private static String ERROR_CODE_E2 = "E-2";
+  private static String ERROR_CODE_E3 = "E-3";
+  private static String ERROR_CODE_E4 = "E-4";
+
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
     validateNovaServerGroupPolicy(fileName, resourceEntry, globalContext);
@@ -51,6 +56,7 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
         if (!isGivenPolicyValid(policy)) {
           globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                   .getErrorWithParameters(Messages.WRONG_POLICY_IN_SERVER_GROUP.getErrorMessage(),
+                      ERROR_CODE_E1,
                       resourceEntry.getKey()),
               LoggerTragetServiceName.VALIDATE_NOVA_SEVER_GROUP_POLICY,
               LoggerErrorDescription.WRONG_POLICY_SERVER_GROUP);
@@ -58,6 +64,7 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
       } else {
         globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                 .getErrorWithParameters(Messages.WRONG_POLICY_IN_SERVER_GROUP.getErrorMessage(),
+                    ERROR_CODE_E2,
                     resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_NOVA_SEVER_GROUP_POLICY,
             LoggerErrorDescription.WRONG_POLICY_SERVER_GROUP);
@@ -94,6 +101,7 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
               ErrorMessagesFormatBuilder
                   .getErrorWithParameters(
                       Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
+                      ERROR_CODE_E3,
                       ValidatorConstants.Server_Group, resourceEntry.getKey()),
               LoggerTragetServiceName.VALIDATE_ALL_SERVER_GROUP_OR_SECURITY_GROUP_IN_USE,
               LoggerErrorDescription.SERVER_GROUP_SECURITY_GROUP_NOT_IN_USE);
@@ -119,6 +127,7 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
               ErrorMessagesFormatBuilder
                   .getErrorWithParameters(
                       Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
+                      ERROR_CODE_E4,
                       ValidatorConstants.Server_Group, resourceEntry.getKey()),
               LoggerTragetServiceName.VALIDATE_ALL_SERVER_GROUP_OR_SECURITY_GROUP_IN_USE,
               LoggerErrorDescription.SERVER_GROUP_SECURITY_GROUP_NOT_IN_USE);

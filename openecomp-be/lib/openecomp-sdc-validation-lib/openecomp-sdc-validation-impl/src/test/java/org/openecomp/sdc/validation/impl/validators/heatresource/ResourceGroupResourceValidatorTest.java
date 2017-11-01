@@ -30,7 +30,7 @@ public class ResourceGroupResourceValidatorTest {
     Assert.assertEquals(messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().size(), 8);
     Assert.assertEquals(
         messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: Wrong value assigned to a ResourceGroup index_var property (functions are not allowed but only strings), Resource ID [resource_with_resources_group_1]");
+        "ERROR: F-1 : Wrong value assigned to a ResourceGroup index_var property (functions are not allowed but only strings), Resource ID [resource_with_resources_group_1]");
     Assert.assertEquals(
         messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().get(1).getMessage(),
         "WARNING: Wrong value type assigned to a nested input parameter, nested resource [resource_with_resources_group_2], property name [index_boolean], nested file [yamlFile.yaml]");
@@ -51,7 +51,7 @@ public class ResourceGroupResourceValidatorTest {
         "WARNING: Wrong value type assigned to a nested input parameter, nested resource [resource_with_resources_group_5], property name [index_number], nested file [yamlFile.yaml]");
     Assert.assertEquals(
         messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().get(7).getMessage(),
-        "ERROR: Wrong value assigned to a ResourceGroup index_var property (functions are not allowed but only strings), Resource ID [resource_with_resources_group_6]");
+        "ERROR: F-1 : Wrong value assigned to a ResourceGroup index_var property (functions are not allowed but only strings), Resource ID [resource_with_resources_group_6]");
   }
 
   @Test
@@ -95,12 +95,12 @@ public class ResourceGroupResourceValidatorTest {
     Assert.assertEquals(messages.get("nested-pps_v1.0.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(
         messages.get("nested-pps_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: Nested files loop - [nested-pps_v1.0.yaml -- nested-from-resources-group.yaml -- hot-nimbus-pps_v1.0.yaml -- nested-pps_v1.0.yaml]");
+        "ERROR: F-3 : Nested files loop - [nested-pps_v1.0.yaml -- nested-from-resources-group.yaml -- hot-nimbus-pps_v1.0.yaml -- nested-pps_v1.0.yaml]");
 
     Assert.assertEquals(messages.get("nested-not-exist.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(
         messages.get("nested-not-exist.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: Missing nested file - nested-not-exist.yaml");
+        "ERROR: F-2 : Missing nested file - nested-not-exist.yaml");
   }
 
 }

@@ -67,7 +67,7 @@ public enum Messages {
   MISSING_FILE_IN_ZIP("Missing file in zip"),
   MISSING_FILE_IN_MANIFEST("Missing file in manifest"),
   MISSING_FILE_NAME_IN_MANIFEST("Missing file name in manifest - %s"),
-  MISSING_NESTED_FILE("Missing nested file - %s"),
+  MISSING_NESTED_FILE("%s : Missing nested file - %s"),
   MISSING_ARTIFACT("Missing artifact - %s"),
   WRONG_HEAT_FILE_EXTENSION("Wrong HEAT file extension - %s"),
   WRONG_ENV_FILE_EXTENSION("Wrong ENV file extension - %s"),
@@ -89,19 +89,19 @@ public enum Messages {
   GET_ATTR_NOT_FOUND("get_attr attribute not found, Attribute name [%s], Resource ID [%s]"),
   MISSING_PARAMETER_IN_NESTED(
       "Referenced parameter not found in nested file - %s, parameter name [%s], Resource ID [%s]"),
-  NESTED_LOOP("Nested files loop - %s"),
-  MORE_THAN_ONE_BIND_FROM_NOVA_TO_PORT("Resource Port %s exceed allowed relations from NovaServer"),
-  SERVER_NOT_DEFINED_FROM_NOVA("Missing server group definition - %s, %s"),
-  WRONG_POLICY_IN_SERVER_GROUP("Wrong policy in server group - %s"),
-  MISSING_IMAGE_AND_FLAVOR("Missing both Image and Flavor in NOVA Server, Resource ID [%s]"),
+  NESTED_LOOP("%s : Nested files loop - %s"),
+  MORE_THAN_ONE_BIND_FROM_NOVA_TO_PORT("%s : Resource Port %s exceed allowed relations from NovaServer"),
+  SERVER_NOT_DEFINED_FROM_NOVA("%s : Missing server group definition - %s, %s"),
+  WRONG_POLICY_IN_SERVER_GROUP("%s : Wrong policy in server group - %s"),
+  MISSING_IMAGE_AND_FLAVOR("%s : Missing both Image and Flavor in NOVA Server, Resource ID [%s]"),
   ENV_INCLUDES_PARAMETER_NOT_IN_HEAT("Env file %s includes a parameter not in HEAT - %s"),
   PARAMETER_ENV_VALUE_NOT_ALIGN_WITH_TYPE("Parameter env value %s not align with type"),
   PARAMETER_DEFAULT_VALUE_NOT_ALIGN_WITH_TYPE(
       "Parameter - %s default value not align with type %s"),
   INVALID_RESOURCE_TYPE("A resource has an invalid or unsupported type - %s, Resource ID [%s]"),
   ARTIFACT_FILE_NOT_REFERENCED("Artifact file is not referenced."),
-  RESOURCE_NOT_IN_USE("%s not in use, Resource Id [%s]"),
-  PORT_NO_BIND_TO_ANY_NOVA_SERVER("Port not bind to any NOVA Server, Resource Id [%s]"),
+  RESOURCE_NOT_IN_USE("%s : %s not in use, Resource Id [%s]"),
+  PORT_NO_BIND_TO_ANY_NOVA_SERVER("%s : Port not bind to any NOVA Server, Resource Id [%s]"),
   INVALID_GET_RESOURCE_SYNTAX(
       "invalid get_resource syntax is in use - %s , get_resource"
           + " function should get the resource id of the referenced resource"),
@@ -115,7 +115,7 @@ public enum Messages {
       "Nova Server naming convention in image, flavor and name properties is not "
           + "consistent, Resource ID [%s]"),
   RESOURCE_GROUP_INVALID_INDEX_VAR(
-      "Wrong value assigned to a ResourceGroup index_var property (functions are not allowed"
+      "%s : Wrong value assigned to a ResourceGroup index_var property (functions are not allowed"
           + " but only strings), Resource ID [%s]"),
   CONTRAIL_2_IN_USE("Contrail 2.x deprecated resource is in use, Resource ID [%s]"),
 

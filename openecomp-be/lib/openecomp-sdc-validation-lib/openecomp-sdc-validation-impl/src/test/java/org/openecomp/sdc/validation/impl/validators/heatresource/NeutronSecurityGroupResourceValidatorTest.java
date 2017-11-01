@@ -31,7 +31,7 @@ public class NeutronSecurityGroupResourceValidatorTest {
 
     Assert.assertEquals(messages.get("baseFile.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("baseFile.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: SecurityGroup not in use, Resource Id [jsa_security_group3]");
+        "WARNING: D-1 : SecurityGroup not in use, Resource Id [jsa_security_group3]");
   }
 
   @Test
@@ -47,7 +47,7 @@ public class NeutronSecurityGroupResourceValidatorTest {
     Assert.assertEquals(messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(
         messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: SecurityGroup not in use, Resource Id [not_used_security_group]");
+        "WARNING: D-1 : SecurityGroup not in use, Resource Id [not_used_security_group]");
   }
 
 }

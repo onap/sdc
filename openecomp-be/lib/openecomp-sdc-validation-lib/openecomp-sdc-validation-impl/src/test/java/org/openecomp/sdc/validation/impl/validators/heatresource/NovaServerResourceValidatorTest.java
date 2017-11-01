@@ -30,7 +30,7 @@ public class NovaServerResourceValidatorTest {
     Assert.assertEquals(messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(
         messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: Missing both Image and Flavor in NOVA Server, Resource ID [nova_server_resource_missing_both]");
+        "ERROR: G-1 : Missing both Image and Flavor in NOVA Server, Resource ID [nova_server_resource_missing_both]");
   }
 
   @Test
@@ -45,9 +45,9 @@ public class NovaServerResourceValidatorTest {
     Assert.assertEquals(messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().size(), 2);
     Assert.assertEquals(
         messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: Missing server group definition - BE_Affinity_2, nova_server_1");
+        "ERROR: G-2 : Missing server group definition - BE_Affinity_2, nova_server_1");
     Assert.assertEquals(
         messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().get(1).getMessage(),
-        "ERROR: Missing server group definition - BE_Affinity_2, nova_server_2");
+        "ERROR: G-2 : Missing server group definition - BE_Affinity_2, nova_server_2");
   }
 }

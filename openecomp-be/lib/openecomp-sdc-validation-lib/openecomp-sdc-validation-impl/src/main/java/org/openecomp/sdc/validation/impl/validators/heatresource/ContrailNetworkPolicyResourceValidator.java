@@ -23,6 +23,8 @@ import java.util.Map;
  */
 public class ContrailNetworkPolicyResourceValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static String ERROR_CODE_A1 = "A-1";
+  private static String ERROR_CODE_A2 = "A-2";
 
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
@@ -50,6 +52,7 @@ public class ContrailNetworkPolicyResourceValidator implements ResourceValidator
               ErrorMessagesFormatBuilder
                   .getErrorWithParameters(
                       Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
+                      ERROR_CODE_A1,
                       ValidatorConstants.Network_Policy, resourceEntry.getKey()),
               LoggerTragetServiceName.VALIDATE_ATTACH_POLICY_IN_USE,
               LoggerErrorDescription.NETWORK_ATTACH_POLICY_NOT_IN_USE);
@@ -78,6 +81,7 @@ public class ContrailNetworkPolicyResourceValidator implements ResourceValidator
               ErrorMessagesFormatBuilder
                   .getErrorWithParameters(
                       Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
+                      ERROR_CODE_A2,
                       ValidatorConstants.Network_Policy, resourceEntry.getKey()),
               LoggerTragetServiceName.VALIDATE_ATTACH_POLICY_IN_USE,
               LoggerErrorDescription.NETWORK_ATTACH_POLICY_NOT_IN_USE);

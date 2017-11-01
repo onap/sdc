@@ -30,6 +30,6 @@ public class NeutronPortResourceValidatorTest {
     Assert.assertEquals(messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(
         messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: Resource Port oam1_int_port exceed allowed relations from NovaServer");
+        "ERROR: C-2 : Resource Port oam1_int_port exceed allowed relations from NovaServer");
   }
 }

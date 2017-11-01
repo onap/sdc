@@ -29,6 +29,10 @@ import java.util.Set;
 public class ResourceGroupResourceValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
+  private static String ERROR_CODE_F1 = "F-1";
+  private static String ERROR_CODE_F2 = "F-2";
+  private static String ERROR_CODE_F3 = "F-3";
+
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
@@ -70,7 +74,8 @@ public class ResourceGroupResourceValidator implements ResourceValidator {
     } else {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
               .getErrorWithParameters(Messages.RESOURCE_GROUP_INVALID_INDEX_VAR.getErrorMessage(),
-                  resourceEntry.getKey()), LoggerTragetServiceName.VALIDATE_RESOURCE_GROUP_TYPE,
+                  ERROR_CODE_F1, resourceEntry.getKey()),
+          LoggerTragetServiceName.VALIDATE_RESOURCE_GROUP_TYPE,
           LoggerErrorDescription.INVALID_INDEX_VAR);
       return Optional.empty();
     }
@@ -109,7 +114,8 @@ public class ResourceGroupResourceValidator implements ResourceValidator {
       }
     } else {
       globalContext.addMessage(resourceType, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.MISSING_NESTED_FILE.getErrorMessage(), resourceType),
+              .getErrorWithParameters(Messages.MISSING_NESTED_FILE.getErrorMessage(), ERROR_CODE_F2,
+                  resourceType),
           LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
           LoggerErrorDescription.MISSING_FILE);
     }
@@ -127,6 +133,7 @@ public class ResourceGroupResourceValidator implements ResourceValidator {
         .isNestedLoopExistInFile(fileName, resourceType, filesInLoop, globalContext)) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
               .getErrorWithParameters(Messages.NESTED_LOOP.getErrorMessage(),
+                  ERROR_CODE_F3,
                   HeatValidationService.drawFilesLoop(filesInLoop)),
           LoggerTragetServiceName.VALIDATE_NESTING_LOOPS, LoggerErrorDescription.NESTED_LOOP);
     }

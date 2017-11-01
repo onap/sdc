@@ -25,6 +25,8 @@ import java.util.Set;
  */
 public class NestedResourceValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static String ERROR_CODE_B1 = "B-1";
+  private static String ERROR_CODE_B2 = "B-2";
 
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
@@ -67,7 +69,8 @@ public class NestedResourceValidator implements ResourceValidator {
       }
     } else {
       globalContext.addMessage(resourceType, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.MISSING_NESTED_FILE.getErrorMessage(), resourceType),
+              .getErrorWithParameters(Messages.MISSING_NESTED_FILE.getErrorMessage(), ERROR_CODE_B1,
+                  resourceType),
           LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
           LoggerErrorDescription.MISSING_FILE);
     }
@@ -85,6 +88,7 @@ public class NestedResourceValidator implements ResourceValidator {
         .isNestedLoopExistInFile(fileName, resourceType, filesInLoop, globalContext)) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
               .getErrorWithParameters(Messages.NESTED_LOOP.getErrorMessage(),
+                  ERROR_CODE_B2,
                   HeatValidationService.drawFilesLoop(filesInLoop)),
           LoggerTragetServiceName.VALIDATE_NESTING_LOOPS, LoggerErrorDescription.NESTED_LOOP);
     }

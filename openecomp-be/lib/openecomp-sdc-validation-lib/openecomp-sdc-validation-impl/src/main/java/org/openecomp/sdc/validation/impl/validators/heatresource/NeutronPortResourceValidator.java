@@ -28,6 +28,9 @@ import java.util.Set;
  */
 public class NeutronPortResourceValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static String ERROR_CODE_C1 = "C-1";
+  private static String ERROR_CODE_C2 = "C-2";
+  private static String ERROR_CODE_C3 = "C-3";
 
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
@@ -56,6 +59,7 @@ public class NeutronPortResourceValidator implements ResourceValidator {
               ErrorMessagesFormatBuilder
                   .getErrorWithParameters(
                       Messages.PORT_NO_BIND_TO_ANY_NOVA_SERVER.getErrorMessage(),
+                      ERROR_CODE_C1,
                       resourceEntry.getKey()), LoggerTragetServiceName.CHECK_FOR_ORPHAN_PORTS,
               LoggerErrorDescription.NO_BIND_FROM_PORT_TO_NOVA);
 
@@ -96,6 +100,7 @@ public class NeutronPortResourceValidator implements ResourceValidator {
               ErrorMessagesFormatBuilder
                   .getErrorWithParameters(
                       Messages.MORE_THAN_ONE_BIND_FROM_NOVA_TO_PORT.getErrorMessage(),
+                      ERROR_CODE_C2,
                       portEntry.getKey()),
               LoggerTragetServiceName.VALIDATE_NOVA_SERVER_PORT_BINDING,
               LoggerErrorDescription.PORT_BINDS_MORE_THAN_ONE_NOVA);
@@ -107,6 +112,7 @@ public class NeutronPortResourceValidator implements ResourceValidator {
               ErrorMessagesFormatBuilder
                   .getErrorWithParameters(
                       Messages.PORT_NO_BIND_TO_ANY_NOVA_SERVER.getErrorMessage(),
+                      ERROR_CODE_C3,
                       portEntry.getKey()), LoggerTragetServiceName.CHECK_FOR_ORPHAN_PORTS,
               LoggerErrorDescription.NO_BIND_FROM_PORT_TO_NOVA);
     }
