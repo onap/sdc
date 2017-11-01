@@ -16,48 +16,32 @@ public class UnifiedCompositionCatalogInstanceFullTest extends BaseFullTranslati
 
   @Test
   public void testThreeNovaSameTypeDiffGetAttrFromSameEntitiesTypes() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/catalogInstances/threeComputesSameTypeGetAttrBetweenThem/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/catalogInstances/threeComputesSameTypeGetAttrBetweenThem/out";
-
-    testTranslationWithUnifiedCondition();
+      testTranslationWithInit("/mock/services/heattotosca/fulltest/catalogInstances/threeComputesSameTypeGetAttrBetweenThem");
   }
 
   @Test
   public void testThreeNovaSameTypePortsConnectedToDiffNetworks() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/catalogInstances/threeComputesSameTypePortsConnectedToDiffNetworks/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/catalogInstances/threeComputesSameTypePortsConnectedToDiffNetworks/out";
+      testTranslationWithInit("/mock/services/heattotosca/fulltest/catalogInstances/threeComputesSameTypePortsConnectedToDiffNetworks");
+  }
 
-    testTranslationWithUnifiedCondition();
+  @Test
+  public void testComputeWithTwoSamePortTypesWithDiffPropVal() throws IOException {
+      testTranslationWithInit("/mock/services/heattotosca/fulltest/catalogInstances/computewithtwosameporttypes");
   }
 
   @Test
   public void testThreeNovaSameTypeDiffImageName() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/catalogInstances/threeComputesSameTypeDiffImageName/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/catalogInstances/threeComputesSameTypeDiffImageName/out";
-
-    testTranslationWithUnifiedCondition();
+      testTranslationWithInit("/mock/services/heattotosca/fulltest/catalogInstances/threeComputesSameTypeDiffImageName");
   }
 
   @Test
   public void testTwoNovaWithDiffProperties() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/catalogInstances/twoNovaWithDiffProperties/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/catalogInstances/twoNovaWithDiffProperties/out";
-
-    testTranslationWithUnifiedCondition();
+      testTranslationWithInit("/mock/services/heattotosca/fulltest/catalogInstances/twoNovaWithDiffProperties");
   }
 
-
-
-  private void testTranslationWithUnifiedCondition() throws IOException {
+  /*private void testTranslationWithUnifiedCondition(String path) throws IOException {
+      basePath = path;
       initTranslatorAndTranslate();
       testTranslation();
-  }
+  }*/
 }

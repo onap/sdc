@@ -1,0 +1,478 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    pd_flavor_name:
+      label: PD flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PD instance
+      default: m3.xlarge
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+      default: nova
+    repl_net_ips:
+      label: repl network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: ips of repl network
+      default:
+      - 107.239.33.57
+      - 107.239.33.58
+      entry_schema:
+        type: string
+    sl_net_name:
+      label: silver lining network name
+      hidden: false
+      immutable: false
+      type: string
+      description: id of the sl network
+      default: exn_protected_net_0
+    pd_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PD image name
+      default: MOG_BASE_8.0
+    pd_server_names:
+      label: PD server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PD instance
+      default:
+      - ZRDM1MOGX01MPD001
+      - ZRDM1MOGX01MPD002
+      entry_schema:
+        type: string
+    sm_server_names:
+      label: SM server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the SM instance
+      default:
+      - ZRDM1MOGX01MSM001
+      - ZRDM1MOGX01MSM002
+      entry_schema:
+        type: string
+    dummy_net_netmask_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: CSB internal network subnet mask
+      default: 255.255.255.0
+    dummy_net_netmask_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: CSB internal network subnet mask
+      default: 255.255.255.0
+    ran_net_floating_ip:
+      label: mog ran net virtual ip
+      hidden: false
+      immutable: false
+      type: string
+      description: mog ran net virtual ip
+      default: 107.239.36.5
+    ran_net_ips:
+      label: RAN network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: RAN network ip
+      default:
+      - 107.239.36.3
+      - 107.239.36.4
+      entry_schema:
+        type: string
+    dummy_net_end_0:
+      label: csb internal end
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal end
+      default: 169.254.1.254
+    oam_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM image name
+      default: MOG_BASE_8.0
+    dummy_net_end_1:
+      label: csb internal end
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal end
+      default: 169.254.2.254
+    oam_net_name:
+      label: oam network name
+      hidden: false
+      immutable: false
+      type: string
+      description: name of the oam network
+      default: oam_protected_net_0
+    oam_net_ips:
+      label: internet network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: ip of the OAM network
+      default:
+      - 107.250.172.213
+      - 107.250.172.214
+      - 107.250.172.215
+      - 107.250.172.216
+      - 107.250.172.217
+      entry_schema:
+        type: string
+    ran_net_name:
+      label: RAN network name
+      hidden: false
+      immutable: false
+      type: string
+      description: RAN network name
+      default: gn_direct_net_0
+    cluster-manager-vol-1:
+      label: mog-cm-vol-1
+      hidden: false
+      immutable: false
+      type: string
+      description: Cluster Manager volume 1
+      default: 43ccf5ba-2d50-427b-a38f-e8c7d8670eee
+    csb_net_netmask:
+      hidden: false
+      immutable: false
+      type: string
+      description: CSB internal network subnet mask
+      default: 255.255.255.0
+    oam_flavor_name:
+      label: OAM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of OAM instance
+      default: m3.xlarge
+    dummy_net_start_0:
+      label: csb internal start
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal start
+      default: 169.254.1.4
+    dummy_net_start_1:
+      label: csb internal start
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal start
+      default: 169.254.2.4
+    cm_flavor_name:
+      label: CM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of CM instance
+      default: m3.xlarge
+    sm_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: SM image name
+      default: MOG_BASE_8.0
+    ps_server_names:
+      label: PS server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PS instance
+      default:
+      - ZRDM1MOGX01MPS001
+      - ZRDM1MOGX01MPS002
+      - ZRDM1MOGX01MPS003
+      - ZRDM1MOGX01MPS004
+      entry_schema:
+        type: string
+    csb_net_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: mog_csb_net IP addresses
+      default:
+      - 172.26.0.10
+      - 172.26.0.11
+      - 172.26.0.12
+      - 172.26.0.13
+      - 172.26.0.14
+      - 172.26.0.15
+      - 172.26.0.16
+      - 172.26.0.17
+      - 172.26.0.18
+      - 172.26.0.19
+      - 172.26.0.20
+      entry_schema:
+        type: string
+    ps_flavor_name:
+      label: PS flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PS instance
+      default: m3.xlarge
+    rx_net_ips:
+      label: Rx network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: Rx network ips
+      default:
+      - 107.239.34.3
+      - 107.239.34.4
+      entry_schema:
+        type: string
+    dummy_net_name_1:
+      label: csb internal network name
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal network name
+      default: mog_dummy_1
+    dummy_net_cidr_1:
+      label: csb ineternal cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal cidr
+      default: 169.254.2.0/24
+    dummy_net_name_0:
+      label: csb internal network name
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal network name
+      default: mog_dummy_0
+    dummy_net_cidr_0:
+      label: csb ineternal cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal cidr
+      default: 169.254.1.0/24
+    oam-vol-2:
+      label: mog-oam-vol-2
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM volume 2
+      default: 6d169cb6-6ddc-41dc-920c-2839898a2924
+    sl_net_floating_ip:
+      label: mog sl net virtual ip
+      hidden: false
+      immutable: false
+      type: string
+      description: mog sl net virtual ip
+      default: 107.239.45.6
+    session-manager-vol-1:
+      label: mog-sm-vol-1
+      hidden: false
+      immutable: false
+      type: string
+      description: Session Manager volume 1
+      default: 49201898-333d-4c88-b58d-cf573b091633
+    rx_net_floating_ip:
+      label: mog rx net virtual ip
+      hidden: false
+      immutable: false
+      type: string
+      description: mog rx net virtual ip
+      default: 107.239.34.5
+    session-manager-vol-2:
+      label: mog-sm-vol-2
+      hidden: false
+      immutable: false
+      type: string
+      description: Session Manager volume 2
+      default: 4c35b5f1-ce99-4220-a6e2-cda6e2d713a0
+    oam-vol-1:
+      label: mog-oam-vol-1
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM volume 1
+      default: 0a7fcd9e-2624-401d-ac21-b0191f85ec77
+    csb_net_start:
+      label: csb internal start
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal start
+      default: 172.26.0.1
+    cm_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: CM image name
+      default: MOG_BASE_8.0
+    sm_flavor_name:
+      label: SM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of SM instance
+      default: m2.xlarge4
+    ps_image_name:
+      label: PS image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PS image name
+      default: MOG_BASE_8.0
+    oam_server_names:
+      label: OAM server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the OAM instance
+      default:
+      - ZRDM1MOGX01OAM001
+      - ZRDM1MOGX01OAM002
+      entry_schema:
+        type: string
+    csb_net_cidr:
+      label: csb ineternal cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal cidr
+      default: 172.26.0.0/24
+    cm_server_names:
+      label: CM server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the CM instance
+      default:
+      - ZRDM1MOGX01MCM001
+      entry_schema:
+        type: string
+    sl_net_ips:
+      label: silver lining network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: ips of the sl network
+      default:
+      - 107.239.45.4
+      - 107.239.45.5
+      entry_schema:
+        type: string
+    rx_net_name:
+      label: Rx network name
+      hidden: false
+      immutable: false
+      type: string
+      description: Rx network name
+      default: cor_direct_net_1
+    repl_net_name:
+      label: Replication network name
+      hidden: false
+      immutable: false
+      type: string
+      description: name of the replication network
+      default: cor_direct_net_0
+    security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+      default: mog_security_group
+    csb_net_end:
+      label: csb internal end
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal end
+      default: 172.26.0.254
+    csb_net_name:
+      label: csb internal network name
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal network name
+      default: int_mog_csb_net
+  node_templates:
+    abstract_pd_server:
+      type: org.openecomp.resource.abstract.nodes.pd_server
+      directives:
+      - substitutable
+      properties:
+        port_pd01_port1_network:
+        - get_input: oam_net_name
+        port_pd01_port1_network_role_tag: oam
+        port_pd01_port1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pd01_port2_network:
+        - get_input: oam_net_name
+        port_pd01_port2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 0
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_pd01_port1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_pd01_port2_network_role_tag: oam
+        port_pd01_port2_mac_requirements:
+          mac_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pd_image_name
+        compute_pd_server_user_data_format:
+        - RAW
+        service_template_filter:
+          substitute_service_template: Nested_pd_serverServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+  groups:
+    hot-mog-0108-bs1271_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-mog-0108-bs1271.yml
+        description: heat template that creates MOG stack
+      members:
+      - abstract_pd_server

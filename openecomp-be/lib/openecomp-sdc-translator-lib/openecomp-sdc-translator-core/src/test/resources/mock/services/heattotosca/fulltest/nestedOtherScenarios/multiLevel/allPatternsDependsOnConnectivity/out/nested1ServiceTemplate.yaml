@@ -135,34 +135,34 @@ topology_template:
       directives:
       - substitutable
       properties:
-        compute_ps_server_main_1b_availability_zone:
-        - get_input: availability_zone_0
-        port_ps_server_main_b_port_replacement_policy:
-        - AUTO
-        port_ps_server_main_b_port_ip_requirements:
+        port_ps_server_main_1b_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - ps_server_main_1b_ips
+            - 0
+        port_ps_server_main_1b_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        compute_ps_server_main_1b_availability_zone:
+        - get_input: availability_zone_0
         vm_flavor_name:
           get_input: ps_server_main_1b_flavor
-        port_ps_server_main_b_port_network:
-        - get_input: jsa_name
-        port_ps_server_main_b_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_ps_server_main_b_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - ps_server_main_1b_ips
-            - 0
         vm_image_name:
           get_input: ps_server_main_1b_image
         compute_ps_server_main_1b_name:
         - get_input:
           - ps_server_main_1b_names
           - 1
+        port_ps_server_main_1b_port_replacement_policy:
+        - AUTO
+        port_ps_server_main_1b_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_ps_server_main_1b_port_network:
+        - get_input: jsa_name
         service_template_filter:
           substitute_service_template: Nested_ps_server_main_1bServiceTemplate.yaml
           count: 1
@@ -224,32 +224,32 @@ topology_template:
       properties:
         compute_pd_server_main_1b_availability_zone:
         - get_input: availability_zone_0
-        port_pd_server_main_b_port_replacement_policy:
+        port_pd_server_main_1b_port_replacement_policy:
         - AUTO
+        port_pd_server_main_1b_port_mac_requirements:
+          mac_count_required:
+            is_required: false
         vm_flavor_name:
           get_input: pd_server_main_1b_flavor
-        port_pd_server_main_b_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - pd_server_main_1b_ips
-            - 0
-        port_pd_server_main_b_port_ip_requirements:
+        vm_image_name:
+          get_input: pd_server_main_1b_image
+        compute_pd_server_main_1b_name:
+        - get_input:
+          - pd_server_main_1b_names
+          - 0
+        port_pd_server_main_1b_port_network:
+        - get_input: jsa_name
+        port_pd_server_main_1b_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        vm_image_name:
-          get_input: pd_server_main_1b_image
-        port_pd_server_main_b_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        compute_pd_server_main_1b_name:
-        - get_input:
-          - pd_server_main_1b_names
-          - 0
-        port_pd_server_main_b_port_network:
-        - get_input: jsa_name
+        port_pd_server_main_1b_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - pd_server_main_1b_ips
+            - 0
         service_template_filter:
           substitute_service_template: Nested_pd_server_main_1bServiceTemplate.yaml
           count: 1
@@ -468,7 +468,7 @@ topology_template:
       - binding_ps_server_main_1b
       network.outgoing.bytes.rate_pd_server_main_1b_port:
       - abstract_pd_server_main_1b
-      - network.outgoing.bytes.rate_pd_server_main_1b_pd_server_main_b_port
+      - network.outgoing.bytes.rate_pd_server_main_1b_pd_server_main_1b_port
       binding_cmaui_port_1:
       - abstract_cmaui_1c1_main
       - binding_cmaui_1c1_main_cmaui_port
@@ -660,10 +660,10 @@ topology_template:
       - disk.device.latency_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file
       attachment_pd_server_main_1b_port:
       - abstract_pd_server_main_1b
-      - attachment_pd_server_main_1b_pd_server_main_b_port
+      - attachment_pd_server_main_1b_pd_server_main_1b_port
       feature_ps_server_main_1b_port:
       - abstract_ps_server_main_1b
-      - feature_ps_server_main_1b_ps_server_main_b_port
+      - feature_ps_server_main_1b_ps_server_main_1b_port
       disk.root.size_server_nested2_1c1_cmaui_1_test_nested2Level:
       - test_nested2Level
       - disk.root.size_server_nested2_1c1_cmaui_1
@@ -681,7 +681,7 @@ topology_template:
       - disk.device.read.requests_pd_server_main_1b
       network.incoming.bytes.rate_ps_server_main_1b_port:
       - abstract_ps_server_main_1b
-      - network.incoming.bytes.rate_ps_server_main_1b_ps_server_main_b_port
+      - network.incoming.bytes.rate_ps_server_main_1b_ps_server_main_1b_port
       disk.allocation_server_main_pd_1b:
       - abstract_pd_server_main_1b
       - disk.allocation_pd_server_main_1b
@@ -759,7 +759,7 @@ topology_template:
       - disk.device.write.bytes.rate_server_nested2_1c1_cmaui_1
       network.outpoing.packets_ps_server_main_1b_port:
       - abstract_ps_server_main_1b
-      - network.outpoing.packets_ps_server_main_1b_ps_server_main_b_port
+      - network.outpoing.packets_ps_server_main_1b_ps_server_main_1b_port
       feature_pd_server_pattern4_port_2_test_nested_pattern_4_main_1:
       - test_nested_pattern_4_main_1
       - feature_pd_server_pattern4_port_2
@@ -774,7 +774,7 @@ topology_template:
       - network.incoming.packets_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file
       network.outgoing.bytes_ps_server_main_1b_port:
       - abstract_ps_server_main_1b
-      - network.outgoing.bytes_ps_server_main_1b_ps_server_main_b_port
+      - network.outgoing.bytes_ps_server_main_1b_ps_server_main_1b_port
       disk.ephemeral.size_server_main_pd_1b:
       - abstract_pd_server_main_1b
       - disk.ephemeral.size_pd_server_main_1b
@@ -942,7 +942,7 @@ topology_template:
       - scalable_server_nested2_pd_1b
       network.outgoing.packets.rate_ps_server_main_1b_port:
       - abstract_ps_server_main_1b
-      - network.outgoing.packets.rate_ps_server_main_1b_ps_server_main_b_port
+      - network.outgoing.packets.rate_ps_server_main_1b_ps_server_main_1b_port
       disk.device.write.bytes.rate_server_main_ps_1b:
       - abstract_ps_server_main_1b
       - disk.device.write.bytes.rate_ps_server_main_1b
@@ -999,7 +999,7 @@ topology_template:
       - binding_server_pd_pattern4_test_nested_pattern_4_nested2
       network.outgoing.bytes_pd_server_main_1b_port:
       - abstract_pd_server_main_1b
-      - network.outgoing.bytes_pd_server_main_1b_pd_server_main_b_port
+      - network.outgoing.bytes_pd_server_main_1b_pd_server_main_1b_port
       instance_server_main_ps_1b:
       - abstract_ps_server_main_1b
       - instance_ps_server_main_1b
@@ -1080,7 +1080,7 @@ topology_template:
       - disk.device.latency_server_pd_pattern4
       network.outgoing.packets.rate_pd_server_main_1b_port:
       - abstract_pd_server_main_1b
-      - network.outgoing.packets.rate_pd_server_main_1b_pd_server_main_b_port
+      - network.outgoing.packets.rate_pd_server_main_1b_pd_server_main_1b_port
       disk.ephemeral.size_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file_test_nested2Level:
       - test_nested2Level
       - disk.ephemeral.size_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file
@@ -1257,7 +1257,7 @@ topology_template:
       - disk.read.bytes.rate_server_nested2_ps_1b
       network.incoming.bytes_pd_server_main_1b_port:
       - abstract_pd_server_main_1b
-      - network.incoming.bytes_pd_server_main_1b_pd_server_main_b_port
+      - network.incoming.bytes_pd_server_main_1b_pd_server_main_1b_port
       endpoint_server_nested2_1c1_cmaui_1_test_nested2Level:
       - test_nested2Level
       - endpoint_server_nested2_1c1_cmaui_1
@@ -1416,7 +1416,7 @@ topology_template:
       - cpu_server_pd_pattern4_test_nested_pattern_4_nested2
       network.outpoing.packets_pd_server_main_1b_port:
       - abstract_pd_server_main_1b
-      - network.outpoing.packets_pd_server_main_1b_pd_server_main_b_port
+      - network.outpoing.packets_pd_server_main_1b_pd_server_main_1b_port
       network.outpoing.packets_pd_server_pattern4_port_2_test_nested_pattern_4_main_1:
       - test_nested_pattern_4_main_1
       - network.outpoing.packets_pd_server_pattern4_port_2
@@ -1497,7 +1497,7 @@ topology_template:
       - memory_server_nested2_1c1_cmaui_2
       attachment_ps_server_main_1b_port:
       - abstract_ps_server_main_1b
-      - attachment_ps_server_main_1b_ps_server_main_b_port
+      - attachment_ps_server_main_1b_ps_server_main_1b_port
       disk.write.bytes.rate_server_nested2_pd_1b_test_nested2Level:
       - test_nested2Level
       - disk.write.bytes.rate_server_nested2_pd_1b
@@ -1524,7 +1524,7 @@ topology_template:
       - feature_jsa_security_group1_test_resourceGroup
       network.outgoing.bytes.rate_ps_server_main_1b_port:
       - abstract_ps_server_main_1b
-      - network.outgoing.bytes.rate_ps_server_main_1b_ps_server_main_b_port
+      - network.outgoing.bytes.rate_ps_server_main_1b_ps_server_main_1b_port
       cpu_server_main_ps_1b:
       - abstract_ps_server_main_1b
       - cpu_ps_server_main_1b
@@ -1710,7 +1710,7 @@ topology_template:
       - network.outgoing.bytes_pd_server_pattern4_port_1
       feature_pd_server_main_1b_port:
       - abstract_pd_server_main_1b
-      - feature_pd_server_main_1b_pd_server_main_b_port
+      - feature_pd_server_main_1b_pd_server_main_1b_port
       disk.device.write.requests.rate_server_pd_pattern4_test_nested_pattern_4_main_1:
       - test_nested_pattern_4_main_1
       - disk.device.write.requests.rate_server_pd_pattern4
@@ -1755,7 +1755,7 @@ topology_template:
       - feature_server_nested2_1c1_cmaui_1
       network.incoming.packets.rate_pd_server_main_1b_port:
       - abstract_pd_server_main_1b
-      - network.incoming.packets.rate_pd_server_main_1b_pd_server_main_b_port
+      - network.incoming.packets.rate_pd_server_main_1b_pd_server_main_1b_port
       disk.allocation_server_pd_pattern4_test_nested_pattern_4_nested2_test_nested2Level:
       - test_nested2Level
       - disk.allocation_server_pd_pattern4_test_nested_pattern_4_nested2
@@ -1779,7 +1779,7 @@ topology_template:
       - disk.device.capacity_server_nested2_pd_1b
       network.incoming.bytes.rate_pd_server_main_1b_port:
       - abstract_pd_server_main_1b
-      - network.incoming.bytes.rate_pd_server_main_1b_pd_server_main_b_port
+      - network.incoming.bytes.rate_pd_server_main_1b_pd_server_main_1b_port
       disk.latency_server_pd_pattern4_test_nested_pattern_4_main_1:
       - test_nested_pattern_4_main_1
       - disk.latency_server_pd_pattern4
@@ -1830,13 +1830,13 @@ topology_template:
       - feature_pd_server_nested2_1b_port
       network.incoming.packets_ps_server_main_1b_port:
       - abstract_ps_server_main_1b
-      - network.incoming.packets_ps_server_main_1b_ps_server_main_b_port
+      - network.incoming.packets_ps_server_main_1b_ps_server_main_1b_port
       binding_cmaui_port_2_test_nested2Level:
       - test_nested2Level
       - binding_cmaui_port_2
       binding_pd_server_main_1b_port:
       - abstract_pd_server_main_1b
-      - binding_pd_server_main_1b_pd_server_main_b_port
+      - binding_pd_server_main_1b_pd_server_main_1b_port
       binding_server_main_1c1_cmaui_1:
       - abstract_cmaui_1c1_main
       - binding_cmaui_1c1_main
@@ -1872,7 +1872,7 @@ topology_template:
       - scalable_server_nested2_1c1_cmaui_2
       network.incoming.packets_pd_server_main_1b_port:
       - abstract_pd_server_main_1b
-      - network.incoming.packets_pd_server_main_1b_pd_server_main_b_port
+      - network.incoming.packets_pd_server_main_1b_pd_server_main_1b_port
       memory_server_nested2_pd_1b_test_nested2Level:
       - test_nested2Level
       - memory_server_nested2_pd_1b
@@ -1977,7 +1977,7 @@ topology_template:
       - disk.device.write.requests.rate_server_nested2_1c1_cmaui_2
       network.incoming.bytes_ps_server_main_1b_port:
       - abstract_ps_server_main_1b
-      - network.incoming.bytes_ps_server_main_1b_ps_server_main_b_port
+      - network.incoming.bytes_ps_server_main_1b_ps_server_main_1b_port
       scalable_server_nested2_1c1_cmaui_1_test_nested2Level:
       - test_nested2Level
       - scalable_server_nested2_1c1_cmaui_1
@@ -2049,7 +2049,7 @@ topology_template:
       - disk.device.write.bytes.rate_server_pd_pattern4
       network.incoming.packets.rate_ps_server_main_1b_port:
       - abstract_ps_server_main_1b
-      - network.incoming.packets.rate_ps_server_main_1b_ps_server_main_b_port
+      - network.incoming.packets.rate_ps_server_main_1b_ps_server_main_1b_port
       disk.device.latency_server_nested2_pd_1b_test_nested2Level:
       - test_nested2Level
       - disk.device.latency_server_nested2_pd_1b
@@ -2097,7 +2097,7 @@ topology_template:
       - network.incoming.packets_pd_server_pattern4_port_2
       binding_ps_server_main_1b_port:
       - abstract_ps_server_main_1b
-      - binding_ps_server_main_1b_ps_server_main_b_port
+      - binding_ps_server_main_1b_ps_server_main_1b_port
       feature_test_resourceGroup_test_nested2Level:
       - test_nested2Level
       - feature_test_resourceGroup
@@ -2134,7 +2134,7 @@ topology_template:
       - dependency_jsa_security_group2_test_resourceGroup
       dependency_pd_server_main_1b_port:
       - abstract_pd_server_main_1b
-      - dependency_pd_server_main_1b_pd_server_main_b_port
+      - dependency_pd_server_main_1b_pd_server_main_1b_port
       dependency_cmaui_port_2_test_nested2Level:
       - test_nested2Level
       - dependency_cmaui_port_2
@@ -2182,7 +2182,7 @@ topology_template:
       - local_storage_server_nested2_1c1_cmaui_2
       dependency_ps_server_main_1b_port:
       - abstract_ps_server_main_1b
-      - dependency_ps_server_main_1b_ps_server_main_b_port
+      - dependency_ps_server_main_1b_ps_server_main_1b_port
       dependency_pd_server_pattern4_port_2_test_nested_pattern_4_nested2_test_nested2Level:
       - test_nested2Level
       - dependency_pd_server_pattern4_port_2_test_nested_pattern_4_nested2
@@ -2233,7 +2233,7 @@ topology_template:
       - dependency_server_pd_pattern4_test_nested_pattern_4_nested2
       link_ps_server_main_1b_port:
       - abstract_ps_server_main_1b
-      - link_ps_server_main_1b_ps_server_main_b_port
+      - link_ps_server_main_1b_ps_server_main_1b_port
       dependency_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file_test_nested2Level:
       - test_nested2Level
       - dependency_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file
@@ -2242,7 +2242,7 @@ topology_template:
       - dependency_cmaui_port_1
       link_pd_server_main_1b_port:
       - abstract_pd_server_main_1b
-      - link_pd_server_main_1b_pd_server_main_b_port
+      - link_pd_server_main_1b_pd_server_main_1b_port
       local_storage_server_pd_pattern4_test_nested_pattern_4_main_1:
       - test_nested_pattern_4_main_1
       - local_storage_server_pd_pattern4

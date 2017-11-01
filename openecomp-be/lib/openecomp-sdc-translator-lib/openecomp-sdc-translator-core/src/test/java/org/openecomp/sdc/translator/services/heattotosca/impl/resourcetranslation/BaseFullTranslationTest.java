@@ -61,8 +61,12 @@ import java.util.zip.ZipInputStream;
 
 public class BaseFullTranslationTest {
 
-  protected String inputFilesPath;
-  protected String outputFilesPath;
+  /*protected String inputFilesPath;
+  protected String outputFilesPath;*/
+  public static final String IN_PREFIX = "/in";
+  public static final String OUT_PREFIX = "/out";
+
+  protected String basePath;
   protected TranslationContext translationContext;
 
   private String zipFilename = "VSP.zip";
@@ -77,7 +81,8 @@ public class BaseFullTranslationTest {
     initTranslatorAndTranslate();
   }
 
-  protected void testTranslationWithInit() throws IOException {
+  protected void testTranslationWithInit(String path) throws IOException {
+      basePath = path;
       initTranslatorAndTranslate();
       testTranslation();
   }
@@ -89,7 +94,7 @@ public class BaseFullTranslationTest {
 
   protected void testTranslation() throws IOException {
 
-    URL url = BaseFullTranslationTest.class.getResource(outputFilesPath);
+    URL url = BaseFullTranslationTest.class.getResource(basePath + OUT_PREFIX);
     expectedResultFileNameSet = new HashSet<>();
 
     String path = url.getPath();
@@ -130,7 +135,7 @@ public class BaseFullTranslationTest {
   }
 
   private File translateZipFile() throws IOException {
-    URL inputFilesUrl = this.getClass().getResource(inputFilesPath);
+    URL inputFilesUrl = this.getClass().getResource(basePath + IN_PREFIX);
     String path = inputFilesUrl.getPath();
     TestUtils.addFilesToTranslator(heatToToscaTranslator, path);
     TranslatorOutput translatorOutput = heatToToscaTranslator.translate();

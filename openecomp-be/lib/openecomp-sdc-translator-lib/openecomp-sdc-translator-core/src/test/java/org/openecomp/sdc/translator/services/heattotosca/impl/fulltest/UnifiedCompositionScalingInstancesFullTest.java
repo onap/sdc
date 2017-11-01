@@ -18,73 +18,39 @@ public class UnifiedCompositionScalingInstancesFullTest extends BaseFullTranslat
   @Test
   public void testComputesSameTypeWithOnePortEach() throws IOException {
     //1. Scenario #1 - Compute type 1 – 2 nova, each one with 1 port
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances/oneComputeTypeOnePort/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances/oneComputeTypeOnePort/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/scalingInstances/oneComputeTypeOnePort");
   }
 
   @Test
   public void testComputesTypesTwoComputesEachWithOnePort() throws IOException {
     //2. Scenario #2 - 2 compute types, each type has 2 computes with one port per compute
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances/twoComputeTypesOnePort/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances/twoComputeTypesOnePort/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/scalingInstances/twoComputeTypesOnePort");
   }
 
   @Test
   public void testComputesTypesTwoComputesEachWithOnePortWithGetAttr() throws IOException {
     //3.	Scenario #2 + between the 2 nova which has diff types there is getAttr
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances/twoComputeTypesOnePortWithGetAttr/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances/twoComputeTypesOnePortWithGetAttr/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/scalingInstances/twoComputeTypesOnePortWithGetAttr");
   }
 
   @Test
   public void testComputesSameTypeWithOnePortOneGroupEach() throws IOException {
     //4.	Scenario #1 + group – NovaServerGroup, connected to both nova
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances/oneComputeTypeOnePortOneGroup/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances/oneComputeTypeOnePortOneGroup/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/scalingInstances/oneComputeTypeOnePortOneGroup");
   }
 
   @Test
   public void testComputesSameTypeWithOnePortEachAndNodesConnectedIn() throws IOException {
     //5.	Scenario #1 + node connected In – security Rule point to both port + “resource” with
     // dependency (depends_on) to both computes
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances" +
-            "/oneComputeTypeOnePortNodeConnectedIn/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances" +
-            "/oneComputeTypeOnePortNodeConnectedIn/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/scalingInstances/oneComputeTypeOnePortNodeConnectedIn");
   }
 
   @Test
   public void testComputesSameTypeWithOnePortEachAndNodesConnectedOut() throws IOException {
     //6.	Scenario#1  + node connected Out – both port connected to same network + each compute
     // connected to same volume
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances" +
-            "/oneComputeTypeOnePortNodeConnectedOut/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances" +
-            "/oneComputeTypeOnePortNodeConnectedOut/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/scalingInstances/oneComputeTypeOnePortNodeConnectedOut");
   }
 
   @Test
@@ -95,15 +61,7 @@ public class UnifiedCompositionScalingInstancesFullTest extends BaseFullTranslat
         b.	Property with getAttr from Compute2
         c.	Property with getAttr from port
     */
-
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances" +
-            "/oneComputeTypeOnePortGetAttrIn/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances" +
-            "/oneComputeTypeOnePortGetAttrIn/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/scalingInstances/oneComputeTypeOnePortGetAttrIn");
   }
 
   @Test
@@ -114,15 +72,7 @@ public class UnifiedCompositionScalingInstancesFullTest extends BaseFullTranslat
         b.	Compute2 with property2, that include getAttr from network
         c.	Port with property, that include getAttr from network
     */
-
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances" +
-            "/oneComputeTypeOnePortGetAttrOut/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances" +
-            "/oneComputeTypeOnePortGetAttrOut/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/scalingInstances/oneComputeTypeOnePortGetAttrOut");
   }
 
 
@@ -134,15 +84,7 @@ public class UnifiedCompositionScalingInstancesFullTest extends BaseFullTranslat
         b.	Output param with getAttr from Compute2
         c.	Output param with getAttr from Port
     */
-
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances" +
-            "/oneComputeTypeOnePortOutputParamGetAttrIn/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances" +
-            "/oneComputeTypeOnePortOutputParamGetAttrIn/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/scalingInstances/oneComputeTypeOnePortOutputParamGetAttrIn");
   }
 
   @Test
@@ -155,15 +97,7 @@ public class UnifiedCompositionScalingInstancesFullTest extends BaseFullTranslat
         c.	Port1 with property, that include getAttr from compute1
         d.	Port2 with property, that include getAttr from compute2
     */
-
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances" +
-            "/oneComputeTypeOnePortGetAttrOutComputePort/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/scalingInstances" +
-            "/oneComputeTypeOnePortGetAttrOutComputePort/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/scalingInstances/oneComputeTypeOnePortGetAttrOutComputePort");
   }
 
 }

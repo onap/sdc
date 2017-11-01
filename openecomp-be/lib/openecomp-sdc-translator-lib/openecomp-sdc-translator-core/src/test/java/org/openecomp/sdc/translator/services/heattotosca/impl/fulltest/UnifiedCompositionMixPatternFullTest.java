@@ -27,33 +27,18 @@ public class UnifiedCompositionMixPatternFullTest extends BaseFullTranslationTes
 
   @Test
   public void testMixPatterns() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/mixPatterns/oneAppearancePerPattern/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/mixPatterns/oneAppearancePerPattern/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/mixPatterns/oneAppearancePerPattern");
   }
 
   @Test
   public void testMixPatternsWithConnectivityBetweenPatterns() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/mixPatterns/connectivityBetweenPatterns/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/mixPatterns/connectivityBetweenPatterns/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/mixPatterns/connectivityBetweenPatterns");
   }
 
   @Test
   public void testMixPatternsWithConnectivityAndMoreThanOneOccurenceForEachPattern()
       throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/mixPatterns/twoAppearancePerPatternWithConnectivities/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/mixPatterns/twoAppearancePerPatternWithConnectivities/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/mixPatterns/twoAppearancePerPatternWithConnectivities");
   }
 
   @Test
@@ -62,19 +47,12 @@ public class UnifiedCompositionMixPatternFullTest extends BaseFullTranslationTes
     exception.expectMessage("Resource with id lb_0_int_oam_int_0_port occurs more " +
         "than once in different addOn files");
 
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/mixPatterns/duplicateResourceIdsInDiffAddOnFiles/in";
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/mixPatterns/duplicateResourceIdsInDiffAddOnFiles");
   }
 
   @Test
   public void testMixPatternsWithDependencyConnectivity() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/mixPatterns/dependencyConnectivity/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/mixPatterns/dependencyConnectivity/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit("/mock/services/heattotosca/fulltest/mixPatterns/dependencyConnectivity");
   }
 
 }

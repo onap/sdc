@@ -1,7 +1,7 @@
 package org.openecomp.sdc.translator.services.heattotosca;
 
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
@@ -34,7 +34,6 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.services.heattotosca.errors.DuplicateResourceIdsInDifferentFilesErrorBuilder;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -48,7 +47,8 @@ import java.util.Objects;
 public class ConsolidationDataUtil {
 
   protected static Logger logger = (Logger) LoggerFactory.getLogger(ConsolidationDataUtil.class);
-
+  public static final String UNDERSCORE = "_";
+  public static final String DIGIT_REGEX = "\\d+";
   /**
    * Gets compute template consolidation data.
    *
@@ -524,26 +524,28 @@ public class ConsolidationDataUtil {
    * @return the port type
    */
   public static String getPortType(String portNodeTemplateId) {
-    String[] portSplitArr = portNodeTemplateId.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
-    String finalValue = "";
-    if (NumberUtils.isNumber(portSplitArr[portSplitArr.length - 1])) {
-      for (String id : portSplitArr) {
-        finalValue = finalValue + id;
+      if (StringUtils.isNotBlank(portNodeTemplateId)) {
+          String formatedName = portNodeTemplateId.replaceAll(DIGIT_REGEX + "$", "");
+
+          StringBuilder sb = new StringBuilder();
+          String[] arr = formatedName.split(UNDERSCORE);
+          int count = 0;
+          for (int i = 0; i < arr.length; i++) {
+              if (StringUtils.isNotBlank(arr[i])) {
+                  count++;
+              }
+
+              if (count == 2 && arr[i].matches(DIGIT_REGEX)) {
+                  continue;
+              } else {
+                  sb.append(arr[i] + UNDERSCORE);
+              }
+          }
+
+          return portNodeTemplateId.endsWith(UNDERSCORE) ? sb.toString()
+                  : sb.toString().substring(0, sb.toString().length() - 1);
       }
-      while (finalValue.length() > 0) {
-        if (Character.isLetter(finalValue.charAt(finalValue.length() - 1))) {
-          break;
-        }
-        finalValue = finalValue.substring(0, finalValue.length() - 1);
-      }
-    } else {
-      for (String id : portSplitArr) {
-        if (!NumberUtils.isNumber(id)) {
-          finalValue = finalValue + id;
-        }
-      }
-    }
-    return finalValue;
+      return portNodeTemplateId;
   }
 
   /**
