@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.logging.api.Logger;
@@ -38,8 +37,6 @@ import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.TranslationService;
-
-import java.util.Objects;
 
 public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
 
@@ -95,7 +92,8 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
         .get(translateTo.getResource().getType());
 
     if(DataModelUtil.isNodeTemplateSectionMissingFromServiceTemplate(substitutionServiceTemplate)){
-      handleSubstitutionServiceTemplateWithoutNodeTemplates(translateTo, context, templateName);
+      handleSubstitutionServiceTemplateWithoutNodeTemplates(
+          templateName, translateTo);
       mdcDataDebugMessage.debugExitMessage(null, null);
       return;
     }
@@ -113,11 +111,12 @@ public class ResourceTranslationNestedImpl extends ResourceTranslationBase {
     mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
-  private void handleSubstitutionServiceTemplateWithoutNodeTemplates(TranslateTo translateTo,
-                                                                     TranslationContext context,
-                                                                     String templateName) {
-    context.addServiceTemplateWithoutNodeTemplates(templateName);
-    context.getTranslatedServiceTemplates().remove(translateTo.getResource().getType());
+  private void handleSubstitutionServiceTemplateWithoutNodeTemplates(String templateName,
+                                                                     TranslateTo translateTo) {
+    translateTo.getContext().addServiceTemplateWithoutNodeTemplates(templateName);
+    translateTo.getContext()
+        .addNestedNodeTemplateIdPointsToStWithoutNodeTemplates(translateTo.getTranslatedId());
+    translateTo.getContext().getTranslatedServiceTemplates().remove(translateTo.getResource().getType());
   }
 
   private ServiceTemplate createSubstitutionServiceTemplate(TranslateTo translateTo,

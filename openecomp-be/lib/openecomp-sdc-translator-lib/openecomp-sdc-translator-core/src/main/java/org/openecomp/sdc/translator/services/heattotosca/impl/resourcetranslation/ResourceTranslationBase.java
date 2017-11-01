@@ -146,16 +146,34 @@ public abstract class ResourceTranslationBase {
       throw new CoreException(
           new ResourceNotFoundInHeatFileErrorBuilder(resourceId, heatFileName).build());
     }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
+    return getTranslatedResourceId(resourceId, heatFileName, resource, heatOrchestrationTemplate,
+        context
+    );
+  }
+
+  private static Optional<String> getTranslatedResourceId(String resourceId,
+                                                          String heatFileName,
+                                                          Resource resource,
+                                                          HeatOrchestrationTemplate heatOrchestrationTemplate,
+                                                          TranslationContext context) {
     TranslateTo translateTo =
         generateTranslationTo(heatFileName, null, heatOrchestrationTemplate, resource, resourceId,
             null, context);
-    translatedId =
+
+    String translatedId =
         ResourceTranslationFactory.getInstance(resource).generateTranslatedId(translateTo);
+
+    if (ConsolidationDataUtil.isNodeTemplatePointsToServiceTemplateWithoutNodeTemplates
+        (translatedId, heatFileName, context)) {
+      return Optional.empty();
+    }
+
     if (translatedId != null) {
       context.getTranslatedIds().get(heatFileName).put(resourceId, translatedId);
     }
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.ofNullable(translatedId);
   }
 
