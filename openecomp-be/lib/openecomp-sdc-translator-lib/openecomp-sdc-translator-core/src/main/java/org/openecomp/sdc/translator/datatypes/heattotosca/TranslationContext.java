@@ -124,6 +124,8 @@ public class TranslationContext {
 
   private Set<String> serviceTemplatesWithoutNodeTemplateSection = new HashSet<>();
 
+  private Set<String> nodeTemplateIdsPointingToStWithoutNodeTemplates = new HashSet<>();
+
   public static Map<String, ImplementationConfiguration>
   getSupportedConsolidationComputeResources() {
     return supportedConsolidationComputeResources;
@@ -591,19 +593,18 @@ public class TranslationContext {
     return serviceTemplatesWithoutNodeTemplateSection;
   }
 
-  public void setServiceTemplatesWithoutNodeTemplateSection(
-      Set<String> serviceTemplatesWithoutNodeTemplateSection) {
-    this.serviceTemplatesWithoutNodeTemplateSection = serviceTemplatesWithoutNodeTemplateSection;
-  }
-
   public void addServiceTemplateWithoutNodeTemplates(String serviceTemplateName){
     this.serviceTemplatesWithoutNodeTemplateSection.add(serviceTemplateName);
   }
 
-  public boolean isServiceTemplateWithoutNodeTemplates(String serviceTemplateName){
-    return !Objects.isNull(serviceTemplateName) &&
-        this.serviceTemplatesWithoutNodeTemplateSection.contains(serviceTemplateName);
+  public void addNestedNodeTemplateIdPointsToStWithoutNodeTemplates(String nodeTemplateId){
+    this.nodeTemplateIdsPointingToStWithoutNodeTemplates.add(nodeTemplateId);
   }
+
+  public Set<String> getNodeTemplateIdsPointingToStWithoutNodeTemplates(){
+    return this.nodeTemplateIdsPointingToStWithoutNodeTemplates;
+  }
+
 
   public void updateRequirementAssignmentIdIndex(String serviceTemplateName,
                                                  String nodeTemplateId,

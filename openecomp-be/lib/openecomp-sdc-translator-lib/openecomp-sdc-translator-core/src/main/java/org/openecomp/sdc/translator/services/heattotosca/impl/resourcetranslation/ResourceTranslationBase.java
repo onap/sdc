@@ -151,6 +151,12 @@ public abstract class ResourceTranslationBase {
             null, context);
     translatedId =
         ResourceTranslationFactory.getInstance(resource).generateTranslatedId(translateTo);
+
+    if(ConsolidationDataUtil.isNodeTemplatePointsToServiceTemplateWithoutNodeTemplates
+        (translatedId, heatFileName, context)){
+      return Optional.empty();
+    }
+
     if (translatedId != null) {
       context.getTranslatedIds().get(heatFileName).put(resourceId, translatedId);
     }

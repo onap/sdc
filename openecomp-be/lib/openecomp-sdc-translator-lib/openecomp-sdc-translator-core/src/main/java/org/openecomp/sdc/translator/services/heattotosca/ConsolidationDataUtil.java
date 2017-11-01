@@ -2,6 +2,7 @@ package org.openecomp.sdc.translator.services.heattotosca;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
@@ -33,7 +34,6 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.TypeComputeConsolidationData;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -160,6 +160,11 @@ public class ConsolidationDataUtil {
               + "files").build());
     }
 
+    if(isNodeTemplatePointsToServiceTemplateWithoutNodeTemplates(
+        nestedNodeTemplateId, nestedHeatFileName, context)){
+      return null;
+    }
+
     ConsolidationData consolidationData = context.getConsolidationData();
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
 
@@ -185,6 +190,16 @@ public class ConsolidationDataUtil {
     }
 
     return nestedTemplateConsolidationData;
+  }
+
+  public static boolean isNodeTemplatePointsToServiceTemplateWithoutNodeTemplates(String
+                                                                                       nestedNodeTemplateId,
+                                                                                  String nestedHeatFileName,
+                                                                                  TranslationContext context) {
+
+    return context.getServiceTemplatesWithoutNodeTemplateSection().contains(
+        FileUtils.getFileWithoutExtention(nestedHeatFileName))
+        || context.getNodeTemplateIdsPointingToStWithoutNodeTemplates().contains(nestedNodeTemplateId);
   }
 
   private static boolean isNestedResourceIdOccuresInDifferentNestedFiles(TranslationContext context,
@@ -333,22 +348,21 @@ public class ConsolidationDataUtil {
         || consolidationEntityType == ConsolidationEntityType.NESTED) {
       entityConsolidationData =
           getNestedTemplateConsolidationData(translationContext, serviceTemplate,
-              null,
+              translateTo.getHeatFileName(),
               translateTo.getTranslatedId());
     }
 
-    if(Objects.isNull(entityConsolidationData)){
+    if (Objects.isNull(entityConsolidationData)){
       return;
     }
-    if (entityConsolidationData != null) {
-      if (entityConsolidationData.getNodesConnectedOut() == null) {
-        entityConsolidationData.setNodesConnectedOut(new HashMap<>());
-      }
 
-      entityConsolidationData.getNodesConnectedOut()
-          .computeIfAbsent(nodeTemplateId, k -> new ArrayList<>())
-          .add(requirementAssignmentData);
+    if (entityConsolidationData.getNodesConnectedOut() == null) {
+      entityConsolidationData.setNodesConnectedOut(new HashMap<>());
     }
+
+    entityConsolidationData.getNodesConnectedOut()
+        .computeIfAbsent(nodeTemplateId, k -> new ArrayList<>())
+        .add(requirementAssignmentData);
   }
 
   /**
