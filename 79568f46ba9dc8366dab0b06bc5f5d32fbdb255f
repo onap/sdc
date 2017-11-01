@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_c5de5911",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/TranslationContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T16:05:03Z",
+      "side": 1,
+      "message": "Can this be final? Also, HashSet is not thread-safe, so there\u0027s potentially a concurrency issue here.",
+      "revId": "79568f46ba9dc8366dab0b06bc5f5d32fbdb255f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_45d26901",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/TranslationContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T16:05:03Z",
+      "side": 1,
+      "message": "Is it OK to pass null here?",
+      "revId": "79568f46ba9dc8366dab0b06bc5f5d32fbdb255f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_65eb25b1",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/datatypes/heattotosca/TranslationContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 604,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T16:05:03Z",
+      "side": 1,
+      "message": "Is there a special reason to return the entire collection? Consider moving the collection where it will be used. Because on the one hand, this class allows adding nodeTemplateId one-by-one to the internal set, but on the other hand it does nothing with the set (just returns it). You also expose the set to accidental modification by reference.",
+      "revId": "79568f46ba9dc8366dab0b06bc5f5d32fbdb255f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_e5d6f5f0",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T16:05:03Z",
+      "side": 1,
+      "message": "Can context or context.getServiceTemplatesWithoutNodeTemplateSection(), or context.getNodeTemplateIdsPointingToStWithoutNodeTemplates() be null? If yes, it will be very difficult to figure out which in case of a NullPointerException.",
+      "revId": "79568f46ba9dc8366dab0b06bc5f5d32fbdb255f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_c505397b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T16:05:03Z",
+      "side": 1,
+      "message": "Objects.isNull()?",
+      "revId": "79568f46ba9dc8366dab0b06bc5f5d32fbdb255f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_25f4fd85",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T16:05:03Z",
+      "side": 1,
+      "message": "This method seems too long.",
+      "revId": "79568f46ba9dc8366dab0b06bc5f5d32fbdb255f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_05f3419f",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T16:05:03Z",
+      "side": 1,
+      "message": "Please place spaces before \"(\" and \"{\"",
+      "revId": "79568f46ba9dc8366dab0b06bc5f5d32fbdb255f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_a52fcdf5",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/ResourceTranslationNestedImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T16:05:03Z",
+      "side": 1,
+      "message": "There are two parameters of type String next to each other. It\u0027s very easy to mix them up accidentally when calling this method. It looks like you could extract \"transtlatedId\" from \"translateTo\", which you\u0027re passing to this method anyway.",
+      "revId": "79568f46ba9dc8366dab0b06bc5f5d32fbdb255f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
