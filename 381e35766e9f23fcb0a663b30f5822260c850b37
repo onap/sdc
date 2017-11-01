@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_026d7798",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/ComponentManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T07:34:35Z",
+      "side": 1,
+      "message": "Please stick to the coding conventions - a space is required before (.",
+      "revId": "381e35766e9f23fcb0a663b30f5822260c850b37",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_e2670bb6",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/ComponentManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T07:34:35Z",
+      "side": 1,
+      "message": "Don\u0027t hesitate to delete commented-out code.",
+      "revId": "381e35766e9f23fcb0a663b30f5822260c850b37",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_020457be",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/ComponentManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-01T07:34:35Z",
+      "side": 1,
+      "message": "It\u0027s named as a constant, but is actually a local variable. Please either inline it where it\u0027s called, or make it a static final field if used in more then one place.",
+      "revId": "381e35766e9f23fcb0a663b30f5822260c850b37",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
