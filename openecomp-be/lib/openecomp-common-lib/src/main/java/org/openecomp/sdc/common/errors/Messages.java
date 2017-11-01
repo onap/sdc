@@ -126,7 +126,7 @@ public enum Messages {
   /*OPENECOMP Guide lines*/
   MISSING_NOVA_SERVER_METADATA("Missing Nova Server Metadata property, Resource ID [%s]"),
   MISSING_NOVA_SERVER_VNF_ID("Missing VNF_ID in Metadata property, Resource ID [%s]"),
-  MISSING_NOVA_SERVER_VF_MODULE_ID("Missing VF_MODULE_ID in Metadata property, Resource id [%s]"),
+  MISSING_NOVA_SERVER_VF_MODULE_ID("%s Missing VF_MODULE_ID in Metadata property, Resource id [%s]"),
   NETWORK_PARAM_NOT_ALIGNED_WITH_GUIDE_LINE(
       "Network Parameter Name not aligned with Guidelines, Parameter Name [%s] Resource ID [%s]"),
   MISSIN_BASE_HEAT_FILE(

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.DefinedHeatParameterTypes;
@@ -37,6 +38,19 @@ import java.util.TreeMap;
 
 public class NovaServerNamingConventionGuideLineValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final ErrorCode ERROR_CODE_NNS1 = new ErrorCode("NNS1");
+  private static final ErrorCode ERROR_CODE_NNS2 = new ErrorCode("NNS2");
+  private static final ErrorCode ERROR_CODE_NNS3 = new ErrorCode("NNS3");
+  private static final ErrorCode ERROR_CODE_NNS4 = new ErrorCode("NNS4");
+  private static final ErrorCode ERROR_CODE_NNS5 = new ErrorCode("NNS5");
+  private static final ErrorCode ERROR_CODE_NNS6 = new ErrorCode("NNS6");
+  private static final ErrorCode ERROR_CODE_NNS7 = new ErrorCode("NNS7");
+  private static final ErrorCode ERROR_CODE_NNS8 = new ErrorCode("NNS8");
+  private static final ErrorCode ERROR_CODE_NNS9 = new ErrorCode("NNS9");
+  private static final ErrorCode ERROR_CODE_NNS10 = new ErrorCode("NNS10");
+  private static final ErrorCode ERROR_CODE_NNS11 = new ErrorCode("NNS11");
+  private static final ErrorCode ERROR_CODE_NNS12 = new ErrorCode("NNS12");
+  private static final ErrorCode ERROR_CODE_NNS13 = new ErrorCode("NNS13");
 
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
@@ -105,12 +119,13 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
     if (MapUtils.isNotEmpty(novaServerProp)) {
       novaServerPropMetadata = novaServerProp.get("metadata");
       if (novaServerPropMetadata == null) {
+          ERROR_CODE_NNS1.setMessage(Messages.MISSING_NOVA_SERVER_METADATA.getErrorMessage());
         globalValidationContext.addMessage(
             fileName,
             ErrorLevel.WARNING,
             ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_NOVA_SERVER_METADATA.getErrorMessage(),
-                    resourceId),
+                .getErrorWithParameters(
+                        ERROR_CODE_NNS1, resourceId),
             LoggerTragetServiceName.VALIDATE_NOVA_META_DATA_NAME,
             LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
       } else if (novaServerPropMetadata instanceof Map) {
@@ -133,20 +148,22 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
         });
         propertyMap.putAll((Map) novaServerPropMetadata);
         if (!propertyMap.containsKey("vf_module_id")) {
+            ERROR_CODE_NNS2.setMessage(Messages.MISSING_NOVA_SERVER_VF_MODULE_ID.getErrorMessage());
           globalValidationContext.addMessage(
               fileName,
               ErrorLevel.WARNING,
               ErrorMessagesFormatBuilder.getErrorWithParameters(
-                  Messages.MISSING_NOVA_SERVER_VF_MODULE_ID.getErrorMessage(), resourceId),
+                      ERROR_CODE_NNS2, resourceId),
               LoggerTragetServiceName.VALIDATE_NOVA_META_DATA_NAME,
               LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
         }
         if (!propertyMap.containsKey("vnf_id")) {
+            ERROR_CODE_NNS3.setMessage(Messages.MISSING_NOVA_SERVER_VNF_ID.getErrorMessage());
           globalValidationContext.addMessage(
               fileName, ErrorLevel.WARNING,
               ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(Messages.MISSING_NOVA_SERVER_VNF_ID.getErrorMessage(),
-                      resourceId),
+                  .getErrorWithParameters(
+                          ERROR_CODE_NNS3, resourceId),
               LoggerTragetServiceName.VALIDATE_NOVA_META_DATA_NAME,
               LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
         }
@@ -188,12 +205,12 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                 role = getNetworkRole((String)((List) network).get(0));
               }
               if (role != null && uniqueResourcePortNetworkRole.containsKey(role)) {
+                  ERROR_CODE_NNS12.setMessage(Messages.RESOURCE_CONNECTED_TO_TWO_EXTERNAL_NETWORKS_WITH_SAME_ROLE.getErrorMessage());
                 globalValidationContext.addMessage(
                     fileName,
                     ErrorLevel.WARNING,
                     ErrorMessagesFormatBuilder.getErrorWithParameters(
-                        Messages.RESOURCE_CONNECTED_TO_TWO_EXTERNAL_NETWORKS_WITH_SAME_ROLE
-                            .getErrorMessage(), resourceId, role),
+                        ERROR_CODE_NNS12, resourceId, role),
                     LoggerTragetServiceName.VALIDATE_RESOURCE_NETWORK_UNIQUE_ROLW,
                     LoggerErrorDescription.RESOURCE_UNIQUE_NETWORK_ROLE);
               } else {
@@ -245,12 +262,13 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
       portNetwork = portResource.getProperties().get("network");
     }
     if (!(portNetwork instanceof Map)) {
+        ERROR_CODE_NNS4.setMessage(Messages.MISSING_GET_PARAM.getErrorMessage());
       globalValidationContext.addMessage(
           fileName,
           ErrorLevel.WARNING,
           ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),
-                  "network or network_id", resourceId),
+              .getErrorWithParameters(
+                      ERROR_CODE_NNS4, "network or network_id", resourceId),
           LoggerTragetServiceName.VALIDATE_RESOURCE_NETWORK_UNIQUE_ROLW,
           LoggerErrorDescription.MISSING_GET_PARAM);
       return null;
@@ -283,23 +301,25 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
 
         if (availabilityZoneName != null) {
           if (!ValidationUtil.evalPattern(availabilityZoneName, regexList)) {
+              ERROR_CODE_NNS5.setMessage(Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage());
             globalContext.addMessage(
                 fileName,
                 ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
-                    Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
-                    ValidationUtil.getMessagePartAccordingToResourceType(resourceEntry),
-                    "Availability Zone",
-                    availabilityZoneName, resourceEntry.getKey()),
+                            ERROR_CODE_NNS5,
+                            ValidationUtil.getMessagePartAccordingToResourceType(resourceEntry),
+                    "Availability Zone", availabilityZoneName, resourceEntry.getKey()),
                 LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
                 LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
           }
         }
       } else {
+          ERROR_CODE_NNS6.setMessage(Messages.MISSING_GET_PARAM.getErrorMessage());
         globalContext.addMessage(
             fileName,
             ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),
-                    "availability_zone", resourceEntry.getKey()),
+                .getErrorWithParameters(
+                        ERROR_CODE_NNS6,
+                        "availability_zone", resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
             LoggerErrorDescription.MISSING_GET_PARAM);
       }
@@ -392,11 +412,13 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
       checkIfNovaNameParameterInEnvIsStringOrList(fileName, envFileName, resourceEntry, novaName,
           globalContext);
     } else {
+        ERROR_CODE_NNS7.setMessage(Messages.MISSING_GET_PARAM.getErrorMessage());
       globalContext.addMessage(
           fileName,
           ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),
-                  "nova server name", resourceEntry.getKey()),
+              .getErrorWithParameters(
+                      ERROR_CODE_NNS7,
+                      "nova server name", resourceEntry.getKey()),
           LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
           LoggerErrorDescription.MISSING_GET_PARAM);
     }
@@ -414,19 +436,22 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
         propertiesMap.get(propertyName) == null ? null : propertiesMap.get(propertyName);
     String[] regexList = new String[]{propertyNameAndRegex.getValue()};
 
+
     if (nonNull(nameValue)) {
       if (nameValue instanceof Map) {
+          globalContext.setErrorCode(ERROR_CODE_NNS13);
         if (ValidationUtil.validateMapPropertyValue(fileName, resourceEntry, globalContext,
             propertyName,
             nameValue, regexList)) {
           return true;
         }
       } else {
+          ERROR_CODE_NNS8.setMessage(Messages.MISSING_GET_PARAM.getErrorMessage());
         globalContext.addMessage(
             fileName,
             ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(), propertyName,
-                    resourceEntry.getKey()),
+                .getErrorWithParameters(
+                        ERROR_CODE_NNS8, propertyName, resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
             LoggerErrorDescription.MISSING_GET_PARAM);
         return true;
@@ -482,11 +507,12 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
         if (Objects.nonNull(novaServerNameEnvValue)) {
           if (!DefinedHeatParameterTypes
               .isNovaServerEnvValueIsFromRightType(novaServerNameEnvValue)) {
+              ERROR_CODE_NNS9.setMessage(Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage());
             globalContext.addMessage(
                 fileName,
                 ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
-                    Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(), "Server",
-                    "Name", novaServerNameEnvValue.toString(), resourceEntry.getKey()),
+                            ERROR_CODE_NNS9, "Server", "Name",
+                            novaServerNameEnvValue.toString(), resourceEntry.getKey()),
                 LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
                 LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
           }
@@ -502,11 +528,12 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
 
     if (getParamNameList.size() != 2 || !ValidationUtil.evalPattern(getParamNameList.get(0),
         regexName)) {
+        ERROR_CODE_NNS10.setMessage(Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage());
       globalContext.addMessage(
           fileName,
           ErrorLevel.WARNING,
           ErrorMessagesFormatBuilder.getErrorWithParameters(
-              Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(), "Server",
+                  ERROR_CODE_NNS10, "Server",
               "name", getParamNameList.toString(), resourceEntry.getKey()),
           LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
           LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
@@ -520,11 +547,12 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
                                          Map.Entry<String, Resource> resourceEntry,
                                          GlobalValidationContext globalContext) {
     if (!ValidationUtil.evalPattern(novaName, regexName)) {
+        ERROR_CODE_NNS10.setMessage(Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage());
       globalContext.addMessage(
           fileName,
           ErrorLevel.WARNING,
           ErrorMessagesFormatBuilder.getErrorWithParameters(
-              Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(), "Server",
+                  ERROR_CODE_NNS10, "Server",
               "name", novaName, resourceEntry.getKey()),
           LoggerTragetServiceName.VALIDATE_NOVA_SERVER_NAME,
           LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
@@ -549,12 +577,12 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
     vmNames.removeIf(VMName -> VMName == null);
 
     if (!isVmNameSync(vmNames)) {
+        ERROR_CODE_NNS11.setMessage(Messages.NOVA_NAME_IMAGE_FLAVOR_NOT_CONSISTENT.getErrorMessage());
       globalContext.addMessage(
           fileName,
           ErrorLevel.WARNING,
           ErrorMessagesFormatBuilder.getErrorWithParameters(
-              Messages.NOVA_NAME_IMAGE_FLAVOR_NOT_CONSISTENT.getErrorMessage(),
-              resourceEntry.getKey()),
+                  ERROR_CODE_NNS11, resourceEntry.getKey()),
           LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
           LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
     }

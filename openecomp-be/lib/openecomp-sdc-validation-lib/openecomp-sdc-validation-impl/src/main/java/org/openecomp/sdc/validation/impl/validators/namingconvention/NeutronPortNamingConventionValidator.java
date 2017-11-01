@@ -3,6 +3,7 @@ package org.openecomp.sdc.validation.impl.validators.namingconvention;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
@@ -26,7 +27,10 @@ import static java.util.Objects.nonNull;
  */
 public class NeutronPortNamingConventionValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
+  private static final ErrorCode ERROR_CODE_NNP1 = new ErrorCode("NNP1");
+  private static final ErrorCode ERROR_CODE_NNP2 = new ErrorCode("NNP2");
+  private static final ErrorCode ERROR_CODE_NNP3 = new ErrorCode("NNP3");
+  private static final ErrorCode ERROR_CODE_NNP4 = new ErrorCode("NNP4");
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
@@ -116,21 +120,23 @@ public class NeutronPortNamingConventionValidator implements ResourceValidator {
                 .getValue());
             if (nonNull(fixedIpsName)) {
               if (!ValidationUtil.evalPattern(fixedIpsName, regexList)) {
+                ERROR_CODE_NNP1.setMessage( Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage());
                 globalContext.addMessage(
                     fileName,
                     ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
-                        Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
+                                ERROR_CODE_NNP1,
                         "Port", "Fixed_IPS", fixedIpsName, resourceEntry.getKey()),
                     LoggerTragetServiceName.VALIDATE_FIXED_IPS_NAME,
                     LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
               }
             }
           } else {
+              ERROR_CODE_NNP2.setMessage(Messages.MISSING_GET_PARAM.getErrorMessage());
             globalContext.addMessage(
                 fileName,
                 ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                    .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),
-                        "fixed_ips", resourceEntry.getKey()),
+                    .getErrorWithParameters(
+                        ERROR_CODE_NNP2,"fixed_ips", resourceEntry.getKey()),
                 LoggerTragetServiceName.VALIDATE_FIXED_IPS_NAME,
                 LoggerErrorDescription.MISSING_GET_PARAM);
           }
@@ -152,22 +158,24 @@ public class NeutronPortNamingConventionValidator implements ResourceValidator {
       paramName = ((Map) propertyValue).get("get_param");
       if (paramName instanceof String) {
         if (!ValidationUtil.evalPattern((String) paramName, regexList)) {
+            ERROR_CODE_NNP3.setMessage(message.getErrorMessage());
           globalContext.addMessage(
               fileName,
               ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(message.getErrorMessage(), resourceType,
+                  .getErrorWithParameters(ERROR_CODE_NNP3, resourceType,
                       wrongPropertyFormat, (String) paramName, resourceId),
               LoggerTragetServiceName.VALIDATE_PORT_NETWORK_NAME,
               LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
         }
       }
     } else {
+        ERROR_CODE_NNP4.setMessage(Messages.MISSING_GET_PARAM.getErrorMessage());
       globalContext.addMessage(
           fileName,
           ErrorLevel.WARNING,
           ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),
-                  "network or network_id", resourceId),
+              .getErrorWithParameters(
+                      ERROR_CODE_NNP4, "network or network_id", resourceId),
           LoggerTragetServiceName.VALIDATE_PORT_NETWORK_NAME,
           LoggerErrorDescription.MISSING_GET_PARAM);
     }

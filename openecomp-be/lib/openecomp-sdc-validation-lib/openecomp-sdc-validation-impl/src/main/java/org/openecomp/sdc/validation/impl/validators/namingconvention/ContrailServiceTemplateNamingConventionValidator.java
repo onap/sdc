@@ -6,6 +6,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
@@ -30,7 +31,9 @@ import static java.util.Objects.nonNull;
  */
 public class ContrailServiceTemplateNamingConventionValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-
+  private static final ErrorCode ERROR_CODE_NST1 = new ErrorCode("NST1");
+  private static final ErrorCode ERROR_CODE_NST2 = new ErrorCode("NST2");
+  private static final ErrorCode ERROR_CODE_NST3 = new ErrorCode("NST3");
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
@@ -124,10 +127,12 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
                                                                    String previousPropertyValueValue,
                                                                    String currentPropVmType) {
     if (!Objects.equals(previousPropertyValueValue, currentPropVmType)) {
+        ERROR_CODE_NST1.setMessage(Messages.CONTRAIL_VM_TYPE_NAME_NOT_ALIGNED_WITH_NAMING_CONVENSION
+                .getErrorMessage());
       globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
               .getErrorWithParameters(
-                  Messages.CONTRAIL_VM_TYPE_NAME_NOT_ALIGNED_WITH_NAMING_CONVENSION
-                      .getErrorMessage(), resourceEntry.getKey()),
+                      ERROR_CODE_NST1,
+                      resourceEntry.getKey()),
           LoggerTragetServiceName.VALIDATE_CONTRAIL_VM_NAME,
           LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
       return true;
@@ -145,19 +150,21 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
     Object nameValue =
         propertiesMap.get(propertyName) == null ? null : propertiesMap.get(propertyName);
     String[] regexList = new String[]{propertyNameAndRegex.getValue()};
-
     if (nonNull(nameValue)) {
       if (nameValue instanceof Map) {
+          globalContext.setErrorCode(ERROR_CODE_NST3);
         if (ValidationUtil.validateMapPropertyValue(fileName, resourceEntry, globalContext,
             propertyName,
             nameValue, regexList)) {
           return true;
         }
       } else {
+          ERROR_CODE_NST2.setMessage(Messages.MISSING_GET_PARAM.getErrorMessage());
         globalContext.addMessage(
             fileName,
             ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(), propertyName,
+                .getErrorWithParameters(
+                        ERROR_CODE_NST2, propertyName,
                     resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
             LoggerErrorDescription.MISSING_GET_PARAM);
@@ -186,10 +193,12 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
           return Optional.ofNullable(pattern.split(propertyValFromGetParam)[0]);
         }
       } else {
+          ERROR_CODE_NST2.setMessage(Messages.MISSING_GET_PARAM.getErrorMessage());
         globalContext.addMessage(
             fileName,
             ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(), propertyName,
+                .getErrorWithParameters(
+                        ERROR_CODE_NST3, propertyName,
                     resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_VM_SYNC_IN_IMAGE_FLAVOR,
             LoggerErrorDescription.MISSING_GET_PARAM);

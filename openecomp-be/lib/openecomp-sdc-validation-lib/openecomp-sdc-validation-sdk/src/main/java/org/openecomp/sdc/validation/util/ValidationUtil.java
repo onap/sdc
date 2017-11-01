@@ -160,11 +160,12 @@ public class ValidationUtil {
     String propertyValue = getWantedNameFromPropertyValueGetParam(nameValue);
     if (nonNull(propertyValue)) {
       if (!evalPattern(propertyValue, regexList)) {
+          globalContext.getErrorCode().setMessage(
+                  Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage());
         globalContext.addMessage(
             fileName,
             ErrorLevel.WARNING,
-            ErrorMessagesFormatBuilder.getErrorWithParameters(
-                Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
+            ErrorMessagesFormatBuilder.getErrorWithParameters(globalContext.getErrorCode(),
                 getMessagePartAccordingToResourceType(resourceEntry), propertyName, propertyValue,
                 resourceEntry.getKey()),
             LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
