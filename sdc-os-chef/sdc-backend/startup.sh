@@ -37,7 +37,9 @@ else
    chef-solo -c normatives.rb
 fi
 
+echo "###### DOCKER STARTED #####"
+
 while true; do sleep 2; done
 
-echo "###### DOCKER STARTED #####"
+
 

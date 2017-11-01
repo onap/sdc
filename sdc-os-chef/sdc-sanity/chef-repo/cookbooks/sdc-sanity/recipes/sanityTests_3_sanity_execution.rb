@@ -6,7 +6,7 @@ cwd "#{tests_base}"
 code <<-EOH
    cd "#{tests_base}"
    jar_file=`ls test-apis*-jar-with-dependencies.jar`
-   nohup ./startTest.sh $jar_file #{ci_test_suite} &
+   ./startTest.sh $jar_file #{ci_test_suite} > #{tests_base}/target/startTest.out 2>&1
    echo "return code from startTest.sh = [$?]"
 EOH
 timeout 72000

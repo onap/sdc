@@ -243,8 +243,13 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
 		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, instanceIdHeader);
 		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL, requestURI);
-		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, componentType.getValue());
 		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, uuid);
+		if (componentType == null) {
+			log.debug("getMetaData: assetType parameter {} is not valid", assetType);
+			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
+			return buildErrorResponse(responseFormat);
+		}
+		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, componentType.getValue());
 
 		// Mandatory
 		if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
@@ -331,8 +336,15 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 		EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
 		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, instanceIdHeader);
 		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL, url);
-		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, componentType.getValue());
 		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, uuid);
+		
+		if (componentType == null) {
+			log.debug("getToscaModel: assetType parameter {} is not valid", assetType);
+			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
+			return buildErrorResponse(responseFormat);
+		}
+		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, componentType.getValue());
+
 
 		if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
 			log.debug("getToscaModel: Missing X-ECOMP-InstanceID header");
