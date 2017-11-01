@@ -206,7 +206,7 @@ echo -e ""
 #fi
 
 # sanityDocker
-echo "docker run sdc-frontend..."
+echo "docker run sdc-sanity..."
 if [ ${SKIPTESTS} = false ]; then
 echo "Triger sanity docker, please wait..."
     if [ ${LOCAL} = false ]; then
