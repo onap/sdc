@@ -85,7 +85,7 @@
 		<extentreports.version>3.0.3</extentreports.version>
 		
 		<!-- parser-->
-		<sdc-tosca-parser.version>1.1.34</sdc-tosca-parser.version>
+		<sdc-tosca-parser.version>1.1.32</sdc-tosca-parser.version>
 		
 		<!--JaCoCO -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -408,7 +408,7 @@
 				<artifact-generator-api.version>1710.0.0</artifact-generator-api.version>
 				<artifact-generator-core.version>1710.0.0</artifact-generator-core.version>
 				<dox-common-lib.version>1710.0.0</dox-common-lib.version>
-				<sdc-tosca-parser.version>1.1.34</sdc-tosca-parser.version>
+				<sdc-tosca-parser.version>1.1.32</sdc-tosca-parser.version>
 			</properties>
 		</profile>
 
