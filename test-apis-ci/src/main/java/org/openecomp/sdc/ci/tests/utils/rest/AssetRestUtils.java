@@ -97,7 +97,7 @@ public class AssetRestUtils extends BaseRestUtils {
 		return httpclient.execute(httpGet);
 	}
 	
-	public static File getToscaModelCsarFile(AssetTypeEnum assetType, String uuid) throws IOException {
+	public static File getToscaModelCsarFile(AssetTypeEnum assetType, String uuid, String fileName) throws IOException {
 		Config config = Utils.getConfig();
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		String url = String.format(Urls.GET_TOSCA_MODEL, config.getCatalogBeHost(), config.getCatalogBePort(),
@@ -105,7 +105,7 @@ public class AssetRestUtils extends BaseRestUtils {
 		HttpGet httpGet = new HttpGet(url);
 
 		String csarDir = FileHandling.getCreateDirByName("outputCsar");
-		File myFile = new File(csarDir+ File.separator + "tmpCSAR" + getShortUUID()+".csar");
+		File myFile = new File(csarDir+ File.separator + "tmpCSAR_" + fileName + ".csar");
 
 		
 		httpGet.addHeader(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");

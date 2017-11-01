@@ -24,7 +24,6 @@ package org.openecomp.sdc.ci.tests.sanity;
 
 
 
-import org.apache.http.HttpResponse;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
@@ -47,7 +46,6 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtillViaApis;
 import org.openecomp.sdc.ci.tests.utils.rest.AssetRestUtils;
 import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.openecomp.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
@@ -60,9 +58,6 @@ import com.clearspring.analytics.util.Pair;
 import fj.data.Either;
 
 import java.io.File;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
 
 
 public class Onboard extends ComponentBaseTest {
@@ -131,7 +126,7 @@ public class Onboard extends ComponentBaseTest {
 		try{
 //			HttpResponse assetResponse = AssetRestUtils.getComponentToscaModel(AssetTypeEnum.SERVICES, service.getUUID());
 //			InputStream inputStream = assetResponse.getEntity().getContent();
-			File csarFile = AssetRestUtils.getToscaModelCsarFile(AssetTypeEnum.SERVICES, service.getUUID());
+			File csarFile = AssetRestUtils.getToscaModelCsarFile(AssetTypeEnum.SERVICES, service.getUUID(), "");
 
 			ExtentTestActions.log(Status.INFO, "Tosca parser is going to convert service csar file to ISdcCsarHelper object...");
 			fdntCsarHelper = factory.getSdcCsarHelper(csarFile.getAbsolutePath());
