@@ -61,10 +61,9 @@ class Limits extends React.Component {
 		}
 		return (
 			<div className='license-model-limits-view'>
-				<ListEditorView
-					isReadOnlyMode={isReadOnlyMode}>
+				<ListEditorView isReadOnlyMode={isReadOnlyMode}>
 					{this.props.selectedLimit === NEW_LIMIT_TEMP_ID && limitEditor.data &&
-						<LimitEditor limitsNames={limitsNames} onCancel={onCloseLimitEditor} onSubmit={ () => this.submit()}/>
+						<LimitEditor limitsNames={limitsNames} onCancel={onCloseLimitEditor} onSubmit={ () => this.submit()} isReadOnlyMode={isReadOnlyMode}/>
 					}
 					{limitsList.length === 0 && !limitEditor.data && <div className='no-limits-text'>{i18n('There are no limits')}</div>}
 					{limitsList.map(limit =>
@@ -75,7 +74,13 @@ class Limits extends React.Component {
 							clickable={!selectedLimit}
 							isReadOnlyMode={isReadOnlyMode}
 							limit={limit}/>
-						{limit.id === selectedLimit &&  limitEditor.data && <LimitEditor limitsNames={limitsNames} onCancel={onCloseLimitEditor} onSubmit={ () => this.submit()}/>}
+						{limit.id === selectedLimit &&  limitEditor.data &&
+							<LimitEditor
+								limitsNames={limitsNames}
+								onCancel={onCloseLimitEditor}
+								onSubmit={ () => this.submit()}
+								isReadOnlyMode={isReadOnlyMode} />
+						}
 					</div> )}
 				</ListEditorView>
 

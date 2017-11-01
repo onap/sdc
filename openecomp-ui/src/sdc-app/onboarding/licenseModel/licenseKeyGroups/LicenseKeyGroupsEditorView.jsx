@@ -269,7 +269,8 @@ class LicenseKeyGroupsEditorView extends React.Component {
 								limitsList={limitsList.filter(item => item.type === limitType.SERVICE_PROVIDER)}
 								selectedLimit={this.state.selectedLimit}
 								onCloseLimitEditor={() => this.onCloseLimitEditor()}
-								onSelectLimit={limit => this.onSelectLimit(limit)}/>}
+								onSelectLimit={limit => this.onSelectLimit(limit)}
+								isReadOnlyMode={isReadOnlyMode} />}
 					</Tab>
 					<Tab tabId={tabIds.VENDOR_LIMITS} disabled={isTabsDisabled} data-test-id='general-tab' title={i18n('Vendor Limits')}>
 						{selectedTab === tabIds.VENDOR_LIMITS && 
@@ -278,16 +279,29 @@ class LicenseKeyGroupsEditorView extends React.Component {
 								limitsList={limitsList.filter(item => item.type === limitType.VENDOR)}
 								selectedLimit={this.state.selectedLimit}
 								onCloseLimitEditor={() => this.onCloseLimitEditor()}
-								onSelectLimit={limit => this.onSelectLimit(limit)}/>}
+								onSelectLimit={limit => this.onSelectLimit(limit)}
+								isReadOnlyMode={isReadOnlyMode} />}
 					</Tab>
 					{selectedTab !== tabIds.GENERAL ? 
-						<Button disabled={this.state.selectedLimit} className='add-limit-button' tabId={tabIds.ADD_LIMIT_BUTTON} btnType='link' iconName='plus'>{i18n('Add Limit')}</Button> : 
+							<Button
+								className='add-limit-button'
+								tabId={tabIds.ADD_LIMIT_BUTTON}
+								btnType='link'
+								iconName='plus'
+								disabled={this.state.selectedLimit || isReadOnlyMode}>
+								{i18n('Add Limit')}
+							</Button>
+						:
 						<div></div> // Render empty div to not break tabs
 					}
 				</Tabs>
 				
 				<GridSection className='license-model-modal-buttons license-key-group-editor-buttons'>
-					{!this.state.selectedLimit && <Button btnType='default' disabled={!this.props.isFormValid} onClick={() => this.submit()} type='reset'>{i18n('Save')}</Button>}
+					{!this.state.selectedLimit &&
+						<Button btnType='default' disabled={!this.props.isFormValid || isReadOnlyMode} onClick={() => this.submit()} type='reset'>
+							{i18n('Save')}
+						</Button>
+					}
 					<Button btnType={this.state.selectedLimit ? 'default' : 'outline'} onClick={() => this.props.onCancel()} type='reset'>
 						{i18n('Cancel')}
 					</Button>

@@ -245,6 +245,7 @@ class EntitlementPoolsEditorView extends React.Component {
 				<Tab disabled={isTabsDisabled} tabId={tabIds.SP_LIMITS} data-test-id='sp-limits-tab' title={i18n('SP Limits')}>
 					{selectedTab === tabIds.SP_LIMITS && 
 						<EntitlementPoolsLimits 
+							isReadOnlyMode={isReadOnlyMode}
 							limitType={limitType.SERVICE_PROVIDER} 
 							limitsList={limitsList.filter(item => item.type === limitType.SERVICE_PROVIDER)}
 							selectedLimit={this.state.selectedLimit}
@@ -254,19 +255,33 @@ class EntitlementPoolsEditorView extends React.Component {
 				<Tab disabled={isTabsDisabled} tabId={tabIds.VENDOR_LIMITS} data-test-id='vendor-limits-tab' title={i18n('Vendor Limits')}>
 					{selectedTab === tabIds.VENDOR_LIMITS && 
 						<EntitlementPoolsLimits 
+							isReadOnlyMode={isReadOnlyMode}
 							limitType={limitType.VENDOR} 
 							limitsList={limitsList.filter(item => item.type === limitType.VENDOR)}
 							selectedLimit={this.state.selectedLimit}
 							onCloseLimitEditor={() => this.onCloseLimitEditor()}
 							onSelectLimit={limit => this.onSelectLimit(limit)}/>}
 				</Tab>
-				{selectedTab !== tabIds.GENERAL ? 
-					<Button disabled={this.state.selectedLimit} className='add-limit-button' tabId={tabIds.ADD_LIMIT_BUTTON} btnType='link' iconName='plus'>{i18n('Add Limit')}</Button> : 
+				{
+					selectedTab !== tabIds.GENERAL ?
+						<Button
+							disabled={this.state.selectedLimit || isReadOnlyMode}
+							className='add-limit-button'
+							tabId={tabIds.ADD_LIMIT_BUTTON}
+							btnType='link'
+							iconName='plus'>
+							{i18n('Add Limit')}
+						</Button>
+					:
 					<div></div> // Render empty div to not break tabs
 				}
 			</Tabs>
 			<GridSection className='license-model-modal-buttons entitlement-pools-editor-buttons'>
-			{!this.state.selectedLimit && <Button btnType='default' disabled={!this.props.isFormValid} onClick={() => this.submit()} type='reset'>{i18n('Save')}</Button>}
+				{!this.state.selectedLimit &&
+					<Button btnType='default' disabled={!this.props.isFormValid || isReadOnlyMode} onClick={() => this.submit()} type='reset'>
+						{i18n('Save')}
+					</Button>
+				}
 			<Button btnType={this.state.selectedLimit ? 'default' : 'outline'} onClick={() => this.props.onCancel()} type='reset'>
 				{i18n('Cancel')}
 			</Button>
