@@ -126,7 +126,7 @@ public class Onboard extends ComponentBaseTest {
 		try{
 //			HttpResponse assetResponse = AssetRestUtils.getComponentToscaModel(AssetTypeEnum.SERVICES, service.getUUID());
 //			InputStream inputStream = assetResponse.getEntity().getContent();
-			File csarFile = AssetRestUtils.getToscaModelCsarFile(AssetTypeEnum.SERVICES, service.getUUID(), "");
+			File csarFile = AssetRestUtils.getToscaModelCsarFile(AssetTypeEnum.SERVICES, service.getUUID(), vnfFile);
 
 			ExtentTestActions.log(Status.INFO, "Tosca parser is going to convert service csar file to ISdcCsarHelper object...");
 			fdntCsarHelper = factory.getSdcCsarHelper(csarFile.getAbsolutePath());
