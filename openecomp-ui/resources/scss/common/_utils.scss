@@ -118,6 +118,7 @@ $browserPrefixes: webkit moz o ms;
   max-height: $lineHeight * $lineCount;
   text-align: justify;
   word-break: break-all;
+  white-space: nowrap;
   // margin-right: -1em;
   padding-right: 1em;
   &:before {
