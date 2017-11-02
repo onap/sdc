@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a4e6583_39dd9743",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/errors/Messages.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-02T18:24:58Z",
+      "side": 1,
+      "message": "Is it possible to use the same code with different messages? Or the same message with different codes? Or are the pairs always the same? If the latter, then it makes sense to couple each message to its code.",
+      "revId": "c6c2aaad5b068f5aa3ba49ba0b09aa62ebc81a7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a4e6583_aea93b26",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/errors/ErrorMessagesFormatBuilder.java",
         "patchSetId": 2
@@ -13,6 +30,23 @@
       "writtenOn": "2017-11-02T16:48:14Z",
       "side": 1,
       "message": "Do you think it would make sense to add a separate API with an error code here? It looks like the case \"[CODE]: Message\" is a common one. Having an method for that could enforce a unified approach and be easier to maintain. Imagine requiring \"\u003cCODE\u003e - Message\" instead of the format above. You will have to find all places where it is used and fix them. On the other hand, changing a code itself is unlikely and would require very pinpointed fix.\n\nExample: getErrorWithParameters(ErrorCode code, String format, String... params) {\n   return \"[\" + code \"]:\" + getErrorWithParameters(error, params);\n}\n\nThis would allow you to leave Messages.java unchanged and backward compatible.\n\nErrorCode is a simple immutable class to distinguish it from String and communicate its purpose.\n\nExample: private static final ErrorCode NS1 \u003d new ErrorCode(\"NS1\");",
+      "revId": "c6c2aaad5b068f5aa3ba49ba0b09aa62ebc81a7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_192bfb31",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/errors/ErrorMessagesFormatBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-02T18:24:58Z",
+      "side": 1,
+      "message": "Regarding my previous comment. Overloading the method getErrorWithParameters(ErrorCode code, ...), i.e. with the same name, will enable to make less changes in the original code. That is you will have just to add an error code to a call.",
       "revId": "c6c2aaad5b068f5aa3ba49ba0b09aa62ebc81a7d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
