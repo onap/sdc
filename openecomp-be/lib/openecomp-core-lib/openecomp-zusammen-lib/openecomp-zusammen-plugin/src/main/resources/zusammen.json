@@ -1,6 +1,6 @@
 {
+  "level": 10,
   "configuration": {
-    "level": 10,
     "plugins": {
       "zusammen_state_store": {
         "implementationClass": "org.openecomp.core.zusammen.plugin.main.CassandraStateStorePluginImpl"
@@ -15,9 +15,6 @@
           "public.url": "C:\\git\\public"
         }
       }
-    },
-    "properties": {
-
     }
   }
 }
