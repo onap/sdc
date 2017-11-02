@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_ab192d24",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationTypesConnectivity.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-02T11:32:12Z",
+      "side": 1,
+      "message": "change to one of the following suggestions:\n1. change all function names to get... instead of update... , make each function return a stream and add it to the map in the static block. this way you\u0027ll have a total separation between the global map and the each stream purpose and you can use the get functions independently later(by only make them public)/\n2. change the function names from update... to add...\n\nI like the first option best but if you don\u0027t see any later business need for it, then go for the second option",
+      "range": {
+        "startLine": 24,
+        "startChar": 22,
+        "endLine": 24,
+        "endChar": 28
+      },
+      "revId": "3355f2eab0c9aa15343df79e5de2d2f3b54c415a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
