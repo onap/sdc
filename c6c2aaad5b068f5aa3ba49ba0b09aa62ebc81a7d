@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_aea93b26",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/errors/ErrorMessagesFormatBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-02T16:48:14Z",
+      "side": 1,
+      "message": "Do you think it would make sense to add a separate API with an error code here? It looks like the case \"[CODE]: Message\" is a common one. Having an method for that could enforce a unified approach and be easier to maintain. Imagine requiring \"\u003cCODE\u003e - Message\" instead of the format above. You will have to find all places where it is used and fix them. On the other hand, changing a code itself is unlikely and would require very pinpointed fix.\n\nExample: getErrorWithParameters(ErrorCode code, String format, String... params) {\n   return \"[\" + code \"]:\" + getErrorWithParameters(error, params);\n}\n\nThis would allow you to leave Messages.java unchanged and backward compatible.\n\nErrorCode is a simple immutable class to distinguish it from String and communicate its purpose.\n\nExample: private static final ErrorCode NS1 \u003d new ErrorCode(\"NS1\");",
+      "revId": "c6c2aaad5b068f5aa3ba49ba0b09aa62ebc81a7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_ce8597ae",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/types/GlobalValidationContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-02T16:48:14Z",
+      "side": 1,
+      "message": "Please stick to the indentation rules used in this file. It looks like it\u0027s two spaces and not four.",
+      "revId": "c6c2aaad5b068f5aa3ba49ba0b09aa62ebc81a7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_6ebc636d",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/ContrailServiceInstanceNamingConventionValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-02T16:48:14Z",
+      "side": 1,
+      "message": "Please adhere to the coding conventions. Spaces around \"\u003d\", single space between type and identifier.",
+      "revId": "c6c2aaad5b068f5aa3ba49ba0b09aa62ebc81a7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_4ec1a7e3",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/ContrailServiceTemplateNamingConventionValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-02T16:48:14Z",
+      "side": 1,
+      "message": "Fix the spaces, please.",
+      "revId": "c6c2aaad5b068f5aa3ba49ba0b09aa62ebc81a7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_cefeb738",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/ContrailServiceTemplateNamingConventionValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-02T16:48:14Z",
+      "side": 1,
+      "message": "Please add a space after the comma \"getErrorMessage(), ERROR_CODE_NST2\" and break the line - the new argument made it too long.",
+      "revId": "c6c2aaad5b068f5aa3ba49ba0b09aa62ebc81a7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_aefb7b46",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/ContrailServiceTemplateNamingConventionValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-02T16:48:14Z",
+      "side": 1,
+      "message": "See the previous comment",
+      "revId": "c6c2aaad5b068f5aa3ba49ba0b09aa62ebc81a7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_0ebbaf73",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/NeutronPortNamingConventionValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-02T16:48:14Z",
+      "side": 1,
+      "message": "Fix the spaces and long lines please",
+      "revId": "c6c2aaad5b068f5aa3ba49ba0b09aa62ebc81a7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_eeaf332a",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/NovaServerNamingConventionGuideLineValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-02T16:48:14Z",
+      "side": 1,
+      "message": "Please fix the spaces and long lines.",
+      "revId": "c6c2aaad5b068f5aa3ba49ba0b09aa62ebc81a7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_8ea67f52",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-sdk/src/main/java/org/openecomp/sdc/validation/util/ValidationUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-02T16:48:14Z",
+      "side": 1,
+      "message": "Please adhere to the coding conventions.",
+      "revId": "c6c2aaad5b068f5aa3ba49ba0b09aa62ebc81a7d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
