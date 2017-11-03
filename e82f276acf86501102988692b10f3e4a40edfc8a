@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_ffc35f88",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-03T12:58:19Z",
+      "side": 1,
+      "message": "This is never used.",
+      "revId": "e82f276acf86501102988692b10f3e4a40edfc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_dfc0a37e",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-03T12:58:19Z",
+      "side": 1,
+      "message": "This method do not have unit tests. Please write a few unit tests to make sure it works as expected.",
+      "revId": "e82f276acf86501102988692b10f3e4a40edfc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_5f527314",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 527,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-03T12:58:19Z",
+      "side": 1,
+      "message": "If there\u0027s nothing to do if portNodeTemplateId is blank, then just return it, no need to proceed. This makes the code much easier to follow - condition not met -\u003e stop right there. This is sometimes called \"guard clauses\" (see for example, https://en.wikipedia.org/wiki/Guard_(computer_science) and https://refactoring.com/catalog/replaceNestedConditionalWithGuardClauses.html)\n\nAlso, is it OK for it to be blank? If not, that may point at a problem in the calling code and an exception should be thrown, not just nothing be done silently.",
+      "revId": "e82f276acf86501102988692b10f3e4a40edfc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_7f9befc9",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-03T12:58:19Z",
+      "side": 1,
+      "message": "This can be replaced by \n\nfor (String token : arr) {\n   if (StringUtils.isNotBlank(tocken);\n   etc.\n}",
+      "revId": "e82f276acf86501102988692b10f3e4a40edfc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_7f4d2f72",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 538,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-03T12:58:19Z",
+      "side": 1,
+      "message": "You\u0027re essentially doing nothing when this condition is true. Its block could even be left blank because \"continue\" is redundant here. So it would make sense to invert it and do whatever needed.\n\nif ((count !\u003d 2) || !arr[i].matches(DIGIT_REGEX)) {\n    sb.append(arr[i] + UNDERSCORE);\n}",
+      "revId": "e82f276acf86501102988692b10f3e4a40edfc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_5fa033f4",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-03T12:58:19Z",
+      "side": 1,
+      "message": "sb.append(arr[i]).append(UNDERSCORE);",
+      "revId": "e82f276acf86501102988692b10f3e4a40edfc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_9f47cb4b",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationDataUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 546,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-03T12:58:19Z",
+      "side": 1,
+      "message": "This code calls StringBuilder.toString() twice, one time just to calculate its length. First, StingBuilder has a lenth() method. Second, it would be better to manipulate the instance of StringBuilder itself, for example using it substring() or deleteCharAt(). That is without converting it to String first.\n\nExample:\nsb.substring(0, sb.lenght() - 1).toString();",
+      "revId": "e82f276acf86501102988692b10f3e4a40edfc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_7f82cf53",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/resourcetranslation/BaseFullTranslationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-03T12:58:19Z",
+      "side": 1,
+      "message": "Please convert all the field that are modified during a test into local variables. As I explained, if every test modifies them when running, that means no two test can run in parallel.",
+      "revId": "e82f276acf86501102988692b10f3e4a40edfc8a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
