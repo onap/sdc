@@ -77,6 +77,14 @@ public class BaseFullTranslationTest {
     initTranslatorAndTranslate();
   }
 
+  protected void testTranslationWithInit (String inputFilesPath,
+                                          String outputFilesPath) throws IOException {
+    this.inputFilesPath = inputFilesPath;
+    this.outputFilesPath = outputFilesPath;
+
+    testTranslationWithInit();
+  }
+
   protected void testTranslationWithInit() throws IOException {
       initTranslatorAndTranslate();
       testTranslation();

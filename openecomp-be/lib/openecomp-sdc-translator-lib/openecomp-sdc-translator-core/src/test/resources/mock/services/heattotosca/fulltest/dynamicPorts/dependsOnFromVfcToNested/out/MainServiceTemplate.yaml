@@ -1,0 +1,402 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VNF Module instance
+    avpn_subnet_id:
+      hidden: false
+      immutable: false
+      type: list
+      description: comma delimited list of the UUIDs of the operator created IPv4 AVPN subnets
+      entry_schema:
+        type: string
+    sbg_internal_allocation_pool_start_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: The start IP of the Internal network's allocation pool. Don't deviate from default!
+      constraints:
+      - pattern: (?:[0-9]{1,3}\.){3}[0-9]{1,3}
+    internal_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: the UUID of the operator-created Internal network
+      constraints:
+      - pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+    sbg_sc_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for SC VM. Minimum 4 non-HT vCPU and 16GB RAM required
+    sbg_management_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network address (CIDR notation) for SBG Management Network, IPv4
+      constraints:
+      - pattern: (?:[0-9]{1,3}\.){3}[0-9]{1,3}\/[1-2][0-9]
+    sbg_comte_floating_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: Moveable IP (VIP) for COM on the Internal network, IPv4. Don't deviate from default!
+      constraints:
+      - pattern: (?:[0-9]{1,3}\.){3}[0-9]{1,3}
+    sbg_avpn_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: |
+        comma delimited list of IPv4 IPs to be used on AVPN networks. n*2 IP address expected where n is the number of PL VM pairs. The first two addresses are assigned to the first PL VM pair, second two IPs to the second PL VM pair, and so on. Note: this is true regardless of the number of AVPN networks and sbg_AVPN_count.
+      entry_schema:
+        type: string
+    management_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: the UUID of the operator-created Management network
+      constraints:
+      - pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+    sbg_sc_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: comma delimited list of VM names assigned to System Controller VMs
+      entry_schema:
+        type: string
+    sbg_management_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: comma delimited list of IPv4 addresses of SBG VMs on the Management network.
+      entry_schema:
+        type: string
+    sbg_nfs_floating_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: Moveable IP (VIP) for NFS server on the Internal network, IPv4. Don't deviate from default!
+      constraints:
+      - pattern: (?:[0-9]{1,3}\.){3}[0-9]{1,3}
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF instance
+    avpn_net_id:
+      hidden: false
+      immutable: false
+      type: list
+      description: comma delimited list of the UUIDs of the operator-created AVPN networks
+      entry_schema:
+        type: string
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: First availability zone ID or Name.
+    sbg_internal_mac_addresses:
+      hidden: false
+      immutable: false
+      type: list
+      description: comma delimited list of MAC addresses for the VMs on the Internal network
+      entry_schema:
+        type: string
+    sbg_management_floating_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: Moveable Management IP (VIP), IPv4
+      constraints:
+      - pattern: (?:[0-9]{1,3}\.){3}[0-9]{1,3}
+    management_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: the UUID of the operator-created Management subnet, IPv4
+      constraints:
+      - pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+    sbg_AVPN_vlan_tag_list:
+      hidden: false
+      immutable: false
+      type: list
+      description: comma delimited list of internal VLAN TAG(s) used by AVPN networks
+      entry_schema:
+        type: string
+    sbg_pl_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: comma delimited list of VM names assigned to Payload VMs
+      entry_schema:
+        type: string
+    sbg_management_gateway_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPv4 IP address of the default gateway on Management network
+      constraints:
+      - pattern: (?:[0-9]{1,3}\.){3}[0-9]{1,3}
+    sbg_AVPN_count:
+      hidden: false
+      immutable: false
+      type: float
+      description: The number of AVPN networks
+      constraints:
+      - in_range:
+        - 1
+        - 999
+    ntp_servers:
+      hidden: false
+      immutable: false
+      type: list
+      description: comma delimited list of NTP servers required by System Controller VMs. Exactly 2 IPv4 values are required
+      entry_schema:
+        type: string
+    sbg_management_mac_addresses:
+      hidden: false
+      immutable: false
+      type: list
+      description: comma delimited list of MAC addresses for the VMs on the Management network
+      entry_schema:
+        type: string
+    core_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: the UUID of the operator-created Core subnet, IPv4
+      constraints:
+      - pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+    sbg_internal_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: comma delimited list of IPv4 addresses of SBG VMs on the Internal network. Don't deviate from the default values.
+      entry_schema:
+        type: string
+    sbg_boot_floating_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: Moveable IP (VIP) for TFTP server on the Internal network, IPv4. Don't deviate from default!
+      constraints:
+      - pattern: (?:[0-9]{1,3}\.){3}[0-9]{1,3}
+    sbg_sc_volume_id_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: the UUID of the pre-created Cinder volume attached to SC-1 as root volume
+      constraints:
+      - pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+    sbg_pl_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for PL VM. Minimum 8 non-HT vCPU and 64GB RAM required
+    sbg_internal_allocation_pool_end_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: The end IP of the Internal network's allocation pool. Don't deviate from default!
+      constraints:
+      - pattern: (?:[0-9]{1,3}\.){3}[0-9]{1,3}
+    sbg_sc_volume_id_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: the UUID of the pre-created Cinder volume attached to SC-1 as tools volume
+      constraints:
+      - pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+    sbg_internal_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network address (CIDR notation) for SBG intra-VM communication, IPv4. Don't deviate from default!
+      constraints:
+      - pattern: (?:[0-9]{1,3}\.){3}[0-9]{1,3}\/[1-2][0-9]
+    dummy_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: the UUID of the operator-created dummy subnet, IPv4
+      constraints:
+      - pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+    trunk_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: the UUID of the operator-created Traffic network
+      constraints:
+      - pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+  node_templates:
+    sbg_pl_trunk_subport_avpn_group_0:
+      type: org.openecomp.resource.abstract.nodes.heat.DPA3_New_VNF_TSBGv_nested_AVPN_subport
+      directives:
+      - substitutable
+      properties:
+        nested_avpn_net_id:
+          get_input: avpn_net_id
+        service_template_filter:
+          substitute_service_template: DPA3_New_VNF_TSBGv_nested_AVPN_subportServiceTemplate.yaml
+          count:
+            get_input: sbg_AVPN_count
+          mandatory: false
+        nested_sbg_AVPN_vlan_tag_list:
+          get_input: sbg_AVPN_vlan_tag_list
+        nested_sbg_avpn_ip_0:
+          get_input:
+          - sbg_avpn_ips
+          - 0
+        nested_avpn_subnet_id:
+          get_input: avpn_subnet_id
+        nested_sbg_AVPN_counter:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    abstract_sbg_sc:
+      type: org.openecomp.resource.abstract.nodes.sbg_sc
+      directives:
+      - substitutable
+      properties:
+        port_sbg_sc_internal_0_port_mac_requirements:
+          mac_count_required:
+            is_required: true
+        compute_sbg_sc_config_drive:
+        - true
+        port_sbg_sc_management_1_port_allowed_address_pairs:
+        - ip_address:
+            get_input: sbg_management_floating_ip
+        port_sbg_sc_internal_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - sbg_internal_ips
+            - 0
+        vm_flavor_name:
+          get_input: sbg_sc_flavor_name
+        port_sbg_sc_internal_0_port_replacement_policy:
+        - AUTO
+        port_sbg_sc_management_1_port_replacement_policy:
+        - AUTO
+        port_sbg_sc_management_1_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
+        port_sbg_sc_management_1_port_mac_address:
+          get_input:
+          - sbg_management_mac_addresses
+          - 0
+        compute_sbg_sc_user_data_format:
+        - RAW
+        port_sbg_sc_management_1_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - sbg_management_ips
+            - 0
+        compute_sbg_sc_name:
+        - get_input:
+          - sbg_sc_names
+          - 0
+        port_sbg_sc_internal_0_port_allowed_address_pairs:
+        - ip_address:
+            get_input: sbg_nfs_floating_ip
+        - ip_address:
+            get_input: sbg_comte_floating_ip
+        - ip_address:
+            get_input: sbg_boot_floating_ip
+        port_sbg_sc_internal_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
+        compute_sbg_sc_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+        port_sbg_sc_internal_0_port_network_role_tag: internal
+        port_sbg_sc_internal_0_port_network:
+        - get_input: internal_net_id
+        port_sbg_sc_management_1_port_network:
+        - get_input: management_net_id
+        port_sbg_sc_management_1_port_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_sbg_sc_management_1_port_network_role_tag: management
+        port_sbg_sc_internal_0_port_mac_address:
+          get_input:
+          - sbg_internal_mac_addresses
+          - 0
+        compute_sbg_sc_availability_zone:
+        - get_input: availability_zone_0
+        service_template_filter:
+          substitute_service_template: Nested_sbg_scServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    nested_sbg:
+      type: org.openecomp.resource.abstract.nodes.heat.sbg_sc
+      directives:
+      - substitutable
+      properties:
+        port_sbg_sc_management_1_port_0_mac_requirements:
+          mac_count_required:
+            is_required: true
+        nested_avpn_net_id:
+          get_input: avpn_net_id
+        service_template_filter:
+          substitute_service_template: nested_DPA3_New_VNF_TSBGvServiceTemplate.yaml
+        port_sbg_sc_internal_0_port_0_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_sbg_sc_internal_0_port_0_network_role_tag: internal
+        nested_sbg_AVPN_vlan_tag_list:
+          get_input: sbg_AVPN_vlan_tag_list
+        port_sbg_sc_internal_0_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
+        port_sbg_sc_management_1_port_0_network_role_tag: management
+        port_sbg_sc_management_1_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
+        nested_sbg_avpn_ip_0:
+          get_input:
+          - sbg_avpn_ips
+          - 0
+        nested_avpn_subnet_id:
+          get_input: avpn_subnet_id
+        nested_sbg_AVPN_counter: '%index%'
+  groups:
+    DPA3_New_VNF_TSBGv_base_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/DPA3_New_VNF_TSBGv_base.yaml
+        description: |
+          SC1, SC2, PL3 and PL4. This is the main template, to be used to create an initial stack, with 1 mated pair
+      members:
+      - sbg_pl_trunk_subport_avpn_group_0
+      - nested_sbg
+      - abstract_sbg_sc

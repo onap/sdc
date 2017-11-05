@@ -1,0 +1,38 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Nested template for AVPN port creation
+
+parameters:
+  nested_sbg_AVPN_vlan_tag_list:
+    type: comma_delimited_list
+    description: the CDL representing the vlan ID list
+  nested_avpn_net_id:
+    type: comma_delimited_list
+    description: the CDL representing the networks to attach to the ports
+  nested_avpn_subnet_id:
+    type: comma_delimited_list
+    description: comma delimited list of the UUIDs of the operator created IPv4 AVPN subnets
+  nested_sbg_avpn_ip_0:
+    type: string
+    description: IPv4 IP address for AVPN networks. Same IP is used for all AVPNs
+  nested_sbg_AVPN_counter:
+    type: number
+    description: current array_index
+  nested_trunk_port_id:
+    type: string
+    description: string containint the trunk parrent port
+
+resources:
+    sub_port:
+     type: OS::Neutron::Port
+     properties:
+      replacement_policy: AUTO
+      network_id: { get_param: [nested_avpn_net_id, { get_param: nested_sbg_AVPN_counter}]}
+      fixed_ips:
+        - ip_address: { get_param: nested_sbg_avpn_ip_0}
+          subnet_id: {get_param: [nested_avpn_subnet_id, {get_param: nested_sbg_AVPN_counter}]}
+      value_specs:
+        trunkport:type: 'subport'
+        trunkport:vid: { get_param: [nested_sbg_AVPN_vlan_tag_list, { get_param: nested_sbg_AVPN_counter}]}
+        trunkport:parent_id: { get_param: nested_trunk_port_id}
