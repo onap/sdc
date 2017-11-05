@@ -1,6 +1,5 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.fulltest;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.BaseFullTranslationTest;
 
@@ -8,84 +7,45 @@ import java.io.IOException;
 
 public class UnifiedCompositionNestedPatternsFullTest extends BaseFullTranslationTest {
 
-    @Override
-    @Before
-    public void setUp() throws IOException {
-        // do not delete this function. it prevents the superclass setup from running
-    }
+    private static final String BASE_DIRECTORY = "/mock/services/heattotosca/fulltest/nestedOtherScenarios/";
 
     @Test
     public void testNestedWithOneLevelMultipleComputesSingleSubstitution() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedSingleSubstitution1B/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedSingleSubstitution1B/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "oneLevel/nestedSingleSubstitution1B");
     }
 
     @Test
     public void testNestedWithOneLevelMultipleComputesScalingInstance() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedScalingInstance/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedScalingInstance/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "oneLevel/nestedScalingInstance");
     }
 
     @Test
     public void testNestedWithOneLevelMultipleComputesCatalogInstance() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedCatalogInstance/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedCatalogInstance/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "oneLevel/nestedCatalogInstance");
     }
 
     @Test
     public void testNestedWithOneLevelAllNonNestedPatterns() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedAllNonNestedPatterns/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedAllNonNestedPatterns/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "oneLevel/nestedAllNonNestedPatterns");
     }
 
     @Test
     public void testNestedWithOneLevelNoCompute() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedNoCompute/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedNoCompute/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "oneLevel/nestedNoCompute");
     }
 
     @Test
     public void testNestedWithOneLevelOtherPatternsNoComputeWithConnectivity() throws IOException {
         //One nested resource with no Compute, one nested resource having all non nested patterns
         // with connectivity between themo
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedAllPatternsConnectivity/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedAllPatternsConnectivity/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "oneLevel/nestedAllPatternsConnectivity");
     }
 
     @Test
     public void testNestedWithOneLevelTwoSameFileOneOtherAllPattern1B() throws IOException {
         // Heat file with 3 nested resources, while 2 point to the same nested heat file, and all
         // nested heat file including pattern 1B.
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedTwoSameFileOneDiff/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedTwoSameFileOneDiff/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "oneLevel/nestedTwoSameFileOneDiff");
     }
 
     @Test
@@ -93,12 +53,7 @@ public class UnifiedCompositionNestedPatternsFullTest extends BaseFullTranslatio
         IOException {
         // Heat file with 3 nested resources, while 2 point to the same nested heat file, and all
         // nested heat file including pattern 1B. +  conectivity between all nested resources
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedTwoSameOneDiffWithConnectivity/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/oneLevel/nestedTwoSameOneDiffWithConnectivity/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "oneLevel/nestedTwoSameOneDiffWithConnectivity");
     }
 
     //**************** NESTED MULTI-LEVEL TESTS ******************************
@@ -110,12 +65,7 @@ public class UnifiedCompositionNestedPatternsFullTest extends BaseFullTranslatio
         // nested levels, network which will be connected from port in ALL nested level.
         //nested heat level 1 - 1 nested resource  + pattern 1B
         //nested heat level 2 - 1 nested resource  + pattern 1B
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/multiLevel/portSecurityGroupNetPattern1B/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/multiLevel/portSecurityGroupNetPattern1B/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "multiLevel/portSecurityGroupNetPattern1B");
     }
 
     @Test
@@ -133,42 +83,22 @@ public class UnifiedCompositionNestedPatternsFullTest extends BaseFullTranslatio
         connectivity between them all
         */
 
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/multiLevel/allPatternsDependsOnConnectivity/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/multiLevel/allPatternsDependsOnConnectivity/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "multiLevel/allPatternsDependsOnConnectivity");
     }
 
     @Test
     public void testThreeNestedLevelsDiffVmTypePattern1B() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/multiLevel/threeNestedLevelsDiffVmTypePattern1B/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/multiLevel/threeNestedLevelsDiffVmTypePattern1B/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "multiLevel/threeNestedLevelsDiffVmTypePattern1B");
     }
 
     @Test
     public void testThreeNestedLevelsSameVmTypePattern1B() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/multiLevel/threeNestedLevelsSameVmTypePattern1B/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/multiLevel/threeNestedLevelsSameVmTypePattern1B/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "multiLevel/threeNestedLevelsSameVmTypePattern1B");
     }
 
     @Test
     public void testTwoNestedLevelsWithAllPatternsAndConnectionsBetweenThem() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/multiLevel/twoNestedLevelsWithAllPatternsAndConnectivities/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedOtherScenarios/multiLevel/twoNestedLevelsWithAllPatternsAndConnectivities/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "multiLevel/twoNestedLevelsWithAllPatternsAndConnectivities");
     }
 
 }

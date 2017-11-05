@@ -20,11 +20,8 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import static org.junit.Assert.assertEquals;
-
 import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
-import org.junit.Before;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.translator.factory.HeatToToscaTranslatorFactory;
@@ -42,7 +39,6 @@ import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.TestUtils;
-import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -58,47 +54,29 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static org.junit.Assert.assertEquals;
+
 
 public class BaseFullTranslationTest {
 
-  protected String inputFilesPath;
-  protected String outputFilesPath;
-  protected TranslationContext translationContext;
+  public static final String IN_POSTFIX = "/in";
+  public static final String OUT_POSTFIX = "/out";
 
-  private String zipFilename = "VSP.zip";
-  private HeatToToscaTranslator heatToToscaTranslator;
-  private File translatedZipFile;
-
-  private Map<String, byte[]> expectedResultMap = new HashMap<>();
-  private Set<String> expectedResultFileNameSet = new HashSet<>();
-
-  @Before
-  public void setUp() throws IOException {
-    initTranslatorAndTranslate();
+  protected void testTranslationWithInit(String path) throws IOException {
+    File translatedZipFile = initTranslatorAndTranslate(path);
+    testTranslation(path, translatedZipFile);
   }
 
-  protected void testTranslationWithInit (String inputFilesPath,
-                                          String outputFilesPath) throws IOException {
-    this.inputFilesPath = inputFilesPath;
-    this.outputFilesPath = outputFilesPath;
-
-    testTranslationWithInit();
+  protected File initTranslatorAndTranslate(String path) throws IOException {
+    HeatToToscaTranslator heatToToscaTranslator = HeatToToscaTranslatorFactory.getInstance().createInterface();
+    return translateZipFile(path, heatToToscaTranslator);
   }
 
-  protected void testTranslationWithInit() throws IOException {
-      initTranslatorAndTranslate();
-      testTranslation();
-  }
+  protected void testTranslation(String basePath, File translatedZipFile) throws IOException {
 
-  protected void initTranslatorAndTranslate() throws IOException {
-    heatToToscaTranslator = HeatToToscaTranslatorFactory.getInstance().createInterface();
-    translatedZipFile = translateZipFile();
-  }
-
-  protected void testTranslation() throws IOException {
-
-    URL url = BaseFullTranslationTest.class.getResource(outputFilesPath);
-    expectedResultFileNameSet = new HashSet<>();
+    URL url = BaseFullTranslationTest.class.getResource(basePath + OUT_POSTFIX);
+    Set<String> expectedResultFileNameSet = new HashSet<>();
+    Map<String, byte[]> expectedResultMap = new HashMap<>();
 
     String path = url.getPath();
     File pathFile = new File(path);
@@ -137,8 +115,8 @@ public class BaseFullTranslationTest {
     assertEquals(0, expectedResultFileNameSet.size());
   }
 
-  private File translateZipFile() throws IOException {
-    URL inputFilesUrl = this.getClass().getResource(inputFilesPath);
+  private File translateZipFile(String basePath, HeatToToscaTranslator heatToToscaTranslator) throws IOException {
+    URL inputFilesUrl = this.getClass().getResource(basePath + IN_POSTFIX);
     String path = inputFilesUrl.getPath();
     TestUtils.addFilesToTranslator(heatToToscaTranslator, path);
     TranslatorOutput translatorOutput = heatToToscaTranslator.translate();
@@ -153,7 +131,8 @@ public class BaseFullTranslationTest {
           "Error in validation " + getErrorAsString(translatorOutput.getErrorMessages()))
           .withId("Validation Error").withCategory(ErrorCategory.APPLICATION).build());
     }
-    File file = new File(path + "/" + zipFilename);
+
+    File file = new File(path + "/VSP.zip");
     file.createNewFile();
 
     try (FileOutputStream fos = new FileOutputStream(file)) {

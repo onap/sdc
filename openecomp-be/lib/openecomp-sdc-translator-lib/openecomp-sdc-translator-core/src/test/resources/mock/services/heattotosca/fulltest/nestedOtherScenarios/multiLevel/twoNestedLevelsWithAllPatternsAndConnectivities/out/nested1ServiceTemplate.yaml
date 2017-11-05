@@ -135,28 +135,28 @@ topology_template:
           - 0
         vm_flavor_name:
           get_input: pd_server_1b_flavor
-        port_pd_server_b_port_mac_requirements:
+        vm_image_name:
+          get_input: pd_server_1b_image
+        port_pd_server_1b_port_replacement_policy:
+        - AUTO
+        port_pd_server_1b_port_mac_requirements:
           mac_count_required:
             is_required: false
-        port_pd_server_b_port_fixed_ips:
+        port_pd_server_1b_port_fixed_ips:
         - ip_address:
             get_input:
             - pd_server_1b_ips
             - 0
-        vm_image_name:
-          get_input: pd_server_1b_image
-        port_pd_server_b_port_ip_requirements:
+        port_pd_server_1b_port_network:
+        - get_input: net
+        compute_pd_server_1b_availability_zone:
+        - get_input: availability_zone_0
+        port_pd_server_1b_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_pd_server_b_port_network:
-        - get_input: net
-        port_pd_server_b_port_replacement_policy:
-        - AUTO
-        compute_pd_server_1b_availability_zone:
-        - get_input: availability_zone_0
         service_template_filter:
           substitute_service_template: Nested_pd_server_1b_1ServiceTemplate.yaml
           count: 1
@@ -251,28 +251,28 @@ topology_template:
         - get_input:
           - pd_server_1b_names
           - 1
-        port_ps_server_b_port_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
+        port_ps_server_1b_port_mac_requirements:
+          mac_count_required:
             is_required: false
-        port_ps_server_b_port_replacement_policy:
-        - AUTO
-        port_ps_server_b_port_fixed_ips:
+        port_ps_server_1b_port_fixed_ips:
         - ip_address:
             get_input:
             - ps_server_1b_ips
             - 0
         vm_flavor_name:
           get_input: pd_server_1b_flavor
-        port_ps_server_b_port_mac_requirements:
-          mac_count_required:
+        port_ps_server_1b_port_network:
+        - get_input: net
+        port_ps_server_1b_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
             is_required: false
         vm_image_name:
           get_input: pd_server_1b_image
-        port_ps_server_b_port_network:
-        - get_input: net
+        port_ps_server_1b_port_replacement_policy:
+        - AUTO
         compute_pd_server_1b_availability_zone:
         - get_input: availability_zone_0
         service_template_filter:
@@ -465,7 +465,7 @@ topology_template:
       - disk.usage_oam_server_1c2
       network.incoming.bytes_pd_server_1b_port:
       - abstract_pd_server_1b_1
-      - network.incoming.bytes_pd_server_1b_pd_server_b_port
+      - network.incoming.bytes_pd_server_1b_pd_server_1b_port
       feature_server_1c1_cmaui_2:
       - abstract_cmaui_1c1
       - feature_cmaui_1c1
@@ -507,10 +507,10 @@ topology_template:
       - feature_server_pd
       network.incoming.packets_pd_server_1b_port:
       - abstract_pd_server_1b_1
-      - network.incoming.packets_pd_server_1b_pd_server_b_port
+      - network.incoming.packets_pd_server_1b_pd_server_1b_port
       attachment_ps_server_1b_port:
       - abstract_pd_server_1b
-      - attachment_pd_server_1b_ps_server_b_port
+      - attachment_pd_server_1b_ps_server_1b_port
       disk.device.write.requests.rate_server_1c2_oam_1:
       - abstract_oam_server_1c2_0
       - disk.device.write.requests.rate_oam_server_1c2
@@ -723,7 +723,7 @@ topology_template:
       - feature_cmaui_1c1_cmaui_port
       network.incoming.bytes.rate_pd_server_1b_port:
       - abstract_pd_server_1b_1
-      - network.incoming.bytes.rate_pd_server_1b_pd_server_b_port
+      - network.incoming.bytes.rate_pd_server_1b_pd_server_1b_port
       network.outgoing.bytes_oam_port_2:
       - abstract_oam_server_1c2_1
       - network.outgoing.bytes_oam_server_1c2_oam_port
@@ -798,7 +798,7 @@ topology_template:
       - host_pd_server_1b
       network.outgoing.packets.rate_ps_server_1b_port:
       - abstract_pd_server_1b
-      - network.outgoing.packets.rate_pd_server_1b_ps_server_b_port
+      - network.outgoing.packets.rate_pd_server_1b_ps_server_1b_port
       disk.root.size_server_1b_pd_1:
       - abstract_pd_server_1b_1
       - disk.root.size_pd_server_1b
@@ -816,19 +816,19 @@ topology_template:
       - disk.device.usage_cmaui_1c1
       network.incoming.bytes_ps_server_1b_port:
       - abstract_pd_server_1b
-      - network.incoming.bytes_pd_server_1b_ps_server_b_port
+      - network.incoming.bytes_pd_server_1b_ps_server_1b_port
       host_server_1b_pd_2:
       - abstract_pd_server_1b
       - host_pd_server_1b
       attachment_pd_server_1b_port:
       - abstract_pd_server_1b_1
-      - attachment_pd_server_1b_pd_server_b_port
+      - attachment_pd_server_1b_pd_server_1b_port
       vcpus_server_1c1_cmaui_2:
       - abstract_cmaui_1c1
       - vcpus_cmaui_1c1
       binding_ps_server_1b_port:
       - abstract_pd_server_1b
-      - binding_pd_server_1b_ps_server_b_port
+      - binding_pd_server_1b_ps_server_1b_port
       disk.device.latency_server_1c2_oam_2:
       - abstract_oam_server_1c2_1
       - disk.device.latency_oam_server_1c2
@@ -870,7 +870,7 @@ topology_template:
       - disk.write.requests_pd_server_1b
       binding_pd_server_1b_port:
       - abstract_pd_server_1b_1
-      - binding_pd_server_1b_pd_server_b_port
+      - binding_pd_server_1b_pd_server_1b_port
       disk.device.read.requests.rate_server_1b_pd_1:
       - abstract_pd_server_1b_1
       - disk.device.read.requests.rate_pd_server_1b
@@ -960,7 +960,7 @@ topology_template:
       - memory.usage_pd_server_1b
       network.outpoing.packets_ps_server_1b_port:
       - abstract_pd_server_1b
-      - network.outpoing.packets_pd_server_1b_ps_server_b_port
+      - network.outpoing.packets_pd_server_1b_ps_server_1b_port
       memory.usage_server_1c2_oam_1:
       - abstract_oam_server_1c2_0
       - memory.usage_oam_server_1c2
@@ -999,7 +999,7 @@ topology_template:
       - disk.device.write.requests_pd_server_1b
       network.incoming.bytes.rate_ps_server_1b_port:
       - abstract_pd_server_1b
-      - network.incoming.bytes.rate_pd_server_1b_ps_server_b_port
+      - network.incoming.bytes.rate_pd_server_1b_ps_server_1b_port
       cpu_util_server_pd_nested1_pattern_4:
       - nested1_pattern_4
       - cpu_util_server_pd
@@ -1047,7 +1047,7 @@ topology_template:
       - binding_cmaui_1c1
       feature_ps_server_1b_port:
       - abstract_pd_server_1b
-      - feature_pd_server_1b_ps_server_b_port
+      - feature_pd_server_1b_ps_server_1b_port
       disk.device.iops_server_1c2_oam_2:
       - abstract_oam_server_1c2_1
       - disk.device.iops_oam_server_1c2
@@ -1074,7 +1074,7 @@ topology_template:
       - disk.device.read.bytes.rate_pd_server_1b
       network.outgoing.packets.rate_pd_server_1b_port:
       - abstract_pd_server_1b_1
-      - network.outgoing.packets.rate_pd_server_1b_pd_server_b_port
+      - network.outgoing.packets.rate_pd_server_1b_pd_server_1b_port
       disk.write.requests.rate_server_1b_pd_1:
       - abstract_pd_server_1b_1
       - disk.write.requests.rate_pd_server_1b
@@ -1170,7 +1170,7 @@ topology_template:
       - cpu_util_pd_server_1b
       network.outgoing.bytes.rate_ps_server_1b_port:
       - abstract_pd_server_1b
-      - network.outgoing.bytes.rate_pd_server_1b_ps_server_b_port
+      - network.outgoing.bytes.rate_pd_server_1b_ps_server_1b_port
       disk.write.requests_server_pd_nested1_pattern_4:
       - nested1_pattern_4
       - disk.write.requests_server_pd
@@ -1179,7 +1179,7 @@ topology_template:
       - feature_pd_server_1b
       network.incoming.packets.rate_ps_server_1b_port:
       - abstract_pd_server_1b
-      - network.incoming.packets.rate_pd_server_1b_ps_server_b_port
+      - network.incoming.packets.rate_pd_server_1b_ps_server_1b_port
       disk.device.write.requests.rate_server_1c1_cmaui_2:
       - abstract_cmaui_1c1
       - disk.device.write.requests.rate_cmaui_1c1
@@ -1242,7 +1242,7 @@ topology_template:
       - disk.iops_pd_server_1b
       network.outpoing.packets_pd_server_1b_port:
       - abstract_pd_server_1b_1
-      - network.outpoing.packets_pd_server_1b_pd_server_b_port
+      - network.outpoing.packets_pd_server_1b_pd_server_1b_port
       disk.device.read.requests_server_1c1_cmaui_2:
       - abstract_cmaui_1c1
       - disk.device.read.requests_cmaui_1c1
@@ -1266,7 +1266,7 @@ topology_template:
       - disk.device.allocation_oam_server_1c2
       network.outgoing.bytes_pd_server_1b_port:
       - abstract_pd_server_1b_1
-      - network.outgoing.bytes_pd_server_1b_pd_server_b_port
+      - network.outgoing.bytes_pd_server_1b_pd_server_1b_port
       disk.write.requests_server_1c1_cmaui_2:
       - abstract_cmaui_1c1
       - disk.write.requests_cmaui_1c1
@@ -1422,13 +1422,13 @@ topology_template:
       - disk.device.read.requests.rate_cmaui_1c1
       network.incoming.packets_ps_server_1b_port:
       - abstract_pd_server_1b
-      - network.incoming.packets_pd_server_1b_ps_server_b_port
+      - network.incoming.packets_pd_server_1b_ps_server_1b_port
       instance_server_pd_nested1_pattern_4:
       - nested1_pattern_4
       - instance_server_pd
       feature_pd_server_1b_port:
       - abstract_pd_server_1b_1
-      - feature_pd_server_1b_pd_server_b_port
+      - feature_pd_server_1b_pd_server_1b_port
       disk.latency_server_1c1_cmaui_1:
       - abstract_cmaui_1c1
       - disk.latency_cmaui_1c1
@@ -1467,7 +1467,7 @@ topology_template:
       - disk.write.bytes_cmaui_1c1
       network.outgoing.bytes.rate_pd_server_1b_port:
       - abstract_pd_server_1b_1
-      - network.outgoing.bytes.rate_pd_server_1b_pd_server_b_port
+      - network.outgoing.bytes.rate_pd_server_1b_pd_server_1b_port
       disk.write.bytes_server_1c1_cmaui_2:
       - abstract_cmaui_1c1
       - disk.write.bytes_cmaui_1c1
@@ -1485,7 +1485,7 @@ topology_template:
       - disk.device.latency_pd_server_1b
       network.incoming.packets.rate_pd_server_1b_port:
       - abstract_pd_server_1b_1
-      - network.incoming.packets.rate_pd_server_1b_pd_server_b_port
+      - network.incoming.packets.rate_pd_server_1b_pd_server_1b_port
       feature_nested1_pattern_4:
       - nested1_pattern_4
       - feature
@@ -1542,7 +1542,7 @@ topology_template:
       - network.incoming.bytes.rate_cmaui_1c1_cmaui_port
       network.outgoing.bytes_ps_server_1b_port:
       - abstract_pd_server_1b
-      - network.outgoing.bytes_pd_server_1b_ps_server_b_port
+      - network.outgoing.bytes_pd_server_1b_ps_server_1b_port
       network.incoming.bytes.rate_cmaui_port_2:
       - abstract_cmaui_1c1
       - network.incoming.bytes.rate_cmaui_1c1_cmaui_port
@@ -1582,7 +1582,7 @@ topology_template:
     requirements:
       link_pd_server_1b_port:
       - abstract_pd_server_1b_1
-      - link_pd_server_1b_pd_server_b_port
+      - link_pd_server_1b_pd_server_1b_port
       dependency_oam_port_2:
       - abstract_oam_server_1c2_1
       - dependency_oam_server_1c2_oam_port
@@ -1597,10 +1597,10 @@ topology_template:
       - link_pd_server_port_2
       link_ps_server_1b_port:
       - abstract_pd_server_1b
-      - link_pd_server_1b_ps_server_b_port
+      - link_pd_server_1b_ps_server_1b_port
       dependency_ps_server_1b_port:
       - abstract_pd_server_1b
-      - dependency_pd_server_1b_ps_server_b_port
+      - dependency_pd_server_1b_ps_server_1b_port
       dependency_server_1c2_oam_1:
       - abstract_oam_server_1c2_0
       - dependency_oam_server_1c2
@@ -1648,7 +1648,7 @@ topology_template:
       - dependency_cmaui_1c1
       dependency_pd_server_1b_port:
       - abstract_pd_server_1b_1
-      - dependency_pd_server_1b_pd_server_b_port
+      - dependency_pd_server_1b_pd_server_1b_port
       dependency_packet_internal_network:
       - packet_internal_network
       - dependency

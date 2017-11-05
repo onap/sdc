@@ -1,6 +1,5 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.fulltest;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.BaseFullTranslationTest;
 
@@ -8,110 +7,71 @@ import java.io.IOException;
 
 public class UnifiedCompositionSingleSubstitutionFullTest extends BaseFullTranslationTest {
 
-  @Override
-  @Before
-  public void setUp() throws IOException {
-    // do not delete this function. it prevents the superclass setup from running
-  }
+  private static final String BASE_DIRECTORY = "/mock/services/heattotosca/fulltest/singleSubstitution/";
 
   @Test
   public void testComputeWithTwoDifferentPortTypes() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computeWithDiffPortType/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computeWithDiffPortType/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "computeWithDiffPortType");
   }
 
   @Test
   public void testComputeWithTwoSamePortTypes() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computewithtwosameporttypes/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computewithtwosameporttypes/out";
+    testTranslationWithInit(BASE_DIRECTORY + "computewithtwosameporttypes");
+  }
 
-    testTranslationWithInit();
+  @Test
+  public void testComputeWithTwoSamePortTypes2() throws IOException {
+    testTranslationWithInit(BASE_DIRECTORY + "computewithtwosameporttypes2");
+  }
+
+  @Test
+  public void testComputeWithTwoSamePortTypes3() throws IOException {
+    testTranslationWithInit(BASE_DIRECTORY + "computewithtwosameporttypes3");
+  }
+
+  @Test
+  public void testComputeWithTwoSamePortTypes4() throws IOException {
+    testTranslationWithInit(BASE_DIRECTORY + "computewithtwosameporttypes4");
   }
 
   @Test
   public void testComputeWithTwoDifferentPortTypesAndNested() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computewithtwodiffporttypesandnested/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computewithtwodiffporttypesandnested/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "computewithtwodiffporttypesandnested");
   }
 
   @Test
   public void testComputeWithTwoDifferentPortAndServerGroup() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computeWithDiffPortTypeAndServerGroup/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computeWithDiffPortTypeAndServerGroup/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "computeWithDiffPortTypeAndServerGroup");
   }
 
   @Test
   public void testComputeWithTwoPortsDiffTypeAndNodeConnectedIn() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computeWithDiffPortTypeNodeConnectedIn/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computeWithDiffPortTypeNodeConnectedIn/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "computeWithDiffPortTypeNodeConnectedIn");
   }
 
   @Test
   public void testComputeWithTwoPortsSameTypeAndNodeConnectedIn() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computeWithSamePortTypeNodeConnectedIn/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computeWithSamePortTypeNodeConnectedIn/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "computeWithSamePortTypeNodeConnectedIn");
   }
 
   @Test
   public void testComputeWithTwoPortsDiffTypeAndNodeConnectedOut() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computeWithDiffPortTypeNodeConnectedOut/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computeWithDiffPortTypeNodeConnectedOut/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "computeWithDiffPortTypeNodeConnectedOut");
   }
 
   @Test
   public void testComputeWithTwoPortsSameTypeAndNodeConnectedOut() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computeWithSamePortTypeNodeConnectedOut/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/computeWithSamePortTypeNodeConnectedOut/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "computeWithSamePortTypeNodeConnectedOut");
   }
 
   @Test
   public void testComputeWithTwoDifferentPortTypesAndOutParamGetAttIn() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/diffPortTypeAndOutParamGetAttrIn/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/diffPortTypeAndOutParamGetAttrIn/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "diffPortTypeAndOutParamGetAttrIn");
   }
 
   @Test
   public void testComputeWithTwoSamePortTypesAndOutParamGetAttIn() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/samePortTypeAndOutParamGetAttrIn/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/samePortTypeAndOutParamGetAttrIn/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "samePortTypeAndOutParamGetAttrIn");
   }
 
 //  @Test
@@ -126,112 +86,56 @@ public class UnifiedCompositionSingleSubstitutionFullTest extends BaseFullTransl
 
   @Test
   public void testTwoSetsOfSingle() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/twoSetsOfSingle/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/twoSetsOfSingle/out";
-
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "twoSetsOfSingle");
   }
 
   @Test
   public void testTwoSetsOfSingleWithGetAttrBetweenThem() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/twoComputesWithGetAttrBetweenThem/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/twoComputesWithGetAttrBetweenThem/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "twoComputesWithGetAttrBetweenThem");
   }
 
   @Test
   public void testOneComputeTwoDiffPortsAndGetAttrIn() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/oneComputeDiffPortTypesAndGetAttIn/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/oneComputeDiffPortTypesAndGetAttIn/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "oneComputeDiffPortTypesAndGetAttIn");
   }
 
   @Test
   public void testOneComputeTwoSimilarPortsAndGetAttrIn() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/oneComputeSamePortsAndGetAttrIn/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/oneComputeSamePortsAndGetAttrIn/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "oneComputeSamePortsAndGetAttrIn");
   }
 
   @Test
   public void testOneComputeTwoDiffPortsAndGetAttrOut() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/oneComputeDiffPortTypesAndGetAttOut/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/oneComputeDiffPortTypesAndGetAttOut/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "oneComputeDiffPortTypesAndGetAttOut");
   }
 
   @Test
   public void testOneComputeTwoSimilarPortsAndGetAttrOut() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/oneComputeSamePortTypesAndGetAttOut/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/oneComputeSamePortTypesAndGetAttOut/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "oneComputeSamePortTypesAndGetAttOut");
   }
 
   @Test
   public void testThreeNovaSameTypeNoConsolidation() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/threeSameComputesNoConsolidation/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/threeSameComputesNoConsolidation/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "threeSameComputesNoConsolidation");
   }
 
   @Test
   public void testThreeNovaDiffTypeWithPorts() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/threeDiffComputesWithPorts/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/threeDiffComputesWithPorts/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "threeDiffComputesWithPorts");
   }
 
   @Test
   public void testThreeNovaDiffTypeWithAllConnectivities() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/threeDiffComputesWithAllConnectivities/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/threeDiffComputesWithAllConnectivities/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "threeDiffComputesWithAllConnectivities");
   }
 
   @Test
   public void testThreeNovaSameTypeWithGetAttrOutFromPort() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/threeNovaSameTypeWithGetAttrFromPort/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/threeNovaSameTypeWithGetAttrFromPort/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "threeNovaSameTypeWithGetAttrFromPort");
   }
 
   @Test
   public void testInputOutputParameterTypes() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/inputOutputParamType/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/inputOutputParamType/out";
-
-    testTranslationWithInit();
+    testTranslationWithInit(BASE_DIRECTORY + "inputOutputParamType");
   }
 }

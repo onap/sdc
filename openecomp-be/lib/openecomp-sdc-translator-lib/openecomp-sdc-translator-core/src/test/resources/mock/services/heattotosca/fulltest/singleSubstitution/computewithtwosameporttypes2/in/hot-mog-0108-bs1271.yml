@@ -1,0 +1,230 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates MOG stack
+
+parameters:
+  pd_server_names:
+    type: comma_delimited_list
+    label: PD server names
+    description: name of the PD instance
+  pd_image_name:
+    type: string
+    label: image name
+    description: PD image name
+  pd_flavor_name:
+    type: string
+    label: PD flavor name
+    description: flavor name of PD instance
+  oam_server_names:
+    type: comma_delimited_list
+    label: OAM server names
+    description: name of the OAM instance
+  oam_image_name:
+    type: string
+    label: image name
+    description: OAM image name
+  oam_flavor_name:
+    type: string
+    label: OAM flavor name
+    description: flavor name of OAM instance
+  sm_server_names:
+    type: comma_delimited_list
+    label: SM server names
+    description: name of the SM instance
+  sm_image_name:
+    type: string
+    label: image name
+    description: SM image name
+  sm_flavor_name:
+    type: string
+    label: SM flavor name
+    description: flavor name of SM instance
+  ps_server_names:
+    type: comma_delimited_list
+    label: PS server names
+    description: name of the PS instance
+  ps_image_name:
+    type: string
+    label: PS image name
+    description: PS image name
+  ps_flavor_name:
+    type: string
+    label: PS flavor name
+    description: flavor name of PS instance
+  cm_server_names:
+    type: comma_delimited_list
+    label: CM server names
+    description: name of the CM instance
+  cm_image_name:
+    type: string
+    label: image name
+    description: CM image name
+  cm_flavor_name:
+    type: string
+    label: CM flavor name
+    description: flavor name of CM instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  oam_net_name:
+    type: string
+    label: oam network name
+    description: name of the oam network
+  oam_net_ips:
+    type: comma_delimited_list
+    label: internet network ips
+    description: ip of the OAM network
+  sl_net_name:
+    type: string
+    label: silver lining network name
+    description: id of the sl network
+  sl_net_ips:
+    type: comma_delimited_list
+    label: silver lining network ips
+    description: ips of the sl network
+  sl_net_floating_ip:
+    type: string
+    label: mog sl net virtual ip
+    description: mog sl net virtual ip
+  repl_net_name:
+    type: string
+    label: Replication network name
+    description: name of the replication network
+  repl_net_ips:
+    type: comma_delimited_list
+    label: repl network ips
+    description: ips of repl network
+  rx_net_name:
+    type: string
+    label: Rx network name
+    description: Rx network name
+  rx_net_ips:
+    type: comma_delimited_list
+    label: Rx network ips
+    description: Rx network ips
+  rx_net_floating_ip:
+    type: string
+    label: mog rx net virtual ip
+    description: mog rx net virtual ip
+  ran_net_name:
+    type: string
+    label: RAN network name
+    description: RAN network name
+  ran_net_ips:
+    type: comma_delimited_list
+    label: RAN network ips
+    description: RAN network ip
+  ran_net_floating_ip:
+    type: string
+    label: mog ran net virtual ip
+    description: mog ran net virtual ip
+  csb_net_name:
+    type: string
+    label: csb internal network name
+    description: csb internal network name
+  csb_net_start:
+    type: string
+    label: csb internal start
+    description: csb internal start
+  csb_net_end:
+    type: string
+    label: csb internal end
+    description: csb internal end
+  csb_net_cidr:
+    type: string
+    label: csb ineternal cidr
+    description: csb internal cidr
+  csb_net_netmask:
+    type: string
+    description: CSB internal network subnet mask
+  csb_net_ips:
+    type: comma_delimited_list
+    description: mog_csb_net IP addresses
+  dummy_net_name_0:
+    type: string
+    label: csb internal network name
+    description: csb internal network name
+  dummy_net_start_0:
+    type: string
+    label: csb internal start
+    description: csb internal start
+  dummy_net_end_0:
+    type: string
+    label: csb internal end
+    description: csb internal end
+  dummy_net_cidr_0:
+    type: string
+    label: csb ineternal cidr
+    description: csb internal cidr
+  dummy_net_netmask_0:
+    type: string
+    description: CSB internal network subnet mask
+  dummy_net_name_1:
+    type: string
+    label: csb internal network name
+    description: csb internal network name
+  dummy_net_start_1:
+    type: string
+    label: csb internal start
+    description: csb internal start
+  dummy_net_end_1:
+    type: string
+    label: csb internal end
+    description: csb internal end
+  dummy_net_cidr_1:
+    type: string
+    label: csb ineternal cidr
+    description: csb internal cidr
+  dummy_net_netmask_1:
+    type: string
+    description: CSB internal network subnet mask
+
+  security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  cluster-manager-vol-1:
+    type: string
+    label: mog-cm-vol-1
+    description: Cluster Manager volume 1
+  session-manager-vol-1:
+    type: string
+    label: mog-sm-vol-1
+    description: Session Manager volume 1
+  session-manager-vol-2:
+    type: string
+    label: mog-sm-vol-2
+    description: Session Manager volume 2
+  oam-vol-1:
+    type: string
+    label: mog-oam-vol-1
+    description: OAM volume 1
+  oam-vol-2:
+    type: string
+    label: mog-oam-vol-2
+    description: OAM volume 2
+
+resources:
+  server_pd_01:
+    type: OS::Nova::Server
+    properties:
+#      config_drive: "True"
+      name: {get_param: [pd_server_names, 0]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: pd_1_port_0}
+        - port: {get_resource: pd_2_port_1}
+      user_data_format:  RAW
+
+  pd_1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+  pd_2_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+

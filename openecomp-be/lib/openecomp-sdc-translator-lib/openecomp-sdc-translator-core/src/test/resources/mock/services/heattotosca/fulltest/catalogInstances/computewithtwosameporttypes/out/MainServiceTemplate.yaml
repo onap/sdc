@@ -1,0 +1,1542 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    app_volume_size_0:
+      hidden: false
+      immutable: false
+      type: float
+      description: Size of Service Data 1 Volume for app VMs
+      default: 130
+      constraints:
+      - in_range:
+        - 1
+        - 9999
+    plt_data_floating_v6_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: Floating IPv6 for plt VMs on the DATA network
+    iox_data_floating_v6_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: Floating IPv6 for iox VMs on the DATA network
+    plt_data_v6_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Fixed IPv6 assignments for plt VMs on the DATA network
+      entry_schema:
+        type: string
+    iox_data_v6_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Fixed IPv6 assignments for iox VMs on the DATA network
+      entry_schema:
+        type: string
+    plt_volume_shared_id_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: ServiceData2 volume for plt VMs
+    plt_oam_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Fixed IPv4 assignments for plt VMs on the OAM network
+      entry_schema:
+        type: string
+    openstack_cacert:
+      label: OpenStack CA Certificate
+      hidden: false
+      immutable: false
+      type: string
+      description: CA Certificate to use for OpenStack client calls.
+      default: ''
+    siteinfo_url:
+      hidden: false
+      immutable: false
+      type: string
+      description: siteinfo url
+    plt_pair_uuid:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID for plt VM pair
+      default: 573f433e25ba8
+    app_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: VM names for app VMs
+      entry_schema:
+        type: string
+    iox_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: VM names for iox VMs
+      entry_schema:
+        type: string
+    plt_servicedata2_volume_size_0:
+      hidden: false
+      immutable: false
+      type: float
+      description: Size of Service Data 2 Volume for plt VMs
+      default: 150
+      constraints:
+      - in_range:
+        - 1
+        - 9999
+    app_volume_id_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: ServiceData1 volume for first app VM
+    plt_servicedata1_volume_size_0:
+      hidden: false
+      immutable: false
+      type: float
+      description: Size of Service Data 1 Volume for plt VMs
+      default: 70
+      constraints:
+      - in_range:
+        - 1
+        - 9999
+    internal_subnet_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: IP subnet for internal network
+      default: 169.30.12.0/24
+    app_volume_id_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: ServiceData1 volume for second app VM
+    domain:
+      hidden: false
+      immutable: false
+      type: string
+      description: What is this domain?
+    app_volume_id_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: ServiceData1 volume for third app VM
+    plt_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Pilot image
+      default: USP_IECF-PILOT_30.3.3-mcas4.4.6.qcow2
+    app_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: App image
+      default: USP_IECF-APP_30.3.3-mcas4.4.6.qcow2
+    plt_oam_floating_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: Floating IPv4 for plt VMs on the OAM network
+    plt_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Pilot flavor
+      default: nd.c2r4d50
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF Module instance
+    iox_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: IO flavor
+      default: nd.c2r4d50
+    app_security_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: App security group
+      entry_schema:
+        type: string
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VF instance
+    config_server_cacert:
+      label: configure server CA Certificate
+      hidden: false
+      immutable: false
+      type: string
+      description: CA Certificate for download from siteinfo url and config url.
+      default: ''
+    vf_module_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VF Module instance
+    oam_security_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: OAM security group
+      entry_schema:
+        type: string
+    iox_oam_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Fixed IPv4 assignments for iox VMs on the OAM network
+      entry_schema:
+        type: string
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF instance
+    iox_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: IO image
+      default: USP_IECF-IO_30.3.3-mcas4.4.6.qcow2
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: First availability zone ID or Name
+    ignore_siteinfo_audit:
+      label: Siteinfo Audit Ignore Flag
+      hidden: false
+      immutable: false
+      type: string
+      description: Set to true if siteinfo audit failure should not prevent system installation
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Second availability zone ID or Name
+    data_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: DATA network
+    plt_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: VM names for plt VMs
+      entry_schema:
+        type: string
+    plt_security_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: Pilot security group
+      entry_schema:
+        type: string
+    app_data_v6_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Fixed IPv6 assignments for app VMs on the DATA network
+      entry_schema:
+        type: string
+    iox_security_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: IO security group
+      entry_schema:
+        type: string
+    ieccf_debug:
+      hidden: false
+      immutable: false
+      type: string
+      description: IECCF debug flag
+      default: false
+    name_server_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: IP address of name server 2
+    app_oam_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Fixed IPv4 assignments for app VMs on the OAM network
+      entry_schema:
+        type: string
+    app_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: App flavor
+      default: nd.c2r4d50
+    name_server_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: IP address of name server 1
+    oam_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network
+    iox_oam_floating_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: Floating IPv4 for iox VMs on the OAM network
+    ieccf_config_url:
+      hidden: false
+      immutable: false
+      type: string
+      description: IECCF configuration package URL
+    iox_pair_uuid:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID for iox VM pair
+      default: 573f433e284b4
+    plt_volume_id_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: ServiceData1 volume for first plt VM
+    plt_volume_id_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: ServiceData1 volume for second plt VM
+    data_security_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: DATA security group
+      entry_schema:
+        type: string
+  node_templates:
+    network:data:vip:m001:m002:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+          get_input: data_security_groups
+        fixed_ips:
+        - ip_address:
+            get_input: plt_data_floating_v6_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: $vnf_name-network_data_vip_m001_m002
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        network_role_tag: data
+        network:
+          get_input: data_net_id
+    network:data:vip:m004:m003:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+          get_input: data_security_groups
+        fixed_ips:
+        - ip_address:
+            get_input: iox_data_floating_v6_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: $vnf_name-network_data_vip_m004_m003
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        network_role_tag: data
+        network:
+          get_input: data_net_id
+    plt_volume_shared_0:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        size: '(get_input : plt_servicedata2_volume_size_0) * 1024'
+        name:
+          str_replace:
+            template: $vnf_name-plt_volume_shared_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+    network:oam:vip:m001:m002:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+          get_input: oam_security_groups
+        fixed_ips:
+        - ip_address:
+            get_input: plt_oam_floating_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: $vnf_name-network_oam_vip_m001_m002
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        network_role_tag: oam
+        network:
+          get_input: oam_net_id
+    app_volume_1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        size: '(get_input : app_volume_size_0) * 1024'
+        name:
+          str_replace:
+            template: $vnf_name-app_volume_1
+            params:
+              $vnf_name:
+                get_input: vnf_name
+    app_volume_2:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        size: '(get_input : app_volume_size_0) * 1024'
+        name:
+          str_replace:
+            template: $vnf_name-app_volume_2
+            params:
+              $vnf_name:
+                get_input: vnf_name
+    app_volume_0:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        size: '(get_input : app_volume_size_0) * 1024'
+        name:
+          str_replace:
+            template: $vnf_name-app_volume_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+    plt_volume_1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        size: '(get_input : plt_servicedata1_volume_size_0) * 1024'
+        name:
+          str_replace:
+            template: $vnf_name-plt_volume_1
+            params:
+              $vnf_name:
+                get_input: vnf_name
+    plt_volume_0:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        size: '(get_input : plt_servicedata1_volume_size_0) * 1024'
+        name:
+          str_replace:
+            template: $vnf_name-plt_volume_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+    abstract_iox_0:
+      type: org.openecomp.resource.abstract.nodes.iox
+      directives:
+      - substitutable
+      properties:
+        port_iox_data_0_port_ip_requirements:
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_iox_internal_0_port_network:
+        - internal_net_0
+        port_iox_data_0_port_name:
+        - str_replace:
+            template: $vnf_name-iox_data_1_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        vm_flavor_name:
+          get_input: iox_flavor_name
+        port_iox_data_0_port_allowed_address_pairs:
+        - ip_address:
+            get_attribute:
+            - network:data:vip:m004:m003
+            - fixed_ips
+            - 0
+            - ip_address
+        port_iox_internal_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: true
+        vm_image_name:
+          get_input: iox_image_name
+        port_iox_oam_0_port_name:
+        - str_replace:
+            template: $vnf_name-iox_oam_1_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        port_iox_oam_0_port_network_role_tag: oam
+        compute_iox_user_data_format:
+        - RAW
+        port_iox_data_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - iox_data_v6_ips
+            - 1
+        port_iox_internal_0_port_allowed_address_pairs:
+        - ip_address:
+            get_input: internal_subnet_cidr
+        compute_iox_config_drive:
+        - true
+        port_iox_oam_0_port_replacement_policy:
+        - AUTO
+        port_iox_data_0_port_security_groups:
+        - get_input: data_security_groups
+        compute_iox_image_update_policy:
+        - REBUILD
+        port_iox_oam_0_port_network:
+        - get_input: oam_net_id
+        port_iox_internal_0_port_security_groups:
+        - get_input: iox_security_groups
+        port_iox_internal_0_port_name:
+        - str_replace:
+            template: $vnf_name-iox_internal_1_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        port_iox_oam_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - iox_oam_ips
+            - 1
+        compute_iox_name:
+        - get_input:
+          - iox_names
+          - 1
+        port_iox_data_0_port_network:
+        - get_input: data_net_id
+        port_iox_internal_0_port_replacement_policy:
+        - AUTO
+        port_iox_internal_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_iox_data_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_iox_data_0_port_replacement_policy:
+        - AUTO
+        compute_iox_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vm_role: iox
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        port_iox_oam_0_port_allowed_address_pairs:
+        - ip_address:
+            get_attribute:
+            - network:io:vip:m004:m003
+            - fixed_ips
+            - 0
+            - ip_address
+        compute_iox_availability_zone:
+        - get_input: availability_zone_1
+        port_iox_oam_0_port_security_groups:
+        - get_input: oam_security_groups
+        port_iox_oam_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_iox_oam_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_iox_data_0_port_network_role_tag: data
+        service_template_filter:
+          substitute_service_template: Nested_ioxServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_iox_iox_internal_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: internal_net_0
+          relationship: tosca.relationships.network.LinksTo
+    abstract_app_0:
+      type: org.openecomp.resource.abstract.nodes.app
+      directives:
+      - substitutable
+      properties:
+        port_app_data_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_app_scheduler_hints:
+        - group: app_server_group_group
+        port_app_internal_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: true
+        port_app_oam_0_port_replacement_policy:
+        - AUTO
+        port_app_oam_0_port_network:
+        - get_input: oam_net_id
+        vm_flavor_name:
+          get_input: app_flavor_name
+        port_app_data_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - app_data_v6_ips
+            - 2
+        vm_image_name:
+          get_input: app_image_name
+        port_app_oam_0_port_name:
+        - str_replace:
+            template: $vnf_name-app_oam_2_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        compute_app_availability_zone:
+        - get_input: availability_zone_0
+        compute_app_config_drive:
+        - true
+        port_app_oam_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_app_data_0_port_network:
+        - get_input: data_net_id
+        port_app_data_0_port_network_role_tag: data
+        port_app_oam_0_port_network_role_tag: oam
+        compute_app_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vm_role: app
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        port_app_data_0_port_ip_requirements:
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_app_internal_0_port_allowed_address_pairs:
+        - ip_address:
+            get_input: internal_subnet_cidr
+        port_app_data_0_port_name:
+        - str_replace:
+            template: $vnf_name-app_data_2_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        port_app_oam_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_app_internal_0_port_network:
+        - internal_net_0
+        port_app_data_0_port_security_groups:
+        - get_input: data_security_groups
+        port_app_internal_0_port_replacement_policy:
+        - AUTO
+        port_app_internal_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_app_oam_0_port_security_groups:
+        - get_input: oam_security_groups
+        port_app_internal_0_port_name:
+        - str_replace:
+            template: $vnf_name-app_internal_2_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        port_app_oam_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - app_oam_ips
+            - 2
+        port_app_data_0_port_replacement_policy:
+        - AUTO
+        compute_app_name:
+        - get_input:
+          - app_names
+          - 2
+        port_app_internal_0_port_security_groups:
+        - get_input: app_security_groups
+        compute_app_image_update_policy:
+        - REBUILD
+        compute_app_user_data_format:
+        - RAW
+        service_template_filter:
+          substitute_service_template: Nested_appServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_app_app_internal_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: internal_net_0
+          relationship: tosca.relationships.network.LinksTo
+    network:system:vip:m001:m002:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: true
+        security_groups:
+          get_input: plt_security_groups
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        allowed_address_pairs:
+        - ip_address:
+            get_input: internal_subnet_cidr
+        name:
+          str_replace:
+            template: $vnf_name-network_system_vip_m001_m002
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        network: internal_net_0
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: internal_net_0
+          relationship: tosca.relationships.network.LinksTo
+    abstract_iox_1:
+      type: org.openecomp.resource.abstract.nodes.iox
+      directives:
+      - substitutable
+      properties:
+        port_iox_data_0_port_ip_requirements:
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_iox_internal_0_port_network:
+        - internal_net_0
+        port_iox_data_0_port_name:
+        - str_replace:
+            template: $vnf_name-iox_data_0_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        vm_flavor_name:
+          get_input: iox_flavor_name
+        port_iox_data_0_port_allowed_address_pairs:
+        - ip_address:
+            get_attribute:
+            - network:data:vip:m004:m003
+            - fixed_ips
+            - 0
+            - ip_address
+        port_iox_internal_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: true
+        vm_image_name:
+          get_input: iox_image_name
+        port_iox_oam_0_port_name:
+        - str_replace:
+            template: $vnf_name-iox_oam_0_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        port_iox_oam_0_port_network_role_tag: oam
+        compute_iox_user_data_format:
+        - RAW
+        port_iox_data_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - iox_data_v6_ips
+            - 0
+        port_iox_internal_0_port_allowed_address_pairs:
+        - ip_address:
+            get_input: internal_subnet_cidr
+        compute_iox_config_drive:
+        - true
+        port_iox_oam_0_port_replacement_policy:
+        - AUTO
+        port_iox_data_0_port_security_groups:
+        - get_input: data_security_groups
+        compute_iox_image_update_policy:
+        - REBUILD
+        port_iox_oam_0_port_network:
+        - get_input: oam_net_id
+        port_iox_internal_0_port_security_groups:
+        - get_input: iox_security_groups
+        port_iox_internal_0_port_name:
+        - str_replace:
+            template: $vnf_name-iox_internal_0_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        port_iox_oam_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - iox_oam_ips
+            - 0
+        compute_iox_name:
+        - get_input:
+          - iox_names
+          - 0
+        port_iox_data_0_port_network:
+        - get_input: data_net_id
+        port_iox_internal_0_port_replacement_policy:
+        - AUTO
+        port_iox_internal_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_iox_data_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_iox_data_0_port_replacement_policy:
+        - AUTO
+        compute_iox_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vm_role: iox
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        port_iox_oam_0_port_allowed_address_pairs:
+        - ip_address:
+            get_attribute:
+            - network:io:vip:m004:m003
+            - fixed_ips
+            - 0
+            - ip_address
+        compute_iox_availability_zone:
+        - get_input: availability_zone_0
+        port_iox_oam_0_port_security_groups:
+        - get_input: oam_security_groups
+        port_iox_oam_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_iox_oam_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_iox_data_0_port_network_role_tag: data
+        service_template_filter:
+          substitute_service_template: Nested_ioxServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_iox_iox_internal_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: internal_net_0
+          relationship: tosca.relationships.network.LinksTo
+    abstract_app_2:
+      type: org.openecomp.resource.abstract.nodes.app
+      directives:
+      - substitutable
+      properties:
+        port_app_data_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_app_scheduler_hints:
+        - group: app_server_group_group
+        port_app_internal_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: true
+        port_app_oam_0_port_replacement_policy:
+        - AUTO
+        port_app_oam_0_port_network:
+        - get_input: oam_net_id
+        vm_flavor_name:
+          get_input: app_flavor_name
+        port_app_data_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - app_data_v6_ips
+            - 1
+        vm_image_name:
+          get_input: app_image_name
+        port_app_oam_0_port_name:
+        - str_replace:
+            template: $vnf_name-app_oam_1_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        compute_app_availability_zone:
+        - get_input: availability_zone_1
+        compute_app_config_drive:
+        - true
+        port_app_oam_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_app_data_0_port_network:
+        - get_input: data_net_id
+        port_app_data_0_port_network_role_tag: data
+        port_app_oam_0_port_network_role_tag: oam
+        compute_app_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vm_role: app
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        port_app_data_0_port_ip_requirements:
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_app_internal_0_port_allowed_address_pairs:
+        - ip_address:
+            get_input: internal_subnet_cidr
+        port_app_data_0_port_name:
+        - str_replace:
+            template: $vnf_name-app_data_1_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        port_app_oam_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_app_internal_0_port_network:
+        - internal_net_0
+        port_app_data_0_port_security_groups:
+        - get_input: data_security_groups
+        port_app_internal_0_port_replacement_policy:
+        - AUTO
+        port_app_internal_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_app_oam_0_port_security_groups:
+        - get_input: oam_security_groups
+        port_app_internal_0_port_name:
+        - str_replace:
+            template: $vnf_name-app_internal_1_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        port_app_oam_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - app_oam_ips
+            - 1
+        port_app_data_0_port_replacement_policy:
+        - AUTO
+        compute_app_name:
+        - get_input:
+          - app_names
+          - 1
+        port_app_internal_0_port_security_groups:
+        - get_input: app_security_groups
+        compute_app_image_update_policy:
+        - REBUILD
+        compute_app_user_data_format:
+        - RAW
+        service_template_filter:
+          substitute_service_template: Nested_appServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_app_app_internal_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: internal_net_0
+          relationship: tosca.relationships.network.LinksTo
+    abstract_app_1:
+      type: org.openecomp.resource.abstract.nodes.app
+      directives:
+      - substitutable
+      properties:
+        port_app_data_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_app_scheduler_hints:
+        - group: app_server_group_group
+        port_app_internal_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: true
+        port_app_oam_0_port_replacement_policy:
+        - AUTO
+        port_app_oam_0_port_network:
+        - get_input: oam_net_id
+        vm_flavor_name:
+          get_input: app_flavor_name
+        port_app_data_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - app_data_v6_ips
+            - 0
+        vm_image_name:
+          get_input: app_image_name
+        port_app_oam_0_port_name:
+        - str_replace:
+            template: $vnf_name-app_oam_0_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        compute_app_availability_zone:
+        - get_input: availability_zone_0
+        compute_app_config_drive:
+        - true
+        port_app_oam_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_app_data_0_port_network:
+        - get_input: data_net_id
+        port_app_data_0_port_network_role_tag: data
+        port_app_oam_0_port_network_role_tag: oam
+        compute_app_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vm_role: app
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        port_app_data_0_port_ip_requirements:
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_app_internal_0_port_allowed_address_pairs:
+        - ip_address:
+            get_input: internal_subnet_cidr
+        port_app_data_0_port_name:
+        - str_replace:
+            template: $vnf_name-app_data_0_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        port_app_oam_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_app_internal_0_port_network:
+        - internal_net_0
+        port_app_data_0_port_security_groups:
+        - get_input: data_security_groups
+        port_app_internal_0_port_replacement_policy:
+        - AUTO
+        port_app_internal_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_app_oam_0_port_security_groups:
+        - get_input: oam_security_groups
+        port_app_internal_0_port_name:
+        - str_replace:
+            template: $vnf_name-app_internal_0_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        port_app_oam_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - app_oam_ips
+            - 0
+        port_app_data_0_port_replacement_policy:
+        - AUTO
+        compute_app_name:
+        - get_input:
+          - app_names
+          - 0
+        port_app_internal_0_port_security_groups:
+        - get_input: app_security_groups
+        compute_app_image_update_policy:
+        - REBUILD
+        compute_app_user_data_format:
+        - RAW
+        service_template_filter:
+          substitute_service_template: Nested_appServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_app_app_internal_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: internal_net_0
+          relationship: tosca.relationships.network.LinksTo
+    internal_net_0:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        dhcp_enabled: 'True'
+        network_name:
+          str_replace:
+            template: $prefix-internal_net_0
+            params:
+              $prefix:
+                get_input: vnf_name
+        subnets:
+          internal_0_subnet_0:
+            enable_dhcp: 'True'
+            name:
+              str_replace:
+                template: $vnf_name-internal_0_subnet_0
+                params:
+                  $vnf_name:
+                    get_input: vnf_name
+            cidr:
+              get_input: internal_subnet_cidr
+            gateway_ip: ''
+    abstract_plt_1:
+      type: org.openecomp.resource.abstract.nodes.plt
+      directives:
+      - substitutable
+      properties:
+        port_plt_internal_0_port_allowed_address_pairs:
+        - ip_address:
+            get_input: internal_subnet_cidr
+        port_plt_oam_0_port_security_groups:
+        - get_input: oam_security_groups
+        compute_plt_config_drive:
+        - true
+        vm_flavor_name:
+          get_input: plt_flavor_name
+        port_plt_data_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - plt_data_v6_ips
+            - 1
+        vm_image_name:
+          get_input: plt_image_name
+        compute_plt_availability_zone:
+        - get_input: availability_zone_1
+        port_plt_oam_0_port_name:
+        - str_replace:
+            template: $vnf_name-plt_oam_0_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        port_plt_internal_0_port_security_groups:
+        - get_input: plt_security_groups
+        port_plt_oam_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_plt_data_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_plt_data_0_port_allowed_address_pairs:
+        - ip_address:
+            get_attribute:
+            - network:data:vip:m001:m002
+            - fixed_ips
+            - 0
+            - ip_address
+        port_plt_data_0_port_ip_requirements:
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_plt_internal_0_port_network:
+        - internal_net_0
+        compute_plt_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vm_role: plt
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        port_plt_data_0_port_security_groups:
+        - get_input: data_security_groups
+        port_plt_internal_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_plt_data_0_port_network_role_tag: data
+        port_plt_internal_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: true
+        port_plt_oam_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - plt_oam_ips
+            - 0
+        port_plt_oam_0_port_network_role_tag: oam
+        port_plt_internal_0_port_name:
+        - str_replace:
+            template: $vnf_name-plt_internal_0_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        compute_plt_image_update_policy:
+        - REBUILD
+        port_plt_oam_0_port_allowed_address_pairs:
+        - ip_address:
+            get_attribute:
+            - network:oam:vip:m001:m002
+            - fixed_ips
+            - 0
+            - ip_address
+        port_plt_data_0_port_name:
+        - str_replace:
+            template: $vnf_name-plt_data_0_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        compute_plt_user_data_format:
+        - RAW
+        port_plt_internal_0_port_replacement_policy:
+        - AUTO
+        port_plt_data_0_port_network:
+        - get_input: data_net_id
+        port_plt_oam_0_port_network:
+        - get_input: oam_net_id
+        port_plt_oam_0_port_replacement_policy:
+        - AUTO
+        port_plt_data_0_port_replacement_policy:
+        - AUTO
+        port_plt_oam_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_plt_name:
+        - get_input:
+          - plt_names
+          - 1
+        service_template_filter:
+          substitute_service_template: Nested_pltServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_plt_plt_internal_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: internal_net_0
+          relationship: tosca.relationships.network.LinksTo
+    abstract_plt_0:
+      type: org.openecomp.resource.abstract.nodes.plt
+      directives:
+      - substitutable
+      properties:
+        port_plt_internal_0_port_allowed_address_pairs:
+        - ip_address:
+            get_input: internal_subnet_cidr
+        port_plt_oam_0_port_security_groups:
+        - get_input: oam_security_groups
+        compute_plt_config_drive:
+        - true
+        vm_flavor_name:
+          get_input: plt_flavor_name
+        port_plt_data_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - plt_data_v6_ips
+            - 0
+        vm_image_name:
+          get_input: plt_image_name
+        compute_plt_availability_zone:
+        - get_input: availability_zone_0
+        port_plt_oam_0_port_name:
+        - str_replace:
+            template: $vnf_name-plt_oam_0_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        port_plt_internal_0_port_security_groups:
+        - get_input: plt_security_groups
+        port_plt_oam_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_plt_data_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_plt_data_0_port_allowed_address_pairs:
+        - ip_address:
+            get_attribute:
+            - network:data:vip:m001:m002
+            - fixed_ips
+            - 0
+            - ip_address
+        port_plt_data_0_port_ip_requirements:
+        - ip_version: 6
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_plt_internal_0_port_network:
+        - internal_net_0
+        compute_plt_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vm_role: plt
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        port_plt_data_0_port_security_groups:
+        - get_input: data_security_groups
+        port_plt_internal_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_plt_data_0_port_network_role_tag: data
+        port_plt_internal_0_port_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: true
+        port_plt_oam_0_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - plt_oam_ips
+            - 0
+        port_plt_oam_0_port_network_role_tag: oam
+        port_plt_internal_0_port_name:
+        - str_replace:
+            template: $vnf_name-plt_internal_0_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        compute_plt_image_update_policy:
+        - REBUILD
+        port_plt_oam_0_port_allowed_address_pairs:
+        - ip_address:
+            get_attribute:
+            - network:oam:vip:m001:m002
+            - fixed_ips
+            - 0
+            - ip_address
+        port_plt_data_0_port_name:
+        - str_replace:
+            template: $vnf_name-plt_data_0_port_0
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        compute_plt_user_data_format:
+        - RAW
+        port_plt_internal_0_port_replacement_policy:
+        - AUTO
+        port_plt_data_0_port_network:
+        - get_input: data_net_id
+        port_plt_oam_0_port_network:
+        - get_input: oam_net_id
+        port_plt_oam_0_port_replacement_policy:
+        - AUTO
+        port_plt_data_0_port_replacement_policy:
+        - AUTO
+        port_plt_oam_0_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        compute_plt_name:
+        - get_input:
+          - plt_names
+          - 0
+        service_template_filter:
+          substitute_service_template: Nested_pltServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_plt_plt_internal_0_port:
+          capability: tosca.capabilities.network.Linkable
+          node: internal_net_0
+          relationship: tosca.relationships.network.LinksTo
+    network:io:vip:m004:m003:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+          get_input: oam_security_groups
+        fixed_ips:
+        - ip_address:
+            get_input: iox_oam_floating_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: $vnf_name-network_io_vip_m004_m003
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        network_role_tag: oam
+        network:
+          get_input: oam_net_id
+  groups:
+    base_vIECCF_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_vIECCF.yml
+      members:
+      - network:data:vip:m001:m002
+      - network:data:vip:m004:m003
+      - network:oam:vip:m001:m002
+      - network:system:vip:m001:m002
+      - internal_net_0
+      - network:io:vip:m004:m003
+      - abstract_iox_0
+      - abstract_iox_1
+      - abstract_app_0
+      - abstract_app_1
+      - abstract_app_2
+      - abstract_plt_0
+      - abstract_plt_1
+    app_server_group_group:
+      type: tosca.groups.Root
+      members:
+      - abstract_app_0
+      - abstract_app_1
+      - abstract_app_2
+    base_vIECCF_volume_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_vIECCF_volume.yml
+        description: Volume creation template for vCCF
+      members:
+      - app_volume_1
+      - app_volume_2
+      - plt_volume_shared_0
+      - app_volume_0
+      - plt_volume_1
+      - plt_volume_0
+  outputs:
+    plt_volume_shared_id_0:
+      description: ServiceData2 volume for plt VMs
+      value: plt_volume_shared_0
+    oam_management_v4_address:
+      value:
+        get_input: plt_oam_floating_ip
+    app_volume_id_0:
+      description: ServiceData1 volume for first app VM
+      value: app_volume_0
+    app_volume_id_1:
+      description: ServiceData1 volume for second app VM
+      value: app_volume_1
+    app_volume_id_2:
+      description: ServiceData1 volume for third app VM
+      value: app_volume_2
+    plt_volume_id_0:
+      description: ServiceData1 volume for first plt VM
+      value: plt_volume_0
+    plt_volume_id_1:
+      description: ServiceData1 volume for second plt VM
+      value: plt_volume_1
+  policies:
+    app_server_group_policy:
+      type: org.openecomp.policies.placement.Antilocate
+      properties:
+        name:
+          str_replace:
+            template: $vnf_name-app_server_group
+            params:
+              $vnf_name:
+                get_input: vnf_name
+        container_type: host
+      targets:
+      - app_server_group_group

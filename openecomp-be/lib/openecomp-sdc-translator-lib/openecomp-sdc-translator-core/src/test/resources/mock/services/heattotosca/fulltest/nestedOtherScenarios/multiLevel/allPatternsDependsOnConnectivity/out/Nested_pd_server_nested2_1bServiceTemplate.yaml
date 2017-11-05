@@ -11,13 +11,13 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_pd_server_nested_b_port_vlan_requirements:
+    port_pd_server_nested2_1b_port_vlan_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.VlanRequirements
-    port_pd_server_nested_b_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
+    port_pd_server_nested2_1b_port_order:
+      type: integer
       required: true
     index_value:
       type: integer
@@ -26,18 +26,26 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_pd_server_nested_b_port_fixed_ips:
+    port_pd_server_nested2_1b_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd_server_nested2_1b_port_fixed_ips:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-    port_pd_server_nested_b_port_network_role_tag:
+    port_pd_server_nested2_1b_port_network_role:
       type: string
+      required: true
+    port_pd_server_nested2_1b_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
     vm_flavor_name:
       type: string
       required: true
-    port_pd_server_nested_b_port_subnetpoolid:
+    port_pd_server_nested2_1b_port_subnetpoolid:
       type: string
       required: true
     compute_pd_server_nested2_1b_availability_zone:
@@ -50,68 +58,26 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_pd_server_nested_b_port_order:
-      type: integer
-      required: true
-    port_pd_server_nested_b_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_pd_server_nested_b_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
-    port_pd_server_nested_b_port_replacement_policy:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     vm_image_name:
       type: string
       required: true
-    port_pd_server_nested_b_port_network_role:
-      type: string
-      required: true
-    port_pd_server_nested_b_port_ip_requirements:
+    port_pd_server_nested2_1b_port_ip_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
+    port_pd_server_nested2_1b_port_network_role_tag:
+      type: string
+      required: true
+    port_pd_server_nested2_1b_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd_server_nested2_1b_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
   node_templates:
-    pd_server_nested2_1b_pd_server_nested_b_port:
-      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
-      properties:
-        exCP_naming:
-          get_input: port_pd_server_nested_b_port_exCP_naming
-        replacement_policy:
-          get_input:
-          - port_pd_server_nested_b_port_replacement_policy
-          - index_value
-        vlan_requirements:
-          get_input: port_pd_server_nested_b_port_vlan_requirements
-        ip_requirements:
-          get_input: port_pd_server_nested_b_port_ip_requirements
-        network_role_tag:
-          get_input: port_pd_server_nested_b_port_network_role_tag
-        mac_requirements:
-          get_input: port_pd_server_nested_b_port_mac_requirements
-        order:
-          get_input: port_pd_server_nested_b_port_order
-        network_role:
-          get_input: port_pd_server_nested_b_port_network_role
-        subnetpoolid:
-          get_input: port_pd_server_nested_b_port_subnetpoolid
-        fixed_ips:
-          get_input: port_pd_server_nested_b_port_fixed_ips
-        network:
-          get_input:
-          - port_pd_server_nested_b_port_network
-          - index_value
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: pd_server_nested2_1b
-          relationship: tosca.relationships.network.BindsTo
     pd_server_nested2_1b:
       type: org.openecomp.resource.vfc.compute.nodes.heat.pd_server_nested2_1b
       properties:
@@ -127,24 +93,58 @@ topology_template:
           get_input:
           - compute_pd_server_nested2_1b_name
           - index_value
+    pd_server_nested2_1b_pd_server_nested2_1b_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        exCP_naming:
+          get_input: port_pd_server_nested2_1b_port_exCP_naming
+        replacement_policy:
+          get_input:
+          - port_pd_server_nested2_1b_port_replacement_policy
+          - index_value
+        vlan_requirements:
+          get_input: port_pd_server_nested2_1b_port_vlan_requirements
+        ip_requirements:
+          get_input: port_pd_server_nested2_1b_port_ip_requirements
+        network_role_tag:
+          get_input: port_pd_server_nested2_1b_port_network_role_tag
+        mac_requirements:
+          get_input: port_pd_server_nested2_1b_port_mac_requirements
+        order:
+          get_input: port_pd_server_nested2_1b_port_order
+        network_role:
+          get_input: port_pd_server_nested2_1b_port_network_role
+        subnetpoolid:
+          get_input: port_pd_server_nested2_1b_port_subnetpoolid
+        fixed_ips:
+          get_input: port_pd_server_nested2_1b_port_fixed_ips
+        network:
+          get_input:
+          - port_pd_server_nested2_1b_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pd_server_nested2_1b
+          relationship: tosca.relationships.network.BindsTo
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.pd_server_nested2_1b
     capabilities:
+      network.outpoing.packets_pd_server_nested2_1b_pd_server_nested2_1b_port:
+      - pd_server_nested2_1b_pd_server_nested2_1b_port
+      - network.outpoing.packets
       cpu_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - cpu
       disk.ephemeral.size_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - disk.ephemeral.size
-      network.outgoing.packets.rate_pd_server_nested2_1b_pd_server_nested_b_port:
-      - pd_server_nested2_1b_pd_server_nested_b_port
-      - network.outgoing.packets.rate
+      network.incoming.packets_pd_server_nested2_1b_pd_server_nested2_1b_port:
+      - pd_server_nested2_1b_pd_server_nested2_1b_port
+      - network.incoming.packets
       memory.usage_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - memory.usage
-      network.outgoing.bytes.rate_pd_server_nested2_1b_pd_server_nested_b_port:
-      - pd_server_nested2_1b_pd_server_nested_b_port
-      - network.outgoing.bytes.rate
       disk.write.bytes.rate_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - disk.write.bytes.rate
@@ -157,12 +157,12 @@ topology_template:
       endpoint_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - endpoint
-      network.incoming.packets.rate_pd_server_nested2_1b_pd_server_nested_b_port:
-      - pd_server_nested2_1b_pd_server_nested_b_port
-      - network.incoming.packets.rate
       disk.device.read.requests.rate_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - disk.device.read.requests.rate
+      attachment_pd_server_nested2_1b_pd_server_nested2_1b_port:
+      - pd_server_nested2_1b_pd_server_nested2_1b_port
+      - attachment
       binding_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - binding
@@ -175,12 +175,15 @@ topology_template:
       disk.device.latency_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - disk.device.latency
-      network.incoming.packets_pd_server_nested2_1b_pd_server_nested_b_port:
-      - pd_server_nested2_1b_pd_server_nested_b_port
-      - network.incoming.packets
+      network.outgoing.packets.rate_pd_server_nested2_1b_pd_server_nested2_1b_port:
+      - pd_server_nested2_1b_pd_server_nested2_1b_port
+      - network.outgoing.packets.rate
       disk.device.write.bytes.rate_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - disk.device.write.bytes.rate
+      network.outgoing.bytes_pd_server_nested2_1b_pd_server_nested2_1b_port:
+      - pd_server_nested2_1b_pd_server_nested2_1b_port
+      - network.outgoing.bytes
       disk.iops_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - disk.iops
@@ -202,24 +205,12 @@ topology_template:
       disk.device.read.requests_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - disk.device.read.requests
-      feature_pd_server_nested2_1b_pd_server_nested_b_port:
-      - pd_server_nested2_1b_pd_server_nested_b_port
-      - feature
-      network.incoming.bytes.rate_pd_server_nested2_1b_pd_server_nested_b_port:
-      - pd_server_nested2_1b_pd_server_nested_b_port
-      - network.incoming.bytes.rate
       disk.capacity_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - disk.capacity
       disk.write.bytes_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - disk.write.bytes
-      binding_pd_server_nested2_1b_pd_server_nested_b_port:
-      - pd_server_nested2_1b_pd_server_nested_b_port
-      - binding
-      attachment_pd_server_nested2_1b_pd_server_nested_b_port:
-      - pd_server_nested2_1b_pd_server_nested_b_port
-      - attachment
       instance_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - instance
@@ -238,15 +229,18 @@ topology_template:
       disk.read.bytes_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - disk.read.bytes
-      network.outgoing.bytes_pd_server_nested2_1b_pd_server_nested_b_port:
-      - pd_server_nested2_1b_pd_server_nested_b_port
-      - network.outgoing.bytes
       cpu.delta_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - cpu.delta
+      binding_pd_server_nested2_1b_pd_server_nested2_1b_port:
+      - pd_server_nested2_1b_pd_server_nested2_1b_port
+      - binding
       vcpus_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - vcpus
+      network.incoming.bytes_pd_server_nested2_1b_pd_server_nested2_1b_port:
+      - pd_server_nested2_1b_pd_server_nested2_1b_port
+      - network.incoming.bytes
       disk.latency_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - disk.latency
@@ -256,18 +250,24 @@ topology_template:
       cpu_util_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - cpu_util
-      network.incoming.bytes_pd_server_nested2_1b_pd_server_nested_b_port:
-      - pd_server_nested2_1b_pd_server_nested_b_port
-      - network.incoming.bytes
+      network.outgoing.bytes.rate_pd_server_nested2_1b_pd_server_nested2_1b_port:
+      - pd_server_nested2_1b_pd_server_nested2_1b_port
+      - network.outgoing.bytes.rate
+      network.incoming.bytes.rate_pd_server_nested2_1b_pd_server_nested2_1b_port:
+      - pd_server_nested2_1b_pd_server_nested2_1b_port
+      - network.incoming.bytes.rate
       disk.allocation_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - disk.allocation
-      network.outpoing.packets_pd_server_nested2_1b_pd_server_nested_b_port:
-      - pd_server_nested2_1b_pd_server_nested_b_port
-      - network.outpoing.packets
       disk.device.write.requests.rate_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - disk.device.write.requests.rate
+      network.incoming.packets.rate_pd_server_nested2_1b_pd_server_nested2_1b_port:
+      - pd_server_nested2_1b_pd_server_nested2_1b_port
+      - network.incoming.packets.rate
+      feature_pd_server_nested2_1b_pd_server_nested2_1b_port:
+      - pd_server_nested2_1b_pd_server_nested2_1b_port
+      - feature
       memory.resident_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - memory.resident
@@ -287,15 +287,15 @@ topology_template:
       - pd_server_nested2_1b
       - host
     requirements:
-      dependency_pd_server_nested2_1b_pd_server_nested_b_port:
-      - pd_server_nested2_1b_pd_server_nested_b_port
-      - dependency
       local_storage_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - local_storage
-      link_pd_server_nested2_1b_pd_server_nested_b_port:
-      - pd_server_nested2_1b_pd_server_nested_b_port
-      - link
       dependency_pd_server_nested2_1b:
       - pd_server_nested2_1b
       - dependency
+      dependency_pd_server_nested2_1b_pd_server_nested2_1b_port:
+      - pd_server_nested2_1b_pd_server_nested2_1b_port
+      - dependency
+      link_pd_server_nested2_1b_pd_server_nested2_1b_port:
+      - pd_server_nested2_1b_pd_server_nested2_1b_port
+      - link

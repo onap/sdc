@@ -14,15 +14,15 @@ topology_template:
     port_FSB1_Internal_mac_address:
       type: string
       required: true
-    port_FSB_OAM_network_role_tag:
-      type: string
-      required: true
     port_FSB1_Internal_ip_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
     port_FSB1_Internal_subnetpoolid:
+      type: string
+      required: true
+    port_FSB1_OAM_subnetpoolid:
       type: string
       required: true
     compute_FSB1_metadata:
@@ -33,17 +33,20 @@ topology_template:
     port_FSB2_Internal2_network_role_tag:
       type: string
       required: true
+    port_FSB1_OAM_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_FSB1_OAM_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
     port_FSB2_Internal1_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
     vm_flavor_name:
       type: string
       required: true
-    port_FSB_OAM_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
     port_FSB2_Internal2_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
@@ -58,11 +61,6 @@ topology_template:
     port_FSB2_Internal1_network_role:
       type: string
       required: true
-    port_FSB_OAM_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
     port_FSB1_Internal_network_role_tag:
       type: string
       required: true
@@ -70,6 +68,11 @@ topology_template:
       type: string
       required: true
     port_FSB2_Internal1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_FSB1_OAM_vlan_requirements:
       type: list
       required: true
       entry_schema:
@@ -82,14 +85,6 @@ topology_template:
     port_FSB1_Internal_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
-    port_FSB_OAM_network_role:
-      type: string
-      required: true
-    port_FSB_OAM_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     port_FSB1_Internal_network_role:
       type: string
       required: true
@@ -98,23 +93,20 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_FSB1_OAM_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
     port_FSB2_Internal2_mac_address:
       type: string
       required: true
     port_FSB2_Internal2_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
-    port_FSB_OAM_subnetpoolid:
-      type: string
-      required: true
     port_FSB2_Internal2_ip_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
-    port_FSB_OAM_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
     compute_FSB1_availability_zone:
       type: list
       required: true
@@ -132,10 +124,15 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_FSB_OAM_order:
+    port_FSB2_Internal2_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB1_OAM_order:
       type: integer
       required: true
-    port_FSB2_Internal2_network:
+    port_FSB1_OAM_network:
       type: list
       required: true
       entry_schema:
@@ -160,28 +157,31 @@ topology_template:
     port_FSB2_Internal1_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
-    port_FSB_OAM_fixed_ips:
-      type: list
+    port_FSB1_OAM_network_role:
+      type: string
       required: true
-      entry_schema:
-        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
     port_FSB2_Internal2_order:
       type: integer
       required: true
     port_FSB2_Internal1_subnetpoolid:
       type: string
       required: true
+    port_FSB1_OAM_network_role_tag:
+      type: string
+      required: true
     port_FSB1_Internal_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
-      required: true
-    port_FSB_OAM_exCP_naming:
-      type: org.openecomp.datatypes.Naming
       required: true
     compute_FSB1_name:
       type: list
       required: true
       entry_schema:
         type: string
+    port_FSB1_OAM_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
   node_templates:
     FSB1_FSB1_Internal:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
@@ -213,30 +213,30 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: FSB1
           relationship: tosca.relationships.network.BindsTo
-    FSB1_FSB_OAM:
+    FSB1_FSB1_OAM:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         exCP_naming:
-          get_input: port_FSB_OAM_exCP_naming
+          get_input: port_FSB1_OAM_exCP_naming
         vlan_requirements:
-          get_input: port_FSB_OAM_vlan_requirements
+          get_input: port_FSB1_OAM_vlan_requirements
         ip_requirements:
-          get_input: port_FSB_OAM_ip_requirements
+          get_input: port_FSB1_OAM_ip_requirements
         network_role_tag:
-          get_input: port_FSB_OAM_network_role_tag
+          get_input: port_FSB1_OAM_network_role_tag
         mac_requirements:
-          get_input: port_FSB_OAM_mac_requirements
+          get_input: port_FSB1_OAM_mac_requirements
         order:
-          get_input: port_FSB_OAM_order
+          get_input: port_FSB1_OAM_order
         network_role:
-          get_input: port_FSB_OAM_network_role
+          get_input: port_FSB1_OAM_network_role
         subnetpoolid:
-          get_input: port_FSB_OAM_subnetpoolid
+          get_input: port_FSB1_OAM_subnetpoolid
         fixed_ips:
-          get_input: port_FSB_OAM_fixed_ips
+          get_input: port_FSB1_OAM_fixed_ips
         network:
           get_input:
-          - port_FSB_OAM_network
+          - port_FSB1_OAM_network
           - index_value
       requirements:
       - binding:
@@ -330,21 +330,18 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.FSB1
     capabilities:
-      network.outgoing.packets.rate_FSB1_FSB_OAM:
-      - FSB1_FSB_OAM
-      - network.outgoing.packets.rate
       network.incoming.packets_FSB1_FSB2_Internal2:
       - FSB1_FSB2_Internal2
       - network.incoming.packets
+      network.incoming.bytes.rate_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - network.incoming.bytes.rate
       network.incoming.packets_FSB1_FSB2_Internal1:
       - FSB1_FSB2_Internal1
       - network.incoming.packets
-      attachment_FSB1_FSB_OAM:
-      - FSB1_FSB_OAM
-      - attachment
-      binding_FSB1_FSB_OAM:
-      - FSB1_FSB_OAM
-      - binding
+      network.outgoing.bytes_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - network.outgoing.bytes
       disk.capacity_FSB1:
       - FSB1
       - disk.capacity
@@ -369,12 +366,12 @@ topology_template:
       disk.device.write.requests.rate_FSB1:
       - FSB1
       - disk.device.write.requests.rate
+      network.outgoing.bytes.rate_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - network.outgoing.bytes.rate
       disk.root.size_FSB1:
       - FSB1
       - disk.root.size
-      network.outgoing.bytes.rate_FSB1_FSB_OAM:
-      - FSB1_FSB_OAM
-      - network.outgoing.bytes.rate
       feature_FSB1:
       - FSB1
       - feature
@@ -387,12 +384,12 @@ topology_template:
       network.outgoing.bytes_FSB1_FSB1_Internal:
       - FSB1_FSB1_Internal
       - network.outgoing.bytes
-      feature_FSB1_FSB_OAM:
-      - FSB1_FSB_OAM
-      - feature
       memory.resident_FSB1:
       - FSB1
       - memory.resident
+      network.incoming.packets.rate_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - network.incoming.packets.rate
       cpu_FSB1:
       - FSB1
       - cpu
@@ -402,15 +399,15 @@ topology_template:
       disk.write.requests.rate_FSB1:
       - FSB1
       - disk.write.requests.rate
+      feature_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - feature
       binding_FSB1_FSB2_Internal2:
       - FSB1_FSB2_Internal2
       - binding
       instance_FSB1:
       - FSB1
       - instance
-      network.incoming.bytes_FSB1_FSB_OAM:
-      - FSB1_FSB_OAM
-      - network.incoming.bytes
       disk.device.read.bytes.rate_FSB1:
       - FSB1
       - disk.device.read.bytes.rate
@@ -453,9 +450,15 @@ topology_template:
       network.incoming.packets.rate_FSB1_FSB2_Internal1:
       - FSB1_FSB2_Internal1
       - network.incoming.packets.rate
-      network.outpoing.packets_FSB1_FSB_OAM:
-      - FSB1_FSB_OAM
-      - network.outpoing.packets
+      network.outgoing.packets.rate_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - network.outgoing.packets.rate
+      binding_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - binding
+      attachment_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - attachment
       network.incoming.bytes_FSB1_FSB2_Internal2:
       - FSB1_FSB2_Internal2
       - network.incoming.bytes
@@ -468,18 +471,18 @@ topology_template:
       attachment_FSB1_FSB1_Internal:
       - FSB1_FSB1_Internal
       - attachment
+      network.incoming.bytes_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - network.incoming.bytes
       memory_FSB1:
       - FSB1
       - memory
-      network.incoming.bytes.rate_FSB1_FSB_OAM:
-      - FSB1_FSB_OAM
-      - network.incoming.bytes.rate
+      network.incoming.packets_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - network.incoming.packets
       network.outpoing.packets_FSB1_FSB1_Internal:
       - FSB1_FSB1_Internal
       - network.outpoing.packets
-      network.outgoing.bytes_FSB1_FSB_OAM:
-      - FSB1_FSB_OAM
-      - network.outgoing.bytes
       disk.device.read.bytes_FSB1:
       - FSB1
       - disk.device.read.bytes
@@ -495,6 +498,9 @@ topology_template:
       disk.usage_FSB1:
       - FSB1
       - disk.usage
+      network.outpoing.packets_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - network.outpoing.packets
       host_FSB1:
       - FSB1
       - host
@@ -510,9 +516,6 @@ topology_template:
       disk.write.requests_FSB1:
       - FSB1
       - disk.write.requests
-      network.incoming.packets.rate_FSB1_FSB_OAM:
-      - FSB1_FSB_OAM
-      - network.incoming.packets.rate
       network.incoming.bytes.rate_FSB1_FSB2_Internal2:
       - FSB1_FSB2_Internal2
       - network.incoming.bytes.rate
@@ -567,9 +570,6 @@ topology_template:
       disk.read.requests_FSB1:
       - FSB1
       - disk.read.requests
-      network.incoming.packets_FSB1_FSB_OAM:
-      - FSB1_FSB_OAM
-      - network.incoming.packets
       disk.device.write.requests_FSB1:
       - FSB1
       - disk.device.write.requests
@@ -586,6 +586,12 @@ topology_template:
       - FSB1
       - disk.device.iops
     requirements:
+      link_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - link
+      dependency_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - dependency
       dependency_FSB1:
       - FSB1
       - dependency
@@ -601,12 +607,6 @@ topology_template:
       local_storage_FSB1:
       - FSB1
       - local_storage
-      dependency_FSB1_FSB_OAM:
-      - FSB1_FSB_OAM
-      - dependency
-      link_FSB1_FSB_OAM:
-      - FSB1_FSB_OAM
-      - link
       dependency_FSB1_FSB2_Internal2:
       - FSB1_FSB2_Internal2
       - dependency

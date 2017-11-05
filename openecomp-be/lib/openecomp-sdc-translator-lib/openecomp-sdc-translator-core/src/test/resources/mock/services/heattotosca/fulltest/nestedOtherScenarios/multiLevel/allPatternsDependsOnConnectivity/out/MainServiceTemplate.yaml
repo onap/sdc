@@ -105,32 +105,32 @@ topology_template:
       properties:
         compute_pd_server_main_1b_availability_zone:
         - get_input: availability_zone_0
-        port_pd_server_main_b_port_replacement_policy:
+        port_pd_server_main_1b_port_replacement_policy:
         - AUTO
+        port_pd_server_main_1b_port_mac_requirements:
+          mac_count_required:
+            is_required: false
         vm_flavor_name:
           get_input: pd_server_main_1b_flavor
-        port_pd_server_main_b_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - pd_server_main_1b_ips
-            - 0
-        port_pd_server_main_b_port_ip_requirements:
+        vm_image_name:
+          get_input: pd_server_main_1b_image
+        compute_pd_server_main_1b_name:
+        - get_input:
+          - pd_server_main_1b_names
+          - 0
+        port_pd_server_main_1b_port_network:
+        - get_input: jsa_name
+        port_pd_server_main_1b_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        vm_image_name:
-          get_input: pd_server_main_1b_image
-        port_pd_server_main_b_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        compute_pd_server_main_1b_name:
-        - get_input:
-          - pd_server_main_1b_names
-          - 0
-        port_pd_server_main_b_port_network:
-        - get_input: jsa_name
+        port_pd_server_main_1b_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - pd_server_main_1b_ips
+            - 0
         service_template_filter:
           substitute_service_template: Nested_pd_server_main_1b_1ServiceTemplate.yaml
           count: 1
@@ -144,34 +144,34 @@ topology_template:
       directives:
       - substitutable
       properties:
-        compute_ps_server_main_1b_availability_zone:
-        - get_input: availability_zone_0
-        port_ps_server_main_b_port_replacement_policy:
-        - AUTO
-        port_ps_server_main_b_port_ip_requirements:
+        port_ps_server_main_1b_port_fixed_ips:
+        - ip_address:
+            get_input:
+            - ps_server_main_1b_ips
+            - 0
+        port_ps_server_main_1b_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        compute_ps_server_main_1b_availability_zone:
+        - get_input: availability_zone_0
         vm_flavor_name:
           get_input: ps_server_main_1b_flavor
-        port_ps_server_main_b_port_network:
-        - get_input: jsa_name
-        port_ps_server_main_b_port_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_ps_server_main_b_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - ps_server_main_1b_ips
-            - 0
         vm_image_name:
           get_input: ps_server_main_1b_image
         compute_ps_server_main_1b_name:
         - get_input:
           - ps_server_main_1b_names
           - 1
+        port_ps_server_main_1b_port_replacement_policy:
+        - AUTO
+        port_ps_server_main_1b_port_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_ps_server_main_1b_port_network:
+        - get_input: jsa_name
         service_template_filter:
           substitute_service_template: Nested_ps_server_main_1b_1ServiceTemplate.yaml
           count: 1
