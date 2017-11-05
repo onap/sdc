@@ -13,8 +13,8 @@ Installation
 
    * This note must be removed after content has been added.
 
-Instalation Guides
-==================
+Installation Guides
+===================
 
 Those are links to the SDC installation guides found in ONAP Confluence:
 
