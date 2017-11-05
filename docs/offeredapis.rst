@@ -2,13 +2,13 @@
 .. http://creativecommons.org/licenses/by/4.0
 
 =============
-Offered API’s
+Offered APIs
 =============
 
 :Date:   2017-10-23
 
 .. contents::
-   :depth: 4
+   :depth: 3
 ..
 
 Overview
