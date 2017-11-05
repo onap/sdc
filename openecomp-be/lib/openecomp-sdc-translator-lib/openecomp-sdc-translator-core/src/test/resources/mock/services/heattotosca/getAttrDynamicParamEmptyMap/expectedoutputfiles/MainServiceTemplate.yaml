@@ -503,11 +503,6 @@ topology_template:
           - install_config
         storage_size: 68
         group_tag: oam
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: NOKIA-LCP-Base
-          relationship: tosca.relationships.DependsOn
     IMS_RRG:
       type: org.openecomp.resource.abstract.nodes.heat.LCP-PairGroup.template
       directives:
@@ -668,11 +663,6 @@ topology_template:
           get_attribute:
           - NOKIA-LCP-Base
           - NetInfoStr
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: NOKIA-LCP-Base
-          relationship: tosca.relationships.DependsOn
   groups:
     base_mso_group:
       type: org.openecomp.groups.heat.HeatStack

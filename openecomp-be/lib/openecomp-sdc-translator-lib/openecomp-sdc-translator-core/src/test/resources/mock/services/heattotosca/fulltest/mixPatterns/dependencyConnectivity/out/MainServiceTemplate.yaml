@@ -110,10 +110,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: nested_network
           relationship: tosca.relationships.network.LinksTo
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: nestedWithNoNovaHadDependencyToIt
-          relationship: tosca.relationships.DependsOn
     abstract_b_single_1b:
       type: org.openecomp.resource.abstract.nodes.b_single_1b
       directives:
@@ -162,10 +158,6 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - dependency_b_single_1b:
-          capability: tosca.capabilities.Node
-          node: nestedWithNoNovaHadDependencyToIt
-          relationship: tosca.relationships.DependsOn
       - link_b_single_1b_1b_t2_port:
           capability: tosca.capabilities.network.Linkable
           node: b_single_1b_network
@@ -243,10 +235,6 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - dependency_1c1_scalling_instance:
-          capability: tosca.capabilities.Node
-          node: nestedWithNoNovaHadDependencyToIt
-          relationship: tosca.relationships.DependsOn
       - link_1c1_scalling_instance_1c1_t1_port:
           capability: tosca.capabilities.network.Linkable
           node: 1c1_scalling_instance_network
@@ -308,10 +296,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: nested_network
           relationship: tosca.relationships.network.LinksTo
-      - dependency_server_pcm:
-          capability: tosca.capabilities.Node
-          node: nestedWithNoNovaHadDependencyToIt
-          relationship: tosca.relationships.DependsOn
     abstract_1c2_catalog_instance_0:
       type: org.openecomp.resource.abstract.nodes.1c2_catalog_instance
       directives:
@@ -363,10 +347,6 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - dependency_1c2_catalog_instance_1c2_t1_port:
-          capability: tosca.capabilities.Node
-          node: nestedWithNoNovaHadDependencyToIt
-          relationship: tosca.relationships.DependsOn
       - link_1c2_catalog_instance_1c2_t2_port:
           capability: tosca.capabilities.network.Linkable
           node: 1c2_catalog_instance_network
@@ -424,10 +404,6 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - dependency_1c2_catalog_instance_1c2_t1_port:
-          capability: tosca.capabilities.Node
-          node: nestedWithNoNovaHadDependencyToIt
-          relationship: tosca.relationships.DependsOn
       - link_1c2_catalog_instance_1c2_t2_port:
           capability: tosca.capabilities.network.Linkable
           node: 1c2_catalog_instance_network
@@ -441,43 +417,6 @@ topology_template:
           substitute_service_template: nested-no-novaServiceTemplate.yaml
         security_group_name: group1
         net_name: myNetwork
-      requirements:
-      - dependency:
-          capability: feature_a_single_1a
-          node: abstract_a_single_1a
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: 4p_nested
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: feature_b_single_1b_1b_t1_port
-          node: abstract_b_single_1b
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: feature_b_single_1b_1b_t1_port
-          node: abstract_b_single_1b_1
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: feature_1c1_scalling_instance
-          node: abstract_1c1_scalling_instance
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: feature_1c2_catalog_instance
-          node: abstract_1c2_catalog_instance_0
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: feature_1c2_catalog_instance
-          node: abstract_1c2_catalog_instance_1
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: nestedNoNestedSingleComputePattern
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: nestedWithNoNovaHadDependencyToIt
-          relationship: tosca.relationships.DependsOn
     1c1_scalling_instance_network:
       type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
       properties:
@@ -657,10 +596,6 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - dependency_a_single_1a:
-          capability: tosca.capabilities.Node
-          node: nestedWithNoNovaHadDependencyToIt
-          relationship: tosca.relationships.DependsOn
       - link_a_single_1a_1a_t1_port:
           capability: tosca.capabilities.network.Linkable
           node: a_single_1a_network
