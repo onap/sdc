@@ -61,12 +61,12 @@ topology_template:
       properties:
         pcm_flavor_name:
           get_input: pcm_flavor_name
+        port_pcm_port_11_network_role_tag: oam
         service_template_filter:
           substitute_service_template: nested-pcm_v0.2ServiceTemplate.yaml
-        port_pcm_port_1_network_role_tag: oam
         availabilityzone_name:
           get_input: availabilityzone_name
-        port_pcm_port_0_ip_requirements:
+        port_pcm_port_11_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
@@ -74,23 +74,23 @@ topology_template:
             is_required: false
         pcm_image_name:
           get_input: pcm_image_name
-        port_pcm_port_1_mac_requirements:
+        port_pcm_port_01_mac_requirements:
           mac_count_required:
             is_required: false
-        port_pcm_port_1_ip_requirements:
+        port_pcm_port_01_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_pcm_port_0_network_role_tag: cps
-        port_pcm_port_0_mac_requirements:
+        port_pcm_port_11_mac_requirements:
           mac_count_required:
             is_required: false
         pcm_server_name:
           get_input:
           - pcm_server_names
           - 0
+        port_pcm_port_01_network_role_tag: cps
     server_pcm_001:
       type: org.openecomp.resource.abstract.nodes.heat.pcm_server_1
       directives:
@@ -137,34 +137,34 @@ topology_template:
           get_input: pcm_flavor_name
         service_template_filter:
           substitute_service_template: nested-pcm_v0.3ServiceTemplate.yaml
-        port_pcm_port_1_network_role_tag: oam
+        port_pcm_port_12_mac_requirements:
+          mac_count_required:
+            is_required: false
         availabilityzone_name:
           get_input: availabilityzone_name
-        port_pcm_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
+        port_pcm_port_02_mac_requirements:
+          mac_count_required:
             is_required: false
         pcm_image_name:
           get_input: pcm_image_name
-        port_pcm_port_1_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_pcm_port_1_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_pcm_port_0_network_role_tag: cps
-        port_pcm_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
+        port_pcm_port_02_network_role_tag: cps
         pcm_server_name:
           get_input:
           - pcm_server_names
           - 0
+        port_pcm_port_12_network_role_tag: oam
+        port_pcm_port_12_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pcm_port_02_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
     compute_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:

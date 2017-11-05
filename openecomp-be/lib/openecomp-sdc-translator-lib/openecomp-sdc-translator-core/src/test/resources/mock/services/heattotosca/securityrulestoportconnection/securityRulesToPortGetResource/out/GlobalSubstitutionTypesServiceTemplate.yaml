@@ -131,6 +131,19 @@ node_types:
         required: true
         status: SUPPORTED
     requirements:
+    - dependency_cdr_network_port_1:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_cdr_network_port_1:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
     - dependency_qrouter_volume_1:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
@@ -145,19 +158,6 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_cdr_network_port:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - link_cdr_network_port:
-        capability: tosca.capabilities.network.Linkable
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
     - dependency_qrouter_volume_2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
@@ -193,12 +193,6 @@ node_types:
         - 1
         - 1
     capabilities:
-      network.outgoing.bytes_cdr_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       binding_QRouter1:
         type: tosca.capabilities.network.Bindable
         occurrences:
@@ -245,17 +239,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_cdr_network_port:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets_cdr_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.device.read.bytes.rate_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -280,12 +263,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outpoing.packets_cdr_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       memory.resident_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -305,11 +282,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_cdr_network_port:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.device.write.bytes.rate_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -322,9 +294,8 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_cdr_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      feature_cdr_network_port_1:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -416,13 +387,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes.rate_cdr_network_port:
+      network.outgoing.bytes_oam_private_net_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes_oam_private_net_network_port:
+      network.incoming.packets.rate_cdr_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -440,6 +411,17 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.incoming.packets_cdr_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_cdr_network_port_1:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.write.requests.rate_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -447,6 +429,12 @@ node_types:
         - 1
         - UNBOUNDED
       disk.device.allocation_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_cdr_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -464,14 +452,15 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      binding_cdr_network_port_1:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
       scalable_QRouter1:
         type: tosca.capabilities.Scalable
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes.rate_cdr_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -482,7 +471,7 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-      network.incoming.packets.rate_cdr_network_port:
+      network.incoming.bytes_cdr_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -512,6 +501,12 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outgoing.bytes.rate_cdr_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       os_QRouter1:
         type: tosca.capabilities.OperatingSystem
         occurrences:
@@ -535,12 +530,17 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      binding_cdr_network_port:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      network.incoming.bytes.rate_cdr_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
-        - 0
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_cdr_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
         - UNBOUNDED
       disk.write.bytes.rate_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
@@ -549,12 +549,6 @@ node_types:
         - 1
         - UNBOUNDED
       disk.device.write.bytes_QRouter1:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.packets.rate_cdr_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -578,6 +572,12 @@ node_types:
         - 1
         - UNBOUNDED
       disk.allocation_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_cdr_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -741,14 +741,14 @@ node_types:
         required: true
         status: SUPPORTED
     requirements:
-    - dependency_packet_mirror_network_port:
+    - dependency_packet_mirror_network_port_1:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_packet_mirror_network_port:
+    - link_packet_mirror_network_port_1:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
@@ -775,19 +775,6 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_oam_private_net_network_port:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - link_oam_private_net_network_port:
-        capability: tosca.capabilities.network.Linkable
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
     - dependency_vLBAgent_volume_1:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
@@ -795,6 +782,19 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
+    - dependency_oam_private_net_network_port_3:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_oam_private_net_network_port_3:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
     - dependency_vLBAgent_volume_2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
@@ -816,18 +816,25 @@ node_types:
         - 1
         - 1
     capabilities:
+      network.incoming.bytes.rate_packet_mirror_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.read.requests_vLBAgentInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_oam_private_net_network_port:
-        type: tosca.capabilities.Attachment
+      network.incoming.packets_packet_internal_network_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets_packet_internal_network_port:
+      network.outgoing.bytes.rate_oam_private_net_network_port_3:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -839,7 +846,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes_packet_mirror_network_port:
+      network.incoming.bytes.rate_oam_private_net_network_port_3:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -851,7 +858,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes.rate_oam_private_net_network_port:
+      network.incoming.packets_oam_private_net_network_port_3:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -863,9 +870,8 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outpoing.packets_oam_private_net_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      feature_oam_private_net_network_port_3:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -890,12 +896,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes.rate_packet_mirror_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.usage_vLBAgentInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -914,6 +914,24 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.incoming.packets_packet_mirror_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_packet_mirror_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_oam_private_net_network_port_3:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       binding_packet_internal_network_port:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
@@ -927,39 +945,35 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_oam_private_net_network_port:
+      attachment_packet_mirror_network_port_1:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_oam_private_net_network_port_3:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      feature_oam_private_net_network_port:
-        type: tosca.capabilities.Node
+      binding_oam_private_net_network_port_3:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
         occurrences:
-        - 1
-        - UNBOUNDED
-      network.outpoing.packets_packet_mirror_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.bytes_packet_mirror_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets_packet_mirror_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
+        - 0
         - UNBOUNDED
       endpoint_vLBAgentInstance:
         type: tosca.capabilities.Endpoint.Admin
         occurrences:
         - 1
+        - UNBOUNDED
+      binding_packet_mirror_network_port_1:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
         - UNBOUNDED
       binding_vLBAgentInstance:
         type: tosca.capabilities.network.Bindable
@@ -983,18 +997,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets.rate_packet_mirror_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.packets.rate_packet_mirror_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.read.bytes_vLBAgentInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1002,12 +1004,6 @@ node_types:
         - 1
         - UNBOUNDED
       memory.usage_vLBAgentInstance:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.bytes.rate_oam_private_net_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1048,12 +1044,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes_oam_private_net_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       memory_vLBAgentInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1078,9 +1068,31 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outgoing.packets.rate_oam_private_net_network_port_3:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_packet_mirror_network_port_1:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
       instance_vLBAgentInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_packet_mirror_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_oam_private_net_network_port_3:
+        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED
@@ -1090,7 +1102,25 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outgoing.packets.rate_packet_mirror_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.incoming.bytes_packet_internal_network_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_packet_mirror_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_packet_mirror_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1113,11 +1143,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_packet_mirror_network_port:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.write.requests.rate_vLBAgentInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1128,13 +1153,6 @@ node_types:
         type: tosca.capabilities.Attachment
         occurrences:
         - 1
-        - UNBOUNDED
-      binding_oam_private_net_network_port:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
         - UNBOUNDED
       disk.device.read.bytes_vLBAgentInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
@@ -1165,43 +1183,25 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_packet_mirror_network_port:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
-      binding_packet_mirror_network_port:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
-        - UNBOUNDED
-      network.incoming.packets_oam_private_net_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.bytes.rate_packet_mirror_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets.rate_oam_private_net_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.device.read.bytes.rate_vLBAgentInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
+      network.outgoing.bytes_oam_private_net_network_port_3:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       cpu.delta_vLBAgentInstance:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_oam_private_net_network_port_3:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1254,6 +1254,12 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.incoming.packets.rate_packet_mirror_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       vcpus_vLBAgentInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1272,12 +1278,6 @@ node_types:
         - 1
         - UNBOUNDED
       disk.write.bytes.rate_vLBAgentInstance:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.packets.rate_oam_private_net_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1421,6 +1421,32 @@ node_types:
         required: true
         status: SUPPORTED
     requirements:
+    - dependency_packet_internal_network_port_2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_packet_internal_network_port_2:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_oam_private_net_network_port_2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_oam_private_net_network_port_2:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
     - dependency_packet_mirror_network_port:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
@@ -1455,32 +1481,6 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_oam_private_net_network_port:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - link_oam_private_net_network_port:
-        capability: tosca.capabilities.network.Linkable
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
-    - dependency_packet_internal_network_port:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - link_packet_internal_network_port:
-        capability: tosca.capabilities.network.Linkable
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
     - dependency_vLBInstance:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
@@ -1496,18 +1496,19 @@ node_types:
         - 0
         - UNBOUNDED
     capabilities:
-      attachment_oam_private_net_network_port:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets_packet_internal_network_port:
+      disk.iops_vLBInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.iops_vLBInstance:
+      network.incoming.packets_packet_internal_network_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_oam_private_net_network_port_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1529,6 +1530,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outgoing.bytes.rate_packet_internal_network_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_oam_private_net_network_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.write.bytes.rate_vLBInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1541,7 +1554,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes.rate_oam_private_net_network_port:
+      network.incoming.bytes.rate_oam_private_net_network_port_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1553,7 +1566,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outpoing.packets_oam_private_net_network_port:
+      feature_oam_private_net_network_port_2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes_packet_internal_network_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets.rate_packet_internal_network_port_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1572,13 +1596,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes.rate_packet_internal_network_port:
+      network.outgoing.bytes.rate_packet_mirror_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes.rate_packet_mirror_network_port:
+      network.outpoing.packets_packet_internal_network_port_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1590,20 +1614,19 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      binding_packet_internal_network_port:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
-        - UNBOUNDED
-      instance_vLBInstance:
+      network.outpoing.packets_oam_private_net_network_port_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_oam_private_net_network_port:
+      network.incoming.packets.rate_oam_private_net_network_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      instance_vLBInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1614,10 +1637,12 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_oam_private_net_network_port:
-        type: tosca.capabilities.Node
+      binding_oam_private_net_network_port_2:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
         occurrences:
-        - 1
+        - 0
         - UNBOUNDED
       disk.device.latency_vLBInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
@@ -1630,6 +1655,13 @@ node_types:
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
+        - UNBOUNDED
+      binding_packet_internal_network_port_2:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
         - UNBOUNDED
       network.incoming.bytes_packet_mirror_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
@@ -1649,11 +1681,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_packet_internal_network_port:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
       network.incoming.packets.rate_packet_mirror_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1666,13 +1693,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes.rate_oam_private_net_network_port:
+      memory_vLBInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      memory_vLBInstance:
+      network.incoming.bytes.rate_packet_internal_network_port_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1685,12 +1712,6 @@ node_types:
         - 1
         - UNBOUNDED
       disk.write.bytes_vLBInstance:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.bytes_oam_private_net_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1719,12 +1740,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.packets.rate_packet_internal_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.capacity_vLBInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1737,8 +1752,19 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      attachment_packet_internal_network_port_2:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
       attachment_vLB_volume_0:
         type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_oam_private_net_network_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -1765,12 +1791,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes_packet_internal_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.write.requests.rate_vLBInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1783,15 +1803,14 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_packet_internal_network_port:
+      network.outgoing.packets.rate_packet_internal_network_port_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets.rate_packet_internal_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      attachment_oam_private_net_network_port_2:
+        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED
@@ -1806,13 +1825,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      binding_oam_private_net_network_port:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
-        - UNBOUNDED
       disk.device.read.requests_vLBInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1825,7 +1837,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.incoming.bytes_packet_internal_network_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       feature_packet_mirror_network_port:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_packet_internal_network_port_2:
         type: tosca.capabilities.Node
         occurrences:
         - 1
@@ -1837,19 +1860,19 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-      network.incoming.packets_oam_private_net_network_port:
+      network.outgoing.bytes_oam_private_net_network_port_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_oam_private_net_network_port_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
       network.incoming.bytes.rate_packet_mirror_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.packets.rate_oam_private_net_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -1895,12 +1918,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes.rate_packet_internal_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       cpu_vLBInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1914,12 +1931,6 @@ node_types:
         - UNBOUNDED
       endpoint_vLBInstance:
         type: tosca.capabilities.Endpoint.Admin
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outpoing.packets_packet_internal_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -1946,18 +1957,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_packet_internal_network_port:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
       cpu_util_vLBInstance:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.packets.rate_oam_private_net_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2152,6 +2152,19 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
+    - dependency_oam_private_net_network_port_1:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_oam_private_net_network_port_1:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
     - dependency_cdr_network_port:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
@@ -2165,27 +2178,14 @@ node_types:
         occurrences:
         - 1
         - 1
-    - dependency_oam_private_net_network_port:
+    - dependency_packet_internal_network_port_1:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_oam_private_net_network_port:
-        capability: tosca.capabilities.network.Linkable
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
-    - dependency_packet_internal_network_port:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - link_packet_internal_network_port:
+    - link_packet_internal_network_port_1:
         capability: tosca.capabilities.network.Linkable
         relationship: tosca.relationships.network.LinksTo
         occurrences:
@@ -2210,18 +2210,31 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_oam_private_net_network_port:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.iops_ProbeInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets_packet_internal_network_port:
+      network.incoming.packets_packet_internal_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_oam_private_net_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.packets_oam_private_net_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.bytes.rate_packet_internal_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2243,13 +2256,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes.rate_oam_private_net_network_port:
+      feature_oam_private_net_network_port_1:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes.rate_oam_private_net_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.outpoing.packets_oam_private_net_network_port:
+      network.outgoing.bytes_packet_internal_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2261,7 +2279,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes.rate_packet_internal_network_port:
+      network.incoming.packets.rate_packet_internal_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2278,7 +2296,19 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      network.outpoing.packets_packet_internal_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.write.bytes.rate_ProbeInstance:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outpoing.packets_oam_private_net_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2297,18 +2327,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      binding_packet_internal_network_port:
+      network.incoming.packets.rate_oam_private_net_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_oam_private_net_network_port_1:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
         occurrences:
         - 0
-        - UNBOUNDED
-      network.incoming.bytes_oam_private_net_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
         - UNBOUNDED
       memory_ProbeInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
@@ -2316,23 +2346,14 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_oam_private_net_network_port:
-        type: tosca.capabilities.Node
+      binding_packet_internal_network_port_1:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
         occurrences:
-        - 1
-        - UNBOUNDED
-      attachment_packet_internal_network_port:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
+        - 0
         - UNBOUNDED
       disk.device.read.requests_ProbeInstance:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.incoming.bytes.rate_oam_private_net_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2385,7 +2406,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes_oam_private_net_network_port:
+      network.incoming.bytes.rate_packet_internal_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2397,14 +2418,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      endpoint_ProbeInstance:
-        type: tosca.capabilities.Endpoint.Admin
+      attachment_packet_internal_network_port_1:
+        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.packets.rate_packet_internal_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      endpoint_ProbeInstance:
+        type: tosca.capabilities.Endpoint.Admin
         occurrences:
         - 1
         - UNBOUNDED
@@ -2415,6 +2435,12 @@ node_types:
         - 1
         - UNBOUNDED
       disk.read.bytes.rate_ProbeInstance:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.outgoing.packets.rate_oam_private_net_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2431,15 +2457,14 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes_packet_internal_network_port:
+      network.outgoing.packets.rate_packet_internal_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.bytes_packet_internal_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      attachment_oam_private_net_network_port_1:
+        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED
@@ -2484,12 +2509,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets.rate_packet_internal_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       attachment_vprobe_volume_1:
         type: tosca.capabilities.Attachment
         occurrences:
@@ -2506,13 +2525,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      binding_oam_private_net_network_port:
-        type: tosca.capabilities.network.Bindable
-        valid_source_types:
-        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
-        occurrences:
-        - 0
-        - UNBOUNDED
       binding_ProbeInstance:
         type: tosca.capabilities.network.Bindable
         occurrences:
@@ -2525,6 +2537,12 @@ node_types:
         - 1
         - UNBOUNDED
       disk.capacity_ProbeInstance:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_packet_internal_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2552,9 +2570,8 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets_oam_private_net_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      feature_packet_internal_network_port_1:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -2563,7 +2580,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.incoming.packets.rate_oam_private_net_network_port:
+      network.outgoing.bytes_oam_private_net_network_port_1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      network.incoming.bytes_oam_private_net_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -2605,12 +2628,6 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outgoing.bytes.rate_packet_internal_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       binding_cdr_network_port:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
@@ -2636,24 +2653,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      network.outpoing.packets_packet_internal_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_packet_internal_network_port:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
       disk.device.read.bytes.rate_ProbeInstance:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      network.outgoing.packets.rate_oam_private_net_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:

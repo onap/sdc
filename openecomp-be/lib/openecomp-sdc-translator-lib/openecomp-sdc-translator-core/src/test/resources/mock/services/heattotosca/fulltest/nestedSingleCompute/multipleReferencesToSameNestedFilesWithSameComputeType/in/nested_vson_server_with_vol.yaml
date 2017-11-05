@@ -145,7 +145,7 @@ resources:
     type: OS::Heat::SwiftSignalHandle
 
 # vSON server OAM network port
-  vson_server_oam_net_port_0:
+  vson_server_oam_net_port_00:
     type: OS::Neutron::Port
     properties:
       name: 
@@ -162,17 +162,17 @@ resources:
       - {get_param: oam_net_security_group_id}
 
 # Attach Cinder volume to the server
-  vson_server_volume_attach:
+  vson_server_volume_attach_1:
     type: OS::Cinder::VolumeAttachment
-    depends_on: vson_server
+    depends_on: vson_server_2
     properties:
-      instance_uuid: {get_resource: vson_server}
+      instance_uuid: {get_resource: vson_server_2}
       volume_id: {get_param: [volume_ids, {get_param: instance_index}]}
 
 # Create vSON server 
-  vson_server:
+  vson_server_2:
     type: OS::Nova::Server
-    depends_on: [vson_server_oam_net_port_0]
+    depends_on: [vson_server_oam_net_port_00]
     properties:
       name: {get_param: [vson_vm_names, {get_param: instance_index}]}
       availability_zone: {get_param: [availability_zones, {get_param: instance_index}]}
@@ -186,7 +186,7 @@ resources:
         vf_module_id: {get_param: vf_module_id}
         vm_role: {get_param: vfc_role}
       networks:
-      - port: {get_resource: vson_server_oam_net_port_0}
+      - port: {get_resource: vson_server_oam_net_port_00}
       scheduler_hints:
         group: {get_param: vson_server_group_id}
       user_data_format: RAW

@@ -180,7 +180,7 @@ topology_template:
           cdr_network_ip_0:
           - UNSUPPORTED_ATTRIBUTE_cdr_network_port.fixed_ip_0s
           packet_internal_network_ip_0:
-          - UNSUPPORTED_ATTRIBUTE_packet_internal_network_port.fixed_ip_0s
+          - UNSUPPORTED_ATTRIBUTE_packet_internal_network_port_1.fixed_ip_0s
           version_number:
             get_input: vProbe_version_name
           vprobe_type:
@@ -207,7 +207,7 @@ topology_template:
           mount_colon__slash_config: vprobe_volume_2
           oam_private_network_cidr:
             get_attribute:
-            - oam_private_net_network_port
+            - oam_private_net_network_port_1
             - subnets
             - 0
             - cidr
@@ -229,7 +229,7 @@ topology_template:
             get_input: vprobe_AppDependenciesMachineType
           packet_internal_network_cidr:
             get_attribute:
-            - packet_internal_network_port
+            - packet_internal_network_port_1
             - subnets
             - 0
             - cidr
@@ -237,7 +237,7 @@ topology_template:
             get_input: vProbe_node_count
           DPDK: DPDK_IP
           oam_private_network_ip_0:
-          - UNSUPPORTED_ATTRIBUTE_oam_private_net_network_port.fixed_ip_0s
+          - UNSUPPORTED_ATTRIBUTE_oam_private_net_network_port_1.fixed_ip_0s
           region:
             get_input: region_name
           manager_oam_direct_ip_0:
@@ -322,28 +322,7 @@ topology_template:
         size: '(get_input : vprobe_volume_size_0) * 1024'
         description:
           get_input: vprobe_volume_name_0
-    cdr_network_port:
-      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
-      properties:
-        ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        security_groups:
-        - get_input: security_group
-        mac_requirements:
-          mac_count_required:
-            is_required: false
-        network:
-          get_input: cdr_network
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: ProbeInstance
-          relationship: tosca.relationships.network.BindsTo
-    oam_private_net_network_port:
+    oam_private_net_network_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         ip_requirements:
@@ -365,7 +344,28 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: ProbeInstance
           relationship: tosca.relationships.network.BindsTo
-    packet_internal_network_port:
+    cdr_network_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: cdr_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ProbeInstance
+          relationship: tosca.relationships.network.BindsTo
+    packet_internal_network_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         ip_requirements:
@@ -412,9 +412,9 @@ topology_template:
       - vprobe_volume_2
       - vprobe_volume_1
       - vprobe_volume_0
+      - oam_private_net_network_port_1
       - cdr_network_port
-      - oam_private_net_network_port
-      - packet_internal_network_port
+      - packet_internal_network_port_1
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vProbeTemplate
     capabilities:
@@ -427,15 +427,21 @@ topology_template:
       disk.device.write.requests_ProbeInstance:
       - ProbeInstance
       - disk.device.write.requests
-      attachment_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - attachment
       disk.iops_ProbeInstance:
       - ProbeInstance
       - disk.iops
-      network.incoming.packets_packet_internal_network_port:
-      - packet_internal_network_port
+      network.incoming.packets_packet_internal_network_port_1:
+      - packet_internal_network_port_1
       - network.incoming.packets
+      network.outgoing.bytes.rate_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
+      - network.outgoing.bytes.rate
+      network.incoming.packets_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
+      - network.incoming.packets
+      network.outgoing.bytes.rate_packet_internal_network_port_1:
+      - packet_internal_network_port_1
+      - network.outgoing.bytes.rate
       attachment_cdr_network_port:
       - cdr_network_port
       - attachment
@@ -445,54 +451,57 @@ topology_template:
       feature_ProbeInstance:
       - ProbeInstance
       - feature
-      network.outgoing.bytes.rate_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.outgoing.bytes.rate
-      network.outpoing.packets_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.outpoing.packets
+      feature_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
+      - feature
+      network.incoming.bytes.rate_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
+      - network.incoming.bytes.rate
+      network.outgoing.bytes_packet_internal_network_port_1:
+      - packet_internal_network_port_1
+      - network.outgoing.bytes
       network.outpoing.packets_cdr_network_port:
       - cdr_network_port
       - network.outpoing.packets
-      network.incoming.bytes.rate_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.incoming.bytes.rate
+      network.incoming.packets.rate_packet_internal_network_port_1:
+      - packet_internal_network_port_1
+      - network.incoming.packets.rate
       disk.device.latency_ProbeInstance:
       - ProbeInstance
       - disk.device.latency
       feature_cdr_network_port:
       - cdr_network_port
       - feature
+      network.outpoing.packets_packet_internal_network_port_1:
+      - packet_internal_network_port_1
+      - network.outpoing.packets
       disk.write.bytes.rate_ProbeInstance:
       - ProbeInstance
       - disk.write.bytes.rate
+      network.outpoing.packets_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
+      - network.outpoing.packets
       network.incoming.bytes_cdr_network_port:
       - cdr_network_port
       - network.incoming.bytes
       host_ProbeInstance:
       - ProbeInstance
       - host
-      binding_packet_internal_network_port:
-      - packet_internal_network_port
+      network.incoming.packets.rate_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
+      - network.incoming.packets.rate
+      binding_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
       - binding
-      network.incoming.bytes_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.incoming.bytes
       memory_ProbeInstance:
       - ProbeInstance
       - memory
-      feature_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - feature
-      attachment_packet_internal_network_port:
-      - packet_internal_network_port
-      - attachment
+      binding_packet_internal_network_port_1:
+      - packet_internal_network_port_1
+      - binding
       disk.device.read.requests_ProbeInstance:
       - ProbeInstance
       - disk.device.read.requests
-      network.incoming.bytes.rate_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.incoming.bytes.rate
       memory.resident_ProbeInstance:
       - ProbeInstance
       - memory.resident
@@ -517,36 +526,39 @@ topology_template:
       disk.write.bytes_ProbeInstance:
       - ProbeInstance
       - disk.write.bytes
-      network.outgoing.bytes_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.outgoing.bytes
+      network.incoming.bytes.rate_packet_internal_network_port_1:
+      - packet_internal_network_port_1
+      - network.incoming.bytes.rate
       disk.device.capacity_ProbeInstance:
       - ProbeInstance
       - disk.device.capacity
+      attachment_packet_internal_network_port_1:
+      - packet_internal_network_port_1
+      - attachment
       endpoint_ProbeInstance:
       - ProbeInstance
       - endpoint
-      network.outgoing.packets.rate_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.outgoing.packets.rate
       disk.ephemeral.size_ProbeInstance:
       - ProbeInstance
       - disk.ephemeral.size
       disk.read.bytes.rate_ProbeInstance:
       - ProbeInstance
       - disk.read.bytes.rate
+      network.outgoing.packets.rate_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
+      - network.outgoing.packets.rate
       disk.latency_ProbeInstance:
       - ProbeInstance
       - disk.latency
       os_ProbeInstance:
       - ProbeInstance
       - os
-      network.outgoing.bytes_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.outgoing.bytes
-      network.incoming.bytes_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.incoming.bytes
+      network.outgoing.packets.rate_packet_internal_network_port_1:
+      - packet_internal_network_port_1
+      - network.outgoing.packets.rate
+      attachment_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
+      - attachment
       cpu_util_ProbeInstance:
       - ProbeInstance
       - cpu_util
@@ -568,9 +580,6 @@ topology_template:
       attachment_vprobe_volume_2:
       - vprobe_volume_2
       - attachment
-      network.incoming.packets.rate_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.incoming.packets.rate
       attachment_vprobe_volume_1:
       - vprobe_volume_1
       - attachment
@@ -580,9 +589,6 @@ topology_template:
       network.outgoing.bytes.rate_cdr_network_port:
       - cdr_network_port
       - network.outgoing.bytes.rate
-      binding_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - binding
       binding_ProbeInstance:
       - ProbeInstance
       - binding
@@ -592,6 +598,9 @@ topology_template:
       disk.capacity_ProbeInstance:
       - ProbeInstance
       - disk.capacity
+      network.incoming.bytes_packet_internal_network_port_1:
+      - packet_internal_network_port_1
+      - network.incoming.bytes
       disk.write.requests.rate_ProbeInstance:
       - ProbeInstance
       - disk.write.requests.rate
@@ -604,15 +613,18 @@ topology_template:
       feature_vprobe_volume_2:
       - vprobe_volume_2
       - feature
-      network.incoming.packets_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.incoming.packets
+      feature_packet_internal_network_port_1:
+      - packet_internal_network_port_1
+      - feature
       feature_vprobe_volume_0:
       - vprobe_volume_0
       - feature
-      network.incoming.packets.rate_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.incoming.packets.rate
+      network.outgoing.bytes_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
+      - network.outgoing.bytes
+      network.incoming.bytes_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
+      - network.incoming.bytes
       disk.device.read.requests.rate_ProbeInstance:
       - ProbeInstance
       - disk.device.read.requests.rate
@@ -631,9 +643,6 @@ topology_template:
       disk.usage_ProbeInstance:
       - ProbeInstance
       - disk.usage
-      network.outgoing.bytes.rate_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.outgoing.bytes.rate
       binding_cdr_network_port:
       - cdr_network_port
       - binding
@@ -646,34 +655,19 @@ topology_template:
       network.outgoing.packets.rate_cdr_network_port:
       - cdr_network_port
       - network.outgoing.packets.rate
-      network.outpoing.packets_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.outpoing.packets
-      feature_packet_internal_network_port:
-      - packet_internal_network_port
-      - feature
       disk.device.read.bytes.rate_ProbeInstance:
       - ProbeInstance
       - disk.device.read.bytes.rate
-      network.outgoing.packets.rate_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.outgoing.packets.rate
     requirements:
-      dependency_packet_internal_network_port:
-      - packet_internal_network_port
-      - dependency
-      link_packet_internal_network_port:
-      - packet_internal_network_port
+      link_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
       - link
-      dependency_oam_private_net_network_port:
-      - oam_private_net_network_port
+      dependency_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
       - dependency
       dependency_cdr_network_port:
       - cdr_network_port
       - dependency
-      link_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - link
       dependency_vprobe_volume_1:
       - vprobe_volume_1
       - dependency
@@ -689,6 +683,12 @@ topology_template:
       local_storage_ProbeInstance:
       - ProbeInstance
       - local_storage
+      dependency_packet_internal_network_port_1:
+      - packet_internal_network_port_1
+      - dependency
+      link_packet_internal_network_port_1:
+      - packet_internal_network_port_1
+      - link
       dependency_vprobe_volume_2:
       - vprobe_volume_2
       - dependency

@@ -47,31 +47,31 @@ topology_template:
           - test_contrailV2_net
           - fq_name
       requirements:
-      - link_cmaui_port_2_test_nested2Level:
+      - link_cmaui_port_10:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_cmaui_port_21_test_nested2Level:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_cmaui_port_22_test_nested2Level:
           capability: tosca.capabilities.network.Linkable
           node: test_contrailV2_net
           relationship: tosca.relationships.network.LinksTo
-      - link_cmaui_port_3_test_nested3Level_test_nested2Level:
+      - link_cmaui_port_32_test_nested3Level_test_nested2Level:
           capability: tosca.capabilities.network.Linkable
           node: test_net
           relationship: tosca.relationships.network.LinksTo
-      - link_cmaui_port_3_test_nested4Level_test_nested3Level_test_nested2Level:
+      - link_cmaui_port_43_test_nested4Level_test_nested3Level_test_nested2Level:
           capability: tosca.capabilities.network.Linkable
           node: test_net
           relationship: tosca.relationships.network.LinksTo
-      - link_cmaui_port_2_test_nested4Level_test_nested3Level_test_nested2Level:
+      - link_cmaui_port_42_test_nested4Level_test_nested3Level_test_nested2Level:
           capability: tosca.capabilities.network.Linkable
           node: test_net
           relationship: tosca.relationships.network.LinksTo
-      - link_cmaui_port_2_test_nested3Level_test_nested2Level:
-          capability: tosca.capabilities.network.Linkable
-          node: test_net
-          relationship: tosca.relationships.network.LinksTo
-      - link_cmaui_port_1_test_nested2Level:
-          capability: tosca.capabilities.network.Linkable
-          node: test_net
-          relationship: tosca.relationships.network.LinksTo
-      - link_cmaui_port_0:
+      - link_cmaui_port_33_test_nested3Level_test_nested2Level:
           capability: tosca.capabilities.network.Linkable
           node: test_net
           relationship: tosca.relationships.network.LinksTo
@@ -96,11 +96,11 @@ topology_template:
           - service_template_filter
           - index_value
       requirements:
-      - link_cmaui_port_3_test_nested4Level:
+      - link_cmaui_port_32:
           capability: tosca.capabilities.network.Linkable
           node: test_contrail_net
           relationship: tosca.relationships.network.LinksTo
-      - link_cmaui_port_2:
+      - link_cmaui_port_43_test_nested4Level:
           capability: tosca.capabilities.network.Linkable
           node: test_contrail_net
           relationship: tosca.relationships.network.LinksTo

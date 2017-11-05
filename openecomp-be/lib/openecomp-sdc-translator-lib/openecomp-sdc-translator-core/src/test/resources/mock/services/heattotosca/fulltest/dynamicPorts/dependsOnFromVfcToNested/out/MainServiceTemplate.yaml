@@ -356,36 +356,36 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_sbg_sc_management_1_port_0_mac_requirements:
-          mac_count_required:
-            is_required: true
         nested_avpn_net_id:
           get_input: avpn_net_id
         service_template_filter:
           substitute_service_template: nested_DPA3_New_VNF_TSBGvServiceTemplate.yaml
-        port_sbg_sc_internal_0_port_0_mac_requirements:
+        port_sbg_sc_management_1_port_01_mac_requirements:
           mac_count_required:
             is_required: true
-        port_sbg_sc_internal_0_port_0_network_role_tag: internal
+        port_sbg_sc_internal_0_port_01_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
+        port_sbg_sc_management_1_port_01_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         nested_sbg_AVPN_vlan_tag_list:
           get_input: sbg_AVPN_vlan_tag_list
-        port_sbg_sc_internal_0_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
+        port_sbg_sc_internal_0_port_01_mac_requirements:
+          mac_count_required:
             is_required: true
-          floating_ip_count_required:
-            is_required: true
-        port_sbg_sc_management_1_port_0_network_role_tag: management
-        port_sbg_sc_management_1_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: true
+        port_sbg_sc_management_1_port_01_network_role_tag: management
         nested_sbg_avpn_ip_0:
           get_input:
           - sbg_avpn_ips
           - 0
+        port_sbg_sc_internal_0_port_01_network_role_tag: internal
         nested_avpn_subnet_id:
           get_input: avpn_subnet_id
         nested_sbg_AVPN_counter: '%index%'

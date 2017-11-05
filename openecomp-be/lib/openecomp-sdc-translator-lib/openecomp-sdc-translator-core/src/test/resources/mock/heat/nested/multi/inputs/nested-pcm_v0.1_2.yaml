@@ -74,7 +74,7 @@ resources:
       - config: { get_resource: network}
       - config: { get_resource: script_init}
 
-  server_pcm:
+  server_pcm_2:
     type: OS::Nova::Server
     properties:
       config_drive: "True"
@@ -107,14 +107,7 @@ resources:
       fixed_ips:
         - ip_address: { get_param: oam_net_ip }
       security_groups: [{ get_param: security_group_name }]
-
-  #pcm_vol_attachment:
-  #  type: OS:: Cinder::VolumeAttachment
-  #  properties:
-  #    volume_id: { get_param: pcm_vol }
-  #    mountpoint: /dev/vdb
-  #    instance_uuid: { get_resource: server_pcm }
 outputs:
   server_pcm_id:
     description: the pcm nova service id
-    value: { get_resource: server_pcm }
+    value: { get_resource: server_pcm_2 }

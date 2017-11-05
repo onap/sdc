@@ -34,14 +34,14 @@ parameters:
     type: string
 resources:
 
-  pd_server_pattern4_port_1:
+  pd_server_pattern4_port_01:
     type: OS::Neutron::Port
     properties:
       network: { get_param: net }
       fixed_ips: [{"ip_address": {get_param: [pd_server_pattern4_ips, 0]}}]
       replacement_policy: AUTO
 
-  pd_server_pattern4_port_2:
+  pd_server_pattern4_port_02:
     type: OS::Neutron::Port
     properties:
       network: { get_param: net }
@@ -56,8 +56,8 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: pd_server_pattern4_flavor }
       networks:
-      - port: { get_resource: pd_server_pattern4_port_1 }
-      - port: { get_resource: pd_server_pattern4_port_2 }
+      - port: { get_resource: pd_server_pattern4_port_01 }
+      - port: { get_resource: pd_server_pattern4_port_02 }
 
 outputs:
   pattern4_attr_1:
