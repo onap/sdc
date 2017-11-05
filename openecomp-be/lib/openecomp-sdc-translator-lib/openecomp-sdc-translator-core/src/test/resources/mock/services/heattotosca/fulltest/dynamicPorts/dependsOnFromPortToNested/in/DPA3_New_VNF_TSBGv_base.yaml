@@ -1,0 +1,222 @@
+heat_template_version: 2013-05-23
+description: >
+  SC1, SC2, PL3 and PL4. This is the main template, to be used to create an initial stack, with 1 mated pair
+parameters:
+  ntp_servers:
+    type: comma_delimited_list
+    description: comma delimited list of NTP servers required by System Controller VMs. Exactly 2 IPv4 values are required
+  sbg_pl_flavor_name:
+    type: string
+    description: Flavor to use for PL VM. Minimum 8 non-HT vCPU and 64GB RAM required
+  sbg_sc_flavor_name:
+    type: string
+    description: Flavor to use for SC VM. Minimum 4 non-HT vCPU and 16GB RAM required
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+  vf_module_id:
+    type: string
+    description: Unique ID for this VNF Module instance
+  sbg_sc_names:
+    type: comma_delimited_list
+    description: comma delimited list of VM names assigned to System Controller VMs
+  sbg_pl_names:
+    type: comma_delimited_list
+    description: comma delimited list of VM names assigned to Payload VMs
+  sbg_internal_cidr:
+    type: string
+    description: Network address (CIDR notation) for SBG intra-VM communication, IPv4. Don't deviate from default!
+    constraints:
+      - allowed_pattern: '(?:[0-9]{1,3}\.){3}[0-9]{1,3}\/[1-2][0-9]'
+        description: A valid IPv4 CIDR notation must be provided, e.g. 192.168.0.0/24
+  sbg_internal_allocation_pool_start_ip:
+    type: string
+    description: The start IP of the Internal network's allocation pool. Don't deviate from default!
+    constraints:
+      - allowed_pattern: '(?:[0-9]{1,3}\.){3}[0-9]{1,3}'
+        description: A valid IPv4 address must be provided, e.g 169.254.100.253
+  sbg_internal_allocation_pool_end_ip:
+    type: string
+    description: The end IP of the Internal network's allocation pool. Don't deviate from default!
+    constraints:
+      - allowed_pattern: '(?:[0-9]{1,3}\.){3}[0-9]{1,3}'
+        description: A valid IPv4 address must be provided, e.g 169.254.100.254
+  internal_net_id:
+    type: string
+    description: the UUID of the operator-created Internal network
+    constraints:
+      - allowed_pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+        description: A valid OpenStack UUID must be provided
+  sbg_internal_ips:
+    type: comma_delimited_list
+    description: comma delimited list of IPv4 addresses of SBG VMs on the Internal network. Don't deviate from the default values.
+  sbg_internal_mac_addresses:
+    type: comma_delimited_list
+    description: comma delimited list of MAC addresses for the VMs on the Internal network
+  sbg_management_cidr:
+    type: string
+    description: Network address (CIDR notation) for SBG Management Network, IPv4
+    constraints:
+      - allowed_pattern: '(?:[0-9]{1,3}\.){3}[0-9]{1,3}\/[1-2][0-9]'
+        description: A valid IPv4 CIDR notation must be provided, e.g. 192.168.0.0/24
+  sbg_management_gateway_ip_0:
+    type: string
+    description: IPv4 IP address of the default gateway on Management network
+    constraints:
+      - allowed_pattern: '(?:[0-9]{1,3}\.){3}[0-9]{1,3}'
+        description: A valid IPv4 address must be provided, e.g 192.168.0.1
+  management_net_id:
+    type: string
+    description: the UUID of the operator-created Management network
+    constraints:
+      - allowed_pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+        description: A valid OpenStack UUID must be provided
+  management_subnet_id:
+    type: string
+    description: the UUID of the operator-created Management subnet, IPv4
+    constraints:
+      - allowed_pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+        description: A valid OpenStack UUID must be provided
+  sbg_management_mac_addresses:
+    type: comma_delimited_list
+    description: comma delimited list of MAC addresses for the VMs on the Management network
+  sbg_management_ips:
+    type: comma_delimited_list
+    description: comma delimited list of IPv4 addresses of SBG VMs on the Management network.
+  trunk_net_id:
+    type: string
+    description: the UUID of the operator-created Traffic network
+    constraints:
+       - allowed_pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+         description: A valid OpenStack UUID must be provided
+  core_subnet_id:
+    type: string
+    description: the UUID of the operator-created Core subnet, IPv4
+    constraints:
+       - allowed_pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+         description: A valid OpenStack UUID must be provided
+  sbg_AVPN_count:
+    type: number
+    description: The number of AVPN networks
+    constraints:
+       - range: { min: 1, max: 999 }
+  avpn_net_id:
+    type: comma_delimited_list
+    description: comma delimited list of the UUIDs of the operator-created AVPN networks
+  sbg_AVPN_vlan_tag_list:
+    type: comma_delimited_list
+    description: comma delimited list of internal VLAN TAG(s) used by AVPN networks
+  avpn_subnet_id:
+    type: comma_delimited_list
+    description: comma delimited list of the UUIDs of the operator created IPv4 AVPN subnets
+  sbg_avpn_ips:
+    type: comma_delimited_list
+    description: >
+       comma delimited list of IPv4 IPs to be used on AVPN networks. n*2 IP address expected where n is the number of PL VM pairs. The first two addresses are assigned to the first PL VM pair, second two IPs to the second PL VM pair, and so on. Note: this is true regardless of the number of AVPN networks and sbg_AVPN_count.
+  dummy_subnet_id:
+    type: string
+    description: the UUID of the operator-created dummy subnet, IPv4
+    constraints:
+       - allowed_pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+         description: A valid OpenStack UUID must be provided
+  sbg_management_floating_ip:
+    type: string
+    description: Moveable Management IP (VIP), IPv4
+    constraints:
+      - allowed_pattern: '(?:[0-9]{1,3}\.){3}[0-9]{1,3}'
+        description: A valid IPv4 address must be provided, e.g 192.168.0.1
+  availability_zone_0:
+    type: string
+    description: First availability zone ID or Name.
+  sbg_nfs_floating_ip:
+    type: string
+    description: Moveable IP (VIP) for NFS server on the Internal network, IPv4. Don't deviate from default!
+    constraints:
+      - allowed_pattern: '(?:[0-9]{1,3}\.){3}[0-9]{1,3}'
+        description: A valid IPv4 address must be provided, e.g 192.168.0.1
+  sbg_comte_floating_ip:
+    type: string
+    description: Moveable IP (VIP) for COM on the Internal network, IPv4. Don't deviate from default!
+    constraints:
+      - allowed_pattern: '(?:[0-9]{1,3}\.){3}[0-9]{1,3}'
+        description: A valid IPv4 address must be provided, e.g 192.168.0.1
+  sbg_boot_floating_ip:
+    type: string
+    description: Moveable IP (VIP) for TFTP server on the Internal network, IPv4. Don't deviate from default!
+    constraints:
+      - allowed_pattern: '(?:[0-9]{1,3}\.){3}[0-9]{1,3}'
+        description: A valid IPv4 address must be provided, e.g 192.168.0.1
+
+  sbg_sc_volume_id_0:
+    type: string
+    description: the UUID of the pre-created Cinder volume attached to SC-1 as root volume
+    constraints:
+       - allowed_pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+         description: A valid OpenStack UUID must be provided
+  sbg_sc_volume_id_1:
+    type: string
+    description: the UUID of the pre-created Cinder volume attached to SC-1 as tools volume
+    constraints:
+       - allowed_pattern: '[a-f0-9]{8}\-(?:[a-f0-9]{4}\-){3}[a-f0-9]{12}'
+         description: A valid OpenStack UUID must be provided
+
+resources:
+  sbg_sc_internal_0_port_0:
+    type: OS::Neutron::Port
+    properties:
+      replacement_policy: AUTO
+      network_id: { get_param: internal_net_id }
+      fixed_ips:
+      - ip_address: { get_param: [sbg_internal_ips ,0] }
+      allowed_address_pairs:
+      - ip_address: { get_param: sbg_nfs_floating_ip }
+      - ip_address: { get_param: sbg_comte_floating_ip }
+      - ip_address: { get_param: sbg_boot_floating_ip }
+      mac_address: { get_param: [sbg_internal_mac_addresses ,0] }
+
+  sbg_sc_management_1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      replacement_policy: AUTO
+      network_id: { get_param: management_net_id }
+      fixed_ips:
+      - ip_address: { get_param: [sbg_management_ips ,0] }
+      allowed_address_pairs:
+      - ip_address: { get_param: sbg_management_floating_ip }
+      mac_address: { get_param: [sbg_management_mac_addresses ,0] }
+
+  sbg_pl_trunk_subport_avpn_group_0:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: {get_param: sbg_AVPN_count}
+      resource_def:
+        type: DPA3_New_VNF_TSBGv_nested_AVPN_subport.yaml
+        properties:
+          nested_sbg_AVPN_vlan_tag_list: {get_param: sbg_AVPN_vlan_tag_list}
+          nested_avpn_net_id: {get_param: avpn_net_id}
+          nested_avpn_subnet_id: {get_param: avpn_subnet_id}
+          nested_sbg_avpn_ip_0: {get_param: [sbg_avpn_ips, 0]}
+          nested_sbg_AVPN_counter: '%index%'
+
+  sbg_sc_0:
+    type: OS::Nova::Server
+    depends_on: [ sbg_pl_trunk_subport_avpn_group_0 ]
+    properties:
+      name: { get_param: [sbg_sc_names, 0]}
+      metadata:
+        vnf_id: { get_param: vnf_id }
+        vf_module_id: { get_param: vf_module_id }
+      availability_zone: { get_param: availability_zone_0 }
+      block_device_mapping:
+      - device_name: "vda"
+        volume_id : { get_param : sbg_sc_volume_id_0 }
+        delete_on_termination : "false"
+      - device_name: "vdb"
+        volume_id : { get_param : sbg_sc_volume_id_1 }
+        delete_on_termination : "false"
+      flavor: { get_param: sbg_sc_flavor_name }
+      networks:
+      - port: { get_resource: sbg_sc_internal_0_port_0 }
+      - port: { get_resource: sbg_sc_management_1_port_0 }
+      config_drive: "true"
+      user_data_format: RAW
