@@ -1,6 +1,5 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.fulltest;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.BaseFullTranslationTest;
 
@@ -8,72 +7,38 @@ import java.io.IOException;
 
 public class UnifiedCompositionNestedSingleComputeFullTest extends BaseFullTranslationTest {
 
-    @Override
-    @Before
-    public void setUp() throws IOException {
-        // do not delete this function. it prevents the superclass setup from running
-    }
+    private static final String BASE_DIRECTORY = "/mock/services/heattotosca/fulltest/nestedSingleCompute/";
 
     @Test
     public void testNestedWithOneCompute() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedWithOneCompute/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedWithOneCompute/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "nestedWithOneCompute");
     }
 
     @Test
     public void testNestedWithOneComputeSamePortType() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedWithOneComputeDiffPortType/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedWithOneComputeDiffPortType/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "nestedWithOneComputeDiffPortType");
     }
 
     @Test
     public void testOneNestedWithTwoComputesOfSameType() throws IOException {
         //Not pattern 4 (Complex VFC)
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedWithTwoComputesOfSameType/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedWithTwoComputesOfSameType/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "nestedWithTwoComputesOfSameType");
     }
 
     @Test
     public void testOneNestedWithTwoDiffComputeTypes() throws IOException {
         //Not pattern 4 (Complex VFC)
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedWithTwoDiffComputeTypes/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedWithTwoDiffComputeTypes/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "nestedWithTwoDiffComputeTypes");
     }
 
     @Test
     public void testTwoNestedNodeTemplatesOfSameType() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/twoNestedNodeTemplatesWithSameComputeType/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/twoNestedNodeTemplatesWithSameComputeType/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "twoNestedNodeTemplatesWithSameComputeType");
     }
 
     @Test
     public void testTwoDiffNestedFilesWithSameComputeType() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/diffNestedFilesWithSameComputeType/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/diffNestedFilesWithSameComputeType/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "diffNestedFilesWithSameComputeType");
     }
 
     @Test
@@ -88,12 +53,7 @@ public class UnifiedCompositionNestedSingleComputeFullTest extends BaseFullTrans
          f. Security Rule to Port nested connection
          g. Security Rule to Port nested shared connection
          */
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedNodesConnectedIn/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedNodesConnectedIn/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "nestedNodesConnectedIn");
     }
 
     @Test
@@ -108,12 +68,7 @@ public class UnifiedCompositionNestedSingleComputeFullTest extends BaseFullTrans
           f. Get attribute in a non-consolidation entity resource from a nested compute resource
           g. Get attribute in a non-consolidation entity resource from a non-nested compute resource
          */
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedNodesGetAttrIn/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedNodesGetAttrIn/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "nestedNodesGetAttrIn");
     }
 
     @Test
@@ -126,62 +81,32 @@ public class UnifiedCompositionNestedSingleComputeFullTest extends BaseFullTrans
           d. From a non-nested consolidation entity resource
           e. From a regular non-consolidation entity resource
          */
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedOutputParamGetAttrIn/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedOutputParamGetAttrIn/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "nestedOutputParamGetAttrIn");
     }
 
     @Test
     public void testMultiLevelNestedComposition() throws IOException {
         //Not pattern 4 (Multi level Complex VFC)
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedMultiLevels/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedMultiLevels/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "nestedMultiLevels");
     }
 
     @Test
     public void testThreeNestedSameTypeTwoPointingToSameNestedFile() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/threeNestedSameTypeTwoPointingOnSameNestedFile/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/threeNestedSameTypeTwoPointingOnSameNestedFile/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "threeNestedSameTypeTwoPointingOnSameNestedFile");
     }
 
     @Test
     public void testThreeNestedSameTypePointingToDiffFiles() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/threeNestedPointingToThreeDiffNestedFilesSameComputeType/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/threeNestedPointingToThreeDiffNestedFilesSameComputeType/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "threeNestedPointingToThreeDiffNestedFilesSameComputeType");
     }
 
     @Test
     public void testMultipleReferencesToSameNestedFilesWithSameComputeType() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/multipleReferencesToSameNestedFilesWithSameComputeType/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/multipleReferencesToSameNestedFilesWithSameComputeType/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "multipleReferencesToSameNestedFilesWithSameComputeType");
     }
 
     @Test
     public void testDuplicateReq() throws IOException {
-        inputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/duplicateReqs/in";
-        outputFilesPath =
-            "/mock/services/heattotosca/fulltest/nestedSingleCompute/duplicateReqs/out";
-
-        testTranslationWithInit();
+        testTranslationWithInit(BASE_DIRECTORY + "duplicateReqs");
     }
 }

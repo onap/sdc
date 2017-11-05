@@ -1,0 +1,394 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_pd_server
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.compute.nodes.heat.pd_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_pd_oam1_port_0_network_role_tag:
+      type: string
+      required: true
+    port_pd_oam1_port_0_network_role:
+      type: string
+      required: true
+    port_pd_oam1_port_1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_pd_oam1_port_0_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    compute_pd_server_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_pd_server_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_flavor_name:
+      type: string
+      required: true
+    port_pd_oam1_port_1_order:
+      type: integer
+      required: true
+    port_pd_oam1_port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_pd_oam1_port_1_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd_oam1_port_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_pd_oam1_port_1_network_role:
+      type: string
+      required: true
+    port_pd_oam1_port_1_subnetpoolid:
+      type: string
+      required: true
+    port_pd_oam1_port_0_order:
+      type: integer
+      required: true
+    port_pd_oam1_port_1_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_pd_oam1_port_0_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_image_name:
+      type: string
+      required: true
+    port_pd_oam1_port_0_subnetpoolid:
+      type: string
+      required: true
+    port_pd_oam1_port_0_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_pd_oam1_port_1_network_role_tag:
+      type: string
+      required: true
+    port_pd_oam1_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_pd_oam1_port_0_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    compute_pd_server_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    pd_server:
+      type: org.openecomp.resource.vfc.compute.nodes.heat.pd_server
+      properties:
+        availability_zone:
+          get_input:
+          - compute_pd_server_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_pd_server_name
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_pd_server_user_data_format
+          - index_value
+    pd_server_pd_oam1_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        exCP_naming:
+          get_input: port_pd_oam1_port_1_exCP_naming
+        vlan_requirements:
+          get_input: port_pd_oam1_port_1_vlan_requirements
+        ip_requirements:
+          get_input: port_pd_oam1_port_1_ip_requirements
+        network_role_tag:
+          get_input: port_pd_oam1_port_1_network_role_tag
+        mac_requirements:
+          get_input: port_pd_oam1_port_1_mac_requirements
+        order:
+          get_input: port_pd_oam1_port_1_order
+        network_role:
+          get_input: port_pd_oam1_port_1_network_role
+        subnetpoolid:
+          get_input: port_pd_oam1_port_1_subnetpoolid
+        network:
+          get_input:
+          - port_pd_oam1_port_1_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pd_server
+          relationship: tosca.relationships.network.BindsTo
+    pd_server_pd_oam1_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        exCP_naming:
+          get_input: port_pd_oam1_port_0_exCP_naming
+        vlan_requirements:
+          get_input: port_pd_oam1_port_0_vlan_requirements
+        ip_requirements:
+          get_input: port_pd_oam1_port_0_ip_requirements
+        network_role_tag:
+          get_input: port_pd_oam1_port_0_network_role_tag
+        mac_requirements:
+          get_input: port_pd_oam1_port_0_mac_requirements
+        order:
+          get_input: port_pd_oam1_port_0_order
+        network_role:
+          get_input: port_pd_oam1_port_0_network_role
+        subnetpoolid:
+          get_input: port_pd_oam1_port_0_subnetpoolid
+        network:
+          get_input:
+          - port_pd_oam1_port_0_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pd_server
+          relationship: tosca.relationships.network.BindsTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.pd_server
+    capabilities:
+      scalable_pd_server:
+      - pd_server
+      - scalable
+      disk.read.bytes.rate_pd_server:
+      - pd_server
+      - disk.read.bytes.rate
+      memory.usage_pd_server:
+      - pd_server
+      - memory.usage
+      memory_pd_server:
+      - pd_server
+      - memory
+      disk.device.usage_pd_server:
+      - pd_server
+      - disk.device.usage
+      os_pd_server:
+      - pd_server
+      - os
+      disk.write.bytes.rate_pd_server:
+      - pd_server
+      - disk.write.bytes.rate
+      network.incoming.packets_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - network.incoming.packets
+      network.incoming.packets_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - network.incoming.packets
+      cpu_pd_server:
+      - pd_server
+      - cpu
+      feature_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - feature
+      cpu_util_pd_server:
+      - pd_server
+      - cpu_util
+      feature_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - feature
+      disk.device.write.requests.rate_pd_server:
+      - pd_server
+      - disk.device.write.requests.rate
+      disk.read.bytes_pd_server:
+      - pd_server
+      - disk.read.bytes
+      disk.device.read.bytes.rate_pd_server:
+      - pd_server
+      - disk.device.read.bytes.rate
+      disk.iops_pd_server:
+      - pd_server
+      - disk.iops
+      network.incoming.bytes_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - network.incoming.bytes
+      network.incoming.bytes_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - network.incoming.bytes
+      memory.resident_pd_server:
+      - pd_server
+      - memory.resident
+      cpu.delta_pd_server:
+      - pd_server
+      - cpu.delta
+      attachment_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - attachment
+      attachment_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - attachment
+      vcpus_pd_server:
+      - pd_server
+      - vcpus
+      disk.device.write.bytes.rate_pd_server:
+      - pd_server
+      - disk.device.write.bytes.rate
+      disk.device.write.requests_pd_server:
+      - pd_server
+      - disk.device.write.requests
+      endpoint_pd_server:
+      - pd_server
+      - endpoint
+      disk.capacity_pd_server:
+      - pd_server
+      - disk.capacity
+      network.incoming.packets.rate_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - network.incoming.packets.rate
+      disk.device.allocation_pd_server:
+      - pd_server
+      - disk.device.allocation
+      disk.allocation_pd_server:
+      - pd_server
+      - disk.allocation
+      network.incoming.packets.rate_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - network.incoming.packets.rate
+      binding_pd_server:
+      - pd_server
+      - binding
+      disk.read.requests_pd_server:
+      - pd_server
+      - disk.read.requests
+      feature_pd_server:
+      - pd_server
+      - feature
+      disk.usage_pd_server:
+      - pd_server
+      - disk.usage
+      disk.write.bytes_pd_server:
+      - pd_server
+      - disk.write.bytes
+      network.incoming.bytes.rate_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - network.incoming.bytes.rate
+      network.outgoing.packets.rate_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - network.outgoing.packets.rate
+      network.outgoing.bytes.rate_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - network.outgoing.bytes.rate
+      network.incoming.bytes.rate_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - network.incoming.bytes.rate
+      network.outgoing.bytes.rate_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - network.outgoing.bytes.rate
+      network.outgoing.packets.rate_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - network.outgoing.packets.rate
+      disk.device.read.requests.rate_pd_server:
+      - pd_server
+      - disk.device.read.requests.rate
+      disk.root.size_pd_server:
+      - pd_server
+      - disk.root.size
+      disk.device.read.bytes_pd_server:
+      - pd_server
+      - disk.device.read.bytes
+      disk.device.write.bytes_pd_server:
+      - pd_server
+      - disk.device.write.bytes
+      disk.device.read.requests_pd_server:
+      - pd_server
+      - disk.device.read.requests
+      instance_pd_server:
+      - pd_server
+      - instance
+      host_pd_server:
+      - pd_server
+      - host
+      disk.write.requests.rate_pd_server:
+      - pd_server
+      - disk.write.requests.rate
+      disk.ephemeral.size_pd_server:
+      - pd_server
+      - disk.ephemeral.size
+      disk.write.requests_pd_server:
+      - pd_server
+      - disk.write.requests
+      network.outgoing.bytes_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - network.outgoing.bytes
+      network.outgoing.bytes_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - network.outgoing.bytes
+      disk.device.latency_pd_server:
+      - pd_server
+      - disk.device.latency
+      network.outpoing.packets_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - network.outpoing.packets
+      disk.latency_pd_server:
+      - pd_server
+      - disk.latency
+      disk.device.capacity_pd_server:
+      - pd_server
+      - disk.device.capacity
+      network.outpoing.packets_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - network.outpoing.packets
+      binding_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - binding
+      binding_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - binding
+      disk.device.iops_pd_server:
+      - pd_server
+      - disk.device.iops
+    requirements:
+      local_storage_pd_server:
+      - pd_server
+      - local_storage
+      link_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - link
+      link_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - link
+      dependency_pd_server:
+      - pd_server
+      - dependency
+      dependency_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - dependency
+      dependency_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - dependency

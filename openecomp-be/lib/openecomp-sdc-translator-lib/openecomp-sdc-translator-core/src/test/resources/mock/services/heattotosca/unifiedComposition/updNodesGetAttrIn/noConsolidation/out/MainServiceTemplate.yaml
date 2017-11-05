@@ -228,7 +228,7 @@ topology_template:
             - CMAUI_volume_type
             - get_attribute:
               - FSB1
-              - FSB1_FSB_OAM_status
+              - FSB1_FSB1_OAM_status
           - 0
           - OS-EXT-IPS-MAC:mac_addr
     cmaui_volume2:
