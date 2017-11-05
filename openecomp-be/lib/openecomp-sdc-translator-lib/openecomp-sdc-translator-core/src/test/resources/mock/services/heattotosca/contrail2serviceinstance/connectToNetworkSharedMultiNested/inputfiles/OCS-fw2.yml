@@ -92,19 +92,19 @@ parameters:
 
 resources:
 
-  hsl_direct_net:
+  hsl_direct_net_2:
     type: OS::Contrail::VirtualNetwork
     properties:
       name: { get_param: HSL_direct_net_id }
 
-  hsl_ip_subnet:
+  hsl_ip_subnet_2:
     type: OS::Neutron::Subnet
     properties:
-      network_id: { get_resource: hsl_direct_net }
+      network_id: { get_resource: hsl_direct_net_2 }
       cidr: { get_param: HSL_direct_net_cidr }
       gateway_ip: { get_param: HSL_direct_net_gateway }
 
-  service_template:
+  service_template_2:
     type: OS::Contrail::ServiceTemplate
     properties:
       name: { get_param: st_name }
@@ -119,11 +119,11 @@ resources:
 
   service_instance3:
     type: OS::Contrail::ServiceInstance
-    depends_on: [ hsl_ip_subnet]
+    depends_on: [ hsl_ip_subnet_2]
     properties:
       name: { get_param: service_instance_name }
       availability_zone: { get_param: availability_zone_1 }
-      service_template: { get_resource: service_template }
+      service_template: { get_resource: service_template_2 }
       scale_out:
         max_instances: {get_param: max_num_fw_instances}
       interface_list: [
@@ -138,13 +138,13 @@ resources:
           }
           ]
 
-  service_instance1:
+  service_instance21:
     type: OS::Contrail::ServiceInstance
-    depends_on: [ hsl_ip_subnet]
+    depends_on: [ hsl_ip_subnet_2]
     properties:
       name: { get_param: service_instance_name }
       availability_zone: { get_param: availability_zone_1 }
-      service_template: { get_resource: service_template }
+      service_template: { get_resource: service_template_2 }
       scale_out:
         max_instances: {get_param: max_num_fw_instances}
       interface_list: [
@@ -159,7 +159,7 @@ resources:
           }
           ]
 
-  service_policy:
+  service_policy_2:
     type: OS::Contrail::NetworkPolicy
     depends_on: [ service_instance3 ]
     properties:
@@ -177,19 +177,19 @@ resources:
           },
           ]
 
-  service_policy_attach_direct_net:
+  service_policy_attach_direct_net_2:
     type: OS::Contrail::AttachPolicy
-    depends_on: [ service_policy ]
+    depends_on: [ service_policy_2 ]
     properties:
       network: { get_param: Cricket_OCS_direct_net_id }
-      policy: { get_attr: [service_policy, fq_name] }
+      policy: { get_attr: [service_policy_2, fq_name] }
 
-  service_policy_attach_protected_net:
+  service_policy_attach_protected_net_2:
     type: OS::Contrail::AttachPolicy
-    depends_on: [ service_policy ]
+    depends_on: [ service_policy_2 ]
     properties:
       network: { get_param: Cricket_OCS_protected_net_id }
-      policy: { get_attr: [service_policy, fq_name] }
+      policy: { get_attr: [service_policy_2, fq_name] }
 
   test_nested3:
     type: OCS-fw3.yml

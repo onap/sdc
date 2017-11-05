@@ -121,19 +121,6 @@ topology_template:
       entry_schema:
         type: string
   node_templates:
-    server_pd_pattern4:
-      type: org.openecomp.resource.vfc.compute.nodes.heat.pd_server_pattern4
-      properties:
-        flavor:
-          get_input: pd_server_pattern4_flavor
-        availability_zone:
-          get_input: availability_zone_0
-        image:
-          get_input: pd_server_pattern4_image
-        name:
-          get_input:
-          - pd_server_pattern4_names
-          - 0
     pd_server_pattern4_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
@@ -164,8 +151,21 @@ topology_template:
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: server_pd_pattern4
+          node: server_pd_pattern4_1
           relationship: tosca.relationships.network.BindsTo
+    server_pd_pattern4_1:
+      type: org.openecomp.resource.vfc.compute.nodes.heat.pd_server_pattern4
+      properties:
+        flavor:
+          get_input: pd_server_pattern4_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: pd_server_pattern4_image
+        name:
+          get_input:
+          - pd_server_pattern4_names
+          - 0
     pd_server_pattern4_port_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
@@ -196,7 +196,7 @@ topology_template:
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: server_pd_pattern4
+          node: server_pd_pattern4_1
           relationship: tosca.relationships.network.BindsTo
   groups:
     nested-pattern-4-same-type_group:
@@ -205,181 +205,175 @@ topology_template:
         heat_file: ../Artifacts/nested-pattern-4-same-type.yml
         description: nested1
       members:
-      - server_pd_pattern4
       - pd_server_pattern4_port_1
+      - server_pd_pattern4_1
       - pd_server_pattern4_port_2
   outputs:
     pattern4_attr_1:
       description: pattern4_attr_1_value
-      value: server_pd_pattern4
+      value: server_pd_pattern4_1
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.pd_server_pattern4_2
     capabilities:
-      disk.root.size_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.root.size
-      disk.device.write.bytes_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.device.write.bytes
+      disk.ephemeral.size_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.ephemeral.size
       network.outgoing.bytes_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - network.outgoing.bytes
-      disk.allocation_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.allocation
-      disk.device.usage_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.device.usage
+      endpoint_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - endpoint
+      memory.usage_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - memory.usage
       network.outgoing.bytes_pd_server_pattern4_port_2:
       - pd_server_pattern4_port_2
       - network.outgoing.bytes
-      disk.write.bytes.rate_server_pd_pattern4:
-      - server_pd_pattern4
+      disk.device.capacity_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.device.capacity
+      disk.write.bytes.rate_server_pd_pattern4_1:
+      - server_pd_pattern4_1
       - disk.write.bytes.rate
-      disk.ephemeral.size_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.ephemeral.size
-      cpu.delta_server_pd_pattern4:
-      - server_pd_pattern4
-      - cpu.delta
-      disk.write.bytes_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.write.bytes
+      disk.device.iops_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.device.iops
       feature_pd_server_pattern4_port_2:
       - pd_server_pattern4_port_2
       - feature
       feature_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - feature
-      disk.latency_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.latency
-      endpoint_server_pd_pattern4:
-      - server_pd_pattern4
-      - endpoint
+      disk.device.latency_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.device.latency
+      disk.write.requests_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.write.requests
+      disk.device.read.requests.rate_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.device.read.requests.rate
       attachment_pd_server_pattern4_port_2:
       - pd_server_pattern4_port_2
       - attachment
       attachment_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - attachment
-      feature_server_pd_pattern4:
-      - server_pd_pattern4
-      - feature
-      disk.device.read.requests.rate_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.device.read.requests.rate
-      instance_server_pd_pattern4:
-      - server_pd_pattern4
-      - instance
-      cpu_server_pd_pattern4:
-      - server_pd_pattern4
-      - cpu
-      disk.device.read.requests_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.device.read.requests
-      host_server_pd_pattern4:
-      - server_pd_pattern4
-      - host
-      cpu_util_server_pd_pattern4:
-      - server_pd_pattern4
+      cpu_util_server_pd_pattern4_1:
+      - server_pd_pattern4_1
       - cpu_util
-      memory.resident_server_pd_pattern4:
-      - server_pd_pattern4
-      - memory.resident
-      disk.read.requests_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.read.requests
-      disk.read.bytes.rate_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.read.bytes.rate
-      disk.device.write.bytes.rate_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.device.write.bytes.rate
-      disk.device.read.bytes_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.device.read.bytes
-      disk.write.requests_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.write.requests
-      disk.device.write.requests.rate_server_pd_pattern4:
-      - server_pd_pattern4
+      memory_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - memory
+      scalable_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - scalable
+      disk.latency_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.latency
+      disk.device.write.requests.rate_server_pd_pattern4_1:
+      - server_pd_pattern4_1
       - disk.device.write.requests.rate
-      memory.usage_server_pd_pattern4:
-      - server_pd_pattern4
-      - memory.usage
-      vcpus_server_pd_pattern4:
-      - server_pd_pattern4
-      - vcpus
-      disk.capacity_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.capacity
-      binding_server_pd_pattern4:
-      - server_pd_pattern4
-      - binding
+      disk.allocation_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.allocation
+      disk.device.read.bytes.rate_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.device.read.bytes.rate
+      disk.device.usage_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.device.usage
+      disk.read.bytes.rate_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.read.bytes.rate
+      disk.device.write.bytes_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.device.write.bytes
+      memory.resident_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - memory.resident
+      host_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - host
+      disk.write.bytes_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.write.bytes
       network.outpoing.packets_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - network.outpoing.packets
       network.outpoing.packets_pd_server_pattern4_port_2:
       - pd_server_pattern4_port_2
       - network.outpoing.packets
+      feature_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - feature
+      disk.device.write.requests_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.device.write.requests
+      disk.write.requests.rate_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.write.requests.rate
       network.incoming.packets.rate_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - network.incoming.packets.rate
       network.incoming.bytes_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - network.incoming.bytes
-      disk.device.iops_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.device.iops
+      disk.device.read.bytes_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.device.read.bytes
       network.incoming.packets.rate_pd_server_pattern4_port_2:
       - pd_server_pattern4_port_2
       - network.incoming.packets.rate
       network.incoming.bytes_pd_server_pattern4_port_2:
       - pd_server_pattern4_port_2
       - network.incoming.bytes
-      disk.device.read.bytes.rate_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.device.read.bytes.rate
-      disk.device.allocation_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.device.allocation
+      disk.read.bytes_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.read.bytes
       network.outgoing.bytes.rate_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - network.outgoing.bytes.rate
       network.outgoing.bytes.rate_pd_server_pattern4_port_2:
       - pd_server_pattern4_port_2
       - network.outgoing.bytes.rate
-      disk.usage_server_pd_pattern4:
-      - server_pd_pattern4
+      instance_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - instance
+      vcpus_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - vcpus
+      cpu.delta_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - cpu.delta
+      binding_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - binding
+      disk.device.read.requests_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.device.read.requests
+      disk.device.write.bytes.rate_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.device.write.bytes.rate
+      disk.usage_server_pd_pattern4_1:
+      - server_pd_pattern4_1
       - disk.usage
-      disk.read.bytes_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.read.bytes
-      os_server_pd_pattern4:
-      - server_pd_pattern4
-      - os
-      memory_server_pd_pattern4:
-      - server_pd_pattern4
-      - memory
-      disk.iops_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.iops
-      scalable_server_pd_pattern4:
-      - server_pd_pattern4
-      - scalable
+      disk.device.allocation_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.device.allocation
       binding_pd_server_pattern4_port_2:
       - pd_server_pattern4_port_2
       - binding
+      os_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - os
       network.incoming.bytes.rate_pd_server_pattern4_port_2:
       - pd_server_pattern4_port_2
       - network.incoming.bytes.rate
-      disk.write.requests.rate_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.write.requests.rate
-      disk.device.latency_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.device.latency
+      disk.iops_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.iops
       binding_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - binding
@@ -389,28 +383,34 @@ topology_template:
       network.outgoing.packets.rate_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - network.outgoing.packets.rate
-      disk.device.write.requests_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.device.write.requests
       network.incoming.packets_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - network.incoming.packets
+      disk.read.requests_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.read.requests
+      disk.root.size_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.root.size
       network.outgoing.packets.rate_pd_server_pattern4_port_2:
       - pd_server_pattern4_port_2
       - network.outgoing.packets.rate
       network.incoming.packets_pd_server_pattern4_port_2:
       - pd_server_pattern4_port_2
       - network.incoming.packets
-      disk.device.capacity_server_pd_pattern4:
-      - server_pd_pattern4
-      - disk.device.capacity
+      disk.capacity_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - disk.capacity
+      cpu_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - cpu
     requirements:
+      local_storage_server_pd_pattern4_1:
+      - server_pd_pattern4_1
+      - local_storage
       dependency_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - dependency
-      local_storage_server_pd_pattern4:
-      - server_pd_pattern4
-      - local_storage
       dependency_pd_server_pattern4_port_2:
       - pd_server_pattern4_port_2
       - dependency
@@ -420,6 +420,6 @@ topology_template:
       link_pd_server_pattern4_port_2:
       - pd_server_pattern4_port_2
       - link
-      dependency_server_pd_pattern4:
-      - server_pd_pattern4
+      dependency_server_pd_pattern4_1:
+      - server_pd_pattern4_1
       - dependency

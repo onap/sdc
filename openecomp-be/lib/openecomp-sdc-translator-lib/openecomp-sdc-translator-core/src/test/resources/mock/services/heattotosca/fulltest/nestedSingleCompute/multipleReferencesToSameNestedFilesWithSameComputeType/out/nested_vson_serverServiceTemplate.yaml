@@ -29,11 +29,6 @@ topology_template:
       immutable: false
       type: string
       description: Default gateway.
-    port_vson_server_oam_net_port_0_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
     instance_index:
       label: Instance Index
       hidden: false
@@ -73,6 +68,11 @@ topology_template:
       description: List of DNS servers.
       entry_schema:
         type: string
+    port_vson_server_oam_net_port_20_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
     oam_net_security_group_id:
       label: OAM network security group ID
       hidden: false
@@ -92,7 +92,7 @@ topology_template:
       immutable: false
       type: string
       description: Unique ID for this VF instance.
-    port_vson_server_oam_net_port_0_network_role:
+    port_vson_server_oam_net_port_20_network_role_tag:
       type: string
       required: true
     vson_clm_oam_net_ip:
@@ -101,12 +101,6 @@ topology_template:
       immutable: false
       type: string
       description: IP of the vSON Cluster Manager.
-    port_vson_server_oam_net_port_0_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
-    port_vson_server_oam_net_port_0_subnetpoolid:
-      type: string
-      required: true
     oam_net_ips:
       label: vSON OAM network IP addresses
       hidden: false
@@ -147,14 +141,9 @@ topology_template:
       immutable: false
       type: string
       description: The ID or name of the flavor to boot onto.
-    port_vson_server_oam_net_port_0_network_role_tag:
-      type: string
+    port_vson_server_oam_net_port_20_exCP_naming:
+      type: org.openecomp.datatypes.Naming
       required: true
-    port_vson_server_oam_net_port_0_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
     availability_zones:
       label: Availability zones
       hidden: false
@@ -171,17 +160,28 @@ topology_template:
       description: List of NTP servers.
       entry_schema:
         type: string
+    port_vson_server_oam_net_port_20_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_vson_server_oam_net_port_20_network_role:
+      type: string
+      required: true
+    port_vson_server_oam_net_port_20_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_vson_server_oam_net_port_20_subnetpoolid:
+      type: string
+      required: true
     oam_net_id:
       label: OAM network ID
       hidden: false
       immutable: false
       type: string
       description: The ID of the OAM network.
-    port_vson_server_oam_net_port_0_order:
+    port_vson_server_oam_net_port_20_order:
       type: integer
-      required: true
-    port_vson_server_oam_net_port_0_exCP_naming:
-      type: org.openecomp.datatypes.Naming
       required: true
     vson_vm_names:
       label: vSON Cluster leader names
@@ -192,7 +192,7 @@ topology_template:
       entry_schema:
         type: string
   node_templates:
-    vson_server:
+    vson_server_1:
       type: org.openecomp.resource.vfc.compute.nodes.heat.vson_vm
       properties:
         flavor:
@@ -223,24 +223,24 @@ topology_template:
         scheduler_hints:
           group:
             get_input: vson_server_group_id
-    vson_server_oam_net_port_0:
+    vson_server_oam_net_port_20:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         ip_requirements:
-          get_input: port_vson_server_oam_net_port_0_ip_requirements
+          get_input: port_vson_server_oam_net_port_20_ip_requirements
         security_groups:
         - get_input: oam_net_security_group_id
         network_role:
-          get_input: port_vson_server_oam_net_port_0_network_role
+          get_input: port_vson_server_oam_net_port_20_network_role
         fixed_ips:
         - ip_address:
             get_input:
             - oam_net_ips
             - get_input: instance_index
         subnetpoolid:
-          get_input: port_vson_server_oam_net_port_0_subnetpoolid
+          get_input: port_vson_server_oam_net_port_20_subnetpoolid
         mac_requirements:
-          get_input: port_vson_server_oam_net_port_0_mac_requirements
+          get_input: port_vson_server_oam_net_port_20_mac_requirements
         name:
           str_replace:
             template: VNF_NAME_VNF_ID_SERVER_NAME_oam_net_port_0
@@ -254,19 +254,19 @@ topology_template:
                 - vson_vm_names
                 - get_input: instance_index
         exCP_naming:
-          get_input: port_vson_server_oam_net_port_0_exCP_naming
+          get_input: port_vson_server_oam_net_port_20_exCP_naming
         vlan_requirements:
-          get_input: port_vson_server_oam_net_port_0_vlan_requirements
+          get_input: port_vson_server_oam_net_port_20_vlan_requirements
         network_role_tag:
-          get_input: port_vson_server_oam_net_port_0_network_role_tag
+          get_input: port_vson_server_oam_net_port_20_network_role_tag
         network:
           get_input: oam_net_id
         order:
-          get_input: port_vson_server_oam_net_port_0_order
+          get_input: port_vson_server_oam_net_port_20_order
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: vson_server
+          node: vson_server_1
           relationship: tosca.relationships.network.BindsTo
   groups:
     nested_vson_server_group:
@@ -276,177 +276,177 @@ topology_template:
         description: |
           The template intended for deploying vSON VM instance.
       members:
-      - vson_server
-      - vson_server_oam_net_port_0
+      - vson_server_1
+      - vson_server_oam_net_port_20
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.vson_vm_4
     capabilities:
-      disk.write.bytes_vson_server:
-      - vson_server
-      - disk.write.bytes
-      disk.device.allocation_vson_server:
-      - vson_server
-      - disk.device.allocation
-      network.incoming.packets_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - network.incoming.packets
-      memory.usage_vson_server:
-      - vson_server
-      - memory.usage
-      network.incoming.bytes_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - network.incoming.bytes
-      disk.device.latency_vson_server:
-      - vson_server
-      - disk.device.latency
-      disk.device.write.bytes.rate_vson_server:
-      - vson_server
-      - disk.device.write.bytes.rate
-      disk.device.read.requests_vson_server:
-      - vson_server
-      - disk.device.read.requests
-      memory_vson_server:
-      - vson_server
-      - memory
-      disk.latency_vson_server:
-      - vson_server
-      - disk.latency
-      os_vson_server:
-      - vson_server
-      - os
-      feature_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - feature
-      instance_vson_server:
-      - vson_server
+      instance_vson_server_1:
+      - vson_server_1
       - instance
-      cpu_vson_server:
-      - vson_server
-      - cpu
-      attachment_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - attachment
-      disk.iops_vson_server:
-      - vson_server
-      - disk.iops
-      network.outgoing.bytes_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - network.outgoing.bytes
-      disk.device.write.bytes_vson_server:
-      - vson_server
+      disk.device.write.bytes_vson_server_1:
+      - vson_server_1
       - disk.device.write.bytes
-      disk.device.read.bytes.rate_vson_server:
-      - vson_server
-      - disk.device.read.bytes.rate
-      endpoint_vson_server:
-      - vson_server
-      - endpoint
-      vcpus_vson_server:
-      - vson_server
-      - vcpus
-      network.incoming.packets.rate_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - network.incoming.packets.rate
-      disk.device.read.requests.rate_vson_server:
-      - vson_server
-      - disk.device.read.requests.rate
-      disk.write.requests.rate_vson_server:
-      - vson_server
-      - disk.write.requests.rate
-      disk.capacity_vson_server:
-      - vson_server
-      - disk.capacity
-      disk.device.capacity_vson_server:
-      - vson_server
-      - disk.device.capacity
-      disk.device.iops_vson_server:
-      - vson_server
-      - disk.device.iops
-      disk.device.write.requests.rate_vson_server:
-      - vson_server
-      - disk.device.write.requests.rate
-      network.outpoing.packets_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - network.outpoing.packets
-      disk.read.bytes_vson_server:
-      - vson_server
-      - disk.read.bytes
-      disk.read.bytes.rate_vson_server:
-      - vson_server
-      - disk.read.bytes.rate
-      disk.device.write.requests_vson_server:
-      - vson_server
-      - disk.device.write.requests
-      network.outgoing.packets.rate_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - network.outgoing.packets.rate
-      disk.root.size_vson_server:
-      - vson_server
-      - disk.root.size
-      disk.ephemeral.size_vson_server:
-      - vson_server
-      - disk.ephemeral.size
-      memory.resident_vson_server:
-      - vson_server
-      - memory.resident
-      disk.device.read.bytes_vson_server:
-      - vson_server
-      - disk.device.read.bytes
-      scalable_vson_server:
-      - vson_server
-      - scalable
-      network.outgoing.bytes.rate_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - network.outgoing.bytes.rate
-      disk.write.requests_vson_server:
-      - vson_server
-      - disk.write.requests
-      disk.usage_vson_server:
-      - vson_server
-      - disk.usage
-      cpu_util_vson_server:
-      - vson_server
-      - cpu_util
-      disk.device.usage_vson_server:
-      - vson_server
-      - disk.device.usage
-      cpu.delta_vson_server:
-      - vson_server
-      - cpu.delta
-      disk.write.bytes.rate_vson_server:
-      - vson_server
-      - disk.write.bytes.rate
-      feature_vson_server:
-      - vson_server
-      - feature
-      disk.allocation_vson_server:
-      - vson_server
-      - disk.allocation
-      binding_vson_server:
-      - vson_server
-      - binding
-      host_vson_server:
-      - vson_server
-      - host
-      binding_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - binding
-      network.incoming.bytes.rate_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - network.incoming.bytes.rate
-      disk.read.requests_vson_server:
-      - vson_server
+      disk.read.requests_vson_server_1:
+      - vson_server_1
       - disk.read.requests
+      disk.read.bytes_vson_server_1:
+      - vson_server_1
+      - disk.read.bytes
+      disk.read.bytes.rate_vson_server_1:
+      - vson_server_1
+      - disk.read.bytes.rate
+      disk.latency_vson_server_1:
+      - vson_server_1
+      - disk.latency
+      endpoint_vson_server_1:
+      - vson_server_1
+      - endpoint
+      disk.write.requests_vson_server_1:
+      - vson_server_1
+      - disk.write.requests
+      memory_vson_server_1:
+      - vson_server_1
+      - memory
+      cpu_util_vson_server_1:
+      - vson_server_1
+      - cpu_util
+      disk.device.read.requests.rate_vson_server_1:
+      - vson_server_1
+      - disk.device.read.requests.rate
+      disk.device.iops_vson_server_1:
+      - vson_server_1
+      - disk.device.iops
+      disk.usage_vson_server_1:
+      - vson_server_1
+      - disk.usage
+      disk.allocation_vson_server_1:
+      - vson_server_1
+      - disk.allocation
+      disk.capacity_vson_server_1:
+      - vson_server_1
+      - disk.capacity
+      memory.usage_vson_server_1:
+      - vson_server_1
+      - memory.usage
+      disk.device.read.bytes.rate_vson_server_1:
+      - vson_server_1
+      - disk.device.read.bytes.rate
+      disk.write.requests.rate_vson_server_1:
+      - vson_server_1
+      - disk.write.requests.rate
+      disk.ephemeral.size_vson_server_1:
+      - vson_server_1
+      - disk.ephemeral.size
+      feature_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - feature
+      disk.device.read.bytes_vson_server_1:
+      - vson_server_1
+      - disk.device.read.bytes
+      os_vson_server_1:
+      - vson_server_1
+      - os
+      feature_vson_server_1:
+      - vson_server_1
+      - feature
+      network.outpoing.packets_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - network.outpoing.packets
+      network.outgoing.bytes.rate_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - network.outgoing.bytes.rate
+      disk.root.size_vson_server_1:
+      - vson_server_1
+      - disk.root.size
+      network.outgoing.packets.rate_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - network.outgoing.packets.rate
+      disk.device.write.requests_vson_server_1:
+      - vson_server_1
+      - disk.device.write.requests
+      disk.device.write.bytes.rate_vson_server_1:
+      - vson_server_1
+      - disk.device.write.bytes.rate
+      host_vson_server_1:
+      - vson_server_1
+      - host
+      disk.device.latency_vson_server_1:
+      - vson_server_1
+      - disk.device.latency
+      cpu.delta_vson_server_1:
+      - vson_server_1
+      - cpu.delta
+      network.outgoing.bytes_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - network.outgoing.bytes
+      network.incoming.bytes.rate_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - network.incoming.bytes.rate
+      memory.resident_vson_server_1:
+      - vson_server_1
+      - memory.resident
+      binding_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - binding
+      disk.write.bytes_vson_server_1:
+      - vson_server_1
+      - disk.write.bytes
+      disk.device.usage_vson_server_1:
+      - vson_server_1
+      - disk.device.usage
+      disk.device.write.requests.rate_vson_server_1:
+      - vson_server_1
+      - disk.device.write.requests.rate
+      scalable_vson_server_1:
+      - vson_server_1
+      - scalable
+      network.incoming.packets_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - network.incoming.packets
+      vcpus_vson_server_1:
+      - vson_server_1
+      - vcpus
+      binding_vson_server_1:
+      - vson_server_1
+      - binding
+      network.incoming.packets.rate_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - network.incoming.packets.rate
+      disk.iops_vson_server_1:
+      - vson_server_1
+      - disk.iops
+      disk.write.bytes.rate_vson_server_1:
+      - vson_server_1
+      - disk.write.bytes.rate
+      network.incoming.bytes_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - network.incoming.bytes
+      attachment_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - attachment
+      disk.device.allocation_vson_server_1:
+      - vson_server_1
+      - disk.device.allocation
+      cpu_vson_server_1:
+      - vson_server_1
+      - cpu
+      disk.device.read.requests_vson_server_1:
+      - vson_server_1
+      - disk.device.read.requests
+      disk.device.capacity_vson_server_1:
+      - vson_server_1
+      - disk.device.capacity
     requirements:
-      link_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - link
-      dependency_vson_server:
-      - vson_server
-      - dependency
-      dependency_vson_server_oam_net_port_0:
-      - vson_server_oam_net_port_0
-      - dependency
-      local_storage_vson_server:
-      - vson_server
+      local_storage_vson_server_1:
+      - vson_server_1
       - local_storage
+      link_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - link
+      dependency_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - dependency
+      dependency_vson_server_1:
+      - vson_server_1
+      - dependency

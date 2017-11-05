@@ -204,7 +204,7 @@ topology_template:
         service_template_filter:
           substitute_service_template: nested2ServiceTemplate.yaml
       requirements:
-      - link_cmaui_port_1:
+      - link_cmaui_port_21:
           capability: tosca.capabilities.network.Linkable
           node: test_net1
           relationship: tosca.relationships.network.LinksTo
@@ -220,17 +220,17 @@ topology_template:
         p2:
           get_input: shared_network_id2
       requirements:
-      - link_cmaui_port_2:
+      - link_cmaui_port_12:
           capability: tosca.capabilities.network.Linkable
           node: test_net2
+          relationship: tosca.relationships.network.LinksTo
+      - link_cmaui_port_11:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net1
           relationship: tosca.relationships.network.LinksTo
       - link_abc_port_1:
           capability: tosca.capabilities.network.Linkable
           node: test_net2
-          relationship: tosca.relationships.network.LinksTo
-      - link_cmaui_port_1:
-          capability: tosca.capabilities.network.Linkable
-          node: test_net1
           relationship: tosca.relationships.network.LinksTo
     test_net1:
       type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
@@ -275,17 +275,17 @@ topology_template:
         p2:
           get_input: shared_network_id2
       requirements:
-      - link_cmaui_port_2:
+      - link_cmaui_port_12:
           capability: tosca.capabilities.network.Linkable
           node: test_net2
+          relationship: tosca.relationships.network.LinksTo
+      - link_cmaui_port_11:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net1
           relationship: tosca.relationships.network.LinksTo
       - link_abc_port_1:
           capability: tosca.capabilities.network.Linkable
           node: test_net2
-          relationship: tosca.relationships.network.LinksTo
-      - link_cmaui_port_1:
-          capability: tosca.capabilities.network.Linkable
-          node: test_net1
           relationship: tosca.relationships.network.LinksTo
   groups:
     main_group:
