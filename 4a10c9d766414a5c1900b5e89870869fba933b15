@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_31736bb3",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/UnifiedCompositionServiceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-05T15:25:02Z",
+      "side": 1,
+      "message": "this could be presented a s a constant",
+      "range": {
+        "startLine": 248,
+        "startChar": 28,
+        "endLine": 248,
+        "endChar": 73
+      },
+      "revId": "4a10c9d766414a5c1900b5e89870869fba933b15",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
