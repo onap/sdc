@@ -99,7 +99,7 @@
                     <generatePackage>org.openecomp.sdc.generator.aai.xml</generatePackage>
                     <generateDirectory>target/generated-sources/aai/xml</generateDirectory>
                     <schemaIncludes>
-                        <include>aai_schema_v10.xsd</include>
+                        <include>aai_schema_v11.xsd</include>
                     </schemaIncludes>
                     <extension>true</extension>
                     <args>
