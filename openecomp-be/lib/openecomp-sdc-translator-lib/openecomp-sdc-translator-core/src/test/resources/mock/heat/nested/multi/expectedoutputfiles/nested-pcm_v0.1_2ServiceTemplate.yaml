@@ -99,9 +99,9 @@ topology_template:
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: server_pcm
+          node: server_pcm_2
           relationship: tosca.relationships.network.BindsTo
-    server_pcm:
+    server_pcm_2:
       type: org.openecomp.resource.vfc.nodes.heat.pcm_server
       properties:
         flavor:
@@ -137,7 +137,7 @@ topology_template:
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: server_pcm
+          node: server_pcm_2
           relationship: tosca.relationships.network.BindsTo
   groups:
     nested-pcm_v0.1_2_group:
@@ -147,108 +147,96 @@ topology_template:
         description: heat template that creates PCRF Cluman stack
       members:
       - pcm_port_1
-      - server_pcm
+      - server_pcm_2
       - pcm_port_0
   outputs:
     server_pcm_id:
       description: the pcm nova service id
-      value: server_pcm
+      value: server_pcm_2
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1_2
     capabilities:
       network.incoming.packets.rate_pcm_port_0:
       - pcm_port_0
       - network.incoming.packets.rate
-      cpu_server_pcm:
-      - server_pcm
-      - cpu
       network.incoming.packets.rate_pcm_port_1:
       - pcm_port_1
       - network.incoming.packets.rate
+      disk.root.size_server_pcm_2:
+      - server_pcm_2
+      - disk.root.size
       network.outpoing.packets_pcm_port_1:
       - pcm_port_1
       - network.outpoing.packets
-      memory_server_pcm:
-      - server_pcm
-      - memory
-      disk.write.requests_server_pcm:
-      - server_pcm
-      - disk.write.requests
+      disk.iops_server_pcm_2:
+      - server_pcm_2
+      - disk.iops
       network.outpoing.packets_pcm_port_0:
       - pcm_port_0
       - network.outpoing.packets
-      disk.device.iops_server_pcm:
-      - server_pcm
-      - disk.device.iops
-      memory.resident_server_pcm:
-      - server_pcm
-      - memory.resident
-      disk.device.write.requests_server_pcm:
-      - server_pcm
-      - disk.device.write.requests
-      disk.device.usage_server_pcm:
-      - server_pcm
-      - disk.device.usage
-      disk.allocation_server_pcm:
-      - server_pcm
-      - disk.allocation
-      disk.usage_server_pcm:
-      - server_pcm
+      disk.device.write.bytes.rate_server_pcm_2:
+      - server_pcm_2
+      - disk.device.write.bytes.rate
+      disk.usage_server_pcm_2:
+      - server_pcm_2
       - disk.usage
-      disk.device.write.bytes_server_pcm:
-      - server_pcm
-      - disk.device.write.bytes
-      disk.root.size_server_pcm:
-      - server_pcm
-      - disk.root.size
-      disk.ephemeral.size_server_pcm:
-      - server_pcm
-      - disk.ephemeral.size
-      disk.device.latency_server_pcm:
-      - server_pcm
-      - disk.device.latency
+      disk.capacity_server_pcm_2:
+      - server_pcm_2
+      - disk.capacity
+      disk.write.requests_server_pcm_2:
+      - server_pcm_2
+      - disk.write.requests
+      disk.read.bytes_server_pcm_2:
+      - server_pcm_2
+      - disk.read.bytes
       network.incoming.bytes_pcm_port_0:
       - pcm_port_0
       - network.incoming.bytes
       network.incoming.bytes_pcm_port_1:
       - pcm_port_1
       - network.incoming.bytes
+      cpu_util_server_pcm_2:
+      - server_pcm_2
+      - cpu_util
+      vcpus_server_pcm_2:
+      - server_pcm_2
+      - vcpus
+      memory.resident_server_pcm_2:
+      - server_pcm_2
+      - memory.resident
       binding_pcm_port_0:
       - pcm_port_0
       - binding
       binding_pcm_port_1:
       - pcm_port_1
       - binding
-      memory.usage_server_pcm:
-      - server_pcm
-      - memory.usage
-      disk.read.requests_server_pcm:
-      - server_pcm
-      - disk.read.requests
-      disk.capacity_server_pcm:
-      - server_pcm
-      - disk.capacity
-      os_server_pcm:
-      - server_pcm
-      - os
-      disk.read.bytes_server_pcm:
-      - server_pcm
-      - disk.read.bytes
+      cpu_server_pcm_2:
+      - server_pcm_2
+      - cpu
       network.outgoing.packets.rate_pcm_port_0:
       - pcm_port_0
       - network.outgoing.packets.rate
       network.outgoing.packets.rate_pcm_port_1:
       - pcm_port_1
       - network.outgoing.packets.rate
+      feature_server_pcm_2:
+      - server_pcm_2
+      - feature
+      disk.device.write.bytes_server_pcm_2:
+      - server_pcm_2
+      - disk.device.write.bytes
+      disk.device.iops_server_pcm_2:
+      - server_pcm_2
+      - disk.device.iops
+      disk.allocation_server_pcm_2:
+      - server_pcm_2
+      - disk.allocation
       feature_pcm_port_1:
       - pcm_port_1
       - feature
       network.outgoing.bytes_pcm_port_0:
       - pcm_port_0
       - network.outgoing.bytes
-      disk.device.read.bytes_server_pcm:
-      - server_pcm
-      - disk.device.read.bytes
       feature_pcm_port_0:
       - pcm_port_0
       - feature
@@ -261,90 +249,102 @@ topology_template:
       attachment_pcm_port_1:
       - pcm_port_1
       - attachment
-      endpoint_server_pcm:
-      - server_pcm
-      - endpoint
-      disk.device.read.requests.rate_server_pcm:
-      - server_pcm
-      - disk.device.read.requests.rate
-      vcpus_server_pcm:
-      - server_pcm
-      - vcpus
-      disk.write.bytes_server_pcm:
-      - server_pcm
-      - disk.write.bytes
-      disk.iops_server_pcm:
-      - server_pcm
-      - disk.iops
-      disk.read.bytes.rate_server_pcm:
-      - server_pcm
-      - disk.read.bytes.rate
-      disk.device.allocation_server_pcm:
-      - server_pcm
-      - disk.device.allocation
-      scalable_server_pcm:
-      - server_pcm
-      - scalable
-      disk.device.read.bytes.rate_server_pcm:
-      - server_pcm
-      - disk.device.read.bytes.rate
-      cpu_util_server_pcm:
-      - server_pcm
-      - cpu_util
-      disk.write.requests.rate_server_pcm:
-      - server_pcm
-      - disk.write.requests.rate
-      disk.device.write.bytes.rate_server_pcm:
-      - server_pcm
-      - disk.device.write.bytes.rate
-      host_server_pcm:
-      - server_pcm
+      memory.usage_server_pcm_2:
+      - server_pcm_2
+      - memory.usage
+      disk.device.read.bytes_server_pcm_2:
+      - server_pcm_2
+      - disk.device.read.bytes
+      host_server_pcm_2:
+      - server_pcm_2
       - host
-      cpu.delta_server_pcm:
-      - server_pcm
+      endpoint_server_pcm_2:
+      - server_pcm_2
+      - endpoint
+      disk.read.bytes.rate_server_pcm_2:
+      - server_pcm_2
+      - disk.read.bytes.rate
+      disk.device.capacity_server_pcm_2:
+      - server_pcm_2
+      - disk.device.capacity
+      cpu.delta_server_pcm_2:
+      - server_pcm_2
       - cpu.delta
+      disk.device.write.requests.rate_server_pcm_2:
+      - server_pcm_2
+      - disk.device.write.requests.rate
+      disk.read.requests_server_pcm_2:
+      - server_pcm_2
+      - disk.read.requests
+      disk.ephemeral.size_server_pcm_2:
+      - server_pcm_2
+      - disk.ephemeral.size
+      disk.latency_server_pcm_2:
+      - server_pcm_2
+      - disk.latency
+      disk.write.requests.rate_server_pcm_2:
+      - server_pcm_2
+      - disk.write.requests.rate
+      scalable_server_pcm_2:
+      - server_pcm_2
+      - scalable
+      memory_server_pcm_2:
+      - server_pcm_2
+      - memory
+      disk.device.read.bytes.rate_server_pcm_2:
+      - server_pcm_2
+      - disk.device.read.bytes.rate
+      disk.device.latency_server_pcm_2:
+      - server_pcm_2
+      - disk.device.latency
       network.outgoing.bytes.rate_pcm_port_1:
       - pcm_port_1
       - network.outgoing.bytes.rate
+      disk.device.usage_server_pcm_2:
+      - server_pcm_2
+      - disk.device.usage
       network.incoming.packets_pcm_port_0:
       - pcm_port_0
       - network.incoming.packets
-      binding_server_pcm:
-      - server_pcm
-      - binding
       network.outgoing.bytes.rate_pcm_port_0:
       - pcm_port_0
       - network.outgoing.bytes.rate
-      disk.device.capacity_server_pcm:
-      - server_pcm
-      - disk.device.capacity
+      disk.device.write.requests_server_pcm_2:
+      - server_pcm_2
+      - disk.device.write.requests
       network.incoming.packets_pcm_port_1:
       - pcm_port_1
       - network.incoming.packets
-      instance_server_pcm:
-      - server_pcm
+      disk.write.bytes_server_pcm_2:
+      - server_pcm_2
+      - disk.write.bytes
+      os_server_pcm_2:
+      - server_pcm_2
+      - os
+      instance_server_pcm_2:
+      - server_pcm_2
       - instance
-      disk.device.write.requests.rate_server_pcm:
-      - server_pcm
-      - disk.device.write.requests.rate
-      disk.latency_server_pcm:
-      - server_pcm
-      - disk.latency
-      disk.device.read.requests_server_pcm:
-      - server_pcm
+      disk.device.read.requests_server_pcm_2:
+      - server_pcm_2
       - disk.device.read.requests
-      feature_server_pcm:
-      - server_pcm
-      - feature
+      disk.device.read.requests.rate_server_pcm_2:
+      - server_pcm_2
+      - disk.device.read.requests.rate
       network.incoming.bytes.rate_pcm_port_0:
       - pcm_port_0
       - network.incoming.bytes.rate
-      disk.write.bytes.rate_server_pcm:
-      - server_pcm
+      disk.write.bytes.rate_server_pcm_2:
+      - server_pcm_2
       - disk.write.bytes.rate
+      binding_server_pcm_2:
+      - server_pcm_2
+      - binding
       network.incoming.bytes.rate_pcm_port_1:
       - pcm_port_1
       - network.incoming.bytes.rate
+      disk.device.allocation_server_pcm_2:
+      - server_pcm_2
+      - disk.device.allocation
     requirements:
       link_pcm_port_0:
       - pcm_port_0
@@ -352,15 +352,15 @@ topology_template:
       link_pcm_port_1:
       - pcm_port_1
       - link
-      local_storage_server_pcm:
-      - server_pcm
-      - local_storage
+      dependency_server_pcm_2:
+      - server_pcm_2
+      - dependency
       dependency_pcm_port_0:
       - pcm_port_0
-      - dependency
-      dependency_server_pcm:
-      - server_pcm
       - dependency
       dependency_pcm_port_1:
       - pcm_port_1
       - dependency
+      local_storage_server_pcm_2:
+      - server_pcm_2
+      - local_storage

@@ -36,9 +36,9 @@ parameters:
     description: Flavor for CMAUI server
   cmaui_oam_ips:
       type: string
-  packet_internal_network_name:
+  packet_internal_network_1_name:
       type: string
-  packet_external_network_name:
+  packet_external_network_1_name:
       type: string
   net:
     type: string
@@ -66,14 +66,14 @@ parameters:
       type: string
       
 resources:
-  pd_server_1b_port:
+  pd_server_1b_port_1:
     type: OS::Neutron::Port
     properties:
       network: { get_param: net }
       fixed_ips: [{"ip_address": {get_param: [pd_server_1b_ips, 0]}}]
       replacement_policy: AUTO
 
-  ps_server_1b_port:
+  ps_server_1b_port_1:
     type: OS::Neutron::Port
     properties:
       network: { get_param: net }
@@ -88,7 +88,7 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: pd_server_1b_flavor }
       networks:
-      - port: { get_resource: pd_server_1b_port }
+      - port: { get_resource: pd_server_1b_port_1 }
 
   server_1b_pd_2:
     type: OS::Nova::Server
@@ -98,19 +98,19 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: pd_server_1b_flavor }
       networks:
-      - port: { get_resource: ps_server_1b_port }
+      - port: { get_resource: ps_server_1b_port_1 }
       
   cmaui_port_1:
     type: OS::Neutron::Port
     properties:
-      network: {get_resource: packet_internal_network}
+      network: {get_resource: packet_external_network_1}
       fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
       replacement_policy: AUTO
 
   cmaui_port_2:
     type: OS::Neutron::Port
     properties:
-      network: {get_resource: packet_internal_network}
+      network: {get_resource: packet_external_network_1}
       fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
       replacement_policy: AUTO
 
@@ -137,14 +137,14 @@ resources:
   oam_port_1:
     type: OS::Neutron::Port
     properties:
-      network: {get_resource: packet_internal_network}
+      network: {get_resource: packet_internal_network_1}
       fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 1]}}]
       replacement_policy: AUTO
 
   oam_port_2:
     type: OS::Neutron::Port
     properties:
-      network: {get_resource: packet_external_network}
+      network: {get_resource: packet_external_network_1}
       fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 1]}}]
       replacement_policy: AUTO
 
@@ -179,17 +179,17 @@ resources:
     properties:
       p2: {get_param: p2}
 
-  packet_internal_network:
+  packet_internal_network_1:
     type: OS::Neutron::Net
     properties:
       name:
-        get_param: packet_internal_network_name
+        get_param: packet_internal_network_1_name
 
-  packet_external_network:
+  packet_external_network_1:
     type: OS::Neutron::Net
     properties:
       name:
-        get_param: packet_external_network_name
+        get_param: packet_external_network_1_name
 
 outputs:
   all_pattern_attr_1:

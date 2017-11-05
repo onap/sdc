@@ -103,27 +103,27 @@ topology_template:
           direction: ingress
       requirements:
       - port:
+          capability: attachment_cmaui_port_211_test_nested2
+          node: test_nested
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_cmaui_port_222_test_nested2
+          node: test_nested
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_cmaui_port_311_test_nested3_test_nested2
+          node: test_nested
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_cmaui_port_322_test_nested3_test_nested2
+          node: test_nested
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
           capability: attachment_cmaui_port_2
           node: test_nested
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_cmaui_port_22_test_nested2
-          node: test_nested
-          relationship: org.openecomp.relationships.AttachesTo
-      - port:
           capability: attachment_cmaui_port_1
-          node: test_nested
-          relationship: org.openecomp.relationships.AttachesTo
-      - port:
-          capability: attachment_cmaui_port_11_test_nested3_test_nested2
-          node: test_nested
-          relationship: org.openecomp.relationships.AttachesTo
-      - port:
-          capability: attachment_cmaui_port_22_test_nested3_test_nested2
-          node: test_nested
-          relationship: org.openecomp.relationships.AttachesTo
-      - port:
-          capability: attachment_cmaui_port_11_test_nested2
           node: test_nested
           relationship: org.openecomp.relationships.AttachesTo
     jsa_security_group2:
@@ -199,15 +199,15 @@ topology_template:
           direction: ingress
       requirements:
       - port:
+          capability: attachment_cmaui_port_211_test_nested2
+          node: test_nested
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_cmaui_port_311_test_nested3_test_nested2
+          node: test_nested
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
           capability: attachment_cmaui_port_1
-          node: test_nested
-          relationship: org.openecomp.relationships.AttachesTo
-      - port:
-          capability: attachment_cmaui_port_11_test_nested3_test_nested2
-          node: test_nested
-          relationship: org.openecomp.relationships.AttachesTo
-      - port:
-          capability: attachment_cmaui_port_11_test_nested2
           node: test_nested
           relationship: org.openecomp.relationships.AttachesTo
     test_nested:

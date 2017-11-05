@@ -66,10 +66,10 @@ resources:
       flavor: { get_param: oam_flavor_name }
       availability_zone: { get_param: availabilityzone_name }
       networks:
-        - port: { get_resource: pcm_port_0}
-        - port: { get_resource: pcm_port_1}
+        - port: { get_resource: pcm_port_00}
+        - port: { get_resource: pcm_port_01}
 
-  pcm_port_0:
+  pcm_port_00:
     type: OS::Neutron::Port
     properties:
       network: { get_param: cps_net_name }
@@ -77,7 +77,7 @@ resources:
         - ip_address: { get_param: cps_net_ip }
       security_groups: [{ get_param: security_group_name }]
 
-  pcm_port_1:
+  pcm_port_01:
     type: OS::Neutron::Port
     properties:
       network: { get_param: oam_net_name }

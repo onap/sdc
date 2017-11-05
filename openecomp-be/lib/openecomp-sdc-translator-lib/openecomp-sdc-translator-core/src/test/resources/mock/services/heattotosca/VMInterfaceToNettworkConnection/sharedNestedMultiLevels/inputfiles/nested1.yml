@@ -57,7 +57,7 @@ resources:
       port_tuple_refs: [{ get_param: template_PortTuple_LB1 }]
       security_group_refs: [{ get_param: oam_sec_group_name}]
 
-  template_VMInt_OAM_lb_3:
+  template_VMInt_OAM_lb_30:
     type: OS::ContrailV2::VirtualMachineInterface
     properties:
       virtual_machine_interface_properties:

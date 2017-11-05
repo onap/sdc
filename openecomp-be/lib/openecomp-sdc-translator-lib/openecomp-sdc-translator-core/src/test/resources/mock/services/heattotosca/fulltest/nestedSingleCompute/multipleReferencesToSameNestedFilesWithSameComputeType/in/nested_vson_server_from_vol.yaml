@@ -134,7 +134,7 @@ resources:
     type: OS::Heat::SwiftSignalHandle
 
 # vSON server OAM network port
-  vson_server_oam_net_port_0:
+  vson_server_oam_net_port_10:
     type: OS::Neutron::Port
     properties:
       name: 
@@ -151,9 +151,9 @@ resources:
       - {get_param: oam_net_security_group_id}
 
 # Create vSON server 
-  vson_server:
+  vson_server_3:
     type: OS::Nova::Server
-    depends_on: [vson_server_oam_net_port_0]
+    depends_on: [vson_server_oam_net_port_10]
     properties:
       name: {get_param: [vson_vm_names, {get_param: instance_index}]}
       block_device_mapping_v2:
@@ -170,7 +170,7 @@ resources:
         vf_module_id: {get_param: vf_module_id}
         vm_role: {get_param: vfc_role}
       networks:
-      - port: {get_resource: vson_server_oam_net_port_0}
+      - port: {get_resource: vson_server_oam_net_port_10}
       scheduler_hints:
         group: {get_param: vson_server_group_id}
       user_data_format: RAW

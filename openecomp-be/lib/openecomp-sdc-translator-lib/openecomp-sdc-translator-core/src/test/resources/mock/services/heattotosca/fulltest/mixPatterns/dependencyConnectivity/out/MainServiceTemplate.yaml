@@ -102,11 +102,11 @@ topology_template:
           - 0
         cps_net_name: nested_network
       requirements:
-      - link_pcm_port_2:
+      - link_pcm_port_2_0:
           capability: tosca.capabilities.network.Linkable
           node: nested_network
           relationship: tosca.relationships.network.LinksTo
-      - link_pcm_port_0:
+      - link_pcm_port_0_0:
           capability: tosca.capabilities.network.Linkable
           node: nested_network
           relationship: tosca.relationships.network.LinksTo
@@ -686,19 +686,19 @@ topology_template:
           node: 4p_nested
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_pcm_port_0
+          capability: attachment_pcm_port_0_0
           node: nestedNoNestedSingleComputePattern
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_pcm_port_1
+          capability: attachment_pcm_port_3_0
           node: nestedNoNestedSingleComputePattern
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_pcm_port_2
+          capability: attachment_pcm_port_2_0
           node: nestedNoNestedSingleComputePattern
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_pcm_port_3
+          capability: attachment_pcm_port_1_0
           node: nestedNoNestedSingleComputePattern
           relationship: org.openecomp.relationships.AttachesTo
     abstract_b_single_1b_1:

@@ -25,57 +25,56 @@ topology_template:
       immutable: false
       type: string
       description: UID of OAM network
-    port_pd_server_pattern4_port_2_order:
+    port_pd_server_pattern4_port_02_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_pd_server_pattern4_port_01_network_role_tag:
+      type: string
+      required: true
+    port_pd_server_pattern4_port_01_subnetpoolid:
+      type: string
+      required: true
+    port_pd_server_pattern4_port_01_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_pd_server_pattern4_port_02_order:
       type: integer
       required: true
-    port_pd_server_pattern4_port_2_vlan_requirements:
+    port_pd_server_pattern4_port_01_ip_requirements:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_pd_server_pattern4_port_2_network_role_tag:
-      type: string
-      required: true
-    port_pd_server_pattern4_port_2_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
+        type: org.openecomp.datatypes.network.IpRequirements
     availability_zone_0:
       label: availabilityzone name
       hidden: false
       immutable: false
       type: string
       description: availabilityzone name
-    port_pd_server_pattern4_port_2_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_pd_server_pattern4_port_1_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
     net:
       hidden: false
       immutable: false
       type: string
-    port_pd_server_pattern4_port_1_network_role_tag:
-      type: string
+    port_pd_server_pattern4_port_02_exCP_naming:
+      type: org.openecomp.datatypes.Naming
       required: true
+    port_pd_server_pattern4_port_02_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
     pd_server_pattern4_flavor:
       hidden: false
       immutable: false
       type: string
       description: Flavor for PD server
-    port_pd_server_pattern4_port_2_exCP_naming:
-      type: org.openecomp.datatypes.Naming
+    port_pd_server_pattern4_port_01_network_role:
+      type: string
       required: true
-    port_pd_server_pattern4_port_1_ip_requirements:
-      type: list
+    port_pd_server_pattern4_port_02_network_role:
+      type: string
       required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_pd_server_pattern4_port_1_exCP_naming:
+    port_pd_server_pattern4_port_01_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
     security_group_name:
@@ -90,7 +89,7 @@ topology_template:
       immutable: false
       type: string
       description: Flavor for PS server
-    port_pd_server_pattern4_port_1_order:
+    port_pd_server_pattern4_port_01_order:
       type: integer
       required: true
     pd_server_pattern4_image:
@@ -98,19 +97,20 @@ topology_template:
       immutable: false
       type: string
       description: Flavor for PD server
-    port_pd_server_pattern4_port_1_network_role:
+    port_pd_server_pattern4_port_02_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_pd_server_pattern4_port_02_subnetpoolid:
       type: string
       required: true
-    port_pd_server_pattern4_port_2_network_role:
-      type: string
+    port_pd_server_pattern4_port_01_vlan_requirements:
+      type: list
       required: true
-    port_pd_server_pattern4_port_1_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
-    port_pd_server_pattern4_port_1_subnetpoolid:
-      type: string
-      required: true
-    port_pd_server_pattern4_port_2_subnetpoolid:
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_pd_server_pattern4_port_02_network_role_tag:
       type: string
       required: true
     pd_server_pattern4_names:
@@ -121,6 +121,38 @@ topology_template:
       entry_schema:
         type: string
   node_templates:
+    pd_server_pattern4_port_01:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+          get_input: port_pd_server_pattern4_port_01_ip_requirements
+        network_role:
+          get_input: port_pd_server_pattern4_port_01_network_role
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - pd_server_pattern4_ips
+            - 0
+        subnetpoolid:
+          get_input: port_pd_server_pattern4_port_01_subnetpoolid
+        mac_requirements:
+          get_input: port_pd_server_pattern4_port_01_mac_requirements
+        exCP_naming:
+          get_input: port_pd_server_pattern4_port_01_exCP_naming
+        vlan_requirements:
+          get_input: port_pd_server_pattern4_port_01_vlan_requirements
+        network_role_tag:
+          get_input: port_pd_server_pattern4_port_01_network_role_tag
+        network:
+          get_input: net
+        order:
+          get_input: port_pd_server_pattern4_port_01_order
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_pd_pattern4
+          relationship: tosca.relationships.network.BindsTo
     server_pd_pattern4:
       type: org.openecomp.resource.vfc.compute.nodes.heat.pd_server_pattern4
       properties:
@@ -134,65 +166,33 @@ topology_template:
           get_input:
           - pd_server_pattern4_names
           - 0
-    pd_server_pattern4_port_1:
+    pd_server_pattern4_port_02:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
         ip_requirements:
-          get_input: port_pd_server_pattern4_port_1_ip_requirements
+          get_input: port_pd_server_pattern4_port_02_ip_requirements
         network_role:
-          get_input: port_pd_server_pattern4_port_1_network_role
-        fixed_ips:
-        - ip_address:
-            get_input:
-            - pd_server_pattern4_ips
-            - 0
-        subnetpoolid:
-          get_input: port_pd_server_pattern4_port_1_subnetpoolid
-        mac_requirements:
-          get_input: port_pd_server_pattern4_port_1_mac_requirements
-        exCP_naming:
-          get_input: port_pd_server_pattern4_port_1_exCP_naming
-        vlan_requirements:
-          get_input: port_pd_server_pattern4_port_1_vlan_requirements
-        network_role_tag:
-          get_input: port_pd_server_pattern4_port_1_network_role_tag
-        network:
-          get_input: net
-        order:
-          get_input: port_pd_server_pattern4_port_1_order
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: server_pd_pattern4
-          relationship: tosca.relationships.network.BindsTo
-    pd_server_pattern4_port_2:
-      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
-      properties:
-        replacement_policy: AUTO
-        ip_requirements:
-          get_input: port_pd_server_pattern4_port_2_ip_requirements
-        network_role:
-          get_input: port_pd_server_pattern4_port_2_network_role
+          get_input: port_pd_server_pattern4_port_02_network_role
         fixed_ips:
         - ip_address:
             get_input:
             - pd_server_pattern4_ips
             - 1
         subnetpoolid:
-          get_input: port_pd_server_pattern4_port_2_subnetpoolid
+          get_input: port_pd_server_pattern4_port_02_subnetpoolid
         mac_requirements:
-          get_input: port_pd_server_pattern4_port_2_mac_requirements
+          get_input: port_pd_server_pattern4_port_02_mac_requirements
         exCP_naming:
-          get_input: port_pd_server_pattern4_port_2_exCP_naming
+          get_input: port_pd_server_pattern4_port_02_exCP_naming
         vlan_requirements:
-          get_input: port_pd_server_pattern4_port_2_vlan_requirements
+          get_input: port_pd_server_pattern4_port_02_vlan_requirements
         network_role_tag:
-          get_input: port_pd_server_pattern4_port_2_network_role_tag
+          get_input: port_pd_server_pattern4_port_02_network_role_tag
         network:
           get_input: net
         order:
-          get_input: port_pd_server_pattern4_port_2_order
+          get_input: port_pd_server_pattern4_port_02_order
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -205,9 +205,9 @@ topology_template:
         heat_file: ../Artifacts/nested-pattern-4.yml
         description: nested1
       members:
+      - pd_server_pattern4_port_01
       - server_pd_pattern4
-      - pd_server_pattern4_port_1
-      - pd_server_pattern4_port_2
+      - pd_server_pattern4_port_02
   outputs:
     pattern4_attr_1:
       description: pattern4_attr_1_value
@@ -221,18 +221,33 @@ topology_template:
       disk.device.write.bytes_server_pd_pattern4:
       - server_pd_pattern4
       - disk.device.write.bytes
-      network.outgoing.bytes_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
-      - network.outgoing.bytes
+      network.incoming.packets_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
+      - network.incoming.packets
+      binding_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
+      - binding
+      network.incoming.bytes_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
+      - network.incoming.bytes
+      network.incoming.bytes_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
+      - network.incoming.bytes
+      feature_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
+      - feature
+      feature_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
+      - feature
+      network.incoming.packets_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
+      - network.incoming.packets
       disk.allocation_server_pd_pattern4:
       - server_pd_pattern4
       - disk.allocation
       disk.device.usage_server_pd_pattern4:
       - server_pd_pattern4
       - disk.device.usage
-      network.outgoing.bytes_pd_server_pattern4_port_2:
-      - pd_server_pattern4_port_2
-      - network.outgoing.bytes
       disk.write.bytes.rate_server_pd_pattern4:
       - server_pd_pattern4
       - disk.write.bytes.rate
@@ -245,24 +260,15 @@ topology_template:
       disk.write.bytes_server_pd_pattern4:
       - server_pd_pattern4
       - disk.write.bytes
-      feature_pd_server_pattern4_port_2:
-      - pd_server_pattern4_port_2
-      - feature
-      feature_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
-      - feature
+      binding_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
+      - binding
       disk.latency_server_pd_pattern4:
       - server_pd_pattern4
       - disk.latency
       endpoint_server_pd_pattern4:
       - server_pd_pattern4
       - endpoint
-      attachment_pd_server_pattern4_port_2:
-      - pd_server_pattern4_port_2
-      - attachment
-      attachment_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
-      - attachment
       feature_server_pd_pattern4:
       - server_pd_pattern4
       - feature
@@ -278,18 +284,27 @@ topology_template:
       disk.device.read.requests_server_pd_pattern4:
       - server_pd_pattern4
       - disk.device.read.requests
+      network.incoming.packets.rate_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
+      - network.incoming.packets.rate
       host_server_pd_pattern4:
       - server_pd_pattern4
       - host
       cpu_util_server_pd_pattern4:
       - server_pd_pattern4
       - cpu_util
+      network.incoming.packets.rate_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
+      - network.incoming.packets.rate
       memory.resident_server_pd_pattern4:
       - server_pd_pattern4
       - memory.resident
       disk.read.requests_server_pd_pattern4:
       - server_pd_pattern4
       - disk.read.requests
+      network.outgoing.bytes_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
+      - network.outgoing.bytes
       disk.read.bytes.rate_server_pd_pattern4:
       - server_pd_pattern4
       - disk.read.bytes.rate
@@ -302,6 +317,9 @@ topology_template:
       disk.write.requests_server_pd_pattern4:
       - server_pd_pattern4
       - disk.write.requests
+      network.outgoing.bytes_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
+      - network.outgoing.bytes
       disk.device.write.requests.rate_server_pd_pattern4:
       - server_pd_pattern4
       - disk.device.write.requests.rate
@@ -314,48 +332,36 @@ topology_template:
       disk.capacity_server_pd_pattern4:
       - server_pd_pattern4
       - disk.capacity
+      network.outgoing.packets.rate_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
+      - network.outgoing.packets.rate
+      network.outpoing.packets_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
+      - network.outpoing.packets
+      network.outpoing.packets_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
+      - network.outpoing.packets
       binding_server_pd_pattern4:
       - server_pd_pattern4
       - binding
-      network.outpoing.packets_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
-      - network.outpoing.packets
-      network.outpoing.packets_pd_server_pattern4_port_2:
-      - pd_server_pattern4_port_2
-      - network.outpoing.packets
-      network.incoming.packets.rate_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
-      - network.incoming.packets.rate
-      network.incoming.bytes_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
-      - network.incoming.bytes
       disk.device.iops_server_pd_pattern4:
       - server_pd_pattern4
       - disk.device.iops
-      network.incoming.packets.rate_pd_server_pattern4_port_2:
-      - pd_server_pattern4_port_2
-      - network.incoming.packets.rate
-      network.incoming.bytes_pd_server_pattern4_port_2:
-      - pd_server_pattern4_port_2
-      - network.incoming.bytes
       disk.device.read.bytes.rate_server_pd_pattern4:
       - server_pd_pattern4
       - disk.device.read.bytes.rate
       disk.device.allocation_server_pd_pattern4:
       - server_pd_pattern4
       - disk.device.allocation
-      network.outgoing.bytes.rate_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
-      - network.outgoing.bytes.rate
-      network.outgoing.bytes.rate_pd_server_pattern4_port_2:
-      - pd_server_pattern4_port_2
-      - network.outgoing.bytes.rate
       disk.usage_server_pd_pattern4:
       - server_pd_pattern4
       - disk.usage
       disk.read.bytes_server_pd_pattern4:
       - server_pd_pattern4
       - disk.read.bytes
+      network.outgoing.packets.rate_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
+      - network.outgoing.packets.rate
       os_server_pd_pattern4:
       - server_pd_pattern4
       - os
@@ -368,57 +374,51 @@ topology_template:
       scalable_server_pd_pattern4:
       - server_pd_pattern4
       - scalable
-      binding_pd_server_pattern4_port_2:
-      - pd_server_pattern4_port_2
-      - binding
-      network.incoming.bytes.rate_pd_server_pattern4_port_2:
-      - pd_server_pattern4_port_2
-      - network.incoming.bytes.rate
+      network.outgoing.bytes.rate_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
+      - network.outgoing.bytes.rate
       disk.write.requests.rate_server_pd_pattern4:
       - server_pd_pattern4
       - disk.write.requests.rate
       disk.device.latency_server_pd_pattern4:
       - server_pd_pattern4
       - disk.device.latency
-      binding_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
-      - binding
-      network.incoming.bytes.rate_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
-      - network.incoming.bytes.rate
-      network.outgoing.packets.rate_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
-      - network.outgoing.packets.rate
       disk.device.write.requests_server_pd_pattern4:
       - server_pd_pattern4
       - disk.device.write.requests
-      network.incoming.packets_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
-      - network.incoming.packets
-      network.outgoing.packets.rate_pd_server_pattern4_port_2:
-      - pd_server_pattern4_port_2
-      - network.outgoing.packets.rate
-      network.incoming.packets_pd_server_pattern4_port_2:
-      - pd_server_pattern4_port_2
-      - network.incoming.packets
+      network.outgoing.bytes.rate_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
+      - network.outgoing.bytes.rate
+      attachment_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
+      - attachment
+      network.incoming.bytes.rate_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
+      - network.incoming.bytes.rate
+      attachment_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
+      - attachment
+      network.incoming.bytes.rate_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
+      - network.incoming.bytes.rate
       disk.device.capacity_server_pd_pattern4:
       - server_pd_pattern4
       - disk.device.capacity
     requirements:
-      dependency_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
+      dependency_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
       - dependency
       local_storage_server_pd_pattern4:
       - server_pd_pattern4
       - local_storage
-      dependency_pd_server_pattern4_port_2:
-      - pd_server_pattern4_port_2
+      dependency_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
       - dependency
-      link_pd_server_pattern4_port_1:
-      - pd_server_pattern4_port_1
+      link_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
       - link
-      link_pd_server_pattern4_port_2:
-      - pd_server_pattern4_port_2
+      link_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
       - link
       dependency_server_pd_pattern4:
       - server_pd_pattern4

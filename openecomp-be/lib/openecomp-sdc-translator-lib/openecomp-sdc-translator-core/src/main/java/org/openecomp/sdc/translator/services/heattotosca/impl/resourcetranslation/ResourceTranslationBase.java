@@ -22,6 +22,7 @@ package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslati
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
@@ -44,6 +45,7 @@ import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationEntityType;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFactory;
+import org.openecomp.sdc.translator.services.heattotosca.errors.DuplicateResourceIdsInDifferentFilesErrorBuilder;
 import org.openecomp.sdc.translator.services.heattotosca.errors.ResourceNotFoundInHeatFileErrorBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -85,6 +88,11 @@ public abstract class ResourceTranslationBase {
     Optional<String> translatedId =
         getResourceTranslatedId(heatFileName, heatOrchestrationTemplate, resourceId, context);
     context.getTranslatedResources().putIfAbsent(heatFileName, new HashSet<>());
+
+    if(isResourceWithSameIdAppearsInOtherFiles(heatFileName, resourceId, context)){
+      throw new CoreException(
+          new DuplicateResourceIdsInDifferentFilesErrorBuilder(resourceId).build());
+    }
     if (context.getTranslatedResources().get(heatFileName).contains(resourceId)) {
       return translatedId;
     }
@@ -108,6 +116,15 @@ public abstract class ResourceTranslationBase {
 
     mdcDataDebugMessage.debugExitMessage("file, resource", heatFileName, resourceId);
     return translatedId;
+  }
+
+  private boolean isResourceWithSameIdAppearsInOtherFiles(String heatFileName,
+                                                          String resourceId,
+                                                          TranslationContext context){
+    Set<String> translatedResourceIdsFromOtherFiles =
+        context.getTranslatedResourceIdsFromOtherFiles(heatFileName);
+
+    return translatedResourceIdsFromOtherFiles.contains(resourceId);
   }
 
   /**

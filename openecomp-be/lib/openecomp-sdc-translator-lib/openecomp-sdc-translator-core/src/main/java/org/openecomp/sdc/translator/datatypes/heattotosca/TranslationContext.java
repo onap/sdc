@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.openecomp.config.api.Configuration;
 import org.openecomp.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
@@ -361,6 +363,19 @@ public class TranslationContext {
       this.usedHeatPseudoParams.put(heatFileName, new HashMap<>());
     }
     this.usedHeatPseudoParams.get(heatFileName).put(heatPseudoParam, translatedToscaParam);
+  }
+
+  public Set<String> getTranslatedResourceIdsFromOtherFiles(String fileNameToIgnore){
+    if(MapUtils.isEmpty(this.translatedResources)){
+      return new HashSet<>();
+    }
+
+    Set<String> translatedResourceIds = new HashSet<>();
+
+    this.translatedResources.entrySet().stream().filter(entry -> !entry.getKey().equals(fileNameToIgnore))
+        .forEach(entry -> translatedResourceIds.addAll(entry.getValue()));
+
+    return translatedResourceIds;
   }
 
   /**

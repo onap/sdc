@@ -154,7 +154,7 @@ topology_template:
       immutable: false
       type: string
   node_templates:
-    packet_mirror_network_port:
+    packet_mirror_network_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         ip_requirements:
@@ -189,7 +189,7 @@ topology_template:
             get_input: vf_module_id
           packet_mirror_network_cidr:
             get_attribute:
-            - packet_mirror_network_port
+            - packet_mirror_network_port_1
             - subnets
             - 0
             - cidr
@@ -213,7 +213,7 @@ topology_template:
           mount_colon__slash_config: vLBAgent_volume_2
           oam_private_network_cidr:
             get_attribute:
-            - oam_private_net_network_port
+            - oam_private_net_network_port_3
             - subnets
             - 0
             - cidr
@@ -241,9 +241,9 @@ topology_template:
             get_input: vLBAgent_type
           DPDK: DPDK_IP
           oam_private_network_ip_0:
-          - UNSUPPORTED_ATTRIBUTE_oam_private_net_network_port.fixed_ip_0s
+          - UNSUPPORTED_ATTRIBUTE_oam_private_net_network_port_3.fixed_ip_0s
           packet_mirror_network_ip_0:
-          - UNSUPPORTED_ATTRIBUTE_packet_mirror_network_port.fixed_ip_0s
+          - UNSUPPORTED_ATTRIBUTE_packet_mirror_network_port_1.fixed_ip_0s
           vLBAgent_name:
             get_input:
             - vLBAgent_names
@@ -323,7 +323,15 @@ topology_template:
         size: '(get_input : vLBAgent_volume_size_0) * 1024'
         description:
           get_input: vLBAgent_volume_name_0
-    oam_private_net_network_port:
+    vLBAgent_volume_1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: vLBAgent_volume_type_1
+        size: '(get_input : vLBAgent_volume_size_1) * 1024'
+        description:
+          get_input: vLBAgent_volume_name_1
+    oam_private_net_network_port_3:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         ip_requirements:
@@ -345,14 +353,6 @@ topology_template:
           capability: tosca.capabilities.network.Bindable
           node: vLBAgentInstance
           relationship: tosca.relationships.network.BindsTo
-    vLBAgent_volume_1:
-      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
-      properties:
-        volume_type:
-          get_input: vLBAgent_volume_type_1
-        size: '(get_input : vLBAgent_volume_size_1) * 1024'
-        description:
-          get_input: vLBAgent_volume_name_1
     vLBAgent_volume_2:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -404,43 +404,46 @@ topology_template:
       properties:
         heat_file: ../Artifacts/FEAdd_On_Module_vLBAgentTemplate.yaml
       members:
-      - packet_mirror_network_port
+      - packet_mirror_network_port_1
       - vLBAgentInstance
       - vLBAgent_volume_0
-      - oam_private_net_network_port
       - vLBAgent_volume_1
+      - oam_private_net_network_port_3
       - vLBAgent_volume_2
       - packet_internal_network_port
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vLBAgentTemplate
     capabilities:
+      network.incoming.bytes.rate_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
+      - network.incoming.bytes.rate
       disk.device.read.requests_vLBAgentInstance:
       - vLBAgentInstance
       - disk.device.read.requests
-      attachment_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - attachment
       network.incoming.packets_packet_internal_network_port:
       - packet_internal_network_port
       - network.incoming.packets
+      network.outgoing.bytes.rate_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - network.outgoing.bytes.rate
       disk.device.usage_vLBAgentInstance:
       - vLBAgentInstance
       - disk.device.usage
-      network.outgoing.bytes_packet_mirror_network_port:
-      - packet_mirror_network_port
-      - network.outgoing.bytes
+      network.incoming.bytes.rate_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - network.incoming.bytes.rate
       disk.read.requests_vLBAgentInstance:
       - vLBAgentInstance
       - disk.read.requests
-      network.outgoing.bytes.rate_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.outgoing.bytes.rate
+      network.incoming.packets_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - network.incoming.packets
       cpu_util_vLBAgentInstance:
       - vLBAgentInstance
       - cpu_util
-      network.outpoing.packets_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.outpoing.packets
+      feature_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - feature
       feature_vLBAgent_volume_1:
       - vLBAgent_volume_1
       - feature
@@ -453,9 +456,6 @@ topology_template:
       network.incoming.bytes.rate_packet_internal_network_port:
       - packet_internal_network_port
       - network.incoming.bytes.rate
-      network.outgoing.bytes.rate_packet_mirror_network_port:
-      - packet_mirror_network_port
-      - network.outgoing.bytes.rate
       disk.usage_vLBAgentInstance:
       - vLBAgentInstance
       - disk.usage
@@ -465,30 +465,36 @@ topology_template:
       disk.device.iops_vLBAgentInstance:
       - vLBAgentInstance
       - disk.device.iops
+      network.incoming.packets_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
+      - network.incoming.packets
+      network.outgoing.bytes.rate_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
+      - network.outgoing.bytes.rate
+      network.outpoing.packets_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - network.outpoing.packets
       binding_packet_internal_network_port:
       - packet_internal_network_port
       - binding
       disk.device.write.bytes_vLBAgentInstance:
       - vLBAgentInstance
       - disk.device.write.bytes
-      network.incoming.bytes_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.incoming.bytes
-      feature_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - feature
-      network.outpoing.packets_packet_mirror_network_port:
-      - packet_mirror_network_port
-      - network.outpoing.packets
-      network.incoming.bytes_packet_mirror_network_port:
-      - packet_mirror_network_port
-      - network.incoming.bytes
-      network.incoming.packets_packet_mirror_network_port:
-      - packet_mirror_network_port
-      - network.incoming.packets
+      attachment_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
+      - attachment
+      network.incoming.packets.rate_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - network.incoming.packets.rate
+      binding_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - binding
       endpoint_vLBAgentInstance:
       - vLBAgentInstance
       - endpoint
+      binding_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
+      - binding
       binding_vLBAgentInstance:
       - vLBAgentInstance
       - binding
@@ -501,21 +507,12 @@ topology_template:
       attachment_packet_internal_network_port:
       - packet_internal_network_port
       - attachment
-      network.incoming.packets.rate_packet_mirror_network_port:
-      - packet_mirror_network_port
-      - network.incoming.packets.rate
-      network.outgoing.packets.rate_packet_mirror_network_port:
-      - packet_mirror_network_port
-      - network.outgoing.packets.rate
       disk.read.bytes_vLBAgentInstance:
       - vLBAgentInstance
       - disk.read.bytes
       memory.usage_vLBAgentInstance:
       - vLBAgentInstance
       - memory.usage
-      network.incoming.bytes.rate_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.incoming.bytes.rate
       scalable_vLBAgentInstance:
       - vLBAgentInstance
       - scalable
@@ -534,9 +531,6 @@ topology_template:
       disk.write.bytes_vLBAgentInstance:
       - vLBAgentInstance
       - disk.write.bytes
-      network.outgoing.bytes_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.outgoing.bytes
       memory_vLBAgentInstance:
       - vLBAgentInstance
       - memory
@@ -549,15 +543,36 @@ topology_template:
       disk.iops_vLBAgentInstance:
       - vLBAgentInstance
       - disk.iops
+      network.outgoing.packets.rate_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - network.outgoing.packets.rate
+      feature_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
+      - feature
       instance_vLBAgentInstance:
       - vLBAgentInstance
       - instance
+      network.incoming.bytes_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
+      - network.incoming.bytes
+      attachment_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - attachment
       network.outgoing.bytes_packet_internal_network_port:
       - packet_internal_network_port
       - network.outgoing.bytes
+      network.outgoing.packets.rate_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
+      - network.outgoing.packets.rate
       network.incoming.bytes_packet_internal_network_port:
       - packet_internal_network_port
       - network.incoming.bytes
+      network.outpoing.packets_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
+      - network.outpoing.packets
+      network.outgoing.bytes_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
+      - network.outgoing.bytes
       disk.device.read.requests.rate_vLBAgentInstance:
       - vLBAgentInstance
       - disk.device.read.requests.rate
@@ -567,18 +582,12 @@ topology_template:
       network.incoming.packets.rate_packet_internal_network_port:
       - packet_internal_network_port
       - network.incoming.packets.rate
-      attachment_packet_mirror_network_port:
-      - packet_mirror_network_port
-      - attachment
       disk.write.requests.rate_vLBAgentInstance:
       - vLBAgentInstance
       - disk.write.requests.rate
       attachment_vLBAgent_volume_0:
       - vLBAgent_volume_0
       - attachment
-      binding_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - binding
       disk.device.read.bytes_vLBAgentInstance:
       - vLBAgentInstance
       - disk.device.read.bytes
@@ -594,27 +603,18 @@ topology_template:
       disk.device.write.requests.rate_vLBAgentInstance:
       - vLBAgentInstance
       - disk.device.write.requests.rate
-      feature_packet_mirror_network_port:
-      - packet_mirror_network_port
-      - feature
-      binding_packet_mirror_network_port:
-      - packet_mirror_network_port
-      - binding
-      network.incoming.packets_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.incoming.packets
-      network.incoming.bytes.rate_packet_mirror_network_port:
-      - packet_mirror_network_port
-      - network.incoming.bytes.rate
-      network.incoming.packets.rate_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.incoming.packets.rate
       disk.device.read.bytes.rate_vLBAgentInstance:
       - vLBAgentInstance
       - disk.device.read.bytes.rate
+      network.outgoing.bytes_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - network.outgoing.bytes
       cpu.delta_vLBAgentInstance:
       - vLBAgentInstance
       - cpu.delta
+      network.incoming.bytes_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - network.incoming.bytes
       disk.capacity_vLBAgentInstance:
       - vLBAgentInstance
       - disk.capacity
@@ -639,6 +639,9 @@ topology_template:
       network.outpoing.packets_packet_internal_network_port:
       - packet_internal_network_port
       - network.outpoing.packets
+      network.incoming.packets.rate_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
+      - network.incoming.packets.rate
       vcpus_vLBAgentInstance:
       - vLBAgentInstance
       - vcpus
@@ -651,9 +654,6 @@ topology_template:
       disk.write.bytes.rate_vLBAgentInstance:
       - vLBAgentInstance
       - disk.write.bytes.rate
-      network.outgoing.packets.rate_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.outgoing.packets.rate
     requirements:
       dependency_vLBAgentInstance:
       - vLBAgentInstance
@@ -661,29 +661,29 @@ topology_template:
       dependency_packet_internal_network_port:
       - packet_internal_network_port
       - dependency
+      dependency_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - dependency
       link_packet_internal_network_port:
       - packet_internal_network_port
       - link
-      dependency_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - dependency
+      link_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - link
       dependency_vLBAgent_volume_1:
       - vLBAgent_volume_1
       - dependency
       dependency_vLBAgent_volume_2:
       - vLBAgent_volume_2
       - dependency
-      dependency_packet_mirror_network_port:
-      - packet_mirror_network_port
+      dependency_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
       - dependency
-      link_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - link
       dependency_vLBAgent_volume_0:
       - vLBAgent_volume_0
       - dependency
-      link_packet_mirror_network_port:
-      - packet_mirror_network_port
+      link_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
       - link
       local_storage_vLBAgentInstance:
       - vLBAgentInstance

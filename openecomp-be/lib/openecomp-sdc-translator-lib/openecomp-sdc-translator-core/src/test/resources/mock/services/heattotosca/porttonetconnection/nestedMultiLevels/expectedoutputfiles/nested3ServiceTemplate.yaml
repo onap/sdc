@@ -59,7 +59,7 @@ topology_template:
       immutable: false
       type: string
   node_templates:
-    cmaui_port_3:
+    cmaui_port_32:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
@@ -80,11 +80,11 @@ topology_template:
           mac_count_required:
             is_required: false
         network:
-          get_input: p2
+          get_input: p1
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: server_cmaui
+          node: server_cmaui_3
           relationship: tosca.relationships.network.BindsTo
     test_nested4Level:
       type: org.openecomp.resource.abstract.nodes.heat.nested4
@@ -97,7 +97,20 @@ topology_template:
           substitute_service_template: nested4ServiceTemplate.yaml
         p2:
           get_input: p2
-    cmaui_port_2:
+    server_cmaui_3:
+      type: org.openecomp.resource.vfc.nodes.heat.cmaui
+      properties:
+        flavor:
+          get_input: cmaui_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: cmaui_image
+        name:
+          get_input:
+          - cmaui_names
+          - 0
+    cmaui_port_33:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
@@ -118,25 +131,12 @@ topology_template:
           mac_count_required:
             is_required: false
         network:
-          get_input: p1
+          get_input: p2
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: server_cmaui
+          node: server_cmaui_3
           relationship: tosca.relationships.network.BindsTo
-    server_cmaui:
-      type: org.openecomp.resource.vfc.nodes.heat.cmaui
-      properties:
-        flavor:
-          get_input: cmaui_flavor
-        availability_zone:
-          get_input: availability_zone_0
-        image:
-          get_input: cmaui_image
-        name:
-          get_input:
-          - cmaui_names
-          - 0
   groups:
     nested3_group:
       type: org.openecomp.groups.heat.HeatStack
@@ -144,431 +144,431 @@ topology_template:
         heat_file: ../Artifacts/nested3.yml
         description: nested3
       members:
-      - cmaui_port_3
+      - cmaui_port_32
       - test_nested4Level
-      - cmaui_port_2
-      - server_cmaui
+      - server_cmaui_3
+      - cmaui_port_33
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested3
     capabilities:
-      cpu.delta_server_cmaui:
-      - server_cmaui
-      - cpu.delta
-      disk.device.write.requests.rate_server_cmaui:
-      - server_cmaui
-      - disk.device.write.requests.rate
-      binding_cmaui_port_2_test_nested4Level:
+      memory.usage_server_cmaui_4_test_nested4Level:
       - test_nested4Level
-      - binding_cmaui_port_2
-      disk.device.allocation_server_cmaui:
-      - server_cmaui
-      - disk.device.allocation
-      network.incoming.bytes_cmaui_port_2_test_nested4Level:
+      - memory.usage_server_cmaui_4
+      cpu_util_server_cmaui_4_test_nested4Level:
       - test_nested4Level
-      - network.incoming.bytes_cmaui_port_2
-      memory_server_cmaui_test_nested4Level:
+      - cpu_util_server_cmaui_4
+      attachment_cmaui_port_42_test_nested4Level:
       - test_nested4Level
-      - memory_server_cmaui
-      network.outpoing.packets_cmaui_port_3_test_nested4Level:
-      - test_nested4Level
-      - network.outpoing.packets_cmaui_port_3
-      scalable_server_cmaui:
-      - server_cmaui
-      - scalable
-      disk.read.bytes.rate_server_cmaui:
-      - server_cmaui
-      - disk.read.bytes.rate
-      instance_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - instance_server_cmaui
-      disk.root.size_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.root.size_server_cmaui
-      disk.write.bytes_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.write.bytes_server_cmaui
-      host_server_cmaui:
-      - server_cmaui
-      - host
-      network.outpoing.packets_cmaui_port_2_test_nested4Level:
-      - test_nested4Level
-      - network.outpoing.packets_cmaui_port_2
-      cpu_util_server_cmaui:
-      - server_cmaui
-      - cpu_util
-      feature_cmaui_port_2_test_nested4Level:
-      - test_nested4Level
-      - feature_cmaui_port_2
-      cpu_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - cpu_server_cmaui
-      vcpus_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - vcpus_server_cmaui
-      disk.device.usage_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.device.usage_server_cmaui
-      network.outgoing.bytes_cmaui_port_3:
-      - cmaui_port_3
-      - network.outgoing.bytes
-      network.incoming.bytes_cmaui_port_3_test_nested4Level:
-      - test_nested4Level
-      - network.incoming.bytes_cmaui_port_3
-      disk.device.write.requests_server_cmaui:
-      - server_cmaui
-      - disk.device.write.requests
-      network.outgoing.bytes_cmaui_port_2:
-      - cmaui_port_2
-      - network.outgoing.bytes
-      network.outgoing.bytes.rate_cmaui_port_2_test_nested4Level:
-      - test_nested4Level
-      - network.outgoing.bytes.rate_cmaui_port_2
-      attachment_cmaui_port_2_test_nested4Level:
-      - test_nested4Level
-      - attachment_cmaui_port_2
-      instance_server_cmaui:
-      - server_cmaui
-      - instance
-      disk.latency_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.latency_server_cmaui
-      disk.device.read.bytes_server_cmaui:
-      - server_cmaui
-      - disk.device.read.bytes
-      disk.device.capacity_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.device.capacity_server_cmaui
-      disk.root.size_server_cmaui:
-      - server_cmaui
-      - disk.root.size
-      host_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - host_server_cmaui
-      network.outgoing.bytes.rate_cmaui_port_3_test_nested4Level:
-      - test_nested4Level
-      - network.outgoing.bytes.rate_cmaui_port_3
-      attachment_cmaui_port_3_test_nested4Level:
-      - test_nested4Level
-      - attachment_cmaui_port_3
-      network.incoming.packets_cmaui_port_3:
-      - cmaui_port_3
-      - network.incoming.packets
-      network.incoming.packets_cmaui_port_2:
-      - cmaui_port_2
-      - network.incoming.packets
-      os_server_cmaui:
-      - server_cmaui
-      - os
-      disk.device.write.bytes.rate_server_cmaui:
-      - server_cmaui
-      - disk.device.write.bytes.rate
-      disk.device.read.requests.rate_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.device.read.requests.rate_server_cmaui
-      disk.allocation_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.allocation_server_cmaui
-      disk.device.write.bytes.rate_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.device.write.bytes.rate_server_cmaui
-      disk.device.write.bytes_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.device.write.bytes_server_cmaui
-      network.incoming.packets.rate_cmaui_port_2_test_nested4Level:
-      - test_nested4Level
-      - network.incoming.packets.rate_cmaui_port_2
-      disk.device.write.requests.rate_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.device.write.requests.rate_server_cmaui
-      disk.device.iops_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.device.iops_server_cmaui
-      disk.read.requests_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.read.requests_server_cmaui
-      disk.ephemeral.size_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.ephemeral.size_server_cmaui
-      binding_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - binding_server_cmaui
-      disk.usage_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.usage_server_cmaui
-      feature_server_cmaui:
-      - server_cmaui
-      - feature
-      binding_cmaui_port_2:
-      - cmaui_port_2
-      - binding
-      binding_cmaui_port_3:
-      - cmaui_port_3
-      - binding
-      network.outgoing.bytes_cmaui_port_3_test_nested4Level:
-      - test_nested4Level
-      - network.outgoing.bytes_cmaui_port_3
-      binding_cmaui_port_3_test_nested4Level:
-      - test_nested4Level
-      - binding_cmaui_port_3
-      memory.usage_server_cmaui:
-      - server_cmaui
-      - memory.usage
-      disk.ephemeral.size_server_cmaui:
-      - server_cmaui
-      - disk.ephemeral.size
-      network.outgoing.bytes.rate_cmaui_port_2:
-      - cmaui_port_2
-      - network.outgoing.bytes.rate
-      network.outgoing.bytes.rate_cmaui_port_3:
-      - cmaui_port_3
-      - network.outgoing.bytes.rate
-      feature_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - feature_server_cmaui
-      disk.read.bytes.rate_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.read.bytes.rate_server_cmaui
-      disk.iops_server_cmaui:
-      - server_cmaui
-      - disk.iops
-      network.incoming.bytes_cmaui_port_3:
-      - cmaui_port_3
-      - network.incoming.bytes
-      network.outgoing.packets.rate_cmaui_port_3_test_nested4Level:
-      - test_nested4Level
-      - network.outgoing.packets.rate_cmaui_port_3
-      disk.device.iops_server_cmaui:
-      - server_cmaui
-      - disk.device.iops
-      feature_cmaui_port_3_test_nested4Level:
-      - test_nested4Level
-      - feature_cmaui_port_3
-      network.incoming.bytes_cmaui_port_2:
-      - cmaui_port_2
-      - network.incoming.bytes
-      disk.capacity_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.capacity_server_cmaui
-      disk.read.bytes_server_cmaui:
-      - server_cmaui
-      - disk.read.bytes
-      network.incoming.packets_cmaui_port_3_test_nested4Level:
-      - test_nested4Level
-      - network.incoming.packets_cmaui_port_3
-      scalable_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - scalable_server_cmaui
-      network.incoming.bytes.rate_cmaui_port_3_test_nested4Level:
-      - test_nested4Level
-      - network.incoming.bytes.rate_cmaui_port_3
-      disk.device.read.bytes.rate_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.device.read.bytes.rate_server_cmaui
-      disk.device.allocation_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.device.allocation_server_cmaui
-      disk.device.write.requests_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.device.write.requests_server_cmaui
-      network.incoming.packets.rate_cmaui_port_2:
-      - cmaui_port_2
-      - network.incoming.packets.rate
-      cpu_server_cmaui:
-      - server_cmaui
-      - cpu
-      network.incoming.packets.rate_cmaui_port_3:
-      - cmaui_port_3
-      - network.incoming.packets.rate
-      feature_cmaui_port_2:
-      - cmaui_port_2
-      - feature
-      feature_cmaui_port_3:
-      - cmaui_port_3
-      - feature
-      disk.write.bytes.rate_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.write.bytes.rate_server_cmaui
-      disk.write.requests.rate_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.write.requests.rate_server_cmaui
-      disk.write.bytes.rate_server_cmaui:
-      - server_cmaui
-      - disk.write.bytes.rate
-      disk.device.read.bytes.rate_server_cmaui:
-      - server_cmaui
-      - disk.device.read.bytes.rate
-      attachment_cmaui_port_2:
-      - cmaui_port_2
-      - attachment
-      attachment_cmaui_port_3:
-      - cmaui_port_3
-      - attachment
-      disk.device.latency_server_cmaui:
-      - server_cmaui
-      - disk.device.latency
-      disk.read.requests_server_cmaui:
-      - server_cmaui
-      - disk.read.requests
-      disk.device.capacity_server_cmaui:
-      - server_cmaui
-      - disk.device.capacity
-      network.outgoing.packets.rate_cmaui_port_2:
-      - cmaui_port_2
-      - network.outgoing.packets.rate
-      disk.usage_server_cmaui:
-      - server_cmaui
-      - disk.usage
-      network.outgoing.packets.rate_cmaui_port_3:
-      - cmaui_port_3
-      - network.outgoing.packets.rate
-      disk.device.usage_server_cmaui:
-      - server_cmaui
+      - attachment_cmaui_port_42
+      disk.device.usage_server_cmaui_3:
+      - server_cmaui_3
       - disk.device.usage
-      disk.capacity_server_cmaui:
-      - server_cmaui
-      - disk.capacity
-      disk.write.requests.rate_server_cmaui:
-      - server_cmaui
+      disk.device.latency_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.latency
+      disk.read.requests_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.read.requests_server_cmaui_4
+      network.incoming.bytes.rate_cmaui_port_33:
+      - cmaui_port_33
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_cmaui_port_32:
+      - cmaui_port_32
+      - network.incoming.bytes.rate
+      disk.root.size_server_cmaui_3:
+      - server_cmaui_3
+      - disk.root.size
+      disk.device.write.requests.rate_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.write.requests.rate
+      disk.write.bytes.rate_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.write.bytes.rate_server_cmaui_4
+      disk.latency_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.latency_server_cmaui_4
+      disk.read.requests_server_cmaui_3:
+      - server_cmaui_3
+      - disk.read.requests
+      network.outgoing.bytes.rate_cmaui_port_43_test_nested4Level:
+      - test_nested4Level
+      - network.outgoing.bytes.rate_cmaui_port_43
+      disk.device.iops_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.iops
+      disk.device.capacity_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.capacity
+      feature_cmaui_port_42_test_nested4Level:
+      - test_nested4Level
+      - feature_cmaui_port_42
+      disk.device.read.bytes.rate_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.read.bytes.rate
+      binding_cmaui_port_43_test_nested4Level:
+      - test_nested4Level
+      - binding_cmaui_port_43
+      feature_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - feature_server_cmaui_4
+      disk.capacity_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.capacity_server_cmaui_4
+      disk.read.bytes_server_cmaui_3:
+      - server_cmaui_3
+      - disk.read.bytes
+      attachment_cmaui_port_32:
+      - cmaui_port_32
+      - attachment
+      attachment_cmaui_port_43_test_nested4Level:
+      - test_nested4Level
+      - attachment_cmaui_port_43
+      disk.device.write.bytes.rate_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.device.write.bytes.rate_server_cmaui_4
+      attachment_cmaui_port_33:
+      - cmaui_port_33
+      - attachment
+      disk.device.read.requests_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.device.read.requests_server_cmaui_4
+      network.outgoing.bytes.rate_cmaui_port_42_test_nested4Level:
+      - test_nested4Level
+      - network.outgoing.bytes.rate_cmaui_port_42
+      network.incoming.packets.rate_cmaui_port_33:
+      - cmaui_port_33
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_cmaui_port_32:
+      - cmaui_port_32
+      - network.incoming.packets.rate
+      disk.device.write.requests_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.device.write.requests_server_cmaui_4
+      disk.write.requests.rate_server_cmaui_3:
+      - server_cmaui_3
       - disk.write.requests.rate
-      network.incoming.packets.rate_cmaui_port_3_test_nested4Level:
+      disk.device.write.requests.rate_server_cmaui_4_test_nested4Level:
       - test_nested4Level
-      - network.incoming.packets.rate_cmaui_port_3
-      disk.iops_server_cmaui_test_nested4Level:
+      - disk.device.write.requests.rate_server_cmaui_4
+      disk.device.read.bytes_server_cmaui_4_test_nested4Level:
       - test_nested4Level
-      - disk.iops_server_cmaui
-      disk.device.read.requests_server_cmaui:
-      - server_cmaui
-      - disk.device.read.requests
-      endpoint_server_cmaui_test_nested4Level:
+      - disk.device.read.bytes_server_cmaui_4
+      disk.device.read.bytes_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.read.bytes
+      binding_cmaui_port_42_test_nested4Level:
       - test_nested4Level
-      - endpoint_server_cmaui
-      memory_server_cmaui:
-      - server_cmaui
+      - binding_cmaui_port_42
+      feature_cmaui_port_43_test_nested4Level:
+      - test_nested4Level
+      - feature_cmaui_port_43
+      memory_server_cmaui_3:
+      - server_cmaui_3
       - memory
-      cpu.delta_server_cmaui_test_nested4Level:
+      memory.resident_server_cmaui_4_test_nested4Level:
       - test_nested4Level
-      - cpu.delta_server_cmaui
-      memory.resident_server_cmaui_test_nested4Level:
+      - memory.resident_server_cmaui_4
+      cpu_server_cmaui_3:
+      - server_cmaui_3
+      - cpu
+      binding_server_cmaui_4_test_nested4Level:
       - test_nested4Level
-      - memory.resident_server_cmaui
-      network.incoming.bytes.rate_cmaui_port_2_test_nested4Level:
+      - binding_server_cmaui_4
+      os_server_cmaui_4_test_nested4Level:
       - test_nested4Level
-      - network.incoming.bytes.rate_cmaui_port_2
-      binding_server_cmaui:
-      - server_cmaui
-      - binding
-      disk.device.read.requests.rate_server_cmaui:
-      - server_cmaui
-      - disk.device.read.requests.rate
-      disk.write.bytes_server_cmaui:
-      - server_cmaui
+      - os_server_cmaui_4
+      disk.ephemeral.size_server_cmaui_3:
+      - server_cmaui_3
+      - disk.ephemeral.size
+      cpu.delta_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - cpu.delta_server_cmaui_4
+      network.incoming.bytes_cmaui_port_42_test_nested4Level:
+      - test_nested4Level
+      - network.incoming.bytes_cmaui_port_42
+      disk.capacity_server_cmaui_3:
+      - server_cmaui_3
+      - disk.capacity
+      disk.device.capacity_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.device.capacity_server_cmaui_4
+      scalable_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - scalable_server_cmaui_4
+      network.outpoing.packets_cmaui_port_42_test_nested4Level:
+      - test_nested4Level
+      - network.outpoing.packets_cmaui_port_42
+      disk.device.iops_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.device.iops_server_cmaui_4
+      disk.read.bytes.rate_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.read.bytes.rate_server_cmaui_4
+      endpoint_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - endpoint_server_cmaui_4
+      vcpus_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - vcpus_server_cmaui_4
+      disk.device.write.requests_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.write.requests
+      disk.write.bytes_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.write.bytes_server_cmaui_4
+      disk.write.requests.rate_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.write.requests.rate_server_cmaui_4
+      disk.iops_server_cmaui_3:
+      - server_cmaui_3
+      - disk.iops
+      host_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - host_server_cmaui_4
+      cpu_util_server_cmaui_3:
+      - server_cmaui_3
+      - cpu_util
+      disk.device.write.bytes.rate_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.write.bytes.rate
+      disk.write.bytes.rate_server_cmaui_3:
+      - server_cmaui_3
+      - disk.write.bytes.rate
+      disk.device.write.bytes_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.write.bytes
+      network.outgoing.bytes.rate_cmaui_port_33:
+      - cmaui_port_33
+      - network.outgoing.bytes.rate
+      network.incoming.packets_cmaui_port_42_test_nested4Level:
+      - test_nested4Level
+      - network.incoming.packets_cmaui_port_42
+      network.incoming.bytes.rate_cmaui_port_42_test_nested4Level:
+      - test_nested4Level
+      - network.incoming.bytes.rate_cmaui_port_42
+      disk.iops_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.iops_server_cmaui_4
+      feature_server_cmaui_3:
+      - server_cmaui_3
+      - feature
+      cpu_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - cpu_server_cmaui_4
+      network.outgoing.packets.rate_cmaui_port_43_test_nested4Level:
+      - test_nested4Level
+      - network.outgoing.packets.rate_cmaui_port_43
+      disk.write.bytes_server_cmaui_3:
+      - server_cmaui_3
       - disk.write.bytes
-      disk.read.bytes_server_cmaui_test_nested4Level:
+      disk.allocation_server_cmaui_3:
+      - server_cmaui_3
+      - disk.allocation
+      network.outgoing.bytes_cmaui_port_32:
+      - cmaui_port_32
+      - network.outgoing.bytes
+      feature_cmaui_port_33:
+      - cmaui_port_33
+      - feature
+      feature_cmaui_port_32:
+      - cmaui_port_32
+      - feature
+      network.outgoing.bytes_cmaui_port_43_test_nested4Level:
       - test_nested4Level
-      - disk.read.bytes_server_cmaui
-      disk.device.read.requests_server_cmaui_test_nested4Level:
+      - network.outgoing.bytes_cmaui_port_43
+      binding_server_cmaui_3:
+      - server_cmaui_3
+      - binding
+      vcpus_server_cmaui_3:
+      - server_cmaui_3
+      - vcpus
+      network.outgoing.bytes_cmaui_port_33:
+      - cmaui_port_33
+      - network.outgoing.bytes
+      instance_server_cmaui_4_test_nested4Level:
       - test_nested4Level
-      - disk.device.read.requests_server_cmaui
-      disk.write.requests_server_cmaui_test_nested4Level:
+      - instance_server_cmaui_4
+      scalable_server_cmaui_3:
+      - server_cmaui_3
+      - scalable
+      network.outgoing.packets.rate_cmaui_port_42_test_nested4Level:
       - test_nested4Level
-      - disk.write.requests_server_cmaui
-      disk.device.latency_server_cmaui_test_nested4Level:
+      - network.outgoing.packets.rate_cmaui_port_42
+      network.outgoing.bytes.rate_cmaui_port_32:
+      - cmaui_port_32
+      - network.outgoing.bytes.rate
+      disk.write.requests_server_cmaui_3:
+      - server_cmaui_3
+      - disk.write.requests
+      disk.usage_server_cmaui_3:
+      - server_cmaui_3
+      - disk.usage
+      disk.device.write.bytes_server_cmaui_4_test_nested4Level:
       - test_nested4Level
-      - disk.device.latency_server_cmaui
+      - disk.device.write.bytes_server_cmaui_4
+      network.outgoing.packets.rate_cmaui_port_33:
+      - cmaui_port_33
+      - network.outgoing.packets.rate
+      binding_cmaui_port_33:
+      - cmaui_port_33
+      - binding
+      endpoint_server_cmaui_3:
+      - server_cmaui_3
+      - endpoint
+      memory_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - memory_server_cmaui_4
+      network.incoming.packets.rate_cmaui_port_43_test_nested4Level:
+      - test_nested4Level
+      - network.incoming.packets.rate_cmaui_port_43
+      network.incoming.packets_cmaui_port_43_test_nested4Level:
+      - test_nested4Level
+      - network.incoming.packets_cmaui_port_43
+      os_server_cmaui_3:
+      - server_cmaui_3
+      - os
+      disk.root.size_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.root.size_server_cmaui_4
+      network.outgoing.packets.rate_cmaui_port_32:
+      - cmaui_port_32
+      - network.outgoing.packets.rate
+      binding_cmaui_port_32:
+      - cmaui_port_32
+      - binding
+      disk.usage_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.usage_server_cmaui_4
+      network.incoming.bytes_cmaui_port_32:
+      - cmaui_port_32
+      - network.incoming.bytes
+      disk.device.latency_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.device.latency_server_cmaui_4
+      network.incoming.packets_cmaui_port_32:
+      - cmaui_port_32
+      - network.incoming.packets
+      network.incoming.packets_cmaui_port_33:
+      - cmaui_port_33
+      - network.incoming.packets
+      disk.device.read.requests.rate_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.device.read.requests.rate_server_cmaui_4
+      disk.ephemeral.size_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.ephemeral.size_server_cmaui_4
+      network.incoming.bytes_cmaui_port_33:
+      - cmaui_port_33
+      - network.incoming.bytes
+      disk.device.allocation_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.allocation
+      disk.read.bytes_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.read.bytes_server_cmaui_4
+      disk.allocation_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.allocation_server_cmaui_4
+      disk.device.allocation_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.device.allocation_server_cmaui_4
+      host_server_cmaui_3:
+      - server_cmaui_3
+      - host
+      network.outpoing.packets_cmaui_port_33:
+      - cmaui_port_33
+      - network.outpoing.packets
+      network.outpoing.packets_cmaui_port_32:
+      - cmaui_port_32
+      - network.outpoing.packets
+      disk.write.requests_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.write.requests_server_cmaui_4
       feature_test_nested4Level:
       - test_nested4Level
       - feature
-      os_server_cmaui_test_nested4Level:
+      network.incoming.packets.rate_cmaui_port_42_test_nested4Level:
       - test_nested4Level
-      - os_server_cmaui
-      network.outgoing.bytes_cmaui_port_2_test_nested4Level:
+      - network.incoming.packets.rate_cmaui_port_42
+      instance_server_cmaui_3:
+      - server_cmaui_3
+      - instance
+      network.outpoing.packets_cmaui_port_43_test_nested4Level:
       - test_nested4Level
-      - network.outgoing.bytes_cmaui_port_2
-      memory.resident_server_cmaui:
-      - server_cmaui
+      - network.outpoing.packets_cmaui_port_43
+      disk.read.bytes.rate_server_cmaui_3:
+      - server_cmaui_3
+      - disk.read.bytes.rate
+      disk.device.usage_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.device.usage_server_cmaui_4
+      disk.device.read.bytes.rate_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - disk.device.read.bytes.rate_server_cmaui_4
+      disk.device.read.requests_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.read.requests
+      disk.device.read.requests.rate_server_cmaui_3:
+      - server_cmaui_3
+      - disk.device.read.requests.rate
+      cpu.delta_server_cmaui_3:
+      - server_cmaui_3
+      - cpu.delta
+      memory.resident_server_cmaui_3:
+      - server_cmaui_3
       - memory.resident
-      memory.usage_server_cmaui_test_nested4Level:
+      network.incoming.bytes.rate_cmaui_port_43_test_nested4Level:
       - test_nested4Level
-      - memory.usage_server_cmaui
-      network.outgoing.packets.rate_cmaui_port_2_test_nested4Level:
+      - network.incoming.bytes.rate_cmaui_port_43
+      network.incoming.bytes_cmaui_port_43_test_nested4Level:
       - test_nested4Level
-      - network.outgoing.packets.rate_cmaui_port_2
-      disk.latency_server_cmaui:
-      - server_cmaui
+      - network.incoming.bytes_cmaui_port_43
+      network.outgoing.bytes_cmaui_port_42_test_nested4Level:
+      - test_nested4Level
+      - network.outgoing.bytes_cmaui_port_42
+      disk.latency_server_cmaui_3:
+      - server_cmaui_3
       - disk.latency
-      vcpus_server_cmaui:
-      - server_cmaui
-      - vcpus
-      network.incoming.packets_cmaui_port_2_test_nested4Level:
-      - test_nested4Level
-      - network.incoming.packets_cmaui_port_2
-      disk.device.write.bytes_server_cmaui:
-      - server_cmaui
-      - disk.device.write.bytes
-      network.incoming.bytes.rate_cmaui_port_2:
-      - cmaui_port_2
-      - network.incoming.bytes.rate
-      network.incoming.bytes.rate_cmaui_port_3:
-      - cmaui_port_3
-      - network.incoming.bytes.rate
-      disk.device.read.bytes_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - disk.device.read.bytes_server_cmaui
-      cpu_util_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - cpu_util_server_cmaui
-      disk.allocation_server_cmaui:
-      - server_cmaui
-      - disk.allocation
-      disk.write.requests_server_cmaui:
-      - server_cmaui
-      - disk.write.requests
-      network.outpoing.packets_cmaui_port_2:
-      - cmaui_port_2
-      - network.outpoing.packets
-      network.outpoing.packets_cmaui_port_3:
-      - cmaui_port_3
-      - network.outpoing.packets
-      endpoint_server_cmaui:
-      - server_cmaui
-      - endpoint
+      memory.usage_server_cmaui_3:
+      - server_cmaui_3
+      - memory.usage
     requirements:
-      dependency_server_cmaui:
-      - server_cmaui
-      - dependency
-      link_cmaui_port_3_test_nested4Level:
+      link_cmaui_port_42_test_nested4Level:
       - test_nested4Level
-      - link_cmaui_port_3
-      local_storage_server_cmaui_test_nested4Level:
+      - link_cmaui_port_42
+      dependency_cmaui_port_42_test_nested4Level:
       - test_nested4Level
-      - local_storage_server_cmaui
-      link_cmaui_port_2:
-      - cmaui_port_2
-      - link
-      link_cmaui_port_3:
-      - cmaui_port_3
-      - link
-      dependency_cmaui_port_2_test_nested4Level:
+      - dependency_cmaui_port_42
+      local_storage_server_cmaui_4_test_nested4Level:
       - test_nested4Level
-      - dependency_cmaui_port_2
+      - local_storage_server_cmaui_4
+      local_storage_server_cmaui_3:
+      - server_cmaui_3
+      - local_storage
       dependency_test_nested4Level:
       - test_nested4Level
       - dependency
-      local_storage_server_cmaui:
-      - server_cmaui
-      - local_storage
-      dependency_server_cmaui_test_nested4Level:
-      - test_nested4Level
-      - dependency_server_cmaui
-      dependency_cmaui_port_3_test_nested4Level:
-      - test_nested4Level
-      - dependency_cmaui_port_3
-      dependency_cmaui_port_3:
-      - cmaui_port_3
+      link_cmaui_port_33:
+      - cmaui_port_33
+      - link
+      dependency_cmaui_port_32:
+      - cmaui_port_32
       - dependency
-      link_cmaui_port_2_test_nested4Level:
+      link_cmaui_port_32:
+      - cmaui_port_32
+      - link
+      dependency_cmaui_port_33:
+      - cmaui_port_33
+      - dependency
+      link_cmaui_port_43_test_nested4Level:
       - test_nested4Level
-      - link_cmaui_port_2
-      dependency_cmaui_port_2:
-      - cmaui_port_2
+      - link_cmaui_port_43
+      dependency_server_cmaui_4_test_nested4Level:
+      - test_nested4Level
+      - dependency_server_cmaui_4
+      dependency_cmaui_port_43_test_nested4Level:
+      - test_nested4Level
+      - dependency_cmaui_port_43
+      dependency_server_cmaui_3:
+      - server_cmaui_3
       - dependency
