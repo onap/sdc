@@ -1,6 +1,7 @@
 .. This work is licensed under a Creative Commons Attribution 4.0 International License.
 .. http://creativecommons.org/licenses/by/4.0
 
+========
 Delivery
 ========
 
@@ -13,32 +14,42 @@ Delivery
      and referenced in developer and user guides
    
    * This note must be removed after content has been added.
+   
+   
+SDC Dockers Containers Structure
+================================
 
-Example use of a block diagram.
+Below is a diagram of the SDC project docker containers and the connections between them.
 
 .. blockdiag::
    
 
-   blockdiag layers {
-   orientation = portrait
-   a -> m;
-   b -> n;
-   c -> x;
-   m -> y;
-   m -> z;
-   group l1 {
-	color = blue;
-	x; y; z;
-	}
-   group l2 {
-	color = yellow;
-	m; n; 
-	}
-   group l3 {
-	color = orange;
-	a; b; c;
-	}
-
-   }
-
-
+    blockdiag delivery {
+        node_width = 170;
+        orientation = portrait;
+        SDC-Elasticsearch[shape = flowchart.database]
+        SDC-Cassandra[shape = flowchart.database]
+        SDC-Frontend -> SDC-Backend;
+        SDC-Backend -> SDC-Elasticsearch, SDC-Cassandra;
+        SDC-Sanity -> SDC-Backend;
+        group ui_group {
+            color = blue;
+            label = "UI Layer";
+            SDC-Frontend;
+        }
+        group bi_group {
+            color = yellow;
+            label = "Business Login Layer"
+            SDC-Backend;
+        }
+        group data_storage_group {
+            color = orange;
+            label = "Data Storage Layer"
+            SDC-Elasticsearch; SDC-Cassandra;
+        }
+        group testing_group {
+            color = green;
+            label = "Testing Layer";
+            SDC-Sanity;
+        }
+    }
