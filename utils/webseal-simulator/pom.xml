@@ -208,7 +208,13 @@
 						<configuration>
 							<verbose>true</verbose>
 							<apiVersion>1.23</apiVersion>
-
+							<registry>nexus3.onap.org:10003</registry>
+                            <authConfig>
+                                <pull>
+      					            <username>docker</username>
+      					            <password>docker</password>
+      				            </pull>
+    			            </authConfig>
 							<images>
 
 								<!-- Build simulator image -->
