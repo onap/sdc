@@ -37,13 +37,52 @@ public class UnifiedCompositionServiceTest {
   @Spy
   TranslationContext context;
 
-  String inputServiceTemplatesPath;
-  String outputServiceTemplatesPath;
+  private static final String IN_PREFIX = "/in";
+  private static final String OUT_PREFIX = "/out";
+  private static final String FSB1_template = "FSB1_template";
+  private static final String FSB2_template = "FSB2_template";
+  private static final String FSB3_template = "FSB3_template";
+  private static final String FSB1_INTERNAL = "FSB1_Internal";
+  private static final String FSB2_INTERNAL = "FSB2_Internal";
+  private static final String FSB1_INTERNAL1 = "FSB1_Internal1";
+  private static final String FSB1_INTERNAL2 = "FSB1_Internal2";
+  private static final String FSB2_INTERNAL1 = "FSB2_Internal1";
+  private static final String FSB2_INTERNAL2 = "FSB2_Internal2";
+  private static final String PORT = "port";
+  private static final String PORT1 = "port1";
+  private static final String PORT2 = "port2";
+  private static final String FSB1_OAM = "FSB1_OAM";
+  private static final String ORG_OPENECOMP_RESOURCE_ABSTRACT_NODES_FSB1 = "org.openecomp.resource.abstract.nodes.FSB1";
+  private static final String ORG_OPENECOMP_RESOURCE_VFC_NODES_HEAT_FSB = "org.openecomp.resource.vfc.nodes.heat.FSB";
+  private static final String DEVICE_OWNER = "device_owner";
+  private static final String COMPLEX_OUTPUT1 = "complexOutput1";
+  private static final String COMPLEX_OUTPUT2 = "complexOutput2";
+  private static final String COMPLEX_OUTPUT3 = "complexOutput3";
+  private static final String USER_DATA_FORMAT = "user_data_format";
+  private static final String TENANT_ID = "tenant_id";
+  private static final String SIMPLE_OUTPUT1 = "simpleOutput1";
+  private static final String SIMPLE_OUTPUT2 = "simpleOutput2";
+  private static final String ADDRESSES = "addresses";
+  private static final String CMAUI_VOLUME1 = "cmaui_volume1";
+  private static final String CMAUI_VOLUME2 = "cmaui_volume2";
+  private static final String CMAUI_VOLUME3 = "cmaui_volume3";
+  private static final String ACCESS_IPv4 = "accessIPv4";
+  private static final String ACCESS_IPv6 = "accessIPv6";
+  private static final String FSB1 = "FSB1";
+  private static final String MYATTR = "myAttr";
+  private static final String VOLUME_TYPE = "volume_type";
+  private static final String SIZE = "size";
+  private static final String NETWORK_ID = "network_id";
+  private static final String JSA_NET1 = "jsa_net1";
+  private static final String STATUS = "status";
+  private static final String AVAILABILITY_ZONE = "availability_zone";
+  private static final String DEPENDENCY = "dependency";
+
   Map<String, ServiceTemplate> inputServiceTemplates;
   Map<String, ServiceTemplate> expectedOutserviceTemplates;
-  private static String mainSTName = "MainServiceTemplate.yaml";
-  private static String substitutionST = "SubstitutionServiceTemplate.yaml";
-  private static String globalSubstitutionST = "GlobalSubstitutionTypesServiceTemplate.yaml";
+
+  private static final String MAIN_SERVICE_TEMPLATE_YAML = "MainServiceTemplate.yaml";
+  private static final String GLOBAL_SUBSTITUTION_TYPES_SERVICE_TEMPLATE_YAML = "GlobalSubstitutionTypesServiceTemplate.yaml";
 
   @Before
   public void setUp() {
@@ -58,18 +97,14 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void createSubstitutionStNoConsolidationData() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/NoOutParamDuplicatePortType/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/NoOutParamDuplicatePortType/out";
-
-    loadInputAndOutputData();
+    String path = "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/NoOutParamDuplicatePortType";
+    loadInputAndOutputData(path);
     ServiceTemplate expectedServiceTemplate =
-        TestUtils.loadServiceTemplate(outputServiceTemplatesPath);
+        TestUtils.loadServiceTemplate("/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/NoOutParamDuplicatePortType" + OUT_PREFIX);
 
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList,
             context, "org.openecomp.resource.vfc.nodes.heat.FSB1", null);
     assertEquals(false, substitutionServiceTemplate.isPresent());
@@ -77,27 +112,22 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void createSubstitutionStNoOutputParamAndDuplicatePortType() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/NoOutParamDuplicatePortType/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/NoOutParamDuplicatePortType/out";
-
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
+    portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
 
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/NoOutParamDuplicatePortType");
     UnifiedCompositionData unifiedCompositionData =
-        createCompositionData("FSB1_template", portTypeToIdList);
+        createCompositionData(FSB1_template, portTypeToIdList);
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     unifiedCompositionDataList.add(unifiedCompositionData);
 
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList,
-            context, "org.openecomp.resource.abstract.nodes.FSB1", null);
+            context, ORG_OPENECOMP_RESOURCE_ABSTRACT_NODES_FSB1, null);
     assertEquals(true, substitutionServiceTemplate.isPresent());
     substitutionServiceTemplate
         .ifPresent(
@@ -107,29 +137,23 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void createSubstitutionStWithOutputParamNoConsolidation() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate" +
-            "/WithOutputParameters/noConsolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/WithOutputParameters/noConsolidation/out";
-
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
 
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/WithOutputParameters/noConsolidation");
     UnifiedCompositionData unifiedCompositionData =
-        createCompositionData("FSB1_template", portTypeToIdList);
+        createCompositionData(FSB1_template, portTypeToIdList);
     addGetAttrForCompute(unifiedCompositionData);
     addGetAttrForPort(unifiedCompositionData);
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     unifiedCompositionDataList.add(unifiedCompositionData);
 
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList,
-            context, "org.openecomp.resource.abstract.nodes.FSB1", null);
+            context, ORG_OPENECOMP_RESOURCE_ABSTRACT_NODES_FSB1, null);
     assertEquals(true, substitutionServiceTemplate.isPresent());
     substitutionServiceTemplate
         .ifPresent(
@@ -139,37 +163,32 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void createSubstitutionStWithOutputParamWithConsolidation() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/WithOutputParameters/consolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/WithOutputParameters/consolidation/out";
-
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     List<Pair<String, String>> portTypeToIdList1 = new ArrayList<>();
-    portTypeToIdList1.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList1.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
+    portTypeToIdList1.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList1.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
 
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/WithOutputParameters/consolidation");
     UnifiedCompositionData unifiedCompositionData1 =
-        createCompositionData("FSB1_template", portTypeToIdList1);
+        createCompositionData(FSB1_template, portTypeToIdList1);
     addGetAttrForCompute(unifiedCompositionData1);
     addGetAttrForPort(unifiedCompositionData1);
     unifiedCompositionDataList.add(unifiedCompositionData1);
 
     List<Pair<String, String>> portTypeToIdList2 = new ArrayList<>();
-    portTypeToIdList2.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal2"));
-    portTypeToIdList2.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal1"));
+    portTypeToIdList2.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL2));
+    portTypeToIdList2.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL1));
 
     UnifiedCompositionData unifiedCompositionData2 =
-        createCompositionData("FSB2_template", portTypeToIdList2);
+        createCompositionData(FSB2_template, portTypeToIdList2);
     addGetAttrForCompute2(unifiedCompositionData2);
     addGetAttrForPort2(unifiedCompositionData2);
     unifiedCompositionDataList.add(unifiedCompositionData2);
 
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList,
-            context, "org.openecomp.resource.abstract.nodes.FSB1", null);
+            context, ORG_OPENECOMP_RESOURCE_ABSTRACT_NODES_FSB1, null);
     assertEquals(true, substitutionServiceTemplate.isPresent());
     substitutionServiceTemplate
         .ifPresent(
@@ -179,24 +198,18 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void createSubstitutionStNoPorts() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/NoPorts/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/NoPorts/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/NoPorts");
 
     UnifiedCompositionData unifiedCompositionData = new UnifiedCompositionData();
-    String computeNodeTemplateId = "FSB1_template";
     unifiedCompositionData.setComputeTemplateConsolidationData(
-        TestUtils.createComputeTemplateConsolidationData(computeNodeTemplateId, null, null));
+        TestUtils.createComputeTemplateConsolidationData(FSB1_template, null, null));
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     unifiedCompositionDataList.add(unifiedCompositionData);
 
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList,
-            context, "org.openecomp.resource.abstract.nodes.FSB1", null);
+            context, ORG_OPENECOMP_RESOURCE_ABSTRACT_NODES_FSB1, null);
     assertEquals(true, substitutionServiceTemplate.isPresent());
     substitutionServiceTemplate
         .ifPresent(
@@ -207,26 +220,21 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void createSubstitutionStWithIndex() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/WithIndex/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/WithIndex/out";
-
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
 
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/WithIndex");
     UnifiedCompositionData unifiedCompositionData =
-        createCompositionData("FSB1_template", portTypeToIdList);
+        createCompositionData(FSB1_template, portTypeToIdList);
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     unifiedCompositionDataList.add(unifiedCompositionData);
 
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList,
-            context,"org.openecomp.resource.abstract.nodes.FSB1", 2);
+            context,ORG_OPENECOMP_RESOURCE_ABSTRACT_NODES_FSB1, 2);
     assertEquals(true, substitutionServiceTemplate.isPresent());
     substitutionServiceTemplate
         .ifPresent(
@@ -237,33 +245,28 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void createAbstractSubstituteOneComputeMultiplePortsDifferentTypesTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/createAbstractSubstitute/oneComputeMultiplePortsDiffType/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/createAbstractSubstitute/oneComputeMultiplePortsDiffType/out";
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/createAbstractSubstitute/oneComputeMultiplePortsDiffType");
 
-    loadInputAndOutputData();
-
-    UnifiedCompositionData data = createComputeUnifiedCompositionData("FSB1_template");
+    UnifiedCompositionData data = createComputeUnifiedCompositionData(FSB1_template);
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
     addPortDataToCompositionData(portTypeToIdList, data);
 
     List<UnifiedCompositionData> unifiedCompositionDataList = new LinkedList<>();
     unifiedCompositionDataList.add(data);
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList,
-            context, "org.openecomp.resource.vfc.nodes.heat.FSB", null);
+            context, ORG_OPENECOMP_RESOURCE_VFC_NODES_HEAT_FSB, null);
     assertEquals(true, substitutionServiceTemplate.isPresent());
     if (substitutionServiceTemplate.isPresent()) {
       String substitutionNodeTypeId =
-          unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(mainSTName),
+          unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
               unifiedCompositionDataList.get(0), null, context);
       String nodeTemplateId = unifiedCompositionService.createAbstractSubstituteNodeTemplate(
-          inputServiceTemplates.get(mainSTName), substitutionServiceTemplate.get(),
+          inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), substitutionServiceTemplate.get(),
           unifiedCompositionDataList, substitutionNodeTypeId,
           context, null);
       validateAbstractSubstitute();
@@ -273,33 +276,28 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void createAbstractSubstituteOneComputeMultiplePortsSameTypesTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/createAbstractSubstitute/oneComputeMultiplePortsSameType/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/createAbstractSubstitute/oneComputeMultiplePortsSameType/out";
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/createAbstractSubstitute/oneComputeMultiplePortsSameType");
 
-    loadInputAndOutputData();
-
-    UnifiedCompositionData data = createComputeUnifiedCompositionData("FSB1_template");
+    UnifiedCompositionData data = createComputeUnifiedCompositionData(FSB1_template);
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal2"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL2));
     addPortDataToCompositionData(portTypeToIdList, data);
 
     List<UnifiedCompositionData> unifiedCompositionDataList = new LinkedList<>();
     unifiedCompositionDataList.add(data);
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList
-            , context, "org.openecomp.resource.vfc.nodes.heat.FSB", null);
+            , context, ORG_OPENECOMP_RESOURCE_VFC_NODES_HEAT_FSB, null);
 
     assertEquals(true, substitutionServiceTemplate.isPresent());
     if (substitutionServiceTemplate.isPresent()) {
       String substitutionNodeTypeId =
-          unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(mainSTName),
+          unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
               unifiedCompositionDataList.get(0), null, context);
       String nodeTemplateId = unifiedCompositionService.createAbstractSubstituteNodeTemplate(
-          inputServiceTemplates.get(mainSTName), substitutionServiceTemplate.get(),
+          inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), substitutionServiceTemplate.get(),
           unifiedCompositionDataList, substitutionNodeTypeId,
           context, null);
       validateAbstractSubstitute();
@@ -309,25 +307,20 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void createAbstractSubstituteTwoComputesMultiplePorts() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/createAbstractSubstitute/twoComputesMultiplePorts/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/createAbstractSubstitute/twoComputesMultiplePorts/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/createAbstractSubstitute/twoComputesMultiplePorts");
     List<UnifiedCompositionData> unifiedCompositionDataList =
         createAbstractSubstituteCompositionDataComputeAndPort();
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList
-            , context, "org.openecomp.resource.vfc.nodes.heat.FSB", null);
+            , context, ORG_OPENECOMP_RESOURCE_VFC_NODES_HEAT_FSB, null);
     assertEquals(true, substitutionServiceTemplate.isPresent());
     if (substitutionServiceTemplate.isPresent()) {
       String substitutionNodeTypeId =
-          unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(mainSTName),
+          unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
               unifiedCompositionDataList.get(0), null, context);
       String nodeTemplateId = unifiedCompositionService.createAbstractSubstituteNodeTemplate(
-          inputServiceTemplates.get(mainSTName), substitutionServiceTemplate.get(),
+          inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), substitutionServiceTemplate.get(),
           unifiedCompositionDataList, substitutionNodeTypeId,
           context, null);
       validateAbstractSubstitute();
@@ -337,30 +330,25 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void updNodesConnectedOutWithConsolidationTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updNodesConnectedOut/consolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updNodesConnectedOut/consolidation/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/updNodesConnectedOut/consolidation");
     List<UnifiedCompositionData> unifiedCompositionDataList =
         createAbstractSubstituteCompositionDataComputeAndPort();
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList
-            , context, "org.openecomp.resource.vfc.nodes.heat.FSB", null);
+            , context, ORG_OPENECOMP_RESOURCE_VFC_NODES_HEAT_FSB, null);
     assertEquals(true, substitutionServiceTemplate.isPresent());
     if (substitutionServiceTemplate.isPresent()) {
       String substitutionNodeTypeId =
-          unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(mainSTName),
+          unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
               unifiedCompositionDataList.get(0), null, context);
       String nodeTemplateId = unifiedCompositionService.createAbstractSubstituteNodeTemplate(
-          inputServiceTemplates.get(mainSTName), substitutionServiceTemplate.get(),
+          inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), substitutionServiceTemplate.get(),
           unifiedCompositionDataList, substitutionNodeTypeId,
           context, null);
 
       unifiedCompositionService
-          .updateCompositionConnectivity(inputServiceTemplates.get(mainSTName),
+          .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
               unifiedCompositionDataList, context);
       validateAbstractSubstitute();
     }
@@ -368,46 +356,41 @@ public class UnifiedCompositionServiceTest {
 
   private void validateAbstractSubstitute() {
     YamlUtil yamlUtil = new YamlUtil();
-    assertEquals(yamlUtil.objectToYaml(expectedOutserviceTemplates.get(mainSTName)), yamlUtil
-        .objectToYaml(inputServiceTemplates.get(mainSTName)));
+    assertEquals(yamlUtil.objectToYaml(expectedOutserviceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML)), yamlUtil
+        .objectToYaml(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML)));
   }
 
 
   @Test
   public void updNodesConnectedOutNoConsolidationTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updNodesConnectedOut/noConsolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updNodesConnectedOut/noConsolidation/out";
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/updNodesConnectedOut/noConsolidation");
 
-    loadInputAndOutputData();
-
-    UnifiedCompositionData data = createComputeUnifiedCompositionData("FSB1_template");
+    UnifiedCompositionData data = createComputeUnifiedCompositionData(FSB1_template);
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
     addPortDataToCompositionData(portTypeToIdList, data);
 
     List<UnifiedCompositionData> unifiedCompositionDataList = new LinkedList<>();
     unifiedCompositionDataList.add(data);
 
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList
-            , context, "org.openecomp.resource.vfc.nodes.heat.FSB", null);
+            , context, ORG_OPENECOMP_RESOURCE_VFC_NODES_HEAT_FSB, null);
     assertEquals(true, substitutionServiceTemplate.isPresent());
     if (substitutionServiceTemplate.isPresent()) {
       String substitutionNodeTypeId =
-          unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(mainSTName),
+          unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
               unifiedCompositionDataList.get(0), null, context);
       String nodeTemplateId = unifiedCompositionService.createAbstractSubstituteNodeTemplate(
-          inputServiceTemplates.get(mainSTName), substitutionServiceTemplate.get(),
+          inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), substitutionServiceTemplate.get(),
           unifiedCompositionDataList, substitutionNodeTypeId,
           context, null);
 
       unifiedCompositionService
-          .updateCompositionConnectivity(inputServiceTemplates.get(mainSTName),
+          .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
               unifiedCompositionDataList, context);
       validateAbstractSubstitute();
     }
@@ -416,12 +399,7 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void updNodesConnectedInNoConsolidationTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updNodesConnectedIn/noConsolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updNodesConnectedIn/noConsolidation/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/updNodesConnectedIn/noConsolidation");
 
     UnifiedCompositionData data = createComputeUnifiedCompositionData("QRouter");
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
@@ -434,20 +412,20 @@ public class UnifiedCompositionServiceTest {
     unifiedCompositionDataList.add(data);
 
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList
             , context, "org.openecomp.resource.abstract.nodes.QRouter", null);
 
     String substitutionNodeTypeId =
-        unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(mainSTName),
+        unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList.get(0), null, context);
     String nodeTemplateId = unifiedCompositionService.createAbstractSubstituteNodeTemplate(
-        inputServiceTemplates.get(mainSTName), substitutionServiceTemplate.get(),
+        inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), substitutionServiceTemplate.get(),
         unifiedCompositionDataList, substitutionNodeTypeId,
         context, null);
 
     unifiedCompositionService
-        .updateCompositionConnectivity(inputServiceTemplates.get(mainSTName),
+        .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList, context);
     validateAbstractSubstitute();
   }
@@ -455,31 +433,26 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void updNodesConnectedInWithConsolidationTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updNodesConnectedIn/consolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updNodesConnectedIn/consolidation/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/updNodesConnectedIn/consolidation");
 
     List<UnifiedCompositionData> unifiedCompositionDataList =
         createAbstractSubstituteCompositionDataComputeAndPort();
 
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList
             , context, "org.openecomp.resource.abstract.nodes.FSB", null);
 
     String substitutionNodeTypeId =
-        unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(mainSTName),
+        unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList.get(0), null, context);
     String nodeTemplateId = unifiedCompositionService.createAbstractSubstituteNodeTemplate(
-        inputServiceTemplates.get(mainSTName), substitutionServiceTemplate.get(),
+        inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), substitutionServiceTemplate.get(),
         unifiedCompositionDataList, substitutionNodeTypeId,
         context, null);
 
     unifiedCompositionService
-        .updateCompositionConnectivity(inputServiceTemplates.get(mainSTName),
+        .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList, context);
     validateAbstractSubstitute();
   }
@@ -487,38 +460,33 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void updVolumesNoConsolidationTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updVolumes/noConsolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updVolumes/noConsolidation/out";
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/updVolumes/noConsolidation");
 
-    loadInputAndOutputData();
-
-    UnifiedCompositionData data = createComputeUnifiedCompositionData("FSB1_template");
+    UnifiedCompositionData data = createComputeUnifiedCompositionData(FSB1_template);
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
     addPortDataToCompositionData(portTypeToIdList, data);
 
     List<UnifiedCompositionData> unifiedCompositionDataList = new LinkedList<>();
     unifiedCompositionDataList.add(data);
 
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList
-            , context, "org.openecomp.resource.vfc.nodes.heat.FSB", null);
+            , context, ORG_OPENECOMP_RESOURCE_VFC_NODES_HEAT_FSB, null);
 
     String substitutionNodeTypeId =
-        unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(mainSTName),
+        unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList.get(0), null, context);
     String nodeTemplateId = unifiedCompositionService.createAbstractSubstituteNodeTemplate(
-        inputServiceTemplates.get(mainSTName), substitutionServiceTemplate.get(),
+        inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), substitutionServiceTemplate.get(),
         unifiedCompositionDataList, substitutionNodeTypeId,
         context, null);
 
     unifiedCompositionService
-        .updateCompositionConnectivity(inputServiceTemplates.get(mainSTName),
+        .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList, context);
     validateAbstractSubstitute();
   }
@@ -526,29 +494,24 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void updVolumesWithConsolidationTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updVolumes/consolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updVolumes/consolidation/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/updVolumes/consolidation");
     List<UnifiedCompositionData> unifiedCompositionDataList =
         createAbstractSubstituteCompositionDataComputeAndPort();
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList
-            , context, "org.openecomp.resource.vfc.nodes.heat.FSB", null);
+            , context, ORG_OPENECOMP_RESOURCE_VFC_NODES_HEAT_FSB, null);
 
     String substitutionNodeTypeId =
-        unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(mainSTName),
+        unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList.get(0), null, context);
     String nodeTemplateId = unifiedCompositionService.createAbstractSubstituteNodeTemplate(
-        inputServiceTemplates.get(mainSTName), substitutionServiceTemplate.get(),
+        inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), substitutionServiceTemplate.get(),
         unifiedCompositionDataList, substitutionNodeTypeId,
         context, null);
 
     unifiedCompositionService
-        .updateCompositionConnectivity(inputServiceTemplates.get(mainSTName),
+        .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList, context);
     validateAbstractSubstitute();
   }
@@ -556,42 +519,36 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void updGroupsNoConsolidationTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updGroupsConnectivity/noConsolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updGroupsConnectivity/noConsolidation/out";
-
-    loadInputAndOutputData();
-
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/updGroupsConnectivity/noConsolidation");
     UnifiedCompositionData data = createComputeUnifiedCompositionData("server_smp1");
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("port", "port1"));
-    portTypeToIdList.add(new ImmutablePair<>("port", "port2"));
+    portTypeToIdList.add(new ImmutablePair<>(PORT, PORT1));
+    portTypeToIdList.add(new ImmutablePair<>(PORT, PORT2));
     addPortDataToCompositionData(portTypeToIdList, data);
 
     //Add groups
     List<String> computeGroupIdList =
-        TestUtils.getGroupsForNode(inputServiceTemplates.get(mainSTName), "server_smp1");
+        TestUtils.getGroupsForNode(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), "server_smp1");
     data.getComputeTemplateConsolidationData().setGroupIds(computeGroupIdList);
 
     List<UnifiedCompositionData> unifiedCompositionDataList = new LinkedList<>();
     unifiedCompositionDataList.add(data);
 
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList
             , context, "org.openecomp.resource.abstract.nodes.smp", null);
 
     String substitutionNodeTypeId =
-        unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(mainSTName),
+        unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList.get(0), null, context);
     String nodeTemplateId = unifiedCompositionService.createAbstractSubstituteNodeTemplate(
-        inputServiceTemplates.get(mainSTName), substitutionServiceTemplate.get(),
+        inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), substitutionServiceTemplate.get(),
         unifiedCompositionDataList, substitutionNodeTypeId,
         context, null);
 
     unifiedCompositionService
-        .updateCompositionConnectivity(inputServiceTemplates.get(mainSTName),
+        .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList, context);
     validateAbstractSubstitute();
   }
@@ -599,122 +556,102 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void updGroupsWithConsolidationTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updGroupsConnectivity/consolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updGroupsConnectivity/consolidation/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/updGroupsConnectivity/consolidation");
 
     List<UnifiedCompositionData> unifiedCompositionDataList =
         createAbstractSubstituteCompositionDataComputeAndPort();
 
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList
-            , context, "org.openecomp.resource.vfc.nodes.heat.FSB", null);
+            , context, ORG_OPENECOMP_RESOURCE_VFC_NODES_HEAT_FSB, null);
 
     String substitutionNodeTypeId =
-        unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(mainSTName),
+        unifiedCompositionService.getSubstitutionNodeTypeId(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList.get(0), null, context);
     String nodeTemplateId = unifiedCompositionService.createAbstractSubstituteNodeTemplate(
-        inputServiceTemplates.get(mainSTName), substitutionServiceTemplate.get(),
+        inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), substitutionServiceTemplate.get(),
         unifiedCompositionDataList, substitutionNodeTypeId,
         context, null);
 
     unifiedCompositionService
-        .updateCompositionConnectivity(inputServiceTemplates.get(mainSTName),
+        .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList, context);
     validateAbstractSubstitute();
   }
 
   @Test
   public void updOutParamGetAttrInNoConsolidationTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updOutputGetAttrIn/noConsolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updOutputGetAttrIn/noConsolidation/out";
-
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
 
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/updOutputGetAttrIn/noConsolidation");
     UnifiedCompositionData unifiedCompositionData =
-        createCompositionData("FSB1_template", portTypeToIdList);
+        createCompositionData(FSB1_template, portTypeToIdList);
     addOutputGetAttrInForComputeNoConsolidation(unifiedCompositionData);
     addOutputGetAttrInForPortNoConsolidation(unifiedCompositionData);
 
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     unifiedCompositionDataList.add(unifiedCompositionData);
     Mockito.doNothing().when(unifiedCompositionService).updNodesConnectedOutConnectivity
-        (inputServiceTemplates.get(mainSTName), unifiedCompositionDataList, context);
-    Mockito.doReturn("FSB1").when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+        (inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), unifiedCompositionDataList, context);
+    Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
         anyString());
     unifiedCompositionService
-        .updateCompositionConnectivity(inputServiceTemplates.get(mainSTName),
+        .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList, context);
 
-    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(mainSTName));
+    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
   }
 
   @Test
   public void updOutParamGetAttrInWithConsolidationTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updOutputGetAttrIn/consolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updOutputGetAttrIn/consolidation/out";
-
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     List<Pair<String, String>> portTypeToIdList1 = new ArrayList<>();
-    portTypeToIdList1.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList1.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
+    portTypeToIdList1.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList1.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
 
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/updOutputGetAttrIn/consolidation");
     UnifiedCompositionData unifiedCompositionData1 =
-        createCompositionData("FSB1_template", portTypeToIdList1);
+        createCompositionData(FSB1_template, portTypeToIdList1);
     addOutputGetAttrInForCompute1WithConsolidation(unifiedCompositionData1);
     addOutputGetAttrInForPortWithConsolidation1(unifiedCompositionData1);
     unifiedCompositionDataList.add(unifiedCompositionData1);
 
     List<Pair<String, String>> portTypeToIdList2 = new ArrayList<>();
-    portTypeToIdList2.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal2"));
-    portTypeToIdList2.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal1"));
+    portTypeToIdList2.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL2));
+    portTypeToIdList2.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL1));
 
     UnifiedCompositionData unifiedCompositionData2 =
-        createCompositionData("FSB2_template", portTypeToIdList2);
+        createCompositionData(FSB2_template, portTypeToIdList2);
     unifiedCompositionDataList.add(unifiedCompositionData2);
     addOutputGetAttrInForCompute2WithConsolidation(unifiedCompositionData2);
     addOutputGetAttrInForPortWithConsolidation2(unifiedCompositionData2);
 
     Mockito.doNothing().when(unifiedCompositionService).updNodesConnectedOutConnectivity
-        (inputServiceTemplates.get(mainSTName), unifiedCompositionDataList, context);
-    Mockito.doReturn("FSB1").when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+        (inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), unifiedCompositionDataList, context);
+    Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
         anyString());
 
     unifiedCompositionService
-        .updateCompositionConnectivity(inputServiceTemplates.get(mainSTName),
+        .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList, context);
 
-    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(mainSTName));
+    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
   }
 
   @Test
   public void updNodeGetAttrInNoConsolidationTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updNodesGetAttrIn/noConsolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updNodesGetAttrIn/noConsolidation/out";
-
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
 
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/updNodesGetAttrIn/noConsolidation");
     UnifiedCompositionData unifiedCompositionData =
-        createCompositionData("FSB1_template", portTypeToIdList);
+        createCompositionData(FSB1_template, portTypeToIdList);
     addGetAttrForCompute(unifiedCompositionData);
     addGetAttrForPort(unifiedCompositionData);
     addGetAttrForPortInnerUC(unifiedCompositionData);
@@ -722,87 +659,77 @@ public class UnifiedCompositionServiceTest {
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     unifiedCompositionDataList.add(unifiedCompositionData);
     Mockito.doNothing().when(unifiedCompositionService).updNodesConnectedOutConnectivity
-        (inputServiceTemplates.get(mainSTName), unifiedCompositionDataList, context);
-    Mockito.doReturn("FSB1").when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+        (inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), unifiedCompositionDataList, context);
+    Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
         anyString());
     unifiedCompositionService
-        .updateCompositionConnectivity(inputServiceTemplates.get(mainSTName),
+        .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList, context);
 
-    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(mainSTName));
+    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
   }
 
   @Test
   public void updNodeGetAttrInWithConsolidationTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updNodesGetAttrIn/consolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/updNodesGetAttrIn/consolidation/out";
-
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     List<Pair<String, String>> portTypeToIdList1 = new ArrayList<>();
-    portTypeToIdList1.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList1.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
+    portTypeToIdList1.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList1.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
 
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/updNodesGetAttrIn/consolidation");
     UnifiedCompositionData unifiedCompositionData1 =
-        createCompositionData("FSB1_template", portTypeToIdList1);
+        createCompositionData(FSB1_template, portTypeToIdList1);
     addGetAttrForCompute(unifiedCompositionData1);
     addGetAttrForPort(unifiedCompositionData1);
     unifiedCompositionDataList.add(unifiedCompositionData1);
 
     List<Pair<String, String>> portTypeToIdList2 = new ArrayList<>();
-    portTypeToIdList2.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal2"));
-    portTypeToIdList2.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal1"));
+    portTypeToIdList2.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL2));
+    portTypeToIdList2.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL1));
 
     UnifiedCompositionData unifiedCompositionData2 =
-        createCompositionData("FSB2_template", portTypeToIdList2);
+        createCompositionData(FSB2_template, portTypeToIdList2);
     addGetAttrForCompute2(unifiedCompositionData2);
     addGetAttrForPort2(unifiedCompositionData2);
     unifiedCompositionDataList.add(unifiedCompositionData2);
 
 
     Mockito.doNothing().when(unifiedCompositionService).updNodesConnectedOutConnectivity
-        (inputServiceTemplates.get(mainSTName), unifiedCompositionDataList, context);
-    Mockito.doReturn("FSB1").when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+        (inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), unifiedCompositionDataList, context);
+    Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
         anyString());
 
     unifiedCompositionService
-        .updateCompositionConnectivity(inputServiceTemplates.get(mainSTName),
+        .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList, context);
 
-    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(mainSTName));
+    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
   }
 
 
   @Test
   public void updNodesGetAttrFromInnerNodesTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/updNodesGetAttrInFromInnerNodes/noConsolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/updNodesGetAttrInFromInnerNodes/noConsolidation/out";
-
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_OAM, FSB1_OAM));
 
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/updNodesGetAttrInFromInnerNodes/noConsolidation");
     UnifiedCompositionData unifiedCompositionData =
-        createCompositionData("FSB1_template", portTypeToIdList);
+        createCompositionData(FSB1_template, portTypeToIdList);
     addGetAttrForCompute(unifiedCompositionData);
     addGetAttrForPort(unifiedCompositionData);
     addGetAttrForPortInnerUC(unifiedCompositionData);
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     unifiedCompositionDataList.add(unifiedCompositionData);
 
-    Mockito.doReturn("FSB1").when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+    Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
         anyString());
 
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList,
-            context, "org.openecomp.resource.abstract.nodes.FSB1", null);
+            context, ORG_OPENECOMP_RESOURCE_ABSTRACT_NODES_FSB1, null);
     assertEquals(true, substitutionServiceTemplate.isPresent());
     substitutionServiceTemplate
         .ifPresent(
@@ -813,37 +740,32 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void updNodesGetAttrFromConsolidationNodesTest() throws Exception {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/updNodesGetAttrInFromInnerNodes/consolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/updNodesGetAttrInFromInnerNodes/consolidation/out";
-
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     List<Pair<String, String>> portTypeToIdList1 = new ArrayList<>();
-    portTypeToIdList1.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList1.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
+    portTypeToIdList1.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList1.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
 
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/creSubstitutionServiceTemplate/updNodesGetAttrInFromInnerNodes/consolidation");
     UnifiedCompositionData unifiedCompositionData1 =
-        createCompositionData("FSB1_template", portTypeToIdList1);
+        createCompositionData(FSB1_template, portTypeToIdList1);
     addGetAttrForCompute(unifiedCompositionData1);
     addGetAttrForPort(unifiedCompositionData1);
     unifiedCompositionDataList.add(unifiedCompositionData1);
 
     List<Pair<String, String>> portTypeToIdList2 = new ArrayList<>();
-    portTypeToIdList2.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal2"));
-    portTypeToIdList2.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal1"));
+    portTypeToIdList2.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL2));
+    portTypeToIdList2.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL1));
 
     UnifiedCompositionData unifiedCompositionData2 =
-        createCompositionData("FSB2_template", portTypeToIdList2);
+        createCompositionData(FSB2_template, portTypeToIdList2);
     addGetAttrForCompute2(unifiedCompositionData2);
     addGetAttrForPort2(unifiedCompositionData2);
     unifiedCompositionDataList.add(unifiedCompositionData2);
 
     Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
-        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(mainSTName),
+        .createUnifiedSubstitutionServiceTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList,
-            context, "org.openecomp.resource.abstract.nodes.FSB1", null);
+            context, ORG_OPENECOMP_RESOURCE_ABSTRACT_NODES_FSB1, null);
     assertEquals(true, substitutionServiceTemplate.isPresent());
     substitutionServiceTemplate
         .ifPresent(
@@ -853,19 +775,14 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void cleanMainServiceTemplateTestNoConsolidation() throws IOException {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/cleanMainSt/noConsolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/cleanMainSt/noConsolidation/out";
-
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", "FSB1_OAM"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
+    portTypeToIdList.add(new ImmutablePair<>("FSB_OAM", FSB1_OAM));
 
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/cleanMainSt/noConsolidation");
     UnifiedCompositionData unifiedCompositionData =
-        createCompositionData("FSB1_template", portTypeToIdList);
+        createCompositionData(FSB1_template, portTypeToIdList);
     addGetAttrForCompute(unifiedCompositionData);
     addGetAttrForPort(unifiedCompositionData);
 
@@ -874,76 +791,66 @@ public class UnifiedCompositionServiceTest {
 
     NodeTemplate abstractNodeTemplate = getMockNode(
         "/mock/services/heattotosca/unifiedComposition/cleanMainSt/mockAbstractNodeTemplate.yaml");
-    inputServiceTemplates.get(mainSTName).getTopology_template().getNode_templates()
-        .put("FSB1", abstractNodeTemplate);
+    inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML).getTopology_template().getNode_templates()
+        .put(FSB1, abstractNodeTemplate);
 
-    Mockito.doReturn("FSB1").when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+    Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
         anyString());
 
     unifiedCompositionService.
-        cleanUnifiedCompositionEntities(inputServiceTemplates.get(mainSTName),
+        cleanUnifiedCompositionEntities(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList, context);
 
-    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(mainSTName));
+    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
   }
 
   @Test
   public void cleanMainServiceTemplateTestWithConsolidation() throws IOException {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/cleanMainSt/consolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/cleanMainSt/consolidation/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/cleanMainSt/consolidation");
 
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     List<Pair<String, String>> portTypeToIdList1 = new ArrayList<>();
-    portTypeToIdList1.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList1.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
+    portTypeToIdList1.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList1.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
 
     UnifiedCompositionData unifiedCompositionData1 =
-        createCompositionData("FSB1_template", portTypeToIdList1);
+        createCompositionData(FSB1_template, portTypeToIdList1);
     addOutputGetAttrInForCompute1WithConsolidation(unifiedCompositionData1);
     addOutputGetAttrInForPortWithConsolidation1(unifiedCompositionData1);
     unifiedCompositionDataList.add(unifiedCompositionData1);
 
     List<Pair<String, String>> portTypeToIdList2 = new ArrayList<>();
-    portTypeToIdList2.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal2"));
-    portTypeToIdList2.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal1"));
+    portTypeToIdList2.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL2));
+    portTypeToIdList2.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL1));
 
     UnifiedCompositionData unifiedCompositionData2 =
-        createCompositionData("FSB2_template", portTypeToIdList2);
+        createCompositionData(FSB2_template, portTypeToIdList2);
     addOutputGetAttrInForCompute2WithConsolidation(unifiedCompositionData2);
     addOutputGetAttrInForPortWithConsolidation2(unifiedCompositionData2);
     unifiedCompositionDataList.add(unifiedCompositionData2);
 
     NodeTemplate abstractNodeTemplate = getMockNode(
         "/mock/services/heattotosca/unifiedComposition/cleanMainSt/mockAbstractNodeTemplate.yaml");
-    inputServiceTemplates.get(mainSTName).getTopology_template().getNode_templates()
-        .put("FSB1", abstractNodeTemplate);
+    inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML).getTopology_template().getNode_templates()
+        .put(FSB1, abstractNodeTemplate);
 
-    Mockito.doReturn("FSB1").when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+    Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
         anyString());
 
     unifiedCompositionService.
-        cleanUnifiedCompositionEntities(inputServiceTemplates.get(mainSTName),
+        cleanUnifiedCompositionEntities(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             unifiedCompositionDataList, context);
 
-    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(mainSTName));
+    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
   }
 
   @Test
   public void updateNewAbstractNodeTemplateNoConsolidation() throws IOException {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/fixNewAbstractNodeTemplate/noConsolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/fixNewAbstractNodeTemplate/noConsolidation/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/fixNewAbstractNodeTemplate/noConsolidation");
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal2"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL2));
 
     NodeTemplate cleanedComputeNodeTemplate =
         getMockNode(
@@ -951,34 +858,29 @@ public class UnifiedCompositionServiceTest {
 
 
     context.setConsolidationData(
-        createConsolidationData(Arrays.asList("FSB1_template"), portTypeToIdList));
-    context.addCleanedNodeTemplate(mainSTName, "FSB1_template",
+        createConsolidationData(Arrays.asList(FSB1_template), portTypeToIdList));
+    context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, FSB1_template,
         UnifiedCompositionEntity.Compute, cleanedComputeNodeTemplate);
-    context.addCleanedNodeTemplate(mainSTName, "FSB1_Internal1",
+    context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, FSB1_INTERNAL1,
         UnifiedCompositionEntity.Port, cleanedComputeNodeTemplate);
-    context.addCleanedNodeTemplate(mainSTName, "FSB1_Internal2",
+    context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, FSB1_INTERNAL2,
         UnifiedCompositionEntity.Port, cleanedComputeNodeTemplate);
 
-    setUnifiedCompositionData(Arrays.asList("FSB1_template", "FSB1_Internal1", "FSB1_Internal2"));
+    setUnifiedCompositionData(Arrays.asList(FSB1_template, FSB1_INTERNAL1, FSB1_INTERNAL2));
 
     unifiedCompositionService
-        .updateUnifiedAbstractNodesConnectivity(inputServiceTemplates.get(mainSTName), context);
+        .updateUnifiedAbstractNodesConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), context);
 
-    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(mainSTName));
+    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
   }
 
   @Test
   public void updateNewAbstractNodeTemplateWithConsolidation() throws IOException {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/fixNewAbstractNodeTemplate/consolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/fixNewAbstractNodeTemplate/consolidation/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/fixNewAbstractNodeTemplate/consolidation");
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal1"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL1));
 
     NodeTemplate cleanedComputeNodeTemplate =
         getMockNode(
@@ -988,53 +890,48 @@ public class UnifiedCompositionServiceTest {
     context.setConsolidationData(
         createConsolidationData(Arrays.asList("FSB1_template_1", "FSB1_template_2"),
             portTypeToIdList));
-    context.addCleanedNodeTemplate(mainSTName, "FSB1_template_1",
+    context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, "FSB1_template_1",
         UnifiedCompositionEntity.Compute, cleanedComputeNodeTemplate);
-    context.addCleanedNodeTemplate(mainSTName, "FSB1_template_2",
+    context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, "FSB1_template_2",
         UnifiedCompositionEntity.Compute, cleanedComputeNodeTemplate);
-    context.addCleanedNodeTemplate(mainSTName, "FSB1_Internal1",
+    context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, FSB1_INTERNAL1,
         UnifiedCompositionEntity.Port, cleanedComputeNodeTemplate);
-    context.addCleanedNodeTemplate(mainSTName, "FSB2_Internal1",
+    context.addCleanedNodeTemplate(MAIN_SERVICE_TEMPLATE_YAML, FSB2_INTERNAL1,
         UnifiedCompositionEntity.Port, cleanedComputeNodeTemplate);
 
     setUnifiedCompositionData(
-        Arrays.asList("FSB1_template_1", "FSB1_template_2", "FSB1_Internal1", "FSB2_Internal1"));
+        Arrays.asList("FSB1_template_1", "FSB1_template_2", FSB1_INTERNAL1, FSB2_INTERNAL1));
 
     unifiedCompositionService
-        .updateUnifiedAbstractNodesConnectivity(inputServiceTemplates.get(mainSTName), context);
+        .updateUnifiedAbstractNodesConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), context);
 
-    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(mainSTName));
+    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
   }
 
   @Ignore
   public void testThreeNovaOfSameTypePreConditionFalse() throws IOException {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/pattern1b/noConsolidation/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/pattern1b/noConsolidation/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/pattern1b/noConsolidation");
 
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
     List<Pair<String, String>> portTypeToIdList1 = new ArrayList<>();
-    portTypeToIdList1.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal1"));
-    portTypeToIdList1.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
+    portTypeToIdList1.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL1));
+    portTypeToIdList1.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
 
     UnifiedCompositionData unifiedCompositionData1 =
-        createCompositionData("FSB1_template", portTypeToIdList1);
+        createCompositionData(FSB1_template, portTypeToIdList1);
     addOutputGetAttrInForCompute1WithConsolidation(unifiedCompositionData1);
     addOutputGetAttrInForPortWithConsolidation1(unifiedCompositionData1);
     unifiedCompositionDataList.add(unifiedCompositionData1);
 
     UnifiedCompositionData unifiedCompositionData2 =
-        createCompositionData("FSB2_template", portTypeToIdList1);
+        createCompositionData(FSB2_template, portTypeToIdList1);
     addOutputGetAttrInForCompute1WithConsolidation(unifiedCompositionData2);
     addOutputGetAttrInForPortWithConsolidation1(unifiedCompositionData2);
     unifiedCompositionDataList.add(unifiedCompositionData2);
 
     portTypeToIdList1.remove(1);
     UnifiedCompositionData unifiedCompositionData3 =
-        createCompositionData("FSB3_template", portTypeToIdList1);
+        createCompositionData(FSB3_template, portTypeToIdList1);
     addOutputGetAttrInForCompute1WithConsolidation(unifiedCompositionData3);
     addOutputGetAttrInForPortWithConsolidation1(unifiedCompositionData3);
     unifiedCompositionDataList.add(unifiedCompositionData3);
@@ -1042,24 +939,19 @@ public class UnifiedCompositionServiceTest {
     UnifiedCompositionSingleSubstitution unifiedCompositionSingleSubstitution =
         new UnifiedCompositionSingleSubstitution();
     unifiedCompositionSingleSubstitution
-        .createUnifiedComposition(inputServiceTemplates.get(mainSTName), null,
+        .createUnifiedComposition(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), null,
             unifiedCompositionDataList, context);
 
-    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(mainSTName));
+    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
   }
 
   @Test
   public void testUnifiedNestedCompositionOneComputeInNested() throws IOException {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/pattern4/oneNestedNode/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/pattern4/oneNestedNode/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/pattern4/oneNestedNode");
 
     ConsolidationData consolidationData = new ConsolidationData();
     String nestedFileName = "nested-pcm_v0.1ServiceTemplate.yaml";
-    TestUtils.updateNestedConsolidationData(mainSTName, Arrays.asList("server_pcm_001"),
+    TestUtils.updateNestedConsolidationData(MAIN_SERVICE_TEMPLATE_YAML, Arrays.asList("server_pcm_001"),
         consolidationData);
 
     TestUtils.initComputeNodeTypeInConsolidationData(nestedFileName,
@@ -1070,14 +962,14 @@ public class UnifiedCompositionServiceTest {
     context.setConsolidationData(consolidationData);
     context.getTranslatedServiceTemplates()
         .put(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME,
-            inputServiceTemplates.get(globalSubstitutionST));
+            inputServiceTemplates.get(GLOBAL_SUBSTITUTION_TYPES_SERVICE_TEMPLATE_YAML));
     context.getTranslatedServiceTemplates()
         .put(nestedFileName, inputServiceTemplates.get(nestedFileName));
     context.getTranslatedServiceTemplates()
-        .put(mainSTName, inputServiceTemplates.get(mainSTName));
+        .put(MAIN_SERVICE_TEMPLATE_YAML, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
 
     UnifiedCompositionData unifiedComposition = createUnifiedCompositionOnlyNested("server_pcm_001");
-    unifiedCompositionService.handleUnifiedNestedDefinition(inputServiceTemplates.get(mainSTName),
+    unifiedCompositionService.handleUnifiedNestedDefinition(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
         inputServiceTemplates.get(nestedFileName), unifiedComposition, context);
 
     checkSTResults(expectedOutserviceTemplates, nestedFileName,
@@ -1088,18 +980,13 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void testTwoNestedWithOneCompute() throws IOException {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/pattern4/twoNestedWithOneCompute/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/pattern4/twoNestedWithOneCompute/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/pattern4/twoNestedWithOneCompute");
 
     ConsolidationData consolidationData = new ConsolidationData();
     String nestedFileName1 = "nested-pcm_v0.1ServiceTemplate.yaml";
     String nestedFileName2 = "nested-oam_v0.1ServiceTemplate.yaml";
 
-    TestUtils.updateNestedConsolidationData(mainSTName,
+    TestUtils.updateNestedConsolidationData(MAIN_SERVICE_TEMPLATE_YAML,
         Arrays.asList("server_pcm_001", "server_oam_001"), consolidationData);
 
     TestUtils.initComputeNodeTypeInConsolidationData(nestedFileName1,
@@ -1114,20 +1001,20 @@ public class UnifiedCompositionServiceTest {
     context.setConsolidationData(consolidationData);
     context.getTranslatedServiceTemplates()
         .put(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME,
-            inputServiceTemplates.get(globalSubstitutionST));
+            inputServiceTemplates.get(GLOBAL_SUBSTITUTION_TYPES_SERVICE_TEMPLATE_YAML));
     context.getTranslatedServiceTemplates()
         .put(nestedFileName1, inputServiceTemplates.get(nestedFileName1));
     context.getTranslatedServiceTemplates()
         .put(nestedFileName2, inputServiceTemplates.get(nestedFileName2));
     context.getTranslatedServiceTemplates()
-        .put(mainSTName, inputServiceTemplates.get(mainSTName));
+        .put(MAIN_SERVICE_TEMPLATE_YAML, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
 
     UnifiedCompositionData unifiedComposition =
         createUnifiedCompositionOnlyNested("server_pcm_001");
-    unifiedCompositionService.handleUnifiedNestedDefinition(inputServiceTemplates.get(mainSTName),
+    unifiedCompositionService.handleUnifiedNestedDefinition(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
         inputServiceTemplates.get(nestedFileName1), unifiedComposition, context);
     unifiedComposition = createUnifiedCompositionOnlyNested("server_oam_001");
-    unifiedCompositionService.handleUnifiedNestedDefinition(inputServiceTemplates.get(mainSTName),
+    unifiedCompositionService.handleUnifiedNestedDefinition(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
         inputServiceTemplates.get(nestedFileName2), unifiedComposition, context);
 
     checkSTResults(expectedOutserviceTemplates, nestedFileName1,
@@ -1141,142 +1028,122 @@ public class UnifiedCompositionServiceTest {
 
   @Test
   public void testNestedCompositionNodesConnectedIn() throws IOException {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/pattern4/nestedNodesConnectedIn/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/pattern4/nestedNodesConnectedIn/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/pattern4/nestedNodesConnectedIn");
     ConsolidationData consolidationData = new ConsolidationData();
     String nestedFileName = "nested-pcm_v0.1ServiceTemplate.yaml";
-    TestUtils.updateNestedConsolidationData(mainSTName, Arrays.asList("server_pcm_001"),
+    TestUtils.updateNestedConsolidationData(MAIN_SERVICE_TEMPLATE_YAML, Arrays.asList("server_pcm_001"),
         consolidationData);
     context.getTranslatedServiceTemplates()
         .put(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME,
-            inputServiceTemplates.get(globalSubstitutionST));
+            inputServiceTemplates.get(GLOBAL_SUBSTITUTION_TYPES_SERVICE_TEMPLATE_YAML));
     context.getTranslatedServiceTemplates()
         .put(nestedFileName, inputServiceTemplates.get(nestedFileName));
     context.getTranslatedServiceTemplates()
-        .put(mainSTName, inputServiceTemplates.get(mainSTName));
-    context.addUnifiedNestedNodeTemplateId(mainSTName, "server_pcm_001", "abstract_pcm_server_0");
+        .put(MAIN_SERVICE_TEMPLATE_YAML, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
+    context.addUnifiedNestedNodeTemplateId(MAIN_SERVICE_TEMPLATE_YAML, "server_pcm_001", "abstract_pcm_server_0");
 
     Map<String, List<RequirementAssignmentData>> nodeConnectedInList =
-        TestUtils.getNodeConnectedInList("server_pcm_001", inputServiceTemplates.get(mainSTName),
-            "dependency");
+        TestUtils.getNodeConnectedInList("server_pcm_001", inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
+            DEPENDENCY);
     UnifiedCompositionData unifiedComposition =
         createUnifiedCompositionOnlyNested("server_pcm_001");
     unifiedComposition.getNestedTemplateConsolidationData()
         .setNodesConnectedIn(nodeConnectedInList);
 
     unifiedCompositionService.updNestedCompositionNodesConnectedInConnectivity
-        (inputServiceTemplates.get(mainSTName), unifiedComposition, context);
+        (inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), unifiedComposition, context);
     checkSTResults(expectedOutserviceTemplates, nestedFileName,
         context.getTranslatedServiceTemplates().get(nestedFileName),
         context.getTranslatedServiceTemplates()
             .get(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME), context
-            .getTranslatedServiceTemplates().get(mainSTName));
+            .getTranslatedServiceTemplates().get(MAIN_SERVICE_TEMPLATE_YAML));
   }
 
 
   @Test
   public void testNestedCompositionNodesGetAttrIn() throws IOException {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/pattern4/nestedNodesGetAttrIn/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/pattern4/nestedNodesGetAttrIn/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/pattern4/nestedNodesGetAttrIn");
     ConsolidationData consolidationData = new ConsolidationData();
     String nestedFileName = "nested-pcm_v0.1ServiceTemplate.yaml";
-    TestUtils.updateNestedConsolidationData(mainSTName, Arrays.asList("server_pcm_001"),
+    TestUtils.updateNestedConsolidationData(MAIN_SERVICE_TEMPLATE_YAML, Arrays.asList("server_pcm_001"),
         consolidationData);
     context.getTranslatedServiceTemplates()
         .put(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME,
-            inputServiceTemplates.get(globalSubstitutionST));
+            inputServiceTemplates.get(GLOBAL_SUBSTITUTION_TYPES_SERVICE_TEMPLATE_YAML));
     context.getTranslatedServiceTemplates()
         .put(nestedFileName, inputServiceTemplates.get(nestedFileName));
     context.getTranslatedServiceTemplates()
-        .put(mainSTName, inputServiceTemplates.get(mainSTName));
-    context.addUnifiedNestedNodeTemplateId(mainSTName, "server_pcm_001", "abstract_pcm_server_0");
+        .put(MAIN_SERVICE_TEMPLATE_YAML, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
+    context.addUnifiedNestedNodeTemplateId(MAIN_SERVICE_TEMPLATE_YAML, "server_pcm_001", "abstract_pcm_server_0");
 
     Map<String, List<RequirementAssignmentData>> nodeConnectedInList =
-        TestUtils.getNodeConnectedInList("server_pcm_001", inputServiceTemplates.get(mainSTName),
-            "dependency");
+        TestUtils.getNodeConnectedInList("server_pcm_001", inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
+            DEPENDENCY);
     UnifiedCompositionData unifiedComposition =
         createUnifiedCompositionOnlyNested("server_pcm_001");
     addGetAttInUnifiedCompositionData(unifiedComposition
-        .getNestedTemplateConsolidationData(), "tenant_id", "oam_net_gw", "packet_mirror_network");
+        .getNestedTemplateConsolidationData(), TENANT_ID, "oam_net_gw", "packet_mirror_network");
     addGetAttInUnifiedCompositionData(unifiedComposition
-        .getNestedTemplateConsolidationData(), "user_data_format", "oam_net_gw",
+        .getNestedTemplateConsolidationData(), USER_DATA_FORMAT, "oam_net_gw",
         "server_compute_get_attr_test");
     addGetAttInUnifiedCompositionData(unifiedComposition
         .getNestedTemplateConsolidationData(), "metadata", "server_pcm_id",
         "server_compute_get_attr_test");
     unifiedCompositionService.updNestedCompositionNodesGetAttrInConnectivity
-        (inputServiceTemplates.get(mainSTName), unifiedComposition, context);
+        (inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), unifiedComposition, context);
     checkSTResults(expectedOutserviceTemplates, nestedFileName,
         context.getTranslatedServiceTemplates().get(nestedFileName),
         context.getTranslatedServiceTemplates()
             .get(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME), context
-            .getTranslatedServiceTemplates().get(mainSTName));
+            .getTranslatedServiceTemplates().get(MAIN_SERVICE_TEMPLATE_YAML));
   }
 
   @Test
   public void testNestedCompositionOutputParamGetAttrIn() throws IOException {
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/pattern4/nestedOutputParamGetAttrIn/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/pattern4/nestedOutputParamGetAttrIn/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/pattern4/nestedOutputParamGetAttrIn");
     ConsolidationData consolidationData = new ConsolidationData();
     String nestedFileName = "nested-pcm_v0.1ServiceTemplate.yaml";
-    TestUtils.updateNestedConsolidationData(mainSTName, Arrays.asList("server_pcm_001"),
+    TestUtils.updateNestedConsolidationData(MAIN_SERVICE_TEMPLATE_YAML, Arrays.asList("server_pcm_001"),
         consolidationData);
     context.getTranslatedServiceTemplates()
         .put(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME,
-            inputServiceTemplates.get(globalSubstitutionST));
+            inputServiceTemplates.get(GLOBAL_SUBSTITUTION_TYPES_SERVICE_TEMPLATE_YAML));
     context.getTranslatedServiceTemplates()
         .put(nestedFileName, inputServiceTemplates.get(nestedFileName));
     context.getTranslatedServiceTemplates()
-        .put(mainSTName, inputServiceTemplates.get(mainSTName));
-    context.addUnifiedNestedNodeTemplateId(mainSTName, "server_pcm_001", "abstract_pcm_server_0");
+        .put(MAIN_SERVICE_TEMPLATE_YAML, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
+    context.addUnifiedNestedNodeTemplateId(MAIN_SERVICE_TEMPLATE_YAML, "server_pcm_001", "abstract_pcm_server_0");
 
     Map<String, List<RequirementAssignmentData>> nodeConnectedInList =
-        TestUtils.getNodeConnectedInList("server_pcm_001", inputServiceTemplates.get(mainSTName),
-            "dependency");
+        TestUtils.getNodeConnectedInList("server_pcm_001", inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
+            DEPENDENCY);
     UnifiedCompositionData unifiedComposition =
         createUnifiedCompositionOnlyNested("server_pcm_001");
     addOutputGetAttInUnifiedCompositionData(unifiedComposition
-        .getNestedTemplateConsolidationData(), "output_attr_1", "accessIPv4");
+        .getNestedTemplateConsolidationData(), "output_attr_1", ACCESS_IPv4);
     addOutputGetAttInUnifiedCompositionData(unifiedComposition
-            .getNestedTemplateConsolidationData(), "output_attr_2", "accessIPv6");
+            .getNestedTemplateConsolidationData(), "output_attr_2", ACCESS_IPv6);
     unifiedCompositionService.updNestedCompositionOutputParamGetAttrInConnectivity
-        (inputServiceTemplates.get(mainSTName), unifiedComposition, context);
+        (inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), unifiedComposition, context);
     checkSTResults(expectedOutserviceTemplates, nestedFileName,
         context.getTranslatedServiceTemplates().get(nestedFileName),
         context.getTranslatedServiceTemplates()
             .get(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME), context
-            .getTranslatedServiceTemplates().get(mainSTName));
+            .getTranslatedServiceTemplates().get(MAIN_SERVICE_TEMPLATE_YAML));
   }
 
   @Test
   public void testInputOutputParameterType() throws IOException{
-    inputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/inputoutputparamtype/in";
-    outputServiceTemplatesPath =
-        "/mock/services/heattotosca/unifiedComposition/inputoutputparamtype/out";
-
-    loadInputAndOutputData();
+    loadInputAndOutputData("/mock/services/heattotosca/unifiedComposition/inputoutputparamtype");
     ConsolidationData consolidationData = new ConsolidationData();
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
     portTypeToIdList.add(new ImmutablePair<>("FSB1_Port", "FSB1_Port1"));
     portTypeToIdList.add(new ImmutablePair<>("VMI", "VMI1"));
 
-    UnifiedCompositionData unifiedCompositionData = createCompositionData("FSB1", portTypeToIdList);
+    UnifiedCompositionData unifiedCompositionData = createCompositionData(FSB1, portTypeToIdList);
 
     Map<String, NodeTemplate> nodeTemplates =
-        inputServiceTemplates.get(mainSTName).getTopology_template().getNode_templates();
+        inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML).getTopology_template().getNode_templates();
     for (Map.Entry<String, NodeTemplate> nodeTemplateEntry : nodeTemplates.entrySet() ) {
       String nodeTemplateId = nodeTemplateEntry.getKey();
       if (nodeTemplateId.equals("cmaui_volume_test_compute_properties")) {
@@ -1307,9 +1174,9 @@ public class UnifiedCompositionServiceTest {
     UnifiedCompositionSingleSubstitution unifiedCompositionSingleSubstitution =
         new UnifiedCompositionSingleSubstitution();
     unifiedCompositionSingleSubstitution
-        .createUnifiedComposition(inputServiceTemplates.get(mainSTName), null,
+        .createUnifiedComposition(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), null,
             unifiedCompositionDataList, context);
-    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(mainSTName));
+    checkSTResults(expectedOutserviceTemplates, null, null, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML));
     System.out.println();
 
   }
@@ -1327,14 +1194,14 @@ public class UnifiedCompositionServiceTest {
 
   private void setUnifiedCompositionData(List<String> nodeTemplateIds) {
     UnifiedSubstitutionData unifiedSubstitutionData =
-        context.getUnifiedSubstitutionData().get(mainSTName) == null ? new UnifiedSubstitutionData()
-            : context.getUnifiedSubstitutionData().get(mainSTName);
+        context.getUnifiedSubstitutionData().get(MAIN_SERVICE_TEMPLATE_YAML) == null ? new UnifiedSubstitutionData()
+            : context.getUnifiedSubstitutionData().get(MAIN_SERVICE_TEMPLATE_YAML);
     Map<String, String> substitutionAbstractNodeIds = new HashMap<>();
     for (String id : nodeTemplateIds) {
       substitutionAbstractNodeIds.put(id, "FSB2");
     }
 
-    substitutionAbstractNodeIds.put("", "FSB1");
+    substitutionAbstractNodeIds.put("", FSB1);
 
     unifiedSubstitutionData.setNodesRelatedAbstractNode(substitutionAbstractNodeIds);
   }
@@ -1345,18 +1212,19 @@ public class UnifiedCompositionServiceTest {
       ServiceTemplate gloablSubstitutionServiceTemplate, ServiceTemplate mainServiceTemplate) {
     YamlUtil yamlUtil = new YamlUtil();
     if (Objects.nonNull(substitutionServiceTemplate)) {
+      String substitutionST = "SubstitutionServiceTemplate.yaml";
       assertEquals("difference substitution service template: ",
           yamlUtil.objectToYaml(expectedOutserviceTemplates.get(substitutionST)),
           yamlUtil.objectToYaml(substitutionServiceTemplate));
     }
     if (Objects.nonNull(gloablSubstitutionServiceTemplate)) {
       assertEquals("difference global substitution service template: ",
-          yamlUtil.objectToYaml(expectedOutserviceTemplates.get(globalSubstitutionST)),
+          yamlUtil.objectToYaml(expectedOutserviceTemplates.get(GLOBAL_SUBSTITUTION_TYPES_SERVICE_TEMPLATE_YAML)),
           yamlUtil.objectToYaml(gloablSubstitutionServiceTemplate));
     }
     if (Objects.nonNull(mainServiceTemplate)) {
       assertEquals("difference main service template: ",
-          yamlUtil.objectToYaml(expectedOutserviceTemplates.get(mainSTName)),
+          yamlUtil.objectToYaml(expectedOutserviceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML)),
           yamlUtil.objectToYaml(mainServiceTemplate));
     }
   }
@@ -1377,12 +1245,12 @@ public class UnifiedCompositionServiceTest {
   }
 
 
-  private void loadInputAndOutputData() throws IOException {
+  private void loadInputAndOutputData(String path) throws IOException {
     inputServiceTemplates = new HashMap<>();
-    TestUtils.loadServiceTemplates(inputServiceTemplatesPath, new ToscaExtensionYamlUtil(),
+    TestUtils.loadServiceTemplates(path + IN_PREFIX, new ToscaExtensionYamlUtil(),
         inputServiceTemplates);
     expectedOutserviceTemplates = new HashMap<>();
-    TestUtils.loadServiceTemplates(outputServiceTemplatesPath, new ToscaExtensionYamlUtil(),
+    TestUtils.loadServiceTemplates(path + OUT_PREFIX, new ToscaExtensionYamlUtil(),
         expectedOutserviceTemplates);
   }
 
@@ -1412,22 +1280,22 @@ public class UnifiedCompositionServiceTest {
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.FSB2";
 
     TestUtils
-        .initComputeNodeTypeInConsolidationData(mainSTName, computeNodeTypeName, consolidationData);
-    TestUtils.initPortConsolidationData(mainSTName, consolidationData);
+        .initComputeNodeTypeInConsolidationData(MAIN_SERVICE_TEMPLATE_YAML, computeNodeTypeName, consolidationData);
+    TestUtils.initPortConsolidationData(MAIN_SERVICE_TEMPLATE_YAML, consolidationData);
 
     for (String computeId : computeNodeIds) {
       ComputeTemplateConsolidationData computeTemplateConsolidationData =
           new ComputeTemplateConsolidationData();
       TestUtils.updatePortsInComputeTemplateConsolidationData(portTypeToIdList,
           computeTemplateConsolidationData);
-      consolidationData.getComputeConsolidationData().getFileComputeConsolidationData(mainSTName)
+      consolidationData.getComputeConsolidationData().getFileComputeConsolidationData(MAIN_SERVICE_TEMPLATE_YAML)
           .getTypeComputeConsolidationData(computeNodeTypeName)
           .setComputeTemplateConsolidationData(computeId,
               computeTemplateConsolidationData);
     }
 
     for (Pair<String, String> portTypeToId : portTypeToIdList) {
-      consolidationData.getPortConsolidationData().getFilePortConsolidationData(mainSTName)
+      consolidationData.getPortConsolidationData().getFilePortConsolidationData(MAIN_SERVICE_TEMPLATE_YAML)
           .setPortTemplateConsolidationData(portTypeToId.getRight(),
               new PortTemplateConsolidationData());
     }
@@ -1440,7 +1308,7 @@ public class UnifiedCompositionServiceTest {
 
     UnifiedCompositionData unifiedCompositionData = new UnifiedCompositionData();
     NodeTemplate computeNodeTemplate =
-        DataModelUtil.getNodeTemplate(inputServiceTemplates.get(mainSTName), computeNodeTemplateId);
+        DataModelUtil.getNodeTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), computeNodeTemplateId);
     Optional<List<RequirementAssignmentData>> requirementAssignmentDataList =
         TestUtils.getRequirementAssignmentDataList(computeNodeTemplate, "local_storage");
     List<RequirementAssignmentData> requirementAssignmentList =
@@ -1455,7 +1323,7 @@ public class UnifiedCompositionServiceTest {
     if (portTypeToIdList != null) {
       for (Pair<String, String> port : portTypeToIdList) {
         NodeTemplate portNodeTemplate =
-            DataModelUtil.getNodeTemplate(inputServiceTemplates.get(mainSTName), port.getRight());
+            DataModelUtil.getNodeTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), port.getRight());
 
         Map<String, List<RequirementAssignmentData>> nodeConnectedOut =
             TestUtils.getNodeConnectedOutList(portNodeTemplate, "link");
@@ -1470,21 +1338,21 @@ public class UnifiedCompositionServiceTest {
 
   private List<UnifiedCompositionData> createAbstractSubstituteCompositionDataComputeAndPort() {
     List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
-    UnifiedCompositionData data1 = createComputeUnifiedCompositionData("FSB1_template");
-    UnifiedCompositionData data2 = createComputeUnifiedCompositionData("FSB2_template");
+    UnifiedCompositionData data1 = createComputeUnifiedCompositionData(FSB1_template);
+    UnifiedCompositionData data2 = createComputeUnifiedCompositionData(FSB2_template);
 
     List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
-    ImmutablePair<String, String> portTypePair1 = new ImmutablePair<>("FSB1_Internal",
-        "FSB1_Internal1");
-    ImmutablePair<String, String> portTypePair2 = new ImmutablePair<>("FSB2_Internal",
-        "FSB2_Internal1");
+    ImmutablePair<String, String> portTypePair1 = new ImmutablePair<>(FSB1_INTERNAL,
+        FSB1_INTERNAL1);
+    ImmutablePair<String, String> portTypePair2 = new ImmutablePair<>(FSB2_INTERNAL,
+        FSB2_INTERNAL1);
     portTypeToIdList.add(portTypePair1);
     portTypeToIdList.add(portTypePair2);
     addPortDataToCompositionData(portTypeToIdList, data1);
     portTypeToIdList.remove(portTypePair1);
     portTypeToIdList.remove(portTypePair2);
-    portTypeToIdList.add(new ImmutablePair<>("FSB1_Internal", "FSB1_Internal2"));
-    portTypeToIdList.add(new ImmutablePair<>("FSB2_Internal", "FSB2_Internal2"));
+    portTypeToIdList.add(new ImmutablePair<>(FSB1_INTERNAL, FSB1_INTERNAL2));
+    portTypeToIdList.add(new ImmutablePair<>(FSB2_INTERNAL, FSB2_INTERNAL2));
     addPortDataToCompositionData(portTypeToIdList, data2);
 
     unifiedCompositionDataList.add(data1);
@@ -1495,7 +1363,7 @@ public class UnifiedCompositionServiceTest {
 
   private UnifiedCompositionData createComputeUnifiedCompositionData(String computeNodeTemplateId) {
     NodeTemplate computeNodeTemplate =
-        DataModelUtil.getNodeTemplate(inputServiceTemplates.get(mainSTName), computeNodeTemplateId);
+        DataModelUtil.getNodeTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), computeNodeTemplateId);
     Optional<List<RequirementAssignmentData>> requirementAssignmentDataList =
         TestUtils.getRequirementAssignmentDataList(computeNodeTemplate, "local_storage");
     Map<String, List<RequirementAssignmentData>> volume = null;
@@ -1504,15 +1372,15 @@ public class UnifiedCompositionServiceTest {
     }
     UnifiedCompositionData data = new UnifiedCompositionData();
     Map<String, List<RequirementAssignmentData>> computeNodeConnectedOut =
-        TestUtils.getNodeConnectedOutList(computeNodeTemplate, "dependency");
+        TestUtils.getNodeConnectedOutList(computeNodeTemplate, DEPENDENCY);
     Map<String, List<RequirementAssignmentData>> computeNodeConnectedIn =
         TestUtils
-            .getNodeConnectedInList(computeNodeTemplateId, inputServiceTemplates.get(mainSTName),
-                "dependency");
+            .getNodeConnectedInList(computeNodeTemplateId, inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
+                DEPENDENCY);
     ComputeTemplateConsolidationData computeTemplateConsolidationData = TestUtils
         .createComputeTemplateConsolidationData(computeNodeTemplateId, null, volume);
     List<String> computeNodeGroups =
-        TestUtils.getGroupsForNode(inputServiceTemplates.get(mainSTName),
+        TestUtils.getGroupsForNode(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
             computeNodeTemplateId);
     if (!computeNodeGroups.isEmpty()) {
       computeTemplateConsolidationData.setGroupIds(computeNodeGroups);
@@ -1530,7 +1398,7 @@ public class UnifiedCompositionServiceTest {
 
     for (Pair<String, String> port : portTypeToIdList) {
       NodeTemplate portNodeTemplate =
-          DataModelUtil.getNodeTemplate(inputServiceTemplates.get(mainSTName), port.getRight());
+          DataModelUtil.getNodeTemplate(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), port.getRight());
 
       Optional<List<RequirementAssignmentData>> bindingReqList =
           TestUtils.getRequirementAssignmentDataList(portNodeTemplate, "binding");
@@ -1551,13 +1419,13 @@ public class UnifiedCompositionServiceTest {
 
       //Add node connected in info to test data
       Map<String, List<RequirementAssignmentData>> portNodeConnectedIn =
-          TestUtils.getNodeConnectedInList(port.getRight(), inputServiceTemplates.get(mainSTName),
-              "port");
+          TestUtils.getNodeConnectedInList(port.getRight(), inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
+              PORT);
       portTemplateConsolidationData.setNodesConnectedIn(portNodeConnectedIn);
 
       //Add group infromation for ports
       List<String> portGroups =
-          TestUtils.getGroupsForNode(inputServiceTemplates.get(mainSTName), port.getRight());
+          TestUtils.getGroupsForNode(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), port.getRight());
       portTemplateConsolidationData.setGroupIds(portGroups);
       data.addPortTemplateConsolidationData(portTemplateConsolidationData);
 
@@ -1580,21 +1448,21 @@ public class UnifiedCompositionServiceTest {
   private void addGetAttrForPort(UnifiedCompositionData unifiedCompositionData) {
     for (PortTemplateConsolidationData portTemplateConsolidationData : unifiedCompositionData
         .getPortTemplateConsolidationDataList()) {
-      if (portTemplateConsolidationData.getNodeTemplateId().equals("FSB1_Internal1")) {
+      if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB1_INTERNAL1)) {
         addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "network_name",
-            "network_id", "jsa_net1");
-        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "size",
-            "device_owner", "cmaui_volume1");
-      } else if (portTemplateConsolidationData.getNodeTemplateId().equals("FSB2_Internal2")) {
-        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "tenant_id",
-            "network_id", "jsa_net1");
+            NETWORK_ID, JSA_NET1);
+        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, SIZE,
+            DEVICE_OWNER, CMAUI_VOLUME1);
+      } else if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB2_INTERNAL2)) {
+        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, TENANT_ID,
+            NETWORK_ID, JSA_NET1);
         addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "qos_policy",
-            "network_id", "jsa_net1");
-        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "volume_type",
-            "tenant_id", "cmaui_volume1");
-      } else if (portTemplateConsolidationData.getNodeTemplateId().equals("FSB1_OAM")) {
-        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "size",
-            "status", "cmaui_volume1");
+            NETWORK_ID, JSA_NET1);
+        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, VOLUME_TYPE,
+            TENANT_ID, CMAUI_VOLUME1);
+      } else if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB1_OAM)) {
+        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, SIZE,
+            STATUS, CMAUI_VOLUME1);
       }
     }
   }
@@ -1602,14 +1470,14 @@ public class UnifiedCompositionServiceTest {
   private void addGetAttrForPort2(UnifiedCompositionData unifiedCompositionData) {
     for (PortTemplateConsolidationData portTemplateConsolidationData : unifiedCompositionData
         .getPortTemplateConsolidationDataList()) {
-      if (portTemplateConsolidationData.getNodeTemplateId().equals("FSB2_Internal1")) {
-        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "volume_type",
-            "tenant_id", "cmaui_volume3");
-      } else if (portTemplateConsolidationData.getNodeTemplateId().equals("FSB1_Internal2")) {
-        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "size",
-            "device_owner", "cmaui_volume3");
-        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "size",
-            "status", "cmaui_volume1");
+      if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB2_INTERNAL1)) {
+        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, VOLUME_TYPE,
+            TENANT_ID, CMAUI_VOLUME3);
+      } else if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB1_INTERNAL2)) {
+        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, SIZE,
+            DEVICE_OWNER, CMAUI_VOLUME3);
+        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, SIZE,
+            STATUS, CMAUI_VOLUME1);
       }
     }
   }
@@ -1617,78 +1485,78 @@ public class UnifiedCompositionServiceTest {
   private void addGetAttrForPortInnerUC(UnifiedCompositionData unifiedCompositionData) {
     for (PortTemplateConsolidationData portTemplateConsolidationData : unifiedCompositionData
         .getPortTemplateConsolidationDataList()) {
-      if (portTemplateConsolidationData.getNodeTemplateId().equals("FSB1_Internal1")) {
-        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "availability_zone",
-            "myAttr", "FSB1_template");
+      if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB1_INTERNAL1)) {
+        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, AVAILABILITY_ZONE,
+            MYATTR, FSB1_template);
         addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "metadata",
-            "myAttr", "FSB1_template");
+            MYATTR, FSB1_template);
         addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "name",
-            "myAttr", "FSB1_template");
-        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, "availability_zone",
-            "tenant_id", "FSB1_template");
+            MYATTR, FSB1_template);
+        addGetAttInUnifiedCompositionData(portTemplateConsolidationData, AVAILABILITY_ZONE,
+            TENANT_ID, FSB1_template);
       }
     }
   }
 
   private void addGetAttrForCompute(UnifiedCompositionData unifiedCompositionData) {
     addGetAttInUnifiedCompositionData(unifiedCompositionData.getComputeTemplateConsolidationData(),
-        "dhcp_agent_ids", "addresses", "jsa_net1");
+        "dhcp_agent_ids", ADDRESSES, JSA_NET1);
     addGetAttInUnifiedCompositionData(unifiedCompositionData.getComputeTemplateConsolidationData(),
-        "volume_type", "addresses", "cmaui_volume1");
+        VOLUME_TYPE, ADDRESSES, CMAUI_VOLUME1);
     addGetAttInUnifiedCompositionData(unifiedCompositionData.getComputeTemplateConsolidationData(),
-        "size", "accessIPv6", "cmaui_volume2");
+        SIZE, ACCESS_IPv6, CMAUI_VOLUME2);
   }
 
   private void addGetAttrForCompute2(UnifiedCompositionData unifiedCompositionData) {
     addGetAttInUnifiedCompositionData(unifiedCompositionData.getComputeTemplateConsolidationData(),
-        "volume_type", "addresses", "cmaui_volume3");
+        VOLUME_TYPE, ADDRESSES, CMAUI_VOLUME3);
     addGetAttInUnifiedCompositionData(unifiedCompositionData.getComputeTemplateConsolidationData(),
-        "size", "user_data_format", "cmaui_volume3");
+        SIZE, USER_DATA_FORMAT, CMAUI_VOLUME3);
   }
 
   private void addOutputGetAttrInForComputeNoConsolidation(
       UnifiedCompositionData unifiedCompositionData) {
     addOutputGetAttInUnifiedCompositionData(unifiedCompositionData
-        .getComputeTemplateConsolidationData(), "simpleOutput1", "accessIPv4");
+        .getComputeTemplateConsolidationData(), SIMPLE_OUTPUT1, ACCESS_IPv4);
     addOutputGetAttInUnifiedCompositionData(unifiedCompositionData
-        .getComputeTemplateConsolidationData(), "simpleOutput2", "addresses");
+        .getComputeTemplateConsolidationData(), SIMPLE_OUTPUT2, ADDRESSES);
     addOutputGetAttInUnifiedCompositionData(unifiedCompositionData
-        .getComputeTemplateConsolidationData(), "complexOutput1", "addresses");
+        .getComputeTemplateConsolidationData(), COMPLEX_OUTPUT1, ADDRESSES);
     addOutputGetAttInUnifiedCompositionData(unifiedCompositionData
-        .getComputeTemplateConsolidationData(), "complexOutput3", "accessIPv6");
+        .getComputeTemplateConsolidationData(), COMPLEX_OUTPUT3, ACCESS_IPv6);
 
   }
 
   private void addOutputGetAttrInForCompute1WithConsolidation(
       UnifiedCompositionData unifiedCompositionData) {
     addOutputGetAttInUnifiedCompositionData(unifiedCompositionData
-        .getComputeTemplateConsolidationData(), "simpleOutput1", "accessIPv4");
+        .getComputeTemplateConsolidationData(), SIMPLE_OUTPUT1, ACCESS_IPv4);
     addOutputGetAttInUnifiedCompositionData(unifiedCompositionData
-        .getComputeTemplateConsolidationData(), "complexOutput1", "addresses");
+        .getComputeTemplateConsolidationData(), COMPLEX_OUTPUT1, ADDRESSES);
 
   }
 
   private void addOutputGetAttrInForCompute2WithConsolidation(
       UnifiedCompositionData unifiedCompositionData) {
     addOutputGetAttInUnifiedCompositionData(unifiedCompositionData
-        .getComputeTemplateConsolidationData(), "simpleOutput2", "addresses");
+        .getComputeTemplateConsolidationData(), SIMPLE_OUTPUT2, ADDRESSES);
   }
 
   private void addOutputGetAttrInForPortNoConsolidation(
       UnifiedCompositionData unifiedCompositionData) {
     for (PortTemplateConsolidationData portTemplateConsolidationData : unifiedCompositionData
         .getPortTemplateConsolidationDataList()) {
-      if (portTemplateConsolidationData.getNodeTemplateId().equals("FSB1_Internal1")) {
-        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, "complexOutput2",
-            "device_owner");
-        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, "complexOutput3",
-            "device_owner");
-      } else if (portTemplateConsolidationData.getNodeTemplateId().equals("FSB2_Internal2")) {
-        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, "complexOutput1",
-            "tenant_id");
-      } else if (portTemplateConsolidationData.getNodeTemplateId().equals("FSB1_OAM")) {
-        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, "complexOutput2",
-            "user_data_format");
+      if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB1_INTERNAL1)) {
+        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, COMPLEX_OUTPUT2,
+            DEVICE_OWNER);
+        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, COMPLEX_OUTPUT3,
+            DEVICE_OWNER);
+      } else if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB2_INTERNAL2)) {
+        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, COMPLEX_OUTPUT1,
+            TENANT_ID);
+      } else if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB1_OAM)) {
+        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, COMPLEX_OUTPUT2,
+            USER_DATA_FORMAT);
       }
     }
   }
@@ -1697,11 +1565,11 @@ public class UnifiedCompositionServiceTest {
       UnifiedCompositionData unifiedCompositionData) {
     for (PortTemplateConsolidationData portTemplateConsolidationData : unifiedCompositionData
         .getPortTemplateConsolidationDataList()) {
-      if (portTemplateConsolidationData.getNodeTemplateId().equals("FSB2_Internal2")) {
-        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, "complexOutput1",
-            "tenant_id");
-      } else if (portTemplateConsolidationData.getNodeTemplateId().equals("FSB1_Internal1")) {
-        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, "complexOutput3",
+      if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB2_INTERNAL2)) {
+        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, COMPLEX_OUTPUT1,
+            TENANT_ID);
+      } else if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB1_INTERNAL1)) {
+        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, COMPLEX_OUTPUT3,
             "admin_state_up");
       }
     }
@@ -1711,12 +1579,12 @@ public class UnifiedCompositionServiceTest {
       UnifiedCompositionData unifiedCompositionData) {
     for (PortTemplateConsolidationData portTemplateConsolidationData : unifiedCompositionData
         .getPortTemplateConsolidationDataList()) {
-      if (portTemplateConsolidationData.getNodeTemplateId().equals("FSB2_Internal1")) {
-        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, "complexOutput2",
-            "user_data_format");
-      } else if (portTemplateConsolidationData.getNodeTemplateId().equals("FSB1_Internal2")) {
-        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, "complexOutput2",
-            "device_owner");
+      if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB2_INTERNAL1)) {
+        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, COMPLEX_OUTPUT2,
+            USER_DATA_FORMAT);
+      } else if (portTemplateConsolidationData.getNodeTemplateId().equals(FSB1_INTERNAL2)) {
+        addOutputGetAttInUnifiedCompositionData(portTemplateConsolidationData, COMPLEX_OUTPUT2,
+            DEVICE_OWNER);
       }
     }
   }
