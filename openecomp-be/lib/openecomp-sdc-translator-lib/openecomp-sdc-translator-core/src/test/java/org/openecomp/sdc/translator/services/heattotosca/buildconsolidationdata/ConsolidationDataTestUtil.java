@@ -925,7 +925,7 @@ public class ConsolidationDataTestUtil {
           nestedNodeTemplateId);
       Assert.assertNull(nestedTemplateConsolidationData.getNodesConnectedIn());
       //Validate output parameter get attribute in
-      getAttrFuncData = nestedTemplateConsolidationData.getNodesGetAttrIn().get("server_cmaui");
+      getAttrFuncData = nestedTemplateConsolidationData.getNodesGetAttrIn().get("server_cmaui_1");
       Assert.assertNotNull(getAttrFuncData);
       Assert.assertEquals(getAttrFuncData.size(), 1);
       Assert.assertEquals(getAttrFuncData.get(0).getFieldName(), "metadata");

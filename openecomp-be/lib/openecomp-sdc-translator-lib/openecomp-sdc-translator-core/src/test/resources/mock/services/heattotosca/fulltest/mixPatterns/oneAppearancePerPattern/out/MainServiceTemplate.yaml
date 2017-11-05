@@ -222,32 +222,31 @@ topology_template:
       directives:
       - substitutable
       properties:
-        server_group: BE_Affinity_group
-        port_pcm_port_1_network_role_tag: oam
-        port_pcm_port_0_ip_requirements:
+        port_pcm_port_00_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
+        server_group: BE_Affinity_group
         pcm_image_name:
           get_input: pcm_image_name
-        security_group_name: jsa_security_group
-        port_pcm_port_1_mac_requirements:
+        port_pcm_port_00_mac_requirements:
           mac_count_required:
             is_required: false
+        security_group_name: jsa_security_group
+        port_pcm_port_01_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pcm_port_00_network_role_tag: cps
         pcm_flavor_name:
           get_input: pcm_flavor_name
         service_template_filter:
           substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
-        port_pcm_port_1_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
-        port_pcm_port_0_network_role_tag: cps
-        port_pcm_port_0_mac_requirements:
+        port_pcm_port_01_mac_requirements:
           mac_count_required:
             is_required: false
         pcm_server_name:
@@ -255,8 +254,9 @@ topology_template:
           - pcm_server_names
           - 0
         cps_net_name: nested_network
+        port_pcm_port_01_network_role_tag: oam
       requirements:
-      - link_pcm_port_0:
+      - link_pcm_port_00:
           capability: tosca.capabilities.network.Linkable
           node: nested_network
           relationship: tosca.relationships.network.LinksTo
@@ -656,11 +656,11 @@ topology_template:
           direction: ingress
       requirements:
       - port:
-          capability: attachment_pcm_port_0
+          capability: attachment_pcm_port_00
           node: 4p_nested
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_pcm_port_1
+          capability: attachment_pcm_port_01
           node: 4p_nested
           relationship: org.openecomp.relationships.AttachesTo
       - port:

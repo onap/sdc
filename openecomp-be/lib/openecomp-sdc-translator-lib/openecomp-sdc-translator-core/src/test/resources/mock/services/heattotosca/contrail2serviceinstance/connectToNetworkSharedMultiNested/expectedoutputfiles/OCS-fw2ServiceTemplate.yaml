@@ -153,83 +153,17 @@ topology_template:
       type: string
       description: HSL (Logging) network address (CIDR notation)
   node_templates:
-    service_instance1:
-      type: org.openecomp.resource.abstract.nodes.heat.service_template
-      directives:
-      - substitutable
+    hsl_direct_net_2:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
       properties:
-        flavor:
-          get_input: st_flavor
-        availability_zone:
-          get_input: availability_zone_1
-        image_name:
-          get_input: st_image_name
-        service_template_filter:
-          substitute_service_template: OCS-fw2_service_instance1ServiceTemplate.yaml
-          count:
-            get_input: max_num_fw_instances
-          scaling_enabled:
-            get_input: st_scaling
-          mandatory: false
-        service_type:
-          get_input: st_type
-        static_routes_list:
-        - token:
-          - get_input: st_static_routes_list
-          - ','
-          - 0
-        - token:
-          - get_input: st_static_routes_list
-          - ','
-          - 1
-        - token:
-          - get_input: st_static_routes_list
-          - ','
-          - 2
-        service_template_name:
-          get_input: st_name
-        service_interface_type_list:
-        - token:
-          - get_input: st_service_interface_type_list
-          - ','
-          - 0
-        - token:
-          - get_input: st_service_interface_type_list
-          - ','
-          - 1
-        - token:
-          - get_input: st_service_interface_type_list
-          - ','
-          - 2
-        service_instance_name:
-          get_input: service_instance_name
-        interface_list:
-        - virtual_network:
-            get_input: network_param2
-        - virtual_network:
-            get_input: network_param1
-        - virtual_network:
-            get_input: network_param2
-        service_mode:
-          get_input: st_mode
-        shared_ip_list:
-        - token:
-          - get_input: st_shared_ip_list
-          - ','
-          - 0
-        - token:
-          - get_input: st_shared_ip_list
-          - ','
-          - 1
-        - token:
-          - get_input: st_shared_ip_list
-          - ','
-          - 2
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: hsl_direct_net
-          relationship: tosca.relationships.DependsOn
+        network_name:
+          get_input: HSL_direct_net_id
+        subnets:
+          hsl_ip_subnet_2:
+            cidr:
+              get_input: HSL_direct_net_cidr
+            gateway_ip:
+              get_input: HSL_direct_net_gateway
     test_nested3:
       type: org.openecomp.resource.abstract.nodes.heat.OCS-fw3
       directives:
@@ -241,19 +175,8 @@ topology_template:
           substitute_service_template: OCS-fw3ServiceTemplate.yaml
         network_param1:
           get_input: network_param1
-    hsl_direct_net:
-      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
-      properties:
-        network_name:
-          get_input: HSL_direct_net_id
-        subnets:
-          hsl_ip_subnet:
-            cidr:
-              get_input: HSL_direct_net_cidr
-            gateway_ip:
-              get_input: HSL_direct_net_gateway
     service_instance3:
-      type: org.openecomp.resource.abstract.nodes.heat.service_template
+      type: org.openecomp.resource.abstract.nodes.heat.service_template_2
       directives:
       - substitutable
       properties:
@@ -327,9 +250,9 @@ topology_template:
       requirements:
       - dependency:
           capability: tosca.capabilities.Node
-          node: hsl_direct_net
+          node: hsl_direct_net_2
           relationship: tosca.relationships.DependsOn
-    service_policy:
+    service_policy_2:
       type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrail.NetworkRules
       properties:
         entries:
@@ -363,6 +286,83 @@ topology_template:
           capability: tosca.capabilities.Node
           node: service_instance3
           relationship: tosca.relationships.DependsOn
+    service_instance21:
+      type: org.openecomp.resource.abstract.nodes.heat.service_template_2
+      directives:
+      - substitutable
+      properties:
+        flavor:
+          get_input: st_flavor
+        availability_zone:
+          get_input: availability_zone_1
+        image_name:
+          get_input: st_image_name
+        service_template_filter:
+          substitute_service_template: OCS-fw2_service_instance21ServiceTemplate.yaml
+          count:
+            get_input: max_num_fw_instances
+          scaling_enabled:
+            get_input: st_scaling
+          mandatory: false
+        service_type:
+          get_input: st_type
+        static_routes_list:
+        - token:
+          - get_input: st_static_routes_list
+          - ','
+          - 0
+        - token:
+          - get_input: st_static_routes_list
+          - ','
+          - 1
+        - token:
+          - get_input: st_static_routes_list
+          - ','
+          - 2
+        service_template_name:
+          get_input: st_name
+        service_interface_type_list:
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 0
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 1
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 2
+        service_instance_name:
+          get_input: service_instance_name
+        interface_list:
+        - virtual_network:
+            get_input: network_param2
+        - virtual_network:
+            get_input: network_param1
+        - virtual_network:
+            get_input: network_param2
+        service_mode:
+          get_input: st_mode
+        shared_ip_list:
+        - token:
+          - get_input: st_shared_ip_list
+          - ','
+          - 0
+        - token:
+          - get_input: st_shared_ip_list
+          - ','
+          - 1
+        - token:
+          - get_input: st_shared_ip_list
+          - ','
+          - 2
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: hsl_direct_net_2
+          relationship: tosca.relationships.DependsOn
   groups:
     OCS-fw2_group:
       type: org.openecomp.groups.heat.HeatStack
@@ -371,111 +371,111 @@ topology_template:
         description: |
           Based on the following reference for the HOT-DMZ-FW template: Version 3.5 8-10-2015 (Authors: Art Mishurov,am254u & Johhny Chen, jc3066) - HOT-DMZ-FW template that creates two DMZ networks (direct and protected) with a scaled out firewall service between the two.
       members:
-      - service_instance1
+      - hsl_direct_net_2
       - test_nested3
-      - hsl_direct_net
       - service_instance3
-      - service_policy
+      - service_policy_2
+      - service_instance21
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.OCS-fw2
     capabilities:
-      feature_service_policy_test_nested3:
-      - test_nested3
-      - feature_service_policy
-      feature_service_instance1:
-      - service_instance1
+      feature_service_instance21:
+      - service_instance21
       - feature
       feature_service_instance3:
       - service_instance3
       - feature
-      attachment_hsl_direct_net:
-      - hsl_direct_net
-      - attachment
-      end_point_hsl_direct_net:
-      - hsl_direct_net
-      - end_point
+      feature_hsl_direct_net_2:
+      - hsl_direct_net_2
+      - feature
+      feature_service_policy_2:
+      - service_policy_2
+      - feature
+      feature_service_policy_3_test_nested3:
+      - test_nested3
+      - feature_service_policy_3
+      end_point_hsl_direct_net_3_test_nested3:
+      - test_nested3
+      - end_point_hsl_direct_net_3
       feature_service_instance4_test_nested3:
       - test_nested3
       - feature_service_instance4
-      link_hsl_direct_net:
-      - hsl_direct_net
+      feature_hsl_direct_net_3_test_nested3:
+      - test_nested3
+      - feature_hsl_direct_net_3
+      link_hsl_direct_net_2:
+      - hsl_direct_net_2
       - link
-      feature_service_policy:
-      - service_policy
-      - feature
-      feature_hsl_direct_net_test_nested3:
+      link_hsl_direct_net_3_test_nested3:
       - test_nested3
-      - feature_hsl_direct_net
-      link_hsl_direct_net_test_nested3:
-      - test_nested3
-      - link_hsl_direct_net
-      attachment_hsl_direct_net_test_nested3:
-      - test_nested3
-      - attachment_hsl_direct_net
+      - link_hsl_direct_net_3
       feature_test_nested3:
       - test_nested3
       - feature
-      feature_hsl_direct_net:
-      - hsl_direct_net
-      - feature
-      end_point_hsl_direct_net_test_nested3:
+      end_point_hsl_direct_net_2:
+      - hsl_direct_net_2
+      - end_point
+      attachment_hsl_direct_net_3_test_nested3:
       - test_nested3
-      - end_point_hsl_direct_net
+      - attachment_hsl_direct_net_3
+      attachment_hsl_direct_net_2:
+      - hsl_direct_net_2
+      - attachment
     requirements:
-      link_port_0_service_instance1:
-      - service_instance1
-      - link_port_0
       dependency_service_instance3:
       - service_instance3
       - dependency
-      dependency_hsl_direct_net:
-      - hsl_direct_net
-      - dependency
-      dependency_hsl_direct_net_test_nested3:
-      - test_nested3
-      - dependency_hsl_direct_net
+      network_service_policy_2:
+      - service_policy_2
+      - network
       link_port_0_service_instance3:
       - service_instance3
       - link_port_0
-      network_service_policy:
-      - service_policy
-      - network
-      link_port_2_service_instance1:
-      - service_instance1
+      dependency_hsl_direct_net_3_test_nested3:
+      - test_nested3
+      - dependency_hsl_direct_net_3
+      link_port_2_service_instance21:
+      - service_instance21
       - link_port_2
       link_port_0_service_instance4_test_nested3:
       - test_nested3
       - link_port_0_service_instance4
-      dependency_service_policy:
-      - service_policy
+      dependency_hsl_direct_net_2:
+      - hsl_direct_net_2
       - dependency
       link_port_2_service_instance3:
       - service_instance3
       - link_port_2
-      network_service_policy_test_nested3:
+      link_port_1_service_instance21:
+      - service_instance21
+      - link_port_1
+      dependency_service_policy_3_test_nested3:
       - test_nested3
-      - network_service_policy
+      - dependency_service_policy_3
+      link_port_0_service_instance21:
+      - service_instance21
+      - link_port_0
       link_port_2_service_instance4_test_nested3:
       - test_nested3
       - link_port_2_service_instance4
+      dependency_service_instance21:
+      - service_instance21
+      - dependency
       dependency_test_nested3:
       - test_nested3
       - dependency
       dependency_service_instance4_test_nested3:
       - test_nested3
       - dependency_service_instance4
-      dependency_service_policy_test_nested3:
-      - test_nested3
-      - dependency_service_policy
       link_port_1_service_instance3:
       - service_instance3
-      - link_port_1
-      link_port_1_service_instance1:
-      - service_instance1
       - link_port_1
       link_port_1_service_instance4_test_nested3:
       - test_nested3
       - link_port_1_service_instance4
-      dependency_service_instance1:
-      - service_instance1
+      dependency_service_policy_2:
+      - service_policy_2
       - dependency
+      network_service_policy_3_test_nested3:
+      - test_nested3
+      - network_service_policy_3

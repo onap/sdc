@@ -67,21 +67,21 @@ resources:
 
   ########### PATTERN 1B (same type as main) ##################
 
-  pd_server_main_1b_port:
+  pd_server_main_1b_port_1:
     type: OS::Neutron::Port
     properties:
       network: { get_param: jsa_name }
       fixed_ips: [{"ip_address": {get_param: [pd_server_main_1b_ips, 0]}}]
       replacement_policy: AUTO
 
-  ps_server_main_1b_port:
+  ps_server_main_1b_port_1:
     type: OS::Neutron::Port
     properties:
       network: { get_param: jsa_name }
       fixed_ips: [{"ip_address": {get_param: [ps_server_main_1b_ips, 0]}}]
       replacement_policy: AUTO
 
-  server_main_pd_1b:
+  server_main_pd_1b_1:
     type: OS::Nova::Server
     depends_on:
       - test_nested2Level
@@ -91,41 +91,41 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: pd_server_main_1b_flavor }
       networks:
-      - port: { get_resource: pd_server_main_1b_port }
+      - port: { get_resource: pd_server_main_1b_port_1 }
 
-  server_main_ps_1b:
+  server_main_ps_1b_1:
     type: OS::Nova::Server
     depends_on:
-      - server_main_pd_1b
+      - server_main_pd_1b_1
     properties:
       name: { get_param: [ps_server_main_1b_names, 1]}
       image: { get_param: ps_server_main_1b_image }
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: ps_server_main_1b_flavor }
       networks:
-      - port: { get_resource: ps_server_main_1b_port }
+      - port: { get_resource: ps_server_main_1b_port_1 }
 
   ########### PATTERN 1C1 (same type as main) #################
 
-  cmaui_port_1:
+  cmaui_port_11:
     type: OS::Neutron::Port
     properties:
       network: { get_param: contrail_net_name}
       fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
       replacement_policy: AUTO
 
-  cmaui_port_2:
+  cmaui_port_12:
     type: OS::Neutron::Port
     properties:
       network: { get_param: contrail_net_name}
       fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
       replacement_policy: AUTO
 
-  server_main_1c1_cmaui_1:
+  server_main_1c1_cmaui_11:
     type: OS::Nova::Server
     depends_on:
-      - server_main_pd_1b
-      - server_main_ps_1b
+      - server_main_pd_1b_1
+      - server_main_ps_1b_1
       - test_nested2Level
     properties:
       name: { get_param: [cmaui_1c1_main_names, 0]}
@@ -133,13 +133,13 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: cmaui_1c1_main_flavor }
       networks:
-      - port: { get_resource: cmaui_port_1 }
+      - port: { get_resource: cmaui_port_11 }
 
-  server_main_1c1_cmaui_2:
+  server_main_1c1_cmaui_21:
     type: OS::Nova::Server
     depends_on:
-      - server_main_pd_1b
-      - server_main_ps_1b
+      - server_main_pd_1b_1
+      - server_main_ps_1b_1
       - test_nested2Level
     properties:
       name: { get_param: [cmaui_1c1_main_names, 1]}
@@ -147,16 +147,16 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: cmaui_1c1_main_flavor }
       networks:
-      - port: { get_resource: cmaui_port_2 }
+      - port: { get_resource: cmaui_port_12 }
 
   ########### PATTERN 4 (same type as main) #################
 
   test_nested_pattern_4_main_1:
     type: nested-pattern-4.yml
     depends_on:
-      - server_main_1c1_cmaui_1
-      - server_main_1c1_cmaui_2
-      - server_main_pd_1b
-      - server_main_ps_1b
+      - server_main_1c1_cmaui_11
+      - server_main_1c1_cmaui_21
+      - server_main_pd_1b_1
+      - server_main_ps_1b_1
     properties:
       p1: { get_param: jsa_name}

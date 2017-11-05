@@ -179,7 +179,7 @@ parameters:
     description: string containint the trunk parrent port
 
 resources:
-  sbg_sc_internal_0_port_0:
+  sbg_sc_internal_0_port_01:
     type: OS::Neutron::Port
     properties:
       replacement_policy: AUTO
@@ -192,7 +192,7 @@ resources:
       - ip_address: { get_param: sbg_boot_floating_ip }
       mac_address: { get_param: [sbg_internal_mac_addresses ,0] }
 
-  sbg_sc_management_1_port_0:
+  sbg_sc_management_1_port_01:
     type: OS::Neutron::Port
     properties:
       replacement_policy: AUTO
@@ -203,7 +203,7 @@ resources:
       - ip_address: { get_param: sbg_management_floating_ip }
       mac_address: { get_param: [sbg_management_mac_addresses ,0] }
 
-  sbg_sc_0:
+  sbg_sc_01:
     type: OS::Nova::Server
     properties:
       name: { get_param: [sbg_sc_names, 0]}
@@ -213,7 +213,7 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: sbg_sc_flavor_name }
       networks:
-      - port: { get_resource: sbg_sc_internal_0_port_0 }
-      - port: { get_resource: sbg_sc_management_1_port_0 }
+      - port: { get_resource: sbg_sc_internal_0_port_01 }
+      - port: { get_resource: sbg_sc_management_1_port_01 }
       config_drive: "true"
       user_data_format: RAW

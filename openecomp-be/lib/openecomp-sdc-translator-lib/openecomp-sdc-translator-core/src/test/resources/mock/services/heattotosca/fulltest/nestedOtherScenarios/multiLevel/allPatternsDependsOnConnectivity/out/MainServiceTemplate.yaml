@@ -253,19 +253,19 @@ topology_template:
           get_input: jsa_name
         service_template_filter:
           substitute_service_template: nested-pattern-4ServiceTemplate.yaml
-        port_pd_server_pattern4_port_1_ip_requirements:
+        port_pd_server_pattern4_port_01_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pd_server_pattern4_port_02_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_pd_server_pattern4_port_2_mac_requirements:
+        port_pd_server_pattern4_port_02_mac_requirements:
           mac_count_required:
             is_required: false
-        port_pd_server_pattern4_port_1_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_pd_server_pattern4_port_2_ip_requirements:
+        port_pd_server_pattern4_port_01_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true

@@ -103,14 +103,14 @@ resources:
   BE_port_1:
     type: OS::Neutron::Port
     properties:
-      network: {get_resource: packet_internal_network}
+      network: {get_resource: packet_internal_network_2}
       fixed_ips: [{"ip_address": {get_param: [BE_osm_ips, 0]}}]
       replacement_policy: AUTO
 
   BE_port_2:
     type: OS::Neutron::Port
     properties:
-      network: {get_resource: packet_internal_network}
+      network: {get_resource: packet_internal_network_2}
       fixed_ips: [{"ip_address": {get_param: [BE_osm_ips, 0]}}]
       replacement_policy: AUTO
 
@@ -137,14 +137,14 @@ resources:
   osm_port_1:
     type: OS::Neutron::Port
     properties:
-      network: {get_resource: packet_internal_network}
+      network: {get_resource: packet_internal_network_2}
       fixed_ips: [{"ip_address": {get_param: [BE_osm_ips, 1]}}]
       replacement_policy: AUTO
 
   osm_port_2:
     type: OS::Neutron::Port
     properties:
-      network: {get_resource: packet_external_network}
+      network: {get_resource: packet_external_network_2}
       fixed_ips: [{"ip_address": {get_param: [BE_osm_ips, 1]}}]
       replacement_policy: AUTO
 
@@ -179,13 +179,13 @@ resources:
     properties:
       p2: {get_param: p2}
 
-  packet_internal_network:
+  packet_internal_network_2:
     type: OS::Neutron::Net
     properties:
       name:
         get_param: packet_internal_network_name
 
-  packet_external_network:
+  packet_external_network_2:
     type: OS::Neutron::Net
     properties:
       name:
