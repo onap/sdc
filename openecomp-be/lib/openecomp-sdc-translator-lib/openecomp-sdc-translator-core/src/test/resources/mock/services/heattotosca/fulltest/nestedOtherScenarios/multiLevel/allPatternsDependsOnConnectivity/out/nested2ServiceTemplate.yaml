@@ -153,19 +153,19 @@ topology_template:
           get_input: jsa_name
         service_template_filter:
           substitute_service_template: nested-pattern-4ServiceTemplate.yaml
-        port_pd_server_pattern4_port_1_ip_requirements:
+        port_pd_server_pattern4_port_01_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pd_server_pattern4_port_02_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
           floating_ip_count_required:
             is_required: false
-        port_pd_server_pattern4_port_2_mac_requirements:
+        port_pd_server_pattern4_port_02_mac_requirements:
           mac_count_required:
             is_required: false
-        port_pd_server_pattern4_port_1_mac_requirements:
-          mac_count_required:
-            is_required: false
-        port_pd_server_pattern4_port_2_ip_requirements:
+        port_pd_server_pattern4_port_01_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: true
@@ -334,9 +334,9 @@ topology_template:
       disk.allocation_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.allocation_ps_server_nested2_1b
-      network.incoming.packets_pd_server_pattern4_port_2_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.incoming.packets_pd_server_pattern4_port_2
+      scalable_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - scalable_server_pd_pattern4_1
       network.incoming.packets.rate_pd_server_nested2_1b_port:
       - abstract_pd_server_nested2_1b
       - network.incoming.packets.rate_pd_server_nested2_1b_pd_server_nested_b_port
@@ -361,9 +361,6 @@ topology_template:
       memory.usage_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - memory.usage_cmaui_1c1_nested2
-      instance_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - instance_server_pd_pattern4
       instance_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - instance_cmaui_1c1_nested2
@@ -376,12 +373,6 @@ topology_template:
       disk.read.bytes_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - disk.read.bytes_pd_server_nested2_1b
-      cpu_util_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - cpu_util_server_pd_pattern4
-      disk.device.read.requests.rate_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.device.read.requests.rate_server_pd_pattern4
       network.outgoing.packets.rate_ps_server_nested2_1b_port:
       - abstract_ps_server_nested2_1b
       - network.outgoing.packets.rate_ps_server_nested2_1b_ps_server_nested_b_port
@@ -418,15 +409,18 @@ topology_template:
       network.incoming.bytes.rate_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - network.incoming.bytes.rate_pd_server_pattern4_port_1
-      disk.device.capacity_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.device.capacity_server_pd_pattern4
       disk.write.bytes.rate_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.write.bytes.rate_ps_server_nested2_1b
       network.incoming.packets.rate_pd_server_pattern4_port_2_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - network.incoming.packets.rate_pd_server_pattern4_port_2
+      disk.device.write.requests_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.device.write.requests_server_pd_pattern4_1
+      memory.resident_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - memory.resident_server_pd_pattern4_1
       feature_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - feature
@@ -448,48 +442,57 @@ topology_template:
       binding_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - binding_pd_server_pattern4_port_1
+      attachment_pd_server_pattern4_port_02_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - attachment_pd_server_pattern4_port_02
       disk.device.iops_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.device.iops_ps_server_nested2_1b
+      disk.ephemeral.size_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.ephemeral.size_server_pd_pattern4_1
+      disk.read.bytes.rate_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.read.bytes.rate_server_pd_pattern4_1
+      os_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - os_server_pd_pattern4_1
       cpu_util_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - cpu_util_pd_server_nested2_1b
+      network.incoming.packets_pd_server_pattern4_port_01_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - network.incoming.packets_pd_server_pattern4_port_01
       network.incoming.packets_pd_server_nested2_1b_port:
       - abstract_pd_server_nested2_1b
       - network.incoming.packets_pd_server_nested2_1b_pd_server_nested_b_port
-      network.incoming.bytes.rate_pd_server_pattern4_port_1_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.incoming.bytes.rate_pd_server_pattern4_port_1
-      binding_pd_server_pattern4_port_1_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - binding_pd_server_pattern4_port_1
       disk.write.bytes.rate_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - disk.write.bytes.rate_pd_server_nested2_1b
-      host_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - host_server_pd_pattern4
+      network.incoming.packets.rate_pd_server_pattern4_port_02_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - network.incoming.packets.rate_pd_server_pattern4_port_02
       disk.device.capacity_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.device.capacity_cmaui_1c1_nested2
       disk.device.capacity_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.device.capacity_cmaui_1c1_nested2
-      disk.ephemeral.size_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.ephemeral.size_server_pd_pattern4
+      binding_pd_server_pattern4_port_02_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - binding_pd_server_pattern4_port_02
       network.outpoing.packets_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - network.outpoing.packets_pd_server_pattern4_port_1
+      disk.device.write.requests.rate_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.device.write.requests.rate_server_pd_pattern4_1
       disk.write.bytes_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.write.bytes_ps_server_nested2_1b
       disk.latency_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - disk.latency_pd_server_nested2_1b
-      network.outgoing.bytes.rate_pd_server_pattern4_port_1_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.outgoing.bytes.rate_pd_server_pattern4_port_1
       network.incoming.packets_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - network.incoming.packets_pd_server_pattern4_port_1
@@ -508,9 +511,6 @@ topology_template:
       disk.device.capacity_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.device.capacity_ps_server_nested2_1b
-      disk.device.usage_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.device.usage_server_pd_pattern4
       network.outgoing.bytes.rate_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - network.outgoing.bytes.rate_pd_server_pattern4_port_1
@@ -523,27 +523,18 @@ topology_template:
       network.incoming.bytes_ps_server_nested2_1b_port:
       - abstract_ps_server_nested2_1b
       - network.incoming.bytes_ps_server_nested2_1b_ps_server_nested_b_port
-      disk.device.read.requests_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.device.read.requests_server_pd_pattern4
-      feature_pd_server_pattern4_port_2_test_nested_pattern_4_nested2:
+      network.outgoing.bytes.rate_pd_server_pattern4_port_02_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
-      - feature_pd_server_pattern4_port_2
+      - network.outgoing.bytes.rate_pd_server_pattern4_port_02
       feature_test_resourceGroup:
       - test_resourceGroup
       - feature
-      endpoint_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
+      disk.read.bytes_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
-      - endpoint_server_pd_pattern4
-      disk.read.bytes.rate_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.read.bytes.rate_server_pd_pattern4
+      - disk.read.bytes_server_pd_pattern4_1
       network.incoming.bytes_cmaui_port_2:
       - abstract_cmaui_1c1_nested2
       - network.incoming.bytes_cmaui_1c1_nested2_cmaui_port
-      network.outgoing.bytes_pd_server_pattern4_port_1_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.outgoing.bytes_pd_server_pattern4_port_1
       disk.device.write.requests.rate_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.device.write.requests.rate_server_pd_pattern4
@@ -559,6 +550,9 @@ topology_template:
       scalable_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - scalable_server_pd_pattern4
+      disk.device.iops_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.device.iops_server_pd_pattern4_1
       disk.allocation_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.allocation_cmaui_1c1_nested2
@@ -568,9 +562,9 @@ topology_template:
       disk.allocation_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.allocation_cmaui_1c1_nested2
-      network.incoming.packets.rate_pd_server_pattern4_port_1_test_nested_pattern_4_nested2:
+      network.incoming.packets.rate_pd_server_pattern4_port_01_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
-      - network.incoming.packets.rate_pd_server_pattern4_port_1
+      - network.incoming.packets.rate_pd_server_pattern4_port_01
       disk.device.write.bytes.rate_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.device.write.bytes.rate_cmaui_1c1_nested2
@@ -592,18 +586,12 @@ topology_template:
       os_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - os_ps_server_nested2_1b
-      cpu_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - cpu_server_pd_pattern4
       disk.device.read.requests_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.device.read.requests_ps_server_nested2_1b
-      disk.latency_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.latency_server_pd_pattern4
-      disk.usage_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.usage_server_pd_pattern4
+      network.outgoing.packets.rate_pd_server_pattern4_port_01_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - network.outgoing.packets.rate_pd_server_pattern4_port_01
       disk.ephemeral.size_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.ephemeral.size_ps_server_nested2_1b
@@ -616,36 +604,30 @@ topology_template:
       feature_jsa_security_group1_test_resourceGroup:
       - test_resourceGroup
       - feature_jsa_security_group1
+      disk.write.requests.rate_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.write.requests.rate_server_pd_pattern4_1
       disk.device.usage_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.device.usage_ps_server_nested2_1b
       feature_pd_server_pattern4_port_2_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - feature_pd_server_pattern4_port_2
-      memory_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - memory_server_pd_pattern4
       disk.device.write.requests.rate_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.device.write.requests.rate_cmaui_1c1_nested2
       disk.device.write.requests.rate_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.device.write.requests.rate_cmaui_1c1_nested2
-      disk.write.bytes_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
+      memory.usage_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
-      - disk.write.bytes_server_pd_pattern4
+      - memory.usage_server_pd_pattern4_1
       disk.latency_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.latency_server_pd_pattern4
       cpu_util_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - cpu_util_server_pd_pattern4
-      disk.write.bytes.rate_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.write.bytes.rate_server_pd_pattern4
-      memory.usage_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - memory.usage_server_pd_pattern4
       binding_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - binding_cmaui_1c1_nested2
@@ -676,18 +658,21 @@ topology_template:
       disk.read.bytes.rate_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.read.bytes.rate_cmaui_1c1_nested2
+      cpu_util_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - cpu_util_server_pd_pattern4_1
       disk.read.bytes.rate_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.read.bytes.rate_cmaui_1c1_nested2
       endpoint_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - endpoint_ps_server_nested2_1b
+      network.incoming.bytes_pd_server_pattern4_port_02_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - network.incoming.bytes_pd_server_pattern4_port_02
       network.incoming.bytes_pd_server_nested2_1b_port:
       - abstract_pd_server_nested2_1b
       - network.incoming.bytes_pd_server_nested2_1b_pd_server_nested_b_port
-      vcpus_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - vcpus_server_pd_pattern4
       vcpus_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - vcpus_cmaui_1c1_nested2
@@ -697,12 +682,15 @@ topology_template:
       vcpus_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - vcpus_cmaui_1c1_nested2
-      disk.device.allocation_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
+      disk.write.bytes.rate_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
-      - disk.device.allocation_server_pd_pattern4
+      - disk.write.bytes.rate_server_pd_pattern4_1
       disk.iops_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.iops_server_pd_pattern4
+      disk.allocation_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.allocation_server_pd_pattern4_1
       disk.usage_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.usage_server_pd_pattern4
@@ -715,18 +703,24 @@ topology_template:
       disk.device.write.bytes_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.device.write.bytes_ps_server_nested2_1b
+      network.outgoing.bytes_pd_server_pattern4_port_02_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - network.outgoing.bytes_pd_server_pattern4_port_02
       disk.latency_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.latency_ps_server_nested2_1b
       memory.resident_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - memory.resident_cmaui_1c1_nested2
-      network.outpoing.packets_pd_server_pattern4_port_2_test_nested_pattern_4_nested2:
+      network.incoming.bytes.rate_pd_server_pattern4_port_02_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
-      - network.outpoing.packets_pd_server_pattern4_port_2
+      - network.incoming.bytes.rate_pd_server_pattern4_port_02
       disk.device.allocation_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.device.allocation_server_pd_pattern4
+      disk.device.read.bytes.rate_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.device.read.bytes.rate_server_pd_pattern4_1
       feature_pd_server_nested2_1b_port:
       - abstract_pd_server_nested2_1b
       - feature_pd_server_nested2_1b_pd_server_nested_b_port
@@ -739,24 +733,27 @@ topology_template:
       disk.read.requests_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - disk.read.requests_pd_server_nested2_1b
-      network.outgoing.packets.rate_pd_server_pattern4_port_2_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.outgoing.packets.rate_pd_server_pattern4_port_2
-      memory.resident_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
+      disk.device.read.requests.rate_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
-      - memory.resident_server_pd_pattern4
-      disk.device.latency_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.device.latency_server_pd_pattern4
+      - disk.device.read.requests.rate_server_pd_pattern4_1
       disk.device.capacity_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - disk.device.capacity_pd_server_nested2_1b
       disk.capacity_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.capacity_ps_server_nested2_1b
+      instance_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - instance_server_pd_pattern4_1
+      disk.read.requests_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.read.requests_server_pd_pattern4_1
       os_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - os_cmaui_1c1_nested2
+      disk.device.latency_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.device.latency_server_pd_pattern4_1
       disk.read.bytes_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.read.bytes_ps_server_nested2_1b
@@ -769,6 +766,15 @@ topology_template:
       attachment_pd_server_nested2_1b_port:
       - abstract_pd_server_nested2_1b
       - attachment_pd_server_nested2_1b_pd_server_nested_b_port
+      attachment_pd_server_pattern4_port_01_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - attachment_pd_server_pattern4_port_01
+      feature_pd_server_pattern4_port_02_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - feature_pd_server_pattern4_port_02
+      feature_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - feature_server_pd_pattern4_1
       disk.allocation_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.allocation_server_pd_pattern4
@@ -778,6 +784,9 @@ topology_template:
       network.outpoing.packets_cmaui_port_2:
       - abstract_cmaui_1c1_nested2
       - network.outpoing.packets_cmaui_1c1_nested2_cmaui_port
+      disk.iops_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.iops_server_pd_pattern4_1
       disk.ephemeral.size_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - disk.ephemeral.size_pd_server_nested2_1b
@@ -808,9 +817,18 @@ topology_template:
       memory.resident_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - memory.resident_cmaui_1c1_nested2
+      disk.device.write.bytes_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.device.write.bytes_server_pd_pattern4_1
       disk.device.latency_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.device.latency_server_pd_pattern4
+      host_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - host_server_pd_pattern4_1
+      disk.latency_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.latency_server_pd_pattern4_1
       disk.device.iops_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.device.iops_cmaui_1c1_nested2
@@ -823,12 +841,6 @@ topology_template:
       disk.device.write.bytes.rate_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - disk.device.write.bytes.rate_pd_server_nested2_1b
-      disk.device.read.bytes_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.device.read.bytes_server_pd_pattern4
-      disk.device.write.requests.rate_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.device.write.requests.rate_server_pd_pattern4
       attachment_pd_server_pattern4_port_2_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - attachment_pd_server_pattern4_port_2
@@ -838,6 +850,9 @@ topology_template:
       network.incoming.packets.rate_ps_server_nested2_1b_port:
       - abstract_ps_server_nested2_1b
       - network.incoming.packets.rate_ps_server_nested2_1b_ps_server_nested_b_port
+      binding_pd_server_pattern4_port_01_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - binding_pd_server_pattern4_port_01
       disk.device.read.requests_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.device.read.requests_cmaui_1c1_nested2
@@ -850,24 +865,21 @@ topology_template:
       disk.device.read.requests_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.device.read.requests_server_pd_pattern4
-      network.incoming.bytes.rate_pd_server_pattern4_port_2_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.incoming.bytes.rate_pd_server_pattern4_port_2
-      attachment_pd_server_pattern4_port_2_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - attachment_pd_server_pattern4_port_2
+      cpu.delta_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - cpu.delta_server_pd_pattern4_1
       disk.usage_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - disk.usage_pd_server_nested2_1b
       disk.device.read.bytes.rate_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.device.read.bytes.rate_ps_server_nested2_1b
-      cpu.delta_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - cpu.delta_server_pd_pattern4
       network.outgoing.bytes.rate_pd_server_pattern4_port_2_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - network.outgoing.bytes.rate_pd_server_pattern4_port_2
+      network.incoming.bytes_pd_server_pattern4_port_01_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - network.incoming.bytes_pd_server_pattern4_port_01
       disk.write.bytes_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.write.bytes_server_pd_pattern4
@@ -877,6 +889,9 @@ topology_template:
       feature_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - feature_pd_server_pattern4_port_1
+      network.outgoing.bytes.rate_pd_server_pattern4_port_01_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - network.outgoing.bytes.rate_pd_server_pattern4_port_01
       scalable_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - scalable_cmaui_1c1_nested2
@@ -889,6 +904,9 @@ topology_template:
       cpu_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - cpu_pd_server_nested2_1b
+      network.outpoing.packets_pd_server_pattern4_port_01_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - network.outpoing.packets_pd_server_pattern4_port_01
       disk.device.latency_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.device.latency_ps_server_nested2_1b
@@ -898,9 +916,15 @@ topology_template:
       memory.usage_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - memory.usage_pd_server_nested2_1b
-      disk.root.size_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
+      disk.write.bytes_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
-      - disk.root.size_server_pd_pattern4
+      - disk.write.bytes_server_pd_pattern4_1
+      cpu_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - cpu_server_pd_pattern4_1
+      binding_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - binding_server_pd_pattern4_1
       cpu.delta_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - cpu.delta_server_pd_pattern4
@@ -925,15 +949,24 @@ topology_template:
       disk.capacity_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.capacity_cmaui_1c1_nested2
+      disk.device.allocation_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.device.allocation_server_pd_pattern4_1
       disk.device.read.bytes_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.device.read.bytes_ps_server_nested2_1b
+      disk.device.usage_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.device.usage_server_pd_pattern4_1
       disk.device.read.requests_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - disk.device.read.requests_pd_server_nested2_1b
       disk.write.requests_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.write.requests_server_pd_pattern4
+      feature_pd_server_pattern4_port_01_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - feature_pd_server_pattern4_port_01
       endpoint_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - endpoint_cmaui_1c1_nested2
@@ -955,9 +988,6 @@ topology_template:
       feature_jsa_security_group2_test_nested3Level:
       - test_nested3Level
       - feature_jsa_security_group2
-      disk.read.requests_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.read.requests_server_pd_pattern4
       feature_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - feature
@@ -973,9 +1003,6 @@ topology_template:
       disk.ephemeral.size_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.ephemeral.size_server_pd_pattern4
-      network.outgoing.bytes_pd_server_pattern4_port_2_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.outgoing.bytes_pd_server_pattern4_port_2
       disk.usage_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.usage_cmaui_1c1_nested2
@@ -988,9 +1015,15 @@ topology_template:
       network.incoming.bytes_pd_server_pattern4_port_2_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - network.incoming.bytes_pd_server_pattern4_port_2
+      disk.root.size_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.root.size_server_pd_pattern4_1
       cpu.delta_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - cpu.delta_pd_server_nested2_1b
+      disk.write.requests_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.write.requests_server_pd_pattern4_1
       network.incoming.bytes_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - network.incoming.bytes_pd_server_pattern4_port_1
@@ -1006,12 +1039,6 @@ topology_template:
       feature_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - feature_pd_server_nested2_1b
-      disk.device.write.requests_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.device.write.requests_server_pd_pattern4
-      network.incoming.bytes_pd_server_pattern4_port_1_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.incoming.bytes_pd_server_pattern4_port_1
       disk.device.read.requests.rate_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.device.read.requests.rate_ps_server_nested2_1b
@@ -1021,12 +1048,12 @@ topology_template:
       disk.device.read.requests.rate_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.device.read.requests.rate_cmaui_1c1_nested2
+      network.incoming.packets_pd_server_pattern4_port_02_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - network.incoming.packets_pd_server_pattern4_port_02
       disk.read.requests_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.read.requests_cmaui_1c1_nested2
-      binding_pd_server_pattern4_port_2_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - binding_pd_server_pattern4_port_2
       disk.device.read.requests.rate_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.device.read.requests.rate_cmaui_1c1_nested2
@@ -1048,18 +1075,12 @@ topology_template:
       memory_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - memory_cmaui_1c1_nested2
-      disk.allocation_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.allocation_server_pd_pattern4
       disk.device.write.requests_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.device.write.requests_cmaui_1c1_nested2
-      disk.read.bytes_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
+      memory_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
-      - disk.read.bytes_server_pd_pattern4
-      scalable_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - scalable_server_pd_pattern4
+      - memory_server_pd_pattern4_1
       disk.device.write.requests_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.device.write.requests_cmaui_1c1_nested2
@@ -1078,9 +1099,6 @@ topology_template:
       disk.device.write.bytes_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.device.write.bytes_cmaui_1c1_nested2
-      network.outgoing.bytes.rate_pd_server_pattern4_port_2_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.outgoing.bytes.rate_pd_server_pattern4_port_2
       memory_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - memory_ps_server_nested2_1b
@@ -1090,6 +1108,9 @@ topology_template:
       disk.read.bytes_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.read.bytes_cmaui_1c1_nested2
+      endpoint_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - endpoint_server_pd_pattern4_1
       disk.read.bytes_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.read.bytes_cmaui_1c1_nested2
@@ -1099,18 +1120,18 @@ topology_template:
       disk.device.write.bytes_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.device.write.bytes_cmaui_1c1_nested2
+      vcpus_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - vcpus_server_pd_pattern4_1
       os_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - os_server_pd_pattern4
-      disk.capacity_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
+      disk.device.read.requests_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
-      - disk.capacity_server_pd_pattern4
+      - disk.device.read.requests_server_pd_pattern4_1
       attachment_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - attachment_pd_server_pattern4_port_1
-      network.incoming.bytes_pd_server_pattern4_port_2_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.incoming.bytes_pd_server_pattern4_port_2
       disk.write.requests_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.write.requests_cmaui_1c1_nested2
@@ -1132,6 +1153,9 @@ topology_template:
       disk.ephemeral.size_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.ephemeral.size_cmaui_1c1_nested2
+      network.outpoing.packets_pd_server_pattern4_port_02_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - network.outpoing.packets_pd_server_pattern4_port_02
       disk.device.capacity_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.device.capacity_server_pd_pattern4
@@ -1159,9 +1183,6 @@ topology_template:
       disk.write.bytes.rate_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.write.bytes.rate_server_pd_pattern4
-      disk.device.write.bytes_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.device.write.bytes_server_pd_pattern4
       disk.read.bytes.rate_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.read.bytes.rate_ps_server_nested2_1b
@@ -1177,36 +1198,21 @@ topology_template:
       network.outgoing.packets.rate_cmaui_port_2:
       - abstract_cmaui_1c1_nested2
       - network.outgoing.packets.rate_cmaui_1c1_nested2_cmaui_port
-      disk.iops_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.iops_server_pd_pattern4
       attachment_cmaui_port_1:
       - abstract_cmaui_1c1_nested2
       - attachment_cmaui_1c1_nested2_cmaui_port
-      attachment_pd_server_pattern4_port_1_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - attachment_pd_server_pattern4_port_1
       disk.device.iops_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.device.iops_server_pd_pattern4
-      feature_pd_server_pattern4_port_1_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - feature_pd_server_pattern4_port_1
-      disk.device.iops_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
+      disk.device.read.bytes_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
-      - disk.device.iops_server_pd_pattern4
-      disk.device.write.bytes.rate_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.device.write.bytes.rate_server_pd_pattern4
+      - disk.device.read.bytes_server_pd_pattern4_1
       disk.root.size_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.root.size_cmaui_1c1_nested2
       disk.root.size_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.root.size_cmaui_1c1_nested2
-      network.incoming.packets_pd_server_pattern4_port_1_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.incoming.packets_pd_server_pattern4_port_1
       disk.device.latency_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - disk.device.latency_pd_server_nested2_1b
@@ -1216,6 +1222,9 @@ topology_template:
       network.outgoing.bytes_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - network.outgoing.bytes_pd_server_pattern4_port_1
+      disk.usage_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.usage_server_pd_pattern4_1
       disk.write.bytes_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.write.bytes_cmaui_1c1_nested2
@@ -1228,12 +1237,9 @@ topology_template:
       disk.iops_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.iops_cmaui_1c1_nested2
-      os_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - os_server_pd_pattern4
-      binding_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - binding_server_pd_pattern4
+      network.outgoing.bytes_pd_server_pattern4_port_01_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - network.outgoing.bytes_pd_server_pattern4_port_01
       disk.iops_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - disk.iops_pd_server_nested2_1b
@@ -1246,9 +1252,6 @@ topology_template:
       disk.device.read.bytes.rate_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.device.read.bytes.rate_cmaui_1c1_nested2
-      network.outgoing.packets.rate_pd_server_pattern4_port_1_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.outgoing.packets.rate_pd_server_pattern4_port_1
       disk.latency_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - disk.latency_cmaui_1c1_nested2
@@ -1264,21 +1267,18 @@ topology_template:
       endpoint_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - endpoint_server_pd_pattern4
+      disk.device.capacity_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.device.capacity_server_pd_pattern4_1
       memory_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - memory_pd_server_nested2_1b
       disk.write.requests.rate_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.write.requests.rate_ps_server_nested2_1b
-      network.incoming.packets.rate_pd_server_pattern4_port_2_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.incoming.packets.rate_pd_server_pattern4_port_2
       cpu_util_server_nested2_1c1_cmaui_2:
       - abstract_cmaui_1c1_nested2
       - cpu_util_cmaui_1c1_nested2
-      disk.write.requests.rate_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.write.requests.rate_server_pd_pattern4
       disk.device.read.bytes_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - disk.device.read.bytes_pd_server_nested2_1b
@@ -1291,6 +1291,9 @@ topology_template:
       instance_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - instance_ps_server_nested2_1b
+      network.incoming.bytes.rate_pd_server_pattern4_port_01_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - network.incoming.bytes.rate_pd_server_pattern4_port_01
       network.incoming.bytes.rate_cmaui_port_1:
       - abstract_cmaui_1c1_nested2
       - network.incoming.bytes.rate_cmaui_1c1_nested2_cmaui_port
@@ -1315,39 +1318,36 @@ topology_template:
       network.incoming.bytes.rate_ps_server_nested2_1b_port:
       - abstract_ps_server_nested2_1b
       - network.incoming.bytes.rate_ps_server_nested2_1b_ps_server_nested_b_port
-      disk.device.read.bytes.rate_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.device.read.bytes.rate_server_pd_pattern4
       disk.device.read.requests.rate_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - disk.device.read.requests.rate_pd_server_nested2_1b
       binding_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - binding_ps_server_nested2_1b
+      disk.device.write.bytes.rate_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.device.write.bytes.rate_server_pd_pattern4_1
       disk.read.bytes_server_pd_pattern4_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - disk.read.bytes_server_pd_pattern4
       disk.device.allocation_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - disk.device.allocation_ps_server_nested2_1b
-      feature_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - feature_server_pd_pattern4
       scalable_server_nested2_pd_1b:
       - abstract_pd_server_nested2_1b
       - scalable_pd_server_nested2_1b
-      network.outpoing.packets_pd_server_pattern4_port_1_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - network.outpoing.packets_pd_server_pattern4_port_1
+      disk.capacity_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - disk.capacity_server_pd_pattern4_1
       network.outgoing.bytes_pd_server_nested2_1b_port:
       - abstract_pd_server_nested2_1b
       - network.outgoing.bytes_pd_server_nested2_1b_pd_server_nested_b_port
+      network.outgoing.packets.rate_pd_server_pattern4_port_02_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - network.outgoing.packets.rate_pd_server_pattern4_port_02
       disk.device.allocation_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - disk.device.allocation_cmaui_1c1_nested2
-      disk.write.requests_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - disk.write.requests_server_pd_pattern4
       cpu.delta_server_nested2_ps_1b:
       - abstract_ps_server_nested2_1b
       - cpu.delta_ps_server_nested2_1b
@@ -1370,9 +1370,6 @@ topology_template:
       port_jsa_security_group1_test_resourceGroup:
       - test_resourceGroup
       - port_jsa_security_group1
-      dependency_pd_server_pattern4_port_2_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - dependency_pd_server_pattern4_port_2
       link_ps_server_nested2_1b_port:
       - abstract_ps_server_nested2_1b
       - link_ps_server_nested2_1b_ps_server_nested_b_port
@@ -1388,9 +1385,9 @@ topology_template:
       dependency_server_nested2_1c1_cmaui_1:
       - abstract_cmaui_1c1_nested2
       - dependency_cmaui_1c1_nested2
-      link_pd_server_pattern4_port_2_test_nested_pattern_4_nested2:
+      dependency_pd_server_pattern4_port_01_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
-      - link_pd_server_pattern4_port_2
+      - dependency_pd_server_pattern4_port_01
       port_jsa_security_group2_test_nested3Level:
       - test_nested3Level
       - port_jsa_security_group2
@@ -1400,6 +1397,9 @@ topology_template:
       link_cmaui_port_2:
       - abstract_cmaui_1c1_nested2
       - link_cmaui_1c1_nested2_cmaui_port
+      link_pd_server_pattern4_port_02_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - link_pd_server_pattern4_port_02
       link_cmaui_port_1:
       - abstract_cmaui_1c1_nested2
       - link_cmaui_1c1_nested2_cmaui_port
@@ -1409,6 +1409,12 @@ topology_template:
       dependency_test_resourceGroup:
       - test_resourceGroup
       - dependency
+      local_storage_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - local_storage_server_pd_pattern4_1
+      dependency_pd_server_pattern4_port_02_test_nested_pattern_4_nested2:
+      - test_nested_pattern_4_nested2
+      - dependency_pd_server_pattern4_port_02
       dependency_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - dependency_pd_server_pattern4_port_1
@@ -1427,18 +1433,18 @@ topology_template:
       dependency_cmaui_port_2:
       - abstract_cmaui_1c1_nested2
       - dependency_cmaui_1c1_nested2_cmaui_port
-      local_storage_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - local_storage_server_pd_pattern4
       dependency_pd_server_nested2_1b_port:
       - abstract_pd_server_nested2_1b
       - dependency_pd_server_nested2_1b_pd_server_nested_b_port
       port_jsa_security_group1_test_nested3Level:
       - test_nested3Level
       - port_jsa_security_group1
-      link_pd_server_pattern4_port_1_test_nested_pattern_4_nested2:
+      dependency_server_pd_pattern4_1_test_nested_pattern_4_same_type_diff_file:
+      - test_nested_pattern_4_same_type_diff_file
+      - dependency_server_pd_pattern4_1
+      link_pd_server_pattern4_port_01_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
-      - link_pd_server_pattern4_port_1
+      - link_pd_server_pattern4_port_01
       dependency_ps_server_nested2_1b_port:
       - abstract_ps_server_nested2_1b
       - dependency_ps_server_nested2_1b_ps_server_nested_b_port
@@ -1451,9 +1457,6 @@ topology_template:
       dependency_jsa_security_group1_test_nested3Level:
       - test_nested3Level
       - dependency_jsa_security_group1
-      dependency_server_pd_pattern4_test_nested_pattern_4_same_type_diff_file:
-      - test_nested_pattern_4_same_type_diff_file
-      - dependency_server_pd_pattern4
       link_pd_server_pattern4_port_1_test_nested_pattern_4_same_type_diff_file:
       - test_nested_pattern_4_same_type_diff_file
       - link_pd_server_pattern4_port_1
@@ -1472,6 +1475,3 @@ topology_template:
       dependency_test_nested_pattern_4_nested2:
       - test_nested_pattern_4_nested2
       - dependency
-      dependency_pd_server_pattern4_port_1_test_nested_pattern_4_nested2:
-      - test_nested_pattern_4_nested2
-      - dependency_pd_server_pattern4_port_1

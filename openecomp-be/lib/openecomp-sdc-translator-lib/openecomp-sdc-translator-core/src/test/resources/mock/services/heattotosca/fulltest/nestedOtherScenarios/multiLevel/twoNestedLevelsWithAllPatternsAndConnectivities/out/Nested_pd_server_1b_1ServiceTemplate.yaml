@@ -16,9 +16,6 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_pd_server_b_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -29,37 +26,34 @@ topology_template:
     vm_flavor_name:
       type: string
       required: true
-    port_pd_server_b_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
-      required: true
-    port_pd_server_b_port_fixed_ips:
+    port_pd_server_1b_port_vlan_requirements:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
-    port_pd_server_b_port_subnetpoolid:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_pd_server_1b_port_network_role_tag:
       type: string
       required: true
     vm_image_name:
       type: string
       required: true
-    port_pd_server_b_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_pd_server_b_port_network:
+    port_pd_server_1b_port_replacement_policy:
       type: list
       required: true
       entry_schema:
         type: string
-    port_pd_server_b_port_network_role_tag:
+    port_pd_server_1b_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_pd_server_1b_port_network_role:
       type: string
       required: true
-    port_pd_server_b_port_network_role:
-      type: string
+    port_pd_server_1b_port_fixed_ips:
+      type: list
       required: true
-    port_pd_server_b_port_replacement_policy:
+      entry_schema:
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+    port_pd_server_1b_port_network:
       type: list
       required: true
       entry_schema:
@@ -69,14 +63,20 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_pd_server_b_port_order:
+    port_pd_server_1b_port_order:
       type: integer
       required: true
-    port_pd_server_b_port_vlan_requirements:
+    port_pd_server_1b_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_pd_server_1b_port_ip_requirements:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_pd_server_1b_port_subnetpoolid:
+      type: string
+      required: true
   node_templates:
     pd_server_1b:
       type: org.openecomp.resource.vfc.compute.nodes.heat.pd_server_1b
@@ -93,34 +93,34 @@ topology_template:
           get_input:
           - compute_pd_server_1b_name
           - index_value
-    pd_server_1b_pd_server_b_port:
+    pd_server_1b_pd_server_1b_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         exCP_naming:
-          get_input: port_pd_server_b_port_exCP_naming
+          get_input: port_pd_server_1b_port_exCP_naming
         replacement_policy:
           get_input:
-          - port_pd_server_b_port_replacement_policy
+          - port_pd_server_1b_port_replacement_policy
           - index_value
         vlan_requirements:
-          get_input: port_pd_server_b_port_vlan_requirements
+          get_input: port_pd_server_1b_port_vlan_requirements
         ip_requirements:
-          get_input: port_pd_server_b_port_ip_requirements
+          get_input: port_pd_server_1b_port_ip_requirements
         network_role_tag:
-          get_input: port_pd_server_b_port_network_role_tag
+          get_input: port_pd_server_1b_port_network_role_tag
         mac_requirements:
-          get_input: port_pd_server_b_port_mac_requirements
+          get_input: port_pd_server_1b_port_mac_requirements
         order:
-          get_input: port_pd_server_b_port_order
+          get_input: port_pd_server_1b_port_order
         network_role:
-          get_input: port_pd_server_b_port_network_role
+          get_input: port_pd_server_1b_port_network_role
         subnetpoolid:
-          get_input: port_pd_server_b_port_subnetpoolid
+          get_input: port_pd_server_1b_port_subnetpoolid
         fixed_ips:
-          get_input: port_pd_server_b_port_fixed_ips
+          get_input: port_pd_server_1b_port_fixed_ips
         network:
           get_input:
-          - port_pd_server_b_port_network
+          - port_pd_server_1b_port_network
           - index_value
       requirements:
       - binding:
@@ -140,30 +140,27 @@ topology_template:
       disk.device.read.bytes_pd_server_1b:
       - pd_server_1b
       - disk.device.read.bytes
+      feature_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
+      - feature
       host_pd_server_1b:
       - pd_server_1b
       - host
       disk.read.bytes.rate_pd_server_1b:
       - pd_server_1b
       - disk.read.bytes.rate
-      feature_pd_server_1b_pd_server_b_port:
-      - pd_server_1b_pd_server_b_port
-      - feature
       disk.allocation_pd_server_1b:
       - pd_server_1b
       - disk.allocation
-      network.incoming.bytes_pd_server_1b_pd_server_b_port:
-      - pd_server_1b_pd_server_b_port
-      - network.incoming.bytes
-      network.outgoing.bytes.rate_pd_server_1b_pd_server_b_port:
-      - pd_server_1b_pd_server_b_port
-      - network.outgoing.bytes.rate
-      binding_pd_server_1b_pd_server_b_port:
-      - pd_server_1b_pd_server_b_port
-      - binding
+      network.incoming.bytes.rate_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
+      - network.incoming.bytes.rate
       cpu.delta_pd_server_1b:
       - pd_server_1b
       - cpu.delta
+      network.incoming.bytes_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
+      - network.incoming.bytes
       disk.device.read.requests_pd_server_1b:
       - pd_server_1b
       - disk.device.read.requests
@@ -173,6 +170,9 @@ topology_template:
       disk.device.iops_pd_server_1b:
       - pd_server_1b
       - disk.device.iops
+      binding_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
+      - binding
       cpu_pd_server_1b:
       - pd_server_1b
       - cpu
@@ -191,9 +191,9 @@ topology_template:
       memory.usage_pd_server_1b:
       - pd_server_1b
       - memory.usage
-      attachment_pd_server_1b_pd_server_b_port:
-      - pd_server_1b_pd_server_b_port
-      - attachment
+      network.outpoing.packets_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
+      - network.outpoing.packets
       memory_pd_server_1b:
       - pd_server_1b
       - memory
@@ -209,18 +209,21 @@ topology_template:
       disk.device.usage_pd_server_1b:
       - pd_server_1b
       - disk.device.usage
+      attachment_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
+      - attachment
       disk.device.write.requests_pd_server_1b:
       - pd_server_1b
       - disk.device.write.requests
-      network.incoming.bytes.rate_pd_server_1b_pd_server_b_port:
-      - pd_server_1b_pd_server_b_port
-      - network.incoming.bytes.rate
       disk.latency_pd_server_1b:
       - pd_server_1b
       - disk.latency
       disk.ephemeral.size_pd_server_1b:
       - pd_server_1b
       - disk.ephemeral.size
+      network.outgoing.bytes.rate_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
+      - network.outgoing.bytes.rate
       scalable_pd_server_1b:
       - pd_server_1b
       - scalable
@@ -236,9 +239,6 @@ topology_template:
       disk.iops_pd_server_1b:
       - pd_server_1b
       - disk.iops
-      network.incoming.packets.rate_pd_server_1b_pd_server_b_port:
-      - pd_server_1b_pd_server_b_port
-      - network.incoming.packets.rate
       disk.write.bytes_pd_server_1b:
       - pd_server_1b
       - disk.write.bytes
@@ -251,6 +251,9 @@ topology_template:
       vcpus_pd_server_1b:
       - pd_server_1b
       - vcpus
+      network.incoming.packets.rate_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
+      - network.incoming.packets.rate
       instance_pd_server_1b:
       - pd_server_1b
       - instance
@@ -260,15 +263,15 @@ topology_template:
       cpu_util_pd_server_1b:
       - pd_server_1b
       - cpu_util
+      network.outgoing.bytes_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
+      - network.outgoing.bytes
       memory.resident_pd_server_1b:
       - pd_server_1b
       - memory.resident
-      network.incoming.packets_pd_server_1b_pd_server_b_port:
-      - pd_server_1b_pd_server_b_port
+      network.incoming.packets_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
       - network.incoming.packets
-      network.outgoing.packets.rate_pd_server_1b_pd_server_b_port:
-      - pd_server_1b_pd_server_b_port
-      - network.outgoing.packets.rate
       disk.device.write.requests.rate_pd_server_1b:
       - pd_server_1b
       - disk.device.write.requests.rate
@@ -278,18 +281,15 @@ topology_template:
       disk.read.requests_pd_server_1b:
       - pd_server_1b
       - disk.read.requests
-      network.outpoing.packets_pd_server_1b_pd_server_b_port:
-      - pd_server_1b_pd_server_b_port
-      - network.outpoing.packets
+      network.outgoing.packets.rate_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
+      - network.outgoing.packets.rate
       disk.capacity_pd_server_1b:
       - pd_server_1b
       - disk.capacity
       disk.usage_pd_server_1b:
       - pd_server_1b
       - disk.usage
-      network.outgoing.bytes_pd_server_1b_pd_server_b_port:
-      - pd_server_1b_pd_server_b_port
-      - network.outgoing.bytes
       disk.write.requests.rate_pd_server_1b:
       - pd_server_1b
       - disk.write.requests.rate
@@ -300,9 +300,9 @@ topology_template:
       local_storage_pd_server_1b:
       - pd_server_1b
       - local_storage
-      link_pd_server_1b_pd_server_b_port:
-      - pd_server_1b_pd_server_b_port
+      link_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
       - link
-      dependency_pd_server_1b_pd_server_b_port:
-      - pd_server_1b_pd_server_b_port
+      dependency_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
       - dependency

@@ -31,7 +31,7 @@ parameters:
     type: string
 resources:
 
-  server_pd_1:
+  server_pd_21:
     type: OS::Nova::Server
     properties:
 #      config_drive: "True"
@@ -40,10 +40,10 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: pd01_port_0}
+        - port: {get_resource: pd01_port_02}
       user_data_format:  RAW
 
-  server_pd_2:
+  server_pd_22:
     type: OS::Nova::Server
     properties:
 #      config_drive: "True"
@@ -52,14 +52,14 @@ resources:
       flavor: {get_param: pd_flavor_name}
       availability_zone: {get_param: availabilityzone_name}
       networks:
-        - port: {get_resource: pd02_port_0}
+        - port: {get_resource: pd02_port_02}
       user_data_format:  RAW
 
-  pd01_port_0:
+  pd01_port_02:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}
-  pd02_port_0:
+  pd02_port_02:
     type: OS::Neutron::Port
     properties:
       network: {get_param: oam_net_name}

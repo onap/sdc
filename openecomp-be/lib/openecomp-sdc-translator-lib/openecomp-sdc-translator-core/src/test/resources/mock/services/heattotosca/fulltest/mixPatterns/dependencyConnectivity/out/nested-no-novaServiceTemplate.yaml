@@ -17,12 +17,7 @@ topology_template:
       immutable: false
       type: string
   node_templates:
-    dependsOn_network:
-      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
-      properties:
-        network_name:
-          get_input: net_name
-    jsa_security_group:
+    jsa_security_group_1:
       type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
       properties:
         name:
@@ -93,6 +88,11 @@ topology_template:
           ethertype: IPv6
           remote_ip_prefix: ::/0
           direction: ingress
+    dependsOn_network_0:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: net_name
   groups:
     nested-no-nova_group:
       type: org.openecomp.groups.heat.HeatStack
@@ -100,36 +100,36 @@ topology_template:
         heat_file: ../Artifacts/nested-no-nova.yaml
         description: heat template that creates PCRF Cluman stack
       members:
-      - dependsOn_network
-      - jsa_security_group
+      - jsa_security_group_1
+      - dependsOn_network_0
   outputs:
     output1:
       value: myOutput
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested-no-nova
     capabilities:
-      end_point_dependsOn_network:
-      - dependsOn_network
-      - end_point
-      link_dependsOn_network:
-      - dependsOn_network
+      feature_jsa_security_group_1:
+      - jsa_security_group_1
+      - feature
+      feature_dependsOn_network_0:
+      - dependsOn_network_0
+      - feature
+      link_dependsOn_network_0:
+      - dependsOn_network_0
       - link
-      feature_jsa_security_group:
-      - jsa_security_group
-      - feature
-      feature_dependsOn_network:
-      - dependsOn_network
-      - feature
-      attachment_dependsOn_network:
-      - dependsOn_network
+      attachment_dependsOn_network_0:
+      - dependsOn_network_0
       - attachment
+      end_point_dependsOn_network_0:
+      - dependsOn_network_0
+      - end_point
     requirements:
-      dependency_dependsOn_network:
-      - dependsOn_network
+      dependency_dependsOn_network_0:
+      - dependsOn_network_0
       - dependency
-      port_jsa_security_group:
-      - jsa_security_group
+      port_jsa_security_group_1:
+      - jsa_security_group_1
       - port
-      dependency_jsa_security_group:
-      - jsa_security_group
+      dependency_jsa_security_group_1:
+      - jsa_security_group_1
       - dependency

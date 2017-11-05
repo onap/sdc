@@ -296,16 +296,6 @@ topology_template:
         port_pd_server_port_1_mac_requirements:
           mac_count_required:
             is_required: false
-    packet_external_network:
-      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
-      properties:
-        network_name:
-          get_input: packet_external_network_name
-    packet_internal_network:
-      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
-      properties:
-        network_name:
-          get_input: packet_internal_network_name
     abstract_osm_server_1c2_0:
       type: org.openecomp.resource.abstract.nodes.osm_server_1c2
       directives:
@@ -314,7 +304,7 @@ topology_template:
         port_osm_port_replacement_policy:
         - AUTO
         port_osm_port_network:
-        - packet_internal_network
+        - packet_internal_network_2
         compute_osm_server_1c2_name:
         - get_input:
           - osm_server_1c2_names
@@ -350,7 +340,7 @@ topology_template:
       requirements:
       - link_osm_server_1c2_osm_port:
           capability: tosca.capabilities.network.Linkable
-          node: packet_internal_network
+          node: packet_internal_network_2
           relationship: tosca.relationships.network.LinksTo
     abstract_osm_server_1c2_1:
       type: org.openecomp.resource.abstract.nodes.osm_server_1c2
@@ -360,7 +350,7 @@ topology_template:
         port_osm_port_replacement_policy:
         - AUTO
         port_osm_port_network:
-        - packet_external_network
+        - packet_external_network_2
         compute_osm_server_1c2_name:
         - get_input:
           - osm_server_1c2_names
@@ -413,8 +403,18 @@ topology_template:
       requirements:
       - link_osm_server_1c2_osm_port:
           capability: tosca.capabilities.network.Linkable
-          node: packet_external_network
+          node: packet_external_network_2
           relationship: tosca.relationships.network.LinksTo
+    packet_internal_network_2:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_internal_network_name
+    packet_external_network_2:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_external_network_name
     abstract_BE_1c1:
       type: org.openecomp.resource.abstract.nodes.BE_1c1
       directives:
@@ -434,7 +434,7 @@ topology_template:
         - get_input: availability_zone_0
         - get_input: availability_zone_0
         port_BE_port_network:
-        - packet_internal_network
+        - packet_internal_network_2
         port_BE_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
@@ -463,7 +463,7 @@ topology_template:
       requirements:
       - link_BE_1c1_BE_port:
           capability: tosca.capabilities.network.Linkable
-          node: packet_internal_network
+          node: packet_internal_network_2
           relationship: tosca.relationships.network.LinksTo
     test_nested_all_patterns:
       type: org.openecomp.resource.abstract.nodes.heat.nested1
@@ -499,8 +499,8 @@ topology_template:
         description: nested1
       members:
       - nested2_pattern_4
-      - packet_external_network
-      - packet_internal_network
+      - packet_internal_network_2
+      - packet_external_network_2
       - abstract_rd_server_1b
       - abstract_rd_server_1b_1
       - abstract_osm_server_1c2_0

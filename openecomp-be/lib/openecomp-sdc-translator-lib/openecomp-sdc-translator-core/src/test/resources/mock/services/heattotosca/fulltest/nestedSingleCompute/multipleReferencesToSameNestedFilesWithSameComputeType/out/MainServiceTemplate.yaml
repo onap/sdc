@@ -1009,12 +1009,6 @@ topology_template:
           get_input: vson_cluster_name
         default_gateway:
           get_input: default_gateway
-        port_vson_server_oam_net_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
         instance_index: 0
         vnf_name:
           get_input: vnf_name
@@ -1033,11 +1027,9 @@ topology_template:
           get_input: vson_clm_image_name
         vnf_id:
           get_input: vnf_id
+        port_vson_server_oam_net_port_20_network_role_tag: oam
         vson_clm_oam_net_ip:
           get_input: vson_master_clm_ip
-        port_vson_server_oam_net_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
         oam_net_ips:
         - get_input: vson_clm_oam_net_ip_0
         swift_son_container_name:
@@ -1048,17 +1040,25 @@ topology_template:
         vson_server_group_id: UNSUPPORTED_RESOURCE_vson_clm_server_group
         vson_vm_flavor_name:
           get_input: vson_clm_flavor_name
-        port_vson_server_oam_net_port_0_network_role_tag: oam
         availability_zones:
         - get_input: availability_zone_0
         ntp_servers:
           get_input: ntp_servers
+        port_vson_server_oam_net_port_20_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_vson_server_oam_net_port_20_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         oam_net_id:
           get_input: oam_net_id
         vson_vm_names:
         - get_input: vson_clm_name_0
       requirements:
-      - dependency_vson_server:
+      - dependency_vson_server_1:
           capability: tosca.capabilities.Node
           node: oam_net_security_group
           relationship: tosca.relationships.DependsOn
@@ -1071,12 +1071,6 @@ topology_template:
           get_input: vf_module_id
         default_gateway:
           get_input: default_gateway
-        port_vson_server_oam_net_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
         instance_index:
           get_property:
           - SELF
@@ -1101,9 +1095,6 @@ topology_template:
           get_input: vnf_id
         vson_clm_oam_net_ip:
           get_input: vson_clm_0_oam_net_ip_0
-        port_vson_server_oam_net_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
         vson_dc_unit:
           get_input: vson_dc_unit
         oam_net_ips:
@@ -1115,17 +1106,26 @@ topology_template:
           get_input: vson_mgt_server_group_id
         vson_vm_flavor_name:
           get_input: vson_mgt_flavor_name
-        port_vson_server_oam_net_port_0_network_role_tag: oam
         availability_zones:
         - get_input: availability_zone_0
         volume_ids:
         - get_input: vson_mgt_volume_id_0
+        port_vson_server_oam_net_port_10_network_role_tag: oam
         ntp_servers:
           get_input: ntp_servers
         oam_net_id:
           get_input: oam_net_id
         vson_vm_names:
         - get_input: vson_mgt_name_0
+        port_vson_server_oam_net_port_10_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_vson_server_oam_net_port_10_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
     vson_dbs_volume_1:
       type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
       properties:
@@ -1149,12 +1149,7 @@ topology_template:
           get_input: vf_module_id
         default_gateway:
           get_input: default_gateway
-        port_vson_server_oam_net_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+        port_vson_server_oam_net_port_00_network_role_tag: oam
         instance_index:
           get_property:
           - SELF
@@ -1164,6 +1159,12 @@ topology_template:
           get_input: vnf_name
         oam_net_subnet_prefix_length:
           get_input: oam_net_subnet_prefix_length
+        port_vson_server_oam_net_port_00_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         vf_module_name:
           get_input: vf_module_name
         dns_servers:
@@ -1181,9 +1182,6 @@ topology_template:
           get_input: vnf_id
         vson_clm_oam_net_ip:
           get_input: vson_clm_0_oam_net_ip_0
-        port_vson_server_oam_net_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
         vson_dc_unit:
           get_input: vson_dc_unit
         oam_net_ips:
@@ -1191,11 +1189,13 @@ topology_template:
         vfc_role: dbc
         swift_account_auth_token:
           get_input: swift_account_auth_token
+        port_vson_server_oam_net_port_00_mac_requirements:
+          mac_count_required:
+            is_required: false
         vson_server_group_id:
           get_input: vson_dbc_server_group_id
         vson_vm_flavor_name:
           get_input: vson_dbc_flavor_name
-        port_vson_server_oam_net_port_0_network_role_tag: oam
         availability_zones:
         - get_input: availability_zone_0
         volume_ids:
@@ -1232,12 +1232,6 @@ topology_template:
         vson_cluster_name: ''
         default_gateway:
           get_input: default_gateway
-        port_vson_server_oam_net_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
         instance_index:
           get_property:
           - SELF
@@ -1263,11 +1257,9 @@ topology_template:
           get_input: vson_clm_image_name
         vnf_id:
           get_input: vnf_id
+        port_vson_server_oam_net_port_20_network_role_tag: oam
         vson_clm_oam_net_ip:
           get_input: vson_clm_0_oam_net_ip_0
-        port_vson_server_oam_net_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
         oam_net_ips:
         - get_input: vson_clm_oam_net_ip_0
         swift_son_container_name: ''
@@ -1278,11 +1270,19 @@ topology_template:
           get_input: vson_clm_server_group_id
         vson_vm_flavor_name:
           get_input: vson_clm_flavor_name
-        port_vson_server_oam_net_port_0_network_role_tag: oam
         availability_zones:
         - get_input: availability_zone_0
         ntp_servers:
           get_input: ntp_servers
+        port_vson_server_oam_net_port_20_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_vson_server_oam_net_port_20_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         oam_net_id:
           get_input: oam_net_id
         vson_vm_names:
@@ -1350,12 +1350,6 @@ topology_template:
           get_input: vf_module_id
         default_gateway:
           get_input: default_gateway
-        port_vson_server_oam_net_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
         instance_index:
           get_property:
           - SELF
@@ -1380,9 +1374,6 @@ topology_template:
           get_input: vnf_id
         vson_clm_oam_net_ip:
           get_input: vson_clm_0_oam_net_ip_0
-        port_vson_server_oam_net_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
         vson_dc_unit:
           get_input: vson_dc_unit
         oam_net_ips:
@@ -1394,17 +1385,26 @@ topology_template:
           get_input: vson_mdr_server_group_id
         vson_vm_flavor_name:
           get_input: vson_mdr_flavor_name
-        port_vson_server_oam_net_port_0_network_role_tag: oam
         availability_zones:
         - get_input: availability_zone_0
         volume_ids:
         - get_input: vson_mdr_volume_id_0
+        port_vson_server_oam_net_port_10_network_role_tag: oam
         ntp_servers:
           get_input: ntp_servers
         oam_net_id:
           get_input: oam_net_id
         vson_vm_names:
         - get_input: vson_mdr_name_0
+        port_vson_server_oam_net_port_10_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_vson_server_oam_net_port_10_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
     vson_dbs_group:
       type: org.openecomp.resource.abstract.nodes.heat.vson_vm_1
       directives:
@@ -1414,12 +1414,7 @@ topology_template:
           get_input: vf_module_id
         default_gateway:
           get_input: default_gateway
-        port_vson_server_oam_net_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+        port_vson_server_oam_net_port_00_network_role_tag: oam
         instance_index:
           get_property:
           - SELF
@@ -1429,6 +1424,12 @@ topology_template:
           get_input: vnf_name
         oam_net_subnet_prefix_length:
           get_input: oam_net_subnet_prefix_length
+        port_vson_server_oam_net_port_00_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         vf_module_name:
           get_input: vf_module_name
         dns_servers:
@@ -1446,9 +1447,6 @@ topology_template:
           get_input: vnf_id
         vson_clm_oam_net_ip:
           get_input: vson_clm_0_oam_net_ip_0
-        port_vson_server_oam_net_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
         vson_dc_unit:
           get_input: vson_dc_unit
         oam_net_ips:
@@ -1457,11 +1455,13 @@ topology_template:
         vfc_role: dbs
         swift_account_auth_token:
           get_input: swift_account_auth_token
+        port_vson_server_oam_net_port_00_mac_requirements:
+          mac_count_required:
+            is_required: false
         vson_server_group_id:
           get_input: vson_dbs_server_group_id
         vson_vm_flavor_name:
           get_input: vson_dbs_flavor_name
-        port_vson_server_oam_net_port_0_network_role_tag: oam
         availability_zones:
         - get_input: availability_zone_0
         - get_input: availability_zone_1
@@ -1652,31 +1652,31 @@ topology_template:
           direction: ingress
       requirements:
       - port:
-          capability: attachment_vson_server_oam_net_port_0
+          capability: attachment_vson_server_oam_net_port_20
           node: vson_clm_0
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_vson_server_oam_net_port_0
+          capability: attachment_vson_server_oam_net_port_00
           node: vson_dcl_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_vson_server_oam_net_port_0
+          capability: attachment_vson_server_oam_net_port_00
           node: vson_dbs_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_vson_server_oam_net_port_0
+          capability: attachment_vson_server_oam_net_port_00
           node: vson_dbg_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_vson_server_oam_net_port_0
+          capability: attachment_vson_server_oam_net_port_20
           node: vson_clm_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_vson_server_oam_net_port_0
+          capability: attachment_vson_server_oam_net_port_10
           node: vson_mdr_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_vson_server_oam_net_port_0
+          capability: attachment_vson_server_oam_net_port_00
           node: vson_cll_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
@@ -1684,15 +1684,15 @@ topology_template:
           node: vson_app_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_vson_server_oam_net_port_0
+          capability: attachment_vson_server_oam_net_port_00
           node: vson_dbc_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_vson_server_oam_net_port_0
+          capability: attachment_vson_server_oam_net_port_10
           node: vson_mon_group
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_vson_server_oam_net_port_0
+          capability: attachment_vson_server_oam_net_port_10
           node: vson_mgt_group
           relationship: org.openecomp.relationships.AttachesTo
     vson_dbg_volume_0:
@@ -1718,12 +1718,7 @@ topology_template:
           get_input: vf_module_id
         default_gateway:
           get_input: default_gateway
-        port_vson_server_oam_net_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+        port_vson_server_oam_net_port_00_network_role_tag: oam
         instance_index:
           get_property:
           - SELF
@@ -1733,6 +1728,12 @@ topology_template:
           get_input: vnf_name
         oam_net_subnet_prefix_length:
           get_input: oam_net_subnet_prefix_length
+        port_vson_server_oam_net_port_00_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         vf_module_name:
           get_input: vf_module_name
         dns_servers:
@@ -1750,9 +1751,6 @@ topology_template:
           get_input: vnf_id
         vson_clm_oam_net_ip:
           get_input: vson_clm_0_oam_net_ip_0
-        port_vson_server_oam_net_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
         vson_dc_unit:
           get_input: vson_dc_unit
         oam_net_ips:
@@ -1760,11 +1758,13 @@ topology_template:
         vfc_role: dbg
         swift_account_auth_token:
           get_input: swift_account_auth_token
+        port_vson_server_oam_net_port_00_mac_requirements:
+          mac_count_required:
+            is_required: false
         vson_server_group_id:
           get_input: vson_dbg_server_group_id
         vson_vm_flavor_name:
           get_input: vson_dbg_flavor_name
-        port_vson_server_oam_net_port_0_network_role_tag: oam
         availability_zones:
         - get_input: availability_zone_0
         volume_ids:
@@ -1786,12 +1786,7 @@ topology_template:
           get_input: vf_module_id
         default_gateway:
           get_input: default_gateway
-        port_vson_server_oam_net_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+        port_vson_server_oam_net_port_00_network_role_tag: oam
         instance_index:
           get_property:
           - SELF
@@ -1801,6 +1796,12 @@ topology_template:
           get_input: vnf_name
         oam_net_subnet_prefix_length:
           get_input: oam_net_subnet_prefix_length
+        port_vson_server_oam_net_port_00_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         vf_module_name:
           get_input: vf_module_name
         dns_servers:
@@ -1818,9 +1819,6 @@ topology_template:
           get_input: vnf_id
         vson_clm_oam_net_ip:
           get_input: vson_clm_0_oam_net_ip_0
-        port_vson_server_oam_net_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
         vson_dc_unit:
           get_input: vson_dc_unit
         oam_net_ips:
@@ -1830,11 +1828,13 @@ topology_template:
         vfc_role: cll
         swift_account_auth_token:
           get_input: swift_account_auth_token
+        port_vson_server_oam_net_port_00_mac_requirements:
+          mac_count_required:
+            is_required: false
         vson_server_group_id:
           get_input: vson_leader_server_group_id
         vson_vm_flavor_name:
           get_input: vson_cll_flavor_name
-        port_vson_server_oam_net_port_0_network_role_tag: oam
         availability_zones:
         - get_input: availability_zone_0
         - get_input: availability_zone_1
@@ -1875,12 +1875,6 @@ topology_template:
           get_input: vf_module_id
         default_gateway:
           get_input: default_gateway
-        port_vson_server_oam_net_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
         instance_index:
           get_property:
           - SELF
@@ -1905,9 +1899,6 @@ topology_template:
           get_input: vnf_id
         vson_clm_oam_net_ip:
           get_input: vson_clm_0_oam_net_ip_0
-        port_vson_server_oam_net_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
         vson_dc_unit:
           get_input: vson_dc_unit
         oam_net_ips:
@@ -1919,17 +1910,26 @@ topology_template:
           get_input: vson_mon_server_group_id
         vson_vm_flavor_name:
           get_input: vson_mon_flavor_name
-        port_vson_server_oam_net_port_0_network_role_tag: oam
         availability_zones:
         - get_input: availability_zone_0
         volume_ids:
         - get_input: vson_mon_volume_id_0
+        port_vson_server_oam_net_port_10_network_role_tag: oam
         ntp_servers:
           get_input: ntp_servers
         oam_net_id:
           get_input: oam_net_id
         vson_vm_names:
         - get_input: vson_mon_name_0
+        port_vson_server_oam_net_port_10_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_vson_server_oam_net_port_10_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
     vson_dcl_group:
       type: org.openecomp.resource.abstract.nodes.heat.vson_vm_1
       directives:
@@ -1939,12 +1939,7 @@ topology_template:
           get_input: vf_module_id
         default_gateway:
           get_input: default_gateway
-        port_vson_server_oam_net_port_0_ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+        port_vson_server_oam_net_port_00_network_role_tag: oam
         instance_index:
           get_property:
           - SELF
@@ -1954,6 +1949,12 @@ topology_template:
           get_input: vnf_name
         oam_net_subnet_prefix_length:
           get_input: oam_net_subnet_prefix_length
+        port_vson_server_oam_net_port_00_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         vf_module_name:
           get_input: vf_module_name
         dns_servers:
@@ -1971,9 +1972,6 @@ topology_template:
           get_input: vnf_id
         vson_clm_oam_net_ip:
           get_input: vson_clm_0_oam_net_ip_0
-        port_vson_server_oam_net_port_0_mac_requirements:
-          mac_count_required:
-            is_required: false
         vson_dc_unit:
           get_input: vson_dc_unit
         oam_net_ips:
@@ -1983,11 +1981,13 @@ topology_template:
         vfc_role: dcl
         swift_account_auth_token:
           get_input: swift_account_auth_token
+        port_vson_server_oam_net_port_00_mac_requirements:
+          mac_count_required:
+            is_required: false
         vson_server_group_id:
           get_input: vson_leader_server_group_id
         vson_vm_flavor_name:
           get_input: vson_dcl_flavor_name
-        port_vson_server_oam_net_port_0_network_role_tag: oam
         availability_zones:
         - get_input: availability_zone_0
         - get_input: availability_zone_1
