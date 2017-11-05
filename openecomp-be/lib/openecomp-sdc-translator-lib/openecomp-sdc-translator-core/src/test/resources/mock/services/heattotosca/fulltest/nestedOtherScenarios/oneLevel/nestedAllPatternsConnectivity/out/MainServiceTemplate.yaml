@@ -72,15 +72,6 @@ topology_template:
           - pattern4_attr_1
         service_template_filter:
           substitute_service_template: nested-no-computeServiceTemplate.yaml
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: test_nested_all_patterns
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: test_nested_pattern_4
-          relationship: tosca.relationships.DependsOn
     test_nested_all_patterns:
       type: org.openecomp.resource.abstract.nodes.heat.nested1
       directives:

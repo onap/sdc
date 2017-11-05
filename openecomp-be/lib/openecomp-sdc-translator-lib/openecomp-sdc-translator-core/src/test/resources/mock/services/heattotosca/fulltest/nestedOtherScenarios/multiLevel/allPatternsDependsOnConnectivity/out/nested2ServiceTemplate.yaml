@@ -144,11 +144,6 @@ topology_template:
           - SELF
           - service_template_filter
           - index_value
-      requirements:
-      - dependency_pd_server_nested2_1b:
-          capability: tosca.capabilities.Node
-          node: test_nested3Level
-          relationship: tosca.relationships.DependsOn
     test_nested_pattern_4_nested2:
       type: org.openecomp.resource.abstract.nodes.heat.pd_server_pattern4
       directives:
@@ -176,11 +171,6 @@ topology_template:
             is_required: true
           floating_ip_count_required:
             is_required: false
-      requirements:
-      - dependency_server_pd_pattern4:
-          capability: tosca.capabilities.Node
-          node: test_resourceGroup
-          relationship: tosca.relationships.DependsOn
     test_nested3Level:
       type: org.openecomp.resource.abstract.nodes.heat.nested3
       directives:
@@ -190,15 +180,6 @@ topology_template:
           substitute_service_template: nested3ServiceTemplate.yaml
         name:
           get_input: security_group_name
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: test_nested_pattern_4_nested2
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: feature_ps_server_nested2_1b
-          node: abstract_ps_server_nested2_1b
-          relationship: tosca.relationships.DependsOn
     test_nested_pattern_4_same_type_diff_file:
       type: org.openecomp.resource.abstract.nodes.heat.pd_server_pattern4_2
       directives:
@@ -329,11 +310,6 @@ topology_template:
           - SELF
           - service_template_filter
           - index_value
-      requirements:
-      - dependency_cmaui_1c1_nested2:
-          capability: tosca.capabilities.Node
-          node: test_nested3Level
-          relationship: tosca.relationships.DependsOn
   groups:
     nested2_group:
       type: org.openecomp.groups.heat.HeatStack

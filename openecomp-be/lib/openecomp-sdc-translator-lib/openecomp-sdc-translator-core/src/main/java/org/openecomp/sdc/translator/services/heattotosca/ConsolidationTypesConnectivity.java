@@ -23,34 +23,47 @@ public class ConsolidationTypesConnectivity {
         .put(ConsolidationEntityType.VOLUME, getIgnoredVolumeRelationships());
     entityToEntitiesWithoutRelationship
         .put(ConsolidationEntityType.VFC_NESTED, getIgnoredVfcNestedRelationships());
+    entityToEntitiesWithoutRelationship.
+        put(ConsolidationEntityType.NESTED, getIgnoredNestedRelationships());
   }
 
   private static Set<ConsolidationEntityType> getIgnoredComputeRelationships(){
-        return Stream.of(ConsolidationEntityType.COMPUTE,
-            ConsolidationEntityType.VOLUME,
-            ConsolidationEntityType.PORT,
-            ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
+    return Stream.of(ConsolidationEntityType.COMPUTE,
+        ConsolidationEntityType.VOLUME,
+        ConsolidationEntityType.PORT,
+        ConsolidationEntityType.NESTED,
+        ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
   }
 
   private static Set<ConsolidationEntityType> getIgnoredPortRelationships(){
-        return Stream.of(ConsolidationEntityType.COMPUTE,
-            ConsolidationEntityType.VOLUME,
-            ConsolidationEntityType.PORT,
-            ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
+    return Stream.of(ConsolidationEntityType.COMPUTE,
+        ConsolidationEntityType.VOLUME,
+        ConsolidationEntityType.PORT,
+        ConsolidationEntityType.NESTED,
+        ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
   }
 
   private static Set<ConsolidationEntityType> getIgnoredVolumeRelationships(){
-        return Stream.of(ConsolidationEntityType.COMPUTE,
-            ConsolidationEntityType.VOLUME,
-            ConsolidationEntityType.PORT,
-            ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
+    return Stream.of(ConsolidationEntityType.COMPUTE,
+        ConsolidationEntityType.VOLUME,
+        ConsolidationEntityType.PORT,
+        ConsolidationEntityType.NESTED,
+        ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
   }
 
   private static Set<ConsolidationEntityType> getIgnoredVfcNestedRelationships(){
-        return Stream.of(ConsolidationEntityType.COMPUTE,
-            ConsolidationEntityType.VOLUME,
-            ConsolidationEntityType.PORT,
-            ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
+    return Stream.of(ConsolidationEntityType.COMPUTE,
+        ConsolidationEntityType.VOLUME,
+        ConsolidationEntityType.PORT,
+        ConsolidationEntityType.NESTED,
+        ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
+  }
+
+  private static Set<ConsolidationEntityType> getIgnoredNestedRelationships(){
+    return Stream.of(ConsolidationEntityType.COMPUTE,
+        ConsolidationEntityType.PORT,
+        ConsolidationEntityType.NESTED,
+        ConsolidationEntityType.VFC_NESTED).collect(Collectors.toSet());
   }
 
   public static boolean isDependsOnRelationshipValid(ConsolidationEntityType source,
