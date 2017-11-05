@@ -85,18 +85,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: Internal2-net
           relationship: tosca.relationships.network.LinksTo
-      - link_port_0_service_instance1_test_nested2:
-          capability: tosca.capabilities.network.Linkable
-          node: Internal2-net
-          relationship: tosca.relationships.network.LinksTo
-      - link_port_1_service_instance1_test_nested2:
-          capability: tosca.capabilities.network.Linkable
-          node: Internal1-net
-          relationship: tosca.relationships.network.LinksTo
-      - link_port_2_service_instance1_test_nested2:
-          capability: tosca.capabilities.network.Linkable
-          node: Internal2-net
-          relationship: tosca.relationships.network.LinksTo
       - link_port_0_service_instance4_test_nested3_test_nested2:
           capability: tosca.capabilities.network.Linkable
           node: Internal1-net
@@ -118,6 +106,18 @@ topology_template:
           node: Internal1-net
           relationship: tosca.relationships.network.LinksTo
       - link_port_2_service_instance3_test_nested2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net
+          relationship: tosca.relationships.network.LinksTo
+      - link_port_0_service_instance21_test_nested2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net
+          relationship: tosca.relationships.network.LinksTo
+      - link_port_1_service_instance21_test_nested2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1-net
+          relationship: tosca.relationships.network.LinksTo
+      - link_port_2_service_instance21_test_nested2:
           capability: tosca.capabilities.network.Linkable
           node: Internal2-net
           relationship: tosca.relationships.network.LinksTo

@@ -68,14 +68,14 @@ parameters:
   vnf_id:
     type: string
 resources:
-  oam_private_net_network_port:
+  oam_private_net_network_port_2:
     properties:
       network:
         get_param: oam_private_net_name
       security_groups:
       - get_param: security_group
     type: OS::Neutron::Port
-  packet_internal_network_port:
+  packet_internal_network_port_2:
     properties:
       network:
         get_param: packet_internal_network
@@ -119,25 +119,25 @@ resources:
           get_param: ntp_timezone
         oam_private_network_cidr:
           get_attr:
-          - oam_private_net_network_port
+          - oam_private_net_network_port_2
           - subnets
           - 0
           - cidr
         oam_private_network_ip_0:
           get_attr:
-          - oam_private_net_network_port
+          - oam_private_net_network_port_2
           - fixed_ip_0s
           - 0
           - ip_address
         packet_internal_network_cidr:
           get_attr:
-          - packet_internal_network_port
+          - packet_internal_network_port_2
           - subnets
           - 0
           - cidr
         packet_internal_network_ip_0:
           get_attr:
-          - packet_internal_network_port
+          - packet_internal_network_port_2
           - fixed_ip_0s
           - 0
           - ip_address
@@ -187,11 +187,11 @@ resources:
         - get_param: vLB_index
       networks:
       - port:
-          get_resource: oam_private_net_network_port
+          get_resource: oam_private_net_network_port_2
       - port:
           get_resource: packet_mirror_network_port
       - port:
-          get_resource: packet_internal_network_port
+          get_resource: packet_internal_network_port_2
       personality:
         /root/CheckAvailability/check_availability.py:
           get_file: check_availability.py

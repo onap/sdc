@@ -17,13 +17,13 @@ parameters:
     type: string
 
 resources:
-  Internal1-net:
+  Internal1-net-1:
     type: OS::Contrail::VirtualNetwork
     properties:
       name: { get_param: Internal1_net_name }
       forwarding_mode: { get_param: Internal1_forwarding_mode }
       shared: { get_param: Internal1_shared }
-  Internal2-net:
+  Internal2-net-1:
     type: OS::Contrail::VirtualNetwork
     properties:
       name: { get_param: Internal1_net_name }
@@ -33,5 +33,5 @@ resources:
   test_nested1:
     type: OCS-fw.yml
     properties:
-      network_param1: { get_resource: Internal1-net}
-      network_param2: { get_resource: Internal2-net}
+      network_param1: { get_resource: Internal1-net-1}
+      network_param2: { get_resource: Internal2-net-1}

@@ -55,7 +55,7 @@ topology_template:
       type: string
       description: UID of OAM network
   node_templates:
-    cmaui_port_3:
+    cmaui_port_43:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
@@ -80,9 +80,9 @@ topology_template:
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: server_cmaui
+          node: server_cmaui_4
           relationship: tosca.relationships.network.BindsTo
-    cmaui_port_2:
+    cmaui_port_42:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
@@ -107,9 +107,9 @@ topology_template:
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: server_cmaui
+          node: server_cmaui_4
           relationship: tosca.relationships.network.BindsTo
-    server_cmaui:
+    server_cmaui_4:
       type: org.openecomp.resource.vfc.nodes.heat.cmaui
       properties:
         flavor:
@@ -129,217 +129,217 @@ topology_template:
         heat_file: ../Artifacts/nested4.yml
         description: nested4
       members:
-      - cmaui_port_3
-      - cmaui_port_2
-      - server_cmaui
+      - cmaui_port_43
+      - cmaui_port_42
+      - server_cmaui_4
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested4
     capabilities:
-      cpu.delta_server_cmaui:
-      - server_cmaui
-      - cpu.delta
-      disk.device.write.requests.rate_server_cmaui:
-      - server_cmaui
-      - disk.device.write.requests.rate
-      disk.device.allocation_server_cmaui:
-      - server_cmaui
-      - disk.device.allocation
-      scalable_server_cmaui:
-      - server_cmaui
-      - scalable
-      disk.read.bytes.rate_server_cmaui:
-      - server_cmaui
-      - disk.read.bytes.rate
-      network.incoming.packets.rate_cmaui_port_2:
-      - cmaui_port_2
-      - network.incoming.packets.rate
-      cpu_server_cmaui:
-      - server_cmaui
-      - cpu
-      network.incoming.packets.rate_cmaui_port_3:
-      - cmaui_port_3
-      - network.incoming.packets.rate
-      feature_cmaui_port_2:
-      - cmaui_port_2
-      - feature
-      feature_cmaui_port_3:
-      - cmaui_port_3
-      - feature
-      disk.write.bytes.rate_server_cmaui:
-      - server_cmaui
-      - disk.write.bytes.rate
-      disk.device.read.bytes.rate_server_cmaui:
-      - server_cmaui
-      - disk.device.read.bytes.rate
-      host_server_cmaui:
-      - server_cmaui
-      - host
-      cpu_util_server_cmaui:
-      - server_cmaui
-      - cpu_util
-      attachment_cmaui_port_2:
-      - cmaui_port_2
-      - attachment
-      attachment_cmaui_port_3:
-      - cmaui_port_3
-      - attachment
-      network.outgoing.bytes_cmaui_port_3:
-      - cmaui_port_3
-      - network.outgoing.bytes
-      disk.device.latency_server_cmaui:
-      - server_cmaui
-      - disk.device.latency
-      disk.device.write.requests_server_cmaui:
-      - server_cmaui
-      - disk.device.write.requests
-      disk.read.requests_server_cmaui:
-      - server_cmaui
-      - disk.read.requests
-      network.outgoing.bytes_cmaui_port_2:
-      - cmaui_port_2
-      - network.outgoing.bytes
-      disk.device.capacity_server_cmaui:
-      - server_cmaui
-      - disk.device.capacity
-      network.outgoing.packets.rate_cmaui_port_2:
-      - cmaui_port_2
-      - network.outgoing.packets.rate
-      disk.usage_server_cmaui:
-      - server_cmaui
-      - disk.usage
-      network.outgoing.packets.rate_cmaui_port_3:
-      - cmaui_port_3
-      - network.outgoing.packets.rate
-      disk.device.usage_server_cmaui:
-      - server_cmaui
-      - disk.device.usage
-      disk.capacity_server_cmaui:
-      - server_cmaui
-      - disk.capacity
-      disk.write.requests.rate_server_cmaui:
-      - server_cmaui
-      - disk.write.requests.rate
-      disk.device.read.requests_server_cmaui:
-      - server_cmaui
-      - disk.device.read.requests
-      instance_server_cmaui:
-      - server_cmaui
-      - instance
-      disk.device.read.bytes_server_cmaui:
-      - server_cmaui
-      - disk.device.read.bytes
-      memory_server_cmaui:
-      - server_cmaui
-      - memory
-      disk.root.size_server_cmaui:
-      - server_cmaui
-      - disk.root.size
-      binding_server_cmaui:
-      - server_cmaui
-      - binding
-      disk.device.read.requests.rate_server_cmaui:
-      - server_cmaui
-      - disk.device.read.requests.rate
-      network.incoming.packets_cmaui_port_3:
-      - cmaui_port_3
-      - network.incoming.packets
-      network.incoming.packets_cmaui_port_2:
-      - cmaui_port_2
-      - network.incoming.packets
-      disk.write.bytes_server_cmaui:
-      - server_cmaui
+      disk.write.bytes_server_cmaui_4:
+      - server_cmaui_4
       - disk.write.bytes
-      os_server_cmaui:
-      - server_cmaui
-      - os
-      disk.device.write.bytes.rate_server_cmaui:
-      - server_cmaui
-      - disk.device.write.bytes.rate
-      memory.resident_server_cmaui:
-      - server_cmaui
-      - memory.resident
-      disk.latency_server_cmaui:
-      - server_cmaui
-      - disk.latency
-      feature_server_cmaui:
-      - server_cmaui
-      - feature
-      binding_cmaui_port_2:
-      - cmaui_port_2
-      - binding
-      vcpus_server_cmaui:
-      - server_cmaui
-      - vcpus
-      binding_cmaui_port_3:
-      - cmaui_port_3
-      - binding
-      disk.device.write.bytes_server_cmaui:
-      - server_cmaui
+      disk.device.write.bytes_server_cmaui_4:
+      - server_cmaui_4
       - disk.device.write.bytes
-      network.incoming.bytes.rate_cmaui_port_2:
-      - cmaui_port_2
-      - network.incoming.bytes.rate
-      network.incoming.bytes.rate_cmaui_port_3:
-      - cmaui_port_3
-      - network.incoming.bytes.rate
-      disk.allocation_server_cmaui:
-      - server_cmaui
+      feature_server_cmaui_4:
+      - server_cmaui_4
+      - feature
+      disk.device.latency_server_cmaui_4:
+      - server_cmaui_4
+      - disk.device.latency
+      disk.device.usage_server_cmaui_4:
+      - server_cmaui_4
+      - disk.device.usage
+      feature_cmaui_port_42:
+      - cmaui_port_42
+      - feature
+      attachment_cmaui_port_43:
+      - cmaui_port_43
+      - attachment
+      attachment_cmaui_port_42:
+      - cmaui_port_42
+      - attachment
+      disk.read.requests_server_cmaui_4:
+      - server_cmaui_4
+      - disk.read.requests
+      disk.allocation_server_cmaui_4:
+      - server_cmaui_4
       - disk.allocation
-      disk.write.requests_server_cmaui:
-      - server_cmaui
+      vcpus_server_cmaui_4:
+      - server_cmaui_4
+      - vcpus
+      binding_server_cmaui_4:
+      - server_cmaui_4
+      - binding
+      disk.root.size_server_cmaui_4:
+      - server_cmaui_4
+      - disk.root.size
+      disk.device.write.requests.rate_server_cmaui_4:
+      - server_cmaui_4
+      - disk.device.write.requests.rate
+      network.incoming.bytes_cmaui_port_43:
+      - cmaui_port_43
+      - network.incoming.bytes
+      network.incoming.packets_cmaui_port_42:
+      - cmaui_port_42
+      - network.incoming.packets
+      network.incoming.packets_cmaui_port_43:
+      - cmaui_port_43
+      - network.incoming.packets
+      network.incoming.bytes_cmaui_port_42:
+      - cmaui_port_42
+      - network.incoming.bytes
+      scalable_server_cmaui_4:
+      - server_cmaui_4
+      - scalable
+      disk.write.requests_server_cmaui_4:
+      - server_cmaui_4
       - disk.write.requests
-      memory.usage_server_cmaui:
-      - server_cmaui
-      - memory.usage
-      disk.ephemeral.size_server_cmaui:
-      - server_cmaui
-      - disk.ephemeral.size
-      network.outpoing.packets_cmaui_port_2:
-      - cmaui_port_2
-      - network.outpoing.packets
-      network.outpoing.packets_cmaui_port_3:
-      - cmaui_port_3
-      - network.outpoing.packets
-      network.outgoing.bytes.rate_cmaui_port_2:
-      - cmaui_port_2
-      - network.outgoing.bytes.rate
-      network.outgoing.bytes.rate_cmaui_port_3:
-      - cmaui_port_3
-      - network.outgoing.bytes.rate
-      endpoint_server_cmaui:
-      - server_cmaui
-      - endpoint
-      disk.iops_server_cmaui:
-      - server_cmaui
-      - disk.iops
-      network.incoming.bytes_cmaui_port_3:
-      - cmaui_port_3
-      - network.incoming.bytes
-      disk.device.iops_server_cmaui:
-      - server_cmaui
+      disk.usage_server_cmaui_4:
+      - server_cmaui_4
+      - disk.usage
+      disk.device.capacity_server_cmaui_4:
+      - server_cmaui_4
+      - disk.device.capacity
+      disk.device.iops_server_cmaui_4:
+      - server_cmaui_4
       - disk.device.iops
-      network.incoming.bytes_cmaui_port_2:
-      - cmaui_port_2
-      - network.incoming.bytes
-      disk.read.bytes_server_cmaui:
-      - server_cmaui
+      disk.device.read.bytes.rate_server_cmaui_4:
+      - server_cmaui_4
+      - disk.device.read.bytes.rate
+      endpoint_server_cmaui_4:
+      - server_cmaui_4
+      - endpoint
+      disk.read.bytes_server_cmaui_4:
+      - server_cmaui_4
       - disk.read.bytes
+      network.outgoing.bytes_cmaui_port_42:
+      - cmaui_port_42
+      - network.outgoing.bytes
+      network.outgoing.bytes_cmaui_port_43:
+      - cmaui_port_43
+      - network.outgoing.bytes
+      os_server_cmaui_4:
+      - server_cmaui_4
+      - os
+      disk.device.allocation_server_cmaui_4:
+      - server_cmaui_4
+      - disk.device.allocation
+      disk.write.requests.rate_server_cmaui_4:
+      - server_cmaui_4
+      - disk.write.requests.rate
+      disk.device.read.bytes_server_cmaui_4:
+      - server_cmaui_4
+      - disk.device.read.bytes
+      memory_server_cmaui_4:
+      - server_cmaui_4
+      - memory
+      disk.write.bytes.rate_server_cmaui_4:
+      - server_cmaui_4
+      - disk.write.bytes.rate
+      cpu_server_cmaui_4:
+      - server_cmaui_4
+      - cpu
+      disk.capacity_server_cmaui_4:
+      - server_cmaui_4
+      - disk.capacity
+      host_server_cmaui_4:
+      - server_cmaui_4
+      - host
+      network.incoming.packets.rate_cmaui_port_43:
+      - cmaui_port_43
+      - network.incoming.packets.rate
+      network.outgoing.packets.rate_cmaui_port_43:
+      - cmaui_port_43
+      - network.outgoing.packets.rate
+      binding_cmaui_port_43:
+      - cmaui_port_43
+      - binding
+      network.incoming.packets.rate_cmaui_port_42:
+      - cmaui_port_42
+      - network.incoming.packets.rate
+      network.outgoing.packets.rate_cmaui_port_42:
+      - cmaui_port_42
+      - network.outgoing.packets.rate
+      binding_cmaui_port_42:
+      - cmaui_port_42
+      - binding
+      instance_server_cmaui_4:
+      - server_cmaui_4
+      - instance
+      disk.read.bytes.rate_server_cmaui_4:
+      - server_cmaui_4
+      - disk.read.bytes.rate
+      disk.device.write.requests_server_cmaui_4:
+      - server_cmaui_4
+      - disk.device.write.requests
+      disk.device.read.requests_server_cmaui_4:
+      - server_cmaui_4
+      - disk.device.read.requests
+      network.outpoing.packets_cmaui_port_43:
+      - cmaui_port_43
+      - network.outpoing.packets
+      disk.iops_server_cmaui_4:
+      - server_cmaui_4
+      - disk.iops
+      disk.device.read.requests.rate_server_cmaui_4:
+      - server_cmaui_4
+      - disk.device.read.requests.rate
+      network.outpoing.packets_cmaui_port_42:
+      - cmaui_port_42
+      - network.outpoing.packets
+      cpu.delta_server_cmaui_4:
+      - server_cmaui_4
+      - cpu.delta
+      feature_cmaui_port_43:
+      - cmaui_port_43
+      - feature
+      memory.resident_server_cmaui_4:
+      - server_cmaui_4
+      - memory.resident
+      disk.ephemeral.size_server_cmaui_4:
+      - server_cmaui_4
+      - disk.ephemeral.size
+      network.incoming.bytes.rate_cmaui_port_42:
+      - cmaui_port_42
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_cmaui_port_43:
+      - cmaui_port_43
+      - network.incoming.bytes.rate
+      disk.latency_server_cmaui_4:
+      - server_cmaui_4
+      - disk.latency
+      network.outgoing.bytes.rate_cmaui_port_42:
+      - cmaui_port_42
+      - network.outgoing.bytes.rate
+      disk.device.write.bytes.rate_server_cmaui_4:
+      - server_cmaui_4
+      - disk.device.write.bytes.rate
+      network.outgoing.bytes.rate_cmaui_port_43:
+      - cmaui_port_43
+      - network.outgoing.bytes.rate
+      memory.usage_server_cmaui_4:
+      - server_cmaui_4
+      - memory.usage
+      cpu_util_server_cmaui_4:
+      - server_cmaui_4
+      - cpu_util
     requirements:
-      dependency_server_cmaui:
-      - server_cmaui
+      link_cmaui_port_42:
+      - cmaui_port_42
+      - link
+      dependency_server_cmaui_4:
+      - server_cmaui_4
       - dependency
-      local_storage_server_cmaui:
-      - server_cmaui
+      dependency_cmaui_port_42:
+      - cmaui_port_42
+      - dependency
+      dependency_cmaui_port_43:
+      - cmaui_port_43
+      - dependency
+      link_cmaui_port_43:
+      - cmaui_port_43
+      - link
+      local_storage_server_cmaui_4:
+      - server_cmaui_4
       - local_storage
-      link_cmaui_port_2:
-      - cmaui_port_2
-      - link
-      dependency_cmaui_port_3:
-      - cmaui_port_3
-      - dependency
-      link_cmaui_port_3:
-      - cmaui_port_3
-      - link
-      dependency_cmaui_port_2:
-      - cmaui_port_2
-      - dependency

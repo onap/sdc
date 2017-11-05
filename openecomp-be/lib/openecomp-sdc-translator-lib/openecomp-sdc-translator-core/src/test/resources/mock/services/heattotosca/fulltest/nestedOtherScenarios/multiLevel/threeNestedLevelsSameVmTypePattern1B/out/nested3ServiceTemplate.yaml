@@ -67,23 +67,23 @@ topology_template:
         compute_pd_server_name:
         - get_input:
           - pd_server_names
-          - 1
-        port_pd02_port_mac_requirements:
-          mac_count_required:
-            is_required: false
+          - 0
         vm_flavor_name:
           get_input: pd_flavor_name
-        port_pd02_port_network_role_tag: oam
+        port_pd01_port_mac_requirements:
+          mac_count_required:
+            is_required: false
         vm_image_name:
           get_input: pd_image_name
-        port_pd02_port_ip_requirements:
+        port_pd01_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_pd02_port_network:
+        port_pd01_port_network:
         - get_input: oam_net_name
+        port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
@@ -104,23 +104,23 @@ topology_template:
         compute_pd_server_name:
         - get_input:
           - pd_server_names
-          - 0
-        vm_flavor_name:
-          get_input: pd_flavor_name
-        port_pd01_port_mac_requirements:
+          - 1
+        port_pd02_port_mac_requirements:
           mac_count_required:
             is_required: false
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_pd02_port_network_role_tag: oam
         vm_image_name:
           get_input: pd_image_name
-        port_pd01_port_ip_requirements:
+        port_pd02_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
             is_required: false
           floating_ip_count_required:
             is_required: false
-        port_pd01_port_network:
+        port_pd02_port_network:
         - get_input: oam_net_name
-        port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
@@ -143,340 +143,340 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested3
     capabilities:
-      disk.iops_server_pd_1:
+      attachment_pd02_port_03:
       - abstract_pd_server_1
-      - disk.iops_pd_server
-      disk.iops_server_pd_2:
-      - abstract_pd_server
-      - disk.iops_pd_server
-      disk.write.bytes.rate_server_pd_2:
-      - abstract_pd_server
-      - disk.write.bytes.rate_pd_server
-      disk.write.bytes.rate_server_pd_1:
-      - abstract_pd_server_1
-      - disk.write.bytes.rate_pd_server
-      cpu.delta_server_pd_2:
-      - abstract_pd_server
-      - cpu.delta_pd_server
-      feature_server_pd_2:
-      - abstract_pd_server
-      - feature_pd_server
-      feature_server_pd_1:
-      - abstract_pd_server_1
-      - feature_pd_server
-      cpu.delta_server_pd_1:
-      - abstract_pd_server_1
-      - cpu.delta_pd_server
-      host_server_pd_1:
-      - abstract_pd_server_1
-      - host_pd_server
-      network.outgoing.bytes_pd02_port_0:
-      - abstract_pd_server
-      - network.outgoing.bytes_pd_server_pd02_port
-      host_server_pd_2:
-      - abstract_pd_server
-      - host_pd_server
-      network.outgoing.bytes_pd01_port_0:
-      - abstract_pd_server_1
-      - network.outgoing.bytes_pd_server_pd01_port
-      memory_server_pd_2:
-      - abstract_pd_server
-      - memory_pd_server
-      memory_server_pd_1:
-      - abstract_pd_server_1
-      - memory_pd_server
-      network.incoming.packets_pd02_port_0:
-      - abstract_pd_server
-      - network.incoming.packets_pd_server_pd02_port
-      memory.resident_server_pd_1:
-      - abstract_pd_server_1
-      - memory.resident_pd_server
-      memory.resident_server_pd_2:
-      - abstract_pd_server
-      - memory.resident_pd_server
-      network.incoming.bytes_pd02_port_0:
-      - abstract_pd_server
-      - network.incoming.bytes_pd_server_pd02_port
-      disk.write.requests_server_pd_1:
-      - abstract_pd_server_1
-      - disk.write.requests_pd_server
-      disk.ephemeral.size_server_pd_2:
-      - abstract_pd_server
-      - disk.ephemeral.size_pd_server
-      disk.ephemeral.size_server_pd_1:
-      - abstract_pd_server_1
-      - disk.ephemeral.size_pd_server
-      disk.write.requests_server_pd_2:
-      - abstract_pd_server
-      - disk.write.requests_pd_server
-      disk.write.bytes_server_pd_1:
-      - abstract_pd_server_1
-      - disk.write.bytes_pd_server
-      disk.write.bytes_server_pd_2:
-      - abstract_pd_server
-      - disk.write.bytes_pd_server
-      disk.read.requests_server_pd_1:
-      - abstract_pd_server_1
-      - disk.read.requests_pd_server
-      network.outgoing.bytes.rate_pd02_port_0:
-      - abstract_pd_server
-      - network.outgoing.bytes.rate_pd_server_pd02_port
-      binding_pd01_port_0:
-      - abstract_pd_server_1
-      - binding_pd_server_pd01_port
-      disk.read.requests_server_pd_2:
-      - abstract_pd_server
-      - disk.read.requests_pd_server
-      disk.device.usage_server_pd_2:
-      - abstract_pd_server
-      - disk.device.usage_pd_server
-      disk.device.usage_server_pd_1:
-      - abstract_pd_server_1
-      - disk.device.usage_pd_server
-      disk.device.read.bytes_server_pd_1:
-      - abstract_pd_server_1
-      - disk.device.read.bytes_pd_server
-      disk.device.read.bytes_server_pd_2:
-      - abstract_pd_server
-      - disk.device.read.bytes_pd_server
-      network.incoming.packets.rate_pd02_port_0:
-      - abstract_pd_server
-      - network.incoming.packets.rate_pd_server_pd02_port
-      network.outgoing.packets.rate_pd01_port_0:
-      - abstract_pd_server_1
-      - network.outgoing.packets.rate_pd_server_pd01_port
-      disk.write.requests.rate_server_pd_1:
-      - abstract_pd_server_1
-      - disk.write.requests.rate_pd_server
-      disk.write.requests.rate_server_pd_2:
-      - abstract_pd_server
-      - disk.write.requests.rate_pd_server
-      disk.root.size_server_pd_1:
-      - abstract_pd_server_1
-      - disk.root.size_pd_server
-      disk.device.iops_server_pd_1:
-      - abstract_pd_server_1
-      - disk.device.iops_pd_server
-      disk.device.iops_server_pd_2:
-      - abstract_pd_server
-      - disk.device.iops_pd_server
-      feature_pd02_port_0:
-      - abstract_pd_server
-      - feature_pd_server_pd02_port
-      disk.root.size_server_pd_2:
-      - abstract_pd_server
-      - disk.root.size_pd_server
-      disk.usage_server_pd_2:
-      - abstract_pd_server
-      - disk.usage_pd_server
-      disk.usage_server_pd_1:
-      - abstract_pd_server_1
-      - disk.usage_pd_server
-      disk.read.bytes.rate_server_pd_2:
-      - abstract_pd_server
-      - disk.read.bytes.rate_pd_server
-      disk.read.bytes.rate_server_pd_1:
-      - abstract_pd_server_1
-      - disk.read.bytes.rate_pd_server
-      cpu_server_pd_2:
-      - abstract_pd_server
-      - cpu_pd_server
-      cpu_server_pd_1:
-      - abstract_pd_server_1
-      - cpu_pd_server
-      attachment_pd01_port_0:
-      - abstract_pd_server_1
-      - attachment_pd_server_pd01_port
-      endpoint_server_pd_2:
-      - abstract_pd_server
-      - endpoint_pd_server
-      endpoint_server_pd_1:
-      - abstract_pd_server_1
-      - endpoint_pd_server
-      vcpus_server_pd_1:
-      - abstract_pd_server_1
-      - vcpus_pd_server
-      vcpus_server_pd_2:
-      - abstract_pd_server
-      - vcpus_pd_server
-      disk.device.capacity_server_pd_2:
-      - abstract_pd_server
-      - disk.device.capacity_pd_server
-      disk.device.capacity_server_pd_1:
-      - abstract_pd_server_1
-      - disk.device.capacity_pd_server
-      disk.device.write.bytes.rate_server_pd_1:
-      - abstract_pd_server_1
-      - disk.device.write.bytes.rate_pd_server
-      disk.device.write.bytes.rate_server_pd_2:
-      - abstract_pd_server
-      - disk.device.write.bytes.rate_pd_server
-      network.incoming.bytes.rate_pd01_port_0:
-      - abstract_pd_server_1
-      - network.incoming.bytes.rate_pd_server_pd01_port
-      feature_pd01_port_0:
-      - abstract_pd_server_1
-      - feature_pd_server_pd01_port
-      disk.device.latency_server_pd_2:
-      - abstract_pd_server
-      - disk.device.latency_pd_server
-      disk.device.latency_server_pd_1:
-      - abstract_pd_server_1
-      - disk.device.latency_pd_server
-      instance_server_pd_1:
-      - abstract_pd_server_1
-      - instance_pd_server
-      disk.device.read.requests.rate_server_pd_1:
-      - abstract_pd_server_1
-      - disk.device.read.requests.rate_pd_server
-      instance_server_pd_2:
-      - abstract_pd_server
-      - instance_pd_server
-      disk.device.read.requests.rate_server_pd_2:
-      - abstract_pd_server
-      - disk.device.read.requests.rate_pd_server
-      attachment_pd02_port_0:
-      - abstract_pd_server
       - attachment_pd_server_pd02_port
-      network.outgoing.bytes.rate_pd01_port_0:
-      - abstract_pd_server_1
-      - network.outgoing.bytes.rate_pd_server_pd01_port
-      cpu_util_server_pd_1:
-      - abstract_pd_server_1
-      - cpu_util_pd_server
-      cpu_util_server_pd_2:
+      disk.root.size_server_pd_31:
       - abstract_pd_server
-      - cpu_util_pd_server
-      disk.device.read.bytes.rate_server_pd_2:
-      - abstract_pd_server
-      - disk.device.read.bytes.rate_pd_server
-      binding_pd02_port_0:
-      - abstract_pd_server
-      - binding_pd_server_pd02_port
-      disk.allocation_server_pd_2:
-      - abstract_pd_server
-      - disk.allocation_pd_server
-      disk.device.write.bytes_server_pd_1:
+      - disk.root.size_pd_server
+      disk.root.size_server_pd_32:
       - abstract_pd_server_1
-      - disk.device.write.bytes_pd_server
-      disk.device.write.bytes_server_pd_2:
-      - abstract_pd_server
-      - disk.device.write.bytes_pd_server
-      disk.allocation_server_pd_1:
+      - disk.root.size_pd_server
+      network.outgoing.packets.rate_pd02_port_03:
       - abstract_pd_server_1
-      - disk.allocation_pd_server
-      network.incoming.packets.rate_pd01_port_0:
-      - abstract_pd_server_1
-      - network.incoming.packets.rate_pd_server_pd01_port
-      disk.capacity_server_pd_2:
-      - abstract_pd_server
-      - disk.capacity_pd_server
-      disk.capacity_server_pd_1:
-      - abstract_pd_server_1
-      - disk.capacity_pd_server
-      disk.device.read.bytes.rate_server_pd_1:
-      - abstract_pd_server_1
-      - disk.device.read.bytes.rate_pd_server
-      network.incoming.bytes_pd01_port_0:
-      - abstract_pd_server_1
-      - network.incoming.bytes_pd_server_pd01_port
-      network.outgoing.packets.rate_pd02_port_0:
-      - abstract_pd_server
       - network.outgoing.packets.rate_pd_server_pd02_port
-      network.outpoing.packets_pd02_port_0:
-      - abstract_pd_server
-      - network.outpoing.packets_pd_server_pd02_port
-      network.outpoing.packets_pd01_port_0:
+      disk.iops_server_pd_32:
       - abstract_pd_server_1
+      - disk.iops_pd_server
+      disk.iops_server_pd_31:
+      - abstract_pd_server
+      - disk.iops_pd_server
+      network.outpoing.packets_pd01_port_03:
+      - abstract_pd_server
       - network.outpoing.packets_pd_server_pd01_port
-      binding_server_pd_2:
+      disk.device.write.bytes.rate_server_pd_32:
+      - abstract_pd_server_1
+      - disk.device.write.bytes.rate_pd_server
+      disk.device.write.bytes.rate_server_pd_31:
       - abstract_pd_server
-      - binding_pd_server
-      disk.device.write.requests_server_pd_2:
+      - disk.device.write.bytes.rate_pd_server
+      network.outgoing.bytes_pd01_port_03:
       - abstract_pd_server
-      - disk.device.write.requests_pd_server
-      binding_server_pd_1:
+      - network.outgoing.bytes_pd_server_pd01_port
+      disk.write.requests_server_pd_32:
       - abstract_pd_server_1
-      - binding_pd_server
-      disk.device.write.requests_server_pd_1:
-      - abstract_pd_server_1
-      - disk.device.write.requests_pd_server
-      network.incoming.packets_pd01_port_0:
-      - abstract_pd_server_1
-      - network.incoming.packets_pd_server_pd01_port
-      disk.device.allocation_server_pd_1:
-      - abstract_pd_server_1
-      - disk.device.allocation_pd_server
-      disk.device.allocation_server_pd_2:
+      - disk.write.requests_pd_server
+      disk.write.requests_server_pd_31:
       - abstract_pd_server
-      - disk.device.allocation_pd_server
-      disk.device.write.requests.rate_server_pd_2:
+      - disk.write.requests_pd_server
+      disk.read.bytes_server_pd_32:
+      - abstract_pd_server_1
+      - disk.read.bytes_pd_server
+      disk.read.bytes_server_pd_31:
+      - abstract_pd_server
+      - disk.read.bytes_pd_server
+      network.incoming.packets.rate_pd02_port_03:
+      - abstract_pd_server_1
+      - network.incoming.packets.rate_pd_server_pd02_port
+      cpu_util_server_pd_31:
+      - abstract_pd_server
+      - cpu_util_pd_server
+      cpu_util_server_pd_32:
+      - abstract_pd_server_1
+      - cpu_util_pd_server
+      disk.allocation_server_pd_31:
+      - abstract_pd_server
+      - disk.allocation_pd_server
+      disk.allocation_server_pd_32:
+      - abstract_pd_server_1
+      - disk.allocation_pd_server
+      disk.device.write.bytes_server_pd_32:
+      - abstract_pd_server_1
+      - disk.device.write.bytes_pd_server
+      feature_pd02_port_03:
+      - abstract_pd_server_1
+      - feature_pd_server_pd02_port
+      disk.device.write.bytes_server_pd_31:
+      - abstract_pd_server
+      - disk.device.write.bytes_pd_server
+      memory.usage_server_pd_32:
+      - abstract_pd_server_1
+      - memory.usage_pd_server
+      memory.usage_server_pd_31:
+      - abstract_pd_server
+      - memory.usage_pd_server
+      disk.read.bytes.rate_server_pd_31:
+      - abstract_pd_server
+      - disk.read.bytes.rate_pd_server
+      disk.read.bytes.rate_server_pd_32:
+      - abstract_pd_server_1
+      - disk.read.bytes.rate_pd_server
+      binding_pd01_port_03:
+      - abstract_pd_server
+      - binding_pd_server_pd01_port
+      attachment_pd01_port_03:
+      - abstract_pd_server
+      - attachment_pd_server_pd01_port
+      disk.device.read.bytes_server_pd_32:
+      - abstract_pd_server_1
+      - disk.device.read.bytes_pd_server
+      disk.device.read.bytes_server_pd_31:
+      - abstract_pd_server
+      - disk.device.read.bytes_pd_server
+      cpu.delta_server_pd_31:
+      - abstract_pd_server
+      - cpu.delta_pd_server
+      disk.device.iops_server_pd_32:
+      - abstract_pd_server_1
+      - disk.device.iops_pd_server
+      disk.device.iops_server_pd_31:
+      - abstract_pd_server
+      - disk.device.iops_pd_server
+      cpu.delta_server_pd_32:
+      - abstract_pd_server_1
+      - cpu.delta_pd_server
+      disk.ephemeral.size_server_pd_32:
+      - abstract_pd_server_1
+      - disk.ephemeral.size_pd_server
+      disk.read.requests_server_pd_32:
+      - abstract_pd_server_1
+      - disk.read.requests_pd_server
+      scalable_server_pd_31:
+      - abstract_pd_server
+      - scalable_pd_server
+      disk.ephemeral.size_server_pd_31:
+      - abstract_pd_server
+      - disk.ephemeral.size_pd_server
+      disk.read.requests_server_pd_31:
+      - abstract_pd_server
+      - disk.read.requests_pd_server
+      network.outgoing.bytes_pd02_port_03:
+      - abstract_pd_server_1
+      - network.outgoing.bytes_pd_server_pd02_port
+      network.outpoing.packets_pd02_port_03:
+      - abstract_pd_server_1
+      - network.outpoing.packets_pd_server_pd02_port
+      disk.device.write.requests.rate_server_pd_31:
       - abstract_pd_server
       - disk.device.write.requests.rate_pd_server
-      memory.usage_server_pd_2:
-      - abstract_pd_server
-      - memory.usage_pd_server
-      disk.read.bytes_server_pd_1:
+      disk.device.write.requests.rate_server_pd_32:
       - abstract_pd_server_1
-      - disk.read.bytes_pd_server
-      disk.device.read.requests_server_pd_1:
+      - disk.device.write.requests.rate_pd_server
+      network.incoming.bytes.rate_pd02_port_03:
       - abstract_pd_server_1
-      - disk.device.read.requests_pd_server
-      disk.device.read.requests_server_pd_2:
-      - abstract_pd_server
-      - disk.device.read.requests_pd_server
-      disk.read.bytes_server_pd_2:
-      - abstract_pd_server
-      - disk.read.bytes_pd_server
-      memory.usage_server_pd_1:
-      - abstract_pd_server_1
-      - memory.usage_pd_server
-      network.incoming.bytes.rate_pd02_port_0:
-      - abstract_pd_server
       - network.incoming.bytes.rate_pd_server_pd02_port
-      disk.device.write.requests.rate_server_pd_1:
-      - abstract_pd_server_1
-      - disk.device.write.requests.rate_pd_server
-      os_server_pd_2:
-      - abstract_pd_server
-      - os_pd_server
-      disk.latency_server_pd_1:
-      - abstract_pd_server_1
-      - disk.latency_pd_server
-      disk.latency_server_pd_2:
-      - abstract_pd_server
-      - disk.latency_pd_server
-      scalable_server_pd_2:
-      - abstract_pd_server
-      - scalable_pd_server
-      scalable_server_pd_1:
+      scalable_server_pd_32:
       - abstract_pd_server_1
       - scalable_pd_server
-      os_server_pd_1:
+      disk.device.latency_server_pd_32:
+      - abstract_pd_server_1
+      - disk.device.latency_pd_server
+      disk.device.write.requests_server_pd_32:
+      - abstract_pd_server_1
+      - disk.device.write.requests_pd_server
+      network.incoming.packets.rate_pd01_port_03:
+      - abstract_pd_server
+      - network.incoming.packets.rate_pd_server_pd01_port
+      disk.device.write.requests_server_pd_31:
+      - abstract_pd_server
+      - disk.device.write.requests_pd_server
+      disk.device.latency_server_pd_31:
+      - abstract_pd_server
+      - disk.device.latency_pd_server
+      network.incoming.packets_pd01_port_03:
+      - abstract_pd_server
+      - network.incoming.packets_pd_server_pd01_port
+      disk.device.usage_server_pd_31:
+      - abstract_pd_server
+      - disk.device.usage_pd_server
+      disk.device.usage_server_pd_32:
+      - abstract_pd_server_1
+      - disk.device.usage_pd_server
+      feature_pd01_port_03:
+      - abstract_pd_server
+      - feature_pd_server_pd01_port
+      disk.device.read.requests_server_pd_32:
+      - abstract_pd_server_1
+      - disk.device.read.requests_pd_server
+      os_server_pd_31:
+      - abstract_pd_server
+      - os_pd_server
+      os_server_pd_32:
       - abstract_pd_server_1
       - os_pd_server
+      disk.device.read.requests_server_pd_31:
+      - abstract_pd_server
+      - disk.device.read.requests_pd_server
+      network.incoming.bytes.rate_pd01_port_03:
+      - abstract_pd_server
+      - network.incoming.bytes.rate_pd_server_pd01_port
+      binding_pd02_port_03:
+      - abstract_pd_server_1
+      - binding_pd_server_pd02_port
+      disk.capacity_server_pd_32:
+      - abstract_pd_server_1
+      - disk.capacity_pd_server
+      disk.capacity_server_pd_31:
+      - abstract_pd_server
+      - disk.capacity_pd_server
+      network.incoming.bytes_pd01_port_03:
+      - abstract_pd_server
+      - network.incoming.bytes_pd_server_pd01_port
+      vcpus_server_pd_31:
+      - abstract_pd_server
+      - vcpus_pd_server
+      network.incoming.packets_pd02_port_03:
+      - abstract_pd_server_1
+      - network.incoming.packets_pd_server_pd02_port
+      disk.usage_server_pd_32:
+      - abstract_pd_server_1
+      - disk.usage_pd_server
+      vcpus_server_pd_32:
+      - abstract_pd_server_1
+      - vcpus_pd_server
+      memory.resident_server_pd_32:
+      - abstract_pd_server_1
+      - memory.resident_pd_server
+      disk.usage_server_pd_31:
+      - abstract_pd_server
+      - disk.usage_pd_server
+      memory.resident_server_pd_31:
+      - abstract_pd_server
+      - memory.resident_pd_server
+      network.outgoing.bytes.rate_pd01_port_03:
+      - abstract_pd_server
+      - network.outgoing.bytes.rate_pd_server_pd01_port
+      cpu_server_pd_32:
+      - abstract_pd_server_1
+      - cpu_pd_server
+      cpu_server_pd_31:
+      - abstract_pd_server
+      - cpu_pd_server
+      feature_server_pd_31:
+      - abstract_pd_server
+      - feature_pd_server
+      feature_server_pd_32:
+      - abstract_pd_server_1
+      - feature_pd_server
+      endpoint_server_pd_32:
+      - abstract_pd_server_1
+      - endpoint_pd_server
+      endpoint_server_pd_31:
+      - abstract_pd_server
+      - endpoint_pd_server
+      disk.device.capacity_server_pd_31:
+      - abstract_pd_server
+      - disk.device.capacity_pd_server
+      host_server_pd_31:
+      - abstract_pd_server
+      - host_pd_server
+      host_server_pd_32:
+      - abstract_pd_server_1
+      - host_pd_server
+      disk.device.capacity_server_pd_32:
+      - abstract_pd_server_1
+      - disk.device.capacity_pd_server
+      disk.latency_server_pd_32:
+      - abstract_pd_server_1
+      - disk.latency_pd_server
+      disk.write.requests.rate_server_pd_31:
+      - abstract_pd_server
+      - disk.write.requests.rate_pd_server
+      disk.write.requests.rate_server_pd_32:
+      - abstract_pd_server_1
+      - disk.write.requests.rate_pd_server
+      network.outgoing.packets.rate_pd01_port_03:
+      - abstract_pd_server
+      - network.outgoing.packets.rate_pd_server_pd01_port
+      memory_server_pd_32:
+      - abstract_pd_server_1
+      - memory_pd_server
+      network.incoming.bytes_pd02_port_03:
+      - abstract_pd_server_1
+      - network.incoming.bytes_pd_server_pd02_port
+      memory_server_pd_31:
+      - abstract_pd_server
+      - memory_pd_server
+      disk.device.read.bytes.rate_server_pd_31:
+      - abstract_pd_server
+      - disk.device.read.bytes.rate_pd_server
+      disk.device.read.bytes.rate_server_pd_32:
+      - abstract_pd_server_1
+      - disk.device.read.bytes.rate_pd_server
+      disk.latency_server_pd_31:
+      - abstract_pd_server
+      - disk.latency_pd_server
+      disk.device.allocation_server_pd_32:
+      - abstract_pd_server_1
+      - disk.device.allocation_pd_server
+      disk.device.read.requests.rate_server_pd_31:
+      - abstract_pd_server
+      - disk.device.read.requests.rate_pd_server
+      instance_server_pd_32:
+      - abstract_pd_server_1
+      - instance_pd_server
+      disk.device.allocation_server_pd_31:
+      - abstract_pd_server
+      - disk.device.allocation_pd_server
+      disk.write.bytes_server_pd_31:
+      - abstract_pd_server
+      - disk.write.bytes_pd_server
+      binding_server_pd_31:
+      - abstract_pd_server
+      - binding_pd_server
+      disk.device.read.requests.rate_server_pd_32:
+      - abstract_pd_server_1
+      - disk.device.read.requests.rate_pd_server
+      disk.write.bytes_server_pd_32:
+      - abstract_pd_server_1
+      - disk.write.bytes_pd_server
+      binding_server_pd_32:
+      - abstract_pd_server_1
+      - binding_pd_server
+      network.outgoing.bytes.rate_pd02_port_03:
+      - abstract_pd_server_1
+      - network.outgoing.bytes.rate_pd_server_pd02_port
+      disk.write.bytes.rate_server_pd_32:
+      - abstract_pd_server_1
+      - disk.write.bytes.rate_pd_server
+      instance_server_pd_31:
+      - abstract_pd_server
+      - instance_pd_server
+      disk.write.bytes.rate_server_pd_31:
+      - abstract_pd_server
+      - disk.write.bytes.rate_pd_server
     requirements:
-      link_pd01_port_0:
+      dependency_server_pd_32:
       - abstract_pd_server_1
-      - link_pd_server_pd01_port
-      link_pd02_port_0:
+      - dependency_pd_server
+      local_storage_server_pd_32:
+      - abstract_pd_server_1
+      - local_storage_pd_server
+      dependency_server_pd_31:
       - abstract_pd_server
+      - dependency_pd_server
+      local_storage_server_pd_31:
+      - abstract_pd_server
+      - local_storage_pd_server
+      link_pd02_port_03:
+      - abstract_pd_server_1
       - link_pd_server_pd02_port
-      local_storage_server_pd_1:
+      dependency_pd02_port_03:
       - abstract_pd_server_1
-      - local_storage_pd_server
-      local_storage_server_pd_2:
-      - abstract_pd_server
-      - local_storage_pd_server
-      dependency_pd01_port_0:
-      - abstract_pd_server_1
-      - dependency_pd_server_pd01_port
-      dependency_server_pd_1:
-      - abstract_pd_server_1
-      - dependency_pd_server
-      dependency_server_pd_2:
-      - abstract_pd_server
-      - dependency_pd_server
-      dependency_pd02_port_0:
-      - abstract_pd_server
       - dependency_pd_server_pd02_port
+      link_pd01_port_03:
+      - abstract_pd_server
+      - link_pd_server_pd01_port
+      dependency_pd01_port_03:
+      - abstract_pd_server
+      - dependency_pd_server_pd01_port

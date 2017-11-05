@@ -326,7 +326,7 @@ topology_template:
         - service_instance3
         - status
   substitution_mappings:
-    node_type: org.openecomp.resource.abstract.nodes.heat.service_template
+    node_type: org.openecomp.resource.abstract.nodes.heat.service_template_2
     requirements:
       link_port_0:
       - port_0

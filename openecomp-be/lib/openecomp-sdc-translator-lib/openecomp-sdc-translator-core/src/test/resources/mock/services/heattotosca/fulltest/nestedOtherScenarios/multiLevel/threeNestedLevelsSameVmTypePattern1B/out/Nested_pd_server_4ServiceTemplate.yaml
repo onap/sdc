@@ -18,11 +18,6 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_ps02_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
     compute_pd_server_availability_zone:
       type: list
       required: true
@@ -33,41 +28,46 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_ps02_port_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
+    port_pd01_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
       required: true
     vm_flavor_name:
       type: string
       required: true
-    port_ps02_port_network_role_tag:
-      type: string
-      required: true
-    port_ps02_port_network_role:
-      type: string
-      required: true
-    port_ps02_port_vlan_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
-    port_ps02_port_exCP_naming:
-      type: org.openecomp.datatypes.Naming
+    port_pd01_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
     vm_image_name:
       type: string
       required: true
-    port_ps02_port_subnetpoolid:
-      type: string
+    port_pd01_port_ip_requirements:
+      type: list
       required: true
-    port_ps02_port_order:
-      type: integer
-      required: true
-    compute_pd_server_user_data_format:
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_pd01_port_network:
       type: list
       required: true
       entry_schema:
         type: string
-    port_ps02_port_network:
+    port_pd01_port_order:
+      type: integer
+      required: true
+    port_pd01_port_subnetpoolid:
+      type: string
+      required: true
+    port_pd01_port_network_role:
+      type: string
+      required: true
+    port_pd01_port_network_role_tag:
+      type: string
+      required: true
+    port_pd01_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    compute_pd_server_user_data_format:
       type: list
       required: true
       entry_schema:
@@ -92,28 +92,28 @@ topology_template:
           get_input:
           - compute_pd_server_user_data_format
           - index_value
-    pd_server_ps02_port:
+    pd_server_pd01_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         exCP_naming:
-          get_input: port_ps02_port_exCP_naming
+          get_input: port_pd01_port_exCP_naming
         vlan_requirements:
-          get_input: port_ps02_port_vlan_requirements
+          get_input: port_pd01_port_vlan_requirements
         ip_requirements:
-          get_input: port_ps02_port_ip_requirements
+          get_input: port_pd01_port_ip_requirements
         network_role_tag:
-          get_input: port_ps02_port_network_role_tag
+          get_input: port_pd01_port_network_role_tag
         mac_requirements:
-          get_input: port_ps02_port_mac_requirements
+          get_input: port_pd01_port_mac_requirements
         order:
-          get_input: port_ps02_port_order
+          get_input: port_pd01_port_order
         network_role:
-          get_input: port_ps02_port_network_role
+          get_input: port_pd01_port_network_role
         subnetpoolid:
-          get_input: port_ps02_port_subnetpoolid
+          get_input: port_pd01_port_subnetpoolid
         network:
           get_input:
-          - port_ps02_port_network
+          - port_pd01_port_network
           - index_value
       requirements:
       - binding:
@@ -129,9 +129,6 @@ topology_template:
       disk.read.bytes.rate_pd_server:
       - pd_server
       - disk.read.bytes.rate
-      binding_pd_server_ps02_port:
-      - pd_server_ps02_port
-      - binding
       memory.usage_pd_server:
       - pd_server
       - memory.usage
@@ -141,15 +138,18 @@ topology_template:
       disk.device.usage_pd_server:
       - pd_server
       - disk.device.usage
-      network.incoming.bytes.rate_pd_server_ps02_port:
-      - pd_server_ps02_port
-      - network.incoming.bytes.rate
+      network.outgoing.packets.rate_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.outgoing.packets.rate
       os_pd_server:
       - pd_server
       - os
       disk.write.bytes.rate_pd_server:
       - pd_server
       - disk.write.bytes.rate
+      network.incoming.bytes_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.incoming.bytes
       cpu_pd_server:
       - pd_server
       - cpu
@@ -165,18 +165,21 @@ topology_template:
       disk.device.read.bytes.rate_pd_server:
       - pd_server
       - disk.device.read.bytes.rate
+      network.outgoing.bytes_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.outgoing.bytes
       disk.iops_pd_server:
       - pd_server
       - disk.iops
-      network.incoming.packets.rate_pd_server_ps02_port:
-      - pd_server_ps02_port
-      - network.incoming.packets.rate
       memory.resident_pd_server:
       - pd_server
       - memory.resident
       cpu.delta_pd_server:
       - pd_server
       - cpu.delta
+      network.incoming.packets.rate_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.incoming.packets.rate
       vcpus_pd_server:
       - pd_server
       - vcpus
@@ -189,12 +192,12 @@ topology_template:
       endpoint_pd_server:
       - pd_server
       - endpoint
+      attachment_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - attachment
       disk.capacity_pd_server:
       - pd_server
       - disk.capacity
-      network.incoming.bytes_pd_server_ps02_port:
-      - pd_server_ps02_port
-      - network.incoming.bytes
       disk.device.allocation_pd_server:
       - pd_server
       - disk.device.allocation
@@ -207,24 +210,24 @@ topology_template:
       disk.read.requests_pd_server:
       - pd_server
       - disk.read.requests
-      attachment_pd_server_ps02_port:
-      - pd_server_ps02_port
-      - attachment
       feature_pd_server:
       - pd_server
       - feature
       disk.usage_pd_server:
       - pd_server
       - disk.usage
+      binding_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - binding
       disk.write.bytes_pd_server:
       - pd_server
       - disk.write.bytes
-      feature_pd_server_ps02_port:
-      - pd_server_ps02_port
-      - feature
-      network.outgoing.bytes.rate_pd_server_ps02_port:
-      - pd_server_ps02_port
-      - network.outgoing.bytes.rate
+      network.incoming.bytes.rate_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.incoming.bytes.rate
+      network.incoming.packets_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.incoming.packets
       disk.device.read.requests.rate_pd_server:
       - pd_server
       - disk.device.read.requests.rate
@@ -237,9 +240,6 @@ topology_template:
       disk.device.write.bytes_pd_server:
       - pd_server
       - disk.device.write.bytes
-      network.outgoing.packets.rate_pd_server_ps02_port:
-      - pd_server_ps02_port
-      - network.outgoing.packets.rate
       disk.device.read.requests_pd_server:
       - pd_server
       - disk.device.read.requests
@@ -249,8 +249,8 @@ topology_template:
       host_pd_server:
       - pd_server
       - host
-      network.outpoing.packets_pd_server_ps02_port:
-      - pd_server_ps02_port
+      network.outpoing.packets_pd_server_pd01_port:
+      - pd_server_pd01_port
       - network.outpoing.packets
       disk.write.requests.rate_pd_server:
       - pd_server
@@ -258,12 +258,12 @@ topology_template:
       disk.ephemeral.size_pd_server:
       - pd_server
       - disk.ephemeral.size
-      network.outgoing.bytes_pd_server_ps02_port:
-      - pd_server_ps02_port
-      - network.outgoing.bytes
       disk.write.requests_pd_server:
       - pd_server
       - disk.write.requests
+      feature_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - feature
       disk.device.latency_pd_server:
       - pd_server
       - disk.device.latency
@@ -273,9 +273,9 @@ topology_template:
       disk.device.capacity_pd_server:
       - pd_server
       - disk.device.capacity
-      network.incoming.packets_pd_server_ps02_port:
-      - pd_server_ps02_port
-      - network.incoming.packets
+      network.outgoing.bytes.rate_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - network.outgoing.bytes.rate
       disk.device.iops_pd_server:
       - pd_server
       - disk.device.iops
@@ -283,12 +283,12 @@ topology_template:
       local_storage_pd_server:
       - pd_server
       - local_storage
-      link_pd_server_ps02_port:
-      - pd_server_ps02_port
+      link_pd_server_pd01_port:
+      - pd_server_pd01_port
       - link
+      dependency_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - dependency
       dependency_pd_server:
       - pd_server
-      - dependency
-      dependency_pd_server_ps02_port:
-      - pd_server_ps02_port
       - dependency

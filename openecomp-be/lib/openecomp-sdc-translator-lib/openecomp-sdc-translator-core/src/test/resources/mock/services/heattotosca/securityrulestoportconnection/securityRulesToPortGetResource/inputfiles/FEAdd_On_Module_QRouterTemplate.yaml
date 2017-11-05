@@ -74,7 +74,7 @@ resources:
       metadata:
         cdr_network_ip_0:
           get_attr:
-          - cdr_network_port
+          - cdr_network_port_1
           - fixed_ip_0s
           - 0
           - ip_address
@@ -121,7 +121,7 @@ resources:
       - port:
           get_resource: oam_private_net_network_port
       - port:
-          get_resource: cdr_network_port
+          get_resource: cdr_network_port_1
       personality:
         /root/CheckAvailability/check_availability.py:
           get_file: check_availability.py
@@ -152,7 +152,7 @@ resources:
             get_file: FEAdd_On_Module_QRouterCloudConfig
       user_data_format: RAW
     type: OS::Nova::Server
-  cdr_network_port:
+  cdr_network_port_1:
     properties:
       network:
         get_param: cdr_network

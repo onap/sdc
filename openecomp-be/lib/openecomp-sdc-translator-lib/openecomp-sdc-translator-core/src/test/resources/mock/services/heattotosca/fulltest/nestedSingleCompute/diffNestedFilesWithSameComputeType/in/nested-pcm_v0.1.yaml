@@ -57,7 +57,7 @@ parameters:
     description: the name of security group
 
 resources:
-  server_pcm:
+  server_pcm_1:
     type: OS::Nova::Server
     properties:
       config_drive: "True"
@@ -91,4 +91,4 @@ resources:
 outputs:
   server_pcm_id:
     description: the pcm nova service id
-    value: { get_resource: server_pcm }
+    value: { get_resource: server_pcm_1 }

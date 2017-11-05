@@ -146,6 +146,49 @@ topology_template:
       immutable: false
       type: float
   node_templates:
+    packet_internal_network_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: packet_internal_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vLBInstance
+          relationship: tosca.relationships.network.BindsTo
+    oam_private_net_network_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam_private
+        network:
+          get_input: oam_private_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vLBInstance
+          relationship: tosca.relationships.network.BindsTo
     packet_mirror_network_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
@@ -185,49 +228,6 @@ topology_template:
         volume_type:
           get_input: vLB_volume_type_2
         size: '(get_input : vLB_volume_size_2) * 1024'
-    oam_private_net_network_port:
-      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
-      properties:
-        ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        security_groups:
-        - get_input: security_group
-        mac_requirements:
-          mac_count_required:
-            is_required: false
-        network_role_tag: oam_private
-        network:
-          get_input: oam_private_net_name
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: vLBInstance
-          relationship: tosca.relationships.network.BindsTo
-    packet_internal_network_port:
-      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
-      properties:
-        ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: false
-          floating_ip_count_required:
-            is_required: false
-        security_groups:
-        - get_input: security_group
-        mac_requirements:
-          mac_count_required:
-            is_required: false
-        network:
-          get_input: packet_internal_network
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: vLBInstance
-          relationship: tosca.relationships.network.BindsTo
     vLBInstance:
       type: org.openecomp.resource.vfc.nodes.heat.vLB
       properties:
@@ -247,7 +247,7 @@ topology_template:
             - 0
             - cidr
           packet_internal_network_ip_0:
-          - UNSUPPORTED_ATTRIBUTE_packet_internal_network_port.fixed_ip_0s
+          - UNSUPPORTED_ATTRIBUTE_packet_internal_network_port_2.fixed_ip_0s
           version_number:
             get_input: vLB_version_name
           machine_name:
@@ -264,7 +264,7 @@ topology_template:
           mount_colon__slash_config: vLB_volume_2
           oam_private_network_cidr:
             get_attribute:
-            - oam_private_net_network_port
+            - oam_private_net_network_port_2
             - subnets
             - 0
             - cidr
@@ -284,7 +284,7 @@ topology_template:
             get_input: vLB_version_name
           packet_internal_network_cidr:
             get_attribute:
-            - packet_internal_network_port
+            - packet_internal_network_port_2
             - subnets
             - 0
             - cidr
@@ -292,7 +292,7 @@ topology_template:
             get_input: vLB_type
           DPDK: DPDK_IP
           oam_private_network_ip_0:
-          - UNSUPPORTED_ATTRIBUTE_oam_private_net_network_port.fixed_ip_0s
+          - UNSUPPORTED_ATTRIBUTE_oam_private_net_network_port_2.fixed_ip_0s
           packet_mirror_network_ip_0:
           - UNSUPPORTED_ATTRIBUTE_packet_mirror_network_port.fixed_ip_0s
           vLBAgent_name:
@@ -381,25 +381,25 @@ topology_template:
       properties:
         heat_file: ../Artifacts/FEAdd_On_Module_vLBTemplate.yaml
       members:
+      - packet_internal_network_port_2
+      - oam_private_net_network_port_2
       - packet_mirror_network_port
       - vLB_volume_1
       - vLB_volume_0
       - vLB_volume_2
-      - oam_private_net_network_port
-      - packet_internal_network_port
       - vLBInstance
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vLBTemplate
     capabilities:
-      attachment_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - attachment
-      network.incoming.packets_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.incoming.packets
       disk.iops_vLBInstance:
       - vLBInstance
       - disk.iops
+      network.incoming.packets_packet_internal_network_port_2:
+      - packet_internal_network_port_2
+      - network.incoming.packets
+      network.outgoing.bytes.rate_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
+      - network.outgoing.bytes.rate
       feature_vLBInstance:
       - vLBInstance
       - feature
@@ -409,57 +409,72 @@ topology_template:
       os_vLBInstance:
       - vLBInstance
       - os
+      network.outgoing.bytes.rate_packet_internal_network_port_2:
+      - packet_internal_network_port_2
+      - network.outgoing.bytes.rate
+      network.incoming.packets_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
+      - network.incoming.packets
       disk.device.write.bytes.rate_vLBInstance:
       - vLBInstance
       - disk.device.write.bytes.rate
       network.outgoing.bytes_packet_mirror_network_port:
       - packet_mirror_network_port
       - network.outgoing.bytes
-      network.outgoing.bytes.rate_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.outgoing.bytes.rate
+      network.incoming.bytes.rate_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
+      - network.incoming.bytes.rate
       disk.write.bytes.rate_vLBInstance:
       - vLBInstance
       - disk.write.bytes.rate
-      network.outpoing.packets_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.outpoing.packets
+      feature_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
+      - feature
+      network.outgoing.bytes_packet_internal_network_port_2:
+      - packet_internal_network_port_2
+      - network.outgoing.bytes
+      network.incoming.packets.rate_packet_internal_network_port_2:
+      - packet_internal_network_port_2
+      - network.incoming.packets.rate
       memory.usage_vLBInstance:
       - vLBInstance
       - memory.usage
       host_vLBInstance:
       - vLBInstance
       - host
-      network.incoming.bytes.rate_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.incoming.bytes.rate
       network.outgoing.bytes.rate_packet_mirror_network_port:
       - packet_mirror_network_port
       - network.outgoing.bytes.rate
+      network.outpoing.packets_packet_internal_network_port_2:
+      - packet_internal_network_port_2
+      - network.outpoing.packets
       disk.device.capacity_vLBInstance:
       - vLBInstance
       - disk.device.capacity
-      binding_packet_internal_network_port:
-      - packet_internal_network_port
-      - binding
+      network.outpoing.packets_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
+      - network.outpoing.packets
+      network.incoming.packets.rate_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
+      - network.incoming.packets.rate
       instance_vLBInstance:
       - vLBInstance
       - instance
-      network.incoming.bytes_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.incoming.bytes
       binding_vLBInstance:
       - vLBInstance
       - binding
-      feature_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - feature
+      binding_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
+      - binding
       disk.device.latency_vLBInstance:
       - vLBInstance
       - disk.device.latency
       network.outpoing.packets_packet_mirror_network_port:
       - packet_mirror_network_port
       - network.outpoing.packets
+      binding_packet_internal_network_port_2:
+      - packet_internal_network_port_2
+      - binding
       network.incoming.bytes_packet_mirror_network_port:
       - packet_mirror_network_port
       - network.incoming.bytes
@@ -469,30 +484,24 @@ topology_template:
       disk.device.read.requests.rate_vLBInstance:
       - vLBInstance
       - disk.device.read.requests.rate
-      attachment_packet_internal_network_port:
-      - packet_internal_network_port
-      - attachment
       network.incoming.packets.rate_packet_mirror_network_port:
       - packet_mirror_network_port
       - network.incoming.packets.rate
       network.outgoing.packets.rate_packet_mirror_network_port:
       - packet_mirror_network_port
       - network.outgoing.packets.rate
-      network.incoming.bytes.rate_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.incoming.bytes.rate
       memory_vLBInstance:
       - vLBInstance
       - memory
+      network.incoming.bytes.rate_packet_internal_network_port_2:
+      - packet_internal_network_port_2
+      - network.incoming.bytes.rate
       cpu.delta_vLBInstance:
       - vLBInstance
       - cpu.delta
       disk.write.bytes_vLBInstance:
       - vLBInstance
       - disk.write.bytes
-      network.outgoing.bytes_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.outgoing.bytes
       disk.write.requests_vLBInstance:
       - vLBInstance
       - disk.write.requests
@@ -505,18 +514,21 @@ topology_template:
       disk.device.iops_vLBInstance:
       - vLBInstance
       - disk.device.iops
-      network.outgoing.packets.rate_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.outgoing.packets.rate
       disk.capacity_vLBInstance:
       - vLBInstance
       - disk.capacity
       disk.device.read.bytes_vLBInstance:
       - vLBInstance
       - disk.device.read.bytes
+      attachment_packet_internal_network_port_2:
+      - packet_internal_network_port_2
+      - attachment
       attachment_vLB_volume_0:
       - vLB_volume_0
       - attachment
+      network.outgoing.packets.rate_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
+      - network.outgoing.packets.rate
       attachment_vLB_volume_1:
       - vLB_volume_1
       - attachment
@@ -529,51 +541,51 @@ topology_template:
       memory.resident_vLBInstance:
       - vLBInstance
       - memory.resident
-      network.outgoing.bytes_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.outgoing.bytes
       disk.write.requests.rate_vLBInstance:
       - vLBInstance
       - disk.write.requests.rate
       disk.device.write.requests_vLBInstance:
       - vLBInstance
       - disk.device.write.requests
-      network.incoming.bytes_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.incoming.bytes
-      network.incoming.packets.rate_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.incoming.packets.rate
+      network.outgoing.packets.rate_packet_internal_network_port_2:
+      - packet_internal_network_port_2
+      - network.outgoing.packets.rate
+      attachment_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
+      - attachment
       attachment_packet_mirror_network_port:
       - packet_mirror_network_port
       - attachment
       disk.read.requests_vLBInstance:
       - vLBInstance
       - disk.read.requests
-      binding_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - binding
       disk.device.read.requests_vLBInstance:
       - vLBInstance
       - disk.device.read.requests
       disk.latency_vLBInstance:
       - vLBInstance
       - disk.latency
+      network.incoming.bytes_packet_internal_network_port_2:
+      - packet_internal_network_port_2
+      - network.incoming.bytes
       feature_packet_mirror_network_port:
       - packet_mirror_network_port
+      - feature
+      feature_packet_internal_network_port_2:
+      - packet_internal_network_port_2
       - feature
       binding_packet_mirror_network_port:
       - packet_mirror_network_port
       - binding
-      network.incoming.packets_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.incoming.packets
+      network.outgoing.bytes_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
+      - network.outgoing.bytes
+      network.incoming.bytes_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
+      - network.incoming.bytes
       network.incoming.bytes.rate_packet_mirror_network_port:
       - packet_mirror_network_port
       - network.incoming.bytes.rate
-      network.incoming.packets.rate_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.incoming.packets.rate
       disk.device.write.requests.rate_vLBInstance:
       - vLBInstance
       - disk.device.write.requests.rate
@@ -595,9 +607,6 @@ topology_template:
       feature_vLB_volume_1:
       - vLB_volume_1
       - feature
-      network.outgoing.bytes.rate_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.outgoing.bytes.rate
       cpu_vLBInstance:
       - vLBInstance
       - cpu
@@ -607,9 +616,6 @@ topology_template:
       endpoint_vLBInstance:
       - vLBInstance
       - endpoint
-      network.outpoing.packets_packet_internal_network_port:
-      - packet_internal_network_port
-      - network.outpoing.packets
       disk.device.allocation_vLBInstance:
       - vLBInstance
       - disk.device.allocation
@@ -622,15 +628,9 @@ topology_template:
       disk.usage_vLBInstance:
       - vLBInstance
       - disk.usage
-      feature_packet_internal_network_port:
-      - packet_internal_network_port
-      - feature
       cpu_util_vLBInstance:
       - vLBInstance
       - cpu_util
-      network.outgoing.packets.rate_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - network.outgoing.packets.rate
     requirements:
       dependency_vLB_volume_0:
       - vLB_volume_0
@@ -641,27 +641,27 @@ topology_template:
       local_storage_vLBInstance:
       - vLBInstance
       - local_storage
-      dependency_packet_internal_network_port:
-      - packet_internal_network_port
+      dependency_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
       - dependency
-      link_packet_internal_network_port:
-      - packet_internal_network_port
-      - link
       dependency_vLB_volume_2:
       - vLB_volume_2
       - dependency
-      dependency_oam_private_net_network_port:
-      - oam_private_net_network_port
+      link_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
+      - link
+      dependency_packet_internal_network_port_2:
+      - packet_internal_network_port_2
       - dependency
       dependency_packet_mirror_network_port:
       - packet_mirror_network_port
       - dependency
-      link_oam_private_net_network_port:
-      - oam_private_net_network_port
-      - link
       dependency_vLBInstance:
       - vLBInstance
       - dependency
       link_packet_mirror_network_port:
       - packet_mirror_network_port
+      - link
+      link_packet_internal_network_port_2:
+      - packet_internal_network_port_2
       - link
