@@ -2,6 +2,7 @@ package org.openecomp.sdc.translator.services.heattotosca;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
@@ -34,7 +35,6 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.services.heattotosca.errors.DuplicateResourceIdsInDifferentFilesErrorBuilder;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -145,17 +145,23 @@ public class ConsolidationDataUtil {
    *
    * @param context              the context
    * @param serviceTemplate      the service template
-   * @param nestedHeatFileName
-   *@param nestedNodeTemplateId the nested node template id  @return the nested template consolidation data
+   * @param nestedNodeTemplateId the nested node template id  @return the nested template
+   *                             consolidation data
    */
   public static NestedTemplateConsolidationData getNestedTemplateConsolidationData(
       TranslationContext context,
       ServiceTemplate serviceTemplate,
       String nestedHeatFileName, String nestedNodeTemplateId) {
 
-    if(isNestedResourceIdOccuresInDifferentNestedFiles(context, nestedHeatFileName,
-        nestedNodeTemplateId)){
-      throw new CoreException(new DuplicateResourceIdsInDifferentFilesErrorBuilder(nestedNodeTemplateId).build());
+    if (isNestedResourceIdOccuresInDifferentNestedFiles(context, nestedHeatFileName,
+        nestedNodeTemplateId)) {
+      throw new CoreException(
+          new DuplicateResourceIdsInDifferentFilesErrorBuilder(nestedNodeTemplateId).build());
+    }
+
+    if (isNodeTemplatePointsToServiceTemplateWithoutNodeTemplates(
+        nestedNodeTemplateId, nestedHeatFileName, context)) {
+      return null;
     }
 
     ConsolidationData consolidationData = context.getConsolidationData();
@@ -185,11 +191,22 @@ public class ConsolidationDataUtil {
     return nestedTemplateConsolidationData;
   }
 
+  public static boolean isNodeTemplatePointsToServiceTemplateWithoutNodeTemplates(String
+                                                                                      nestedNodeTemplateId,
+                                                                                  String nestedHeatFileName,
+                                                                                  TranslationContext context) {
+
+    return context.isServiceTemplateWithoutNodeTemplatesSection(
+        FileUtils.getFileWithoutExtention(nestedHeatFileName))
+        || context.isNodeTemplateIdPointsToStWithoutNodeTemplates(nestedNodeTemplateId);
+  }
+
   private static boolean isNestedResourceIdOccuresInDifferentNestedFiles(TranslationContext context,
                                                                          String nestedHeatFileName,
                                                                          String nestedNodeTemplateId) {
     return Objects.nonNull(nestedHeatFileName)
-        && context.getAllTranslatedResourceIdsFromDiffNestedFiles(nestedHeatFileName).contains(nestedNodeTemplateId);
+        && context.getAllTranslatedResourceIdsFromDiffNestedFiles(nestedHeatFileName)
+        .contains(nestedNodeTemplateId);
   }
 
   /**
@@ -331,22 +348,21 @@ public class ConsolidationDataUtil {
         || consolidationEntityType == ConsolidationEntityType.NESTED) {
       entityConsolidationData =
           getNestedTemplateConsolidationData(translationContext, serviceTemplate,
-              null,
+              translateTo.getHeatFileName(),
               translateTo.getTranslatedId());
     }
 
-    if(Objects.isNull(entityConsolidationData)){
+    if (Objects.isNull(entityConsolidationData)) {
       return;
     }
-    if (entityConsolidationData != null) {
-      if (entityConsolidationData.getNodesConnectedOut() == null) {
-        entityConsolidationData.setNodesConnectedOut(new HashMap<>());
-      }
 
-      entityConsolidationData.getNodesConnectedOut()
-          .computeIfAbsent(nodeTemplateId, k -> new ArrayList<>())
-          .add(requirementAssignmentData);
+    if (Objects.isNull(entityConsolidationData.getNodesConnectedOut())) {
+      entityConsolidationData.setNodesConnectedOut(new HashMap<>());
     }
+
+    entityConsolidationData.getNodesConnectedOut()
+        .computeIfAbsent(nodeTemplateId, k -> new ArrayList<>())
+        .add(requirementAssignmentData);
   }
 
   /**
@@ -433,7 +449,7 @@ public class ConsolidationDataUtil {
   /**
    * Checks if the current HEAT resource if of type compute.
    *
-   * @param resource                the resource
+   * @param resource the resource
    * @return true if the resource is of compute type and false otherwise
    */
   public static boolean isComputeResource(Resource resource) {
@@ -473,7 +489,7 @@ public class ConsolidationDataUtil {
   /**
    * Checks if the current HEAT resource if of type port.
    *
-   * @param resource                the resource
+   * @param resource the resource
    * @return true if the resource is of port type and false otherwise
    */
   public static boolean isPortResource(Resource resource) {
@@ -507,7 +523,7 @@ public class ConsolidationDataUtil {
   /**
    * Checks if the current HEAT resource if of type volume.
    *
-   * @param resource                the resource
+   * @param resource the resource
    * @return true if the resource is of volume type and false otherwise
    */
   public static boolean isVolumeResource(Resource resource) {
