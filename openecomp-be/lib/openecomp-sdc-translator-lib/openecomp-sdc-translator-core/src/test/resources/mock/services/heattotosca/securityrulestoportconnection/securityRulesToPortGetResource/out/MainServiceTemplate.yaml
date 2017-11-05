@@ -603,7 +603,7 @@ topology_template:
         rpmrepository_ip_0:
           get_input: rpmrepository_ip_0
       requirements:
-      - link_packet_mirror_network_port:
+      - link_packet_mirror_network_port_1:
           capability: tosca.capabilities.network.Linkable
           node: packet_mirror_network
           relationship: tosca.relationships.network.LinksTo
@@ -709,7 +709,7 @@ topology_template:
         rpmrepository_ip_0:
           get_input: rpmrepository_ip_0
       requirements:
-      - link_packet_internal_network_port:
+      - link_packet_internal_network_port_1:
           capability: tosca.capabilities.network.Linkable
           node: packet_internal_network
           relationship: tosca.relationships.network.LinksTo
@@ -833,15 +833,15 @@ topology_template:
           node: QRouter0
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_cdr_network_port
+          capability: attachment_cdr_network_port_1
           node: QRouter0
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_oam_private_net_network_port
+          capability: attachment_packet_internal_network_port_2
           node: vLB
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_packet_internal_network_port
+          capability: attachment_oam_private_net_network_port_2
           node: vLB
           relationship: org.openecomp.relationships.AttachesTo
       - port:
@@ -849,7 +849,7 @@ topology_template:
           node: vLB
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_oam_private_net_network_port
+          capability: attachment_packet_mirror_network_port_1
           node: vLBAgent
           relationship: org.openecomp.relationships.AttachesTo
       - port:
@@ -857,19 +857,19 @@ topology_template:
           node: vLBAgent
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_packet_mirror_network_port
+          capability: attachment_oam_private_net_network_port_3
           node: vLBAgent
-          relationship: org.openecomp.relationships.AttachesTo
-      - port:
-          capability: attachment_oam_private_net_network_port
-          node: vProbe
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_cdr_network_port
           node: vProbe
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_packet_internal_network_port
+          capability: attachment_packet_internal_network_port_1
+          node: vProbe
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_oam_private_net_network_port_1
           node: vProbe
           relationship: org.openecomp.relationships.AttachesTo
     QRouter0:
@@ -1026,13 +1026,13 @@ topology_template:
         vLB_volume_size_2:
           get_input: vLB_volume_size_2
       requirements:
+      - link_packet_internal_network_port_2:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
       - link_packet_mirror_network_port:
           capability: tosca.capabilities.network.Linkable
           node: packet_mirror_network
-          relationship: tosca.relationships.network.LinksTo
-      - link_packet_internal_network_port:
-          capability: tosca.capabilities.network.Linkable
-          node: packet_internal_network
           relationship: tosca.relationships.network.LinksTo
       - dependency:
           capability: tosca.capabilities.Node

@@ -153,6 +153,13 @@ node_types:
         required: true
         status: SUPPORTED
     requirements:
+    - dependency_hsl_direct_net_3:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
     - dependency_service_instance4:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
@@ -181,21 +188,14 @@ node_types:
         occurrences:
         - 1
         - 1
-    - dependency_hsl_direct_net:
+    - dependency_service_policy_3:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_service_policy:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - network_service_policy:
+    - network_service_policy_3:
         capability: tosca.capabilities.Attachment
         node: tosca.nodes.network.Network
         relationship: org.openecomp.relationships.AttachesTo
@@ -203,13 +203,13 @@ node_types:
         - 0
         - UNBOUNDED
     capabilities:
-      link_hsl_direct_net:
-        type: tosca.capabilities.network.Linkable
+      end_point_hsl_direct_net_3:
+        type: tosca.capabilities.Endpoint
         occurrences:
         - 1
         - UNBOUNDED
-      feature_service_policy:
-        type: tosca.capabilities.Node
+      link_hsl_direct_net_3:
+        type: tosca.capabilities.network.Linkable
         occurrences:
         - 1
         - UNBOUNDED
@@ -218,18 +218,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_hsl_direct_net:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_hsl_direct_net:
+      feature_hsl_direct_net_3:
         type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
-      end_point_hsl_direct_net:
-        type: tosca.capabilities.Endpoint
+      feature_service_policy_3:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_hsl_direct_net_3:
+        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED
@@ -381,35 +381,21 @@ node_types:
         required: true
         status: SUPPORTED
     requirements:
-    - dependency_service_instance1:
+    - dependency_hsl_direct_net_2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_port_0_service_instance1:
-        capability: tosca.capabilities.network.Linkable
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
-    - link_port_1_service_instance1:
-        capability: tosca.capabilities.network.Linkable
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
-    - link_port_2_service_instance1:
-        capability: tosca.capabilities.network.Linkable
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
     - dependency_test_nested3:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_hsl_direct_net_3_test_nested3:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
@@ -444,31 +430,17 @@ node_types:
         occurrences:
         - 1
         - 1
-    - dependency_hsl_direct_net_test_nested3:
+    - dependency_service_policy_3_test_nested3:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_service_policy_test_nested3:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - network_service_policy_test_nested3:
+    - network_service_policy_3_test_nested3:
         capability: tosca.capabilities.Attachment
         node: tosca.nodes.network.Network
         relationship: org.openecomp.relationships.AttachesTo
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - dependency_hsl_direct_net:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
@@ -500,27 +472,50 @@ node_types:
         occurrences:
         - 1
         - 1
-    - dependency_service_policy:
+    - dependency_service_policy_2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - network_service_policy:
+    - network_service_policy_2:
         capability: tosca.capabilities.Attachment
         node: tosca.nodes.network.Network
         relationship: org.openecomp.relationships.AttachesTo
         occurrences:
         - 0
         - UNBOUNDED
-    capabilities:
-      feature_service_policy_test_nested3:
-        type: tosca.capabilities.Node
+    - dependency_service_instance21:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_port_0_service_instance21:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
         occurrences:
         - 1
-        - UNBOUNDED
-      feature_service_instance1:
+        - 1
+    - link_port_1_service_instance21:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2_service_instance21:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      feature_service_instance21:
         type: tosca.capabilities.Node
         occurrences:
         - 1
@@ -530,12 +525,22 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_hsl_direct_net:
-        type: tosca.capabilities.Attachment
+      feature_hsl_direct_net_2:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
-      end_point_hsl_direct_net:
+      feature_service_policy_2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_policy_3_test_nested3:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      end_point_hsl_direct_net_3_test_nested3:
         type: tosca.capabilities.Endpoint
         occurrences:
         - 1
@@ -545,28 +550,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      link_hsl_direct_net:
-        type: tosca.capabilities.network.Linkable
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_service_policy:
+      feature_hsl_direct_net_3_test_nested3:
         type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
-      feature_hsl_direct_net_test_nested3:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
-      link_hsl_direct_net_test_nested3:
+      link_hsl_direct_net_2:
         type: tosca.capabilities.network.Linkable
         occurrences:
         - 1
         - UNBOUNDED
-      attachment_hsl_direct_net_test_nested3:
-        type: tosca.capabilities.Attachment
+      link_hsl_direct_net_3_test_nested3:
+        type: tosca.capabilities.network.Linkable
         occurrences:
         - 1
         - UNBOUNDED
@@ -575,13 +570,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_hsl_direct_net:
-        type: tosca.capabilities.Node
+      end_point_hsl_direct_net_2:
+        type: tosca.capabilities.Endpoint
         occurrences:
         - 1
         - UNBOUNDED
-      end_point_hsl_direct_net_test_nested3:
-        type: tosca.capabilities.Endpoint
+      attachment_hsl_direct_net_3_test_nested3:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_hsl_direct_net_2:
+        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED
@@ -796,35 +796,21 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_service_instance1_test_nested2:
+    - dependency_hsl_direct_net_2_test_nested2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - link_port_0_service_instance1_test_nested2:
-        capability: tosca.capabilities.network.Linkable
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
-    - link_port_1_service_instance1_test_nested2:
-        capability: tosca.capabilities.network.Linkable
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
-    - link_port_2_service_instance1_test_nested2:
-        capability: tosca.capabilities.network.Linkable
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.network.LinksTo
-        occurrences:
-        - 1
-        - 1
     - dependency_test_nested3_test_nested2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_hsl_direct_net_3_test_nested3_test_nested2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
@@ -859,31 +845,17 @@ node_types:
         occurrences:
         - 1
         - 1
-    - dependency_hsl_direct_net_test_nested3_test_nested2:
+    - dependency_service_policy_3_test_nested3_test_nested2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - dependency_service_policy_test_nested3_test_nested2:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - network_service_policy_test_nested3_test_nested2:
+    - network_service_policy_3_test_nested3_test_nested2:
         capability: tosca.capabilities.Attachment
         node: tosca.nodes.network.Network
         relationship: org.openecomp.relationships.AttachesTo
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - dependency_hsl_direct_net_test_nested2:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
@@ -915,20 +887,48 @@ node_types:
         occurrences:
         - 1
         - 1
-    - dependency_service_policy_test_nested2:
+    - dependency_service_policy_2_test_nested2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - network_service_policy_test_nested2:
+    - network_service_policy_2_test_nested2:
         capability: tosca.capabilities.Attachment
         node: tosca.nodes.network.Network
         relationship: org.openecomp.relationships.AttachesTo
         occurrences:
         - 0
         - UNBOUNDED
+    - dependency_service_instance21_test_nested2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_port_0_service_instance21_test_nested2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_1_service_instance21_test_nested2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2_service_instance21_test_nested2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
     - dependency_hsl_direct_net:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
@@ -951,18 +951,13 @@ node_types:
         - 0
         - UNBOUNDED
     capabilities:
-      feature_hsl_direct_net_test_nested3_test_nested2:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
       feature_service_instance1:
         type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
-      feature_service_policy_test_nested2:
-        type: tosca.capabilities.Node
+      attachment_hsl_direct_net_3_test_nested3_test_nested2:
+        type: tosca.capabilities.Attachment
         occurrences:
         - 1
         - UNBOUNDED
@@ -976,6 +971,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      end_point_hsl_direct_net_3_test_nested3_test_nested2:
+        type: tosca.capabilities.Endpoint
+        occurrences:
+        - 1
+        - UNBOUNDED
       attachment_hsl_direct_net:
         type: tosca.capabilities.Attachment
         occurrences:
@@ -986,23 +986,28 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      end_point_hsl_direct_net_2_test_nested2:
+        type: tosca.capabilities.Endpoint
+        occurrences:
+        - 1
+        - UNBOUNDED
       feature_service_instance3_test_nested2:
         type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
-      feature_hsl_direct_net_test_nested2:
+      end_point_hsl_direct_net:
+        type: tosca.capabilities.Endpoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_policy_2_test_nested2:
         type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
-      end_point_hsl_direct_net_test_nested3_test_nested2:
-        type: tosca.capabilities.Endpoint
-        occurrences:
-        - 1
-        - UNBOUNDED
-      end_point_hsl_direct_net:
-        type: tosca.capabilities.Endpoint
+      link_hsl_direct_net_3_test_nested3_test_nested2:
+        type: tosca.capabilities.network.Linkable
         occurrences:
         - 1
         - UNBOUNDED
@@ -1016,27 +1021,12 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      link_hsl_direct_net_test_nested2:
-        type: tosca.capabilities.network.Linkable
-        occurrences:
-        - 1
-        - UNBOUNDED
-      attachment_hsl_direct_net_test_nested3_test_nested2:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
-      attachment_hsl_direct_net_test_nested2:
-        type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
-      feature_service_instance1_test_nested2:
+      feature_hsl_direct_net_2_test_nested2:
         type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
-      link_hsl_direct_net_test_nested3_test_nested2:
+      link_hsl_direct_net_2_test_nested2:
         type: tosca.capabilities.network.Linkable
         occurrences:
         - 1
@@ -1051,16 +1041,74 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      feature_service_policy_test_nested3_test_nested2:
+      feature_service_policy_3_test_nested3_test_nested2:
         type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
-      end_point_hsl_direct_net_test_nested2:
-        type: tosca.capabilities.Endpoint
+      feature_hsl_direct_net_3_test_nested3_test_nested2:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
+      feature_service_instance21_test_nested2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_hsl_direct_net_2_test_nested2:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.service_template_3:
+    derived_from: org.openecomp.resource.abstract.nodes.contrail.AbstractSubstitute
+    requirements:
+    - link_port_0:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+  org.openecomp.resource.abstract.nodes.heat.service_template_2:
+    derived_from: org.openecomp.resource.abstract.nodes.contrail.AbstractSubstitute
+    requirements:
+    - link_port_0:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
   org.openecomp.resource.abstract.nodes.heat.service_template:
     derived_from: org.openecomp.resource.abstract.nodes.contrail.AbstractSubstitute
     requirements:

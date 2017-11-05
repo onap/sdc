@@ -30,7 +30,7 @@ parameters:
       type: string
 resources:
 
-  cmaui_port_2:
+  cmaui_port_32:
     type: OS::Neutron::Port
     properties:
       network: { get_param: shared_test_net }
@@ -38,7 +38,7 @@ resources:
       security_groups: [{get_param: security_group_name}]
       replacement_policy: AUTO
 
-  cmaui_port_3:
+  cmaui_port_33:
     type: OS::Neutron::Port
     properties:
       network: { get_param: p2 }
@@ -46,7 +46,7 @@ resources:
       security_groups: [{get_param: security_group_name}]
       replacement_policy: AUTO
 
-  server_cmaui:
+  server_cmaui_3:
     type: OS::Nova::Server
     properties:
       name: { get_param: [cmaui_names, 0]}
@@ -54,8 +54,8 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: cmaui_flavor }
       networks:
-      - port: { get_resource: cmaui_port_2 }
-      - port: { get_resource: cmaui_port_3 }
+      - port: { get_resource: cmaui_port_32 }
+      - port: { get_resource: cmaui_port_33 }
 
   test_nested4Level:
     type: nested4.yml

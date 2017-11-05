@@ -11,10 +11,7 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_pcm_port_0_network_role:
-      type: string
-      required: true
-    port_pcm_port_1_network_role_tag:
+    port_pcm_port_11_network_role_tag:
       type: string
       required: true
     availabilityzone_name:
@@ -23,27 +20,34 @@ topology_template:
       immutable: false
       type: string
       description: availabilityzone name
-    port_pcm_port_0_vlan_requirements:
+    port_pcm_port_11_ip_requirements:
       type: list
       required: true
       entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
+        type: org.openecomp.datatypes.network.IpRequirements
     pcm_image_name:
       label: image name
       hidden: false
       immutable: false
       type: string
       description: PCRF CM image name
-    port_pcm_port_0_order:
-      type: integer
+    port_pcm_port_01_ip_requirements:
+      type: list
       required: true
-    port_pcm_port_0_subnetpoolid:
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_pcm_port_01_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    port_pcm_port_11_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_pcm_port_01_network_role:
       type: string
       required: true
-    port_pcm_port_1_subnetpoolid:
-      type: string
-      required: true
-    port_pcm_port_0_network_role_tag:
+    port_pcm_port_01_subnetpoolid:
       type: string
       required: true
     pcm_server_name:
@@ -58,71 +62,64 @@ topology_template:
       immutable: false
       type: string
       description: CPS network mask
-    port_pcm_port_1_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
-    port_pcm_port_0_exCP_naming:
-      type: org.openecomp.datatypes.Naming
-      required: true
     oam_net_name:
       label: OAM network name
       hidden: false
       immutable: false
       type: string
       description: OAM network name
-    port_pcm_port_1_network_role:
+    port_pcm_port_01_network_role_tag:
       type: string
       required: true
-    port_pcm_port_0_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
     oam_net_gw:
       label: CPS network gateway
       hidden: false
       immutable: false
       type: string
       description: CPS network gateway
+    port_pcm_port_11_network_role:
+      type: string
+      required: true
     security_group_name:
       label: security group name
       hidden: false
       immutable: false
       type: string
       description: the name of security group
+    port_pcm_port_11_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
     cps_net_ip:
       label: CPS network ip
       hidden: false
       immutable: false
       type: string
       description: CPS network ip
-    port_pcm_port_1_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
+    port_pcm_port_11_order:
+      type: integer
       required: true
-    port_pcm_port_1_vlan_requirements:
-      type: list
+    port_pcm_port_01_order:
+      type: integer
       required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.VlanRequirements
     pcm_flavor_name:
       label: PCRF CM flavor name
       hidden: false
       immutable: false
       type: string
       description: flavor name of PCRF CM instance
+    port_pcm_port_01_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
     pcm_vol:
       label: CPS Cluman Cinder Volume
       hidden: false
       immutable: false
       type: string
       description: CPS Cluman Cinder Volume
-    port_pcm_port_1_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: org.openecomp.datatypes.network.IpRequirements
-    port_pcm_port_0_mac_requirements:
-      type: org.openecomp.datatypes.network.MacRequirements
+    port_pcm_port_11_exCP_naming:
+      type: org.openecomp.datatypes.Naming
       required: true
     cps_net_name:
       label: CPS network name
@@ -142,42 +139,76 @@ topology_template:
       immutable: false
       type: string
       description: CPS network mask
-    port_pcm_port_1_order:
-      type: integer
+    port_pcm_port_01_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    port_pcm_port_11_subnetpoolid:
+      type: string
       required: true
   node_templates:
-    pcm_port_1:
+    pcm_port_11:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         ip_requirements:
-          get_input: port_pcm_port_1_ip_requirements
+          get_input: port_pcm_port_11_ip_requirements
         security_groups:
         - get_input: security_group_name
         network_role:
-          get_input: port_pcm_port_1_network_role
+          get_input: port_pcm_port_11_network_role
         fixed_ips:
         - ip_address:
             get_input: oam_net_ip
         subnetpoolid:
-          get_input: port_pcm_port_1_subnetpoolid
+          get_input: port_pcm_port_11_subnetpoolid
         mac_requirements:
-          get_input: port_pcm_port_1_mac_requirements
+          get_input: port_pcm_port_11_mac_requirements
         exCP_naming:
-          get_input: port_pcm_port_1_exCP_naming
+          get_input: port_pcm_port_11_exCP_naming
         vlan_requirements:
-          get_input: port_pcm_port_1_vlan_requirements
+          get_input: port_pcm_port_11_vlan_requirements
         network_role_tag:
-          get_input: port_pcm_port_1_network_role_tag
+          get_input: port_pcm_port_11_network_role_tag
         network:
           get_input: oam_net_name
         order:
-          get_input: port_pcm_port_1_order
+          get_input: port_pcm_port_11_order
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: server_pcm
+          node: server_pcm_1
           relationship: tosca.relationships.network.BindsTo
-    server_pcm:
+    pcm_port_01:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input: port_pcm_port_01_ip_requirements
+        security_groups:
+        - get_input: security_group_name
+        network_role:
+          get_input: port_pcm_port_01_network_role
+        fixed_ips:
+        - ip_address:
+            get_input: cps_net_ip
+        subnetpoolid:
+          get_input: port_pcm_port_01_subnetpoolid
+        mac_requirements:
+          get_input: port_pcm_port_01_mac_requirements
+        exCP_naming:
+          get_input: port_pcm_port_01_exCP_naming
+        vlan_requirements:
+          get_input: port_pcm_port_01_vlan_requirements
+        network_role_tag:
+          get_input: port_pcm_port_01_network_role_tag
+        network:
+          get_input: cps_net_name
+        order:
+          get_input: port_pcm_port_01_order
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_pcm_1
+          relationship: tosca.relationships.network.BindsTo
+    server_pcm_1:
       type: org.openecomp.resource.vfc.compute.nodes.heat.pcm_server
       properties:
         flavor:
@@ -190,37 +221,6 @@ topology_template:
         user_data_format: RAW
         name:
           get_input: pcm_server_name
-    pcm_port_0:
-      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
-      properties:
-        ip_requirements:
-          get_input: port_pcm_port_0_ip_requirements
-        security_groups:
-        - get_input: security_group_name
-        network_role:
-          get_input: port_pcm_port_0_network_role
-        fixed_ips:
-        - ip_address:
-            get_input: cps_net_ip
-        subnetpoolid:
-          get_input: port_pcm_port_0_subnetpoolid
-        mac_requirements:
-          get_input: port_pcm_port_0_mac_requirements
-        exCP_naming:
-          get_input: port_pcm_port_0_exCP_naming
-        vlan_requirements:
-          get_input: port_pcm_port_0_vlan_requirements
-        network_role_tag:
-          get_input: port_pcm_port_0_network_role_tag
-        network:
-          get_input: cps_net_name
-        order:
-          get_input: port_pcm_port_0_order
-      requirements:
-      - binding:
-          capability: tosca.capabilities.network.Bindable
-          node: server_pcm
-          relationship: tosca.relationships.network.BindsTo
   groups:
     nested-pcm_v0.1_group:
       type: org.openecomp.groups.heat.HeatStack
@@ -228,221 +228,221 @@ topology_template:
         heat_file: ../Artifacts/nested-pcm_v0.1.yaml
         description: heat template that creates PCRF Cluman stack
       members:
-      - pcm_port_1
-      - server_pcm
-      - pcm_port_0
+      - pcm_port_11
+      - pcm_port_01
+      - server_pcm_1
   outputs:
     server_pcm_id:
       description: the pcm nova service id
-      value: server_pcm
+      value: server_pcm_1
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.pcm_server
     capabilities:
-      network.incoming.packets.rate_pcm_port_0:
-      - pcm_port_0
-      - network.incoming.packets.rate
-      cpu_server_pcm:
-      - server_pcm
-      - cpu
-      network.incoming.packets.rate_pcm_port_1:
-      - pcm_port_1
-      - network.incoming.packets.rate
-      network.outpoing.packets_pcm_port_1:
-      - pcm_port_1
-      - network.outpoing.packets
-      memory_server_pcm:
-      - server_pcm
-      - memory
-      disk.write.requests_server_pcm:
-      - server_pcm
-      - disk.write.requests
-      network.outpoing.packets_pcm_port_0:
-      - pcm_port_0
-      - network.outpoing.packets
-      disk.device.iops_server_pcm:
-      - server_pcm
-      - disk.device.iops
-      memory.resident_server_pcm:
-      - server_pcm
-      - memory.resident
-      disk.device.write.requests_server_pcm:
-      - server_pcm
-      - disk.device.write.requests
-      disk.device.usage_server_pcm:
-      - server_pcm
-      - disk.device.usage
-      disk.allocation_server_pcm:
-      - server_pcm
-      - disk.allocation
-      disk.usage_server_pcm:
-      - server_pcm
-      - disk.usage
-      disk.device.write.bytes_server_pcm:
-      - server_pcm
-      - disk.device.write.bytes
-      disk.root.size_server_pcm:
-      - server_pcm
+      disk.root.size_server_pcm_1:
+      - server_pcm_1
       - disk.root.size
-      disk.ephemeral.size_server_pcm:
-      - server_pcm
-      - disk.ephemeral.size
-      disk.device.latency_server_pcm:
-      - server_pcm
-      - disk.device.latency
-      network.incoming.bytes_pcm_port_0:
-      - pcm_port_0
-      - network.incoming.bytes
-      network.incoming.bytes_pcm_port_1:
-      - pcm_port_1
-      - network.incoming.bytes
-      binding_pcm_port_0:
-      - pcm_port_0
-      - binding
-      binding_pcm_port_1:
-      - pcm_port_1
-      - binding
-      memory.usage_server_pcm:
-      - server_pcm
-      - memory.usage
-      disk.read.requests_server_pcm:
-      - server_pcm
-      - disk.read.requests
-      disk.capacity_server_pcm:
-      - server_pcm
-      - disk.capacity
-      os_server_pcm:
-      - server_pcm
-      - os
-      disk.read.bytes_server_pcm:
-      - server_pcm
-      - disk.read.bytes
-      network.outgoing.packets.rate_pcm_port_0:
-      - pcm_port_0
-      - network.outgoing.packets.rate
-      network.outgoing.packets.rate_pcm_port_1:
-      - pcm_port_1
-      - network.outgoing.packets.rate
-      feature_pcm_port_1:
-      - pcm_port_1
-      - feature
-      network.outgoing.bytes_pcm_port_0:
-      - pcm_port_0
+      network.outgoing.bytes_pcm_port_11:
+      - pcm_port_11
       - network.outgoing.bytes
-      disk.device.read.bytes_server_pcm:
-      - server_pcm
-      - disk.device.read.bytes
-      feature_pcm_port_0:
-      - pcm_port_0
+      network.incoming.packets_pcm_port_01:
+      - pcm_port_01
+      - network.incoming.packets
+      feature_pcm_port_01:
+      - pcm_port_01
       - feature
-      network.outgoing.bytes_pcm_port_1:
-      - pcm_port_1
-      - network.outgoing.bytes
-      attachment_pcm_port_0:
-      - pcm_port_0
-      - attachment
-      attachment_pcm_port_1:
-      - pcm_port_1
-      - attachment
-      endpoint_server_pcm:
-      - server_pcm
-      - endpoint
-      disk.device.read.requests.rate_server_pcm:
-      - server_pcm
-      - disk.device.read.requests.rate
-      vcpus_server_pcm:
-      - server_pcm
-      - vcpus
-      disk.write.bytes_server_pcm:
-      - server_pcm
-      - disk.write.bytes
-      disk.iops_server_pcm:
-      - server_pcm
+      disk.iops_server_pcm_1:
+      - server_pcm_1
       - disk.iops
-      disk.read.bytes.rate_server_pcm:
-      - server_pcm
-      - disk.read.bytes.rate
-      disk.device.allocation_server_pcm:
-      - server_pcm
-      - disk.device.allocation
-      scalable_server_pcm:
-      - server_pcm
-      - scalable
-      disk.device.read.bytes.rate_server_pcm:
-      - server_pcm
-      - disk.device.read.bytes.rate
-      cpu_util_server_pcm:
-      - server_pcm
-      - cpu_util
-      disk.write.requests.rate_server_pcm:
-      - server_pcm
-      - disk.write.requests.rate
-      disk.device.write.bytes.rate_server_pcm:
-      - server_pcm
+      disk.device.write.bytes.rate_server_pcm_1:
+      - server_pcm_1
       - disk.device.write.bytes.rate
-      host_server_pcm:
-      - server_pcm
-      - host
-      cpu.delta_server_pcm:
-      - server_pcm
-      - cpu.delta
-      network.outgoing.bytes.rate_pcm_port_1:
-      - pcm_port_1
-      - network.outgoing.bytes.rate
-      network.incoming.packets_pcm_port_0:
-      - pcm_port_0
-      - network.incoming.packets
-      binding_server_pcm:
-      - server_pcm
-      - binding
-      network.outgoing.bytes.rate_pcm_port_0:
-      - pcm_port_0
-      - network.outgoing.bytes.rate
-      disk.device.capacity_server_pcm:
-      - server_pcm
-      - disk.device.capacity
-      network.incoming.packets_pcm_port_1:
-      - pcm_port_1
-      - network.incoming.packets
-      instance_server_pcm:
-      - server_pcm
-      - instance
-      disk.device.write.requests.rate_server_pcm:
-      - server_pcm
-      - disk.device.write.requests.rate
-      disk.latency_server_pcm:
-      - server_pcm
-      - disk.latency
-      disk.device.read.requests_server_pcm:
-      - server_pcm
-      - disk.device.read.requests
-      feature_server_pcm:
-      - server_pcm
+      network.incoming.bytes_pcm_port_01:
+      - pcm_port_01
+      - network.incoming.bytes
+      disk.capacity_server_pcm_1:
+      - server_pcm_1
+      - disk.capacity
+      disk.write.requests_server_pcm_1:
+      - server_pcm_1
+      - disk.write.requests
+      network.incoming.bytes.rate_pcm_port_11:
+      - pcm_port_11
+      - network.incoming.bytes.rate
+      disk.read.bytes_server_pcm_1:
+      - server_pcm_1
+      - disk.read.bytes
+      attachment_pcm_port_01:
+      - pcm_port_01
+      - attachment
+      feature_pcm_port_11:
+      - pcm_port_11
       - feature
-      network.incoming.bytes.rate_pcm_port_0:
-      - pcm_port_0
+      network.outgoing.packets.rate_pcm_port_01:
+      - pcm_port_01
+      - network.outgoing.packets.rate
+      disk.usage_server_pcm_1:
+      - server_pcm_1
+      - disk.usage
+      cpu_util_server_pcm_1:
+      - server_pcm_1
+      - cpu_util
+      vcpus_server_pcm_1:
+      - server_pcm_1
+      - vcpus
+      memory.resident_server_pcm_1:
+      - server_pcm_1
+      - memory.resident
+      network.outgoing.bytes_pcm_port_01:
+      - pcm_port_01
+      - network.outgoing.bytes
+      network.outgoing.packets.rate_pcm_port_11:
+      - pcm_port_11
+      - network.outgoing.packets.rate
+      feature_server_pcm_1:
+      - server_pcm_1
+      - feature
+      disk.allocation_server_pcm_1:
+      - server_pcm_1
+      - disk.allocation
+      disk.device.write.bytes_server_pcm_1:
+      - server_pcm_1
+      - disk.device.write.bytes
+      memory.usage_server_pcm_1:
+      - server_pcm_1
+      - memory.usage
+      cpu_server_pcm_1:
+      - server_pcm_1
+      - cpu
+      network.incoming.packets.rate_pcm_port_11:
+      - pcm_port_11
+      - network.incoming.packets.rate
+      binding_pcm_port_11:
+      - pcm_port_11
+      - binding
+      disk.device.read.bytes_server_pcm_1:
+      - server_pcm_1
+      - disk.device.read.bytes
+      network.incoming.bytes.rate_pcm_port_01:
+      - pcm_port_01
       - network.incoming.bytes.rate
-      disk.write.bytes.rate_server_pcm:
-      - server_pcm
+      network.outgoing.bytes.rate_pcm_port_11:
+      - pcm_port_11
+      - network.outgoing.bytes.rate
+      attachment_pcm_port_11:
+      - pcm_port_11
+      - attachment
+      endpoint_server_pcm_1:
+      - server_pcm_1
+      - endpoint
+      disk.read.bytes.rate_server_pcm_1:
+      - server_pcm_1
+      - disk.read.bytes.rate
+      disk.device.iops_server_pcm_1:
+      - server_pcm_1
+      - disk.device.iops
+      cpu.delta_server_pcm_1:
+      - server_pcm_1
+      - cpu.delta
+      host_server_pcm_1:
+      - server_pcm_1
+      - host
+      disk.device.capacity_server_pcm_1:
+      - server_pcm_1
+      - disk.device.capacity
+      disk.read.requests_server_pcm_1:
+      - server_pcm_1
+      - disk.read.requests
+      disk.device.write.requests.rate_server_pcm_1:
+      - server_pcm_1
+      - disk.device.write.requests.rate
+      disk.ephemeral.size_server_pcm_1:
+      - server_pcm_1
+      - disk.ephemeral.size
+      disk.latency_server_pcm_1:
+      - server_pcm_1
+      - disk.latency
+      network.outpoing.packets_pcm_port_11:
+      - pcm_port_11
+      - network.outpoing.packets
+      network.outgoing.bytes.rate_pcm_port_01:
+      - pcm_port_01
+      - network.outgoing.bytes.rate
+      network.incoming.packets.rate_pcm_port_01:
+      - pcm_port_01
+      - network.incoming.packets.rate
+      binding_pcm_port_01:
+      - pcm_port_01
+      - binding
+      scalable_server_pcm_1:
+      - server_pcm_1
+      - scalable
+      disk.write.requests.rate_server_pcm_1:
+      - server_pcm_1
+      - disk.write.requests.rate
+      memory_server_pcm_1:
+      - server_pcm_1
+      - memory
+      disk.device.latency_server_pcm_1:
+      - server_pcm_1
+      - disk.device.latency
+      disk.device.read.bytes.rate_server_pcm_1:
+      - server_pcm_1
+      - disk.device.read.bytes.rate
+      network.incoming.packets_pcm_port_11:
+      - pcm_port_11
+      - network.incoming.packets
+      disk.device.usage_server_pcm_1:
+      - server_pcm_1
+      - disk.device.usage
+      disk.device.write.requests_server_pcm_1:
+      - server_pcm_1
+      - disk.device.write.requests
+      disk.write.bytes_server_pcm_1:
+      - server_pcm_1
+      - disk.write.bytes
+      disk.device.read.requests_server_pcm_1:
+      - server_pcm_1
+      - disk.device.read.requests
+      instance_server_pcm_1:
+      - server_pcm_1
+      - instance
+      disk.device.read.requests.rate_server_pcm_1:
+      - server_pcm_1
+      - disk.device.read.requests.rate
+      network.incoming.bytes_pcm_port_11:
+      - pcm_port_11
+      - network.incoming.bytes
+      os_server_pcm_1:
+      - server_pcm_1
+      - os
+      binding_server_pcm_1:
+      - server_pcm_1
+      - binding
+      network.outpoing.packets_pcm_port_01:
+      - pcm_port_01
+      - network.outpoing.packets
+      disk.write.bytes.rate_server_pcm_1:
+      - server_pcm_1
       - disk.write.bytes.rate
-      network.incoming.bytes.rate_pcm_port_1:
-      - pcm_port_1
-      - network.incoming.bytes.rate
+      disk.device.allocation_server_pcm_1:
+      - server_pcm_1
+      - disk.device.allocation
     requirements:
-      link_pcm_port_0:
-      - pcm_port_0
+      dependency_pcm_port_11:
+      - pcm_port_11
+      - dependency
+      dependency_pcm_port_01:
+      - pcm_port_01
+      - dependency
+      dependency_server_pcm_1:
+      - server_pcm_1
+      - dependency
+      link_pcm_port_01:
+      - pcm_port_01
       - link
-      link_pcm_port_1:
-      - pcm_port_1
+      link_pcm_port_11:
+      - pcm_port_11
       - link
-      local_storage_server_pcm:
-      - server_pcm
+      local_storage_server_pcm_1:
+      - server_pcm_1
       - local_storage
-      dependency_pcm_port_0:
-      - pcm_port_0
-      - dependency
-      dependency_server_pcm:
-      - server_pcm
-      - dependency
-      dependency_pcm_port_1:
-      - pcm_port_1
-      - dependency

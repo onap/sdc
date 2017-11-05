@@ -85,18 +85,6 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: Internal2-net
           relationship: tosca.relationships.network.LinksTo
-      - link_port_0_service_instance1_test_nested2:
-          capability: tosca.capabilities.network.Linkable
-          node: Internal2-net
-          relationship: tosca.relationships.network.LinksTo
-      - link_port_1_service_instance1_test_nested2:
-          capability: tosca.capabilities.network.Linkable
-          node: Internal1-net
-          relationship: tosca.relationships.network.LinksTo
-      - link_port_2_service_instance1_test_nested2:
-          capability: tosca.capabilities.network.Linkable
-          node: Internal2-net
-          relationship: tosca.relationships.network.LinksTo
       - link_port_0_service_instance4_test_nested3_test_nested2:
           capability: tosca.capabilities.network.Linkable
           node: Internal1-net
@@ -121,76 +109,106 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: Internal2-net
           relationship: tosca.relationships.network.LinksTo
+      - link_port_0_service_instance21_test_nested2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net
+          relationship: tosca.relationships.network.LinksTo
+      - link_port_1_service_instance21_test_nested2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1-net
+          relationship: tosca.relationships.network.LinksTo
+      - link_port_2_service_instance21_test_nested2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net
+          relationship: tosca.relationships.network.LinksTo
+    Internal1-net-1:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        shared:
+          get_input: Internal1_shared
+        forwarding_mode:
+          get_input: Internal1_forwarding_mode
+        network_name:
+          get_input: Internal1_net_name
     test_nested1:
       type: org.openecomp.resource.abstract.nodes.heat.OCS-fw
       directives:
       - substitutable
       properties:
-        network_param2: Internal2-net
+        network_param2: Internal2-net-1
         service_template_filter:
           substitute_service_template: OCS-fwServiceTemplate.yaml
-        network_param1: Internal1-net
+        network_param1: Internal1-net-1
       requirements:
       - link_port_0_service_instance2:
           capability: tosca.capabilities.network.Linkable
-          node: Internal2-net
+          node: Internal2-net-1
           relationship: tosca.relationships.network.LinksTo
       - link_port_1_service_instance2:
           capability: tosca.capabilities.network.Linkable
-          node: Internal1-net
+          node: Internal1-net-1
           relationship: tosca.relationships.network.LinksTo
       - link_port_2_service_instance2:
           capability: tosca.capabilities.network.Linkable
-          node: Internal2-net
+          node: Internal2-net-1
           relationship: tosca.relationships.network.LinksTo
       - link_port_0_service_instance1:
           capability: tosca.capabilities.network.Linkable
-          node: Internal1-net
+          node: Internal1-net-1
           relationship: tosca.relationships.network.LinksTo
       - link_port_1_service_instance1:
           capability: tosca.capabilities.network.Linkable
-          node: Internal1-net
+          node: Internal1-net-1
           relationship: tosca.relationships.network.LinksTo
       - link_port_2_service_instance1:
           capability: tosca.capabilities.network.Linkable
-          node: Internal2-net
-          relationship: tosca.relationships.network.LinksTo
-      - link_port_0_service_instance1_test_nested2:
-          capability: tosca.capabilities.network.Linkable
-          node: Internal2-net
-          relationship: tosca.relationships.network.LinksTo
-      - link_port_1_service_instance1_test_nested2:
-          capability: tosca.capabilities.network.Linkable
-          node: Internal1-net
-          relationship: tosca.relationships.network.LinksTo
-      - link_port_2_service_instance1_test_nested2:
-          capability: tosca.capabilities.network.Linkable
-          node: Internal2-net
+          node: Internal2-net-1
           relationship: tosca.relationships.network.LinksTo
       - link_port_0_service_instance4_test_nested3_test_nested2:
           capability: tosca.capabilities.network.Linkable
-          node: Internal1-net
+          node: Internal1-net-1
           relationship: tosca.relationships.network.LinksTo
       - link_port_1_service_instance4_test_nested3_test_nested2:
           capability: tosca.capabilities.network.Linkable
-          node: Internal1-net
+          node: Internal1-net-1
           relationship: tosca.relationships.network.LinksTo
       - link_port_2_service_instance4_test_nested3_test_nested2:
           capability: tosca.capabilities.network.Linkable
-          node: Internal1-net
+          node: Internal1-net-1
           relationship: tosca.relationships.network.LinksTo
       - link_port_0_service_instance3_test_nested2:
           capability: tosca.capabilities.network.Linkable
-          node: Internal1-net
+          node: Internal1-net-1
           relationship: tosca.relationships.network.LinksTo
       - link_port_1_service_instance3_test_nested2:
           capability: tosca.capabilities.network.Linkable
-          node: Internal1-net
+          node: Internal1-net-1
           relationship: tosca.relationships.network.LinksTo
       - link_port_2_service_instance3_test_nested2:
           capability: tosca.capabilities.network.Linkable
-          node: Internal2-net
+          node: Internal2-net-1
           relationship: tosca.relationships.network.LinksTo
+      - link_port_0_service_instance21_test_nested2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net-1
+          relationship: tosca.relationships.network.LinksTo
+      - link_port_1_service_instance21_test_nested2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1-net-1
+          relationship: tosca.relationships.network.LinksTo
+      - link_port_2_service_instance21_test_nested2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net-1
+          relationship: tosca.relationships.network.LinksTo
+    Internal2-net-1:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        forwarding_mode:
+          get_input: Internal1_forwarding_mode
+        shared:
+          get_input: Internal1_shared
+        network_name:
+          get_input: Internal1_net_name
   groups:
     base_group:
       type: org.openecomp.groups.heat.HeatStack
@@ -207,6 +225,6 @@ topology_template:
         heat_file: ../Artifacts/addOn.yml
         description: ASC External Networks Template
       members:
-      - Internal2-net
-      - Internal1-net
+      - Internal1-net-1
       - test_nested1
+      - Internal2-net-1

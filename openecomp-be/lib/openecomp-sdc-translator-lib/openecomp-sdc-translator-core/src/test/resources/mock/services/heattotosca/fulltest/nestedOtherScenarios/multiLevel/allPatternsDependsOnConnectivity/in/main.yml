@@ -119,14 +119,14 @@ resources:
 
   ########### PATTERN 1C1 #################
 
-  cmaui_port_1:
+  cmaui_port_01:
     type: OS::Neutron::Port
     properties:
       network: { get_param: contrail_net_name}
       fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
       replacement_policy: AUTO
 
-  cmaui_port_2:
+  cmaui_port_02:
     type: OS::Neutron::Port
     properties:
       network: { get_param: contrail_net_name}
@@ -145,7 +145,7 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: cmaui_1c1_main_flavor }
       networks:
-      - port: { get_resource: cmaui_port_1 }
+      - port: { get_resource: cmaui_port_01 }
 
   server_main_1c1_cmaui_2:
     type: OS::Nova::Server
@@ -159,7 +159,7 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: cmaui_1c1_main_flavor }
       networks:
-      - port: { get_resource: cmaui_port_2 }
+      - port: { get_resource: cmaui_port_02 }
 
   ########### PATTERN 4 #################
 

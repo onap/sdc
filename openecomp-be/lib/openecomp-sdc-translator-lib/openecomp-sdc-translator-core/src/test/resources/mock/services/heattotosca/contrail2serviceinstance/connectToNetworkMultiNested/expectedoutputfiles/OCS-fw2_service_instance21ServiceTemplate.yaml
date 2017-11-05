@@ -1,6 +1,6 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
-  template_name: OCS-fw2_service_instance1
+  template_name: OCS-fw2_service_instance21
 imports:
 - openecomp_heat_index:
     file: openecomp-heat/_index.yml
@@ -127,25 +127,6 @@ topology_template:
       entry_schema:
         type: boolean
   node_templates:
-    service_instance1:
-      type: org.openecomp.resource.vfc.nodes.heat.st
-      properties:
-        flavor:
-          get_input: flavor
-        image_name:
-          get_input: image_name
-        availability_zone:
-          get_input: availability_zone
-        service_type:
-          get_input: service_type
-        availability_zone_enable:
-          get_input: availability_zone_enable
-        service_template_name:
-          get_input: service_template_name
-        service_instance_name:
-          get_input: service_instance_name
-        service_mode:
-          get_input: service_mode
     port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.contrail.Port
       properties:
@@ -184,7 +165,7 @@ topology_template:
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: service_instance1
+          node: service_instance21
           relationship: tosca.relationships.network.BindsTo
     port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.contrail.Port
@@ -224,7 +205,7 @@ topology_template:
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: service_instance1
+          node: service_instance21
           relationship: tosca.relationships.network.BindsTo
     port_2:
       type: org.openecomp.resource.cp.nodes.heat.network.contrail.Port
@@ -264,15 +245,34 @@ topology_template:
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
-          node: service_instance1
+          node: service_instance21
           relationship: tosca.relationships.network.BindsTo
+    service_instance21:
+      type: org.openecomp.resource.vfc.nodes.heat.st
+      properties:
+        flavor:
+          get_input: flavor
+        image_name:
+          get_input: image_name
+        availability_zone:
+          get_input: availability_zone
+        service_type:
+          get_input: service_type
+        availability_zone_enable:
+          get_input: availability_zone_enable
+        service_template_name:
+          get_input: service_template_name
+        service_instance_name:
+          get_input: service_instance_name
+        service_mode:
+          get_input: service_mode
   groups:
-    service_instance1_group:
+    service_instance21_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/OCS-fw2.yml
       members:
-      - service_instance1
+      - service_instance21
       - port_0
       - port_1
       - port_2
@@ -281,52 +281,52 @@ topology_template:
       description: Tenant id of the Service Instance
       value:
         get_attribute:
-        - service_instance1
+        - service_instance21
         - tenant_id
     fq_name:
       description: The FQ name of the service instance
       value:
         get_attribute:
-        - service_instance1
+        - service_instance21
         - fq_name
     service_template_name:
       description: Service Template of the Service Instance
       value:
         get_attribute:
-        - service_instance1
+        - service_instance21
         - service_template_name
     show:
       description: All attributes
       value:
         get_attribute:
-        - service_instance1
+        - service_instance21
         - show
     active_vms:
       description: Number of service VMs active for this Service Instance
       value:
         get_attribute:
-        - service_instance1
+        - service_instance21
         - active_vms
     service_instance_name:
       description: The name of the service instance
       value:
         get_attribute:
-        - service_instance1
+        - service_instance21
         - service_instance_name
     virtual_machines:
       description: Service VMs for the Service Instance
       value:
         get_attribute:
-        - service_instance1
+        - service_instance21
         - virtual_machines
     status:
       description: Status of the service instance
       value:
         get_attribute:
-        - service_instance1
+        - service_instance21
         - status
   substitution_mappings:
-    node_type: org.openecomp.resource.abstract.nodes.heat.service_template
+    node_type: org.openecomp.resource.abstract.nodes.heat.service_template_2
     requirements:
       link_port_0:
       - port_0

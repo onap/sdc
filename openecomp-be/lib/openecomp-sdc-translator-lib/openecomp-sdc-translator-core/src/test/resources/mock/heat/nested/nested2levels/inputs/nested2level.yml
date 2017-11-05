@@ -47,7 +47,7 @@ resources:
       security_groups: [{get_param: shared_security_group_id1}]
       replacement_policy: AUTO
 
-  server_cmaui:
+  server_cmaui_2:
     type: OS::Nova::Server
     properties:
       name: { get_param: [cmaui_names, 0]}

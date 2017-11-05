@@ -379,72 +379,72 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.OCS-fw
     capabilities:
-      feature_hsl_direct_net_test_nested3_test_nested2:
-      - test_nested2
-      - feature_hsl_direct_net_test_nested3
       feature_service_instance1:
       - service_instance1
       - feature
-      feature_service_policy_test_nested2:
+      attachment_hsl_direct_net_3_test_nested3_test_nested2:
       - test_nested2
-      - feature_service_policy
+      - attachment_hsl_direct_net_3_test_nested3
       feature_service_instance2:
       - service_instance2
       - feature
       feature_test_nested3_test_nested2:
       - test_nested2
       - feature_test_nested3
+      end_point_hsl_direct_net_3_test_nested3_test_nested2:
+      - test_nested2
+      - end_point_hsl_direct_net_3_test_nested3
       attachment_hsl_direct_net:
       - hsl_direct_net
       - attachment
       feature_service_instance4_test_nested3_test_nested2:
       - test_nested2
       - feature_service_instance4_test_nested3
+      end_point_hsl_direct_net_2_test_nested2:
+      - test_nested2
+      - end_point_hsl_direct_net_2
       feature_service_instance3_test_nested2:
       - test_nested2
       - feature_service_instance3
-      feature_hsl_direct_net_test_nested2:
-      - test_nested2
-      - feature_hsl_direct_net
-      end_point_hsl_direct_net_test_nested3_test_nested2:
-      - test_nested2
-      - end_point_hsl_direct_net_test_nested3
       end_point_hsl_direct_net:
       - hsl_direct_net
       - end_point
+      feature_service_policy_2_test_nested2:
+      - test_nested2
+      - feature_service_policy_2
+      link_hsl_direct_net_3_test_nested3_test_nested2:
+      - test_nested2
+      - link_hsl_direct_net_3_test_nested3
       link_hsl_direct_net:
       - hsl_direct_net
       - link
       feature_service_policy:
       - service_policy
       - feature
-      link_hsl_direct_net_test_nested2:
+      feature_hsl_direct_net_2_test_nested2:
       - test_nested2
-      - link_hsl_direct_net
-      attachment_hsl_direct_net_test_nested3_test_nested2:
+      - feature_hsl_direct_net_2
+      link_hsl_direct_net_2_test_nested2:
       - test_nested2
-      - attachment_hsl_direct_net_test_nested3
-      attachment_hsl_direct_net_test_nested2:
-      - test_nested2
-      - attachment_hsl_direct_net
-      feature_service_instance1_test_nested2:
-      - test_nested2
-      - feature_service_instance1
-      link_hsl_direct_net_test_nested3_test_nested2:
-      - test_nested2
-      - link_hsl_direct_net_test_nested3
+      - link_hsl_direct_net_2
       feature_test_nested2:
       - test_nested2
       - feature
       feature_hsl_direct_net:
       - hsl_direct_net
       - feature
-      feature_service_policy_test_nested3_test_nested2:
+      feature_service_policy_3_test_nested3_test_nested2:
       - test_nested2
-      - feature_service_policy_test_nested3
-      end_point_hsl_direct_net_test_nested2:
+      - feature_service_policy_3_test_nested3
+      feature_hsl_direct_net_3_test_nested3_test_nested2:
       - test_nested2
-      - end_point_hsl_direct_net
+      - feature_hsl_direct_net_3_test_nested3
+      feature_service_instance21_test_nested2:
+      - test_nested2
+      - feature_service_instance21
+      attachment_hsl_direct_net_2_test_nested2:
+      - test_nested2
+      - attachment_hsl_direct_net_2
     requirements:
       link_port_1_service_instance4_test_nested3_test_nested2:
       - test_nested2
@@ -452,15 +452,9 @@ topology_template:
       dependency_hsl_direct_net:
       - hsl_direct_net
       - dependency
-      dependency_hsl_direct_net_test_nested2:
+      network_service_policy_3_test_nested3_test_nested2:
       - test_nested2
-      - dependency_hsl_direct_net
-      dependency_hsl_direct_net_test_nested3_test_nested2:
-      - test_nested2
-      - dependency_hsl_direct_net_test_nested3
-      network_service_policy_test_nested3_test_nested2:
-      - test_nested2
-      - network_service_policy_test_nested3
+      - network_service_policy_3_test_nested3
       link_port_2_service_instance1:
       - service_instance1
       - link_port_2
@@ -470,9 +464,6 @@ topology_template:
       dependency_service_policy:
       - service_policy
       - dependency
-      dependency_service_instance1_test_nested2:
-      - test_nested2
-      - dependency_service_instance1
       link_port_0_service_instance3_test_nested2:
       - test_nested2
       - link_port_0_service_instance3
@@ -482,21 +473,21 @@ topology_template:
       dependency_service_instance4_test_nested3_test_nested2:
       - test_nested2
       - dependency_service_instance4_test_nested3
-      dependency_service_policy_test_nested2:
+      dependency_service_instance21_test_nested2:
       - test_nested2
-      - dependency_service_policy
+      - dependency_service_instance21
       dependency_test_nested2:
       - test_nested2
       - dependency
-      link_port_0_service_instance1_test_nested2:
-      - test_nested2
-      - link_port_0_service_instance1
       link_port_1_service_instance2:
       - service_instance2
       - link_port_1
       link_port_1_service_instance1:
       - service_instance1
       - link_port_1
+      link_port_2_service_instance21_test_nested2:
+      - test_nested2
+      - link_port_2_service_instance21
       link_port_1_service_instance3_test_nested2:
       - test_nested2
       - link_port_1_service_instance3
@@ -509,24 +500,33 @@ topology_template:
       link_port_0_service_instance4_test_nested3_test_nested2:
       - test_nested2
       - link_port_0_service_instance4_test_nested3
-      dependency_service_policy_test_nested3_test_nested2:
+      dependency_service_policy_2_test_nested2:
       - test_nested2
-      - dependency_service_policy_test_nested3
-      link_port_1_service_instance1_test_nested2:
+      - dependency_service_policy_2
+      link_port_0_service_instance21_test_nested2:
       - test_nested2
-      - link_port_1_service_instance1
+      - link_port_0_service_instance21
       network_service_policy:
       - service_policy
       - network
-      network_service_policy_test_nested2:
+      dependency_hsl_direct_net_2_test_nested2:
       - test_nested2
-      - network_service_policy
+      - dependency_hsl_direct_net_2
+      dependency_hsl_direct_net_3_test_nested3_test_nested2:
+      - test_nested2
+      - dependency_hsl_direct_net_3_test_nested3
+      dependency_service_policy_3_test_nested3_test_nested2:
+      - test_nested2
+      - dependency_service_policy_3_test_nested3
       dependency_service_instance3_test_nested2:
       - test_nested2
       - dependency_service_instance3
-      link_port_2_service_instance1_test_nested2:
+      link_port_1_service_instance21_test_nested2:
       - test_nested2
-      - link_port_2_service_instance1
+      - link_port_1_service_instance21
+      network_service_policy_2_test_nested2:
+      - test_nested2
+      - network_service_policy_2
       dependency_test_nested3_test_nested2:
       - test_nested2
       - dependency_test_nested3

@@ -40,7 +40,7 @@ parameters:
     type: string
 resources:
 
-  cmaui_port_1:
+  cmaui_port_11:
     type: OS::Neutron::Port
     properties:
       network: { get_param: p1 }
@@ -48,7 +48,7 @@ resources:
       security_groups: [{get_param: security_group_name}]
       replacement_policy: AUTO
 
-  cmaui_port_2:
+  cmaui_port_12:
     type: OS::Neutron::Port
     properties:
       network: { get_param: p2 }
@@ -64,7 +64,7 @@ resources:
       security_groups: [{get_param: security_group_name}]
       replacement_policy: AUTO
 
-  server_cmaui:
+  server_cmaui_1:
     type: OS::Nova::Server
     properties:
       name: { get_param: [cmaui_names, 0]}
@@ -72,8 +72,8 @@ resources:
       availability_zone: { get_param: availability_zone_0 }
       flavor: { get_param: cmaui_flavor }
       networks:
-      - port: { get_resource: cmaui_port_1 }
-      - port: { get_resource: cmaui_port_2 }
+      - port: { get_resource: cmaui_port_11 }
+      - port: { get_resource: cmaui_port_12 }
 
   server_abc:
     type: OS::Nova::Server

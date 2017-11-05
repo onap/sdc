@@ -68,15 +68,15 @@ resources:
       flavor: { get_param: pcm_flavor_name }
       availability_zone: { get_param: availabilityzone_name }
       networks:
-        - port: { get_resource: pcm_port_0}
-        - port: { get_resource: pcm_port_1}
+        - port: { get_resource: pcm_port_00}
+        - port: { get_resource: pcm_port_01}
       block_device_mapping:
         - device_name: vdb
           volume_id: { get_param: pcm_vol}
       user_data_format: RAW
       scheduler_hints: { group: { get_param: server_group }  }
 
-  pcm_port_0:
+  pcm_port_00:
     type: OS::Neutron::Port
     properties:
       network: { get_param: cps_net_name }
@@ -84,7 +84,7 @@ resources:
         - ip_address: { get_param: cps_net_ip }
       security_groups: [{ get_param: security_group_name }]
 
-  pcm_port_1:
+  pcm_port_01:
     type: OS::Neutron::Port
     properties:
       network: { get_param: oam_net_name }

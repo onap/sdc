@@ -57,7 +57,7 @@ resources:
       port_tuple_refs: [{ get_param: template_PortTuple_LB1 }]
       security_group_refs: [{ get_param: oam_sec_group_name}]
 
-  server_cmaui:
+  server_cmaui_1:
     type: OS::Nova::Server
     properties:
       name: { get_param: [cmaui_names, 0]}

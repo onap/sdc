@@ -153,8 +153,19 @@ topology_template:
       type: string
       description: HSL (Logging) network address (CIDR notation)
   node_templates:
+    hsl_direct_net_3:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: HSL_direct_net_id
+        subnets:
+          hsl_ip_subnet_3:
+            cidr:
+              get_input: HSL_direct_net_cidr
+            gateway_ip:
+              get_input: HSL_direct_net_gateway
     service_instance4:
-      type: org.openecomp.resource.abstract.nodes.heat.service_template
+      type: org.openecomp.resource.abstract.nodes.heat.service_template_3
       directives:
       - substitutable
       properties:
@@ -228,20 +239,9 @@ topology_template:
       requirements:
       - dependency:
           capability: tosca.capabilities.Node
-          node: hsl_direct_net
+          node: hsl_direct_net_3
           relationship: tosca.relationships.DependsOn
-    hsl_direct_net:
-      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
-      properties:
-        network_name:
-          get_input: HSL_direct_net_id
-        subnets:
-          hsl_ip_subnet:
-            cidr:
-              get_input: HSL_direct_net_cidr
-            gateway_ip:
-              get_input: HSL_direct_net_gateway
-    service_policy:
+    service_policy_3:
       type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrail.NetworkRules
       properties:
         entries:
@@ -283,48 +283,48 @@ topology_template:
         description: |
           Based on the following reference for the HOT-DMZ-FW template: Version 3.5 8-10-2015 (Authors: Art Mishurov,am254u & Johhny Chen, jc3066) - HOT-DMZ-FW template that creates two DMZ networks (direct and protected) with a scaled out firewall service between the two.
       members:
+      - hsl_direct_net_3
       - service_instance4
-      - hsl_direct_net
-      - service_policy
+      - service_policy_3
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.OCS-fw3
     capabilities:
-      link_hsl_direct_net:
-      - hsl_direct_net
+      end_point_hsl_direct_net_3:
+      - hsl_direct_net_3
+      - end_point
+      link_hsl_direct_net_3:
+      - hsl_direct_net_3
       - link
-      feature_service_policy:
-      - service_policy
-      - feature
       feature_service_instance4:
       - service_instance4
       - feature
-      attachment_hsl_direct_net:
-      - hsl_direct_net
-      - attachment
-      feature_hsl_direct_net:
-      - hsl_direct_net
+      feature_hsl_direct_net_3:
+      - hsl_direct_net_3
       - feature
-      end_point_hsl_direct_net:
-      - hsl_direct_net
-      - end_point
+      feature_service_policy_3:
+      - service_policy_3
+      - feature
+      attachment_hsl_direct_net_3:
+      - hsl_direct_net_3
+      - attachment
     requirements:
       dependency_service_instance4:
       - service_instance4
       - dependency
-      dependency_hsl_direct_net:
-      - hsl_direct_net
-      - dependency
+      network_service_policy_3:
+      - service_policy_3
+      - network
       link_port_0_service_instance4:
       - service_instance4
       - link_port_0
       link_port_1_service_instance4:
       - service_instance4
       - link_port_1
-      network_service_policy:
-      - service_policy
-      - network
-      dependency_service_policy:
-      - service_policy
+      dependency_service_policy_3:
+      - service_policy_3
+      - dependency
+      dependency_hsl_direct_net_3:
+      - hsl_direct_net_3
       - dependency
       link_port_2_service_instance4:
       - service_instance4
