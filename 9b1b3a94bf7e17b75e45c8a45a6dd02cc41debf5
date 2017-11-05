@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_2eb546cd",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/fulltest/UnifedCompositionDynamicPortsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-05T09:46:17Z",
+      "side": 1,
+      "message": "add a constant for this string",
+      "range": {
+        "startLine": 19,
+        "startChar": 9,
+        "endLine": 19,
+        "endChar": 57
+      },
+      "revId": "9b1b3a94bf7e17b75e45c8a45a6dd02cc41debf5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_0eca8a4f",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/impl/fulltest/UnifedCompositionDynamicPortsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-05T09:46:17Z",
+      "side": 1,
+      "message": "extract a function that recieves the in and out folders and run testTrans.....",
+      "range": {
+        "startLine": 18,
+        "startChar": 4,
+        "endLine": 23,
+        "endChar": 30
+      },
+      "revId": "9b1b3a94bf7e17b75e45c8a45a6dd02cc41debf5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
