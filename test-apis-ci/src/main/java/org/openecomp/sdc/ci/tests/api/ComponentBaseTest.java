@@ -123,6 +123,8 @@ public abstract class ComponentBaseTest {
 		lc.getLogger("com.datastax").setLevel(Level.INFO);
 		lc.getLogger("io.netty").setLevel(Level.INFO);
 		lc.getLogger("c.d").setLevel(Level.INFO);
+		lc.getLogger("o.a.h").setLevel(Level.INFO);
+		lc.getLogger("o.o.s.c.t.d.h").setLevel(Level.INFO);
 	}
 	
 	public static String getReportFolder() {
