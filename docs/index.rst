@@ -16,3 +16,4 @@ SDC Documentation
    installation.rst
    logging.rst
    release-notes.rst
+   sdcsdks.rst
