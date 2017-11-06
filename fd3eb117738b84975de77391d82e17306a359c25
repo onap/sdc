@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a4e6583_e764f1e6",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-06T09:38:50Z",
+      "side": 1,
+      "message": "Is this field really needed? Can be used as a local variable. If you need it as a field, can it at least be private static final?\n\nPlease use a static analysis tool. IntelliJ\u0027s Analyze -\u003e Inspect Code is excellent.",
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a4e6583_477ce572",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
         "patchSetId": 1
@@ -19,6 +36,23 @@
         "endLine": 174,
         "endChar": 51
       },
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_277329b3",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-06T09:38:50Z",
+      "side": 1,
+      "message": "Please adhere to the coding conventions. There must be a space after a comma.\n\nIs GLOBAL_USER used anywhere else? It seems like it is. Please use the right constant then.",
       "revId": "fd3eb117738b84975de77391d82e17306a359c25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -48,6 +82,91 @@
     },
     {
       "key": {
+        "uuid": "5a4e6583_a75ef910",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 878,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-06T09:38:50Z",
+      "side": 1,
+      "message": "Coding conventions, constants.",
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_879bfdc8",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 897,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-06T09:38:50Z",
+      "side": 1,
+      "message": "See above.",
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_67a001f5",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-api/src/main/java/org/openecomp/sdc/healing/api/HealingManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-06T09:38:50Z",
+      "side": 1,
+      "message": "Spaces after commas please.",
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_27aa09d5",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-api/src/main/java/org/openecomp/sdc/healing/api/HealingManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-06T09:38:50Z",
+      "side": 1,
+      "message": "What does this method do? What is a healing flag? It\u0027s not clear. Please consider a different name or at least write a javadoc.",
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_c7e69544",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-core/src/main/java/org/openecomp/sdc/healing/dao/impl/HealingDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-06T09:38:50Z",
+      "side": 1,
+      "message": "Please simplify. This can be written as \nreturn (result.getAvailableWithoutFetching() \u003e\u003d 1) \u0026\u0026 result.one().getBool(0);",
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a4e6583_a78cb980",
         "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-core/src/main/java/org/openecomp/sdc/healing/dao/impl/HealingDaoImpl.java",
         "patchSetId": 1
@@ -71,6 +190,23 @@
     },
     {
       "key": {
+        "uuid": "5a4e6583_6787e162",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-core/src/main/java/org/openecomp/sdc/healing/dao/impl/HealingDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-06T09:38:50Z",
+      "side": 1,
+      "message": "Spaces?",
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a4e6583_47f3c50a",
         "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-core/src/main/java/org/openecomp/sdc/healing/impl/HealingManagerImpl.java",
         "patchSetId": 1
@@ -88,6 +224,91 @@
         "endLine": 51,
         "endChar": 55
       },
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_c7bd7504",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-core/src/main/java/org/openecomp/sdc/healing/impl/HealingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-06T09:38:50Z",
+      "side": 1,
+      "message": "Why is it a data member?",
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_074b8d2c",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-core/src/main/java/org/openecomp/sdc/healing/impl/HealingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-06T09:38:50Z",
+      "side": 1,
+      "message": "Please add spaces after the commas.",
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_4741850a",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-core/src/main/java/org/openecomp/sdc/healing/impl/HealingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-06T09:38:50Z",
+      "side": 1,
+      "message": "A blank line here would improve readability.",
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_e747511c",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-core/src/main/java/org/openecomp/sdc/healing/impl/HealingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-06T09:38:50Z",
+      "side": 1,
+      "message": "Spaces, please.",
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_c75455cc",
+        "filename": "openecomp-be/tools/build/scripts/cassandra-commands.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-06T09:38:50Z",
+      "side": 1,
+      "message": "Please add spaces after the commas.",
       "revId": "fd3eb117738b84975de77391d82e17306a359c25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
