@@ -16,8 +16,8 @@ The sdc projects consists of a few additional sub projects listed below:
 - sdc-distribution-client
 - sdc-titan-cassandra
 
-SDC SDKs guide
-==============
+SDC SDKs Explanations
+=====================
 
 SDC-TOSCA and SDC-DISTRIBUTION-CLIENT
 -------------------------------------
