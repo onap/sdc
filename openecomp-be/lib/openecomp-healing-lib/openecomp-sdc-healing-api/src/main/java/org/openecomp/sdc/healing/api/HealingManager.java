@@ -32,4 +32,8 @@ public interface HealingManager {
     Object heal(HealCode code, Map<String, Object> healParameters);
 
     Optional<String> healAll(Map<String, Object> healParameters);
+
+    public boolean isHealingNeeded(String user,String entityId, String version);
+
+    public void turnOffHealingFlag(String user,String entityId, String version);
 }

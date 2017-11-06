@@ -39,6 +39,7 @@
     "vsp_component_compute": "CREATE TABLE IF NOT EXISTS vsp_component_compute (vsp_id text, version frozen<version>, component_id text, compute_id text, composition_data text, questionnaire_data text, PRIMARY KEY ((vsp_id, version), component_id, compute_id))",
     "vsp_component_dependency_model" : "CREATE TABLE IF NOT EXISTS vsp_component_dependency_model (vsp_id text, version frozen<version>, dependency_id text, sourcecomponent_id text, targetcomponent_id text, relation text, PRIMARY KEY ((vsp_id, version), dependency_id))",
     "activity_log" : "CREATE TABLE IF NOT EXISTS activity_log (item_id text, version_id text, activity_id text, type text, user text, timestamp timestamp, success boolean, message text, comment text, PRIMARY KEY (item_id, version_id, activity_id))",
+    "healing" : "CREATE TABLE IF NOT EXISTS healing (space text,item_id text,version_id text, healing_needed boolean,old_version text, PRIMARY KEY(space,item_id,version_id))",
     "migration": "CREATE TABLE IF NOT EXISTS migration (id text, ismigrated boolean, primary key(id))"
   },
   "drop": {

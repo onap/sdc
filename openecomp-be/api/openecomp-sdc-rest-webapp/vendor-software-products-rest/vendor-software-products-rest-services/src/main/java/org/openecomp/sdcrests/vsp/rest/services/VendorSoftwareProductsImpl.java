@@ -26,6 +26,8 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.healing.api.HealingManager;
+import org.openecomp.sdc.healing.factory.HealingManagerFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.MdcUtil;
@@ -90,6 +92,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
   private VendorSoftwareProductManager vendorSoftwareProductManager =
       VspManagerFactory.getInstance().createInterface();
+
+  private HealingManager healingManager = HealingManagerFactory.getInstance().createInterface();
 
   private static final Logger logger =
       LoggerFactory.getLogger(VendorSoftwareProductsImpl.class);
@@ -167,7 +171,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     VersionInfo versionInfo = getVersionInfo(vspId, VersionableEntityAction.Read, user);
 
 
-    if (vspDetails.getOldVersion() != null && !"".equals(vspDetails.getOldVersion())) {
+    if (healingManager.isHealingNeeded("GLOBAL_USER",vspId,versionId)) {
       if (Version.valueOf(versionId).equals(versionInfo.getActiveVersion())) {
         try {
           Version healedVersion = vendorSoftwareProductManager.callAutoHeal(vspId, versionInfo,

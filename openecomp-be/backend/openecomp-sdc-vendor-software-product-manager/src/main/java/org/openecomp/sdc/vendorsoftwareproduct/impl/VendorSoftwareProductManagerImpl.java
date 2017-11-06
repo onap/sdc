@@ -875,11 +875,9 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     Optional<String> errorMessages =
         healingManager.healAll(getHealingParamsAsMap(vspId, version, user));
 
-    VspDetails vspDetails = new VspDetails(vspId, version);
-    vspDetails.setOldVersion(null);
-    vspInfoDao.updateOldVersionIndication(vspDetails);
+    healingManager.turnOffHealingFlag("GLOBAL_USER",vspId,version.toString());
 
-    LOGGER.audit("Healed VSP " + vspDetails.getId());
+    LOGGER.audit("Healed VSP " + vspId);
     MDC_DATA_DEBUG_MESSAGE.debugExitMessage("VSP id", vspId);
 
     errorMessages.ifPresent(s -> {
@@ -896,9 +894,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     Optional<String> errorMessages = healingManager.healAll(healingParams);
 
-    vspDetails.setVersion(checkoutVersion);
-    vspDetails.setOldVersion(null);
-    vspInfoDao.updateOldVersionIndication(vspDetails);
+    healingManager.turnOffHealingFlag("GLOBAL_USER",vspId,vspDetails.getVersion().toString());
 
     LOGGER.audit("Healed VSP " + vspDetails.getName());
     MDC_DATA_DEBUG_MESSAGE.debugExitMessage("VSP id", vspId);

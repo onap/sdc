@@ -4,7 +4,7 @@ import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.UserInfo;
 import org.openecomp.core.tools.Commands.ImportCommand;
 import org.openecomp.core.tools.Commands.ExportDataCommand;
-import org.openecomp.core.tools.Commands.ResetOldVersion;
+import org.openecomp.core.tools.Commands.SetHealingFlag;
 import org.openecomp.core.tools.util.ToolsUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -38,7 +38,7 @@ public class ZusammenMainTool {
 
     switch (COMMANDS.valueOf(command)){
       case RESET_OLD_VERSION:
-        ResetOldVersion.reset(context,ToolsUtil.getParam("v",args),ToolsUtil.getParam("n",args));
+        SetHealingFlag.populateHealingTable(ToolsUtil.getParam("v",args));
         break;
       case EXPORT:
         ExportDataCommand.exportData(context,ToolsUtil.getParam("i",args));

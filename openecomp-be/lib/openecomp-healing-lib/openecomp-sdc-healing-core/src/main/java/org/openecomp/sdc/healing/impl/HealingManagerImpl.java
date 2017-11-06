@@ -33,6 +33,9 @@ import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
+import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.healing.dao.HealingDao;
+import org.openecomp.sdc.healing.dao.impl.HealingDaoImpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -45,6 +48,7 @@ import java.util.Optional;
 public class HealingManagerImpl implements HealingManager {
   private static String HEALING_CONF_FILE = "healingConfiguration.json";
   private static Map<String, String> healerCodeToImplClass = initHealers();
+  private HealingDao healingDao = new HealingDaoImpl();
 
   @Override
   public Object heal(HealCode code, Map<String, Object> healParameters) {
@@ -69,6 +73,17 @@ public class HealingManagerImpl implements HealingManager {
 
     return healingFailureMessages.isEmpty() ? Optional.empty()
         : Optional.of(CommonMethods.listToSeparatedString(healingFailureMessages, '\n'));
+  }
+
+  @Override
+  public boolean isHealingNeeded(String user,String entityId, String version) {
+
+    return healingDao.getItemHealingFlag(user,entityId,version);
+  }
+  @Override
+  public void turnOffHealingFlag(String user,String entityId, String version) {
+
+    healingDao.setItemHealingFlag(false,user,entityId,version);
   }
 
   private Object heal(Map<String, Object> healParameters, String healerImplClassName,
