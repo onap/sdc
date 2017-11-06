@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_477ce572",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-06T09:36:28Z",
+      "side": 1,
+      "message": "introduce constant",
+      "range": {
+        "startLine": 174,
+        "startChar": 40,
+        "endLine": 174,
+        "endChar": 51
+      },
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_2781e94a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/VendorSoftwareProductManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 878,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-06T09:36:28Z",
+      "side": 1,
+      "message": "introduce constant",
+      "range": {
+        "startLine": 878,
+        "startChar": 39,
+        "endLine": 878,
+        "endChar": 50
+      },
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_a78cb980",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-core/src/main/java/org/openecomp/sdc/healing/dao/impl/HealingDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-06T09:36:28Z",
+      "side": 1,
+      "message": "use capital letters on sql reserved words",
+      "range": {
+        "startLine": 38,
+        "startChar": 12,
+        "endLine": 38,
+        "endChar": 38
+      },
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_47f3c50a",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-core/src/main/java/org/openecomp/sdc/healing/impl/HealingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-06T09:36:28Z",
+      "side": 1,
+      "message": "move instantiation to constructor.",
+      "range": {
+        "startLine": 50,
+        "startChar": 2,
+        "endLine": 51,
+        "endChar": 55
+      },
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_e7d99184",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/SetHealingFlag.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-06T09:36:28Z",
+      "side": 1,
+      "message": "use constant",
+      "range": {
+        "startLine": 29,
+        "startChar": 10,
+        "endLine": 29,
+        "endChar": 21
+      },
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_27cfa9b2",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/SetHealingFlag.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-06T09:36:28Z",
+      "side": 1,
+      "message": "This 2 loops can be merged",
+      "range": {
+        "startLine": 28,
+        "startChar": 4,
+        "endLine": 39,
+        "endChar": 7
+      },
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_a7ba7908",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/main/ZusammenMainTool.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-06T09:36:28Z",
+      "side": 1,
+      "message": "is it possible to give more meaningful names?",
+      "range": {
+        "startLine": 41,
+        "startChar": 64,
+        "endLine": 41,
+        "endChar": 65
+      },
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_87377db0",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/HealingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-06T09:36:28Z",
+      "side": 1,
+      "message": "make isExist function to get only one parameter of type healingEntity and use all it members iside the function instead of sending them separately",
+      "range": {
+        "startLine": 26,
+        "startChar": 19,
+        "endLine": 28,
+        "endChar": 64
+      },
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_673c8194",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/HealingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-06T09:36:28Z",
+      "side": 1,
+      "message": "use capital letters for reserved words",
+      "range": {
+        "startLine": 66,
+        "startChar": 12,
+        "endLine": 66,
+        "endChar": 38
+      },
+      "revId": "fd3eb117738b84975de77391d82e17306a359c25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
