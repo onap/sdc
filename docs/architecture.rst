@@ -5,16 +5,6 @@
 Architecture
 ============
 
-.. note::
-   * This section is used to describe a software component from a high level
-     view of capability, common usage scenarios, and interactions with other
-     components required in the usage scenarios.  
-   
-   * The architecture section is typically: provided in a platform-component
-     and sdk collections; and referenced from developer and user guides.
-   
-   * This note must be removed after content has been added.
-
 SDC As Part of ONAP
 ===================
 
@@ -46,14 +36,3 @@ SDC uses two storage components: Elastic Search(ES) and Cassandra
   
 - **Cassandra** is used to store auditing data, artifacts and data model objects.
 
-
-Capabilities
-============
-
-
-Usage Scenarios
-===============
-
-
-Interactions
-============
