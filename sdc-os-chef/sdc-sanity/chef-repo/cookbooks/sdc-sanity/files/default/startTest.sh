@@ -93,7 +93,7 @@ if [ ${REMOTE_DEBUG} == "true" ]; then
     JAVA_OPTION="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=${debug_port}" ;
 fi
 
-cmd="java $JAVA_OPTION -DdisplayException=true -Dtargetlog=${TARGET_LOG_DIR} -Dfilepath=${FILES_TEST} -Dconfig.resource=${CONF_FILE} -Ddebug=${DEBUG} -Dlog4j.configuration=${LOGS_PROP_FILE} -cp $JAR_FILE ${MainClass} $SUITE_FILE &"
+cmd="java $JAVA_OPTION -Xms1024m -Xmx1024m -DdisplayException=true -Dtargetlog=${TARGET_LOG_DIR} -Dfilepath=${FILES_TEST} -Dconfig.resource=${CONF_FILE} -Ddebug=${DEBUG} -Dlog4j.configuration=${LOGS_PROP_FILE} -cp $JAR_FILE ${MainClass} $SUITE_FILE &"
 
 
 if [ $DEBUG == "true" ]
@@ -108,7 +108,7 @@ if [ ${RERUN} == "true" ]; then
         echo "Prepare" ${TARGET_DIR}/${fileName} "file to rerun all failed tests ...";
         prepareFailedXmlFile ${TARGET_DIR}/${fileName} $SUITE_FILE;
         SUITE_FILE=${fileName};
-	cmd="java $JAVA_OPTION -DdisplayException=true -Dtargetlog=${TARGET_LOG_DIR} -Dfilepath=${FILES_TEST} -Dconfig.resource=${CONF_FILE} -Ddebug=${DEBUG} -Dlog4j.configuration=${LOGS_PROP_FILE} -cp $JAR_FILE ${MainClass} $SUITE_FILE &"
+	cmd="java $JAVA_OPTION -Xms1024m -Xmx1024m -DdisplayException=true -Dtargetlog=${TARGET_LOG_DIR} -Dfilepath=${FILES_TEST} -Dconfig.resource=${CONF_FILE} -Ddebug=${DEBUG} -Dlog4j.configuration=${LOGS_PROP_FILE} -cp $JAR_FILE ${MainClass} $SUITE_FILE &"
         $cmd;
     fi
 fi
