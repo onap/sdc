@@ -65,7 +65,7 @@ topology_template:
       immutable: false
       type: string
   node_templates:
-    cmaui_port_2:
+    cmaui_port_12:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
@@ -89,17 +89,7 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: packet_external_network
           relationship: tosca.relationships.network.LinksTo
-    packet_external_network:
-      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
-      properties:
-        network_name:
-          get_input: packet_external_network_name
-    packet_internal_network:
-      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
-      properties:
-        network_name:
-          get_input: packet_internal_network_name
-    cmaui_port_1:
+    cmaui_port_11:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
@@ -123,6 +113,16 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: packet_internal_network
           relationship: tosca.relationships.network.LinksTo
+    packet_external_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_external_network_name
+    packet_internal_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_internal_network_name
   groups:
     nested-no-compute_group:
       type: org.openecomp.groups.heat.HeatStack
@@ -130,10 +130,10 @@ topology_template:
         heat_file: ../Artifacts/nested-no-compute.yml
         description: nested1
       members:
-      - cmaui_port_2
+      - cmaui_port_12
+      - cmaui_port_11
       - packet_external_network
       - packet_internal_network
-      - cmaui_port_1
   outputs:
     no_compute_attr_1:
       description: no_compute_attr_1
@@ -141,86 +141,89 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested-no-compute
     capabilities:
-      network.incoming.packets_cmaui_port_2:
-      - cmaui_port_2
-      - network.incoming.packets
-      network.incoming.packets_cmaui_port_1:
-      - cmaui_port_1
-      - network.incoming.packets
-      network.incoming.packets.rate_cmaui_port_1:
-      - cmaui_port_1
-      - network.incoming.packets.rate
-      network.incoming.packets.rate_cmaui_port_2:
-      - cmaui_port_2
-      - network.incoming.packets.rate
-      feature_cmaui_port_1:
-      - cmaui_port_1
-      - feature
-      feature_cmaui_port_2:
-      - cmaui_port_2
-      - feature
+      network.outgoing.bytes.rate_cmaui_port_11:
+      - cmaui_port_11
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_cmaui_port_12:
+      - cmaui_port_12
+      - network.outgoing.bytes.rate
+      network.outpoing.packets_cmaui_port_11:
+      - cmaui_port_11
+      - network.outpoing.packets
+      network.outpoing.packets_cmaui_port_12:
+      - cmaui_port_12
+      - network.outpoing.packets
       end_point_packet_internal_network:
       - packet_internal_network
       - end_point
+      feature_cmaui_port_12:
+      - cmaui_port_12
+      - feature
+      feature_cmaui_port_11:
+      - cmaui_port_11
+      - feature
       link_packet_internal_network:
       - packet_internal_network
       - link
       feature_packet_internal_network:
       - packet_internal_network
       - feature
+      network.incoming.bytes.rate_cmaui_port_11:
+      - cmaui_port_11
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_cmaui_port_12:
+      - cmaui_port_12
+      - network.incoming.bytes.rate
       end_point_packet_external_network:
       - packet_external_network
       - end_point
-      attachment_cmaui_port_2:
-      - cmaui_port_2
-      - attachment
-      network.outgoing.bytes_cmaui_port_2:
-      - cmaui_port_2
+      network.outgoing.bytes_cmaui_port_11:
+      - cmaui_port_11
       - network.outgoing.bytes
-      network.outgoing.packets.rate_cmaui_port_1:
-      - cmaui_port_1
-      - network.outgoing.packets.rate
-      network.outgoing.packets.rate_cmaui_port_2:
-      - cmaui_port_2
-      - network.outgoing.packets.rate
-      network.outgoing.bytes_cmaui_port_1:
-      - cmaui_port_1
+      network.outgoing.bytes_cmaui_port_12:
+      - cmaui_port_12
       - network.outgoing.bytes
-      attachment_cmaui_port_1:
-      - cmaui_port_1
-      - attachment
-      binding_cmaui_port_1:
-      - cmaui_port_1
-      - binding
-      binding_cmaui_port_2:
-      - cmaui_port_2
-      - binding
-      network.incoming.bytes.rate_cmaui_port_1:
-      - cmaui_port_1
-      - network.incoming.bytes.rate
-      network.incoming.bytes.rate_cmaui_port_2:
-      - cmaui_port_2
-      - network.incoming.bytes.rate
       attachment_packet_internal_network:
       - packet_internal_network
       - attachment
-      network.outpoing.packets_cmaui_port_1:
-      - cmaui_port_1
-      - network.outpoing.packets
-      network.outpoing.packets_cmaui_port_2:
-      - cmaui_port_2
-      - network.outpoing.packets
-      network.outgoing.bytes.rate_cmaui_port_2:
-      - cmaui_port_2
-      - network.outgoing.bytes.rate
-      network.outgoing.bytes.rate_cmaui_port_1:
-      - cmaui_port_1
-      - network.outgoing.bytes.rate
+      network.outgoing.packets.rate_cmaui_port_12:
+      - cmaui_port_12
+      - network.outgoing.packets.rate
+      binding_cmaui_port_12:
+      - cmaui_port_12
+      - binding
+      network.outgoing.packets.rate_cmaui_port_11:
+      - cmaui_port_11
+      - network.outgoing.packets.rate
+      binding_cmaui_port_11:
+      - cmaui_port_11
+      - binding
+      attachment_cmaui_port_12:
+      - cmaui_port_12
+      - attachment
+      attachment_cmaui_port_11:
+      - cmaui_port_11
+      - attachment
+      network.incoming.packets.rate_cmaui_port_12:
+      - cmaui_port_12
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_cmaui_port_11:
+      - cmaui_port_11
+      - network.incoming.packets.rate
       attachment_packet_external_network:
       - packet_external_network
       - attachment
-      network.incoming.bytes_cmaui_port_2:
-      - cmaui_port_2
+      network.incoming.bytes_cmaui_port_12:
+      - cmaui_port_12
+      - network.incoming.bytes
+      network.incoming.packets_cmaui_port_11:
+      - cmaui_port_11
+      - network.incoming.packets
+      network.incoming.packets_cmaui_port_12:
+      - cmaui_port_12
+      - network.incoming.packets
+      network.incoming.bytes_cmaui_port_11:
+      - cmaui_port_11
       - network.incoming.bytes
       link_packet_external_network:
       - packet_external_network
@@ -228,25 +231,22 @@ topology_template:
       feature_packet_external_network:
       - packet_external_network
       - feature
-      network.incoming.bytes_cmaui_port_1:
-      - cmaui_port_1
-      - network.incoming.bytes
     requirements:
-      binding_cmaui_port_1:
-      - cmaui_port_1
-      - binding
-      binding_cmaui_port_2:
-      - cmaui_port_2
+      dependency_cmaui_port_11:
+      - cmaui_port_11
+      - dependency
+      dependency_cmaui_port_12:
+      - cmaui_port_12
+      - dependency
+      binding_cmaui_port_12:
+      - cmaui_port_12
       - binding
       dependency_packet_internal_network:
       - packet_internal_network
       - dependency
-      dependency_cmaui_port_1:
-      - cmaui_port_1
-      - dependency
-      dependency_cmaui_port_2:
-      - cmaui_port_2
-      - dependency
+      binding_cmaui_port_11:
+      - cmaui_port_11
+      - binding
       dependency_packet_external_network:
       - packet_external_network
       - dependency

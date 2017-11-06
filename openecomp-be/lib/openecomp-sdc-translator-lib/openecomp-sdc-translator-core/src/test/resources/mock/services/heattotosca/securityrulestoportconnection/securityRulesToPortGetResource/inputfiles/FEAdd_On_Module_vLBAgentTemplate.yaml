@@ -72,7 +72,7 @@ parameters:
   vnf_id:
     type: string
 resources:
-  oam_private_net_network_port:
+  oam_private_net_network_port_3:
     properties:
       network:
         get_param: oam_private_net_name
@@ -86,7 +86,7 @@ resources:
       security_groups:
       - get_param: security_group
     type: OS::Neutron::Port
-  packet_mirror_network_port:
+  packet_mirror_network_port_1:
     properties:
       network:
         get_param: packet_mirror_network
@@ -123,13 +123,13 @@ resources:
           get_param: ntp_timezone
         oam_private_network_cidr:
           get_attr:
-          - oam_private_net_network_port
+          - oam_private_net_network_port_3
           - subnets
           - 0
           - cidr
         oam_private_network_ip_0:
           get_attr:
-          - oam_private_net_network_port
+          - oam_private_net_network_port_3
           - fixed_ip_0s
           - 0
           - ip_address
@@ -147,13 +147,13 @@ resources:
           - ip_address
         packet_mirror_network_cidr:
           get_attr:
-          - packet_mirror_network_port
+          - packet_mirror_network_port_1
           - subnets
           - 0
           - cidr
         packet_mirror_network_ip_0:
           get_attr:
-          - packet_mirror_network_port
+          - packet_mirror_network_port_1
           - fixed_ip_0s
           - 0
           - ip_address
@@ -193,9 +193,9 @@ resources:
         - get_param: vLBAgent_index
       networks:
       - port:
-          get_resource: oam_private_net_network_port
+          get_resource: oam_private_net_network_port_3
       - port:
-          get_resource: packet_mirror_network_port
+          get_resource: packet_mirror_network_port_1
       - port:
           get_resource: packet_internal_network_port
       personality:

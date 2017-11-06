@@ -10,7 +10,7 @@ parameters:
 
 resources:
 
-  jsa_security_group:
+  jsa_security_group_1:
     type: OS::Neutron::SecurityGroup
     properties:
       description: ems security group
@@ -29,7 +29,7 @@ resources:
               {"direction": ingress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"}
               ]
 
-  dependsOn_network:
+  dependsOn_network_0:
     type: OS::Neutron::Net
     properties:
       name:
