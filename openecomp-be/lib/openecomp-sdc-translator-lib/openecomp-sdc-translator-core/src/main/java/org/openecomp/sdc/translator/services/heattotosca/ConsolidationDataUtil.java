@@ -527,7 +527,7 @@ public class ConsolidationDataUtil {
    */
   public static String getPortType(String portNodeTemplateId) {
 
-    if (!StringUtils.isNotBlank(portNodeTemplateId)) {
+    if (StringUtils.isBlank(portNodeTemplateId)) {
       return portNodeTemplateId;
     }
 
