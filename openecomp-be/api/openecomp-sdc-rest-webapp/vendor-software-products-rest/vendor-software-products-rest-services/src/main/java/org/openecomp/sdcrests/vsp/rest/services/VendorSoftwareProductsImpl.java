@@ -20,8 +20,6 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import org.openecomp.sdc.activityLog.ActivityLogManager;
-import org.openecomp.sdc.activityLog.ActivityLogManagerFactory;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -48,23 +46,9 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.OnboardingMethod;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.PackageInfoDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.ValidationResponseDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VersionSoftwareProductActionRequestDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspComputeDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspCreationDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.*;
 import org.openecomp.sdcrests.vsp.rest.VendorSoftwareProducts;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapComputeEntityToVspComputeDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapPackageInfoToPackageInfoDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapQuestionnaireResponseToQuestionnaireResponseDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapValidationResponseToDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapVersionedVendorSoftwareProductInfoToVspDetailsDto;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDescriptionDtoToVspDetails;
-import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDetailsToVspCreationDto;
+import org.openecomp.sdcrests.vsp.rest.mapping.*;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
 import org.slf4j.MDC;
@@ -88,14 +72,11 @@ import static org.openecomp.sdc.logging.messages.AuditMessages.SUBMIT_VSP_ERROR;
 @Scope(value = "prototype")
 public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
-  private VendorSoftwareProductManager vendorSoftwareProductManager =
+  private final VendorSoftwareProductManager vendorSoftwareProductManager =
       VspManagerFactory.getInstance().createInterface();
 
   private static final Logger logger =
       LoggerFactory.getLogger(VendorSoftwareProductsImpl.class);
-
-  private ActivityLogManager activityLogManager =
-      ActivityLogManagerFactory.getInstance().createInterface();
 
   @Override
   public Response createVsp(VspDescriptionDto vspDescriptionDto, String user) {
@@ -103,12 +84,14 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VSP
         + vspDescriptionDto.getName());
 
-    VspCreationDto vspCreationDto = null;
-    OnboardingMethod onboardingMethod =
-        OnboardingMethod.valueOf(vspDescriptionDto.getOnboardingMethod());
-    if (onboardingMethod == null) {
-      return handleUnkownOnboardingMethod();
+    OnboardingMethod onboardingMethod;
+
+    try {
+      onboardingMethod = OnboardingMethod.valueOf(vspDescriptionDto.getOnboardingMethod());
+    } catch (IllegalArgumentException e) {
+      return handleUnknownOnboardingMethod();
     }
+
     switch (onboardingMethod) {
       case NetworkPackage:
       case Manual:
@@ -118,16 +101,14 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         vspDetails = vendorSoftwareProductManager.createVsp(vspDetails, user);
 
         MapVspDetailsToVspCreationDto mapping = new MapVspDetailsToVspCreationDto();
-        vspCreationDto = mapping.applyMapping(vspDetails, VspCreationDto.class);
-        break;
+        VspCreationDto vspCreationDto = mapping.applyMapping(vspDetails, VspCreationDto.class);
+        return Response.ok(vspCreationDto).build();
       default:
-        return handleUnkownOnboardingMethod();
+        return handleUnknownOnboardingMethod();
     }
-
-    return Response.ok(vspCreationDto).build();
   }
 
-  private Response handleUnkownOnboardingMethod() {
+  private Response handleUnknownOnboardingMethod() {
     ErrorCode onboardingMethodUpdateErrorCode = OnboardingMethodErrorBuilder
         .getInvalidOnboardingMethodErrorBuilder();
     MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
