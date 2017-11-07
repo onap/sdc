@@ -38,7 +38,7 @@
     "react-select": "1.0.0-rc.5",
     "react-sortable": "^1.2.0",
     "redux": "^3.3.1",
-    "restful-js": "^0.7.0",
+    "restful-js": "0.7.0",
     "sdc-ui": "1.6.8",
     "uuid-js": "^0.7.5",
     "validator": "^4.3.0"
