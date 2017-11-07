@@ -35,7 +35,6 @@ import {navigationItems as SoftwareProductNavigationItems, actionTypes as Softwa
 import ActivityLogActionHelper from 'sdc-app/common/activity-log/ActivityLogActionHelper.js';
 import licenseModelOverviewActionHelper from 'sdc-app/onboarding/licenseModel/overview/licenseModelOverviewActionHelper.js';
 import store from 'sdc-app/AppStore.js';
-import {selectedButton as licenseModelOverviewSelectedButton} from 'sdc-app/onboarding/licenseModel/overview/LicenseModelOverviewConstants.js';
 import {tabsMapping as attachmentsTabsMapping} from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsConstants.js';
 import SoftwareProductAttachmentsActionHelper from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsActionHelper.js';
 
@@ -99,7 +98,7 @@ export default {
 			LicenseModelActionHelper.fetchLicenseModelItems(dispatch, {licenseModelId, version}).then(() =>{
 				setCurrentScreen(dispatch, enums.SCREEN.LICENSE_MODEL_OVERVIEW, {licenseModelId, version});
 			});
-			licenseModelOverviewActionHelper.selectVLMListView(dispatch, {buttonTab: licenseModelOverviewSelectedButton.VLM_LIST_VIEW});
+			licenseModelOverviewActionHelper.selectVLMListView(dispatch, {buttonTab: null});
 		});
 	},
 	navigateToLicenseAgreements(dispatch, {licenseModelId, version}) {

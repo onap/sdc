@@ -56,6 +56,7 @@ describe('License Model Overview - View: ', function () {
 			isDisplayModal: false,
 			modalHeader: undefined,
 			licensingDataList: [laData],
+			orphanDataList: [],
 			selectedTab: selectedButton.VLM_LIST_VIEW,
 			onTabSelect: () => {}
 		};

@@ -51,6 +51,7 @@ class LicenseModelOverviewView extends React.Component {
 		isReadOnlyMode: React.PropTypes.bool,
 		licenseModelId: React.PropTypes.string,
 		licensingDataList: React.PropTypes.array,
+		orphanDataList: React.PropTypes.array,
 		modalHeader: React.PropTypes.string,
 		selectedTab: React.PropTypes.string,
 		onTabSelect: React.PropTypes.func,
@@ -59,17 +60,20 @@ class LicenseModelOverviewView extends React.Component {
 	};
 
 	render() {
-		let {isDisplayModal, modalHeader, licensingDataList, selectedTab, onTabSelect} = this.props;
+		let {isDisplayModal, modalHeader, licensingDataList, selectedTab, onTabSelect, orphanDataList} = this.props;
 		let selectedInUse = selectedTab !== selectedButton.NOT_IN_USE;
-
+		let dataList = selectedInUse ? licensingDataList : orphanDataList;
 		return(
 			<div className='license-model-overview'>
 				<SummaryView/>
 				<div className={classNames('overview-list-section ', !selectedInUse ? 'overview-list-orphans' : '' )}>
 					<div className='vlm-list-tab-panel'>
-						<ListButtons onTabSelect={onTabSelect} selectedTab={selectedTab}/>
+						<ListButtons onTabSelect={onTabSelect}
+							 selectedTab={selectedTab}
+							 hasOrphans={orphanDataList.length > 0}
+							 hasLicensing={licensingDataList.length > 0}/>
 					</div>
-					<VLMListView licensingDataList={licensingDataList} showInUse={selectedInUse}/>
+					<VLMListView licensingDataList={dataList} showInUse={selectedInUse}/>
 				</div>
 				{
 					isDisplayModal &&

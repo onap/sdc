@@ -128,17 +128,18 @@ export const mapStateToProps = ({licenseModel: {licenseModelEditor, entitlementP
 		modalHeader = overviewEditorHeaders.LICENSE_KEY_GROUP;
 		isDisplayModal = true;
 	}
+	let orphanDataList = [
+		...featureGroup.featureGroupsList.reduce(checkFG, []),
+		...entitlementPool.entitlementPoolsList.reduce(checkEP, []),
+		...licenseKeyGroup.licenseKeyGroupsList.reduce(checkLG, [])
+	];
 
-	if (licenseModelOverview.selectedTab === selectedButton.NOT_IN_USE) {
-		licensingDataList = [
-			...featureGroup.featureGroupsList.reduce(checkFG, []),
-			...entitlementPool.entitlementPoolsList.reduce(checkEP, []),
-			...licenseKeyGroup.licenseKeyGroupsList.reduce(checkLG, [])
-		];
-	}else {
-		licensingDataList = licenseAgreement.licenseAgreementList && licenseAgreement.licenseAgreementList.length ? licenseAgreement.licenseAgreementList.map(mapLicenseAgreementData) : [];
+	licensingDataList = licenseAgreement.licenseAgreementList && licenseAgreement.licenseAgreementList.length ? licenseAgreement.licenseAgreementList.map(mapLicenseAgreementData) : [];
+	let selectedTab = licenseModelOverview.selectedTab;
+	// on first entry, we will decide what tab to open depending on data. if there are no connections, we will open the orphans
+	if (selectedTab === null) {
+		selectedTab = (licensingDataList.length) ? selectedButton.VLM_LIST_VIEW : selectedButton.NOT_IN_USE;
 	}
-
 	return {
 		isReadOnlyMode: VersionControllerUtils.isReadOnly(licenseModelEditor.data),
 		isDisplayModal,
@@ -146,8 +147,8 @@ export const mapStateToProps = ({licenseModel: {licenseModelEditor, entitlementP
 		licenseModelId: licenseModelEditor.data.id,
 		version: licenseModelEditor.data.version,
 		licensingDataList,
-		selectedTab: licenseModelOverview.selectedTab
-
+		orphanDataList,
+		selectedTab
 	};
 };
 

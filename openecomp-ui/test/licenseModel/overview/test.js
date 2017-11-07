@@ -29,7 +29,17 @@ describe('License Model Overview: ', function () {
 		expect(mapStateToProps).toBeTruthy();
 	});
 
-	const VLM1 = LicenseModelOverviewFactory.build();
+	const VLM1 = LicenseModelOverviewFactory.build({
+		featureGroup: {
+			featureGroupsList: [],
+		},
+		entitlementPool: {
+			entitlementPoolsList: []
+		},
+		licenseKeyGroup: {
+			licenseKeyGroupsList: []
+		}
+	});
 
 	it('should mapper return vlm overview basic data', () => {
 		const state = {
@@ -42,6 +52,7 @@ describe('License Model Overview: ', function () {
 		expect(props.modalHeader).toEqual(undefined);
 		expect(props.licenseModelId).toEqual(VLM1.licenseModelEditor.data.id);
 		expect(props.licensingDataList).toEqual([]);
+		expect(props.orphanDataList).toEqual([]);
 		expect(props.selectedTab).toEqual(selectedButton.VLM_LIST_VIEW);
 	});
 
@@ -51,6 +62,15 @@ describe('License Model Overview: ', function () {
 				licenseAgreementEditor: {
 					data: LicenseAgreement.build()
 				}
+			},
+			featureGroup: {
+				featureGroupsList: [],
+			},
+			entitlementPool: {
+				entitlementPoolsList: []
+			},
+			licenseKeyGroup: {
+				licenseKeyGroupsList: []
 			}
 		});
 
@@ -101,11 +121,18 @@ describe('License Model Overview: ', function () {
 	});
 
 	it('should mapper return overview data for show EP modal', () => {
-		const VLM1 = LicenseModelOverviewFactory.build({
+		const VLM1 = LicenseModelOverviewFactory.build(	{
+			featureGroup: {
+				featureGroupsList: [],
+			},
 			entitlementPool: {
+				entitlementPoolsList: [],
 				entitlementPoolEditor: {
 					data: EntitlementPool.build()
 				}
+			},
+			licenseKeyGroup: {
+				licenseKeyGroupsList: []
 			}
 		});
 
@@ -283,7 +310,6 @@ describe('License Model Overview: ', function () {
 				selectedTab: selectedButton.NOT_IN_USE
 			}
 		});
-
 		const state = {
 			licenseModel: VLM1
 		};
@@ -300,7 +326,8 @@ describe('License Model Overview: ', function () {
 		expect(props.isDisplayModal).toEqual(false);
 		expect(props.modalHeader).toEqual(undefined);
 		expect(props.licenseModelId).toEqual(VLM1.licenseModelEditor.data.id);
-		expect(props.licensingDataList).toEqual(expectedLicensingDataList);
+		expect(props.licensingDataList).toEqual([]);
+		expect(props.orphanDataList).toEqual(expectedLicensingDataList);
 		expect(props.selectedTab).toEqual(selectedButton.NOT_IN_USE);
 	});
 
@@ -349,7 +376,9 @@ describe('License Model Overview: ', function () {
 		expect(props.isDisplayModal).toEqual(false);
 		expect(props.modalHeader).toEqual(undefined);
 		expect(props.licenseModelId).toEqual(VLM1.licenseModelEditor.data.id);
-		expect(props.licensingDataList).toEqual(expectedLicensingDataList);
+		expect(props.licensingDataList).toEqual([]);
+		expect(props.orphanDataList).toEqual(expectedLicensingDataList);
 		expect(props.selectedTab).toEqual(selectedButton.NOT_IN_USE);
 	});
+
 });

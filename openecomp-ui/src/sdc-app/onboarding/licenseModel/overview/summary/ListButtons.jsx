@@ -19,18 +19,22 @@ import Tabs from 'sdc-ui/lib/react/Tabs.js';
 import Tab from 'sdc-ui/lib/react/Tab.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
-function ListButtons ({onTabSelect, selectedTab}) {
+function ListButtons ({onTabSelect, selectedTab, hasOrphans, hasLicensing}) {
+	// no data, no tabs
+	if (!hasLicensing && !hasOrphans) {
+		return null;
+	}
 	return (
 		<Tabs 
 			onTabClick={(tabId) => onTabSelect(tabId)}
-			activeTab={selectedTab} 
-			className='overview-buttons-section' 
+			activeTab={selectedTab}
+			className='overview-buttons-section'
 			type='header' >
-			<Tab 
+			<Tab
 				tabId={selectedButton.VLM_LIST_VIEW}
 				title={i18n('Connections List')}
 				data-test-id='vlm-overview-vlmlist-tab' />
-			<Tab 
+			<Tab
 				tabId={selectedButton.NOT_IN_USE}
 				title={i18n('Orphans List')}
 				data-test-id='vlm-overview-orphans-tab' />
