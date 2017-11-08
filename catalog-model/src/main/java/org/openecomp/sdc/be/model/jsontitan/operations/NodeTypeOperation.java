@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import fj.data.Either;
+import java.util.stream.Collectors;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -58,8 +59,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @org.springframework.stereotype.Component("node-type-operation")
@@ -757,24 +760,48 @@ public class NodeTypeOperation extends ToscaElementOperation {
 					return DaoStatusConverter.convertTitanStatusToStorageStatus(error);
 				}
 				// must be only one
-				GraphVertex newDerived = getParentResources.left().value().get(0);
-				derivedResources.add(newDerived);
-				StorageOperationStatus updateStatus = updateDataFromNewDerived(derivedResources, nodeTypeV, (NodeType)toscaElementToUpdate);
-				if (updateStatus != StorageOperationStatus.OK) {
-					CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update data for {} from new derived {} ", nodeTypeV.getUniqueId(), newDerived.getUniqueId(), updateStatus);
-					return updateStatus;
-				}
-
-				Either<Edge, TitanOperationStatus> deleteEdge = titanDao.deleteEdge(nodeTypeV, firstDerivedInChain, EdgeLabelEnum.DERIVED_FROM);
-				if (deleteEdge.isRight()) {
-					TitanOperationStatus deleteError = deleteEdge.right().value();
-					log.debug("Failed to disassociate element {} from derived {} , error {}", nodeTypeV.getUniqueId(), firstDerivedInChain.getUniqueId(), deleteError);
-					return DaoStatusConverter.convertTitanStatusToStorageStatus(deleteError);
-				}
-
-				titanDao.createEdge(nodeTypeV, newDerived, EdgeLabelEnum.DERIVED_FROM, new HashMap<>());
+				GraphVertex newDerivedV = getParentResources.left().value().get(0);
+				return updateDerived(toscaElementToUpdate, nodeTypeV, firstDerivedInChain, newDerivedV, false);
 			}
 		}
+		return StorageOperationStatus.OK;
+	}
+
+	/**
+	 * 
+	 * @param toscaElementToUpdate
+	 * @param nodeTypeV
+	 * @param preDerivedV
+	 * @param newDerivedV
+	 * @param mergeValues
+	 * @return
+	 */
+	protected <T extends ToscaElement> StorageOperationStatus updateDerived(T toscaElementToUpdate, GraphVertex nodeTypeV, GraphVertex preDerivedV, GraphVertex newDerivedV, boolean mergeValues) {
+		Set<String> preDerivedChainIdList = new HashSet();
+		preDerivedChainIdList.add(preDerivedV.getUniqueId());
+		Either<GraphVertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(preDerivedV, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.NoParse);
+		while (childVertex.isLeft()) {
+			GraphVertex currentChield = childVertex.left().value();
+			preDerivedChainIdList.add(currentChield.getUniqueId());
+			childVertex = titanDao.getChildVertex(currentChield, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.NoParse);
+		}
+
+		List<GraphVertex> derivedResources = new ArrayList<>();
+		derivedResources.add(newDerivedV);
+		StorageOperationStatus updateStatus = updateDataFromNewDerived(derivedResources, nodeTypeV, (NodeType) toscaElementToUpdate, mergeValues, preDerivedChainIdList);
+		if (updateStatus != StorageOperationStatus.OK) {
+			CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update data for {} from new derived {} ", nodeTypeV.getUniqueId(), newDerivedV.getUniqueId(), updateStatus);
+			return updateStatus;
+		}
+
+		Either<Edge, TitanOperationStatus> deleteEdge = titanDao.deleteEdge(nodeTypeV, preDerivedV, EdgeLabelEnum.DERIVED_FROM);
+		if (deleteEdge.isRight()) {
+			TitanOperationStatus deleteError = deleteEdge.right().value();
+			log.debug("Failed to disassociate element {} from derived {} , error {}", nodeTypeV.getUniqueId(), preDerivedV.getUniqueId(), deleteError);
+			return DaoStatusConverter.convertTitanStatusToStorageStatus(deleteError);
+		}
+
+		titanDao.createEdge(nodeTypeV, newDerivedV, EdgeLabelEnum.DERIVED_FROM, new HashMap<>());
 
 		return StorageOperationStatus.OK;
 	}
@@ -800,20 +827,20 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
 	}
 
-	private StorageOperationStatus updateDataFromNewDerived(List<GraphVertex> newDerived, GraphVertex nodeTypeV, NodeType nodeToUpdate) {    
+	private StorageOperationStatus updateDataFromNewDerived(List<GraphVertex> newDerived, GraphVertex nodeTypeV, NodeType nodeToUpdate, boolean mergeValues, Set<String> preDerivedChainIdList) {
 		EnumSet<EdgeLabelEnum> edgeLabels = EnumSet.of(EdgeLabelEnum.CAPABILITIES, EdgeLabelEnum.REQUIREMENTS, EdgeLabelEnum.PROPERTIES, EdgeLabelEnum.ATTRIBUTES, EdgeLabelEnum.CAPABILITIES_PROPERTIES, EdgeLabelEnum.ADDITIONAL_INFORMATION);
 		StorageOperationStatus status = null;
-		for (EdgeLabelEnum edge : edgeLabels){
-			status = updateDataByType(newDerived, nodeTypeV, edge, nodeToUpdate);
+		for (EdgeLabelEnum edge : edgeLabels) {
+			status = updateDataByType(newDerived, nodeTypeV, edge, nodeToUpdate, mergeValues, preDerivedChainIdList);
 			if (status != StorageOperationStatus.OK) {
 				break;
 			}
 		}
 		return status;
-		
+
 	}
 
-	private <T extends ToscaDataDefinition> StorageOperationStatus updateDataByType(List<GraphVertex> newDerivedList, GraphVertex nodeTypeV, EdgeLabelEnum label, NodeType nodeElement) {
+	private <T extends ToscaDataDefinition> StorageOperationStatus updateDataByType(List<GraphVertex> newDerivedList, GraphVertex nodeTypeV, EdgeLabelEnum label, NodeType nodeElement, boolean mergeValues, Set<String> preDerivedChainIdList) {
 		log.debug("Update data from derived for element {} type {}", nodeTypeV.getUniqueId(), label);
 		Either<GraphVertex, TitanOperationStatus> dataFromGraph = getDataVertex(nodeTypeV, label);
 		if (dataFromGraph.isRight()) {
@@ -824,9 +851,23 @@ public class NodeTypeOperation extends ToscaElementOperation {
 		GraphVertex dataV = dataFromGraph.left().value();
 
 		Map<String, T> mapFromGraph = (Map<String, T>) dataV.getJson();
-		mapFromGraph.entrySet().removeIf(e -> e.getValue().getOwnerId() != null);
+		Map<String, T> valuesFrmPrev = null;
+		if (isSimpleHierarchy(label)) {
+			if (mergeValues) {
+				valuesFrmPrev = mapFromGraph.entrySet().stream().filter(e -> e.getValue().getOwnerId() != null).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+			}
+			mapFromGraph.entrySet().removeIf(e -> preDerivedChainIdList.contains(e.getValue().getOwnerId()));
+		} else {
+			final Map<String, T> valuesFrmPrevFinal = new HashMap<>();
+			mapFromGraph.entrySet().stream().forEach(e -> {
+				T value = e.getValue();
+				value = ToscaDataDefinition.removeAndCollectByOwnerId(value, preDerivedChainIdList);
+				valuesFrmPrevFinal.put(e.getKey(), value);
+			});
+			valuesFrmPrev = valuesFrmPrevFinal;
+			mapFromGraph.entrySet().removeIf(e->e.getValue().isEmpty());
+		}
 
-		
 		Either<Map<String, T>, StorageOperationStatus> dataFromDerived = getDataFromDerived(newDerivedList, label);
 		if (dataFromDerived.isRight()) {
 			return dataFromDerived.right().value();
@@ -845,10 +886,74 @@ public class NodeTypeOperation extends ToscaElementOperation {
 		}
 		return StorageOperationStatus.OK;
 	}
+	
+		private boolean isSimpleHierarchy(EdgeLabelEnum label) {
+		switch (label) {
+		case PROPERTIES:
+		case ATTRIBUTES:
+		case ADDITIONAL_INFORMATION:
+		case ARTIFACTS:
+		case GROUPS:
+		case INPUTS:
+			return true;
+		default:
+			return false;
+		}
+	}
 
+	
 	@Override
 	public <T extends ToscaElement> void fillToscaElementVertexData(GraphVertex elementV, T toscaElementToUpdate, JsonParseFlagEnum flag) {
 		fillMetadata(elementV, (NodeType) toscaElementToUpdate);
+	}
+
+	public Either<ToscaElement, StorageOperationStatus> shouldUpdateDerivedVersion(ToscaElement toscaElementToUpdate, GraphVertex nodeTypeV) {
+		NodeType nodeType = (NodeType) toscaElementToUpdate;
+
+		Either<GraphVertex, TitanOperationStatus> childVertex = titanDao.getChildVertex(nodeTypeV, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.NoParse);
+		if (childVertex.isRight()) {
+			TitanOperationStatus getchildError = childVertex.right().value();
+			if (getchildError == TitanOperationStatus.NOT_FOUND) {
+				log.debug("derived resource for element {} not found", nodeTypeV.getUniqueId());
+				return Either.right(StorageOperationStatus.OK);
+			}
+
+			log.debug("Failed to fetch derived resource for element {} error {}", nodeTypeV.getUniqueId(), getchildError);
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getchildError));
+		}
+		GraphVertex firstDerivedInChain = childVertex.left().value();
+
+		String currentVersion = (String) firstDerivedInChain.getMetadataProperty(GraphPropertyEnum.VERSION);
+
+		Map<GraphPropertyEnum, Object> props = new HashMap<>();
+		props.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, nodeType.getDerivedFrom().get(0));
+		props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+		props.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+
+		Map<GraphPropertyEnum, Object> propsHasNot = new HashMap<>();
+		propsHasNot.put(GraphPropertyEnum.IS_DELETED, true);
+		Either<List<GraphVertex>, TitanOperationStatus> byCriteria = titanDao.getByCriteria(VertexTypeEnum.NODE_TYPE, props, propsHasNot, JsonParseFlagEnum.NoParse);
+		if (byCriteria.isRight()) {
+			log.debug("Failed to fetch derived by props {} error {}", props, byCriteria.right().value());
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(byCriteria.right().value()));
+		}
+		List<GraphVertex> lastDerived = byCriteria.left().value();
+		// now supported only one derived!!! Change in future!(Evg)
+		GraphVertex derivedFromHighest = lastDerived.get(0);
+		String highestVersion = (String) derivedFromHighest.getMetadataProperty(GraphPropertyEnum.VERSION);
+		if (!highestVersion.equals(currentVersion)) {
+
+			// need to update to latest version of derived from
+			StorageOperationStatus updateDerived = updateDerived(toscaElementToUpdate, nodeTypeV, firstDerivedInChain, derivedFromHighest, true);
+
+			if (updateDerived != StorageOperationStatus.OK) {
+				log.debug("Failed to update {} to highest derived {} from error {}", nodeTypeV.getUniqueId(), derivedFromHighest.getUniqueId(), updateDerived);
+				return Either.right(updateDerived);
+			}
+			return getToscaElement(nodeTypeV.getUniqueId(), new ComponentParametersView());
+		}
+		// no version changes
+		return Either.right(StorageOperationStatus.OK);
 	}
 
 }

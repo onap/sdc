@@ -49,11 +49,11 @@ public class ArtifactTemplateInfo {
 	public static final String ENV = "env";
 	public static final String IS_BASE = "isBase";
 
-	private static final String CSAR_HEAT = "HEAT";
-	private static final String CSAR_ARTIFACT = "artifacts";
-	private static final String CSAR_NETWORK = "network";
-	private static final String CSAR_VOLUME = "volume";
-	private static final String CSAR_NESTED = "nested";
+	public static final String CSAR_HEAT = "HEAT";
+	public static final String CSAR_ARTIFACT = "artifacts";
+	public static final String CSAR_NETWORK = "network";
+	public static final String CSAR_VOLUME = "volume";
+	public static final String CSAR_NESTED = "nested";
 	private static final Object DESC = "description";
 	private static Logger log = LoggerFactory.getLogger(ArtifactTemplateInfo.class.getName());
 	String type;
