@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.codehaus.jackson.annotate.JsonCreator;
@@ -103,5 +104,14 @@ public abstract class ToscaDataDefinition {
 
 	public boolean findUidMatch(String uid){
 		return uid.equals(getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID));
+	}
+	public <T extends ToscaDataDefinition>  T removeByOwnerId(Set<String> ownerIdList) {
+		return (T) this;
+	}
+	public static <T extends ToscaDataDefinition> T removeAndCollectByOwnerId(T complexStructure, Set<String> ownerIdList) {
+		return complexStructure.removeByOwnerId(ownerIdList);
+	}
+	public boolean isEmpty(){
+		return false;
 	}
 }
