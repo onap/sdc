@@ -64,27 +64,27 @@ DEBUG_PORT="--publish 4000:4000"
 [ -f /opt/config/nexus_password.txt ] && NEXUS_PASSWD=$(cat /opt/config/nexus_password.txt)      || NEXUS_PASSWD=sfWU3DFVdBr7GVxB85mTYgAW
 [ -f /opt/config/nexus_docker_repo.txt ] && NEXUS_DOCKER_REPO=$(cat /opt/config/nexus_docker_repo.txt) || NEXUS_DOCKER_REPO=ecomp-nexus:${PORT}
 
-while [ "$1" != "" ]; do
+while test $# -gt 0; do
     case $1 in
         -r | --release )
             shift
-            RELEASE=${1}
+            RELEASE=$1
             ;;
         -e | --environment )
 			shift
-            DEP_ENV=${1}
+            DEP_ENV=$1
             ;;
 		-p | --port )
             shift
-            PORT=${1}
+            PORT=$1
 			;;
-		-l | --local )
-		shift
-		LOCAL=true
-		;;
-		-s | --skipTests )
-		shift
-		SKIPTESTS=true
+	-l | --local )
+	    shift
+	    LOCAL=true
+	    ;;
+	-s | --skipTests )
+	   shift
+	   SKIPTESTS=true
 		;;
         -h | --help )
 			usage
@@ -94,8 +94,8 @@ while [ "$1" != "" ]; do
     		usage
             exit 1
     esac
-    shift
 done
+
 
 [ -f /opt/config/nexus_username.txt ] && docker login -u $NEXUS_USERNAME -p $NEXUS_PASSWD $NEXUS_DOCKER_REPO
 
