@@ -1,0 +1,254 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+node_types:
+  org.openecomp.resource.vf.Spgw:
+    derived_from: org.openecomp.resource.abstract.nodes.VF
+    properties:
+      nf_naming:
+        type: org.openecomp.datatypes.Naming
+        default:
+          ecomp_generated_naming: true
+      nf_naming_code:
+        type: string
+        default: {
+          }
+      nf_function:
+        type: string
+        default: {
+          }
+      availability_zone_max_count:
+        type: integer
+        default: 1
+      nf_role:
+        type: string
+        default: {
+          }
+      max_instances:
+        type: integer
+        default: {
+          }
+      min_instances:
+        type: integer
+        default: {
+          }
+      nf_type:
+        type: string
+        default: {
+          }
+    capabilities:
+      extcp0.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      compute0.binding:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      extcp0.internal_connectionPoint:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      blockstorage0.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      compute0.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      compute0.host:
+        type: tosca.capabilities.Container
+        occurrences:
+        - 1
+        - UNBOUNDED
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        properties:
+          num_cpus:
+            type: integer
+            default: {
+              }
+            required: false
+          disk_size:
+            type: scalar-unit.size
+            default: {
+              }
+            required: false
+          cpu_frequency:
+            type: scalar-unit.frequency
+            default: {
+              }
+            required: false
+          mem_size:
+            type: scalar-unit.size
+            default: {
+              }
+            required: false
+      network0.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      compute0.scalable:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          max_instances:
+            type: integer
+            default: 1
+            required: false
+          min_instances:
+            type: integer
+            default: 1
+            required: false
+          default_instances:
+            type: integer
+            default: {
+              }
+            required: false
+      compute0.endpoint:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          secure:
+            type: boolean
+            default: true
+            required: false
+      blockstorage0.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      compute0.os:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          distribution:
+            type: string
+            default: {
+              }
+            required: false
+          type:
+            type: string
+            default: {
+              }
+            required: false
+          version:
+            type: version
+            default: {
+              }
+            required: false
+          architecture:
+            type: string
+            default: {
+              }
+            required: false
+      network0.link:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpd0.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+    requirements:
+    - compute0.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+    - blockstorage0.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+    - network0.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+    - extcp0.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+    - cpd0.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+    - extcp0.virtualBinding:
+        occurrences:
+        - 1
+        - UNBOUNDED
+        capability: tosca.capabilities.network.Bindable
+        relationship: tosca.relationships.network.BindsTo
+    - extcp0.virtualLink:
+        occurrences:
+        - 1
+        - UNBOUNDED
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+    - extcp0.external_virtualLink:
+        occurrences:
+        - 1
+        - UNBOUNDED
+        capability: tosca.capabilities.network.Linkable
+        node: org.openecomp.resource.vl.VL
+        relationship: tosca.relationships.network.LinksTo
+    - cpd0.virtual_link:
+        occurrences:
+        - 1
+        - UNBOUNDED
+        capability: tosca.capabilities.nfv.VirtualLinkable
+        node: tosca.nodes.nfv.VnfVirtualLinkDesc
+        relationship: tosca.relationships.nfv.VirtualLinksTo
+    - compute0.local_storage:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+    - cpd0.virtual_binding:
+        occurrences:
+        - 1
+        - UNBOUNDED
+        capability: tosca.capabilities.nfv.VirtualBindable
+        node: tosca.nodes.nfv.VDU.Compute
+        relationship: tosca.relationships.nfv.VirtualBindsTo

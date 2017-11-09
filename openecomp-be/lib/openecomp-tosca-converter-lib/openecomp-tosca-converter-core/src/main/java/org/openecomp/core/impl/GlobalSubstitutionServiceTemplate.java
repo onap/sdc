@@ -67,7 +67,7 @@ public class GlobalSubstitutionServiceTemplate extends ServiceTemplate {
         setTosca_definitions_version(DEFININTION_VERSION);
     }
 
-    public Optional<Map<String, NodeType>> removeExistingGlobalTypes(Map<String, NodeType> nodes){
+    private Optional<Map<String, NodeType>> removeExistingGlobalTypes(Map<String, NodeType> nodes){
         Map<String, NodeType> nodeTypesToAdd = new HashMap<>();
         ServiceTemplate serviceTemplate = globalServiceTemplates.get("openecomp/nodes.yml");
 
@@ -75,13 +75,33 @@ public class GlobalSubstitutionServiceTemplate extends ServiceTemplate {
             return Optional.of(nodes);
         }
 
-        Map<String, NodeType> globalNodeTypes = serviceTemplate.getNode_types();
+        Map<String, NodeType> globalNodeTypes = getAllGlobalNodeTypes();
         for(Map.Entry<String, NodeType> nodeTypeEntry : nodes.entrySet()){
             if(!globalNodeTypes.containsKey(nodeTypeEntry.getKey())){
-                nodeTypesToAdd.put(nodeTypeEntry.getKey(), nodeTypeEntry.getValue());
+                NodeType nodeType =
+                    (NodeType) ToscaConverterUtil
+                        .createObjectFromClass(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(), NodeType.class);
+
+                nodeTypesToAdd.put(nodeTypeEntry.getKey(), nodeType);
             }
         }
 
         return Optional.of(nodeTypesToAdd);
+    }
+
+    private Map<String, NodeType> getAllGlobalNodeTypes(){
+        Map<String, NodeType> globalNodeTypes = new HashMap<>();
+
+        for(Map.Entry<String, ServiceTemplate> serviceTemplateEntry : globalServiceTemplates.entrySet()){
+            if(isNodesServiceTemplate(serviceTemplateEntry.getKey())){
+                globalNodeTypes.putAll(serviceTemplateEntry.getValue().getNode_types());
+            }
+        }
+
+        return globalNodeTypes;
+    }
+
+    private boolean isNodesServiceTemplate(String filename) {
+        return filename.endsWith("nodes.yml") || filename.endsWith("nodes.yaml");
     }
 }

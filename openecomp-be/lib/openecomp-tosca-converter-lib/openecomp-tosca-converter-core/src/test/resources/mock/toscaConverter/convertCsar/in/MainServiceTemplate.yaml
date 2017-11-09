@@ -1,0 +1,231 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+metadata:
+  invariantUUID: 3c677981-34bf-47a0-a21b-c0d81f93d438
+  UUID: 5e74136f-3ca0-48eb-b0e7-b3740e170030
+  name: SPGW
+  description: SPGW
+  type: VF
+  category: Application L4+
+  subcategory: Firewall
+  resourceVendor: zte
+  resourceVendorRelease: v1.0
+  resourceVendorModelNumber: ''
+imports:
+- nodes:
+    file: Definitions/nodes.yml
+- datatypes:
+    file: Definitions/data.yml
+- capabilities:
+    file: Definitions/capabilities.yml
+- relationships:
+    file: Definitions/relationships.yml
+- groups:
+    file: Definitions/groups.yml
+- policies:
+    file: Definitions/policies.yml
+- resource-SPGW-interface:
+    file: Definitions/resource-Spgw-template-interface.yml
+- resource-Compute:
+    file: Definitions/resource-Compute-template.yml
+- resource-Cpd:
+    file: Definitions/resource-Cpd-template.yml
+- resource-ExtCP:
+    file: Definitions/resource-Extcp-template.yml
+- resource-Network:
+    file: Definitions/resource-Network-template.yml
+- resource-BlockStorage:
+    file: Definitions/resource-Blockstorage-template.yml
+topology_template:
+  inputs:
+    nf_naming:
+      type: org.openecomp.datatypes.Naming
+      default:
+        ecomp_generated_naming: true
+    nf_naming_code:
+      type: string
+      default: {
+        }
+    nf_function:
+      type: string
+      default: {
+        }
+    availability_zone_max_count:
+      type: integer
+      default: 1
+    nf_role:
+      type: string
+      default: {
+        }
+    max_instances:
+      type: integer
+      default: {
+        }
+    min_instances:
+      type: integer
+      default: {
+        }
+    nf_type:
+      type: string
+      default: {
+        }
+  node_templates:
+    Cpd 0:
+      type: tosca.nodes.nfv.VduCpd
+      metadata:
+        invariantUUID: 77336b37-f7b2-4226-a347-158d9c5a90b3
+        UUID: 06e09b93-d4aa-4d08-a2e5-99dbe80fb556
+        customizationUUID: fbf85c13-570f-415b-8eef-477341fcc6dc
+        version: '2.0'
+        name: Cpd
+        description: Cpd desc.
+        type: CP
+        category: Nfvo
+        subcategory: Network Elements
+        resourceVendor: ATT (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+    BlockStorage 0:
+      type: tosca.nodes.BlockStorage
+      metadata:
+        invariantUUID: cbb3a953-20e4-49cd-b957-4d7a3232e2fc
+        UUID: 505ee1a0-68bb-4a85-a5ed-78ffa1a93a9b
+        customizationUUID: 9440174f-f641-44ba-8a93-6c3c8c6e17b9
+        version: '1.0'
+        name: BlockStorage
+        description: Represents a server-local block storage device (i.e., not shared) offering evenly sized blocks of data from which raw storage volumes can be created.
+        type: VFC
+        category: Generic
+        subcategory: Infrastructure
+        resourceVendor: ATT (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+    ExtCP 0:
+      type: org.openecomp.resource.cp.extCP
+      metadata:
+        invariantUUID: eee70cdb-7632-4f4b-8a69-e1d7230a3263
+        UUID: 74db9efa-f694-4a7b-8056-6145372b37c4
+        customizationUUID: b6bc4c89-f2e3-4d14-8fb2-8535f42331a7
+        version: '3.0'
+        name: ExtCP
+        description: The AT&T Connection Point base type all other CP derive from
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+        resourceVendor: ATT (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+      properties:
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        exCP_naming:
+          ecomp_generated_naming: true
+    Network 0:
+      type: tosca.nodes.network.Network
+      metadata:
+        invariantUUID: e9f16c37-4632-4e1b-ba2f-10e2f9ade337
+        UUID: 2a34714c-84fa-4f74-b118-b87d25b6d0eb
+        customizationUUID: f7bb69e3-2b97-4fcd-b18d-5eba059a37b1
+        version: '1.0'
+        name: Network
+        description: Represents a simple , logical network service.
+        type: VL
+        category: Generic
+        subcategory: Infrastructure
+        resourceVendor: ATT (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+      properties:
+        dhcp_enabled: true
+        ip_version: 4
+    Compute 0:
+      type: tosca.nodes.Compute
+      metadata:
+        invariantUUID: 2d9b896d-13ea-4a32-9d59-2966b4925aea
+        UUID: fb2c9fe0-bea9-4945-9e31-04709bcda292
+        customizationUUID: ffee7d61-f396-4630-ba3c-f5c6b514816f
+        version: '1.0'
+        name: Compute
+        description: Represents a real or virtual machine or server. Information specified on the Compute node will be used to find the machine that fits the given requirements in the cloud available machines. If no sizing information are specified the cloud provider default machine will be used. It is strongly recommended to specify the required CPUs and memory at least.
+        type: VFC
+        category: Generic
+        subcategory: Infrastructure
+        resourceVendor: ATT (Tosca)
+        resourceVendorRelease: 1.0.0.wd03
+        resourceVendorModelNumber: ''
+  substitution_mappings:
+    node_type: org.openecomp.resource.vf.Spgw
+    capabilities:
+      extcp0.feature:
+      - ExtCP 0
+      - feature
+      compute0.binding:
+      - Compute 0
+      - binding
+      extcp0.internal_connectionPoint:
+      - ExtCP 0
+      - internal_connectionPoint
+      blockstorage0.feature:
+      - BlockStorage 0
+      - feature
+      compute0.feature:
+      - Compute 0
+      - feature
+      compute0.host:
+      - Compute 0
+      - host
+      network0.feature:
+      - Network 0
+      - feature
+      compute0.scalable:
+      - Compute 0
+      - scalable
+      compute0.endpoint:
+      - Compute 0
+      - endpoint
+      blockstorage0.attachment:
+      - BlockStorage 0
+      - attachment
+      compute0.os:
+      - Compute 0
+      - os
+      network0.link:
+      - Network 0
+      - link
+      cpd0.feature:
+      - Cpd 0
+      - feature
+    requirements:
+      extcp0.virtualBinding:
+      - ExtCP 0
+      - virtualBinding
+      blockstorage0.dependency:
+      - BlockStorage 0
+      - dependency
+      cpd0.dependency:
+      - Cpd 0
+      - dependency
+      compute0.dependency:
+      - Compute 0
+      - dependency
+      extcp0.external_virtualLink:
+      - ExtCP 0
+      - external_virtualLink
+      extcp0.dependency:
+      - ExtCP 0
+      - dependency
+      network0.dependency:
+      - Network 0
+      - dependency
+      cpd0.virtual_link:
+      - Cpd 0
+      - virtual_link
+      extcp0.virtualLink:
+      - ExtCP 0
+      - virtualLink
+      compute0.local_storage:
+      - Compute 0
+      - local_storage
+      cpd0.virtual_binding:
+      - Cpd 0
+      - virtual_binding

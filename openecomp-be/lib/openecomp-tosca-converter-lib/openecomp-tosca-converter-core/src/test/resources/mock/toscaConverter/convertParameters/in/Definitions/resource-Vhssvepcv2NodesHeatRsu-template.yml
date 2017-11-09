@@ -1,0 +1,538 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: f1602dd8-5d45-45f7-b78d-2d94b785418a
+  UUID: 0f3fcf3e-d1cb-4ffb-99dc-a6e658566328
+  name: VhssVepcV2.nodes.heat.RSU
+  description: Not reusable inner VFC
+  type: VFC
+  category: Generic
+  subcategory: Abstract
+  resourceVendor: vEPC_LicenseModel_v2
+  resourceVendorRelease: '1.0'
+node_types:
+  org.openecomp.resource.vfc.VhssVepcV2.abstact.nodes.heat.RSU:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    description: Not reusable inner VFC
+    capabilities:
+      instance:type:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Existence of instance <type> (OpenStack types)
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: instance
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: instance:type
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      cpu.delta:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: CPU time used since previous datapoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Delta
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ns
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu.delta
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      memory:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM allocated to the instance
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      instance:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Existence of instance
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: instance
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: instance
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      memory.usage:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM used by the instance from the amount of its allocated memory
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory.usage
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      cpu:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: CPU time used
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Cumulative
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ns
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      memory.resident:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM used by the instance on the physical machine
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory.resident
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      vcpus:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Average disk latency
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ms
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: vcpus
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      cpu_util:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Average CPU utilization
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: '%'
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu_util
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false

@@ -1,6 +1,7 @@
 package org.openecomp.core.impl;
 
 import org.apache.commons.collections.MapUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
 import org.openecomp.core.converter.ToscaConverter;
 import org.openecomp.core.converter.datatypes.Constants;
@@ -242,7 +243,7 @@ public class ToscaConverterImpl implements ToscaConverter {
         for (Map.Entry<String, Object> nodeTypeEntry : nodeTypes.entrySet()) {
             DataModelUtil
                 .addNodeType(serviceTemplate, nodeTypeEntry.getKey(),
-                    (NodeType) createObjectFromClass(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(),
+                    (NodeType) ToscaConverterUtil.createObjectFromClass(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(),
                         NodeType.class));
         }
     }
@@ -277,10 +278,25 @@ public class ToscaConverterImpl implements ToscaConverter {
 
         for (Map.Entry<String, Object> entry : mapToConvert.entrySet()) {
             ParameterDefinition parameterDefinition =
-                (ParameterDefinition) createObjectFromClass(
+                (ParameterDefinition) ToscaConverterUtil.createObjectFromClass(
                     entry.getKey(), entry.getValue(), ParameterDefinition.class);
+
+            handleDefaultValue(entry.getValue(), parameterDefinition);
+
             addToServiceTemplateAccordingToSection(
                 serviceTemplate, inputsOrOutputs, entry.getKey(), parameterDefinition);
+        }
+    }
+
+    private void handleDefaultValue(Object entryValue,
+                                    ParameterDefinition parameterDefinition) {
+        if(!(entryValue instanceof Map)){
+            return;
+        }
+
+        Object defaultValue = ((Map) entryValue).get("default");
+        if(Objects.nonNull(defaultValue)) {
+            parameterDefinition.set_default(defaultValue);
         }
     }
 
@@ -405,26 +421,13 @@ public class ToscaConverterImpl implements ToscaConverter {
         for (Map.Entry<String, Object> capabilityAssignmentEntry : capabilities.entrySet()) {
             Map<String, CapabilityAssignment> tempMap = new HashMap<>();
             tempMap.put(capabilityAssignmentEntry.getKey(),
-                (CapabilityAssignment) createObjectFromClass
+                (CapabilityAssignment) ToscaConverterUtil.createObjectFromClass
                     (capabilityAssignmentEntry.getKey(), capabilityAssignmentEntry.getValue(), CapabilityAssignment.class));
             convertedCapabilities.add(tempMap);
         }
         return convertedCapabilities;
     }
 
-    private Object createObjectFromClass(String nodeTypeId,
-                                         Object objectCandidate,
-                                         Class classToCreate) {
-        try {
-            return JsonUtil.json2Object(objectCandidate.toString(), classToCreate);
-        } catch (Exception e) {
-            //todo - return error to user?
-            throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-                .withCategory(ErrorCategory.APPLICATION)
-                .withMessage("Can't create " + classToCreate.getSimpleName() + " from " +
-                    nodeTypeId).build());
-        }
-    }
 
     private boolean isMainServiceTemplate(String fileName) {
         return fileName.endsWith(mainStName);
