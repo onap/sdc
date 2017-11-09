@@ -1,0 +1,147 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+metadata:
+  template_name: Main
+  resourceVendor: zte
+  name: SPGW
+  resourceVendorModelNumber: ''
+  description: SPGW
+  invariantUUID: 3c677981-34bf-47a0-a21b-c0d81f93d438
+  UUID: 5e74136f-3ca0-48eb-b0e7-b3740e170030
+  type: VF
+  category: Application L4+
+  subcategory: Firewall
+  resourceVendorRelease: v1.0
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    nf_naming:
+      type: org.openecomp.datatypes.Naming
+      default:
+        ecomp_generated_naming: true
+    nf_naming_code:
+      type: string
+      default: {
+        }
+    nf_function:
+      type: string
+      default: {
+        }
+    availability_zone_max_count:
+      type: integer
+      default: 1
+    nf_role:
+      type: string
+      default: {
+        }
+    max_instances:
+      type: integer
+      default: {
+        }
+    min_instances:
+      type: integer
+      default: {
+        }
+    nf_type:
+      type: string
+      default: {
+        }
+  node_templates:
+    Cpd 0:
+      type: tosca.nodes.nfv.VduCpd
+    BlockStorage 0:
+      type: tosca.nodes.BlockStorage
+    ExtCP 0:
+      type: org.openecomp.resource.cp.extCP
+      properties:
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        exCP_naming:
+          ecomp_generated_naming: true
+    Network 0:
+      type: tosca.nodes.network.Network
+      properties:
+        dhcp_enabled: true
+        ip_version: 4
+    Compute 0:
+      type: tosca.nodes.Compute
+  substitution_mappings:
+    node_type: org.openecomp.resource.vf.Spgw
+    capabilities:
+      extcp0.feature:
+      - ExtCP 0
+      - feature
+      compute0.binding:
+      - Compute 0
+      - binding
+      extcp0.internal_connectionPoint:
+      - ExtCP 0
+      - internal_connectionPoint
+      blockstorage0.feature:
+      - BlockStorage 0
+      - feature
+      compute0.feature:
+      - Compute 0
+      - feature
+      compute0.host:
+      - Compute 0
+      - host
+      network0.feature:
+      - Network 0
+      - feature
+      compute0.scalable:
+      - Compute 0
+      - scalable
+      compute0.endpoint:
+      - Compute 0
+      - endpoint
+      blockstorage0.attachment:
+      - BlockStorage 0
+      - attachment
+      compute0.os:
+      - Compute 0
+      - os
+      network0.link:
+      - Network 0
+      - link
+      cpd0.feature:
+      - Cpd 0
+      - feature
+    requirements:
+      extcp0.virtualBinding:
+      - ExtCP 0
+      - virtualBinding
+      blockstorage0.dependency:
+      - BlockStorage 0
+      - dependency
+      cpd0.dependency:
+      - Cpd 0
+      - dependency
+      compute0.dependency:
+      - Compute 0
+      - dependency
+      extcp0.external_virtualLink:
+      - ExtCP 0
+      - external_virtualLink
+      extcp0.dependency:
+      - ExtCP 0
+      - dependency
+      network0.dependency:
+      - Network 0
+      - dependency
+      cpd0.virtual_link:
+      - Cpd 0
+      - virtual_link
+      extcp0.virtualLink:
+      - ExtCP 0
+      - virtualLink
+      compute0.local_storage:
+      - Compute 0
+      - local_storage
+      cpd0.virtual_binding:
+      - Cpd 0
+      - virtual_binding
