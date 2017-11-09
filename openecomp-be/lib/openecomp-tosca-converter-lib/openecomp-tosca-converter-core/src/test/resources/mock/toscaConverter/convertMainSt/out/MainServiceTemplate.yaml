@@ -53,7 +53,7 @@ topology_template:
             requested_additional_capabilities: {
               }
             virtual_cpu:
-              num_virtual_cpu: 4.0
+              num_virtual_cpu: 4
     USPID3_VduCpd_Fabric:
       type: tosca.nodes.nfv.VduCpd
       properties:
@@ -121,7 +121,7 @@ topology_template:
             requested_additional_capabilities: {
               }
             virtual_cpu:
-              num_virtual_cpu: 4.0
+              num_virtual_cpu: 4
     UPIRU_VduCpd_Base:
       type: tosca.nodes.nfv.VduCpd
       properties:
@@ -182,7 +182,7 @@ topology_template:
             requested_additional_capabilities: {
               }
             virtual_cpu:
-              num_virtual_cpu: 4.0
+              num_virtual_cpu: 4
     PUPDU_VduCpd_Fabric:
       type: tosca.nodes.nfv.VduCpd
       properties:
@@ -415,7 +415,7 @@ topology_template:
             requested_additional_capabilities: {
               }
             virtual_cpu:
-              num_virtual_cpu: 4.0
+              num_virtual_cpu: 4
     USRSU_VduCpd_Base:
       type: tosca.nodes.nfv.VduCpd
       properties:
@@ -455,7 +455,7 @@ topology_template:
             requested_additional_capabilities: {
               }
             virtual_cpu:
-              num_virtual_cpu: 4.0
+              num_virtual_cpu: 4
     UPIRU_VduCpd_Fabric:
       type: tosca.nodes.nfv.VduCpd
       properties:
