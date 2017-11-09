@@ -34,17 +34,6 @@ import org.openecomp.sdc.be.model.Component;
 
 public class ToscaUtils {
 
-	public static boolean isAtomicType(Component component) {
-		ComponentTypeEnum componentType = component.getComponentType();
-		if (ComponentTypeEnum.RESOURCE.equals(componentType)) {
-			ResourceTypeEnum resourceType = ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getResourceType();
-			if (ResourceTypeEnum.CP == resourceType || ResourceTypeEnum.VL == resourceType || ResourceTypeEnum.VFC == resourceType || ResourceTypeEnum.VFCMT == resourceType || ResourceTypeEnum.ABSTRACT == resourceType) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	public static boolean isComplexVfc(Component component) {
 		if (ComponentTypeEnum.RESOURCE == component.getComponentType()) {
 			ResourceTypeEnum resourceType = ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getResourceType();
@@ -55,7 +44,7 @@ public class ToscaUtils {
 		return false;
 	}
 
-	public static Map<String, Object> objectToMap(Object objectToConvert, Class clazz) throws IllegalArgumentException, IllegalAccessException {
+	public static Map<String, Object> objectToMap(Object objectToConvert, Class<?> clazz) throws IllegalArgumentException, IllegalAccessException {
 		Map<String, Object> map = new HashMap<>();
 		List<Field> fields = new ArrayList<>();
 
@@ -76,4 +65,47 @@ public class ToscaUtils {
 		}
 		return fields;
 	}
+	
+	public static class SubstituitionEntry{
+		
+		private String fullName = "";
+		private String sourceName = "";
+		private String owner = "";
+		
+		public SubstituitionEntry() {}
+
+		public SubstituitionEntry(String fullName, String sourceName, String owner) {
+			if(fullName != null)
+				this.fullName = fullName;
+			if(sourceName != null)
+				this.sourceName = sourceName;
+			if(owner != null)
+				this.owner = owner;
+		}
+
+		public String getFullName() {
+			return fullName;
+		}
+
+		public void setFullName(String fullName) {
+			this.fullName = fullName;
+		}
+
+		public String getSourceName() {
+			return sourceName;
+		}
+
+		public void setSourceName(String sourceName) {
+			this.sourceName = sourceName;
+		}
+
+		public String getOwner() {
+			return owner;
+		}
+
+		public void setOwner(String owner) {
+			this.owner = owner;
+		}
+	}
+		
 }
