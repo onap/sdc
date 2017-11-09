@@ -1,0 +1,4 @@
+TOSCA-Meta-Version: 1.0
+CSAR-Version: 1.0
+Created-By: Winery 0.1.37-SNAPSHOT
+Entry-Definitions: Definitions/MainServiceTemplate.yaml

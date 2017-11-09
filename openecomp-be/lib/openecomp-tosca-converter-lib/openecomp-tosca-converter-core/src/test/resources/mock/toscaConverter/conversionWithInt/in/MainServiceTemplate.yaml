@@ -1,0 +1,33 @@
+metadata: 
+  vendor: Huawei
+  csarVersion: v1.0
+  csarProvider: Huawei
+  id: vSBC_vP-CSCF
+  version: v1.0
+  csarType: NFAR
+  vnfdVersion: v1.0
+  vnfmType: hwvnfm
+topology_template: 
+  node_templates: 
+    SCU: 
+      attributes: 
+        tosca_name: SCU
+      capabilities: 
+        virtual_compute: 
+          properties: 
+            virtual_memory: 
+              virtual_mem_size: 24G
+            requested_additional_capabilities: {}
+            virtual_cpu: 
+              num_virtual_cpu: 2
+      properties: 
+        configurable_properties: 
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: SCU
+        descrption: the virtual machine of SCU
+      requirements: 
+      - virtual_storage: 
+          capability: virtual_storage
+          node: SCU_Storage
+      type: tosca.nodes.nfv.VDU.Compute
+tosca_definitions_version: tosca_simple_yaml_1_0
