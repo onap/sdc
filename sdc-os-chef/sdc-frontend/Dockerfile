@@ -1,4 +1,4 @@
-FROM openecomp/base_sdc-frontend:1.0.0-SNAPSHOT-latest
+FROM openecomp/base_sdc-frontend:v1.0.0
 
 COPY chef-solo /root/chef-solo/
 
