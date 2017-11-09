@@ -2,6 +2,7 @@ package org.openecomp.core.converter.impl;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.core.converter.ToscaConverter;
 import org.openecomp.core.impl.ToscaConverterImpl;
@@ -40,28 +41,39 @@ public class ToscaConverterImplTest {
   private static final ToscaConverter toscaConverter = new ToscaConverterImpl();
   private static final String VIRTUAL_LINK = "virtualLink";
   private static final String UNBOUNDED = "UNBOUNDED";
-
-  private static String inputFilesPath;
-  private static String outputFilesPath;
-  private static Map<String, ServiceTemplate> expectedOutserviceTemplates;
+  private static final String BASE_DIR = "/mock/toscaConverter";
 
 
   @Test
   public void testConvertMainSt() throws IOException {
-    inputFilesPath = "/mock/toscaConverter/convertMainSt/in";
-    outputFilesPath = "/mock/toscaConverter/convertMainSt/out";
+    String inputFilesPath = BASE_DIR + "/convertMainSt/in";
+    String outputFilesPath = BASE_DIR + "/convertMainSt/out";
 
-    FileContentHandler fileContentHandler =
-        createFileContentHandlerFromInput(inputFilesPath);
+    convertAndValidate(inputFilesPath, outputFilesPath);
+  }
 
-    expectedOutserviceTemplates = new HashMap<>();
-    loadServiceTemplates(outputFilesPath, new ToscaExtensionYamlUtil(),
-        expectedOutserviceTemplates);
+  @Test
+  public void testNodesConversion() throws IOException {
+    String inputFilesPath = BASE_DIR + "/convertCsar/in";
+    String outputFilesPath = BASE_DIR + "/convertCsar/out";
 
-    ToscaServiceModel toscaServiceModel = toscaConverter.convert(fileContentHandler);
-    ServiceTemplate mainSt = toscaServiceModel.getServiceTemplates().get(mainStName);
+    convertAndValidate(inputFilesPath, outputFilesPath);
+  }
 
-    checkSTResults(expectedOutserviceTemplates, null, mainSt);
+  @Test
+  public void testParameterConversion() throws IOException {
+    String inputFilesPath = BASE_DIR + "/convertParameters/in";
+    String outputFilesPath = BASE_DIR + "/convertParameters/out";
+
+    convertAndValidate(inputFilesPath, outputFilesPath);
+  }
+
+  @Ignore
+  public void testConversionWithInt() throws IOException {
+    String inputFilesPath = BASE_DIR + "/conversionWithInt/in";
+    String outputFilesPath = BASE_DIR + "/conversionWithInt/out";
+
+    convertAndValidate(inputFilesPath, outputFilesPath);
   }
 
   @Test
@@ -117,6 +129,25 @@ public class ToscaConverterImplTest {
 
   private Object[] buildOccurrences(String... bounds) {
     return buildOccurrences(Arrays.asList(bounds));
+  }
+
+  private void convertAndValidate(String inputFilesPath, String outputFilesPath)
+      throws IOException {
+    FileContentHandler fileContentHandler =
+        createFileContentHandlerFromInput(inputFilesPath);
+
+    ToscaServiceModel toscaServiceModel = toscaConverter.convert(fileContentHandler);
+    validateConvertorOutput(outputFilesPath, toscaServiceModel);
+  }
+
+  private void validateConvertorOutput(String outputFilesPath, ToscaServiceModel toscaServiceModel)
+      throws IOException {
+    ServiceTemplate mainSt = toscaServiceModel.getServiceTemplates().get(mainStName);
+    Map<String, ServiceTemplate> expectedOutserviceTemplates = new HashMap<>();
+    loadServiceTemplates(outputFilesPath, new ToscaExtensionYamlUtil(),
+        expectedOutserviceTemplates);
+
+    checkSTResults(expectedOutserviceTemplates, null, mainSt);
   }
 
   private Object[] buildOccurrences(List<String> bounds) {
@@ -201,18 +232,15 @@ public class ToscaConverterImplTest {
 
   private static void addServiceTemplateFiles(Map<String, ServiceTemplate> serviceTemplates,
                                               File[] files,
-                                              ToscaExtensionYamlUtil toscaExtensionYamlUtil)
-      throws IOException {
+                                              ToscaExtensionYamlUtil toscaExtensionYamlUtil) throws IOException {
+
     for (File file : files) {
+
       try (InputStream yamlFile = new FileInputStream(file)) {
         ServiceTemplate serviceTemplateFromYaml =
             toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
         createConcreteRequirementObjectsInServiceTemplate(serviceTemplateFromYaml, toscaExtensionYamlUtil);
         serviceTemplates.put(file.getName(), serviceTemplateFromYaml);
-        try {
-          yamlFile.close();
-        } catch (IOException ignore) {
-        }
       }
     }
   }

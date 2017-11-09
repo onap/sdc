@@ -1,0 +1,503 @@
+metadata: 
+  vendor: Huawei
+  csarVersion: v1.0
+  csarProvider: Huawei
+  id: vSBC_vP-CSCF
+  version: v1.0
+  csarType: NFAR
+  vnfdVersion: v1.0
+  vnfmType: hwvnfm
+topology_template: 
+  node_templates: 
+    SCU: 
+      attributes: 
+        tosca_name: SCU
+      capabilities: 
+        virtual_compute: 
+          properties: 
+            virtual_memory: 
+              virtual_mem_size: 24G
+            requested_additional_capabilities: {}
+            virtual_cpu: 
+              num_virtual_cpu: 2
+      properties: 
+        configurable_properties: 
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: SCU
+        descrption: the virtual machine of SCU
+      requirements: 
+      - virtual_storage: 
+          capability: virtual_storage
+          node: SCU_Storage
+#      - local_storage: 
+#          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VDU.Compute
+    LBU2SignalNet1: 
+      attributes: 
+        tosca_name: LBU2SignalNet1
+      properties: 
+        role: root
+        layer_protocol: ethernet
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: LBU
+#      - virtual_link: 
+#          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    CCU_VduCpd_Intra1: 
+      attributes: 
+        tosca_name: CCU_VduCpd_Intra1
+      properties: 
+        role: root
+        layer_protocol: ipv4
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: CCU
+      - virtual_link: 
+          capability: virtual_linkable
+          node: Intranet1
+      type: tosca.nodes.nfv.VduCpd
+    LBU_VduCpd_Intra1: 
+      attributes: 
+        tosca_name: LBU_VduCpd_Intra1
+      properties: 
+        role: root
+        layer_protocol: ipv4
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: LBU
+      - virtual_link: 
+          capability: virtual_linkable
+          node: Intranet1
+      type: tosca.nodes.nfv.VduCpd
+    OMU2ManageNet: 
+      attributes: 
+        tosca_name: OMU2ManageNet
+      properties: 
+        role: root
+        layer_protocol: ipv4
+#      requirements: 
+#      - virtual_binding: 
+#          node: tosca.nodes.Root
+#      - virtual_link: 
+#          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    LBU_VduCpd_Intra2: 
+      attributes: 
+        tosca_name: LBU_VduCpd_Intra2
+      properties: 
+        role: root
+        layer_protocol: ipv4
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: LBU
+      - virtual_link: 
+          capability: virtual_linkable
+          node: Intranet2
+      type: tosca.nodes.nfv.VduCpd
+    OMU_Storage: 
+      attributes: 
+        tosca_name: OMU_Storage
+      properties: 
+        id: OMU_Storage
+        size_of_storage: 256G
+        rdma_enabled: false
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    HRU: 
+      attributes: 
+        tosca_name: HRU
+      capabilities: 
+        virtual_compute: 
+          properties: 
+            virtual_memory: 
+              virtual_mem_size: 12G
+            requested_additional_capabilities: {}
+            virtual_cpu: 
+              num_virtual_cpu: 3
+      properties: 
+        configurable_properties: 
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: HRU
+        descrption: the virtual machine of HRU
+      requirements: 
+      - virtual_storage: 
+          capability: virtual_storage
+          node: HRU_Storage
+#      - local_storage: 
+#          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VDU.Compute
+    VPU_Storage: 
+      attributes: 
+        tosca_name: VPU_Storage
+      properties: 
+        id: VPU_Storage
+        size_of_storage: 4G
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    SCU_VduCpd_Intra1: 
+      attributes: 
+        tosca_name: SCU_VduCpd_Intra1
+      properties: 
+        role: root
+        layer_protocol: ipv4
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: SCU
+      - virtual_link: 
+          capability: virtual_linkable
+          node: Intranet1
+      type: tosca.nodes.nfv.VduCpd
+    HRU_VduCpd_Intra2: 
+      attributes: 
+        tosca_name: HRU_VduCpd_Intra2
+      properties: 
+        role: root
+        layer_protocol: ipv4
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: HRU
+      - virtual_link: 
+          capability: virtual_linkable
+          node: Intranet2
+      type: tosca.nodes.nfv.VduCpd
+    HRU_VduCpd_Intra1: 
+      attributes: 
+        tosca_name: HRU_VduCpd_Intra1
+      properties: 
+        role: root
+        layer_protocol: ipv4
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: HRU
+      - virtual_link: 
+          capability: virtual_linkable
+          node: Intranet1
+      type: tosca.nodes.nfv.VduCpd
+    CCU_Storage: 
+      attributes: 
+        tosca_name: CCU_Storage
+      properties: 
+        id: CCU_Storage
+        size_of_storage: 4G
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    BSU_VduCpd_Intra1: 
+      attributes: 
+        tosca_name: BSU_VduCpd_Intra1
+      properties: 
+        role: root
+        layer_protocol: ipv4
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: BSU
+      - virtual_link: 
+          capability: virtual_linkable
+          node: Intranet1
+      type: tosca.nodes.nfv.VduCpd
+    Intranet1: 
+      attributes: 
+        tosca_name: Intranet1
+      properties: 
+        vl_flavours: 
+          flavours: 
+            flavourId: test1
+        connectivity_type: 
+          layer_protocol: ipv4
+          flow_pattern: 
+      type: tosca.nodes.nfv.VnfVirtualLinkDesc
+    Intranet2: 
+      attributes: 
+        tosca_name: Intranet2
+      properties: 
+        vl_flavours: 
+          flavours: 
+            flavourId: test2
+        connectivity_type: 
+          layer_protocol: ipv4
+          flow_pattern: 
+      type: tosca.nodes.nfv.VnfVirtualLinkDesc
+    VPU: 
+      attributes: 
+        tosca_name: VPU
+      capabilities: 
+        virtual_compute: 
+          properties: 
+            virtual_memory: 
+              virtual_mem_size: 8G
+            requested_additional_capabilities: {}
+            virtual_cpu: 
+              num_virtual_cpu: 5
+      properties: 
+        configurable_properties: 
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: VPU
+        descrption: the virtual machine of VPU
+      requirements: 
+      - virtual_storage: 
+          capability: virtual_storage
+          node: VPU_Storage
+#      - local_storage: 
+#          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VDU.Compute
+    LBU2SignalNet2: 
+      attributes: 
+        tosca_name: LBU2SignalNet2
+      properties: 
+        role: root
+        layer_protocol: ipv4
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: LBU
+#      - virtual_link: 
+#          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    OMU_VduCpd_Intra1: 
+      attributes: 
+        tosca_name: OMU_VduCpd_Intra1
+      properties: 
+        role: root
+        layer_protocol: ipv4
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: OMU
+      - virtual_link: 
+          capability: virtual_linkable
+          node: Intranet1
+      type: tosca.nodes.nfv.VduCpd
+    LBU: 
+      attributes: 
+        tosca_name: LBU
+      capabilities: 
+        virtual_compute: 
+          properties: 
+            virtual_memory: 
+              virtual_mem_size: 24G
+            requested_additional_capabilities: {}
+            virtual_cpu: 
+              num_virtual_cpu: 4
+      properties: 
+        configurable_properties: 
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: LBU
+        descrption: the virtual machine of LBU
+      requirements: 
+      - virtual_storage: 
+          capability: virtual_storage
+          node: LBU_Storage
+#      - local_storage: 
+#          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VDU.Compute
+    CMU_VduCpd_Intra1: 
+      attributes: 
+        tosca_name: CMU_VduCpd_Intra1
+      properties: 
+        role: root
+        layer_protocol: ipv4
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: CMU
+      - virtual_link: 
+          capability: virtual_linkable
+          node: Intranet1
+      type: tosca.nodes.nfv.VduCpd
+    CMU_Storage: 
+      attributes: 
+        tosca_name: CMU_Storage
+      properties: 
+        id: CMU_Storage
+        size_of_storage: 4G
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    BSU: 
+      attributes: 
+        tosca_name: BSU
+      capabilities: 
+        virtual_compute: 
+          properties: 
+            virtual_memory: 
+              virtual_mem_size: 8G
+            requested_additional_capabilities: {}
+            virtual_cpu: 
+              num_virtual_cpu: 1
+      properties: 
+        configurable_properties: 
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: BSU
+        descrption: the virtual machine of BSU
+      requirements: 
+      - virtual_storage: 
+          capability: virtual_storage
+          node: BSU_Storage
+#      - local_storage: 
+#          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VDU.Compute
+    CMU: 
+      attributes: 
+        tosca_name: CMU
+      capabilities: 
+        virtual_compute: 
+          properties: 
+            virtual_memory: 
+              virtual_mem_size: 8G
+            requested_additional_capabilities: {}
+            virtual_cpu: 
+              num_virtual_cpu: 1
+      properties: 
+        configurable_properties: 
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: CMU
+        descrption: the virtual machine of CMU
+      requirements: 
+      - virtual_storage: 
+          capability: virtual_storage
+          node: CMU_Storage
+#      - local_storage: 
+#          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VDU.Compute
+    SCU_Storage: 
+      attributes: 
+        tosca_name: SCU_Storage
+      properties: 
+        id: SCU_Storage
+        size_of_storage: 4G
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    HRU_Storage: 
+      attributes: 
+        tosca_name: HRU_Storage
+      properties: 
+        id: HRU_Storage
+        size_of_storage: 4G
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    CCU: 
+      attributes: 
+        tosca_name: CCU
+      capabilities: 
+        virtual_compute: 
+          properties: 
+            virtual_memory: 
+              virtual_mem_size: 16G
+            requested_additional_capabilities: {}
+            virtual_cpu: 
+              num_virtual_cpu: 2
+      properties: 
+        configurable_properties: 
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: CCU
+        descrption: the virtual machine of CCU
+      requirements: 
+      - virtual_storage: 
+          capability: virtual_storage
+          node: CCU_Storage
+#      - local_storage: 
+#          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VDU.Compute
+    OMU: 
+      attributes: 
+        tosca_name: OMU
+      capabilities: 
+        virtual_compute: 
+          properties: 
+            virtual_memory: 
+              virtual_mem_size: 16G
+            requested_additional_capabilities: {}
+            virtual_cpu: 
+              num_virtual_cpu: 4
+      properties: 
+        configurable_properties: 
+          test: {"additional_vnfc_configurable_properties":{"aaa":"1"}}
+        name: OMU
+        descrption: the virtual machine of OMU
+      requirements: 
+      - virtual_storage: 
+          capability: virtual_storage
+          node: OMU_Storage
+#      - local_storage: 
+#          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VDU.Compute
+    BSU_Storage: 
+      attributes: 
+        tosca_name: BSU_Storage
+      properties: 
+        id: BSU_Storage
+        size_of_storage: 4G
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    UPIRU_VduCpd_Intra1: 
+      attributes: 
+        tosca_name: UPIRU_VduCpd_Intra1
+      properties: 
+        role: root
+        layer_protocol: ipv4
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: VPU
+      - virtual_link: 
+          capability: virtual_linkable
+          node: Intranet1
+      type: tosca.nodes.nfv.VduCpd
+    UPIRU_VduCpd_Intra2: 
+      attributes: 
+        tosca_name: UPIRU_VduCpd_Intra2
+      properties: 
+        role: root
+        layer_protocol: ipv4
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: VPU
+      - virtual_link: 
+          capability: virtual_linkable
+          node: Intranet2
+      type: tosca.nodes.nfv.VduCpd
+    HRU2MediaNet1: 
+      attributes: 
+        tosca_name: HRU2MediaNet1
+      properties: 
+        role: root
+        layer_protocol: ethernet
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: HRU
+#      - virtual_link: 
+#          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+    LBU_Storage: 
+      attributes: 
+        tosca_name: LBU_Storage
+      properties: 
+        id: LBU_Storage
+        size_of_storage: 4G
+        type_of_storage: volume
+      type: tosca.nodes.nfv.VDU.VirtualStorage
+    HRU2MediaNet2: 
+      attributes: 
+        tosca_name: HRU2MediaNet2
+      properties: 
+        role: root
+        layer_protocol: ipv4
+      requirements: 
+      - virtual_binding: 
+          capability: virtual_binding
+          node: HRU
+#      - virtual_link: 
+#          node: tosca.nodes.Root
+      type: tosca.nodes.nfv.VduCpd
+#  substitution_mappings: 
+#    node_type: tosca.nodes.nfv.VNF.vSBC
+tosca_definitions_version: tosca_simple_yaml_1_0
