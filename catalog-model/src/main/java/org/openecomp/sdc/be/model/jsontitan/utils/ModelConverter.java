@@ -94,6 +94,22 @@ public class ModelConverter {
 			return null;
 		}
 	}
+	
+	public static boolean isAtomicComponent(Component component) {
+		ComponentTypeEnum componentType = component.getComponentType();
+		if (!componentType.equals(ComponentTypeEnum.RESOURCE)) {
+			return false;
+		}
+		Resource resource = (Resource) component;
+		ResourceTypeEnum resType = resource.getResourceType();
+		return isAtomicComponent(resType);
+	}
+	
+	public static boolean isAtomicComponent(ResourceTypeEnum resourceType) {
+		if (resourceType == null || resourceType == ResourceTypeEnum.VF || resourceType == ResourceTypeEnum.PNF || resourceType == ResourceTypeEnum.CVFC)
+			return false;
+		return true;
+	}
 
 	// **********************************************************
 	public static VertexTypeEnum getVertexType(Component component) {
@@ -117,11 +133,7 @@ public class ModelConverter {
 		return vertexType;
 	}
 
-	public static boolean isAtomicComponent(ResourceTypeEnum resourceType) {
-		if (resourceType == null || resourceType == ResourceTypeEnum.VF || resourceType == ResourceTypeEnum.PNF || resourceType == ResourceTypeEnum.CVFC)
-			return false;
-		return true;
-	}
+	
 
 	private static Service convertToService(ToscaElement toscaElement) {
 		Service service = new Service();
@@ -303,6 +315,7 @@ public class ModelConverter {
 
 		relationshipPair.setCapabilityOwnerId(relation.getCapabilityOwnerId());
 		relationshipPair.setCapabilityUid(relation.getCapabilityId());
+		relationshipPair.setCapability(relation.getCapability());
 		relationshipPair.setRequirementOwnerId(relation.getRequirementOwnerId());
 		relationshipPair.setRequirementUid(relation.getRequirementId());
 		relationshipPair.setRequirement(relation.getRequirement());
@@ -991,18 +1004,7 @@ public class ModelConverter {
 		toscaElement.setMetadataValue(JsonPresentationFields.CONTACT_ID, component.getContactId());
 	}
 
-	public static boolean isAtomicComponent(Component component) {
-		ComponentTypeEnum componentType = component.getComponentType();
-		if (!componentType.equals(ComponentTypeEnum.RESOURCE)) {
-			return false;
-		}
-		Resource resource = (Resource) component;
-		ResourceTypeEnum resType = resource.getResourceType();
-		if (resType == ResourceTypeEnum.VFC || resType == ResourceTypeEnum.VFCMT || resType == ResourceTypeEnum.VL || resType == ResourceTypeEnum.CP || resType == ResourceTypeEnum.ABSTRACT) {
-			return true;
-		}
-		return false;
-	}
+	
 
 	private static void setComponentInstancesToComponent(TopologyTemplate topologyTemplate, Component component) {
 

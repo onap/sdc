@@ -259,6 +259,7 @@
                                     </resources>
                                 </configuration>
                             </execution>
+                            
                             <execution>
                                 <id>copy-resources-test-apis-ci</id>
                                 <phase>validate</phase>
