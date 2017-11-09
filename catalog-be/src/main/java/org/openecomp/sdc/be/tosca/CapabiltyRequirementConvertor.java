@@ -177,7 +177,7 @@ public class CapabiltyRequirementConvertor {
 	 * @return
 	 */
 	public Either<SubstitutionMapping, ToscaError> convertSubstitutionMappingRequirements(Map<String,Component> componentsCache, Component component, SubstitutionMapping substitutionMappings) {
-		Either<SubstitutionMapping, ToscaError> result = null ;
+		Either<SubstitutionMapping, ToscaError> result = Either.left(substitutionMappings);
 		Either<Map<String, String[]>, ToscaError> toscaRequirementsRes = convertSubstitutionMappingRequirementsAsMap(componentsCache, component);
 		if(toscaRequirementsRes.isRight()){
 			result = Either.right(toscaRequirementsRes.right().value());
