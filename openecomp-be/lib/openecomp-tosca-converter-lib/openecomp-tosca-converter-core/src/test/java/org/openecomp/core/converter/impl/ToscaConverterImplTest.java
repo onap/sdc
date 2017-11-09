@@ -40,24 +40,31 @@ public class ToscaConverterImplTest {
   private static final ToscaConverter toscaConverter = new ToscaConverterImpl();
   private static final String VIRTUAL_LINK = "virtualLink";
   private static final String UNBOUNDED = "UNBOUNDED";
+  private static final String BASE_DIR = "/mock/toscaConverter";
 
 
   @Test
   public void testConvertMainSt() throws IOException {
-    String inputFilesPath = "/mock/toscaConverter/convertMainSt/in";
-    String outputFilesPath = "/mock/toscaConverter/convertMainSt/out";
+    String inputFilesPath = BASE_DIR + "/convertMainSt/in";
+    String outputFilesPath = BASE_DIR + "/convertMainSt/out";
 
-    FileContentHandler fileContentHandler =
-        createFileContentHandlerFromInput(inputFilesPath);
+    convertAndValidate(inputFilesPath, outputFilesPath);
+  }
 
-    Map<String, ServiceTemplate> expectedOutserviceTemplates = new HashMap<>();
-    loadServiceTemplates(outputFilesPath, new ToscaExtensionYamlUtil(),
-            expectedOutserviceTemplates);
+  @Test
+  public void testNodesConversion() throws IOException {
+    String inputFilesPath = BASE_DIR + "/convertCsar/in";
+    String outputFilesPath = BASE_DIR + "/convertCsar/out";
 
-    ToscaServiceModel toscaServiceModel = toscaConverter.convert(fileContentHandler);
-    ServiceTemplate mainSt = toscaServiceModel.getServiceTemplates().get(mainStName);
+    convertAndValidate(inputFilesPath, outputFilesPath);
+  }
 
-    checkSTResults(expectedOutserviceTemplates, null, mainSt);
+  @Test
+  public void testParameterConversion() throws IOException {
+    String inputFilesPath = BASE_DIR + "/convertParameters/in";
+    String outputFilesPath = BASE_DIR + "/convertParameters/out";
+
+    convertAndValidate(inputFilesPath, outputFilesPath);
   }
 
   @Test
@@ -113,6 +120,25 @@ public class ToscaConverterImplTest {
 
   private Object[] buildOccurrences(String... bounds) {
     return buildOccurrences(Arrays.asList(bounds));
+  }
+
+  private void convertAndValidate(String inputFilesPath, String outputFilesPath)
+      throws IOException {
+    FileContentHandler fileContentHandler =
+        createFileContentHandlerFromInput(inputFilesPath);
+
+    ToscaServiceModel toscaServiceModel = toscaConverter.convert(fileContentHandler);
+    validateConvertorOutput(outputFilesPath, toscaServiceModel);
+  }
+
+  private void validateConvertorOutput(String outputFilesPath, ToscaServiceModel toscaServiceModel)
+      throws IOException {
+    ServiceTemplate mainSt = toscaServiceModel.getServiceTemplates().get(mainStName);
+    Map<String, ServiceTemplate> expectedOutserviceTemplates = new HashMap<>();
+    loadServiceTemplates(outputFilesPath, new ToscaExtensionYamlUtil(),
+        expectedOutserviceTemplates);
+
+    checkSTResults(expectedOutserviceTemplates, null, mainSt);
   }
 
   private Object[] buildOccurrences(List<String> bounds) {
