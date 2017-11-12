@@ -191,7 +191,12 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 	}
 
 	public static enum ArtifactOperationEnum {
-		Create(), Update(), Delete(), Download();
+		Create(), Update(), Delete(), Download(), Link();
+
+		public static boolean isCreateOrLink(ArtifactOperationEnum operation) {
+			return (operation.equals(Create) || operation.equals(Link));
+
+		}
 	}
 
 	public class ArtifactOperationInfo {

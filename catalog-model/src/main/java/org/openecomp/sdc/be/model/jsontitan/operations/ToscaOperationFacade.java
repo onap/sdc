@@ -275,8 +275,11 @@ public class ToscaOperationFacade {
 
     public <T extends Component> Either<T, StorageOperationStatus> getLatestByToscaResourceName(String toscaResourceName) {
         return getLatestByName(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName);
-
     }
+    
+	public <T extends Component> Either<T, StorageOperationStatus> getFullLatestComponentByToscaResourceName(String toscaResourceName) {
+		return getLatestByName(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName, JsonParseFlagEnum.ParseAll);
+	}
 
     public <T extends Component> Either<T, StorageOperationStatus> getLatestByName(String resourceName) {
         return getLatestByName(GraphPropertyEnum.NAME, resourceName);
@@ -535,6 +538,39 @@ public class ToscaOperationFacade {
         }
         return getToscaElementByOperation(highestResource);
     }
+
+	private <T extends Component> Either<T, StorageOperationStatus> getLatestByName(GraphPropertyEnum property, String nodeName, JsonParseFlagEnum parseFlag) {
+		Either<T, StorageOperationStatus> result;
+
+		Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+		Map<GraphPropertyEnum, Object> propertiesNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
+
+		propertiesToMatch.put(property, nodeName);
+		propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+
+		propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
+
+		Either<List<GraphVertex>, TitanOperationStatus> highestResources = titanDao.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, parseFlag);
+		if (highestResources.isRight()) {
+			TitanOperationStatus status = highestResources.right().value();
+			log.debug("failed to find resource with name {}. status={} ", nodeName, status);
+			result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+			return result;
+		}
+
+		List<GraphVertex> resources = highestResources.left().value();
+		double version = 0.0;
+		GraphVertex highestResource = null;
+		for (GraphVertex vertex : resources) {
+			Object versionObj = vertex.getMetadataProperty(GraphPropertyEnum.VERSION);
+			double resourceVersion = Double.valueOf((String) versionObj);
+			if (resourceVersion > version) {
+				version = resourceVersion;
+				highestResource = vertex;
+			}
+		}
+		return getToscaElementByOperation(highestResource);
+	}
 
     public <T extends Component> Either<List<T>, StorageOperationStatus> getBySystemName(ComponentTypeEnum componentType, String systemName) {
 
@@ -2215,5 +2251,29 @@ public class ToscaOperationFacade {
 		}
 		return status;
 	}
+
+	public Either<Component, StorageOperationStatus> shouldUpgradeToLatestDerived(Resource clonedResource) {
+		String componentId = clonedResource.getUniqueId();
+		Either<GraphVertex, TitanOperationStatus> getVertexEither = titanDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
+		if (getVertexEither.isRight()) {
+			log.debug("Couldn't fetch component with and unique id {}, error: {}", componentId, getVertexEither.right().value());
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getVertexEither.right().value()));
+
+		}
+		GraphVertex nodeTypeV = getVertexEither.left().value();
+		
+		ToscaElement toscaElementToUpdate = ModelConverter.convertToToscaElement(clonedResource);
+
+		Either<ToscaElement, StorageOperationStatus> shouldUpdateDerivedVersion = nodeTypeOperation.shouldUpdateDerivedVersion(toscaElementToUpdate, nodeTypeV);
+		if ( shouldUpdateDerivedVersion.isRight() && StorageOperationStatus.OK != shouldUpdateDerivedVersion.right().value() ){
+			log.debug("Failed to update derived version for node type {} derived {}, error: {}", componentId, clonedResource.getDerivedFrom().get(0), shouldUpdateDerivedVersion.right().value());
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getVertexEither.right().value()));
+		}
+		if ( shouldUpdateDerivedVersion.isLeft() ){
+			return Either.left(ModelConverter.convertFromToscaElement(shouldUpdateDerivedVersion.left().value()));
+		}
+		return Either.left(clonedResource);
+	}
+
 
 }

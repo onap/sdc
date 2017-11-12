@@ -1178,6 +1178,11 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 		return text;
 	}
 
+	public Either<Component, ActionStatus> shouldUpgradeToLatestDerived(Component clonedComponent) {
+		//general implementation. Must be error for service, VF . In ResourceBuisnessLogic exist override
+		return Either.right(ActionStatus.GENERAL_ERROR);
+	}
+
 }
 
 
