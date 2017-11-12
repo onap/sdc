@@ -66,3 +66,7 @@ relationship_types:
 
   tosca.relationships.nfv.VirtualLinksTo:
     derived_from: tosca.relationships.Root
+
+  org.openecomp.relationships.ForwardsTo:
+    derived_from: tosca.relationships.Root
+    valid_target_types: [org.openecomp.capabilities.Forwarder]

@@ -1343,3 +1343,20 @@ node_types:
         type: list
       connectivity_type:
         type: tosca.datatypes.nfv.ConnectivityType
+
+  org.openecomp.nodes.ForwardingPath:
+    derived_from: tosca.nodes.Root
+    properties:
+      target_range:
+        type: list
+        entry_schema:
+          description: Identifier of the reciever port of the VNF or the service
+          type: integer
+      protocol:
+        type: string
+        description: protocol type that runs on the link
+    requirements:
+    - forwarder:
+        capability: org.openecomp.capabilities.Forwarder
+        relationship: org.openecomp.relationships.ForwardsTo
+        occurrences: [ 0, UNBOUNDED ]
