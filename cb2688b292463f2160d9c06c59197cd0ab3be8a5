@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_50e7ef12",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/togglz/TogglzConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-12T14:45:22Z",
+      "side": 1,
+      "message": "I don\u0027t see this file in the commit",
+      "range": {
+        "startLine": 20,
+        "startChar": 55,
+        "endLine": 20,
+        "endChar": 74
+      },
+      "revId": "cb2688b292463f2160d9c06c59197cd0ab3be8a5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_90dd6745",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1287,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-12T14:45:22Z",
+      "side": 1,
+      "message": "replace with stream and filter",
+      "range": {
+        "startLine": 1284,
+        "startChar": 6,
+        "endLine": 1287,
+        "endChar": 74
+      },
+      "revId": "cb2688b292463f2160d9c06c59197cd0ab3be8a5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
