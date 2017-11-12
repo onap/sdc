@@ -21,7 +21,9 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import org.apache.commons.collections4.MapUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.translator.factory.HeatToToscaTranslatorFactory;
@@ -30,6 +32,7 @@ import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
@@ -39,6 +42,8 @@ import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.TestUtils;
+import org.togglz.testing.TestFeatureManager;
+import org.togglz.testing.TestFeatureManagerProvider;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -61,6 +66,24 @@ public class BaseFullTranslationTest {
 
   public static final String IN_POSTFIX = "/in";
   public static final String OUT_POSTFIX = "/out";
+
+  protected static TestFeatureManager manager;
+
+  @BeforeClass
+  public static void enableForwarderFeature(){
+    manager = new TestFeatureManager(ToggleableFeature.class);
+    if (!ToggleableFeature.FORWARDER_CAPABILITY.isActive()) {
+      manager.enable(ToggleableFeature.FORWARDER_CAPABILITY);
+    }
+  }
+
+
+  @AfterClass
+  public static void disableForwarderFeature() {
+    manager.disable(ToggleableFeature.FORWARDER_CAPABILITY);
+    manager = null;
+    TestFeatureManagerProvider.setFeatureManager(null);
+  }
 
   protected void testTranslationWithInit(String path) throws IOException {
     File translatedZipFile = initTranslatorAndTranslate(path);

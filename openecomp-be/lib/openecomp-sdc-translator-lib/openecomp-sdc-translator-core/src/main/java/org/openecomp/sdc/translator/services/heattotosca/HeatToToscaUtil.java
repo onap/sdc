@@ -27,6 +27,7 @@ import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.translator.factory.HeatToToscaTranslatorFactory;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -106,6 +107,7 @@ public class HeatToToscaUtil {
 
   protected static Logger logger = (Logger) LoggerFactory.getLogger(HeatToToscaUtil.class);
   protected static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final String forwarder = "forwarder";
 
 
   /**
@@ -1277,21 +1279,35 @@ public class HeatToToscaUtil {
 
     NodeType flatNodeType =
         getNodeTypeWithFlatHierarchy(type, serviceTemplate, context);
-    String capabilityKey;
-    List<String> capabilityMapping;
+
     if (flatNodeType.getCapabilities() != null) {
-      for (Map.Entry<String, CapabilityDefinition> capabilityNodeEntry : flatNodeType
-          .getCapabilities()
-          .entrySet()) {
-        capabilityKey = capabilityNodeEntry.getKey() + "_" + templateName;
-        nodeTypeCapabilitiesDefinition.put(capabilityKey, capabilityNodeEntry.getValue().clone());
-        capabilityMapping = new ArrayList<>();
-        capabilityMapping.add(templateName);
-        capabilityMapping.add(capabilityNodeEntry.getKey());
-        capabilitySubstitutionMapping.put(capabilityKey, capabilityMapping);
-      }
+      flatNodeType.getCapabilities()
+          .entrySet()
+          .stream()
+          .filter(capabilityNodeEntry -> shouldCapabilityNeedsToBeAdded(capabilityNodeEntry.getKey()))
+          .forEach(capabilityNodeEntry ->
+              addCapabilityToSubMapping(
+              templateName, capabilityNodeEntry, nodeTypeCapabilitiesDefinition, capabilitySubstitutionMapping));
     }
     mdcDataDebugMessage.debugExitMessage(null, null);
+  }
+
+  private static boolean shouldCapabilityNeedsToBeAdded(String capabilityKey) {
+    return !capabilityKey.contains(forwarder) || ToggleableFeature.FORWARDER_CAPABILITY.isActive();
+  }
+
+  private static void addCapabilityToSubMapping(String templateName,
+                                                Map.Entry<String, CapabilityDefinition> capabilityNodeEntry,
+                                                Map<String, CapabilityDefinition> nodeTypeCapabilitiesDefinition,
+                                                Map<String, List<String>> capabilitySubstitutionMapping) {
+    String capabilityKey;
+    List<String> capabilityMapping;
+    capabilityKey = capabilityNodeEntry.getKey() + "_" + templateName;
+    nodeTypeCapabilitiesDefinition.put(capabilityKey, capabilityNodeEntry.getValue().clone());
+    capabilityMapping = new ArrayList<>();
+    capabilityMapping.add(templateName);
+    capabilityMapping.add(capabilityNodeEntry.getKey());
+    capabilitySubstitutionMapping.put(capabilityKey, capabilityMapping);
   }
 
   private static List<Map<String, RequirementDefinition>> getNodeTypeReqs(
