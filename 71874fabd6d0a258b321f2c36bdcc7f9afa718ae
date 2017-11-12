@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_f0edbbf0",
+        "filename": "common/openecomp-tosca-datatype/src/main/resources/globalTypes/openecomp/nodes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1360,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-12T14:47:08Z",
+      "side": 1,
+      "message": "shouldn\u0027t it be org.openecomp.capabilities.Forwarder ?",
+      "range": {
+        "startLine": 1360,
+        "startChar": 20,
+        "endLine": 1360,
+        "endChar": 52
+      },
+      "revId": "71874fabd6d0a258b321f2c36bdcc7f9afa718ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
