@@ -215,6 +215,7 @@ public class ResponseParser {
 		mapper.registerModule(module);
 		ComponentInstanceProperty propertyDefinition = null;
 		try {
+			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			propertyDefinition = mapper.readValue(response, ComponentInstanceProperty.class);
 			logger.debug(propertyDefinition.toString());
 		} catch (IOException e) {
@@ -233,7 +234,7 @@ public class ResponseParser {
 		ObjectMapper mapper = new ObjectMapper();
 		ArtifactDefinition artifactDefinition = null;
 		try {
-
+			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			artifactDefinition = mapper.readValue(response, ArtifactDefinition.class);
 			logger.debug(artifactDefinition.toString());
 		} catch (IOException e) {
@@ -273,6 +274,7 @@ public class ResponseParser {
 		JsonDeserializer<PropertyConstraint> desrializer = new PropertyConstraintJacksonDeserialiser();
 		addDeserializer(module, PropertyConstraint.class, desrializer);
 		mapper.registerModule(module);
+		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		try {
 			object = mapper.readValue(json, clazz);
 			// System.out.println("Class: "+clazz.getSimpleName()+", json:
@@ -311,6 +313,8 @@ public class ResponseParser {
 		mapper.registerModule(module);
 		Service service = null;
 		try {
+//			TODO Andrey L. uncomment line below in case to ignore on unknown properties, not recommended, added by Matvey
+			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			service = mapper.readValue(response, Service.class);
 			logger.debug(service.toString());
 		} catch (IOException e) {
@@ -334,6 +338,7 @@ public class ResponseParser {
 		
 		Product product = null;
 		try {
+			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			product = mapper.readValue(response, Product.class);
 			logger.debug(product.toString());
 		} catch (IOException e) {
@@ -355,6 +360,7 @@ public class ResponseParser {
 		mapper.registerModule(module);
 		ComponentInstance componentInstance = null;
 		try {
+			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			componentInstance = mapper.readValue(response, ComponentInstance.class);
 			logger.debug(componentInstance.toString());
 		} catch (IOException e) {

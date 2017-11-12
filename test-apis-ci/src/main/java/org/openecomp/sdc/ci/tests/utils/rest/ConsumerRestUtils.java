@@ -24,6 +24,7 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import java.util.Map;
 
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 import org.openecomp.sdc.be.model.User;
@@ -123,6 +124,7 @@ public class ConsumerRestUtils extends BaseRestUtils {
 		String bodyToParse = restResponse.getResponse();
 		ObjectMapper mapper = new ObjectMapper();
 		try {
+			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			ConsumerDataDefinition component = mapper.readValue(bodyToParse, ConsumerDataDefinition.class);
 			return component;
 		} catch (Exception e) {
