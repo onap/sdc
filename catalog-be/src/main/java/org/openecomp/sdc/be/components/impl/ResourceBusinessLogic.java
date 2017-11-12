@@ -3821,7 +3821,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		String value = null;
 		List<GetInputValueDataDefinition> getInputs = null;
 		boolean isValidate = true;
-		if (propertyInfo.getValue() != null) {
+		if (null != propertyInfo && null != propertyInfo.getValue()) {
 			getInputs = propertyInfo.getGet_input();
 			isValidate = getInputs == null || getInputs.isEmpty();
 			if (isValidate) {
