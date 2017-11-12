@@ -23,9 +23,24 @@ SDC SDKs Versions
 -  sdc-tosca
 
    :Version: 1.1.32
+   
+
+Release Purpose
+----------------
+The Amsterdam release is the first OMAP release.
+This release is focused on creating a merged architecture between the OpenECOMP and OpenO comonents.
+In addition, the release enhances the list of supported use cases to support the `VoLTE <https://wiki.onap.org/pages/viewpage.action?pageId=6593603>`_ snd 'vCPE <https://wiki.onap.org/pages/viewpage.action?pageId=3246168>`_ use cases.
 
 New Features
 ------------
+
+Main Fetures
+-  Full and comprehensive VNF/Software Application(VF) and service design
+-  Collaborative design
+-  VNF/VF/SERVICE testing and certification
+-  Distribution to ONAP
+-  External API- for VNF/VF and  service 
+-  Integration with BSS / Customer ordering.
 
 **Epics**
 
@@ -72,8 +87,6 @@ New Features
    integration with VFC
 -  [`SDC-219 <https://jira.onap.org/browse/SDC-219>`__\ ] - Support for
    uCPE usecase
--  [`SDC-220 <https://jira.onap.org/browse/SDC-220>`__\ ] - integrate
-   VNF onboarding using VNF-SDK
 -  [`SDC-287 <https://jira.onap.org/browse/SDC-287>`__\ ] - catalog
    support TOSCA CSAR import and distribution
 -  [`SDC-326 <https://jira.onap.org/browse/SDC-326>`__\ ] - Support work
@@ -132,8 +145,6 @@ New Features
    quote input of start event for params
 -  [`SDC-161 <https://jira.onap.org/browse/SDC-161>`__\ ] - Remove
    MojoHaus Maven plug-in from pom file
--  [`SDC-222 <https://jira.onap.org/browse/SDC-222>`__\ ] - Retrive and
-   Desplay VNF provided by VNF-SDK
 -  [`SDC-223 <https://jira.onap.org/browse/SDC-223>`__\ ] - Attachment
    display changes - UI
 -  [`SDC-224 <https://jira.onap.org/browse/SDC-224>`__\ ] - Tosca based
@@ -223,91 +234,8 @@ New Features
 -  [`SDC-623 <https://jira.onap.org/browse/SDC-623>`__\ ] - Independent
    Versioning and Release Process
 
-**Tasks**
-
--  [`SDC-185 <https://jira.onap.org/browse/SDC-185>`__\ ] - [Doc]
-   Document SDC generated CSAR structure
--  [`SDC-246 <https://jira.onap.org/browse/SDC-246>`__\ ] - Set up
-   static analysis for on-boarding
--  [`SDC-258 <https://jira.onap.org/browse/SDC-258>`__\ ] - get param
-   from url
--  [`SDC-260 <https://jira.onap.org/browse/SDC-260>`__\ ] - add node
-   property edit panel
--  [`SDC-261 <https://jira.onap.org/browse/SDC-261>`__\ ] - Resolve the
-   String nullpoint problem in validateString() function
--  [`SDC-266 <https://jira.onap.org/browse/SDC-266>`__\ ] - change
-   component structure
--  [`SDC-271 <https://jira.onap.org/browse/SDC-271>`__\ ] - support get
-   dynamic swagger definition
--  [`SDC-281 <https://jira.onap.org/browse/SDC-281>`__\ ] - support
-   swagger definition for microservice
--  [`SDC-284 <https://jira.onap.org/browse/SDC-284>`__\ ] - get
-   parameters from definition
--  [`SDC-285 <https://jira.onap.org/browse/SDC-285>`__\ ] - support set
-   path and query parameters for rest task
--  [`SDC-316 <https://jira.onap.org/browse/SDC-316>`__\ ] - support
-   multi element drag
--  [`SDC-336 <https://jira.onap.org/browse/SDC-336>`__\ ] - support
-   workflow variable to be parameter
--  [`SDC-362 <https://jira.onap.org/browse/SDC-362>`__\ ] - adjust css
-   style for tree node
--  [`SDC-382 <https://jira.onap.org/browse/SDC-382>`__\ ] - Add Python
-   to Cassandra base docker
--  [`SDC-439 <https://jira.onap.org/browse/SDC-439>`__\ ] - add consumer
--  [`SDC-462 <https://jira.onap.org/browse/SDC-462>`__\ ] - Deploy
-   workflow designer in VM
--  [`SDC-475 <https://jira.onap.org/browse/SDC-475>`__\ ] - Update
-   gitignore
--  [`SDC-478 <https://jira.onap.org/browse/SDC-478>`__\ ] - Sanity
-   docker build & vLB + vCSCF\_aligned VNF addition
--  [`SDC-487 <https://jira.onap.org/browse/SDC-487>`__\ ] - remove neo4j
-   classes
--  [`SDC-496 <https://jira.onap.org/browse/SDC-496>`__\ ] - debug csit
-   sanity failure
--  [`SDC-524 <https://jira.onap.org/browse/SDC-524>`__\ ] - move docker
-   pull credentials from settings.xml to pom
--  [`SDC-527 <https://jira.onap.org/browse/SDC-527>`__\ ] - Update
-   SDC-Simulator base image to the latest
--  [`SDC-553 <https://jira.onap.org/browse/SDC-553>`__\ ] - improve
-   build time
--  [`SDC-569 <https://jira.onap.org/browse/SDC-569>`__\ ] - revert
-   changes to sdc tosca and jtosca
--  [`SDC-577 <https://jira.onap.org/browse/SDC-577>`__\ ] - Change of
-   SDC artifact generator version from v10 to v11 for Amsterdam
--  [`SDC-585 <https://jira.onap.org/browse/SDC-585>`__\ ] - pom.xml
-   alignment - sdc-docker-base
--  [`SDC-635 <https://jira.onap.org/browse/SDC-635>`__\ ] - Updating
-   schema from V11 to V10
--  [`SDC-636 <https://jira.onap.org/browse/SDC-636>`__\ ] - add docs for
-   workflow designer
--  [`SDC-644 <https://jira.onap.org/browse/SDC-644>`__\ ] - Fix doc8
-   errors
-
-**Sub-task**
-
--  [`SDC-372 <https://jira.onap.org/browse/SDC-372>`__\ ] - document
-   jenkins triggers
--  [`SDC-377 <https://jira.onap.org/browse/SDC-377>`__\ ] - create tast
-   case, docker init logic and push to integration project
--  [`SDC-378 <https://jira.onap.org/browse/SDC-378>`__\ ] - create
-   Jenkins jobs to trigger csit test cases
--  [`SDC-419 <https://jira.onap.org/browse/SDC-419>`__\ ] - Setup Read
-   The Docs for SDC
--  [`SDC-530 <https://jira.onap.org/browse/SDC-530>`__\ ] - remove all
-   use of snapshoots from the code
--  [`SDC-542 <https://jira.onap.org/browse/SDC-542>`__\ ] - sanity
-   stabilization
--  [`SDC-551 <https://jira.onap.org/browse/SDC-551>`__\ ] - Fix typos
-   and error/warning messages from sphinx-build
--  [`SDC-563 <https://jira.onap.org/browse/SDC-563>`__\ ] - add tosca
-   parser verification step in onboarding test
--  [`SDC-579 <https://jira.onap.org/browse/SDC-579>`__\ ] - fill SDC
-   SDKs
--  [`SDC-611 <https://jira.onap.org/browse/SDC-611>`__\ ] - sanity
-   stabilization
 
 
-**One or two sentences explaining the purpose of this Release.**
 
 Bug Fixes
 ---------
