@@ -11,6 +11,12 @@
         <param-value>WEB-INF/beans-services.xml</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>org.togglz.core.manager.TogglzConfig</param-name>
+        <param-value>org.openecomp.sdc.common.togglz.TogglzConfiguration</param-value>
+    </context-param>
+
+
 
     <listener>
         <listener-class>org.openecomp.server.listeners.OnboardingAppStartupListener</listener-class>
