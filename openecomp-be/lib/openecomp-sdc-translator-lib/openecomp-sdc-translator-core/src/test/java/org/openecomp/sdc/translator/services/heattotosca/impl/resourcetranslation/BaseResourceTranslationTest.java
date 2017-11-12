@@ -34,8 +34,10 @@ import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidati
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateVolumeInConsolidationData;
 
 import org.apache.commons.collections4.MapUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
@@ -43,6 +45,7 @@ import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.common.togglz.ToggleableFeature;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -66,6 +69,8 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolida
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.TypeComputeConsolidationData;
 import org.openecomp.sdc.translator.services.heattotosca.TranslationService;
 import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataValidationType;
+import org.togglz.testing.TestFeatureManager;
+import org.togglz.testing.TestFeatureManagerProvider;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -97,6 +102,24 @@ public class BaseResourceTranslationTest {
 
   private final String MANIFEST_NAME = SdcCommon.MANIFEST_NAME;
   private String validationFilename = "validationOutput.json";
+
+  protected static TestFeatureManager manager;
+
+  @BeforeClass
+  public static void enableForwarderFeature(){
+    manager = new TestFeatureManager(ToggleableFeature.class);
+    if (!ToggleableFeature.FORWARDER_CAPABILITY.isActive()) {
+      manager.enable(ToggleableFeature.FORWARDER_CAPABILITY);
+    }
+  }
+
+
+  @AfterClass
+  public static void disableForwarderFeature() {
+    manager.disable(ToggleableFeature.FORWARDER_CAPABILITY);
+    manager = null;
+    TestFeatureManagerProvider.setFeatureManager(null);
+  }
 
   @Before
   public void setUp() throws IOException {

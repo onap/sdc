@@ -97,6 +97,7 @@
         <zusammen-state-store.version>0.2.2</zusammen-state-store.version>
         <pmd.version>5.8.1</pmd.version>
         <build.tools.version>${project.version}</build.tools.version>
+        <togglz.version>2.4.1.Final</togglz.version>
     </properties>
 
     <build>
