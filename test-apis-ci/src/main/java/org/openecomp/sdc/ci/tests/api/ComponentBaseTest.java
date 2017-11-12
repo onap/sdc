@@ -116,7 +116,7 @@ public abstract class ComponentBaseTest {
 		config = Utils.getConfig();
 		myContext=context;
 		ExtentManager.initReporter(getReportFolder(), REPORT_FILE_NAME, context);	
-//		AtomicOperationUtils.createDefaultConsumer(true);
+		AtomicOperationUtils.createDefaultConsumer(true);
 		openTitanLogic();
 		performClean();
 		
