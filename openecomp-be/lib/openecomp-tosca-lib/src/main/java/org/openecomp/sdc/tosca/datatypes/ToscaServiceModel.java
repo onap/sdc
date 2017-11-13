@@ -20,12 +20,14 @@
 
 package org.openecomp.sdc.tosca.datatypes;
 
+import org.apache.commons.collections.MapUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.datatypes.model.AsdcModel;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -87,6 +89,15 @@ public class ToscaServiceModel implements AsdcModel {
     return Collections.unmodifiableMap(serviceTemplates);
   }
 
+  public void addServiceTemplate(String serviceTemplateName,
+                                 ServiceTemplate serviceTemplate) {
+    if(MapUtils.isEmpty(serviceTemplates)){
+      serviceTemplates = new HashMap<>();
+    }
+
+    serviceTemplates.put(serviceTemplateName, serviceTemplate);
+  }
+
   /**
    * Sets service templates.
    *
@@ -122,13 +133,5 @@ public class ToscaServiceModel implements AsdcModel {
    */
   public static ToscaServiceModel getClonedServiceModel(ToscaServiceModel toscaServiceModel) {
     return ToscaServiceModel.class.cast(DataModelUtil.getClonedObject(toscaServiceModel));
-  }
-
-  public FileContentHandler getExternalFiles() {
-    return externalFiles;
-  }
-
-  public void setExternalFiles(FileContentHandler externalFiles) {
-    this.externalFiles = externalFiles;
   }
 }

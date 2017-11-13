@@ -8,5 +8,6 @@
   "COMPONENT_QUESTIONNAIRE_HEALER" : "org.openecomp.sdc.healing.healers.ComponentQuestionnaireHealer",
   "HEAT_TOSCA_TRANSLATION_HEALER" : "org.openecomp.sdc.healing.healers.HeatToToscaTranslationHealer",
   "VLM_VERSION_HEALER" : "org.openecomp.sdc.healing.healers.VlmVersionHealer",
-  "VALIDATION_STRUCTURE_HEALER" : "org.openecomp.sdc.healing.healers.ValidationStructureHealer"
+  "VALIDATION_STRUCTURE_HEALER" : "org.openecomp.sdc.healing.healers.ValidationStructureHealer",
+  "FORWARDER_CAPABILITY_HEALER" : "org.openecomp.sdc.healing.healers.ForwarderCapabilityHealer"
 }
