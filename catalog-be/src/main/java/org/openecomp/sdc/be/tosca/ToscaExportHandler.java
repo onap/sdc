@@ -938,12 +938,12 @@ public class ToscaExportHandler {
 		if(CollectionUtils.isEmpty(filteredRelations)){
 			result = true;
 		} else {
-			result = !filteredRelations.stream().filter(rel -> !addRequirement(componentInstance, originComponent, component.getComponentInstances(), rel, toscaRequirements)).findFirst().isPresent();
+			result = !filteredRelations.stream().filter(rel -> !addRequirement(component,componentInstance, originComponent, component.getComponentInstances(), rel, toscaRequirements)).findFirst().isPresent();
 		}
 		return result;
 	}
 	
-	private boolean addRequirement(ComponentInstance fromInstance, Component originComponent, List<ComponentInstance> instancesList, RequirementCapabilityRelDef rel, List<Map<String, ToscaTemplateRequirement>> toscaRequirements){
+	private boolean addRequirement(Component component,ComponentInstance fromInstance, Component originComponent, List<ComponentInstance> instancesList, RequirementCapabilityRelDef rel, List<Map<String, ToscaTemplateRequirement>> toscaRequirements){
 		
 		boolean result = true;
 		Map<String,Component> originComponents = new HashMap<>();
@@ -962,7 +962,13 @@ public class ToscaExportHandler {
 			result = false;
 		}
 		if(result){
-			reqOpt = findRequirement(reqMap, reqAndRelationshipPair.getRequirementUid());
+
+			if(component.getComponentType().equals(ComponentTypeEnum.SERVICE)) {
+				reqOpt = findRequirement(reqMap, reqAndRelationshipPair);
+			}
+			else {
+				reqOpt = findRequirement(reqMap, reqAndRelationshipPair.getRequirementUid());
+			}
 			if(!reqOpt.isPresent()){
 				log.debug("Failed to find a requirement with uniqueId {} on a component with uniqueId {}", reqAndRelationshipPair.getRequirementUid(), originComponent.getUniqueId());
 				result = false;
@@ -1020,7 +1026,23 @@ public class ToscaExportHandler {
 		}
 		return Optional.empty();
 	}
+	
+	private Optional<RequirementDefinition> findRequirement(Map<String, List<RequirementDefinition>> reqMap, RequirementAndRelationshipPair reqAndRelationshipPair) {
+		for(List<RequirementDefinition> reqList: reqMap.values()){
+			Optional<RequirementDefinition> reqOpt = reqList.stream().filter(r -> 
+				isRequirmentBelongTo(reqAndRelationshipPair, r))
+					.findFirst();
+			if(reqOpt.isPresent()){
+				return reqOpt;
+			}
+		}
+		return Optional.empty();
+	}
 
+	private boolean isRequirmentBelongTo(RequirementAndRelationshipPair reqAndRelationshipPair, RequirementDefinition r) {
+		return StringUtils.isNotEmpty(r.getOwnerId()) && r.getOwnerId().equals(reqAndRelationshipPair.getRequirementOwnerId()) 
+				&& StringUtils.isNotEmpty(r.getName()) && r.getName().equals(reqAndRelationshipPair.getRequirement());
+	}
 
 	private Either<SubstitutionMapping, ToscaError> convertCapabilities(Component component, SubstitutionMapping substitutionMappings) {
 		
