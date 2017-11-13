@@ -303,7 +303,7 @@
                         <configuration>
                             <verbose>true</verbose>
                             <apiVersion>1.23</apiVersion>
-                            <registry>nexus3.onap.org:10003</registry>
+                            <registry>nexus3.onap.org:10001</registry>
                             <authConfig>
                                 <pull>
      					<username>docker</username>
