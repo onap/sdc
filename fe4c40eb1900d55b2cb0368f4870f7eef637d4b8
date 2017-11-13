@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_0badc688",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/ForwarderCapabilityHealer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-13T10:05:45Z",
+      "side": 1,
+      "message": "constants should be with capital letters",
+      "range": {
+        "startLine": 34,
+        "startChar": 30,
+        "endLine": 34,
+        "endChar": 51
+      },
+      "revId": "fe4c40eb1900d55b2cb0368f4870f7eef637d4b8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_4bca9e50",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/ForwarderCapabilityHealer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-13T10:05:45Z",
+      "side": 1,
+      "message": "this function is obsolete since it calls only yo one function with the same name and almost same parameters.",
+      "range": {
+        "startLine": 104,
+        "startChar": 2,
+        "endLine": 108,
+        "endChar": 3
+      },
+      "revId": "fe4c40eb1900d55b2cb0368f4870f7eef637d4b8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_abbb52c3",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/src/main/java/org/openecomp/sdc/healing/healers/ForwarderCapabilityHealer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-13T10:05:45Z",
+      "side": 1,
+      "message": "is there a more meaningful name then handle(to general and not implies of the function BL)",
+      "range": {
+        "startLine": 110,
+        "startChar": 15,
+        "endLine": 110,
+        "endChar": 21
+      },
+      "revId": "fe4c40eb1900d55b2cb0368f4870f7eef637d4b8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
