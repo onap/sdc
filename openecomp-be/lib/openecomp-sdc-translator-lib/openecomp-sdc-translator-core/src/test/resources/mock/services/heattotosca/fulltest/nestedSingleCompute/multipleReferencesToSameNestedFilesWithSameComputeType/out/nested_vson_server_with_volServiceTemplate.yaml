@@ -286,6 +286,9 @@ topology_template:
       network.outpoing.packets_vson_server_oam_net_port_00:
       - vson_server_oam_net_port_00
       - network.outpoing.packets
+      forwarder_vson_server_oam_net_port_00:
+      - vson_server_oam_net_port_00
+      - forwarder
       network.outgoing.bytes.rate_vson_server_oam_net_port_00:
       - vson_server_oam_net_port_00
       - network.outgoing.bytes.rate

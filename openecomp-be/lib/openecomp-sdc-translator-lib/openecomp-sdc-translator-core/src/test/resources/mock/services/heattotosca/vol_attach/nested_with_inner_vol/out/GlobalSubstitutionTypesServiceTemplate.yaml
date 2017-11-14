@@ -287,6 +287,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_cmaui_port_0:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.read.bytes_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.

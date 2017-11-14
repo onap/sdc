@@ -227,6 +227,12 @@ topology_template:
       disk.device.allocation_server_cmaui_4:
       - server_cmaui_4
       - disk.device.allocation
+      forwarder_cmaui_port_8:
+      - cmaui_port_8
+      - forwarder
+      forwarder_cmaui_port_7:
+      - cmaui_port_7
+      - forwarder
       disk.write.requests.rate_server_cmaui_4:
       - server_cmaui_4
       - disk.write.requests.rate

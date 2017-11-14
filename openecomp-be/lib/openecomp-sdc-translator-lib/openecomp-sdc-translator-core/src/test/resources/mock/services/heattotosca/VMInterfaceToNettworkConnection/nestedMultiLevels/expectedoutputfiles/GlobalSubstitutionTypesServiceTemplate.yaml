@@ -575,6 +575,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_4_test_nested2Level:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.write.bytes.rate_server_cmaui_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -692,6 +697,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.read.bytes.rate_server_cmaui_4_test_nested4Level_test_nested3Level_test_nested2Level:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -730,6 +740,11 @@ node_types:
       network.incoming.packets.rate_template_VMInt_OAM_lb_4_test_nested2Level:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_2:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -780,6 +795,11 @@ node_types:
         - UNBOUNDED
       os_server_cmaui_4_test_nested4Level_test_nested3Level_test_nested2Level:
         type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_8_test_nested4Level_test_nested3Level_test_nested2Level:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -834,6 +854,11 @@ node_types:
       disk.device.write.bytes_server_cmaui_3_test_nested3Level_test_nested2Level:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_3_test_nested2Level:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -940,6 +965,11 @@ node_types:
       disk.write.bytes.rate_server_cmaui_3_test_nested3Level_test_nested2Level:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_6_test_nested3Level_test_nested2Level:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1372,6 +1402,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_5_test_nested3Level_test_nested2Level:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.write.requests_server_cmaui_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1475,6 +1510,11 @@ node_types:
       network.outpoing.packets_template_VMInt_OAM_lb_8_test_nested4Level_test_nested3Level_test_nested2Level:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_7_test_nested4Level_test_nested3Level_test_nested2Level:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -2047,6 +2087,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_7_test_nested4Level_test_nested3Level:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       feature_test_nested4Level_test_nested3Level:
         type: tosca.capabilities.Node
         occurrences:
@@ -2376,6 +2421,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_8_test_nested4Level_test_nested3Level:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.read.requests.rate_server_cmaui_3_test_nested3Level:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2501,6 +2551,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_6_test_nested3Level:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       binding_server_cmaui_2:
         type: tosca.capabilities.network.Bindable
         occurrences:
@@ -2550,6 +2605,16 @@ node_types:
       network.incoming.packets.rate_template_VMInt_OAM_lb_5_test_nested3Level:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_4:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_3:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -2646,6 +2711,11 @@ node_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
         occurrences:
         - 0
+        - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_5_test_nested3Level:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
         - UNBOUNDED
       feature_template_VMInt_OAM_lb_3:
         type: tosca.capabilities.Node
@@ -3574,6 +3644,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_6:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.iops_server_cmaui_4_test_nested4Level:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -3603,6 +3678,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_7_test_nested4Level:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       binding_server_cmaui_3:
         type: tosca.capabilities.network.Bindable
         occurrences:
@@ -3622,6 +3702,11 @@ node_types:
         - UNBOUNDED
       scalable_server_cmaui_3:
         type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_5:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -3713,6 +3798,11 @@ node_types:
       disk.device.latency_server_cmaui_4_test_nested4Level:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_8_test_nested4Level:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -3983,9 +4073,19 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_8:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.write.bytes_server_cmaui_4:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_7:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

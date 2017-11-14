@@ -425,6 +425,9 @@ topology_template:
       disk.device.latency_app:
       - app
       - disk.device.latency
+      forwarder_app_app_oam_0_port:
+      - app_app_oam_0_port
+      - forwarder
       disk.ephemeral.size_app:
       - app
       - disk.ephemeral.size
@@ -494,6 +497,9 @@ topology_template:
       network.outgoing.bytes.rate_app_app_oam_0_port:
       - app_app_oam_0_port
       - network.outgoing.bytes.rate
+      forwarder_app_app_internal_0_port:
+      - app_app_internal_0_port
+      - forwarder
       memory_app:
       - app
       - memory
@@ -584,6 +590,9 @@ topology_template:
       network.incoming.bytes_app_app_internal_0_port:
       - app_app_internal_0_port
       - network.incoming.bytes
+      forwarder_app_app_data_0_port:
+      - app_app_data_0_port
+      - forwarder
       disk.write.requests_app:
       - app
       - disk.write.requests

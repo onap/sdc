@@ -207,6 +207,12 @@ topology_template:
       disk.device.read.bytes.rate_server_cmaui_4:
       - server_cmaui_4
       - disk.device.read.bytes.rate
+      forwarder_cmaui_port_42:
+      - cmaui_port_42
+      - forwarder
+      forwarder_cmaui_port_43:
+      - cmaui_port_43
+      - forwarder
       endpoint_server_cmaui_4:
       - server_cmaui_4
       - endpoint

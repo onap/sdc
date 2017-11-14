@@ -190,9 +190,15 @@ topology_template:
       disk.read.bytes.rate_pd_server:
       - pd_server
       - disk.read.bytes.rate
+      forwarder_pd_server_pd01_port_2:
+      - pd_server_pd01_port_2
+      - forwarder
       binding_pd_server_pd01_port_2:
       - pd_server_pd01_port_2
       - binding
+      forwarder_pd_server_pd01_port_3:
+      - pd_server_pd01_port_3
+      - forwarder
       binding_pd_server_pd01_port_3:
       - pd_server_pd01_port_3
       - binding

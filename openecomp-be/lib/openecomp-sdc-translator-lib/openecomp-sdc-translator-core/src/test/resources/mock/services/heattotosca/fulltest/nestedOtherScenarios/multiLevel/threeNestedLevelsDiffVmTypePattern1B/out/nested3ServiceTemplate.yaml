@@ -423,6 +423,12 @@ topology_template:
       vcpus_server_ps_2:
       - abstract_ps
       - vcpus_ps
+      forwarder_pd01_port_1:
+      - abstract_ps_1
+      - forwarder_ps_pd01_port
+      forwarder_pd02_port_2:
+      - abstract_ps
+      - forwarder_ps_pd02_port
       network.incoming.packets_pd01_port_1:
       - abstract_ps_1
       - network.incoming.packets_ps_pd01_port

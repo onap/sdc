@@ -260,6 +260,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_pd_server_pd02_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.capacity_pd_server:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -631,6 +636,11 @@ node_types:
       disk.device.write.bytes_ps:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_ps_pd01_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1209,6 +1219,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_pd_server_pd01_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.write.requests.rate_pd_server:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1503,6 +1518,11 @@ node_types:
       disk.write.requests_oam:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_oam_oam02_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -2027,6 +2047,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_oam_oam01_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.read.bytes_oam:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2257,6 +2282,11 @@ node_types:
       disk.device.write.bytes_cmaui:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cmaui_cmaui02_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -2790,6 +2820,11 @@ node_types:
       network.incoming.bytes_cmaui_cmaui01_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cmaui_cmaui01_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -3541,6 +3576,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_cmaui01_port_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.outgoing.bytes.rate_oam02_port_2_test_nested2Level:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -3931,6 +3971,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_oam02_port_2_test_nested2Level:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.incoming.packets_oam01_port_1_test_nested2Level:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -4076,6 +4121,11 @@ node_types:
       cpu_server_ps_1_test_nested3Level_test_nested2Level:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_pd02_port_2_test_nested3Level_test_nested2Level:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -4323,6 +4373,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_oam01_port_1_test_nested2Level:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       feature_server_oam_1_test_nested2Level:
         type: tosca.capabilities.Node
         occurrences:
@@ -4429,8 +4484,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_cmaui02_port_2:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       feature_server_oam_2_test_nested2Level:
         type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_pd01_port_1_test_nested3Level_test_nested2Level:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -5241,6 +5306,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_pd01_port_1_test_nested3Level:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.latency_server_oam_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -5291,6 +5361,11 @@ node_types:
       disk.device.read.bytes_server_oam_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_oam01_port_1:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -5909,6 +5984,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_oam02_port_2:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.incoming.packets.rate_pd01_port_1_test_nested3Level:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -6343,6 +6423,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_pd02_port_2_test_nested3Level:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.capacity_server_oam_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -6621,6 +6706,11 @@ node_types:
       disk.device.usage_ps:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_ps_pd02_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -7506,6 +7596,16 @@ node_types:
       vcpus_server_ps_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_pd01_port_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_pd02_port_2:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

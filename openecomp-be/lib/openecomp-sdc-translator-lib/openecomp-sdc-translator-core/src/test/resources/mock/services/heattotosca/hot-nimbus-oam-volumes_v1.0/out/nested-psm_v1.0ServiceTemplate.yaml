@@ -134,6 +134,9 @@ topology_template:
       disk.device.write.bytes.rate_pcrf_server_psm:
       - pcrf_server_psm
       - disk.device.write.bytes.rate
+      forwarder_psm01_port_0:
+      - psm01_port_0
+      - forwarder
       network.outgoing.bytes.rate_psm01_port_0:
       - psm01_port_0
       - network.outgoing.bytes.rate

@@ -510,12 +510,24 @@ topology_template:
       network.outgoing.bytes_perimeta_ssc_a_ha_0_port:
       - perimeta_ssc_a_ha_0_port
       - network.outgoing.bytes
+      forwarder_perimeta_ssc_a_mgmt_1_port:
+      - perimeta_ssc_a_mgmt_1_port
+      - forwarder
       memory.usage_perimeta_ssc_a_server_0:
       - perimeta_ssc_a_server_0
       - memory.usage
       network.incoming.packets.rate_perimeta_ssc_a_ha_0_port:
       - perimeta_ssc_a_ha_0_port
       - network.incoming.packets.rate
+      forwarder_perimeta_ssc_a_unused_0_port:
+      - perimeta_ssc_a_unused_0_port
+      - forwarder
+      forwarder_perimeta_ssc_a_mgmt_0_port:
+      - perimeta_ssc_a_mgmt_0_port
+      - forwarder
+      forwarder_perimeta_ssc_a_untrusted_parent_0_port:
+      - perimeta_ssc_a_untrusted_parent_0_port
+      - forwarder
       disk.device.read.requests.rate_perimeta_ssc_a_server_0:
       - perimeta_ssc_a_server_0
       - disk.device.read.requests.rate
@@ -597,6 +609,9 @@ topology_template:
       network.incoming.bytes.rate_perimeta_ssc_a_untrusted_parent_0_port:
       - perimeta_ssc_a_untrusted_parent_0_port
       - network.incoming.bytes.rate
+      forwarder_perimeta_ssc_a_trusted_0_port:
+      - perimeta_ssc_a_trusted_0_port
+      - forwarder
       network.outgoing.bytes.rate_perimeta_ssc_a_unused_0_port:
       - perimeta_ssc_a_unused_0_port
       - network.outgoing.bytes.rate
@@ -639,6 +654,9 @@ topology_template:
       disk.device.latency_perimeta_ssc_a_server_0:
       - perimeta_ssc_a_server_0
       - disk.device.latency
+      forwarder_perimeta_ssc_a_ha_0_port:
+      - perimeta_ssc_a_ha_0_port
+      - forwarder
       network.incoming.bytes.rate_perimeta_ssc_a_mgmt_1_port:
       - perimeta_ssc_a_mgmt_1_port
       - network.incoming.bytes.rate

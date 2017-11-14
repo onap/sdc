@@ -274,6 +274,9 @@ topology_template:
       disk.write.requests_pd_server:
       - pd_server
       - disk.write.requests
+      forwarder_pd_server_pd_server_port:
+      - pd_server_pd_server_port
+      - forwarder
       disk.device.latency_pd_server:
       - pd_server
       - disk.device.latency

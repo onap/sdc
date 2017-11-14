@@ -270,6 +270,12 @@ topology_template:
       cpu.delta_server_pcm_2:
       - server_pcm_2
       - cpu.delta
+      forwarder_pcm_port_0:
+      - pcm_port_0
+      - forwarder
+      forwarder_pcm_port_1:
+      - pcm_port_1
+      - forwarder
       disk.device.write.requests.rate_server_pcm_2:
       - server_pcm_2
       - disk.device.write.requests.rate

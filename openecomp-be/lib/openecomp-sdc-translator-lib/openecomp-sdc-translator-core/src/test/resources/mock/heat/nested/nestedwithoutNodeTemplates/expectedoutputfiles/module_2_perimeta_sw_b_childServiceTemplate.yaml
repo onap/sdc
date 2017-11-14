@@ -439,6 +439,9 @@ topology_template:
       disk.read.requests_perimeta_rtp_msc_b_server_0:
       - perimeta_rtp_msc_b_server_0
       - disk.read.requests
+      forwarder_perimeta_rtp_msc_b_trusted_0_port:
+      - perimeta_rtp_msc_b_trusted_0_port
+      - forwarder
       network.incoming.bytes.rate_perimeta_rtp_msc_b_ha_0_port:
       - perimeta_rtp_msc_b_ha_0_port
       - network.incoming.bytes.rate
@@ -496,6 +499,9 @@ topology_template:
       disk.capacity_perimeta_rtp_msc_b_server_0:
       - perimeta_rtp_msc_b_server_0
       - disk.capacity
+      forwarder_perimeta_rtp_msc_b_mgmt_0_port:
+      - perimeta_rtp_msc_b_mgmt_0_port
+      - forwarder
       network.incoming.bytes_perimeta_rtp_msc_b_mgmt_0_port:
       - perimeta_rtp_msc_b_mgmt_0_port
       - network.incoming.bytes
@@ -517,6 +523,9 @@ topology_template:
       disk.write.requests.rate_perimeta_rtp_msc_b_server_0:
       - perimeta_rtp_msc_b_server_0
       - disk.write.requests.rate
+      forwarder_perimeta_rtp_msc_b_ha_0_port:
+      - perimeta_rtp_msc_b_ha_0_port
+      - forwarder
       network.outpoing.packets_perimeta_rtp_msc_b_trusted_0_port:
       - perimeta_rtp_msc_b_trusted_0_port
       - network.outpoing.packets
@@ -550,6 +559,9 @@ topology_template:
       network.incoming.packets_perimeta_rtp_msc_b_mgmt_0_port:
       - perimeta_rtp_msc_b_mgmt_0_port
       - network.incoming.packets
+      forwarder_perimeta_rtp_msc_b_untrusted_parent_0_port:
+      - perimeta_rtp_msc_b_untrusted_parent_0_port
+      - forwarder
       disk.device.iops_perimeta_rtp_msc_b_server_0:
       - perimeta_rtp_msc_b_server_0
       - disk.device.iops

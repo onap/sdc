@@ -526,6 +526,9 @@ topology_template:
       disk.device.capacity_plt:
       - plt
       - disk.device.capacity
+      forwarder_plt_plt_oam_0_port:
+      - plt_plt_oam_0_port
+      - forwarder
       binding_plt_plt_data_0_port:
       - plt_plt_data_0_port
       - binding
@@ -592,6 +595,9 @@ topology_template:
       network.outgoing.bytes.rate_plt_plt_internal_0_port:
       - plt_plt_internal_0_port
       - network.outgoing.bytes.rate
+      forwarder_plt_plt_internal_0_port:
+      - plt_plt_internal_0_port
+      - forwarder
       network.incoming.packets_plt_plt_data_0_port:
       - plt_plt_data_0_port
       - network.incoming.packets
@@ -610,6 +616,9 @@ topology_template:
       disk.write.requests.rate_plt:
       - plt
       - disk.write.requests.rate
+      forwarder_plt_plt_data_0_port:
+      - plt_plt_data_0_port
+      - forwarder
     requirements:
       local_storage_plt:
       - plt

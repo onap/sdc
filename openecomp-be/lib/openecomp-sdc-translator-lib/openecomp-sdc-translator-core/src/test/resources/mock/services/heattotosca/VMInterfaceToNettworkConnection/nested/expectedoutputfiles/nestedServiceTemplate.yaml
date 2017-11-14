@@ -160,6 +160,9 @@ topology_template:
       cpu_util_server_cmaui:
       - server_cmaui
       - cpu_util
+      forwarder_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - forwarder
       network.outgoing.bytes.rate_template_VMInt_OAM_lb_1:
       - template_VMInt_OAM_lb_1
       - network.outgoing.bytes.rate
@@ -187,6 +190,9 @@ topology_template:
       network.incoming.bytes_template_VMInt_OAM_lb_1:
       - template_VMInt_OAM_lb_1
       - network.incoming.bytes
+      forwarder_template_VMInt_OAM_lb_2:
+      - template_VMInt_OAM_lb_2
+      - forwarder
       disk.device.usage_server_cmaui:
       - server_cmaui
       - disk.device.usage

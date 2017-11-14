@@ -242,6 +242,9 @@ topology_template:
       cpu.delta_a_single_1a:
       - a_single_1a
       - cpu.delta
+      forwarder_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - forwarder
       disk.device.write.requests_a_single_1a:
       - a_single_1a
       - disk.device.write.requests
@@ -287,6 +290,9 @@ topology_template:
       memory.usage_a_single_1a:
       - a_single_1a
       - memory.usage
+      forwarder_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - forwarder
       disk.device.write.requests.rate_a_single_1a:
       - a_single_1a
       - disk.device.write.requests.rate

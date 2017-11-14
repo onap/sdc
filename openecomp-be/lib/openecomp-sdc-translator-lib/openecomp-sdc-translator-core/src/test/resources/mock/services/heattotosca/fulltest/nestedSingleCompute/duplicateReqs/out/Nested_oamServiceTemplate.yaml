@@ -302,6 +302,9 @@ topology_template:
       disk.read.bytes_oam:
       - oam
       - disk.read.bytes
+      forwarder_oam_oam_oam_0_port:
+      - oam_oam_oam_0_port
+      - forwarder
       network.incoming.packets_oam_oam_internal_0_port:
       - oam_oam_internal_0_port
       - network.incoming.packets
@@ -434,6 +437,9 @@ topology_template:
       network.incoming.bytes.rate_oam_oam_oam_0_port:
       - oam_oam_oam_0_port
       - network.incoming.bytes.rate
+      forwarder_oam_oam_internal_0_port:
+      - oam_oam_internal_0_port
+      - forwarder
       network.incoming.bytes_oam_oam_oam_0_port:
       - oam_oam_oam_0_port
       - network.incoming.bytes

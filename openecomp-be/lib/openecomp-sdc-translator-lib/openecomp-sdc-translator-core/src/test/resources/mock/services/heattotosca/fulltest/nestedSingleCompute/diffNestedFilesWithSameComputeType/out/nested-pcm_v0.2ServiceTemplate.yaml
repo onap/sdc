@@ -358,6 +358,9 @@ topology_template:
       disk.read.bytes.rate_server_pcm:
       - server_pcm
       - disk.read.bytes.rate
+      forwarder_pcm_port_12:
+      - pcm_port_12
+      - forwarder
       disk.device.allocation_server_pcm:
       - server_pcm
       - disk.device.allocation
@@ -400,6 +403,9 @@ topology_template:
       binding_server_pcm:
       - server_pcm
       - binding
+      forwarder_pcm_port_02:
+      - pcm_port_02
+      - forwarder
       disk.device.capacity_server_pcm:
       - server_pcm
       - disk.device.capacity

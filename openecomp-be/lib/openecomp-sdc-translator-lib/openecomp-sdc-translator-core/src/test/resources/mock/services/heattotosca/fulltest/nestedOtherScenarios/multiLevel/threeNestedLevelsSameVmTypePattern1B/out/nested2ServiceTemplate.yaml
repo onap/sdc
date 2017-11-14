@@ -348,6 +348,9 @@ topology_template:
       disk.device.write.requests.rate_server_pd_22:
       - abstract_pd_server_2
       - disk.device.write.requests.rate_pd_server
+      forwarder_pd02_port_03_test_nested3Level:
+      - test_nested3Level
+      - forwarder_pd02_port_03
       network.outgoing.bytes.rate_pd01_port_02:
       - abstract_pd_server_3
       - network.outgoing.bytes.rate_pd_server_pd01_port
@@ -519,9 +522,15 @@ topology_template:
       disk.write.requests.rate_server_pd_22:
       - abstract_pd_server_2
       - disk.write.requests.rate_pd_server
+      forwarder_pd02_port_02:
+      - abstract_pd_server_2
+      - forwarder_pd_server_pd02_port
       disk.device.latency_server_pd_31_test_nested3Level:
       - test_nested3Level
       - disk.device.latency_server_pd_31
+      forwarder_pd01_port_03_test_nested3Level:
+      - test_nested3Level
+      - forwarder_pd01_port_03
       disk.device.latency_server_pd_21:
       - abstract_pd_server_3
       - disk.device.latency_pd_server
@@ -771,6 +780,9 @@ topology_template:
       network.outgoing.bytes.rate_pd02_port_03_test_nested3Level:
       - test_nested3Level
       - network.outgoing.bytes.rate_pd02_port_03
+      forwarder_pd01_port_02:
+      - abstract_pd_server_3
+      - forwarder_pd_server_pd01_port
       network.outgoing.bytes.rate_pd02_port_02:
       - abstract_pd_server_2
       - network.outgoing.bytes.rate_pd_server_pd02_port

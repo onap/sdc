@@ -262,6 +262,9 @@ topology_template:
       disk.usage_cmaui:
       - cmaui
       - disk.usage
+      forwarder_cmaui_cmaui_port:
+      - cmaui_cmaui_port
+      - forwarder
       network.outgoing.packets.rate_cmaui_cmaui_port:
       - cmaui_cmaui_port
       - network.outgoing.packets.rate

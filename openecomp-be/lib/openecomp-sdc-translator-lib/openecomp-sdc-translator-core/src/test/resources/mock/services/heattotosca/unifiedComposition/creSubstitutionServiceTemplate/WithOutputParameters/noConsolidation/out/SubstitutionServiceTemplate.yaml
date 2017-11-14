@@ -348,6 +348,9 @@ topology_template:
       disk.root.size_FSB1:
       - FSB1
       - disk.root.size
+      forwarder_FSB1_FSB2_Internal:
+      - FSB1_FSB2_Internal
+      - forwarder
       feature_FSB1:
       - FSB1
       - feature
@@ -366,12 +369,18 @@ topology_template:
       network.incoming.packets_FSB1_FSB2_Internal:
       - FSB1_FSB2_Internal
       - network.incoming.packets
+      forwarder_FSB1_FSB1_OAM:
+      - FSB1_FSB1_OAM
+      - forwarder
       memory.resident_FSB1:
       - FSB1
       - memory.resident
       network.incoming.packets.rate_FSB1_FSB1_OAM:
       - FSB1_FSB1_OAM
       - network.incoming.packets.rate
+      forwarder_FSB1_FSB1_Internal:
+      - FSB1_FSB1_Internal
+      - forwarder
       network.incoming.packets.rate_FSB1_FSB2_Internal:
       - FSB1_FSB2_Internal
       - network.incoming.packets.rate

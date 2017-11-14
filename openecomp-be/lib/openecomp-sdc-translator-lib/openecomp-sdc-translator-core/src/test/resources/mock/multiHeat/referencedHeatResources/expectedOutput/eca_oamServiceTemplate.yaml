@@ -584,6 +584,9 @@ topology_template:
       binding_arb_mgmt_port:
       - arb_mgmt_port
       - binding
+      forwarder_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - forwarder
       network.outpoing.packets_oam2_mgmt_port:
       - oam2_mgmt_port
       - network.outpoing.packets
@@ -593,6 +596,9 @@ topology_template:
       attachment_arb_int_port:
       - arb_int_port
       - attachment
+      forwarder_oam2_int_port:
+      - oam2_int_port
+      - forwarder
       disk.device.write.bytes_oam2_instance:
       - oam2_instance
       - disk.device.write.bytes
@@ -713,6 +719,9 @@ topology_template:
       scalable_oam1_instance:
       - oam1_instance
       - scalable
+      forwarder_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - forwarder
       disk.root.size_arb_instance:
       - arb_instance
       - disk.root.size
@@ -737,6 +746,9 @@ topology_template:
       disk.device.read.bytes.rate_oam2_instance:
       - oam2_instance
       - disk.device.read.bytes.rate
+      forwarder_oam1_int_port:
+      - oam1_int_port
+      - forwarder
       network.outgoing.packets.rate_oam2_mgmt_port:
       - oam2_mgmt_port
       - network.outgoing.packets.rate
@@ -1016,6 +1028,9 @@ topology_template:
       disk.device.write.requests.rate_arb_instance:
       - arb_instance
       - disk.device.write.requests.rate
+      forwarder_arb_mgmt_port:
+      - arb_mgmt_port
+      - forwarder
       vcpus_oam2_instance:
       - oam2_instance
       - vcpus
@@ -1061,6 +1076,9 @@ topology_template:
       attachment_oam2_int_port:
       - oam2_int_port
       - attachment
+      forwarder_arb_int_port:
+      - arb_int_port
+      - forwarder
       disk.device.latency_oam2_instance:
       - oam2_instance
       - disk.device.latency

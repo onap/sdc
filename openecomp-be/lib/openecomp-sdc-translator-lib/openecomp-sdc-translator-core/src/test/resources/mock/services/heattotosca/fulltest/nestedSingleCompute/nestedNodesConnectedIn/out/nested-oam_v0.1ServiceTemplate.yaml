@@ -293,6 +293,12 @@ topology_template:
       network.outgoing.bytes.rate_oam_port_1:
       - oam_port_1
       - network.outgoing.bytes.rate
+      forwarder_oam_port_0:
+      - oam_port_0
+      - forwarder
+      forwarder_oam_port_1:
+      - oam_port_1
+      - forwarder
       disk.device.usage_server_oam:
       - server_oam
       - disk.device.usage

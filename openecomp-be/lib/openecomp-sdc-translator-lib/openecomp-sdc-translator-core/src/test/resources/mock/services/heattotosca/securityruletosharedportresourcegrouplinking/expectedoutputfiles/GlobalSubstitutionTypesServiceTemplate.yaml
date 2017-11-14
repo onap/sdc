@@ -285,8 +285,18 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_cmaui_port_2:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       binding_server_cmaui:
         type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cmaui_port_1:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

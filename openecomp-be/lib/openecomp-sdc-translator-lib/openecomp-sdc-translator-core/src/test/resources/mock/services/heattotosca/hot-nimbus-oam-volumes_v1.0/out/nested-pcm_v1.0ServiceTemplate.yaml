@@ -344,9 +344,15 @@ topology_template:
       network.incoming.bytes.rate_pcrf_pcm_port_1:
       - pcrf_pcm_port_1
       - network.incoming.bytes.rate
+      forwarder_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
+      - forwarder
       cpu_pcrf_server_pcm:
       - pcrf_server_pcm
       - cpu
+      forwarder_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - forwarder
       network.incoming.bytes.rate_pcrf_pcm_port_0:
       - pcrf_pcm_port_0
       - network.incoming.bytes.rate

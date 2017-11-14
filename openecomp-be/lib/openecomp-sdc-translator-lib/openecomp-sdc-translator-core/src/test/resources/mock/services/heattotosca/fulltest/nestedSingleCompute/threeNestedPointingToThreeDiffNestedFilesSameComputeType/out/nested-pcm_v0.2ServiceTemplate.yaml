@@ -349,6 +349,9 @@ topology_template:
       disk.device.capacity_server_pcm_1:
       - server_pcm_1
       - disk.device.capacity
+      forwarder_pcm_port_11:
+      - pcm_port_11
+      - forwarder
       disk.read.requests_server_pcm_1:
       - server_pcm_1
       - disk.read.requests
@@ -397,6 +400,9 @@ topology_template:
       disk.device.write.requests_server_pcm_1:
       - server_pcm_1
       - disk.device.write.requests
+      forwarder_pcm_port_01:
+      - pcm_port_01
+      - forwarder
       disk.write.bytes_server_pcm_1:
       - server_pcm_1
       - disk.write.bytes

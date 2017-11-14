@@ -349,6 +349,9 @@ topology_template:
       cpu.delta_server_pcm_2:
       - server_pcm_2
       - cpu.delta
+      forwarder_pcm_port_12:
+      - pcm_port_12
+      - forwarder
       disk.device.write.requests.rate_server_pcm_2:
       - server_pcm_2
       - disk.device.write.requests.rate
@@ -394,6 +397,9 @@ topology_template:
       disk.device.usage_server_pcm_2:
       - server_pcm_2
       - disk.device.usage
+      forwarder_pcm_port_02:
+      - pcm_port_02
+      - forwarder
       disk.device.write.requests_server_pcm_2:
       - server_pcm_2
       - disk.device.write.requests

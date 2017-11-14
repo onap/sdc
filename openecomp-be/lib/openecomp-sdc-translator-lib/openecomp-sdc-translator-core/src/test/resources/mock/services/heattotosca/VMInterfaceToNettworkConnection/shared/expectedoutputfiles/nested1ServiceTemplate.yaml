@@ -234,6 +234,9 @@ topology_template:
       disk.device.usage_server_abc:
       - server_abc
       - disk.device.usage
+      forwarder_abc_port_1:
+      - abc_port_1
+      - forwarder
       disk.root.size_server_cmaui_1:
       - server_cmaui_1
       - disk.root.size
@@ -411,6 +414,9 @@ topology_template:
       binding_server_cmaui_1:
       - server_cmaui_1
       - binding
+      forwarder_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - forwarder
       scalable_server_cmaui_1:
       - server_cmaui_1
       - scalable
@@ -420,6 +426,12 @@ topology_template:
       network.outgoing.bytes.rate_template_VMInt_OAM_lb_2:
       - template_VMInt_OAM_lb_2
       - network.outgoing.bytes.rate
+      forwarder_template_VMInt_OAM_lb_3:
+      - template_VMInt_OAM_lb_3
+      - forwarder
+      forwarder_template_VMInt_OAM_lb_2:
+      - template_VMInt_OAM_lb_2
+      - forwarder
       disk.root.size_server_abc:
       - server_abc
       - disk.root.size

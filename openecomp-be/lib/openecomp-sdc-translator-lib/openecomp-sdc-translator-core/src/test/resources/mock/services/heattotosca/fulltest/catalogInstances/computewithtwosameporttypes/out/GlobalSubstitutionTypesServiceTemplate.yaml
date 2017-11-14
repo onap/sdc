@@ -596,6 +596,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_plt_plt_oam_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       binding_plt_plt_data_0_port:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
@@ -725,6 +730,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_plt_plt_internal_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.incoming.packets_plt_plt_data_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -759,6 +769,11 @@ node_types:
       disk.write.requests.rate_plt:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_plt_plt_data_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1160,6 +1175,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_app_app_oam_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.ephemeral.size_app:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1292,6 +1312,11 @@ node_types:
       network.outgoing.bytes.rate_app_app_oam_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_app_app_internal_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1468,6 +1493,11 @@ node_types:
       network.incoming.bytes_app_app_internal_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_app_app_data_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1833,6 +1863,11 @@ node_types:
         - 1
         - 1
     capabilities:
+      forwarder_iox_iox_oam_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       cpu.delta_iox:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2228,6 +2263,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_iox_iox_data_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.read.bytes.rate_iox:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2255,6 +2295,11 @@ node_types:
       network.outgoing.bytes.rate_iox_iox_internal_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_iox_iox_internal_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

@@ -442,6 +442,12 @@ topology_template:
       cpu.delta_server_pcm_0:
       - abstract_pcm_server
       - cpu.delta_pcm_server
+      forwarder_pcm_port_0:
+      - abstract_pcm_server
+      - forwarder_pcm_server_pcm_port
+      forwarder_pcm_port_1:
+      - abstract_pd_server
+      - forwarder_pd_server_pcm_port
       memory.resident_server_pd_0:
       - abstract_pd_server
       - memory.resident_pd_server

@@ -260,6 +260,9 @@ topology_template:
       disk.device.latency_CPM:
       - CPM
       - disk.device.latency
+      forwarder_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - forwarder
       feature_CPM:
       - CPM
       - feature
@@ -314,6 +317,9 @@ topology_template:
       network.incoming.packets_cpm_mgt_0_port:
       - cpm_mgt_0_port
       - network.incoming.packets
+      forwarder_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - forwarder
       feature_cpm_ctrl_fabric_0_port:
       - cpm_ctrl_fabric_0_port
       - feature

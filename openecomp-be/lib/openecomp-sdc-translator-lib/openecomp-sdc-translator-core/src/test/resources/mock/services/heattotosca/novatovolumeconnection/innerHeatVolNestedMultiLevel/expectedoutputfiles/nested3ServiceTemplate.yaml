@@ -189,9 +189,15 @@ topology_template:
       host_server_cmaui6:
       - server_cmaui6
       - host
+      forwarder_cmaui_port_7_test_nested4Level:
+      - test_nested4Level
+      - forwarder_cmaui_port_7
       disk.device.capacity_server_cmaui8_test_nested4Level:
       - test_nested4Level
       - disk.device.capacity_server_cmaui8
+      forwarder_cmaui_port_8_test_nested4Level:
+      - test_nested4Level
+      - forwarder_cmaui_port_8
       disk.device.allocation_server_cmaui8_test_nested4Level:
       - test_nested4Level
       - disk.device.allocation_server_cmaui8
@@ -387,6 +393,12 @@ topology_template:
       memory.resident_server_cmaui7_test_nested4Level:
       - test_nested4Level
       - memory.resident_server_cmaui7
+      forwarder_cmaui_port_6:
+      - cmaui_port_6
+      - forwarder
+      forwarder_cmaui_port_5:
+      - cmaui_port_5
+      - forwarder
       disk.device.read.bytes_server_cmaui6:
       - server_cmaui6
       - disk.device.read.bytes

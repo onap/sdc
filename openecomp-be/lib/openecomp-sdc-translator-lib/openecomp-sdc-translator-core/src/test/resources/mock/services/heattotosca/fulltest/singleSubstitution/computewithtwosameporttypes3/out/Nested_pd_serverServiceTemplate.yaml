@@ -211,9 +211,15 @@ topology_template:
       network.incoming.packets_pd_server_pd_oam1_port_0:
       - pd_server_pd_oam1_port_0
       - network.incoming.packets
+      forwarder_pd_server_pd_oam1_port_0:
+      - pd_server_pd_oam1_port_0
+      - forwarder
       cpu_pd_server:
       - pd_server
       - cpu
+      forwarder_pd_server_pd_oam1_port_1:
+      - pd_server_pd_oam1_port_1
+      - forwarder
       feature_pd_server_pd_oam1_port_1:
       - pd_server_pd_oam1_port_1
       - feature

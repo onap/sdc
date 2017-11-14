@@ -388,6 +388,9 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.iox
     capabilities:
+      forwarder_iox_iox_oam_0_port:
+      - iox_iox_oam_0_port
+      - forwarder
       cpu.delta_iox:
       - iox
       - cpu.delta
@@ -589,6 +592,9 @@ topology_template:
       network.outpoing.packets_iox_iox_oam_0_port:
       - iox_iox_oam_0_port
       - network.outpoing.packets
+      forwarder_iox_iox_data_0_port:
+      - iox_iox_data_0_port
+      - forwarder
       disk.device.read.bytes.rate_iox:
       - iox
       - disk.device.read.bytes.rate
@@ -604,6 +610,9 @@ topology_template:
       network.outgoing.bytes.rate_iox_iox_internal_0_port:
       - iox_iox_internal_0_port
       - network.outgoing.bytes.rate
+      forwarder_iox_iox_internal_0_port:
+      - iox_iox_internal_0_port
+      - forwarder
       disk.device.usage_iox:
       - iox
       - disk.device.usage

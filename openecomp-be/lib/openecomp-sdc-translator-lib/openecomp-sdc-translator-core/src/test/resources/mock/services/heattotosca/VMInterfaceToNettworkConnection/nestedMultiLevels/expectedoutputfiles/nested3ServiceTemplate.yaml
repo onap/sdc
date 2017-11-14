@@ -358,6 +358,9 @@ topology_template:
       disk.device.write.bytes_server_cmaui_3:
       - server_cmaui_3
       - disk.device.write.bytes
+      forwarder_template_VMInt_OAM_lb_6:
+      - template_VMInt_OAM_lb_6
+      - forwarder
       disk.iops_server_cmaui_4_test_nested4Level:
       - test_nested4Level
       - disk.iops_server_cmaui_4
@@ -373,6 +376,9 @@ topology_template:
       disk.allocation_server_cmaui_3:
       - server_cmaui_3
       - disk.allocation
+      forwarder_template_VMInt_OAM_lb_7_test_nested4Level:
+      - test_nested4Level
+      - forwarder_template_VMInt_OAM_lb_7
       binding_server_cmaui_3:
       - server_cmaui_3
       - binding
@@ -385,6 +391,9 @@ topology_template:
       scalable_server_cmaui_3:
       - server_cmaui_3
       - scalable
+      forwarder_template_VMInt_OAM_lb_5:
+      - template_VMInt_OAM_lb_5
+      - forwarder
       network.outgoing.packets.rate_template_VMInt_OAM_lb_8_test_nested4Level:
       - test_nested4Level
       - network.outgoing.packets.rate_template_VMInt_OAM_lb_8
@@ -433,6 +442,9 @@ topology_template:
       disk.device.latency_server_cmaui_4_test_nested4Level:
       - test_nested4Level
       - disk.device.latency_server_cmaui_4
+      forwarder_template_VMInt_OAM_lb_8_test_nested4Level:
+      - test_nested4Level
+      - forwarder_template_VMInt_OAM_lb_8
       disk.device.read.requests.rate_server_cmaui_4_test_nested4Level:
       - test_nested4Level
       - disk.device.read.requests.rate_server_cmaui_4

@@ -252,9 +252,15 @@ topology_template:
       network.incoming.bytes_cmaui_cmaui_port_4:
       - cmaui_cmaui_port_4
       - network.incoming.bytes
+      forwarder_cmaui_cmaui_port_3:
+      - cmaui_cmaui_port_3
+      - forwarder
       disk.read.bytes_cmaui:
       - cmaui
       - disk.read.bytes
+      forwarder_cmaui_cmaui_port_4:
+      - cmaui_cmaui_port_4
+      - forwarder
       network.incoming.bytes_cmaui_cmaui_port_3:
       - cmaui_cmaui_port_3
       - network.incoming.bytes

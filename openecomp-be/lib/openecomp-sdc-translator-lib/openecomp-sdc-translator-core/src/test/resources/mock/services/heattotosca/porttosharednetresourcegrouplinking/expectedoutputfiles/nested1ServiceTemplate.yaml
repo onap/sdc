@@ -234,6 +234,9 @@ topology_template:
       host_server_cmaui:
       - server_cmaui
       - host
+      forwarder_abc_port_1:
+      - abc_port_1
+      - forwarder
       cpu_util_server_cmaui:
       - server_cmaui
       - cpu_util
@@ -432,12 +435,18 @@ topology_template:
       disk.device.read.bytes_server_abc:
       - server_abc
       - disk.device.read.bytes
+      forwarder_cmaui_port_2:
+      - cmaui_port_2
+      - forwarder
       binding_server_cmaui:
       - server_cmaui
       - binding
       memory.usage_server_abc:
       - server_abc
       - memory.usage
+      forwarder_cmaui_port_1:
+      - cmaui_port_1
+      - forwarder
       disk.read.requests_server_abc:
       - server_abc
       - disk.read.requests

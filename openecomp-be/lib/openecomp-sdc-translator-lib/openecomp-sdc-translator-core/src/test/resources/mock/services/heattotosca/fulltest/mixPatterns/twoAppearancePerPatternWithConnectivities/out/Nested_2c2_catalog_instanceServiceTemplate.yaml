@@ -242,6 +242,9 @@ topology_template:
       disk.device.write.requests_2c2_catalog_instance:
       - 2c2_catalog_instance
       - disk.device.write.requests
+      forwarder_2c2_catalog_instance_2c202_port:
+      - 2c2_catalog_instance_2c202_port
+      - forwarder
       host_2c2_catalog_instance:
       - 2c2_catalog_instance
       - host
@@ -326,6 +329,9 @@ topology_template:
       cpu_2c2_catalog_instance:
       - 2c2_catalog_instance
       - cpu
+      forwarder_2c2_catalog_instance_1c201_port:
+      - 2c2_catalog_instance_1c201_port
+      - forwarder
       disk.ephemeral.size_2c2_catalog_instance:
       - 2c2_catalog_instance
       - disk.ephemeral.size

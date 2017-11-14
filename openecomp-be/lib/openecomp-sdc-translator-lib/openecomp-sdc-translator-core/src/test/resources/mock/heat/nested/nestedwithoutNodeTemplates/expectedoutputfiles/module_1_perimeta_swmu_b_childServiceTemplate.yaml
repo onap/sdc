@@ -454,6 +454,9 @@ topology_template:
       host_perimeta_ssc_b_server_0:
       - perimeta_ssc_b_server_0
       - host
+      forwarder_perimeta_ssc_b_mgmt_1_port:
+      - perimeta_ssc_b_mgmt_1_port
+      - forwarder
       network.outgoing.packets.rate_perimeta_ssc_b_trusted_0_port:
       - perimeta_ssc_b_trusted_0_port
       - network.outgoing.packets.rate
@@ -475,6 +478,9 @@ topology_template:
       os_perimeta_ssc_b_server_0:
       - perimeta_ssc_b_server_0
       - os
+      forwarder_perimeta_ssc_b_untrusted_parent_0_port:
+      - perimeta_ssc_b_untrusted_parent_0_port
+      - forwarder
       memory_perimeta_ssc_b_server_0:
       - perimeta_ssc_b_server_0
       - memory
@@ -499,6 +505,9 @@ topology_template:
       network.outgoing.packets.rate_perimeta_ssc_b_ha_0_port:
       - perimeta_ssc_b_ha_0_port
       - network.outgoing.packets.rate
+      forwarder_perimeta_ssc_b_mgmt_0_port:
+      - perimeta_ssc_b_mgmt_0_port
+      - forwarder
       disk.write.requests.rate_perimeta_ssc_b_server_0:
       - perimeta_ssc_b_server_0
       - disk.write.requests.rate
@@ -613,6 +622,9 @@ topology_template:
       binding_perimeta_ssc_b_ha_0_port:
       - perimeta_ssc_b_ha_0_port
       - binding
+      forwarder_perimeta_ssc_b_ha_0_port:
+      - perimeta_ssc_b_ha_0_port
+      - forwarder
       network.outgoing.bytes.rate_perimeta_ssc_b_mgmt_1_port:
       - perimeta_ssc_b_mgmt_1_port
       - network.outgoing.bytes.rate
@@ -643,6 +655,9 @@ topology_template:
       disk.device.latency_perimeta_ssc_b_server_0:
       - perimeta_ssc_b_server_0
       - disk.device.latency
+      forwarder_perimeta_ssc_b_unused_0_port:
+      - perimeta_ssc_b_unused_0_port
+      - forwarder
       network.incoming.packets_perimeta_ssc_b_unused_0_port:
       - perimeta_ssc_b_unused_0_port
       - network.incoming.packets
@@ -721,6 +736,9 @@ topology_template:
       network.incoming.packets.rate_perimeta_ssc_b_unused_0_port:
       - perimeta_ssc_b_unused_0_port
       - network.incoming.packets.rate
+      forwarder_perimeta_ssc_b_trusted_0_port:
+      - perimeta_ssc_b_trusted_0_port
+      - forwarder
       network.outgoing.packets.rate_perimeta_ssc_b_unused_0_port:
       - perimeta_ssc_b_unused_0_port
       - network.outgoing.packets.rate

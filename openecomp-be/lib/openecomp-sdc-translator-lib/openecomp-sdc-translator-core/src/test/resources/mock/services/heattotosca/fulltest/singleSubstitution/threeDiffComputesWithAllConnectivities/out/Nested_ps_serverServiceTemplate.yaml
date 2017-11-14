@@ -214,6 +214,9 @@ topology_template:
       network.outgoing.bytes_ps_server_pd01_port:
       - ps_server_pd01_port
       - network.outgoing.bytes
+      forwarder_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - forwarder
       disk.write.requests_ps_server:
       - ps_server
       - disk.write.requests

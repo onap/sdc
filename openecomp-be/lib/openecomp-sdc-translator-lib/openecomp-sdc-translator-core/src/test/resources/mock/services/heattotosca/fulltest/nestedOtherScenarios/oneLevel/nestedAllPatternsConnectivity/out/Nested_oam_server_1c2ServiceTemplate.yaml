@@ -230,6 +230,9 @@ topology_template:
       endpoint_oam_server_1c2:
       - oam_server_1c2
       - endpoint
+      forwarder_oam_server_1c2_oam_port:
+      - oam_server_1c2_oam_port
+      - forwarder
       disk.ephemeral.size_oam_server_1c2:
       - oam_server_1c2
       - disk.ephemeral.size

@@ -191,6 +191,9 @@ topology_template:
       binding_server_cmaui:
       - server_cmaui
       - binding
+      forwarder_cmaui_port_1:
+      - cmaui_port_1
+      - forwarder
       disk.device.read.requests.rate_server_cmaui:
       - server_cmaui
       - disk.device.read.requests.rate

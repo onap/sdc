@@ -186,6 +186,9 @@ topology_template:
       instance_smp:
       - smp
       - instance
+      forwarder_smp_port:
+      - smp_port
+      - forwarder
       host_smp:
       - smp
       - host

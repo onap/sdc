@@ -257,6 +257,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_dns_int_bearer_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       host_dns_servers:
         type: tosca.capabilities.Container
         valid_source_types:
@@ -433,6 +438,11 @@ node_types:
       disk.device.read.requests_dns_servers:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_dns_oam_protected_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

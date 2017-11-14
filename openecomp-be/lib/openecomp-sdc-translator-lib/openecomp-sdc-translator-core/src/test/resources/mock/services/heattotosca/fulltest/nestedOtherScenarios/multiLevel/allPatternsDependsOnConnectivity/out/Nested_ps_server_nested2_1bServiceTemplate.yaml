@@ -286,6 +286,9 @@ topology_template:
       disk.device.write.bytes.rate_ps_server_nested2_1b:
       - ps_server_nested2_1b
       - disk.device.write.bytes.rate
+      forwarder_ps_server_nested2_1b_ps_server_nested2_1b_port:
+      - ps_server_nested2_1b_ps_server_nested2_1b_port
+      - forwarder
     requirements:
       local_storage_ps_server_nested2_1b:
       - ps_server_nested2_1b

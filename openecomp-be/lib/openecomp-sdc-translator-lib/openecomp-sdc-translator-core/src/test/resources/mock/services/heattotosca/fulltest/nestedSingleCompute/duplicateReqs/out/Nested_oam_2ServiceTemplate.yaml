@@ -356,6 +356,9 @@ topology_template:
       network.outgoing.bytes.rate_oam_oam_internal_2_port:
       - oam_oam_internal_2_port
       - network.outgoing.bytes.rate
+      forwarder_oam_oam_internal_2_port:
+      - oam_oam_internal_2_port
+      - forwarder
       network.outpoing.packets_oam_oam_internal_2_port:
       - oam_oam_internal_2_port
       - network.outpoing.packets
@@ -374,6 +377,9 @@ topology_template:
       network.incoming.bytes_oam_oam_oam_2_port:
       - oam_oam_oam_2_port
       - network.incoming.bytes
+      forwarder_oam_oam_oam_2_port:
+      - oam_oam_oam_2_port
+      - forwarder
       network.outgoing.packets.rate_oam_oam_internal_2_port:
       - oam_oam_internal_2_port
       - network.outgoing.packets.rate

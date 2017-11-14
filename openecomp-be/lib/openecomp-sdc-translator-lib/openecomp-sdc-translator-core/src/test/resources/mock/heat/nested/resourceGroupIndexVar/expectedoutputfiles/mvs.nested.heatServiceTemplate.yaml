@@ -351,6 +351,9 @@ topology_template:
       vcpus_vnfci:
       - vnfci
       - vcpus
+      forwarder_mgmt_port:
+      - mgmt_port
+      - forwarder
       cpu.delta_vnfci:
       - vnfci
       - cpu.delta

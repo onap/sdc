@@ -248,6 +248,16 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_cmaui_port_2:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cmaui_port_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       attachment_packet_external_network:
         type: tosca.capabilities.Attachment
         occurrences:

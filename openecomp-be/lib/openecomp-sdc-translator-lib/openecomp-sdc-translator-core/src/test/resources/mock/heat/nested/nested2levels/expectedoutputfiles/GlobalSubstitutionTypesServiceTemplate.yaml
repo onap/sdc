@@ -331,6 +331,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_cmaui_port_11_test_nested2:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       memory.usage_server_cmaui_2_test_nested2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -696,6 +701,16 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_cmaui_port_2:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cmaui_port_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       feature_server_cmaui_2_test_nested2:
         type: tosca.capabilities.Node
         occurrences:
@@ -883,6 +898,11 @@ node_types:
       disk.latency_server_cmaui_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cmaui_port_22_test_nested2:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1197,6 +1217,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_cmaui_port_11:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.capacity_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1277,6 +1302,11 @@ node_types:
       disk.read.bytes.rate_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cmaui_port_22:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

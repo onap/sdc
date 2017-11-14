@@ -142,6 +142,9 @@ topology_template:
       disk.device.write.bytes_server_cmaui_3:
       - server_cmaui_3
       - disk.device.write.bytes
+      forwarder_cmaui_port_311:
+      - cmaui_port_311
+      - forwarder
       feature_server_cmaui_3:
       - server_cmaui_3
       - feature
@@ -283,6 +286,9 @@ topology_template:
       disk.read.bytes.rate_server_cmaui_3:
       - server_cmaui_3
       - disk.read.bytes.rate
+      forwarder_cmaui_port_322:
+      - cmaui_port_322
+      - forwarder
       disk.device.write.requests_server_cmaui_3:
       - server_cmaui_3
       - disk.device.write.requests

@@ -365,6 +365,12 @@ topology_template:
       disk.iops_server_pcm:
       - server_pcm
       - disk.iops
+      forwarder_pcm_port_0:
+      - pcm_port_0
+      - forwarder
+      forwarder_pcm_port_1:
+      - pcm_port_1
+      - forwarder
       disk.read.bytes.rate_server_pcm:
       - server_pcm
       - disk.read.bytes.rate

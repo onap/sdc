@@ -380,6 +380,12 @@ topology_template:
       disk.read.bytes_server_cmaui1:
       - server_cmaui1
       - disk.read.bytes
+      forwarder_cmaui_port_2:
+      - cmaui_port_2
+      - forwarder
+      forwarder_cmaui_port_1:
+      - cmaui_port_1
+      - forwarder
       disk.device.usage_server_cmaui1:
       - server_cmaui1
       - disk.device.usage

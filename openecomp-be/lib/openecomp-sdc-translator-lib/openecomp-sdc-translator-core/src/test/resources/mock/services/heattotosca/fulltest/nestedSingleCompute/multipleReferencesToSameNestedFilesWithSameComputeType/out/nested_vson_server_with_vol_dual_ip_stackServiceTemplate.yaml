@@ -385,6 +385,9 @@ topology_template:
       disk.device.capacity_vson_server:
       - vson_server
       - disk.device.capacity
+      forwarder_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - forwarder
       disk.device.iops_vson_server:
       - vson_server
       - disk.device.iops

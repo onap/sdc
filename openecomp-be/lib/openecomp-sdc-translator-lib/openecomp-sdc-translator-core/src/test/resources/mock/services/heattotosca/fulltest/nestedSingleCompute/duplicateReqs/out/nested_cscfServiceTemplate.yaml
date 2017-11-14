@@ -354,6 +354,9 @@ topology_template:
       disk.write.bytes_cscf_server_0:
       - cscf_server_0
       - disk.write.bytes
+      forwarder_cscf_internal_0_port_0:
+      - cscf_internal_0_port_0
+      - forwarder
       cpu.delta_cscf_server_0:
       - cscf_server_0
       - cpu.delta

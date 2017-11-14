@@ -380,6 +380,9 @@ topology_template:
       network.incoming.packets_tdcore_dpdk_0_port_1:
       - tdcore_dpdk_0_port_1
       - network.incoming.packets
+      forwarder_tdcore_dpdk_0_port_1:
+      - tdcore_dpdk_0_port_1
+      - forwarder
       vcpus_tdcore_server_0:
       - tdcore_server_0
       - vcpus
@@ -452,6 +455,9 @@ topology_template:
       disk.write.bytes.rate_tdcore_server_0:
       - tdcore_server_0
       - disk.write.bytes.rate
+      forwarder_tdcore_internal_0_port_0:
+      - tdcore_internal_0_port_0
+      - forwarder
       disk.device.capacity_tdcore_server_0:
       - tdcore_server_0
       - disk.device.capacity

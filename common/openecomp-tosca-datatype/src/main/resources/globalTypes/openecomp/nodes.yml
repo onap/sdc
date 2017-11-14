@@ -487,6 +487,8 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder:
+        type: org.openecomp.capabilities.Forwarder
 
   org.openecomp.resource.nodes.DeploymentFlavor:
     derived_from: tosca.nodes.Root

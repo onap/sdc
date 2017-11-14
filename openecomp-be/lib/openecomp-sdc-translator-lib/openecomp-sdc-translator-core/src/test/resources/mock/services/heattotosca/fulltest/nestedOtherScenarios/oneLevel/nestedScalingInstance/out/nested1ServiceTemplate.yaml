@@ -344,6 +344,12 @@ topology_template:
       os_server_cmaui_1:
       - abstract_cmaui
       - os_cmaui
+      forwarder_cmaui_port_2:
+      - abstract_cmaui
+      - forwarder_cmaui_cmaui_port
+      forwarder_cmaui_port_1:
+      - abstract_cmaui
+      - forwarder_cmaui_cmaui_port
       disk.device.allocation_server_cmaui_1:
       - abstract_cmaui
       - disk.device.allocation_cmaui

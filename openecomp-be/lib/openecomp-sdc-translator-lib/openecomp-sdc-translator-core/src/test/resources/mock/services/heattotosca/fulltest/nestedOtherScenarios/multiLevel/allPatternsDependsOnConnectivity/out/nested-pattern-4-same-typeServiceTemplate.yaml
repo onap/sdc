@@ -332,6 +332,12 @@ topology_template:
       disk.read.bytes_server_pd_pattern4_1:
       - server_pd_pattern4_1
       - disk.read.bytes
+      forwarder_pd_server_pattern4_port_1:
+      - pd_server_pattern4_port_1
+      - forwarder
+      forwarder_pd_server_pattern4_port_2:
+      - pd_server_pattern4_port_2
+      - forwarder
       network.outgoing.bytes.rate_pd_server_pattern4_port_1:
       - pd_server_pattern4_port_1
       - network.outgoing.bytes.rate

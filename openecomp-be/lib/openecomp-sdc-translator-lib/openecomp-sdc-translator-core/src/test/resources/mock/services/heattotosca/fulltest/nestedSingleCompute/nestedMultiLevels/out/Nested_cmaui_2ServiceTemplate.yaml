@@ -252,6 +252,12 @@ topology_template:
       disk.device.allocation_cmaui:
       - cmaui
       - disk.device.allocation
+      forwarder_cmaui_cmaui_port_1:
+      - cmaui_cmaui_port_1
+      - forwarder
+      forwarder_cmaui_cmaui_port_2:
+      - cmaui_cmaui_port_2
+      - forwarder
       network.incoming.bytes_cmaui_cmaui_port_2:
       - cmaui_cmaui_port_2
       - network.incoming.bytes

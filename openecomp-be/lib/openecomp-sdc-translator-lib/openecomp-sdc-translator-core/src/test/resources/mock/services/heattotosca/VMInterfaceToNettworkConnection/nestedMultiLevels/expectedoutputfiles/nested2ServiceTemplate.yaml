@@ -221,6 +221,9 @@ topology_template:
       network.outgoing.bytes_template_VMInt_OAM_lb_7_test_nested4Level_test_nested3Level:
       - test_nested3Level
       - network.outgoing.bytes_template_VMInt_OAM_lb_7_test_nested4Level
+      forwarder_template_VMInt_OAM_lb_7_test_nested4Level_test_nested3Level:
+      - test_nested3Level
+      - forwarder_template_VMInt_OAM_lb_7_test_nested4Level
       feature_test_nested4Level_test_nested3Level:
       - test_nested3Level
       - feature_test_nested4Level
@@ -386,6 +389,9 @@ topology_template:
       disk.device.write.requests_server_cmaui_3_test_nested3Level:
       - test_nested3Level
       - disk.device.write.requests_server_cmaui_3
+      forwarder_template_VMInt_OAM_lb_8_test_nested4Level_test_nested3Level:
+      - test_nested3Level
+      - forwarder_template_VMInt_OAM_lb_8_test_nested4Level
       disk.device.read.requests.rate_server_cmaui_3_test_nested3Level:
       - test_nested3Level
       - disk.device.read.requests.rate_server_cmaui_3
@@ -449,6 +455,9 @@ topology_template:
       disk.device.allocation_server_cmaui_4_test_nested4Level_test_nested3Level:
       - test_nested3Level
       - disk.device.allocation_server_cmaui_4_test_nested4Level
+      forwarder_template_VMInt_OAM_lb_6_test_nested3Level:
+      - test_nested3Level
+      - forwarder_template_VMInt_OAM_lb_6
       binding_server_cmaui_2:
       - server_cmaui_2
       - binding
@@ -476,6 +485,12 @@ topology_template:
       network.incoming.packets.rate_template_VMInt_OAM_lb_5_test_nested3Level:
       - test_nested3Level
       - network.incoming.packets.rate_template_VMInt_OAM_lb_5
+      forwarder_template_VMInt_OAM_lb_4:
+      - template_VMInt_OAM_lb_4
+      - forwarder
+      forwarder_template_VMInt_OAM_lb_3:
+      - template_VMInt_OAM_lb_3
+      - forwarder
       disk.device.read.bytes.rate_server_cmaui_3_test_nested3Level:
       - test_nested3Level
       - disk.device.read.bytes.rate_server_cmaui_3
@@ -524,6 +539,9 @@ topology_template:
       binding_template_VMInt_OAM_lb_6_test_nested3Level:
       - test_nested3Level
       - binding_template_VMInt_OAM_lb_6
+      forwarder_template_VMInt_OAM_lb_5_test_nested3Level:
+      - test_nested3Level
+      - forwarder_template_VMInt_OAM_lb_5
       feature_template_VMInt_OAM_lb_3:
       - template_VMInt_OAM_lb_3
       - feature

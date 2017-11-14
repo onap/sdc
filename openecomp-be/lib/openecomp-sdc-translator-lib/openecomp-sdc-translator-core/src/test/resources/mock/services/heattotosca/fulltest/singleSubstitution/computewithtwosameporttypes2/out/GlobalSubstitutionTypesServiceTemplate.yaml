@@ -349,6 +349,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_pd_server_pd_2_port_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       binding_pd_server:
         type: tosca.capabilities.network.Bindable
         occurrences:
@@ -537,6 +542,11 @@ node_types:
       disk.device.iops_pd_server:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_pd_server_pd_1_port_0:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

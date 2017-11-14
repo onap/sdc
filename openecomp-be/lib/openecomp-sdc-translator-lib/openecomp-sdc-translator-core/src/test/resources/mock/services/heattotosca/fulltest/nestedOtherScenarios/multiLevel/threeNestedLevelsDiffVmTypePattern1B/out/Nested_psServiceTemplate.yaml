@@ -166,6 +166,9 @@ topology_template:
       disk.device.usage_ps:
       - ps
       - disk.device.usage
+      forwarder_ps_pd02_port:
+      - ps_pd02_port
+      - forwarder
       network.outgoing.bytes.rate_ps_pd02_port:
       - ps_pd02_port
       - network.outgoing.bytes.rate

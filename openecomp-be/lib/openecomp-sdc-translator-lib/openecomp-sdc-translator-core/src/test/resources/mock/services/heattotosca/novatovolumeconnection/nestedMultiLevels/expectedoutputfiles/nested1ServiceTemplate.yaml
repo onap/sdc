@@ -233,6 +233,9 @@ topology_template:
       disk.allocation_server_cmaui8_test_nested4Level_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.allocation_server_cmaui8_test_nested4Level_test_nested3Level
+      forwarder_cmaui_port_4_test_nested2Level:
+      - test_nested2Level
+      - forwarder_cmaui_port_4
       network.incoming.packets_cmaui_port_4_test_nested2Level:
       - test_nested2Level
       - network.incoming.packets_cmaui_port_4
@@ -362,6 +365,9 @@ topology_template:
       disk.write.bytes_server_cmaui8_test_nested4Level_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.write.bytes_server_cmaui8_test_nested4Level_test_nested3Level
+      forwarder_cmaui_port_5_test_nested3Level_test_nested2Level:
+      - test_nested2Level
+      - forwarder_cmaui_port_5_test_nested3Level
       disk.write.requests.rate_server_cmaui5_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.write.requests.rate_server_cmaui5_test_nested3Level
@@ -425,6 +431,9 @@ topology_template:
       disk.device.read.bytes.rate_server_cmaui6_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.device.read.bytes.rate_server_cmaui6_test_nested3Level
+      forwarder_cmaui_port_3_test_nested2Level:
+      - test_nested2Level
+      - forwarder_cmaui_port_3
       network.incoming.packets_cmaui_port_7_test_nested4Level_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - network.incoming.packets_cmaui_port_7_test_nested4Level_test_nested3Level
@@ -578,6 +587,9 @@ topology_template:
       cpu.delta_server_cmaui6_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - cpu.delta_server_cmaui6_test_nested3Level
+      forwarder_cmaui_port_7_test_nested4Level_test_nested3Level_test_nested2Level:
+      - test_nested2Level
+      - forwarder_cmaui_port_7_test_nested4Level_test_nested3Level
       disk.device.latency_server_cmaui5_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.device.latency_server_cmaui5_test_nested3Level
@@ -824,6 +836,9 @@ topology_template:
       disk.read.bytes.rate_server_cmaui4_test_nested2Level:
       - test_nested2Level
       - disk.read.bytes.rate_server_cmaui4
+      forwarder_cmaui_port_6_test_nested3Level_test_nested2Level:
+      - test_nested2Level
+      - forwarder_cmaui_port_6_test_nested3Level
       memory_server_cmaui8_test_nested4Level_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - memory_server_cmaui8_test_nested4Level_test_nested3Level
@@ -1019,9 +1034,15 @@ topology_template:
       os_server_cmaui8_test_nested4Level_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - os_server_cmaui8_test_nested4Level_test_nested3Level
+      forwarder_cmaui_port_2:
+      - cmaui_port_2
+      - forwarder
       disk.device.read.requests.rate_server_cmaui8_test_nested4Level_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.device.read.requests.rate_server_cmaui8_test_nested4Level_test_nested3Level
+      forwarder_cmaui_port_1:
+      - cmaui_port_1
+      - forwarder
       disk.device.usage_server_cmaui1:
       - server_cmaui1
       - disk.device.usage
@@ -1067,6 +1088,9 @@ topology_template:
       endpoint_server_cmaui2:
       - server_cmaui2
       - endpoint
+      forwarder_cmaui_port_8_test_nested4Level_test_nested3Level_test_nested2Level:
+      - test_nested2Level
+      - forwarder_cmaui_port_8_test_nested4Level_test_nested3Level
       disk.capacity_server_cmaui4_test_nested2Level:
       - test_nested2Level
       - disk.capacity_server_cmaui4

@@ -210,6 +210,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_abc_port_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.root.size_server_cmaui_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -561,6 +566,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       scalable_server_cmaui_1:
         type: tosca.capabilities.Scalable
         occurrences:
@@ -575,6 +585,16 @@ node_types:
       network.outgoing.bytes.rate_template_VMInt_OAM_lb_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_3:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_template_VMInt_OAM_lb_2:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1131,6 +1151,11 @@ node_types:
         - UNBOUNDED
       binding_server_cmaui:
         type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cmaui_port_1:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

@@ -359,6 +359,9 @@ topology_template:
       memory.usage_pcrf_server_oam:
       - pcrf_server_oam
       - memory.usage
+      forwarder_pcrf_oam_port_1:
+      - pcrf_oam_port_1
+      - forwarder
       network.outgoing.bytes_pcrf_oam_port_0:
       - pcrf_oam_port_0
       - network.outgoing.bytes
@@ -377,6 +380,9 @@ topology_template:
       network.outpoing.packets_pcrf_oam_port_1:
       - pcrf_oam_port_1
       - network.outpoing.packets
+      forwarder_pcrf_oam_port_0:
+      - pcrf_oam_port_0
+      - forwarder
     requirements:
       dependency_pcrf_server_oam:
       - pcrf_server_oam

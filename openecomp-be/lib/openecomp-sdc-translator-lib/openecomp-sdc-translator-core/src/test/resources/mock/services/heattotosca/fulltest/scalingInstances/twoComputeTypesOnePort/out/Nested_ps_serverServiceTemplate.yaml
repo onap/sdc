@@ -261,6 +261,9 @@ topology_template:
       binding_ps_server_ps01_port:
       - ps_server_ps01_port
       - binding
+      forwarder_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - forwarder
       disk.device.write.bytes.rate_ps_server:
       - ps_server
       - disk.device.write.bytes.rate

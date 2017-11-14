@@ -230,6 +230,9 @@ topology_template:
       disk.read.requests_server_oam:
       - abstract_oam_server
       - disk.read.requests_oam_server
+      forwarder_oam_server_port:
+      - abstract_oam_server
+      - forwarder_oam_server_oam_server_port
       cpu_util_server_sm:
       - abstract_sm_server
       - cpu_util_sm_server
@@ -239,6 +242,9 @@ topology_template:
       disk.device.read.bytes_server_oam:
       - abstract_oam_server
       - disk.device.read.bytes_oam_server
+      forwarder_sm_server_port:
+      - abstract_sm_server
+      - forwarder_sm_server_sm_server_port
       network.incoming.bytes_oam_server_port:
       - abstract_oam_server
       - network.incoming.bytes_oam_server_oam_server_port

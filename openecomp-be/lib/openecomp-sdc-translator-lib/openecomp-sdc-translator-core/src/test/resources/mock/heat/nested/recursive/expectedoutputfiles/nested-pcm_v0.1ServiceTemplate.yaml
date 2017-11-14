@@ -395,6 +395,9 @@ topology_template:
       disk.device.read.bytes.rate_server_pcm_1:
       - server_pcm_1
       - disk.device.read.bytes.rate
+      forwarder_pcm_port_00_server_pcm_005:
+      - server_pcm_005
+      - forwarder_pcm_port_00
       disk.write.bytes_server_pcm_server_pcm_005:
       - server_pcm_005
       - disk.write.bytes_server_pcm
@@ -536,6 +539,12 @@ topology_template:
       cpu.delta_server_pcm_1:
       - server_pcm_1
       - cpu.delta
+      forwarder_pcm_port_0:
+      - pcm_port_0
+      - forwarder
+      forwarder_pcm_port_1:
+      - pcm_port_1
+      - forwarder
       network.outpoing.packets_pcm_port_01_server_pcm_005:
       - server_pcm_005
       - network.outpoing.packets_pcm_port_01
@@ -575,6 +584,9 @@ topology_template:
       disk.device.latency_server_pcm_1:
       - server_pcm_1
       - disk.device.latency
+      forwarder_pcm_port_01_server_pcm_005:
+      - server_pcm_005
+      - forwarder_pcm_port_01
       network.outgoing.bytes.rate_pcm_port_1:
       - pcm_port_1
       - network.outgoing.bytes.rate

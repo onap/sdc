@@ -232,6 +232,9 @@ topology_template:
       network.incoming.packets_pcm_server_pcm_port:
       - pcm_server_pcm_port
       - network.incoming.packets
+      forwarder_pcm_server_pcm_port:
+      - pcm_server_pcm_port
+      - forwarder
       disk.device.usage_pcm_server:
       - pcm_server
       - disk.device.usage

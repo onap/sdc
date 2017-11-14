@@ -313,6 +313,12 @@ topology_template:
       disk.capacity_pd_server:
       - pd_server
       - disk.capacity
+      forwarder_pd_server_pd01_port_0:
+      - pd_server_pd01_port_0
+      - forwarder
+      forwarder_pd_server_pd01_port_1:
+      - pd_server_pd01_port_1
+      - forwarder
       network.incoming.packets_pd_server_pd01_port_1:
       - pd_server_pd01_port_1
       - network.incoming.packets

@@ -212,6 +212,9 @@ topology_template:
       disk.usage_b_single_2b:
       - b_single_2b
       - disk.usage
+      forwarder_b_single_2b_1b_t2_port:
+      - b_single_2b_1b_t2_port
+      - forwarder
       network.incoming.bytes.rate_b_single_2b_1b_t2_port:
       - b_single_2b_1b_t2_port
       - network.incoming.bytes.rate
@@ -242,6 +245,9 @@ topology_template:
       disk.read.bytes_b_single_2b:
       - b_single_2b
       - disk.read.bytes
+      forwarder_b_single_2b_1b_t1_port:
+      - b_single_2b_1b_t1_port
+      - forwarder
       disk.device.iops_b_single_2b:
       - b_single_2b
       - disk.device.iops

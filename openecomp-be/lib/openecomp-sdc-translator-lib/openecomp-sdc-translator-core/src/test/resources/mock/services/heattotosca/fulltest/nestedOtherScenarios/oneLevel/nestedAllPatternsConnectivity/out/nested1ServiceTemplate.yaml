@@ -457,6 +457,9 @@ topology_template:
       disk.device.write.requests.rate_server_1c2_oam_1:
       - abstract_oam_server_1c2_0
       - disk.device.write.requests.rate_oam_server_1c2
+      forwarder_ps_server_1b_port:
+      - abstract_ps_server_1b
+      - forwarder_ps_server_1b_ps_server_1b_port
       disk.device.write.requests.rate_server_1c2_oam_2:
       - abstract_oam_server_1c2_1
       - disk.device.write.requests.rate_oam_server_1c2
@@ -706,6 +709,12 @@ topology_template:
       disk.device.write.bytes.rate_server_1b_ps:
       - abstract_ps_server_1b
       - disk.device.write.bytes.rate_ps_server_1b
+      forwarder_cmaui_port_2:
+      - abstract_cmaui_1c1
+      - forwarder_cmaui_1c1_cmaui_port
+      forwarder_cmaui_port_1:
+      - abstract_cmaui_1c1
+      - forwarder_cmaui_1c1_cmaui_port
       disk.device.write.requests_server_1b_ps:
       - abstract_ps_server_1b
       - disk.device.write.requests_ps_server_1b
@@ -898,6 +907,12 @@ topology_template:
       disk.write.bytes.rate_server_1b_pd:
       - abstract_pd_server_1b
       - disk.write.bytes.rate_pd_server_1b
+      forwarder_oam_port_1:
+      - abstract_oam_server_1c2_0
+      - forwarder_oam_server_1c2_oam_port
+      forwarder_oam_port_2:
+      - abstract_oam_server_1c2_1
+      - forwarder_oam_server_1c2_oam_port
       binding_server_1c2_oam_2:
       - abstract_oam_server_1c2_1
       - binding_oam_server_1c2
@@ -1159,6 +1174,9 @@ topology_template:
       network.incoming.bytes_oam_port_1:
       - abstract_oam_server_1c2_0
       - network.incoming.bytes_oam_server_1c2_oam_port
+      forwarder_pd_server_1b_port:
+      - abstract_pd_server_1b
+      - forwarder_pd_server_1b_pd_server_1b_port
       disk.device.write.requests.rate_server_1b_ps:
       - abstract_ps_server_1b
       - disk.device.write.requests.rate_ps_server_1b

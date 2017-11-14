@@ -257,6 +257,9 @@ topology_template:
       binding_rd_server_1b_rd_server_1b_port:
       - rd_server_1b_rd_server_1b_port
       - binding
+      forwarder_rd_server_1b_rd_server_1b_port:
+      - rd_server_1b_rd_server_1b_port
+      - forwarder
       disk.device.iops_rd_server_1b:
       - rd_server_1b
       - disk.device.iops

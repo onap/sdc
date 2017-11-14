@@ -263,6 +263,9 @@ topology_template:
       memory_pcrf_server_pps:
       - pcrf_server_pps
       - memory
+      forwarder_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - forwarder
       network.outpoing.packets_pcrf_pps_port_0:
       - pcrf_pps_port_0
       - network.outpoing.packets

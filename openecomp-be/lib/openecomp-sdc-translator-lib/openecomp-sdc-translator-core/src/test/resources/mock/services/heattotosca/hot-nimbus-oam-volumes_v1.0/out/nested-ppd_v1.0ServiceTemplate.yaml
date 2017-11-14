@@ -553,9 +553,18 @@ topology_template:
       memory.resident_pcrf_server_ppd:
       - pcrf_server_ppd
       - memory.resident
+      forwarder_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - forwarder
       network.outgoing.bytes.rate_pcrf_ppd_port_7:
       - pcrf_ppd_port_7
       - network.outgoing.bytes.rate
+      forwarder_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - forwarder
+      forwarder_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - forwarder
       network.outgoing.bytes.rate_pcrf_ppd_port_5:
       - pcrf_ppd_port_5
       - network.outgoing.bytes.rate
@@ -565,12 +574,27 @@ topology_template:
       network.outgoing.bytes.rate_pcrf_ppd_port_6:
       - pcrf_ppd_port_6
       - network.outgoing.bytes.rate
+      forwarder_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - forwarder
+      forwarder_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - forwarder
+      forwarder_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - forwarder
       os_pcrf_server_ppd:
       - pcrf_server_ppd
       - os
+      forwarder_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - forwarder
       disk.capacity_pcrf_server_ppd:
       - pcrf_server_ppd
       - disk.capacity
+      forwarder_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - forwarder
       endpoint_pcrf_server_ppd:
       - pcrf_server_ppd
       - endpoint

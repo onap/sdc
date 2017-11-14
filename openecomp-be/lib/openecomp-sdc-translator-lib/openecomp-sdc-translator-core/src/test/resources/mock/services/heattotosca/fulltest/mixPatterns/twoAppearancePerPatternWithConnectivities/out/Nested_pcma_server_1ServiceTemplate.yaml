@@ -312,6 +312,12 @@ topology_template:
       network.incoming.packets.rate_pcma_server_pcm_port_1:
       - pcma_server_pcm_port_1
       - network.incoming.packets.rate
+      forwarder_pcma_server_pcm_port_0:
+      - pcma_server_pcm_port_0
+      - forwarder
+      forwarder_pcma_server_pcm_port_1:
+      - pcma_server_pcm_port_1
+      - forwarder
       disk.device.read.requests_pcma_server:
       - pcma_server
       - disk.device.read.requests

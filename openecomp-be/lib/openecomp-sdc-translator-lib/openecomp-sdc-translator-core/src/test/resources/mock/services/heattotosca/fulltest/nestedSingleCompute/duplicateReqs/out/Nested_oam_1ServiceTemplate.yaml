@@ -296,6 +296,9 @@ topology_template:
       disk.device.write.bytes_oam:
       - oam
       - disk.device.write.bytes
+      forwarder_oam_oam_internal_1_port:
+      - oam_oam_internal_1_port
+      - forwarder
       disk.read.bytes_oam:
       - oam
       - disk.read.bytes
@@ -458,6 +461,9 @@ topology_template:
       disk.write.bytes_oam:
       - oam
       - disk.write.bytes
+      forwarder_oam_oam_oam_1_port:
+      - oam_oam_oam_1_port
+      - forwarder
       disk.read.requests_oam:
       - oam
       - disk.read.requests

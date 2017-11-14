@@ -214,6 +214,9 @@ topology_template:
       disk.device.capacity_server_cmaui_2:
       - server_cmaui_2
       - disk.device.capacity
+      forwarder_cmaui_port_222:
+      - cmaui_port_222
+      - forwarder
       disk.device.read.bytes.rate_server_cmaui_2:
       - server_cmaui_2
       - disk.device.read.bytes.rate
@@ -289,6 +292,9 @@ topology_template:
       scalable_server_cmaui_3_test_nested3:
       - test_nested3
       - scalable_server_cmaui_3
+      forwarder_cmaui_port_322_test_nested3:
+      - test_nested3
+      - forwarder_cmaui_port_322
       binding_cmaui_port_322_test_nested3:
       - test_nested3
       - binding_cmaui_port_322
@@ -469,6 +475,9 @@ topology_template:
       host_server_cmaui_2:
       - server_cmaui_2
       - host
+      forwarder_cmaui_port_211:
+      - cmaui_port_211
+      - forwarder
       network.outgoing.packets.rate_cmaui_port_322_test_nested3:
       - test_nested3
       - network.outgoing.packets.rate_cmaui_port_322
@@ -499,6 +508,9 @@ topology_template:
       disk.device.read.requests_server_cmaui_2:
       - server_cmaui_2
       - disk.device.read.requests
+      forwarder_cmaui_port_311_test_nested3:
+      - test_nested3
+      - forwarder_cmaui_port_311
       disk.read.bytes.rate_server_cmaui_2:
       - server_cmaui_2
       - disk.read.bytes.rate

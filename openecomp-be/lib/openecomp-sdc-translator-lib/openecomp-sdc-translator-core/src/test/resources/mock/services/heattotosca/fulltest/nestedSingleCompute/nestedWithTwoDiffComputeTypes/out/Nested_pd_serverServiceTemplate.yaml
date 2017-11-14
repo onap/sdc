@@ -148,6 +148,9 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.pd_server
     capabilities:
+      forwarder_pd_server_pcm_port:
+      - pd_server_pcm_port
+      - forwarder
       scalable_pd_server:
       - pd_server
       - scalable

@@ -178,6 +178,9 @@ topology_template:
       memory.resident_server_ps_2_test_nested3Level:
       - test_nested3Level
       - memory.resident_server_ps_2
+      forwarder_pd01_port_1_test_nested3Level:
+      - test_nested3Level
+      - forwarder_pd01_port_1
       disk.latency_server_oam_1:
       - abstract_oam_1
       - disk.latency_oam
@@ -205,6 +208,9 @@ topology_template:
       disk.device.read.bytes_server_oam_1:
       - abstract_oam_1
       - disk.device.read.bytes_oam
+      forwarder_oam01_port_1:
+      - abstract_oam_1
+      - forwarder_oam_oam01_port
       disk.device.read.bytes_server_oam_2:
       - abstract_oam
       - disk.device.read.bytes_oam
@@ -517,6 +523,9 @@ topology_template:
       cpu_server_ps_2_test_nested3Level:
       - test_nested3Level
       - cpu_server_ps_2
+      forwarder_oam02_port_2:
+      - abstract_oam
+      - forwarder_oam_oam02_port
       network.incoming.packets.rate_pd01_port_1_test_nested3Level:
       - test_nested3Level
       - network.incoming.packets.rate_pd01_port_1
@@ -739,6 +748,9 @@ topology_template:
       disk.device.write.bytes.rate_server_ps_2_test_nested3Level:
       - test_nested3Level
       - disk.device.write.bytes.rate_server_ps_2
+      forwarder_pd02_port_2_test_nested3Level:
+      - test_nested3Level
+      - forwarder_pd02_port_2
       disk.device.capacity_server_oam_2:
       - abstract_oam
       - disk.device.capacity_oam

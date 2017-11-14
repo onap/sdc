@@ -231,6 +231,9 @@ topology_template:
       disk.device.read.requests.rate_server_pd_11:
       - abstract_pd_server_4
       - disk.device.read.requests.rate_pd_server
+      forwarder_pd02_port_03_test_nested3Level_test_nested2Level:
+      - test_nested2Level
+      - forwarder_pd02_port_03_test_nested3Level
       binding_server_pd_11:
       - abstract_pd_server_4
       - binding_pd_server
@@ -480,6 +483,9 @@ topology_template:
       binding_server_pd_22_test_nested2Level:
       - test_nested2Level
       - binding_server_pd_22
+      forwarder_pd01_port_02_test_nested2Level:
+      - test_nested2Level
+      - forwarder_pd01_port_02
       disk.iops_server_pd_32_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.iops_server_pd_32_test_nested3Level
@@ -495,6 +501,9 @@ topology_template:
       disk.write.requests.rate_server_pd_32_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.write.requests.rate_server_pd_32_test_nested3Level
+      forwarder_pd01_port_03_test_nested3Level_test_nested2Level:
+      - test_nested2Level
+      - forwarder_pd01_port_03_test_nested3Level
       disk.write.requests_server_pd_31_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.write.requests_server_pd_31_test_nested3Level
@@ -546,6 +555,9 @@ topology_template:
       disk.device.read.bytes.rate_server_pd_31_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.device.read.bytes.rate_server_pd_31_test_nested3Level
+      forwarder_pd02_port_02_test_nested2Level:
+      - test_nested2Level
+      - forwarder_pd02_port_02
       network.incoming.packets_pd01_port_02_test_nested2Level:
       - test_nested2Level
       - network.incoming.packets_pd01_port_02
@@ -1062,9 +1074,15 @@ topology_template:
       vcpus_server_pd_11:
       - abstract_pd_server_4
       - vcpus_pd_server
+      forwarder_ps02_port_01:
+      - abstract_pd_server_5
+      - forwarder_pd_server_ps02_port
       disk.device.write.bytes_server_pd_11:
       - abstract_pd_server_4
       - disk.device.write.bytes_pd_server
+      forwarder_pd01_port_01:
+      - abstract_pd_server_4
+      - forwarder_pd_server_pd01_port
       disk.allocation_server_pd_11:
       - abstract_pd_server_4
       - disk.allocation_pd_server

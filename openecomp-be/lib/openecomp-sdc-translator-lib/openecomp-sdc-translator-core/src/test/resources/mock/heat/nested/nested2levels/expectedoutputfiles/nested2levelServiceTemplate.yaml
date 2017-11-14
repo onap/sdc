@@ -247,6 +247,9 @@ topology_template:
       disk.ephemeral.size_server_cmaui_2:
       - server_cmaui_2
       - disk.ephemeral.size
+      forwarder_cmaui_port_11:
+      - cmaui_port_11
+      - forwarder
       disk.capacity_server_cmaui_2:
       - server_cmaui_2
       - disk.capacity
@@ -289,6 +292,9 @@ topology_template:
       disk.read.bytes.rate_server_cmaui_2:
       - server_cmaui_2
       - disk.read.bytes.rate
+      forwarder_cmaui_port_22:
+      - cmaui_port_22
+      - forwarder
       cpu.delta_server_cmaui_2:
       - server_cmaui_2
       - cpu.delta

@@ -557,21 +557,12 @@ topology_template:
       binding_cif:
       - cif
       - binding
-      cpu_util_cif:
-      - cif
-      - cpu_util
       disk.device.read.requests_cif:
       - cif
       - disk.device.read.requests
-      disk.device.write.bytes_cif:
-      - cif
-      - disk.device.write.bytes
       disk.latency_cif:
       - cif
       - disk.latency
-      feature_cif_cif_ims_li_1_port:
-      - cif_cif_ims_li_1_port
-      - feature
       os_cif:
       - cif
       - os
@@ -590,63 +581,33 @@ topology_template:
       feature_cif_cif_ims_core_1_port:
       - cif_cif_ims_core_1_port
       - feature
-      network.incoming.packets_cif_cif_oam_1_port_3:
-      - cif_cif_oam_1_port_3
-      - network.incoming.packets
       instance_cif:
       - cif
       - instance
       network.incoming.bytes.rate_cif_cif_oam_1_port_1:
       - cif_cif_oam_1_port_1
       - network.incoming.bytes.rate
-      network.outgoing.bytes_cif_cif_oam_1_port_3:
-      - cif_cif_oam_1_port_3
-      - network.outgoing.bytes
       network.outgoing.bytes_cif_cif_ims_li_1_port:
       - cif_cif_ims_li_1_port
       - network.outgoing.bytes
-      network.outgoing.bytes_cif_cif_oam_1_port_1:
-      - cif_cif_oam_1_port_1
-      - network.outgoing.bytes
-      disk.allocation_cif:
-      - cif
-      - disk.allocation
-      network.outgoing.bytes.rate_cif_cif_internal_1_port:
-      - cif_cif_internal_1_port
-      - network.outgoing.bytes.rate
       network.incoming.packets.rate_cif_cif_oam_1_port_1:
       - cif_cif_oam_1_port_1
       - network.incoming.packets.rate
-      disk.device.iops_cif:
-      - cif
-      - disk.device.iops
       feature_cif_cif_oam_1_port_3:
       - cif_cif_oam_1_port_3
       - feature
       disk.root.size_cif:
       - cif
       - disk.root.size
-      disk.device.write.requests_cif:
-      - cif
-      - disk.device.write.requests
       feature_cif_cif_oam_1_port_1:
       - cif_cif_oam_1_port_1
       - feature
       memory.resident_cif:
       - cif
       - memory.resident
-      network.incoming.bytes.rate_cif_cif_internal_1_port:
-      - cif_cif_internal_1_port
-      - network.incoming.bytes.rate
-      binding_cif_cif_ims_core_1_port:
-      - cif_cif_ims_core_1_port
-      - binding
       network.outgoing.bytes_cif_cif_ims_core_1_port:
       - cif_cif_ims_core_1_port
       - network.outgoing.bytes
-      attachment_cif_cif_ims_core_1_port:
-      - cif_cif_ims_core_1_port
-      - attachment
       network.incoming.packets.rate_cif_cif_oam_1_port_3:
       - cif_cif_oam_1_port_3
       - network.incoming.packets.rate
@@ -656,30 +617,15 @@ topology_template:
       network.incoming.bytes_cif_cif_oam_1_port_1:
       - cif_cif_oam_1_port_1
       - network.incoming.bytes
-      attachment_cif_cif_oam_1_port_3:
-      - cif_cif_oam_1_port_3
-      - attachment
       disk.usage_cif:
       - cif
       - disk.usage
-      disk.write.bytes.rate_cif:
-      - cif
-      - disk.write.bytes.rate
-      network.incoming.bytes_cif_cif_ims_core_1_port:
-      - cif_cif_ims_core_1_port
-      - network.incoming.bytes
-      host_cif:
-      - cif
-      - host
       disk.ephemeral.size_cif:
       - cif
       - disk.ephemeral.size
       disk.write.requests.rate_cif:
       - cif
       - disk.write.requests.rate
-      cpu.delta_cif:
-      - cif
-      - cpu.delta
       disk.read.bytes_cif:
       - cif
       - disk.read.bytes
@@ -689,21 +635,9 @@ topology_template:
       network.outgoing.packets.rate_cif_cif_internal_1_port:
       - cif_cif_internal_1_port
       - network.outgoing.packets.rate
-      scalable_cif:
-      - cif
-      - scalable
       disk.device.read.requests.rate_cif:
       - cif
       - disk.device.read.requests.rate
-      binding_cif_cif_oam_1_port_3:
-      - cif_cif_oam_1_port_3
-      - binding
-      feature_cif_cif_internal_1_port:
-      - cif_cif_internal_1_port
-      - feature
-      binding_cif_cif_oam_1_port_1:
-      - cif_cif_oam_1_port_1
-      - binding
       disk.device.allocation_cif:
       - cif
       - disk.device.allocation
@@ -713,9 +647,6 @@ topology_template:
       vcpus_cif:
       - cif
       - vcpus
-      disk.device.write.bytes.rate_cif:
-      - cif
-      - disk.device.write.bytes.rate
       network.outgoing.packets.rate_cif_cif_ims_li_1_port:
       - cif_cif_ims_li_1_port
       - network.outgoing.packets.rate
@@ -731,12 +662,6 @@ topology_template:
       disk.device.usage_cif:
       - cif
       - disk.device.usage
-      disk.iops_cif:
-      - cif
-      - disk.iops
-      disk.read.bytes.rate_cif:
-      - cif
-      - disk.read.bytes.rate
       network.outpoing.packets_cif_cif_ims_core_1_port:
       - cif_cif_ims_core_1_port
       - network.outpoing.packets
@@ -752,36 +677,15 @@ topology_template:
       network.outgoing.packets.rate_cif_cif_oam_1_port_1:
       - cif_cif_oam_1_port_1
       - network.outgoing.packets.rate
-      disk.write.requests_cif:
-      - cif
-      - disk.write.requests
-      binding_cif_cif_ims_li_1_port:
-      - cif_cif_ims_li_1_port
-      - binding
-      memory_cif:
-      - cif
-      - memory
       disk.read.requests_cif:
       - cif
       - disk.read.requests
-      network.outgoing.packets.rate_cif_cif_ims_core_1_port:
-      - cif_cif_ims_core_1_port
-      - network.outgoing.packets.rate
-      network.outgoing.bytes.rate_cif_cif_oam_1_port_1:
-      - cif_cif_oam_1_port_1
-      - network.outgoing.bytes.rate
       disk.write.bytes_cif:
       - cif
       - disk.write.bytes
       network.outpoing.packets_cif_cif_ims_li_1_port:
       - cif_cif_ims_li_1_port
       - network.outpoing.packets
-      disk.capacity_cif:
-      - cif
-      - disk.capacity
-      network.outgoing.bytes.rate_cif_cif_oam_1_port_3:
-      - cif_cif_oam_1_port_3
-      - network.outgoing.bytes.rate
       network.outgoing.bytes.rate_cif_cif_ims_li_1_port:
       - cif_cif_ims_li_1_port
       - network.outgoing.bytes.rate
@@ -797,12 +701,6 @@ topology_template:
       network.incoming.packets.rate_cif_cif_internal_1_port:
       - cif_cif_internal_1_port
       - network.incoming.packets.rate
-      binding_cif_cif_internal_1_port:
-      - cif_cif_internal_1_port
-      - binding
-      network.incoming.packets_cif_cif_oam_1_port_1:
-      - cif_cif_oam_1_port_1
-      - network.incoming.packets
       cpu_cif:
       - cif
       - cpu
@@ -815,30 +713,147 @@ topology_template:
       disk.device.read.bytes_cif:
       - cif
       - disk.device.read.bytes
-      disk.device.latency_cif:
-      - cif
-      - disk.device.latency
       network.outgoing.bytes.rate_cif_cif_ims_core_1_port:
       - cif_cif_ims_core_1_port
       - network.outgoing.bytes.rate
       network.incoming.packets_cif_cif_ims_core_1_port:
       - cif_cif_ims_core_1_port
       - network.incoming.packets
-      disk.device.write.requests.rate_cif:
-      - cif
-      - disk.device.write.requests.rate
       network.outpoing.packets_cif_cif_internal_1_port:
       - cif_cif_internal_1_port
       - network.outpoing.packets
       feature_cif:
       - cif
       - feature
-      attachment_cif_cif_internal_1_port:
-      - cif_cif_internal_1_port
-      - attachment
       network.incoming.bytes.rate_cif_cif_ims_core_1_port:
       - cif_cif_ims_core_1_port
       - network.incoming.bytes.rate
+      cpu_util_cif:
+      - cif
+      - cpu_util
+      disk.device.write.bytes_cif:
+      - cif
+      - disk.device.write.bytes
+      feature_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - feature
+      network.incoming.packets_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - network.incoming.packets
+      network.outgoing.bytes_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - network.outgoing.bytes
+      network.outgoing.bytes_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - network.outgoing.bytes
+      disk.allocation_cif:
+      - cif
+      - disk.allocation
+      network.outgoing.bytes.rate_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - network.outgoing.bytes.rate
+      disk.device.iops_cif:
+      - cif
+      - disk.device.iops
+      disk.device.write.requests_cif:
+      - cif
+      - disk.device.write.requests
+      network.incoming.bytes.rate_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - network.incoming.bytes.rate
+      binding_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - binding
+      attachment_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - attachment
+      attachment_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - attachment
+      disk.write.bytes.rate_cif:
+      - cif
+      - disk.write.bytes.rate
+      network.incoming.bytes_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - network.incoming.bytes
+      host_cif:
+      - cif
+      - host
+      forwarder_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - forwarder
+      forwarder_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - forwarder
+      cpu.delta_cif:
+      - cif
+      - cpu.delta
+      scalable_cif:
+      - cif
+      - scalable
+      binding_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - binding
+      feature_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - feature
+      binding_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - binding
+      disk.device.write.bytes.rate_cif:
+      - cif
+      - disk.device.write.bytes.rate
+      disk.iops_cif:
+      - cif
+      - disk.iops
+      disk.read.bytes.rate_cif:
+      - cif
+      - disk.read.bytes.rate
+      forwarder_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - forwarder
+      disk.write.requests_cif:
+      - cif
+      - disk.write.requests
+      binding_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - binding
+      memory_cif:
+      - cif
+      - memory
+      network.outgoing.packets.rate_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - network.outgoing.packets.rate
+      network.outgoing.bytes.rate_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - network.outgoing.bytes.rate
+      disk.capacity_cif:
+      - cif
+      - disk.capacity
+      network.outgoing.bytes.rate_cif_cif_oam_1_port_3:
+      - cif_cif_oam_1_port_3
+      - network.outgoing.bytes.rate
+      binding_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - binding
+      network.incoming.packets_cif_cif_oam_1_port_1:
+      - cif_cif_oam_1_port_1
+      - network.incoming.packets
+      forwarder_cif_cif_ims_core_1_port:
+      - cif_cif_ims_core_1_port
+      - forwarder
+      disk.device.latency_cif:
+      - cif
+      - disk.device.latency
+      forwarder_cif_cif_ims_li_1_port:
+      - cif_cif_ims_li_1_port
+      - forwarder
+      disk.device.write.requests.rate_cif:
+      - cif
+      - disk.device.write.requests.rate
+      attachment_cif_cif_internal_1_port:
+      - cif_cif_internal_1_port
+      - attachment
       network.incoming.packets_cif_cif_ims_li_1_port:
       - cif_cif_ims_li_1_port
       - network.incoming.packets

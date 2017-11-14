@@ -343,6 +343,9 @@ topology_template:
       binding_iom_ctrl_fabric_0_port:
       - iom_ctrl_fabric_0_port
       - binding
+      forwarder_iom_data_0_port:
+      - iom_data_0_port
+      - forwarder
       disk.read.bytes_IOM:
       - IOM
       - disk.read.bytes
@@ -412,6 +415,9 @@ topology_template:
       disk.write.requests.rate_IOM:
       - IOM
       - disk.write.requests.rate
+      forwarder_iom_data_1_port:
+      - iom_data_1_port
+      - forwarder
       network.incoming.packets_iom_ctrl_fabric_0_port:
       - iom_ctrl_fabric_0_port
       - network.incoming.packets
@@ -532,6 +538,9 @@ topology_template:
       network.outpoing.packets_iom_data_0_port:
       - iom_data_0_port
       - network.outpoing.packets
+      forwarder_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - forwarder
       disk.device.write.bytes.rate_IOM:
       - IOM
       - disk.device.write.bytes.rate
@@ -541,6 +550,9 @@ topology_template:
       network.outgoing.packets.rate_iom_data_1_port:
       - iom_data_1_port
       - network.outgoing.packets.rate
+      forwarder_iom_data_3_port:
+      - iom_data_3_port
+      - forwarder
       disk.device.allocation_IOM:
       - IOM
       - disk.device.allocation
@@ -601,6 +613,9 @@ topology_template:
       disk.device.write.requests.rate_IOM:
       - IOM
       - disk.device.write.requests.rate
+      forwarder_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - forwarder
       network.incoming.bytes_iom_data_1_port:
       - iom_data_1_port
       - network.incoming.bytes
@@ -640,6 +655,9 @@ topology_template:
       network.outgoing.bytes.rate_iom_data_3_port:
       - iom_data_3_port
       - network.outgoing.bytes.rate
+      forwarder_iom_data_2_port:
+      - iom_data_2_port
+      - forwarder
       memory_IOM:
       - IOM
       - memory

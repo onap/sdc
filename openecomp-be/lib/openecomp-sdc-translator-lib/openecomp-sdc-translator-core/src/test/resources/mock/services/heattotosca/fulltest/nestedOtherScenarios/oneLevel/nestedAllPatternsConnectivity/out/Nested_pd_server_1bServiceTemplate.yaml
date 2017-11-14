@@ -151,6 +151,9 @@ topology_template:
       cpu.delta_pd_server_1b:
       - pd_server_1b
       - cpu.delta
+      forwarder_pd_server_1b_pd_server_1b_port:
+      - pd_server_1b_pd_server_1b_port
+      - forwarder
       network.incoming.bytes_pd_server_1b_pd_server_1b_port:
       - pd_server_1b_pd_server_1b_port
       - network.incoming.bytes

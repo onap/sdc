@@ -456,6 +456,16 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_pcm_port_00:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_pcm_port_01:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       instance_server_pcm:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1052,6 +1062,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_pcm_port_00_server_pcm_005:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.write.bytes_server_pcm_server_pcm_005:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1325,6 +1340,16 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_pcm_port_0:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_pcm_port_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.outpoing.packets_pcm_port_01_server_pcm_005:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1397,6 +1422,11 @@ node_types:
       disk.device.latency_server_pcm_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_pcm_port_01_server_pcm_005:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

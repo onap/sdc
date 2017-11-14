@@ -496,6 +496,9 @@ topology_template:
       network.incoming.bytes.rate_packet_internal_network_port_2:
       - packet_internal_network_port_2
       - network.incoming.bytes.rate
+      forwarder_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - forwarder
       cpu.delta_vLBInstance:
       - vLBInstance
       - cpu.delta
@@ -589,6 +592,12 @@ topology_template:
       disk.device.write.requests.rate_vLBInstance:
       - vLBInstance
       - disk.device.write.requests.rate
+      forwarder_packet_internal_network_port_2:
+      - packet_internal_network_port_2
+      - forwarder
+      forwarder_oam_private_net_network_port_2:
+      - oam_private_net_network_port_2
+      - forwarder
       disk.read.bytes_vLBInstance:
       - vLBInstance
       - disk.read.bytes

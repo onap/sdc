@@ -327,9 +327,15 @@ topology_template:
       network.incoming.packets.rate_pcma_server_pcm_port_2:
       - pcma_server_pcm_port_2
       - network.incoming.packets.rate
+      forwarder_pcma_server_pcm_port_2:
+      - pcma_server_pcm_port_2
+      - forwarder
       disk.device.read.requests_pcma_server:
       - pcma_server
       - disk.device.read.requests
+      forwarder_pcma_server_pcm_port_3:
+      - pcma_server_pcm_port_3
+      - forwarder
       disk.write.bytes.rate_pcma_server:
       - pcma_server
       - disk.write.bytes.rate

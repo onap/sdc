@@ -326,9 +326,15 @@ topology_template:
       disk.device.usage_server_pcm_1:
       - server_pcm_1
       - disk.device.usage
+      forwarder_pcm_port_00:
+      - pcm_port_00
+      - forwarder
       disk.device.write.requests_server_pcm_1:
       - server_pcm_1
       - disk.device.write.requests
+      forwarder_pcm_port_01:
+      - pcm_port_01
+      - forwarder
       disk.write.bytes_server_pcm_1:
       - server_pcm_1
       - disk.write.bytes

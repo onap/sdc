@@ -193,6 +193,9 @@ topology_template:
       memory.usage_ps_server_main_1b:
       - ps_server_main_1b
       - memory.usage
+      forwarder_ps_server_main_1b_ps_server_main_1b_port:
+      - ps_server_main_1b_ps_server_main_1b_port
+      - forwarder
       disk.write.requests.rate_ps_server_main_1b:
       - ps_server_main_1b
       - disk.write.requests.rate

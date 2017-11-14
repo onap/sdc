@@ -281,6 +281,9 @@ topology_template:
       disk.device.read.bytes_osm_server_1c2:
       - osm_server_1c2
       - disk.device.read.bytes
+      forwarder_osm_server_1c2_osm_port:
+      - osm_server_1c2_osm_port
+      - forwarder
       disk.device.capacity_osm_server_1c2:
       - osm_server_1c2
       - disk.device.capacity

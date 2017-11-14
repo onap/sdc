@@ -207,6 +207,9 @@ topology_template:
       disk.device.usage_compute:
       - compute
       - disk.device.usage
+      forwarder_compute_compute_port:
+      - compute_compute_port
+      - forwarder
       network.incoming.packets_compute_compute_port:
       - compute_compute_port
       - network.incoming.packets

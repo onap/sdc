@@ -280,6 +280,9 @@ topology_template:
       network.outpoing.packets_pd_server_pd01_port:
       - pd_server_pd01_port
       - network.outpoing.packets
+      forwarder_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - forwarder
       disk.write.requests.rate_pd_server:
       - pd_server
       - disk.write.requests.rate

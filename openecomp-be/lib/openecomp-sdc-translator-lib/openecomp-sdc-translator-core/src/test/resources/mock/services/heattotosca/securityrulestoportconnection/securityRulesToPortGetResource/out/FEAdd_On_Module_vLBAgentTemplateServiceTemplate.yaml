@@ -474,6 +474,9 @@ topology_template:
       network.outpoing.packets_oam_private_net_network_port_3:
       - oam_private_net_network_port_3
       - network.outpoing.packets
+      forwarder_packet_mirror_network_port_1:
+      - packet_mirror_network_port_1
+      - forwarder
       binding_packet_internal_network_port:
       - packet_internal_network_port
       - binding
@@ -489,6 +492,9 @@ topology_template:
       binding_oam_private_net_network_port_3:
       - oam_private_net_network_port_3
       - binding
+      forwarder_packet_internal_network_port:
+      - packet_internal_network_port
+      - forwarder
       endpoint_vLBAgentInstance:
       - vLBAgentInstance
       - endpoint
@@ -609,6 +615,9 @@ topology_template:
       network.outgoing.bytes_oam_private_net_network_port_3:
       - oam_private_net_network_port_3
       - network.outgoing.bytes
+      forwarder_oam_private_net_network_port_3:
+      - oam_private_net_network_port_3
+      - forwarder
       cpu.delta_vLBAgentInstance:
       - vLBAgentInstance
       - cpu.delta

@@ -293,6 +293,9 @@ topology_template:
       disk.device.read.bytes.rate_server_pcma2:
       - abstract_pcma_server
       - disk.device.read.bytes.rate_pcma_server
+      forwarder_pcm_port_0_0:
+      - abstract_pcma_server_1
+      - forwarder_pcma_server_pcm_port_0
       disk.device.latency_server_pcma2:
       - abstract_pcma_server
       - disk.device.latency_pcma_server
@@ -395,6 +398,9 @@ topology_template:
       disk.read.bytes_server_pcma2:
       - abstract_pcma_server
       - disk.read.bytes_pcma_server
+      forwarder_pcm_port_1_0:
+      - abstract_pcma_server_1
+      - forwarder_pcma_server_pcm_port_1
       cpu_util_server_pcma1:
       - abstract_pcma_server_1
       - cpu_util_pcma_server
@@ -506,6 +512,9 @@ topology_template:
       disk.device.write.requests_server_pcma1:
       - abstract_pcma_server_1
       - disk.device.write.requests_pcma_server
+      forwarder_pcm_port_2_0:
+      - abstract_pcma_server
+      - forwarder_pcma_server_pcm_port_2
       disk.device.write.requests_server_pcma2:
       - abstract_pcma_server
       - disk.device.write.requests_pcma_server
@@ -566,6 +575,9 @@ topology_template:
       network.incoming.bytes_pcm_port_3_0:
       - abstract_pcma_server
       - network.incoming.bytes_pcma_server_pcm_port_3
+      forwarder_pcm_port_3_0:
+      - abstract_pcma_server
+      - forwarder_pcma_server_pcm_port_3
       feature_pcm_port_1_0:
       - abstract_pcma_server_1
       - feature_pcma_server_pcm_port_1

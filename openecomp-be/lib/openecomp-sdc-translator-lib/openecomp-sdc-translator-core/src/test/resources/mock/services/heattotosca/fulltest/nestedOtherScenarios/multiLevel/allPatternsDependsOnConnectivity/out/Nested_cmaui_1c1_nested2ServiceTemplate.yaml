@@ -223,6 +223,9 @@ topology_template:
       memory_cmaui_1c1_nested2:
       - cmaui_1c1_nested2
       - memory
+      forwarder_cmaui_1c1_nested2_cmaui_port:
+      - cmaui_1c1_nested2_cmaui_port
+      - forwarder
       disk.allocation_cmaui_1c1_nested2:
       - cmaui_1c1_nested2
       - disk.allocation

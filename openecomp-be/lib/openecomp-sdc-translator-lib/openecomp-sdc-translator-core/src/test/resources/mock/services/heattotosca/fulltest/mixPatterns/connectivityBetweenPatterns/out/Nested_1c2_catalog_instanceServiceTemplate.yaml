@@ -323,6 +323,9 @@ topology_template:
       attachment_1c2_catalog_instance_1c2_t2_port:
       - 1c2_catalog_instance_1c2_t2_port
       - attachment
+      forwarder_1c2_catalog_instance_1c2_t1_port:
+      - 1c2_catalog_instance_1c2_t1_port
+      - forwarder
       network.outgoing.packets.rate_1c2_catalog_instance_1c2_t1_port:
       - 1c2_catalog_instance_1c2_t1_port
       - network.outgoing.packets.rate
@@ -341,6 +344,9 @@ topology_template:
       disk.device.read.bytes.rate_1c2_catalog_instance:
       - 1c2_catalog_instance
       - disk.device.read.bytes.rate
+      forwarder_1c2_catalog_instance_1c2_t2_port:
+      - 1c2_catalog_instance_1c2_t2_port
+      - forwarder
       disk.device.allocation_1c2_catalog_instance:
       - 1c2_catalog_instance
       - disk.device.allocation

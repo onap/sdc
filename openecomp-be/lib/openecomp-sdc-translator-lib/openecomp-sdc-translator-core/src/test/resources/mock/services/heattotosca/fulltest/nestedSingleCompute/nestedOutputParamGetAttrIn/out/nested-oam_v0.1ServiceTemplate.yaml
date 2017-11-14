@@ -402,6 +402,12 @@ topology_template:
       disk.device.capacity_server_oam:
       - server_oam
       - disk.device.capacity
+      forwarder_pcm_port_00:
+      - pcm_port_00
+      - forwarder
+      forwarder_pcm_port_01:
+      - pcm_port_01
+      - forwarder
       disk.latency_server_oam:
       - server_oam
       - disk.latency

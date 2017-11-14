@@ -259,6 +259,9 @@ topology_template:
       disk.device.allocation_pd_server_main_1b:
       - pd_server_main_1b
       - disk.device.allocation
+      forwarder_pd_server_main_1b_pd_server_main_1b_port:
+      - pd_server_main_1b_pd_server_main_1b_port
+      - forwarder
       attachment_pd_server_main_1b_pd_server_main_1b_port:
       - pd_server_main_1b_pd_server_main_1b_port
       - attachment

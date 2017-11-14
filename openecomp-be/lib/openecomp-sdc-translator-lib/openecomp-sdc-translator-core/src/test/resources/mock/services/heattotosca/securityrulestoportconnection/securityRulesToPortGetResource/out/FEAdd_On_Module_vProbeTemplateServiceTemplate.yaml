@@ -625,6 +625,12 @@ topology_template:
       network.incoming.bytes_oam_private_net_network_port_1:
       - oam_private_net_network_port_1
       - network.incoming.bytes
+      forwarder_packet_internal_network_port_1:
+      - packet_internal_network_port_1
+      - forwarder
+      forwarder_oam_private_net_network_port_1:
+      - oam_private_net_network_port_1
+      - forwarder
       disk.device.read.requests.rate_ProbeInstance:
       - ProbeInstance
       - disk.device.read.requests.rate
@@ -643,6 +649,9 @@ topology_template:
       disk.usage_ProbeInstance:
       - ProbeInstance
       - disk.usage
+      forwarder_cdr_network_port:
+      - cdr_network_port
+      - forwarder
       binding_cdr_network_port:
       - cdr_network_port
       - binding

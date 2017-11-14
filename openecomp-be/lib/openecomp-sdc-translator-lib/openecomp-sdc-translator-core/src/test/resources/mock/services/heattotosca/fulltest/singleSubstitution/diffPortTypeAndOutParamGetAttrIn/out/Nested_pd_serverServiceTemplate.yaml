@@ -293,6 +293,9 @@ topology_template:
       attachment_pd_server_pd01_port:
       - pd_server_pd01_port
       - attachment
+      forwarder_pd_server_pd02_port:
+      - pd_server_pd02_port
+      - forwarder
       disk.capacity_pd_server:
       - pd_server
       - disk.capacity
@@ -359,6 +362,9 @@ topology_template:
       attachment_pd_server_pd02_port:
       - pd_server_pd02_port
       - attachment
+      forwarder_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - forwarder
       disk.write.requests.rate_pd_server:
       - pd_server
       - disk.write.requests.rate

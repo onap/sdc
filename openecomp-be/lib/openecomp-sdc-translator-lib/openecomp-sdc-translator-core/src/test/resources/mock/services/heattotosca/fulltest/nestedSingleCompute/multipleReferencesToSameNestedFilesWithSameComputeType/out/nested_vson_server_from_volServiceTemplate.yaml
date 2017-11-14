@@ -385,6 +385,9 @@ topology_template:
       feature_vson_server_3:
       - vson_server_3
       - feature
+      forwarder_vson_server_oam_net_port_10:
+      - vson_server_oam_net_port_10
+      - forwarder
       disk.write.bytes_vson_server_3:
       - vson_server_3
       - disk.write.bytes

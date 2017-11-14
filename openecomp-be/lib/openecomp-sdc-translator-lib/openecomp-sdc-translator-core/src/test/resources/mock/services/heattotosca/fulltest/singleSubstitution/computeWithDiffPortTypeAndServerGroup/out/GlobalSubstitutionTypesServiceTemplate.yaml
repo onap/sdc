@@ -198,6 +198,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_smp_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       host_smp:
         type: tosca.capabilities.Container
         valid_source_types:

@@ -352,6 +352,12 @@ topology_template:
       disk.device.capacity_server_pcm_1:
       - server_pcm_1
       - disk.device.capacity
+      forwarder_pcm_port_0:
+      - pcm_port_0
+      - forwarder
+      forwarder_pcm_port_1:
+      - pcm_port_1
+      - forwarder
       disk.read.requests_server_pcm_1:
       - server_pcm_1
       - disk.read.requests

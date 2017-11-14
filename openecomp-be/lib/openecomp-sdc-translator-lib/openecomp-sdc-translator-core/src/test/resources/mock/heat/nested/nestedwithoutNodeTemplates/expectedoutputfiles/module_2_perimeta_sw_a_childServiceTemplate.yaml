@@ -534,6 +534,9 @@ topology_template:
       network.incoming.bytes.rate_perimeta_rtp_msc_a_untrusted_parent_0_port:
       - perimeta_rtp_msc_a_untrusted_parent_0_port
       - network.incoming.bytes.rate
+      forwarder_perimeta_rtp_msc_a_mgmt_0_port:
+      - perimeta_rtp_msc_a_mgmt_0_port
+      - forwarder
       network.incoming.bytes.rate_perimeta_rtp_msc_a_ha_0_port:
       - perimeta_rtp_msc_a_ha_0_port
       - network.incoming.bytes.rate
@@ -543,6 +546,9 @@ topology_template:
       disk.write.bytes_perimeta_rtp_msc_a_server_0:
       - perimeta_rtp_msc_a_server_0
       - disk.write.bytes
+      forwarder_perimeta_rtp_msc_a_untrusted_parent_0_port:
+      - perimeta_rtp_msc_a_untrusted_parent_0_port
+      - forwarder
       attachment_perimeta_rtp_msc_a_trusted_0_port:
       - perimeta_rtp_msc_a_trusted_0_port
       - attachment
@@ -591,6 +597,9 @@ topology_template:
       network.incoming.packets_perimeta_rtp_msc_a_mgmt_0_port:
       - perimeta_rtp_msc_a_mgmt_0_port
       - network.incoming.packets
+      forwarder_perimeta_rtp_msc_a_ha_0_port:
+      - perimeta_rtp_msc_a_ha_0_port
+      - forwarder
       scalable_perimeta_rtp_msc_a_server_0:
       - perimeta_rtp_msc_a_server_0
       - scalable
@@ -603,6 +612,9 @@ topology_template:
       network.incoming.packets.rate_perimeta_rtp_msc_a_mgmt_0_port:
       - perimeta_rtp_msc_a_mgmt_0_port
       - network.incoming.packets.rate
+      forwarder_perimeta_rtp_msc_a_trusted_0_port:
+      - perimeta_rtp_msc_a_trusted_0_port
+      - forwarder
       network.incoming.packets.rate_perimeta_rtp_msc_a_untrusted_parent_0_port:
       - perimeta_rtp_msc_a_untrusted_parent_0_port
       - network.incoming.packets.rate

@@ -154,9 +154,6 @@ topology_template:
       network.outpoing.packets_cmaui_port_222_test_nested2:
       - test_nested2
       - network.outpoing.packets_cmaui_port_222
-      disk.device.usage_server_cmaui_1:
-      - server_cmaui_1
-      - disk.device.usage
       memory.usage_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - memory.usage_server_cmaui_3_test_nested3
@@ -181,39 +178,21 @@ topology_template:
       feature_cmaui_port_311_test_nested3_test_nested2:
       - test_nested2
       - feature_cmaui_port_311_test_nested3
-      memory_server_cmaui_3_test_nested3_test_nested2:
-      - test_nested2
-      - memory_server_cmaui_3_test_nested3
-      network.outgoing.bytes_cmaui_port_222_test_nested2:
-      - test_nested2
-      - network.outgoing.bytes_cmaui_port_222
       disk.device.write.bytes.rate_server_cmaui_2_test_nested2:
       - test_nested2
       - disk.device.write.bytes.rate_server_cmaui_2
       feature_cmaui_port_322_test_nested3_test_nested2:
       - test_nested2
       - feature_cmaui_port_322_test_nested3
-      binding_cmaui_port_322_test_nested3_test_nested2:
-      - test_nested2
-      - binding_cmaui_port_322_test_nested3
       disk.root.size_server_cmaui_1:
       - server_cmaui_1
       - disk.root.size
-      disk.device.write.requests.rate_server_cmaui_1:
-      - server_cmaui_1
-      - disk.device.write.requests.rate
       network.outpoing.packets_cmaui_port_311_test_nested3_test_nested2:
       - test_nested2
       - network.outpoing.packets_cmaui_port_311_test_nested3
-      binding_cmaui_port_311_test_nested3_test_nested2:
-      - test_nested2
-      - binding_cmaui_port_311_test_nested3
       network.outpoing.packets_cmaui_port_322_test_nested3_test_nested2:
       - test_nested2
       - network.outpoing.packets_cmaui_port_322_test_nested3
-      disk.write.bytes.rate_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.write.bytes.rate_server_cmaui_2
       disk.iops_server_cmaui_2_test_nested2:
       - test_nested2
       - disk.iops_server_cmaui_2
@@ -238,21 +217,12 @@ topology_template:
       cpu.delta_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - cpu.delta_server_cmaui_3_test_nested3
-      disk.device.iops_server_cmaui_1:
-      - server_cmaui_1
-      - disk.device.iops
       network.incoming.packets_cmaui_port_311_test_nested3_test_nested2:
       - test_nested2
       - network.incoming.packets_cmaui_port_311_test_nested3
-      disk.device.allocation_server_cmaui_3_test_nested3_test_nested2:
-      - test_nested2
-      - disk.device.allocation_server_cmaui_3_test_nested3
       disk.latency_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - disk.latency_server_cmaui_3_test_nested3
-      disk.allocation_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.allocation_server_cmaui_2
       disk.device.read.bytes.rate_server_cmaui_1:
       - server_cmaui_1
       - disk.device.read.bytes.rate
@@ -265,24 +235,15 @@ topology_template:
       disk.device.read.bytes_server_cmaui_1:
       - server_cmaui_1
       - disk.device.read.bytes
-      cpu_server_cmaui_2_test_nested2:
-      - test_nested2
-      - cpu_server_cmaui_2
       disk.device.read.bytes.rate_server_cmaui_2_test_nested2:
       - test_nested2
       - disk.device.read.bytes.rate_server_cmaui_2
-      disk.device.read.bytes_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.device.read.bytes_server_cmaui_2
       disk.write.requests.rate_server_cmaui_1:
       - server_cmaui_1
       - disk.write.requests.rate
       network.outgoing.packets.rate_cmaui_port_211_test_nested2:
       - test_nested2
       - network.outgoing.packets.rate_cmaui_port_211
-      endpoint_server_cmaui_2_test_nested2:
-      - test_nested2
-      - endpoint_server_cmaui_2
       disk.device.read.bytes.rate_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - disk.device.read.bytes.rate_server_cmaui_3_test_nested3
@@ -292,18 +253,9 @@ topology_template:
       instance_server_cmaui_2_test_nested2:
       - test_nested2
       - instance_server_cmaui_2
-      cpu_server_cmaui_1:
-      - server_cmaui_1
-      - cpu
       network.incoming.packets.rate_cmaui_port_311_test_nested3_test_nested2:
       - test_nested2
       - network.incoming.packets.rate_cmaui_port_311_test_nested3
-      feature_cmaui_port_211_test_nested2:
-      - test_nested2
-      - feature_cmaui_port_211
-      network.incoming.packets_cmaui_port_2:
-      - cmaui_port_2
-      - network.incoming.packets
       memory.usage_server_cmaui_2_test_nested2:
       - test_nested2
       - memory.usage_server_cmaui_2
@@ -313,9 +265,6 @@ topology_template:
       disk.capacity_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - disk.capacity_server_cmaui_3_test_nested3
-      network.incoming.packets_cmaui_port_1:
-      - cmaui_port_1
-      - network.incoming.packets
       disk.device.write.bytes_server_cmaui_2_test_nested2:
       - test_nested2
       - disk.device.write.bytes_server_cmaui_2
@@ -325,105 +274,45 @@ topology_template:
       disk.ephemeral.size_server_cmaui_1:
       - server_cmaui_1
       - disk.ephemeral.size
-      disk.capacity_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.capacity_server_cmaui_2
-      disk.capacity_server_cmaui_1:
-      - server_cmaui_1
-      - disk.capacity
-      disk.device.write.requests.rate_server_cmaui_3_test_nested3_test_nested2:
-      - test_nested2
-      - disk.device.write.requests.rate_server_cmaui_3_test_nested3
       disk.latency_server_cmaui_2_test_nested2:
       - test_nested2
       - disk.latency_server_cmaui_2
-      disk.read.bytes.rate_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.read.bytes.rate_server_cmaui_2
       network.incoming.bytes.rate_cmaui_port_211_test_nested2:
       - test_nested2
       - network.incoming.bytes.rate_cmaui_port_211
-      disk.ephemeral.size_server_cmaui_3_test_nested3_test_nested2:
-      - test_nested2
-      - disk.ephemeral.size_server_cmaui_3_test_nested3
-      disk.device.read.requests_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.device.read.requests_server_cmaui_2
-      binding_cmaui_port_211_test_nested2:
-      - test_nested2
-      - binding_cmaui_port_211
       binding_server_cmaui_2_test_nested2:
       - test_nested2
       - binding_server_cmaui_2
-      os_server_cmaui_2_test_nested2:
-      - test_nested2
-      - os_server_cmaui_2
-      attachment_cmaui_port_211_test_nested2:
-      - test_nested2
-      - attachment_cmaui_port_211
       binding_cmaui_port_1:
       - cmaui_port_1
       - binding
       binding_cmaui_port_2:
       - cmaui_port_2
       - binding
-      disk.ephemeral.size_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.ephemeral.size_server_cmaui_2
-      disk.iops_server_cmaui_1:
-      - server_cmaui_1
-      - disk.iops
-      vcpus_server_cmaui_2_test_nested2:
-      - test_nested2
-      - vcpus_server_cmaui_2
       binding_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - binding_server_cmaui_3_test_nested3
       disk.device.write.requests_server_cmaui_1:
       - server_cmaui_1
       - disk.device.write.requests
-      network.outgoing.bytes.rate_cmaui_port_2:
-      - cmaui_port_2
-      - network.outgoing.bytes.rate
       disk.device.write.bytes.rate_server_cmaui_1:
       - server_cmaui_1
       - disk.device.write.bytes.rate
       cpu_util_server_cmaui_1:
       - server_cmaui_1
       - cpu_util
-      network.outgoing.bytes.rate_cmaui_port_1:
-      - cmaui_port_1
-      - network.outgoing.bytes.rate
-      network.outgoing.bytes_cmaui_port_322_test_nested3_test_nested2:
-      - test_nested2
-      - network.outgoing.bytes_cmaui_port_322_test_nested3
       network.incoming.bytes_cmaui_port_2:
       - cmaui_port_2
       - network.incoming.bytes
-      cpu_server_cmaui_3_test_nested3_test_nested2:
-      - test_nested2
-      - cpu_server_cmaui_3_test_nested3
       network.incoming.bytes_cmaui_port_1:
       - cmaui_port_1
       - network.incoming.bytes
       network.incoming.packets_cmaui_port_222_test_nested2:
       - test_nested2
       - network.incoming.packets_cmaui_port_222
-      network.incoming.packets.rate_cmaui_port_222_test_nested2:
-      - test_nested2
-      - network.incoming.packets.rate_cmaui_port_222
       network.incoming.packets.rate_cmaui_port_322_test_nested3_test_nested2:
       - test_nested2
       - network.incoming.packets.rate_cmaui_port_322_test_nested3
-      network.incoming.bytes.rate_cmaui_port_311_test_nested3_test_nested2:
-      - test_nested2
-      - network.incoming.bytes.rate_cmaui_port_311_test_nested3
-      network.outgoing.bytes.rate_cmaui_port_222_test_nested2:
-      - test_nested2
-      - network.outgoing.bytes.rate_cmaui_port_222
-      network.incoming.bytes.rate_cmaui_port_322_test_nested3_test_nested2:
-      - test_nested2
-      - network.incoming.bytes.rate_cmaui_port_322_test_nested3
       disk.write.bytes.rate_server_cmaui_1:
       - server_cmaui_1
       - disk.write.bytes.rate
@@ -436,15 +325,9 @@ topology_template:
       memory.resident_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - memory.resident_server_cmaui_3_test_nested3
-      disk.device.latency_server_cmaui_3_test_nested3_test_nested2:
-      - test_nested2
-      - disk.device.latency_server_cmaui_3_test_nested3
       attachment_cmaui_port_222_test_nested2:
       - test_nested2
       - attachment_cmaui_port_222
-      network.incoming.bytes_cmaui_port_222_test_nested2:
-      - test_nested2
-      - network.incoming.bytes_cmaui_port_222
       network.incoming.packets.rate_cmaui_port_1:
       - cmaui_port_1
       - network.incoming.packets.rate
@@ -466,30 +349,15 @@ topology_template:
       feature_cmaui_port_2:
       - cmaui_port_2
       - feature
-      disk.write.bytes_server_cmaui_1:
-      - server_cmaui_1
-      - disk.write.bytes
-      feature_server_cmaui_1:
-      - server_cmaui_1
-      - feature
-      disk.allocation_server_cmaui_1:
-      - server_cmaui_1
-      - disk.allocation
       attachment_cmaui_port_322_test_nested3_test_nested2:
       - test_nested2
       - attachment_cmaui_port_322_test_nested3
       disk.device.capacity_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - disk.device.capacity_server_cmaui_3_test_nested3
-      cpu_util_server_cmaui_2_test_nested2:
-      - test_nested2
-      - cpu_util_server_cmaui_2
       network.incoming.packets_cmaui_port_211_test_nested2:
       - test_nested2
       - network.incoming.packets_cmaui_port_211
-      disk.device.iops_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.device.iops_server_cmaui_2
       binding_server_cmaui_1:
       - server_cmaui_1
       - binding
@@ -499,18 +367,249 @@ topology_template:
       scalable_server_cmaui_2_test_nested2:
       - test_nested2
       - scalable_server_cmaui_2
-      network.incoming.bytes_cmaui_port_322_test_nested3_test_nested2:
-      - test_nested2
-      - network.incoming.bytes_cmaui_port_322_test_nested3
-      attachment_cmaui_port_2:
-      - cmaui_port_2
-      - attachment
       feature_test_nested2:
       - test_nested2
       - feature
       scalable_server_cmaui_1:
       - server_cmaui_1
       - scalable
+      disk.write.requests_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.write.requests_server_cmaui_2
+      disk.read.requests_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.read.requests_server_cmaui_2
+      endpoint_server_cmaui_1:
+      - server_cmaui_1
+      - endpoint
+      memory.resident_server_cmaui_2_test_nested2:
+      - test_nested2
+      - memory.resident_server_cmaui_2
+      disk.usage_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.usage_server_cmaui_2
+      disk.device.read.requests_server_cmaui_3_test_nested3_test_nested2:
+      - test_nested2
+      - disk.device.read.requests_server_cmaui_3_test_nested3
+      forwarder_cmaui_port_2:
+      - cmaui_port_2
+      - forwarder
+      forwarder_cmaui_port_1:
+      - cmaui_port_1
+      - forwarder
+      disk.device.write.requests.rate_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.device.write.requests.rate_server_cmaui_2
+      feature_server_cmaui_2_test_nested2:
+      - test_nested2
+      - feature_server_cmaui_2
+      disk.device.allocation_server_cmaui_1:
+      - server_cmaui_1
+      - disk.device.allocation
+      network.outgoing.bytes_cmaui_port_311_test_nested3_test_nested2:
+      - test_nested2
+      - network.outgoing.bytes_cmaui_port_311_test_nested3
+      memory_server_cmaui_1:
+      - server_cmaui_1
+      - memory
+      disk.read.requests_server_cmaui_3_test_nested3_test_nested2:
+      - test_nested2
+      - disk.read.requests_server_cmaui_3_test_nested3
+      instance_server_cmaui_3_test_nested3_test_nested2:
+      - test_nested2
+      - instance_server_cmaui_3_test_nested3
+      disk.write.requests.rate_server_cmaui_3_test_nested3_test_nested2:
+      - test_nested2
+      - disk.write.requests.rate_server_cmaui_3_test_nested3
+      network.outgoing.bytes.rate_cmaui_port_311_test_nested3_test_nested2:
+      - test_nested2
+      - network.outgoing.bytes.rate_cmaui_port_311_test_nested3
+      disk.device.capacity_server_cmaui_1:
+      - server_cmaui_1
+      - disk.device.capacity
+      disk.device.latency_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.device.latency_server_cmaui_2
+      disk.usage_server_cmaui_3_test_nested3_test_nested2:
+      - test_nested2
+      - disk.usage_server_cmaui_3_test_nested3
+      network.outgoing.bytes.rate_cmaui_port_322_test_nested3_test_nested2:
+      - test_nested2
+      - network.outgoing.bytes.rate_cmaui_port_322_test_nested3
+      network.outpoing.packets_cmaui_port_211_test_nested2:
+      - test_nested2
+      - network.outpoing.packets_cmaui_port_211
+      disk.device.allocation_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.device.allocation_server_cmaui_2
+      instance_server_cmaui_1:
+      - server_cmaui_1
+      - instance
+      scalable_server_cmaui_3_test_nested3_test_nested2:
+      - test_nested2
+      - scalable_server_cmaui_3_test_nested3
+      disk.write.bytes_server_cmaui_3_test_nested3_test_nested2:
+      - test_nested2
+      - disk.write.bytes_server_cmaui_3_test_nested3
+      network.outpoing.packets_cmaui_port_1:
+      - cmaui_port_1
+      - network.outpoing.packets
+      network.outpoing.packets_cmaui_port_2:
+      - cmaui_port_2
+      - network.outpoing.packets
+      disk.device.read.requests_server_cmaui_1:
+      - server_cmaui_1
+      - disk.device.read.requests
+      cpu.delta_server_cmaui_1:
+      - server_cmaui_1
+      - cpu.delta
+      disk.device.usage_server_cmaui_1:
+      - server_cmaui_1
+      - disk.device.usage
+      memory_server_cmaui_3_test_nested3_test_nested2:
+      - test_nested2
+      - memory_server_cmaui_3_test_nested3
+      network.outgoing.bytes_cmaui_port_222_test_nested2:
+      - test_nested2
+      - network.outgoing.bytes_cmaui_port_222
+      binding_cmaui_port_322_test_nested3_test_nested2:
+      - test_nested2
+      - binding_cmaui_port_322_test_nested3
+      disk.device.write.requests.rate_server_cmaui_1:
+      - server_cmaui_1
+      - disk.device.write.requests.rate
+      binding_cmaui_port_311_test_nested3_test_nested2:
+      - test_nested2
+      - binding_cmaui_port_311_test_nested3
+      disk.write.bytes.rate_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.write.bytes.rate_server_cmaui_2
+      forwarder_cmaui_port_311_test_nested3_test_nested2:
+      - test_nested2
+      - forwarder_cmaui_port_311_test_nested3
+      disk.device.iops_server_cmaui_1:
+      - server_cmaui_1
+      - disk.device.iops
+      disk.device.allocation_server_cmaui_3_test_nested3_test_nested2:
+      - test_nested2
+      - disk.device.allocation_server_cmaui_3_test_nested3
+      disk.allocation_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.allocation_server_cmaui_2
+      cpu_server_cmaui_2_test_nested2:
+      - test_nested2
+      - cpu_server_cmaui_2
+      disk.device.read.bytes_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.device.read.bytes_server_cmaui_2
+      endpoint_server_cmaui_2_test_nested2:
+      - test_nested2
+      - endpoint_server_cmaui_2
+      cpu_server_cmaui_1:
+      - server_cmaui_1
+      - cpu
+      feature_cmaui_port_211_test_nested2:
+      - test_nested2
+      - feature_cmaui_port_211
+      network.incoming.packets_cmaui_port_2:
+      - cmaui_port_2
+      - network.incoming.packets
+      network.incoming.packets_cmaui_port_1:
+      - cmaui_port_1
+      - network.incoming.packets
+      disk.capacity_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.capacity_server_cmaui_2
+      disk.capacity_server_cmaui_1:
+      - server_cmaui_1
+      - disk.capacity
+      disk.device.write.requests.rate_server_cmaui_3_test_nested3_test_nested2:
+      - test_nested2
+      - disk.device.write.requests.rate_server_cmaui_3_test_nested3
+      disk.read.bytes.rate_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.read.bytes.rate_server_cmaui_2
+      disk.ephemeral.size_server_cmaui_3_test_nested3_test_nested2:
+      - test_nested2
+      - disk.ephemeral.size_server_cmaui_3_test_nested3
+      disk.device.read.requests_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.device.read.requests_server_cmaui_2
+      binding_cmaui_port_211_test_nested2:
+      - test_nested2
+      - binding_cmaui_port_211
+      forwarder_cmaui_port_211_test_nested2:
+      - test_nested2
+      - forwarder_cmaui_port_211
+      os_server_cmaui_2_test_nested2:
+      - test_nested2
+      - os_server_cmaui_2
+      attachment_cmaui_port_211_test_nested2:
+      - test_nested2
+      - attachment_cmaui_port_211
+      disk.ephemeral.size_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.ephemeral.size_server_cmaui_2
+      disk.iops_server_cmaui_1:
+      - server_cmaui_1
+      - disk.iops
+      vcpus_server_cmaui_2_test_nested2:
+      - test_nested2
+      - vcpus_server_cmaui_2
+      network.outgoing.bytes.rate_cmaui_port_2:
+      - cmaui_port_2
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_cmaui_port_1:
+      - cmaui_port_1
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes_cmaui_port_322_test_nested3_test_nested2:
+      - test_nested2
+      - network.outgoing.bytes_cmaui_port_322_test_nested3
+      cpu_server_cmaui_3_test_nested3_test_nested2:
+      - test_nested2
+      - cpu_server_cmaui_3_test_nested3
+      network.incoming.packets.rate_cmaui_port_222_test_nested2:
+      - test_nested2
+      - network.incoming.packets.rate_cmaui_port_222
+      network.incoming.bytes.rate_cmaui_port_311_test_nested3_test_nested2:
+      - test_nested2
+      - network.incoming.bytes.rate_cmaui_port_311_test_nested3
+      network.outgoing.bytes.rate_cmaui_port_222_test_nested2:
+      - test_nested2
+      - network.outgoing.bytes.rate_cmaui_port_222
+      network.incoming.bytes.rate_cmaui_port_322_test_nested3_test_nested2:
+      - test_nested2
+      - network.incoming.bytes.rate_cmaui_port_322_test_nested3
+      forwarder_cmaui_port_222_test_nested2:
+      - test_nested2
+      - forwarder_cmaui_port_222
+      disk.device.latency_server_cmaui_3_test_nested3_test_nested2:
+      - test_nested2
+      - disk.device.latency_server_cmaui_3_test_nested3
+      network.incoming.bytes_cmaui_port_222_test_nested2:
+      - test_nested2
+      - network.incoming.bytes_cmaui_port_222
+      disk.write.bytes_server_cmaui_1:
+      - server_cmaui_1
+      - disk.write.bytes
+      feature_server_cmaui_1:
+      - server_cmaui_1
+      - feature
+      disk.allocation_server_cmaui_1:
+      - server_cmaui_1
+      - disk.allocation
+      cpu_util_server_cmaui_2_test_nested2:
+      - test_nested2
+      - cpu_util_server_cmaui_2
+      disk.device.iops_server_cmaui_2_test_nested2:
+      - test_nested2
+      - disk.device.iops_server_cmaui_2
+      network.incoming.bytes_cmaui_port_322_test_nested3_test_nested2:
+      - test_nested2
+      - network.incoming.bytes_cmaui_port_322_test_nested3
+      attachment_cmaui_port_2:
+      - cmaui_port_2
+      - attachment
       disk.device.read.requests.rate_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - disk.device.read.requests.rate_server_cmaui_3_test_nested3
@@ -526,9 +625,6 @@ topology_template:
       disk.device.usage_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - disk.device.usage_server_cmaui_3_test_nested3
-      disk.write.requests_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.write.requests_server_cmaui_2
       disk.root.size_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - disk.root.size_server_cmaui_3_test_nested3
@@ -544,27 +640,12 @@ topology_template:
       feature_cmaui_port_222_test_nested2:
       - test_nested2
       - feature_cmaui_port_222
-      disk.read.requests_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.read.requests_server_cmaui_2
-      endpoint_server_cmaui_1:
-      - server_cmaui_1
-      - endpoint
       disk.device.capacity_server_cmaui_2_test_nested2:
       - test_nested2
       - disk.device.capacity_server_cmaui_2
       disk.device.read.requests.rate_server_cmaui_2_test_nested2:
       - test_nested2
       - disk.device.read.requests.rate_server_cmaui_2
-      memory.resident_server_cmaui_2_test_nested2:
-      - test_nested2
-      - memory.resident_server_cmaui_2
-      disk.usage_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.usage_server_cmaui_2
-      disk.device.read.requests_server_cmaui_3_test_nested3_test_nested2:
-      - test_nested2
-      - disk.device.read.requests_server_cmaui_3_test_nested3
       os_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - os_server_cmaui_3_test_nested3
@@ -574,27 +655,12 @@ topology_template:
       network.outgoing.bytes.rate_cmaui_port_211_test_nested2:
       - test_nested2
       - network.outgoing.bytes.rate_cmaui_port_211
-      disk.device.write.requests.rate_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.device.write.requests.rate_server_cmaui_2
-      feature_server_cmaui_2_test_nested2:
-      - test_nested2
-      - feature_server_cmaui_2
       memory_server_cmaui_2_test_nested2:
       - test_nested2
       - memory_server_cmaui_2
-      disk.device.allocation_server_cmaui_1:
-      - server_cmaui_1
-      - disk.device.allocation
-      network.outgoing.bytes_cmaui_port_311_test_nested3_test_nested2:
-      - test_nested2
-      - network.outgoing.bytes_cmaui_port_311_test_nested3
       disk.write.bytes.rate_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - disk.write.bytes.rate_server_cmaui_3_test_nested3
-      memory_server_cmaui_1:
-      - server_cmaui_1
-      - memory
       disk.device.iops_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - disk.device.iops_server_cmaui_3_test_nested3
@@ -622,45 +688,12 @@ topology_template:
       disk.device.write.requests_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - disk.device.write.requests_server_cmaui_3_test_nested3
-      disk.read.requests_server_cmaui_3_test_nested3_test_nested2:
-      - test_nested2
-      - disk.read.requests_server_cmaui_3_test_nested3
-      instance_server_cmaui_3_test_nested3_test_nested2:
-      - test_nested2
-      - instance_server_cmaui_3_test_nested3
-      disk.write.requests.rate_server_cmaui_3_test_nested3_test_nested2:
-      - test_nested2
-      - disk.write.requests.rate_server_cmaui_3_test_nested3
-      network.outgoing.bytes.rate_cmaui_port_311_test_nested3_test_nested2:
-      - test_nested2
-      - network.outgoing.bytes.rate_cmaui_port_311_test_nested3
-      disk.device.capacity_server_cmaui_1:
-      - server_cmaui_1
-      - disk.device.capacity
-      disk.device.latency_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.device.latency_server_cmaui_2
-      disk.usage_server_cmaui_3_test_nested3_test_nested2:
-      - test_nested2
-      - disk.usage_server_cmaui_3_test_nested3
-      network.outgoing.bytes.rate_cmaui_port_322_test_nested3_test_nested2:
-      - test_nested2
-      - network.outgoing.bytes.rate_cmaui_port_322_test_nested3
       disk.device.read.bytes_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - disk.device.read.bytes_server_cmaui_3_test_nested3
-      network.outpoing.packets_cmaui_port_211_test_nested2:
-      - test_nested2
-      - network.outpoing.packets_cmaui_port_211
       disk.device.write.bytes_server_cmaui_3_test_nested3_test_nested2:
       - test_nested2
       - disk.device.write.bytes_server_cmaui_3_test_nested3
-      disk.device.allocation_server_cmaui_2_test_nested2:
-      - test_nested2
-      - disk.device.allocation_server_cmaui_2
-      instance_server_cmaui_1:
-      - server_cmaui_1
-      - instance
       disk.device.read.requests.rate_server_cmaui_1:
       - server_cmaui_1
       - disk.device.read.requests.rate
@@ -670,9 +703,9 @@ topology_template:
       binding_cmaui_port_222_test_nested2:
       - test_nested2
       - binding_cmaui_port_222
-      scalable_server_cmaui_3_test_nested3_test_nested2:
+      forwarder_cmaui_port_322_test_nested3_test_nested2:
       - test_nested2
-      - scalable_server_cmaui_3_test_nested3
+      - forwarder_cmaui_port_322_test_nested3
       network.incoming.bytes.rate_cmaui_port_1:
       - cmaui_port_1
       - network.incoming.bytes.rate
@@ -685,24 +718,9 @@ topology_template:
       vcpus_server_cmaui_1:
       - server_cmaui_1
       - vcpus
-      disk.write.bytes_server_cmaui_3_test_nested3_test_nested2:
-      - test_nested2
-      - disk.write.bytes_server_cmaui_3_test_nested3
       disk.read.bytes.rate_server_cmaui_1:
       - server_cmaui_1
       - disk.read.bytes.rate
-      network.outpoing.packets_cmaui_port_1:
-      - cmaui_port_1
-      - network.outpoing.packets
-      network.outpoing.packets_cmaui_port_2:
-      - cmaui_port_2
-      - network.outpoing.packets
-      disk.device.read.requests_server_cmaui_1:
-      - server_cmaui_1
-      - disk.device.read.requests
-      cpu.delta_server_cmaui_1:
-      - server_cmaui_1
-      - cpu.delta
       disk.write.bytes_server_cmaui_2_test_nested2:
       - test_nested2
       - disk.write.bytes_server_cmaui_2

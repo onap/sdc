@@ -274,15 +274,24 @@ topology_template:
       disk.device.read.bytes_server_cmaui:
       - server_cmaui
       - disk.device.read.bytes
+      forwarder_cmaui_port_0:
+      - cmaui_port_0
+      - forwarder
       memory_server_cmaui:
       - server_cmaui
       - memory
       disk.root.size_server_cmaui:
       - server_cmaui
       - disk.root.size
+      forwarder_cmaui_port_3:
+      - cmaui_port_3
+      - forwarder
       binding_server_cmaui:
       - server_cmaui
       - binding
+      forwarder_cmaui_port_1:
+      - cmaui_port_1
+      - forwarder
       disk.device.read.requests.rate_server_cmaui:
       - server_cmaui
       - disk.device.read.requests.rate

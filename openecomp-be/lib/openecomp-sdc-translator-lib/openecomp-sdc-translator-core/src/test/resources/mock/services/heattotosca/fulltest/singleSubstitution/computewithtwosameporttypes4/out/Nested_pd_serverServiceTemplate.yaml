@@ -274,12 +274,18 @@ topology_template:
       network.outgoing.packets.rate_pd_server_pd01_port2:
       - pd_server_pd01_port2
       - network.outgoing.packets.rate
+      forwarder_pd_server_pd01_port1:
+      - pd_server_pd01_port1
+      - forwarder
       network.incoming.packets_pd_server_pd01_port2:
       - pd_server_pd01_port2
       - network.incoming.packets
       binding_pd_server:
       - pd_server
       - binding
+      forwarder_pd_server_pd01_port2:
+      - pd_server_pd01_port2
+      - forwarder
       disk.read.requests_pd_server:
       - pd_server
       - disk.read.requests

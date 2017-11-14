@@ -208,6 +208,9 @@ topology_template:
       disk.write.bytes.rate_rd_server_1b:
       - rd_server_1b
       - disk.write.bytes.rate
+      forwarder_rd_server_1b_ps_server_1b_port:
+      - rd_server_1b_ps_server_1b_port
+      - forwarder
       memory_rd_server_1b:
       - rd_server_1b
       - memory

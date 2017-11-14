@@ -276,6 +276,9 @@ topology_template:
       os_server_cmaui_2:
       - server_cmaui_2
       - os
+      forwarder_cmaui_port_0:
+      - cmaui_port_0
+      - forwarder
       disk.device.read.bytes_server_cmaui_2:
       - server_cmaui_2
       - disk.device.read.bytes

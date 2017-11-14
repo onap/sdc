@@ -145,6 +145,9 @@ topology_template:
       binding_sm_server_sm_server_port:
       - sm_server_sm_server_port
       - binding
+      forwarder_sm_server_sm_server_port:
+      - sm_server_sm_server_port
+      - forwarder
       disk.iops_sm_server:
       - sm_server
       - disk.iops

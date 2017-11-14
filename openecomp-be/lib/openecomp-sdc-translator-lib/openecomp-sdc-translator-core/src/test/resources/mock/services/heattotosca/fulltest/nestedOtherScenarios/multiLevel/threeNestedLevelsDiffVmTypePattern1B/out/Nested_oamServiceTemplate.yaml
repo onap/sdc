@@ -202,6 +202,9 @@ topology_template:
       disk.write.requests_oam:
       - oam
       - disk.write.requests
+      forwarder_oam_oam02_port:
+      - oam_oam02_port
+      - forwarder
       disk.capacity_oam:
       - oam
       - disk.capacity

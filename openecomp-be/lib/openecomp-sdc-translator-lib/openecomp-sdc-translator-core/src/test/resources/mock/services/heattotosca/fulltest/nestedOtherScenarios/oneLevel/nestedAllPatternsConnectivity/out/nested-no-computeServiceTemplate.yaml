@@ -207,6 +207,12 @@ topology_template:
       network.outpoing.packets_cmaui_port_01:
       - cmaui_port_01
       - network.outpoing.packets
+      forwarder_cmaui_port_01:
+      - cmaui_port_01
+      - forwarder
+      forwarder_cmaui_port_02:
+      - cmaui_port_02
+      - forwarder
       link_packet_external_network_0:
       - packet_external_network_0
       - link

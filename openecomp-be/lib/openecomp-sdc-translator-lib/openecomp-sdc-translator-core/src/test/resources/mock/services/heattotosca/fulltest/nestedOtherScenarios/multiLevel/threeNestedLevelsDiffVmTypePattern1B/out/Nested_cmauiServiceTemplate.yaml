@@ -151,6 +151,9 @@ topology_template:
       disk.device.write.bytes_cmaui:
       - cmaui
       - disk.device.write.bytes
+      forwarder_cmaui_cmaui02_port:
+      - cmaui_cmaui02_port
+      - forwarder
       disk.device.iops_cmaui:
       - cmaui
       - disk.device.iops

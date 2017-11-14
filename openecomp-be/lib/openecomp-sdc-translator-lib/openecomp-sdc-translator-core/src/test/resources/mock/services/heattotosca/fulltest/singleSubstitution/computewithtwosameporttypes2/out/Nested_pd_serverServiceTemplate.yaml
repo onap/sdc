@@ -277,6 +277,9 @@ topology_template:
       disk.allocation_pd_server:
       - pd_server
       - disk.allocation
+      forwarder_pd_server_pd_2_port_1:
+      - pd_server_pd_2_port_1
+      - forwarder
       binding_pd_server:
       - pd_server
       - binding
@@ -373,6 +376,9 @@ topology_template:
       disk.device.iops_pd_server:
       - pd_server
       - disk.device.iops
+      forwarder_pd_server_pd_1_port_0:
+      - pd_server_pd_1_port_0
+      - forwarder
     requirements:
       local_storage_pd_server:
       - pd_server

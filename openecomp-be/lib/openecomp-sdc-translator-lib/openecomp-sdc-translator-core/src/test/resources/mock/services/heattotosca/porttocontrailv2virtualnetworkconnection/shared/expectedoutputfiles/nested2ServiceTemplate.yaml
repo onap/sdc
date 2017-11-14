@@ -233,6 +233,9 @@ topology_template:
       disk.device.read.requests_server_cmaui_2:
       - server_cmaui_2
       - disk.device.read.requests
+      forwarder_cmaui_port_21:
+      - cmaui_port_21
+      - forwarder
       disk.read.bytes.rate_server_cmaui_2:
       - server_cmaui_2
       - disk.read.bytes.rate

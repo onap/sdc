@@ -205,6 +205,9 @@ topology_template:
       network.incoming.bytes_cmaui_cmaui01_port:
       - cmaui_cmaui01_port
       - network.incoming.bytes
+      forwarder_cmaui_cmaui01_port:
+      - cmaui_cmaui01_port
+      - forwarder
       network.outgoing.packets.rate_cmaui_cmaui01_port:
       - cmaui_cmaui01_port
       - network.outgoing.packets.rate

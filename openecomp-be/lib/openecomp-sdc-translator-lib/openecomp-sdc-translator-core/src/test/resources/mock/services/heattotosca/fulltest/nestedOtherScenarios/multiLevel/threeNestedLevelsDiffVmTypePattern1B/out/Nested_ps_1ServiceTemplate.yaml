@@ -187,6 +187,9 @@ topology_template:
       disk.device.write.bytes_ps:
       - ps
       - disk.device.write.bytes
+      forwarder_ps_pd01_port:
+      - ps_pd01_port
+      - forwarder
       cpu.delta_ps:
       - ps
       - cpu.delta

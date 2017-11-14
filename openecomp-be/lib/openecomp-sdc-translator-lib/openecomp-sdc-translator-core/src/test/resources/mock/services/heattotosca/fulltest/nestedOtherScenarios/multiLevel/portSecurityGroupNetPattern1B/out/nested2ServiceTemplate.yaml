@@ -303,6 +303,9 @@ topology_template:
       disk.read.requests_server_oam:
       - abstract_oam_server
       - disk.read.requests_oam_server
+      forwarder_oam_server_port:
+      - abstract_oam_server
+      - forwarder_oam_server_oam_server_port
       cpu_util_server_sm:
       - abstract_sm_server
       - cpu_util_sm_server
@@ -315,6 +318,9 @@ topology_template:
       disk.device.read.bytes_server_oam:
       - abstract_oam_server
       - disk.device.read.bytes_oam_server
+      forwarder_sm_server_port:
+      - abstract_sm_server
+      - forwarder_sm_server_sm_server_port
       network.incoming.bytes_oam_server_port:
       - abstract_oam_server
       - network.incoming.bytes_oam_server_oam_server_port
@@ -360,6 +366,9 @@ topology_template:
       attachment_oam_server_port:
       - abstract_oam_server
       - attachment_oam_server_oam_server_port
+      forwarder_cmaui_port_8_test_resourceGroup:
+      - test_resourceGroup
+      - forwarder_cmaui_port_8
       scalable_server_oam:
       - abstract_oam_server
       - scalable_oam_server
@@ -516,6 +525,9 @@ topology_template:
       network.incoming.packets.rate_cmaui_port_7_test_resourceGroup:
       - test_resourceGroup
       - network.incoming.packets.rate_cmaui_port_7
+      forwarder_cmaui_port_7_test_resourceGroup:
+      - test_resourceGroup
+      - forwarder_cmaui_port_7
       disk.write.requests_server_cmaui_test_resourceGroup:
       - test_resourceGroup
       - disk.write.requests_server_cmaui

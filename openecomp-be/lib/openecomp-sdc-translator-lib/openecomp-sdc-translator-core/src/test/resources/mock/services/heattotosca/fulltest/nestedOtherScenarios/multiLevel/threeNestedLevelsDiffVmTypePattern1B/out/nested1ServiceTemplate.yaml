@@ -342,6 +342,9 @@ topology_template:
       disk.device.write.bytes.rate_server_ps_2_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.device.write.bytes.rate_server_ps_2_test_nested3Level
+      forwarder_cmaui01_port_1:
+      - abstract_cmaui_1
+      - forwarder_cmaui_cmaui01_port
       network.outgoing.bytes.rate_oam02_port_2_test_nested2Level:
       - test_nested2Level
       - network.outgoing.bytes.rate_oam02_port_2
@@ -543,6 +546,9 @@ topology_template:
       vcpus_server_oam_1_test_nested2Level:
       - test_nested2Level
       - vcpus_server_oam_1
+      forwarder_oam02_port_2_test_nested2Level:
+      - test_nested2Level
+      - forwarder_oam02_port_2
       network.incoming.packets_oam01_port_1_test_nested2Level:
       - test_nested2Level
       - network.incoming.packets_oam01_port_1
@@ -618,6 +624,9 @@ topology_template:
       cpu_server_ps_1_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - cpu_server_ps_1_test_nested3Level
+      forwarder_pd02_port_2_test_nested3Level_test_nested2Level:
+      - test_nested2Level
+      - forwarder_pd02_port_2_test_nested3Level
       disk.device.read.requests_server_cmaui_2:
       - abstract_cmaui
       - disk.device.read.requests_cmaui
@@ -741,6 +750,9 @@ topology_template:
       disk.device.capacity_server_cmaui_2:
       - abstract_cmaui
       - disk.device.capacity_cmaui
+      forwarder_oam01_port_1_test_nested2Level:
+      - test_nested2Level
+      - forwarder_oam01_port_1
       feature_server_oam_1_test_nested2Level:
       - test_nested2Level
       - feature_server_oam_1
@@ -795,9 +807,15 @@ topology_template:
       host_server_oam_2_test_nested2Level:
       - test_nested2Level
       - host_server_oam_2
+      forwarder_cmaui02_port_2:
+      - abstract_cmaui
+      - forwarder_cmaui_cmaui02_port
       feature_server_oam_2_test_nested2Level:
       - test_nested2Level
       - feature_server_oam_2
+      forwarder_pd01_port_1_test_nested3Level_test_nested2Level:
+      - test_nested2Level
+      - forwarder_pd01_port_1_test_nested3Level
       disk.allocation_server_ps_1_test_nested3Level_test_nested2Level:
       - test_nested2Level
       - disk.allocation_server_ps_1_test_nested3Level

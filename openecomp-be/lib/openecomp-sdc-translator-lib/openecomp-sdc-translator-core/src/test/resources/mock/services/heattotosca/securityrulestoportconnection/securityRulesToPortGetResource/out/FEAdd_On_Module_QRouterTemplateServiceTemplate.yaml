@@ -460,6 +460,9 @@ topology_template:
       memory_QRouter1:
       - QRouter1
       - memory
+      forwarder_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - forwarder
       disk.usage_QRouter1:
       - QRouter1
       - disk.usage
@@ -475,6 +478,9 @@ topology_template:
       network.incoming.bytes_cdr_network_port_1:
       - cdr_network_port_1
       - network.incoming.bytes
+      forwarder_cdr_network_port_1:
+      - cdr_network_port_1
+      - forwarder
       disk.write.bytes_QRouter1:
       - QRouter1
       - disk.write.bytes

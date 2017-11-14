@@ -251,6 +251,9 @@ topology_template:
       network.incoming.packets_cmaui_port_2:
       - cmaui_port_2
       - network.incoming.packets
+      forwarder_cmaui_port_11_test_nested2:
+      - test_nested2
+      - forwarder_cmaui_port_11
       memory.usage_server_cmaui_2_test_nested2:
       - test_nested2
       - memory.usage_server_cmaui_2
@@ -440,6 +443,12 @@ topology_template:
       os_server_cmaui_1:
       - server_cmaui_1
       - os
+      forwarder_cmaui_port_2:
+      - cmaui_port_2
+      - forwarder
+      forwarder_cmaui_port_1:
+      - cmaui_port_1
+      - forwarder
       feature_server_cmaui_2_test_nested2:
       - test_nested2
       - feature_server_cmaui_2
@@ -536,6 +545,9 @@ topology_template:
       disk.latency_server_cmaui_1:
       - server_cmaui_1
       - disk.latency
+      forwarder_cmaui_port_22_test_nested2:
+      - test_nested2
+      - forwarder_cmaui_port_22
       memory.usage_server_cmaui_1:
       - server_cmaui_1
       - memory.usage

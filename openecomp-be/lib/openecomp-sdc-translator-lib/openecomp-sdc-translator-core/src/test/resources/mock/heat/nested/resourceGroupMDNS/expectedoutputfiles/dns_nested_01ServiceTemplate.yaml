@@ -269,6 +269,9 @@ topology_template:
       disk.device.capacity_dns_servers:
       - dns_servers
       - disk.device.capacity
+      forwarder_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - forwarder
       host_dns_servers:
       - dns_servers
       - host
@@ -359,6 +362,9 @@ topology_template:
       disk.device.read.requests_dns_servers:
       - dns_servers
       - disk.device.read.requests
+      forwarder_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - forwarder
       disk.iops_dns_servers:
       - dns_servers
       - disk.iops

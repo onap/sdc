@@ -222,6 +222,9 @@ topology_template:
       disk.device.usage_server_abc:
       - server_abc
       - disk.device.usage
+      forwarder_abc_port_1:
+      - abc_port_1
+      - forwarder
       disk.root.size_server_cmaui_1:
       - server_cmaui_1
       - disk.root.size
@@ -285,6 +288,12 @@ topology_template:
       disk.capacity_server_cmaui_1:
       - server_cmaui_1
       - disk.capacity
+      forwarder_cmaui_port_11:
+      - cmaui_port_11
+      - forwarder
+      forwarder_cmaui_port_12:
+      - cmaui_port_12
+      - forwarder
       feature_cmaui_port_12:
       - cmaui_port_12
       - feature

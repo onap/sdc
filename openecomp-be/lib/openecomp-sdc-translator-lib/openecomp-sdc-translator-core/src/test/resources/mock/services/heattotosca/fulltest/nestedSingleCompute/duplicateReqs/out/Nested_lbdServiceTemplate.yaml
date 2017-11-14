@@ -454,6 +454,9 @@ topology_template:
       disk.allocation_lbd:
       - lbd
       - disk.allocation
+      forwarder_lbd_lbd_dpdk_1_port:
+      - lbd_lbd_dpdk_1_port
+      - forwarder
       disk.device.write.requests_lbd:
       - lbd
       - disk.device.write.requests
@@ -469,6 +472,9 @@ topology_template:
       memory.resident_lbd:
       - lbd
       - memory.resident
+      forwarder_lbd_lbd_internal_1_port:
+      - lbd_lbd_internal_1_port
+      - forwarder
       disk.read.bytes.rate_lbd:
       - lbd
       - disk.read.bytes.rate
@@ -487,6 +493,9 @@ topology_template:
       network.outgoing.bytes_lbd_lbd_internal_1_port:
       - lbd_lbd_internal_1_port
       - network.outgoing.bytes
+      forwarder_lbd_lbd_ims_core_1_port:
+      - lbd_lbd_ims_core_1_port
+      - forwarder
       network.incoming.packets.rate_lbd_lbd_dpdk_1_port:
       - lbd_lbd_dpdk_1_port
       - network.incoming.packets.rate

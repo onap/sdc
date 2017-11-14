@@ -377,6 +377,9 @@ topology_template:
       network.outgoing.bytes.rate_pd_server_port_2:
       - pd_server_port_2
       - network.outgoing.bytes.rate
+      forwarder_pd_server_port_1:
+      - pd_server_port_1
+      - forwarder
       network.outgoing.bytes.rate_pd_server_port_1:
       - pd_server_port_1
       - network.outgoing.bytes.rate
@@ -386,6 +389,9 @@ topology_template:
       disk.write.bytes.rate_server_pd:
       - server_pd
       - disk.write.bytes.rate
+      forwarder_pd_server_port_2:
+      - pd_server_port_2
+      - forwarder
       feature_server_pd:
       - server_pd
       - feature

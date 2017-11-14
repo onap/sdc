@@ -162,6 +162,9 @@ topology_template:
       disk.write.requests_oam_server:
       - oam_server
       - disk.write.requests
+      forwarder_oam_server_pd01_port:
+      - oam_server_pd01_port
+      - forwarder
       cpu_oam_server:
       - oam_server
       - cpu

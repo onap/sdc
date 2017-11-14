@@ -765,12 +765,22 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_pd_server_template_VMInt_OAM_lb:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       binding_pd_server_template_VMInt_OAM_lb:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
         occurrences:
         - 0
+        - UNBOUNDED
+      forwarder_pd_server_pd01_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
         - UNBOUNDED
       disk.write.requests.rate_pd_server:
         type: org.openecomp.capabilities.metric.Ceilometer

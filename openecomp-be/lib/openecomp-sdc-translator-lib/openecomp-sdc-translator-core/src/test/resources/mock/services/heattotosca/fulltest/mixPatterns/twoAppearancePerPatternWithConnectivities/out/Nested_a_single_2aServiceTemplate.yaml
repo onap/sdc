@@ -172,6 +172,9 @@ topology_template:
       disk.device.usage_a_single_2a:
       - a_single_2a
       - disk.device.usage
+      forwarder_a_single_2a_1a_t1_port:
+      - a_single_2a_1a_t1_port
+      - forwarder
       disk.read.bytes.rate_a_single_2a:
       - a_single_2a
       - disk.read.bytes.rate

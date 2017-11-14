@@ -502,6 +502,9 @@ topology_template:
       binding_lbd_lbd_dpdk_0_port:
       - lbd_lbd_dpdk_0_port
       - binding
+      forwarder_lbd_lbd_ims_core_0_port:
+      - lbd_lbd_ims_core_0_port
+      - forwarder
       network.outgoing.bytes_lbd_lbd_internal_0_port:
       - lbd_lbd_internal_0_port
       - network.outgoing.bytes
@@ -553,9 +556,15 @@ topology_template:
       disk.device.write.bytes_lbd:
       - lbd
       - disk.device.write.bytes
+      forwarder_lbd_lbd_internal_0_port:
+      - lbd_lbd_internal_0_port
+      - forwarder
       disk.capacity_lbd:
       - lbd
       - disk.capacity
+      forwarder_lbd_lbd_dpdk_0_port:
+      - lbd_lbd_dpdk_0_port
+      - forwarder
       feature_lbd:
       - lbd
       - feature

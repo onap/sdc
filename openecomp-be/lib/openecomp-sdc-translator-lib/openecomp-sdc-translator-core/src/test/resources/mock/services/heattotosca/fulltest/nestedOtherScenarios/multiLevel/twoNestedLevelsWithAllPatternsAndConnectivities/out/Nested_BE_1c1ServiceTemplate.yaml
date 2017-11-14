@@ -218,6 +218,9 @@ topology_template:
       network.incoming.packets_BE_1c1_BE_port:
       - BE_1c1_BE_port
       - network.incoming.packets
+      forwarder_BE_1c1_BE_port:
+      - BE_1c1_BE_port
+      - forwarder
       disk.device.latency_BE_1c1:
       - BE_1c1
       - disk.device.latency

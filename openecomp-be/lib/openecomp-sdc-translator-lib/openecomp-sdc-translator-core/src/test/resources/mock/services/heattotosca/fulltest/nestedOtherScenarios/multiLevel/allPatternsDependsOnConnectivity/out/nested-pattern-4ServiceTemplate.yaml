@@ -347,6 +347,12 @@ topology_template:
       disk.device.iops_server_pd_pattern4:
       - server_pd_pattern4
       - disk.device.iops
+      forwarder_pd_server_pattern4_port_01:
+      - pd_server_pattern4_port_01
+      - forwarder
+      forwarder_pd_server_pattern4_port_02:
+      - pd_server_pattern4_port_02
+      - forwarder
       disk.device.read.bytes.rate_server_pd_pattern4:
       - server_pd_pattern4
       - disk.device.read.bytes.rate

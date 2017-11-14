@@ -209,6 +209,9 @@ topology_template:
       attachment_b_single_1b_1b_t2_port:
       - b_single_1b_1b_t2_port
       - attachment
+      forwarder_b_single_1b_1b_t2_port:
+      - b_single_1b_1b_t2_port
+      - forwarder
       endpoint_b_single_1b:
       - b_single_1b
       - endpoint
@@ -224,6 +227,9 @@ topology_template:
       network.outgoing.bytes.rate_b_single_1b_1b_t2_port:
       - b_single_1b_1b_t2_port
       - network.outgoing.bytes.rate
+      forwarder_b_single_1b_1b_t1_port:
+      - b_single_1b_1b_t1_port
+      - forwarder
       scalable_b_single_1b:
       - b_single_1b
       - scalable

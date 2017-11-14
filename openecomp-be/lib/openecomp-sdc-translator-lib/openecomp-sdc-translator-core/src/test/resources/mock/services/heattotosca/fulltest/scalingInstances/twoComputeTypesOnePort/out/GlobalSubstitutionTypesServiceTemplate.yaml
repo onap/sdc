@@ -373,6 +373,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_pd_server_pd01_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.write.requests.rate_pd_server:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -793,6 +798,11 @@ node_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
         occurrences:
         - 0
+        - UNBOUNDED
+      forwarder_ps_server_ps01_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
         - UNBOUNDED
       disk.device.write.bytes.rate_ps_server:
         type: org.openecomp.capabilities.metric.Ceilometer

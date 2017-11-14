@@ -296,6 +296,9 @@ topology_template:
       disk.device.write.requests.rate_cdi:
       - cdi
       - disk.device.write.requests.rate
+      forwarder_cdi_cdi_ims_core_1_port:
+      - cdi_cdi_ims_core_1_port
+      - forwarder
       network.incoming.bytes_cdi_cdi_ims_core_1_port:
       - cdi_cdi_ims_core_1_port
       - network.incoming.bytes
@@ -398,6 +401,9 @@ topology_template:
       network.outpoing.packets_cdi_cdi_ims_core_1_port:
       - cdi_cdi_ims_core_1_port
       - network.outpoing.packets
+      forwarder_cdi_cdi_internal_1_port:
+      - cdi_cdi_internal_1_port
+      - forwarder
       scalable_cdi:
       - cdi
       - scalable

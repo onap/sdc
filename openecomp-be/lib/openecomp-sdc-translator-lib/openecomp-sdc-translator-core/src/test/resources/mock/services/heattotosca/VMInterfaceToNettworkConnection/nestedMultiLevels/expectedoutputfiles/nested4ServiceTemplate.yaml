@@ -131,9 +131,15 @@ topology_template:
       disk.write.bytes_server_cmaui_4:
       - server_cmaui_4
       - disk.write.bytes
+      forwarder_template_VMInt_OAM_lb_8:
+      - template_VMInt_OAM_lb_8
+      - forwarder
       disk.device.write.bytes_server_cmaui_4:
       - server_cmaui_4
       - disk.device.write.bytes
+      forwarder_template_VMInt_OAM_lb_7:
+      - template_VMInt_OAM_lb_7
+      - forwarder
       feature_server_cmaui_4:
       - server_cmaui_4
       - feature

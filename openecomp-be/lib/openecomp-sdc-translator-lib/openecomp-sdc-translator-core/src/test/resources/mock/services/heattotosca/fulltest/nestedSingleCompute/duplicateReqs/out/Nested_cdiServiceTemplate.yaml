@@ -281,6 +281,9 @@ topology_template:
       network.incoming.bytes.rate_cdi_cdi_internal_0_port:
       - cdi_cdi_internal_0_port
       - network.incoming.bytes.rate
+      forwarder_cdi_cdi_ims_core_0_port:
+      - cdi_cdi_ims_core_0_port
+      - forwarder
       network.outgoing.bytes_cdi_cdi_internal_0_port:
       - cdi_cdi_internal_0_port
       - network.outgoing.bytes
@@ -392,6 +395,9 @@ topology_template:
       disk.allocation_cdi:
       - cdi
       - disk.allocation
+      forwarder_cdi_cdi_internal_0_port:
+      - cdi_cdi_internal_0_port
+      - forwarder
       scalable_cdi:
       - cdi
       - scalable

@@ -234,12 +234,18 @@ topology_template:
       disk.device.write.bytes_cmaui:
       - cmaui
       - disk.device.write.bytes
+      forwarder_cmaui_cmaui_port_5:
+      - cmaui_cmaui_port_5
+      - forwarder
       disk.device.iops_cmaui:
       - cmaui
       - disk.device.iops
       memory.resident_cmaui:
       - cmaui
       - memory.resident
+      forwarder_cmaui_cmaui_port_6:
+      - cmaui_cmaui_port_6
+      - forwarder
       disk.write.bytes.rate_cmaui:
       - cmaui
       - disk.write.bytes.rate

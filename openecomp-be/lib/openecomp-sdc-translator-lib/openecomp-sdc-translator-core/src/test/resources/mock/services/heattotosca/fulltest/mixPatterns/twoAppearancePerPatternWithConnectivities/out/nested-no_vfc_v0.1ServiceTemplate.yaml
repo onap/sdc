@@ -537,6 +537,18 @@ topology_template:
       os_server_pcma2:
       - abstract_pcma_server
       - os_pcma_server
+      forwarder_pcm_port_2:
+      - abstract_pcma_server
+      - forwarder_pcma_server_pcm_port_2
+      forwarder_pcm_port_3:
+      - abstract_pcma_server
+      - forwarder_pcma_server_pcm_port_3
+      forwarder_pcm_port_0:
+      - abstract_pcma_server_1
+      - forwarder_pcma_server_pcm_port_0
+      forwarder_pcm_port_1:
+      - abstract_pcma_server_1
+      - forwarder_pcma_server_pcm_port_1
       disk.capacity_server_pcma1:
       - abstract_pcma_server_1
       - disk.capacity_pcma_server

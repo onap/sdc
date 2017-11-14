@@ -427,6 +427,12 @@ topology_template:
       os_server_cmaui_1:
       - abstract_cmaui_1
       - os_cmaui
+      forwarder_cmaui_port_2:
+      - abstract_cmaui_0
+      - forwarder_cmaui_cmaui_port
+      forwarder_cmaui_port_1:
+      - abstract_cmaui_1
+      - forwarder_cmaui_cmaui_port
       feature_packet_external_network:
       - packet_external_network
       - feature

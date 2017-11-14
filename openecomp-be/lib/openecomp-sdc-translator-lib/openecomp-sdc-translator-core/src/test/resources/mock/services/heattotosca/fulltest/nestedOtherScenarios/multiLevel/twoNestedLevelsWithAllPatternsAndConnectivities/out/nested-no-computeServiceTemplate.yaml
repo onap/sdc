@@ -153,6 +153,12 @@ topology_template:
       network.outpoing.packets_cmaui_port_12:
       - cmaui_port_12
       - network.outpoing.packets
+      forwarder_cmaui_port_11:
+      - cmaui_port_11
+      - forwarder
+      forwarder_cmaui_port_12:
+      - cmaui_port_12
+      - forwarder
       end_point_packet_internal_network:
       - packet_internal_network
       - end_point

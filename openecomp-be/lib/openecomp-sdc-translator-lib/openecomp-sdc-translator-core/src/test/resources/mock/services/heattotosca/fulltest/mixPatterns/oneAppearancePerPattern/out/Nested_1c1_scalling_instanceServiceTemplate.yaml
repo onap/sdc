@@ -271,6 +271,9 @@ topology_template:
       cpu_1c1_scalling_instance:
       - 1c1_scalling_instance
       - cpu
+      forwarder_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - forwarder
       disk.write.bytes_1c1_scalling_instance:
       - 1c1_scalling_instance
       - disk.write.bytes
@@ -295,6 +298,9 @@ topology_template:
       disk.device.write.requests.rate_1c1_scalling_instance:
       - 1c1_scalling_instance
       - disk.device.write.requests.rate
+      forwarder_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - forwarder
       disk.read.bytes.rate_1c1_scalling_instance:
       - 1c1_scalling_instance
       - disk.read.bytes.rate

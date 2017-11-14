@@ -253,6 +253,9 @@ topology_template:
       endpoint_oam_server:
       - oam_server
       - endpoint
+      forwarder_oam_server_oam_server_port:
+      - oam_server_oam_server_port
+      - forwarder
       network.outgoing.bytes.rate_oam_server_oam_server_port:
       - oam_server_oam_server_port
       - network.outgoing.bytes.rate

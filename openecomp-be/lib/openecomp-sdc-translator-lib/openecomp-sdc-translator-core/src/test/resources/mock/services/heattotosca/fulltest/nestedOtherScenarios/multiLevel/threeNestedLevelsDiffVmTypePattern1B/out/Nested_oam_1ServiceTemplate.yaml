@@ -250,6 +250,9 @@ topology_template:
       disk.device.write.requests.rate_oam:
       - oam
       - disk.device.write.requests.rate
+      forwarder_oam_oam01_port:
+      - oam_oam01_port
+      - forwarder
       disk.device.read.bytes_oam:
       - oam
       - disk.device.read.bytes

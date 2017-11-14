@@ -221,6 +221,9 @@ topology_template:
       os_1c11_scalling_instance:
       - 1c11_scalling_instance
       - os
+      forwarder_1c11_scalling_instance_1c1_t1_port:
+      - 1c11_scalling_instance_1c1_t1_port
+      - forwarder
       network.outpoing.packets_1c11_scalling_instance_1c1_t1_port:
       - 1c11_scalling_instance_1c1_t1_port
       - network.outpoing.packets

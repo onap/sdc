@@ -436,6 +436,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_mgmt_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       cpu.delta_vnfci:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.

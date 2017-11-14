@@ -103,10 +103,6 @@ topology_template:
           direction: ingress
       requirements:
       - port:
-          capability: attachment_cmaui_port_211_test_nested2
-          node: test_nested
-          relationship: org.openecomp.relationships.AttachesTo
-      - port:
           capability: attachment_cmaui_port_222_test_nested2
           node: test_nested
           relationship: org.openecomp.relationships.AttachesTo
@@ -116,6 +112,10 @@ topology_template:
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_cmaui_port_322_test_nested3_test_nested2
+          node: test_nested
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_cmaui_port_211_test_nested2
           node: test_nested
           relationship: org.openecomp.relationships.AttachesTo
       - port:
@@ -199,11 +199,11 @@ topology_template:
           direction: ingress
       requirements:
       - port:
-          capability: attachment_cmaui_port_211_test_nested2
+          capability: attachment_cmaui_port_311_test_nested3_test_nested2
           node: test_nested
           relationship: org.openecomp.relationships.AttachesTo
       - port:
-          capability: attachment_cmaui_port_311_test_nested3_test_nested2
+          capability: attachment_cmaui_port_211_test_nested2
           node: test_nested
           relationship: org.openecomp.relationships.AttachesTo
       - port:

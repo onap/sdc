@@ -117,6 +117,9 @@ topology_template:
       network.incoming.packets_pd_server_port:
       - pd_server_port
       - network.incoming.packets
+      forwarder_pd_server_port:
+      - pd_server_port
+      - forwarder
       network.incoming.bytes_pd_server_port:
       - pd_server_port
       - network.incoming.bytes
@@ -132,6 +135,9 @@ topology_template:
       attachment_ps_server_port:
       - ps_server_port
       - attachment
+      forwarder_ps_server_port:
+      - ps_server_port
+      - forwarder
       attachment_pd_server_port:
       - pd_server_port
       - attachment

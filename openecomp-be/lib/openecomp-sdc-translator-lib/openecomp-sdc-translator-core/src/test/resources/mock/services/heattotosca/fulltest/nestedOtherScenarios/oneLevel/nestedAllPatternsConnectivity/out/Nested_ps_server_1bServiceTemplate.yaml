@@ -166,6 +166,9 @@ topology_template:
       disk.device.capacity_ps_server_1b:
       - ps_server_1b
       - disk.device.capacity
+      forwarder_ps_server_1b_ps_server_1b_port:
+      - ps_server_1b_ps_server_1b_port
+      - forwarder
       instance_ps_server_1b:
       - ps_server_1b
       - instance

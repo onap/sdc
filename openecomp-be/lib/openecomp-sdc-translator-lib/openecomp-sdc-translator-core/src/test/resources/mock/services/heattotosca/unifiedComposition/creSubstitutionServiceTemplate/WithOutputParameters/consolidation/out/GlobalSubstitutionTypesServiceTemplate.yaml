@@ -260,6 +260,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_FSB1_FSB2_Internal:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       feature_FSB1:
         type: tosca.capabilities.Node
         occurrences:
@@ -296,6 +301,11 @@ node_types:
       memory.resident_FSB1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_FSB1_FSB1_Internal:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

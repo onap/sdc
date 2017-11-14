@@ -198,6 +198,9 @@ topology_template:
       endpoint_pd_server:
       - pd_server
       - endpoint
+      forwarder_pd_server_pd02_port:
+      - pd_server_pd02_port
+      - forwarder
       disk.capacity_pd_server:
       - pd_server
       - disk.capacity

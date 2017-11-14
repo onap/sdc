@@ -414,6 +414,12 @@ topology_template:
       disk.device.capacity_server_pcm:
       - server_pcm
       - disk.device.capacity
+      forwarder_pcm_port_00:
+      - pcm_port_00
+      - forwarder
+      forwarder_pcm_port_01:
+      - pcm_port_01
+      - forwarder
       instance_server_pcm:
       - server_pcm
       - instance

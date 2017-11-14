@@ -380,6 +380,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_perimeta_ssc_a_mgmt_1_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       memory.usage_perimeta_ssc_a_server_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -389,6 +394,21 @@ node_types:
       network.incoming.packets.rate_perimeta_ssc_a_ha_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_perimeta_ssc_a_unused_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_perimeta_ssc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_perimeta_ssc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -550,6 +570,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_perimeta_ssc_a_trusted_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.outgoing.bytes.rate_perimeta_ssc_a_unused_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -628,6 +653,11 @@ node_types:
       disk.device.latency_perimeta_ssc_a_server_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_perimeta_ssc_a_ha_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1211,6 +1241,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_perimeta_ssc_b_mgmt_1_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.outgoing.packets.rate_perimeta_ssc_b_trusted_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1250,6 +1285,11 @@ node_types:
         - UNBOUNDED
       os_perimeta_ssc_b_server_0:
         type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_perimeta_ssc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1298,6 +1338,11 @@ node_types:
       network.outgoing.packets.rate_perimeta_ssc_b_ha_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_perimeta_ssc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1524,6 +1569,11 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
+      forwarder_perimeta_ssc_b_ha_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.outgoing.bytes.rate_perimeta_ssc_b_mgmt_1_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1579,6 +1629,11 @@ node_types:
       disk.device.latency_perimeta_ssc_b_server_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_perimeta_ssc_b_unused_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1732,6 +1787,11 @@ node_types:
       network.incoming.packets.rate_perimeta_ssc_b_unused_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_perimeta_ssc_b_trusted_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -2286,6 +2346,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_perimeta_rtp_msc_a_mgmt_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.incoming.bytes.rate_perimeta_rtp_msc_a_ha_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2301,6 +2366,11 @@ node_types:
       disk.write.bytes_perimeta_rtp_msc_a_server_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_perimeta_rtp_msc_a_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -2399,6 +2469,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_perimeta_rtp_msc_a_ha_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       scalable_perimeta_rtp_msc_a_server_0:
         type: tosca.capabilities.Scalable
         occurrences:
@@ -2420,6 +2495,11 @@ node_types:
       network.incoming.packets.rate_perimeta_rtp_msc_a_mgmt_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_perimeta_rtp_msc_a_trusted_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -2969,6 +3049,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_perimeta_rtp_msc_b_trusted_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.incoming.bytes.rate_perimeta_rtp_msc_b_ha_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -3080,6 +3165,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_perimeta_rtp_msc_b_mgmt_0_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.incoming.bytes_perimeta_rtp_msc_b_mgmt_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -3120,6 +3210,11 @@ node_types:
       disk.write.requests.rate_perimeta_rtp_msc_b_server_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_perimeta_rtp_msc_b_ha_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -3184,6 +3279,11 @@ node_types:
       network.incoming.packets_perimeta_rtp_msc_b_mgmt_0_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_perimeta_rtp_msc_b_untrusted_parent_0_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

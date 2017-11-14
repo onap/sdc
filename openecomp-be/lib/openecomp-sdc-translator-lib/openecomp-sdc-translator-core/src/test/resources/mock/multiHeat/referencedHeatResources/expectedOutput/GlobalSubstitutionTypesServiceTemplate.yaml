@@ -484,6 +484,11 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
+      forwarder_oam1_mgmt_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.outpoing.packets_oam2_mgmt_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -498,6 +503,11 @@ node_types:
         - UNBOUNDED
       attachment_arb_int_port:
         type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_oam2_int_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -737,6 +747,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_oam2_mgmt_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.root.size_arb_instance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -781,6 +796,11 @@ node_types:
       disk.device.read.bytes.rate_oam2_instance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_oam1_int_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1335,6 +1355,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_arb_mgmt_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       vcpus_oam2_instance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1415,6 +1440,11 @@ node_types:
         - UNBOUNDED
       attachment_oam2_int_port:
         type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_arb_int_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

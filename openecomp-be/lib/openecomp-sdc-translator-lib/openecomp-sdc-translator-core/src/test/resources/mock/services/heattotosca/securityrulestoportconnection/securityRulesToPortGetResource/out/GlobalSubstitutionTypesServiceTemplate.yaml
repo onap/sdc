@@ -446,6 +446,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_oam_private_net_network_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.usage_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -474,6 +479,11 @@ node_types:
       network.incoming.bytes_cdr_network_port_1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cdr_network_port_1:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -932,6 +942,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_packet_mirror_network_port_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       binding_packet_internal_network_port:
         type: tosca.capabilities.network.Bindable
         valid_source_types:
@@ -962,6 +977,11 @@ node_types:
         - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
         occurrences:
         - 0
+        - UNBOUNDED
+      forwarder_packet_internal_network_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
         - UNBOUNDED
       endpoint_vLBAgentInstance:
         type: tosca.capabilities.Endpoint.Admin
@@ -1192,6 +1212,11 @@ node_types:
       network.outgoing.bytes_oam_private_net_network_port_3:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_oam_private_net_network_port_3:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -1705,6 +1730,11 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_packet_mirror_network_port:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       cpu.delta_vLBInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -1881,6 +1911,16 @@ node_types:
       disk.device.write.requests.rate_vLBInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_packet_internal_network_port_2:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_oam_private_net_network_port_2:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED
@@ -2592,6 +2632,16 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      forwarder_packet_internal_network_port_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_oam_private_net_network_port_1:
+        type: org.openecomp.capabilities.Forwarder
+        occurrences:
+        - 1
+        - UNBOUNDED
       disk.device.read.requests.rate_ProbeInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
@@ -2625,6 +2675,11 @@ node_types:
       disk.usage_ProbeInstance:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      forwarder_cdr_network_port:
+        type: org.openecomp.capabilities.Forwarder
         occurrences:
         - 1
         - UNBOUNDED

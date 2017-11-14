@@ -145,6 +145,9 @@ topology_template:
       disk.write.bytes.rate_ps_server:
       - ps_server
       - disk.write.bytes.rate
+      forwarder_ps_server_ps_server_port:
+      - ps_server_ps_server_port
+      - forwarder
       feature_ps_server_ps_server_port:
       - ps_server_ps_server_port
       - feature

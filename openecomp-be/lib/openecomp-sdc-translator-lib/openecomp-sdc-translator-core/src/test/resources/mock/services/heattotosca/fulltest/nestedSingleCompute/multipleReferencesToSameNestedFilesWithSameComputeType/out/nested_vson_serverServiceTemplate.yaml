@@ -347,6 +347,9 @@ topology_template:
       os_vson_server_1:
       - vson_server_1
       - os
+      forwarder_vson_server_oam_net_port_20:
+      - vson_server_oam_net_port_20
+      - forwarder
       feature_vson_server_1:
       - vson_server_1
       - feature

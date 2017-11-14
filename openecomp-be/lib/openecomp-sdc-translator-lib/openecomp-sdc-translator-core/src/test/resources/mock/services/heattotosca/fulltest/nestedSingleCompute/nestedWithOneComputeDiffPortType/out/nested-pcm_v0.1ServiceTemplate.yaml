@@ -286,6 +286,9 @@ topology_template:
       disk.allocation_server_pcm:
       - server_pcm
       - disk.allocation
+      forwarder_pcm_2port_1:
+      - pcm_2port_1
+      - forwarder
       network.incoming.packets_pcm_2port_1:
       - pcm_2port_1
       - network.incoming.packets
@@ -325,6 +328,9 @@ topology_template:
       disk.read.bytes_server_pcm:
       - server_pcm
       - disk.read.bytes
+      forwarder_pcm_1port_0:
+      - pcm_1port_0
+      - forwarder
       disk.device.read.bytes_server_pcm:
       - server_pcm
       - disk.device.read.bytes

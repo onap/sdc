@@ -215,6 +215,9 @@ topology_template:
       memory.usage_server_pd_31:
       - abstract_pd_server
       - memory.usage_pd_server
+      forwarder_pd02_port_03:
+      - abstract_pd_server_1
+      - forwarder_pd_server_pd02_port
       disk.read.bytes.rate_server_pd_31:
       - abstract_pd_server
       - disk.read.bytes.rate_pd_server
@@ -425,6 +428,9 @@ topology_template:
       instance_server_pd_32:
       - abstract_pd_server_1
       - instance_pd_server
+      forwarder_pd01_port_03:
+      - abstract_pd_server
+      - forwarder_pd_server_pd01_port
       disk.device.allocation_server_pd_31:
       - abstract_pd_server
       - disk.device.allocation_pd_server

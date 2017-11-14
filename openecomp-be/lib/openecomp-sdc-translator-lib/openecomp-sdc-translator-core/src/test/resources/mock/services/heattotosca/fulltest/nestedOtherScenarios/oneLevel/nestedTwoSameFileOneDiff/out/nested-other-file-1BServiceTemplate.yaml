@@ -362,9 +362,15 @@ topology_template:
       cpu_util_server_ps:
       - abstract_ps_server
       - cpu_util_ps_server
+      forwarder_pd_server_port:
+      - abstract_pd_server
+      - forwarder_pd_server_pd_server_port
       network.incoming.bytes_ps_server_port:
       - abstract_ps_server
       - network.incoming.bytes_ps_server_ps_server_port
+      forwarder_ps_server_port:
+      - abstract_ps_server
+      - forwarder_ps_server_ps_server_port
       disk.device.capacity_server_pd:
       - abstract_pd_server
       - disk.device.capacity_pd_server

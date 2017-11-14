@@ -212,6 +212,12 @@ topology_template:
       network.outgoing.bytes.rate_cmaui_port_1:
       - cmaui_port_1
       - network.outgoing.bytes.rate
+      forwarder_cmaui_port_2:
+      - cmaui_port_2
+      - forwarder
+      forwarder_cmaui_port_1:
+      - cmaui_port_1
+      - forwarder
       attachment_packet_external_network:
       - packet_external_network
       - attachment

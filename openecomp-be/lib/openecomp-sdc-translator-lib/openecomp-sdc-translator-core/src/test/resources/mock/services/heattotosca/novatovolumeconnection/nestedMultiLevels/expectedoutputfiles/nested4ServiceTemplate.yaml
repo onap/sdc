@@ -368,6 +368,12 @@ topology_template:
       disk.device.capacity_server_cmaui7:
       - server_cmaui7
       - disk.device.capacity
+      forwarder_cmaui_port_8:
+      - cmaui_port_8
+      - forwarder
+      forwarder_cmaui_port_7:
+      - cmaui_port_7
+      - forwarder
       disk.device.allocation_server_cmaui8:
       - server_cmaui8
       - disk.device.allocation

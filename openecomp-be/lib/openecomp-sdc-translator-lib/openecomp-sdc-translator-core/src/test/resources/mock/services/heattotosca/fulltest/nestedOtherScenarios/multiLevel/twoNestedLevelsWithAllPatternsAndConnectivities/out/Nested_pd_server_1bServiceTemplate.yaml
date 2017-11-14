@@ -157,6 +157,9 @@ topology_template:
       network.incoming.packets_pd_server_1b_ps_server_1b_port:
       - pd_server_1b_ps_server_1b_port
       - network.incoming.packets
+      forwarder_pd_server_1b_ps_server_1b_port:
+      - pd_server_1b_ps_server_1b_port
+      - forwarder
       disk.device.read.requests_pd_server_1b:
       - pd_server_1b
       - disk.device.read.requests

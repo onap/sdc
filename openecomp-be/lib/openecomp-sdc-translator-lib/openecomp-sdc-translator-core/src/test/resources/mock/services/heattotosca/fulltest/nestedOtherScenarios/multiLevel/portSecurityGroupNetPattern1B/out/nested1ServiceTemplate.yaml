@@ -256,6 +256,9 @@ topology_template:
       os_server_cmaui_test_resourceGroup_test_nested2Level:
       - test_nested2Level
       - os_server_cmaui_test_resourceGroup
+      forwarder_sm_server_port_test_nested2Level:
+      - test_nested2Level
+      - forwarder_sm_server_port
       disk.read.requests_server_sm_test_nested2Level:
       - test_nested2Level
       - disk.read.requests_server_sm
@@ -373,6 +376,9 @@ topology_template:
       feature_test_nested2Level:
       - test_nested2Level
       - feature
+      forwarder_cmaui_port_8_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - forwarder_cmaui_port_8_test_resourceGroup
       disk.read.bytes_server_cmaui_test_resourceGroup_test_nested2Level:
       - test_nested2Level
       - disk.read.bytes_server_cmaui_test_resourceGroup
@@ -466,6 +472,9 @@ topology_template:
       network.incoming.bytes_ps_server_port:
       - abstract_ps_server
       - network.incoming.bytes_ps_server_ps_server_port
+      forwarder_ps_server_port:
+      - abstract_ps_server
+      - forwarder_ps_server_ps_server_port
       disk.device.capacity_server_pd:
       - abstract_pd_server
       - disk.device.capacity_pd_server
@@ -493,6 +502,9 @@ topology_template:
       network.incoming.packets.rate_sm_server_port_test_nested2Level:
       - test_nested2Level
       - network.incoming.packets.rate_sm_server_port
+      forwarder_oam_server_port_test_nested2Level:
+      - test_nested2Level
+      - forwarder_oam_server_port
       disk.capacity_server_ps:
       - abstract_ps_server
       - disk.capacity_ps_server
@@ -700,6 +712,9 @@ topology_template:
       disk.device.read.requests_server_cmaui_test_resourceGroup_test_nested2Level:
       - test_nested2Level
       - disk.device.read.requests_server_cmaui_test_resourceGroup
+      forwarder_cmaui_port_7_test_resourceGroup_test_nested2Level:
+      - test_nested2Level
+      - forwarder_cmaui_port_7_test_resourceGroup
       disk.device.write.requests_server_pd:
       - abstract_pd_server
       - disk.device.write.requests_pd_server
@@ -859,6 +874,9 @@ topology_template:
       cpu_util_server_ps:
       - abstract_ps_server
       - cpu_util_ps_server
+      forwarder_pd_server_port:
+      - abstract_pd_server
+      - forwarder_pd_server_pd_server_port
       disk.write.bytes.rate_server_oam_test_nested2Level:
       - test_nested2Level
       - disk.write.bytes.rate_server_oam

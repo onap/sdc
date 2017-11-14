@@ -184,6 +184,9 @@ topology_template:
       disk.device.write.bytes_cmaui_1c1_main:
       - cmaui_1c1_main
       - disk.device.write.bytes
+      forwarder_cmaui_1c1_main_cmaui_port:
+      - cmaui_1c1_main_cmaui_port
+      - forwarder
       vcpus_cmaui_1c1_main:
       - cmaui_1c1_main
       - vcpus
