@@ -30,7 +30,7 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.when;
 
 public class ProcessArtifactEnricherTest {
-  @Mock
+  /*@Mock
   ProcessDao processDaoMock;
   @Mock
   EnrichedServiceModelDao enrichedServiceModelDaoMock;
@@ -113,5 +113,5 @@ public class ProcessArtifactEnricherTest {
     byte[] mibBytes = FileUtils.readViaInputStream(this.getClass().getResource(fileName),
             stream -> FileUtils.toByteArray(stream));
     return ByteBuffer.wrap(mibBytes);
-  }
+  }*/
 }

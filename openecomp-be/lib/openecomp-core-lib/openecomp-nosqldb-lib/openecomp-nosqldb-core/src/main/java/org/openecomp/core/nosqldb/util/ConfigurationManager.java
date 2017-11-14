@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -60,6 +61,10 @@ public class ConfigurationManager {
   private static final String CASSANDRA_SSL_KEY = "ssl";
   private static final String CASSANDRA_TRUSTSTORE_PATH_KEY = "truststorePath";
   private static final String CASSANDRA_TRUSTSTORE_PASSWORD_KEY = "truststorePassword";
+  private static final String CONSISTENCY_LEVEL = "cassandra.consistencyLevel";
+  private static final String CONSISTENCY_LEVEL_KEY = "consistencyLevel";
+  private static final String LOCAL_DATA_CENTER_KEY = "localDataCenter";
+  private static final String LOCAL_DATA_CENTER = "cassandra.localDataCenter";
   private static ConfigurationManager instance = null;
   private final LinkedHashMap<String, Object> cassandraConfiguration;
 
@@ -78,8 +83,8 @@ public class ConfigurationManager {
     try {
 
       Map<String, LinkedHashMap<String, Object>> configurationMap = configurationYamlFile != null
-              ? readFromFile(configurationYamlFile, reader) // load from file
-              : FileUtils.readViaInputStream(CONFIGURATION_YAML_FILE, reader); // or from resource
+          ? readFromFile(configurationYamlFile, reader) // load from file
+          : FileUtils.readViaInputStream(CONFIGURATION_YAML_FILE, reader); // or from resource
       cassandraConfiguration = configurationMap.get(CASSANDRA_KEY);
 
     } catch (IOException e) {
@@ -93,7 +98,7 @@ public class ConfigurationManager {
    * @return the instance
    */
   public static ConfigurationManager getInstance() {
-    if (instance == null) {
+    if (Objects.isNull(instance)) {
       instance = new ConfigurationManager();
     }
     return instance;
@@ -107,7 +112,7 @@ public class ConfigurationManager {
   public String[] getAddresses() {
 
     String addresses = System.getProperty(CASSANDRA_ADDRESSES);
-    if (addresses != null) {
+    if (Objects.isNull(addresses)) {
       return addresses.split(",");
     }
     List lsAddresses = (ArrayList) cassandraConfiguration.get(CASSANDRA_HOSTS_KEY);
@@ -124,7 +129,7 @@ public class ConfigurationManager {
    */
   public String getKeySpace() {
     String keySpace = System.getProperty(CASSANDRA_DOX_KEY_STORE);
-    if (keySpace == null) {
+    if (Objects.isNull(keySpace)) {
       //keySpace = cassandraConfiguration.get(cassandraKeySpaceKey);
       //if (keySpace == null)
       keySpace = DEFAULT_KEYSPACE_NAME;
@@ -139,7 +144,7 @@ public class ConfigurationManager {
    */
   public String getUsername() {
     String username = System.getProperty(CASSANDRA_USER);
-    if (username == null) {
+    if (Objects.isNull(username)) {
       username = (String) cassandraConfiguration.get(CASSANDRA_USERNAME_KEY);
     }
     return username;
@@ -152,7 +157,7 @@ public class ConfigurationManager {
    */
   public String getPassword() {
     String password = System.getProperty(CASSANDRA_PASSWORD);
-    if (password == null) {
+    if (Objects.isNull(password)) {
       password = (String) cassandraConfiguration.get(CASSANDRA_PASSWORD_KEY);
     }
     return password;
@@ -165,7 +170,7 @@ public class ConfigurationManager {
    */
   public String getTruststorePath() {
     String truststorePath = System.getProperty(CASSANDRA_TRUSTSTORE);
-    if (truststorePath == null) {
+    if (Objects.isNull(truststorePath)) {
       truststorePath = (String) cassandraConfiguration.get(CASSANDRA_TRUSTSTORE_PATH_KEY);
     }
     return truststorePath;
@@ -178,7 +183,7 @@ public class ConfigurationManager {
    */
   public String getTruststorePassword() {
     String truststorePassword = System.getProperty(CASSANDRA_TRUSTSTORE_PASSWORD);
-    if (truststorePassword == null) {
+    if (Objects.isNull(truststorePassword)) {
       truststorePassword = (String) cassandraConfiguration.get(CASSANDRA_TRUSTSTORE_PASSWORD_KEY);
     }
     return truststorePassword;
@@ -192,9 +197,9 @@ public class ConfigurationManager {
   public int getSslPort() {
     int port;
     String sslPort = System.getProperty(CASSANDRA_PORT);
-    if (sslPort == null) {
+    if (Objects.isNull(sslPort)) {
       sslPort = (String) cassandraConfiguration.get(CASSANDRA_PORT_KEY);
-      if (sslPort == null) {
+      if (Objects.isNull(sslPort)) {
         sslPort = "0";
       }
     }
@@ -239,5 +244,25 @@ public class ConfigurationManager {
     try (InputStream is = new FileInputStream(file)) {
       return reader.apply(is);
     }
+  }
+
+  public String getConsistencyLevel() {
+    String consistencyLevel = System.getProperty(CONSISTENCY_LEVEL);
+    if (Objects.isNull(consistencyLevel)) {
+      consistencyLevel = (String) cassandraConfiguration.get(CONSISTENCY_LEVEL_KEY);
+    }
+
+    if (Objects.isNull(consistencyLevel)) {
+      consistencyLevel = "LOCAL_QUORUM";
+    }
+    return consistencyLevel;
+  }
+
+  public String getLocalDataCenter() {
+    String localDataCenter = System.getProperty(LOCAL_DATA_CENTER);
+    if (Objects.isNull(localDataCenter)) {
+      localDataCenter = (String) cassandraConfiguration.get(LOCAL_DATA_CENTER_KEY);
+    }
+    return localDataCenter;
   }
 }
