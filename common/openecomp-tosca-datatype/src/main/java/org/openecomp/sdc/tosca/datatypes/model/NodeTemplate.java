@@ -134,4 +134,66 @@ public class NodeTemplate implements Template {
     NodeTemplate clone = yamlUtil.yamlToObject(yamlUtil.objectToYaml(this), NodeTemplate.class);
     return clone;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof NodeTemplate)) {
+      return false;
+    }
+
+    NodeTemplate that = (NodeTemplate) o;
+
+    if (type != null ? !type.equals(that.type) : that.type != null) {
+      return false;
+    }
+    if (description != null ? !description.equals(that.description) : that.description != null) {
+      return false;
+    }
+    if (directives != null ? !directives.equals(that.directives) : that.directives != null) {
+      return false;
+    }
+    if (properties != null ? !properties.equals(that.properties) : that.properties != null) {
+      return false;
+    }
+    if (attributes != null ? !attributes.equals(that.attributes) : that.attributes != null) {
+      return false;
+    }
+    if (requirements != null ? !requirements.equals(that.requirements)
+        : that.requirements != null) {
+      return false;
+    }
+    if (capabilities != null ? !capabilities.equals(that.capabilities)
+        : that.capabilities != null) {
+      return false;
+    }
+    if (interfaces != null ? !interfaces.equals(that.interfaces) : that.interfaces != null) {
+      return false;
+    }
+    if (artifacts != null ? !artifacts.equals(that.artifacts) : that.artifacts != null) {
+      return false;
+    }
+    if (node_filter != null ? !node_filter.equals(that.node_filter) : that.node_filter != null) {
+      return false;
+    }
+    return copy != null ? copy.equals(that.copy) : that.copy == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = type != null ? type.hashCode() : 0;
+    result = 31 * result + (description != null ? description.hashCode() : 0);
+    result = 31 * result + (directives != null ? directives.hashCode() : 0);
+    result = 31 * result + (properties != null ? properties.hashCode() : 0);
+    result = 31 * result + (attributes != null ? attributes.hashCode() : 0);
+    result = 31 * result + (requirements != null ? requirements.hashCode() : 0);
+    result = 31 * result + (capabilities != null ? capabilities.hashCode() : 0);
+    result = 31 * result + (interfaces != null ? interfaces.hashCode() : 0);
+    result = 31 * result + (artifacts != null ? artifacts.hashCode() : 0);
+    result = 31 * result + (node_filter != null ? node_filter.hashCode() : 0);
+    result = 31 * result + (copy != null ? copy.hashCode() : 0);
+    return result;
+  }
 }

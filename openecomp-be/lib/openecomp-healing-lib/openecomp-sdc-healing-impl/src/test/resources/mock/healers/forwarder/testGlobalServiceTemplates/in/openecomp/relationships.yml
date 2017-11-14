@@ -1,0 +1,68 @@
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+tosca_definitions_version: tosca_simple_openecomp_1_0
+
+metadata:
+  filename: openecomp/relationships.yml
+  version: '1.0'
+
+imports:
+- openecomp_index:
+    file: _index.yml
+
+relationship_types:
+
+  org.openecomp.relationships.VolumeAttachesTo:
+    derived_from: org.openecomp.relationships.AttachesTo
+    description: This type represents an attachment relationship for associating volume
+    properties:
+      volume_id:
+        description: The ID of the volume to be attached
+        type: string
+        status: SUPPORTED
+        required: true
+      instance_uuid:
+        description: The ID of the server to which the volume attaches
+        type: string
+        status: SUPPORTED
+        required: true
+    attributes:
+      show:
+        description: Detailed information about resource
+        type: string
+        status: SUPPORTED
+
+  org.openecomp.relationships.AttachesTo:
+    derived_from: tosca.relationships.AttachesTo
+    description: This type represents an attachment relationship
+    properties:
+      location:
+        description: The relative location (e.g., path on the file system), which provides the root location to address an attached node.
+        type: string
+        status: SUPPORTED
+        required: false
+        
+  tosca.relationships.nfv.VDU.AttachedTo:
+    derived_from: tosca.relationships.Root
+    properties:
+      location:
+        required: false
+        type: string
+
+  tosca.relationships.nfv.VirtualBindsTo:
+    derived_from: tosca.relationships.Root
+
+  tosca.relationships.nfv.VirtualLinksTo:
+    derived_from: tosca.relationships.Root
