@@ -17,6 +17,7 @@ import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class NeutronPortResourceValidator implements ResourceValidator {
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
 
     validateNovaServerPortBinding
-        (fileName, resourceEntry, (HeatResourceValidationContext)validationContext, globalContext);
+        (fileName, resourceEntry, (HeatResourceValidationContext) validationContext, globalContext);
   }
 
 
@@ -50,44 +51,43 @@ public class NeutronPortResourceValidator implements ResourceValidator {
         heatResourceValidationContext.getFileLevelResourceDependencies()
             .get(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource());
 
-    if(MapUtils.isEmpty(portIdToPointingResources)){
+    String portResourceId = resourceEntry.getKey();
+    if (MapUtils.isEmpty(portIdToPointingResources)) {
       globalContext
           .addMessage(fileName, ErrorLevel.WARNING,
               ErrorMessagesFormatBuilder
                   .getErrorWithParameters(
                       Messages.PORT_NO_BIND_TO_ANY_NOVA_SERVER.getErrorMessage(),
-                      resourceEntry.getKey()), LoggerTragetServiceName.CHECK_FOR_ORPHAN_PORTS,
+                      portResourceId), LoggerTragetServiceName.CHECK_FOR_ORPHAN_PORTS,
               LoggerErrorDescription.NO_BIND_FROM_PORT_TO_NOVA);
 
       return;
     }
 
-    for (Map.Entry<String, Map<String, List<String>>> portEntry :
-        portIdToPointingResources.entrySet()) {
-      checkPortBindingFromMap(fileName, portEntry, globalContext);
-    }
+    Map<String, List<String>> pointingResourcesToCurrPort =
+        portIdToPointingResources.get(portResourceId);
+    checkPortBindingFromMap(
+        fileName, portResourceId, pointingResourcesToCurrPort, globalContext);
 
     mdcDataDebugMessage.debugExitMessage("file", fileName);
   }
 
   private static void checkPortBindingFromMap(String fileName,
-                                              Map.Entry<String, Map<String, List<String>>> portEntry,
+                                              String portResourceId,
+                                              Map<String, List<String>> resourcesPointingToCurrPort,
                                               GlobalValidationContext globalContext) {
-    Map<String, List<String>> pointingResourcesToCurrPort = portEntry.getValue();
-    List<String> pointingNovaServers = pointingResourcesToCurrPort
-        .get(HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource());
+    List<String> pointingNovaServers =
+        MapUtils.isEmpty(resourcesPointingToCurrPort) ? new ArrayList<>()
+        : resourcesPointingToCurrPort.get(HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource());
 
-    if (CollectionUtils.isEmpty(pointingNovaServers)) {
-      return;
-    }
-
-    handleErrorEventsForPortBinding(fileName, portEntry, globalContext, pointingNovaServers);
+    handleErrorEventsForPortBinding(
+        fileName, portResourceId, globalContext, pointingNovaServers);
 
 
   }
 
   private static void handleErrorEventsForPortBinding(String fileName,
-                                                      Map.Entry<String, Map<String, List<String>>> portEntry,
+                                                      String portResourceId,
                                                       GlobalValidationContext globalContext,
                                                       List<String> pointingNovaServers) {
     if (isThereMoreThanOneBindFromNovaToPort(pointingNovaServers)) {
@@ -96,28 +96,29 @@ public class NeutronPortResourceValidator implements ResourceValidator {
               ErrorMessagesFormatBuilder
                   .getErrorWithParameters(
                       Messages.MORE_THAN_ONE_BIND_FROM_NOVA_TO_PORT.getErrorMessage(),
-                      portEntry.getKey()),
+                      portResourceId),
               LoggerTragetServiceName.VALIDATE_NOVA_SERVER_PORT_BINDING,
               LoggerErrorDescription.PORT_BINDS_MORE_THAN_ONE_NOVA);
     }
 
-    if(isNoNovaPointingToPort(pointingNovaServers)){
+    if (isNoNovaPointingToPort(pointingNovaServers)) {
       globalContext
           .addMessage(fileName, ErrorLevel.WARNING,
               ErrorMessagesFormatBuilder
                   .getErrorWithParameters(
                       Messages.PORT_NO_BIND_TO_ANY_NOVA_SERVER.getErrorMessage(),
-                      portEntry.getKey()), LoggerTragetServiceName.CHECK_FOR_ORPHAN_PORTS,
+                      portResourceId), LoggerTragetServiceName.CHECK_FOR_ORPHAN_PORTS,
               LoggerErrorDescription.NO_BIND_FROM_PORT_TO_NOVA);
     }
   }
 
   private static boolean isNoNovaPointingToPort(List<String> pointingNovaServers) {
-    return pointingNovaServers.size() == 0;
+    return CollectionUtils.isEmpty(pointingNovaServers);
   }
 
   private static boolean isThereMoreThanOneBindFromNovaToPort(List<String> pointingNovaServers) {
-    return pointingNovaServers.size() > 1;
+    return CollectionUtils.isNotEmpty(pointingNovaServers)
+            && pointingNovaServers.size() > 1;
   }
 
   @SuppressWarnings("unchecked")
