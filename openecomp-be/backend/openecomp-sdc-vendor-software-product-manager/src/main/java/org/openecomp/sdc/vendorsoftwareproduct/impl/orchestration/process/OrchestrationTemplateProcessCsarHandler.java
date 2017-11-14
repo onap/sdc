@@ -7,6 +7,8 @@ import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
@@ -38,10 +40,10 @@ import java.util.Optional;
 public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTemplateProcessHandler {
 
   private static Logger logger =
-      LoggerFactory.getLogger(OrchestrationTemplateProcessCsarHandler.class);
+          LoggerFactory.getLogger(OrchestrationTemplateProcessCsarHandler.class);
   private ToscaConverter toscaConverter = new ToscaConverterImpl();
   private CandidateService candidateService =
-      CandidateServiceFactory.getInstance().createInterface();
+          CandidateServiceFactory.getInstance().createInterface();
   ToscaTreeManager toscaTreeManager = new ToscaTreeManager();
 
   @Override
@@ -54,9 +56,9 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
     OrchestrationTemplateActionResponse response = new OrchestrationTemplateActionResponse();
     UploadFileResponse uploadFileResponse = new UploadFileResponse();
     Optional<FileContentHandler> fileContent =
-        OrchestrationUtil
-            .getFileContentMap(
-                OnboardingTypesEnum.CSAR, uploadFileResponse, candidateData.getContentData().array());
+            OrchestrationUtil
+                    .getFileContentMap(
+                            OnboardingTypesEnum.CSAR, uploadFileResponse, candidateData.getContentData().array());
 
     if(fileContent.isPresent()){
       try {
@@ -65,8 +67,13 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
       } catch (CoreException e){
         logger.error(e.getMessage());
         throw e;
-      } catch (Exception e){
-        logger.error(e.getMessage());
+      } catch (IOException ioe){
+        logger.error(ioe.getMessage());
+        throw new CoreException(new  GeneralErrorBuilder(ioe.getMessage()).build(),ioe);
+      }
+    } else{
+      if (!uploadFileResponse.getErrors().isEmpty()){
+        response.addStructureErrors(uploadFileResponse.getErrors());
       }
     }
 
@@ -94,15 +101,15 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
     Map<String, ProcessEntity> processArtifact = new HashMap<>();
 
     OrchestrationUtil.backupComponentsQuestionnaireBeforeDelete(vspId,
-        version, componentsQuestionnaire,
-        componentNicsQuestionnaire, componentMibList, processes, processArtifact);
+            version, componentsQuestionnaire,
+            componentNicsQuestionnaire, componentMibList, processes, processArtifact);
 
     Optional<ByteArrayInputStream> zipByteArrayInputStream = candidateService
-        .fetchZipFileByteArrayInputStream(vspId, candidateData, null, OnboardingTypesEnum.CSAR, errors);
+            .fetchZipFileByteArrayInputStream(vspId, candidateData, null, OnboardingTypesEnum.CSAR, errors);
 
     OrchestrationUtil.deleteUploadDataAndContent(vspId, version);
     OrchestrationUtil.saveUploadData(
-        vspId, version, zipByteArrayInputStream.get(), fileContentHandler, tree);
+            vspId, version, zipByteArrayInputStream.get(), fileContentHandler, tree);
 
     ToscaServiceModel toscaServiceModel = toscaConverter.convert(fileContentHandler);
     OrchestrationUtil.saveServiceModel(vspId, version, toscaServiceModel, toscaServiceModel);
@@ -116,7 +123,7 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
   }
 
   private Map<String, List<ErrorMessage>> validateCsar(FileContentHandler fileContentHandler,
-                                         OrchestrationTemplateActionResponse response){
+                                                       OrchestrationTemplateActionResponse response){
 
 
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
