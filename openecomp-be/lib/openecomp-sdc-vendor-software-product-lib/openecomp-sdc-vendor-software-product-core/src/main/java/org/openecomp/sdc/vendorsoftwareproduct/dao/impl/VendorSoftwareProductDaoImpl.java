@@ -204,7 +204,8 @@ public class VendorSoftwareProductDaoImpl implements VendorSoftwareProductDao {
     serviceModelDao.deleteAll(vspId, version);
     //processDao.deleteVspAll(vspId,version);
     componentDao.deleteAll(vspId, version);
-    vspInfoDao.deleteAll(vspId, version);
+    //Retain VSP information on heat upload
+    //vspInfoDao.deleteAll(vspId, version);
 
 //    uploadDataDao.deleteContentDataAndValidationData(vspId, version);
 
