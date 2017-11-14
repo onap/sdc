@@ -59,44 +59,24 @@ LOCAL=false
 SKIPTESTS=false
 DEBUG_PORT="--publish 4000:4000"
 
-[ -f /opt/config/env_name.txt ] && DEP_ENV=$(cat /opt/config/env_name.txt) || DEP_ENV=__ENV-NAME__
-[ -f /opt/config/nexus_username.txt ] && NEXUS_USERNAME=$(cat /opt/config/nexus_username.txt)    || NEXUS_USERNAME=release
-[ -f /opt/config/nexus_password.txt ] && NEXUS_PASSWD=$(cat /opt/config/nexus_password.txt)      || NEXUS_PASSWD=sfWU3DFVdBr7GVxB85mTYgAW
-[ -f /opt/config/nexus_docker_repo.txt ] && NEXUS_DOCKER_REPO=$(cat /opt/config/nexus_docker_repo.txt) || NEXUS_DOCKER_REPO=ecomp-nexus:${PORT}
-
-while test $# -gt 0; do
+while [ $# -gt 0 ]
+do
     case $1 in
-        -r | --release )
-            shift
-            RELEASE=$1
-            ;;
-        -e | --environment )
-			shift
-            DEP_ENV=$1
-            ;;
-		-p | --port )
-            shift
-            PORT=$1
-			;;
-	-l | --local )
-	    shift
-	    LOCAL=true
-	    ;;
-	-s | --skipTests )
-	   shift
-	   SKIPTESTS=true
-		;;
-        -h | --help )
-			usage
-            exit
-            ;;
-        * )
-    		usage
-            exit 1
+        -r | --release )     shift 1 ;  RELEASE=$1     ; shift 1 ;;
+        -e | --environment ) shift 1 ;  DEP_ENV=$1     ; shift 1 ;;
+	-p | --port )        shift 1 ;  PORT=$1        ; shift 1 ;;
+	-l | --local )     	        LOCAL=true     ; shift 1 ;;
+	-s | --skipTests )              SKIPTESTS=true ; shift 1 ;;
+        -h | --help )                   usage          ; exit  0  ;;
+        * )                        	usage          ; exit  1  ;;
     esac
 done
 
 
+[ -f /opt/config/env_name.txt ] && DEP_ENV=$(cat /opt/config/env_name.txt) || DEP_ENV=__ENV-NAME__
+[ -f /opt/config/nexus_username.txt ] && NEXUS_USERNAME=$(cat /opt/config/nexus_username.txt)    || NEXUS_USERNAME=release
+[ -f /opt/config/nexus_password.txt ] && NEXUS_PASSWD=$(cat /opt/config/nexus_password.txt)      || NEXUS_PASSWD=sfWU3DFVdBr7GVxB85mTYgAW
+[ -f /opt/config/nexus_docker_repo.txt ] && NEXUS_DOCKER_REPO=$(cat /opt/config/nexus_docker_repo.txt) || NEXUS_DOCKER_REPO=nexus3.onap.org:${PORT}
 [ -f /opt/config/nexus_username.txt ] && docker login -u $NEXUS_USERNAME -p $NEXUS_PASSWD $NEXUS_DOCKER_REPO
 
 
@@ -118,7 +98,7 @@ if [ ${LOCAL} = false ]; then
 	echo "pulling code"
 	docker pull ${PREFIX}/sdc-elasticsearch:${RELEASE}
 fi
-docker run --detach --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 1g --memory-swap=1g --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro -e ES_HEAP_SIZE=1024M --volume /data/ES:/usr/share/elasticsearch/data --volume /data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 ${PREFIX}/sdc-elasticsearch:${RELEASE}
+docker run --detach --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 750m --memory-swap=750m -e ES_JAVA_OPTS="-Xms512m -Xmx512m" --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro -e ES_HEAP_SIZE=1024M --volume /data/ES:/usr/share/elasticsearch/data --volume /data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 ${PREFIX}/sdc-elasticsearch:${RELEASE}
 
 
 # cassandra
@@ -212,5 +192,6 @@ echo "Triger sanity docker, please wait..."
     if [ ${LOCAL} = false ]; then
 	   docker pull ${PREFIX}/sdc-sanity:${RELEASE}
     fi
-	docker run --detach --name sdc-sanity --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 1g --memory-swap=1g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/sdc-sanity/target:/var/lib/tests/target --volume /data/logs/sdc-sanity/ExtentReport:/var/lib/tests/ExtentReport --volume /data/logs/sdc-sanity/outputCsar:/var/lib/tests/outputCsar --volume /data/environments:/root/chef-solo/environments --publish 9560:9560 ${PREFIX}/sdc-sanity:${RELEASE}
+
+docker run --detach --name sdc-sanity --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --env http_proxy=${http_proxy} --env https_proxy=${https_proxy} --env no_proxy=${no_proxy} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 1500m --memory-swap=1500m --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/sdc-sanity/target:/var/lib/tests/target --volume /data/logs/sdc-sanity/ExtentReport:/var/lib/tests/ExtentReport --volume /data/logs/sdc-sanity/outputCsar:/var/lib/tests/outputCsar --volume /data/environments:/root/chef-solo/environments --publish 9560:9560 ${PREFIX}/sdc-sanity:${RELEASE}
 fi
