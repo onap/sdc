@@ -1,0 +1,533 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_01aa4719",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "optimize imports. you have unused imports",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 35
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_c1bc2f6f",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "remove javadoc. According to clean code guidelines, parameters and function names should be self explenatory",
+      "range": {
+        "startLine": 106,
+        "startChar": 2,
+        "endLine": 119,
+        "endChar": 5
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_2151c362",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "remove the initialization from the default constructor and use the new constructor to init the members(call the second constructor with all parameters).\nby using initialization code in one place, you\u0027ll have more control",
+      "range": {
+        "startLine": 130,
+        "startChar": 4,
+        "endLine": 139,
+        "endChar": 61
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_8183d7cb",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "remove javadoc. According to clean code guidelines, parameters and function names should be self explenatory",
+      "range": {
+        "startLine": 168,
+        "startChar": 1,
+        "endLine": 178,
+        "endChar": 5
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_415eff46",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "this function is to hard to read. please extarct sub-function",
+      "range": {
+        "startLine": 179,
+        "startChar": 14,
+        "endLine": 179,
+        "endChar": 55
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_215b0356",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "can be extracted",
+      "range": {
+        "startLine": 196,
+        "startChar": 6,
+        "endLine": 207,
+        "endChar": 7
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_01580755",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "can be extracted",
+      "range": {
+        "startLine": 210,
+        "startChar": 6,
+        "endLine": 225,
+        "endChar": 7
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_e154cb22",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "remove unused code",
+      "range": {
+        "startLine": 238,
+        "startChar": 8,
+        "endLine": 239,
+        "endChar": 59
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_6188dbe7",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "remove javadoc. According to clean code guidelines, parameters and function names should be self explenatory",
+      "range": {
+        "startLine": 249,
+        "startChar": 1,
+        "endLine": 259,
+        "endChar": 5
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_c131cf0c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "too hard to read this function. extract functions",
+      "range": {
+        "startLine": 260,
+        "startChar": 14,
+        "endLine": 260,
+        "endChar": 46
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_416ddf31",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "remove javadoc. According to clean code guidelines, parameters and function names should be self explenatory",
+      "range": {
+        "startLine": 333,
+        "startChar": 2,
+        "endLine": 341,
+        "endChar": 5
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_216ae31a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "remove javadoc. According to clean code guidelines, parameters and function names should be self explenatory",
+      "range": {
+        "startLine": 361,
+        "startChar": 2,
+        "endLine": 368,
+        "endChar": 5
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_a136d301",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "unuserd. remove",
+      "range": {
+        "startLine": 379,
+        "startChar": 6,
+        "endLine": 381,
+        "endChar": 26
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_0177e703",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "remove javadoc. According to clean code guidelines, parameters and function names should be self explenatory",
+      "range": {
+        "startLine": 385,
+        "startChar": 2,
+        "endLine": 391,
+        "endChar": 5
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_e173ab13",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "remove javadoc. According to clean code guidelines, parameters and function names should be self explenatory",
+      "range": {
+        "startLine": 400,
+        "startChar": 2,
+        "endLine": 405,
+        "endChar": 5
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_2122e3b9",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 406,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "add unit testing coverage for this class and function(at least for the functions you added)",
+      "range": {
+        "startLine": 406,
+        "startChar": 14,
+        "endLine": 406,
+        "endChar": 44
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_813bd7ea",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "too many levels of if\\for. extract sub function. this is not a testable function",
+      "range": {
+        "startLine": 411,
+        "startChar": 3,
+        "endLine": 434,
+        "endChar": 7
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_c160af37",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "remove javadoc. According to clean code guidelines, parameters and function names should be self explenatory",
+      "range": {
+        "startLine": 439,
+        "startChar": 2,
+        "endLine": 445,
+        "endChar": 5
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_012fe7a2",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "add unit testing coverage for this class and function(at least for the functions you added)",
+      "range": {
+        "startLine": 446,
+        "startChar": 29,
+        "endLine": 446,
+        "endChar": 54
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_c118af86",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/OrchestrationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 461,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "add unit testing coverage for this class and function(at least for the functions you added)",
+      "range": {
+        "startLine": 461,
+        "startChar": 30,
+        "endLine": 461,
+        "endChar": 55
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_6140db56",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessZipHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "remove javadoc. According to clean code guidelines, parameters and function names should be self explenatory",
+      "range": {
+        "startLine": 76,
+        "startChar": 2,
+        "endLine": 83,
+        "endChar": 5
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_410cbf42",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/OrchestrationTemplateCandidateManagerImplTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "code duplications with lines 236-245",
+      "range": {
+        "startLine": 206,
+        "startChar": 4,
+        "endLine": 214,
+        "endChar": 5
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_0106c720",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/VendorSoftwareProductDaoImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T09:32:39Z",
+      "side": 1,
+      "message": "remove unused code",
+      "range": {
+        "startLine": 208,
+        "startChar": 4,
+        "endLine": 208,
+        "endChar": 43
+      },
+      "revId": "f1f480bee221cca4a2659dd7c18b2c7642a65e98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
