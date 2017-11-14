@@ -90,4 +90,14 @@ public class CassandraUtils {
   public static boolean isAuthenticate() {
     return ConfigurationManager.getInstance().isAuthenticate();
   }
+
+  public static String getConsistencyLevel() {
+
+    return ConfigurationManager.getInstance().getConsistencyLevel();
+
+  }
+
+  public static String getLocalDataCenter() {
+    return ConfigurationManager.getInstance().getLocalDataCenter();
+  }
 }

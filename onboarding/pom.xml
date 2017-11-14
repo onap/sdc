@@ -93,8 +93,8 @@
         <testng.version>6.9.10</testng.version> <!--new 6.9.13.6 still shows blackduck risk -->
         <woodstox.version>4.4.1</woodstox.version>
         <ws.rs.version>2.0.1</ws.rs.version>  <!--  New version 2.0.1 to fix blackduck violation Failing with comiplation issues-->
-        <zusammen.version>0.2.0</zusammen.version>
-        <zusammen-state-store.version>0.2.2</zusammen-state-store.version>
+        <zusammen.version>0.2.3</zusammen.version>
+        <zusammen-state-store.version>0.2.3</zusammen-state-store.version>
         <pmd.version>5.8.1</pmd.version>
         <build.tools.version>${project.version}</build.tools.version>
         <togglz.version>2.4.1.Final</togglz.version>

@@ -21,13 +21,21 @@
 package org.openecomp.core.nosqldb.impl.cassandra;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.QueryOptions;
 import com.datastax.driver.core.SSLOptions;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
+import com.datastax.driver.core.policies.LoadBalancingPolicy;
+import com.datastax.driver.core.policies.TokenAwarePolicy;
 import com.google.common.base.Optional;
+import org.apache.commons.lang.ArrayUtils;
 import org.openecomp.core.nosqldb.util.CassandraUtils;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -37,8 +45,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
+import java.util.Objects;
 
 public class CassandraSessionFactory {
 
@@ -75,9 +82,44 @@ public class CassandraSessionFactory {
     if (isAuthenticate) {
       builder.withCredentials(CassandraUtils.getUser(), CassandraUtils.getPassword());
     }
+
+    setConsistencyLevel(builder, addresses);
+
+    setLocalDataCenter(builder);
+
+
     Cluster cluster = builder.build();
     String keyStore = CassandraUtils.getKeySpace();
     return cluster.connect(keyStore);
+  }
+
+  private static void setLocalDataCenter(Cluster.Builder builder) {
+    String localDataCenter = CassandraUtils.getLocalDataCenter();
+    if (Objects.nonNull(localDataCenter)) {
+      log.info("localDatacenter was provided, setting Cassndra client to use datacenter: {} as " +
+          "local.", localDataCenter);
+
+      LoadBalancingPolicy tokenAwarePolicy = new TokenAwarePolicy(
+          DCAwareRoundRobinPolicy.builder().withLocalDc(localDataCenter).build());
+      builder.withLoadBalancingPolicy(tokenAwarePolicy);
+    } else {
+      log.info(
+          "localDatacenter was provided,  the driver will use the datacenter of the first contact point that was reached at initialization");
+    }
+  }
+
+  private static void setConsistencyLevel(Cluster.Builder builder, String[] addresses) {
+    if (ArrayUtils.isNotEmpty(addresses) && addresses.length > 1) {
+      String consistencyLevel = CassandraUtils.getConsistencyLevel();
+      if (Objects.nonNull(consistencyLevel)) {
+        log.info(
+            "consistencyLevel was provided, setting Cassandra client to use consistencyLevel: {}" +
+                " as "
+            , consistencyLevel);
+        builder.withQueryOptions(new QueryOptions().setConsistencyLevel(ConsistencyLevel.valueOf
+            (consistencyLevel)));
+      }
+    }
   }
 
   private static Optional<SSLOptions> getSslOptions() {
@@ -116,7 +158,7 @@ public class CassandraSessionFactory {
 
       ctx.init(null, tmf.getTrustManagers(), new SecureRandom());
     } catch (Exception exception) {
-      log.debug("",exception);
+      log.debug("", exception);
     } finally {
       if (tsf != null) {
         tsf.close();

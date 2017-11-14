@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -60,6 +61,10 @@ public class ConfigurationManager {
   private static final String CASSANDRA_SSL_KEY = "ssl";
   private static final String CASSANDRA_TRUSTSTORE_PATH_KEY = "truststorePath";
   private static final String CASSANDRA_TRUSTSTORE_PASSWORD_KEY = "truststorePassword";
+  private static final String CONSISTENCY_LEVEL = "cassandra.consistencyLevel";
+  private static final String CONSISTENCY_LEVEL_KEY = "consistencyLevel";
+  private static final String LOCAL_DATA_CENTER_KEY = "localDataCenter";
+  private static final String LOCAL_DATA_CENTER = "cassandra.localDataCenter";
   private static ConfigurationManager instance = null;
   private final LinkedHashMap<String, Object> cassandraConfiguration;
 
@@ -239,5 +244,25 @@ public class ConfigurationManager {
     try (InputStream is = new FileInputStream(file)) {
       return reader.apply(is);
     }
+  }
+
+  public String getConsistencyLevel() {
+    String consistencyLevel = System.getProperty(CONSISTENCY_LEVEL);
+    if (Objects.isNull(consistencyLevel) ) {
+      consistencyLevel = (String) cassandraConfiguration.get(CONSISTENCY_LEVEL_KEY);
+    }
+
+    if(Objects.isNull(consistencyLevel)) {
+      consistencyLevel="LOCAL_QUORUM";
+    }
+    return consistencyLevel;
+  }
+
+  public String getLocalDataCenter() {
+    String localDataCenter = System.getProperty(LOCAL_DATA_CENTER);
+    if (Objects.isNull(localDataCenter)) {
+      localDataCenter = (String) cassandraConfiguration.get(LOCAL_DATA_CENTER_KEY);
+    }
+    return localDataCenter;
   }
 }
