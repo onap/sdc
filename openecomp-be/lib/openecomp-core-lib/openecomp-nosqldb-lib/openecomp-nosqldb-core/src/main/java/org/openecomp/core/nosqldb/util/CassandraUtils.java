@@ -50,8 +50,8 @@ public class CassandraUtils {
   public static String getStatement(String statementName) {
 
     if (statementMap.size() == 0) {
-        statementMap = FileUtils.readViaInputStream(CASSANDRA_STATEMENT_DEFINITION_FILE,
-                stream -> JsonUtil.json2Object(stream, Map.class));
+      statementMap = FileUtils.readViaInputStream(CASSANDRA_STATEMENT_DEFINITION_FILE,
+          stream -> JsonUtil.json2Object(stream, Map.class));
     }
 
     return statementMap.get(statementName);
@@ -89,5 +89,15 @@ public class CassandraUtils {
 
   public static boolean isAuthenticate() {
     return ConfigurationManager.getInstance().isAuthenticate();
+  }
+
+  public static String getConsistencyLevel() {
+
+    return ConfigurationManager.getInstance().getConsistencyLevel();
+
+  }
+
+  public static String getLocalDataCenter() {
+    return ConfigurationManager.getInstance().getLocalDataCenter();
   }
 }

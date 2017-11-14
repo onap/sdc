@@ -6,6 +6,7 @@ import org.openecomp.core.nosqldb.util.CassandraUtils;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.util.Objects;
 
 /**
  * @author Avrahamg
@@ -13,39 +14,77 @@ import javax.servlet.ServletContextListener;
  */
 
 public class CassandraConnectionInitializer implements ServletContextListener {
+
+  private static String DATA_CENTER_PROPERTY_NAME = "cassandra.datacenter";
+  private static String CONSISTENCY_LEVEL_PROPERTY_NAME = "cassandra.consistency.level";
+  private static String NODES_PROPERTY_NAME = "cassandra.nodes";
+  private static String AUTHENTICATE_PROPERTY_NAME = "cassandra.authenticate";
+  private static String TRUE = "true";
+  private static String FALSE = "false";
+  private static String SSL_PROPERTY_NAME = "cassandra.ssl";
+  private static String TRUSTSTORE_PROPERTY_NAME = "cassandra.truststore";
+  private static String TRUSTSTORE_PASSWORD_PROPERTY_NAME = "cassandra.truststore.password";
+  private static String USER_PROPERTY_NAME = "cassandra.user";
+  private static String PASSWORD_PROPERTY_NAME = "cassandra.password";
+  private static String KEYSPACE_PROPERTY_NAME = "cassandra.keyspace";
+  private static String ZUSAMMEN = "zusammen";
+
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
     setCassandraConnectionPropertiesToSystem();
   }
 
   public static void setCassandraConnectionPropertiesToSystem() {
-    if (!System.getProperties().containsKey("cassandra.nodes")) {
-      System.setProperty("cassandra.nodes", StringUtils.join(CassandraUtils.getAddresses(), ','));
+
+    if (!System.getProperties().containsKey(NODES_PROPERTY_NAME)) {
+      System.setProperty(NODES_PROPERTY_NAME, StringUtils.join(CassandraUtils.getAddresses(), ','));
     }
-    if (!System.getProperties().containsKey("cassandra.authenticate")) {
-      System
-          .setProperty("cassandra.authenticate",
-              CassandraUtils.isAuthenticate() ? "true" : "false");
+
+    if (!System.getProperties().containsKey(AUTHENTICATE_PROPERTY_NAME)) {
+      System.setProperty(AUTHENTICATE_PROPERTY_NAME,
+          CassandraUtils.isAuthenticate() ? TRUE : FALSE);
     }
-    if (!System.getProperties().containsKey("cassandra.ssl")) {
-      System.setProperty("cassandra.ssl",
-          CassandraUtils.isSsl() ? "true" : "false");
+    if (!System.getProperties().containsKey(SSL_PROPERTY_NAME)) {
+      System.setProperty(SSL_PROPERTY_NAME,
+          CassandraUtils.isSsl() ? TRUE : FALSE);
     }
-    if (!System.getProperties().containsKey("cassandra.truststore")) {
-      System.setProperty("cassandra.truststore", CassandraUtils.getTruststore());
+
+    if (!System.getProperties().containsKey(TRUSTSTORE_PROPERTY_NAME)) {
+      System.setProperty(TRUSTSTORE_PROPERTY_NAME, CassandraUtils.getTruststore());
     }
-    if (!System.getProperties().containsKey("cassandra.truststore.password")) {
-      System.setProperty("cassandra.truststore.password", CassandraUtils.getTruststorePassword());
+
+    if (!System.getProperties().containsKey(TRUSTSTORE_PASSWORD_PROPERTY_NAME)) {
+      System.setProperty(TRUSTSTORE_PASSWORD_PROPERTY_NAME, CassandraUtils.getTruststorePassword());
     }
-    if (!System.getProperties().containsKey("cassandra.user")) {
-      System.setProperty("cassandra.user", CassandraUtils.getUser());
+
+    if (!System.getProperties().containsKey(USER_PROPERTY_NAME)) {
+      System.setProperty(USER_PROPERTY_NAME, CassandraUtils.getUser());
     }
-    if (!System.getProperties().containsKey("cassandra.password")) {
-      System.setProperty("cassandra.password", CassandraUtils.getPassword());
+
+    if (!System.getProperties().containsKey(PASSWORD_PROPERTY_NAME)) {
+      System.setProperty(PASSWORD_PROPERTY_NAME, CassandraUtils.getPassword());
     }
-    if (!System.getProperties().containsKey("cassandra.keyspace")) {
-      System.setProperty("cassandra.keyspace", "zusammen");
+
+    if (!System.getProperties().containsKey(KEYSPACE_PROPERTY_NAME)) {
+      System.setProperty(KEYSPACE_PROPERTY_NAME, ZUSAMMEN);
     }
+
+
+    if (!System.getProperties().containsKey(DATA_CENTER_PROPERTY_NAME)) {
+      String dataCenter = CassandraUtils.getLocalDataCenter();
+      if (Objects.nonNull(dataCenter)) {
+        System.setProperty(DATA_CENTER_PROPERTY_NAME, dataCenter);
+      }
+    }
+
+    if (!System.getProperties().containsKey(CONSISTENCY_LEVEL_PROPERTY_NAME)) {
+      String consistencyLevel = CassandraUtils.getConsistencyLevel();
+      if (Objects.nonNull(consistencyLevel)) {
+        System.setProperty(CONSISTENCY_LEVEL_PROPERTY_NAME, consistencyLevel);
+      }
+    }
+
+
   }
 
   //       -Dcassandra.nodes=10.147.97.145  -Dcassandra.keyspace=zusammen -Dcassandra.authenticate=true -Dcassandra.ssl=true

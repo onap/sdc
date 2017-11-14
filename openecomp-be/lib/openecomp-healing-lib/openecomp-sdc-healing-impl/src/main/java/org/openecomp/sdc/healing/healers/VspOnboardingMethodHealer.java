@@ -14,11 +14,11 @@ import java.util.Map;
 import java.util.Objects;
 
 public class VspOnboardingMethodHealer implements Healer {
-  private static VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao =
-      VendorSoftwareProductInfoDaoFactory.getInstance().createInterface();
+  private static VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao;
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
   public VspOnboardingMethodHealer(){
+    this(VendorSoftwareProductInfoDaoFactory.getInstance().createInterface());
   }
 
   public VspOnboardingMethodHealer( VendorSoftwareProductInfoDao inVendorSoftwareProductInfoDao){

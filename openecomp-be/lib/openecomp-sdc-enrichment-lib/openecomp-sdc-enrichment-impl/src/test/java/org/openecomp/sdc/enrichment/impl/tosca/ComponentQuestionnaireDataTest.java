@@ -27,7 +27,7 @@ import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_FUN
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
 
 public class ComponentQuestionnaireDataTest {
-  private static String VSP_ID = "vspId";
+  /*private static String VSP_ID = "vspId";
   public static final Version VERSION01 = new Version(0, 1);
   private static final Version VERSION10 = new Version(1, 0);
 
@@ -119,5 +119,5 @@ public class ComponentQuestionnaireDataTest {
 
 
   }
-
+*/
 }
