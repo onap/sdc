@@ -1,0 +1,135 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_69232106",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessCsarHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T16:06:45Z",
+      "side": 1,
+      "message": "you shouldn\u0027t throw exception here. you should add an error to the response and in OrchestrationTemplateCandidateImpl you should check the response for errors before continuing to",
+      "range": {
+        "startLine": 69,
+        "startChar": 8,
+        "endLine": 72,
+        "endChar": 88
+      },
+      "revId": "de25d88fb9c021bc19a696c844a887a5a49834b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_a91119ae",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessCsarHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T16:06:45Z",
+      "side": 1,
+      "message": "replace with CollectionUtils.isNotEmpty",
+      "range": {
+        "startLine": 75,
+        "startChar": 10,
+        "endLine": 75,
+        "endChar": 51
+      },
+      "revId": "de25d88fb9c021bc19a696c844a887a5a49834b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_291d29be",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/common/utils/CommonUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T16:06:45Z",
+      "side": 1,
+      "message": "why is this class empty?",
+      "revId": "de25d88fb9c021bc19a696c844a887a5a49834b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_097a6df1",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/OrchestrationTemplateProcessCsarHandlerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T16:06:45Z",
+      "side": 1,
+      "message": "why is this class empty?",
+      "revId": "de25d88fb9c021bc19a696c844a887a5a49834b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_e97ef1e3",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/mock/NoSqlDbFactoryMock.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T16:06:45Z",
+      "side": 1,
+      "message": "why is this class empty?",
+      "revId": "de25d88fb9c021bc19a696c844a887a5a49834b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_896d3d35",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/mock/PackageInfoDaoFactoryImplMock.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T16:06:45Z",
+      "side": 1,
+      "message": "why is this class empty?",
+      "revId": "de25d88fb9c021bc19a696c844a887a5a49834b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_696a011c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/mock/VendorSoftwareProductDaoFactoryMock.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-14T16:06:45Z",
+      "side": 1,
+      "message": "why is this class empty?",
+      "revId": "de25d88fb9c021bc19a696c844a887a5a49834b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
