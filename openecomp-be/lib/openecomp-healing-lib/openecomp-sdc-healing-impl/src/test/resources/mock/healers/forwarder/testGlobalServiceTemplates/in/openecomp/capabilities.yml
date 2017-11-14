@@ -1,0 +1,157 @@
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+tosca_definitions_version: tosca_simple_openecomp_1_0
+
+metadata:
+  filename: openecomp/capabilities.yml
+  version: '1.0'
+
+imports:
+- openecomp_index:
+    file: _index.yml
+
+capability_types:
+
+  org.openecomp.capabilities.attachment.DeploymentFlavor:
+    derived_from: tosca.capabilities.Attachment
+    description: The Node capability indicates the base capabilities of a TOSCA Node Type.
+    properties:
+      DeploymentFlavor:
+        type: map
+        description: Deployment flavors instance
+        required: true
+        status: SUPPORTED
+        entry_schema:
+            type: org.openecomp.datatypes.DeploymentFlavor     
+
+  org.openecomp.capabilities.metric.SnmpTrap:
+    derived_from: org.openecomp.capabilities.Metric
+    description: A node type that includes the Metric capability indicates that it can be monitored using snmp trap.
+    properties:
+      oid:
+        description: Object Id of the metric
+        type: string
+        status: SUPPORTED
+        required: true
+
+  org.openecomp.capabilities.AllottedResource:
+    derived_from: tosca.capabilities.Root
+
+  org.openecomp.capabilities.metric.SnmpPolling:
+    derived_from: org.openecomp.capabilities.Metric
+    description: A node type that includes the Metric capability indicates that it can be monitored using snmp polling.
+    properties:
+      oid:
+        description: Object Id of the metric
+        type: string
+        status: SUPPORTED
+        required: true
+
+  org.openecomp.capabilities.metric.Ceilometer:
+    derived_from: org.openecomp.capabilities.Metric
+    description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+    properties:
+      name:
+        description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+        type: string
+        status: SUPPORTED
+        required: true
+
+  org.openecomp.capabilities.Metric:
+    derived_from: tosca.capabilities.Endpoint
+    description: A node type that includes the Metric capability indicates that it can be monitored.
+    properties:
+      unit:
+        description: Unit of the metric value
+        type: string
+        status: SUPPORTED
+        required: true
+      description:
+        description: Description of the metric
+        type: string
+        status: SUPPORTED
+        required: false
+      type:
+        description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+        type: string
+        status: SUPPORTED
+        required: true
+      category:
+        description: Category of the metric, for an example, compute, disk, network, storage and etc.
+        type: string
+        status: SUPPORTED
+        required: false
+    attributes:
+      value:
+        description: Runtime monitored value
+        type: string
+        status: SUPPORTED
+
+  tosca.capabilities.nfv.VirtualLinkable:
+    derived_from: tosca.capabilities.Root
+
+  tosca.capabilities.nfv.Metric:
+    derived_from: tosca.capabilities.Root
+
+  tosca.capabilities.nfv.VirtualBindable:
+    derived_from: tosca.capabilities.Root
+
+  tosca.capabilities.nfv.VirtualCompute:
+    derived_from: tosca.capabilities.Root
+    properties:
+      virtual_memory:
+        type: tosca.datatypes.nfv.VirtualMemory
+      requested_additional_capabilities:
+        entry_schema:
+          type: tosca.datatypes.nfv.RequestedAdditionalCapability
+        required: false
+        type: map
+      virtual_cpu:
+        type: tosca.datatypes.nfv.VirtualCpu
+
+
+  tosca.capabilities.nfv.VirtualStorage:
+    derived_from: tosca.capabilities.Root
+
+  tosca.capabilities.nfv.Forwarder:
+    derived_from: tosca.capabilities.Root
+
+  tosca.capabilities.nfv.ext.Compute.Container.Architecture:
+    derived_from: tosca.capabilities.Root
+    properties:
+      num_cpus:
+        required: false
+        type: string
+      flavor_extra_specs:
+        entry_schema:
+          type: string
+        required: false
+        type: map
+      mem_size:
+        required: false
+        type: string
+
+  tosca.capabilities.nfv.ext.ImageFile:
+    derived_from: tosca.capabilities.Root
+
+  tosca.capabilities.nfv.ext.LocalAttachment:
+    derived_from: tosca.capabilities.Root
+  # New capability types for Port Mirroring
+  org.openecomp.capabilities.PortMirroring:
+    derived_from: tosca.capabilities.Root
+    properties:
+      connection_point:
+        type: org.openecomp.datatypes.PortMirroringConnectionPointDescription
+        required: true

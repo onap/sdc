@@ -1,0 +1,120 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_pd_server
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.pd_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    compute_pd_server_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_pd_server_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd01_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    vm_flavor_name:
+      type: string
+      required: true
+    port_pd01_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    vm_image_name:
+      type: string
+      required: true
+    port_pd01_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_pd01_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd01_port_order:
+      type: integer
+      required: true
+    port_pd01_port_subnetpoolid:
+      type: string
+      required: true
+    port_pd01_port_network_role:
+      type: string
+      required: true
+    port_pd01_port_network_role_tag:
+      type: string
+      required: true
+    port_pd01_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    compute_pd_server_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    pd_server:
+      type: org.openecomp.resource.vfc.nodes.heat.pd_server
+      properties:
+        availability_zone:
+          get_input:
+          - compute_pd_server_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_pd_server_name
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_pd_server_user_data_format
+          - index_value
+    pd_server_pd01_port:
+      type: org.openecomp.resource.cp.v2.extContrailCP
+      properties:
+        exCP_naming: port_pd01_port_exCP_naming
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.pd_server
+    capabilities:
+      scalable_pd_server:
+      - pd_server
+      - scalable
+      disk.read.bytes.rate_pd_server:
+      - pd_server
+      - disk.read.bytes.rate
+    requirements:
+      local_storage_pd_server:
+      - pd_server
+      - local_storage
+      link_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - link
+      dependency_pd_server_pd01_port:
+      - pd_server_pd01_port
+      - dependency
+      dependency_pd_server:
+      - pd_server
+      - dependency
