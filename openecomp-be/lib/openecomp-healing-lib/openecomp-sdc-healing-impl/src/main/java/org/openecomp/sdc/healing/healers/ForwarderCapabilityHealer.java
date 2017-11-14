@@ -28,11 +28,22 @@ public class ForwarderCapabilityHealer implements Healer {
 
   private MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
-  private final ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao =
-      ServiceModelDaoFactory.getInstance().createInterface();
+  private final ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao;
   private static ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
   private static final String FORWARDER_CAPABILITY_ID = "Forwarder";
   private static final String UNDERSCORE = "_";
+
+  public ForwarderCapabilityHealer() {
+    this.serviceModelDao =
+        ServiceModelDaoFactory.getInstance().createInterface();
+  }
+
+  public ForwarderCapabilityHealer(ServiceModelDao<ToscaServiceModel, ServiceElement>
+                                       serviceModelDao,
+                                   ToscaAnalyzerService toscaAnalyzerService){
+    this.serviceModelDao = serviceModelDao;
+    this.toscaAnalyzerService = toscaAnalyzerService;
+  }
 
   @Override
   public Object heal(Map<String, Object> healingParams) throws Exception {
