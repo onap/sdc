@@ -195,33 +195,12 @@ public class VendorSoftwareProductDaoImpl implements VendorSoftwareProductDao {
 
   @Override
   public void deleteUploadData(String vspId, Version version) {
-
     networkDao.deleteAll(vspId, version);
-    //nicDao.deleteByVspId(vspId, version);
-    //artifactDao.delete(vspId, version);
-    //templateDao.deleteAll(vspId, version);
     enrichedServiceModelDao.deleteAll(vspId, version);
     serviceModelDao.deleteAll(vspId, version);
-    //processDao.deleteVspAll(vspId,version);
     componentDao.deleteAll(vspId, version);
-    vspInfoDao.deleteAll(vspId, version);
-
-//    uploadDataDao.deleteContentDataAndValidationData(vspId, version);
-
-//    enrichArtifactDao.deleteAll(vspId, version);
-//    artifactDao.deleteAll(vspId, version);
   }
 
-  /* @Override
-   public void updateVspLatestModificationTime(String vspId, Version version) {
-   *//*  if (Objects.isNull(vspId) || Objects.isNull(version)) {
-      return;
-    }
-
-    VspDetails retrieved = getVendorSoftwareProductInfo(new VspDetails(vspId, version));
-    updateVendorSoftwareProductInfo(retrieved);*//*
-  }
-*/
   @Override
   public void createComponentDependencyModel(List<ComponentDependencyModelEntity>
                                                  componentDependencyModel, String vspId,

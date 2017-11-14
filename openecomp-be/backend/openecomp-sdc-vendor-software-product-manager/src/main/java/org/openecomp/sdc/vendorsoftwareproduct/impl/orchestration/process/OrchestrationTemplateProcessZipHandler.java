@@ -1,5 +1,7 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
+import static org.openecomp.sdc.logging.messages.AuditMessages.HEAT_VALIDATION_ERROR;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.model.dao.ServiceModelDao;
@@ -49,8 +51,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.openecomp.sdc.logging.messages.AuditMessages.HEAT_VALIDATION_ERROR;
-
 public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemplateProcessHandler {
   Logger logger = LoggerFactory.getLogger(OrchestrationTemplateProcessZipHandler.class);
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
@@ -68,18 +68,20 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
   public OrchestrationTemplateProcessZipHandler(){}
 
   public OrchestrationTemplateActionResponse process(VspDetails vspDetails,
-                                                     OrchestrationTemplateCandidateData candidateData,
+                                                     OrchestrationTemplateCandidateData
+                                                         candidateData,
                                                      String user) {
     String vspId = vspDetails.getId();
     Version version = vspDetails.getVersion();
-    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_VALIDATION_STARTED +
-        vspId);
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_VALIDATION_STARTED
+        + vspId);
     OrchestrationTemplateActionResponse response = new OrchestrationTemplateActionResponse();
     UploadFileResponse uploadFileResponse = new UploadFileResponse();
     Optional<FileContentHandler> fileContent =
         OrchestrationUtil
             .getFileContentMap(
-                OnboardingTypesEnum.ZIP, uploadFileResponse, candidateData.getContentData().array());
+                OnboardingTypesEnum.ZIP, uploadFileResponse,
+                candidateData.getContentData().array());
     if (!fileContent.isPresent()) {
       response.addStructureErrors(uploadFileResponse.getErrors());
       mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
@@ -124,18 +126,21 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     Map<String, Collection<ProcessEntity>> processes = new HashMap<>();
     Map<String, ProcessEntity> processArtifact = new HashMap<>();
 
-    OrchestrationUtil.backupComponentsQuestionnaireBeforeDelete(vspId,
+    OrchestrationUtil orchestrationUtil = new OrchestrationUtil();
+    Map<String, String> vspComponentIdNameInfoBeforeProcess =
+        orchestrationUtil.getVspComponentIdNameInfo(vspId, version);
+    orchestrationUtil.backupComponentsQuestionnaireBeforeDelete(vspId,
         version, componentsQuestionnaire,
         componentNicsQuestionnaire, componentMibList, processes, processArtifact);
 
-    OrchestrationUtil.deleteUploadDataAndContent(vspId, version);
-    OrchestrationUtil.saveUploadData(vspId, version, zipByteArrayInputStream.get(), fileContentMap,
+    orchestrationUtil.deleteUploadDataAndContent(vspId, version);
+    orchestrationUtil.saveUploadData(vspId, version, zipByteArrayInputStream.get(), fileContentMap,
         tree);
 
     response.getErrors().values().forEach(errorList -> printAuditForErrors(errorList,vspId,
         HEAT_VALIDATION_ERROR));
-    if ( MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, response.getErrors
-        ()))) {
+    if ( MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR,
+        response.getErrors()))) {
       logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_VALIDATION_COMPLETED + vspId);
     }
 
@@ -145,11 +150,12 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
         HeatToToscaUtil.loadAndTranslateTemplateData(fileContentMap);
 
     ToscaServiceModel toscaServiceModel = translatorOutput.getToscaServiceModel();
-    OrchestrationUtil.saveServiceModel(vspId, version, translatorOutput
+    orchestrationUtil.saveServiceModel(vspId, version, translatorOutput
         .getNonUnifiedToscaServiceModel(), toscaServiceModel);
-    OrchestrationUtil.retainComponentQuestionnaireData(vspId, version, componentsQuestionnaire,
+    orchestrationUtil.retainComponentQuestionnaireData(vspId, version, componentsQuestionnaire,
         componentNicsQuestionnaire, componentMibList, processes, processArtifact);
-
+    orchestrationUtil.updateVspComponentDependencies(vspId, version,
+        vspComponentIdNameInfoBeforeProcess);
     logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.HEAT_TRANSLATION_COMPLETED + vspId);
     uploadFileResponse.addStructureErrors(uploadErrors);
 

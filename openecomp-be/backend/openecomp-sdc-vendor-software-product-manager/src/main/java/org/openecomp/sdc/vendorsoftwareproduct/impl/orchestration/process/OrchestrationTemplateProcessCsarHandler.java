@@ -92,20 +92,20 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
     Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList = new HashMap<>();
     Map<String, Collection<ProcessEntity>> processes = new HashMap<>();
     Map<String, ProcessEntity> processArtifact = new HashMap<>();
-
-    OrchestrationUtil.backupComponentsQuestionnaireBeforeDelete(vspId,
+    OrchestrationUtil orchestrationUtil = new OrchestrationUtil();
+    orchestrationUtil.backupComponentsQuestionnaireBeforeDelete(vspId,
         version, componentsQuestionnaire,
         componentNicsQuestionnaire, componentMibList, processes, processArtifact);
 
     Optional<ByteArrayInputStream> zipByteArrayInputStream = candidateService
         .fetchZipFileByteArrayInputStream(vspId, candidateData, null, OnboardingTypesEnum.CSAR, errors);
 
-    OrchestrationUtil.deleteUploadDataAndContent(vspId, version);
-    OrchestrationUtil.saveUploadData(
+    orchestrationUtil.deleteUploadDataAndContent(vspId, version);
+    orchestrationUtil.saveUploadData(
         vspId, version, zipByteArrayInputStream.get(), fileContentHandler, tree);
 
     ToscaServiceModel toscaServiceModel = toscaConverter.convert(fileContentHandler);
-    OrchestrationUtil.saveServiceModel(vspId, version, toscaServiceModel, toscaServiceModel);
+    orchestrationUtil.saveServiceModel(vspId, version, toscaServiceModel, toscaServiceModel);
 
   }
 
