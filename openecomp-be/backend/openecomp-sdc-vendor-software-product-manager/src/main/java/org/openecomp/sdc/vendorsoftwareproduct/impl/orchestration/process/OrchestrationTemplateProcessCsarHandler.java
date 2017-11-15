@@ -7,6 +7,8 @@ import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
@@ -37,11 +39,8 @@ import java.util.Optional;
 
 public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTemplateProcessHandler {
 
-  private static Logger logger =
-      LoggerFactory.getLogger(OrchestrationTemplateProcessCsarHandler.class);
-  private ToscaConverter toscaConverter = new ToscaConverterImpl();
-  private CandidateService candidateService =
-      CandidateServiceFactory.getInstance().createInterface();
+  private static final Logger logger = LoggerFactory.getLogger(OrchestrationTemplateProcessCsarHandler.class);
+  private CandidateService candidateService = CandidateServiceFactory.getInstance().createInterface();
   ToscaTreeManager toscaTreeManager = new ToscaTreeManager();
 
   @Override
@@ -64,12 +63,17 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
         processCsar(vspId, version, fileContentHandler, candidateData, response);
       } catch (CoreException e){
         logger.error(e.getMessage());
-        throw e;
-      } catch (Exception e){
-        logger.error(e.getMessage());
+        response.addErrorMessageToMap(e.code().id(), e.code().message(),ErrorLevel.ERROR);
+      } catch (IOException ioe) {
+        logger.error(ioe.getMessage());
+        ErrorCode errorCode = new GeneralErrorBuilder(ioe.getMessage()).build();
+        response.addErrorMessageToMap(errorCode.id(), errorCode.message(),ErrorLevel.ERROR);
+      }
+    } else {
+      if (!uploadFileResponse.getErrors().isEmpty()) {
+        response.addStructureErrors(uploadFileResponse.getErrors());
       }
     }
-
     return response;
   }
 
@@ -77,8 +81,6 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
                            FileContentHandler fileContentHandler,
                            OrchestrationTemplateCandidateData candidateData,
                            OrchestrationTemplateActionResponse response) throws IOException {
-
-
     response.setFileNames(new ArrayList<>(fileContentHandler.getFileList()));
     Map<String, List<ErrorMessage>> errors = validateCsar(fileContentHandler, response);
     if(!isValid(errors)){
@@ -104,7 +106,7 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
     orchestrationUtil.saveUploadData(
         vspId, version, zipByteArrayInputStream.get(), fileContentHandler, tree);
 
-    ToscaServiceModel toscaServiceModel = toscaConverter.convert(fileContentHandler);
+    ToscaServiceModel toscaServiceModel = new ToscaConverterImpl().convert(fileContentHandler);
     orchestrationUtil.saveServiceModel(vspId, version, toscaServiceModel, toscaServiceModel);
 
   }
