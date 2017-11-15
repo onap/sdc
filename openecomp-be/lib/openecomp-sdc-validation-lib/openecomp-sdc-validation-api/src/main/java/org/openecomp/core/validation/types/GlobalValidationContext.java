@@ -21,6 +21,7 @@
 package org.openecomp.core.validation.types;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -41,6 +42,16 @@ public class GlobalValidationContext {
   private static Logger logger = (Logger) LoggerFactory.getLogger(GlobalValidationContext.class);
   private Map<String, FileValidationContext> fileContextMap = new HashMap<>();
   private Map<String, MessageContainer> messageContainerMap = new HashMap<>();
+  private ErrorMessageCode messageCode;
+
+  public ErrorMessageCode getMessageCode() {
+    return messageCode;
+  }
+
+  public void setMessageCode(ErrorMessageCode messageCode) {
+    this.messageCode = messageCode;
+  }
+
 
   /**
    * Add message.
