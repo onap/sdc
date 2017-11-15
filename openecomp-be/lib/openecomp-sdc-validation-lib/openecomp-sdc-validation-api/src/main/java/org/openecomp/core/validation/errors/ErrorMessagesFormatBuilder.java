@@ -21,10 +21,28 @@
 package org.openecomp.core.validation.errors;
 
 
+import org.openecomp.core.validation.ErrorMessageCode;
+
 public class ErrorMessagesFormatBuilder {
+  private static final String messagePattern = "[%s]: %s";
+
   public static String getErrorWithParameters(String error, String... params) {
     return String.format(error, params);
   }
+  /**
+   * Formatted message with error code.
+   *
+   * @param messageCode error code.
+   * @param errorMessage error message.
+   * @param params parameters used in formatting message.
+   * @return formatted message string.
+   */
+  public static String getErrorWithParameters(ErrorMessageCode messageCode,
+                                              String errorMessage, String... params) {
+    String message = getErrorWithParameters(errorMessage, params);
 
+    return ( null != messageCode && null != messageCode.getMessageCode() )  ?
+            String.format(messagePattern, messageCode.getMessageCode(), message) : message;
+  }
 
 }

@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.common.errors.Messages;
 import org.testng.Assert;
+import org.openecomp.core.validation.ErrorMessageCode;
 
 
 public class ErrorMessagesTest {
@@ -42,5 +43,12 @@ public class ErrorMessagesTest {
         .getErrorWithParameters(Messages.REFERENCED_PARAMETER_NOT_FOUND.getErrorMessage(), "param",
             "res");
     Assert.assertNotNull(error1);
+  }
+  @Test
+  public void testErrorFormatWithErrorCode() {
+    String error = ErrorMessagesFormatBuilder
+            .getErrorWithParameters(new ErrorMessageCode("TestCode"), Messages.MISSING_NOVA_SERVER_METADATA
+                    .getErrorMessage(), "param");
+    Assert.assertEquals("[TestCode]: Missing Nova Server Metadata property, Resource ID [param]", error);
   }
 }
