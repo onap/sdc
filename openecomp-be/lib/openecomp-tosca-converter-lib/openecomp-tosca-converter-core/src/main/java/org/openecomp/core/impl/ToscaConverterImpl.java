@@ -1,10 +1,12 @@
 package org.openecomp.core.impl;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
 import org.openecomp.core.converter.ToscaConverter;
 import org.openecomp.core.converter.datatypes.Constants;
 import org.openecomp.core.converter.datatypes.CsarFileTypes;
+import org.openecomp.core.converter.errors.SubstitutionMappingsConverterErrorBuilder;
 import org.openecomp.core.impl.services.ServiceTemplateReaderServiceImpl;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonUtil;
@@ -326,16 +328,51 @@ public class ToscaConverterImpl implements ToscaConverter {
         SubstitutionMapping substitutionMapping = new SubstitutionMapping();
 
         substitutionMapping.setNode_type((String) substitutionMappings.get(nodeType));
-        substitutionMapping.setCapabilities(
-            convertSubstitutionMappingsSections((Map<String, Object>) substitutionMappings.get(capabilities)));
-        substitutionMapping.setRequirements(
-            convertSubstitutionMappingsSections((Map<String, Object>) substitutionMappings.get(requirements)));
+        setSubstitutionMappingsSection(
+            capabilities, substitutionMapping,
+            convertSubstitutionMappingsSections(capabilities, substitutionMappings.get(capabilities)));
+        setSubstitutionMappingsSection(
+            requirements, substitutionMapping,
+            convertSubstitutionMappingsSections(requirements, substitutionMappings.get(requirements)));
 
         return substitutionMapping;
     }
 
-    private Map<String, List<String>> convertSubstitutionMappingsSections(
-        Map<String, Object> sectionToConvert) {
+    private void setSubstitutionMappingsSection(String sectionName,
+                                                SubstitutionMapping substitutionMapping,
+                                                Map<String, List<String>> convertedSection) {
+        if(MapUtils.isEmpty(convertedSection)
+            || StringUtils.isEmpty(sectionName)
+            || Objects.isNull(substitutionMapping)){
+            return;
+        }
+
+        switch (sectionName){
+            case requirements:
+                substitutionMapping.setRequirements(convertedSection);
+                break;
+            case capabilities:
+                substitutionMapping.setCapabilities(convertedSection);
+                break;
+        }
+    }
+
+    private Map<String, List<String>> convertSubstitutionMappingsSections(String sectionName,
+                                                                          Object sectionToConvert) {
+        if(Objects.isNull(sectionToConvert)){
+            return null;
+        }
+
+        if(!(sectionToConvert instanceof Map)){
+            throw new CoreException(
+                new SubstitutionMappingsConverterErrorBuilder(
+                    sectionName, "Map").build());
+        }
+
+        return convertSubstitutionMappongsSection((Map<String, Object>) sectionToConvert);
+    }
+
+    private Map<String, List<String>> convertSubstitutionMappongsSection(Map<String, Object> sectionToConvert) {
         Map<String, List<String>> convertedSection = new HashMap<>();
         if (MapUtils.isEmpty(sectionToConvert)) {
             return null;
