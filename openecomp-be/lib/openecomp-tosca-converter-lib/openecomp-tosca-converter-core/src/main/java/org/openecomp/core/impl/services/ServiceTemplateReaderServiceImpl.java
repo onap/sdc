@@ -1,11 +1,7 @@
 package org.openecomp.core.impl.services;
 
 import org.openecomp.core.converter.ServiceTemplateReaderService;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.tosca.services.YamlUtil;
-import org.yaml.snakeyaml.error.YAMLException;
 
 import java.util.HashMap;
 import java.util.Map;
