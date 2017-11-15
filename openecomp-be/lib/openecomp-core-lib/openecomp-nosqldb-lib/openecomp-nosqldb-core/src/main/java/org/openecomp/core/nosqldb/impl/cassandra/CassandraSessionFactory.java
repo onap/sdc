@@ -29,7 +29,6 @@ import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.datastax.driver.core.policies.LoadBalancingPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
 import com.google.common.base.Optional;
-import org.apache.commons.lang.ArrayUtils;
 import org.openecomp.core.nosqldb.util.CassandraUtils;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -109,7 +108,7 @@ public class CassandraSessionFactory {
   }
 
   private static void setConsistencyLevel(Cluster.Builder builder, String[] addresses) {
-    if (ArrayUtils.isNotEmpty(addresses) && addresses.length > 1) {
+    if (addresses != null && addresses.length > 1) {
       String consistencyLevel = CassandraUtils.getConsistencyLevel();
       if (Objects.nonNull(consistencyLevel)) {
         log.info(

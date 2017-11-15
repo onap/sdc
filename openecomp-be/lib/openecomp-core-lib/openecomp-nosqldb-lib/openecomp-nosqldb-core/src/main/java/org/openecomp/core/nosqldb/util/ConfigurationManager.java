@@ -20,6 +20,7 @@
 
 package org.openecomp.core.nosqldb.util;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -116,9 +117,10 @@ public class ConfigurationManager {
       return addresses.split(",");
     }
     List lsAddresses = (ArrayList) cassandraConfiguration.get(CASSANDRA_HOSTS_KEY);
-    if (Objects.isNull(addresses) || addresses.length() == 0) {
-      throw new RuntimeException("Missing Cassandra hose.Cassandra host missing is mandatory.");
+    if (CollectionUtils.isEmpty(lsAddresses)) {
+      log.info("No Cassandra hosts are defined.");
     }
+
     String[] addressesArray;
     addressesArray = (String[]) lsAddresses.toArray(new String[lsAddresses.size()]);
     return addressesArray;
