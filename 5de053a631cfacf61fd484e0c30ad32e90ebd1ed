@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_12b736da",
+        "filename": "openecomp-be/lib/openecomp-tosca-converter-lib/openecomp-tosca-converter-core/src/main/java/org/openecomp/core/impl/ToscaConverterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-15T14:49:16Z",
+      "side": 1,
+      "message": "possible NPE.\nchange to if/elseif or use goava lib Strings.nullToEmpty or any other idea you have",
+      "range": {
+        "startLine": 347,
+        "startChar": 16,
+        "endLine": 347,
+        "endChar": 27
+      },
+      "revId": "5de053a631cfacf61fd484e0c30ad32e90ebd1ed",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
