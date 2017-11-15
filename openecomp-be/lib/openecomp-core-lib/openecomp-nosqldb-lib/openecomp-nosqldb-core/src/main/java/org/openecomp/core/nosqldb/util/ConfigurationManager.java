@@ -112,10 +112,13 @@ public class ConfigurationManager {
   public String[] getAddresses() {
 
     String addresses = System.getProperty(CASSANDRA_ADDRESSES);
-    if (Objects.isNull(addresses)) {
+    if (Objects.nonNull(addresses)) {
       return addresses.split(",");
     }
     List lsAddresses = (ArrayList) cassandraConfiguration.get(CASSANDRA_HOSTS_KEY);
+    if (Objects.isNull(addresses) || addresses.length() == 0) {
+      throw new RuntimeException("Missing Cassandra hose.Cassandra host missing is mandatory.");
+    }
     String[] addressesArray;
     addressesArray = (String[]) lsAddresses.toArray(new String[lsAddresses.size()]);
     return addressesArray;
