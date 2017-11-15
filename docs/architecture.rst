@@ -10,7 +10,6 @@ SDC As Part of ONAP
 
 .. image:: images/SDC_In_ONAP.png
 
-
 High Level Architecture
 =======================
 
