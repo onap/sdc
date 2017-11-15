@@ -1,32 +1,10 @@
 $PORT: '9090';
 $PROD_MACHINE: '10.147.92.78';
 
-@font-face {
-  font-family: omnes-light;
-  src: url('http://localhost:#{$PORT}/omnes-att-light.ttf'),
-    url('http://#{$PROD_MACHINE}:#{$PORT}/omnes-att-light.ttf');
-}
-
-@font-face {
-  font-family: omnes-regular;
-  src: url('http://localhost:#{$PORT}/omnes-att-regular.ttf'),
-    url('http://#{$PROD_MACHINE}:#{$PORT}/omnes-att-regular.ttf');
-}
-
-@font-face {
-  font-family: omnes-medium;
-  src: url('http://localhost:#{$PORT}/omnes-att-medium.ttf'),
-    url('http://#{$PROD_MACHINE}:#{$PORT}/omnes-att-medium.ttf');
-}
-
-@font-face {
-  font-family: omnes-bold;
-  src: url('http://localhost:#{$PORT}/omnes-att-bold.otf'),
-    url('http://#{$PROD_MACHINE}:#{$PORT}/omnes-att-bold.otf');
-}
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,600,700');
 
 body {
     @import '../resources/scss/bootstrap.scss';
-    font-family: omnes-medium,sans-serif;
+    font-family: 'Open Sans',sans-serif;
     font-size: 14px;
 }
