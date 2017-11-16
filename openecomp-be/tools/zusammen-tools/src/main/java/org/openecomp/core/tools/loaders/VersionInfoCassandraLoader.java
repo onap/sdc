@@ -20,7 +20,6 @@
 
 package org.openecomp.core.tools.loaders;
 
-import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
@@ -30,18 +29,14 @@ import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 
 import java.util.Collection;
 
-public class VersionInfoCassandraLoader  {
+public class VersionInfoCassandraLoader {
 
   private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-  private static Mapper<VersionInfoEntity> mapper =
-      noSqlDb.getMappingManager().mapper(VersionInfoEntity.class);
   private static VersionInfoAccessor accessor =
       noSqlDb.getMappingManager().createAccessor(VersionInfoAccessor.class);
 
 
-
-
-  public Collection<VersionInfoEntity> list() {
+  public static Collection<VersionInfoEntity> list() {
     return accessor.getAll().all();
   }
 

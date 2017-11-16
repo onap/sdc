@@ -125,6 +125,17 @@ public class Version {
     return major == version.major && minor == version.minor;
   }
 
+  public int compateTo(Version other){
+    if (this.major>other.major) {
+      return 1;
+    } else if(this.major<other.major){
+      return -1;
+    } else if(this.major == other.major){
+      return Integer.compare(this.minor,other.minor);
+    }
+    return 0;
+  }
+
   @Override
   public String toString() {
     return major + "." + minor;

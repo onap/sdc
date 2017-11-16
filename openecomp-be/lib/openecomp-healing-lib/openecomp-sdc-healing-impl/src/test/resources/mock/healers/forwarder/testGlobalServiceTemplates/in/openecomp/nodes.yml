@@ -511,7 +511,6 @@ node_types:
         type: integer
         required: true
       network_role_tag:
-        description: Must correlate to the set of defined “network-role�? tag identifiers from the associated HEAT template
         type: string
         required: true
       mac_requirements:
