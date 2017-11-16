@@ -8,6 +8,7 @@
 #  3.  Import one item - ./zusammenMainTool.sh -c  IMPORT -f ${fileName} -i ${elementId}
 #  4.  Import all - ./zusammenMainTool.sh -c  IMPORT -f  ${fileName}
 #  5.  Reset old version - ./zusammenMainTool.sh -c  RESET_OLD_VERSION
+#  6.  Heal all - ./zusammenMainTool.sh -c  HEAL_ALL -t ${thread number}
 #
 ##########################################################################################################
 
@@ -22,5 +23,5 @@ else
 fi
 echo "Configuration file location:  ${CONF_FILE_LOCATION}"
 
-java -Dlog.home=/apps/jetty/base/be/logs -Dconfiguration.yaml=${CONF_FILE_LOCATION}  -jar openecomp-zusammen-tools-1.2.0-SNAPSHOT.jar org.openecomp.core.tools.main.ZusammenMainTool $1 $2 $3 $4 $5 $6
+java -Dconfig.home=/opt/app/jetty/base/be/config -Dlog.home=/apps/jetty/base/be/logs -Dconfiguration.yaml=${CONF_FILE_LOCATION}  -classpath openecomp-zusammen-tools-1.2.0-SNAPSHOT.jar:lib/* org.openecomp.core.tools.main.ZusammenMainTool $1 $2 $3 $4 $5 $6
 STATUS="${?}" echo "${STATUS}"

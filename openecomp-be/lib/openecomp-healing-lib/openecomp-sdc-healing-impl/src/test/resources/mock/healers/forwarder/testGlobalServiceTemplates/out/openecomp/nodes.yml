@@ -403,7 +403,6 @@ node_types:
     derived_from: tosca.nodes.network.Port  
     properties:
       network_role_tag:
-        description: Must correlate to the set of defined “network-role�? tag identifiers from the associated HEAT template
         type: string
         required: true
       mac_requirements:
@@ -513,8 +512,8 @@ node_types:
         type: integer
         required: true
       network_role_tag:
-        description: Must correlate to the set of defined “network-role�? tag identifiers from the associated HEAT template
         type: string
+        description: Must correlate to the set of defined network-role tag identifiers from the associated HEAT template
         required: true
       mac_requirements:
         description: identifies MAC address assignments to the CP

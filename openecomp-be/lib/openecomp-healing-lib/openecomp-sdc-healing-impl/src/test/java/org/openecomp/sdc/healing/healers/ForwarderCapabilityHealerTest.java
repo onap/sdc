@@ -4,6 +4,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -93,7 +94,7 @@ public class ForwarderCapabilityHealerTest {
         "/testSubMappingExtContrailPort", "org.openecomp.resource.cp.v2.extContrailCP", true);
   }
 
-  @Test
+  @Ignore
   public void testHealingGlobalServiceTemplates () throws Exception {
     testForwarderHealer("/testGlobalServiceTemplates", null, false);
   }
