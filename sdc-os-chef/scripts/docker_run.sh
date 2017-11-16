@@ -56,19 +56,36 @@ fi
 
 RELEASE=latest
 LOCAL=false
-SKIPTESTS=false
+RUNTESTS=false
 DEBUG_PORT="--publish 4000:4000"
 
 while [ $# -gt 0 ]
 do
     case $1 in
-        -r | --release )     shift 1 ;  RELEASE=$1     ; shift 1 ;;
-        -e | --environment ) shift 1 ;  DEP_ENV=$1     ; shift 1 ;;
-	-p | --port )        shift 1 ;  PORT=$1        ; shift 1 ;;
-	-l | --local )     	        LOCAL=true     ; shift 1 ;;
-	-s | --skipTests )              SKIPTESTS=true ; shift 1 ;;
-        -h | --help )                   usage          ; exit  0  ;;
-        * )                        	usage          ; exit  1  ;;
+    -r | --release )
+          shift 1 ;
+          RELEASE=$1;
+          shift 1;;
+    -e | --environment )
+          shift 1;
+          DEP_ENV=$1;
+          shift 1 ;;
+    -p | --port )
+          shift 1 ;
+          PORT=$1;
+          shift 1 ;;
+    -l | --local )
+          LOCAL=true;
+          shift 1;;
+    -t | --runTests )
+          RUNTESTS=true;
+          shift 1 ;;
+    -h | --help )
+          usage;
+          exit  0;;
+         * )
+          usage;
+          exit  1;;
     esac
 done
 
@@ -187,7 +204,7 @@ echo -e ""
 
 # sanityDocker
 echo "docker run sdc-sanity..."
-if [ ${SKIPTESTS} = false ]; then
+if [ ${RUNTESTS} = true ]; then
 echo "Triger sanity docker, please wait..."
     if [ ${LOCAL} = false ]; then
 	   docker pull ${PREFIX}/sdc-sanity:${RELEASE}
