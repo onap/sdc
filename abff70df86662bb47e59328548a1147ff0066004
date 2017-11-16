@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_9ef9edca",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/ErrorMessageCode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-16T11:00:14Z",
+      "side": 1,
+      "message": "I think it makes sense to make the class final and implement hashCode() and equals()",
+      "revId": "abff70df86662bb47e59328548a1147ff0066004",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_7ef631d9",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/errors/ErrorMessagesFormatBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-16T11:00:14Z",
+      "side": 1,
+      "message": "Can this be replaced with a formatting pattern? For example,\n\"[%s]: %s\" seems more readable, and easier to change if needed.",
+      "revId": "abff70df86662bb47e59328548a1147ff0066004",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_1e2dfd46",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/errors/ErrorMessagesFormatBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-16T11:00:14Z",
+      "side": 1,
+      "message": "This way you make the message code portion a part of the format you pass to getErrorWithParameters(String, String...). You have to be very careful not to use formatting symbols in message codes and the enclosing pattern (\"[xxx]:\"). I would first format the message first, and then insert the code portion. This will also allow you to use a formatting pattern for the code-message combination - because code and message will be formatted independently.",
+      "revId": "abff70df86662bb47e59328548a1147ff0066004",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
