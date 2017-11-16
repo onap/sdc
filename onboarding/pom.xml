@@ -38,7 +38,7 @@
         <openecomp.sdc.common.version>${project.version}</openecomp.sdc.common.version>
 
         <!-- Onboarding 3rd party versions -->
-        <jtosca.version>1.1.1-SNAPSHOT</jtosca.version>
+        <jtosca.version>1.1.1</jtosca.version>
         <aspectj.version>1.8.9</aspectj.version>
         <bsh.version>2.0b5</bsh.version>
         <cassandra.version>2.1.9</cassandra.version>
