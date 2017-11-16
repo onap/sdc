@@ -1,0 +1,326 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_9e3a0dcc",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAllCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "remove \"Command\" from class name(already in package commands)",
+      "range": {
+        "startLine": 28,
+        "startChar": 13,
+        "endLine": 28,
+        "endChar": 27
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_5e3495dd",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAllCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "maybe surround whole function with \"try with resource\"",
+      "range": {
+        "startLine": 40,
+        "startChar": 10,
+        "endLine": 40,
+        "endChar": 43
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_7e3e31ba",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAllCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "change the function name to clarify what the healer is healing (only VSPs?)/",
+      "range": {
+        "startLine": 47,
+        "startChar": 21,
+        "endLine": 47,
+        "endChar": 28
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_1e4e1d70",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAllCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "don\u0027t print start and end time. start the total time the command ran",
+      "range": {
+        "startLine": 49,
+        "startChar": 4,
+        "endLine": 49,
+        "endChar": 75
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_3e31d9ec",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAllCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "use constant",
+      "range": {
+        "startLine": 50,
+        "startChar": 89,
+        "endLine": 50,
+        "endChar": 92
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_9e68cdbb",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAllCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "separate to function for readability. In this case, although it\u0027s one check, it is too long to read",
+      "range": {
+        "startLine": 53,
+        "startChar": 16,
+        "endLine": 54,
+        "endChar": 84
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_fe790194",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAllCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "move this block before the previous command and then connect the vsps.forEach to the stream filter",
+      "range": {
+        "startLine": 56,
+        "startChar": 4,
+        "endLine": 58,
+        "endChar": 37
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_7e6511e0",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAllCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "seperate to a function(createTask ??)",
+      "range": {
+        "startLine": 60,
+        "startChar": 48,
+        "endLine": 64,
+        "endChar": 42
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_bef829e6",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAllCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "why not use writeToLog",
+      "range": {
+        "startLine": 71,
+        "startChar": 10,
+        "endLine": 72,
+        "endChar": 24
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_7eacf1ed",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAllCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "separate to a function",
+      "range": {
+        "startLine": 67,
+        "startChar": 4,
+        "endLine": 80,
+        "endChar": 5
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_beaa69d2",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAllCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "separate to a function(keepAlive ??)",
+      "range": {
+        "startLine": 81,
+        "startChar": 4,
+        "endLine": 84,
+        "endChar": 5
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_9e968d93",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAllCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "use CollectionUtils.isEmpty instead",
+      "range": {
+        "startLine": 100,
+        "startChar": 15,
+        "endLine": 102,
+        "endChar": 44
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_1eea9d0f",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/Commands/HealAllCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "separate to a function and simplify",
+      "range": {
+        "startLine": 105,
+        "startChar": 75,
+        "endLine": 107,
+        "endChar": 59
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_9edd6d73",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/concurrent/ItemHealingTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-16T08:09:34Z",
+      "side": 1,
+      "message": "use String formatter",
+      "range": {
+        "startLine": 56,
+        "startChar": 14,
+        "endLine": 58,
+        "endChar": 75
+      },
+      "revId": "aee1641749ed3bd5c2108bc1a703a5353a94def2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
