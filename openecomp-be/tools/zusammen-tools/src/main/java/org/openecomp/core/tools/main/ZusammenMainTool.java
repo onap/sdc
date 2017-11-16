@@ -2,6 +2,7 @@ package org.openecomp.core.tools.main;
 
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.UserInfo;
+import org.openecomp.core.tools.Commands.HealAll;
 import org.openecomp.core.tools.Commands.ImportCommand;
 import org.openecomp.core.tools.Commands.ExportDataCommand;
 import org.openecomp.core.tools.Commands.ResetOldVersion;
@@ -46,6 +47,8 @@ public class ZusammenMainTool {
       case IMPORT:
         ImportCommand.importData(context, ToolsUtil.getParam("f",args),ToolsUtil.getParam("i",args));
         break;
+      case HEAL_ALL:
+        HealAll.healAll(ToolsUtil.getParam("t",args));
 
     }
 
@@ -68,7 +71,8 @@ public class ZusammenMainTool {
 
     RESET_OLD_VERSION("reset-old-version"),
     EXPORT("export"),
-    IMPORT("import");
+    IMPORT("import"),
+    HEAL_ALL("heal-all");
 
     COMMANDS(String command) {
       this.command  = command;
