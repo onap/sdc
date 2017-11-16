@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4e6583_723ae5ce",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/ErrorMessageCode.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-16T14:10:48Z",
+      "side": 1,
+      "message": "return Objects.equals(this.messageCode, o.messageCode);",
+      "revId": "f2a6970092984d018375598e1697b3092f9e73dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_5237e9e3",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/ErrorMessageCode.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-16T14:10:48Z",
+      "side": 1,
+      "message": "return Objects.hashCode(this.messageCode);",
+      "revId": "f2a6970092984d018375598e1697b3092f9e73dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_f24db573",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/errors/ErrorMessagesFormatBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-16T14:10:48Z",
+      "side": 1,
+      "message": "Please don\u0027t forget a space after each comma.",
+      "revId": "f2a6970092984d018375598e1697b3092f9e73dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_d252b912",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-api/src/main/java/org/openecomp/core/validation/errors/ErrorMessagesFormatBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-16T14:10:48Z",
+      "side": 1,
+      "message": "What happens if messageCode is null?",
+      "revId": "f2a6970092984d018375598e1697b3092f9e73dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a4e6583_925c4127",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/impl/validators/ErrorMessagesTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-16T14:10:48Z",
+      "side": 1,
+      "message": "Please stick to the coding conventions - a comma must be followed by a space.",
+      "revId": "f2a6970092984d018375598e1697b3092f9e73dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
