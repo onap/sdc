@@ -21,6 +21,7 @@
 package org.openecomp.sdc.heat.datatypes;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.ClassUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -72,14 +73,13 @@ public enum DefinedHeatParameterTypes {
           return HeatBoolean.isValueBoolean(value);
 
         case COMMA_DELIMITED_LIST:
-          String valAsString = String.valueOf(value);
-          return valAsString.split(",") instanceof String[];
+          return isValueCommaDelimitedList(value);
 
         case JSON:
-          return (value instanceof Map) || (value instanceof List);
+          return isValueJson(value);
 
         case STRING:
-          return true;
+          return isValueString(value);
         default:
       }
     }
@@ -90,6 +90,20 @@ public enum DefinedHeatParameterTypes {
   public static boolean isNovaServerEnvValueIsFromRightType(Object value) {
     return isValueIsFromGivenType(value, COMMA_DELIMITED_LIST.getType())
         || isValueIsFromGivenType(value, STRING.getType());
+  }
+
+  private static boolean isValueCommaDelimitedList(Object value) {
+    return String.valueOf(value).contains(",")
+            || isValueIsFromGivenType(value, DefinedHeatParameterTypes.STRING.type);
+  }
+
+  private static boolean isValueString(Object value) {
+    return value instanceof String
+            || ClassUtils.isPrimitiveOrWrapper(value.getClass());
+  }
+
+  private static boolean isValueJson(Object value) {
+    return (value instanceof Map) || (value instanceof List);
   }
 
   public static boolean isEmptyValueInEnv(Object value) {
