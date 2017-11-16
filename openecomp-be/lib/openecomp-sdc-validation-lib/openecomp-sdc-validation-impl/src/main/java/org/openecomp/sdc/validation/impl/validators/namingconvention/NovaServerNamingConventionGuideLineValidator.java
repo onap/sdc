@@ -389,7 +389,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
     if (nonNull(novaNameGetParam)) {
       novaName =
           checkNovaNameGetParamValueMap(fileName, novaNameGetParam, resourceEntry, globalContext);
-      checkIfNovaNameParameterInEnvIsStringOrList(fileName, envFileName, resourceEntry, novaName,
+      checkIfNovaNameParameterInEnvIsStringOrList(fileName, envFileName, novaName, resourceEntry,
           globalContext);
     } else {
       globalContext.addMessage(
@@ -457,7 +457,7 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
     if (getParamValue instanceof List) {
       List<Object> getParamNameList = (List) getParamValue;
       String[] regexName = new String[]{".*_names"};
-      return isNovaNameAsListLegal(fileName, getParamNameList, regexName, resourceEntry,
+      return isNovaNameAsListLegal(fileName, regexName, getParamNameList, resourceEntry,
           globalContext);
     } else if (getParamValue instanceof String) {
       String[] regexName = new String[]{".*_name_(\\d+)"};
@@ -468,9 +468,10 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
     return null;
   }
 
-  private void checkIfNovaNameParameterInEnvIsStringOrList(String fileName, String envFileName,
-                                                           Map.Entry<String, Resource> resourceEntry,
+  private void checkIfNovaNameParameterInEnvIsStringOrList(String fileName,
+                                                           String envFileName,
                                                            String novaServerName,
+                                                           Map.Entry<String, Resource> resourceEntry,
                                                            GlobalValidationContext globalContext) {
     if (nonNull(envFileName)) {
       Environment environment = ValidationUtil.validateEnvContent(envFileName, globalContext);
@@ -495,8 +496,9 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
     }
   }
 
-  private String isNovaNameAsListLegal(String fileName, List<Object> getParamNameList,
+  private String isNovaNameAsListLegal(String fileName,
                                        String[] regexName,
+                                       List<Object> getParamNameList,
                                        Map.Entry<String, Resource> resourceEntry,
                                        GlobalValidationContext globalContext) {
 
@@ -516,7 +518,9 @@ public class NovaServerNamingConventionGuideLineValidator implements ResourceVal
     return (String) getParamNameList.get(0);
   }
 
-  private String isNovaNameAsStringLegal(String fileName, String novaName, String[] regexName,
+  private String isNovaNameAsStringLegal(String fileName,
+                                         String novaName,
+                                         String[] regexName,
                                          Map.Entry<String, Resource> resourceEntry,
                                          GlobalValidationContext globalContext) {
     if (!ValidationUtil.evalPattern(novaName, regexName)) {
