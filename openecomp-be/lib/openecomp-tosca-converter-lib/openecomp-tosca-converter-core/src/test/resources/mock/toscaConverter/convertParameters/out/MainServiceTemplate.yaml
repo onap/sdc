@@ -1,0 +1,627 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  template_name: Main
+  resourceVendor: vEPC_LicenseModel_v2
+  name: vHSS_vEPC_v2
+  description: 'vHSS '
+  invariantUUID: 1aaefda9-109a-421f-ad7d-2a7b3100a424
+  UUID: 7a308278-ab71-4bc8-ae45-2779c5f625dc
+  type: VF
+  category: Network L2-3
+  subcategory: Gateway
+  resourceVendorRelease: '1.0'
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    base_net_cidr:
+      type: string
+      description: The CIDR of the base network
+      default: 192.168.10.0/24
+    fabric_net_id:
+      type: string
+      description: The ID of the fabric network
+      default: test1_fabric_net
+    data_2_net_cidr:
+      type: string
+      description: The CIDR of the PCRF external data 2 network
+      default: 10.4.0.0/16
+    RSU_data_2_ip:
+      type: string
+      description: RSU IP address that is assigned to the vHSS to communicate with the RSU
+      default: 10.4.0.1
+    public_net_id:
+      type: string
+      description: Public network that enables remote connection to VNF
+      default: 00000000-0000-0000-0000-000000000000
+    om_net_id:
+      type: string
+      description: The ID of the PCRF om network
+      default: test1_om_net
+    signal_1_net_cidr:
+      type: string
+      description: The CIDR of the PCRF external signal 1 network
+      default: 10.1.0.0/16
+    OMU_om_ip:
+      type: string
+      description: OM IP address that is assigned to the vHSS to communicate with the OMU
+      default: 192.168.30.100
+    dcae_collector_ip:
+      type: string
+      description: IP address of the DCAE collector
+      default: 10.0.4.102
+    data_1_net_id:
+      type: string
+      description: The ID of the PCRF external data 1 network
+      default: test1_data_1
+    FEU_name_0:
+      type: string
+      description: Name of the FEU
+      default: huaweiPCRFl01FEU01
+    data_2_net_id:
+      type: string
+      description: The ID of the PCRF external data 2 network
+      default: test1_data_2
+    signal_1_net_id:
+      type: string
+      description: The ID of the PCRF external signal 1 network
+      default: test1_signal_1
+    PID_name_0:
+      type: string
+      description: Name of the PID
+      default: huaweiPCRFl01PID01
+    demo_artifacts_version:
+      type: string
+      description: Artifacts (jar, tar.gz) version used in demo vnfs
+      default: 1.0.0-SNAPSHOT
+    boss_net_cidr:
+      type: string
+      description: The CIDR of the PCRF external boss network
+      default: 10.6.0.0/16
+    vHSS_image_name:
+      type: string
+      description: Image to be used for compute instance
+      default: Ubuntu 14.04 LTS (Trusty Tahr) (PVHVM)
+    key_name:
+      type: string
+      description: Public/Private key pair name
+      default: vHSS_key
+    OMU_name_0:
+      type: string
+      description: Name of the OMU
+      default: huaweiPCRFl01omu01
+    boss_net_id:
+      type: string
+      description: The ID of the PCRF external boss network
+      default: test1_boss
+    OMU_fabric_ip:
+      type: string
+      description: Private IP address that is assigned to the vHSS to communicate with the OMU
+      default: 192.168.20.100
+    vf_module_id:
+      type: string
+      description: The vHSS Module ID is provided by ECOMP
+      default: vHSS
+    repo_url_blob:
+      type: string
+      description: URL of the repository that hosts the demo packages
+      default: https://nexus.openecomp.org/content/repositories/raw
+    FEU_base_ip:
+      type: string
+      description: FEU IP address that is assigned to the vHSS to communicate with the FEU
+      default: 192.168.10.201
+    RSU_base_ip:
+      type: string
+      description: RSU IP address that is assigned to the vHSS to communicate with the RSU
+      default: 192.168.10.205
+    RSU_fabric_ip:
+      type: string
+      description: RSU IP address that is assigned to the vHSS to communicate with the RSU
+      default: 192.168.20.205
+    RSU_name_0:
+      type: string
+      description: Name of the RSU
+      default: huaweiPCRFl01RSU01
+    FEU_signal_1_ip:
+      type: string
+      description: FEU IP address that is assigned to the vHSS to communicate with the FEU
+      default: 10.1.0.1
+    OMU_base_ip:
+      type: string
+      description: Private IP address that is assigned to the vHSS to communicate with the vPacketGenerator
+      default: 192.168.10.100
+    om_net_cidr:
+      type: string
+      description: The CIDR of the PCRF om network
+      default: 192.168.30.0/24
+    PID_base_ip:
+      type: string
+      description: PID IP address that is assigned to the vHSS to communicate with the PID
+      default: 192.168.10.205
+    vnf_id:
+      type: string
+      description: The VNF ID is provided by ECOMP
+      default: vHSS_demo_app
+    PID_boss_ip:
+      type: string
+      description: PID IP address that is assigned to the vHSS to communicate with the PID
+      default: 10.3.0.1
+    dcae_collector_port:
+      type: string
+      description: Port of the DCAE collector
+      default: '8080'
+    FEU_data_2_ip:
+      type: string
+      description: FEU IP address that is assigned to the vHSS to communicate with the FEU
+      default: 10.4.0.1
+    vHSS_flavor_name:
+      type: string
+      description: Type of instance (flavor) to be used
+      default: 4 GB General Purpose v1
+    signal_2_net_id:
+      type: string
+      description: The ID of the PCRF external signal 2 network
+      default: test1_signal_2
+    FEU_fabric_ip:
+      type: string
+      description: FEU IP address that is assigned to the vHSS to communicate with the FEU
+      default: 192.168.20.201
+    RSU_data_1_ip:
+      type: string
+      description: RSU IP address that is assigned to the vHSS to communicate with the RSU
+      default: 10.3.0.1
+    signal_2_net_cidr:
+      type: string
+      description: The CIDR of the PCRF external signal 2 network
+      default: 10.2.0.0/16
+    data_1_net_cidr:
+      type: string
+      description: The CIDR of the PCRF external data 1 network
+      default: 10.3.0.0/16
+    pub_key:
+      type: string
+      description: Public key to be installed on the compute instance
+      default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQXYJYYi3/OUZXUiCYWdtc7K0m5C0dJKVxPG0eI8EWZrEHYdfYe6WoTSDJCww+1qlBSpA5ac/Ba4Wn9vh+lR1vtUKkyIC/nrYb90ReUd385Glkgzrfh5HdR5y5S2cL/Frh86lAn9r6b3iWTJD8wBwXFyoe1S2nMTOIuG4RPNvfmyCTYVh8XTCCE8HPvh3xv2r4egawG1P4Q4UDwk+hDBXThY2KS8M5/8EMyxHV0ImpLbpYCTBA6KYDIRtqmgS6iKyy8v2D1aSY5mc9J0T5t9S2Gv+VZQNWQDDKNFnxqYaAo1uEoq/i1q63XC5AD3ckXb2VT6dp23BQMdDfbHyUWfJN
+    repo_url_artifacts:
+      type: string
+      description: URL of the repository that hosts the demo packages
+      default: https://nexus.openecomp.org/content/repositories/snapshots
+    base_net_id:
+      type: string
+      description: The ID of the base network
+      default: test1_base_net
+    fabric_net_cidr:
+      type: string
+      description: The CIDR of the fabric network
+      default: 192.168.20.0/24
+    FEU_signal_2_ip:
+      type: string
+      description: FEU IP address that is assigned to the vHSS to communicate with the FEU
+      default: 10.2.0.1
+    PID_fabric_ip:
+      type: string
+      description: PID IP address that is assigned to the vHSS to communicate with the PID
+      default: 192.168.20.205
+    PID_om_ip:
+      type: string
+      description: PID IP address that is assigned to the vHSS to communicate with the PID
+      default: 10.4.0.1
+    FEU_data_1_ip:
+      type: string
+      description: FEU IP address that is assigned to the vHSS to communicate with the FEU
+      default: 10.3.0.1
+  node_templates:
+    OMU_fabric_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: fabric_network
+          ip_address:
+            get_input: OMU_fabric_ip
+        network: fabric_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: OMU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: fabric_network
+          relationship: tosca.relationships.network.LinksTo
+    PID_fabric_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: fabric_network
+          ip_address:
+            get_input: PID_fabric_ip
+        network: fabric_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: PID_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: fabric_network
+          relationship: tosca.relationships.network.LinksTo
+    RSU_fabric_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: fabric_network
+          ip_address:
+            get_input: RSU_fabric_ip
+        network: fabric_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: RSU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: fabric_network
+          relationship: tosca.relationships.network.LinksTo
+    PID_om_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: om_network
+          ip_address:
+            get_input: PID_om_ip
+        network: om_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: PID_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: om_network
+          relationship: tosca.relationships.network.LinksTo
+    FEU_signal_2_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: signal_2_network
+          ip_address:
+            get_input: FEU_signal_2_ip
+        network: signal_2_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FEU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: signal_2_network
+          relationship: tosca.relationships.network.LinksTo
+    boss_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: boss_net_id
+    RSU_0:
+      type: org.openecomp.resource.vfc.VhssVepcV2.abstact.nodes.heat.RSU
+      properties:
+        flavor:
+          get_input: vHSS_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_my_keypair
+        image:
+          get_input: vHSS_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input: RSU_name_0
+    PID_base_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: base_network
+          ip_address:
+            get_input: PID_base_ip
+        network: base_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: PID_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: base_network
+          relationship: tosca.relationships.network.LinksTo
+    OMU_om_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: om_network
+          ip_address:
+            get_input: OMU_om_ip
+        network: om_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: OMU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: om_network
+          relationship: tosca.relationships.network.LinksTo
+    PID_0:
+      type: org.openecomp.resource.vfc.VhssVepcV2.abstact.nodes.heat.PID
+      properties:
+        flavor:
+          get_input: vHSS_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_my_keypair
+        image:
+          get_input: vHSS_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input: PID_name_0
+    OMU_0:
+      type: org.openecomp.resource.vfc.VhssVepcV2.abstact.nodes.heat.OMU
+      properties:
+        flavor:
+          get_input: vHSS_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_my_keypair
+        image:
+          get_input: vHSS_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input: OMU_name_0
+    RSU_data_2_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: data_2_network
+          ip_address:
+            get_input: RSU_data_2_ip
+        network: data_2_network
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: data_2_network
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: RSU_0
+          relationship: tosca.relationships.network.BindsTo
+    FEU_data_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: data_1_network
+          ip_address:
+            get_input: FEU_data_1_ip
+        network: data_1_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FEU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: data_1_network
+          relationship: tosca.relationships.network.LinksTo
+    base_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: base_net_id
+        subnets:
+          base_subnet:
+            cidr:
+              get_input: base_net_cidr
+    FEU_0:
+      type: org.openecomp.resource.vfc.VhssVepcV2.abstact.nodes.heat.FEU
+      properties:
+        flavor:
+          get_input: vHSS_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_my_keypair
+        image:
+          get_input: vHSS_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input: FEU_name_0
+    FEU_signal_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: signal_1_network
+          ip_address:
+            get_input: FEU_signal_1_ip
+        network: signal_1_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FEU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: signal_1_network
+          relationship: tosca.relationships.network.LinksTo
+    RSU_base_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: base_network
+          ip_address:
+            get_input: RSU_base_ip
+        network: base_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: RSU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: base_network
+          relationship: tosca.relationships.network.LinksTo
+    OMU_base_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: base_network
+          ip_address:
+            get_input: OMU_base_ip
+        network: base_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: OMU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: base_network
+          relationship: tosca.relationships.network.LinksTo
+    om_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: om_net_id
+        subnets:
+          om_subnet:
+            cidr:
+              get_input: om_net_cidr
+    RSU_data_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: data_1_network
+          ip_address:
+            get_input: RSU_data_1_ip
+        network: data_1_network
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: data_1_network
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: RSU_0
+          relationship: tosca.relationships.network.BindsTo
+    signal_2_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: signal_2_net_id
+    signal_1_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: signal_1_net_id
+    fabric_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: fabric_net_id
+        subnets:
+          fabric_subnet:
+            cidr:
+              get_input: fabric_net_cidr
+    data_1_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: data_1_net_id
+    data_2_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: data_2_net_id
+    PID_boss_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: boss_network
+          ip_address:
+            get_input: PID_boss_ip
+        network: boss_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: PID_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: boss_network
+          relationship: tosca.relationships.network.LinksTo
+    FEU_base_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: base_network
+          ip_address:
+            get_input: FEU_base_ip
+        network: base_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FEU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: base_network
+          relationship: tosca.relationships.network.LinksTo
+    FEU_data_2_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: data_2_network
+          ip_address:
+            get_input: FEU_data_2_ip
+        network: data_2_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FEU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: data_2_network
+          relationship: tosca.relationships.network.LinksTo
+    FEU_fabric_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - subnet: fabric_network
+          ip_address:
+            get_input: FEU_fabric_ip
+        network: fabric_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FEU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: fabric_network
+          relationship: tosca.relationships.network.LinksTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.vf.VhssVepcV2
+    capabilities: {
+      }
+    requirements: {
+      }

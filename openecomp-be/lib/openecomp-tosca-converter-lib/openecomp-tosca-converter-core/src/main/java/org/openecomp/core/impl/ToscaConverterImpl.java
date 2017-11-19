@@ -9,7 +9,6 @@ import org.openecomp.core.converter.datatypes.CsarFileTypes;
 import org.openecomp.core.converter.errors.SubstitutionMappingsConverterErrorBuilder;
 import org.openecomp.core.impl.services.ServiceTemplateReaderServiceImpl;
 import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -141,7 +140,7 @@ public class ToscaConverterImpl implements ToscaConverter {
         Optional<ServiceTemplate> serviceTemplate =
             getServiceTemplateFromCsar(fileName, csarFiles);
         serviceTemplate.ifPresent(
-            serviceTemplate1 -> addServiceTemplate(serviceTemplateName, serviceTemplate1,
+            serviceTemplateValue -> addServiceTemplate(serviceTemplateName, serviceTemplateValue,
                 serviceTemplates));
     }
 
@@ -242,10 +241,12 @@ public class ToscaConverterImpl implements ToscaConverter {
         }
 
         for (Map.Entry<String, Object> nodeTypeEntry : nodeTypes.entrySet()) {
-            DataModelUtil
-                .addNodeType(serviceTemplate, nodeTypeEntry.getKey(),
-                    (NodeType) createObjectFromClass(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(),
-                        NodeType.class));
+            Optional<NodeType> nodeType = ToscaConverterUtil
+                .createObjectFromClass(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(),
+                    NodeType.class);
+
+            nodeType.ifPresent(nodeTypeValue -> DataModelUtil
+                .addNodeType(serviceTemplate, nodeTypeEntry.getKey(), nodeTypeValue));
         }
     }
 
@@ -278,11 +279,28 @@ public class ToscaConverterImpl implements ToscaConverter {
         }
 
         for (Map.Entry<String, Object> entry : mapToConvert.entrySet()) {
-            ParameterDefinition parameterDefinition =
-                (ParameterDefinition) createObjectFromClass(
+            Optional<ParameterDefinition> parameterDefinition =
+                ToscaConverterUtil.createObjectFromClass(
                     entry.getKey(), entry.getValue(), ParameterDefinition.class);
-            addToServiceTemplateAccordingToSection(
-                serviceTemplate, inputsOrOutputs, entry.getKey(), parameterDefinition);
+
+            parameterDefinition.ifPresent(parameterDefinitionValue -> {
+                handleDefaultValue(entry.getValue(), parameterDefinition.get());
+                addToServiceTemplateAccordingToSection(
+                    serviceTemplate, inputsOrOutputs, entry.getKey(), parameterDefinition.get());
+            } );
+        }
+    }
+
+    private void handleDefaultValue(Object entryValue,
+                                    ParameterDefinition parameterDefinition) {
+        if(!(entryValue instanceof Map)
+            || Objects.isNull(parameterDefinition)){
+            return;
+        }
+
+        Object defaultValue = ((Map) entryValue).get("default");
+        if(Objects.nonNull(defaultValue)) {
+            parameterDefinition.set_default(defaultValue);
         }
     }
 
@@ -328,57 +346,40 @@ public class ToscaConverterImpl implements ToscaConverter {
         SubstitutionMapping substitutionMapping = new SubstitutionMapping();
 
         substitutionMapping.setNode_type((String) substitutionMappings.get(nodeType));
-        setSubstitutionMappingsSection(
-            capabilities, substitutionMapping,
+        substitutionMapping.setCapabilities(
             convertSubstitutionMappingsSections(capabilities, substitutionMappings.get(capabilities)));
-        setSubstitutionMappingsSection(
-            requirements, substitutionMapping,
+        substitutionMapping.setRequirements(
             convertSubstitutionMappingsSections(requirements, substitutionMappings.get(requirements)));
 
         return substitutionMapping;
     }
 
-    private void setSubstitutionMappingsSection(String sectionName,
-                                                SubstitutionMapping substitutionMapping,
-                                                Map<String, List<String>> convertedSection) {
-        if(MapUtils.isEmpty(convertedSection)
-            || StringUtils.isEmpty(sectionName)
-            || Objects.isNull(substitutionMapping)){
-            return;
-        }
-
-        switch (sectionName){
-            case requirements:
-                substitutionMapping.setRequirements(convertedSection);
-                break;
-            case capabilities:
-                substitutionMapping.setCapabilities(convertedSection);
-                break;
-        }
-    }
-
     private Map<String, List<String>> convertSubstitutionMappingsSections(String sectionName,
                                                                           Object sectionToConvert) {
+
         if(Objects.isNull(sectionToConvert)){
             return null;
         }
 
-        if(!(sectionToConvert instanceof Map)){
+        if(!(sectionToConvert instanceof Map)) {
             throw new CoreException(
                 new SubstitutionMappingsConverterErrorBuilder(
-                    sectionName, "Map").build());
+                    sectionName, sectionToConvert.getClass().getSimpleName()).build());
         }
 
-        return convertSubstitutionMappongsSection((Map<String, Object>) sectionToConvert);
+        return convertSection(sectionToConvert);
     }
 
-    private Map<String, List<String>> convertSubstitutionMappongsSection(Map<String, Object> sectionToConvert) {
+    private Map<String, List<String>> convertSection(Object sectionToConvert) {
+
+        Map<String, Object> sectionAsMap = (Map<String, Object>)sectionToConvert;
         Map<String, List<String>> convertedSection = new HashMap<>();
-        if (MapUtils.isEmpty(sectionToConvert)) {
+
+        if (MapUtils.isEmpty(sectionAsMap)) {
             return null;
         }
 
-        for (Map.Entry<String, Object> entry : sectionToConvert.entrySet()) {
+        for (Map.Entry<String, Object> entry : sectionAsMap.entrySet()) {
             if (entry.getValue() instanceof List) {
                 convertedSection.put(entry.getKey(), (List<String>) entry.getValue());
             }
@@ -441,27 +442,20 @@ public class ToscaConverterImpl implements ToscaConverter {
         }
         for (Map.Entry<String, Object> capabilityAssignmentEntry : capabilities.entrySet()) {
             Map<String, CapabilityAssignment> tempMap = new HashMap<>();
-            tempMap.put(capabilityAssignmentEntry.getKey(),
-                (CapabilityAssignment) createObjectFromClass
-                    (capabilityAssignmentEntry.getKey(), capabilityAssignmentEntry.getValue(), CapabilityAssignment.class));
-            convertedCapabilities.add(tempMap);
+            Optional<CapabilityAssignment> capabilityAssignment = ToscaConverterUtil.createObjectFromClass
+                (capabilityAssignmentEntry.getKey(), capabilityAssignmentEntry.getValue(),
+                    CapabilityAssignment.class);
+
+            capabilityAssignment.ifPresent(capabilityAssignmentValue -> {
+                tempMap.put(capabilityAssignmentEntry.getKey(), capabilityAssignmentValue);
+                convertedCapabilities.add(tempMap);
+                }
+            );
+
         }
         return convertedCapabilities;
     }
 
-    private Object createObjectFromClass(String nodeTypeId,
-                                         Object objectCandidate,
-                                         Class classToCreate) {
-        try {
-            return JsonUtil.json2Object(objectCandidate.toString(), classToCreate);
-        } catch (Exception e) {
-            //todo - return error to user?
-            throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-                .withCategory(ErrorCategory.APPLICATION)
-                .withMessage("Can't create " + classToCreate.getSimpleName() + " from " +
-                    nodeTypeId).build());
-        }
-    }
 
     private boolean isMainServiceTemplate(String fileName) {
         return fileName.endsWith(mainStName);
