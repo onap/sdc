@@ -1,0 +1,3961 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: 1aaefda9-109a-421f-ad7d-2a7b3100a424
+  UUID: 7a308278-ab71-4bc8-ae45-2779c5f625dc
+  name: vHSS_vEPC_v2
+  description: 'vHSS '
+  type: VF
+  category: Network L2-3
+  subcategory: Gateway
+  resourceVendor: vEPC_LicenseModel_v2
+  resourceVendorRelease: '1.0'
+imports:
+- NeutronPort:
+    file: resource-Neutronport-template.yml
+- VhssVepcV2.nodes.heat.RSU:
+    file: resource-Vhssvepcv2NodesHeatRsu-template.yml
+- VhssVepcV2.nodes.heat.PID:
+    file: resource-Vhssvepcv2NodesHeatPid-template.yml
+- VhssVepcV2.nodes.heat.FEU:
+    file: resource-Vhssvepcv2NodesHeatFeu-template.yml
+- NeutronNet:
+    file: resource-Neutronnet-template.yml
+- VhssVepcV2.nodes.heat.OMU:
+    file: resource-Vhssvepcv2NodesHeatOmu-template.yml
+topology_template:
+  inputs:
+    base_net_cidr:
+      type: string
+      default: 192.168.10.0/24
+      description: The CIDR of the base network
+    fabric_net_id:
+      type: string
+      default: test1_fabric_net
+      description: The ID of the fabric network
+    data_2_net_cidr:
+      type: string
+      default: 10.4.0.0/16
+      description: The CIDR of the PCRF external data 2 network
+    RSU_data_2_ip:
+      type: string
+      default: 10.4.0.1
+      description: RSU IP address that is assigned to the vHSS to communicate with the RSU
+    public_net_id:
+      type: string
+      default: 00000000-0000-0000-0000-000000000000
+      description: Public network that enables remote connection to VNF
+    om_net_id:
+      type: string
+      default: test1_om_net
+      description: The ID of the PCRF om network
+    signal_1_net_cidr:
+      type: string
+      default: 10.1.0.0/16
+      description: The CIDR of the PCRF external signal 1 network
+    OMU_om_ip:
+      type: string
+      default: 192.168.30.100
+      description: OM IP address that is assigned to the vHSS to communicate with the OMU
+    dcae_collector_ip:
+      type: string
+      default: 10.0.4.102
+      description: IP address of the DCAE collector
+    data_1_net_id:
+      type: string
+      default: test1_data_1
+      description: The ID of the PCRF external data 1 network
+    FEU_name_0:
+      type: string
+      default: huaweiPCRFl01FEU01
+      description: Name of the FEU
+    data_2_net_id:
+      type: string
+      default: test1_data_2
+      description: The ID of the PCRF external data 2 network
+    signal_1_net_id:
+      type: string
+      default: test1_signal_1
+      description: The ID of the PCRF external signal 1 network
+    PID_name_0:
+      type: string
+      default: huaweiPCRFl01PID01
+      description: Name of the PID
+    demo_artifacts_version:
+      type: string
+      default: 1.0.0-SNAPSHOT
+      description: Artifacts (jar, tar.gz) version used in demo vnfs
+    boss_net_cidr:
+      type: string
+      default: 10.6.0.0/16
+      description: The CIDR of the PCRF external boss network
+    vHSS_image_name:
+      type: string
+      default: Ubuntu 14.04 LTS (Trusty Tahr) (PVHVM)
+      description: Image to be used for compute instance
+    key_name:
+      type: string
+      default: vHSS_key
+      description: Public/Private key pair name
+    OMU_name_0:
+      type: string
+      default: huaweiPCRFl01omu01
+      description: Name of the OMU
+    boss_net_id:
+      type: string
+      default: test1_boss
+      description: The ID of the PCRF external boss network
+    OMU_fabric_ip:
+      type: string
+      default: 192.168.20.100
+      description: Private IP address that is assigned to the vHSS to communicate with the OMU
+    vf_module_id:
+      type: string
+      default: vHSS
+      description: The vHSS Module ID is provided by ECOMP
+    repo_url_blob:
+      type: string
+      default: https://nexus.openecomp.org/content/repositories/raw
+      description: URL of the repository that hosts the demo packages
+    FEU_base_ip:
+      type: string
+      default: 192.168.10.201
+      description: FEU IP address that is assigned to the vHSS to communicate with the FEU
+    RSU_base_ip:
+      type: string
+      default: 192.168.10.205
+      description: RSU IP address that is assigned to the vHSS to communicate with the RSU
+    RSU_fabric_ip:
+      type: string
+      default: 192.168.20.205
+      description: RSU IP address that is assigned to the vHSS to communicate with the RSU
+    RSU_name_0:
+      type: string
+      default: huaweiPCRFl01RSU01
+      description: Name of the RSU
+    FEU_signal_1_ip:
+      type: string
+      default: 10.1.0.1
+      description: FEU IP address that is assigned to the vHSS to communicate with the FEU
+    OMU_base_ip:
+      type: string
+      default: 192.168.10.100
+      description: Private IP address that is assigned to the vHSS to communicate with the vPacketGenerator
+    om_net_cidr:
+      type: string
+      default: 192.168.30.0/24
+      description: The CIDR of the PCRF om network
+    PID_base_ip:
+      type: string
+      default: 192.168.10.205
+      description: PID IP address that is assigned to the vHSS to communicate with the PID
+    vnf_id:
+      type: string
+      default: vHSS_demo_app
+      description: The VNF ID is provided by ECOMP
+    PID_boss_ip:
+      type: string
+      default: 10.3.0.1
+      description: PID IP address that is assigned to the vHSS to communicate with the PID
+    dcae_collector_port:
+      type: string
+      default: '8080'
+      description: Port of the DCAE collector
+    FEU_data_2_ip:
+      type: string
+      default: 10.4.0.1
+      description: FEU IP address that is assigned to the vHSS to communicate with the FEU
+    vHSS_flavor_name:
+      type: string
+      default: 4 GB General Purpose v1
+      description: Type of instance (flavor) to be used
+    signal_2_net_id:
+      type: string
+      default: test1_signal_2
+      description: The ID of the PCRF external signal 2 network
+    FEU_fabric_ip:
+      type: string
+      default: 192.168.20.201
+      description: FEU IP address that is assigned to the vHSS to communicate with the FEU
+    RSU_data_1_ip:
+      type: string
+      default: 10.3.0.1
+      description: RSU IP address that is assigned to the vHSS to communicate with the RSU
+    signal_2_net_cidr:
+      type: string
+      default: 10.2.0.0/16
+      description: The CIDR of the PCRF external signal 2 network
+    data_1_net_cidr:
+      type: string
+      default: 10.3.0.0/16
+      description: The CIDR of the PCRF external data 1 network
+    pub_key:
+      type: string
+      default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQXYJYYi3/OUZXUiCYWdtc7K0m5C0dJKVxPG0eI8EWZrEHYdfYe6WoTSDJCww+1qlBSpA5ac/Ba4Wn9vh+lR1vtUKkyIC/nrYb90ReUd385Glkgzrfh5HdR5y5S2cL/Frh86lAn9r6b3iWTJD8wBwXFyoe1S2nMTOIuG4RPNvfmyCTYVh8XTCCE8HPvh3xv2r4egawG1P4Q4UDwk+hDBXThY2KS8M5/8EMyxHV0ImpLbpYCTBA6KYDIRtqmgS6iKyy8v2D1aSY5mc9J0T5t9S2Gv+VZQNWQDDKNFnxqYaAo1uEoq/i1q63XC5AD3ckXb2VT6dp23BQMdDfbHyUWfJN
+      description: Public key to be installed on the compute instance
+    repo_url_artifacts:
+      type: string
+      default: https://nexus.openecomp.org/content/repositories/snapshots
+      description: URL of the repository that hosts the demo packages
+    base_net_id:
+      type: string
+      default: test1_base_net
+      description: The ID of the base network
+    fabric_net_cidr:
+      type: string
+      default: 192.168.20.0/24
+      description: The CIDR of the fabric network
+    FEU_signal_2_ip:
+      type: string
+      default: 10.2.0.1
+      description: FEU IP address that is assigned to the vHSS to communicate with the FEU
+    PID_fabric_ip:
+      type: string
+      default: 192.168.20.205
+      description: PID IP address that is assigned to the vHSS to communicate with the PID
+    PID_om_ip:
+      type: string
+      default: 10.4.0.1
+      description: PID IP address that is assigned to the vHSS to communicate with the PID
+    FEU_data_1_ip:
+      type: string
+      default: 10.3.0.1
+      description: FEU IP address that is assigned to the vHSS to communicate with the FEU
+  node_templates:
+    OMU_fabric_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: fabric_network
+          ip_address:
+            get_input: OMU_fabric_ip
+        network: fabric_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: OMU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: fabric_network
+          relationship: tosca.relationships.network.LinksTo
+    PID_fabric_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: fabric_network
+          ip_address:
+            get_input: PID_fabric_ip
+        network: fabric_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: PID_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: fabric_network
+          relationship: tosca.relationships.network.LinksTo
+    RSU_fabric_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: fabric_network
+          ip_address:
+            get_input: RSU_fabric_ip
+        network: fabric_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: RSU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: fabric_network
+          relationship: tosca.relationships.network.LinksTo
+    PID_om_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: om_network
+          ip_address:
+            get_input: PID_om_ip
+        network: om_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: PID_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: om_network
+          relationship: tosca.relationships.network.LinksTo
+    FEU_signal_2_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: signal_2_network
+          ip_address:
+            get_input: FEU_signal_2_ip
+        network: signal_2_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FEU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: signal_2_network
+          relationship: tosca.relationships.network.LinksTo
+    boss_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      metadata:
+        invariantUUID: c229a4d1-7116-4c63-a64d-6d57e062903e
+        UUID: cb8f2c64-468b-45b7-ab0f-49373f939126
+        version: '1.0'
+        name: NeutronNet
+        description: Represents a network service with optional subnets and advanced configurations.
+        type: VL
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        network_name:
+          get_input: boss_net_id
+    RSU_0:
+      type: org.openecomp.resource.vfc.VhssVepcV2.abstact.nodes.heat.RSU
+      metadata:
+        invariantUUID: f1602dd8-5d45-45f7-b78d-2d94b785418a
+        UUID: 0f3fcf3e-d1cb-4ffb-99dc-a6e658566328
+        version: '1.0'
+        name: VhssVepcV2.nodes.heat.RSU
+        description: Not reusable inner VFC
+        type: VFC
+        category: Generic
+        subcategory: Abstract
+      properties:
+        flavor:
+          get_input: vHSS_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_my_keypair
+        image:
+          get_input: vHSS_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input: RSU_name_0
+    PID_base_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: base_network
+          ip_address:
+            get_input: PID_base_ip
+        network: base_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: PID_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: base_network
+          relationship: tosca.relationships.network.LinksTo
+    OMU_om_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: om_network
+          ip_address:
+            get_input: OMU_om_ip
+        network: om_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: OMU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: om_network
+          relationship: tosca.relationships.network.LinksTo
+    PID_0:
+      type: org.openecomp.resource.vfc.VhssVepcV2.abstact.nodes.heat.PID
+      metadata:
+        invariantUUID: a985617e-bffa-43cd-a0fc-22c3a79cd0ba
+        UUID: f2e484df-e149-4cc0-8b5e-023fa889177a
+        version: '1.0'
+        name: VhssVepcV2.nodes.heat.PID
+        description: Not reusable inner VFC
+        type: VFC
+        category: Generic
+        subcategory: Abstract
+      properties:
+        flavor:
+          get_input: vHSS_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_my_keypair
+        image:
+          get_input: vHSS_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input: PID_name_0
+    OMU_0:
+      type: org.openecomp.resource.vfc.VhssVepcV2.abstact.nodes.heat.OMU
+      metadata:
+        invariantUUID: 167c9263-7180-4188-987a-e87264bdfb50
+        UUID: 53b9728c-9887-4ac9-b8ef-d421368fcdf0
+        version: '1.0'
+        name: VhssVepcV2.nodes.heat.OMU
+        description: Not reusable inner VFC
+        type: VFC
+        category: Generic
+        subcategory: Abstract
+      properties:
+        flavor:
+          get_input: vHSS_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_my_keypair
+        image:
+          get_input: vHSS_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input: OMU_name_0
+    RSU_data_2_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: data_2_network
+          ip_address:
+            get_input: RSU_data_2_ip
+        network: data_2_network
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: data_2_network
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: RSU_0
+          relationship: tosca.relationships.network.BindsTo
+    FEU_data_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: data_1_network
+          ip_address:
+            get_input: FEU_data_1_ip
+        network: data_1_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FEU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: data_1_network
+          relationship: tosca.relationships.network.LinksTo
+    base_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      metadata:
+        invariantUUID: c229a4d1-7116-4c63-a64d-6d57e062903e
+        UUID: cb8f2c64-468b-45b7-ab0f-49373f939126
+        version: '1.0'
+        name: NeutronNet
+        description: Represents a network service with optional subnets and advanced configurations.
+        type: VL
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        network_name:
+          get_input: base_net_id
+        subnets:
+          base_subnet:
+            cidr:
+              get_input: base_net_cidr
+    FEU_0:
+      type: org.openecomp.resource.vfc.VhssVepcV2.abstact.nodes.heat.FEU
+      metadata:
+        invariantUUID: 20b32de7-8f55-46c7-b1df-3b413b812d06
+        UUID: dc501fa4-a59c-4304-bea7-5f6bf2a8b25c
+        version: '1.0'
+        name: VhssVepcV2.nodes.heat.FEU
+        description: Not reusable inner VFC
+        type: VFC
+        category: Generic
+        subcategory: Abstract
+      properties:
+        flavor:
+          get_input: vHSS_flavor_name
+        key_name: UNSUPPORTED_RESOURCE_my_keypair
+        image:
+          get_input: vHSS_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input: FEU_name_0
+    FEU_signal_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: signal_1_network
+          ip_address:
+            get_input: FEU_signal_1_ip
+        network: signal_1_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FEU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: signal_1_network
+          relationship: tosca.relationships.network.LinksTo
+    RSU_base_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: base_network
+          ip_address:
+            get_input: RSU_base_ip
+        network: base_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: RSU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: base_network
+          relationship: tosca.relationships.network.LinksTo
+    OMU_base_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: base_network
+          ip_address:
+            get_input: OMU_base_ip
+        network: base_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: OMU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: base_network
+          relationship: tosca.relationships.network.LinksTo
+    om_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      metadata:
+        invariantUUID: c229a4d1-7116-4c63-a64d-6d57e062903e
+        UUID: cb8f2c64-468b-45b7-ab0f-49373f939126
+        version: '1.0'
+        name: NeutronNet
+        description: Represents a network service with optional subnets and advanced configurations.
+        type: VL
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        network_name:
+          get_input: om_net_id
+        subnets:
+          om_subnet:
+            cidr:
+              get_input: om_net_cidr
+    RSU_data_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: data_1_network
+          ip_address:
+            get_input: RSU_data_1_ip
+        network: data_1_network
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: data_1_network
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: RSU_0
+          relationship: tosca.relationships.network.BindsTo
+    signal_2_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      metadata:
+        invariantUUID: c229a4d1-7116-4c63-a64d-6d57e062903e
+        UUID: cb8f2c64-468b-45b7-ab0f-49373f939126
+        version: '1.0'
+        name: NeutronNet
+        description: Represents a network service with optional subnets and advanced configurations.
+        type: VL
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        network_name:
+          get_input: signal_2_net_id
+    signal_1_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      metadata:
+        invariantUUID: c229a4d1-7116-4c63-a64d-6d57e062903e
+        UUID: cb8f2c64-468b-45b7-ab0f-49373f939126
+        version: '1.0'
+        name: NeutronNet
+        description: Represents a network service with optional subnets and advanced configurations.
+        type: VL
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        network_name:
+          get_input: signal_1_net_id
+    fabric_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      metadata:
+        invariantUUID: c229a4d1-7116-4c63-a64d-6d57e062903e
+        UUID: cb8f2c64-468b-45b7-ab0f-49373f939126
+        version: '1.0'
+        name: NeutronNet
+        description: Represents a network service with optional subnets and advanced configurations.
+        type: VL
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        network_name:
+          get_input: fabric_net_id
+        subnets:
+          fabric_subnet:
+            cidr:
+              get_input: fabric_net_cidr
+    data_1_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      metadata:
+        invariantUUID: c229a4d1-7116-4c63-a64d-6d57e062903e
+        UUID: cb8f2c64-468b-45b7-ab0f-49373f939126
+        version: '1.0'
+        name: NeutronNet
+        description: Represents a network service with optional subnets and advanced configurations.
+        type: VL
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        network_name:
+          get_input: data_1_net_id
+    data_2_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      metadata:
+        invariantUUID: c229a4d1-7116-4c63-a64d-6d57e062903e
+        UUID: cb8f2c64-468b-45b7-ab0f-49373f939126
+        version: '1.0'
+        name: NeutronNet
+        description: Represents a network service with optional subnets and advanced configurations.
+        type: VL
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        network_name:
+          get_input: data_2_net_id
+    PID_boss_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: boss_network
+          ip_address:
+            get_input: PID_boss_ip
+        network: boss_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: PID_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: boss_network
+          relationship: tosca.relationships.network.LinksTo
+    FEU_base_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: base_network
+          ip_address:
+            get_input: FEU_base_ip
+        network: base_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FEU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: base_network
+          relationship: tosca.relationships.network.LinksTo
+    FEU_data_2_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: data_2_network
+          ip_address:
+            get_input: FEU_data_2_ip
+        network: data_2_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FEU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: data_2_network
+          relationship: tosca.relationships.network.LinksTo
+    FEU_fabric_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: e93055b8-b133-45e7-8a7e-f7edb9de22be
+        UUID: 6ea3bf6f-c4f5-4c4b-9ffd-6841e39d527b
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - subnet: fabric_network
+          ip_address:
+            get_input: FEU_fabric_ip
+        network: fabric_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FEU_0
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: fabric_network
+          relationship: tosca.relationships.network.LinksTo
+  groups:
+    VhssVepcV2..base_vHSS..module-0:
+      type: org.openecomp.groups.VfModule
+      members:
+      - OMU_fabric_port
+      - PID_fabric_port
+      - RSU_fabric_port
+      - PID_om_port
+      - FEU_signal_2_port
+      - boss_network
+      - RSU_0
+      - PID_base_port
+      - OMU_om_port
+      - PID_0
+      - OMU_0
+      - RSU_data_2_port
+      - FEU_data_1_port
+      - base_network
+      - FEU_0
+      - FEU_signal_1_port
+      - RSU_base_port
+      - OMU_base_port
+      - om_network
+      - RSU_data_1_port
+      - signal_2_network
+      - signal_1_network
+      - fabric_network
+      - data_1_network
+      - data_2_network
+      - PID_boss_port
+      - FEU_base_port
+      - FEU_data_2_port
+      - FEU_fabric_port
+      metadata:
+        vfModuleModelName: VhssVepcV2..base_vHSS..module-0
+        vfModuleModelInvariantUUID: 964dc8ad-df00-4f28-b2af-a690e9cd0614
+        vfModuleModelUUID: 8a85edc2-ded9-4a3e-ac31-2c3c9faa9e57
+        vfModuleModelVersion: '1'
+      properties:
+        vf_module_type: Base
+        vf_module_description:
+        volume_group: false
+    base_vHSS:
+      type: org.openecomp.groups.heat.HeatStack
+      members:
+      - OMU_fabric_port
+      - PID_fabric_port
+      - RSU_fabric_port
+      - PID_om_port
+      - FEU_signal_2_port
+      - boss_network
+      - RSU_0
+      - PID_base_port
+      - OMU_om_port
+      - PID_0
+      - OMU_0
+      - RSU_data_2_port
+      - FEU_data_1_port
+      - base_network
+      - FEU_0
+      - FEU_signal_1_port
+      - RSU_base_port
+      - OMU_base_port
+      - om_network
+      - RSU_data_1_port
+      - signal_2_network
+      - signal_1_network
+      - fabric_network
+      - data_1_network
+      - data_2_network
+      - PID_boss_port
+      - FEU_base_port
+      - FEU_data_2_port
+      - FEU_fabric_port
+      metadata:
+        invariantUUID: 2552188e-d021-47c5-8b48-79f041f2ea08
+        UUID: a3685268-eb53-477e-92d8-a1fe03e99eb1
+        version: '1'
+        name: base_vHSS
+  substitution_mappings:
+    node_type: org.openecomp.resource.vf.VhssVepcV2
+    capabilities:
+      base_network.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      RSU_0.memory:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM allocated to the instance
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      PID_0.instance:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Existence of instance
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: instance
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: instance
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      FEU_0.instance:type:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Existence of instance <type> (OpenStack types)
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: instance
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: instance:type
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      data_2_network.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      PID_0.scalable:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          min_instances:
+            type: integer
+            default: 1
+          max_instances:
+            type: integer
+            default: 1
+          default_instances:
+            type: integer
+      RSU_fabric_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      data_1_network.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_0.scalable:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          min_instances:
+            type: integer
+            default: 1
+          max_instances:
+            type: integer
+            default: 1
+          default_instances:
+            type: integer
+      RSU_0.memory.usage:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM used by the instance from the amount of its allocated memory
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory.usage
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      FEU_0.instance:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Existence of instance
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: instance
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: instance
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      RSU_data_2_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_0.endpoint:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          port_name:
+            type: string
+            required: false
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          secure:
+            type: boolean
+            default: true
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          url_path:
+            type: string
+            required: false
+      PID_fabric_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      PID_0.memory:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM allocated to the instance
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      om_network.link:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 0
+        - UNBOUNDED
+      RSU_0.cpu:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: CPU time used
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Cumulative
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ns
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      FEU_signal_2_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_0.instance:type:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Existence of instance <type> (OpenStack types)
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: instance
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: instance:type
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      RSU_base_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_fabric_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      fabric_network.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      PID_0.cpu_util:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Average CPU utilization
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: '%'
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu_util
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      OMU_0.memory:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM allocated to the instance
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      RSU_0.cpu.delta:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: CPU time used since previous datapoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Delta
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ns
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu.delta
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      RSU_0.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_fabric_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      RSU_0.instance:type:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Existence of instance <type> (OpenStack types)
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: instance
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: instance:type
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      PID_0.memory.resident:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM used by the instance on the physical machine
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory.resident
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      RSU_0.endpoint:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          port_name:
+            type: string
+            required: false
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          secure:
+            type: boolean
+            default: true
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          url_path:
+            type: string
+            required: false
+      OMU_0.instance:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Existence of instance
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: instance
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: instance
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      RSU_0.vcpus:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Average disk latency
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ms
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: vcpus
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      PID_0.instance:type:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Existence of instance <type> (OpenStack types)
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: instance
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: instance:type
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      FEU_0.memory.resident:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM used by the instance on the physical machine
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory.resident
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      data_2_network.link:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 0
+        - UNBOUNDED
+      FEU_0.cpu:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: CPU time used
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Cumulative
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ns
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      PID_0.vcpus:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Average disk latency
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ms
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: vcpus
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      signal_2_network.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_fabric_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_0.endpoint:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          port_name:
+            type: string
+            required: false
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          secure:
+            type: boolean
+            default: true
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          url_path:
+            type: string
+            required: false
+      data_2_network.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_om_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_0.binding:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 0
+        - UNBOUNDED
+      OMU_0.memory.resident:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM used by the instance on the physical machine
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory.resident
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      FEU_base_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_0.memory.usage:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM used by the instance from the amount of its allocated memory
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory.usage
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      FEU_signal_1_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      PID_base_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      PID_boss_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_0.cpu_util:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Average CPU utilization
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: '%'
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu_util
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      OMU_base_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      RSU_base_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_0.memory:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM allocated to the instance
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      RSU_data_2_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_0.os:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          distribution:
+            type: string
+            required: false
+          type:
+            type: string
+            required: false
+          version:
+            type: version
+            required: false
+          architecture:
+            type: string
+            required: false
+      boss_network.link:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 0
+        - UNBOUNDED
+      FEU_data_1_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      base_network.link:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 0
+        - UNBOUNDED
+      PID_0.endpoint:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          port_name:
+            type: string
+            required: false
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          secure:
+            type: boolean
+            default: true
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          url_path:
+            type: string
+            required: false
+      FEU_0.os:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          distribution:
+            type: string
+            required: false
+          type:
+            type: string
+            required: false
+          version:
+            type: version
+            required: false
+          architecture:
+            type: string
+            required: false
+      RSU_0.scalable:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          min_instances:
+            type: integer
+            default: 1
+          max_instances:
+            type: integer
+            default: 1
+          default_instances:
+            type: integer
+      RSU_0.cpu_util:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Average CPU utilization
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: '%'
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu_util
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      RSU_fabric_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_base_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_0.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      boss_network.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_data_1_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      PID_0.binding:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 0
+        - UNBOUNDED
+      PID_0.cpu:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: CPU time used
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Cumulative
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ns
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      FEU_0.binding:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 0
+        - UNBOUNDED
+      PID_fabric_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      signal_1_network.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      PID_om_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      data_1_network.link:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 0
+        - UNBOUNDED
+      OMU_0.cpu_util:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Average CPU utilization
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: '%'
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu_util
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      fabric_network.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_base_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      PID_0.memory.usage:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM used by the instance from the amount of its allocated memory
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory.usage
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      RSU_0.host:
+        type: tosca.capabilities.Container
+        occurrences:
+        - 1
+        - UNBOUNDED
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        properties:
+          num_cpus:
+            type: integer
+            required: false
+          disk_size:
+            type: scalar-unit.size
+            required: false
+          cpu_frequency:
+            type: scalar-unit.frequency
+            required: false
+          mem_size:
+            type: scalar-unit.size
+            required: false
+      signal_1_network.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_om_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      PID_0.host:
+        type: tosca.capabilities.Container
+        occurrences:
+        - 1
+        - UNBOUNDED
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        properties:
+          num_cpus:
+            type: integer
+            required: false
+          disk_size:
+            type: scalar-unit.size
+            required: false
+          cpu_frequency:
+            type: scalar-unit.frequency
+            required: false
+          mem_size:
+            type: scalar-unit.size
+            required: false
+      signal_1_network.link:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 0
+        - UNBOUNDED
+      signal_2_network.link:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 0
+        - UNBOUNDED
+      RSU_data_1_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      RSU_0.os:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          distribution:
+            type: string
+            required: false
+          type:
+            type: string
+            required: false
+          version:
+            type: version
+            required: false
+          architecture:
+            type: string
+            required: false
+      OMU_0.vcpus:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Average disk latency
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ms
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: vcpus
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      base_network.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      RSU_0.memory.resident:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM used by the instance on the physical machine
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory.resident
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      OMU_0.host:
+        type: tosca.capabilities.Container
+        occurrences:
+        - 1
+        - UNBOUNDED
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        properties:
+          num_cpus:
+            type: integer
+            required: false
+          disk_size:
+            type: scalar-unit.size
+            required: false
+          cpu_frequency:
+            type: scalar-unit.frequency
+            required: false
+          mem_size:
+            type: scalar-unit.size
+            required: false
+      fabric_network.link:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 0
+        - UNBOUNDED
+      PID_base_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_0.scalable:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          min_instances:
+            type: integer
+            default: 1
+          max_instances:
+            type: integer
+            default: 1
+          default_instances:
+            type: integer
+      FEU_0.cpu.delta:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: CPU time used since previous datapoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Delta
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ns
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu.delta
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      FEU_signal_1_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_data_2_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_0.cpu:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: CPU time used
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Cumulative
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ns
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      PID_om_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_0.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_0.vcpus:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Average disk latency
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ms
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: vcpus
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      boss_network.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      signal_2_network.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_0.host:
+        type: tosca.capabilities.Container
+        occurrences:
+        - 1
+        - UNBOUNDED
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        properties:
+          num_cpus:
+            type: integer
+            required: false
+          disk_size:
+            type: scalar-unit.size
+            required: false
+          cpu_frequency:
+            type: scalar-unit.frequency
+            required: false
+          mem_size:
+            type: scalar-unit.size
+            required: false
+      om_network.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      RSU_data_1_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_fabric_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      PID_0.cpu.delta:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: CPU time used since previous datapoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Delta
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ns
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu.delta
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      RSU_0.binding:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 0
+        - UNBOUNDED
+      FEU_signal_2_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      PID_0.os:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          distribution:
+            type: string
+            required: false
+          type:
+            type: string
+            required: false
+          version:
+            type: version
+            required: false
+          architecture:
+            type: string
+            required: false
+      PID_0.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_0.memory.usage:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Volume of RAM used by the instance from the amount of its allocated memory
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: MB
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: memory.usage
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      PID_boss_port.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      FEU_data_2_port.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      om_network.attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      RSU_0.instance:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: Existence of instance
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Gauge
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: instance
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: instance
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+      data_1_network.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      OMU_0.cpu.delta:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: CPU time used since previous datapoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+        properties:
+          initiator:
+            type: string
+            default: source
+          network_name:
+            type: string
+            default: PRIVATE
+            required: false
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+          type:
+            type: string
+            default: Delta
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+          secure:
+            type: boolean
+            default: false
+          ports:
+            type: map
+            required: false
+            entry_schema:
+              type: PortSpec
+          port_name:
+            type: string
+            required: false
+          unit:
+            type: string
+            default: ns
+            description: Unit of the metric value
+            required: true
+          protocol:
+            type: string
+            default: tcp
+          port:
+            type: PortDef
+            required: false
+          name:
+            type: string
+            default: cpu.delta
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+          category:
+            type: string
+            default: compute
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+          url_path:
+            type: string
+            required: false
+    requirements:
+      FEU_0.local_storage:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+      RSU_0.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      OMU_fabric_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      OMU_om_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      om_network.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      RSU_0.local_storage:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+      OMU_0.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      FEU_signal_2_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      OMU_0.local_storage:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+      PID_fabric_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      PID_0.local_storage:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+      PID_om_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      PID_0.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      RSU_fabric_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      PID_base_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      FEU_data_1_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      RSU_data_2_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      RSU_base_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      signal_2_network.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      PID_boss_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      fabric_network.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      data_2_network.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      data_1_network.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      boss_network.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      FEU_0.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      FEU_signal_1_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      FEU_data_2_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      RSU_data_1_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      FEU_fabric_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      signal_1_network.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      OMU_base_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      FEU_base_port.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      base_network.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn

@@ -1,0 +1,42 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  vnfdVersion: v1.0
+  template_name: Main
+  vendor: Huawei
+  csarVersion: v1.0
+  vnfmType: hwvnfm
+  csarProvider: Huawei
+  id: vSBC_vP-CSCF
+  version: v1.0
+  csarType: NFAR
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  node_templates:
+    SCU:
+      type: tosca.nodes.nfv.VDU.Compute
+      properties:
+        configurable_properties:
+          test:
+            additional_vnfc_configurable_properties:
+              aaa: '1'
+        name: SCU
+        descrption: the virtual machine of SCU
+      attributes:
+        tosca_name: SCU
+      requirements:
+      - virtual_storage:
+          capability: virtual_storage
+          node: SCU_Storage
+      capabilities:
+      - virtual_compute:
+          properties:
+            virtual_memory:
+              virtual_mem_size: 24G
+            requested_additional_capabilities: {
+              }
+            virtual_cpu:
+              num_virtual_cpu: 2
