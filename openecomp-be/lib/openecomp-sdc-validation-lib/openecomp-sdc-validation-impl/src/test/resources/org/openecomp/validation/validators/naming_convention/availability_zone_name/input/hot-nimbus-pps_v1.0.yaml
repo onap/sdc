@@ -44,6 +44,10 @@ parameters:
     type: string
     label: PCRF VNF Id
     description: PCRF VNF Id
+  pcrf_names:
+    type: number
+    label: PCRF  name
+    description: PCRF name
 
 
 resources:

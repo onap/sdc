@@ -1,0 +1,45 @@
+heat_template_version: 2013-05-23
+
+description: heat expose volume resource
+
+resources:
+  service_instance_1:
+      type: OS::Contrail::ServiceInstance
+      depends_on: [ hsl_ip_subnet]
+      properties:
+        name: { get_param: service_instance_name }
+        availability_zone:  get_param
+        service_template: { get_resource: service_template_1 }
+        scale_out:
+          max_instances: {get_param: max_num_fw_instances}
+        interface_list: [
+            {
+                virtual_network: { get_param: oam_mgmt_net_0_id }
+            },
+            {
+                virtual_network: { get_param: Cricket_OCS_direct_net_id }
+            },
+            {
+                virtual_network: { get_resource: hsl_direct_net }
+            },
+            {
+                virtual_network: {get_param: oam_mgmt_net_1_id},
+                                  static_routes: [
+                                  { "prefix": {get_param: prefix_0} },
+                                  { "prefix": {get_param: prefix_1} },
+                                 { "prefix": {get_param: prefix_2} },
+                      ],
+            }
+            ]
+  service_template_1:
+      type: OS::Contrail::ServiceTemplate
+      properties:
+        name: { get_param: st_name }
+        service_mode: { get_param: st_mode }
+        service_type: { get_param: st_type }
+        image_name: { get_param: st_image_name }
+        flavor: { get_param: st_flavor_name }
+        service_interface_type_list: { "Fn::Split" : [ ",", "management,left,right,other" ] }
+        shared_ip_list: { "Fn::Split" : [ ",", Ref: st_shared_ip_list ] }
+        static_routes_list: { "Fn::Split" : [ ",", Ref: st_static_routes_list ] }
+        service_scaling: { get_param: st_scaling }

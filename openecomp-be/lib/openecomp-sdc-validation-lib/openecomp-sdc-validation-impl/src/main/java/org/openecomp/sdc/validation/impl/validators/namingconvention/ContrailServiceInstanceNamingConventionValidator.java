@@ -1,6 +1,7 @@
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
@@ -22,6 +23,8 @@ import static java.util.Objects.nonNull;
  */
 public class ContrailServiceInstanceNamingConventionValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final ErrorMessageCode ERROR_CODE_NSI1 = new ErrorMessageCode("NSI1");
+  private static final ErrorMessageCode ERROR_CODE_NSI2 = new ErrorMessageCode("NSI2");
 
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
@@ -37,42 +40,41 @@ public class ContrailServiceInstanceNamingConventionValidator implements Resourc
     mdcDataDebugMessage.debugEntryMessage("file", fileName);
 
     String[] regexList = new String[]{"availability_zone_(\\d+)"};
-
     if (MapUtils.isEmpty(resourceEntry.getValue().getProperties())) {
       mdcDataDebugMessage.debugExitMessage("file", fileName);
       return;
     }
 
     Object availabilityZoneMap =
-        resourceEntry.getValue().getProperties().containsKey("availability_zone") ? resourceEntry
-            .getValue().getProperties().get("availability_zone") : null;
+            resourceEntry.getValue().getProperties().containsKey("availability_zone") ? resourceEntry
+                    .getValue().getProperties().get("availability_zone") : null;
 
     if (nonNull(availabilityZoneMap)) {
       if (availabilityZoneMap instanceof Map) {
         String availabilityZoneName = ValidationUtil.getWantedNameFromPropertyValueGetParam
-            (availabilityZoneMap);
+                (availabilityZoneMap);
 
         if (availabilityZoneName != null) {
           if (!ValidationUtil.evalPattern(availabilityZoneName, regexList)) {
             globalContext.addMessage(
-                fileName,
-                ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
-                    Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
-                    ValidationUtil.getMessagePartAccordingToResourceType(resourceEntry),
-                    "Availability Zone",
-                    availabilityZoneName, resourceEntry.getKey()),
-                LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
-                LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
+                    fileName,
+                    ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(ERROR_CODE_NSI1,
+                            Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
+                            ValidationUtil.getMessagePartAccordingToResourceType(resourceEntry),
+                            "Availability Zone",
+                            availabilityZoneName, resourceEntry.getKey()),
+                    LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
+                    LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
           }
         }
       } else {
         globalContext.addMessage(
-            fileName,
-            ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(),
-                    "availability_zone", resourceEntry.getKey()),
-            LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
-            LoggerErrorDescription.MISSING_GET_PARAM);
+                fileName,
+                ErrorLevel.WARNING, ErrorMessagesFormatBuilder
+                        .getErrorWithParameters(ERROR_CODE_NSI2,Messages.MISSING_GET_PARAM.getErrorMessage(),
+                                "availability_zone", resourceEntry.getKey()),
+                LoggerTragetServiceName.VALIDATE_AVAILABILITY_ZONE_NAME,
+                LoggerErrorDescription.MISSING_GET_PARAM);
       }
     }
     mdcDataDebugMessage.debugExitMessage("file", fileName);

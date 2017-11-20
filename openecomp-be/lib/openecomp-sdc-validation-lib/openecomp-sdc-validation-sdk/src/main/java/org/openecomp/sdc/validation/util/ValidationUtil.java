@@ -163,7 +163,7 @@ public class ValidationUtil {
         globalContext.addMessage(
             fileName,
             ErrorLevel.WARNING,
-            ErrorMessagesFormatBuilder.getErrorWithParameters(
+            ErrorMessagesFormatBuilder.getErrorWithParameters(globalContext.getMessageCode(),
                 Messages.PARAMETER_NAME_NOT_ALIGNED_WITH_GUIDELINES.getErrorMessage(),
                 getMessagePartAccordingToResourceType(resourceEntry), propertyName, propertyValue,
                 resourceEntry.getKey()),

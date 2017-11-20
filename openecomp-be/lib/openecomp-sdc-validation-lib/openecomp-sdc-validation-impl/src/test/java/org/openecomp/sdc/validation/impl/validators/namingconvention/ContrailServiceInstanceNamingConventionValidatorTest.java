@@ -21,21 +21,32 @@ public class ContrailServiceInstanceNamingConventionValidatorTest {
   @Test
   public void testContrailServiceInstanceAvailabilityZoneNotAlignedWithNamingConvention() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
-        resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_INSTANCE.getHeatResource(),
-        "/org/openecomp/validation/validators/guideLineValidator/heatcontrailserviceinstanceavailabilityzone/notaligned");
+            resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_INSTANCE.getHeatResource(),
+            "/org/openecomp/validation/validators/guideLineValidator/heatcontrailserviceinstanceavailabilityzone/notaligned");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Service Instance 'Availability Zone' Parameter Name not aligned with Guidelines, Parameter Name [availability_zone_1a], Resource ID [service_instance_1]. As a result, VF/VFC Profile may miss this information");
+            "WARNING: [NSI1]: Service Instance 'Availability Zone' Parameter Name not aligned with Guidelines, Parameter Name [availability_zone_1a], Resource ID [service_instance_1]. As a result, VF/VFC Profile may miss this information");
   }
 
   @Test
   public void testContrailServiceInstanceAvailabilityZoneAlignedWithNamingConvention() {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
-        resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_INSTANCE.getHeatResource(),
-        "/org/openecomp/validation/validators/guideLineValidator/heatcontrailserviceinstanceavailabilityzone/aligned");
+            resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_INSTANCE.getHeatResource(),
+            "/org/openecomp/validation/validators/guideLineValidator/heatcontrailserviceinstanceavailabilityzone/aligned");
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 0);
+  }
+  @Test
+  public void testContrailServiceInstanceAvailabilityZoneNotAlignedWithNamingConventionMissingParam() {
+    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+            resourceValidator, HeatResourcesTypes.CONTRAIL_SERVICE_INSTANCE.getHeatResource(),
+            "/org/openecomp/validation/validators/guideLineValidator/heatcontrailserviceinstanceavailabilityzone/missingparam");
+    Assert.assertNotNull(messages);
+    Assert.assertEquals(messages.size(), 1);
+    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
+    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
+            "WARNING: [NSI2]: Missing get_param in availability_zone, Resource Id [service_instance_1]");
   }
 }

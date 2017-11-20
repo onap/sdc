@@ -1,0 +1,17 @@
+heat_template_version: 2013-05-23
+
+description: heat expose volume resource
+
+resources:
+  service_template:
+      type: OS::Contrail::ServiceTemplate
+      properties:
+        name: { get_param: st_name }
+        service_mode: { get_param: st_mode }
+        service_type: { get_param: st_type }
+        image_name: st1_image_name
+        flavor: { get_param: st_flavor_name }
+        service_interface_type_list: { "Fn::Split" : [ ",", "management,left,right,other" ] }
+        shared_ip_list: { "Fn::Split" : [ ",", Ref: st_shared_ip_list ] }
+        static_routes_list: { "Fn::Split" : [ ",", Ref: st_static_routes_list ] }
+        service_scaling: { get_param: st_scaling }
