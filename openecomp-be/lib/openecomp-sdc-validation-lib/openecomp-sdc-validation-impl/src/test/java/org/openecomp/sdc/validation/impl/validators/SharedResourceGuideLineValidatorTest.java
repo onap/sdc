@@ -28,7 +28,32 @@ public class SharedResourceGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Resource is not defined as output and thus cannot be Shared, Resource ID [SecurityGroup_expose]");
+        "WARNING: [SRG1]: Resource is not defined as output and thus cannot be Shared, Resource ID [SecurityGroup_expose]");
+  }
+
+  @Test
+  public void testParseException(){
+    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+        "/org/openecomp/validation/validators/guideLineValidator/baseHeatDoesNotExposeNetwork/parseException/");
+    Assert.assertEquals(messages.size(), 1);
+    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
+    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
+        "ERROR: [SRG5]: Invalid HEAT format problem - [while scanning for the next token\n" +
+            "found character '\\t(TAB)' that cannot start any token. (Do not use \\t(TAB) for indentation)\n" +
+            " in 'reader', line 5, column 1:\n" +
+            "    \t\t\tresources:\n" +
+            "    ^\n" +
+            "]");
+  }
+
+  @Test
+  public void testInvalidGetResource(){
+    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(validator,
+        "/org/openecomp/validation/validators/guideLineValidator/" +
+            "baseHeatDoesNotExposeNetworkInvalidGetResource");
+    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
+        "WARNING: [SRG1]: Resource is not defined as output and thus cannot be Shared, Resource ID [net_expose]");
+
   }
 
   @Test
@@ -44,9 +69,9 @@ public class SharedResourceGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 2);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Resource is not defined as output and thus cannot be Shared, Resource ID [volume_expose]");
+        "WARNING: [SRG1]: Resource is not defined as output and thus cannot be Shared, Resource ID [volume_expose]");
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(1).getMessage(),
-        "WARNING: Resource is not defined as output and thus cannot be Shared, Resource ID [net_expose]");
+        "WARNING: [SRG1]: Resource is not defined as output and thus cannot be Shared, Resource ID [net_expose]");
   }
 
   @Test
@@ -62,7 +87,7 @@ public class SharedResourceGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Resource is not defined as output and thus cannot be Shared, Resource ID [ServerGroup_expose]");
+        "WARNING: [SRG1]: Resource is not defined as output and thus cannot be Shared, Resource ID [ServerGroup_expose]");
   }
 
   @Test
@@ -78,7 +103,7 @@ public class SharedResourceGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Resource is not defined as output and thus cannot be Shared, Resource ID [SecurityGroup_expose]");
+        "WARNING: [SRG1]: Resource is not defined as output and thus cannot be Shared, Resource ID [SecurityGroup_expose]");
   }
 
   @Test
@@ -94,7 +119,7 @@ public class SharedResourceGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Resource is not defined as output and thus cannot be Shared, Resource ID [volume_expose]");
+        "WARNING: [SRG1]: Resource is not defined as output and thus cannot be Shared, Resource ID [volume_expose]");
   }
 
   @Test
@@ -110,7 +135,7 @@ public class SharedResourceGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("firstVol.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("firstVol.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Volume is not defined as output and thus cannot be attached volume_expose");
+        "WARNING: [SRG2]: Volume is not defined as output and thus cannot be attached volume_expose");
 
   }
 
@@ -128,7 +153,7 @@ public class SharedResourceGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("base_virc.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("base_virc.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Resource is not defined as output and thus cannot be Shared, Resource ID [virc_RSG]");
+        "WARNING: [SRG1]: Resource is not defined as output and thus cannot be Shared, Resource ID [virc_RSG]");
   }
 
   @Test
@@ -139,7 +164,7 @@ public class SharedResourceGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("MANIFEST.json").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("MANIFEST.json").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Missing Base HEAT. Pay attention that without Base HEAT, there will be no shared resources");
+        "WARNING: [SRG3]: Missing Base HEAT. Pay attention that without Base HEAT, there will be no shared resources");
   }
 
   @Test
@@ -150,6 +175,6 @@ public class SharedResourceGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("MANIFEST.json").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("MANIFEST.json").getErrorMessageList().get(0).getMessage(),
-        "WARNING: Multi Base HEAT. Expected only one. Files [second.yaml,first.yaml].");
+        "WARNING: [SRG4]: Multi Base HEAT. Expected only one. Files [second.yaml,first.yaml].");
   }
 }

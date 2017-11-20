@@ -6,6 +6,7 @@ import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -229,8 +230,9 @@ public class ValidationUtil {
       }
     } catch (Exception exception) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.INVALID_HEAT_FORMAT_REASON.getErrorMessage(),
-                  getParserExceptionReason(exception)),
+              .getErrorWithParameters(globalContext.getMessageCode(),
+                      Messages.INVALID_HEAT_FORMAT_REASON.getErrorMessage()
+                      , getParserExceptionReason(exception)),
           LoggerTragetServiceName.VALIDATE_HEAT_FORMAT,
           LoggerErrorDescription.INVALID_HEAT_FORMAT);
       mdcDataDebugMessage.debugExitMessage("file", fileName);
@@ -238,43 +240,6 @@ public class ValidationUtil {
     }
     mdcDataDebugMessage.debugExitMessage("file", fileName);
     return heatOrchestrationTemplate;
-  }
-
-  public static Set<String> validateManifest(ManifestContent manifestContent,
-                                      GlobalValidationContext globalContext) {
-
-    mdcDataDebugMessage.debugEntryMessage("file", SdcCommon.MANIFEST_NAME);
-
-    Set<String> baseFiles = ManifestUtil.getBaseFiles(manifestContent);
-    if (baseFiles == null || baseFiles.size() == 0) {
-      globalContext.addMessage(
-          SdcCommon.MANIFEST_NAME,
-          ErrorLevel.WARNING,
-          ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.MISSIN_BASE_HEAT_FILE.getErrorMessage()),
-          LoggerTragetServiceName.VALIDATE_BASE_FILE,
-          LoggerErrorDescription.MISSING_BASE_HEAT);
-    } else if (baseFiles.size() > 1) {
-      String baseFileList = getElementListAsString(baseFiles);
-      globalContext.addMessage(
-          SdcCommon.MANIFEST_NAME,
-          ErrorLevel.WARNING,
-          ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.MULTI_BASE_HEAT_FILE.getErrorMessage(),
-                  baseFileList),
-          LoggerTragetServiceName.VALIDATE_BASE_FILE,
-          LoggerErrorDescription.MULTI_BASE_HEAT);
-    }
-
-    mdcDataDebugMessage.debugExitMessage("file", SdcCommon.MANIFEST_NAME);
-    return baseFiles;
-  }
-
-  private static String getElementListAsString(Set<String> elementCollection) {
-
-    return "["
-        + CommonMethods.collectionToCommaSeparatedString(elementCollection)
-        +  "]";
   }
 
 }

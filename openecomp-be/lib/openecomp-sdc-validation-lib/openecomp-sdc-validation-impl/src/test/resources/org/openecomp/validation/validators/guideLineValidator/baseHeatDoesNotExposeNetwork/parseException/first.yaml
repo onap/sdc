@@ -1,0 +1,14 @@
+heat_template_version: 2013-05-23
+
+description: heat expose volume resource
+
+			resources:
+  net_expose:
+    type: OS::Neutron::Net
+
+outputs:
+  expose_resource_network_output:
+    description: the pcrf_server
+    value: { get_resource: net_expose }
+
+

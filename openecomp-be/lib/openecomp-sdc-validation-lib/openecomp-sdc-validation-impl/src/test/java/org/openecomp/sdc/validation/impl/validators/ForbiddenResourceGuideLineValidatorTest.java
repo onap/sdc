@@ -48,6 +48,29 @@ public class ForbiddenResourceGuideLineValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: OS::Neutron::FloatingIP is in use, Resource ID [FSB2]");
+        "WARNING: [FRG2]: OS::Neutron::FloatingIP is in use, Resource ID [FSB2]");
+  }
+  @Test
+  public void testParseException(){
+    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(forbiddenResourceGuideLineValidator,
+        "/org/openecomp/validation/validators/guideLineValidator/heatFloatingIpResourceType/parseException");
+    Assert.assertEquals(messages.size(), 1);
+    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().size(), 1);
+    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
+        "ERROR: [FRG3]: Invalid HEAT format problem - [while scanning for the next token\n" +
+            "found character '\\t(TAB)' that cannot start any token. (Do not use \\t(TAB) for indentation)\n" +
+            " in 'reader', line 5, column 1:\n" +
+            "    \t\t\tresources:\n" +
+            "    ^\n" +
+            "]");
+  }
+
+  @Test
+  public void testInvalidResourceType(){
+    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(forbiddenResourceGuideLineValidator,
+        "/org/openecomp/validation/validators/guideLineValidator/heatFloatingIpResourceType" +
+            "/TestInvalidResourceType");
+    Assert.assertEquals(messages.get("first.yaml").getErrorMessageList().get(0).getMessage(),
+        "WARNING: [FRG1]: A resource has an invalid or unsupported type - null, Resource ID [FSB2]");
   }
 }

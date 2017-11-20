@@ -1,6 +1,7 @@
 package org.openecomp.sdc.validation.impl.validators;
 
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
@@ -29,6 +30,9 @@ import java.util.Set;
 public class ForbiddenResourceGuideLineValidator implements Validator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static Set<String> forbiddenResources = new HashSet<>();
+  private static final ErrorMessageCode ERROR_CODE_FRG_1 = new ErrorMessageCode("FRG1");
+  private static final ErrorMessageCode ERROR_CODE_FRG_2 = new ErrorMessageCode("FRG2");
+  private static final ErrorMessageCode ERROR_CODE_FRG_3 = new ErrorMessageCode("FRG3");
 
   private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
@@ -40,10 +44,6 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
     forbiddenResourcesMap.entrySet().stream()
         .filter(entry -> isResourceEnabled(entry.getValue().get("enable")))
         .forEach(entry -> forbiddenResources.add(entry.getKey()));
-
-
-
-
   }
 
   private boolean isResourceEnabled(Object enableValue){
@@ -78,8 +78,10 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
   }
 
   private void validate(String fileName, GlobalValidationContext globalContext) {
+    globalContext.setMessageCode(ERROR_CODE_FRG_3);
     HeatOrchestrationTemplate
-        heatOrchestrationTemplate = ValidationUtil.checkHeatOrchestrationPreCondition(fileName, globalContext);
+        heatOrchestrationTemplate = ValidationUtil.checkHeatOrchestrationPreCondition(
+        fileName, globalContext);
     if (heatOrchestrationTemplate == null) {
       return;
     }
@@ -103,18 +105,19 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
       String resourceType = resourceEntry.getValue().getType();
       if (Objects.isNull(resourceType)) {
         globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.INVALID_RESOURCE_TYPE.getErrorMessage(), "null",
+                .getErrorWithParameters(ERROR_CODE_FRG_1,
+                        Messages.INVALID_RESOURCE_TYPE.getErrorMessage(),"null",
                     resourceEntry.getKey()), LoggerTragetServiceName.VALIDATE_RESOURCE_TYPE,
             LoggerErrorDescription.INVALID_RESOURCE_TYPE);
       } else {
-        if(isResourceForbidden(resourceType)){
+        if (isResourceForbidden(resourceType)){
           globalContext.addMessage(
               fileName,
               ErrorLevel.WARNING,
               ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(Messages.FORBIDDEN_RESOURCE_IN_USE.getErrorMessage(),
-                      resourceType,
-                      resourceEntry.getKey()),
+                  .getErrorWithParameters(ERROR_CODE_FRG_2, Messages.FORBIDDEN_RESOURCE_IN_USE
+                          .getErrorMessage(),
+                      resourceType, resourceEntry.getKey()),
               LoggerTragetServiceName.VALIDATE_FORBIDDEN_RESOURCE,
               LoggerErrorDescription.FLOATING_IP_IN_USE);
         }

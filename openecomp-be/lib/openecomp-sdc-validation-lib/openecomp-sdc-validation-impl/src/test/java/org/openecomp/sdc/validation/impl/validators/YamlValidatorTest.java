@@ -56,7 +56,7 @@ public class YamlValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     ValidationTestUtil.validateErrorMessage(
         messages.get("invalidYamlTab.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: " + Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
+        "ERROR: " +"[YML2]: "+ Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
         "while scanning for the next tokenfound character '\\t(TAB)' that cannot start any token. (Do not use \\t(TAB) for indentation) in 'reader', line 14, column 5:        \tadmin_state_up: true        ^");
 
   }
@@ -72,7 +72,7 @@ public class YamlValidatorTest {
     Assert.assertTrue(messages.containsKey("duplicateKey.yaml"));
     ValidationTestUtil.validateErrorMessage(
         messages.get("duplicateKey.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: " + Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
+        "ERROR: " +"[YML2]: "+ Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
         "while parsing MappingNode in 'reader', line 6, column 3:      Key_1_unique:      ^duplicate key: Key_2_not_unique in 'reader', line 31, column 1:        ^");
   }
 
@@ -87,7 +87,7 @@ public class YamlValidatorTest {
     Assert.assertTrue(messages.containsKey("invalidYamlStructure.yaml"));
     ValidationTestUtil.validateErrorMessage(
         messages.get("invalidYamlStructure.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: " + Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
+        "ERROR: " +"[YML2]: "+ Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
         "while parsing a block mapping in 'reader', line 8, column 7:          admin_state_up: true          ^expected <block end>, but found BlockEntry in 'reader', line 10, column 7:          - shared: true          ^");
   }
 
@@ -100,7 +100,7 @@ public class YamlValidatorTest {
     Assert.assertEquals(messages.size(), 1);
     Assert.assertTrue(messages.containsKey("emptyYaml.yaml"));
     ValidationTestUtil.validateErrorMessage(messages.get("emptyYaml.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: " + Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
+        "ERROR: " +"[YML1]: "+ Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
         Messages.EMPTY_YAML_FILE.getErrorMessage());
   }
 

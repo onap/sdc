@@ -1,0 +1,37 @@
+heat_template_version: 2013-05-23
+
+description: heat expose volume resource
+
+			resources:
+  FSB2_Internal1:
+      type: OS::Neutron::Port
+      properties:
+        network_id: { get_param: Internal1_net_id }
+  FSB2_Internal2:
+      type: OS::Neutron::Port
+      properties:
+        network_id: { get_param: Internal2_net_name }
+			FSB2_OAM:
+      type: OS::Neutron::Port
+      properties:
+        network_id: { get_param: Internal3_net_id }
+  FSB2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: fsb2_name_2 }
+      block_device_mapping: [{device_name: "vda", volume_id : {get_param: VMME_FSB2_boot_volume }, delete_on_termination: "false" }]
+      flavor: { get_param: fsb2_flavor_name }
+      availability_zone: { get_param: availability_zone_0 }
+      metadata:
+        VNF_id: { get_param: vnfvfVF_id }
+        vf_module_id: { get_param: vf_module_id }
+      networks:
+        - port: { get_resource: FSB2_Internal1 }
+        - port: { get_resource: FSB2_Internal2 }
+        - port: { get_resource: FSB2_OAM }
+outputs:
+  expose_resource_nove_output:
+    description: the pcrf_server
+    value: { get_resource: FSB2 }
+
+
