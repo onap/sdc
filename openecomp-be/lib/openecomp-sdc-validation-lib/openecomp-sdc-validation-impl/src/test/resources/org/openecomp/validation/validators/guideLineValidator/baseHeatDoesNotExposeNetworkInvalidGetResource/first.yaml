@@ -1,0 +1,26 @@
+heat_template_version: 2013-05-23
+
+description: heat expose volume resource
+
+parameters:
+  pcrf_oam_vol_name_2:
+       type: string
+       label: OAM volume name 2
+       description: Assigning name to volume
+
+resources:
+  net_expose:
+    type: OS::Neutron::Net
+
+  aaa:
+    type: OS::Neutron::Net
+    properties:
+      name: {get_param: pcrf_oam_vol_name_2}
+
+
+outputs:
+  expose_resource_network_output:
+    description: the pcrf_server
+    value: { get_resource: aaa }
+
+
