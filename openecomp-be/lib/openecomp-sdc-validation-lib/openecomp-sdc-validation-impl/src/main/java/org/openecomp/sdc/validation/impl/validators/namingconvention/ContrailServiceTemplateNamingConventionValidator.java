@@ -4,6 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
@@ -30,6 +31,9 @@ import static java.util.Objects.nonNull;
  */
 public class ContrailServiceTemplateNamingConventionValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final ErrorMessageCode ERROR_CODE_NST1 = new ErrorMessageCode("NST1");
+  private static final ErrorMessageCode ERROR_CODE_NST2 = new ErrorMessageCode("NST2");
+  private static final ErrorMessageCode ERROR_CODE_NST3 = new ErrorMessageCode("NST3");
 
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
@@ -56,15 +60,15 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
     boolean errorExistValidatingImageOrFlavor = false;
     for (Pair<String, String> imageOrFlavor : imageFlavorPairs) {
       boolean errorExistWhenValidatingImageOrFlavorNames =
-          isErrorExistWhenValidatingImageOrFlavorNames(fileName, imageOrFlavor, entry,
-              propertiesMap, globalContext);
+              isErrorExistWhenValidatingImageOrFlavorNames(fileName, imageOrFlavor, entry,
+                      propertiesMap, globalContext);
       errorExistValidatingImageOrFlavor =
-          errorExistValidatingImageOrFlavor || errorExistWhenValidatingImageOrFlavorNames;
+              errorExistValidatingImageOrFlavor || errorExistWhenValidatingImageOrFlavorNames;
     }
 
     if (!errorExistValidatingImageOrFlavor) {
       validateServiceTemplatePropertiesValuesVmtypesAreIdentical(fileName, entry, globalContext,
-          propertiesMap);
+              propertiesMap);
     }
 
     mdcDataDebugMessage.debugExitMessage("file", fileName);
@@ -80,7 +84,7 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
     Pair<String, String> vmTypeImagePair = new ImmutablePair<>("image_name", "\\_image\\_name");
     Pair<String, String> vmTypeFlavorPair = new ImmutablePair<>("flavor", "\\_flavor\\_name");
     validatePropertiesValuesVmtypesAreIdentical(Arrays.asList(vmTypeImagePair, vmTypeFlavorPair),
-        fileName, entry, propertiesMap, globalContext);
+            fileName, entry, propertiesMap, globalContext);
 
     mdcDataDebugMessage.debugExitMessage("file", fileName);
   }
@@ -101,14 +105,14 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
     String previousPropertyValueValue = null;
     for (Pair propertyToMatch : propertiesToMatch) {
       Optional<String> propertyVmType =
-          extractVmTypeFromProperty(fileName, resourceEntry, propertiesMap, globalContext,
-              propertyToMatch);
+              extractVmTypeFromProperty(fileName, resourceEntry, propertiesMap, globalContext,
+                      propertyToMatch);
       if (propertyVmType.isPresent()) {
         String currentPropVmType = propertyVmType.get();
         previousPropertyValueValue =
-            handleFirstIteration(previousPropertyValueValue, currentPropVmType);
+                handleFirstIteration(previousPropertyValueValue, currentPropVmType);
         if (addWarningIfCurrentVmTypeIsDifferentFromPrevious(fileName, resourceEntry, globalContext,
-            previousPropertyValueValue, currentPropVmType)) {
+                previousPropertyValueValue, currentPropVmType)) {
           mdcDataDebugMessage.debugExitMessage("file", fileName);
           return;
         }
@@ -125,11 +129,12 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
                                                                    String currentPropVmType) {
     if (!Objects.equals(previousPropertyValueValue, currentPropVmType)) {
       globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(
-                  Messages.CONTRAIL_VM_TYPE_NAME_NOT_ALIGNED_WITH_NAMING_CONVENSION
-                      .getErrorMessage(), resourceEntry.getKey()),
-          LoggerTragetServiceName.VALIDATE_CONTRAIL_VM_NAME,
-          LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
+                      .getErrorWithParameters(
+                              ERROR_CODE_NST1, Messages.CONTRAIL_VM_TYPE_NAME_NOT_ALIGNED_WITH_NAMING_CONVENSION
+                                      .getErrorMessage(),
+                              resourceEntry.getKey()),
+              LoggerTragetServiceName.VALIDATE_CONTRAIL_VM_NAME,
+              LoggerErrorDescription.NAME_NOT_ALIGNED_WITH_GUIDELINES);
       return true;
     }
 
@@ -143,24 +148,26 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
                                                                GlobalValidationContext globalContext) {
     String propertyName = propertyNameAndRegex.getKey();
     Object nameValue =
-        propertiesMap.get(propertyName) == null ? null : propertiesMap.get(propertyName);
+            propertiesMap.get(propertyName) == null ? null : propertiesMap.get(propertyName);
     String[] regexList = new String[]{propertyNameAndRegex.getValue()};
-
     if (nonNull(nameValue)) {
       if (nameValue instanceof Map) {
+        globalContext.setMessageCode(ERROR_CODE_NST3);
         if (ValidationUtil.validateMapPropertyValue(fileName, resourceEntry, globalContext,
-            propertyName,
-            nameValue, regexList)) {
+                propertyName,
+                nameValue, regexList)) {
           return true;
         }
       } else {
         globalContext.addMessage(
-            fileName,
-            ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(), propertyName,
-                    resourceEntry.getKey()),
-            LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
-            LoggerErrorDescription.MISSING_GET_PARAM);
+                fileName,
+                ErrorLevel.WARNING, ErrorMessagesFormatBuilder
+                        .getErrorWithParameters(
+                                ERROR_CODE_NST2, Messages.MISSING_GET_PARAM.getErrorMessage(),
+                                propertyName,
+                                resourceEntry.getKey()),
+                LoggerTragetServiceName.VALIDATE_IMAGE_AND_FLAVOR_NAME,
+                LoggerErrorDescription.MISSING_GET_PARAM);
         return true;
       }
 
@@ -180,19 +187,21 @@ public class ContrailServiceTemplateNamingConventionValidator implements Resourc
     if (nonNull(propertyVal)) {
       if (propertyVal instanceof Map) {
         String propertyValFromGetParam = ValidationUtil.getWantedNameFromPropertyValueGetParam
-            (propertyVal);
+                (propertyVal);
         if (nonNull(propertyValFromGetParam)) {
           Pattern pattern = Pattern.compile("" + propertyKeyRegex.getValue());
           return Optional.ofNullable(pattern.split(propertyValFromGetParam)[0]);
         }
       } else {
         globalContext.addMessage(
-            fileName,
-            ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.MISSING_GET_PARAM.getErrorMessage(), propertyName,
-                    resourceEntry.getKey()),
-            LoggerTragetServiceName.VALIDATE_VM_SYNC_IN_IMAGE_FLAVOR,
-            LoggerErrorDescription.MISSING_GET_PARAM);
+                fileName,
+                ErrorLevel.WARNING, ErrorMessagesFormatBuilder
+                        .getErrorWithParameters(
+                                ERROR_CODE_NST2, Messages.MISSING_GET_PARAM.getErrorMessage(),
+                                propertyName,
+                                resourceEntry.getKey()),
+                LoggerTragetServiceName.VALIDATE_VM_SYNC_IN_IMAGE_FLAVOR,
+                LoggerErrorDescription.MISSING_GET_PARAM);
         return Optional.empty();
       }
     }
