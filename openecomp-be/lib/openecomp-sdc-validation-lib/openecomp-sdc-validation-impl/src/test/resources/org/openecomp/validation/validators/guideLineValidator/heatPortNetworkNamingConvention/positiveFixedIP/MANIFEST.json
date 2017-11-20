@@ -1,0 +1,27 @@
+{
+  "name": "validTest",
+  "description": "Valid Test",
+  "version": "1610",
+  "data": [
+    {
+      "file": "first.yaml",
+      "type": "HEAT",
+      "isBase": true,
+      "data": [
+        {
+          "file": "first.env",
+          "type": "HEAT_ENV"
+        },
+        {
+          "file": "firstVol.yaml",
+          "type": "HEAT_VOL"
+        }
+      ]
+    },
+    {
+      "file": "second.yaml",
+      "type": "HEAT",
+      "isBase": false
+    }
+  ]
+}
