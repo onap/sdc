@@ -59,7 +59,7 @@ public class HeatStructureUtil {
         if (!(getFunctionValue instanceof String) && functionName.equals(
             ResourceReferenceFunctions.GET_RESOURCE.getFunction())) {
           globalContext.addMessage(filename, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(Messages.INVALID_GET_RESOURCE_SYNTAX.getErrorMessage(),
+                  .getErrorWithParameters(globalContext.getMessageCode(), Messages.INVALID_GET_RESOURCE_SYNTAX.getErrorMessage(),
                       getFunctionValue == null ? "null" : getFunctionValue.toString()),
               LoggerTragetServiceName.VALIDATE_GET_RESOURCE, "Invalid get_resource syntax");
           return valuesNames;

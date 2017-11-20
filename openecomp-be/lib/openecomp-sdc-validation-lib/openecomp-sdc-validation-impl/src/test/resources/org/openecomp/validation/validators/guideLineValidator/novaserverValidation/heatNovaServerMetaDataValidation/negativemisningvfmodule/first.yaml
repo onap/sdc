@@ -12,16 +12,15 @@ resources:
       flavor: { get_param: fsb2_flavor_name }
       availability_zone: { get_param: availability_zone_0 }
       metadata:
-        not_VF_id: { get_param: vnfvfVF_id }
-        vf_module_id: { get_param: vf_module_id }
+        Not_VnF_id: { get_param: vnfvfVF_id }
+        not_vf_module_id: { get_param: vf_module_id }
       networks:
         - port: { get_resource: FSB2_Internal1 }
         - port: { get_resource: FSB2_Internal2 }
         - port: { get_resource: FSB2_OAM }
 outputs:
-  expose_resource_nove_output_1:
+  expose_resource_nove_output:
     description: the pcrf_server
     value: { get_resource: FSB2 }
-
 
 
