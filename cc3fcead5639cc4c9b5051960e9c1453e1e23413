@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da87b5cf_1b3733e5",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/ContrailServiceInstanceNamingConventionValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-20T11:22:09Z",
+      "side": 1,
+      "message": "Please don\u0027t forget a space after a comma.",
+      "revId": "cc3fcead5639cc4c9b5051960e9c1453e1e23413",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da87b5cf_bb33a7f5",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/namingconvention/NovaServerNamingConventionGuideLineValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-20T11:22:09Z",
+      "side": 1,
+      "message": "Are these codes a standard? How do you know which code goes where? Would using meaningful names for the constants make it clearer?",
+      "revId": "cc3fcead5639cc4c9b5051960e9c1453e1e23413",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da87b5cf_9b526312",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/impl/validators/namingconvention/ContrailServiceTemplateNamingConventionValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-20T11:22:09Z",
+      "side": 1,
+      "message": "I see that all resource file related to the same functionality are located under the same directory. I would probably make the shared portion of the path into a constant.",
+      "revId": "cc3fcead5639cc4c9b5051960e9c1453e1e23413",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
