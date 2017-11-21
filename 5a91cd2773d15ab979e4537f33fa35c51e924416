@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da87b5cf_8d79c4fe",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/impl/validators/ForbiddenResourceGuideLineValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-21T13:54:59Z",
+      "side": 1,
+      "message": "this is a very fragile test. it is enough that a new valid line will be inserted and your test will fail because the keys you are checking moved a line. try to use regex instead of specifying a line number and a column",
+      "range": {
+        "startLine": 62,
+        "startChar": 8,
+        "endLine": 67,
+        "endChar": 16
+      },
+      "revId": "5a91cd2773d15ab979e4537f33fa35c51e924416",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
