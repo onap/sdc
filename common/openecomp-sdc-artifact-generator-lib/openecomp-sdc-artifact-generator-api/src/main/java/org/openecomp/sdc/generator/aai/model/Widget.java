@@ -78,6 +78,8 @@ public abstract class Widget extends Model {
         return new AllotedResourceWidget();
       case TUNNEL_XCONNECT:
         return new TunnelXconnectWidget();
+      case PNF:
+        return new PnfWidget();
       default:
         return null;
     }
@@ -191,6 +193,6 @@ public abstract class Widget extends Model {
 
   public enum Type {
     SERVICE, VF, VFC, VSERVER, VOLUME, FLAVOR, TENANT, VOLUME_GROUP, LINT, L3_NET, VFMODULE, IMAGE,
-    OAM_NETWORK,ALLOTTED_RESOURCE,TUNNEL_XCONNECT
+    OAM_NETWORK,ALLOTTED_RESOURCE,TUNNEL_XCONNECT, PNF
   }
 }

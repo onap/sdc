@@ -793,7 +793,7 @@ public class NodeTemplateOperation extends BaseOperation {
 			for (Map.Entry<String, List<ArtifactDefinition>> groupArtifacts : groupInstancesArtifacts.entrySet()) {
 				Optional<GroupDefinition> groupOptional = groups.stream().filter(g -> g.getUniqueId().equals(groupArtifacts.getKey())).findFirst();
 				if (groupOptional.isPresent()) {
-					GroupInstanceDataDefinition groupInstance = buildGroupInstanceDataDefinition((GroupDataDefinition)groupOptional.get(), (ComponentInstanceDataDefinition)componentInstance);
+					GroupInstanceDataDefinition groupInstance = buildGroupInstanceDataDefinition((GroupDataDefinition) groupOptional.get(), (ComponentInstanceDataDefinition) componentInstance, null);
 					groupInstance.setGroupInstanceArtifacts(groupArtifacts.getValue().stream().map(a -> a.getUniqueId()).collect(Collectors.toList()));
 					groupInstance.setGroupInstanceArtifactsUuid(groupArtifacts.getValue().stream().map(a -> a.getArtifactUUID()).collect(Collectors.toList()));
 					groupInstanceToCreate.put(groupInstance.getName(), groupInstance);

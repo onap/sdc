@@ -80,6 +80,9 @@ public abstract class Model {
         case "org.openecomp.resource.vfc.nodes.heat.cinder":
           modelToBeReturned = new VolumeWidget();
           break;
+        case "org.openecomp.resource.pnf":
+          modelToBeReturned = new PnfResource();
+          break;
         default:
           modelToBeReturned = null;
           break;

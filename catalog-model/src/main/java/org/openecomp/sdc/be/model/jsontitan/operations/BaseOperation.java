@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -44,6 +45,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
@@ -1338,32 +1340,49 @@ public abstract class BaseOperation {
 //		return StorageOperationStatus.OK;
 //	}
 	
-	protected GroupInstanceDataDefinition buildGroupInstanceDataDefinition(GroupDataDefinition group, ComponentInstanceDataDefinition componentInstance) {
+    protected GroupInstanceDataDefinition buildGroupInstanceDataDefinition(GroupDataDefinition group, ComponentInstanceDataDefinition componentInstance, Map<String, ArtifactDataDefinition> instDeplArtifMap) {
 
-		String componentInstanceName = componentInstance.getName();
-		Long creationDate = System.currentTimeMillis();
-		GroupInstanceDataDefinition groupInstance = new GroupInstanceDataDefinition();
-		String groupUid = group.getUniqueId();
+        String componentInstanceName = componentInstance.getName();
+        Long creationDate = System.currentTimeMillis();
+        GroupInstanceDataDefinition groupInstance = new GroupInstanceDataDefinition();
+        String groupUid = group.getUniqueId();
 
-		groupInstance.setGroupUid(groupUid);
-		groupInstance.setType(group.getType());
-		groupInstance.setCustomizationUUID(generateCustomizationUUID());
-		groupInstance.setCreationTime(creationDate);
-		groupInstance.setModificationTime(creationDate);
-		groupInstance.setName(buildGroupInstanceName(componentInstanceName, group.getName()));
-		groupInstance.setGroupName(group.getName());
-		groupInstance.setNormalizedName(ValidationUtils.normalizeComponentInstanceName(groupInstance.getName()));
-		groupInstance.setUniqueId(UniqueIdBuilder.buildResourceInstanceUniuqeId(componentInstance.getUniqueId(), groupUid, groupInstance.getNormalizedName()));
-		groupInstance.setArtifacts(group.getArtifacts());
-		groupInstance.setArtifactsUuid(group.getArtifactsUuid());
-		groupInstance.setProperties(group.getProperties());
-		convertPropertiesToInstanceProperties(groupInstance.getProperties());
-		groupInstance.setInvariantUUID(group.getInvariantUUID());
-		groupInstance.setGroupUUID(group.getGroupUUID());
-		groupInstance.setVersion(group.getVersion());
+        groupInstance.setGroupUid(groupUid);
+        groupInstance.setType(group.getType());
+        groupInstance.setCustomizationUUID(generateCustomizationUUID());
+        groupInstance.setCreationTime(creationDate);
+        groupInstance.setModificationTime(creationDate);
+        groupInstance.setName(buildGroupInstanceName(componentInstanceName, group.getName()));
+        groupInstance.setGroupName(group.getName());
+        groupInstance.setNormalizedName(ValidationUtils.normalizeComponentInstanceName(groupInstance.getName()));
+        groupInstance.setUniqueId(UniqueIdBuilder.buildResourceInstanceUniuqeId(componentInstance.getUniqueId(), groupUid, groupInstance.getNormalizedName()));
+        groupInstance.setArtifacts(group.getArtifacts());
 
-		return groupInstance;
-	}
+//        List<String> fixedArtifactsUuid;
+//        List<String> artifactsUuid = group.getArtifactsUuid();
+//        if (instDeplArtifMap != null) {
+//              fixedArtifactsUuid = new ArrayList<>();
+//              artifactsUuid.forEach(u -> {
+//                    Optional<ArtifactDataDefinition> findFirst = instDeplArtifMap.values().stream().filter(a -> u.equals(a.getUniqueId())).findFirst();
+//                    if (findFirst.isPresent()) {
+//                          fixedArtifactsUuid.add(findFirst.get().getArtifactUUID());
+//                    } else {
+//                          fixedArtifactsUuid.add(u);
+//                    }
+//              });
+//        } else {
+//              fixedArtifactsUuid = artifactsUuid;
+//        }
+        groupInstance.setArtifactsUuid(group.getArtifactsUuid());
+        groupInstance.setProperties(group.getProperties());
+        convertPropertiesToInstanceProperties(groupInstance.getProperties());
+        groupInstance.setInvariantUUID(group.getInvariantUUID());
+        groupInstance.setGroupUUID(group.getGroupUUID());
+        groupInstance.setVersion(group.getVersion());
+
+        return groupInstance;
+  }
+
 	
 	protected String buildGroupInstanceName(String instanceName, String groupName) {
 		return ValidationUtils.normalizeComponentInstanceName(instanceName) + ".." + groupName;
