@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da87b5cf_cdc34c37",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/impl/validators/YamlValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-21T13:20:50Z",
+      "side": 1,
+      "message": "this is a very fragile test. it is enough that a new valid line will be inserted and your test will fail because the keys you are checking moved a line. try to use regex instead of specifying a line number and a column",
+      "range": {
+        "startLine": 78,
+        "startChar": 9,
+        "endLine": 80,
+        "endChar": 32
+      },
+      "revId": "45b046c11eec86e9148d8c8290ef201f7a97ef4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da87b5cf_edc0902c",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/impl/validators/YamlValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-21T13:20:50Z",
+      "side": 1,
+      "message": "this is a very fragile test. it is enough that a new valid line will be inserted and your test will fail because the keys you are checking moved a line. try to use regex instead of specifying a line number and a column",
+      "range": {
+        "startLine": 94,
+        "startChar": 9,
+        "endLine": 96,
+        "endChar": 67
+      },
+      "revId": "45b046c11eec86e9148d8c8290ef201f7a97ef4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
