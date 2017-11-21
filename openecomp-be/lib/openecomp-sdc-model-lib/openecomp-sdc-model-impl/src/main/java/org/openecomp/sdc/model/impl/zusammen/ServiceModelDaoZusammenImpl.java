@@ -11,10 +11,12 @@ import com.amdocs.zusammen.datatypes.item.Info;
 import com.amdocs.zusammen.datatypes.item.ItemVersion;
 import org.apache.commons.io.IOUtils;
 import org.openecomp.core.model.dao.ServiceModelDao;
+import org.openecomp.core.model.errors.RetrieveServiceTemplateFromDbErrorBuilder;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.api.ZusammenUtil;
+import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
@@ -84,17 +86,12 @@ public class ServiceModelDaoZusammenImpl
         context, elementContext, serviceModelElementId, StructureElement.Templates.name());
 
     if (templatesElementInfo.isPresent()) {
-
-      //Map<String, ServiceTemplate> serviceTemplateMap = new HashMap<>();
       Collection<Element> elements = zusammenAdaptor.listElementData(context, elementContext,
           templatesElementInfo.get().getId());
 
       return elements.stream().collect(Collectors.toMap(
           element -> element.getInfo().getName(),
           this::elementToServiceTemplate));
-    /*elements.stream().forEach(element ->serviceTemplateMap.put(element.getInfo().getName(),
-        elementToServiceTemplate(element)));
-    return serviceTemplateMap;*/
     }
     return null;
   }
@@ -186,8 +183,9 @@ public class ServiceModelDaoZusammenImpl
       return new ToscaExtensionYamlUtil().
           yamlToObject(yamlContent, ServiceTemplate.class);
     }catch (Exception e){
-      logger.debug("",e);
-      return null;
+      throw new CoreException(
+          new RetrieveServiceTemplateFromDbErrorBuilder(
+              element.getInfo().getName(), e.getMessage()).build());
     }
   }
 
