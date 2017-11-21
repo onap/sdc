@@ -93,7 +93,8 @@ public enum DefinedHeatParameterTypes {
   }
 
   private static boolean isValueCommaDelimitedList(Object value) {
-    return String.valueOf(value).contains(",")
+    return  value instanceof List
+            || String.valueOf(value).contains(",")
             || isValueIsFromGivenType(value, DefinedHeatParameterTypes.STRING.type);
   }
 
