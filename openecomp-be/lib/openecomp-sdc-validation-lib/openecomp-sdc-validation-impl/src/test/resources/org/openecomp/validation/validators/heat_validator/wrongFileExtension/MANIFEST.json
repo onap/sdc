@@ -1,0 +1,17 @@
+{
+  "name": "validTest",
+  "description": "Valid Test",
+  "version": "1610",
+  "data": [
+    {
+      "file": "single.ya",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "single.aad",
+          "type": "HEAT_ENV"
+        }
+      ]
+    }
+  ]
+}
