@@ -2,6 +2,7 @@ package org.openecomp.sdc.validation.impl.validators;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
@@ -32,6 +33,7 @@ import java.util.Set;
 public class HeatResourceValidator extends ResourceBaseValidator {
   public static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static Logger logger = (Logger) LoggerFactory.getLogger(ResourceBaseValidator.class);
+  private static final ErrorMessageCode ERROR_CODE_HTR_1 = new ErrorMessageCode("HTR1");
 
   @Override
   public void init(Map<String, Object> properties) {
@@ -51,6 +53,7 @@ public class HeatResourceValidator extends ResourceBaseValidator {
     }
     Set<String> baseFiles = ManifestUtil.getBaseFiles(manifestContent);
     String baseFileName = CollectionUtils.isEmpty(baseFiles) ? null : baseFiles.iterator().next();
+    globalContext.setMessageCode(ERROR_CODE_HTR_1);
     HeatOrchestrationTemplate baseHot =
         ValidationUtil.checkHeatOrchestrationPreCondition(baseFileName, globalContext);
     Set<String> securityGroupsNamesFromBaseFileOutputs = baseFileName == null ? new HashSet<>()
