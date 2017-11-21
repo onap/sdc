@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da87b5cf_2dce785b",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/ManifestValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-21T13:51:22Z",
+      "side": 1,
+      "message": "use FileData.isHeatFile",
+      "range": {
+        "startLine": 167,
+        "startChar": 15,
+        "endLine": 168,
+        "endChar": 42
+      },
+      "revId": "b32ca121552188a9a87ccc2495ae7ebb0323ea0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
