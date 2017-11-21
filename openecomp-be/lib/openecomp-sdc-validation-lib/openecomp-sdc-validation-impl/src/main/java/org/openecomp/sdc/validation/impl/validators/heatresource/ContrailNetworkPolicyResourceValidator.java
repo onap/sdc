@@ -1,6 +1,7 @@
 package org.openecomp.sdc.validation.impl.validators.heatresource;
 
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
@@ -23,12 +24,14 @@ import java.util.Map;
  */
 public class ContrailNetworkPolicyResourceValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final ErrorMessageCode ERROR_CODE_HNP1 = new ErrorMessageCode("HNP1");
+  private static final ErrorMessageCode ERROR_CODE_HNP2 = new ErrorMessageCode("HNP2");
 
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
-    validateNetworkPolicyIsUsed
-        (fileName, resourceEntry, globalContext, (HeatResourceValidationContext)validationContext);
+    validateNetworkPolicyIsUsed(fileName, resourceEntry, globalContext,
+            (HeatResourceValidationContext) validationContext);
 
   }
 
@@ -39,25 +42,25 @@ public class ContrailNetworkPolicyResourceValidator implements ResourceValidator
     mdcDataDebugMessage.debugEntryMessage("file", fileName);
 
     Map<String, Map<String, List<String>>> referencedNetworkAttachPoliciesResources =
-        validationContext.getFileLevelResourceDependencies()
-            .get(HeatResourcesTypes.CONTRAIL_NETWORK_RULE_RESOURCE_TYPE.getHeatResource());
+            validationContext.getFileLevelResourceDependencies()
+                    .get(HeatResourcesTypes.CONTRAIL_NETWORK_RULE_RESOURCE_TYPE.getHeatResource());
 
     if (MapUtils.isEmpty(referencedNetworkAttachPoliciesResources)) {
       globalContext
-          .addMessage(
-              fileName,
-              ErrorLevel.WARNING,
-              ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(
-                      Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
-                      ValidatorConstants.Network_Policy, resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_ATTACH_POLICY_IN_USE,
-              LoggerErrorDescription.NETWORK_ATTACH_POLICY_NOT_IN_USE);
+              .addMessage(
+                      fileName,
+                      ErrorLevel.WARNING,
+                      ErrorMessagesFormatBuilder
+                              .getErrorWithParameters(ERROR_CODE_HNP1,
+                                      Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
+                                      ValidatorConstants.Network_Policy, resourceEntry.getKey()),
+                      LoggerTragetServiceName.VALIDATE_ATTACH_POLICY_IN_USE,
+                      LoggerErrorDescription.NETWORK_ATTACH_POLICY_NOT_IN_USE);
       return;
     }
 
-    handleNetworkAttachPolicyReferences
-        (fileName, resourceEntry, referencedNetworkAttachPoliciesResources, globalContext);
+    handleNetworkAttachPolicyReferences(fileName, resourceEntry,
+            referencedNetworkAttachPoliciesResources, globalContext);
 
     mdcDataDebugMessage.debugExitMessage("file", fileName);
 
@@ -69,23 +72,23 @@ public class ContrailNetworkPolicyResourceValidator implements ResourceValidator
                                                           GlobalValidationContext globalContext) {
 
     Map<String, List<String>> resourcesPointingToCurrNetworkAttachPolicy =
-        pointedNetworkAttachPolicies.get(resourceEntry.getKey());
+            pointedNetworkAttachPolicies.get(resourceEntry.getKey());
     if (isNetworkAttachPolicyNotInUse(resourcesPointingToCurrNetworkAttachPolicy)) {
       globalContext
-          .addMessage(
-              fileName,
-              ErrorLevel.WARNING,
-              ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(
-                      Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
-                      ValidatorConstants.Network_Policy, resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_ATTACH_POLICY_IN_USE,
-              LoggerErrorDescription.NETWORK_ATTACH_POLICY_NOT_IN_USE);
+              .addMessage(
+                      fileName,
+                      ErrorLevel.WARNING,
+                      ErrorMessagesFormatBuilder
+                              .getErrorWithParameters(ERROR_CODE_HNP2,
+                                      Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
+                                      ValidatorConstants.Network_Policy, resourceEntry.getKey()),
+                      LoggerTragetServiceName.VALIDATE_ATTACH_POLICY_IN_USE,
+                      LoggerErrorDescription.NETWORK_ATTACH_POLICY_NOT_IN_USE);
     }
   }
 
   private static boolean isNetworkAttachPolicyNotInUse(
-      Map<String, List<String>> resourcesPointingToCurrNetworkAttachPolicy) {
+          Map<String, List<String>> resourcesPointingToCurrNetworkAttachPolicy) {
     return MapUtils.isEmpty(resourcesPointingToCurrNetworkAttachPolicy);
   }
 
