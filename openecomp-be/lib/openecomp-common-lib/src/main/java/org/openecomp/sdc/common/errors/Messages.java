@@ -66,7 +66,7 @@ public enum Messages {
   /* manifest errors*/
   MISSING_FILE_IN_ZIP("Missing file in zip"),
   MISSING_FILE_IN_MANIFEST("Missing file in manifest"),
-  MISSING_FILE_NAME_IN_MANIFEST("Missing file name in manifest - %s"),
+  MISSING_FILE_NAME_IN_MANIFEST("Missing file name in manifest"),
   MISSING_NESTED_FILE("Missing nested file - %s"),
   MISSING_ARTIFACT("Missing artifact - %s"),
   WRONG_HEAT_FILE_EXTENSION("Wrong HEAT file extension - %s"),

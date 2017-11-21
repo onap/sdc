@@ -21,6 +21,7 @@
 package org.openecomp.sdc.validation.impl.validators;
 
 import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
@@ -47,6 +48,14 @@ import java.util.Optional;
 public class ManifestValidator implements Validator {
   public static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static Logger logger = (Logger) LoggerFactory.getLogger(YamlValidator.class);
+  private static final ErrorMessageCode ERROR_CODE_MNF_1 = new ErrorMessageCode("MNF1");
+  private static final ErrorMessageCode ERROR_CODE_MNF_2 = new ErrorMessageCode("MNF2");
+  private static final ErrorMessageCode ERROR_CODE_MNF_3 = new ErrorMessageCode("MNF3");
+  private static final ErrorMessageCode ERROR_CODE_MNF_4 = new ErrorMessageCode("MNF4");
+  private static final ErrorMessageCode ERROR_CODE_MNF_5 = new ErrorMessageCode("MNF5");
+  private static final ErrorMessageCode ERROR_CODE_MNF_6 = new ErrorMessageCode("MNF6");
+  private static final ErrorMessageCode ERROR_CODE_MNF_7 = new ErrorMessageCode("MNF7");
+  private static final ErrorMessageCode ERROR_CODE_MNF_8 = new ErrorMessageCode("MNF8");
 
   @Override
   public void validate(GlobalValidationContext globalContext) {
@@ -67,7 +76,9 @@ public class ManifestValidator implements Validator {
     } catch (Exception re) {
       logger.debug("",re);
       globalContext.addMessage(SdcCommon.MANIFEST_NAME, ErrorLevel.ERROR,
-          Messages.INVALID_MANIFEST_FILE.getErrorMessage(),
+              ErrorMessagesFormatBuilder
+                      .getErrorWithParameters(ERROR_CODE_MNF_6,
+                              Messages.INVALID_MANIFEST_FILE.getErrorMessage()),
           LoggerTragetServiceName.VALIDATE_MANIFEST_CONTENT,
           LoggerErrorDescription.INVALID_MANIFEST);
       return;
@@ -77,14 +88,18 @@ public class ManifestValidator implements Validator {
     manifestFiles.stream().filter(name ->
         !globalContext.getFileContextMap().containsKey(name)
     ).forEach(name -> globalContext
-        .addMessage(name, ErrorLevel.ERROR, Messages.MISSING_FILE_IN_ZIP.getErrorMessage(),
+        .addMessage(name, ErrorLevel.ERROR,ErrorMessagesFormatBuilder
+                .getErrorWithParameters(ERROR_CODE_MNF_4,
+                        Messages.MISSING_FILE_IN_ZIP.getErrorMessage()),
             LoggerTragetServiceName.VALIDATE_FILE_IN_ZIP, LoggerErrorDescription.MISSING_FILE));
 
     globalContext.getFileContextMap().keySet().stream().filter(name ->
         isNotManifestFiles(manifestFiles, name) && isNotManifestName(name)
     ).forEach(name ->
         globalContext.addMessage(name, ErrorLevel.WARNING,
-            Messages.MISSING_FILE_IN_MANIFEST.getErrorMessage(),
+                ErrorMessagesFormatBuilder
+                        .getErrorWithParameters(ERROR_CODE_MNF_5,
+                                Messages.MISSING_FILE_IN_MANIFEST.getErrorMessage()),
             LoggerTragetServiceName.VALIDATE_FILE_IN_MANIFEST, LoggerErrorDescription.MISSING_FILE)
     );
 
@@ -107,7 +122,6 @@ public class ManifestValidator implements Validator {
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
     ManifestScanner manifestScanner = new ManifestScanner();
-    manifestScanner.init(context);
     manifestScanner.scan(null, manifestContent.getData(), context);
 
     mdcDataDebugMessage.debugExitMessage(null, null);
@@ -116,32 +130,18 @@ public class ManifestValidator implements Validator {
 
 
   private class ManifestScanner {
-    private GlobalValidationContext globalValidationContext;
-    private List<String> fileList;
-
-    public void init(GlobalValidationContext globalValidationContext) {
-      this.globalValidationContext = globalValidationContext;
-      this.fileList = new ArrayList<>();
-    }
-
+    private List<String> fileList=new ArrayList<>();
 
     public void scan(FileData fileData, List<FileData> data,
                      GlobalValidationContext globalContext) {
       if (fileData == null) {
         for (FileData childFileData : data) {
-          if (childFileData.getType() != null
-              && childFileData.getType().equals(FileData.Type.HEAT_ENV)) {
-            globalContext.addMessage(childFileData.getFile(), ErrorLevel.ERROR,
-                ErrorMessagesFormatBuilder
-                    .getErrorWithParameters(Messages.ENV_NOT_ASSOCIATED_TO_HEAT.getErrorMessage()),
-                LoggerTragetServiceName.SCAN_MANIFEST_STRUCTURE,
-                "env file is not associated to HEAT file");
-          }
+          validateIfEnvIsAssociatedToHeat(globalContext, childFileData);
         }
       }
       if (fileData != null) {
         fileList.add(fileData.getFile());
-        validateFileTypeVsFileName(fileData);
+        validateFileTypeVsFileName(globalContext,fileData);
       }
       if (data == null) {
         return;
@@ -149,42 +149,76 @@ public class ManifestValidator implements Validator {
       data.forEach(chileFileData -> scan(chileFileData, chileFileData.getData(), globalContext));
     }
 
-
     public List<String> getFileList() {
       return this.fileList;
     }
+  }
 
-    private void validateFileTypeVsFileName(FileData fileData) {
-      String fileName = fileData.getFile();
-      if (fileName == null) {
-        this.globalValidationContext.addMessage(SdcCommon.MANIFEST_NAME, ErrorLevel.ERROR,
-            Messages.MISSING_FILE_NAME_IN_MANIFEST.getErrorMessage(),
-            LoggerTragetServiceName.VALIDATE_FILE_TYPE_AND_NAME, "Missing file name in manifest");
+  private void validateFileTypeVsFileName(GlobalValidationContext globalValidationContext,
+                                          FileData fileData) {
+    String fileName = fileData.getFile();
+    validateIfFileExists(globalValidationContext,fileName);
+    FileData.Type type = fileData.getType();
+    if (type == null) {
+      globalValidationContext.addMessage(fileName, ErrorLevel.ERROR,
+          ErrorMessagesFormatBuilder.getErrorWithParameters(ERROR_CODE_MNF_8,
+              Messages.INVALID_FILE_TYPE.getErrorMessage()),
+          LoggerTragetServiceName.VALIDATE_FILE_TYPE_AND_NAME, "Invalid file type");
+    } else if (type.equals(FileData.Type.HEAT_NET) || type.equals(FileData.Type.HEAT_VOL)
+        || type.equals(FileData.Type.HEAT)) {
+      validateIfFileHasYamlExtenstion(globalValidationContext,fileName);
+    } else if (type.equals(FileData.Type.HEAT_ENV)) {
+      validateIfFileHasEnvExtension(globalValidationContext,fileName);
+    }
+  }
 
-      }
-      FileData.Type type = fileData.getType();
-      if (type == null) {
-        this.globalValidationContext
-            .addMessage(fileName, ErrorLevel.ERROR, Messages.INVALID_FILE_TYPE.getErrorMessage(),
-                LoggerTragetServiceName.VALIDATE_FILE_TYPE_AND_NAME, "Invalid file type");
-      } else if (type.equals(FileData.Type.HEAT_NET) || type.equals(FileData.Type.HEAT_VOL)
-          || type.equals(FileData.Type.HEAT)) {
-        if (fileName != null && !fileName.endsWith(".yml") && !fileName.endsWith(".yaml")) {
-          this.globalValidationContext.addMessage(fileName, ErrorLevel.ERROR,
-              ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(Messages.WRONG_HEAT_FILE_EXTENSION.getErrorMessage(),
-                      fileName), LoggerTragetServiceName.VALIDATE_FILE_TYPE_AND_NAME,
-              "Wrong HEAT file extention");
-        }
-      } else if (type.equals(FileData.Type.HEAT_ENV)) {
-        if (fileName != null && !fileName.endsWith(".env")) {
-          this.globalValidationContext.addMessage(fileName, ErrorLevel.ERROR,
-              ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(Messages.WRONG_ENV_FILE_EXTENSION.getErrorMessage(),
-                      fileName), LoggerTragetServiceName.VALIDATE_FILE_TYPE_AND_NAME,
-              "Wrong env file extention");
-        }
-      }
+  private void validateIfFileHasEnvExtension(GlobalValidationContext globalValidationContext,
+                                             String fileName) {
+    if (fileName != null && !fileName.endsWith(".env")) {
+      globalValidationContext.addMessage(fileName, ErrorLevel.ERROR,
+          ErrorMessagesFormatBuilder
+              .getErrorWithParameters(ERROR_CODE_MNF_3,
+                  Messages.WRONG_ENV_FILE_EXTENSION.getErrorMessage(),
+                  fileName), LoggerTragetServiceName.VALIDATE_FILE_TYPE_AND_NAME,
+          "Wrong env file extention");
+    }
+  }
+
+  private void validateIfFileHasYamlExtenstion(GlobalValidationContext globalValidationContext,
+                                               String fileName) {
+    if (fileName != null && !fileName.endsWith(".yml") && !fileName.endsWith(".yaml")) {
+      globalValidationContext.addMessage(fileName, ErrorLevel.ERROR,
+          ErrorMessagesFormatBuilder
+              .getErrorWithParameters(ERROR_CODE_MNF_2,
+                  Messages.WRONG_HEAT_FILE_EXTENSION.getErrorMessage(),
+                  fileName), LoggerTragetServiceName.VALIDATE_FILE_TYPE_AND_NAME,
+          "Wrong HEAT file extention");
+    }
+  }
+
+  private void validateIfFileExists(GlobalValidationContext globalValidationContext,
+                                    String fileName) {
+    if (fileName == null) {
+      globalValidationContext.addMessage(SdcCommon.MANIFEST_NAME, ErrorLevel.ERROR,
+          ErrorMessagesFormatBuilder
+              .getErrorWithParameters(ERROR_CODE_MNF_7,
+                  Messages.MISSING_FILE_NAME_IN_MANIFEST.getErrorMessage()),
+          LoggerTragetServiceName.VALIDATE_FILE_TYPE_AND_NAME,
+          "Missing file name in manifest");
+
+    }
+  }
+
+  private void validateIfEnvIsAssociatedToHeat(GlobalValidationContext globalContext,
+                                               FileData childFileData) {
+    if (childFileData.getType() != null
+        && childFileData.getType().equals(FileData.Type.HEAT_ENV)) {
+      globalContext.addMessage(childFileData.getFile(), ErrorLevel.ERROR,
+          ErrorMessagesFormatBuilder
+              .getErrorWithParameters(ERROR_CODE_MNF_1,
+                      Messages.ENV_NOT_ASSOCIATED_TO_HEAT.getErrorMessage()),
+          LoggerTragetServiceName.SCAN_MANIFEST_STRUCTURE,
+          "env file is not associated to HEAT file");
     }
   }
 
