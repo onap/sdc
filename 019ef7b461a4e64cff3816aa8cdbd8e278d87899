@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da87b5cf_4ae8827c",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/datatypes/DefinedHeatParameterTypes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-21T09:40:12Z",
+      "side": 1,
+      "message": "what about value of type String that contains only one value? it would not be with a comma",
+      "range": {
+        "startLine": 96,
+        "startChar": 12,
+        "endLine": 98,
+        "endChar": 84
+      },
+      "revId": "019ef7b461a4e64cff3816aa8cdbd8e278d87899",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
