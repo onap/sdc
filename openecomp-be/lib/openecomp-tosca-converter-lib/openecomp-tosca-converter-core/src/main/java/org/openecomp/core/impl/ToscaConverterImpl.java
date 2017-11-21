@@ -1,7 +1,6 @@
 package org.openecomp.core.impl;
 
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
 import org.openecomp.core.converter.ToscaConverter;
 import org.openecomp.core.converter.datatypes.Constants;
@@ -284,23 +283,12 @@ public class ToscaConverterImpl implements ToscaConverter {
                     entry.getKey(), entry.getValue(), ParameterDefinition.class);
 
             parameterDefinition.ifPresent(parameterDefinitionValue -> {
-                handleDefaultValue(entry.getValue(), parameterDefinition.get());
+                Optional<Object> defaultValue =
+                    ToscaConverterUtil.getDefaultValue(entry.getValue(), parameterDefinition.get());
+                defaultValue.ifPresent(parameterDefinitionValue::set_default);
                 addToServiceTemplateAccordingToSection(
                     serviceTemplate, inputsOrOutputs, entry.getKey(), parameterDefinition.get());
             } );
-        }
-    }
-
-    private void handleDefaultValue(Object entryValue,
-                                    ParameterDefinition parameterDefinition) {
-        if(!(entryValue instanceof Map)
-            || Objects.isNull(parameterDefinition)){
-            return;
-        }
-
-        Object defaultValue = ((Map) entryValue).get("default");
-        if(Objects.nonNull(defaultValue)) {
-            parameterDefinition.set_default(defaultValue);
         }
     }
 
