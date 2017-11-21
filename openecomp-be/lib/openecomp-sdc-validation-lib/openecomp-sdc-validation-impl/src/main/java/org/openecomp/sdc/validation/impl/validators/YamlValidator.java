@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.validation.impl.validators;
 
+import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
@@ -41,6 +42,8 @@ import java.util.Optional;
 public class YamlValidator implements Validator {
   public static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static final Logger logger = (Logger) LoggerFactory.getLogger(YamlValidator.class);
+  private static final ErrorMessageCode ERROR_CODE_YML_1 = new ErrorMessageCode("YML1");
+  private static final ErrorMessageCode ERROR_CODE_YML_2 = new ErrorMessageCode("YML2");
 
   @Override
   public void validate(GlobalValidationContext globalContext) {
@@ -59,7 +62,8 @@ public class YamlValidator implements Validator {
     Optional<InputStream> rowContent = globalContext.getFileContent(fileName);
     if (!rowContent.isPresent()) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
+              .getErrorWithParameters(ERROR_CODE_YML_1, Messages
+                      .INVALID_YAML_FORMAT_REASON.getErrorMessage(),
                   Messages.EMPTY_YAML_FILE.getErrorMessage()),
           LoggerTragetServiceName.VALIDATE_YAML_CONTENT,
           LoggerErrorDescription.INVALID_YAML_FORMAT);
@@ -71,7 +75,8 @@ public class YamlValidator implements Validator {
     } catch (Exception exception) {
 
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
+              .getErrorWithParameters(ERROR_CODE_YML_2, Messages
+                      .INVALID_YAML_FORMAT_REASON.getErrorMessage(),
                   YamlValidatorUtil.getParserExceptionReason(exception)),
           LoggerTragetServiceName.VALIDATE_YAML_CONTENT,
           LoggerErrorDescription.INVALID_YAML_FORMAT);
