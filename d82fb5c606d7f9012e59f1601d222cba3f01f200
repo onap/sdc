@@ -1,0 +1,135 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da87b5cf_6a11c6ab",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-21T08:39:13Z",
+      "side": 1,
+      "message": "This can be simplified to avoid nested \"if\"s. Besides, instanceof also checks for null. So that the entire condition can be written as \"if (resourceDefType instanceof String)\".",
+      "range": {
+        "startLine": 167,
+        "startChar": 0,
+        "endLine": 168,
+        "endChar": 48
+      },
+      "revId": "d82fb5c606d7f9012e59f1601d222cba3f01f200",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da87b5cf_ca1fb2b6",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-21T08:39:13Z",
+      "side": 1,
+      "message": "This Javadoc doesn\u0027t seem to add any useful information. Please either expand it, or remove it altogether.",
+      "revId": "d82fb5c606d7f9012e59f1601d222cba3f01f200",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da87b5cf_2a23be06",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-21T08:39:13Z",
+      "side": 1,
+      "message": "Too many nested blocks. Please simplify.",
+      "revId": "d82fb5c606d7f9012e59f1601d222cba3f01f200",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da87b5cf_ea1cf6c3",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-21T08:39:13Z",
+      "side": 1,
+      "message": "Another useless Javadoc, IMO. It just seems to state what\u0027s already clear from the method signature.",
+      "revId": "d82fb5c606d7f9012e59f1601d222cba3f01f200",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da87b5cf_8a79aafe",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-21T08:39:13Z",
+      "side": 1,
+      "message": "return HeatStuctureUtil.isNestedResource(resourceDefType);",
+      "range": {
+        "startLine": 256,
+        "startChar": 1,
+        "endLine": 259,
+        "endChar": 16
+      },
+      "revId": "d82fb5c606d7f9012e59f1601d222cba3f01f200",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da87b5cf_aa7eeee2",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-21T08:39:13Z",
+      "side": 1,
+      "message": "This code is very difficult to read because of the nested blocks. Please simplify.",
+      "revId": "d82fb5c606d7f9012e59f1601d222cba3f01f200",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da87b5cf_4a83a2cc",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/util/HeatValidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-11-21T08:39:13Z",
+      "side": 1,
+      "message": "Is it OK to return here if an exception is thrown? What is the purpose of \"throw new Exception\" a few lines above, then? In any case, logger.debug() most likely will not be seen as debug is disabled. Also, \"\" adds nothing to understand the problem.",
+      "revId": "d82fb5c606d7f9012e59f1601d222cba3f01f200",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
