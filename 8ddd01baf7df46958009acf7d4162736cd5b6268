@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da87b5cf_0d261417",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/impl/validators/HeatResourceValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-11-21T13:52:21Z",
+      "side": 1,
+      "message": "this is a very fragile test. it is enough that a new valid line will be inserted and your test will fail because the keys you are checking moved a line. try to use regex instead of specifying a line number and a column",
+      "range": {
+        "startLine": 21,
+        "startChar": 8,
+        "endLine": 26,
+        "endChar": 17
+      },
+      "revId": "8ddd01baf7df46958009acf7d4162736cd5b6268",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
