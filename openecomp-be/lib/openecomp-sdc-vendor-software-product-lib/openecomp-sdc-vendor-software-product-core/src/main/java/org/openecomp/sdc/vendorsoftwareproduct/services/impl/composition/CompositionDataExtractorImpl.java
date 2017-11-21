@@ -324,43 +324,33 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
   private Map<String,List<String>> getComponentImages(Map<String, NodeTemplate>
                                                           computeNodeTemplates,
                                                       ToscaServiceModel toscaServiceModel) {
-    Map<String,List<String>> computeImages = new HashMap<>();
-    for (String component : computeNodeTemplates.keySet()) {
-      List<String> images = new ArrayList<>();
-      Map<String,Object> properties =  computeNodeTemplates.get(component).getProperties();
-
-      List<Object> imagesList = properties.entrySet()
-          .stream()
-          .filter(map -> map.getKey().equals("image"))
-          .map(map -> map.getValue())
-          .collect(Collectors.toList());
-      for (Object obj : imagesList) {
-        if (obj instanceof String) {
-          images.add((String) obj);
-        } else {
-          Map<String,String> objMap = new ObjectMapper().convertValue(obj,Map.class);
-          images.add(getInputs(toscaServiceModel,objMap.get("get_input")));
-        }
-      }
-      computeImages.put(component,images);
-    }
-    return computeImages;
+    return getComponentProperty(ToscaConstants.COMPUTE_IMAGE, computeNodeTemplates, toscaServiceModel);
   }
 
   private Map<String,List<String>> getComponentComputeFlavor(Map<String, NodeTemplate>
                                                                  computeNodeTemplates,
                                                              ToscaServiceModel toscaServiceModel) {
-    Map<String,List<String>> componentComputeFlavor = new HashMap<>();
+    return getComponentProperty(ToscaConstants.COMPUTE_FLAVOR, computeNodeTemplates, toscaServiceModel);
+  }
+
+  private Map<String, List<String>> getComponentProperty(String propertyName,
+                                                         Map<String, NodeTemplate> computeNodeTemplates,
+                                                         ToscaServiceModel toscaServiceModel) {
+    Map<String,List<String>> componentPropertyValues = new HashMap<>();
     for (String component : computeNodeTemplates.keySet()) {
       List<String> computes = new ArrayList<>();
       Map<String,Object> properties =  computeNodeTemplates.get(component).getProperties();
 
-      List<Object> computessList = properties.entrySet()
+      if(MapUtils.isEmpty(properties)){
+        continue;
+      }
+
+      List<Object> computesList = properties.entrySet()
           .stream()
-          .filter(map -> map.getKey().equals("flavor"))
-          .map(map -> map.getValue())
+          .filter(map -> map.getKey().equals(propertyName))
+          .map(Map.Entry::getValue)
           .collect(Collectors.toList());
-      for (Object obj : computessList) {
+      for (Object obj : computesList) {
         if (obj instanceof String) {
           computes.add((String) obj);
         } else {
@@ -368,9 +358,9 @@ public class CompositionDataExtractorImpl implements CompositionDataExtractor {
           computes.add(getInputs(toscaServiceModel, objMap.get("get_input")));
         }
       }
-      componentComputeFlavor.put(component,computes);
+      componentPropertyValues.put(component,computes);
     }
-    return componentComputeFlavor;
+    return componentPropertyValues;
   }
 
   private String  getInputs(ToscaServiceModel toscaServiceModel, String inputValue) {

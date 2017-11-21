@@ -10,7 +10,7 @@ public interface ServiceTemplateReaderService {
 
   Object getToscaVersion();
 
-  Object getNodeTypes();
+  Map<String, Object> getNodeTypes();
 
   Object getTopologyTemplate();
 

@@ -37,8 +37,9 @@ public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderSe
   }
 
   @Override
-  public Object getNodeTypes(){
-    return this.readServiceTemplate.get(nodeTypes);
+  public Map<String, Object> getNodeTypes(){
+    return Objects.isNull(this.readServiceTemplate.get(nodeTypes)) ? new HashMap<>()
+        :(Map<String, Object>) this.readServiceTemplate.get(nodeTypes);
   }
 
   @Override
