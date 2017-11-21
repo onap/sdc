@@ -1,0 +1,23 @@
+{
+  "name": "validTest",
+  "description": "Valid Test",
+  "version": "1610",
+  "data": [
+    {
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "single.env.illegalSuffix",
+          "type": "HEAT_ENV"
+        },
+        {
+          "file": "singleVol.yaml.illegalSuffix",
+          "type": "HEAT_VOL"
+        }
+      ]
+    },{
+      "file": "illegalTypeFile.yaml",
+      "type": "ILLEGAL_TYPE"
+    }
+  ]
+}
