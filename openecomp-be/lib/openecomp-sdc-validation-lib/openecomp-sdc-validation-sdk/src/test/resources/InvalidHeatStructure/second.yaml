@@ -1,0 +1,19 @@
+heat_template_version: 2013-05-23
+
+description: cmaui server template for vMMSC
+
+parameters:
+  nems_traffic_name:
+    description: dummy
+    type: string
+
+resources:
+  jsa_net2:
+      type: OS::ContrailV2::VirtualNetwork
+      properties:
+        name: {get_param: nems_traffic_name}
+  jsa_net4:
+      type: OS::ContrailV2::VirtualNetwork
+      properties:
+        name: {get_param: nems_traffic_name}
+
