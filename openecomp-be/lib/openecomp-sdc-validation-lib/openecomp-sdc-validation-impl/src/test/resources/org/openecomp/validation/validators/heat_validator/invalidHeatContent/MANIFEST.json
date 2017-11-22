@@ -1,0 +1,21 @@
+{
+  "name": "validTest",
+  "description": "Valid Test",
+  "version": "1610",
+  "data": [
+    {
+      "file": "single.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "single.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "mount_iso_script.sh",
+      "type": "SHELL"
+    }
+  ]
+}
