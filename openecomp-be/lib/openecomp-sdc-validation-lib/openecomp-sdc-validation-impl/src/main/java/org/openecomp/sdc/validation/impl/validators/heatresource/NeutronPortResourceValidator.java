@@ -2,6 +2,7 @@ package org.openecomp.sdc.validation.impl.validators.heatresource;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
@@ -29,13 +30,16 @@ import java.util.Set;
  */
 public class NeutronPortResourceValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static ErrorMessageCode ERROR_HPRODE_HPR1 = new ErrorMessageCode("HPR1");
+  private static ErrorMessageCode ERROR_HPRODE_HPR2 = new ErrorMessageCode("HPR2");
+  private static ErrorMessageCode ERROR_HPRODE_HPR3 = new ErrorMessageCode("HPR3");
 
   @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
 
     validateNovaServerPortBinding
-        (fileName, resourceEntry, (HeatResourceValidationContext) validationContext, globalContext);
+            (fileName, resourceEntry, (HeatResourceValidationContext) validationContext, globalContext);
   }
 
 
@@ -48,26 +52,26 @@ public class NeutronPortResourceValidator implements ResourceValidator {
     mdcDataDebugMessage.debugEntryMessage("file", fileName);
 
     Map<String, Map<String, List<String>>> portIdToPointingResources =
-        heatResourceValidationContext.getFileLevelResourceDependencies()
-            .get(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource());
+            heatResourceValidationContext.getFileLevelResourceDependencies()
+                    .get(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource());
 
     String portResourceId = resourceEntry.getKey();
     if (MapUtils.isEmpty(portIdToPointingResources)) {
       globalContext
-          .addMessage(fileName, ErrorLevel.WARNING,
-              ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(
-                      Messages.PORT_NO_BIND_TO_ANY_NOVA_SERVER.getErrorMessage(),
-                      portResourceId), LoggerTragetServiceName.CHECK_FOR_ORPHAN_PORTS,
-              LoggerErrorDescription.NO_BIND_FROM_PORT_TO_NOVA);
+              .addMessage(fileName, ErrorLevel.WARNING,
+                      ErrorMessagesFormatBuilder
+                              .getErrorWithParameters(
+                                      ERROR_HPRODE_HPR1, Messages.PORT_NO_BIND_TO_ANY_NOVA_SERVER.getErrorMessage(),
+                                      portResourceId), LoggerTragetServiceName.CHECK_FOR_ORPHAN_PORTS,
+                      LoggerErrorDescription.NO_BIND_FROM_PORT_TO_NOVA);
 
       return;
     }
 
     Map<String, List<String>> pointingResourcesToCurrPort =
-        portIdToPointingResources.get(portResourceId);
+            portIdToPointingResources.get(portResourceId);
     checkPortBindingFromMap(
-        fileName, portResourceId, pointingResourcesToCurrPort, globalContext);
+            fileName, portResourceId, pointingResourcesToCurrPort, globalContext);
 
     mdcDataDebugMessage.debugExitMessage("file", fileName);
   }
@@ -77,11 +81,11 @@ public class NeutronPortResourceValidator implements ResourceValidator {
                                               Map<String, List<String>> resourcesPointingToCurrPort,
                                               GlobalValidationContext globalContext) {
     List<String> pointingNovaServers =
-        MapUtils.isEmpty(resourcesPointingToCurrPort) ? new ArrayList<>()
-        : resourcesPointingToCurrPort.get(HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource());
+            MapUtils.isEmpty(resourcesPointingToCurrPort) ? new ArrayList<>()
+                    : resourcesPointingToCurrPort.get(HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource());
 
     handleErrorEventsForPortBinding(
-        fileName, portResourceId, globalContext, pointingNovaServers);
+            fileName, portResourceId, globalContext, pointingNovaServers);
 
 
   }
@@ -92,23 +96,23 @@ public class NeutronPortResourceValidator implements ResourceValidator {
                                                       List<String> pointingNovaServers) {
     if (isThereMoreThanOneBindFromNovaToPort(pointingNovaServers)) {
       globalContext
-          .addMessage(fileName, ErrorLevel.ERROR,
-              ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(
-                      Messages.MORE_THAN_ONE_BIND_FROM_NOVA_TO_PORT.getErrorMessage(),
-                      portResourceId),
-              LoggerTragetServiceName.VALIDATE_NOVA_SERVER_PORT_BINDING,
-              LoggerErrorDescription.PORT_BINDS_MORE_THAN_ONE_NOVA);
+              .addMessage(fileName, ErrorLevel.ERROR,
+                      ErrorMessagesFormatBuilder
+                              .getErrorWithParameters(
+                                      ERROR_HPRODE_HPR2, Messages.MORE_THAN_ONE_BIND_FROM_NOVA_TO_PORT.getErrorMessage(),
+                                      portResourceId),
+                      LoggerTragetServiceName.VALIDATE_NOVA_SERVER_PORT_BINDING,
+                      LoggerErrorDescription.PORT_BINDS_MORE_THAN_ONE_NOVA);
     }
 
     if (isNoNovaPointingToPort(pointingNovaServers)) {
       globalContext
-          .addMessage(fileName, ErrorLevel.WARNING,
-              ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(
-                      Messages.PORT_NO_BIND_TO_ANY_NOVA_SERVER.getErrorMessage(),
-                      portResourceId), LoggerTragetServiceName.CHECK_FOR_ORPHAN_PORTS,
-              LoggerErrorDescription.NO_BIND_FROM_PORT_TO_NOVA);
+              .addMessage(fileName, ErrorLevel.WARNING,
+                      ErrorMessagesFormatBuilder
+                              .getErrorWithParameters(
+                                      ERROR_HPRODE_HPR3, Messages.PORT_NO_BIND_TO_ANY_NOVA_SERVER.getErrorMessage(),
+                                      portResourceId), LoggerTragetServiceName.CHECK_FOR_ORPHAN_PORTS,
+                      LoggerErrorDescription.NO_BIND_FROM_PORT_TO_NOVA);
     }
   }
 
@@ -143,11 +147,11 @@ public class NeutronPortResourceValidator implements ResourceValidator {
 
     if (securityGroupsValue instanceof List) {
       List<Object> securityGroupsListFromCurrResource =
-          (List<Object>) propertiesMap.get("security_groups");
+              (List<Object>) propertiesMap.get("security_groups");
       for (Object securityGroup : securityGroupsListFromCurrResource) {
         removeSecurityGroupNamesFromListByGivenFunction(filename,
-            ResourceReferenceFunctions.GET_RESOURCE.getFunction(), securityGroup,
-            securityGroupResourceNameList, globalContext);
+                ResourceReferenceFunctions.GET_RESOURCE.getFunction(), securityGroup,
+                securityGroupResourceNameList, globalContext);
       }
     }
 
@@ -158,10 +162,10 @@ public class NeutronPortResourceValidator implements ResourceValidator {
                                                                       String functionName,
                                                                       Object securityGroup,
                                                                       Collection<String>
-                                                                          securityGroupResourceNameList,
+                                                                              securityGroupResourceNameList,
                                                                       GlobalValidationContext globalContext) {
     Set<String> securityGroupsNamesFromFunction = HeatStructureUtil
-        .getReferencedValuesByFunctionName(filename, functionName, securityGroup, globalContext);
+            .getReferencedValuesByFunctionName(filename, functionName, securityGroup, globalContext);
     securityGroupsNamesFromFunction.forEach(securityGroupResourceNameList::remove);
   }
 }
