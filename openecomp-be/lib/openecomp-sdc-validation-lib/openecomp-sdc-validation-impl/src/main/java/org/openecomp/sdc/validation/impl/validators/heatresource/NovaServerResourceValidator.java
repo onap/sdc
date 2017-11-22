@@ -1,6 +1,7 @@
 package org.openecomp.sdc.validation.impl.validators.heatresource;
 
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
@@ -24,14 +25,16 @@ import java.util.Map;
  */
 public class NovaServerResourceValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final ErrorMessageCode ERROR_CODE_HNS1 = new ErrorMessageCode("HNS1");
+  private static final ErrorMessageCode ERROR_CODE_HNS2 = new ErrorMessageCode("HNS2");
 
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
 
     HeatResourceValidationContext heatResourceValidationContext = (HeatResourceValidationContext)
-        validationContext;
+            validationContext;
     validateNovaServerResourceType
-        (fileName, resourceEntry, heatResourceValidationContext, globalContext);
+            (fileName, resourceEntry, heatResourceValidationContext, globalContext);
   }
 
   private static void validateNovaServerResourceType(String fileName,
@@ -43,8 +46,8 @@ public class NovaServerResourceValidator implements ResourceValidator {
 
     validateAssignedValueForImageOrFlavorFromNova(fileName, resourceEntry, globalContext);
     validateAllServerGroupsPointedByServerExistAndDefined
-        (fileName, resourceEntry,
-            heatResourceValidationContext.getHeatOrchestrationTemplate(), globalContext);
+            (fileName, resourceEntry,
+                    heatResourceValidationContext.getHeatOrchestrationTemplate(), globalContext);
 
     mdcDataDebugMessage.debugExitMessage("file", fileName);
 
@@ -52,21 +55,21 @@ public class NovaServerResourceValidator implements ResourceValidator {
 
   private static void validateAssignedValueForImageOrFlavorFromNova(String fileName,
                                                                     Map.Entry<String, Resource>
-                                                                        resourceEntry,
+                                                                            resourceEntry,
                                                                     GlobalValidationContext
-                                                                        globalContext) {
+                                                                            globalContext) {
 
     mdcDataDebugMessage.debugEntryMessage("file", fileName);
 
     Resource resource = resourceEntry.getValue();
     Map<String, Object> propertiesMap = resource.getProperties();
     if (propertiesMap.get(PropertiesMapKeyTypes.IMAGE.getKeyMap()) == null
-        && propertiesMap.get(PropertiesMapKeyTypes.FLAVOR.getKeyMap()) == null) {
+            && propertiesMap.get(PropertiesMapKeyTypes.FLAVOR.getKeyMap()) == null) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.MISSING_IMAGE_AND_FLAVOR.getErrorMessage(),
-                  resourceEntry.getKey()),
-          LoggerTragetServiceName.VALIDATE_ASSIGNED_VALUES_FOR_NOVA_IMAGE_FLAVOR,
-          LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
+                      .getErrorWithParameters(ERROR_CODE_HNS1, Messages.MISSING_IMAGE_AND_FLAVOR.getErrorMessage(),
+                              resourceEntry.getKey()),
+              LoggerTragetServiceName.VALIDATE_ASSIGNED_VALUES_FOR_NOVA_IMAGE_FLAVOR,
+              LoggerErrorDescription.MISSING_NOVA_PROPERTIES);
     }
 
     mdcDataDebugMessage.debugExitMessage("file", fileName);
@@ -83,8 +86,8 @@ public class NovaServerResourceValidator implements ResourceValidator {
     Map<String, Resource> resourcesMap = heatOrchestrationTemplate.getResources();
     Map<String, Object> resourceProperties = resourceEntry.getValue().getProperties();
     Map<String, Object> schedulerHintsMap =
-        resourceProperties == null ? null : (Map<String, Object>) resourceProperties.get(
-            ResourceReferenceFunctions.SCHEDULER_HINTS.getFunction());
+            resourceProperties == null ? null : (Map<String, Object>) resourceProperties.get(
+                    ResourceReferenceFunctions.SCHEDULER_HINTS.getFunction());
 
     if (MapUtils.isEmpty(schedulerHintsMap)) {
       return;
@@ -99,16 +102,16 @@ public class NovaServerResourceValidator implements ResourceValidator {
         String serverResourceName = (String) currentServerMap
                 .get(ResourceReferenceFunctions.GET_RESOURCE.getFunction());
         Resource serverResource =
-            serverResourceName == null || resourcesMap == null ? null
-                : resourcesMap.get(serverResourceName);
+                serverResourceName == null || resourcesMap == null ? null
+                        : resourcesMap.get(serverResourceName);
 
         if (serverResource != null && !serverResource.getType()
-            .equals(HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource())) {
+                .equals(HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource())) {
           globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(Messages.SERVER_NOT_DEFINED_FROM_NOVA.getErrorMessage(),
-                      serverResourceName, resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_SERVER_GROUP_EXISTENCE,
-              LoggerErrorDescription.SERVER_NOT_DEFINED_NOVA);
+                          .getErrorWithParameters(ERROR_CODE_HNS2, Messages.SERVER_NOT_DEFINED_FROM_NOVA.getErrorMessage(),
+                                  serverResourceName, resourceEntry.getKey()),
+                  LoggerTragetServiceName.VALIDATE_SERVER_GROUP_EXISTENCE,
+                  LoggerErrorDescription.SERVER_NOT_DEFINED_NOVA);
         }
       }
     }
