@@ -3,6 +3,7 @@ package org.openecomp.sdc.healing.healers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.healing.interfaces.Healer;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
@@ -24,71 +25,69 @@ import java.util.Objects;
 
 public class ComponentQuestionnaireHealer implements Healer {
 
-  private static final ComponentDao componentDao =
-      ComponentDaoFactory.getInstance().createInterface();
-  private static final ComputeDao computeDao =
-      ComputeDaoFactory.getInstance().createInterface();
-  private static final ImageDao imageDao =
-      ImageDaoFactory.getInstance().createInterface();
-
+  private static final String GENERAL = "general";
+  private static final String IMAGE = "image";
+  private static final String FORMAT = "format";
+  private static final String CPU_OVER_SUBSCRIPTION_RATIO = "CpuOverSubscriptionRatio";
+  private static final String MEMORY_RAM = "MemoryRAM";
+  private static final String VM_SIZING = "vmSizing";
+  private static final String COMPUTE = "compute";
+  private static final String NUM_OF_VMS = "numOfVMs";
+  private static final String DISK = "disk";
+  private static final String IO_OP_PER_SEC = "IOOperationsPerSec";
+  private static final String COMPUTE_CPU_OVER_SUBSCRIPTION_RATIO = "cpuOverSubscriptionRatio";
+  private static final String COMPUTE_MEMORY_RAM = "memoryRAM";
+  private static final String COMPUTE_IO_OP_PER_SEC = "ioOperationsPerSec";
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private final ComponentDao componentDao;
+  private final ComputeDao computeDao;
+  private final ImageDao imageDao;
 
-  public static final String GENERAL = "general";
-  public static final String IMAGE = "image";
-  public static final String FORMAT = "format";
-  public static final String CPU_OVER_SUBSCRIPTION_RATIO = "CpuOverSubscriptionRatio";
-  public static final String MEMORY_RAM = "MemoryRAM";
-  public static final String VM_SIZING = "vmSizing";
-  public static final String COMPUTE = "compute";
-  public static final String NUM_OF_VMS = "numOfVMs";
-  public static final String DISK = "disk";
-  public static final String IO_OP_PER_SEC = "IOOperationsPerSec";
-
-  public static final String COMPUTE_CPU_OVER_SUBSCRIPTION_RATIO = "cpuOverSubscriptionRatio";
-  public static final String COMPUTE_MEMORY_RAM = "memoryRAM";
-  public static final String COMPUTE_IO_OP_PER_SEC = "ioOperationsPerSec";
-
-  public ComponentQuestionnaireHealer(){
-
+  public ComponentQuestionnaireHealer() {
+    this.componentDao = ComponentDaoFactory.getInstance().createInterface();
+    this.computeDao = ComputeDaoFactory.getInstance().createInterface();
+    this.imageDao = ImageDaoFactory.getInstance().createInterface();
   }
+
+  public ComponentQuestionnaireHealer(ComponentDao componentDao,
+                                      ComputeDao computeDao, ImageDao imageDao) {
+    this.componentDao = componentDao;
+    this.computeDao = computeDao;
+    this.imageDao = imageDao;
+  }
+
   @Override
   public Object heal(Map<String, Object> healingParams) throws Exception {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage("VSP ID",
+        (String) healingParams.get(SdcCommon.VSP_ID));
     String vspId = (String) healingParams.get(SdcCommon.VSP_ID);
     Version version = (Version) healingParams.get(SdcCommon.VERSION);
-    String user = (String) healingParams.get(SdcCommon.USER);
     Collection<ComponentEntity> componentEntities =
         componentDao.list(new ComponentEntity(vspId, version, null));
     componentEntities.forEach(componentEntity -> {
       ComponentEntity componentQuestionnaireData =
           componentDao.getQuestionnaireData(vspId, version, componentEntity.getId());
       String questionnaire = Objects.isNull(componentQuestionnaireData) ? null
-      : componentQuestionnaireData.getQuestionnaireData();
+          : componentQuestionnaireData.getQuestionnaireData();
 
-      if (questionnaire != null) {
+      if (StringUtils.isNotBlank(questionnaire)) {
         JsonParser jsonParser = new JsonParser();
-        JsonObject  json = (JsonObject) jsonParser.parse(questionnaire);
+        JsonObject json = (JsonObject) jsonParser.parse(questionnaire);
 
         Collection<ComputeEntity> computeEntities = computeDao.list(new ComputeEntity(vspId,
             version, componentEntity.getId(), null));
-        computeEntities.stream().forEach(
-            computeEntity -> {
-              populateComputeQuestionnaire(json, computeEntity);
-            }
-        );
+        populateComputeQuestionnaire(json, computeEntities);
 
         Collection<ImageEntity> imageEntities = imageDao.list(new ImageEntity(vspId,
             version, componentEntity.getId(), null));
-        imageEntities.stream().forEach(
-            imageEntity -> {
-              populateImageQuestionnaire(json, imageEntity);
-            }
-        );
+        populateImageQuestionnaire(json, imageEntities);
 
         processDiskAttribute(json, "bootDiskSizePerVM");
         processDiskAttribute(json, "ephemeralDiskSizePerVM");
 
         String questionnaireData = json.toString();
+        componentEntity.setQuestionnaireData(questionnaireData); //Added to validate data in Junit
+
         componentDao.updateQuestionnaireData(vspId, version, componentEntity.getId(),
             questionnaireData);
       }
@@ -98,9 +97,9 @@ public class ComponentQuestionnaireHealer implements Healer {
 
   /**
    * Move Disk Atributes from genral/image/  to genral/disk in component questionnaire itself
-   * @param json
-   * @param diskAttrName
-   * @return
+   *
+   * @param json Component Json
+   * @param diskAttrName Name of disk attribute
    */
   private void processDiskAttribute(JsonObject json, String diskAttrName) {
     boolean isBootDisksizePerVM = isDiskAttributePresent(json, diskAttrName);
@@ -119,71 +118,86 @@ public class ComponentQuestionnaireHealer implements Healer {
   }
 
   private boolean isDiskAttributePresent(JsonObject json, String diskAttrName) {
-    return json.getAsJsonObject(GENERAL) != null &&
-        json.getAsJsonObject(GENERAL).getAsJsonObject(IMAGE) != null &&
-        json.getAsJsonObject(GENERAL).getAsJsonObject (IMAGE).get(diskAttrName)
+    return json.getAsJsonObject(GENERAL) != null
+        && json.getAsJsonObject(GENERAL).getAsJsonObject(IMAGE) != null
+        && json.getAsJsonObject(GENERAL).getAsJsonObject(IMAGE).get(diskAttrName)
             != null;
   }
 
   /**
    * Move the required attributes from component to Image Questionnaire
-   * @param json
-   * @param imageEntity
+   *
+   * @param json Component Json
+   * @param imageEntities All images present in component
    */
-  private void populateImageQuestionnaire(JsonObject json, ImageEntity imageEntity) {
+  private void populateImageQuestionnaire(JsonObject json, Collection<ImageEntity> imageEntities) {
     JsonObject general = getJsonObject(json, GENERAL);
     boolean isImageFormat = general != null && json
         .getAsJsonObject(GENERAL)
-        .getAsJsonObject(IMAGE) != null && json.getAsJsonObject(GENERAL).getAsJsonObject
-        (IMAGE).get(FORMAT) != null;
+        .getAsJsonObject(IMAGE) != null && json.getAsJsonObject(GENERAL).getAsJsonObject(IMAGE)
+        .get(FORMAT) != null;
     if (isImageFormat) {
       JsonObject image = getJsonObject(general, IMAGE);
       JsonElement jsonElement = image.get(FORMAT);
       JsonObject jsonObject = new JsonObject();
       jsonObject.add(FORMAT, jsonElement);
-      imageDao.updateQuestionnaireData(imageEntity.getVspId(), imageEntity.getVersion(), imageEntity
-          .getComponentId(),imageEntity.getId(), jsonObject.toString());
+      imageEntities.forEach(imageEntity -> imageDao.updateQuestionnaireData(imageEntity.getVspId(),
+          imageEntity.getVersion(), imageEntity.getComponentId(),
+          imageEntity.getId(), jsonObject.toString()));
       image.remove(FORMAT);
     }
   }
 
-  /**
-   * Move the required attributes from component to Compute Questionnaire
-   * @param json
-   * @param computeEntity
-   */
-  private void populateComputeQuestionnaire(JsonObject json, ComputeEntity computeEntity) {
+  private void populateComputeQuestionnaire(JsonObject json, Collection<ComputeEntity>
+      computeEntities) {
     JsonObject compute = getJsonObject(json, COMPUTE);
+    if (compute != null) {
+      JsonObject vmSizing = handleVmSizing(compute);
+      vmSizing = handleNumOfVm(compute, vmSizing);
+
+      if (vmSizing != null) {
+        JsonObject computeQuestionnaireJsonObject = new JsonObject();
+        computeQuestionnaireJsonObject.add(VM_SIZING, vmSizing);
+        String computeQuestionnaire = computeQuestionnaireJsonObject.toString();
+        computeEntities.forEach(
+            computeEntity -> computeDao.updateQuestionnaireData(computeEntity.getVspId(),
+                computeEntity.getVersion(), computeEntity.getComponentId(),
+                computeEntity.getId(), computeQuestionnaire));
+      }
+    }
+  }
+
+  private JsonObject handleVmSizing(JsonObject compute) {
     JsonObject vmSizing = getJsonObject(compute, VM_SIZING);
-    if (compute != null && vmSizing != null) {
+    if (vmSizing != null) {
       JsonElement ioOperationsPerSec = vmSizing.get(IO_OP_PER_SEC);
       if (ioOperationsPerSec != null) {
         vmSizing.addProperty(COMPUTE_IO_OP_PER_SEC, ioOperationsPerSec.getAsNumber());
         vmSizing.remove(IO_OP_PER_SEC);
       }
-
-      JsonObject numberOfVms = getJsonObject(compute, NUM_OF_VMS);
-      if (numberOfVms != null ) {
-        JsonElement cpuRatio =  numberOfVms.get(CPU_OVER_SUBSCRIPTION_RATIO);
-        if (cpuRatio != null ) {
-          vmSizing.addProperty(COMPUTE_CPU_OVER_SUBSCRIPTION_RATIO, cpuRatio.getAsString());
-          numberOfVms.remove(CPU_OVER_SUBSCRIPTION_RATIO);
-        }
-        JsonElement memoryRam =  numberOfVms.get(MEMORY_RAM);
-        if (memoryRam != null ) {
-          vmSizing.addProperty(COMPUTE_MEMORY_RAM, memoryRam.getAsString());
-          numberOfVms.remove(MEMORY_RAM);
-        }
-      }
-
-      JsonObject computeQuestionnaireJsonObject = new JsonObject();
-      computeQuestionnaireJsonObject.add(VM_SIZING, vmSizing);
-      String computeQuestionnaire = computeQuestionnaireJsonObject.toString();
-      computeDao.updateQuestionnaireData(computeEntity.getVspId(), computeEntity.getVersion(),
-          computeEntity.getComponentId(), computeEntity.getId(), computeQuestionnaire);
       compute.remove(VM_SIZING);
-
     }
+    return vmSizing;
+  }
+
+  private JsonObject handleNumOfVm(JsonObject compute, JsonObject vmSizing) {
+    JsonObject numberOfVms = getJsonObject(compute, NUM_OF_VMS);
+    if (numberOfVms != null) {
+      JsonElement cpuRatio = numberOfVms.get(CPU_OVER_SUBSCRIPTION_RATIO);
+      JsonElement memoryRam = numberOfVms.get(MEMORY_RAM);
+      if (vmSizing == null && (cpuRatio != null || memoryRam != null)) {
+        vmSizing = new JsonObject();
+      }
+      if (cpuRatio != null) {
+        vmSizing.addProperty(COMPUTE_CPU_OVER_SUBSCRIPTION_RATIO, cpuRatio.getAsString());
+        numberOfVms.remove(CPU_OVER_SUBSCRIPTION_RATIO);
+      }
+      if (memoryRam != null) {
+        vmSizing.addProperty(COMPUTE_MEMORY_RAM, memoryRam.getAsString());
+        numberOfVms.remove(MEMORY_RAM);
+      }
+    }
+    return vmSizing;
   }
 
   private JsonObject getJsonObject(JsonObject json, String name) {
