@@ -17,35 +17,51 @@ public class NovaServerGroupResourceValidatorTest {
 
   HeatResourceValidator baseValidator = new HeatResourceValidator();
   NovaServerGroupResourceValidator resourceValidator = new NovaServerGroupResourceValidator();
-
+  private static final String PATH = "/org/openecomp/validation/validators/heat_validator/";
   @Test
   public void testPolicyIsAffinityOrAntiAffinity() throws IOException {
     Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
-        resourceValidator, HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/heat_validator/policy_is_affinity_or_anti_affinity/negative_test/input");
+            resourceValidator, HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource(),
+            PATH + "policy_is_affinity_or_anti_affinity/negative_test/input");
 
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
 
     Assert.assertEquals(messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(
-        messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "ERROR: Wrong policy in server group - pcrf_server_policies_1");
+            messages.get("hot-nimbus-psm_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
+            "ERROR: [HNG1]: Wrong policy in server group - pcrf_server_policies_1");
   }
 
   @Test
   public void testServerGroupCalledByServer() throws IOException {
-    Map<String, MessageContainer> messages =ValidationTestUtil.testValidator(baseValidator,
-        resourceValidator, HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource(),
-        "/org/openecomp/validation/validators/heat_validator/server_group_called_by_nova_server/input");
+    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+            resourceValidator, HeatResourcesTypes.NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource(),
+            PATH + "server_group_called_by_nova_server/input");
 
     Assert.assertNotNull(messages);
     Assert.assertEquals(messages.size(), 1);
 
     Assert.assertEquals(messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().size(), 1);
     Assert.assertEquals(
-        messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
-        "WARNING: ServerGroup not in use, Resource Id [not_used_server_group]");
+            messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
+            "WARNING: [HNG3]: ServerGroup not in use, Resource Id [not_used_server_group]");
+
+  }
+
+  @Test
+  public void testNonServerGroup() throws IOException {
+    Map<String, MessageContainer> messages = ValidationTestUtil.testValidator(baseValidator,
+            resourceValidator, HeatResourcesTypes.NOVA_SERVER_RESOURCE_TYPE.getHeatResource(),
+            PATH + "server_group_called_by_nova_server_negative/input");
+
+    Assert.assertNotNull(messages);
+    Assert.assertEquals(messages.size(), 1);
+
+    Assert.assertEquals(messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().size(), 1);
+    Assert.assertEquals(
+            messages.get("hot-nimbus-pps_v1.0.yaml").getErrorMessageList().get(0).getMessage(),
+            "WARNING: [HNG2]: ServerGroup not in use, Resource Id [nova_server]");
 
   }
 }

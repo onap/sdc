@@ -1,6 +1,7 @@
 package org.openecomp.sdc.validation.impl.validators.heatresource;
 
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
@@ -25,12 +26,15 @@ import java.util.Objects;
  */
 public class NovaServerGroupResourceValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final ErrorMessageCode ERROR_CODE_HNG1 = new ErrorMessageCode("HNG1");
+  private static final ErrorMessageCode ERROR_CODE_HNG2 = new ErrorMessageCode("HNG2");
+  private static final ErrorMessageCode ERROR_CODE_HNG3 = new ErrorMessageCode("HNG3");
 
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
     validateNovaServerGroupPolicy(fileName, resourceEntry, globalContext);
-    validateServerGroupIsUsed
-        (fileName, resourceEntry, globalContext, (HeatResourceValidationContext) validationContext);
+    validateServerGroupIsUsed(fileName, resourceEntry, globalContext,
+            (HeatResourceValidationContext) validationContext);
   }
 
   @SuppressWarnings("unchecked")
@@ -42,7 +46,7 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
 
     Resource resource = resourceEntry.getValue();
     Object policies =
-        resource.getProperties() == null ? null : resource.getProperties().get("policies");
+            resource.getProperties() == null ? null : resource.getProperties().get("policies");
 
     if (Objects.nonNull(policies) && policies instanceof List) {
       List<Object> policiesList = (List<Object>) policies;
@@ -50,17 +54,19 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
         Object policy = policiesList.get(0);
         if (!isGivenPolicyValid(policy)) {
           globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(Messages.WRONG_POLICY_IN_SERVER_GROUP.getErrorMessage(),
-                      resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_NOVA_SEVER_GROUP_POLICY,
-              LoggerErrorDescription.WRONG_POLICY_SERVER_GROUP);
+                          .getErrorWithParameters(
+                                  ERROR_CODE_HNG1, Messages.WRONG_POLICY_IN_SERVER_GROUP.getErrorMessage(),
+                                  resourceEntry.getKey()),
+                  LoggerTragetServiceName.VALIDATE_NOVA_SEVER_GROUP_POLICY,
+                  LoggerErrorDescription.WRONG_POLICY_SERVER_GROUP);
         }
       } else {
         globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(Messages.WRONG_POLICY_IN_SERVER_GROUP.getErrorMessage(),
-                    resourceEntry.getKey()),
-            LoggerTragetServiceName.VALIDATE_NOVA_SEVER_GROUP_POLICY,
-            LoggerErrorDescription.WRONG_POLICY_SERVER_GROUP);
+                        .getErrorWithParameters(ERROR_CODE_HNG1,
+                                Messages.WRONG_POLICY_IN_SERVER_GROUP.getErrorMessage(),
+                                resourceEntry.getKey()),
+                LoggerTragetServiceName.VALIDATE_NOVA_SEVER_GROUP_POLICY,
+                LoggerErrorDescription.WRONG_POLICY_SERVER_GROUP);
       }
     }
 
@@ -83,45 +89,43 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
                                         HeatResourceValidationContext validationContext) {
 
     Map<String, Map<String, List<String>>> pointedServerGroups =
-        validationContext.getFileLevelResourceDependencies().get(HeatResourcesTypes
-            .NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource());
+            validationContext.getFileLevelResourceDependencies().get(HeatResourcesTypes
+                    .NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource());
 
     if (MapUtils.isEmpty(pointedServerGroups)) {
       globalContext
-          .addMessage(
-              fileName,
-              ErrorLevel.WARNING,
-              ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(
-                      Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
-                      ValidatorConstants.Server_Group, resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_ALL_SERVER_GROUP_OR_SECURITY_GROUP_IN_USE,
-              LoggerErrorDescription.SERVER_GROUP_SECURITY_GROUP_NOT_IN_USE);
+              .addMessage(
+                      fileName,
+                      ErrorLevel.WARNING,
+                      ErrorMessagesFormatBuilder
+                              .getErrorWithParameters(
+                                      ERROR_CODE_HNG2, Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
+                                      ValidatorConstants.Server_Group, resourceEntry.getKey()),
+                      LoggerTragetServiceName.VALIDATE_ALL_SERVER_GROUP_OR_SECURITY_GROUP_IN_USE,
+                      LoggerErrorDescription.SERVER_GROUP_SECURITY_GROUP_NOT_IN_USE);
       return;
     }
 
     handleServerGroupReferences(fileName, resourceEntry, pointedServerGroups, globalContext);
-
-
   }
 
   private void handleServerGroupReferences(String fileName, Map.Entry<String, Resource>
-      resourceEntry, Map<String, Map<String, List<String>>> pointedServerGroups,
+          resourceEntry, Map<String, Map<String, List<String>>> pointedServerGroups,
                                            GlobalValidationContext globalContext) {
     Map<String, List<String>> resourcesPointingToCurrServerGroup =
-        pointedServerGroups.get(resourceEntry.getKey());
+            pointedServerGroups.get(resourceEntry.getKey());
 
     if (MapUtils.isEmpty(resourcesPointingToCurrServerGroup)) {
       globalContext
-          .addMessage(
-              fileName,
-              ErrorLevel.WARNING,
-              ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(
-                      Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
-                      ValidatorConstants.Server_Group, resourceEntry.getKey()),
-              LoggerTragetServiceName.VALIDATE_ALL_SERVER_GROUP_OR_SECURITY_GROUP_IN_USE,
-              LoggerErrorDescription.SERVER_GROUP_SECURITY_GROUP_NOT_IN_USE);
+              .addMessage(
+                      fileName,
+                      ErrorLevel.WARNING,
+                      ErrorMessagesFormatBuilder
+                              .getErrorWithParameters(
+                                      ERROR_CODE_HNG3, Messages.RESOURCE_NOT_IN_USE.getErrorMessage(),
+                                      ValidatorConstants.Server_Group, resourceEntry.getKey()),
+                      LoggerTragetServiceName.VALIDATE_ALL_SERVER_GROUP_OR_SECURITY_GROUP_IN_USE,
+                      LoggerErrorDescription.SERVER_GROUP_SECURITY_GROUP_NOT_IN_USE);
     }
 
   }
