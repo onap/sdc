@@ -7,7 +7,8 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
-import org.springframework.util.Assert;
+import org.testng.Assert;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -98,8 +99,7 @@ public class TestUtil {
       ServiceTemplate actualServiceTemplate =
           actualServiceTemplates.get(serviceTemplateName);
 
-      Assert.notNull(actualServiceTemplate,
-          "Missing service template in service model : " + serviceTemplateName);
+      Assert.assertNotNull(actualServiceTemplate,"Missing service template in service model : " + serviceTemplateName);
       org.junit.Assert.assertEquals("Difference in file " + serviceTemplateName,
           JsonUtil.object2Json(expectedServiceTemplateEntry.getValue()),
           JsonUtil.object2Json(actualServiceTemplate));

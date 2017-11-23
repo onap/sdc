@@ -28,7 +28,7 @@
         <module>openecomp-tosca-lib</module>
         <module>openecomp-sdc-action-lib</module>
         <module>openecomp-sdc-enrichment-lib</module>
-        <module>openecomp-logging-lib</module>
+        <module>openecomp-sdc-logging-lib</module>
         <module>openecomp-healing-lib</module>
         <module>openecomp-sdc-activity-log-lib</module>
         <module>openecomp-tosca-converter-lib</module>
