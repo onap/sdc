@@ -21,10 +21,9 @@
 package org.openecomp.sdc.validation.impl.validators;
 
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.sdc.tosca.services.YamlUtil;
-import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.validation.Validator;
+import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -51,10 +50,6 @@ import java.util.Optional;
 public class ContrailValidator implements Validator {
   public static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   protected static Logger logger = (Logger) LoggerFactory.getLogger(ContrailValidator.class);
-  private static final ErrorMessageCode ERROR_CODE_CTL_1 = new ErrorMessageCode("CTL1");
-  private static final ErrorMessageCode ERROR_CODE_CTL_2 = new ErrorMessageCode("CTL2");
-  private static final ErrorMessageCode ERROR_CODE_CTL_3 = new ErrorMessageCode("CTL3");
-  private static final ErrorMessageCode ERROR_CODE_CTL_4 = new ErrorMessageCode("CTL4");
 
   @Override
   public void validate(GlobalValidationContext globalContext) {
@@ -118,7 +113,7 @@ public class ContrailValidator implements Validator {
       globalContext.addMessage(
           contrailResourcesMappingTo.getContrailV1Resources().keySet().iterator().next(),
           ErrorLevel.WARNING, ErrorMessagesFormatBuilder.getErrorWithParameters(
-                  ERROR_CODE_CTL_2, Messages.MERGE_OF_CONTRAIL2_AND_CONTRAIL3_RESOURCES.getErrorMessage(),
+              Messages.MERGE_OF_CONTRAIL2_AND_CONTRAIL3_RESOURCES.getErrorMessage(),
               contrailResourcesMappingTo.fetchContrailV1Resources(),
               contrailResourcesMappingTo.fetchContrailV2Resources()),
           LoggerTragetServiceName.MERGE_OF_CONTRAIL_2_AND_3,
@@ -133,9 +128,8 @@ public class ContrailValidator implements Validator {
     Optional<InputStream> fileContent = globalContext.getFileContent(fileName);
     if (!fileContent.isPresent()) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-          .getErrorWithParameters(ERROR_CODE_CTL_1, Messages.INVALID_HEAT_FORMAT_REASON
-                  .getErrorMessage(),
-          "The file '" + fileName + "' has no content"),
+              .getErrorWithParameters(Messages.INVALID_HEAT_FORMAT_REASON.getErrorMessage(),
+                  "The file '" + fileName + "' has no content"),
           LoggerTragetServiceName.VALIDATE_HEAT_FORMAT, LoggerErrorDescription.INVALID_HEAT_FORMAT);
       return Optional.empty();
     }
@@ -181,33 +175,28 @@ public class ContrailValidator implements Validator {
                                                      GlobalValidationContext globalContext) {
 
     mdcDataDebugMessage.debugEntryMessage("file", fileName);
-    globalContext.setMessageCode(ERROR_CODE_CTL_4);
+
     HeatOrchestrationTemplate heatOrchestrationTemplate =
         ValidationUtil.checkHeatOrchestrationPreCondition(fileName, globalContext);
 
     if (heatOrchestrationTemplate == null) {
       return;
     }
-    validateResourcePrefix(fileName, globalContext, heatOrchestrationTemplate);
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
-  }
 
-  private void validateResourcePrefix(String fileName, GlobalValidationContext globalContext,
-                                      HeatOrchestrationTemplate heatOrchestrationTemplate) {
-
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
     Map<String, Resource> resourcesMap = heatOrchestrationTemplate.getResources();
-    if(!MapUtils.isEmpty(resourcesMap)) {
+
+    if( ! MapUtils.isEmpty(resourcesMap)) {
       for (Map.Entry<String, Resource> resourceEntry : resourcesMap.entrySet()) {
         String type = resourceEntry.getValue().getType();
         if (Objects.nonNull(type) && type.startsWith(HeatConstants.CONTRAIL_RESOURCE_PREFIX)) {
           globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(ERROR_CODE_CTL_3, Messages.CONTRAIL_2_IN_USE.getErrorMessage(),
-              resourceEntry.getKey()), LoggerTragetServiceName.CONTRAIL_2_IN_USE,
+                  .getErrorWithParameters(Messages.CONTRAIL_2_IN_USE.getErrorMessage(),
+                      resourceEntry.getKey()), LoggerTragetServiceName.CONTRAIL_2_IN_USE,
               LoggerErrorDescription.CONTRAIL_2_IN_USE);
         }
       }
     }
+
     mdcDataDebugMessage.debugExitMessage("file", fileName);
   }
 

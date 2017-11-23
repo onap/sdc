@@ -2,7 +2,6 @@ package org.openecomp.sdc.validation.base;
 
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -35,8 +34,6 @@ public class ResourceBaseValidator implements Validator {
 
   protected Map<String, ImplementationConfiguration> resourceTypeToImpl = new HashMap<>();
   private static Logger logger = (Logger) LoggerFactory.getLogger(ResourceBaseValidator.class);
-  private static final ErrorMessageCode ERROR_CODE_RBV_1 = new ErrorMessageCode("RBV1");
-  private static final ErrorMessageCode ERROR_CODE_RBV_2 = new ErrorMessageCode("RBV2");
 
 
   public void init(Map<String, Object> properties) {
@@ -45,8 +42,8 @@ public class ResourceBaseValidator implements Validator {
     }
 
     properties.entrySet().stream()
-        .filter(entry -> getImplementationConfigurationFromProperties(entry.getValue()) != null)
-        .forEach(entry -> resourceTypeToImpl
+        .filter(entry -> getImplementationConfigurationFromProperties(entry.getValue()) != null).
+        forEach(entry -> resourceTypeToImpl
             .put(entry.getKey(), getImplementationConfigurationFromProperties(entry.getValue())));
   }
 
@@ -72,7 +69,6 @@ public class ResourceBaseValidator implements Validator {
 
   private void validate(String fileName, String envFileName,
                         GlobalValidationContext globalContext) {
-    globalContext.setMessageCode(ERROR_CODE_RBV_2);
     HeatOrchestrationTemplate heatOrchestrationTemplate =
         ValidationUtil.checkHeatOrchestrationPreCondition(fileName, globalContext);
     if (heatOrchestrationTemplate == null) {
@@ -92,8 +88,7 @@ public class ResourceBaseValidator implements Validator {
 
       if (Objects.isNull(resourceType)) {
         globalContext.addMessage(fileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
-                .getErrorWithParameters(ERROR_CODE_RBV_1,
-                        Messages.INVALID_RESOURCE_TYPE.getErrorMessage(),"null",
+                .getErrorWithParameters(Messages.INVALID_RESOURCE_TYPE.getErrorMessage(), "null",
                     resourceEntry.getKey()), LoggerTragetServiceName.VALIDATE_RESOURCE_TYPE,
             LoggerErrorDescription.INVALID_RESOURCE_TYPE);
       } else {

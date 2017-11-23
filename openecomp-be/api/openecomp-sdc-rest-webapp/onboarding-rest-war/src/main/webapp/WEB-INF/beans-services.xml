@@ -35,21 +35,7 @@
     <bean id="applicationConfigManager" class="org.openecomp.sdc.applicationconfig.impl.ApplicationConfigManagerImpl"/>
 
     <!-- aspect beans -->
-    <bean id = "debugAspect" class="org.openecomp.sdc.logging.aspects.DebugAspect"/>
     <bean id = "healthCheck" class="org.openecomp.sdcrests.health.rest.services.HealthCheckImpl"/>
-    <!--aop:config>
-        < aspect pointcuts>
-        <aop:pointcut id="loggingDebugPointcut" expression="execution(* org.openecomp.sdc.*.*.*(..))"/>
-
-        <advices>
-        <aop:aspect id="logDebugAspect" ref="debugAspect">
-            <aop:before pointcut-ref="loggingDebugPointcut" method="debugEnterMethod"/>
-            <aop:after-returning pointcut-ref="loggingDebugPointcut" method="debugExitMethod"/>
-        </aop:aspect>
-    </aop:config-->
-
-
-
 
     <!-- RESTful Services -->
     <jaxrs:server id="restContainer" address="/">

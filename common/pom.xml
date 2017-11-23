@@ -20,7 +20,6 @@
     </properties>
 
     <modules>
-        <module>openecomp-logging-lib</module>
         <module>openecomp-sdc-artifact-generator-lib</module>
         <module>openecomp-common-configuration-management</module>
         <module>openecomp-tosca-datatype</module>
