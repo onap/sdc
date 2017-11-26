@@ -21,9 +21,9 @@
 package org.openecomp.sdc.ci.tests.sanity;
 
 
-
-
-
+import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
+import fj.data.Either;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
@@ -51,11 +51,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
-
-import fj.data.Either;
 
 import java.io.File;
 
@@ -86,7 +81,8 @@ public class Onboard extends ComponentBaseTest {
 	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "VNF_List")
 	public void onboardVNFShotFlow(String filepath, String vnfFile) throws Exception, Throwable {
 		setLog(vnfFile);
-		System.out.println("print - >" + makeDistributionValue);
+		logger.info("Onboarding - > " + vnfFile);
+//		System.out.println("Onboarding - > " + vnfFile);
 		runOnboardToDistributionFlow(filepath, vnfFile);
 	}
 	

@@ -33,24 +33,17 @@
                         </goals>
                         <configuration>
                             <filesets>
-                                <fileset>
-                                    <directory>${project.basedir}\sdc-cassandra\chef-repo\cookbooks\cassandra-actions\attributes\</directory>
-                                    <followSymlinks>false</followSymlinks>
-                                    <includes>
-                                        <include>**/default.rb</include>
-                                    </includes>
-                                </fileset>
                                 <!-- static configuration files -->
                                	<fileset>	
                                		<directory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-catalog-be/files/default</directory>
                                		<followSymlinks>false</followSymlinks>
                                    	<includes>
-										<include>Artifact-Generator.properties</include>
-										<include>error-configuration.yaml</include>
-										<include>ecomp-error-configuration.yaml</include>
-										<include>logback.xml</include>
-									</includes>
-          						</fileset>
+                                        <include>Artifact-Generator.properties</include>
+                                        <include>error-configuration.yaml</include>
+                                        <include>ecomp-error-configuration.yaml</include>
+                                        <include>logback.xml</include>
+                                    </includes>
+                                </fileset>
                                 <!-- BE WAR's -->
                                 <fileset>	
 	                                <directory>${project.parent.basedir}/sdc-os-chef/sdc-backend</directory>
@@ -73,6 +66,17 @@
                                     <includes>
     	                               	<include>normatives.tar.gz</include>
                                    	</includes>
+                                </fileset>
+                                <fileset>
+                                    <directory>${project.basedir}/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/attributes/</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                    <includes>
+                                        <include>**/default.rb</include>
+                                    </includes>
+                                </fileset>
+                                <fileset>
+                                    <directory>${project.basedir}/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/tools</directory>
+                                    <followSymlinks>false</followSymlinks>
                                 </fileset>
                                 <!-- Sanity jar -->
                                 <fileset>
@@ -104,7 +108,7 @@
                                 ${project.basedir}\sdc-cassandra\chef-repo\cookbooks\cassandra-actions\attributes\default.rb
                             </path>
                             <lines>
-                                <line>normal['version'] = "${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"</line>
+                                <line>normal['version'] ="${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}"</line>
                             </lines>
                         </file>
                     </files>
@@ -255,6 +259,7 @@
                                     </resources>
                                 </configuration>
                             </execution>
+                            
                             <execution>
                                 <id>copy-resources-test-apis-ci</id>
                                 <phase>validate</phase>
@@ -273,6 +278,33 @@
                                     </resources>
                                 </configuration>
                             </execution>
+                            
+                            
+                            <execution>
+                                <id>copy-dox-files</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/openecomp-be</directory>
+                                            <includes>
+                                                <include>tools/build/**</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/openecomp-be</directory>
+                                            <includes>
+                                                <include>tools/install/**</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            
                             <execution>
 								<id>copy-normatives</id>
 								<phase>validate</phase>
@@ -306,11 +338,10 @@
                             <registry>nexus3.onap.org:10001</registry>
                             <authConfig>
                                 <pull>
-     					<username>docker</username>
-      					<password>docker</password>
-     				</pull>
-    			    </authConfig>
-
+      					            <username>docker</username>
+      					            <password>docker</password>
+      				            </pull>
+    			            </authConfig>
                             <images>
 
                                 <!-- Build backend image -->

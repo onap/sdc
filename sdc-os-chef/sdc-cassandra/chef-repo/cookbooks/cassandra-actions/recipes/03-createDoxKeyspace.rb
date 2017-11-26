@@ -22,7 +22,7 @@ bash "onboard-db-schema-creation" do
     code <<-EOH
      cd /tmp/tools/build/scripts
      chmod +x onboard-db-schema-creation.sh
-     /tmp/tools/build/scripts/onboard-db-schema-creation.sh
+     bash /tmp/tools/build/scripts/onboard-db-schema-creation.sh
     EOH
 end
     
