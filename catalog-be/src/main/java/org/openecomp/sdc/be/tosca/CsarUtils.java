@@ -52,6 +52,7 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
@@ -146,7 +147,8 @@ public class CsarUtils {
 																	ImportUtils.Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + 
 																	"([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
 																	"([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN + 
-																	"([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN;
+																	"([\\d\\w\\_\\-\\.\\s]+)" + DEL_PATTERN +
+																	"([\\d\\w\\_\\-\\.\\s]+)";
 
 	public static final String VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN = ARTIFACTS + DEL_PATTERN+
 	// Artifact Group (i.e Deployment/Informational)
@@ -274,7 +276,7 @@ public class CsarUtils {
 		zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + fileName));
 		zip.write(mainYaml);
 			//US798487 - Abstraction of complex types
-			if (!ToscaUtils.isAtomicType(component)){
+			if (!ModelConverter.isAtomicComponent(component)){
 				log.debug("Component {} is complex - generating abstract type for it..", component.getName());
 				writeComponentInterface(component, zip, fileName);
 			}
@@ -331,7 +333,7 @@ public class CsarUtils {
 				zip.write(content);
 
 				// add component interface to zip
-				if (!ToscaUtils.isAtomicType(innerComponent)) {
+				if (!ModelConverter.isAtomicComponent(innerComponent)) {
 					writeComponentInterface(innerComponent, zip, icFileName);
 				}
 			}
@@ -452,7 +454,7 @@ public class CsarUtils {
 					}
 
 					//if not atomic - insert inner components as well
-					if(!ToscaUtils.isAtomicType(componentRI)) {
+					if(!ModelConverter.isAtomicComponent(componentRI)) {
 						addInnerComponentsToCache(componentCache, componentRI);
 					}
 				}

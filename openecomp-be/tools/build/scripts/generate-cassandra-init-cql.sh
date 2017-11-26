@@ -26,7 +26,7 @@ usage() { echo "Usage: $0 <db-cql-json-file> keyspace yes/no, for example: $0 ca
 
 main()
 {
-        if [ $3 == 'yes' ]; then
+        if [ "$3" = "yes" ]; then
             echo "CREATE KEYSPACE IF NOT EXISTS dox WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
         fi
         echo "USE dox;"

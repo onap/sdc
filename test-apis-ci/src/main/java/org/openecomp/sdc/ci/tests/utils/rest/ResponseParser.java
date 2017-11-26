@@ -187,7 +187,7 @@ public class ResponseParser {
 		Resource resource = null;
 		try {
 //			TODO Andrey L. uncomment line below in case to ignore on unknown properties, not recommended  
-//			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			resource = mapper.readValue(response, Resource.class);
 			
 			logger.debug(resource.toString());

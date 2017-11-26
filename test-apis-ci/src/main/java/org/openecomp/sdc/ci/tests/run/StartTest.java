@@ -34,8 +34,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 //import org.junit.runner.JUnitCore;
@@ -94,7 +95,7 @@ public class StartTest {
 	}
 
 	public StartTest() {
-		logger = Logger.getLogger(StartTest.class.getName());
+		logger = LoggerFactory.getLogger(StartTest.class.getName());
 	}
 
 	public static void enableLogger() {
