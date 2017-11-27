@@ -140,7 +140,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
 			@ApiResponse(code = 400, message = "Create VFCMT request: VFCMT vendor name has wrong format - SVC4071"),
 			@ApiResponse(code = 400, message = "Create VFCMT request: VFCMT vendor release has wrong format - SVC4072"),
 			@ApiResponse(code = 400, message = "Create VFCMT request: VFCMT name exceeds character limit - SVC4073")})
-	@ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.Resource", paramType = "body", value = "json describe the created resource")})
+			@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.Resource", paramType = "body", value = "json describe the created resource")
 	public Response createResourceExternal(
 			@ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
 			@ApiParam(value = "The user id", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
@@ -277,7 +277,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
 			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
 			@ApiResponse(code = 403, message = "Asset is already checked-out by another user - SVC4085"),
 			@ApiResponse(code = 403, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4080")})
-	@ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction", paramType = "body", value = "userRemarks - Short description (free text) about the asset version being changed")})
+			@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction", paramType = "body", value = "userRemarks - Short description (free text) about the asset version being changed")
 	public Response changeResourceStateExternal(
 			@ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
 			@ApiParam(value = "The user id", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
