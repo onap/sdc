@@ -255,7 +255,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
 	@Path("/services/{serviceName}/{serviceVersion}/resourceInstances/{resourceInstanceName}/artifacts/{artifactName}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@ApiOperation(value = "Download resource instance artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = String.class)
+	@ApiOperation(nickname = "downloadResourceInstanceArtifactByName",value = "Download resource instance artifact by artifact name", httpMethod = "GET", notes = "Returns downloaded artifact", response = String.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "The artifact is found and streamed.", response = String.class),
 			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),

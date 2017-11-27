@@ -61,7 +61,6 @@ import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -120,7 +119,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 			@ApiResponse(code = 400, message = "Artifact name is missing in input - SVC4128"),
 			@ApiResponse(code = 400, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
 			@ApiResponse(code = 400, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-	@ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
+			@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")
 	public Response uploadArtifact(
 			@ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
 			@ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true)@HeaderParam(value = Constants.MD5_HEADER) String checksum,
@@ -212,7 +211,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 			@ApiResponse(code = 400, message = "Artifact name is missing in input - SVC4128"),
 			@ApiResponse(code = 400, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
 			@ApiResponse(code = 400, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-	@ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
+			@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")
 	public Response uploadArtifactToInstance(
 			@ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
 			@ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true)@HeaderParam(value = Constants.MD5_HEADER) String checksum,
@@ -312,7 +311,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 			@ApiResponse(code = 400, message = "Artifact name is missing in input - SVC4128"),
 			@ApiResponse(code = 403, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
 			@ApiResponse(code = 409, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-	@ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
+			@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")
 	public Response updateArtifact(
 			@ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
 			@ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true)@HeaderParam(value = Constants.MD5_HEADER) String checksum,
@@ -406,7 +405,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 			@ApiResponse(code = 400, message = "Artifact name is missing in input - SVC4128"),
 			@ApiResponse(code = 403, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
 			@ApiResponse(code = 409, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-	@ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
+			@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")
 	public Response updateArtifactOnResourceInstance(
 			@ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
 			@ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true)@HeaderParam(value = Constants.MD5_HEADER) String checksum,
@@ -747,7 +746,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@GET
 	@Path("/{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@ApiOperation(value = "Download resource instance artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = Response.class)
+	@ApiOperation(nickname = "downloadResourceInstanceArtifactByUUID",value = "Download resource instance artifact by artifact UUID", httpMethod = "GET", notes = "Returns downloaded artifact", response = Response.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Artifact downloaded", response = String.class),
 			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
