@@ -1,0 +1,135 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_72121eb6",
+        "filename": "openecomp-ui/src/nfvo-components/fileupload/DraggableUploadFileBox.jsx",
+        "patchSetId": 8
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-11-29T09:54:33Z",
+      "side": 1,
+      "message": "This should not be part of the changed files. in general - check your setting for white spaces",
+      "revId": "8f969a9b1ad7f3e211363090e593a62bd619da96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_722bfeeb",
+        "filename": "openecomp-ui/src/nfvo-components/fileupload/VnfRepositorySearchBox.jsx",
+        "patchSetId": 8
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-11-29T09:54:33Z",
+      "side": 1,
+      "message": "please remove. this is not relevant for this page.",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 3
+      },
+      "revId": "8f969a9b1ad7f3e211363090e593a62bd619da96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9217aaa3",
+        "filename": "openecomp-ui/src/nfvo-components/fileupload/VnfRepositorySearchBox.jsx",
+        "patchSetId": 8
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-11-29T09:54:33Z",
+      "side": 1,
+      "message": "makes this a component that receives and wraps the box, it is confusing that the file box is displayed through this component when vnf is set to false",
+      "revId": "8f969a9b1ad7f3e211363090e593a62bd619da96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_32357646",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/landingPage/SoftwareProductLandingPageView.jsx",
+        "patchSetId": 8
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-11-29T09:54:33Z",
+      "side": 1,
+      "message": "wrong location for the component. this should be under sdc/vnfMarketPlace",
+      "revId": "8f969a9b1ad7f3e211363090e593a62bd619da96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f23e2e29",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/landingPage/SoftwareProductLandingPageView.jsx",
+        "patchSetId": 8
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-11-29T09:54:33Z",
+      "side": 1,
+      "message": "why not add the vnf code here instead of the searchbox? this code is very misleading since it shows the regular searchbox if there is no VNF cnfigured",
+      "revId": "8f969a9b1ad7f3e211363090e593a62bd619da96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_320c9694",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportActionHelper.js",
+        "patchSetId": 8
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-11-29T09:54:33Z",
+      "side": 1,
+      "message": "i don\u0027t understand why you don\u0027t add the entire url (including http) to the configuration file instead of only the domain. why add more hardcoded stuff when it\u0027s already in the configuration",
+      "range": {
+        "startLine": 27,
+        "startChar": 1,
+        "endLine": 27,
+        "endChar": 88
+      },
+      "revId": "8f969a9b1ad7f3e211363090e593a62bd619da96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b248a6cd",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportView.jsx",
+        "patchSetId": 8
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-11-29T09:54:33Z",
+      "side": 1,
+      "message": "new line for function.\n\ndo you not use the sortDesc paramter?\n\nam nor sure what this does, should the sort only be activated when descending? or should you always sort and only reverse later depending on the state?",
+      "revId": "8f969a9b1ad7f3e211363090e593a62bd619da96",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
