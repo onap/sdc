@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.datatypes.components;
 import java.io.Serializable;
 
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinition implements Serializable {
 

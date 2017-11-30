@@ -30,7 +30,6 @@ public class ToscaServiceGroupsMetadataDefinition {
 	
 	public ToscaServiceGroupsMetadataDefinition() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getVfModuleModelName() {

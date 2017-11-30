@@ -40,7 +40,6 @@ import {ExpandCollapseMenuBoxDirective} from "../directives/utils/expand-collaps
 import {PunchOutDirective} from "../directives/punch-out/punch-out";
 import {CustomValidationDirective} from "../directives/custom-validation/custom-validation";
 import {EcompHeaderDirective} from "../directives/ecomp-header/ecomp-header";
-import {EcompFooterDirective} from "../directives/ecomp-footer/ecomp-footer";
 import {EditNamePopoverDirective} from "../directives/edit-name-popover/edit-name-popover-directive";
 import {DataTypeFieldsStructureDirective} from "../directives/property-types/data-type-fields-structure/data-type-fields-structure";
 import {TypeMapDirective} from "../directives/property-types/type-map/type-map-directive";
@@ -54,7 +53,6 @@ import {SdcTabsDirective} from "../directives/sdc-tabs/sdc-tabs-directive";
 import {SdcSingleTabDirective, InnerSdcSingleTabDirective} from "../directives/sdc-tabs/sdc-single-tab/sdc-single-tab-directive";
 import {ExpandCollapseListHeaderDirective} from "../directives/utils/expand-collapse-list-header/expand-collapse-list-header";
 import {JsonExportExcelDirective} from "../directives/export-json-to-excel/export-json-to-excel";
-import {TopNavDirective} from "../directives/layout/top-nav/top-nav";
 import {TopProgressDirective} from "../directives/layout/top-progress/top-progress";
 import {CheckboxElementDirective} from "../directives/elements/checkbox/checkbox";
 import {RadiobuttonElementDirective} from "../directives/elements/radiobutton/radiobutton";
@@ -105,7 +103,6 @@ directiveModule.directive('expandCollapseMenuBox', ExpandCollapseMenuBoxDirectiv
 directiveModule.directive('punchOut', PunchOutDirective.factory);
 directiveModule.directive('customValidation', CustomValidationDirective.factory);
 directiveModule.directive('ecompHeader', EcompHeaderDirective.factory);
-directiveModule.directive('ecompFooter', EcompFooterDirective.factory);
 directiveModule.directive('editNamePopover', EditNamePopoverDirective.factory);
 directiveModule.directive('fieldsStructure', DataTypeFieldsStructureDirective.factory);
 directiveModule.directive('typeMap', TypeMapDirective.factory);
@@ -122,7 +119,6 @@ directiveModule.directive('jsonExportExcel', JsonExportExcelDirective.factory);
 directiveModule.directive('expandCollapseListHeader', ExpandCollapseListHeaderDirective.factory);
 //
 // // Layouts
-directiveModule.directive('topNav', TopNavDirective.factory);
 directiveModule.directive('topProgress', TopProgressDirective.factory);
 //
 // // Elements
@@ -170,3 +166,18 @@ directiveModule.service('DeploymentGraphGeneralUtils', DeploymentGraphGeneralUti
 //Compoisiton right tab directives
 directiveModule.directive('capabilitiesList', CapabilitiesListDirective.factory);
 directiveModule.directive('requirementsList', RequirementsListDirective.factory);
+
+
+// *** NG2 Components (downgraded) *** //
+import {MenuListNg2Component} from "../ng2/components/downgrade-wrappers/menu-list-ng2/menu-list-ng2.component";
+import {TopNavComponent} from "../ng2/components/layout/top-nav/top-nav.component";
+
+directiveModule.directive('menuListNg2', downgradeComponent({
+    component: MenuListNg2Component,
+    inputs: ['props']
+}) as angular.IDirectiveFactory);
+directiveModule.directive('topNav', downgradeComponent({
+    component: TopNavComponent,
+    inputs: ['version', 'menuModel', 'topLvlSelectedIndex', 'hideSearch', 'searchTerm', 'notificationIconCallback'],
+    outputs: ['searchTermChange']
+}) as ng.IDirectiveFactory);

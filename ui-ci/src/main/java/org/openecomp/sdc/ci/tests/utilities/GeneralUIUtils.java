@@ -433,9 +433,9 @@ public final class GeneralUIUtils {
 		}
 	}
 	
-	public static void moveToStep(DataTestIdEnum.StepsEnum Stepname) {
-		moveToStep(Stepname.getValue());
-		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Going to %s page ", Stepname.toString()));
+	public static void moveToStep(DataTestIdEnum.StepsEnum stepName) {
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Going to %s page ", stepName.toString()));
+		moveToStep(stepName.getValue());
 	}
 
 	public static void moveToStep(String dataTestId) {
@@ -784,6 +784,11 @@ public final class GeneralUIUtils {
 		StringSelection selection = new StringSelection(text);
 	    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 	    clipboard.setContents(selection, selection);
+	}
+	
+	public static boolean checkForDisabledAttributeInHiddenElement(String  cssString){
+		Object elementAttributes = getAllElementAttributes(getDriver().findElement(By.cssSelector(cssString)));
+		return elementAttributes.toString().contains("disabled");
 	}
     
 }

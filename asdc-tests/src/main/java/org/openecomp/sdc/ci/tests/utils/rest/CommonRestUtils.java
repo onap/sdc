@@ -2,11 +2,10 @@ package org.openecomp.sdc.ci.tests.utils.rest;
 
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 
 public class CommonRestUtils extends BaseRestUtils {
 

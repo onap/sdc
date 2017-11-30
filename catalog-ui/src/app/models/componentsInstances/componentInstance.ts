@@ -23,7 +23,7 @@
  */
 'use strict';
 import {ArtifactGroupModel, CapabilitiesGroup,RequirementsGroup, PropertyModel, InputModel, Module} from "../../models";
-import {ResourceType} from "../../utils/constants";
+import {ResourceType,ComponentType} from "../../utils/constants";
 
 export class ComponentInstance {
 
@@ -46,6 +46,10 @@ export class ComponentInstance {
     public capabilities:CapabilitiesGroup;
     public requirements:RequirementsGroup;
     public customizationUUID:string;
+    public sourceModelInvariant:string;
+    public sourceModelName:string;
+    public sourceModelUid:string;
+    public sourceModelUuid:string;
     //custom properties
     public certified:boolean;
     public iconSprite:string;
@@ -79,6 +83,10 @@ export class ComponentInstance {
             this.updatePosition(componentInstance.posX, componentInstance.posY);
             this.groupInstances = componentInstance.groupInstances;
             this.invariantName = componentInstance.invariantName;
+            this.sourceModelInvariant = componentInstance.sourceModelInvariant;
+            this.sourceModelName = componentInstance.sourceModelName;
+            this.sourceModelUid = componentInstance.sourceModelUid;
+            this.sourceModelUuid = componentInstance.sourceModelUuid;
         }
     }
 
@@ -95,6 +103,10 @@ export class ComponentInstance {
 
     public isComplex = () : boolean => {
         return this.originType === ResourceType.VF || this.originType === ResourceType.PNF || this.originType === ResourceType.CVFC  ;
+    }
+
+    public isServiceProxy = () :boolean => {
+        return this.originType === ComponentType.SERVICE_PROXY;
     }
 
     public setInstanceRC = ():void=> {

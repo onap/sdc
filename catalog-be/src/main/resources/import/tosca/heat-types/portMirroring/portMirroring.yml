@@ -1,0 +1,11 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:                
+    org.openecomp.nodes.PortMirroringConfiguration:
+        derived_from: tosca.nodes.Root
+        requirements:
+            - source:
+                capability: org.openecomp.capabilities.PortMirroring
+                occurrences: [1,UNBOUNDED]
+            - collector:
+                capability: org.openecomp.capabilities.PortMirroring
+                occurrences: [1,1]

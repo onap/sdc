@@ -2,13 +2,8 @@ package org.openecomp.sdc.be.model.tosca.converters;
 
 import java.util.Map;
 
-import javax.annotation.Generated;
-
-import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
-
-import fj.data.Either;
 
 
 public class MapConverterTest {

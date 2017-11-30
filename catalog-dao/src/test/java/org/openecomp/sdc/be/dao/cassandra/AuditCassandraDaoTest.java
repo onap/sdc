@@ -2,9 +2,6 @@ package org.openecomp.sdc.be.dao.cassandra;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
-import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;

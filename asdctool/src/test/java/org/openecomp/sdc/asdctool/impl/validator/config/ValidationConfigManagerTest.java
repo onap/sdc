@@ -2,8 +2,6 @@ package org.openecomp.sdc.asdctool.impl.validator.config;
 
 import java.util.Properties;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 
@@ -21,16 +19,6 @@ public class ValidationConfigManagerTest {
 		// default test
 		result = ValidationConfigManager.getOutputFilePath();
 	}
-
-	
-	@Test
-	public void testSetOutputFilePath() throws Exception {
-		String outputPath = "";
-
-		// default test
-		ValidationConfigManager.setOutputFilePath(outputPath);
-	}
-
 	
 	@Test
 	public void testGetCsvReportFilePath() throws Exception {

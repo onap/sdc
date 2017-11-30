@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.cassandra.transport.Event.SchemaChange.Target;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;

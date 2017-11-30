@@ -1,7 +1,5 @@
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

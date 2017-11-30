@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -42,17 +41,13 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.info.ArtifactDefinitionInfo;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.info.GroupDefinitionInfo;
@@ -69,17 +64,15 @@ import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition.GroupInstancePropertyValueUpdateBehavior;
 import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsontitan.operations.GroupsOperation;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
-import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
@@ -88,7 +81,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
 
 import fj.data.Either;
 

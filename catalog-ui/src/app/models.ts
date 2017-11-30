@@ -40,6 +40,7 @@ export * from './models/components/service';
 export * from './models/componentsInstances/componentInstance';
 export * from './models/componentsInstances/resourceInstance';
 export * from './models/componentsInstances/serviceInstance';
+export * from './models/componentsInstances/serviceProxyInstance';
 export * from './models/csar-component';
 //export * from './models/data-type-properties';
 export * from './models/properties-inputs/property-be-model';
@@ -74,7 +75,9 @@ export * from './models/graph/nodes/base-common-node';
 export * from './models/graph/nodes/common-ci-node-base';
 export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-base';
 export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-cp';
+export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-configuration';
 export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-service';
+export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-service-proxy';
 export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-ucpe-cp';
 export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-ucpe';
 export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-vf';
@@ -83,7 +86,7 @@ export * from './models/graph/nodes/composition-graph-nodes/composition-ci-node-
 export * from './models/graph/nodes/modules-graph-nodes/module-node-base';
 export * from './models/graph/nodes/nodes-factory';
 export * from './models/graph/point';
-export * from './models/graph/relationMenuObjects';
+export * from './models/graph/connectRelationModel';
 export * from './models/graph/relationship';
 export * from './models/heat-parameters';
 export * from './models/input-property-base';
@@ -103,6 +106,8 @@ export * from './models/validate';
 export * from './models/component-metadata';
 export * from './models/modal';
 export * from './models/button';
+export * from './models/wizard-step';
+export * from './models/radio-button';
 export * from './models/filter-properties-assignment-data'
 export * from './models/properties-inputs/input-be-model'
 

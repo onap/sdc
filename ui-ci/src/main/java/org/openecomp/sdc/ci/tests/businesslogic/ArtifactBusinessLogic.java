@@ -42,6 +42,7 @@ import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 
 import com.clearspring.analytics.util.Pair;
+import com.google.gson.Gson;
 
 public class ArtifactBusinessLogic {
 
@@ -175,7 +176,18 @@ public class ArtifactBusinessLogic {
 						pair = Pair.create(envParametersMap.get(key).left, "\"" + parameter.getValue() + "\"");
 					}else if(envParametersMap.get(key).left.equals("string") && parameter.getValue() == null){
 						pair = Pair.create(envParametersMap.get(key).left, "");
-					}else if(parameter.getValue() == null){
+					}else if(parameter.getValue() == null) {
+						pair = Pair.create(envParametersMap.get(key).left, "");
+					} else if(envParametersMap.get(key).left.equals("json") && parameter.getValue() != null){
+						String pairValue = "";
+						Gson gson = new Gson();
+						if(parameter.getValue() instanceof java.util.LinkedHashMap){
+							pairValue = gson.toJson(parameter.getValue());
+						}
+//						pair = Pair.create(envParametersMap.get(key).left, "\"" + pairValue + "\"");
+						pair = Pair.create(envParametersMap.get(key).left, pairValue );
+
+					}else if(envParametersMap.get(key).left.equals("json") && parameter.getValue() == null){
 						pair = Pair.create(envParametersMap.get(key).left, "");
 					}else{
 						pair = Pair.create(envParametersMap.get(key).left, parameter.getValue());

@@ -109,6 +109,7 @@ public class DeploymentArtifactPage extends GeneralPageElements {
 	}
 	
 	public static void clickOK(){
+		SetupCDTest.getExtendTest().log(Status.INFO, "Artifact Page, Clicking OK");
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.OK.getValue()).click();
 		GeneralUIUtils.getWebElementBy(By.className("flex-container"));
 		GeneralUIUtils.waitForAngular();

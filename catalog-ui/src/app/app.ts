@@ -31,18 +31,17 @@ import './modules/service-module';
 import './modules/view-model-module.ts';
 
 import {
-    IUserResourceClass,
     DataTypesService,
     LeftPaletteLoaderService,
     EcompHeaderService,
     CookieService,
     ConfigurationUiService,
     CacheService,
-    IUserResource,
     SdcVersionService,
     ICategoryResourceClass,
     EntityService
 } from "./services";
+import { UserService } from "./ng2/services/user.service";
 import {forwardRef} from '@angular/core';
 import {UpgradeAdapter} from '@angular/upgrade';
 import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, States} from "./utils";
@@ -53,11 +52,12 @@ import {downgradeComponent} from "@angular/upgrade/static";
 
 import {AppModule} from './ng2/app.module';
 import {PropertiesAssignmentComponent} from "./ng2/pages/properties-assignment/properties-assignment.page.component";
-import { SearchWithAutoCompleteComponent } from "./ng2/shared/search-with-autocomplete/search-with-autocomplete.component";
 import {Component} from "./models/components/component";
 import {ComponentServiceNg2} from "./ng2/services/component-services/component.service";
 import {ComponentMetadata} from "./models/component-metadata";
 import {Categories} from "./models/categories";
+import {IUserProperties} from "./models/user";
+import {SearchWithAutoCompleteComponent} from "./ng2/components/ui/search-with-autocomplete/search-with-autocomplete.component";
 
 
 let moduleName:string = 'sdcApp';
@@ -225,7 +225,13 @@ ng1appModule.config([
                 resolve: {
                     injectComponent: ['$stateParams', 'ComponentFactory', 'ComponentServiceNg2', function ($stateParams, ComponentFactory:ComponentFactory, ComponentServiceNg2:ComponentServiceNg2) {
                         if ($stateParams.id) {
-                            return ComponentFactory.getComponentWithMetadataFromServer($stateParams.type.toUpperCase(), $stateParams.id);
+                            return ComponentFactory.getComponentWithMetadataFromServer($stateParams.type.toUpperCase(), $stateParams.id).then(
+                                (component:Component)=> {
+                                if ($stateParams.componentCsar){
+                                    component = ComponentFactory.updateComponentFromCsar($stateParams.componentCsar, <Resource>component);
+                                }
+                                return component;
+                            });
                         } else if ($stateParams.componentCsar && $stateParams.componentCsar.csarUUID) {
                             return $stateParams.componentCsar;
                         } else {
@@ -546,8 +552,8 @@ ng1appModule.config([
                 templateUrl: './view-models/catalog/catalog-view.html',
                 controller: viewModelsModuleName + '.CatalogViewModel',
                 resolve: {
-                    auth: ["$q", "Sdc.Services.UserResourceService", ($q:any, userResourceService:IUserResourceClass) => {
-                        let userInfo:IUserResource = userResourceService.getLoggedinUser();
+                    auth: ["$q", "UserServiceNg2", ($q:any, userService:UserService) => {
+                        let userInfo:IUserProperties = userService.getLoggedinUser();
                         if (userInfo) {
                             return $q.when(userInfo);
                         } else {
@@ -592,6 +598,7 @@ ng1appModule.value('TagValidationPattern', /^[\s\w_.-]{1,50}$/);
 ng1appModule.value('VendorReleaseValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,25}$/);
 ng1appModule.value('VendorNameValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,60}$/);
 ng1appModule.value('VendorModelNumberValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,65}$/);
+ng1appModule.value('ServiceTypeAndRoleValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,256}$/);
 ng1appModule.value('ContactIdValidationPattern', /^[\s\w-]{1,50}$/);
 ng1appModule.value('UserIdValidationPattern', /^[\s\w-]{1,50}$/);
 ng1appModule.value('ProjectCodeValidationPattern', /^[\s\w-]{5,50}$/);
@@ -614,7 +621,7 @@ ng1appModule.run([
     'Sdc.Services.CacheService',
     'Sdc.Services.CookieService',
     'Sdc.Services.ConfigurationUiService',
-    'Sdc.Services.UserResourceService',
+    'UserServiceNg2',
     'Sdc.Services.CategoryResourceService',
     'Sdc.Services.SdcVersionService',
     '$state',
@@ -631,7 +638,7 @@ ng1appModule.run([
      cacheService:CacheService,
      cookieService:CookieService,
      ConfigurationUi:ConfigurationUiService,
-     UserResourceClass:IUserResourceClass,
+     userService:UserService,
      categoryResourceService:ICategoryResourceClass,
      sdcVersionService:SdcVersionService,
      $state:ng.ui.IStateService,
@@ -644,6 +651,7 @@ ng1appModule.run([
      DataTypesService:DataTypesService,
      AngularJSBridge,
      $templateCache:ng.ITemplateCacheService):void => {
+        $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
         $templateCache.put('notification-custom-template.html', require('./view-models/shared/notification-custom-template.html'));
         //handle cache data - version
         let initAsdcVersion:Function = ():void => {
@@ -756,27 +764,27 @@ ng1appModule.run([
                 toParams.previousState = fromParams.previousState;
             }
 
-            if (toState.name !== 'error-403' && !UserResourceClass.getLoggedinUser()) {
+            if (toState.name !== 'error-403' && !userService.getLoggedinUser()) {
                 internalDeregisterStateChangeStartWatcher();
                 event.preventDefault();
 
-                UserResourceClass.authorize().$promise.then((user:IUserResource) => {
-                    if (!doesUserHasAccess(toState, user)) {
+                userService.authorize().subscribe((userInfo:IUserProperties) => {
+                    if (!doesUserHasAccess(toState, userInfo)) {
                         $state.go('error-403');
                         console.info('User has no permissions');
                         registerStateChangeStartWatcher();
                         return;
                     }
-                    UserResourceClass.setLoggedinUser(user);
-                    cacheService.set('user', user);
+                    userService.setLoggedinUser(userInfo);
+                    cacheService.set('user', userInfo);
                     initCategories();
-                    //   initEcompMenu(user);
+                    //   initEcompMenu(userInfo);
                     setTimeout(function () {
 
                         removeLoader();
 
                         // initCategories();
-                        if (UserResourceClass.getLoggedinUser().role === 'ADMIN') {
+                        if (userService.getLoggedinUser().role === 'ADMIN') {
                             // toState.name = "adminDashboard";
                             $state.go("adminDashboard", toParams);
                             registerStateChangeStartWatcher();
@@ -804,9 +812,9 @@ ng1appModule.run([
                     registerStateChangeStartWatcher();
                 });
             }
-            else if (UserResourceClass.getLoggedinUser()) {
+            else if (userService.getLoggedinUser()) {
                 internalDeregisterStateChangeStartWatcher();
-                if (!doesUserHasAccess(toState, UserResourceClass.getLoggedinUser())) {
+                if (!doesUserHasAccess(toState, userService.getLoggedinUser())) {
                     event.preventDefault();
                     $state.go('error-403');
                     console.info('User has no permissions');

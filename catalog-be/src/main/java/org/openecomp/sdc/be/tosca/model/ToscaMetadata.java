@@ -38,7 +38,12 @@ public class ToscaMetadata implements IToscaMetadata {
 	private Boolean serviceEcompNaming;
 	private Boolean ecompGeneratedNaming;
 	private String namingPolicy;
-
+	private String sourceModelInvariant;
+	private String environmentContext;
+	private String sourceModelName;
+	private String sourceModelUuid;
+	
+	
 	public String getName() {
 		return name;
 	}
@@ -179,4 +184,37 @@ public class ToscaMetadata implements IToscaMetadata {
 		this.customizationUUID = customizationUUID;
 	}
 
+	public String getSourceModelInvariant() {
+		return sourceModelInvariant;
+	}
+
+	public void setSourceModelInvariant(String sourceModelInvariant) {
+		this.sourceModelInvariant = sourceModelInvariant;
+	}
+
+	public String getSourceModelName() {
+		return sourceModelName;
+	}
+
+	public void setSourceModelName(String sourceModelName) {
+		this.sourceModelName = sourceModelName;
+	}
+
+	public String getSourceModelUuid() {
+		return sourceModelUuid;
+	}
+
+	public void setSourceModelUuid(String sourceModelUuid) {
+		this.sourceModelUuid = sourceModelUuid;
+	}
+	
+	
+
+	public String getEnvironmentContext() {
+		return environmentContext;
+	}
+
+	public void setEnvironmentContext(String environmentContext) {
+		this.environmentContext = environmentContext;
+	}
 }

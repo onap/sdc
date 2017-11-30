@@ -21,6 +21,7 @@
 import {ComponentInstance} from "../../../componentsInstances/componentInstance";
 import {ImageCreatorService} from "../../../../directives/graphs-v2/image-creator/image-creator.service";
 import {CompositionCiNodeBase} from "./composition-ci-node-base";
+import { ImagesUrl} from "../../../../utils/constants";
 
 export class NodeUcpe extends CompositionCiNodeBase {
     constructor(instance:ComponentInstance,
@@ -36,6 +37,7 @@ export class NodeUcpe extends CompositionCiNodeBase {
         this.classes = 'ucpe-node';
         this.type = 'ucpe-node';
         this.allowConnection = false;
+        this.imagesPath = this.imagesPath + ImagesUrl.RESOURCE_ICONS;
 
         if (!this.certified) {
             this.classes = this.classes + ' not-certified-ucpe';

@@ -43,9 +43,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
@@ -58,10 +56,8 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -115,7 +111,7 @@ public class AssetsDataServletTest extends JerseyTest {
 		when(resource.getName()).thenReturn("MockVFCMT");
 		when(resource.getSystemName()).thenReturn("mockvfcmt");
 		Either<Resource, ResponseFormat>  eitherRet = Either.left(resource);
-		when(componentsUtils.convertJsonToObjectUsingObjectMapper(Mockito.anyString(), Mockito.any(User.class), Mockito.eq(Resource.class), Mockito.any(AuditingActionEnum.class), Mockito.eq(ComponentTypeEnum.RESOURCE))).thenReturn(eitherRet);
+		when(componentsUtils.convertJsonToObjectUsingObjectMapper(Mockito.any(), Mockito.any(), Mockito.eq(Resource.class), Mockito.any(), Mockito.eq(ComponentTypeEnum.RESOURCE))).thenReturn(eitherRet);
 	
 		when(webApplicationContext.getBean(ResourceImportManager.class)).thenReturn(resourceImportManager);
 		when(webApplicationContext.getBean(ElementBusinessLogic.class)).thenReturn(elementBusinessLogic);
@@ -123,7 +119,7 @@ public class AssetsDataServletTest extends JerseyTest {
 		when(subCategoryDefinition.getName()).thenReturn("Monitoring Template");
 		when(categoryDefinition.getSubcategories()).thenReturn(Arrays.asList(subCategoryDefinition));
 		when(elementBusinessLogic.getAllResourceCategories()).thenReturn(Either.left(Arrays.asList(categoryDefinition)));
-		when(resourceBusinessLogic.createResource(Mockito.eq(resource), Mockito.any(AuditingActionEnum.class), Mockito.any(User.class), Mockito.anyMap(), Mockito.anyString())).thenReturn(Either.left(resource));
+		when(resourceBusinessLogic.createResource(Mockito.eq(resource), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(Either.left(resource));
 		when(webApplicationContext.getBean(AssetMetadataConverter.class)).thenReturn(assetMetadataConverter);
 		
 		Mockito.doReturn(Either.left(resourceAssetMetadata)).when(assetMetadataConverter).convertToSingleAssetMetadata(Mockito.eq(resource), Mockito.anyString(),
@@ -136,22 +132,21 @@ public class AssetsDataServletTest extends JerseyTest {
 
 
 	private static void mockResponseFormat() {
-		when(componentsUtils.getResponseFormat(Mockito.any(ActionStatus.class), Matchers.<String>anyVararg())).thenAnswer(new Answer<ResponseFormat>(){
-			public ResponseFormat answer(InvocationOnMock invocation) throws Throwable {
-				ResponseFormat ret;
-				final ActionStatus actionStatus = invocation.getArgumentAt(0, ActionStatus.class);
-				switch( actionStatus ){
-				case CREATED :{
-					ret = new ResponseFormat(HttpStatus.SC_CREATED);
-					break;
-				}
-				default :{
-					ret = new ResponseFormat(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-					break;
-				}
-				}
-				return ret;
-			}});
+		when(componentsUtils.getResponseFormat(Mockito.any(ActionStatus.class), Mockito.any(String[].class))).thenAnswer((Answer<ResponseFormat>) invocation -> {
+            ResponseFormat ret;
+            final ActionStatus actionStatus = invocation.getArgument(0);
+            switch( actionStatus ){
+            case CREATED :{
+                ret = new ResponseFormat(HttpStatus.SC_CREATED);
+                break;
+            }
+            default :{
+                ret = new ResponseFormat(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+                break;
+            }
+            }
+            return ret;
+        });
 	}
 
 	

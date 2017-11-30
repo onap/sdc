@@ -1,0 +1,3585 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    vlc4_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc4_Internal2
+      default: 00:80:37:0E:04:12
+    sctp-a-egress_rule_application:
+      hidden: false
+      immutable: false
+      type: string
+      description: application for the SecurityGroup
+      default: any
+    sctp-b-ipv6-ingress-src_start_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: IPV6 start port
+      default: 0
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    ncb1_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to ncb1_Internal2
+      default: 00:80:37:0E:09:12
+    sctp-a-ipv6-ingress_ethertype:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 ethertype
+      default: IPv4
+    gpb8_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb8_Internal1
+      default: 00:80:37:0E:10:22
+    sctp-a-ingress_rule_protocol:
+      hidden: false
+      immutable: false
+      type: string
+      description: protocol for the SecurityGroup
+      default: any
+    sctp-b-display_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: display_name for the SecurityGroup
+      default: epc-sctp-b-ipv4v6-sec-group
+    sctp-a-ingress_ethertype:
+      hidden: false
+      immutable: false
+      type: string
+      description: ethertype for the SecurityGroup
+      default: IPv4
+    sctp-a-egress-src_start_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: start_port for the SecurityGroup
+      default: 0
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    ncb_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for servers ncb
+      default: nv.c8r32d1
+    vlc3_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc3_Internal1
+      default: 00:80:37:0E:03:12
+    Internal2_net_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: CIDR for internal-2 network
+      default: 169.255.0.0
+    sctp-a-egress-dst_start_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: start_port for the SecurityGroup
+      default: 0
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    sctp-a-egress_ethertype:
+      hidden: false
+      immutable: false
+      type: string
+      description: ethertype for the SecurityGroup
+      default: IPv4
+    gpb4_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb4_Internal2
+      default: 00:80:37:0E:0C:22
+    sctp-b-ipv6-egress_rule_application:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 Rule-application
+      default: any
+    vlc8_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc8_Internal1
+      default: 00:80:37:0E:08:12
+    sctp-b-ipv6-ingress-src_end_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: IPV6 ending port for destination
+      default: 65535
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    fsb2_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to fsb2_Internal1
+      default: 00:80:37:0E:0D:12
+    sctp-b-name:
+      hidden: false
+      immutable: false
+      type: string
+      description: name for the SecurityGroup
+      default: epc-sctp-b-ipv4v6-sec-group
+    sctp-b-ipv6-egress_ethertype:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 ethertype
+      default: IPv4
+    internal_net_id_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID of Internal2_net
+      default: e3397c69-a942-49aa-81cb-fb91ff34abc8
+    sctp-a-egress_dst_subnet_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip_prefix for the SecurityGroup
+      default: 0.0.0.0
+    internal_net_id_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID of Internal1_net
+      default: 871de971-22ac-47b6-befb-50e7d4cb67ea
+    sctp_b_net_fqdn:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network FQDN SCTPB
+      default: default-domain:vMME-24474-Ericsson-WTC-Lab-vLCP1-4:vMME-24474-Ericsson-WTC-Lab-vLCP1-4_gn_SCTPB_net_1
+    sctp-a-ipv6-ingress_rule_application:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 Rule-application
+      default: any
+    sctp-b-ipv6-ingress_src_subnet_prefix_len:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 subnet prefix length
+      default: '0'
+    ncb_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of ncb2
+      default: zrdm3mmex59ncb002
+    ncb_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of ncb1
+      default: zrdm3mmex59ncb001
+    vlc_st_virtualization_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: Indicates virtualization type
+      default: virtual-machine
+    vlc2_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc2_Internal1
+      default: 00:80:37:0E:02:12
+    sctp-b-ingress-dst_start_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: start_port for the SecurityGroup
+      default: 0
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    sctp-a-display_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: display_name for the SecurityGroup
+      default: epc-sctp-a-ipv4v6-sec-group
+    sctp-b-ingress_rule_application:
+      hidden: false
+      immutable: false
+      type: string
+      description: application for the SecurityGroup
+      default: any
+    int2_sec_group_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SecurityGroup name for internal-2
+      default: int2-sec-group
+    gpb5_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb5_Internal2
+      default: 00:80:37:0E:0D:22
+    sctp-a-egress-dst_subnet_prefix_v6:
+      hidden: false
+      immutable: false
+      type: string
+      description: dst subnet
+      default: '::'
+    OS::stack_name:
+      type: string
+      required: false
+    sctp-b-egress-src_end_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: end_port for the SecurityGroup
+      default: 65535
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    Internal2_shared:
+      hidden: false
+      immutable: false
+      type: string
+      description: Whether Shared or private internal-2 network
+      default: false
+    sctp-a-ipv6-egress_rule_protocol:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 Rule-protocol
+      default: any
+    Internal2_rpf:
+      hidden: false
+      immutable: false
+      type: string
+      description: Reverse Path Forwarding Enabled/Disabled internal-2 network
+      default: disable
+    vlc5_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc5_Internal2
+      default: 00:80:37:0E:05:12
+    sctp-a-ipv6-egress_src_end_port:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 end port
+      default: 65535
+    Internal1_forwarding_mode:
+      hidden: false
+      immutable: false
+      type: string
+      description: L2 or L3 forwarding mode for internal-1 network
+      default: l2
+    gpb3_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb3_Internal1
+      default: 00:80:37:0E:0B:22
+    vip_oam_management_v4_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: IP address of OAM service IP address to be provisioned in A&AI
+      default: 107.239.72.176
+    vmi_oam_preference_primary:
+      hidden: false
+      immutable: false
+      type: float
+      description: Preference for primary interface/port
+      default: 200
+    sctp-b-src_subnet_prefix_v6:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip_prefix for the SecurityGroup
+      default: '::'
+    sctp-a-egress_dst_subnet_prefix_len:
+      hidden: false
+      immutable: false
+      type: float
+      description: ip_prefix_len for the SecurityGroup
+      default: '0'
+      constraints:
+      - in_range:
+        - 0
+        - 32
+    security_group_sctp_b_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Security Group UUID for output
+      default: 92a4ae54-1733-4d03-b488-f178bb9f7b82
+    Internal2_forwarding_mode:
+      hidden: false
+      immutable: false
+      type: string
+      description: L2 or L3 forwarding mode for internal-2 network
+      default: l2
+    sctp-a-ipv6-egress_dst_end_port:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 end port
+      default: 65535
+    sctp-b-egress-dst_subnet_prefix_v6:
+      hidden: false
+      immutable: false
+      type: string
+      description: dst subnet
+      default: '::'
+    sctp-b-egress_dst_subnet_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip_prefix for the SecurityGroup
+      default: 0.0.0.0
+    security_group_oam_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Security Group UUID for output
+      default: 4ae4aa74-3e8e-4f2b-8b5f-a8bd262da96b
+    gpb2_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb2_Internal1
+      default: 00:80:37:0E:0A:22
+    security_group_int1_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID of Internal1_net security group
+      default: 94c62578-835d-4801-9372-70a2cfb22683
+    sctp-a-egress_action:
+      hidden: false
+      immutable: false
+      type: string
+      description: simple_action for the SecurityGroup
+      default: pass
+    oam_net_fqdn:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network FQDN OAM
+      default: default-domain:vMME-24474-Ericsson-WTC-Lab-vLCP1-4:vMME-24474-Ericsson-WTC-Lab-vLCP1-4_OAM_net_1
+    ncb2_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to ncb2_Internal2
+      default: 00:80:37:0E:0F:12
+    vlc_st_interface_type_sctp_a:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_interface_type for the ServiceTemplate
+      default: left
+    gpb3_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb3_Internal2
+      default: 00:80:37:0E:0B:22
+    vlc_st_interface_type_sctp_b:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_interface_type for the ServiceTemplate
+      default: right
+    gpb1_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb1_Internal2
+      default: 00:80:37:0E:09:22
+    oam_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network Name OAM
+      default: vMME-24474-Ericsson-WTC-Lab-vLCP1-4_OAM_net_1
+    sctp-b-ingress-src_start_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: start_port for the SecurityGroup
+      default: 0
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    fsb1_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to fsb1_Internal1
+      default: 00:80:37:0E:0B:12
+    sctp-b-ingress_dst_addresses:
+      hidden: false
+      immutable: false
+      type: string
+      description: security_group for the SecurityGroup
+      default: local
+    vlc_st_interface_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_interface_type for the ServiceTemplate
+      default: management
+    shc_monitor_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: health check
+      default: PING
+    oam_sec_group_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SecurityGroup name for OAM
+      default: oam-sec-group
+    Internal2_net_gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: gateway for internal-2 network
+      default: 169.255.0.3
+    evac_policy:
+      hidden: false
+      immutable: false
+      type: string
+      description: CMHA Policy
+      default: Evacuate
+    server_group_id_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: ID of Anti-Affinity Policy-based Server Group
+      default: ec99a73d-38f8-4280-8103-ba8ee584629f
+    vlc8_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc8_Internal2
+      default: 00:80:37:0E:08:12
+    sctp-b-ipv6-egress_rule_protocol:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 Rule-protocol
+      default: any
+    gtp_sec_group_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SecurityGroup name for GTP
+      default: gtp-sec-group
+    vlc_sctp_b_v6_ip_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc3 SCTPB
+      default: fd00:200:200:5:0:0:0:24
+    vlc_sctp_b_v6_ip_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc2 SCTPB
+      default: fd00:200:200:5:0:0:0:17
+    sctp-a-ipv6-egress_dst_subnet_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 subnet prefix
+      default: 0.0.0.0
+    vlc_sctp_b_v6_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc1 SCTPB
+      default: fd00:200:200:5:0:0:0:16
+    vlc4_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc4_Internal1
+      default: 00:80:37:0E:04:12
+    vlc_sctp_b_v6_ip_6:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc7 SCTPB
+      default: fd00:200:200:5:0:0:0:28
+    vlc_sctp_b_v6_ip_5:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc6 SCTPB
+      default: fd00:200:200:5:0:0:0:27
+    vlc_sctp_b_v6_ip_4:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc5 SCTPB
+      default: fd00:200:200:5:0:0:0:26
+    vlc_sctp_b_v6_ip_3:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc4 SCTPB
+      default: fd00:200:200:5:0:0:0:25
+    sctp_b_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network Name SCTPB
+      default: vMME-24474-Ericsson-WTC-Lab-vLCP1-4_gn_SCTPB_net_1
+    sctp-b-ipv6-egress_dst_subnet_prefix_len:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 subnet prefix
+      default: '0'
+    sctp-a-egress_rule_protocol:
+      hidden: false
+      immutable: false
+      type: string
+      description: protocol for the SecurityGroup
+      default: any
+    Internal1_shared:
+      hidden: false
+      immutable: false
+      type: string
+      description: Whether Shared or private internal-1 network
+      default: false
+    shc_url_path:
+      hidden: false
+      immutable: false
+      type: string
+      description: health check
+      default: local-ip
+    Internal2_net_cidr_len:
+      hidden: false
+      immutable: false
+      type: string
+      description: CIDR length for internal-2 network
+      default: 17
+    sctp-a-ingress-src_end_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: end_port for the SecurityGroup
+      default: 65535
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    sctp-b-ipv6-ingress_src_subnet_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 subnet prefix
+      default: 0.0.0.0
+    sctp-a-egress-dst_end_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: end_port for the SecurityGroup
+      default: 65535
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    sctp-a-ingress_action:
+      hidden: false
+      immutable: false
+      type: string
+      description: simple_action for the SecurityGroup
+      default: pass
+    sctp-b-ipv6-ingress_action:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 action
+      default: pass
+    vlc_st_service_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: service type
+      default: firewall
+    sctp-b-ipv6-ingress-dst_start_port:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 starting port for destination
+      default: 0
+    vlc_st_availability_zone:
+      hidden: false
+      immutable: false
+      type: string
+      description: Indicates availability zone is enabled
+      default: true
+    vlc7_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc7_Internal1
+      default: 00:80:37:0E:07:12
+    fsb_volume_image_name_1:
+      label: MME_FSB2
+      hidden: false
+      immutable: false
+      type: string
+      description: volume name
+      default: MME_FSB2_1_3_GA.qcow2
+    vlc_oam_ip_6:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc7 OAM
+      default: 107.239.72.151
+    sctp-a-ipv6-ingress_src_subnet_prefix_len:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 subnet prefix length
+      default: '0'
+    vlc_oam_ip_7:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc8 OAM
+      default: 107.239.72.152
+    Internal1_allow_transit:
+      hidden: false
+      immutable: false
+      type: string
+      description: Allow/disallow transit internal-1 network
+      default: true
+    vlc_oam_ip_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc3 OAM
+      default: 107.239.72.157
+    vlc_oam_ip_3:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc4 OAM
+      default: 107.239.72.158
+    vlc_gtp_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc1 GTP
+      default: 107.243.47.208
+    vlc_oam_ip_4:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc5 OAM
+      default: 107.239.72.149
+    fsb_volume_image_name_0:
+      label: MME_FSB1
+      hidden: false
+      immutable: false
+      type: string
+      description: volume name
+      default: MME_FSB1_1_3_GA.qcow2
+    vlc_gtp_ip_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc2 GTP
+      default: 107.243.47.209
+    vlc_oam_ip_5:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc6 OAM
+      default: 107.239.72.150
+    vlc_gtp_ip_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc3 GTP
+      default: 107.243.47.216
+    vlc_name_6:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of vlc7
+      default: zrdm3mmex59vlc007
+    vlc_gtp_ip_3:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc4 GTP
+      default: 107.243.47.217
+    vlc_name_7:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of vlc8
+      default: zrdm3mmex59vlc008
+    security_group_sctp_a_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Security Group UUID for output
+      default: 3cd8a524-77ff-4980-ae2a-d19ba70e0511
+    vlc_gtp_ip_4:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc5 GTP
+      default: 107.243.47.218
+    vlc_gtp_ip_5:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc6 GTP
+      default: 107.243.47.219
+    vlc_gtp_ip_6:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc7 GTP
+      default: 107.243.47.220
+    vlc_name_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of vlc3
+      default: zrdm3mmex59vlc003
+    vlc_gtp_ip_7:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc8 GTP
+      default: 107.243.47.221
+    vlc_name_3:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of vlc4
+      default: zrdm3mmex59vlc004
+    vlc_name_4:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of vlc5
+      default: zrdm3mmex59vlc005
+    vlc_name_5:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of vlc6
+      default: zrdm3mmex59vlc006
+    fsb_volume_id_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: ID of Cinder Volume for FSB2
+      default: 5bd0560c-bfd0-47dc-a84a-554e2698c925
+    sctp-a-ipv6-ingress_action:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 action
+      default: pass
+    vlc_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of vlc1
+      default: zrdm3mmex59vlc001
+    vlc_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of vlc2
+      default: zrdm3mmex59vlc002
+    vlc_oam_route_prefixes:
+      hidden: false
+      immutable: false
+      type: json
+      description: Route prefixes for static routing on OAM
+    sctp-b-egress_rule_application:
+      hidden: false
+      immutable: false
+      type: string
+      description: application for the SecurityGroup
+      default: any
+    vlc_oam_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc1 OAM
+      default: 107.239.72.155
+    vlc_oam_ip_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc2 OAM
+      default: 107.239.72.156
+    vlc6_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc6_Internal1
+      default: 00:80:37:0E:06:12
+    fsb_volume_id_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: ID of Cinder Volume for FSB1
+      default: 27baa6a0-b701-4795-bf5e-4f546b350b1f
+    sctp-b-egress-dst_end_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: end_port for the SecurityGroup
+      default: 65535
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    gpb2_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb2_Internal2
+      default: 00:80:37:0E:0A:22
+    sctp-a-ipv6-egress_rule_application:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 Rule-application
+      default: any
+    sctp-b-ipv6-egress_src_start_port:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 subnet prefix
+      default: 0
+    Internal2_allow_transit:
+      hidden: false
+      immutable: false
+      type: string
+      description: Allow/disallow transit internal-2 network
+      default: true
+    fsb_volume_size:
+      label: volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: volume size 320GB
+      default: 320
+      constraints:
+      - in_range:
+        - 0
+        - 340
+    sctp-b-IPv6_ethertype:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 ethertype
+      default: IPv6
+    gtp_net_fqdn:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network FQDN GTP
+      default: default-domain:vMME-24474-Ericsson-WTC-Lab-vLCP1-4:vMME-24474-Ericsson-WTC-Lab-vLCP1-4_gn_GTP_net_1
+    ncb2_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to ncb2_Internal1
+      default: 00:80:37:0E:0F:12
+    sctp-b-ingress_rule_protocol:
+      hidden: false
+      immutable: false
+      type: string
+      description: protocol for the SecurityGroup
+      default: any
+    sctp-b-ingress_action:
+      hidden: false
+      immutable: false
+      type: string
+      description: simple_action for the SecurityGroup
+      default: pass
+    sctp-b-egress_src_addresses:
+      hidden: false
+      immutable: false
+      type: string
+      description: security_group for the SecurityGroup
+      default: local
+    gpb7_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb7_Internal2
+      default: 00:80:37:0E:0F:22
+    sctp-a-ipv6-ingress-dst_start_port:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 starting port for destination
+      default: 0
+    gtp_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network Name GTP
+      default: vMME-24474-Ericsson-WTC-Lab-vLCP1-4_gn_GTP_net_1
+    sctp-b-ipv6-ingress_rule_application:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 Rule-application
+      default: any
+    domain_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name of vMME contrail domain
+      default: default-domain
+    vlc5_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc5_Internal1
+      default: 00:80:37:0E:05:12
+    sctp-a-egress_src_addresses:
+      hidden: false
+      immutable: false
+      type: string
+      description: security_group for the SecurityGroup
+      default: local
+    sctp-b-egress-src_start_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: start_port for the SecurityGroup
+      default: 0
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    shc_enabled:
+      hidden: false
+      immutable: false
+      type: string
+      description: health check
+      default: true
+    sctp-b-ipv6-ingress-dst_end_port:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 end port
+      default: 65535
+    sctp-b-dst_subnet_prefix_v6:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip_prefix for the SecurityGroup
+      default: '::'
+    sctp_a_net_fqdn:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network FQDN SCTPA
+      default: default-domain:vMME-24474-Ericsson-WTC-Lab-vLCP1-4:vMME-24474-Ericsson-WTC-Lab-vLCP1-4_gn_SCTPA_net_1
+    security_group_gtp_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Security Group UUID for output
+      default: e8ad3fe2-5f95-43e4-bbcc-da97b1c22588
+    sctp-a-ipv6-ingress_src_subnet_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 subnet prefix
+      default: 0.0.0.0
+    fsb_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of fsb1
+      default: zrdm3mmex59fsb002
+    sctp-b-egress-dst_start_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: start_port for the SecurityGroup
+      default: 0
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    fsb_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of fsb1
+      default: zrdm3mmex59fsb001
+    sctp_a_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network Name SCTPA
+      default: vMME-24474-Ericsson-WTC-Lab-vLCP1-4_gn_SCTPA_net_1
+    sctp-b-egress_dst_subnet_prefix_len:
+      hidden: false
+      immutable: false
+      type: float
+      description: ip_prefix_len for the SecurityGroup
+      default: '0'
+      constraints:
+      - in_range:
+        - 0
+        - 32
+    gpb1_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb1_Internal1
+      default: 00:80:37:0E:09:22
+    sctp-a-ingress-dst_start_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: start_port for the SecurityGroup
+      default: 0
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    fsb1_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to fsb1_Internal2
+      default: 00:80:37:0E:0B:12
+    vlc_st_service_mode:
+      hidden: false
+      immutable: false
+      type: string
+      description: service mode
+      default: in-network-nat
+    sctp-a-ipv6-egress_ethertype:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 ethertype
+      default: IPv4
+    sctp-a-egress-src_end_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: end_port for the SecurityGroup
+      default: 65535
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    sctp-b-egress_action:
+      hidden: false
+      immutable: false
+      type: string
+      description: simple_action for the SecurityGroup
+      default: pass
+    sctp-a-ingress-src_subnet_prefix_len:
+      hidden: false
+      immutable: false
+      type: float
+      description: ip_prefix_len for the SecurityGroup
+      default: '0'
+      constraints:
+      - in_range:
+        - 0
+        - 32
+    sctp-a-ipv6-ingress-src_start_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: IPV6 start port
+      default: 0
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: the vf_module_id for this instance. UUID provided by ECOMP
+      default: TWO
+    Internal1_net_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: CIDR for internal-1 network
+      default: 169.253.0.0
+    fsb_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for servers  fsb1
+      default: nv.c8r32d1
+    sctp_rule_protocol:
+      hidden: false
+      immutable: false
+      type: string
+      description: protocol for the SecurityGroup
+      default: 132
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: the vnf_name for this instance. provided by ECOMP
+      default: zrdm3mmex59
+    sctp-a-IPv6_ethertype:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 ethertype
+      default: IPv6
+    vlc_sctp_b_v6_ip_7:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc8 SCTPB
+      default: fd00:200:200:5:0:0:0:29
+    vlc6_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc6_Internal2
+      default: 00:80:37:0E:06:12
+    sctp-b-ingress-dst_end_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: end_port for the SecurityGroup
+      default: 65535
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    vlc7_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc7_Internal2
+      default: 00:80:37:0E:07:12
+    sctp-a-ipv6-ingress-src_end_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: IPV6 ending port for destination
+      default: 65535
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    vlc_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for servers vlc
+      default: nd.c16r64d1
+    sctp-b-ipv6-egress_src_addresses:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 source
+      default: local
+    vlc_st_interface_type_int1:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_interface_type for the ServiceTemplate
+      default: other1
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: cluster for spawnning fsb instances
+      default: rdm3-kvm-az02
+    service_instance_id_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID of service instance for vLCs
+      default: 77c67cc8-d15f-47bc-aeb1-8d65d09e917a
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: cluster for spawnning ncb instances
+      default: rdm3-kvm-az02
+    vlc_st_interface_type_int2:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_interface_type for the ServiceTemplate
+      default: other2
+    sctp-a-ipv6-egress-dst_start_port:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 start port
+      default: 0
+    sctp-a-ipv6-egress_dst_subnet_prefix_len:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 subnet prefix
+      default: '0'
+    vlc_sctp_a_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc1 SCTPA
+      default: 107.243.47.144
+    vlc_sctp_b_route_prefixes:
+      hidden: false
+      immutable: false
+      type: json
+      description: Route prefixes for static routing on SCTPB
+    vlc1_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc1_Internal1
+      default: 00:80:37:0E:01:12
+    sctp-b-ipv6-egress_src_end_port:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 end port
+      default: 65535
+    sctp-a-ipv6-egress_src_addresses:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 source
+      default: local
+    vlc_sctp_a_ip_7:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc8 SCTPA
+      default: 107.243.47.157
+    sctp-a-ingress-src_subnet_prefix_v6:
+      hidden: false
+      immutable: false
+      type: string
+      description: src subnet
+      default: '::'
+    vlc_sctp_a_ip_6:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc7 SCTPA
+      default: 107.243.47.156
+    vlc_sctp_a_ip_5:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc6 SCTPA
+      default: 107.243.47.155
+    sctp-a-ingress-dst_end_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: end_port for the SecurityGroup
+      default: 65535
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    vlc_sctp_a_ip_4:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc5 SCTPA
+      default: 107.243.47.154
+    vlc_sctp_a_ip_3:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc4 SCTPA
+      default: 107.243.47.153
+    vlc_sctp_a_ip_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc3 SCTPA
+      default: 107.243.47.152
+    vlc_sctp_a_ip_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc2 SCTPA
+      default: 107.243.47.145
+    gpb6_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb6_Internal2
+      default: 00:80:37:0E:0E:22
+    security_group_int2_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID of Internal1_net security group
+      default: 1361f069-baf2-4b76-b321-7f68ba26c369
+    Internal2_dhcp:
+      hidden: false
+      immutable: false
+      type: string
+      description: Whether DHCP/static IP addressing on internal-2 network
+      default: false
+    sctp-a-dst_subnet_prefix_v6:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip_prefix for the SecurityGroup
+      default: '::'
+    pxe_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of image to use for server ncb
+      default: MME_PXE-Boot_1_3_GA.qcow2
+    vlc_st_interface_type_gtp:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_interface_type for the ServiceTemplate
+      default: other0
+    ncb1_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to ncb1_Internal1
+      default: 00:80:37:0E:09:12
+    vlc_gtp_route_prefixes:
+      hidden: false
+      immutable: false
+      type: json
+      description: Route prefixes for static routing on GTP
+    int1_sec_group_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SecurityGroup name for internal-1
+      default: int1-sec-group
+    vmi_oam_preference_secondary:
+      hidden: false
+      immutable: false
+      type: float
+      description: Preference for secondary interface/port
+      default: 100
+    Internal1_dhcp:
+      hidden: false
+      immutable: false
+      type: string
+      description: Whether DHCP/static IP addressing on internal-1 network
+      default: false
+    fsb2_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to fsb2_Internal2
+      default: 00:80:37:0E:0D:12
+    Internal1_net_cidr_len:
+      hidden: false
+      immutable: false
+      type: string
+      description: CIDR length for internal-1 network
+      default: 17
+    sctp-a-ingress_dst_addresses:
+      hidden: false
+      immutable: false
+      type: string
+      description: security_group for the SecurityGroup
+      default: local
+    sctp-b-ingress-src_subnet_prefix_len:
+      hidden: false
+      immutable: false
+      type: float
+      description: ip_prefix_len for the SecurityGroup
+      default: '0'
+      constraints:
+      - in_range:
+        - 0
+        - 32
+    fsb_oam_ip_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: IP address of OAM vNIC for FSB2
+      default: 107.239.72.154
+    fsb_oam_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: IP address of OAM vNIC for FSB1
+      default: 107.239.72.153
+    shc_timeout:
+      hidden: false
+      immutable: false
+      type: string
+      description: health check
+      default: 5
+    vlc_st_version:
+      hidden: false
+      immutable: false
+      type: string
+      description: Indicates service version
+      default: 2
+    sctp-a-src_subnet_prefix_v6:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip_prefix for the SecurityGroup
+      default: '::'
+    sctp-a-ingress_rule_application:
+      hidden: false
+      immutable: false
+      type: string
+      description: application for the SecurityGroup
+      default: any
+    sctp-b-egress_ethertype:
+      hidden: false
+      immutable: false
+      type: string
+      description: ethertype for the SecurityGroup
+      default: IPv4
+    sctp-a-ipv6-egress_src_start_port:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 subnet prefix
+      default: 0
+    instance_ip_family_v6:
+      hidden: false
+      immutable: false
+      type: string
+      description: Ipv6 instance type
+      default: v6
+    sctp-b-ingress-src_subnet_prefix_v6:
+      hidden: false
+      immutable: false
+      type: string
+      description: src subnet
+      default: '::'
+    gpb8_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb8_Internal2
+      default: 00:80:37:0E:10:22
+    gpb4_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb4_Internal1
+      default: 00:80:37:0E:0C:22
+    sctp-a-ipv6-ingress-dst_end_port:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 end port
+      default: 65535
+    Internal1_net_gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: gateway for internal-1 network
+      default: 169.253.0.3
+    sctp-b-ipv6-egress-dst_start_port:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 start port
+      default: 0
+    gpb_name_7:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of gpb8
+      default: zrdm3mmex59gpb0016
+    gpb_name_6:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of gpb7
+      default: zrdm3mmex59gpb0015
+    gpb_name_5:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of gpb6
+      default: zrdm3mmex59gpb0014
+    gpb_name_4:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of gpb5
+      default: zrdm3mmex59gpb0013
+    gpb_name_3:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of gpb4
+      default: zrdm3mmex59gpb0012
+    sctp-a-ipv6-ingress_dst_addresses:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 destination
+      default: local
+    gpb_name_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of gpb3
+      default: zrdm3mmex59gpb0011
+    shc_delay:
+      hidden: false
+      immutable: false
+      type: string
+      description: health check
+      default: 3
+    gpb_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of gpb2
+      default: zrdm3mmex59gpb0010
+    sctp-b-ipv6-egress_action:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 action
+      default: pass
+    vlc3_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc3_Internal2
+      default: 00:80:37:0E:03:12
+    gpb_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of gpb1
+      default: zrdm3mmex59gpb009
+    sctp-a-ipv6-egress_action:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 action
+      default: pass
+    gpb5_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb5_Internal1
+      default: 00:80:37:0E:0D:22
+    sctp-b-ipv6-ingress_rule_protocol:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 Rule-protocol
+      default: any
+    shc_max_retries:
+      hidden: false
+      immutable: false
+      type: string
+      description: health check
+      default: 2
+    fsb_volume_type:
+      label: volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: volume type SolidFire
+      default: SF-Default-SSD
+    sctp-a-name:
+      hidden: false
+      immutable: false
+      type: string
+      description: name for the SecurityGroup
+      default: epc-sctp-a-ipv4v6-sec-group
+    vlc_sctp_b_ip_5:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc6 SCTPB
+      default: 107.243.47.187
+    vlc_sctp_b_ip_4:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc5 SCTPB
+      default: 107.243.47.186
+    vlc_sctp_b_ip_3:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc4 SCTPB
+      default: 107.243.47.185
+    vlc_sctp_b_ip_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc3 SCTPB
+      default: 107.243.47.184
+    sctp-b-egress_rule_protocol:
+      hidden: false
+      immutable: false
+      type: string
+      description: protocol for the SecurityGroup
+      default: any
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: the vf_id for this instance. UUID provided by ECOMP
+      default: zrdm3mmex59
+    vlc_sctp_b_ip_7:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc8 SCTPB
+      default: 107.243.47.189
+    vlc_sctp_b_ip_6:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc7 SCTPB
+      default: 107.243.47.188
+    vlc_sctp_b_ip_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc2 SCTPB
+      default: 107.243.47.177
+    gpb6_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb6_Internal1
+      default: 00:80:37:0E:0E:22
+    sctp-b-ipv6-egress_dst_end_port:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 end port
+      default: 65535
+    vlc_sctp_b_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc1 SCTPB
+      default: 107.243.47.176
+    vlc2_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc2_Internal2
+      default: 00:80:37:0E:02:12
+    sctp-b-ingress-src_subnet_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip_prefix for the SecurityGroup
+      default: 0.0.0.0
+    gpb_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for servers gpb
+      default: nv.c20r64d1
+    vlc_sctp_a_route_prefixes:
+      hidden: false
+      immutable: false
+      type: json
+      description: Route prefixes for static routing on SCTPA
+    sctp-b-ipv6-ingress_dst_addresses:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 destination
+      default: local
+    sctp-b-ipv6-ingress_ethertype:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 ethertype
+      default: IPv4
+    sctp-b-ipv6-egress_dst_subnet_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 subnet prefix
+      default: 0.0.0.0
+    sctp-a-ingress-src_subnet_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip_prefix for the SecurityGroup
+      default: 0.0.0.0
+    vlc1_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc1_Internal2
+      default: 00:80:37:0E:01:12
+    Internal1_rpf:
+      hidden: false
+      immutable: false
+      type: string
+      description: Reverse Path Forwarding Enabled/Disabled internal-1 network
+      default: disable
+    sctp-b-ingress_ethertype:
+      hidden: false
+      immutable: false
+      type: string
+      description: ethertype for the SecurityGroup
+      default: IPv4
+    sctp-b-ingress-src_end_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: end_port for the SecurityGroup
+      default: 65535
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    sctp-a-ipv6-ingress_rule_protocol:
+      hidden: false
+      immutable: false
+      type: string
+      description: IPV6 Rule-protocol
+      default: any
+    vlc_sctp_a_v6_ip_7:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc8 SCTPA
+      default: fd00:200:200:4:0:0:0:29
+    vlc_sctp_a_v6_ip_6:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc7 SCTPA
+      default: fd00:200:200:4:0:0:0:28
+    gpb7_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb7_Internal1
+      default: 00:80:37:0E:0F:22
+    vlc_sctp_a_v6_ip_5:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc6 SCTPA
+      default: fd00:200:200:4:0:0:0:27
+    vlc_sctp_a_v6_ip_4:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc5 SCTPA
+      default: fd00:200:200:4:0:0:0:26
+    vlc_sctp_a_v6_ip_3:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc4 SCTPA
+      default: fd00:200:200:4:0:0:0:25
+    vlc_sctp_a_v6_ip_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc3 SCTPA
+      default: fd00:200:200:4:0:0:0:24
+    sctp-a-ingress-src_start_port:
+      hidden: false
+      immutable: false
+      type: float
+      description: start_port for the SecurityGroup
+      default: 0
+      constraints:
+      - in_range:
+        - 0
+        - 65535
+    vlc_sctp_a_v6_ip_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc2 SCTPA
+      default: fd00:200:200:4:0:0:0:17
+    vlc_sctp_a_v6_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static IP vlc1 SCTPA
+      default: fd00:200:200:4:0:0:0:16
+  node_templates:
+    abstract_gpb_1:
+      type: org.openecomp.resource.abstract.nodes.gpb_1
+      directives:
+      - substitutable
+      properties:
+        compute_gpb_name:
+        - get_input: gpb_name_1
+        vm_flavor_name:
+          get_input: gpb_flavor_name
+        compute_gpb_scheduler_hints:
+        - group:
+            get_input: server_group_id_0
+        port_gpb2_Internal1_security_groups:
+        - - get_input: security_group_int1_id
+        compute_gpb_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        port_gpb2_Internal2_network:
+        - get_input: internal_net_id_1
+        port_gpb2_Internal1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pxe_image_name
+        port_gpb2_Internal1_replacement_policy:
+        - AUTO
+        port_gpb2_Internal1_network:
+        - get_input: internal_net_id_0
+        port_gpb2_Internal2_replacement_policy:
+        - AUTO
+        port_gpb2_Internal1_mac_requirements:
+          mac_count_required:
+            is_required: true
+        compute_gpb_availability_zone:
+        - get_input: availability_zone_1
+        port_gpb2_Internal1_mac_address:
+          get_input: gpb2_Internal1_mac
+        port_gpb2_Internal2_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_gpb2_Internal2_mac_address:
+          get_input: gpb2_Internal1_mac
+        port_gpb2_Internal2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_gpb2_Internal2_security_groups:
+        - - get_input: security_group_int2_id
+        service_template_filter:
+          substitute_service_template: Nested_gpb_1ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vm_type_tag: gpb
+        nfc_naming_code: gpb
+      requirements:
+      - link_gpb_gpb2_Internal1:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_gpb_gpb2_Internal2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2_net
+          relationship: tosca.relationships.network.LinksTo
+    abstract_gpb_2:
+      type: org.openecomp.resource.abstract.nodes.gpb_2
+      directives:
+      - substitutable
+      properties:
+        port_gpb3_Internal1_replacement_policy:
+        - AUTO
+        compute_gpb_name:
+        - get_input: gpb_name_2
+        port_gpb3_Internal1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_gpb3_Internal2_replacement_policy:
+        - AUTO
+        vm_flavor_name:
+          get_input: gpb_flavor_name
+        port_gpb3_Internal2_security_groups:
+        - - get_input: security_group_int2_id
+        compute_gpb_scheduler_hints:
+        - group:
+            get_input: server_group_id_0
+        compute_gpb_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        vm_image_name:
+          get_input: pxe_image_name
+        port_gpb3_Internal1_security_groups:
+        - - get_input: security_group_int1_id
+        port_gpb3_Internal2_network:
+        - get_input: internal_net_id_1
+        compute_gpb_availability_zone:
+        - get_input: availability_zone_0
+        port_gpb3_Internal1_network:
+        - get_input: internal_net_id_0
+        port_gpb3_Internal1_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_gpb3_Internal2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_gpb3_Internal1_mac_address:
+          get_input: gpb3_Internal1_mac
+        port_gpb3_Internal2_mac_address:
+          get_input: gpb3_Internal1_mac
+        port_gpb3_Internal2_mac_requirements:
+          mac_count_required:
+            is_required: true
+        service_template_filter:
+          substitute_service_template: Nested_gpb_2ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vm_type_tag: gpb
+        nfc_naming_code: gpb
+      requirements:
+      - link_gpb_gpb3_Internal1:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_gpb_gpb3_Internal2_diferent_name:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2_net
+          relationship: tosca.relationships.network.LinksTo
+    abstract_vlc:
+      type: org.openecomp.resource.abstract.nodes.vlc
+      directives:
+      - substitutable
+      properties:
+        port_template_VMInt_SCTP_A_vlc_virtual_network_refs:
+        - - get_input: sctp_a_net_fqdn
+        port_template_VMInt_INT1_vlc_security_group_refs:
+        - - get_input: security_group_int1_id
+        vm_flavor_name:
+          get_input: vlc_flavor_name
+        port_template_VMInt_INT2_vlc_port_tuple_refs:
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc4
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc3
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc2
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc1
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc8
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc7
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc6
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc5
+        vm_image_name:
+          get_input: pxe_image_name
+        port_template_VMInt_INT1_vlc_port_tuple_refs:
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc4
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc3
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc2
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc1
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc8
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc7
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc6
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc5
+        port_template_VMInt_INT2_vlc_virtual_network_refs:
+        - - get_input: internal_net_id_1
+        port_template_VMInt_OAM_vlc_virtual_network_refs:
+        - - get_input: oam_net_fqdn
+        port_template_VMInt_OAM_vlc_port_tuple_refs:
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc4
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc3
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc2
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc1
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc8
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc7
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc6
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc5
+        port_template_VMInt_INT2_vlc_virtual_machine_interface_mac_addresses:
+        - - get_input: vlc4_Internal2_mac
+        - - get_input: vlc3_Internal2_mac
+        - - get_input: vlc2_Internal2_mac
+        - - get_input: vlc1_Internal2_mac
+        - - get_input: vlc8_Internal2_mac
+        - - get_input: vlc7_Internal2_mac
+        - - get_input: vlc6_Internal2_mac
+        - - get_input: vlc5_Internal2_mac
+        port_template_VMInt_SCTP_B_vlc_port_tuple_refs:
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc4
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc3
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc2
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc1
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc8
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc7
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc6
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc5
+        port_template_VMInt_GTP_vlc_security_group_refs:
+        - - get_input: security_group_gtp_id
+        compute_vlc_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        port_template_VMInt_OAM_vlc_security_group_refs:
+        - - get_input: security_group_oam_id
+        compute_vlc_contrail_service_instance_ind:
+        - true
+        - true
+        - true
+        - true
+        - true
+        - true
+        - true
+        - true
+        port_template_VMInt_GTP_vlc_port_tuple_refs:
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc4
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc3
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc2
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc1
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc8
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc7
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc6
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc5
+        port_template_VMInt_SCTP_B_vlc_virtual_network_refs:
+        - - get_input: sctp_b_net_fqdn
+        port_template_VMInt_INT2_vlc_security_group_refs:
+        - - get_input: security_group_int2_id
+        port_template_VMInt_SCTP_B_vlc_security_group_refs:
+        - - get_input: security_group_sctp_b_id
+        port_template_VMInt_INT1_vlc_virtual_network_refs:
+        - - get_input: internal_net_id_0
+        port_template_VMInt_SCTP_A_vlc_port_tuple_refs:
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc4
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc3
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc2
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc1
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc8
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc7
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc6
+        - - UNSUPPORTED_RESOURCE_template_PortTuple_vlc5
+        compute_vlc_scheduler_hints:
+        - group:
+            get_input: server_group_id_0
+        - group:
+            get_input: server_group_id_0
+        - group:
+            get_input: server_group_id_0
+        - group:
+            get_input: server_group_id_0
+        - group:
+            get_input: server_group_id_0
+        - group:
+            get_input: server_group_id_0
+        - group:
+            get_input: server_group_id_0
+        - group:
+            get_input: server_group_id_0
+        compute_vlc_name:
+        - get_input: vlc_name_3
+        - get_input: vlc_name_2
+        - get_input: vlc_name_1
+        - get_input: vlc_name_0
+        - get_input: vlc_name_7
+        - get_input: vlc_name_6
+        - get_input: vlc_name_5
+        - get_input: vlc_name_4
+        port_template_VMInt_SCTP_A_vlc_security_group_refs:
+        - - get_input: security_group_sctp_a_id
+        compute_vlc_availability_zone:
+        - get_input: availability_zone_1
+        - get_input: availability_zone_0
+        - get_input: availability_zone_1
+        - get_input: availability_zone_0
+        - get_input: availability_zone_1
+        - get_input: availability_zone_0
+        - get_input: availability_zone_1
+        - get_input: availability_zone_0
+        port_template_VMInt_INT1_vlc_virtual_machine_interface_mac_addresses:
+        - - get_input: vlc4_Internal1_mac
+        - - get_input: vlc3_Internal1_mac
+        - - get_input: vlc2_Internal1_mac
+        - - get_input: vlc1_Internal1_mac
+        - - get_input: vlc8_Internal1_mac
+        - - get_input: vlc7_Internal1_mac
+        - - get_input: vlc6_Internal1_mac
+        - - get_input: vlc5_Internal1_mac
+        port_template_VMInt_GTP_vlc_virtual_network_refs:
+        - - get_input: gtp_net_fqdn
+        service_template_filter:
+          substitute_service_template: Nested_vlcServiceTemplate.yaml
+          count: 8
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vm_type_tag: vlc
+        nfc_naming_code: vlc
+      requirements:
+      - link_vlc_template_VMInt_INT2_vlc:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_vlc_template_VMInt_INT1_vlc:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1_net
+          relationship: tosca.relationships.network.LinksTo
+    abstract_gpb_7:
+      type: org.openecomp.resource.abstract.nodes.gpb_7
+      directives:
+      - substitutable
+      properties:
+        compute_gpb_name:
+        - get_input: gpb_name_7
+        port_gpb8_Internal1_mac_address:
+          get_input: gpb8_Internal1_mac
+        port_gpb8_Internal2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        vm_flavor_name:
+          get_input: gpb_flavor_name
+        compute_gpb_scheduler_hints:
+        - group:
+            get_input: server_group_id_0
+        compute_gpb_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        vm_image_name:
+          get_input: pxe_image_name
+        port_gpb8_Internal2_security_groups:
+        - - get_input: security_group_int2_id
+        port_gpb8_Internal1_replacement_policy:
+        - AUTO
+        port_gpb8_Internal2_replacement_policy:
+        - AUTO
+        compute_gpb_availability_zone:
+        - get_input: availability_zone_1
+        port_gpb8_Internal1_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_gpb8_Internal1_network:
+        - get_input: internal_net_id_0
+        port_gpb8_Internal2_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_gpb8_Internal1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_gpb8_Internal1_security_groups:
+        - - get_input: security_group_int1_id
+        port_gpb8_Internal2_network:
+        - get_input: internal_net_id_1
+        port_gpb8_Internal2_mac_address:
+          get_input: gpb8_Internal1_mac
+        service_template_filter:
+          substitute_service_template: Nested_gpb_7ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vm_type_tag: gpb
+        nfc_naming_code: gpb
+      requirements:
+      - link_gpb_gpb8_Internal1:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_gpb_gpb8_Internal2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2_net
+          relationship: tosca.relationships.network.LinksTo
+    abstract_gpb_5:
+      type: org.openecomp.resource.abstract.nodes.gpb_5
+      directives:
+      - substitutable
+      properties:
+        port_gpb6_Internal1_mac_requirements:
+          mac_count_required:
+            is_required: true
+        compute_gpb_name:
+        - get_input: gpb_name_5
+        vm_flavor_name:
+          get_input: gpb_flavor_name
+        compute_gpb_scheduler_hints:
+        - group:
+            get_input: server_group_id_0
+        compute_gpb_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        port_gpb6_Internal1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pxe_image_name
+        port_gpb6_Internal1_security_groups:
+        - - get_input: security_group_int1_id
+        port_gpb6_Internal2_network:
+        - get_input: internal_net_id_1
+        compute_gpb_availability_zone:
+        - get_input: availability_zone_1
+        port_gpb6_Internal1_network:
+        - get_input: internal_net_id_0
+        port_gpb6_Internal2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_gpb6_Internal2_mac_address:
+          get_input: gpb6_Internal1_mac
+        port_gpb6_Internal1_mac_address:
+          get_input: gpb6_Internal1_mac
+        port_gpb6_Internal2_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_gpb6_Internal2_replacement_policy:
+        - AUTO
+        port_gpb6_Internal1_replacement_policy:
+        - AUTO
+        port_gpb6_Internal2_security_groups:
+        - - get_input: security_group_int2_id
+        service_template_filter:
+          substitute_service_template: Nested_gpb_5ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vm_type_tag: gpb
+        nfc_naming_code: gpb
+      requirements:
+      - link_gpb_gpb6_Internal1:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_gpb_gpb6_Internal2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2_net
+          relationship: tosca.relationships.network.LinksTo
+    abstract_gpb_6:
+      type: org.openecomp.resource.abstract.nodes.gpb_6
+      directives:
+      - substitutable
+      properties:
+        port_gpb7_Internal1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_gpb7_Internal1_network:
+        - get_input: internal_net_id_0
+        compute_gpb_name:
+        - get_input: gpb_name_6
+        port_gpb7_Internal2_network:
+        - get_input: internal_net_id_1
+        vm_flavor_name:
+          get_input: gpb_flavor_name
+        port_gpb7_Internal1_replacement_policy:
+        - AUTO
+        port_gpb7_Internal2_replacement_policy:
+        - AUTO
+        port_gpb7_Internal2_security_groups:
+        - - get_input: security_group_int2_id
+        compute_gpb_scheduler_hints:
+        - group:
+            get_input: server_group_id_0
+        compute_gpb_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        vm_image_name:
+          get_input: pxe_image_name
+        port_gpb7_Internal2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_gpb7_Internal1_security_groups:
+        - - get_input: security_group_int1_id
+        compute_gpb_availability_zone:
+        - get_input: availability_zone_0
+        port_gpb7_Internal2_mac_address:
+          get_input: gpb7_Internal1_mac
+        port_gpb7_Internal1_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_gpb7_Internal1_mac_address:
+          get_input: gpb7_Internal1_mac
+        port_gpb7_Internal2_mac_requirements:
+          mac_count_required:
+            is_required: true
+        service_template_filter:
+          substitute_service_template: Nested_gpb_6ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vm_type_tag: gpb
+        nfc_naming_code: gpb
+      requirements:
+      - link_gpb_gpb7_Internal1:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_gpb_gpb7_Internal2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2_net
+          relationship: tosca.relationships.network.LinksTo
+    abstract_gpb_3:
+      type: org.openecomp.resource.abstract.nodes.gpb_3
+      directives:
+      - substitutable
+      properties:
+        compute_gpb_name:
+        - get_input: gpb_name_3
+        port_gpb4_Internal2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        vm_flavor_name:
+          get_input: gpb_flavor_name
+        port_gpb4_Internal1_mac_address:
+          get_input: gpb4_Internal1_mac
+        compute_gpb_scheduler_hints:
+        - group:
+            get_input: server_group_id_0
+        port_gpb4_Internal2_mac_requirements:
+          mac_count_required:
+            is_required: true
+        compute_gpb_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        port_gpb4_Internal2_mac_address:
+          get_input: gpb4_Internal1_mac
+        vm_image_name:
+          get_input: pxe_image_name
+        port_gpb4_Internal2_security_groups:
+        - - get_input: security_group_int2_id
+        compute_gpb_availability_zone:
+        - get_input: availability_zone_1
+        port_gpb4_Internal2_replacement_policy:
+        - AUTO
+        port_gpb4_Internal1_replacement_policy:
+        - AUTO
+        port_gpb4_Internal1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_gpb4_Internal1_security_groups:
+        - - get_input: security_group_int1_id
+        port_gpb4_Internal2_network:
+        - get_input: internal_net_id_1
+        port_gpb4_Internal1_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_gpb4_Internal1_network:
+        - get_input: internal_net_id_0
+        service_template_filter:
+          substitute_service_template: Nested_gpb_3ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vm_type_tag: gpb
+        nfc_naming_code: gpb
+      requirements:
+      - link_gpb_gpb4_Internal1:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_gpb_gpb4_Internal2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2_net
+          relationship: tosca.relationships.network.LinksTo
+    abstract_gpb_4:
+      type: org.openecomp.resource.abstract.nodes.gpb_4
+      directives:
+      - substitutable
+      properties:
+        port_gpb5_Internal2_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_gpb5_Internal1_security_groups:
+        - - get_input: security_group_int1_id
+        compute_gpb_name:
+        - get_input: gpb_name_4
+        vm_flavor_name:
+          get_input: gpb_flavor_name
+        port_gpb5_Internal1_mac_requirements:
+          mac_count_required:
+            is_required: true
+        compute_gpb_scheduler_hints:
+        - group:
+            get_input: server_group_id_0
+        port_gpb5_Internal2_network:
+        - get_input: internal_net_id_1
+        compute_gpb_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        vm_image_name:
+          get_input: pxe_image_name
+        port_gpb5_Internal1_network:
+        - get_input: internal_net_id_0
+        port_gpb5_Internal2_mac_address:
+          get_input: gpb5_Internal1_mac
+        port_gpb5_Internal1_mac_address:
+          get_input: gpb5_Internal1_mac
+        port_gpb5_Internal1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_gpb5_Internal2_replacement_policy:
+        - AUTO
+        compute_gpb_availability_zone:
+        - get_input: availability_zone_0
+        port_gpb5_Internal1_replacement_policy:
+        - AUTO
+        port_gpb5_Internal2_security_groups:
+        - - get_input: security_group_int2_id
+        port_gpb5_Internal2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        service_template_filter:
+          substitute_service_template: Nested_gpb_4ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vm_type_tag: gpb
+        nfc_naming_code: gpb
+      requirements:
+      - link_gpb_gpb5_Internal1:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_gpb_gpb5_Internal2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2_net
+          relationship: tosca.relationships.network.LinksTo
+    abstract_gpb:
+      type: org.openecomp.resource.abstract.nodes.gpb
+      directives:
+      - substitutable
+      properties:
+        port_gpb1_Internal1_security_groups:
+        - - get_input: security_group_int1_id
+        compute_gpb_name:
+        - get_input: gpb_name_0
+        port_gpb1_Internal2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        vm_flavor_name:
+          get_input: gpb_flavor_name
+        port_gpb1_Internal1_mac_requirements:
+          mac_count_required:
+            is_required: true
+        compute_gpb_scheduler_hints:
+        - group:
+            get_input: server_group_id_0
+        compute_gpb_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        vm_image_name:
+          get_input: pxe_image_name
+        port_gpb1_Internal1_mac_address:
+          get_input: gpb1_Internal1_mac
+        port_gpb1_Internal2_mac_address:
+          get_input: gpb1_Internal1_mac
+        port_gpb1_Internal2_mac_requirements:
+          mac_count_required:
+            is_required: true
+        compute_gpb_availability_zone:
+        - get_input: availability_zone_0
+        port_gpb1_Internal1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_gpb1_Internal2_security_groups:
+        - - get_input: security_group_int2_id
+        port_gpb1_Internal1_replacement_policy:
+        - AUTO
+        port_gpb1_Internal2_replacement_policy:
+        - AUTO
+        port_gpb1_Internal2_network:
+        - get_input: internal_net_id_1
+        port_gpb1_Internal1_network:
+        - get_input: internal_net_id_0
+        service_template_filter:
+          substitute_service_template: Nested_gpbServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vm_type_tag: gpb
+        nfc_naming_code: gpb
+      requirements:
+      - link_gpb_gpb1_Internal1:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_gpb_gpb1_Internal2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2_net
+          relationship: tosca.relationships.network.LinksTo
+    Internal1_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_ipam_refs_data:
+        - network_ipam_refs_data_ipam_subnets:
+          - network_ipam_refs_data_ipam_subnets_enable_dhcp:
+              get_input: Internal1_dhcp
+            network_ipam_refs_data_ipam_subnets_default_gateway:
+              get_input: Internal1_net_gateway
+            network_ipam_refs_data_ipam_subnets_subnet:
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+                get_input: Internal1_net_cidr_len
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+                get_input: Internal1_net_cidr
+        network_name:
+          str_replace:
+            template: $VNF_NAME_int_net_1
+            params:
+              $VNF_NAME:
+                get_input: vnf_name
+        network_ipam_refs:
+        - UNSUPPORTED_RESOURCE_template_NetworkIpam_Internal1
+    abstract_fsb:
+      type: org.openecomp.resource.abstract.nodes.fsb
+      directives:
+      - substitutable
+      properties:
+        port_FSB1_Internal1_mac_address:
+          get_input: fsb1_Internal1_mac
+        port_FSB_OAM_network_role_tag:
+        - oam
+        port_FSB1_Internal2_network:
+        - Internal2_net
+        port_FSB1_Internal1_network:
+        - Internal1_net
+        vm_flavor_name:
+          get_input: fsb_flavor_name
+        port_FSB1_Internal2_mac_address:
+          get_input: fsb1_Internal1_mac
+        port_FSB_OAM_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        compute_fsb_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        port_FSB1_Internal1_security_groups:
+        - - int1_security_group
+        port_FSB1_Internal2_replacement_policy:
+        - AUTO
+        compute_fsb_scheduler_hints:
+        - group: VM_Affinity_group
+        port_FSB1_Internal1_replacement_policy:
+        - AUTO
+        compute_fsb_name:
+        - get_input: fsb_name_0
+        port_FSB1_Internal1_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_FSB1_Internal1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_FSB_OAM_network:
+        - get_input: oam_net_name
+        port_FSB_OAM_security_groups:
+        - - oam_security_group
+        port_FSB_OAM_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_FSB_OAM_replacement_policy:
+        - AUTO
+        compute_fsb_availability_zone:
+        - get_input: availability_zone_0
+        port_FSB1_Internal2_security_groups:
+        - - int2_security_group
+        port_FSB1_Internal2_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_FSB1_Internal2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_FSB_OAM_fixed_ips:
+        - ip_address:
+            get_input: fsb_oam_ip_0
+        service_template_filter:
+          substitute_service_template: Nested_fsbServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vm_type_tag: fsb
+        nfc_naming_code: fsb
+      requirements:
+      - link_fsb_FSB1_Internal1:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_fsb_FSB1_Internal2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2_net
+          relationship: tosca.relationships.network.LinksTo
+    gtp_security_group:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: $VNF_NAME_$SECGROUPNAME
+            params:
+              $SECGROUPNAME:
+                get_input: gtp_sec_group_name
+              $VNF_NAME:
+                get_input: vnf_name
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+    abstract_ncb_1:
+      type: org.openecomp.resource.abstract.nodes.ncb_1
+      directives:
+      - substitutable
+      properties:
+        port_NCB2_Internal2_security_groups:
+        - - int2_security_group
+        port_NCB2_Internal1_replacement_policy:
+        - AUTO
+        port_NCB2_Internal2_replacement_policy:
+        - AUTO
+        vm_flavor_name:
+          get_input: ncb_flavor_name
+        port_NCB2_Internal2_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_NCB2_Internal1_mac_requirements:
+          mac_count_required:
+            is_required: true
+        vm_image_name:
+          get_input: pxe_image_name
+        compute_ncb_scheduler_hints:
+        - group: VM_Affinity_group
+        compute_ncb_availability_zone:
+        - get_input: availability_zone_1
+        port_NCB2_Internal1_network:
+        - Internal1_net
+        port_NCB2_Internal2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_NCB2_Internal1_security_groups:
+        - - int1_security_group
+        port_NCB2_Internal2_network:
+        - Internal2_net
+        port_NCB2_Internal1_mac_address:
+          get_input: ncb2_Internal1_mac
+        port_NCB2_Internal2_mac_address:
+          get_input: ncb2_Internal1_mac
+        compute_ncb_name:
+        - get_input: ncb_name_1
+        compute_ncb_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        port_NCB2_Internal1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        service_template_filter:
+          substitute_service_template: Nested_ncb_1ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vm_type_tag: ncb
+        nfc_naming_code: ncb
+      requirements:
+      - link_ncb_NCB2_Internal1:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_ncb_NCB2_Internal2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2_net
+          relationship: tosca.relationships.network.LinksTo
+    abstract_ncb:
+      type: org.openecomp.resource.abstract.nodes.ncb
+      directives:
+      - substitutable
+      properties:
+        vm_flavor_name:
+          get_input: ncb_flavor_name
+        port_NCB1_Internal2_mac_requirements:
+          mac_count_required:
+            is_required: true
+        vm_image_name:
+          get_input: pxe_image_name
+        port_NCB1_Internal2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        compute_ncb_scheduler_hints:
+        - group: VM_Affinity_group
+        port_NCB1_Internal1_security_groups:
+        - - int1_security_group
+        compute_ncb_availability_zone:
+        - get_input: availability_zone_0
+        port_NCB1_Internal2_mac_address:
+          get_input: ncb1_Internal1_mac
+        port_NCB1_Internal1_mac_address:
+          get_input: ncb1_Internal1_mac
+        port_NCB1_Internal1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_NCB1_Internal1_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_NCB1_Internal2_replacement_policy:
+        - AUTO
+        port_NCB1_Internal1_network:
+        - Internal1_net
+        port_NCB1_Internal2_security_groups:
+        - - int2_security_group
+        port_NCB1_Internal1_replacement_policy:
+        - AUTO
+        compute_ncb_name:
+        - get_input: ncb_name_0
+        compute_ncb_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        port_NCB1_Internal2_network:
+        - Internal2_net
+        service_template_filter:
+          substitute_service_template: Nested_ncbServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vm_type_tag: ncb
+        nfc_naming_code: ncb
+      requirements:
+      - link_ncb_NCB1_Internal1:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_ncb_NCB1_Internal2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2_net
+          relationship: tosca.relationships.network.LinksTo
+    int1_security_group:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: $VNF_NAME_$SECGROUPNAME
+            params:
+              $SECGROUPNAME:
+                get_input: int1_sec_group_name
+              $VNF_NAME:
+                get_input: vnf_name
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+      requirements:
+      - port:
+          capability: attachment_fsb_FSB1_Internal1
+          node: abstract_fsb
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_fsb_FSB2_Internal1
+          node: abstract_fsb_1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_ncb_NCB1_Internal1
+          node: abstract_ncb
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_ncb_NCB2_Internal1
+          node: abstract_ncb_1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb1_Internal1
+          node: abstract_gpb
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb2_Internal1
+          node: abstract_gpb_1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb3_Internal1
+          node: abstract_gpb_2
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb4_Internal1
+          node: abstract_gpb_3
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb5_Internal1
+          node: abstract_gpb_4
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb6_Internal1
+          node: abstract_gpb_5
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb7_Internal1
+          node: abstract_gpb_6
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb8_Internal1
+          node: abstract_gpb_7
+          relationship: org.openecomp.relationships.AttachesTo
+    fsb_volume_0:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        image:
+          get_input: fsb_volume_image_name_0
+        volume_type:
+          get_input: fsb_volume_type
+        size: '(get_input : fsb_volume_size) * 1024'
+        name:
+          list_join:
+          - _
+          - - get_input: OS::stack_name
+            - FSB1_Vol_1
+    fsb_volume_1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        image:
+          get_input: fsb_volume_image_name_1
+        volume_type:
+          get_input: fsb_volume_type
+        size: '(get_input : fsb_volume_size) * 1024'
+        name:
+          list_join:
+          - _
+          - - get_input: OS::stack_name
+            - FSB2_Vol_1
+    Internal2_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_ipam_refs_data:
+        - network_ipam_refs_data_ipam_subnets:
+          - network_ipam_refs_data_ipam_subnets_enable_dhcp:
+              get_input: Internal2_dhcp
+            network_ipam_refs_data_ipam_subnets_default_gateway:
+              get_input: Internal2_net_gateway
+            network_ipam_refs_data_ipam_subnets_subnet:
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+                get_input: Internal2_net_cidr_len
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+                get_input: Internal2_net_cidr
+        network_name:
+          str_replace:
+            template: $VNF_NAME_int_net_2
+            params:
+              $VNF_NAME:
+                get_input: vnf_name
+        network_ipam_refs:
+        - UNSUPPORTED_RESOURCE_template_NetworkIpam_Internal2
+    int2_security_group:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: $VNF_NAME_$SECGROUPNAME
+            params:
+              $SECGROUPNAME:
+                get_input: int2_sec_group_name
+              $VNF_NAME:
+                get_input: vnf_name
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: 132
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: egress
+          port_range_min: 1
+        - protocol: 132
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: egress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: 132
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+        - protocol: tcp
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: 132
+          ethertype: IPv6
+          port_range_max: 65535
+          remote_ip_prefix: ::/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          direction: ingress
+      requirements:
+      - port:
+          capability: attachment_fsb_FSB1_Internal2
+          node: abstract_fsb
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_fsb_FSB2_Internal2
+          node: abstract_fsb_1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_ncb_NCB1_Internal2
+          node: abstract_ncb
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_ncb_NCB2_Internal2
+          node: abstract_ncb_1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb1_Internal2
+          node: abstract_gpb
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb2_Internal2
+          node: abstract_gpb_1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb3_Internal2
+          node: abstract_gpb_2
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb4_Internal2
+          node: abstract_gpb_3
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb5_Internal2
+          node: abstract_gpb_4
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb6_Internal2
+          node: abstract_gpb_5
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb7_Internal2
+          node: abstract_gpb_6
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_gpb_gpb8_Internal2
+          node: abstract_gpb_7
+          relationship: org.openecomp.relationships.AttachesTo
+    abstract_fsb_1:
+      type: org.openecomp.resource.abstract.nodes.fsb_1
+      directives:
+      - substitutable
+      properties:
+        port_FSB_OAM_network_role_tag:
+        - oam
+        vm_flavor_name:
+          get_input: fsb_flavor_name
+        port_FSB_OAM_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_FSB2_Internal1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_FSB2_Internal2_security_groups:
+        - - int2_security_group
+        compute_fsb_metadata:
+        - vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        port_FSB2_Internal1_mac_address:
+          get_input: fsb2_Internal1_mac
+        compute_fsb_scheduler_hints:
+        - group: VM_Affinity_group
+        compute_fsb_name:
+        - get_input: fsb_name_1
+        port_FSB2_Internal1_security_groups:
+        - - int1_security_group
+        port_FSB_OAM_network:
+        - get_input: oam_net_name
+        port_FSB_OAM_security_groups:
+        - - oam_security_group
+        port_FSB2_Internal1_network:
+        - Internal1_net
+        port_FSB2_Internal2_mac_address:
+          get_input: fsb2_Internal1_mac
+        port_FSB2_Internal2_mac_requirements:
+          mac_count_required:
+            is_required: true
+        port_FSB_OAM_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_FSB2_Internal2_replacement_policy:
+        - AUTO
+        port_FSB2_Internal2_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        port_FSB_OAM_replacement_policy:
+        - AUTO
+        port_FSB2_Internal2_network:
+        - Internal2_net
+        port_FSB2_Internal1_replacement_policy:
+        - AUTO
+        compute_fsb_availability_zone:
+        - get_input: availability_zone_1
+        port_FSB_OAM_fixed_ips:
+        - ip_address:
+            get_input: fsb_oam_ip_1
+        port_FSB2_Internal1_mac_requirements:
+          mac_count_required:
+            is_required: true
+        service_template_filter:
+          substitute_service_template: Nested_fsb_1ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        vm_type_tag: fsb
+        nfc_naming_code: fsb
+      requirements:
+      - link_fsb_FSB2_Internal1:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_fsb_FSB2_Internal2:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2_net
+          relationship: tosca.relationships.network.LinksTo
+    oam_security_group:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: $VNF_NAME_$SECGROUPNAME
+            params:
+              $SECGROUPNAME:
+                get_input: oam_sec_group_name
+              $VNF_NAME:
+                get_input: vnf_name
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+      requirements:
+      - port:
+          capability: attachment_fsb_FSB_OAM
+          node: abstract_fsb
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_fsb_FSB_OAM
+          node: abstract_fsb_1
+          relationship: org.openecomp.relationships.AttachesTo
+  groups:
+    vmme_gpb3_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/vmme_gpb3.yml
+        description: |
+          Module HOT template to create vmme 1-8 gpb
+      members:
+      - abstract_gpb
+      - abstract_gpb_1
+      - abstract_gpb_2
+      - abstract_gpb_3
+      - abstract_gpb_4
+      - abstract_gpb_5
+      - abstract_gpb_6
+      - abstract_gpb_7
+    base_vmme_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_vmme.yml
+        description: |
+          Base HOT template to create vmme 2 fsb 2 ncb
+      members:
+      - int2_security_group
+      - oam_security_group
+      - gtp_security_group
+      - Internal2_net
+      - int1_security_group
+      - Internal1_net
+      - abstract_ncb
+      - abstract_ncb_1
+      - abstract_fsb
+      - abstract_fsb_1
+    base_vmme_volume_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_vmme_volume.yml
+        description: HOT template for vMME Cinder Volumes
+      members:
+      - fsb_volume_0
+      - fsb_volume_1
+    vmme_gpb1_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/vmme_gpb1.yml
+        description: |
+          Module HOT template to create vmme 1-8 gpb
+      members:
+      - abstract_gpb
+      - abstract_gpb_1
+      - abstract_gpb_2
+      - abstract_gpb_3
+      - abstract_gpb_4
+      - abstract_gpb_5
+      - abstract_gpb_6
+      - abstract_gpb_7
+    vmme_gpb4_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/vmme_gpb4.yml
+        description: |
+          Module HOT template to create vmme 1-8 gpb
+      members:
+      - abstract_gpb
+      - abstract_gpb_1
+      - abstract_gpb_2
+      - abstract_gpb_3
+      - abstract_gpb_4
+      - abstract_gpb_5
+      - abstract_gpb_6
+      - abstract_gpb_7
+    vmme_gpb2_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/vmme_gpb2.yml
+        description: |
+          Module HOT template to create vmme 1-8 gpb
+      members:
+      - abstract_gpb
+      - abstract_gpb_1
+      - abstract_gpb_2
+      - abstract_gpb_3
+      - abstract_gpb_4
+      - abstract_gpb_5
+      - abstract_gpb_6
+      - abstract_gpb_7
+    VM_Affinity_group:
+      type: tosca.groups.Root
+      members:
+      - abstract_ncb
+      - abstract_ncb_1
+      - abstract_vlc
+      - abstract_fsb
+      - abstract_fsb_1
+      - abstract_gpb
+      - abstract_gpb_1
+      - abstract_gpb_2
+      - abstract_gpb_3
+      - abstract_gpb_4
+      - abstract_gpb_5
+      - abstract_gpb_6
+      - abstract_gpb_7
+    vmme_vlc_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/vmme_vlc.yml
+        description: |
+          Module HOT template to create vmme 8 vlcs
+      members:
+      - abstract_vlc
+  outputs:
+    oam_management_v4_address:
+      description: ID of OAM VIP to be provisioned in A&AI
+      value:
+        get_input: vip_oam_management_v4_ip
+    fsb_volume_id_1:
+      description: ID of Cinder Volume for FSB2
+      value: fsb_volume_1
+    security_group_sctp_b_id:
+      description: ID of sctpb_security_group
+      value: UNSUPPORTED_RESOURCE_sctpb_security_group
+    service_instance_id_0:
+      description: ID of Service Instance used for vLCs
+      value: UNSUPPORTED_RESOURCE_template_ServiceInstance_VLC
+    security_group_sctp_a_id:
+      description: ID of sctpa_security_group
+      value: UNSUPPORTED_RESOURCE_sctpa_security_group
+    fsb_volume_id_0:
+      description: ID of Cinder Volume for FSB1
+      value: fsb_volume_0
+  policies:
+    VM_Affinity_policy:
+      type: org.openecomp.policies.placement.Antilocate
+      properties:
+        container_type: host
+      targets:
+      - VM_Affinity_group

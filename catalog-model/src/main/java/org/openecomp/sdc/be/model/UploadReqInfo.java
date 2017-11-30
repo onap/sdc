@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.util.Map;
-
 public class UploadReqInfo extends UploadInfo {
 	/**
 	 * specify the node type(Optional by tosca)

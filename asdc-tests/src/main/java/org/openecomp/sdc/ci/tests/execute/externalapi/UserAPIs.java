@@ -20,7 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.execute.externalapi;
 
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -47,17 +48,11 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.EcompUserRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.rest.UserRestUtils;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import fj.data.Either;
-
-import org.testng.Assert;
 
 public class UserAPIs extends ComponentBaseTest {
 	

@@ -11,16 +11,22 @@ import java.util.Properties;
 public class ValidationConfigManager {
 
     private static Properties prop = new Properties();
+    private static String outputFullFilePath;
+    private static String outputFilePath;
 
+    public static String getOutputFullFilePath() {
+        return outputFullFilePath;
+    }
     public static String getOutputFilePath() {
         return outputFilePath;
     }
 
-    public static void setOutputFilePath(String outputPath) {
-        ValidationConfigManager.outputFilePath = outputPath+ "/reportOutput.txt";
+    public static void setOutputFullFilePath(String outputPath) {
+    	ValidationConfigManager.outputFilePath = outputPath;
+        ValidationConfigManager.outputFullFilePath = outputPath+ "/reportOutput.txt";
     }
 
-    private static String outputFilePath;
+    
 
     public static String getCsvReportFilePath() {
         return csvReportFilePath;

@@ -2,11 +2,8 @@ package org.openecomp.sdc.be.dao.jsongraph;
 
 import java.util.Map;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;

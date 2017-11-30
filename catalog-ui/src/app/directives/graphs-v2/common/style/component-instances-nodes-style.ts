@@ -225,6 +225,23 @@ export class ComponentInstanceNodesStyle {
                 css: {
                     'overlay-opacity': 0
                 }
+            }, {
+                selector: '.configuration-node',
+                css: {
+                    'background-color': 'rgb(255,255,255)',
+                    'shape': 'rectangle',
+                    'label': 'data(displayName)',
+                    'background-image': 'data(img)',
+                    'background-width': GraphUIObjects.SMALL_RESOURCE_WIDTH,
+                    'background-height': GraphUIObjects.SMALL_RESOURCE_WIDTH,
+                    'width': GraphUIObjects.SMALL_RESOURCE_WIDTH,
+                    'height': GraphUIObjects.SMALL_RESOURCE_WIDTH,
+                    'text-valign': 'bottom',
+                    'text-halign': 'center',
+                    'background-opacity': 0,
+                    'overlay-color': GraphColors.NODE_BACKGROUND_COLOR,
+                    'overlay-opacity': 0
+                }
             }
         ]
     }

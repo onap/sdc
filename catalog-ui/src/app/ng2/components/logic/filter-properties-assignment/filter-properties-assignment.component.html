@@ -1,0 +1,27 @@
+<popover-content #filterPopover [title]="'Filters'" [buttons]="footerButtons" placement="bottom-right" [hideArrow]="true">
+    <!--<form [formGroup]="filterForm">-->
+    <form>
+        <div class="field">
+            <label>Resource Type</label>
+            <div>
+                <checkbox [label]="'All'" [(checked)]="allSelected" (checkedChange)="selectAll()" data-tests-id="filter-checkbox-all"></checkbox>
+            </div>
+            <div *ngFor="let type of typesOptions">
+                <checkbox [label]="type" [(checked)]="selectedTypes[type]" (checkedChange)="onTypeSelected(type)"></checkbox>
+            </div>
+        </div>
+        <div class="field">
+            <label>Property Name</label>
+            <input class="i-sdc-form-input"
+                   name="propertyName"
+                   [(ngModel)]="filterData.propertyName"
+                   placeholder="Type here"
+                   required
+                   data-tests-id="filter-box"
+            />
+        </div>
+    </form>
+</popover-content>
+<div class="open-filter-button" [popover]="filterPopover" [ngClass]="{'open':showPopover}" (onShown)="showPopover = true" (onHidden)="showPopover = false">
+    <div class="sprite-new filter-icon" data-tests-id="filter-button"></div>
+</div>

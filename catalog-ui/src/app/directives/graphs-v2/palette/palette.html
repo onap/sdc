@@ -32,7 +32,7 @@
                  data-ng-repeat="component in components | orderBy: 'displayName' track by $index"
                  data-tests-id={{component.displayName}}>
                 <div class="i-sdc-designer-leftbar-section-content-item-icon-ph">
-                    <div class="medium {{component.iconClass}}"
+                    <div class="medium small {{component.iconClass}}"
                          data-tests-id="leftbar-section-content-item-{{component.displayName}}">
                         <div class="{{component.certifiedIconClass}}" uib-tooltip="Not certified"
                              tooltip-class="uib-custom-tooltip" tooltip-placement="bottom" tooltip-popup-delay="700">

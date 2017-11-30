@@ -20,13 +20,21 @@
 
 package org.openecomp.sdc.ci.tests.api;
 
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -37,7 +45,11 @@ import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.Product;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
@@ -47,9 +59,14 @@ import org.openecomp.sdc.ci.tests.utils.cassandra.CassandraUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.general.FileHandling;
-import org.openecomp.sdc.ci.tests.utils.rest.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.CatalogRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.CategoryRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ProductRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
+import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
@@ -57,31 +74,22 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-
-
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.thinkaurelius.titan.core.TitanFactory;
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanVertex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 
 
 public abstract class ComponentBaseTest {
 
-//	private static Logger logger = LoggerFactory.getLogger(ComponentBaseTest.class.getName());
+
 	protected static Logger logger= LoggerFactory.getLogger(ComponentBaseTest.class);
-	
-
-//	 public ComponentBaseTest(TestName testName, String className) {
-//	 super(testName, className);
-//	 }
-
 	protected static final String REPORT_FOLDER = "." + File.separator + "ExtentReport" + File.separator;
 	private static final String VERSIONS_INFO_FILE_NAME = "versions.info";
 	private static final String REPORT_FILE_NAME = "SDC_CI_Extent_Report.html";
@@ -93,7 +101,8 @@ public abstract class ComponentBaseTest {
 	
 	/**************** METHODS ****************/
 	public static ExtentTest getExtendTest() {
-		return ExtentTestManager.getTest();
+		SomeInterface testManager = new ExtentTestManager(); 
+		return testManager.getTest();
 	}
 
 	public static enum ComponentOperationEnum {
@@ -101,16 +110,12 @@ public abstract class ComponentBaseTest {
 	};
 
 	public ComponentBaseTest(TestName name, String name2) {
-		// TODO Auto-generated constructor stub
-//		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-//		lc.getLogger("com.thinkaurelius").setLevel(Level.INFO);
-//		lc.getLogger("com.datastax").setLevel(Level.INFO);
-//		lc.getLogger("io.netty").setLevel(Level.INFO);
-//		lc.getLogger("c.d").setLevel(Level.INFO);
-//		lc.getLogger("o.a.h").setLevel(Level.INFO);
-//		lc.getLogger("o.o.s.c.t.d.h").setLevel(Level.INFO);
-
-}
+		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+		lc.getLogger("com.thinkaurelius").setLevel(Level.INFO);
+		lc.getLogger("com.datastax").setLevel(Level.INFO);
+		lc.getLogger("io.netty").setLevel(Level.INFO);
+		lc.getLogger("c.d").setLevel(Level.INFO);
+	}
 	
 	public static String getReportFolder() {
 		return REPORT_FOLDER;
@@ -124,33 +129,26 @@ public abstract class ComponentBaseTest {
 		AtomicOperationUtils.createDefaultConsumer(true);
 		openTitanLogic();
 		performClean();
-		
-		String basePath = FileHandling.getBasePath();
-		String csarDir = FileHandling.getCreateDirByName("outputCsar");
-		FileUtils.cleanDirectory(new File(csarDir));
+
+
+
 	}
 	
 	@BeforeMethod(alwaysRun = true)
-	public void setBrowserBeforeTest(java.lang.reflect.Method method, ITestContext context) throws Exception {
+	public void setupBeforeTest(java.lang.reflect.Method method, ITestContext context) throws Exception {
 
-
-//		    String suiteName = ExtentManager.getSuiteName(context);
-//			ExtentTestManager.startTest(method.getName());
-//			ExtentTestManager.assignCategory(this.getClass());
-
-		boolean emptyDataProvider = method.getAnnotation(Test.class).dataProvider().isEmpty();
-		String className = method.getDeclaringClass().getName();
 		System.out.println(" method.getName() " + method.getName());
 		if (!method.getName().equals("onboardVNFShotFlow"))  {
-			System.out.println("ExtentReport instance started from BeforeMethod...");
+//			System.out.println("ExtentReport instance started from BeforeMethod...");
+			logger.info("ExtentReport instance started from BeforeMethod...");
 			ExtentTestManager.startTest(method.getName());
 			ExtentTestManager.assignCategory(this.getClass());
 
 		} else {
-			System.out.println("ExtentReport instance started from Test...");
+//			System.out.println("ExtentReport instance started from Test...");
+			logger.debug("ExtentReport instance started from Test...");
 		}
       
-
 	}
 	
 	@AfterMethod(alwaysRun = true)
@@ -187,8 +185,13 @@ public abstract class ComponentBaseTest {
 	@AfterClass(alwaysRun = true)
 	public synchronized static void cleanAfterClass() throws Exception{
 
+//		System.out.println("<<<<<<<<class name>>>>>"+method.getDeclaringClass());
+//		System.out.println("<<<<<<<<class name>>>>>"+method.getName());
+
+
 		System.out.println("delete components AfterClass");
 		deleteCreatedComponents(getCatalogAsMap());
+//		extentReport.flush();
 
 	}
 	
@@ -197,6 +200,7 @@ public abstract class ComponentBaseTest {
 		
 		performClean();
 		shutdownTitanLogic();
+
 	}
 
 	protected static void openTitanLogic() throws Exception {
@@ -228,8 +232,14 @@ public abstract class ComponentBaseTest {
 
 	protected static void performClean() throws Exception, FileNotFoundException {
 //		cleanComponents();
-		deleteCreatedComponents(getCatalogAsMap());
-		CassandraUtils.truncateAllKeyspaces();
+		if(!config.getSystemUnderDebug()){
+			deleteCreatedComponents(getCatalogAsMap());
+			CassandraUtils.truncateAllKeyspaces();
+			FileHandling.overWriteExistindDir("outputCsar");
+
+		}else{
+			System.out.println("Accordindig to configuration components will not be deleted, in case to unable option to delete, please change systemUnderDebug parameter value to false ...");
+		}
 	}
 
 	public void verifyErrorCode(RestResponse response, String action, int expectedCode) {
@@ -372,13 +382,14 @@ public abstract class ComponentBaseTest {
 		titanGraph.tx().commit();
 
 		String adminId = UserRoleEnum.ADMIN.getUserId();
-		String productStrategistId = UserRoleEnum.PRODUCT_STRATEGIST1.getUserId();
+	/*	String productStrategistId = UserRoleEnum.PRODUCT_STRATEGIST1.getUserId();*/
 
 		// Component delete
-		for (String id : productsToDelete) {
+		
+/*		for (String id : productsToDelete) {
 			RestResponse deleteProduct = ProductRestUtils.deleteProduct(id, productStrategistId);
 
-		}
+		}*/
 		for (String id : servicesToDelete) {
 			RestResponse deleteServiceById = ServiceRestUtils.deleteServiceById(id, adminId);
 
@@ -394,7 +405,7 @@ public abstract class ComponentBaseTest {
 		}
 
 		// Categories delete - product
-		String componentType = BaseRestUtils.PRODUCT_COMPONENT_TYPE;
+		/*String componentType = BaseRestUtils.PRODUCT_COMPONENT_TYPE;
 		for (ImmutableTriple<String, String, String> triple : productGroupingsToDelete) {
 			CategoryRestUtils.deleteGrouping(triple.getRight(), triple.getMiddle(), triple.getLeft(), productStrategistId, componentType);
 		}
@@ -403,10 +414,10 @@ public abstract class ComponentBaseTest {
 		}
 		for (String id : productCategoriesToDelete) {
 			CategoryRestUtils.deleteCategory(id, productStrategistId, componentType);
-		}
+		}*/
 
 		// Categories delete - resource
-		componentType = BaseRestUtils.RESOURCE_COMPONENT_TYPE;
+		String componentType = BaseRestUtils.RESOURCE_COMPONENT_TYPE;
 		for (ImmutablePair<String, String> pair : resourceSubsToDelete) {
 			CategoryRestUtils.deleteSubCategory(pair.getRight(), pair.getLeft(), adminId, componentType);
 		}

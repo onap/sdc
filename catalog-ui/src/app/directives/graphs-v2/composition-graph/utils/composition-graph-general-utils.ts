@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {ComponentInstance, Component, MatchReqToCapability, MatchBase, CompositionCiLinkBase, CompositionCiNodeUcpeCp} from "app/models";
+import {ComponentInstance, Component, Match, CompositionCiLinkBase, CompositionCiNodeUcpeCp} from "app/models";
 import {QueueUtils, Dictionary, GraphUIObjects} from "app/utils";
 import {LoaderService} from "app/services";
 import {MatchCapabilitiesRequirementsUtils} from "./match-capability-requierment-utils";
@@ -106,16 +106,16 @@ export class CompositionGraphGeneralUtils {
      * @param cy - Cytoscape instance
      * @param fromUcpeInstance
      * @param toComponentInstance
-     * @returns {MatchReqToCapability}
+     * @returns {Match}
      */
-    public canBeHostedOn(cy:Cy.Instance, fromUcpeInstance:ComponentInstance, toComponentInstance:ComponentInstance):MatchReqToCapability {
+    public canBeHostedOn(cy:Cy.Instance, fromUcpeInstance:ComponentInstance, toComponentInstance:ComponentInstance):Match {
 
-        let matches:Array<MatchBase> = this.matchCapabilitiesRequirementsUtils.getMatchedRequirementsCapabilities(fromUcpeInstance, toComponentInstance, this.getAllCompositionCiLinks(cy));
-        let hostedOnMatch:MatchBase = _.find(matches, (match:MatchReqToCapability) => {
+        let matches:Array<Match> = this.matchCapabilitiesRequirementsUtils.getMatchedRequirementsCapabilities(fromUcpeInstance, toComponentInstance, this.getAllCompositionCiLinks(cy));
+        let hostedOnMatch:Match = _.find(matches, (match:Match) => {
             return match.requirement.capability.toLowerCase() === 'tosca.capabilities.container';
         });
 
-        return <MatchReqToCapability>hostedOnMatch;
+        return hostedOnMatch;
     };
 
 
@@ -128,7 +128,7 @@ export class CompositionGraphGeneralUtils {
      */
     private isValidDropInsideUCPE(cy:Cy.Instance, nodeToInsert:ComponentInstance, ucpeNode:ComponentInstance):boolean {
 
-        let hostedOnMatch:MatchReqToCapability = this.canBeHostedOn(cy, ucpeNode, nodeToInsert);
+        let hostedOnMatch:Match = this.canBeHostedOn(cy, ucpeNode, nodeToInsert);
         let result:boolean = !angular.isUndefined(hostedOnMatch) || nodeToInsert.isVl(); //group validation
         return result;
 

@@ -2,8 +2,6 @@ package org.openecomp.sdc.be.resources.data;
 
 import java.util.Date;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

@@ -20,8 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.utils.validation;
 
-import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;

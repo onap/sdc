@@ -2,7 +2,6 @@ package org.openecomp.sdc.common.listener;
 
 import java.util.Map;
 
-import javax.annotation.Generated;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 

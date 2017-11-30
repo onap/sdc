@@ -35,7 +35,25 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapCapabiltyProperty;
+import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListCapabiltyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -161,6 +179,7 @@ public class ModelConverter {
 		service.setDistributionStatus(DistributionStatusEnum.findState((String) toscaElement.getMetadataValue(JsonPresentationFields.DISTRIBUTION_STATUS)));
 		service.setEcompGeneratedNaming((Boolean) toscaElement.getMetadataValueOrDefault(JsonPresentationFields.ECOMP_GENERATED_NAMING, true));
 		service.setNamingPolicy((String) toscaElement.getMetadataValueOrDefault(JsonPresentationFields.NAMING_POLICY, StringUtils.EMPTY));
+		service.setEnvironmentContext((String) toscaElement.getMetadataValue(JsonPresentationFields.ENVIRONMENT_CONTEXT));
 	}
 
 	private static Resource convertToResource(ToscaElement toscaElement) {
@@ -408,7 +427,7 @@ public class ModelConverter {
 								sb.append(cap.getOwnerId());
 							}
 							sb.append(CAP_PROP_DELIM).append(s).append(CAP_PROP_DELIM).append(cap.getName());
-							toscaCapPropMap.put(sb.toString(), dataToCreate);
+							toscaCapPropMap.put(sb.toString(), new MapPropertiesDataDefinition(dataToCreate));
 						}
 					}
 
@@ -909,6 +928,7 @@ public class ModelConverter {
 		topologyTemplate.setMetadataValue(JsonPresentationFields.PROJECT_CODE, service.getProjectCode());
 		topologyTemplate.setMetadataValue(JsonPresentationFields.ECOMP_GENERATED_NAMING, service.isEcompGeneratedNaming());
 		topologyTemplate.setMetadataValue(JsonPresentationFields.NAMING_POLICY, service.getNamingPolicy());
+		topologyTemplate.setMetadataValue(JsonPresentationFields.ENVIRONMENT_CONTEXT, service.getEnvironmentContext());
 
 	}
 
@@ -1125,10 +1145,15 @@ public class ModelConverter {
 					} else {
 						instancesCapabilities.put(capabilityType, caps);
 					}
-					if (MapUtils.isEmpty(instancesMap.get(instanceId).getCapabilities())) {
-						instancesMap.get(instanceId).setCapabilities(new HashMap<>());
+					ComponentInstance instance = instancesMap.get(instanceId);
+					if (instance == null) {
+						log.error("instance is null for id {} entry {}", instanceId, entry.getValue().getToscaPresentationValue(JsonPresentationFields.NAME));
+					} else {
+						if (MapUtils.isEmpty(instance.getCapabilities())) {
+							instance.setCapabilities(new HashMap<>());
+						}
+						instance.getCapabilities().put(capabilityType, new ArrayList<>(caps));
 					}
-					instancesMap.get(instanceId).getCapabilities().put(capabilityType, new ArrayList<>(caps));
 				}
 			}
 			component.setCapabilities(instancesCapabilities);

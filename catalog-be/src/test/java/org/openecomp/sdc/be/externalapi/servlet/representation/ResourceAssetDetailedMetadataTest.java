@@ -2,8 +2,6 @@ package org.openecomp.sdc.be.externalapi.servlet.representation;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 public class ResourceAssetDetailedMetadataTest {

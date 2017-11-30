@@ -2,8 +2,6 @@ package org.openecomp.sdc.common.datastructure;
 
 import java.util.Map;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

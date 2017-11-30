@@ -98,6 +98,7 @@ public class AdminUserManagment extends SetupCDTest {
 		UserRoleEnum userRole = UserRoleEnum.DESIGNER;
 		AdminWorkspaceUIUtilies.createNewUser(userId, userRole);
 		ExtentTestActions.log(Status.INFO, "Trying to create the same user once again.");
+		GeneralUIUtils.ultimateWait(); // extra wait, necessary for system with large user list
 		AdminWorkspaceUIUtilies.createNewUser(userId, userRole);
 		ErrorMessageUIVerificator.validateErrorMessage(ActionStatus.USER_ALREADY_EXIST);
 	}

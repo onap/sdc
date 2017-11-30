@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.model;
 
 import java.io.Serializable;
-import java.util.Map;
 
 public class ComponentInstancePropInput extends ComponentInstanceProperty implements Serializable{
 	/**

@@ -267,8 +267,14 @@ public class YamlToObjectConverter {
 	
 	public boolean isValidYaml(byte[] fileContents) {
 		try {
-			Map<String, Object> mappedToscaTemplate = (Map<String, Object>) defaultYaml
-					.load(new ByteArrayInputStream(fileContents));
+			
+			Iterable<Object> mappedToscaTemplateIt =  defaultYaml.loadAll(new ByteArrayInputStream(fileContents));
+			
+			 for (Object o : mappedToscaTemplateIt) {
+	                System.out.println("Loaded object type:" + o.getClass());
+	                Map<String, Object> map = (Map<String, Object>) o;
+			 }
+			
 		} catch (Exception e) {
 			log.error("Failed to convert yaml file to object - yaml is invalid", e);
 			return false;

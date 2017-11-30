@@ -1,10 +1,6 @@
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
-
-import com.datastax.driver.core.Cluster;
 
 
 public class SdcSchemaUtilsTest {

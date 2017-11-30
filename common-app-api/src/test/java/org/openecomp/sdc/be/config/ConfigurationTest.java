@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheConfig;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL2CacheConfig;

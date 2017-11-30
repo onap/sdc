@@ -31,10 +31,8 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.json.JSONArray;

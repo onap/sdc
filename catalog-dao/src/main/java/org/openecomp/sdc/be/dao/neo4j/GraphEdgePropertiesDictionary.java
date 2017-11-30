@@ -23,8 +23,6 @@ package org.openecomp.sdc.be.dao.neo4j;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-
 public enum GraphEdgePropertiesDictionary {
 
 	// field name class type

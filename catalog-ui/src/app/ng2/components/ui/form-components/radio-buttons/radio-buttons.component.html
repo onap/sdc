@@ -1,0 +1,8 @@
+<div class="radio-buttons-container {{direction}}">
+    <div *ngFor="let option of options" class="radio-button" [ngClass]="{'disabled':readonly}">
+        <input type="radio" [(ngModel)]="value"  name="{{fieldName}}" value="{{option.value}}" [disabled]="readonly"/>
+        <div class="shown-radio-button" (click)="!readonly && select(option.value)"><div *ngIf="value==option.value" class="selected"></div></div>
+        <span>{{option.key}}</span>
+    </div>
+</div>
+

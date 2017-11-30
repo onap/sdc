@@ -64,6 +64,8 @@ public interface INotificationData {
 	/** List of the artifacts */
 	List<ArtifactInfoImpl> getServiceArtifacts();
 
+	String getWorkloadContext();
+
 	void setDistributionID(String distributionId);
 
 	/** Logical Service Name. */
@@ -98,5 +100,7 @@ public interface INotificationData {
 
 	/** List of the Resource Instances */
 	void setServiceArtifacts(List<ArtifactInfoImpl> artifacts);
+
+	void setWorkloadContext(String workloadContext);
 
 }

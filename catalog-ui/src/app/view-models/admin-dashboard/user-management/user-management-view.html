@@ -14,7 +14,7 @@
             <div class="sdc-user-management-top-bar-wrapper">
                 <div class="i-sdc-form-item sdc-user-management-top-bar-form-container" data-ng-class="{error:(editForm.contactId.$dirty && editForm.contactId.$invalid)}">
                     <input ng-focus="search.filterTerm=''" type="text"
-                           data-ng-model="newUser.resource.userId"
+                           data-ng-model="newUser.userInfo.userId"
                            class="i-sdc-form-input"
                            placeholder="{{ USER_MANAGEMENT_SEARCH_TEXT | translate}}"
                            data-ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 750, 'blur': 0 } }"
@@ -36,7 +36,7 @@
                             data-required
                             name="role"
                             data-tests-id="selectrole"
-                            data-ng-model = "newUser.resource.role"
+                            data-ng-model = "newUser.userInfo.role"
                             data-ng-options="role as (getTitle(role)) for role in roles | orderBy:'role'"
                             ng-focus="search.filterTerm=''">
                         <option value="">Select Role</option>

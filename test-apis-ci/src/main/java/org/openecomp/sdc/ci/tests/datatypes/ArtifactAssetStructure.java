@@ -49,7 +49,6 @@ public class ArtifactAssetStructure {
 
 	public ArtifactAssetStructure() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getArtifactName() {

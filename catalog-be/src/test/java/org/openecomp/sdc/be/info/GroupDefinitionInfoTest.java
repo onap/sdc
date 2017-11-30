@@ -2,12 +2,8 @@ package org.openecomp.sdc.be.info;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.model.GroupProperty;
-import java.util.*;
-import org.junit.Assert;
 
 
 public class GroupDefinitionInfoTest {

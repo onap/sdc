@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 
 public abstract class UiComponentMetadata {

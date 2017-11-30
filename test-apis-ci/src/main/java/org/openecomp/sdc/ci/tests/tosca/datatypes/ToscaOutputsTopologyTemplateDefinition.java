@@ -28,7 +28,6 @@ public class ToscaOutputsTopologyTemplateDefinition {
 
 	public ToscaOutputsTopologyTemplateDefinition() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Map<String, Object> getOutputs() {

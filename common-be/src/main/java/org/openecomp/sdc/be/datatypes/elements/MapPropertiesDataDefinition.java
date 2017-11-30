@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonCreator;
@@ -37,6 +38,15 @@ public class MapPropertiesDataDefinition extends MapDataDefinition<PropertyDataD
 	@JsonCreator
 	public MapPropertiesDataDefinition(Map<String, PropertyDataDefinition > mapToscaDataDefinition) {
 		super(mapToscaDataDefinition);
+	}
+
+	/**
+	 * Copy Constructor
+	 */
+	public MapPropertiesDataDefinition(MapPropertiesDataDefinition toBeDeepCopiedMapPropertiesDataDefinition){
+		this.parentName = toBeDeepCopiedMapPropertiesDataDefinition.parentName;
+		this.toscaPresentation = toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.toscaPresentation);
+		this.mapToscaDataDefinition = toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition == null ? null : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition);
 	}
 	public MapPropertiesDataDefinition() {
 		super();

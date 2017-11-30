@@ -1,9 +1,5 @@
 package org.openecomp.sdc.be.model.tosca.version;
 
-import java.util.StringTokenizer;
-
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 public class VersionTest {

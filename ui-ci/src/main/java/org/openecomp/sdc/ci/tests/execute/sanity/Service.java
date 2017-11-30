@@ -23,7 +23,6 @@ package org.openecomp.sdc.ci.tests.execute.sanity;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.awt.AWTException;
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +30,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactInfo;
-import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
@@ -40,6 +38,7 @@ import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ServiceMetadataEnum;
 import org.openecomp.sdc.ci.tests.datatypes.LifeCycleStateEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
@@ -117,7 +116,7 @@ public class Service extends SetupCDTest {
 		
         // Update Service
 		ServiceGeneralPage.deleteOldTags(serviceMetadata);
-		serviceMetadata.setName("ciUpdatedNameSanity");
+		serviceMetadata.setName(ElementFactory.getServicePrefix() + "UpdatedName" + serviceMetadata.getName());
 		serviceMetadata.setDescription("updatedDescriptionSanity");
 		serviceMetadata.setProjectCode("654321");
 		serviceMetadata.setContactId("cs6543");
@@ -214,6 +213,23 @@ public class Service extends SetupCDTest {
 	}
 	
 	@Test
+	public void createLinkService() throws Exception{
+		String fileName2 = "vSeGW.csar";
+		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+		ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName2, getUser());
+		ResourceGeneralPage.clickCheckinButton(resourceMetaData.getName());
+		
+		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+		ServiceUIUtils.createService(serviceMetadata, getUser());
+		DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
+		CanvasManager canvasManager = CanvasManager.getCanvasManager();		
+		CompositionPage.searchForElement(resourceMetaData.getName());
+		CanvasElement firstElement = canvasManager.createElementOnCanvas(resourceMetaData.getName());
+		CanvasElement secondElement = canvasManager.createElementOnCanvas(resourceMetaData.getName());
+		canvasManager.linkElements(firstElement, secondElement);		
+	}
+	
+	@Test
 	public void addDeploymentArtifactInCompositionScreenTest() throws Exception{
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
 		ServiceUIUtils.createService(serviceMetadata, getUser());
@@ -264,7 +280,7 @@ public class Service extends SetupCDTest {
 	}
 	
 	@Test
-	public void addAPIArtifactInCompositionScreenTest() throws Exception{		
+	public void addAPIArtifactInCompositionScreenTest() throws Exception{			
 		String fileName        = HEAT_FILE_YAML_NAME,
 			   descriptionText = DESCRIPTION,
 		       url             = "http://kuku.com";
@@ -272,7 +288,7 @@ public class Service extends SetupCDTest {
 		ServiceUIUtils.createService(serviceMetadata, getUser());
 		
 		ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
-		ArtifactInfo artifactInfo = new ArtifactInfo(filePath, fileName, descriptionText, ARTIFACT_LABEL,"OTHER");
+		new ArtifactInfo(filePath, fileName, descriptionText, ARTIFACT_LABEL,"OTHER");
 		CompositionPage.showAPIArtifactTab();
 
 		for(DataTestIdEnum.APIArtifactsService artifact: DataTestIdEnum.APIArtifactsService.values()){
@@ -367,10 +383,6 @@ public class Service extends SetupCDTest {
 	@Test
 	public void addDeploymentArtifactToVFInstanceTest() throws Exception{
 		
-		if(true){
-			throw new SkipException("Open bug 321669");			
-		}
-		
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
 		ArtifactInfo artifact = new ArtifactInfo(filePath, HEAT_FILE_YAML_NAME, DESCRIPTION, ARTIFACT_LABEL,ArtifactTypeEnum.SNMP_POLL.getType());
@@ -385,12 +397,12 @@ public class Service extends SetupCDTest {
 
 	@Test
 	public void deleteDeploymentArtifactFromVFInstanceTest() throws Exception{
-		
+				
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
 		ArtifactInfo artifact = new ArtifactInfo(filePath, HEAT_FILE_YAML_NAME, DESCRIPTION, ARTIFACT_LABEL,ArtifactTypeEnum.SNMP_POLL.getType());
 		
-		CanvasElement computeElement = createServiceWithRiArtifact(atomicResourceMetaData, serviceMetadata, artifact);
+		createServiceWithRiArtifact(atomicResourceMetaData, serviceMetadata, artifact);
 		checkArtifactIfAdded(1, HEAT_FILE_YAML_NAME);
 		List<WebElement> actualArtifactList = GeneralUIUtils.getWebElementsListBy(By.className(GET_ARTIFACT_LIST_BY_CLASS_NAME));
 		deleteAndVerifyArtifact(actualArtifactList);
@@ -401,7 +413,7 @@ public class Service extends SetupCDTest {
 	public void deleteDeploymentArtifactFromVFInstanceNextVersionTest() throws Exception{
 		
 		if(true){
-			throw new SkipException("Open bug 322930");			
+			throw new SkipException("Open bug 342260");			
 		}
 		
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
@@ -569,7 +581,7 @@ public class Service extends SetupCDTest {
 	
 	@Test
 	public void deploymentViewServiceTest() throws Exception{				
-		String fileName2 = "vSeGW.csar";
+		String fileName2 = "vSeGWNew.csar";
 		
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName2, getUser());
