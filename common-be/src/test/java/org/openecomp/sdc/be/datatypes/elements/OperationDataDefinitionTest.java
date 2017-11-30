@@ -2,8 +2,6 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.Map;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

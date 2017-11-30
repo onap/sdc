@@ -20,7 +20,18 @@
 
 package org.openecomp.sdc.be.resources;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
@@ -32,12 +43,17 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.Configuration.ElasticSearchConfig.IndicesTimeFrequencyEntry;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.es.ElasticSearchClient;
 import org.openecomp.sdc.be.dao.impl.AuditingDao;
-import org.openecomp.sdc.be.resources.data.auditing.*;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
+import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
+import org.openecomp.sdc.be.resources.data.auditing.DistributionStatusEvent;
+import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
+import org.openecomp.sdc.be.resources.data.auditing.UserAccessEvent;
+import org.openecomp.sdc.be.resources.data.auditing.UserAdminEvent;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
@@ -53,14 +69,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import static org.junit.Assert.*;
+import fj.data.Either;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")

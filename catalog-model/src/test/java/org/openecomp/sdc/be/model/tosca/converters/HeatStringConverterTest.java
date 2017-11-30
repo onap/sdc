@@ -2,11 +2,7 @@ package org.openecomp.sdc.be.model.tosca.converters;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Map;
-
-import org.junit.Assert;
 import org.junit.Test;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
 
 public class HeatStringConverterTest {
 

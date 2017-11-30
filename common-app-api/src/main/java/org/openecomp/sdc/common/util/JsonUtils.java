@@ -58,4 +58,5 @@ public class JsonUtils {
 	public static boolean isJsonNullOrEmpty(JsonObject json) {
 		return json.isJsonNull() || isEmptyJson(json);
 	}
+
 }

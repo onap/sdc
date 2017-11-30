@@ -3,13 +3,8 @@ package org.openecomp.sdc.be.dao.jsongraph;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Generated;
-import javax.lang.model.element.Element;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
@@ -19,11 +14,7 @@ import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 
-import com.datastax.driver.core.schemabuilder.SchemaBuilder.Direction;
-import com.google.common.collect.Multiset.Entry;
 import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanGraphQuery;
-import com.thinkaurelius.titan.core.TitanVertex;
 
 import fj.data.Either;
 

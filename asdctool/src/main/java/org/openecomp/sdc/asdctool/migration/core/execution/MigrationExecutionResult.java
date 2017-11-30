@@ -1,10 +1,10 @@
 package org.openecomp.sdc.asdctool.migration.core.execution;
 
+import java.util.Date;
+
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
 import org.openecomp.sdc.be.resources.data.MigrationTaskEntry;
-
-import java.util.Date;
 
 public class MigrationExecutionResult {
 

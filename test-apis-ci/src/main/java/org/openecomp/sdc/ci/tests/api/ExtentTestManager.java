@@ -20,17 +20,21 @@
 
 package org.openecomp.sdc.ci.tests.api;
 
+import java.util.HashMap;
+
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 
-import java.util.HashMap;
-
-public class ExtentTestManager {
+public class ExtentTestManager implements SomeInterface{
 
 		private static HashMap<Long, ExtentTest> extentTestMap = new HashMap<Long, ExtentTest>();
 		private static ExtentReports extent = ExtentManager.getReporter();
-
-	    public static synchronized ExtentTest getTest() {
+		
+		public ExtentTestManager(){			
+		}
+        
+		@Override
+	    public synchronized ExtentTest getTest() {
 	        return extentTestMap.get(Thread.currentThread().getId());
 	    }
 
@@ -54,7 +58,7 @@ public class ExtentTestManager {
 			String[] parts = clazz.getName().split("\\.");
 			String lastOne1 = parts[parts.length-1];
 			String lastOne2 = parts[parts.length-2];
-			getTest().assignCategory(lastOne2 + "-" + lastOne1);
+			extentTestMap.get(Thread.currentThread().getId()).assignCategory(lastOne2 + "-" + lastOne1);
 	    }
 	    
 	    	

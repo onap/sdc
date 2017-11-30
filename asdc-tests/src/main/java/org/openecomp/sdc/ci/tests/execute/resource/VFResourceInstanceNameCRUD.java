@@ -57,7 +57,6 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.gson.Gson;

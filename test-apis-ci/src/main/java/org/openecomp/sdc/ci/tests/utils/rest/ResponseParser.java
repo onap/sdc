@@ -28,15 +28,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.json.JSONArray;
@@ -55,14 +52,11 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserialiser;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceAssetStructure;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceRespJavaObject;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -196,7 +190,6 @@ public class ResponseParser {
 				List<Resource> resources = Arrays.asList(mapper.readValue(response.toString(), Resource[].class));
 				resource = resources.get(0);
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -207,8 +200,7 @@ public class ResponseParser {
 	public static ComponentInstanceProperty convertPropertyResponseToJavaObject(String response) {
 
 		ObjectMapper mapper = new ObjectMapper();
-		final SimpleModule module = new SimpleModule("customerSerializationModule",
-				new Version(1, 0, 0, "static version"));
+		final SimpleModule module = new SimpleModule("customerSerializationModule",	new Version(1, 0, 0, "static version"));
 		JsonDeserializer<PropertyConstraint> desrializer = new PropertyConstraintJacksonDeserialiser();
 		addDeserializer(module, PropertyConstraint.class, desrializer);
 
@@ -219,7 +211,6 @@ public class ResponseParser {
 			propertyDefinition = mapper.readValue(response, ComponentInstanceProperty.class);
 			logger.debug(propertyDefinition.toString());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return propertyDefinition;
@@ -238,7 +229,6 @@ public class ResponseParser {
 			artifactDefinition = mapper.readValue(response, ArtifactDefinition.class);
 			logger.debug(artifactDefinition.toString());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -280,7 +270,6 @@ public class ResponseParser {
 			// System.out.println("Class: "+clazz.getSimpleName()+", json:
 			// "+json);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -313,12 +302,12 @@ public class ResponseParser {
 		mapper.registerModule(module);
 		Service service = null;
 		try {
-//			TODO Andrey L. uncomment line below in case to ignore on unknown properties, not recommended, added by Matvey
+//			TODO Andrey L. uncomment line below in case to ignore on unknown properties, not recommended, added by Matvey 
 			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			
 			service = mapper.readValue(response, Service.class);
 			logger.debug(service.toString());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -342,7 +331,6 @@ public class ResponseParser {
 			product = mapper.readValue(response, Product.class);
 			logger.debug(product.toString());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -403,29 +391,9 @@ public class ResponseParser {
 
 	}
 
-	public static List<Map<String, Object>> getAuditFromMessage(Map auditingMessage) {
+	public static List<Map<String, Object>> getAuditFromMessage(Map<String, Object> auditingMessage) {
 		List<Map<String, Object>> auditList = new ArrayList<Map<String, Object>>();
-		// JsonElement jElement = new JsonParser().parse(auditingMessage);
-		// JsonObject jObject = jElement.getAsJsonObject();
-		// JsonObject hitsObject = (JsonObject) jObject.get("hits");
-		// JsonArray hitsArray = (JsonArray) hitsObject.get("hits");
-		//
-		// Iterator<JsonElement> hitsIterator = hitsArray.iterator();
-		// while(hitsIterator.hasNext())
-		// {
-		// JsonElement nextHit = hitsIterator.next();
-		// JsonObject jHitObject = nextHit.getAsJsonObject();
-		// JsonObject jSourceObject = (JsonObject) jHitObject.get("_source");
-		//
-		// Gson gson=new Gson();
-		// String auditUnparsed = jSourceObject.toString();
-		//
-		// Map<String,Object> map = new HashMap<String,Object>();
-		// map = (Map<String,Object>) gson.fromJson(auditUnparsed,
-		// map.getClass());
-
 		auditList.add(auditingMessage);
-		// }
 		return auditList;
 	}
 
@@ -609,4 +577,5 @@ public class ResponseParser {
 		
 		return null;
 	}
+	
 }

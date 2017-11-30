@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.model;
 
+import org.openecomp.sdc.be.model.jsontitan.datamodel.NodeType;
+
 /**
  * Specifies an implementation artifact for interfaces or operations of a
  * {@link NodeType node type} or {@link RelationshipType relation type}.

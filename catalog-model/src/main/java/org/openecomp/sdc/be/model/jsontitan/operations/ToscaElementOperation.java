@@ -20,9 +20,16 @@
 
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import fj.data.Either;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -59,9 +66,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.Map.Entry;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import fj.data.Either;
 
 public abstract class ToscaElementOperation extends BaseOperation {
 	private static Logger log = LoggerFactory.getLogger(ToscaElementOperation.class.getName());

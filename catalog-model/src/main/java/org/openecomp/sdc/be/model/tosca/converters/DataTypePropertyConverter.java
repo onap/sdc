@@ -1,18 +1,19 @@
 package org.openecomp.sdc.be.model.tosca.converters;
 
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.common.util.JsonUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.common.util.JsonUtils;
-
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class DataTypePropertyConverter {
 

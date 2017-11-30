@@ -43,8 +43,14 @@ import {FileUtils} from "../utils/file-utils";
 import {ValidationUtils} from "../utils/validation-utils";
 import {AngularJSBridge} from "../services/angular-js-bridge-service";
 import {LoaderService} from "../services/loader-service";
-import {UserResourceService} from "../services/user-resource-service";
 import {CategoryResourceService} from "../services/category-resource-service";
+import {downgradeInjectable} from "@angular/upgrade/static";
+import {ModalService} from "../ng2/services/modal.service";
+import {ComponentServiceNg2} from "../ng2/services/component-services/component.service";
+import {ServiceServiceNg2} from "../ng2/services/component-services/service.service";
+import {ConnectionWizardService} from "../ng2/pages/connection-wizard/connection-wizard.service";
+import {ComponentInstanceServiceNg2} from "../ng2/services/component-instance-services/component-instance.service";
+import {UserService as UserServiceNg2} from "../ng2/services/user.service";
 
 let moduleName:string = 'Sdc.Services';
 let serviceModule:ng.IModule = angular.module(moduleName, []);
@@ -80,5 +86,12 @@ serviceModule.service('ValidationUtils', ValidationUtils);
 serviceModule.service('AngularJSBridge',AngularJSBridge);
 serviceModule.service('LoaderService', LoaderService);
 
-serviceModule.factory('Sdc.Services.UserResourceService', UserResourceService.getResource);
 serviceModule.factory('Sdc.Services.CategoryResourceService', CategoryResourceService.getResource);
+
+// Angular2 upgraded services - This is in order to use the service in angular1 till we finish remove all angular1 code
+serviceModule.factory('ComponentServiceNg2', downgradeInjectable(ComponentServiceNg2));
+serviceModule.factory('ServiceServiceNg2', downgradeInjectable(ServiceServiceNg2));
+serviceModule.factory('ModalServiceNg2', downgradeInjectable(ModalService));
+serviceModule.factory('ConnectionWizardServiceNg2', downgradeInjectable(ConnectionWizardService));
+serviceModule.factory('ComponentInstanceServiceNg2', downgradeInjectable(ComponentInstanceServiceNg2));
+serviceModule.factory('UserServiceNg2', downgradeInjectable(UserServiceNg2));

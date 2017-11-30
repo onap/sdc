@@ -20,10 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.utils.graph;
 
-import com.thinkaurelius.titan.core.TitanVertex;
-import org.apache.commons.io.FileUtils;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -31,6 +27,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+
+import com.thinkaurelius.titan.core.TitanVertex;
 
 public class GraphFileUtils {
 

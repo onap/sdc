@@ -70,6 +70,22 @@ export class ComponentFactory {
         return newResource;
     };
 
+    public updateComponentFromCsar = (csarComponent:Resource, oldComponent:Resource):Component => {
+        _.pull(oldComponent.tags, oldComponent.name);
+        oldComponent.name = csarComponent.name;
+        oldComponent.selectedCategory = csarComponent.selectedCategory;
+        oldComponent.categories = csarComponent.categories;
+        oldComponent.vendorName = csarComponent.vendorName;
+        oldComponent.vendorRelease = csarComponent.vendorRelease;
+        oldComponent.csarUUID = csarComponent.csarUUID;
+        oldComponent.csarPackageType = csarComponent.csarPackageType;
+        oldComponent.csarVersion = csarComponent.csarVersion;
+        oldComponent.packageId = csarComponent.packageId;
+        oldComponent.description = csarComponent.description;
+        oldComponent.filterTerm = oldComponent.name +  ' '  + oldComponent.description + ' ' + oldComponent.vendorName + ' ' + oldComponent.csarVersion
+        return oldComponent;
+    };
+
     public createFromCsarComponent = (csar:ICsarComponent):Component => {
         let newResource:Resource = <Resource>this.createEmptyComponent(ComponentType.RESOURCE);
         newResource.name = csar.vspName;
@@ -124,7 +140,7 @@ export class ComponentFactory {
         let newComponent:Component;
 
         switch (componentType) {
-
+            case ComponentType.SERVICE_PROXY:
             case ComponentType.SERVICE:
                 newComponent = new Service(this.ServiceService, this.$q);
                 break;
@@ -136,6 +152,7 @@ export class ComponentFactory {
             case ResourceType.CP:
             case ResourceType.PNF:
             case ResourceType.CVFC:
+            case ResourceType.CONFIGURATION:
                 newComponent = new Resource(this.ResourceService, this.$q);
                 break;
         }

@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.ui.model;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 

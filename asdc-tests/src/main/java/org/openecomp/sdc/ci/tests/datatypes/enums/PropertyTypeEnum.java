@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.datatypes.enums;
 
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;

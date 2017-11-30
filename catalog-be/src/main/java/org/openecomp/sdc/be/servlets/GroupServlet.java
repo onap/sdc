@@ -46,7 +46,6 @@ import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,13 +53,13 @@ import org.slf4j.LoggerFactory;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.jcabi.aspects.Loggable;
+
+import fj.data.Either;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
-import fj.data.Either;
 
 /**
  * Root resource (exposed at "/" path)
@@ -106,7 +105,7 @@ public class GroupServlet extends AbstractValidationsServlet {
 			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
 					actionResponse.left().value());
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("getGroupArtifactById");
 			log.debug("getGroupArtifactById unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));

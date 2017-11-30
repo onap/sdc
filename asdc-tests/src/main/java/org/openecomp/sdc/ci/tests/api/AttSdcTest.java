@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -43,8 +41,8 @@ import org.openecomp.sdc.ci.tests.rules.MyTestWatcher;
 import org.openecomp.sdc.ci.tests.run.StartTest;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.FileUtils;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

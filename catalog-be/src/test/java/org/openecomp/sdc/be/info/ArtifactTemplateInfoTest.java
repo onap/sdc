@@ -1,8 +1,7 @@
 package org.openecomp.sdc.be.info;
 
-import static org.junit.Assert.*;
-import java.util.*;
-import org.junit.Assert;
+import java.util.List;
+
 import org.junit.Test;
 
 

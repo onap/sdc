@@ -20,7 +20,11 @@
 
 package org.openecomp.sdc.ci.tests.execute.category;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -34,7 +38,11 @@ import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.*;
+import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;

@@ -22,28 +22,19 @@ package org.openecomp.sdc.ci.tests.execute.imports;
 
 import static org.testng.AssertJUnit.assertEquals;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
 import org.junit.rules.TestName;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.ui.model.UiResourceDataTransfer;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
-import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.testng.annotations.Test;

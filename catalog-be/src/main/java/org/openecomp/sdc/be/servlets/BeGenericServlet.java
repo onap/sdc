@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
@@ -57,7 +56,6 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.config.EcompErrorName;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;

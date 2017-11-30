@@ -27,14 +27,14 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 public class HealthCheckInfo {
-
-	private HealthCheckComponent healthCheckComponent;
+	
+	private String healthCheckComponent;
 	private HealthCheckStatus healthCheckStatus;
 	private String version;
 	private String description;
 	private List<HealthCheckInfo> componentsInfo;
 
-	public HealthCheckInfo(HealthCheckComponent healthCheckComponent, HealthCheckStatus healthCheckStatus,
+	public HealthCheckInfo(String healthCheckComponent, HealthCheckStatus healthCheckStatus,
 			String version, String description) {
 		super();
 		this.healthCheckComponent = healthCheckComponent;
@@ -43,7 +43,7 @@ public class HealthCheckInfo {
 		this.description = description;
 	}
 
-	public HealthCheckInfo(HealthCheckComponent healthCheckComponent, HealthCheckStatus healthCheckStatus,
+	public HealthCheckInfo(String healthCheckComponent, HealthCheckStatus healthCheckStatus,
 						   String version, String description, List<HealthCheckInfo> componentsInfo) {
 		super();
 		this.healthCheckComponent = healthCheckComponent;
@@ -57,12 +57,16 @@ public class HealthCheckInfo {
 		super();
 	}
 
-	public HealthCheckComponent getHealthCheckComponent() {
+	public String getHealthCheckComponent() {
 		return healthCheckComponent;
 	}
 
 	public HealthCheckStatus getHealthCheckStatus() {
 		return healthCheckStatus;
+	}
+
+	public void setHealthCheckStatus(HealthCheckStatus healthCheckStatus) {
+		this.healthCheckStatus = healthCheckStatus;
 	}
 
 	public List<HealthCheckInfo> getComponentsInfo() {
@@ -85,10 +89,14 @@ public class HealthCheckInfo {
 		return description;
 	}
 
-	public enum HealthCheckComponent {
-		FE, BE, TITAN, DE, ON_BOARDING, CASSANDRA, 
-		CAS, ZU;//Amdocs components
+	public void setDescription(String description) {
+		this.description = description;
 	}
+
+	/*public enum HealthCheckComponent {
+		FE, BE, TITAN, DE, ON_BOARDING, CASSANDRA, DCAE,
+		CAS, ZU;//Amdocs components
+	}*/
 
 	public enum HealthCheckStatus {
 		UP, DOWN, UNKNOWN;

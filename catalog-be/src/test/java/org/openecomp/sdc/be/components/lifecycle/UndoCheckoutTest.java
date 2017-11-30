@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.be.components.lifecycle.UndoCheckoutTransition;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -58,7 +57,7 @@ public class UndoCheckoutTest extends LifecycleTestBase {
 	@Test
 	public void testResourceNotCheckedOutValidation() {
 		Either<Resource, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 		Either<User, ResponseFormat> ownerResponse = undoCheckoutObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
@@ -102,7 +101,7 @@ public class UndoCheckoutTest extends LifecycleTestBase {
 	@Test
 	public void testDifferentResourceOwnerValidation() {
 		Either<Resource, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		User modifier = new User();

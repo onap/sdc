@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.config;
 
+import static java.lang.String.format;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,8 +29,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openecomp.sdc.common.api.BasicConfiguration;
-
-import static java.lang.String.format;
 
 public class Configuration extends BasicConfiguration {
 
@@ -117,6 +117,8 @@ public class Configuration extends BasicConfiguration {
 
 	private OnboardingConfig onboarding;
 
+	private DcaeConfig dcae;
+
 	private CassandrConfig cassandraConfig;
 
 	private SwitchoverDetectorConfig switchoverDetector;
@@ -132,6 +134,60 @@ public class Configuration extends BasicConfiguration {
 	private Map<String, VfModuleProperty> vfModuleProperties;
 	
 	private Map<String, String> genericAssetNodeTypes;
+	
+	private String appVersion;
+	private String artifactGeneratorConfig;
+
+	public String getAutoHealingOwner() {
+		return autoHealingOwner;
+	}
+
+	public void setAutoHealingOwner(String autoHealingOwner) {
+		this.autoHealingOwner = autoHealingOwner;
+	}
+
+	private String autoHealingOwner;
+	
+	private Map<String, List<String>> resourcesForUpgrade;
+	private boolean skipUpgradeFailedVfs;
+
+	private boolean skipUpgradeVSPs;
+
+
+
+
+
+	public void setSkipUpgradeVSPs(boolean skipUpgradeVSPs) { this.skipUpgradeVSPs = skipUpgradeVSPs; }
+
+	public boolean getSkipUpgradeVSPsFlag() { return skipUpgradeVSPs; }
+
+	public boolean getSkipUpgradeFailedVfs() {
+		return skipUpgradeFailedVfs;
+	}
+
+	public void setSkipUpgradeFailedVfs(boolean skipUpgradeFailedVfs) {
+		this.skipUpgradeFailedVfs = skipUpgradeFailedVfs;
+	}
+
+	public String getAppVersion() {
+		return appVersion;
+	}
+
+	public void setAppVersion(String appVersion) {
+		this.appVersion = appVersion;
+	}
+
+	public String getArtifactGeneratorConfig() {
+		return artifactGeneratorConfig;
+	}
+
+	public void setArtifactGeneratorConfig(String artifactGeneratorConfig) {
+		this.artifactGeneratorConfig = artifactGeneratorConfig;
+	}
+
+	private String workloadContext;
+	
+	private EnvironmentContext environmentContext;
 
 	public Map<String, String> getGenericAssetNodeTypes() {
 		return genericAssetNodeTypes;
@@ -483,6 +539,22 @@ public class Configuration extends BasicConfiguration {
 
 	public void setUebHealthCheckReadTimeout(Long uebHealthCheckReadTimeout) {
 		this.uebHealthCheckReadTimeout = uebHealthCheckReadTimeout;
+	}
+
+	public String getWorkloadContext() {
+		return workloadContext;
+	}
+
+	public void setWorkloadContext(String workloadContext) {
+		this.workloadContext = workloadContext;
+	}
+
+	public EnvironmentContext getEnvironmentContext() {
+		return environmentContext;
+	}
+
+	public void setEnvironmentContext(EnvironmentContext environmentContext) {
+		this.environmentContext = environmentContext;
 	}
 
 	public static class ElasticSearchConfig {
@@ -902,6 +974,54 @@ public class Configuration extends BasicConfiguration {
 
 	}
 
+	public DcaeConfig getDcae() {
+		return dcae;
+	}
+
+	public void setDcae(DcaeConfig dcae) {
+		this.dcae = dcae;
+	}
+
+	public static class DcaeConfig {
+
+		String protocol = "http";
+		String host;
+		Integer port;
+		String healthCheckUri;
+
+		public String getProtocol() {
+			return protocol;
+		}
+
+		public void setProtocol(String protocol) {
+			this.protocol = protocol;
+		}
+
+		public String getHost() {
+			return host;
+		}
+
+		public void setHost(String host) {
+			this.host = host;
+		}
+
+		public Integer getPort() {
+			return port;
+		}
+
+		public void setPort(Integer port) {
+			this.port = port;
+		}
+
+		public String getHealthCheckUri() {
+			return healthCheckUri;
+		}
+
+		public void setHealthCheckUri(String healthCheckUri) {
+			this.healthCheckUri = healthCheckUri;
+		}
+	}
+
 	public static class EcompPortalConfig {
 
 		private String defaultFunctionalMenu;
@@ -1117,6 +1237,30 @@ public class Configuration extends BasicConfiguration {
 					+ syncIntervalInSecondes + ", numberOfCacheWorkers=" + this.numberOfCacheWorkers + ']';
 		}
 	}
+
+	public static class EnvironmentContext {
+
+		String defaultValue;
+		List<String> validValues;
+
+		public String getDefaultValue() {
+			return defaultValue;
+		}
+
+		public void setDefaultValue(String defaultValue) {
+			this.defaultValue = defaultValue;
+		}
+
+		public List<String> getValidValues() {
+			return validValues;
+		}
+
+		public void setValidValues(List<String> validValues) {
+			this.validValues = validValues;
+		}
+	}
+	
+
 
 	public CleanComponentsConfiguration getCleanComponentsConfiguration() {
 		return cleanComponentsConfiguration;
@@ -1340,4 +1484,13 @@ public class Configuration extends BasicConfiguration {
 	public void setDefaultImports(LinkedList<Map<String, Map<String, String>>> defaultImports) {
 		this.defaultImports = defaultImports;
 	}
+
+	public Map<String, List<String>> getResourcesForUpgrade() {
+		return resourcesForUpgrade;
+	}
+
+	public void setResourcesForUpgrade(Map<String, List<String>> resourcesForUpgrade) {
+		this.resourcesForUpgrade = resourcesForUpgrade;
+	}
+	
 }

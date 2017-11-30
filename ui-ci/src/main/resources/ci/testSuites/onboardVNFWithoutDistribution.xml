@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="uitests" configfailurepolicy="continue" parallel="methods" thread-count="1" data-provider-thread-count="1">
+ <parameter name="makeDistribution"  value="false"/>
+ <parameter name="eraseAfterTests"  value="false"/>
+
+  <test name="uiSanity">
+    <classes>   	
+   	    <class name="org.openecomp.sdc.ci.tests.execute.sanity.Onboard">
+   			  <methods>
+				<include name="onboardVNFTestSanity"/>
+			  </methods>
+		</class>						
+    </classes>
+  </test> <!-- uitests -->
+</suite> <!-- uisuite -->

@@ -38,7 +38,6 @@ import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.PolicyTypeOperation;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 

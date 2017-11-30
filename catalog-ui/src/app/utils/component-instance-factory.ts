@@ -21,7 +21,8 @@
  * Created by obarda on 3/7/2016.
  */
 'use strict';
-import {ComponentInstance, ServiceInstance, ResourceInstance, Component} from "../models";
+import {ComponentInstance, ServiceInstance, ResourceInstance, Component, ServiceProxyInstance} from "../models";
+import {ComponentType} from "app/utils";
 import {LeftPaletteComponent} from "../models/components/displayComponent";
 
 export class ComponentInstanceFactory {
@@ -29,10 +30,12 @@ export class ComponentInstanceFactory {
     static createComponentInstance(componentInstance:ComponentInstance):ComponentInstance {
         let newComponentInstance:ComponentInstance;
         switch (componentInstance.originType) {
-            case 'SERVICE':
+            case ComponentType.SERVICE:
                 newComponentInstance = new ServiceInstance(componentInstance);
                 break;
-
+           case ComponentType.SERVICE_PROXY:
+                newComponentInstance = new ServiceProxyInstance(componentInstance);
+                break;
             default :
                 newComponentInstance = new ResourceInstance(componentInstance);
                 break;
@@ -43,10 +46,12 @@ export class ComponentInstanceFactory {
     public createEmptyComponentInstance = (componentInstanceType?:string):ComponentInstance => {
         let newComponentInstance:ComponentInstance;
         switch (componentInstanceType) {
-            case 'SERVICE':
+            case ComponentType.SERVICE:
                 newComponentInstance = new ServiceInstance();
                 break;
-
+            case ComponentType.SERVICE_PROXY:
+                newComponentInstance = new ServiceProxyInstance();
+                break;
             default :
                 newComponentInstance = new ResourceInstance();
                 break;
@@ -62,6 +67,9 @@ export class ComponentInstanceFactory {
         newComponentInstance.name = component.name;
         newComponentInstance.componentVersion = component.version;
         newComponentInstance.originType = component.getComponentSubType();
+        if(component.getComponentSubType() === ComponentType.SERVICE){
+            newComponentInstance.originType = ComponentType.SERVICE_PROXY
+        }
         //new component instance -> req. & cap. are added on successful instance creation
         newComponentInstance.requirements = component.requirements;
         newComponentInstance.capabilities = component.capabilities;

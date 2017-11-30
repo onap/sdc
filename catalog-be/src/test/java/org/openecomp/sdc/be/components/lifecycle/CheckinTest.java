@@ -25,9 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.be.components.lifecycle.CheckinTransition;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -59,7 +57,7 @@ public class CheckinTest extends LifecycleTestBase {
 	@Test
 	public void testSimpleCheckin() {
 		Either<Boolean, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		Either<User, ResponseFormat> ownerResponse = checkinObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
@@ -87,7 +85,7 @@ public class CheckinTest extends LifecycleTestBase {
 	@Test
 	public void testCheckinTwiceValidation() {
 		Either<Resource, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 		Either<User, ResponseFormat> owner = checkinObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
@@ -122,7 +120,7 @@ public class CheckinTest extends LifecycleTestBase {
 	@Test
 	public void testCheckoutByAnotherUserValidation() {
 		Either<Resource, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		User modifier = new User();
 		modifier.setUserId("modifier");

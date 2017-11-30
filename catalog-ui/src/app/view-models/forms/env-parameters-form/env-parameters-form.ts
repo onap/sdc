@@ -37,6 +37,7 @@ export interface IEnvParametersFormViewModelScope extends ng.IScope {
     getValidationPattern(type:string):RegExp;
     isInstance():boolean;
     validateJson(json:string):boolean;
+    onValueChanged(parameter: HeatParameterModel):void;
     close():void;
     save():void;
     openDescPopover(selectedParam:HeatParameterModel):void;
@@ -86,7 +87,10 @@ export class EnvParametersFormViewModel {
         this.$scope.envParametersModal = this.$uibModalInstance;
         this.$scope.artifactResource = this.artifact;
         this.$scope.heatParameters = angular.copy(this.artifact.heatParameters);
-
+        //if param does not have a value - display the default
+        this.$scope.heatParameters.forEach((heatParam) => {
+            heatParam.currentValue = heatParam.currentValue || heatParam.defaultValue;
+        });
         this.$scope.tableHeadersList = [
             {title: "Parameter", property: "name"},
             {title: "Default Value", property: "defaultValue", info: "DEFAULT_VALUE_INFO"},
@@ -114,13 +118,13 @@ export class EnvParametersFormViewModel {
         this.$scope.save = ():void => {
             this.$scope.buttons[0].disabled = true;//prevent double click (DE246266)
             this.$scope.isLoading = true;
-            this.artifact.heatParameters = this.$scope.heatParameters;
+            this.artifact.heatParameters = angular.copy(this.$scope.heatParameters);
             this.artifact.heatParameters.forEach((parameter:any):void => {
                 if ("" === parameter.currentValue) {
                     //[Bug 154465] - Update and erase current value field in Env parameters form return empty String ("") instead of null.
                     parameter.currentValue = null;
-                }else if (!parameter.currentValue && parameter.defaultValue) {
-                    parameter.currentValue = parameter.defaultValue;
+                } else if (parameter.defaultValue && parameter.defaultValue == parameter.currentValue) {
+                    parameter.currentValue = undefined;
                 }
             });
 
@@ -142,6 +146,13 @@ export class EnvParametersFormViewModel {
 
             this.component.addOrUpdateArtifact(this.$scope.artifactResource).then(success, error);
         };
+
+        this.$scope.onValueChanged = (parameter: HeatParameterModel):void => {
+            parameter.filterTerm = parameter.name + ' ' + parameter.currentValue + ' ' + parameter.defaultValue + ' ' +parameter.description
+            if('json'==parameter.type){
+                this.$scope.forms.editForm[parameter.name].$setValidity('pattern', this.$scope.validateJson(parameter.currentValue));
+            }
+        }
 
         this.$scope.close = ():void => {
             //this.artifact.heatParameters.forEach((parameter:any):void => {

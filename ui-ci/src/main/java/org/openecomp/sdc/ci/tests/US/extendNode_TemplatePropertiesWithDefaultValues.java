@@ -28,11 +28,9 @@ import java.util.Set;
 
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ToscaArtifactsScreenEnum;
-import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
+import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ToscaArtifactsScreenEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;

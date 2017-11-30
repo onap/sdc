@@ -296,8 +296,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 //			{ElementFactory.getDefaultUser(UserRoleEnum.ADMIN)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.OPS)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},
+			/*due to those roles are not exists in the system		{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
+			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},*/
 			};
 	}
 	
@@ -332,8 +332,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 //			{ElementFactory.getDefaultUser(UserRoleEnum.ADMIN)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.OPS)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},
+			/*due to those roles are not exists in the system					{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
+			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},*/
 			};
 	}
 	
@@ -370,8 +370,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 //			{ElementFactory.getDefaultUser(UserRoleEnum.ADMIN)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.OPS)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},
+			/*due to those roles are not exists in the system		{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
+			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},*/
 			};
 	}
 	
@@ -406,8 +406,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 //			{ElementFactory.getDefaultUser(UserRoleEnum.ADMIN)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.OPS)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},
+			/*due to those roles are not exists in the system		{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
+			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},*/
 			};
 	}
 	
@@ -444,8 +444,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 //			{ElementFactory.getDefaultUser(UserRoleEnum.ADMIN)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.OPS)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},
+	/*due to those roles are not exists in the system		{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
+			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},*/
 			};
 	}
 	
@@ -480,8 +480,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 //			{ElementFactory.getDefaultUser(UserRoleEnum.ADMIN)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.OPS)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},
+			/*due to those roles are not exists in the system		{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
+			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},*/
 			};
 	}
 	
@@ -518,8 +518,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 //			{ElementFactory.getDefaultUser(UserRoleEnum.ADMIN)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.OPS)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},
+			/*due to those roles are not exists in the system		{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
+			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},*/
 			};
 	}
 	
@@ -554,8 +554,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 //			{ElementFactory.getDefaultUser(UserRoleEnum.ADMIN)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR)},
 			{ElementFactory.getDefaultUser(UserRoleEnum.OPS)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
-			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},
+			/*due to those roles are not exists in the system		{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1)},
+			{ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1)},*/
 			};
 	}
 	
@@ -624,7 +624,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 			ActionStatus actionStatus, User user, User operationUser) throws Exception {
 		
 		if(initState.equals(LifeCycleStatesEnum.STARTCERTIFICATION) && targetState.equals(LifeCycleStatesEnum.CHECKIN)){
-			throw new SkipException("Open bug DE270217");			
+			throw new SkipException("Open bug DE270217 or TDP number: 154592");			
 		}
 		
 		getExtendTest().log(Status.INFO, String.format("initState: %s, targetState: %s, errorCode: %s,"
@@ -732,7 +732,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 				currState, status, actionStatus, user, operationUser));
 		
 		if(initState.equals(LifeCycleStatesEnum.STARTCERTIFICATION) && targetState.equals(LifeCycleStatesEnum.CHECKIN)){
-			throw new SkipException("Open bug DE270217");			
+			throw new SkipException("Open bug DE270217 or TDP number: 154592");			
 		}
 		
 		Either<Resource, RestResponse> createdComponent = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);

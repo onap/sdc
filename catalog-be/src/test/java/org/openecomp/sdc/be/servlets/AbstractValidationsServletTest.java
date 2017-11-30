@@ -23,43 +23,26 @@ package org.openecomp.sdc.be.servlets;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.tinkerpop.gremlin.structure.T;
-import org.glassfish.grizzly.servlet.ServletUtils;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.servlets.ResourceUploadServlet.ResourceAuthorityTypeEnum;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 
-import com.google.common.base.Supplier;
-import com.google.gson.Gson;
-
-import aj.org.objectweb.asm.Type;
 import fj.data.Either;
 
 public class AbstractValidationsServletTest {

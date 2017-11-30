@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.components.impl;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -359,7 +358,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 			if (genericServiceEither.isRight())
 				return Either.right(genericServiceEither.right().value());
 
-			generateInputsFromGenericTypeProperties(service, genericServiceEither.left().value());
+			generateAndAddInputsFromGenericTypeProperties(service, genericServiceEither.left().value());
 
 			Either<Service, StorageOperationStatus> dataModelResponse = toscaOperationFacade.createToscaComponent(service);
 
@@ -711,7 +710,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 		String uuidUpdated = serviceUpdate.getUUID();
 		String uuidCurrent = currentService.getUUID();
 		if (!uuidCurrent.equals(uuidUpdated)) {
-			log.info("update srvice: recived request to update uuid to {} the field is not updatable ignoring.", uuidUpdated);
+			log.info("update service: recived request to update uuid to {} the field is not updatable ignoring.", uuidUpdated);
 		}
 		
 		response = validateAndUpdateServiceType(user, currentService, serviceUpdate, null);
@@ -734,7 +733,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 			serviceUpdate.setInvariantUUID(currentInvariantUuid);
 		}
 		validateAndUpdateEcompNaming(currentService, serviceUpdate);
-		
+
+		currentService.setEnvironmentContext(serviceUpdate.getEnvironmentContext());
+
 		return Either.left(currentService);
 
 	}
@@ -1508,7 +1509,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 		return vfModuleAertifact;
 	}
 
-	private void fillVfModuleInstHeatEnvPayload(List<GroupInstance> groupsForCurrVF, ComponentInstance currVFInstance, Wrapper<String> payloadWrapper) {
+	private void fillVfModuleInstHeatEnvPayload(List<GroupInstance> groupsForCurrVF, Wrapper<String> payloadWrapper) {
 		// Converts GroupDefinition to VfModuleArtifactPayload which is the
 		// format used in the payload
 
@@ -1531,37 +1532,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
 	}
 
-	private void addHeatEnvArtifactsToVFModulePayload(VfModuleArtifactPayload vfModulePayload, ComponentInstance currVFInstance) {
-		List<String> originalModuleArtifacts = vfModulePayload.getArtifacts();
-		if (!MapUtils.isEmpty(currVFInstance.getDeploymentArtifacts()) && !CollectionUtils.isEmpty(originalModuleArtifacts)) {
-
-			// EVG : fix now for patch. remove null from list. Need to be fixed later : remove VF HEAT ENV uuid from the list??
-			List<String> filteredUUIDFromModule = originalModuleArtifacts.stream().filter(uuid -> uuid != null).collect(Collectors.toList());
-
-			final Collection<ArtifactDefinition> depInsArtifacts = currVFInstance.getDeploymentArtifacts().values();
-			// All Heat_ENV
-			List<ArtifactDefinition> heatEnvArtifacts = depInsArtifacts.stream().filter(art -> art.getArtifactType().equals(ArtifactTypeEnum.HEAT_ENV.getType())).collect(Collectors.toList());
-			// Unique Id Of Artifacts In the vf module
-			List<String> moduleArtUniqueId = depInsArtifacts.stream().filter(art -> originalModuleArtifacts.contains(art.getArtifactUUID())).map(art -> art.getUniqueId()).collect(Collectors.toList());
-			// Collect Only Heat Artifatcs that are Generated from artifacts in
-			// the module
-			List<String> relevantHeatEnvUUID = heatEnvArtifacts.stream().filter(heatEnv -> moduleArtUniqueId.contains(heatEnv.getGeneratedFromId())).map(heatEnv -> heatEnv.getArtifactUUID()).collect(Collectors.toList());
-
-			List<String> fullArtifactList = new ArrayList<>();
-			fullArtifactList.addAll(filteredUUIDFromModule);
-			fullArtifactList.addAll(relevantHeatEnvUUID);
-
-			vfModulePayload.setArtifacts(fullArtifactList);
-		}
-	}
-
 	private Either<ArtifactDefinition, ResponseFormat> generateVfModuleInstanceArtifact(User modifier, ComponentInstance currVFInstance, Service service, boolean shouldLock) {
 		ArtifactDefinition vfModuleAertifact = null;
 		Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
 		Wrapper<String> payloadWrapper = new Wrapper<>();
 		List<GroupInstance> groupsForCurrVF = collectGroupsInstanceForCompInstance(currVFInstance, responseWrapper);
 		if (responseWrapper.isEmpty()) {
-			fillVfModuleInstHeatEnvPayload(groupsForCurrVF, currVFInstance, payloadWrapper);
+			fillVfModuleInstHeatEnvPayload(groupsForCurrVF, payloadWrapper);
 		}
 		if (responseWrapper.isEmpty() && payloadWrapper.getInnerElement() != null) {
 			vfModuleAertifact = getVfModuleInstArtifactForCompInstance(currVFInstance, service, modifier, groupsForCurrVF, payloadWrapper, responseWrapper);
@@ -1694,7 +1671,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
 		@Override
 		public Either<ArtifactDefinition, ResponseFormat> call() throws Exception {
-			return artifactsBusinessLogic.generateHeatEnvArtifact(artifactDefinition, ComponentTypeEnum.RESOURCE_INSTANCE, service, resourceInstanceName, modifier, shouldLock, instanceId);
+			return artifactsBusinessLogic.forceGenerateHeatEnvArtifact(artifactDefinition, ComponentTypeEnum.RESOURCE_INSTANCE, service, resourceInstanceName, modifier, shouldLock, instanceId);
 		}
 
 		public ArtifactDefinition getArtifactDefinition() {

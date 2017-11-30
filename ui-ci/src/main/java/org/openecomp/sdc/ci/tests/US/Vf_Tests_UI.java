@@ -20,39 +20,16 @@
 
 package org.openecomp.sdc.ci.tests.US;
 
-import java.awt.AWTException;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.ArtifactPageEnum;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.StepsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.execute.sanity.Onboard;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.utilities.ArtifactUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.OnboardingUtils;
 import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
-import org.openqa.selenium.WebElement;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 public class Vf_Tests_UI extends SetupCDTest{
 
 	public Vf_Tests_UI() {
-		// TODO Auto-generated constructor stub
 	}
 	public void uploadHeatEnvVFLevel() throws Exception {
 		
@@ -68,7 +45,7 @@ public class Vf_Tests_UI extends SetupCDTest{
 //		String secondEnvArtifact = "mod_vmsi_dnt_fw_parent.env";
 //		String filePath=Config.instance().getWindowsDownloadDirectory();
 //		String vnfFile = "FDNT.zip";
-//	    OnboardingUtils.onboardAndValidate(Onboard.getFilePath(), vnfFile, getUser());
+//	    OnboardingUiUtils.onboardAndValidate(Onboard.getFilePath(), vnfFile, getUser());
 //		Map<String,File> mD5OfFilesToValidate = new HashMap<String,File>();
 //		mD5OfFilesToValidate.put(firstEnvArtifact,new File(FileHandling.getResourcesEnvFilesPath() + firstEnvArtifact));
 //		mD5OfFilesToValidate.put(secondEnvArtifact,new File(FileHandling.getResourcesEnvFilesPath() + secondEnvArtifact));
@@ -88,7 +65,6 @@ public class Vf_Tests_UI extends SetupCDTest{
 //	}
 	@Override
 	protected UserRoleEnum getRole() {
-		// TODO Auto-generated method stub
 		return UserRoleEnum.DESIGNER;
 	}
 }

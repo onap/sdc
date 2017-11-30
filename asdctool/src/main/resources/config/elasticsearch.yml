@@ -1,14 +1,15 @@
 
 elasticSearch.local: true
 elasticSearch.transportclient: false
-cluster.name: elasticsearch_1_5_2222
+cluster.name: elasticsearch
   
 discovery.zen.ping.multicast.enabled: false
 discovery.zen.ping.unicast.enabled: true
-discovery.zen.ping.unicast.hosts: 1.2.3.4
+discovery.zen.ping.unicast.hosts: elasticsearch_host
 transport.client.initial_nodes:
-   - 1.2.3.4:9300
+   - elasticsearch_host:9300
 
+http.cors.enabled: true
 
 #plugin.types: "DeleteByQueryPlugin"
 

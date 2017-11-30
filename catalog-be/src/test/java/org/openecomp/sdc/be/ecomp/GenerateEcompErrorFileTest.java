@@ -20,20 +20,18 @@
 
 package org.openecomp.sdc.be.ecomp;
 
-import java.io.File;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.common.config.EcompClassification;
 import org.openecomp.sdc.common.config.EcompErrorCode;
 import org.openecomp.sdc.common.config.EcompErrorEnum;
 import org.openecomp.sdc.common.config.generation.GenerateEcompErrorsCsv;
-
-import static org.junit.Assert.assertTrue;
 
 public class GenerateEcompErrorFileTest {
 

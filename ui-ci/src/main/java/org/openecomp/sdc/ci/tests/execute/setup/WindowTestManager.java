@@ -22,8 +22,6 @@ package org.openecomp.sdc.ci.tests.execute.setup;
 
 import java.util.HashMap;
 
-import com.aventstack.extentreports.ExtentTest;
-
 public class WindowTestManager {
 	
 	private static HashMap<Long, WindowTest> windowMap = new HashMap<Long, WindowTest>();

@@ -32,21 +32,20 @@ import java.util.stream.Collectors;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.ci.tests.datatypes.TypeHeatMetaDefinition;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaServiceGroupsMetadataDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaGroupsTopologyTemplateDefinition;
-import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
+import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaServiceGroupsMetadataDefinition;
 
 import com.aventstack.extentreports.Status;
 
 public class VfModuleVerificator {
 
-	private static final String [] PROPERTY_TYPES = {"vf_module_label", "min_vf_module_instances", "max_vf_module_instances", "initial_count"};
+	
+	private final static List<String> PROPERTY_TYPES = DeploymentViewVerificator.getCurrentPropertiesWithoutIsBase();//{"vf_module_label", "min_vf_module_instances", "max_vf_module_instances", "initial_count"};
 	private static final String VF_MODULE_TYPE = "org.openecomp.groups.VfModule";
 	
 	/**
@@ -107,7 +106,7 @@ public class VfModuleVerificator {
 											                     filter(e -> e.getType().equals(VF_MODULE_TYPE)).
 											                     map(e -> e.getProperties()).
 											                     collect(Collectors.toList());
-		for(String propertyType :PROPERTY_TYPES){
+		for(String propertyType : PROPERTY_TYPES){
 			int numberOfTypes = getPropertyType(allProperties, propertyType).size();
 			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Validating VF property %s exist, Expected: %s, Actual: %s  ", propertyType, allProperties.size(), numberOfTypes));
 			assertTrue(numberOfTypes == allProperties.size());
@@ -126,25 +125,13 @@ public class VfModuleVerificator {
 											                                                            filter(e -> e.getType().equals(VF_MODULE_TYPE)).
 											                                                            collect(Collectors.toList());
 		
-		for(String propertyType :PROPERTY_TYPES){
+		for(String propertyType : PROPERTY_TYPES){
 			int numberOfTypes = (int) vfModules.stream().
 												filter(e -> e.getProperties().containsKey(propertyType)).
 												count();
 			SetupCDTest.getExtendTest().log(Status.INFO, String.format("Validating VF property %s exist, Expected: %s, Actual: %s  ", propertyType, vfModules.size(), numberOfTypes));
 			assertTrue(numberOfTypes == vfModules.size());
 		}		
-	}
-
-	public static ToscaDefinition getToscaTemplate(String pathToCsar) throws Exception {
-		String outputFolder = DeploymentViewVerificator.unzipCsarFile(pathToCsar);
-		String templateFileName = VfModuleVerificator.getTemplateFilenname(pathToCsar);
-		
-		File pathToMainServiceTemplate = new File(outputFolder + File.separator + "Definitions" + File.separator + templateFileName);
-		ToscaDefinition toscaDefinition = ToscaParserUtils.parseToscaYamlToJavaObject(pathToMainServiceTemplate);
-		
-		DeploymentViewVerificator.cleanFolders(new File(outputFolder).getParent());
-		
-		return toscaDefinition;
 	}
 
 	public static String getTemplateFilenname(String pathToCsar) {

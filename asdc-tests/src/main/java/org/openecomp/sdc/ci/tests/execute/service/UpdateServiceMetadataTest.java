@@ -45,7 +45,6 @@ import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
@@ -521,6 +520,15 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
 		validateResponse(updateServiceResponse, 400, ActionStatus.MISSING_COMPONENT_NAME, Arrays.asList("Service"));
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+	}
+
+	@Test
+	public void environmentContextService() throws Exception {
+		updatedServiceDetails.setEnvironmentContext("General_Revenue-Bearing");
+		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		validateResponse(updateServiceResponse, 200, null, listForMessage);
+		Service actualService = ResponseParser.convertServiceResponseToJavaObject(updateServiceResponse.getResponse());
+		assertEquals(updatedServiceDetails.getEnvironmentContext(), actualService.getEnvironmentContext());
 	}
 
 	// TODO Irrelevant

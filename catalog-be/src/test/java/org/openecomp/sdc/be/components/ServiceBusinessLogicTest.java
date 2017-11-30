@@ -44,6 +44,7 @@ import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
@@ -104,6 +105,7 @@ public class ServiceBusinessLogicTest {
 	TitanDao mockTitanDao = Mockito.mock(TitanDao.class);
 	ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
 	CacheMangerOperation cacheManager = Mockito.mock(CacheMangerOperation.class);
+	GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
 
 	User user = null;
 	Service serviceResponse = null;
@@ -154,7 +156,7 @@ public class ServiceBusinessLogicTest {
 
 		// artifact bussinesslogic
 		ArtifactDefinition artifactDef = new ArtifactDefinition();
-		when(artifactBl.createArtifactPlaceHolderInfo(Mockito.anyString(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class), Mockito.any(ArtifactGroupTypeEnum.class))).thenReturn(artifactDef);
+		when(artifactBl.createArtifactPlaceHolderInfo(Mockito.any(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class), Mockito.any(ArtifactGroupTypeEnum.class))).thenReturn(artifactDef);
 
 		// createService
 		serviceResponse = createServiceObject(true);
@@ -177,7 +179,7 @@ public class ServiceBusinessLogicTest {
 		bl.setGraphLockOperation(graphLockOperation);
 		bl.setTitanGenericDao(mockTitanDao);
 		bl.setToscaOperationFacade(toscaOperationFacade);
-		
+		bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);
 		componentsUtils.Init();
 		componentsUtils.setAuditingManager(auditingManager);
 		bl.setComponentsUtils(componentsUtils);
@@ -209,6 +211,7 @@ public class ServiceBusinessLogicTest {
 	@Test
 	public void testHappyScenario() {
 		Service service = createServiceObject(false);
+		when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
 		Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
 
 		if (createResponse.isRight()) {
@@ -744,8 +747,6 @@ public class ServiceBusinessLogicTest {
 		Either<Component, StorageOperationStatus> eitherDelete = Either.left(new Resource());
 		when(toscaOperationFacade.deleteToscaComponent(resourceFree)).thenReturn(eitherDelete);
 
-		when(artifactBl.deleteAllComponentArtifactsIfNotOnGraph(artifacts)).thenReturn(StorageOperationStatus.OK);
-
 		Either<List<String>, ResponseFormat> deleteMarkedResources = bl.deleteMarkedComponents();
 		assertTrue(deleteMarkedResources.isLeft());
 		List<String> resourceIdList = deleteMarkedResources.left().value();
@@ -753,7 +754,6 @@ public class ServiceBusinessLogicTest {
 		assertTrue(resourceIdList.contains(resourceFree));
 		assertFalse(resourceIdList.contains(resourceInUse));
 
-		Mockito.verify(artifactBl, Mockito.times(1)).deleteAllComponentArtifactsIfNotOnGraph(artifacts);
 	}
 
 	private Service createServiceObject(boolean afterCreate) {
@@ -1004,6 +1004,7 @@ public class ServiceBusinessLogicTest {
 	public void testDerivedFromGeneric() {
 		Service service = createServiceObject(true);
 		when(toscaOperationFacade.createToscaComponent(service)).thenReturn(Either.left(service));
+		when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
 		Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
 		assertTrue(createResponse.isLeft());
 		service = createResponse.left().value();

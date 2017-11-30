@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.exception;
 
-import javax.ws.rs.core.Response;
-
 /**
  * Nested POJOs to express required JSON format of the error
  * 

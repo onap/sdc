@@ -20,21 +20,29 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import com.datastax.driver.core.*;
-import com.datastax.driver.core.schemabuilder.Alter;
-import com.datastax.driver.core.schemabuilder.Create;
-import com.datastax.driver.core.schemabuilder.SchemaBuilder;
-import com.datastax.driver.core.schemabuilder.SchemaStatement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.config.*;
 import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.OldExternalApiEventTableDesc;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.DataType;
+import com.datastax.driver.core.KeyspaceMetadata;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.schemabuilder.Alter;
+import com.datastax.driver.core.schemabuilder.Create;
+import com.datastax.driver.core.schemabuilder.SchemaBuilder;
+import com.datastax.driver.core.schemabuilder.SchemaStatement;
 
 public class SdcSchemaBuilder {
 

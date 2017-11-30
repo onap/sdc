@@ -12,7 +12,7 @@
                    data-ng-pattern="MapKeyValidationPattern"
                    data-ng-model-options="{ debounce: 200 }"
                    data-ng-change="changeKeyOfMap(mapKeys[$index], $index,'mapKey'+fieldsPrefixName+$index);$event.stopPropagation();"
-                   data-ng-disabled="readOnly"
+                   data-ng-readonly="readOnly"
                    data-required
                    autofocus/>
             <div class="input-error" data-ng-show="parentFormObj['mapKey'+fieldsPrefixName+$index].$dirty && parentFormObj['mapKey'+fieldsPrefixName+$index].$invalid">
@@ -26,7 +26,7 @@
             <label class="i-sdc-form-label required">Value</label>
             <input class="i-sdc-form-input"
                    ng-if="!((schemaProperty.simpleType||schemaProperty.type) == 'boolean')"
-                   data-ng-disabled="readOnly"
+                   data-ng-readonly="readOnly"
                    data-ng-model="valueObjRef[mapKeys[$index]]"
                    type="text"
                    name="mapValue{{fieldsPrefixName}}{{$index}}"

@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.be.model.cache.jobs;
 
-import fj.data.Either;
-
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Component;
@@ -30,6 +28,8 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import fj.data.Either;
 
 public abstract class Job<E> {
 	private static Logger log = LoggerFactory.getLogger(Job.class.getName());

@@ -1,0 +1,14 @@
+<input
+    class="value-input"
+    [ngClass]="{'error': control.invalid, 'disabled':readonly}"
+    type="text"
+    [name]="name"
+    [(ngModel)]="value"
+    (change)="onSave()"
+    [attr.maxlength]="validation.propertyValue.max"
+    [attr.minlength]="validation.propertyValue.min"
+    [pattern]="pattern"
+    [formControl]="control"
+    tooltip="{{value}}"
+    [readonly]="readonly"
+/>

@@ -393,7 +393,7 @@ export class WorkspaceViewModel {
             } else {
                 this.$scope.component = this.ComponentFactory.createComponent(this.$scope.originComponent);
             }
-
+            this.EventListenerService.notifyObservers(EVENTS.ON_REVERT);
         };
 
         this.$scope.changeLifecycleState = (state:string):void => {

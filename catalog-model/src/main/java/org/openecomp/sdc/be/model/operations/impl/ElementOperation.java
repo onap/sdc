@@ -28,8 +28,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;

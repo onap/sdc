@@ -1,46 +1,46 @@
-<div class="link-menu-open" data-tests-id="link-menu-open" data-ng-show="isLinkMenuOpen" ng-style="{left: relationMenuDirectiveObj.menuPosition.x, top: relationMenuDirectiveObj.menuPosition.y}" clicked-outside="{onClickedOutside: 'hideRelationMatch()', clickedOutsideEnable: 'isLinkMenuOpen'}" >
+<div class="link-menu-open" data-tests-id="link-menu-open" data-ng-show="isLinkMenuOpen" ng-style="{left: connectRelationModel.menuPosition.x, top: connectRelationModel.menuPosition.y}" clicked-outside="{onClickedOutside: 'hideRelationMatch()', clickedOutsideEnable: 'isLinkMenuOpen'}" >
     <h4 sdc-smart-tooltip>{{relationMenuDirectiveObj.leftSideLink.componentInstance.name | resourceName}}</h4>
     <h4 sdc-smart-tooltip>{{relationMenuDirectiveObj.rightSideLink.componentInstance.name | resourceName}}</h4>
 
     <p>Select one of the options below to connect</p>
 
     <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
-        <div class="inner-title" data-ng-show="hasMatchesToShow(relationMenuDirectiveObj.leftSideLink.requirements, relationMenuDirectiveObj.rightSideLink.selectedMatch)">Requirements</div>
-        <div class="link-item" data-tests-id="link-item-requirements" data-ng-repeat="(req ,matchArr) in relationMenuDirectiveObj.leftSideLink.requirements"
-             data-ng-click="relationMenuDirectiveObj.leftSideLink.selectMatchArr(matchArr); updateSelectionText()"
-             data-ng-show="showMatch(relationMenuDirectiveObj.rightSideLink.selectedMatch, matchArr)"
-             data-ng-class="{ 'selected': relationMenuDirectiveObj.leftSideLink.selectedMatch === matchArr}">
+        <div class="inner-title" data-ng-show="hasMatchesToShow(connectRelationModel.leftSideLink.requirements, connectRelationModel.rightSideLink.selectedMatch)">Requirements</div>
+        <div class="link-item" data-tests-id="link-item-requirements" data-ng-repeat="(req ,matchArr) in connectRelationModel.leftSideLink.requirements"
+             data-ng-click="connectRelationModel.leftSideLink.selectMatchArr(matchArr); updateSelectionText()"
+             data-ng-show="showMatch(connectRelationModel.rightSideLink.selectedMatch, matchArr)"
+             data-ng-class="{ 'selected': connectRelationModel.leftSideLink.selectedMatch === matchArr}">
             <div sdc-smart-tooltip>{{matchArr[0].requirement.getFullTitle()}}</div>
         </div>
 
-        <div class="inner-title" data-ng-show="hasMatchesToShow(relationMenuDirectiveObj.leftSideLink.capabilities, relationMenuDirectiveObj.rightSideLink.selectedMatch)">Capabilities</div>
-        <div class="link-item" data-tests-id="link-item-capabilities" data-ng-repeat="(cap, matchArr) in relationMenuDirectiveObj.leftSideLink.capabilities"
-             data-ng-click="relationMenuDirectiveObj.leftSideLink.selectMatchArr(matchArr); updateSelectionText()"
-             data-ng-show="showMatch(relationMenuDirectiveObj.rightSideLink.selectedMatch, matchArr)"
-             data-ng-class="{ 'selected': relationMenuDirectiveObj.leftSideLink.selectedMatch === matchArr}">
+        <div class="inner-title" data-ng-show="hasMatchesToShow(connectRelationModel.leftSideLink.capabilities, connectRelationModel.rightSideLink.selectedMatch)">Capabilities</div>
+        <div class="link-item" data-tests-id="link-item-capabilities" data-ng-repeat="(cap, matchArr) in connectRelationModel.leftSideLink.capabilities"
+             data-ng-click="connectRelationModel.leftSideLink.selectMatchArr(matchArr); updateSelectionText()"
+             data-ng-show="showMatch(connectRelationModel.rightSideLink.selectedMatch, matchArr)"
+             data-ng-class="{ 'selected': connectRelationModel.leftSideLink.selectedMatch === matchArr}">
             <div sdc-smart-tooltip>{{matchArr[0].capability.getFullTitle()}}</div>
         </div>
     </perfect-scrollbar>
 
     <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
-        <div class="inner-title" data-ng-show="hasMatchesToShow(relationMenuDirectiveObj.rightSideLink.requirements, relationMenuDirectiveObj.leftSideLink.selectedMatch)">Requirements</div>
-        <div class="link-item" data-tests-id="link-item-requirements" data-ng-repeat="(req, matchArr) in relationMenuDirectiveObj.rightSideLink.requirements"
-             data-ng-click="relationMenuDirectiveObj.rightSideLink.selectMatchArr(matchArr); updateSelectionText()"
-             data-ng-show="showMatch(relationMenuDirectiveObj.leftSideLink.selectedMatch, matchArr)"
-             data-ng-class="{ 'selected': relationMenuDirectiveObj.rightSideLink.selectedMatch === matchArr}">
+        <div class="inner-title" data-ng-show="hasMatchesToShow(connectRelationModel.rightSideLink.requirements, connectRelationModel.leftSideLink.selectedMatch)">Requirements</div>
+        <div class="link-item" data-tests-id="link-item-requirements" data-ng-repeat="(req, matchArr) in connectRelationModel.rightSideLink.requirements"
+             data-ng-click="connectRelationModel.rightSideLink.selectMatchArr(matchArr); updateSelectionText()"
+             data-ng-show="showMatch(connectRelationModel.leftSideLink.selectedMatch, matchArr)"
+             data-ng-class="{ 'selected': connectRelationModel.rightSideLink.selectedMatch === matchArr}">
             <div sdc-smart-tooltip>{{matchArr[0].secondRequirement ? matchArr[0].secondRequirement.getFullTitle() : matchArr[0].requirement.getFullTitle()}}</div>
         </div>
 
-        <div class="inner-title" data-ng-show="hasMatchesToShow(relationMenuDirectiveObj.rightSideLink.capabilities, relationMenuDirectiveObj.leftSideLink.selectedMatch)">Capabilities</div>
-        <div class="link-item"  data-tests-id="link-item-capabilities" data-ng-repeat="(cap, matchArr) in relationMenuDirectiveObj.rightSideLink.capabilities"
-             data-ng-click="relationMenuDirectiveObj.rightSideLink.selectMatchArr(matchArr); updateSelectionText()"
-             data-ng-show="showMatch(relationMenuDirectiveObj.leftSideLink.selectedMatch, matchArr)"
-             data-ng-class="{ 'selected': relationMenuDirectiveObj.rightSideLink.selectedMatch === matchArr}">
+        <div class="inner-title" data-ng-show="hasMatchesToShow(connectRelationModel.rightSideLink.capabilities, connectRelationModel.leftSideLink.selectedMatch)">Capabilities</div>
+        <div class="link-item"  data-tests-id="link-item-capabilities" data-ng-repeat="(cap, matchArr) in connectRelationModel.rightSideLink.capabilities"
+             data-ng-click="connectRelationModel.rightSideLink.selectMatchArr(matchArr); updateSelectionText()"
+             data-ng-show="showMatch(connectRelationModel.leftSideLink.selectedMatch, matchArr)"
+             data-ng-class="{ 'selected': connectRelationModel.rightSideLink.selectedMatch === matchArr}">
             <div sdc-smart-tooltip>{{matchArr[0].capability.getFullTitle()}}</div>
         </div>
     </perfect-scrollbar>
 
-    <div class="vl-type" data-ng-class="{'disabled': !relationMenuDirectiveObj.leftSideLink.selectedMatch[0].secondRequirement || !relationMenuDirectiveObj.rightSideLink.selectedMatch[0].secondRequirement}">
+    <div class="vl-type" data-ng-class="{'disabled': !connectRelationModel.leftSideLink.selectedMatch[0].secondRequirement || !connectRelationModel.rightSideLink.selectedMatch[0].secondRequirement}">
         <sdc-radio-button sdc-model="relationMenuDirectiveObj.vlType" value="ptp"
                           disabled="!relationMenuDirectiveObj.leftSideLink.selectedMatch[0].secondRequirement || !relationMenuDirectiveObj.rightSideLink.selectedMatch[0].secondRequirement || !relationMenuDirectiveObj.p2pVL"
                           text="Point to point" elem-id="radioPTP" elem-name="vlType"></sdc-radio-button>
@@ -57,7 +57,7 @@
     </div>
 
     <button class="tlv-btn grey" data-tests-id="link-menu-button-cancel" data-ng-click="hideRelationMatch()">Cancel</button>
-    <button class="tlv-btn blue" data-tests-id="link-menu-button-connect" data-ng-disabled="!relationMenuDirectiveObj.leftSideLink.selectedMatch || !relationMenuDirectiveObj.rightSideLink.selectedMatch ||
-                                                                    (relationMenuDirectiveObj.leftSideLink.selectedMatch[0].secondRequirement && !relationMenuDirectiveObj.vlType)"
+    <button class="tlv-btn blue" data-tests-id="link-menu-button-connect" data-ng-disabled="!connectRelationModel.leftSideLink.selectedMatch || !connectRelationModel.rightSideLink.selectedMatch ||
+                                                                    (connectRelationModel.leftSideLink.selectedMatch[0].secondRequirement && !connectRelationModel.vlType)"
             data-ng-click="saveRelation()">Connect</button>
 </div>

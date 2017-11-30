@@ -20,14 +20,7 @@
 
 package org.openecomp.sdc.be.components;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 
@@ -43,8 +36,6 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupProperty;
-import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -53,11 +44,8 @@ import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
-import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import fj.data.Either;
 /**
  * tests GroupBusinessLogic class
  * @author ns019t

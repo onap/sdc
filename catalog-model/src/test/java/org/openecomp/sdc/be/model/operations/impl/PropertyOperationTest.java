@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,27 +36,17 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
-import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
-import org.openecomp.sdc.be.resources.data.PropertyData;
-
-import fj.data.Either;
 
 public class PropertyOperationTest extends ModelTestBase {
 

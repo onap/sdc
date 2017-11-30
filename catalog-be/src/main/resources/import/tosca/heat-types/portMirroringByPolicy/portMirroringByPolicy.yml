@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+    org.openecomp.nodes.PortMirroringConfigurationByPolicy:
+        derived_from: tosca.nodes.Root
+        properties:            
+            collector_node:
+                type: string
+                description: The name of the Collector Proxy
+                required: true
+            policy_name:
+                type: string
+                description: The name of the policy for selection of the collector interfaces
+                required: true       
+            equip_model:
+                type: string
+                description: The name of the equipment type of the collector, i.e. Cisco 4500x
+                required: true
+            equip_vendor:
+                type: string
+                description: The name of the equipment vendor of the collector, i.e. Cisco
+                required: true                
+        requirements:
+            - source:
+                capability: org.openecomp.capabilities.PortMirroring
+                occurrences: [1,UNBOUNDED]
+

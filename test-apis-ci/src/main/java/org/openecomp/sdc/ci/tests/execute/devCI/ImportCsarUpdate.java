@@ -20,20 +20,15 @@
 
 package org.openecomp.sdc.ci.tests.execute.devCI;
 
-import static org.testng.AssertJUnit.assertTrue;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.imports.ImportCsarResourceTest;
@@ -42,7 +37,6 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.validation.CsarValidationUtils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;

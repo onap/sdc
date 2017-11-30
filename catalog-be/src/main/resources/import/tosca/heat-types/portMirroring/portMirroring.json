@@ -1,0 +1,21 @@
+{
+  "payloadName": "portMirroring.yml",
+  "contactId": "jh0003",
+  "name": "Port Mirroring Configuration",
+  "description": "A port mirroring configuration object",
+  "resourceIconPath": "pmc",
+  "resourceType": "Configuration",
+  "categories": [
+  {
+    "name": "Configuration",
+    "subcategories": [
+      {
+        "name": "Configuration"
+      }
+    ]
+  }
+],
+  "tags": [
+    "Port Mirroring Configuration"
+  ]
+}

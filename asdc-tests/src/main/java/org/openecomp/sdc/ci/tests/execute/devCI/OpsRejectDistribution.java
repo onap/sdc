@@ -20,15 +20,11 @@
 
 package org.openecomp.sdc.ci.tests.execute.devCI;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
@@ -37,11 +33,8 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ComponentRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class OpsRejectDistribution extends ComponentBaseTest {

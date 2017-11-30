@@ -2,8 +2,6 @@ package org.openecomp.sdc.be.dao.cassandra;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 

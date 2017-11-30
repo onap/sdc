@@ -1,7 +1,5 @@
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceValidatorExecuter;
@@ -10,7 +8,6 @@ import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidat
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.VfArtifactValidationTask;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.moduleJson.ModuleJsonTask;
-import org.openecomp.sdc.asdctool.impl.validator.utils.ReportManager;
 import org.openecomp.sdc.be.dao.TitanClientStrategy;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
@@ -20,7 +17,6 @@ import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
 import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsontitan.operations.CategoryOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.GroupsOperation;
-import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeTypeOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaDataOperation;
@@ -99,18 +95,6 @@ public class ValidationToolConfigurationTest {
 		testSubject = createTestSubject();
 		result = testSubject.basicVfValidator();
 	}
-
-	
-	@Test
-	public void testReportManager() throws Exception {
-		ValidationToolConfiguration testSubject;
-		ReportManager result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.reportManager();
-	}
-
 	
 	@Test
 	public void testArtifactCassandraDao() throws Exception {

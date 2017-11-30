@@ -32,22 +32,30 @@ public class ToscaNodeTemplatesTopologyTemplateDefinition {
 	private String description;
 	private String [] directives;
 	private Map<String, Object> properties;
-	private List<Map<String, Object>> attributes;
+	private Map<String, Object> attributes;
 	private List<Map<String, Object>> requirements;
-	private List<Map<String, Object>> capabilities;
-	private List<Map<String, Object>> interfaces;
-	private List<Map<String, Object>> artifacts;
-	private List<Map<String, Object>> node_filter;
-	private String copy;
-	private Map<String, String> metadata;
-
-	
+	private Object capabilities;
+//	private List<Map<String, Object>> capabilities;
 //	private Map<String, ToscaPropertiesNodeTemplatesDefinition> properties;
 //	private Map<String, ToscaRequirementsNodeTemplatesDefinition> requirements;
 //	private Map<String, ToscaCapabilitiesNodeTemplatesDefinition> capabilities;
+	private Map<String, Object> interfaces;
+	private Map<String, Object> artifacts;
+	private Map<String, Object> node_filter;
+	private String copy;
+	private Map<String, String> metadata;
+
 
 	public ToscaNodeTemplatesTopologyTemplateDefinition() {
 		super();
+	}
+	
+	public Object getCapabilities() {
+		return capabilities;
+	}
+	
+	public void setCapabilities(Object capabilities) {
+		this.capabilities = capabilities;
 	}
 	
 	public Map<String, String> getMetadata() {
@@ -100,11 +108,11 @@ public class ToscaNodeTemplatesTopologyTemplateDefinition {
 		this.properties = properties;
 	}
 
-	public List<Map<String, Object>> getAttributes() {
+	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(List<Map<String, Object>> attributes) {
+	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}
 
@@ -116,35 +124,27 @@ public class ToscaNodeTemplatesTopologyTemplateDefinition {
 		this.requirements = requirements;
 	}
 
-	public List<Map<String, Object>> getCapabilities() {
-		return capabilities;
-	}
-
-	public void setCapabilities(List<Map<String, Object>> capabilities) {
-		this.capabilities = capabilities;
-	}
-
-	public List<Map<String, Object>> getInterfaces() {
+	public Map<String, Object> getInterfaces() {
 		return interfaces;
 	}
 
-	public void setInterfaces(List<Map<String, Object>> interfaces) {
+	public void setInterfaces(Map<String, Object> interfaces) {
 		this.interfaces = interfaces;
 	}
 
-	public List<Map<String, Object>> getArtifacts() {
+	public Map<String, Object> getArtifacts() {
 		return artifacts;
 	}
 
-	public void setArtifacts(List<Map<String, Object>> artifacts) {
+	public void setArtifacts(Map<String, Object> artifacts) {
 		this.artifacts = artifacts;
 	}
 
-	public List<Map<String, Object>> getNode_filter() {
+	public Map<String, Object> getNode_filter() {
 		return node_filter;
 	}
 
-	public void setNode_filter(List<Map<String, Object>> node_filter) {
+	public void setNode_filter(Map<String, Object> node_filter) {
 		this.node_filter = node_filter;
 	}
 
@@ -161,11 +161,12 @@ public class ToscaNodeTemplatesTopologyTemplateDefinition {
         TypeDescription typeDescription = new TypeDescription(ToscaNodeTemplatesTopologyTemplateDefinition.class);
         typeDescription.putMapPropertyType("properties", String.class, Object.class);
         typeDescription.putListPropertyType("requirements", Map.class);
-        typeDescription.putListPropertyType("capabilities", Map.class);
-    	typeDescription.putListPropertyType("attributes", Map.class);
-    	typeDescription.putListPropertyType("interfaces", Map.class);
-    	typeDescription.putListPropertyType("artifacts", Map.class);
-    	typeDescription.putListPropertyType("node_filter", Map.class);
+//        typeDescription.putMapPropertyType("capabilities",String.class, Object.class);
+//        typeDescription.putListPropertyType("capabilities", Object.class);
+    	typeDescription.putMapPropertyType("attributes", String.class, Object.class);
+    	typeDescription.putMapPropertyType("interfaces", String.class, Object.class);
+    	typeDescription.putMapPropertyType("artifacts", String.class, Object.class);
+    	typeDescription.putMapPropertyType("node_filter", String.class, Object.class);
     	typeDescription.putMapPropertyType("metadata", String.class, String.class);
     	return typeDescription;
 	}

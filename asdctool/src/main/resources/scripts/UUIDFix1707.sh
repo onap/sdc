@@ -16,9 +16,9 @@ fi
 
 source ${FULL_PATH}/baseOperation.sh
 
-mainClass="org.openecomp.sdc.asdctool.main.MigrationMenu"
+mainClass="org.openecomp.sdc.asdctool.main.ArtifactUUIDFixMenu"
 
-command="java $JVM_LOG_FILE -cp $JARS $mainClass fix-UUID-1707 1707 $@"
+command="java $JVM_LOG_FILE -cp $JARS $mainClass $@"
 echo $command
 
 $command

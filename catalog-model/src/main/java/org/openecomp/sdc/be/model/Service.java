@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model;
 
 import java.util.Map;
+
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
@@ -89,7 +90,13 @@ public class Service extends Component {
 	public String getNamingPolicy() {
 		return getServiceMetadataDefinition().getNamingPolicy();
 	}
-	
+
+	public String getEnvironmentContext() { return getServiceMetadataDefinition().getEnvironmentContext();  }
+
+	public void setEnvironmentContext(String environmentContext) {
+		getServiceMetadataDefinition().setEnvironmentContext(environmentContext);
+	}
+
 	public void setServiceType(String serviceType){
 		getServiceMetadataDefinition().setServiceType(serviceType);
 	}
