@@ -67,7 +67,11 @@ public class ArtifactsOperations extends BaseOperation {
 
 	public Either<ArtifactDefinition, StorageOperationStatus> addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, String instanceId) {
 
-		Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(parentId, artifactInfo, type, artifactInfo.getUniqueId(), instanceId, false);
+		String artifactId = artifactInfo.getUniqueId();
+		if (artifactId == null && artifactInfo.getEsId()!=null) {
+			artifactId = artifactInfo.getEsId();
+		}
+		Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(parentId, artifactInfo, type, artifactId, instanceId, false, false);
 		if (status.isRight()) {
 
 			log.debug("Failed to update artifact {} of {} {}. status is {}", artifactInfo.getArtifactName(), type.getName(), parentId, status.right().value());
@@ -86,7 +90,7 @@ public class ArtifactsOperations extends BaseOperation {
 
 	public Either<ArtifactDefinition, StorageOperationStatus> updateArifactOnResource(ArtifactDefinition artifactInfo, String id, String artifactId, NodeTypeEnum type, String instanceId) {
 
-		Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(id, artifactInfo, type, artifactId, instanceId, true);
+		Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(id, artifactInfo, type, artifactId, instanceId, true, false);
 		if (status.isRight()) {
 
 			log.debug("Failed to update artifact {} of {} {}. status is {}", artifactInfo.getArtifactName(), type.getName(), id, status.right().value());
@@ -269,8 +273,6 @@ public class ArtifactsOperations extends BaseOperation {
 				} else {
 					updateVersionAndDate(artifactData, oldVesrion);
 				}
-				long time = System.currentTimeMillis();
-				artifactData.setHeatParamsUpdateDate(time);
 				break;
 			case HEAT:
 			case HEAT_NET:
@@ -481,7 +483,7 @@ public class ArtifactsOperations extends BaseOperation {
 
 	}
 
-	public Either<ArtifactDataDefinition, StorageOperationStatus> updateArtifactOnGraph(String componentId, ArtifactDefinition artifactInfo, NodeTypeEnum type, String artifactId, String instanceId, boolean isUpdate) {
+	public Either<ArtifactDataDefinition, StorageOperationStatus> updateArtifactOnGraph(String componentId, ArtifactDefinition artifactInfo, NodeTypeEnum type, String artifactId, String instanceId, boolean isUpdate, boolean isDeletePlaceholder) {
 		Either<ArtifactDataDefinition, StorageOperationStatus> res = null;
 		ArtifactDataDefinition artifactToUpdate = new ArtifactDataDefinition(artifactInfo);
 		ArtifactGroupTypeEnum groupType = artifactInfo.getArtifactGroupType();
@@ -506,7 +508,8 @@ public class ArtifactsOperations extends BaseOperation {
 				uniqueId = UniqueIdBuilder.buildPropertyUniqueId(instanceId, artifactToUpdate.getArtifactLabel());
 			}
 			artifactToUpdate.setUniqueId(uniqueId);
-			artifactToUpdate.setEsId(uniqueId);
+			if(!isDeletePlaceholder)
+				artifactToUpdate.setEsId(uniqueId);
 		} else
 			artifactToUpdate.setUniqueId(artifactId);
 
@@ -552,7 +555,8 @@ public class ArtifactsOperations extends BaseOperation {
 					String id = type != NodeTypeEnum.ResourceInstance ? componentId : instanceId;
 					String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(id, artifactToUpdate.getArtifactLabel());
 					artifactToUpdate.setUniqueId(uniqueId);
-					artifactToUpdate.setEsId(uniqueId);
+					if(!isDeletePlaceholder)
+						artifactToUpdate.setEsId(uniqueId);
 					artifactToUpdate.setDuplicated(Boolean.FALSE);
 				}
 			}

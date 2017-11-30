@@ -23,7 +23,9 @@
  */
 'use strict';
 import {PropertyModel} from "./properties";
+import {Requirement} from "./requirement";
 
+export interface RequirementCapabilityModel{};
 //this is an object contains keys, when each key has matching array.
 // for example: key = tosca.capabilities.network.Linkable and the match array is array of capabilities objects
 export class CapabilitiesGroup {
@@ -44,7 +46,7 @@ export class CapabilitiesGroup {
     }
 }
 
-export class Capability {
+export class Capability implements RequirementCapabilityModel{
 
     //server data
     name:string;
@@ -55,9 +57,9 @@ export class Capability {
     capabilitySources:Array<String>;
     minOccurrences:string;
     maxOccurrences:string;
-    properties:Array<PropertyModel>;
     description:string;
     validSourceTypes:Array<string>;
+    properties:Array<PropertyModel>;
     //custom
     selected:boolean;
     filterTerm:string;

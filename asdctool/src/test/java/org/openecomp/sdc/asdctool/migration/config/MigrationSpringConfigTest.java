@@ -1,7 +1,5 @@
 package org.openecomp.sdc.asdctool.migration.config;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.asdctool.migration.core.SdcMigrationTool;
 import org.openecomp.sdc.asdctool.migration.dao.MigrationTasksDao;

@@ -135,7 +135,7 @@
             <!-- HEADER -->
             <div>
                 <div class="w-sdc-dashboard-catalog-header">
-                    {{getNumOfElements((catalogFilterdItems| filter:{resourceType:('!'+vfcmtType)} | entityFilter:checkboxesFilter | filter:search).length)}}
+                    {{getNumOfElements((catalogFilterdItems| entityFilter:checkboxesFilter | filter:search).length)}}
                 </div>
                 <div class="w-sdc-dashboard-catalog-header-right">
                     <span class="w-sdc-dashboard-catalog-header-order" translate="SORT_CAPTION"></span>&nbsp;&nbsp;
@@ -155,31 +155,32 @@
                     
                     <!-- Tile new -->
                     <div data-ng-init="component.filterTerm = component.name +  ' '  + component.description + ' ' + component.tags.toString() + ' ' + component.version"
-                        class="sdc-tile-catalog sdc-tile-fix-width"
-                        data-ng-repeat="component in catalogFilterdItems| filter:{resourceType:('!'+vfcmtType)} | entityFilter:checkboxesFilter | filter:search | orderBy:sortBy:reverse | limitTo:numberOfItemToDisplay"
+                        class="sdc-tile sdc-tile-fix-width"
+                        data-ng-repeat="component in catalogFilterdItems| entityFilter:checkboxesFilter | filter:search | orderBy:sortBy:reverse | limitTo:numberOfItemToDisplay"
                         >
 
-                        <div class="sdc-tile-header">
-                            <div class='sdc-tile-header-type' data-ng-class="{'purple': component.isResource(), 'blue': !component.isResource()}">
-                                <div data-ng-if="component.isResource()" data-tests-id="asset-type">{{component.getComponentSubType()}}</div>
-                                <div data-ng-if="component.isService()">S</div>
-                            </div>
+                        <div class='sdc-tile-header' data-ng-class="{'purple': component.isResource(), 'blue': !component.isResource()}">
+                            <div data-ng-if="component.isResource()" data-tests-id="asset-type">{{component.getComponentSubType()}}</div>
+                            <div data-ng-if="component.isService()">S</div>
                         </div>
+
                         <div class='sdc-tile-content' data-ng-click="gui.isLoading || goToComponent(component)">
-                            <div class='sdc-tile-content-icon'>
+                            <div class='sdc-tile-content-icon centered'>
                                 <div class="{{component.iconSprite}} {{component.icon}}"
                                     data-ng-class="{'sprite-resource-icons': component.isResource(), 'sprite-services-icons': component.isService()}"
                                     data-tests-id="{{component.name}}"></div>
                             </div>
                             <div class='sdc-tile-content-info'>
-                                <div class="sdc-tile-content-info-item-name" data-tests-id="{{component.name | resourceName}}" sdc-smart-tooltip>{{component.name | resourceName}}</div>
-                                <div class="sdc-tile-content-info-version-info">
-                                    <div class="sdc-tile-content-info-version-info-text" data-tests-id="{{component.name}}Version">V {{component.version}}</div>
+                                <div class="sdc-tile-info-line title" data-tests-id="{{component.name | resourceName}}" sdc-smart-tooltip>{{component.name | resourceName}}</div>
+                                <div class="sdc-tile-info-line subtitle" data-tests-id="{{component.name}}Version">
+                                    V {{component.version}}
                                 </div>
                             </div>
                         </div>
                         <div class='sdc-tile-footer'>
-                            <div class='sdc-tile-footer-text'>{{component.getStatus(sdcMenu)}}</div>
+                            <div class="sdc-tile-footer-content">
+                                <div class='sdc-tile-footer-text'>{{component.getStatus(sdcMenu)}}</div>
+                            </div>
                         </div>               
 
                     </div>
@@ -192,8 +193,7 @@
 
     </div>
 
-    <top-nav top-lvl-selected-index="1" search-bind="search.filterTerm" version="{{version}}"></top-nav>
+    <top-nav [top-lvl-selected-index]="1" [search-term]="search.filterTerm" (search-term-change)="search.filterTerm=$event" [version]="version"></top-nav>
 
-    <ecomp-footer></ecomp-footer>
 
 </div>

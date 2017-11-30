@@ -20,11 +20,16 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
-import fj.data.Either;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Supplier;
+
+import javax.servlet.ServletContext;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -57,14 +62,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Supplier;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
+
+import fj.data.Either;
 
 @Component("propertyBusinessLogic")
 public class PropertyBusinessLogic extends BaseBusinessLogic {
@@ -229,7 +232,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, ""));
 		}
 		for (PropertyDefinition property : properties) {
-			if (property.getUniqueId().equals(propertyId) && isPropertyBelongsToResource(property, resourceId)) {
+			if (property.getUniqueId().equals(propertyId) ) {
 				Map<String, PropertyDefinition> propMap = new HashMap<>();
 				propMap.put(property.getName(), property);
 				return Either.left(propMap.entrySet().iterator().next());

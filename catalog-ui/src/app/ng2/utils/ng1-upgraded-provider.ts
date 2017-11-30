@@ -42,6 +42,10 @@ export function cookieServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('Sdc.Services.CookieService');
 }
 
+export function stateServiceFactory(cacheObj: ICacheObject) {
+    return cacheObj.get('$state');
+}
+
 export function stateParamsServiceFactory(cacheObj: ICacheObject) {
     return cacheObj.get('$stateParams');
 }
@@ -71,6 +75,12 @@ export const SharingServiceProvider = {
 export const CookieServiceProvider = {
     provide: CookieService,
     useFactory: cookieServiceFactory,
+    deps: ['$injector']
+};
+
+export const StateServiceFactory = {
+    provide: '$state',
+    useFactory: stateServiceFactory,
     deps: ['$injector']
 };
 

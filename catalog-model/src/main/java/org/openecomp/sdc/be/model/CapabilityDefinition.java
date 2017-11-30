@@ -23,9 +23,9 @@ package org.openecomp.sdc.be.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 /**
  * Specifies the capabilities that the Node Type exposes.
@@ -59,7 +59,7 @@ public class CapabilityDefinition extends CapabilityDataDefinition implements Se
 		super((CapabilityDefinition)other);
 	
 		if (other.properties != null) {
-			this.properties = new ArrayList<>(other.properties);
+			this.properties = new ArrayList<>(other.properties.stream().map(p -> new ComponentInstanceProperty(p)).collect(Collectors.toList()));
 		}
 		
 	}

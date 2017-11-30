@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,8 +34,6 @@ import org.openecomp.sdc.be.model.operations.impl.util.OperationTestsUtil;
 import org.openecomp.sdc.be.resources.data.UserData;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")

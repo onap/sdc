@@ -30,18 +30,19 @@ import org.json.simple.JSONValue;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.OnboardingUtils;
+import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
+import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 
 import com.clearspring.analytics.util.Pair;
 
 public class LocalGeneralUtilities {
 
 	public LocalGeneralUtilities() {
-		// TODO Auto-generated constructor stub
 	}
 	public static final String FILE_PATH = FileHandling.getBasePath() + "\\src\\main\\resources\\Files\\VNFs\\";
 	public static final String Env_FILE_PATH = FileHandling.getBasePath() + "\\src\\main\\resources\\Files\\Env_files\\";
@@ -74,12 +75,12 @@ public static List<String> getValuesFromJsonArray(RestResponse message) throws E
 	return artifactTypesArrayFromApi;
 }
 
-public static String simpleOnBoarding(String fileName, String filePath,User user) throws Exception {
-	AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(user);
-	Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(fileName, filePath, user, amdocsLicenseMembers);
+public static String simpleOnBoarding(ResourceReqDetails resourceReqDetails, String fileName, String filePath,User user) throws Exception {
+	AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUiUtils.createVendorLicense(user);
+	Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(resourceReqDetails, fileName, filePath, user, amdocsLicenseMembers);
 	String vspName = createVendorSoftwareProduct.left;
 	HomePage.showVspRepository();
-	OnboardingUtils.importVSP(createVendorSoftwareProduct);
+	OnboardingUiUtils.importVSP(createVendorSoftwareProduct);
 	GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.GeneralElementsEnum.CHECKIN_BUTTON.getValue()).click();
 	GeneralUIUtils.waitForLoader();
 	return vspName;

@@ -2,7 +2,6 @@ package org.openecomp.sdc.be.servlets;
 
 import java.util.Map;
 
-import javax.annotation.Generated;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
@@ -12,8 +11,6 @@ import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-
-import com.google.common.collect.Multiset.Entry;
 
 import fj.data.Either;
 

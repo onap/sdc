@@ -1,6 +1,5 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import fj.data.Either;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
@@ -8,6 +7,8 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+
+import fj.data.Either;
 
 /**
  * Created by cb478c on 6/13/2017.

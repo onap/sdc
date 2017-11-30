@@ -23,6 +23,7 @@ import { Service, IApi, IAppConfigurtaion, Resource, Component} from "../models"
 import {SharingService} from "./sharing-service";
 import {ComponentFactory} from "../utils/component-factory";
 import {CacheService} from "./cache-service";
+import {ResourceType} from "app/utils";
 
 interface IEntityService {
     getAllComponents():ng.IPromise<Array<Component>>;
@@ -48,7 +49,7 @@ export class EntityService implements IEntityService {
 
     getCatalog = ():ng.IPromise<Array<Component>> => {
         let defer = this.$q.defer<Array<Component>>();
-        this.$http.get(this.api.root + this.api.GET_catalog)
+        this.$http.get(this.api.root + this.api.GET_catalog, {params: {excludeTypes: [ResourceType.VFCMT, ResourceType.CONFIGURATION]}})
             .then((response:any) => {
                 let followedResponse: IComponentsArray =  response.data;
                 let componentsList:Array<Component> = new Array();

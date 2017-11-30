@@ -29,6 +29,7 @@ export class CompositionCiNodeVfc extends CompositionCiNodeBase {
     }
 
     private initVfc():void {
-        this.img = this.imagesPath + ImagesUrl.RESOURCE_ICONS + this.componentInstance.icon + '.png';
+        this.imagesPath = this.imagesPath + ImagesUrl.RESOURCE_ICONS;
+        this.img = this.imagesPath + this.componentInstance.icon + '.png';
     }
 }

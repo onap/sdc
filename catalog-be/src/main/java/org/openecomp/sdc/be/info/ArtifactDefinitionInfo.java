@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.info;
 
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
 public class ArtifactDefinitionInfo {
 

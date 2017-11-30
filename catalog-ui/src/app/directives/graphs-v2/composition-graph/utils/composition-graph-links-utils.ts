@@ -21,25 +21,17 @@
 /**
  * Created by obarda on 6/28/2016.
  */
-import {GraphUIObjects, ComponentInstanceFactory, ResourceType} from "app/utils";
-import {LeftPaletteLoaderService, LoaderService} from "app/services";
+import {GraphUIObjects} from "app/utils";
+import {LoaderService} from "app/services";
 import {
     NodeUcpe,
     CompositionCiNodeVf,
-    MatchReqToCapability,
-    MatchBase,
-    MatchReqToReq,
-    ComponentInstance,
+    Match,
     CompositionCiNodeBase,
     RelationshipModel,
-    RelationMenuDirectiveObj,
-    CapabilitiesGroup,
+    ConnectRelationModel,
     LinksFactory,
-    NodesFactory,
-    RequirementsGroup,
     Component,
-    Relationship,
-    Capability,
     LinkMenu,
     Point,
     CompositionCiLinkBase
@@ -105,16 +97,16 @@ export class CompositionGraphLinkUtils {
         );
     };
 
-    private createSimpleLink = (match:MatchReqToCapability, cy:Cy.Instance, component:Component):void => {
+    private createSimpleLink = (match:Match, cy:Cy.Instance, component:Component):void => {
         let newRelation:RelationshipModel = match.matchToRelationModel();
         let linkObg:CompositionCiLinkBase = this.linksFactory.createGraphLink(cy, newRelation, newRelation.relationships[0]);
         this.createLink(linkObg, cy, component);
     };
 
-    public createLinkFromMenu = (cy:Cy.Instance, chosenMatch:MatchBase, component:Component):void => {
+    public createLinkFromMenu = (cy:Cy.Instance, chosenMatch:Match, component:Component):void => {
 
         if (chosenMatch) {
-            if (chosenMatch && chosenMatch instanceof MatchReqToCapability) {
+            if (chosenMatch && chosenMatch instanceof Match) {
                 this.createSimpleLink(chosenMatch, cy, component);
             }
         }
@@ -128,18 +120,18 @@ export class CompositionGraphLinkUtils {
      * @param matchesArray
      * @returns {Array<MatchBase>}
      */
-    public filterUcpeLinks(fromNode:CompositionCiNodeBase, toNode:CompositionCiNodeBase, matchesArray:Array<MatchBase>):any {
+    public filterUcpeLinks(fromNode:CompositionCiNodeBase, toNode:CompositionCiNodeBase, matchesArray:Array<Match>):any {
 
-        let matchLink:Array<MatchBase>;
+        let matchLink:Array<Match>;
 
         if (fromNode.isUcpePart) {
-            matchLink = _.filter(matchesArray, (match:MatchBase) => {
+            matchLink = _.filter(matchesArray, (match:Match) => {
                 return match.isOwner(fromNode.id);
             });
         }
 
         if (toNode.isUcpePart) {
-            matchLink = _.filter(matchesArray, (match:MatchBase) => {
+            matchLink = _.filter(matchesArray, (match:Match) => {
                 return match.isOwner(toNode.id);
             });
         }
@@ -154,14 +146,14 @@ export class CompositionGraphLinkUtils {
      * @param toNode
      * @returns {any}
      */
-    public onLinkDrawn(cy:Cy.Instance, fromNode:Cy.CollectionFirstNode, toNode:Cy.CollectionFirstNode):RelationMenuDirectiveObj {
+    public onLinkDrawn(cy:Cy.Instance, fromNode:Cy.CollectionFirstNode, toNode:Cy.CollectionFirstNode):ConnectRelationModel {
 
         if (!this.commonGraphUtils.nodeLocationsCompatible(cy, fromNode, toNode)) {
             return null;
         }
         let linkModel:Array<CompositionCiLinkBase> = this.generalGraphUtils.getAllCompositionCiLinks(cy);
 
-        let possibleRelations:Array<MatchBase> = this.matchCapabilitiesRequirementsUtils.getMatchedRequirementsCapabilities(fromNode.data().componentInstance,
+        let possibleRelations:Array<Match> = this.matchCapabilitiesRequirementsUtils.getMatchedRequirementsCapabilities(fromNode.data().componentInstance,
             toNode.data().componentInstance, linkModel);
 
         //filter relations found to limit to specific ucpe-cp
@@ -169,8 +161,8 @@ export class CompositionGraphLinkUtils {
 
         //if found possibleRelations between the nodes we create relation menu directive and open the link menu
         if (possibleRelations.length) {
-            let menuPosition = this.generalGraphUtils.getLinkMenuPosition(cy, toNode.renderedPoint());
-            return new RelationMenuDirectiveObj(fromNode.data(), toNode.data(), menuPosition, possibleRelations);
+            // let menuPosition = this.generalGraphUtils.getLinkMenuPosition(cy, toNode.renderedPoint());
+            return new ConnectRelationModel(fromNode.data(), toNode.data(), possibleRelations);
         }
         return null;
     };
@@ -209,7 +201,7 @@ export class CompositionGraphLinkUtils {
      * @param vfNode
      */
     public createVfToUcpeLink = (component:Component, cy:Cy.Instance, ucpeNode:NodeUcpe, vfNode:CompositionCiNodeVf):void => {
-        let hostedOnMatch:MatchReqToCapability = this.generalGraphUtils.canBeHostedOn(cy, ucpeNode.componentInstance, vfNode.componentInstance);
+        let hostedOnMatch:Match = this.generalGraphUtils.canBeHostedOn(cy, ucpeNode.componentInstance, vfNode.componentInstance);
         /* create relation */
         let newRelation = new RelationshipModel();
         newRelation.fromNode = ucpeNode.id;
@@ -224,13 +216,12 @@ export class CompositionGraphLinkUtils {
     /**
      * Handles click event on links.
      * If one edge selected: do nothing.
-     /*Two edges selected - always select all
-     /* Three or more edges: first click - select all, secondary click - select single.
+     * Two or more edges: first click - select all, secondary click - select single.
      * @param cy
      * @param event
      */
     public handleLinkClick(cy:Cy.Instance, event:Cy.EventObject) {
-        if (cy.$('edge:selected').length > 2 && event.cyTarget[0].selected()) {
+        if (cy.$('edge:selected').length > 1 && event.cyTarget[0].selected()) {
             cy.$(':selected').unselect();
         } else {
 
@@ -256,7 +247,7 @@ export class CompositionGraphLinkUtils {
      * @returns {Point}
      */
     public calculateLinkMenuPosition(event, elementWidth, elementHeight):Point {
-        let point:Point = new Point(event.originalEvent.x, event.originalEvent.y);
+        let point:Point = new Point(event.originalEvent.clientX, event.originalEvent.clientY);
         if (event.originalEvent.view.screen.height - elementHeight < point.y) {
             point.y = event.originalEvent.view.screen.height - elementHeight;
         }

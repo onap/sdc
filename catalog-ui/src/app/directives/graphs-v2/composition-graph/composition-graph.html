@@ -8,17 +8,7 @@
 <relation-menu relation-menu-directive-obj="relationMenuDirectiveObj" is-link-menu-open="isLinkMenuOpen"
                create-relation="createLinkFromMenu" cancel="cancelRelationMenu()"></relation-menu>
 
-
-<div class="w-sdc-canvas-menu"
-     data-ng-show="linkMenuObject" ng-style="{left: linkMenuObject.position.x, top: linkMenuObject.position.y}"
-     id="relationMenu">
-
-    <div class="w-sdc-canvas-menu-content hand" data-ng-click="deleteRelation(linkMenuObject.link)">
-        <div class="w-sdc-canvas-menu-content-delete-button"></div>
-        Delete
-    </div>
-
-</div>
+<menu-list-ng2 [props]="canvasMenuProps"></menu-list-ng2>
 
     <div class="w-sdc-search-menu" data-ng-class="{'with-sidebar': withSidebar}">
         <ng2-search-with-autocomplete [search-placeholder]="'Type to search'" [auto-complete-values]="componentInstanceNames" (search-changed)="getAutoCompleteValues($event)" (search-button-clicked)="highlightSearchMatches($event)"

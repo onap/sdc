@@ -11,6 +11,7 @@
                         [propertyNameSearchText]="searchPropertyName"
                         [readonly]="isReadonly"
                         [isLoading]="loadingProperties"
+                        [hasDeclareOption]="true"
                         (valueChanged)="propertyValueChanged($event)"
                         (propertySelected)="propertySelected($event)"
                         (selectPropertyRow)="selectPropertyRow($event)"
@@ -31,12 +32,12 @@
             </tabs>
             <div class="header">
                 <div class="search-filter-container" [class.without-filter]="isInpusTabSelected">
-                    <span *ngIf="displayClearSearch && !isInpusTabSelected" (click)="clickOnClearSearch()" class="clear-filter">Clear All</span>
-                    <input type="text" class="search-box" placeholder="Search" [(ngModel)]="searchQuery" />
-                    <span class="sprite search-icon"></span>
+                    <span *ngIf="displayClearSearch && !isInpusTabSelected" (click)="clickOnClearSearch()" class="clear-filter" data-tests-id="clear-filter-button">Clear All</span>
+                    <input type="text" class="search-box" placeholder="Search" [(ngModel)]="searchQuery" data-tests-id="search-box"/>
+                    <span class="sprite search-icon" data-tests-id="search-button"></span>
                     <filter-properties-assignment *ngIf="!isInpusTabSelected" #advanceSearch class="advance-search" [componentType]="component.componentType" (searchProperties)="searchPropertiesInstances($event)"></filter-properties-assignment>
                 </div>
-                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly" (click)="declareProperties()">Declare</button>
+                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly" (click)="declareProperties()" data-tests-id="declare-button">Declare</button>
             </div>
         </div>
         <div class="right-column gray-border">

@@ -25,14 +25,12 @@ import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.att.nsa.cambria.client.*;
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -43,189 +41,34 @@ import org.slf4j.LoggerFactory;
 
 import com.att.nsa.apiClient.http.HttpException;
 import com.att.nsa.apiClient.http.HttpObjectNotFoundException;
+import com.att.nsa.cambria.client.CambriaBatchingPublisher;
+import com.att.nsa.cambria.client.CambriaClient;
 import com.att.nsa.cambria.client.CambriaClient.CambriaApiException;
-import com.att.nsa.cambria.client.CambriaClientBuilders.TopicManagerBuilder;
-import com.att.nsa.cambria.client.CambriaClientBuilders.PublisherBuilder;
+import com.att.nsa.cambria.client.CambriaClientBuilders;
 import com.att.nsa.cambria.client.CambriaClientBuilders.ConsumerBuilder;
 import com.att.nsa.cambria.client.CambriaClientBuilders.IdentityManagerBuilder;
+import com.att.nsa.cambria.client.CambriaClientBuilders.PublisherBuilder;
+import com.att.nsa.cambria.client.CambriaClientBuilders.TopicManagerBuilder;
+import com.att.nsa.cambria.client.CambriaConsumer;
+import com.att.nsa.cambria.client.CambriaIdentityManager;
 import com.att.nsa.cambria.client.CambriaPublisher.message;
+import com.att.nsa.cambria.client.CambriaTopicManager;
 import com.google.gson.Gson;
 
 import fj.data.Either;
-import jline.internal.Log;
 
 public class CambriaHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(CambriaHandler.class.getName());
 
-	public static String PARTITION_KEY = "asdc" + "aa";
+	private static final String PARTITION_KEY = "asdc" + "aa";
+
+	private final String SEND_NOTIFICATION = "send notification";
 
 	private Gson gson = new Gson();
 
 	public static boolean useHttpsWithDmaap = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().isUseHttpsWithDmaap();
 
-	public static void main(String[] args) {
-
-		// String userBodyJson ="{\"artifactName\":\"myartifact\",
-		// \"artifactType\":\"MURANO-PKG\",
-		// \"artifactDescription\":\"description\",
-		// \"payloadData\":\"UEsDBAoAAAAIAAeLb0bDQz\", \"Content-MD5\":
-		// \"YTg2Mjg4MWJhNmI5NzBiNzdDFkMWI=\" }";
-		// System.out.println(userBodyJson);
-		// String encodeBase64Str = GeneralUtililty.calculateMD5 (userBodyJson);
-		// System.out.println(encodeBase64Str);
-
-		CambriaTopicManager createTopicManager = null;
-		try {
-			List<String> servers = new ArrayList<String>();
-			// servers.add("uebsb91kcdc.it.sdc.com:3904");
-			// servers.add("uebsb92kcdc.it.sdc.com:3904");
-			// servers.add("uebsb93kcdc.it.sdc.com:3904");
-			servers.add("uebsb91sfdc.it.att.com:3904");
-			servers.add("uebsb92sfdc.it.att.com:3904");
-
-			String key = "sSJc5qiBnKy2qrlc";
-			String secret = "4ZRPzNJfEUK0sSNBvccd2m7X";
-
-			createTopicManager = buildCambriaClient(new TopicManagerBuilder().usingHosts(servers).authenticatedBy(key, secret));
-
-			String topicName = "ASDC-DISTR-NOTIF-TOPIC-PRODesofer";
-
-			String clientKey1 = "CGGoorrGPXPx2B1C";
-			String clientSecret1 = "OTHk2mcCSbskEtHhDw8h5oUa";
-
-			CambriaTopicManager createStatusTopicManager = buildCambriaClient(new TopicManagerBuilder().usingHosts(servers).authenticatedBy(key, secret));
-			String reportTopic = "ASDC-DISTR-STATUS-TOPIC-PRODESOFER";
-			createStatusTopicManager.allowProducer(reportTopic, clientKey1);
-
-			CambriaBatchingPublisher createSimplePublisher = new PublisherBuilder().onTopic(reportTopic).usingHttps(useHttpsWithDmaap).usingHosts(servers).build();
-			createSimplePublisher.setApiCredentials(clientKey1, clientSecret1);
-
-			DistributionStatusNotification distributionStatusNotification = new DistributionStatusNotification();
-			distributionStatusNotification.setStatus(DistributionStatusNotificationEnum.DEPLOY_OK);
-			distributionStatusNotification.setArtifactURL("Ssssssss url");
-			distributionStatusNotification.setDistributionID("idddddddddddddd");
-			distributionStatusNotification.setTimestamp(System.currentTimeMillis());
-			distributionStatusNotification.setConsumerID("my consumer id");
-
-			Gson gson = new Gson();
-			int result = createSimplePublisher.send(PARTITION_KEY, gson.toJson(distributionStatusNotification));
-
-			List<message> messagesInQ = createSimplePublisher.close(20, TimeUnit.SECONDS);
-			System.out.println(messagesInQ == null ? 0 : messagesInQ.size());
-
-			// createTopicManager.createTopic(topicName, "my test topic", 1, 1);
-
-			/*
-			 * 
-			 * { "secret": "OTHk2mcCSbskEtHhDw8h5oUa", "aux": { "email": "esofer@intl.sdc.com", "description": "test-keys" }, "key": "CGGoorrGPXPx2B1C" }
-			 * 
-			 * 
-			 * { "secret": "FSlNJbmGWWBvBLJetQMYxPP6", "aux": { "email": "esofer@intl.sdc.com", "description": "test-keys" }, "key": "TAIEPO0aDU4VzM0G" }
-			 * 
-			 */
-
-			String clientKey2 = "TAIEPO0aDU4VzM0G";
-
-			CambriaConsumer createConsumer1 = new ConsumerBuilder().authenticatedBy("asdc1", "consumerId1").onTopic(topicName).usingHttps(useHttpsWithDmaap).usingHosts(servers).build();
-			createConsumer1.setApiCredentials(clientKey1, "OTHk2mcCSbskEtHhDw8h5oUa");
-
-			createTopicManager.allowConsumer(topicName, clientKey1);
-
-			CambriaConsumer createConsumer2 = null;
-			if (true) {
-				createConsumer2 = new ConsumerBuilder().authenticatedBy("asdc2", "consumerId3").onTopic(topicName).usingHttps(useHttpsWithDmaap).usingHosts(servers).build();
-				createConsumer2.setApiCredentials(clientKey2, "FSlNJbmGWWBvBLJetQMYxPP6");
-
-				createTopicManager.allowConsumer(topicName, clientKey2);
-			}
-
-			createSimplePublisher = new PublisherBuilder().onTopic(topicName).usingHttps(useHttpsWithDmaap).usingHosts(servers).build();
-			createSimplePublisher.setApiCredentials(key, secret);
-			createTopicManager.allowProducer(topicName, key);
-
-			createSimplePublisher.send("aaaa", "{ my testttttttttttttttt }");
-
-			while (true) {
-
-				Iterable<String> fetch1 = createConsumer1.fetch();
-
-				Iterator<String> iterator1 = fetch1.iterator();
-				while (iterator1.hasNext()) {
-					System.out.println("***********************************************");
-					System.out.println("client 1" + iterator1.next());
-					System.out.println("***********************************************");
-				}
-
-				if (createConsumer2 != null) {
-					Iterable<String> fetch2 = createConsumer2.fetch();
-
-					Iterator<String> iterator2 = fetch2.iterator();
-					while (iterator2.hasNext()) {
-						System.out.println("***********************************************");
-						System.out.println("client 2" + iterator2.next());
-						System.out.println("***********************************************");
-					}
-				}
-				Thread.sleep(1000 * 20);
-			}
-
-			// createTopicManager = CambriaClientFactory.createTopicManager(
-			// servers, "8F3MDAtMSBwwpSMy", "gzFmsTxSCtO5RQfAccM6PqqX");
-
-			// createTopicManager.deleteTopic("ASDC-DISTR-NOTIF-TOPIC-PROD");
-			// createTopicManager.deleteTopic("ASDC-DISTR-NOTIF-TOPIC-PROD1");
-
-			// CambriaIdentityManager createIdentityManager =
-			// CambriaClientFactory.createIdentityManager(null, null, null);
-			// createIdentityManager.setApiCredentials(arg0, arg1);
-			// createIdentityManager.cl
-
-			// String topicName = " ";
-			// createTopicManager.createTopic(topicName,
-			// "ASDC distribution notification topic", 1, 1);
-			//
-			// Thread.sleep(10 * 1000);
-			//
-			// for (int i = 0; i < 5; i++) {
-			// try {
-			// boolean openForProducing = createTopicManager
-			// .isOpenForProducing(topicName);
-			//
-			// System.out.println("openForProducing=" + openForProducing);
-			// createTopicManager.allowProducer(topicName,
-			// "8F3MDAtMSBwwpSMy");
-			// Set<String> allowedProducers = createTopicManager
-			// .getAllowedProducers(topicName);
-			// System.out.println(allowedProducers);
-			//
-			// } catch (Exception e) {
-			// e.printStackTrace();
-			// }
-			// }
-
-			// createTopicManager.createTopic("", "", 0, 0);
-			// createTopicManager.allowProducer(arg0, arg1);
-			// createTopicManager.getTopics();
-			// createTopicManager.close();
-			// CambriaClientFactory.
-			// CambriaBatchingPublisher createSimplePublisher =
-			// CambriaClientFactory.createSimplePublisher("hostlist", "topic");
-
-			// CambriaIdentityManager createIdentityManager =
-			// CambriaClientFactory.createIdentityManager(null, "apiKey",
-			// "apiSecret");
-			// createIdentityManager.
-
-		} catch (Exception e) {
-			Log.debug("Exception in main test of Cambria Handler: {}", e.getMessage(), e);
-			e.printStackTrace();
-		} finally {
-			if (createTopicManager != null) {
-				createTopicManager.close();
-			}
-		}
-	}
 
 	/**
 	 * process the response error from Cambria client
@@ -403,7 +246,8 @@ public class CambriaHandler {
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeUebSystemError, methodName, operationDesc);
 			BeEcompErrorManager.getInstance().logBeUebSystemError(methodName, operationDesc);
 			break;
-
+		default:
+			break;
 		}
 
 	}
@@ -661,7 +505,7 @@ public class CambriaHandler {
 
 			CambriaErrorResponse cambriaErrorResponse = processError(e);
 
-			writeErrorToLog(cambriaErrorResponse, e.getMessage(), methodName, "send notification");
+			writeErrorToLog(cambriaErrorResponse, e.getMessage(), methodName, SEND_NOTIFICATION);
 
 			return cambriaErrorResponse;
 		} finally {
@@ -719,7 +563,7 @@ public class CambriaHandler {
 
 			response = processError(e);
 
-			writeErrorToLog(response, e.getMessage(), methodName, "send notification");
+			writeErrorToLog(response, e.getMessage(), methodName, SEND_NOTIFICATION);
 
 			return response;
 
@@ -733,7 +577,7 @@ public class CambriaHandler {
 				response = new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);
 				String methodName = new Object() {
 				}.getClass().getEnclosingMethod().getName();
-				writeErrorToLog(response, "closing publisher returned non sent messages", methodName, "send notification");
+				writeErrorToLog(response, "closing publisher returned non sent messages", methodName, SEND_NOTIFICATION);
 			} else {
 				logger.debug("No message left in the queue after closing cambria publisher");
 				response = new CambriaErrorResponse(CambriaOperationStatus.OK, 200);
@@ -743,7 +587,7 @@ public class CambriaHandler {
 			response = new CambriaErrorResponse(CambriaOperationStatus.INTERNAL_SERVER_ERROR, 500);
 			String methodName = new Object() {
 			}.getClass().getEnclosingMethod().getName();
-			writeErrorToLog(response, "closing publisher returned non sent messages", methodName, "send notification");
+			writeErrorToLog(response, "closing publisher returned non sent messages", methodName, SEND_NOTIFICATION);
 		}
 		logger.debug("After closing publisher");
 

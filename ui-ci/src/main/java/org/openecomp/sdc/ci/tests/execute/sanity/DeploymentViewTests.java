@@ -41,7 +41,6 @@ import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.verificator.DeploymentViewVerificator;
 import org.openqa.selenium.WebElement;
-import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -59,7 +58,7 @@ public class DeploymentViewTests extends SetupCDTest {
 	
 	@DataProvider(name = "CSAR_VF_Files", parallel = false)
     public Object[][] createDataX() {
-             return new Object[][] { { "vSeGWdoubleMembers.csar" }, { "vSeGW.csar" }, {"vSeGWsingleModule.csar"}};
+		return new Object[][] {{"vSeGWNew.csar"}, {"vSeGWNewDoubleMembers.csar"}, {"vSeGWNewSingleModule.csar"}};
     }
 	
 	
@@ -76,7 +75,7 @@ public class DeploymentViewTests extends SetupCDTest {
 		List<WebElement> moduleRowsFromTable = GeneralUIUtils.getElementsByCSS(DataTestIdEnum.DeploymentScreen.MODULES.getValue());
 		DeploymentViewVerificator verificator = new DeploymentViewVerificator(filePath + baseFileName);
 		verificator.verifyDeploymentPageModules(moduleRowsFromTable);
-		for(WebElement moduleRow :moduleRowsFromTable){
+		for(WebElement moduleRow : moduleRowsFromTable){
 			String moduleRowText = moduleRow.getText();
 			verificator.verifyDeploymentPageSubElements(moduleRowText.split("\\.\\.")[1]);
 			DeploymentPage.updateModuleName(moduleRowText, "updatedName");
@@ -89,8 +88,8 @@ public class DeploymentViewTests extends SetupCDTest {
 	
 	@Test
 	public void deploymentScreenDCAEAssetUpdateWithNewGroupCSAR_TC1368223_Test() throws Exception{		
-		String baseFileName   = "baseUpdateMinusGroupFlowVF.csar";
-		String updateFileName = "baseUpdateFlowVF.csar";
+		String baseFileName   = "baseUpdateMinusGroupFlowVF_NEW.csar";
+		String updateFileName = "baseUpdateFlowVF_NEW.csar";
 		
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups ", 2));
@@ -111,8 +110,8 @@ public class DeploymentViewTests extends SetupCDTest {
 	
 	@Test
 	public void deploymentScreenDCAEAssetDeleteGroupFromCSAR_TC1368281_Test() throws Exception{		
-		String baseFileName   = "baseUpdateFlowVF.csar";
-		String updateFileName = "baseUpdateMinusGroupFlowVF.csar";
+		String baseFileName   = "baseUpdateFlowVF_NEW.csar";
+		String updateFileName = "baseUpdateMinusGroupFlowVF_NEW.csar";
 				
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups ", 3));
@@ -145,9 +144,9 @@ public class DeploymentViewTests extends SetupCDTest {
 	@Test
 	public void deploymentScreenDCAEAssetUpdateWithNewGroupWithoutMembersCSAR_TC1368280_Test() throws Exception{
 		
-		String baseFileName    = "baseUpdateMinusGroupFlowVF.csar";
-		String updateFileName  = "baseUpdateAddGroupNoMembersUpdateFlow.csar";
-		String updateFileName2 = "baseUpdateFlowVF.csar";
+		String baseFileName    = "baseUpdateMinusGroupFlowVF_NEW.csar";
+		String updateFileName  = "baseUpdateAddGroupNoMembersUpdateFlow_NEW.csar";
+		String updateFileName2 = "baseUpdateFlowVF_NEW.csar";
 		
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups ", 2));
@@ -167,10 +166,6 @@ public class DeploymentViewTests extends SetupCDTest {
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Updating VF with new file, should be %s groups now, base_ldsa group with members", 3));
 		ResourceUIUtils.updateVfWithCsar(filePath, updateFileName2);
 		
-		if(true){
-			throw new SkipException("Open bug 305812");			
-		}
-		
 		// validate that member was added to base_ldsa group
 		DeploymentViewVerificator.regularDepoymentScreenVerificator(metaDataFromUI, new DeploymentViewVerificator(filePath + updateFileName2));
 		DeploymentViewVerificator.validateModuleNameUpadate();
@@ -178,7 +173,7 @@ public class DeploymentViewTests extends SetupCDTest {
 	
 	@Test
 	public void deploymentScreenDCAEAssetImportCSARWithArtifactSection_TC1368282_1_Test() throws Exception{		
-		String baseFileName   = "baseUpdateFlowTwoArtifactsToGroup.csar";
+		String baseFileName   = "baseUpdateFlowTwoArtifactsToGroup_NEW.csar";
 		
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups, should be 4 artifacts in every group ", 3));
@@ -190,8 +185,8 @@ public class DeploymentViewTests extends SetupCDTest {
 	
 	@Test
 	public void deploymentScreenDCAEAssetImportCSARRemoveArtifact_TC1368282_2_Test() throws Exception{		
-		String baseFileName   = "baseUpdateFlowTwoArtifactsToGroup.csar";
-		String updateFileName = "baseUpdateFlowOneArtifactToGroup.csar";
+		String baseFileName   = "baseUpdateFlowTwoArtifactsToGroup_NEW.csar";
+		String updateFileName = "baseUpdateFlowOneArtifactToGroup_NEW.csar";
 		
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups, should be 4 artifacts in every group ", 3));
@@ -203,10 +198,6 @@ public class DeploymentViewTests extends SetupCDTest {
 		// remove artifact from every group
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Updating VF with new file, should be 3 artifacts in every group"));
 		ResourceUIUtils.updateVfWithCsar(filePath, updateFileName);
-		
-		if(true){
-			throw new SkipException("Open bug 306329");			
-		}
 
 		DeploymentViewVerificator.regularDepoymentScreenVerificator(metaDataFromUI, new DeploymentViewVerificator(filePath + updateFileName));
 		DeploymentViewVerificator.validateModuleNameUpadate();
@@ -214,8 +205,8 @@ public class DeploymentViewTests extends SetupCDTest {
 	
 	@Test
 	public void deploymentScreenDCAEAssetImportCSARAddArtifact_TC1368282_3_Test() throws Exception{		
-		String baseFileName   = "baseUpdateFlowTwoArtifactsToGroup.csar";
-		String updateFileName = "baseUpdateFlowOneArtifactToGroup.csar";
+		String baseFileName   = "baseUpdateFlowTwoArtifactsToGroup_NEW.csar";
+		String updateFileName = "baseUpdateFlowOneArtifactToGroup_NEW.csar";
 		
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups, should be 3 artifacts in every group ", 3));
@@ -227,10 +218,6 @@ public class DeploymentViewTests extends SetupCDTest {
 		// add artifact to every group
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Updating VF with new file, should be 4 artifacts in every group"));
 		ResourceUIUtils.updateVfWithCsar(filePath, baseFileName);
-		
-		if(true){
-			throw new SkipException("Open bug 306005");			
-		}
 
 		DeploymentViewVerificator.regularDepoymentScreenVerificator(metaDataFromUI, new DeploymentViewVerificator(filePath + baseFileName));
 		DeploymentViewVerificator.validateModuleNameUpadate();
@@ -238,8 +225,8 @@ public class DeploymentViewTests extends SetupCDTest {
 	
 	@Test
 	public void deploymentScreenDCAEAssetImportCSARMixArtifacts_TC1368282_4_Test() throws Exception{		
-		String baseFileName   = "baseUpdateFlowTwoArtifactsToGroup.csar";
-		String updateFileName = "baseUpdateMixedArtifacts.csar";
+		String baseFileName   = "baseUpdateFlowTwoArtifactsToGroup_NEW.csar";
+		String updateFileName = "baseUpdateMixedArtifacts_NEW.csar";
 		
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups, should be 4 artifacts in every group ", 3));
@@ -252,18 +239,14 @@ public class DeploymentViewTests extends SetupCDTest {
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Updating VF with new file, mixing between artifacts and groups", 3));
 		ResourceUIUtils.updateVfWithCsar(filePath, updateFileName);
 		
-		if(true){
-			throw new SkipException("Open bug 306005");			
-		}
-		
 		DeploymentViewVerificator.regularDepoymentScreenVerificator(metaDataFromUI, new DeploymentViewVerificator());
 		DeploymentViewVerificator.validateModuleNameUpadate();
 	};
 	
 	@Test
 	public void deploymentScreenDCAEAssetUpdateVFModule_TC1296437_Test() throws Exception{
-		String baseFileName   = "baseUpdateMinusGroupFlowVF.csar";
-		String updateFileName = "baseUpdateFlowVF.csar";
+		String baseFileName   = "baseUpdateMinusGroupFlowVF_NEW.csar";
+		String updateFileName = "baseUpdateFlowVF_NEW.csar";
 		
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups ", 2));

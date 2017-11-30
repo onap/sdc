@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.be.model.cache.jobs;
 
-import fj.data.Either;
-
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.cache.DaoInfo;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import fj.data.Either;
 
 /**
  * Created by mlando on 9/20/2016.

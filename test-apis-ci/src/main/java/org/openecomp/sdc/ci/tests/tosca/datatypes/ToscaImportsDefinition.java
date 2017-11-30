@@ -32,7 +32,6 @@ public class ToscaImportsDefinition {
 	
 	public ToscaImportsDefinition() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ToscaImportsDefinition(String name, String file, String repository, String namespace_uri, String namespace_prefix) {

@@ -43,7 +43,6 @@ import org.openecomp.sdc.be.info.ServletJsonResponse;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.config.EcompErrorName;
-import org.openecomp.sdc.common.util.GeneralUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

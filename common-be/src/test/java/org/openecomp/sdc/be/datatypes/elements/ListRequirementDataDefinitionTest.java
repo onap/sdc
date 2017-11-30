@@ -3,8 +3,6 @@ package org.openecomp.sdc.be.datatypes.elements;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

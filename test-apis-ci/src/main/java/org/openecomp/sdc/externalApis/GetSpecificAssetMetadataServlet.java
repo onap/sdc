@@ -50,7 +50,6 @@ import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {

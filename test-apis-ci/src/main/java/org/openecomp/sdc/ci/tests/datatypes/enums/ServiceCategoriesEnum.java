@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.datatypes.enums;
 
+import java.util.Random;
+
 public enum ServiceCategoriesEnum {
 
 	VOIP("VoIP Call Control"), MOBILITY("Mobility"), NETWORK_L4("Network L4+"), NETWORK_L3("Network L1-3");
@@ -34,4 +36,8 @@ public enum ServiceCategoriesEnum {
 		return value;
 	}
 
+    public static ServiceCategoriesEnum getRandomElement() {
+        Random random = new Random();
+        return ServiceCategoriesEnum.values()[random.nextInt(ServiceCategoriesEnum.values().length)];
+    }
 }

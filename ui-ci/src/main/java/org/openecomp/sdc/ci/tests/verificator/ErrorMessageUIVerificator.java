@@ -48,7 +48,8 @@ public class ErrorMessageUIVerificator {
 	public static void validateErrorMessage(ActionStatus errorMessage) {
 		String errorMessageBox = null;
 		try{
-			errorMessageBox = GeneralUIUtils.getWebElementByClassName("w-sdc-modal-caption").getText();
+//			errorMessageBox = GeneralUIUtils.getWebElementByClassName("w-sdc-modal-caption").getText();
+			errorMessageBox = GeneralUIUtils.getWebElementByClassName("error-message-component").getText();
 		}
 		catch(Exception e){
 			ExtentTestActions.log(Status.INFO, "Did not find an error message popup.");

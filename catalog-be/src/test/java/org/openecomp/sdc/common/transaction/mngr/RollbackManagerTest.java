@@ -1,7 +1,5 @@
 package org.openecomp.sdc.common.transaction.mngr;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.common.transaction.api.RollbackHandler;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.DBActionCodeEnum;

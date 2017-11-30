@@ -22,8 +22,6 @@ package org.openecomp.sdc.be.datatypes.components;
 
 import java.io.Serializable;
 
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
 public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefinition implements Serializable {
 
 	/**
@@ -39,6 +37,8 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 	private Boolean ecompGeneratedNaming = true;
 
 	private String namingPolicy = EMPTY_STR;
+
+	private String environmentContext;
 
 	public ServiceMetadataDataDefinition() {
 		super();
@@ -92,11 +92,20 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 		this.namingPolicy = namingPolicy;
 	}
 
+	public String getEnvironmentContext() { return environmentContext;  }
+
+	public void setEnvironmentContext(String environmentContext) { this.environmentContext = environmentContext;  }
+
 	@Override
 	public String toString() {
-		return "ServiceMetadataDataDefinition [ distributionStatus=" + distributionStatus
-				+ ", serviceType=" + serviceType + ", serviceRole=" + serviceRole + ", ecompGeneratedNaming="
-				+ ecompGeneratedNaming + ", namingPolicy=" + namingPolicy + ", parent=" + super.toString() + "]";
+		return "ServiceMetadataDataDefinition{" +
+				"distributionStatus='" + distributionStatus + '\'' +
+				", serviceType='" + serviceType + '\'' +
+				", serviceRole='" + serviceRole + '\'' +
+				", ecompGeneratedNaming=" + ecompGeneratedNaming +
+				", namingPolicy='" + namingPolicy + '\'' +
+				", environmentContext='" + environmentContext + '\'' +
+				'}';
 	}
 
 	@Override
@@ -108,6 +117,7 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 		result = prime * result + ((namingPolicy == null) ? 0 : namingPolicy.hashCode());
 		result = prime * result + ((serviceType == null) ? 0 : serviceType.hashCode());
 		result = prime * result + ((serviceRole == null) ? 0 : serviceRole.hashCode());
+		result = prime * result + ((environmentContext == null) ? 0 : environmentContext.hashCode());
 		return result;
 	}
 
@@ -150,6 +160,11 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 			if (other.serviceRole != null)
 				return false;
 		} else if (!serviceRole.equals(other.serviceRole))
+			return false;
+		if (environmentContext == null){
+			if (other.environmentContext != null)
+				return false;
+		} else if (!environmentContext.equals(other.environmentContext))
 			return false;
 		return super.equals(obj);
 	}

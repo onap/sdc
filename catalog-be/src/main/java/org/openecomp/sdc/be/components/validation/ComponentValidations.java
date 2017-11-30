@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.be.components.validation;
 
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
 
 public class ComponentValidations {
 

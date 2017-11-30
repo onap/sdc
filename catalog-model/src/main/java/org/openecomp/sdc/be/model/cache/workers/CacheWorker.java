@@ -20,14 +20,13 @@
 
 package org.openecomp.sdc.be.model.cache.workers;
 
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
 import org.openecomp.sdc.be.model.cache.jobs.Job;
-import org.openecomp.sdc.be.model.cache.workers.IWorker;
 import org.openecomp.sdc.be.workers.Worker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by mlando on 9/6/2016. the class represents a worker the pull job

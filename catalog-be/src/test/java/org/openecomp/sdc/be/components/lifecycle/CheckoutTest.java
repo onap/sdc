@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
-import org.openecomp.sdc.be.components.lifecycle.CheckoutTransition;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -57,13 +56,15 @@ public class CheckoutTest extends LifecycleTestBase {
 		checkoutObj.setLifeCycleOperation(toscaElementLifecycleOperation);
 		checkoutObj.setConfigurationManager(configurationManager);
 		componentsUtils.Init();
+		bl.setToscaOperationFacade(toscaOperationFacade);
+		bl.setComponentsUtils(componentsUtils);
 
 	}
 
 	@Test
 	public void testCheckoutStateValidation() {
 		Either<? extends Component, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 		Either<User, ResponseFormat> ownerResponse = checkoutObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
@@ -81,7 +82,7 @@ public class CheckoutTest extends LifecycleTestBase {
 	@Test
 	public void testAlreadyCheckout() {
 		Either<Resource, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		Either<User, ResponseFormat> ownerResponse = checkoutObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
@@ -99,7 +100,7 @@ public class CheckoutTest extends LifecycleTestBase {
 	@Test
 	public void testCertificationInProgress() {
 		Either<? extends Component, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		resource.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
 		Either<User, ResponseFormat> ownerResponse = checkoutObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
@@ -119,7 +120,7 @@ public class CheckoutTest extends LifecycleTestBase {
 	@Test
 	public void testReadyForCertification() {
 		Either<Resource, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		resource.setLifecycleState(LifecycleStateEnum.READY_FOR_CERTIFICATION);
 
@@ -159,7 +160,7 @@ public class CheckoutTest extends LifecycleTestBase {
 	@Test
 	public void testRoles() {
 		Either<Resource, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 

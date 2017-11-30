@@ -20,16 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.utils.Utils;
 
 public class ImportUtils {
 

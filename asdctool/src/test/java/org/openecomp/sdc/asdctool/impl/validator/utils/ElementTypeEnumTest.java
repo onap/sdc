@@ -2,8 +2,6 @@ package org.openecomp.sdc.asdctool.impl.validator.utils;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

@@ -1,0 +1,21 @@
+<div class="custom-modal {{input.size}}">
+    <div class="ng2-modal-content">
+        <div class="ng2-modal-header modal-type-{{input.type}}">
+            <span class="title">{{ input.title }}</span>
+            <span class="close-button" (click)="close()"></span>
+        </div>
+        <div class="ng2-modal-body" >
+            <div *ngIf="input.content">{{input.content}}</div>
+            <div #dynamicContentContainer></div>
+        </div>
+        
+        <div class="ng2-modal-footer">
+            <button *ngFor="let button of input.buttons"
+                    class="tlv-btn {{button.cssClass}}"
+                    [disabled] = "button.getDisabled && button.getDisabled()"
+                    [attr.data-tests-id] = "button.text"
+                    (click) = "button.callback()">{{button.text}}</button>
+        </div>
+    </div>
+</div>
+<div class="modal-background"></div>

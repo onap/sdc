@@ -20,9 +20,12 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import fj.data.Either;
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
@@ -43,7 +46,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import fj.data.Either;
 
 @Component("distributionMonitoringBusinessLogic")
 public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
