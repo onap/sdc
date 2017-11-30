@@ -39,8 +39,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.openecomp.sdc.be.components.impl.CapabilityTypeImportManager;
-import org.openecomp.sdc.be.components.impl.CommonImportManager;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;

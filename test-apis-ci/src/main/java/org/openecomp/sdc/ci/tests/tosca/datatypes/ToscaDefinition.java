@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,16 +30,14 @@ import org.yaml.snakeyaml.TypeDescription;
 public class ToscaDefinition {
 
 	String tosca_definitions_version;
-	Map<String, String> metadata;
-	List<Map<String, ToscaImportsDefinition>> imports;
-	Map<String, ToscaNodeTypesDefinition> node_types;
-	ToscaTopologyTemplateDefinition topology_template;
+	Map<String, String> metadata = new HashMap<>();
+	List<Map<String, ToscaImportsDefinition>> imports = new ArrayList<>();
+	Map<String, ToscaNodeTypesDefinition> node_types = new HashMap<>();
+	ToscaTopologyTemplateDefinition topology_template = new ToscaTopologyTemplateDefinition();
 
 	public ToscaDefinition() {
 		super();
 	}
-
-
 
 	public ToscaDefinition(String tosca_definitions_version, Map<String, String> metadata, List<Map<String, ToscaImportsDefinition>> imports, Map<String, ToscaNodeTypesDefinition> node_types,
 			ToscaTopologyTemplateDefinition topology_template) {
@@ -49,26 +49,28 @@ public class ToscaDefinition {
 		this.topology_template = topology_template;
 	}
 
-
-
-	public Map<String, String> getMetadata() {
-		return metadata;
+	public ToscaDefinition(ToscaDefinition toscaDefinition){
+		this.tosca_definitions_version = toscaDefinition.tosca_definitions_version;
+		this.metadata = new HashMap<>(toscaDefinition.metadata);
+		this.imports = new ArrayList<>(toscaDefinition.imports);
+		this.node_types = new HashMap<>(toscaDefinition.node_types);
+		this.topology_template = new ToscaTopologyTemplateDefinition(toscaDefinition.topology_template);
 	}
-
-
-
-	public void setMetadata(Map<String, String> metadata) {
-		this.metadata = metadata;
-	}
-
-
-
+	
 	public List<Map<String, ToscaImportsDefinition>> getImports() {
 		return imports;
 	}
 
 	public void setImports(List<Map<String, ToscaImportsDefinition>> imports) {
 		this.imports = imports;
+	}
+
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
 	}
 
 	public String getTosca_definitions_version() {

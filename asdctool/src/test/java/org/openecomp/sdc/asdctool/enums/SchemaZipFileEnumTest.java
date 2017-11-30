@@ -1,7 +1,5 @@
 package org.openecomp.sdc.asdctool.enums;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

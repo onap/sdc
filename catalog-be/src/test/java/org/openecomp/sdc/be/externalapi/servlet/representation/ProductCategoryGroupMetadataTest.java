@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.externalapi.servlet.representation;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

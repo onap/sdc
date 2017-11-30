@@ -101,7 +101,10 @@ public class ServiceDistributionArtifactsBuilder {
 		notificationData.setServiceUUID(service.getUUID());
 		notificationData.setServiceDescription(service.getDescription());
 		notificationData.setServiceInvariantUUID(service.getInvariantUUID());
-
+		String workloadContext= ConfigurationManager.getConfigurationManager().getConfiguration().getWorkloadContext();
+		if(workloadContext!=null){
+			notificationData.setWorkloadContext(workloadContext);
+		}
 		logger.debug("Before returning notification data object {}", notificationData);
 
 		return notificationData;

@@ -1,13 +1,9 @@
 package org.openecomp.sdc.be.servlets;
 
-import javax.annotation.Generated;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
-import org.openecomp.sdc.be.components.impl.AdditionalInformationBusinessLogic;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 
 public class AdditionalInformationServletTest {

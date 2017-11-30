@@ -1,7 +1,5 @@
 package org.openecomp.sdc.common.api;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.common.api.ResponseInfo.ResponseStatusEnum;
 

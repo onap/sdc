@@ -31,14 +31,21 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.*;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapReqDef;
@@ -82,6 +89,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 	@Autowired
 	protected ComponentCache componentCache;
 
+	@Autowired
+	private GenericTypeBusinessLogic genericTypeBusinessLogic;
+
+	public void setGenericTypeBusinessLogic(GenericTypeBusinessLogic genericTypeBusinessLogic) {
+		this.genericTypeBusinessLogic = genericTypeBusinessLogic;
+	}
 
 	private static Logger log = LoggerFactory.getLogger(ComponentBusinessLogic.class.getName());
 
@@ -116,7 +129,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 			componentsUtils.auditComponentAdmin(responseFormat, user, component, "", "", auditAction, component.getComponentType());
 			return Either.right(responseFormat);
 		}
-		user = userResult.left().value();
 		return userResult;
 	}
 
@@ -502,17 +514,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 		return Either.left(true);
 	}
 
-	/***
-	 * Fetches Component From the DB
-	 * 
-	 * @param componentId
-	 * @param componentTypeEnum
-	 * @return
-	 */
-	public <R extends Component> Either<R, StorageOperationStatus> getComponent(String componentId, ComponentTypeEnum componentTypeEnum) {
-		return toscaOperationFacade.getToscaElement(componentId);
-	}
-
 	public Either<CapReqDef, ResponseFormat> getRequirementsAndCapabilities(String componentId, ComponentTypeEnum componentTypeEnum, String userId) {
 
 		Either<User, ResponseFormat> resp = validateUserExists(userId, "create Component Instance", false);
@@ -545,7 +546,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 				List<String> componentsUidToFetch = new ArrayList<>();
 				componentsUidToFetch.addAll(componentUids);
 	
-				if (componentsUidToFetch.size() > 0) {
+				if (!componentsUidToFetch.isEmpty()) {
 					log.debug("Number of Components to fetch from graph is {}", componentsUidToFetch.size());
 					Boolean isHighest = isHighest(highestFilter);
 					Either<List<Component>, StorageOperationStatus> nonCheckoutCompResponse = toscaOperationFacade.getLatestVersionNotAbstractComponents(isAbstractAbstract, isHighest, componentTypeEnum, internalComponentType, componentsUidToFetch);
@@ -617,7 +618,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 	public void setToscaArtifactsPlaceHolders(Component component, User user) {
 		Map<String, ArtifactDefinition> artifactMap = component.getToscaArtifacts();
 		if (artifactMap == null) {
-			artifactMap = new HashMap<String, ArtifactDefinition>();
+			artifactMap = new HashMap<>();
 		}
 		String componentUniqueId = component.getUniqueId();
 		String componentSystemName = component.getSystemName();
@@ -628,7 +629,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 			for (Entry<String, Object> artifactInfoMap : toscaArtifacts.entrySet()) {
 				Map<String, Object> artifactInfo = (Map<String, Object>) artifactInfoMap.getValue();
 				ArtifactDefinition artifactDefinition = artifactsBusinessLogic.createArtifactPlaceHolderInfo(componentUniqueId, artifactInfoMap.getKey(), artifactInfo, user, ArtifactGroupTypeEnum.TOSCA);
-				artifactDefinition.setArtifactName(componentType + "-" + componentSystemName + artifactInfo.get("artifactName"));
+				artifactDefinition.setArtifactName(ValidationUtils.normalizeFileName(componentType + "-" + componentSystemName + artifactInfo.get("artifactName")));
 				artifactMap.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
 			}
 		}
@@ -695,7 +696,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 		
 		List<Component> components = latestVersionEither.left().value();
 		
-		Component component = components.stream().filter(c -> c.isHighestVersion()).findFirst().orElse(null);
+		Component component = components.stream().filter(Component::isHighestVersion).findFirst().orElse(null);
 		if(component == null){
 			component = components.stream().filter(c -> c.getLifecycleState() == LifecycleStateEnum.CERTIFIED).findFirst().orElse(null);
 		}
@@ -785,7 +786,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 
 	protected Either<List<String>, ResponseFormat> deleteMarkedComponents(ComponentTypeEnum componentType) {
 
-//		List<String> deletedComponents = new ArrayList<String>();
 		log.trace("start deleteMarkedComponents");
 		Either<List<String>, StorageOperationStatus> deleteMarkedElements = toscaOperationFacade.deleteMarkedElements(componentType);
 		
@@ -794,30 +794,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 			ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteMarkedElements.right().value(), componentType));
 			return Either.right(responseFormat);
 		}
-//		ComponentOperation componentOperation = getComponentOperation(componentType);
-//		Either<List<String>, StorageOperationStatus> resourcesToDelete = componentOperation.getAllComponentsMarkedForDeletion();
-//		if (resourcesToDelete.isRight()) {
-//			ResponseFormat responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resourcesToDelete.right().value(), componentType));
-//			return Either.right(responseFormat);
-//		}
-//
-//		for (String resourceToDelete : resourcesToDelete.left().value()) {
-//
-//			Either<String, ResponseFormat> deleteMarkedResource = deleteMarkedComponent(resourceToDelete, componentType);
-//			if (deleteMarkedResource.isLeft()) {
-//				deletedComponents.add(deleteMarkedResource.left().value());
-//			}
-//		}
-//		if(deletedComponents.size() == 0) {
-//			log.debug("Component list to delete is empty. do commit");
-//			titanGenericDao.commit();
-//		}
 		log.trace("end deleteMarkedComponents");
 		return Either.left(deleteMarkedElements.left().value());
 	}
 
-	public Either<List<ArtifactDefinition>, StorageOperationStatus> getComponentArtifactsForDelete(String parentId, NodeTypeEnum parentType, boolean inTransacton) {
-		List<ArtifactDefinition> artifacts = new ArrayList<ArtifactDefinition>();
+	public Either<List<ArtifactDefinition>, StorageOperationStatus> getComponentArtifactsForDelete(String parentId, NodeTypeEnum parentType) {
+		List<ArtifactDefinition> artifacts = new ArrayList<>();
 		Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifactsResponse = artifactToscaOperation.getArtifacts(parentId);
 		if (artifactsResponse.isRight()) {
 			if (!artifactsResponse.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
@@ -827,16 +809,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 		} else {
 			artifacts.addAll(artifactsResponse.left().value().values());
 		}
-
-//		if (NodeTypeEnum.Resource.equals(parentType)) {
-//			Either<List<ArtifactDefinition>, StorageOperationStatus> interfacesArtifactsForResource = getAdditionalArtifacts(parentId, false, true);
-//			if (artifactsResponse.isRight() && !interfacesArtifactsForResource.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
-//				log.debug("failed to retrieve interface artifacts for {} {}", parentType, parentId);
-//				return Either.right(interfacesArtifactsForResource.right().value());
-//			} else if (artifactsResponse.isLeft()) {
-//				artifacts.addAll(interfacesArtifactsForResource.left().value());
-//			}
-//		}
 		return Either.left(artifacts);
 	}
 	
@@ -873,50 +845,39 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 	    return Either.left(result);
 	}
 	
-	protected <T extends Component> void generateInputsFromGenericTypeProperties(T component, Resource genericType) {
-	
-		List<PropertyDefinition> genericTypeProps = genericType.getProperties();
-		if(null != genericTypeProps) {
-			String genericUniqueId = genericType.getUniqueId();
-			List<InputDefinition> inputs = convertGenericTypePropertiesToInputsDefintion(genericTypeProps, genericUniqueId);
-			if(null != component.getInputs())
-				inputs.addAll(component.getInputs());
-			component.setInputs(inputs);
+	protected <T extends Component> void generateAndAddInputsFromGenericTypeProperties(T component, Resource genericType) {
+		List<InputDefinition> genericAndComponentInputs = new ArrayList<>();
+		List<InputDefinition> genericInputs = genericTypeBusinessLogic.generateInputsFromGenericTypeProperties(genericType);
+		genericAndComponentInputs.addAll(genericInputs);
+		if (null != component.getInputs()){
+			List<InputDefinition> nonGenericInputsFromComponent = getAllNonGenericInputsFromComponent(genericInputs, component.getInputs());
+			genericAndComponentInputs.addAll(nonGenericInputsFromComponent);
 		}
+		component.setInputs(genericAndComponentInputs);
 	}
-	
-	private List<InputDefinition> convertGenericTypePropertiesToInputsDefintion(List<PropertyDefinition> genericTypeProps, String genericUniqueId) {
-		return genericTypeProps.stream()
-			.map(p -> setInputDefinitionFromProp(p, genericUniqueId))
-			.collect(Collectors.toList());
-	}
-	
-	private InputDefinition setInputDefinitionFromProp(PropertyDefinition prop, String genericUniqueId){
-		InputDefinition input = new InputDefinition(prop);
-		input.setOwnerId(genericUniqueId);
-		return input;
+
+	private List<InputDefinition> getAllNonGenericInputsFromComponent(List<InputDefinition> genericInputs, List<InputDefinition> componentInputs) {
+		if (genericInputs == null) {
+			return componentInputs;
+		}
+
+		Map<String, InputDefinition> inputByNameMap = MapUtil.toMap(genericInputs, InputDefinition::getName);
+		List<InputDefinition> componentNonGenericInputs = new ArrayList<>();
+		componentInputs.stream().forEach(input -> {
+			if (!inputByNameMap.containsKey(input.getName())) {
+				componentNonGenericInputs.add(input);
+			}
+		});
+		return componentNonGenericInputs;
 	}
 	
 	protected <T extends Component> Either<Resource, ResponseFormat> fetchAndSetDerivedFromGenericType(T component){
-		String genericTypeToscaName = null;
-		if(component.getComponentType() == ComponentTypeEnum.RESOURCE && ((Resource)component).getResourceType() == ResourceTypeEnum.CVFC && CollectionUtils.isNotEmpty(((Resource)component).getDerivedFrom())){
-			genericTypeToscaName = ((Resource)component).getDerivedFrom().get(0);
-		} else {
-			genericTypeToscaName = component.fetchGenericTypeToscaNameFromConfig();
+		Either<Resource, ResponseFormat> genericTypeEither = this.genericTypeBusinessLogic.fetchDerivedFromGenericType(component);
+		if(genericTypeEither.isRight()){
+			log.debug("Failed to fetch latest generic type for component {} of type", component.getName(), component.assetType());
+			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType()));
 		}
-		log.debug("Fetching generic tosca name {}", genericTypeToscaName);
-		if(null == genericTypeToscaName) {
-			log.debug("Failed to fetch certified node type by tosca resource name {}", genericTypeToscaName);
-			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-		}
-		
-		Either<Resource, StorageOperationStatus> findLatestGeneric = toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(genericTypeToscaName);
-		if(findLatestGeneric.isRight()){
-			log.debug("Failed to fetch certified node type by tosca resource name {}", genericTypeToscaName);
-			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), genericTypeToscaName));
-		}
-		
-		Resource genericTypeResource = findLatestGeneric.left().value();
+		Resource genericTypeResource = genericTypeEither.left().value();
 		component.setDerivedFromGenericInfo(genericTypeResource);
 		return Either.left(genericTypeResource);
 	}
@@ -1119,7 +1080,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 			return shouldUpgradeNodeType(componentToCheckOut, latestGeneric);
 		}
 		List<PropertyDefinition> genericTypeProps = latestGeneric.getProperties();	
-		List<InputDefinition> genericTypeInputs = null == genericTypeProps? null : convertGenericTypePropertiesToInputsDefintion(genericTypeProps, latestGeneric.getUniqueId());
+		List<InputDefinition> genericTypeInputs = null == genericTypeProps? null : genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericTypeProps, latestGeneric.getUniqueId());
 		List<InputDefinition> currentList = new ArrayList<>();	
 	    // nullify existing ownerId from existing list and merge into updated list
 		if (null != componentToCheckOut.getInputs()) {

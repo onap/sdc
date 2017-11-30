@@ -25,11 +25,14 @@ import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -37,9 +40,14 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
+import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.common.util.GeneralUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
 
 public class PropertyRestUtils extends BaseRestUtils {
 	private static Logger logger = LoggerFactory.getLogger(PropertyRestUtils.class.getName());
@@ -306,5 +314,27 @@ public class PropertyRestUtils extends BaseRestUtils {
 		List<String> path = new ArrayList<>();
 		path.add(componentInstDetails.getUniqueId());
 		updatePropertyListWithPathParameterOnCompInst(service, path, list);
+	}
+
+	public static RestResponse declareProporties(Component componentObject, Map<String, List<ComponentInstanceInput>> componentInstancesInputs, User sdncModifierDetails)
+			throws Exception {
+		Config config = Config.instance();
+		String url = String.format(Urls.DECLARE_PROPERTIES, config.getCatalogBeHost(), config.getCatalogBePort(), ComponentTypeEnum.findParamByType(componentObject.getComponentType()), componentObject.getUniqueId());
+		String userId = sdncModifierDetails.getUserId();
+		Map<String, String> headersMap = prepareHeadersMap(userId);
+		Map<String, Object> jsonBuilder = new HashMap<>();
+		jsonBuilder.put("componentInstanceInputsMap", componentInstancesInputs);
+		Gson gson = new Gson();
+		String userBodyJson = gson.toJson(jsonBuilder);
+		String calculateMD5 = GeneralUtility.calculateMD5Base64EncodedByString(userBodyJson);
+		headersMap.put(HttpHeaderEnum.Content_MD5.getValue(), calculateMD5);
+		HttpRequest http = new HttpRequest();
+		// System.out.println(url);
+		// System.out.println(userBodyJson);
+		RestResponse declareProportiesResponse = http.httpSendPost(url, userBodyJson, headersMap);
+		if (declareProportiesResponse.getErrorCode() == STATUS_CODE_GET_SUCCESS) {
+
+		}
+		return declareProportiesResponse;
 	}
 }

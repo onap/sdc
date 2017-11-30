@@ -22,12 +22,9 @@ package org.openecomp.sdc.be.model.operations.api;
 
 import java.util.Map;
 
-import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
-
-import com.thinkaurelius.titan.core.TitanVertex;
 
 import fj.data.Either;
 

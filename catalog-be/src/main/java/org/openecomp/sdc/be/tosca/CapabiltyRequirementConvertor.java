@@ -81,9 +81,7 @@ public class CapabiltyRequirementConvertor {
 	@Autowired
 	private ToscaOperationFacade toscaOperationFacade;
 	
-	protected CapabiltyRequirementConvertor() {
-
-	}
+	protected CapabiltyRequirementConvertor() {}
 
 	public static synchronized CapabiltyRequirementConvertor getInstance() {
 		if (instance == null) {
@@ -117,9 +115,8 @@ public class CapabiltyRequirementConvertor {
 	}
 
 	private void convertOverridenProperties(ComponentInstance componentInstance, Map<String, DataTypeDefinition> dataTypes, Map<String, ToscaTemplateCapability> capabilties, CapabilityDefinition c) {
-		List<ComponentInstanceProperty> properties = c.getProperties();
-		if (properties != null && !properties.isEmpty()) {
-			properties
+		if (CollectionUtils.isNotEmpty(c.getProperties())) {
+			c.getProperties()
 			.stream()
 			.filter(p -> p.getValue() != null || p.getDefaultValue() != null)
 			.forEach(p -> convertOverridenProperty(componentInstance, dataTypes, capabilties, c, p));
@@ -178,7 +175,7 @@ public class CapabiltyRequirementConvertor {
 	 * @return
 	 */
 	public Either<SubstitutionMapping, ToscaError> convertSubstitutionMappingRequirements(Map<String,Component> componentsCache, Component component, SubstitutionMapping substitutionMappings) {
-		Either<SubstitutionMapping, ToscaError> result = Either.left(substitutionMappings);
+		Either<SubstitutionMapping, ToscaError> result = null ;
 		Either<Map<String, String[]>, ToscaError> toscaRequirementsRes = convertSubstitutionMappingRequirementsAsMap(componentsCache, component);
 		if(toscaRequirementsRes.isRight()){
 			result = Either.right(toscaRequirementsRes.right().value());
@@ -331,13 +328,15 @@ public class CapabiltyRequirementConvertor {
 			result = Either.right(false);
 		}
 		if(result == null){
-			result = buildSubstitutedName(componentsCache, getOriginRes.left().value(), Lists.newArrayList(path.subList(0, path.size()-1)), name);
+			List<String> reducedPath = getReducedPath(path);
+			reducedPath.remove(reducedPath.size()-1);
+			result = buildSubstitutedName(componentsCache, getOriginRes.left().value(), reducedPath, name);
 		}
 		return result;
 	}
 
 	private String getRequirementPath(Component component, RequirementDefinition r) {
-			
+		
 		// Evg : for the last in path take real instance name and not "decrypt" unique id. ( instance name can be change and not equal to id..)
 		// dirty quick fix. must be changed as capability redesign
 		List<String> capPath = r.getPath();
@@ -432,12 +431,12 @@ public class CapabiltyRequirementConvertor {
 	 */
 	public Either<Map<String, String[]>, ToscaError> convertSubstitutionMappingCapabilities(Map<String, Component> componentsCache, Component component) {
 		Map<String, List<CapabilityDefinition>> capabilities = component.getCapabilities();
-		Either<Map<String, String[]>, ToscaError> res  = null;
+		Either<Map<String, String[]>, ToscaError> res;
 		if (capabilities != null) {
 			res = buildAddSubstitutionMappingsCapabilities(componentsCache, component, capabilities);
 		} else {
+			res = Either.left(Maps.newHashMap());
 			logger.debug(NO_CAPABILITIES);
-			res = Either.left(new HashMap<>());
 		}
 		return res;
 	}
@@ -483,7 +482,7 @@ public class CapabiltyRequirementConvertor {
 
 		toscaCapability.setValid_source_types(c.getValidSourceTypes());
 		List<ComponentInstanceProperty> properties = c.getProperties();
-		if (properties != null && !properties.isEmpty()) {
+		if (CollectionUtils.isNotEmpty(properties)) {
 			Map<String, ToscaProperty> toscaProperties = new HashMap<>();
 			for (PropertyDefinition property : properties) {
 				ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(dataTypes, property, true);
@@ -493,15 +492,22 @@ public class CapabiltyRequirementConvertor {
 		}
 		toscaCapabilities.put(name, toscaCapability);
 	}
-	
-	Either<String, Boolean> buildSubstitutedName(Map<String, Component> originComponents, Component originComponent, List<String> path, String name) {
+	/**
+	 * Allows to build substituted name of capability\requirement of the origin component instance according to the path 
+	 * @param componentsCache
+	 * @param originComponent
+	 * @param path
+	 * @param name
+	 * @return
+	 */
+	public Either<String, Boolean> buildSubstitutedName(Map<String, Component> componentsCache, Component originComponent, List<String> path, String name) {
 		StringBuilder substitutedName = new StringBuilder();
 		boolean nameBuiltSuccessfully = true;
 		Either<String, Boolean> result;
 		if(CollectionUtils.isNotEmpty(path) && !ToscaUtils.isComplexVfc(originComponent)){
-			Collections.reverse(path);
-			Iterator<String> instanceIdIter = path.iterator();
-			nameBuiltSuccessfully = appendNameRecursively(originComponents, originComponent, instanceIdIter, substitutedName);
+			List<String> reducedPath = getReducedPath(path);
+			Collections.reverse(reducedPath);
+			nameBuiltSuccessfully = appendNameRecursively(componentsCache, originComponent, reducedPath.iterator(), substitutedName);
 		}
 		if(nameBuiltSuccessfully){
 			result = Either.left(substitutedName.append(name).toString());
@@ -511,43 +517,57 @@ public class CapabiltyRequirementConvertor {
 		return result;
 	}
 
-	private boolean appendNameRecursively(Map<String, Component> originComponents, Component originComponent, Iterator<String> instanceIdIter, StringBuilder substitutedName) {
-		if(CollectionUtils.isNotEmpty(originComponent.getComponentInstances()) && instanceIdIter.hasNext()){
+	private List<String> getReducedPath(List<String> path) {
+		List<String> pathCopy = Lists.newArrayList();
+		path.stream().forEach(id -> {if(!pathCopy.contains(id))pathCopy.add(id);});
+		return pathCopy;
+	}
+
+	private boolean appendNameRecursively(Map<String, Component> componentsCache, Component originComponent, Iterator<String> instanceIdIter, StringBuilder substitutedName) {
+		if(CollectionUtils.isNotEmpty(originComponent.getComponentInstances()) && instanceIdIter.hasNext() && !ToscaUtils.isComplexVfc(originComponent)){
 			String instanceId = instanceIdIter.next();
 			Optional<ComponentInstance> instanceOpt = originComponent.getComponentInstances().stream().filter(i -> i.getUniqueId().equals(instanceId)).findFirst();
 			if(!instanceOpt.isPresent()){
 				logger.debug("Failed to find an instance with uniqueId {} on a component with uniqueId {}", instanceId, originComponent.getUniqueId());
 				return false;
 			}
-			Either<Component, Boolean> getOriginRes = getOriginComponent(originComponents, instanceOpt.get());
+			substitutedName.append(instanceOpt.get().getNormalizedName()).append('.');
+			Either<Component, Boolean> getOriginRes = getOriginComponent(componentsCache, instanceOpt.get());
 			if(getOriginRes.isRight()){
 				return false;
 			}
-			appendNameRecursively(originComponents, getOriginRes.left().value(), instanceIdIter, substitutedName);
-			substitutedName.append(instanceOpt.get().getNormalizedName()).append('.');
-			return true;
+			appendNameRecursively(componentsCache, getOriginRes.left().value(), instanceIdIter, substitutedName);
 		}
 		return true;
 	}
 
-	private Either<Component, Boolean> getOriginComponent(Map<String, Component> originComponents, ComponentInstance instance) {
+	Either<Component, Boolean> getOriginComponent(Map<String, Component> componentsCache, ComponentInstance instance) {
 		Either<Component, Boolean> result;
 		Either<Component, StorageOperationStatus> getOriginRes;
-		if(originComponents.containsKey(instance.getComponentUid())){
-			result = Either.left(originComponents.get(instance.getComponentUid()));
+		if(componentsCache.containsKey(instance.getActualComponentUid())){
+			result = Either.left(componentsCache.get(instance.getActualComponentUid()));
 		} else {
-			ComponentParametersView filter = new ComponentParametersView(true);
-			filter.setIgnoreComponentInstances(false);
-			getOriginRes = toscaOperationFacade.getToscaElement(instance.getComponentUid(), filter);
+			ComponentParametersView filter = getFilter(instance);
+			getOriginRes = toscaOperationFacade.getToscaElement(instance.getActualComponentUid(), filter);
 			if(getOriginRes.isRight()){
-				logger.debug("Failed to get an origin component with uniqueId {}", instance.getComponentUid());
+				logger.debug("Failed to get an origin component with uniqueId {}", instance.getActualComponentUid());
 				result = Either.right(false);
 			} else {
 				result = Either.left(getOriginRes.left().value());
-				originComponents.put(getOriginRes.left().value().getUniqueId(), getOriginRes.left().value());
+				componentsCache.put(getOriginRes.left().value().getUniqueId(), getOriginRes.left().value());
 			}
 		}
 		return result;
+	}
+
+	private ComponentParametersView getFilter(ComponentInstance instance) {
+		ComponentParametersView filter = new ComponentParametersView(true);
+		filter.setIgnoreComponentInstances(false);
+		if(instance.getIsProxy()){
+			filter.setIgnoreCapabilities(false);
+			filter.setIgnoreRequirements(false);
+		}
+		return filter;
 	}
 
 }

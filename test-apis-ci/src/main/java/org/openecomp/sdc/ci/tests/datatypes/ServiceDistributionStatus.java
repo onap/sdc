@@ -29,7 +29,6 @@ public class ServiceDistributionStatus {
 	
 	public ServiceDistributionStatus() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ServiceDistributionStatus(String distributionID, String timestamp, String userId, String deployementStatus) {

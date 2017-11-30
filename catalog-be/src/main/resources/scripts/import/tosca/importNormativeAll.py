@@ -122,11 +122,7 @@ def main(argv):
 	fileLocation = baseFileLocation + "heat-types/"
 	resultsHeat = importHeatTypes(beHost, bePort, adminUser, fileLocation, updateversion)
 	handleResults(resultsHeat, updateversion)
-	
-	fileLocation = baseFileLocation + "onap-types/"
-	resultsHeat = importOnapTypes(beHost, bePort, adminUser, fileLocation, updateversion)
-	handleResults(resultsHeat, updateversion)
-  
+
 	fileLocation = baseFileLocation + "group-types/"
 	importGroupTypes(beHost, bePort, adminUser, False, fileLocation)
 	

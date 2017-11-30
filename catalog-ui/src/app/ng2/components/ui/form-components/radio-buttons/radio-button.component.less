@@ -1,0 +1,42 @@
+@import './../../../../../../assets/styles/variables.less';
+.radio-buttons-container{
+  display: flex;
+  &.vertical{
+    flex-direction: column;
+  }
+  &.horizontal{
+    flex-direction: row;
+  }
+}
+.radio-button {
+  margin: 0 10px 10px 0;
+  display: flex;
+}
+
+input[type=radio] {
+  width:0;
+  height:0;
+  display:none;
+  &[disabled] ~ .radio-button {
+
+  }
+}
+
+.shown-radio-button{
+  border: @main_color_n solid 1px;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  padding: 1px;
+  margin: auto 5px;
+  .selected{
+    background-color: @main_color_a;
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+  }
+}
+span{
+  margin: auto 0;
+  color: @func_color_s;
+}

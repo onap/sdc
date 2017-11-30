@@ -22,8 +22,8 @@ package org.openecomp.sdc.be.model.tosca.validators;
 
 import java.util.Map;
 
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.Configuration.ToscaValidatorsConfig;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.slf4j.Logger;

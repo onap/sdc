@@ -20,8 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.yaml.snakeyaml.TypeDescription;
 
@@ -29,25 +30,52 @@ import org.yaml.snakeyaml.TypeDescription;
 public class ToscaTopologyTemplateDefinition {
 
 	String description;
-	Map<String, Object> inputs;
-	Map<String,ToscaNodeTemplatesTopologyTemplateDefinition> node_templates;
+//	Map<String, Map<String, ToscaInputsDefinition>> inputs;
+	Map<String,ToscaNodeTemplatesTopologyTemplateDefinition> node_templates = new HashMap<>();
 //	Map<String,ToscaRelationshipTemplatesTopologyTemplateDefinition> relationship_templates;
-	Map<String,ToscaGroupsTopologyTemplateDefinition> groups;
+	Map<String,ToscaGroupsTopologyTemplateDefinition> groups = new HashMap<>();
+	Map<String, ToscaInputsTopologyTemplateDefinition> inputs = new HashMap<>();
 //	Map<String,ToscaPoliciesTopologyTemplateDefinition> policies;
 //	Map<String,ToscaOutputsTopologyTemplateDefinition> outputs;
 	ToscaSubstitutionMappingsDefinition substitution_mappings;
 	
 	public ToscaTopologyTemplateDefinition() {
 		super();
-		// TODO Auto-generated constructor stub
+	}
+	
+	public ToscaTopologyTemplateDefinition(ToscaTopologyTemplateDefinition definition) {
+		this.description = definition.description;
+		this.node_templates = new HashMap<>(definition.node_templates);
+		this.groups = new HashMap<String,ToscaGroupsTopologyTemplateDefinition>(definition.groups);
+		this.inputs = definition.inputs.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> new ToscaInputsTopologyTemplateDefinition(e.getValue())));
+		this.substitution_mappings = definition.substitution_mappings;
+	}
+	
+	public ToscaTopologyTemplateDefinition(String description, Map<String, ToscaNodeTemplatesTopologyTemplateDefinition> node_templates, Map<String, ToscaGroupsTopologyTemplateDefinition> groups,
+		Map<String, ToscaInputsTopologyTemplateDefinition> inputs, ToscaSubstitutionMappingsDefinition substitution_mappings) {
+	super();
+	this.description = description;
+	this.node_templates = node_templates;
+	this.groups = groups;
+	this.inputs = inputs;
+	this.substitution_mappings = substitution_mappings;
+}
+
+	public Map<String, ToscaInputsTopologyTemplateDefinition> getInputs() {
+		return inputs;
 	}
 
+	public void setInputs(Map<String, ToscaInputsTopologyTemplateDefinition> inputs) {
+		this.inputs = inputs;
+	}
 
+	public void addInputs(Map<String, ToscaInputsTopologyTemplateDefinition> inputs) {
+		this.inputs.putAll(inputs);
+	}
+	
 	public ToscaSubstitutionMappingsDefinition getSubstitution_mappings() {
 		return substitution_mappings;
 	}
-
-
 	public void setSubstitution_mappings(ToscaSubstitutionMappingsDefinition substitution_mappings) {
 		this.substitution_mappings = substitution_mappings;
 	}
@@ -60,18 +88,7 @@ public class ToscaTopologyTemplateDefinition {
 		this.description = description;
 	}
 
-	public Map<String, Object> getInputs() {
-		return inputs;
-	}
 
-	public void setInputs(Map<String, Object> inputs) {
-		this.inputs = inputs;
-	}
-
-	public void addInputs(Map<String, Object> inputs) {
-		this.inputs.putAll(inputs);
-	}
-	
 	public Map<String, ToscaNodeTemplatesTopologyTemplateDefinition> getNode_templates() {
 		return node_templates;
 	}
@@ -80,14 +97,6 @@ public class ToscaTopologyTemplateDefinition {
 		this.node_templates = node_templates;
 	}
 
-//	public Map<String, ToscaRelationshipTemplatesTopologyTemplateDefinition> getRelationship_templates() {
-//		return relationship_templates;
-//	}
-//
-//	public void setRelationship_templates(Map<String, ToscaRelationshipTemplatesTopologyTemplateDefinition> relationship_templates) {
-//		this.relationship_templates = relationship_templates;
-//	}
-
 	public Map<String, ToscaGroupsTopologyTemplateDefinition> getGroups() {
 		return groups;
 	}
@@ -95,41 +104,12 @@ public class ToscaTopologyTemplateDefinition {
 	public void setGroups(Map<String, ToscaGroupsTopologyTemplateDefinition> groups) {
 		this.groups = groups;
 	}
-//
-//	public Map<String, ToscaPoliciesTopologyTemplateDefinition> getPolicies() {
-//		return policies;
-//	}
-//
-//	public void setPolicies(Map<String, ToscaPoliciesTopologyTemplateDefinition> policies) {
-//		this.policies = policies;
-//	}
-//
-//	public Map<String, ToscaOutputsTopologyTemplateDefinition> getOutputs() {
-//		return outputs;
-//	}
-//
-//	public void setOutputs(Map<String, ToscaOutputsTopologyTemplateDefinition> outputs) {
-//		this.outputs = outputs;
-//	}
-//
-//	public Map<String, ToscaSubstitutionMappingsDefinition> getSubstitution_mappings() {
-//		return substitution_mappings;
-//	}
-//
-//	public void setSubstitution_mappings(Map<String, ToscaSubstitutionMappingsDefinition> substitution_mappings) {
-//		this.substitution_mappings = substitution_mappings;
-//	}
 
-//	@Override
-//	public String toString() {
-//		return "ToscaTopologyTemplateDefinition [description=" + description + ", inputs=" + inputs + ", node_templates=" + node_templates + ", relationship_templates=" + relationship_templates + ", groups=" + groups + ", policies="
-//				+ policies + ", outputs=" + outputs + ", substitution_mappings=" + substitution_mappings + "]";
-//	}
-
+	
 	//gets Type description for Yaml snake
 	public static TypeDescription getTypeDescription(){
         TypeDescription typeDescription = new TypeDescription(ToscaTopologyTemplateDefinition.class);
-        typeDescription.putMapPropertyType("inputs", String.class, Object.class);
+        typeDescription.putMapPropertyType("inputs", String.class, ToscaInputsTopologyTemplateDefinition.class);
         typeDescription.putMapPropertyType("node_templates", String.class, ToscaNodeTemplatesTopologyTemplateDefinition.class);
         typeDescription.putMapPropertyType("groups", String.class, ToscaGroupsTopologyTemplateDefinition.class);
     	return typeDescription;

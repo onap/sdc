@@ -1,0 +1,67 @@
+ @import '../../../../../../assets/styles/tlv-sprite';
+@import '../../../../../../assets/styles/sprite';
+
+ 
+.checkbox-container {
+    display:inline-block;
+    position:relative;
+    text-align: left;
+    height: 20px;
+
+
+    .checkbox-icon {
+        display: inline-block;
+    }
+    
+    .checkbox-label {
+        font-weight: inherit;
+        font-size: inherit;
+    }
+
+    .checkbox-label-content {
+        margin-left:2px;
+    }
+
+    .checkbox-icon::before {
+        .tlv-sprite;
+        background-position: -10px -60px;
+        width: 14px;
+        height: 14px;
+        content: '';
+        display: inline-block;
+        margin-right: 0px;
+        margin-top: -2px;
+        vertical-align: middle;
+    }
+
+    input[type=checkbox].checkbox-hidden {
+        width:0;
+        height:0;
+        display:none;
+        &:checked ~ .checkbox-icon::before{
+            .sprite-new;
+            .filled-checkbox-icon
+        }
+        &[disabled] ~ .checkbox-icon::before {
+            /* TODO: add disabled styles here */
+            background-image: none;
+            background-color: #EFEFEF;
+            border-radius: 2px;
+            border: solid #CCC 1px;
+        }
+    }
+    
+    .checkbox-animation {
+        background-color: #009fdb;
+        position: absolute;
+        left: 2px;
+        top: 4px;
+        width:10px;
+        height:10px;
+        border-radius: 50%;
+        z-index: 1;
+        pointer-events: none;
+        opacity:0;
+    }
+
+}

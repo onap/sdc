@@ -38,8 +38,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.openecomp.sdc.be.components.impl.CategoriesImportManager;
-import org.openecomp.sdc.be.components.impl.InterfaceLifecycleTypeImportManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -68,13 +66,12 @@ public class CategoriesImportManagerTest {
 		subcategory = new SubCategoryDefinition();
 		subcategory.setUniqueId("123");
 
-		when(elementOperation.createCategory(Mockito.any(CategoryDefinition.class), Mockito.any(NodeTypeEnum.class))).thenAnswer(new Answer<Either<CategoryDefinition, ActionStatus>>() {
-			public Either<CategoryDefinition, ActionStatus> answer(InvocationOnMock invocation) {
-				Object[] args = invocation.getArguments();
-				Either<CategoryDefinition, ActionStatus> ans = Either.left((CategoryDefinition) args[0]);
-				return ans;
-			}
-
+		when(elementOperation.createCategory(Mockito.any(CategoryDefinition.class), Mockito.any(NodeTypeEnum.class))).thenAnswer((Answer<Either<CategoryDefinition, ActionStatus>>) invocation -> {
+			Object[] args = invocation.getArguments();
+			CategoryDefinition category = (CategoryDefinition) args[0];
+			category.setUniqueId("123");
+			Either<CategoryDefinition, ActionStatus> ans = Either.left(category);
+			return ans;
 		});
 		when(elementOperation.createSubCategory(Mockito.any(String.class), Mockito.any(SubCategoryDefinition.class), Mockito.any(NodeTypeEnum.class))).thenAnswer(new Answer<Either<SubCategoryDefinition, ActionStatus>>() {
 			public Either<SubCategoryDefinition, ActionStatus> answer(InvocationOnMock invocation) {

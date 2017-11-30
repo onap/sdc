@@ -21,9 +21,6 @@
 package org.openecomp.sdc.be.model.operations.api;
 
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.cache.jobs.CheckAndUpdateJob;
-import org.openecomp.sdc.be.model.cache.jobs.StoreJob;
 
 /**
  * Created by mlando on 9/5/2016.

@@ -2,8 +2,6 @@ package org.openecomp.sdc.be.resources.data;
 
 import java.util.Map;
 
-import javax.annotation.Generated;
-
 import org.junit.Assert;
 import org.junit.Test;
 

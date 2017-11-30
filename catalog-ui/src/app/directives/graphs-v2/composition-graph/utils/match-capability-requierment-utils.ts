@@ -18,21 +18,16 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Requirement, CompositionCiLinkBase, ComponentInstance, CapabilitiesGroup, RequirementsGroup, MatchReqToCapability, MatchBase,
-    MatchReqToReq,CompositionCiNodeBase, Component, Capability} from "app/models";
+import {
+    Requirement, CompositionCiLinkBase, CapabilitiesGroup, RequirementsGroup, Match,
+    CompositionCiNodeBase, Component, Capability
+} from "app/models";
+import {ComponentInstance} from "../../../../models/componentsInstances/componentInstance";
 /**
  * Created by obarda on 1/1/2017.
  */
 
 export class MatchCapabilitiesRequirementsUtils {
-
-    constructor() {
-    }
-
-    public static linkable(requirement1:Requirement, requirement2:Requirement, vlCapability:Capability):boolean {
-        return MatchCapabilitiesRequirementsUtils.isMatch(requirement1, vlCapability) && MatchCapabilitiesRequirementsUtils.isMatch(requirement2, vlCapability);
-    };
-
 
     /**
      * Shows + icon in corner of each node passed in
@@ -77,9 +72,7 @@ export class MatchCapabilitiesRequirementsUtils {
         })
     }
 
-    // -------------------------------------------ALL FUNCTIONS NEED REFACTORING---------------------------------------------------------------//
-
-    private static requirementFulfilled(fromNodeId:string, requirement:any, links:Array<CompositionCiLinkBase>):boolean {
+    private static isRequirementFulfilled(fromNodeId:string, requirement:any, links:Array<CompositionCiLinkBase>):boolean {
         return _.some(links, {
             'relation': {
                 'fromNode': fromNodeId,
@@ -108,172 +101,97 @@ export class MatchCapabilitiesRequirementsUtils {
         return false;
     };
 
-    private getFromToMatches(requirements1:RequirementsGroup,
-                             requirements2:RequirementsGroup,
-                             capabilities:CapabilitiesGroup,
-                             links:Array<CompositionCiLinkBase>,
-                             fromId:string,
-                             toId:string,
-                             vlCapability?:Capability):Array<MatchBase> {
-        let matches:Array<MatchBase> = new Array<MatchBase>();
-        _.forEach(requirements1, (requirementValue:Array<Requirement>, key) => {
-            _.forEach(requirementValue, (requirement:Requirement) => {
-                if (requirement.name !== "dependency" && !MatchCapabilitiesRequirementsUtils.requirementFulfilled(fromId, requirement, links)) {
-                    _.forEach(capabilities, (capabilityValue:Array<Capability>, key) => {
-                        _.forEach(capabilityValue, (capability:Capability) => {
-                            if (MatchCapabilitiesRequirementsUtils.isMatch(requirement, capability)) {
-                                let match:MatchReqToCapability = new MatchReqToCapability(requirement, capability, true, fromId, toId);
-                                matches.push(match);
-                            }
-                        });
-                    });
-                    if (vlCapability) {
-                        _.forEach(requirements2, (requirement2Value:Array<Requirement>, key) => {
-                            _.forEach(requirement2Value, (requirement2:Requirement) => {
-                                if (!MatchCapabilitiesRequirementsUtils.requirementFulfilled(toId, requirement2, links) && MatchCapabilitiesRequirementsUtils.linkable(requirement, requirement2, vlCapability)) {
-                                    let match:MatchReqToReq = new MatchReqToReq(requirement, requirement2, true, fromId, toId);
-                                    matches.push(match);
-                                }
-                            });
-                        });
-                    }
-                }
-            });
-        });
-        return matches;
-    }
-
-    private getToFromMatches(requirements:RequirementsGroup, capabilities:CapabilitiesGroup, links:Array<CompositionCiLinkBase>, fromId:string, toId:string):Array<MatchReqToCapability> {
-        let matches:Array<MatchReqToCapability> = [];
-        _.forEach(requirements, (requirementValue:Array<Requirement>, key) => {
-            _.forEach(requirementValue, (requirement:Requirement) => {
-                if (requirement.name !== "dependency" && !MatchCapabilitiesRequirementsUtils.requirementFulfilled(toId, requirement, links)) {
-                    _.forEach(capabilities, (capabilityValue:Array<Capability>, key) => {
-                        _.forEach(capabilityValue, (capability:Capability) => {
-                            if (MatchCapabilitiesRequirementsUtils.isMatch(requirement, capability)) {
-                                let match:MatchReqToCapability = new MatchReqToCapability(requirement, capability, false, toId, fromId);
-                                matches.push(match);
-                            }
-                        });
-                    });
-                }
-            });
-        });
-        return matches;
-    }
-
     public getMatchedRequirementsCapabilities(fromComponentInstance:ComponentInstance,
                                               toComponentInstance:ComponentInstance,
-                                              links:Array<CompositionCiLinkBase>,
-                                              vl?:Component):Array<MatchBase> {//TODO allow for VL array
-        let linkCapability;
-        if (vl) {
-            let linkCapabilities:Array<Capability> = vl.capabilities.findValueByKey('linkable');
-            if (linkCapabilities) {
-                linkCapability = linkCapabilities[0];
-            }
-        }
-        let fromToMatches:Array<MatchBase> = this.getFromToMatches(fromComponentInstance.requirements,
-            toComponentInstance.requirements,
+                                              links:Array<CompositionCiLinkBase>):Array<Match> {
+        let fromToMatches:Array<Match> = this.getMatches(fromComponentInstance.requirements,
             toComponentInstance.capabilities,
             links,
             fromComponentInstance.uniqueId,
-            toComponentInstance.uniqueId,
-            linkCapability);
-        let toFromMatches:Array<MatchReqToCapability> = this.getToFromMatches(toComponentInstance.requirements,
+            toComponentInstance.uniqueId, true);
+        let toFromMatches:Array<Match> = this.getMatches(toComponentInstance.requirements,
             fromComponentInstance.capabilities,
             links,
             fromComponentInstance.uniqueId,
-            toComponentInstance.uniqueId);
+            toComponentInstance.uniqueId, false);
 
         return fromToMatches.concat(toFromMatches);
     }
 
+    /***** REFACTORED FUNCTIONS START HERE *****/
+
+    public getMatches(requirements:RequirementsGroup, capabilities:CapabilitiesGroup, links:Array<CompositionCiLinkBase>,
+                      fromId:string, toId:string, isFromTo: boolean):Array<Match> {
+        let matches:Array<Match> = [];
+        let unfulfilledReqs = this.getUnfulfilledRequirements(fromId, requirements, links);
+        _.forEach(unfulfilledReqs, (req)=> {
+            _.forEach(_.flatten(_.values(capabilities)), (capability:Capability)=> {
+                if (MatchCapabilitiesRequirementsUtils.isMatch(req, capability)) {
+                    if(isFromTo) {
+                        matches.push(new Match(req, capability, isFromTo, fromId, toId));
+                    } else{
+                        matches.push(new Match(req, capability, isFromTo, toId, fromId));
+                    }
+                }
+            });
+        });
+        return matches;
+    }
+
+    public getUnfulfilledRequirements = (fromNodeId:string, requirements:RequirementsGroup, links:Array<CompositionCiLinkBase>):Array<Requirement>=> {
+
+        let requirementArray:Array<Requirement> = [];
+        _.forEach(_.flatten(_.values(requirements)), (requirement:Requirement)=> {
+            if (requirement.name !== "dependency" && !MatchCapabilitiesRequirementsUtils.isRequirementFulfilled(fromNodeId, requirement, links)) {
+                requirementArray.push(requirement);
+            }
+        });
+        return requirementArray;
+    };
+
 
     /**
-     * Step I: Check if capabilities of component match requirements of nodeDataArray
-     * 1. Get component capabilities and loop on each capability
-     * 2. Inside the loop, perform another loop on all nodeDataArray, and fetch the requirements for each one
-     * 3. Loop on the requirements, and verify match (see in code the rules)
-     *
-     * Step II: Check if requirements of component match capabilities of nodeDataArray
-     * 1. Get component requirements and loop on each requirement
-     * 2.
-     *
-     * @param component         - this is the hovered resource of the left panel of composition screen
-     * @param nodeDataArray     - Array of resource instances that are on the canvas
-     * @param links             -getMatchedRequirementsCapabilities
-     * @param vl                -
-     * @returns {any[]|T[]}
+     * Returns true if there is a match between the capabilities and requirements that are passed in
+     * @param requirements
+     * @param capabilities
+     * @returns {boolean}
      */
-    public findByMatchingCapabilitiesToRequirements(component:Component,
-                                                    nodeDataArray:Array<CompositionCiNodeBase>,
-                                                    links:Array<CompositionCiLinkBase>,
-                                                    vl?:Component):Array<any> {//TODO allow for VL array
-        let res = [];
-
-        // STEP I
-        {
-            let capabilities:any = component.capabilities;
-            _.forEach(capabilities, (capabilityValue:Array<any>, capabilityKey)=> {
-                _.forEach(capabilityValue, (capability)=> {
-                    _.forEach(nodeDataArray, (node:CompositionCiNodeBase)=> {
-                        if (node && node.componentInstance) {
-                            let requirements:any = node.componentInstance.requirements;
-                            let fromNodeId:string = node.componentInstance.uniqueId;
-                            _.forEach(requirements, (requirementValue:Array<any>, requirementKey)=> {
-                                _.forEach(requirementValue, (requirement)=> {
-                                    if (requirement.name !== "dependency" && MatchCapabilitiesRequirementsUtils.isMatch(requirement, capability)
-                                        && !MatchCapabilitiesRequirementsUtils.requirementFulfilled(fromNodeId, requirement, links)) {
-                                        res.push(node);
-                                    }
-                                });
-                            });
-                        }
-                    });
-                });
+    public containsMatch = (requirements:Array<Requirement>, capabilities:CapabilitiesGroup):boolean => {
+        return _.some(requirements, (req:Requirement)=> {
+            return _.some(_.flatten(_.values(capabilities)), (capability:Capability) => {
+                return MatchCapabilitiesRequirementsUtils.isMatch(req, capability);
             });
-        }
-
-        // STEP II
-        {
-            let requirements:any = component.requirements;
-            let fromNodeId:string = component.uniqueId;
-            let linkCapability:Array<Capability> = vl ? vl.capabilities.findValueByKey('linkable') : undefined;
-
-            _.forEach(requirements, (requirementValue:Array<any>, requirementKey)=> {
-                _.forEach(requirementValue, (requirement)=> {
-                    if (requirement.name !== "dependency" && !MatchCapabilitiesRequirementsUtils.requirementFulfilled(fromNodeId, requirement, links)) {
-                        _.forEach(nodeDataArray, (node:any)=> {
-                            if (node && node.componentInstance && node.category !== 'groupCp') {
-                                let capabilities:any = node.componentInstance.capabilities;
-                                _.forEach(capabilities, (capabilityValue:Array<any>, capabilityKey)=> {
-                                    _.forEach(capabilityValue, (capability)=> {
-                                        if (MatchCapabilitiesRequirementsUtils.isMatch(requirement, capability)) {
-                                            res.push(node);
-                                        }
-                                    });
-                                });
-                                if (linkCapability) {
-                                    let linkRequirements = node.componentInstance.requirements;
-                                    _.forEach(linkRequirements, (value:Array<any>, key)=> {
-                                        _.forEach(value, (linkRequirement)=> {
-                                            if (!MatchCapabilitiesRequirementsUtils.requirementFulfilled(node.componentInstance.uniqueId, linkRequirement, links)
-                                                && MatchCapabilitiesRequirementsUtils.linkable(requirement, linkRequirement, linkCapability[0])) {
-                                                res.push(node);
-                                            }
-                                        });
-                                    });
-                                }
-                            }
-                        });
-                    }
-                });
-            });
-        }
-
-        return _.uniq(res);
+        });
     };
+
+    /**
+     * Returns array of nodes that can connect to the component.
+     * In order to connect, one of the following conditions must be met:
+     * 1. component has an unfulfilled requirement that matches a node's capabilities
+     * 2. node has an unfulfilled requirement that matches the component's capabilities
+     * 3. vl is passed in which has the capability to fulfill requirement from component and requirement on node.
+     */
+    public findMatchingNodes(component:Component, nodeDataArray:Array<CompositionCiNodeBase>,
+                             links:Array<CompositionCiLinkBase>):Array<any> //TODO allow for VL array and TEST
+    {
+        let componentRequirements:Array<Requirement> = this.getUnfulfilledRequirements(component.uniqueId, component.requirements, links);
+        return _.filter(nodeDataArray, (node:any)=> {
+            if (node && node.componentInstance) {
+
+                //Check if component has an unfulfilled requirement that can be met by one of nodes's capabilities (#1)
+                if (componentRequirements.length && node.category !== 'groupCp' && this.containsMatch(componentRequirements, node.componentInstance.capabilities)) {
+                    return true;
+
+                } else { //Check if node has unfulfilled requirement that can be filled by component (#2)
+                    let nodeRequirements:Array<Requirement> = this.getUnfulfilledRequirements(node.componentInstance.uniqueId, node.componentInstance.requirements, links);
+                    if (!nodeRequirements.length) return false;
+                    if (this.containsMatch(nodeRequirements, component.capabilities)) {
+                        return true;
+                    }
+                }
+            }
+        });
+    }
 }
 
 MatchCapabilitiesRequirementsUtils.$inject = [];

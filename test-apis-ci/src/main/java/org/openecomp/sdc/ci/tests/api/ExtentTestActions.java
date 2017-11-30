@@ -20,25 +20,26 @@
 
 package org.openecomp.sdc.ci.tests.api;
 
+import java.io.File;
+
 import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.Markup;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 
-import java.io.File;
-
 
 public class ExtentTestActions {
 	
+	public static SomeInterface testManager = new ExtentTestManager();
+	
 	public static void log(Status logStatus, Markup mark){
-		ExtentTest test = ExtentTestManager.getTest();
+		ExtentTest test = testManager.getTest();
 		test.log(logStatus, mark);
 	}
 
 	public static void log(Status logStatus, String message){
-		ExtentTest test = ExtentTestManager.getTest();
+		ExtentTest test = testManager.getTest();
 		test.log(logStatus, message);
 	}
 	
@@ -47,7 +48,7 @@ public class ExtentTestActions {
 	}
 	
 	public static void log(Status logStatus, Throwable throwabel){
-		ExtentTest test = ExtentTestManager.getTest();
+		ExtentTest test = testManager.getTest();
 		test.log(logStatus, throwabel);
 	}
 	

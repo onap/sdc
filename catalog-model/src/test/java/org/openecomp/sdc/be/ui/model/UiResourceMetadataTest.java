@@ -2,8 +2,6 @@ package org.openecomp.sdc.be.ui.model;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;

@@ -22,9 +22,7 @@ package org.openecomp.sdc.be.dao.graph.datatype;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 
 public class GraphEdge {
 

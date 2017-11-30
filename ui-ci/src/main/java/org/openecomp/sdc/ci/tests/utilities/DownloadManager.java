@@ -68,8 +68,29 @@ public class DownloadManager {
 	 * @param vspName
 	 * @throws Exception
 	 */
-	public static void downloadCsarByNameFromVSPRepository(String vspName, String vspId, Boolean isDelete) throws Exception{
+	public static void downloadCsarByNameFromVSPRepository(String vspName, Boolean isDelete) throws Exception{
 		
+		if(isDelete){
+			FileHandling.cleanCurrentDownloadDir();
+		}
+		HomePage.showVspRepository();
+		boolean vspFound = HomePage.searchForVSP(vspName);
+		if (vspFound){
+			ExtentTestActions.log(Status.INFO, String.format("Going to downloading VSP %s", vspName));
+			List<WebElement> elemenetsFromTable = HomePage.getElemenetsFromTable();
+			elemenetsFromTable.get(1).click();
+			GeneralUIUtils.waitForLoader();
+            GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ImportVfRepository.DOWNLOAD_CSAR.getValue());
+			ExtentTestActions.log(Status.INFO, "Succeeded to downloaded CSAR file named " + vspName + " into folder " + SetupCDTest.getWindowTest().getDownloadDirectory());
+            GeneralUIUtils.getElementsByCSS("div[class^='w-sdc-modal-close']").forEach(e -> e.click());
+            GeneralUIUtils.ultimateWait();
+		}
+	}
+
+
+
+	/*public static void downloadCsarByNameFromVSPRepository(String vspName, String vspId, Boolean isDelete) throws Exception{
+
 		if(isDelete){
 			FileHandling.cleanCurrentDownloadDir();
 		}
@@ -84,15 +105,16 @@ public class DownloadManager {
 			elemenetsFromTable.get(1).click();
 //			findElement.click();
 			GeneralUIUtils.waitForLoader();
-            GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ImportVfRepository.DOWNLOAD_CSAR.getValue());
+			GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ImportVfRepository.DOWNLOAD_CSAR.getValue());
     		ExtentTestActions.log(Status.INFO, "Succeeded to downloaded CSAR file named " + vspId + " into folder " + SetupCDTest.getWindowTest().getDownloadDirectory());
-            GeneralUIUtils.getElementsByCSS("div[class^='w-sdc-modal-close']").forEach(e -> e.click());
-            GeneralUIUtils.ultimateWait();
+			GeneralUIUtils.getElementsByCSS("div[class^='w-sdc-modal-close']").forEach(e -> e.click());
+			GeneralUIUtils.ultimateWait();
 		}
-	}
-	
+	}*/
+
+
 	public static void downloadCsarByNameFromVSPRepository(String vspName, String vspId) throws Exception{
-		downloadCsarByNameFromVSPRepository(vspName, vspId, true);
+		downloadCsarByNameFromVSPRepository(vspName, true);
 	}
 	
 //	AttFtpClient instance = AttFtpClient.getInstance();

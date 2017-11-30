@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.resources.exception;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 

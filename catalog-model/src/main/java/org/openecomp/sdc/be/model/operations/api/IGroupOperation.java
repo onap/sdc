@@ -25,10 +25,8 @@ import java.util.List;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.resources.data.ArtifactData;
-import org.openecomp.sdc.be.resources.data.GroupData;
 
 import fj.data.Either;
 

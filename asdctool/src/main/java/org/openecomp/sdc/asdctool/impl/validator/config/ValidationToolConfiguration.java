@@ -1,7 +1,11 @@
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
+import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
+import org.openecomp.sdc.asdctool.impl.validator.executers.NodeToscaArtifactsValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceToscaArtifactsValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executers.ServiceValidatorExecuter;
+import org.openecomp.sdc.asdctool.impl.validator.executers.VFToscaArtifactValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executers.VfValidatorExecuter;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ArtifactValidationUtils;
 import org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts.ServiceArtifactValidationTask;
@@ -37,6 +41,15 @@ public class ValidationToolConfiguration {
 
     @Bean
     public ServiceValidatorExecuter basicServiceValidator() { return new ServiceValidatorExecuter();}
+    
+    @Bean
+    public NodeToscaArtifactsValidatorExecuter NodeToscaArtifactsValidatorValidator() { return new NodeToscaArtifactsValidatorExecuter();}
+    
+    @Bean
+    public ServiceToscaArtifactsValidatorExecutor ServiceToscaArtifactsValidator() { return new ServiceToscaArtifactsValidatorExecutor();}
+    
+    @Bean
+    public VFToscaArtifactValidatorExecutor VFToscaArtifactValidator() { return new VFToscaArtifactValidatorExecutor();}
 
     @Bean
     public VfArtifactValidationTask vfArtifactValidationTask() { return new VfArtifactValidationTask(); }
@@ -50,6 +63,11 @@ public class ValidationToolConfiguration {
     @Bean
     public ValidationToolBL validationToolBL() {
         return new ValidationToolBL();
+    }
+    
+    @Bean
+    public ArtifactToolBL artifactToolBL() {
+        return new ArtifactToolBL();
     }
 
     @Bean

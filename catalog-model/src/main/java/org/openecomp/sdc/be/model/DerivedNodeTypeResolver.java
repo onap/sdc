@@ -20,13 +20,12 @@
 
 package org.openecomp.sdc.be.model;
 
-import fj.data.Either;
+import java.util.List;
+
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.NodeType;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
-import java.util.List;
+import fj.data.Either;
 
 public interface DerivedNodeTypeResolver {
 

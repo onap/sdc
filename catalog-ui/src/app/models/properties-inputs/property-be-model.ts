@@ -55,7 +55,7 @@ export class PropertyBEModel {
             this.schema = property.schema;
             this.type = property.type;
             this.uniqueId = property.uniqueId;
-            this.value = property.value ? property.value : property.defaultValue;
+            this.value = property.value;
             this.definition = property.definition;
             this.getInputValues = property.getInputValues;
         }

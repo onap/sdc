@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.tosca.model;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

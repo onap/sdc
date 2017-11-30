@@ -22,8 +22,6 @@ package org.openecomp.sdc.ci.tests.utils.rest;
 
 import java.io.IOException;
 
-import com.google.gson.Gson;
-
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Product;
@@ -38,6 +36,8 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
 
 public class ProductRestUtils extends BaseRestUtils {
 	private static Gson gson = new Gson();

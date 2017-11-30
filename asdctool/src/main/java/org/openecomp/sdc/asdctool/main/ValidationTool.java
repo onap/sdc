@@ -22,7 +22,7 @@ public class ValidationTool {
     public static void main(String[] args) throws Exception {
 
         String outputPath = args[0];
-        ValidationConfigManager.setOutputFilePath(outputPath);
+        ValidationConfigManager.setOutputFullFilePath(outputPath);
         ValidationConfigManager.setCsvReportFilePath(outputPath);
 
         String appConfigDir = args[1];

@@ -1,9 +1,6 @@
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
-import org.openecomp.sdc.be.model.tosca.ToscaType;
 
 
 public class EqualConstraintTest {

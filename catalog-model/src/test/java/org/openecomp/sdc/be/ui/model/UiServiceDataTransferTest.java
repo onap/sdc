@@ -2,8 +2,6 @@ package org.openecomp.sdc.be.ui.model;
 
 import java.util.Map;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 

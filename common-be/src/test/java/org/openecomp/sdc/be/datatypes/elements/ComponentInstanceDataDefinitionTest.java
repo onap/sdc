@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 

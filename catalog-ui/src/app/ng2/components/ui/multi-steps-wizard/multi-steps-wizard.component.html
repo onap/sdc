@@ -1,0 +1,57 @@
+<div class="custom-modal {{input.size}}">
+    <div class="ng2-modal-content w-sdc-classic-top-line-modal">
+        <div class="ng2-modal-header modal-type-{{input.type}}">
+            <span class="title">{{ input.title }}</span>
+            <span class="close-button" (click)="close()"></span>
+        </div>
+        <div class="ng2-modal-body" >
+            <div class="multi-steps-wizard-component">
+                <header>
+                    <div class="steps-header">
+                        <div *ngFor="let step of steps; let i = index" class="step-title" [ngClass]="{'active':i == currentStepIndex}">
+                            <div class="title-text">{{step.title}}</div>
+                            <div class="line">
+                                <div class="inner-line" [@displayLineAnimation]="i <= currentStepIndex && i!=0" [hidden]="!i || i > currentStepIndex"></div>
+                            </div>
+                            <div class="circle" [ngClass]="{'full-circle': i < currentStepIndex}"></div>
+                        </div>
+                    </div>
+                    <div class="dynamic-header-container">
+                        <div #dynamicHeaderContainer></div>
+                    </div>
+                </header>
+                <div #dynamicContentContainer></div>
+            </div>
+        </div>
+
+        <div class="ng2-modal-footer">
+            <button *ngFor="let button of input.buttons"
+                    class="tlv-btn {{button.cssClass}}"
+                    [disabled] = "button.getDisabled && button.getDisabled()"
+                    (click) = "button.callback()">{{button.text}}</button>
+            <div class="navigation-buttons">
+                <button (click)="prevStep()"
+                        class="navigation-button tlv-btn outline blue"
+                        [disabled]="dynamicContent.instance.preventBack()">
+                    <div class="navigation-icon sprite-new blue-arrow-back"></div>
+                    Back
+                </button>
+                <button (click)="nextStep()"
+                        *ngIf="currentStepIndex < (steps.length - 1)"
+                        [disabled]="dynamicContent.instance.preventNext()"
+                        class="navigation-button tlv-btn blue">
+                    Next
+                    <div class="navigation-icon sprite-new white-arrow-next"></div>
+                </button>
+                <button (click)="callback();modalService.closeCurrentModal();"
+                        *ngIf="currentStepIndex == (steps.length - 1)"
+                        [disabled]="dynamicContent.instance.preventNext()"
+                        class="tlv-btn blue">
+                    Finish
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal-background"></div>

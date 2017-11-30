@@ -109,6 +109,8 @@ public interface Constants {
 	public static final String ARTIFACT_NAME = "artifactName";
 	public static final String ARTIFACT_ID = "uniqueId";
 	public static final String REQUIRED_ARTIFACTS = "requiredArtifacts";
+	public static final String ARTIFACT_HEAT_PARAMS = "heatParameters";
+	public static final String ARTIFACT_ES_ID = "esId";
 
 	public static final String ABSTRACT = "abstract";
 	public static final String GLOBAL_SUBSTITUTION_TYPES_SERVICE_TEMPLATE = "Definitions/GlobalSubstitutionTypesServiceTemplate.yaml";
@@ -127,4 +129,15 @@ public interface Constants {
 	public static final String SERVICE_TEMPLATE_FILE_POSTFIX = "ServiceTemplate.yaml";
 	public static final String SERVICE_TEMPLATES_CONTAINING_FOLDER = "Definitions/";
 	public static final String UNBOUNDED = "unbounded";
+	
+	//SDC HealthCheck components
+	public static final String HC_COMPONENT_FE = "FE";
+	public static final String HC_COMPONENT_BE = "BE";
+	public static final String HC_COMPONENT_TITAN = "TITAN";
+	public static final String HC_COMPONENT_CASSANDRA = "CASSANDRA";
+	public static final String HC_COMPONENT_DISTRIBUTION_ENGINE = "DE";
+
+	//external HealthCheck components
+	public static final String HC_COMPONENT_ON_BOARDING = "ON_BOARDING";
+	public static final String HC_COMPONENT_DCAE = "DCAE";
 }

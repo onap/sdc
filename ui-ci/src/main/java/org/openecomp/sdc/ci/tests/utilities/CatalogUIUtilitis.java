@@ -27,10 +27,9 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
-import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.CheckBoxStatusEnum;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
-import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.CatalogPageLeftPanelFilterTitle;
+import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.TypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
