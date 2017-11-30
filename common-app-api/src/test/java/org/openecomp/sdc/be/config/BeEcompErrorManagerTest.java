@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.config;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.common.config.IEcompConfigurationManager;

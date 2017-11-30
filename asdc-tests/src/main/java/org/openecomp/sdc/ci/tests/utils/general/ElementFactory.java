@@ -51,7 +51,6 @@ import org.openecomp.sdc.ci.tests.datatypes.ComponentReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.PropertyReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceAssetStructure;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceExternalReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
@@ -70,8 +69,6 @@ import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.util.ValidationUtils;
-
-import com.google.common.base.CaseFormat;
 
 public class ElementFactory {
 

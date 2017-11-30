@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -67,12 +68,24 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
 		return deploymentArtifacts;
 	}
 
+	public Map<String, ArtifactDefinition> safeGetDeploymentArtifacts() {
+		return deploymentArtifacts == null ? Collections.EMPTY_MAP : deploymentArtifacts;
+	}
+
+	public Map<String, ArtifactDefinition> safeGetInformationalArtifacts() {
+		return artifacts == null ? Collections.EMPTY_MAP : deploymentArtifacts;
+	}
+
 	public void setDeploymentArtifacts(Map<String, ArtifactDefinition> deploymentArtifacts) {
 		this.deploymentArtifacts = deploymentArtifacts;
 	}
 	
 	public Map<String, ArtifactDefinition> getArtifacts() {
 		return artifacts;
+	}
+
+	public Map<String, ArtifactDefinition> safeGetArtifacts() {
+		return artifacts == null ? Collections.EMPTY_MAP : artifacts;
 	}
 
 	public void setArtifacts(Map<String, ArtifactDefinition> artifacts) {
@@ -85,6 +98,10 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
 
 	public void setGroupInstances(List<GroupInstance> groupInstances) {
 		this.groupInstances = groupInstances;
+	}
+
+	public String getActualComponentUid() {
+		return getIsProxy() ? getSourceModelUid() : getComponentUid();
 	}
 	
 }

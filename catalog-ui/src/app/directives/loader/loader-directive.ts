@@ -56,19 +56,14 @@ export class LoaderDirective implements ng.IDirective {
 
         let interval;
 
-        this.EventListenerService.registerObserverCallback(EVENTS.SHOW_LOADER_EVENT, (loaderType)=> {
-            if (scope.loaderType !== loaderType) {
-                return;
-            }
-            scope.display = true;
-        });
-        this.EventListenerService.registerObserverCallback(EVENTS.HIDE_LOADER_EVENT, (loaderType)=> {
-            if (scope.loaderType !== loaderType) {
-                return;
-            }
-            scope.display = false;
-        });
-
+        if(scope.loaderType) {
+            this.EventListenerService.registerObserverCallback(EVENTS.SHOW_LOADER_EVENT + scope.loaderType, (loaderType)=> {
+                scope.display = true;
+            });
+            this.EventListenerService.registerObserverCallback(EVENTS.HIDE_LOADER_EVENT + scope.loaderType, (loaderType)=> {
+                scope.display = false;
+            });
+        }
         let calculateSizesForFixPosition = (positionStyle:string):void => {
             // This is problematic, I do not want to change the parent position.
             // set the loader on all the screen

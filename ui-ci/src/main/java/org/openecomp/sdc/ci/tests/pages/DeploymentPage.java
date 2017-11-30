@@ -23,8 +23,6 @@ package org.openecomp.sdc.ci.tests.pages;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.DeploymentScreen;
@@ -33,8 +31,6 @@ import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import static org.testng.Assert.assertTrue;
-
 
 import com.aventstack.extentreports.Status;
 

@@ -21,25 +21,12 @@
 package org.openecomp.sdc.be.model.operations.api;
 
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-
-import org.openecomp.sdc.be.model.ComponentInstance;
-
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.GroupInstanceProperty;
 import org.openecomp.sdc.be.resources.data.ArtifactData;
-import org.openecomp.sdc.exception.ResponseFormat;
-
-import com.thinkaurelius.titan.core.TitanVertex;
 
 import fj.data.Either;
 

@@ -18,26 +18,23 @@
  * ============LICENSE_END=========================================================
  */
 
-import { Injectable } from '@angular/core';
-import { sdc2Config } from './../../../main';
+import {Injectable, Inject} from '@angular/core';
 import {IAppConfigurtaion, ICookie} from "../../models/app-config";
 import {Response, Headers, RequestOptions, Http} from '@angular/http';
 import {Cookie2Service} from "./cookie.service";
 import { Observable } from 'rxjs/Observable';
+import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 
 @Injectable()
 export class AuthenticationService {
 
-    private cookieService:Cookie2Service;
-    private http:Http;
-
-    constructor(cookieService:Cookie2Service, http: Http) {
+    constructor(private cookieService:Cookie2Service, private http: Http, @Inject(SdcConfigToken) private sdcConfig:ISdcConfig) {
         this.cookieService = cookieService;
         this.http = http;
     }
 
     private getAuthHeaders():any {
-        let cookie:ICookie = sdc2Config.cookie;
+        let cookie:ICookie = this.sdcConfig.cookie;
         let authHeaders:any = {};
         authHeaders[cookie.userFirstName] = this.cookieService.getFirstName();
         authHeaders[cookie.userLastName] = this.cookieService.getLastName();
@@ -51,7 +48,7 @@ export class AuthenticationService {
             headers: new Headers(this.getAuthHeaders())
         });
 
-        let authUrl = sdc2Config.api.root + sdc2Config.api.GET_user_authorize;
+        let authUrl = this.sdcConfig.api.root + this.sdcConfig.api.GET_user_authorize;
         return this.http
             .get(authUrl, options)
             .map((res: Response) => res.json());

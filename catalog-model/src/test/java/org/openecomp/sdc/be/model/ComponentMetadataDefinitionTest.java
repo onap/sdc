@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.model;
 
-import javax.annotation.Generated;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;

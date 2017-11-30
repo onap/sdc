@@ -22,12 +22,8 @@ package org.openecomp.sdc.be.model.operations.api;
 
 import java.util.Map;
 
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.resources.data.ArtifactData;
 
 import com.thinkaurelius.titan.core.TitanVertex;
 

@@ -27,10 +27,10 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 
 public class ServiceReqDetails extends ComponentReqDetails {
 	
-	protected String serviceType;
-	protected String serviceRole;
-	protected String namingPolicy;
-	protected Boolean ecompGeneratedNaming;
+	protected String serviceType = "MyServiceType";
+	protected String serviceRole = "MyServiceRole";
+	protected String namingPolicy = "MyServiceNamingPolicy";
+	protected Boolean ecompGeneratedNaming = true;
 
 	public String getServiceType() {
 		return serviceType;

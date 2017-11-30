@@ -27,6 +27,11 @@ tosca.capabilities.Container:
       required: false
       constraints:
         - greater_or_equal: 0 MB
+org.openecomp.capabilities.PortMirroring:
+  derived_from: tosca.capabilities.Root
+  properties:
+    connection_point: 
+        type: org.openecomp.datatypes.PortMirroringConnectionPointDescription
 tosca.capabilities.Endpoint:
   derived_from: tosca.capabilities.Root
   properties:

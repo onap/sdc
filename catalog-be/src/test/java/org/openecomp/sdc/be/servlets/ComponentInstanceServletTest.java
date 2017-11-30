@@ -1,19 +1,9 @@
 package org.openecomp.sdc.be.servlets;
 
-import java.util.List;
-
-import javax.annotation.Generated;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
-import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Test;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.exception.ResponseFormat;
-
-import fj.data.Either;
 
 public class ComponentInstanceServletTest {
 

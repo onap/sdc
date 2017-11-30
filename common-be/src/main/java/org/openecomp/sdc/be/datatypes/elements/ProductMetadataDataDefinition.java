@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class ProductMetadataDataDefinition extends ComponentMetadataDataDefinition implements Serializable {
 

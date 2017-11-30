@@ -22,7 +22,7 @@ beProtocol: http
 beSslPort: <%= @ssl_port %>
 version: 1.0
 released: 2012-11-30
-toscaConformanceLevel: 4.0
+toscaConformanceLevel: 5.0
 minToscaConformanceLevel: 3.0
 
 titanCfgFile: /var/lib/jetty/config/catalog-be/titan.properties
@@ -557,6 +557,11 @@ onboarding:
     downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
     healthCheckUri: "/onboarding-api/v1.0/healthcheck"
 
+dcae:
+    protocol: http
+    host: <%= @host_ip %>
+    port: <%= @catalog_port %>
+    healthCheckUri: "/dcae/healthCheck"
 
 # #GSS IDNS
 switchoverDetector:
@@ -619,3 +624,23 @@ genericAssetNodeTypes:
   VF : org.openecomp.resource.abstract.nodes.VF
   PNF: org.openecomp.resource.abstract.nodes.PNF
   Service: org.openecomp.resource.abstract.nodes.service
+
+workloadContext: Production
+
+environmentContext:
+    defaultValue: General_Revenue-Bearing
+    validValues:
+       - Critical_Revenue-Bearing
+       - Vital_Revenue-Bearing
+       - Essential_Revenue-Bearing
+       - Important_Revenue-Bearing
+       - Needed_Revenue-Bearing
+       - Useful_Revenue-Bearing
+       - General_Revenue-Bearing
+       - Critical_Non-Revenue
+       - Vital_Non-Revenue
+       - Essential_Non-Revenue
+       - Important_Non-Revenue
+       - Needed_Non-Revenue
+       - Useful_Non-Revenue
+       - General_Non-Revenue

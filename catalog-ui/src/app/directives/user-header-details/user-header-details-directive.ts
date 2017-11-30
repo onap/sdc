@@ -19,21 +19,17 @@
  */
 
 'use strict';
-import {User, IUser, IAppConfigurtaion} from "app/models";
-import {IUserResourceClass, IUserResource} from "app/services";
+import {User, IUser, IAppConfigurtaion, IUserProperties} from "app/models";
+import { UserService } from "../../ng2/services/user.service";
 export interface IUserHeaderDetailsScope extends ng.IScope {
-    name:string;
-    role:string;
     iconUrl:string;
-    UserResourceClass:IUserResourceClass;
     user:IUser;
-    sdcConfig:IAppConfigurtaion;
     initUser:Function;
 }
 
 export class UserHeaderDetailsDirective implements ng.IDirective {
 
-    constructor(private $http:ng.IHttpService, private sdcConfig:IAppConfigurtaion, private UserResourceClass:IUserResourceClass) {
+    constructor(private $http:ng.IHttpService, private sdcConfig:IAppConfigurtaion, private userService:UserService) {
     }
 
     scope = {
@@ -50,23 +46,23 @@ export class UserHeaderDetailsDirective implements ng.IDirective {
 
         scope.initUser = ():void => {
             let defaultUserId:string;
-            let user:IUserResource = this.UserResourceClass.getLoggedinUser();
-            if (!user) {
+            let userInfo:IUserProperties = this.userService.getLoggedinUser();
+            if (!userInfo) {
                 defaultUserId = this.$http.defaults.headers.common[this.sdcConfig.cookie.userIdSuffix];
-                user = this.UserResourceClass.get({id: defaultUserId}, ():void => {
-                    scope.user = new User(user);
+                this.userService.getUser(defaultUserId).subscribe((defaultUserInfo):void => {
+                    scope.user = new User(defaultUserInfo);
                 });
             } else {
-                scope.user = new User(user);
+                scope.user = new User(userInfo);
             }
         };
         scope.initUser();
     };
 
-    public static factory = ($http:ng.IHttpService, sdcConfig:IAppConfigurtaion, UserResourceClass:IUserResourceClass)=> {
-        return new UserHeaderDetailsDirective($http, sdcConfig, UserResourceClass);
+    public static factory = ($http:ng.IHttpService, sdcConfig:IAppConfigurtaion, userService:UserService)=> {
+        return new UserHeaderDetailsDirective($http, sdcConfig, userService);
     };
 
 }
 
-UserHeaderDetailsDirective.factory.$inject = ['$http', 'sdcConfig', 'Sdc.Services.UserResourceService'];
+UserHeaderDetailsDirective.factory.$inject = ['$http', 'sdcConfig', 'UserServiceNg2'];

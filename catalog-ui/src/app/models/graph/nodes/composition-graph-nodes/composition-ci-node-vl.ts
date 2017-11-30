@@ -48,6 +48,7 @@ export class CompositionCiNodeVl extends CompositionCiNodeBase {
         }
         this.img = this.imagesPath + ImagesUrl.RESOURCE_ICONS + 'vl.png';
         this.imgWidth = GraphUIObjects.SMALL_RESOURCE_WIDTH;
+        this.imagesPath = this.imagesPath + ImagesUrl.RESOURCE_ICONS;
 
         this.classes = 'vl-node';
         if (!this.certified) {

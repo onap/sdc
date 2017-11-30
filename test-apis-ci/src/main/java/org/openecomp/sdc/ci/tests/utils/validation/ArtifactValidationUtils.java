@@ -44,9 +44,7 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.FileUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class ArtifactValidationUtils {

@@ -22,6 +22,7 @@
  * Created by obarda on 4/20/2016.
  */
 'use strict';
+import {RequirementCapabilityModel} from "./capability";
 //this is an object contains keys, when each key has matching array.
 // for example: key = tosca.capabilities.network. and the match array is array of requirements objects
 export class RequirementsGroup {
@@ -36,7 +37,7 @@ export class RequirementsGroup {
     }
 }
 
-export class Requirement {
+export class Requirement implements RequirementCapabilityModel{
 
     //server data
     capability:string;

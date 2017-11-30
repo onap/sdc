@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.tosca;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;

@@ -1,7 +1,5 @@
 package org.openecomp.sdc.fe.listen;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

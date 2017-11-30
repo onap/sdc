@@ -20,9 +20,12 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.thinkaurelius.titan.core.TitanVertex;
-import fj.data.Either;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -35,12 +38,10 @@ import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.FunctionalMenuInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.UserData;
-import org.openecomp.sdc.be.resources.data.UserFunctionalMenuData;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
 import org.slf4j.Logger;
@@ -48,11 +49,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.thinkaurelius.titan.core.TitanVertex;
+
+import fj.data.Either;
 
 @Component("user-operation")
 public class UserAdminOperation implements IUserAdminOperation {
@@ -98,7 +97,7 @@ public class UserAdminOperation implements IUserAdminOperation {
 
 			return resultWrapper.getInnerElement();
 		} finally {
-			if (false == inTransaction) {
+			if (!inTransaction) {
 				titanGenericDao.commit();
 			}
 			log.debug("getUserData - end");

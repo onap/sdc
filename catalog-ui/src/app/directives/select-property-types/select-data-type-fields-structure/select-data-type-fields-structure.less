@@ -45,9 +45,13 @@
         margin-left: 22px;
     }
 
-    .i-sdc-form-input:disabled{
-        .disabled;
-        &[type="text"]{
+    .i-sdc-form-input{
+        &:disabled{
+            .disabled;
+        }
+    }
+    .property-name{
+        .i-sdc-form-input:read-only{
             opacity: 1 !important;
             background-color: @tlv_color_t;
             color:black;

@@ -21,69 +21,31 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import javax.json.Json;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.tinkerpop.gremlin.process.traversal.Order;
-import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
-import org.openecomp.sdc.be.dao.graph.GraphElementFactory;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
-
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.ComponentInstInputsMap;
-import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstancePropInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.PropertyConstraint;
-import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.IInputsOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.resources.data.AttributeData;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
-import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.InputValueData;
 import org.openecomp.sdc.be.resources.data.InputsData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
-import org.openecomp.sdc.be.resources.data.PropertyValueData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
-import org.openecomp.sdc.be.resources.data.UniqueIdData;
-import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.yaml.snakeyaml.Yaml;
 
 import com.google.gson.Gson;
-import com.thinkaurelius.titan.core.TitanEdge;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
-import com.thinkaurelius.titan.core.TitanVertexQuery;
-import com.thinkaurelius.titan.core.attribute.Cmp;
 
 import fj.data.Either;
 

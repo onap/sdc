@@ -82,7 +82,8 @@ public class BeMonitoringService {
 	}
 
 	public void start(int interval) {
-		Configuration config = ((ConfigurationManager) context.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getConfiguration();
+		Configuration config = ((ConfigurationManager) context.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
+				.getConfiguration();
 		if (config.getSystemMonitoring().getEnabled()) {
 			log.info("BE monitoring service is enabled, interval is {} seconds", interval);
 			this.monitoringExecutor.scheduleAtFixedRate(new MonitoringScheduledTask(), 0, interval, TimeUnit.SECONDS);
@@ -94,8 +95,10 @@ public class BeMonitoringService {
 	private void processMonitoringEvent(MonitoringEvent monitoringMetrics) {
 		CloseableHttpClient httpClient = null;
 		try {
-			Configuration config = ((ConfigurationManager) context.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getConfiguration();
-			String redirectedUrl = String.format(URL, config.getBeProtocol(), config.getBeFqdn(), config.getBeHttpPort());
+			Configuration config = ((ConfigurationManager) context.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
+					.getConfiguration();
+			String redirectedUrl = String.format(URL, config.getBeProtocol(), config.getBeFqdn(),
+					config.getBeHttpPort());
 			httpClient = getHttpClient(config);
 			HttpPost httpPost = new HttpPost(redirectedUrl);
 			String monitoringMetricsJson = gson.toJson(monitoringMetrics);

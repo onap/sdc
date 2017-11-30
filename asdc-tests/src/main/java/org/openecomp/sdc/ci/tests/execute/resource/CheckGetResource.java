@@ -25,7 +25,6 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.common.util.SerializationUtils;
-import org.testng.annotations.Test;
 
 import fj.data.Either;
 

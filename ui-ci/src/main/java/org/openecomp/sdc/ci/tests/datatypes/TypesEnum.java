@@ -22,7 +22,7 @@ package org.openecomp.sdc.ci.tests.datatypes;
 
 public enum TypesEnum {
 
-	RESOURCE("checkbox-resource"), VF("checkbox-vf"), VFC("checkbox-vfc"), CP("checkbox-cp"), VL("checkbox-vl"), SERVICE("checkbox-service"), PRODUCT("checkbox-product");
+	RESOURCE("checkbox-resource"), VF("checkbox-vf"), VFC("checkbox-vfc"), PNF("checkbox-pnf"), CP("checkbox-cp"), VL("checkbox-vl"), SERVICE("checkbox-service"), PRODUCT("checkbox-product");
 	private String value;
 
 	public String getValue() {

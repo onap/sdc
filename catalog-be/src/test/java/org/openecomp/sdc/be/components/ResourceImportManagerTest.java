@@ -156,7 +156,7 @@ public class ResourceImportManagerTest {
 		// Mockito.verify(log).error(Mockito.anyString(), Mockito.anyString(),
 		// Mockito.anyString());
 
-		Mockito.verify(resourceBusinessLogic, Mockito.times(0)).createOrUpdateResourceByImport(Mockito.any(Resource.class), Mockito.eq(user), Mockito.eq(true), Mockito.eq(false), Mockito.eq(true), Mockito.eq(null));
+		Mockito.verify(resourceBusinessLogic, Mockito.times(0)).createOrUpdateResourceByImport(Mockito.any(Resource.class), Mockito.eq(user), Mockito.eq(true), Mockito.eq(false), Mockito.eq(true), Mockito.eq(null), Mockito.eq(null), Mockito.eq(false));
 
 		Mockito.verify(resourceBusinessLogic, Mockito.times(0)).propagateStateToCertified(Mockito.eq(user), Mockito.any(Resource.class), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false));
 
@@ -181,7 +181,7 @@ public class ResourceImportManagerTest {
 		testSetCapabilities(resource);
 
 		Mockito.verify(resourceBusinessLogic, Mockito.times(1)).propagateStateToCertified(Mockito.eq(user), Mockito.eq(resource), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false));
-		Mockito.verify(resourceBusinessLogic, Mockito.times(1)).createOrUpdateResourceByImport(resource, user, true, false, true, null);
+		Mockito.verify(resourceBusinessLogic, Mockito.times(1)).createOrUpdateResourceByImport(resource, user, true, false, true, null, null, false);
 
 	}
 
@@ -206,7 +206,7 @@ public class ResourceImportManagerTest {
 
 	private void setResourceBusinessLogicMock() {
 		when(resourceBusinessLogic.getUserAdmin()).thenReturn(userAdmin);
-		when(resourceBusinessLogic.createOrUpdateResourceByImport(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.eq(null)))
+		when(resourceBusinessLogic.createOrUpdateResourceByImport(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.eq(null), Mockito.eq(null), Mockito.eq(false)))
 				.thenAnswer(new Answer<Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat>>() {
 					public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> answer(InvocationOnMock invocation) throws Throwable {
 						Object[] args = invocation.getArguments();
@@ -250,6 +250,7 @@ public class ResourceImportManagerTest {
 	private UploadResourceInfo createDummyResourceMD() {
 		UploadResourceInfo resourceMD = new UploadResourceInfo();
 		resourceMD.setName("tosca.nodes.BlockStorage");
+		resourceMD.setPayloadName("payLoad");
 		resourceMD.addSubCategory("Generic", "Infrastructure");
 		resourceMD.setContactId("ya107f");
 		resourceMD.setResourceIconPath("defaulticon");

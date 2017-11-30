@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.info;
 
 import java.util.List;
+
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.GroupProperty;

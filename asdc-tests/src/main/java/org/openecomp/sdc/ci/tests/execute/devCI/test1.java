@@ -20,10 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.devCI;
 
-import static org.testng.AssertJUnit.assertNotNull;
-
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -44,13 +40,10 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.utils.DistributionUtils;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.DistributionValidationUtils;
 import org.testng.annotations.Test;
-
-import org.openecomp.sdc.utils.DistributionStatusEnum;
 
 import fj.data.Either;
 

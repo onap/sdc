@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.info;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;

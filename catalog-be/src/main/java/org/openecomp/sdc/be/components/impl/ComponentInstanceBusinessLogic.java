@@ -32,15 +32,17 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.components.merge.instance.ComponentInstanceMergeDataBusinessLogic;
+import org.openecomp.sdc.be.components.merge.instance.DataForMergeHolder;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
@@ -49,6 +51,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
@@ -60,6 +63,8 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
@@ -95,7 +100,10 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 	private ArtifactsBusinessLogic artifactBusinessLogic;
 	@Autowired
 	private ApplicationDataTypeCache dataTypeCache;
-	
+
+	@Autowired
+	private ComponentInstanceMergeDataBusinessLogic compInstMergeDataBL;
+
 	public static final String VF_MODULE = "org.openecomp.groups.VfModule";
 
 	public ComponentInstanceBusinessLogic() {
@@ -112,8 +120,8 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		User user = null;
 		org.openecomp.sdc.be.model.Component containerComponent = null;
 		ComponentTypeEnum containerComponentType;
-		
-		try{
+
+		try {
 			Either<User, ResponseFormat> resp = validateUserExists(userId, "create Component Instance", inTransaction);
 			if (resp.isRight()) {
 				return Either.right(resp.right().value());
@@ -125,37 +133,56 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			if (validateValidJson.isRight()) {
 				return Either.right(validateValidJson.right().value());
 			}
-	
+
 			Either<ComponentTypeEnum, ResponseFormat> validateComponentType = validateComponentType(containerComponentParam);
 			if (validateComponentType.isRight()) {
 				return Either.right(validateComponentType.right().value());
 			} else {
 				containerComponentType = validateComponentType.left().value();
 			}
-	
+
 			Either<org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponentExists = validateComponentExists(containerComponentId, containerComponentType, null);
 			if (validateComponentExists.isRight()) {
 				return Either.right(validateComponentExists.right().value());
 			} else {
 				containerComponent = validateComponentExists.left().value();
 			}
-	
+
 			if (ModelConverter.isAtomicComponent(containerComponent)) {
 				log.debug("Cannot attach resource instances to container resource of type {}", containerComponent.assetType());
 				return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_CANNOT_CONTAIN_RESOURCE_INSTANCES, containerComponent.assetType()));
 			}
-	
+
 			Either<Boolean, ResponseFormat> validateCanWorkOnComponent = validateCanWorkOnComponent(containerComponent, userId);
 			if (validateCanWorkOnComponent.isRight()) {
 				return Either.right(validateCanWorkOnComponent.right().value());
 			}
-			
+
 			if (resourceInstance != null && containerComponentType != null) {
-				Either<Component, ResponseFormat> getOriginComponentRes = getAndValidateOriginComponentOfComponentInstance(containerComponentType, resourceInstance);
-				if (getOriginComponentRes.isRight()) {
-					return Either.right(getOriginComponentRes.right().value());
+				OriginTypeEnum originType = resourceInstance.getOriginType();
+				if (originType == OriginTypeEnum.ServiceProxy) {
+					Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName("serviceProxy");
+					if (serviceProxyOrigin.isRight()) {
+						log.debug("Failed to fetch normative service proxy resource by tosca name, error {}", serviceProxyOrigin.right().value());
+						return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value())));
+					}
+					origComponent = serviceProxyOrigin.left().value();
+
+					StorageOperationStatus fillProxyRes = fillProxyInstanceData(resourceInstance, origComponent);
+					if (fillProxyRes != StorageOperationStatus.OK) {
+						log.debug("Failed to fill service proxy resource data with data from service, error {}", fillProxyRes);
+						return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(fillProxyRes)));
+
+					}
+
 				} else {
-					origComponent = getOriginComponentRes.left().value();
+					Either<Component, ResponseFormat> getOriginComponentRes = getAndValidateOriginComponentOfComponentInstance(containerComponentType, resourceInstance);
+
+					if (getOriginComponentRes.isRight()) {
+						return Either.right(getOriginComponentRes.right().value());
+					} else {
+						origComponent = getOriginComponentRes.left().value();
+					}
 				}
 			}
 			if (needLock) {
@@ -172,6 +199,43 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			if (needLock)
 				unlockComponent(resultOp, containerComponent);
 		}
+	}
+
+	private StorageOperationStatus fillProxyInstanceData(ComponentInstance resourceInstance, Component proxyTemplate) {
+		resourceInstance.setIsProxy(true);
+		ComponentParametersView filter = new ComponentParametersView(true);
+		filter.setIgnoreCapabilities(false);
+		filter.setIgnoreCapabiltyProperties(false);
+		filter.setIgnoreComponentInstances(false);
+		filter.setIgnoreRequirements(false);
+		Either<Component, StorageOperationStatus> serviceRes = toscaOperationFacade.getToscaElement(resourceInstance.getComponentUid(), filter);
+		if (serviceRes.isRight()) {
+			return serviceRes.right().value();
+		}
+		Component service = serviceRes.left().value();
+		Map<String, List<CapabilityDefinition>> capabilities = service.getCapabilities();
+		resourceInstance.setCapabilities(capabilities);
+		Map<String, List<RequirementDefinition>> req = service.getRequirements();
+		resourceInstance.setRequirements(req);
+
+		String name = service.getNormalizedName() + ToscaOperationFacade.PROXY_SUFFIX;
+		String toscaResourceName = ((Resource) proxyTemplate).getToscaResourceName();
+		int lastIndexOf = toscaResourceName.lastIndexOf('.');
+		if (lastIndexOf != -1) {
+			String proxyToscaName = toscaResourceName.substring(0, lastIndexOf + 1) + name;
+			resourceInstance.setToscaComponentName(proxyToscaName);
+		}
+		resourceInstance.setName(name);
+		resourceInstance.setIsProxy(true);
+		resourceInstance.setSourceModelInvariant(service.getInvariantUUID());
+		resourceInstance.setSourceModelName(service.getName());
+		resourceInstance.setSourceModelUuid(service.getUUID());
+		resourceInstance.setSourceModelUid(service.getUniqueId());
+		resourceInstance.setComponentUid(proxyTemplate.getUniqueId());
+		resourceInstance.setDescription("A Proxy for Service " + service.getName());
+		resourceInstance.setComponentVersion(service.getVersion());
+
+		return StorageOperationStatus.OK;
 	}
 
 	public Either<CreateAndAssotiateInfo, ResponseFormat> createAndAssociateRIToRI(String containerComponentParam, String containerComponentId, String userId, CreateAndAssotiateInfo createAndAssotiateInfo) {
@@ -216,7 +280,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
 		try {
 			log.debug("Try to create entry on graph");
-			Either<Component, ResponseFormat> eitherResourceName = getOriginComponentNameFromComponentInstance(resourceInstance, true);
+			Either<Component, ResponseFormat> eitherResourceName = getOriginComponentFromComponentInstance(resourceInstance, true);
 
 			if (eitherResourceName.isRight()) {
 				resultOp = Either.right(eitherResourceName.right().value());
@@ -260,7 +324,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		}
 	}
 
-	private Either<Component, ResponseFormat> getOriginComponentNameFromComponentInstance(ComponentInstance componentInstance, boolean inTransaction) {
+	private Either<Component, ResponseFormat> getOriginComponentFromComponentInstance(ComponentInstance componentInstance, boolean inTransaction) {
 		Either<Component, ResponseFormat> eitherResponse;
 		Either<Component, StorageOperationStatus> eitherComponent = toscaOperationFacade.getToscaFullElement(componentInstance.getComponentUid());
 		if (eitherComponent.isRight()) {
@@ -286,7 +350,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		log.debug("Entity on graph is created.");
 		Component updatedComponent = result.left().value().getLeft();
 		Map<String, String> existingEnvVersions = new HashMap<>();
-		//TODO existingEnvVersions ??
+		// TODO existingEnvVersions ??
 		Either<ActionStatus, ResponseFormat> addComponentInstanceArtifacts = addComponentInstanceArtifacts(updatedComponent, componentInstance, originComponent, user, existingEnvVersions);
 		if (addComponentInstanceArtifacts.isRight()) {
 			log.debug("Failed to create component instance {}", componentInstance.getName());
@@ -304,19 +368,17 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		return resultOp;
 	}
 
-	/**
-	 * addResourceInstanceArtifacts - add artifacts (HEAT_ENV) to resource instance The instance artifacts are generated from the resource's artifacts
-	 * 
-	 * @param componentInstance
-	 * @param userId
-	 * @param existingEnvVersions
-	 *            TODO
-	 * @param containerComponentId
-	 * 
-	 * @return
-	 */
-	protected Either<ActionStatus, ResponseFormat> addComponentInstanceArtifacts(org.openecomp.sdc.be.model.Component containerComponent, ComponentInstance componentInstance, org.openecomp.sdc.be.model.Component originComponent, User user,
-			Map<String, String> existingEnvVersions) {
+/**
+ * addResourceInstanceArtifacts - add artifacts (HEAT_ENV) to resource instance The instance artifacts are generated from the resource's artifacts
+ * @param containerComponent
+ * @param componentInstance
+ * @param originComponent
+ * @param user
+ * @param existingEnvVersions
+ * @return
+ */
+	protected Either<ActionStatus, ResponseFormat> addComponentInstanceArtifacts(org.openecomp.sdc.be.model.Component containerComponent, ComponentInstance componentInstance, org.openecomp.sdc.be.model.Component originComponent, User user,	Map<String, String> existingEnvVersions) {
+		
 		log.debug("add artifacts to resource instance");
 		List<GroupDefinition> filteredGroups = null;
 		ActionStatus status = setResourceArtifactsOnResourceInstance(componentInstance);
@@ -324,80 +386,72 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			ResponseFormat resultOp = componentsUtils.getResponseFormatForResourceInstance(status, "", null);
 			return Either.right(resultOp);
 		}
-
+		StorageOperationStatus artStatus;
 		// generate heat_env if necessary
 		Map<String, ArtifactDefinition> componentDeploymentArtifacts = componentInstance.getDeploymentArtifacts();
-		if (componentDeploymentArtifacts == null) {
-			return Either.left(ActionStatus.OK);
-		}
-		Map<String, ArtifactDefinition> finalDeploymentArtifacts = new HashMap<String, ArtifactDefinition>();
-		
-		Map<String, List<ArtifactDefinition>> groupInstancesArtifacts = new HashMap<>();
-		
-		for (ArtifactDefinition artifact : componentDeploymentArtifacts.values()) {
-			String type = artifact.getArtifactType();
+		if (MapUtils.isNotEmpty(componentDeploymentArtifacts)) {
 			
-			if ( !type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_ENV.getType()) ){
-				finalDeploymentArtifacts.put(artifact.getArtifactLabel(), artifact);
-			}
+			Map<String, ArtifactDefinition> finalDeploymentArtifacts = new HashMap<String, ArtifactDefinition>();
+			Map<String, List<ArtifactDefinition>> groupInstancesArtifacts = new HashMap<>();
 
-			if (!(type.equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_NET.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType()))) {
-				continue;
-			}
+			for (ArtifactDefinition artifact : componentDeploymentArtifacts.values()) {
+				String type = artifact.getArtifactType();
+				if (!type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_ENV.getType())) {
+					finalDeploymentArtifacts.put(artifact.getArtifactLabel(), artifact);
+				}
+				if (!(type.equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_NET.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType()))) {
+					continue;
+				}
+				if (artifact.checkEsIdExist()) {
+					Either<ArtifactDefinition, ResponseFormat> createHeatEnvPlaceHolder = artifactBusinessLogic.createHeatEnvPlaceHolder(artifact, ArtifactsBusinessLogic.HEAT_ENV_NAME, componentInstance.getUniqueId(), NodeTypeEnum.ResourceInstance,
+							componentInstance.getName(), user, containerComponent, existingEnvVersions);
+					if (createHeatEnvPlaceHolder.isRight()) {
+						return Either.right(createHeatEnvPlaceHolder.right().value());
+					}
+					ArtifactDefinition artifactDefinition = createHeatEnvPlaceHolder.left().value();
+					// put env
+					finalDeploymentArtifacts.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
 
-			if (artifact.checkEsIdExist()) {
-				Either<ArtifactDefinition, ResponseFormat> createHeatEnvPlaceHolder = artifactBusinessLogic.createHeatEnvPlaceHolder(artifact, ArtifactsBusinessLogic.HEAT_ENV_NAME, componentInstance.getUniqueId(), NodeTypeEnum.ResourceInstance,
-						componentInstance.getName(), user, containerComponent, existingEnvVersions);
-				if (createHeatEnvPlaceHolder.isRight()) {
-					return Either.right(createHeatEnvPlaceHolder.right().value());
-				}
-				ArtifactDefinition artifactDefinition = createHeatEnvPlaceHolder.left().value();
-				
-				//put env
-				finalDeploymentArtifacts.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
-				
-				if(CollectionUtils.isNotEmpty(originComponent.getGroups())){
-					filteredGroups = originComponent.getGroups().stream().filter(g -> g.getType().equals(VF_MODULE)).collect(Collectors.toList());
-				}
-				if (CollectionUtils.isNotEmpty(filteredGroups)) {
-					for (GroupDefinition groupInstance : filteredGroups) {
-						Optional<String> op = groupInstance.getArtifacts().stream().filter(p -> p.equals(artifactDefinition.getGeneratedFromId())).findAny();
-						if (op.isPresent()) {
-							List<ArtifactDefinition> artifactsUid;
-							if (groupInstancesArtifacts.containsKey(groupInstance.getUniqueId())) {
-								artifactsUid = groupInstancesArtifacts.get(groupInstance.getUniqueId());
-							} else {
-								artifactsUid = new ArrayList<>();
+					if (CollectionUtils.isNotEmpty(originComponent.getGroups())) {
+						filteredGroups = originComponent.getGroups().stream().filter(g -> g.getType().equals(VF_MODULE)).collect(Collectors.toList());
+					}
+					if (CollectionUtils.isNotEmpty(filteredGroups)) {
+						for (GroupDefinition groupInstance : filteredGroups) {
+							Optional<String> op = groupInstance.getArtifacts().stream().filter(p -> p.equals(artifactDefinition.getGeneratedFromId())).findAny();
+							if (op.isPresent()) {
+								List<ArtifactDefinition> artifactsUid;
+								if (groupInstancesArtifacts.containsKey(groupInstance.getUniqueId())) {
+									artifactsUid = groupInstancesArtifacts.get(groupInstance.getUniqueId());
+								} else {
+									artifactsUid = new ArrayList<>();
+								}
+								artifactsUid.add(artifactDefinition);
+								groupInstancesArtifacts.put(groupInstance.getUniqueId(), artifactsUid);
+								break;
 							}
-							artifactsUid.add(artifactDefinition);
-							groupInstancesArtifacts.put(groupInstance.getUniqueId(), artifactsUid);
-							break;
 						}
 					}
-
 				}
 			}
+			artStatus = toscaOperationFacade.addDeploymentArtifactsToInstance(containerComponent.getUniqueId(), componentInstance, finalDeploymentArtifacts);
+			if (artStatus != StorageOperationStatus.OK) {
+				log.debug("Failed to add instance deployment artifacts for instance {} in conatiner {} error {}", componentInstance.getUniqueId(), containerComponent.getUniqueId(), artStatus);
+				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponseForResourceInstance(artStatus, false)));
+
+			}
+			StorageOperationStatus result = toscaOperationFacade.addGroupInstancesToComponentInstance(containerComponent, componentInstance, filteredGroups, groupInstancesArtifacts);
+			if (result != StorageOperationStatus.OK) {
+				log.debug("failed to update group instance for component instance {}", componentInstance.getUniqueId());
+				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(result)));
+			}
+			componentInstance.setDeploymentArtifacts(finalDeploymentArtifacts);
 		}
-		StorageOperationStatus artStatus = toscaOperationFacade.addDeploymentArtifactsToInstance(containerComponent.getUniqueId(), componentInstance, finalDeploymentArtifacts);
-		if ( artStatus != StorageOperationStatus.OK){
-			log.debug("Failed to add instance deployment artifacts for instance {} in conatiner {} error {}", componentInstance.getUniqueId(), containerComponent.getUniqueId(), artStatus);
-			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponseForResourceInstance(artStatus, false)));
-			
-		}
-		StorageOperationStatus result =	toscaOperationFacade
-				.addGroupInstancesToComponentInstance(containerComponent, componentInstance, filteredGroups, groupInstancesArtifacts);
-		if (result != StorageOperationStatus.OK) {
-			log.debug("failed to update group instance for component instance {}", componentInstance.getUniqueId());
-			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(result)));
-		}
-		componentInstance.setDeploymentArtifacts(finalDeploymentArtifacts);
-		
-		
+
 		artStatus = toscaOperationFacade.addInformationalArtifactsToInstance(containerComponent.getUniqueId(), componentInstance, originComponent.getArtifacts());
-		if ( artStatus != StorageOperationStatus.OK){
+		if (artStatus != StorageOperationStatus.OK) {
 			log.debug("Failed to add informational artifacts to the instance {} belonging to the conatiner {}. Status is {}", componentInstance.getUniqueId(), containerComponent.getUniqueId(), artStatus);
 			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponseForResourceInstance(artStatus, false)));
-			
+
 		}
 		componentInstance.setArtifacts(originComponent.getArtifacts());
 		return Either.left(ActionStatus.OK);
@@ -483,7 +537,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		}
 		try {
 
-			Either<Component, ResponseFormat> eitherResourceName = getOriginComponentNameFromComponentInstance(componentInstance, inTransaction);
+			Either<Component, ResponseFormat> eitherResourceName = getOriginComponentFromComponentInstance(componentInstance, inTransaction);
 
 			if (eitherResourceName.isRight()) {
 				resultOp = Either.right(eitherResourceName.right().value());
@@ -557,42 +611,40 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			List<ComponentInstance> updatedList = new ArrayList<>();
 			List<ComponentInstance> instancesFromContainerComponent = containerComponent.getComponentInstances();
 			List<ComponentInstance> listForUpdate = new ArrayList<>();
-			if(instancesFromContainerComponent == null || instancesFromContainerComponent.isEmpty())
+			if (instancesFromContainerComponent == null || instancesFromContainerComponent.isEmpty())
 				containerComponent.setComponentInstances(componentInstanceList);
-			else{
+			else {
 				Iterator<ComponentInstance> iterator = instancesFromContainerComponent.iterator();
-				while(iterator.hasNext()){
+				while (iterator.hasNext()) {
 					ComponentInstance origInst = iterator.next();
 					Optional<ComponentInstance> op = componentInstanceList.stream().filter(ci -> ci.getUniqueId().equals(origInst.getUniqueId())).findAny();
-					if(op.isPresent()){
-						ComponentInstance updatedCi = op.get();	
+					if (op.isPresent()) {
+						ComponentInstance updatedCi = op.get();
 						updatedCi = buildComponentInstance(updatedCi, origInst);
-						
+
 						Boolean isUniqueName = validateInstanceNameUniquenessUponUpdate(containerComponent, origInst, updatedCi.getName());
-						if(!isUniqueName){
-							CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update the name of the component instance {} to {}. A component instance with the same name already exists. ",
-									origInst.getName(), updatedCi.getName());
+						if (!isUniqueName) {
+							CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update the name of the component instance {} to {}. A component instance with the same name already exists. ", origInst.getName(), updatedCi.getName());
 							resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, containerComponentType.getValue(), origInst.getName()));
 							return resultOp;
 						}
-					
+
 						listForUpdate.add(updatedCi);
-					}						
-					else
+					} else
 						listForUpdate.add(origInst);
 				}
 				containerComponent.setComponentInstances(listForUpdate);
-			
-				if(resultOp == null){
-					Either<Component, StorageOperationStatus> updateStatus = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
-					if(updateStatus.isRight()){
+
+				if (resultOp == null) {
+					Either<Component, StorageOperationStatus> updateStatus = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent, componentFilter);
+					if (updateStatus.isRight()) {
 						CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update metadata belonging to container component {}. Status is {}. ", containerComponent.getName(), updateStatus.right().value());
 						resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstance(componentsUtils.convertFromStorageResponseForResourceInstance(updateStatus.right().value(), true), "", null));
 						return resultOp;
 					}
-					for(ComponentInstance updatedInstance : updateStatus.left().value().getComponentInstances()){
+					for (ComponentInstance updatedInstance : updateStatus.left().value().getComponentInstances()) {
 						Optional<ComponentInstance> op = componentInstanceList.stream().filter(ci -> ci.getName().equals(updatedInstance.getName())).findAny();
-						if(op.isPresent()){
+						if (op.isPresent()) {
 							updatedList.add(updatedInstance);
 						}
 					}
@@ -640,8 +692,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		if (resultOp == null) {
 			oldComponentInstance = componentInstanceOptional.get();
 			String newInstanceName = componentInstance.getName();
-			if ( oldComponentInstance!=null && oldComponentInstance.getName() != null
-								&& !oldComponentInstance.getName().equals( newInstanceName ) )
+			if (oldComponentInstance != null && oldComponentInstance.getName() != null && !oldComponentInstance.getName().equals(newInstanceName))
 				isNameChanged = true;
 			Boolean isUniqueName = validateInstanceNameUniquenessUponUpdate(containerComponent, oldComponentInstance, newInstanceName);
 			if (!isUniqueName) {
@@ -655,14 +706,14 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 				CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update metadata of component instance {} belonging to container component {}. Status is {}. ", componentInstance.getName(), containerComponent.getName(),
 						updateRes.right().value());
 				resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstance(componentsUtils.convertFromStorageResponseForResourceInstance(updateRes.right().value(), true), "", null));
-			}else{
-				//region - Update instance Groups
-				if ( isNameChanged ){
-					Either result = toscaOperationFacade.cleanAndAddGroupInstancesToComponentInstance( containerComponent ,oldComponentInstance ,componentInstanceId );
-					if ( result.isRight() )
-						CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to rename group instances for container {}. error {} ", componentInstanceId ,result.right().value() );
+			} else {
+				// region - Update instance Groups
+				if (isNameChanged) {
+					Either result = toscaOperationFacade.cleanAndAddGroupInstancesToComponentInstance(containerComponent, oldComponentInstance, componentInstanceId);
+					if (result.isRight())
+						CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to rename group instances for container {}. error {} ", componentInstanceId, result.right().value());
 				}
-				//endregion
+				// endregion
 			}
 		}
 		if (resultOp == null) {
@@ -672,24 +723,28 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			if (!updatedInstanceOptional.isPresent()) {
 				log.debug("Failed to update metadata of component instance {} of container component {}", componentInstance.getName(), containerComponent.getName());
 				resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, componentInstance.getName()));
-			}else{
+			} else {
 				resultOp = Either.left(updatedInstanceOptional.get());
 			}
-			
+
 		}
 		if (resultOp == null) {
 			resultOp = Either.left(componentInstanceOptional.get());
 		}
 		return resultOp;
 	}
+
 	/**
-	 * @param oldPrefix-  The normalized old vf name
-	 * @param newNormailzedPrefix-  The normalized new vf name
-	 * @param qualifiedGroupInstanceName-  old Group Instance Name
+	 * @param oldPrefix-
+	 *            The normalized old vf name
+	 * @param newNormailzedPrefix-
+	 *            The normalized new vf name
+	 * @param qualifiedGroupInstanceName-
+	 *            old Group Instance Name
 	 **/
-	//modify group names
-	private String getNewGroupName( String oldPrefix ,String newNormailzedPrefix , String qualifiedGroupInstanceName){
-		if (qualifiedGroupInstanceName == null){
+	// modify group names
+	private String getNewGroupName(String oldPrefix, String newNormailzedPrefix, String qualifiedGroupInstanceName) {
+		if (qualifiedGroupInstanceName == null) {
 			log.info("CANNOT change group name ");
 			return null;
 		}
@@ -702,9 +757,8 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		oldComponentInstance.setName(newComponentInstance.getName());
 		oldComponentInstance.setModificationTime(System.currentTimeMillis());
 		oldComponentInstance.setCustomizationUUID(UUID.randomUUID().toString());
-		if ( oldComponentInstance.getGroupInstances() != null )
-			oldComponentInstance.getGroupInstances().forEach( group ->
-					group.setName( getNewGroupName( oldComponentInstance.getNormalizedName() , ValidationUtils.normalizeComponentInstanceName( newComponentInstance.getName() ) , group.getName() ) ) );
+		if (oldComponentInstance.getGroupInstances() != null)
+			oldComponentInstance.getGroupInstances().forEach(group -> group.setName(getNewGroupName(oldComponentInstance.getNormalizedName(), ValidationUtils.normalizeComponentInstanceName(newComponentInstance.getName()), group.getName())));
 		return oldComponentInstance;
 	}
 
@@ -772,26 +826,25 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		}
 		if (resultOp.isLeft() && CollectionUtils.isNotEmpty(containerComponent.getGroups())) {
 			List<GroupDataDefinition> groupsToUpdate = new ArrayList<>();
-			for(GroupDataDefinition currGroup : containerComponent.getGroups()){
-				if(currGroup.getMembers().containsKey(deletedInstance.getName())){
-					currGroup.getMembers().remove(deletedInstance.getName());
+			for (GroupDataDefinition currGroup : containerComponent.getGroups()) {
+				Map<String, String> members = currGroup.getMembers();
+				if (members != null && members.containsKey(deletedInstance.getName())) {
+					members.remove(deletedInstance.getName());
 					groupsToUpdate.add(currGroup);
 				}
 			}
-			Either<List<GroupDefinition>, StorageOperationStatus> updateGroupsRes = 
-					toscaOperationFacade.updateGroupsOnComponent(containerComponent, containerComponent.getComponentType(), groupsToUpdate);
+			Either<List<GroupDefinition>, StorageOperationStatus> updateGroupsRes = toscaOperationFacade.updateGroupsOnComponent(containerComponent, containerComponent.getComponentType(), groupsToUpdate);
 			if (updateGroupsRes.isRight()) {
 				log.debug("Failed to delete component instance {} from group members. ", componentInstanceId);
 				ActionStatus status = componentsUtils.convertFromStorageResponse(updateGroupsRes.right().value(), containerComponentType);
 				resultOp = Either.right(componentsUtils.getResponseFormat(status, componentInstanceId));
 			}
 		}
-		if(resultOp.isLeft() && CollectionUtils.isNotEmpty(containerComponent.getInputs())){
+		if (resultOp.isLeft() && CollectionUtils.isNotEmpty(containerComponent.getInputs())) {
 			List<InputDefinition> inputsToDelete = containerComponent.getInputs().stream().filter(i -> i.getInstanceUniqueId() != null && i.getInstanceUniqueId().equals(componentInstanceId)).collect(Collectors.toList());
-			if(CollectionUtils.isNotEmpty(inputsToDelete)){
-				StorageOperationStatus deleteInputsRes =
-						toscaOperationFacade.deleteComponentInstanceInputsFromTopologyTemplate(containerComponent, containerComponent.getComponentType(), inputsToDelete);
-				if(deleteInputsRes != StorageOperationStatus.OK){
+			if (CollectionUtils.isNotEmpty(inputsToDelete)) {
+				StorageOperationStatus deleteInputsRes = toscaOperationFacade.deleteComponentInstanceInputsFromTopologyTemplate(containerComponent, containerComponent.getComponentType(), inputsToDelete);
+				if (deleteInputsRes != StorageOperationStatus.OK) {
 					log.debug("Failed to delete inputs of the component instance {} from container component. ", componentInstanceId);
 					resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(deleteInputsRes, containerComponentType), componentInstanceId));
 				}
@@ -802,8 +855,8 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
 	private ComponentInstance findAndRemoveComponentInstanceFromContainerComponent(String componentInstanceId, Component containerComponent) {
 		ComponentInstance foundInstance = null;
-		for(ComponentInstance instance : containerComponent.getComponentInstances()){
-			if(instance.getUniqueId().equals(componentInstanceId)){
+		for (ComponentInstance instance : containerComponent.getComponentInstances()) {
+			if (instance.getUniqueId().equals(componentInstanceId)) {
 				foundInstance = instance;
 				containerComponent.getComponentInstances().remove(instance);
 				break;
@@ -999,7 +1052,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
 	/**
 	 * Create Or Updates Attribute Instance
-	 * 
+	 *
 	 * @param componentTypeEnum
 	 * @param componentId
 	 * @param resourceInstanceId
@@ -1156,7 +1209,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			if (object != null) {
 				newValue = object.toString();
 			}
-		}		
+		}
 
 		ImmutablePair<String, Boolean> pair = propertyOperation.validateAndUpdateRules(propertyType, property.getRules(), innerType, allDataTypes.left().value(), true);
 		if (pair.getRight() != null && pair.getRight() == false) {
@@ -1169,12 +1222,12 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			Optional<ComponentInstanceProperty> instanceProperty = instanceProperties.stream().filter(p -> p.getUniqueId().equals(property.getUniqueId())).findAny();
 			StorageOperationStatus status;
 			instanceProperty.get().setValue(newValue);
-			if(instanceProperty.isPresent()){				
+			if (instanceProperty.isPresent()) {
 				status = toscaOperationFacade.updateComponentInstanceProperty(containerComponent, foundResourceInstance.getUniqueId(), property);
 			} else {
 				status = toscaOperationFacade.addComponentInstanceProperty(containerComponent, foundResourceInstance.getUniqueId(), property);
 			}
-			if(status != StorageOperationStatus.OK){
+			if (status != StorageOperationStatus.OK) {
 				ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status);
 				resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
 				return resultOp;
@@ -1182,17 +1235,17 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			List<String> path = new ArrayList<>();
 			path.add(foundResourceInstance.getUniqueId());
 			property.setPath(path);
-			
+
 			foundResourceInstance.setCustomizationUUID(UUID.randomUUID().toString());
 			Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
-			
+
 			if (updateContainerRes.isRight()) {
 				ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(updateContainerRes.right().value());
 				resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
 				return resultOp;
 			}
-		resultOp = Either.left(property);
-		return resultOp;
+			resultOp = Either.left(property);
+			return resultOp;
 
 		} finally {
 			if (resultOp == null || resultOp.isRight()) {
@@ -1205,7 +1258,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		}
 
 	}
-	
+
 	public Either<ComponentInstanceInput, ResponseFormat> createOrUpdateInstanceInputValue(ComponentTypeEnum componentTypeEnum, String componentId, String resourceInstanceId, ComponentInstanceInput property, String userId) {
 
 		Either<ComponentInstanceInput, ResponseFormat> resultOp = null;
@@ -1239,9 +1292,9 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, resourceInstanceId, componentId));
 			return resultOp;
 		}
-		
+
 		ComponentInstance foundResourceInstance = resourceInstanceStatus.left().value();
-	
+
 		// lock resource
 		StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
 		if (lockStatus != StorageOperationStatus.OK) {
@@ -1287,33 +1340,33 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			if (object != null) {
 				newValue = object.toString();
 			}
-		}	
+		}
 
 		try {
 			List<ComponentInstanceInput> instanceProperties = containerComponent.getComponentInstancesInputs().get(resourceInstanceId);
 			Optional<ComponentInstanceInput> instanceProperty = instanceProperties.stream().filter(p -> p.getUniqueId().equals(property.getUniqueId())).findAny();
 			StorageOperationStatus status;
-			if(instanceProperty.isPresent()){
+			if (instanceProperty.isPresent()) {
 				instanceProperty.get().setValue(property.getValue());
 				status = toscaOperationFacade.updateComponentInstanceInput(containerComponent, foundResourceInstance.getUniqueId(), property);
 			} else {
 				status = toscaOperationFacade.addComponentInstanceInput(containerComponent, foundResourceInstance.getUniqueId(), property);
 			}
-			if(status != StorageOperationStatus.OK){
+			if (status != StorageOperationStatus.OK) {
 				ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status);
 				resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
 				return resultOp;
 			}
 			foundResourceInstance.setCustomizationUUID(UUID.randomUUID().toString());
 			Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
-			
+
 			if (updateContainerRes.isRight()) {
 				ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(updateContainerRes.right().value());
 				resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
 				return resultOp;
 			}
-		resultOp = Either.left(property);
-		return resultOp;
+			resultOp = Either.left(property);
+			return resultOp;
 
 		} finally {
 			if (resultOp == null || resultOp.isRight()) {
@@ -1577,7 +1630,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 	}
 
 	private Either<Component, ResponseFormat> getAndValidateOriginComponentOfComponentInstance(ComponentTypeEnum containerComponentType, ComponentInstance componentInstance) {
-		
+
 		Either<Component, ResponseFormat> eitherResponse = null;
 		ComponentTypeEnum componentType = getComponentTypeByParentComponentType(containerComponentType);
 		Component component;
@@ -1589,16 +1642,16 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			errorResponse = componentsUtils.getResponseFormat(actionStatus, Constants.EMPTY_STRING);
 			eitherResponse = Either.right(errorResponse);
 		}
-		if(eitherResponse == null) {
+		if (eitherResponse == null) {
 			component = getComponentRes.left().value();
 			LifecycleStateEnum resourceCurrState = component.getLifecycleState();
 			if (resourceCurrState == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT) {
 				ActionStatus actionStatus = ActionStatus.ILLEGAL_COMPONENT_STATE;
 				errorResponse = componentsUtils.getResponseFormat(actionStatus, component.getComponentType().toString(), component.getName(), resourceCurrState.toString());
-				eitherResponse =  Either.right(errorResponse);
+				eitherResponse = Either.right(errorResponse);
 			}
 		}
-		if(eitherResponse == null) {
+		if (eitherResponse == null) {
 			eitherResponse = Either.left(getComponentRes.left().value());
 		}
 		return eitherResponse;
@@ -1632,7 +1685,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			return Either.right(validateCanWorkOnComponent.right().value());
 		}
 
-		Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus = getResourceInstanceById(containerComponent,componentInstanceId);
+		Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus = getResourceInstanceById(containerComponent, componentInstanceId);
 		if (resourceInstanceStatus.isRight()) {
 			resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, componentInstanceId, containerComponentId));
 			return resultOp;
@@ -1646,48 +1699,82 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		}
 
 		try {
+
+
 			if (currentResourceInstance.getComponentUid().equals(newComponentInstance.getComponentUid())) {
 				resultOp = Either.left(currentResourceInstance);
 				return resultOp;
 
 			}
 			String resourceId = newComponentInstance.getComponentUid();
+
+
+
 			Either<Boolean, StorageOperationStatus> componentExistsRes = toscaOperationFacade.validateComponentExists(resourceId);
-			if(componentExistsRes.isRight()){
+			if (componentExistsRes.isRight()) {
 				log.debug("Failed to validate existing of the component {}. Status is {} ", resourceId);
 				resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(componentExistsRes.right().value()), resourceId));
 				return resultOp;
-			}
-			else if (!componentExistsRes.left().value()) {
+			} else if (!componentExistsRes.left().value()) {
 				log.debug("The resource {} not found ", resourceId);
 				resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
 				return resultOp;
 			}
 
-		//	List<GroupInstance> groupInstances = currentResourceInstance.getGroupInstances();
-			Map<String, ArtifactDefinition> deploymentArtifacts =  currentResourceInstance.getDeploymentArtifacts();
+			// List<GroupInstance> groupInstances =
+			// currentResourceInstance.getGroupInstances();
+			Map<String, ArtifactDefinition> deploymentArtifacts = currentResourceInstance.getDeploymentArtifacts();
+			Either<Component, ResponseFormat> eitherOriginComponent = getOriginComponentFromComponentInstance(currentResourceInstance, true);
+
+			if (eitherOriginComponent.isRight()) {
+				resultOp = Either.right(eitherOriginComponent.right().value());
+				return resultOp;
+			}
+			DataForMergeHolder dataHolder = compInstMergeDataBL.saveAllDataBeforeDeleting(containerComponent, currentResourceInstance, eitherOriginComponent.left().value());
 			resultOp = deleteComponentInstance(containerComponent, componentInstanceId, containerComponentType);
 			if (resultOp.isRight()) {
 				log.debug("failed to delete resource instance {}", resourceId);
 				return resultOp;
 			}
+			ComponentInstance resResourceInfo = resultOp.left().value();
+			Component origComponent = null;
+			OriginTypeEnum originType = currentResourceInstance.getOriginType();
+			if (originType == OriginTypeEnum.ServiceProxy) {
+				Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName("serviceProxy");
+				if (serviceProxyOrigin.isRight()) {
+					log.debug("Failed to fetch normative service proxy resource by tosca name, error {}", serviceProxyOrigin.right().value());
+					return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value())));
+				}
+				origComponent = serviceProxyOrigin.left().value();
 
-			Either<Component, ResponseFormat> eitherResourceName = getOriginComponentNameFromComponentInstance(newComponentInstance, true);
+				StorageOperationStatus fillProxyRes = fillProxyInstanceData(newComponentInstance, origComponent);
 
-			if (eitherResourceName.isRight()) {
-				resultOp = Either.right(eitherResourceName.right().value());
-				return resultOp;
+				if (fillProxyRes != StorageOperationStatus.OK) {
+					log.debug("Failed to fill service proxy resource data with data from service, error {}", fillProxyRes);
+					return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(fillProxyRes)));
+
+				}
+				newComponentInstance.setOriginType(originType);
+			}else{
+
+
+				Either<Component, ResponseFormat> eitherResourceName = getOriginComponentFromComponentInstance(newComponentInstance, true);
+
+				if (eitherResourceName.isRight()) {
+					resultOp = Either.right(eitherResourceName.right().value());
+					return resultOp;
+				}
+
+				 origComponent = eitherResourceName.left().value();
+
+				newComponentInstance.setName(resResourceInfo.getName());
+				//newComponentInstance.setToscaComponentName(((ResourceMetadataDataDefinition) origComponent.getComponentMetadataDefinition().getMetadataDataDefinition()).getToscaResourceName());
 			}
 
-			Component origComponent = eitherResourceName.left().value();
-
-			ComponentInstance resResourceInfo = resultOp.left().value();
-			newComponentInstance.setName(resResourceInfo.getName());
 			newComponentInstance.setInvariantName(resResourceInfo.getInvariantName());
 			newComponentInstance.setPosX(resResourceInfo.getPosX());
 			newComponentInstance.setPosY(resResourceInfo.getPosY());
 			newComponentInstance.setDescription(resResourceInfo.getDescription());
-			newComponentInstance.setToscaComponentName(((ResourceMetadataDataDefinition)origComponent.getComponentMetadataDefinition().getMetadataDataDefinition()).getToscaResourceName());
 
 			resultOp = createComponentInstanceOnGraph(containerComponent, origComponent, newComponentInstance, user);
 
@@ -1702,29 +1789,25 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 				return resultOp;
 			}
 
-	/*		if (CollectionUtils.isNotEmpty(groupInstances)) {
-				StorageOperationStatus addGroupsToComponentInstance = toscaOperationFacade.addGroupInstancesToComponentInstance(containerComponent, updatedComponentInstance, groupInstances);
-				if (addGroupsToComponentInstance != StorageOperationStatus.OK) {
-					BeEcompErrorManager.getInstance().logInternalFlowError("ChangeComponentInstanceVersion", "Failed to associate groups to new component instance", ErrorSeverity.ERROR);
-					resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-					return resultOp;
-				}
-			
-				
+			Either<Component, ResponseFormat> mergeStatusEither = compInstMergeDataBL.mergeComponentUserOrigData(user, dataHolder, containerComponent, containerComponentId, newComponentInstance.getUniqueId());
+			if (mergeStatusEither.isRight()) {
+				return Either.right(mergeStatusEither.right().value());
 			}
-			if (MapUtils.isNotEmpty(deploymentArtifacts)) {
-				StorageOperationStatus addDeploymentArtifactsToComponentInstance = toscaOperationFacade.addDeploymentArtifactsToComponentInstance(containerComponent, updatedComponentInstance, deploymentArtifacts);
-				if (addDeploymentArtifactsToComponentInstance != StorageOperationStatus.OK) {
-					BeEcompErrorManager.getInstance().logInternalFlowError("ChangeComponentInstanceVersion", "Failed to associate groups to new component instance", ErrorSeverity.ERROR);
-					resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-					return resultOp;
-				}
-			}*/
 
-			
+			/*
+			 * if (CollectionUtils.isNotEmpty(groupInstances)) { StorageOperationStatus addGroupsToComponentInstance = toscaOperationFacade.addGroupInstancesToComponentInstance( containerComponent, updatedComponentInstance, groupInstances); if
+			 * (addGroupsToComponentInstance != StorageOperationStatus.OK) { BeEcompErrorManager.getInstance().logInternalFlowError( "ChangeComponentInstanceVersion", "Failed to associate groups to new component instance", ErrorSeverity.ERROR);
+			 * resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus. GENERAL_ERROR)); return resultOp; }
+			 *
+			 *
+			 * } if (MapUtils.isNotEmpty(deploymentArtifacts)) { StorageOperationStatus addDeploymentArtifactsToComponentInstance = toscaOperationFacade.addDeploymentArtifactsToComponentInstance( containerComponent, updatedComponentInstance,
+			 * deploymentArtifacts); if (addDeploymentArtifactsToComponentInstance != StorageOperationStatus.OK) { BeEcompErrorManager.getInstance().logInternalFlowError( "ChangeComponentInstanceVersion",
+			 * "Failed to associate groups to new component instance", ErrorSeverity.ERROR); resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus. GENERAL_ERROR)); return resultOp; } }
+			 */
+
 			ComponentParametersView filter = new ComponentParametersView(true);
 			filter.setIgnoreComponentInstances(false);
-			Either<Component, StorageOperationStatus> updatedComponentRes  = toscaOperationFacade.getToscaElement(containerComponentId, filter);
+			Either<Component, StorageOperationStatus> updatedComponentRes = toscaOperationFacade.getToscaElement(containerComponentId, filter);
 			if (updatedComponentRes.isRight()) {
 				StorageOperationStatus storageOperationStatus = updatedComponentRes.right().value();
 				ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(storageOperationStatus, containerComponent.getComponentType());
@@ -1732,7 +1815,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 				log.debug("Component with id {} was not found", containerComponentId);
 				return Either.right(responseFormat);
 			}
-			resourceInstanceStatus = getResourceInstanceById(updatedComponentRes.left().value(),updatedComponentInstance.getUniqueId());
+			resourceInstanceStatus = getResourceInstanceById(updatedComponentRes.left().value(), updatedComponentInstance.getUniqueId());
 			if (resourceInstanceStatus.isRight()) {
 				resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resourceInstanceStatus.right().value()), updatedComponentInstance.getUniqueId()));
 				return resultOp;
@@ -1780,9 +1863,9 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 				resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, componentInstanceUniqueId, containerComponentId));
 				return resultOp;
 			}
-		
+
 			List<ComponentInstanceProperty> instanceProperties = containerComponent.getComponentInstancesProperties().get(componentInstanceUniqueId);
-			if(CollectionUtils.isEmpty(instanceProperties)){
+			if (CollectionUtils.isEmpty(instanceProperties)) {
 				instanceProperties = new ArrayList<>();
 			}
 			resultOp = Either.left(instanceProperties);
@@ -1808,7 +1891,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
 	/**
 	 * updates componentInstance modificationTime
-	 * 
+	 *
 	 * @param componentInstance
 	 * @param componentInstanceType
 	 * @param modificationTime
@@ -1827,7 +1910,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		}
 		return result;
 	}
-	
+
 	public Either<ComponentInstance, ResponseFormat> deleteServiceProxy(String containerComponentType, String containerComponentId, String serviceProxyId, String userId) {
 		// TODO Add implementation
 		Either<ComponentInstance, ResponseFormat> result = Either.left(new ComponentInstance());
@@ -1845,7 +1928,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		Either<ComponentInstance, ResponseFormat> result = Either.left(new ComponentInstance());
 		return result;
 	}
-	
+
 	private Boolean validateInstanceNameUniquenessUponUpdate(Component containerComponent, ComponentInstance oldComponentInstance, String newInstanceName) {
 		Boolean isUnique = true;
 		String newInstanceNormalizedName = ValidationUtils.normalizeComponentInstanceName(newInstanceName);
@@ -1859,57 +1942,271 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 	}
 
 	private Either<ComponentInstance, StorageOperationStatus> getResourceInstanceById(Component containerComponent, String instanceId) {
-		
+
 		Either<ComponentInstance, StorageOperationStatus> result = null;
 		List<ComponentInstance> instances = containerComponent.getComponentInstances();
 		Optional<ComponentInstance> foundInstance = null;
-		if(CollectionUtils.isEmpty(instances)){
+		if (CollectionUtils.isEmpty(instances)) {
 			result = Either.right(StorageOperationStatus.NOT_FOUND);
 		}
-		if(result == null){
+		if (result == null) {
 			foundInstance = instances.stream().filter(i -> i.getUniqueId().equals(instanceId)).findFirst();
-			if(!foundInstance.isPresent()){
+			if (!foundInstance.isPresent()) {
 				result = Either.right(StorageOperationStatus.NOT_FOUND);
 			}
 		}
-		if(result == null){
+		if (result == null) {
 			result = Either.left(foundInstance.get());
 		}
 		return result;
 	}
-	
-	private ComponentInstance buildComponentInstance(ComponentInstance resourceInstanceForUpdate, ComponentInstance origInstanceForUpdate) {	
 
-		Long creationDate = origInstanceForUpdate.getCreationTime();		
-		
+	private ComponentInstance buildComponentInstance(ComponentInstance resourceInstanceForUpdate, ComponentInstance origInstanceForUpdate) {
+
+		Long creationDate = origInstanceForUpdate.getCreationTime();
+
 		Long modificationTime = System.currentTimeMillis();
 		resourceInstanceForUpdate.setCreationTime(creationDate);
 		resourceInstanceForUpdate.setModificationTime(modificationTime);
-		
+
 		resourceInstanceForUpdate.setCustomizationUUID(origInstanceForUpdate.getCustomizationUUID());
-		
+
 		if (StringUtils.isEmpty(resourceInstanceForUpdate.getName()) && StringUtils.isNotEmpty(origInstanceForUpdate.getName())) {
 			resourceInstanceForUpdate.setName(origInstanceForUpdate.getName());
 		}
-		
+
 		resourceInstanceForUpdate.setNormalizedName(ValidationUtils.normalizeComponentInstanceName(resourceInstanceForUpdate.getName()));
-		
+
 		if (StringUtils.isEmpty(resourceInstanceForUpdate.getIcon()))
-			resourceInstanceForUpdate.setIcon(origInstanceForUpdate.getIcon());		
-	
-		
+			resourceInstanceForUpdate.setIcon(origInstanceForUpdate.getIcon());
+
 		if (StringUtils.isEmpty(resourceInstanceForUpdate.getComponentVersion()))
 			resourceInstanceForUpdate.setComponentVersion(origInstanceForUpdate.getComponentVersion());
-		
+
 		if (StringUtils.isEmpty(resourceInstanceForUpdate.getComponentName()))
 			resourceInstanceForUpdate.setComponentName(origInstanceForUpdate.getComponentName());
-		
+
 		if (StringUtils.isEmpty(resourceInstanceForUpdate.getToscaComponentName()))
-				resourceInstanceForUpdate.setToscaComponentName(origInstanceForUpdate.getToscaComponentName());
-		
-		if (resourceInstanceForUpdate.getOriginType() == null) {			
+			resourceInstanceForUpdate.setToscaComponentName(origInstanceForUpdate.getToscaComponentName());
+
+		if (resourceInstanceForUpdate.getOriginType() == null) {
 			resourceInstanceForUpdate.setOriginType(origInstanceForUpdate.getOriginType());
 		}
+		if(resourceInstanceForUpdate.getOriginType()  == OriginTypeEnum.ServiceProxy)
+			resourceInstanceForUpdate.setIsProxy(true);
+		if (resourceInstanceForUpdate.getSourceModelInvariant() == null) {
+			resourceInstanceForUpdate.setSourceModelInvariant(origInstanceForUpdate.getSourceModelInvariant());
+		}
+		if (resourceInstanceForUpdate.getSourceModelName() == null) {
+			resourceInstanceForUpdate.setSourceModelName(origInstanceForUpdate.getSourceModelName());
+		}
+		if (resourceInstanceForUpdate.getSourceModelUuid() == null) {
+			resourceInstanceForUpdate.setSourceModelUuid(origInstanceForUpdate.getSourceModelUuid());
+		}
+		if (resourceInstanceForUpdate.getSourceModelUid() == null) {
+			resourceInstanceForUpdate.setSourceModelUid(origInstanceForUpdate.getSourceModelUid());
+		}
 		return resourceInstanceForUpdate;
+	}
+
+	public Either<List<ComponentInstanceProperty>, ResponseFormat> getComponentInstanceCapabilityPropertiesById(String containerComponentType, String containerComponentId, String componentInstanceUniqueId, String capabilityType,
+			String capabilityName, String userId) {
+		final String ECOMP_ERROR_CONTEXT = "Get Component Instance Properties By Id";
+		Component containerComponent = null;
+
+		Either<List<ComponentInstanceProperty>, ResponseFormat> resultOp = null;
+		try {
+			Either<User, ResponseFormat> validateUserExists = validateUserExists(userId, ECOMP_ERROR_CONTEXT, false);
+			if (validateUserExists.isRight()) {
+				resultOp = Either.right(validateUserExists.right().value());
+				return resultOp;
+			}
+
+			Either<ComponentTypeEnum, ResponseFormat> validateComponentType = validateComponentType(containerComponentType);
+			if (validateComponentType.isRight()) {
+				resultOp = Either.right(validateComponentType.right().value());
+				return resultOp;
+			}
+
+			Either<Component, StorageOperationStatus> validateContainerComponentExists = toscaOperationFacade.getToscaFullElement(containerComponentId);
+			if (validateContainerComponentExists.isRight()) {
+				resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(validateContainerComponentExists.right().value())));
+				return resultOp;
+			}
+			containerComponent = validateContainerComponentExists.left().value();
+
+			Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus = getResourceInstanceById(containerComponent, componentInstanceUniqueId);
+			if (resourceInstanceStatus.isRight()) {
+				resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, componentInstanceUniqueId, containerComponentId));
+				return resultOp;
+			}
+
+			CapabilityDefinition foundCapability = null;
+
+			Map<String, List<CapabilityDefinition>> instanceCapabilities = resourceInstanceStatus.left().value().getCapabilities();
+			if (MapUtils.isNotEmpty(instanceCapabilities)) {
+				List<CapabilityDefinition> listPerType = instanceCapabilities.get(capabilityType);
+				if (listPerType != null) {
+					Optional<CapabilityDefinition> capabilityOpt = listPerType.stream().filter(c -> c.getName().equals(capabilityName)).findFirst();
+					if (capabilityOpt.isPresent()) {
+						foundCapability = capabilityOpt.get();
+					}
+				}
+			}
+			if (foundCapability == null) {
+				resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.CAPABILITY_OF_INSTANCE_NOT_FOUND_ON_CONTAINER, capabilityType, componentInstanceUniqueId, containerComponentId));
+				return resultOp;
+			}
+
+			resultOp = Either.left(foundCapability.getProperties() == null ? new ArrayList<>() : foundCapability.getProperties());
+			return resultOp;
+		} finally {
+			unlockComponent(resultOp, containerComponent);
+		}
+	}
+
+	public Either<ComponentInstanceProperty, ResponseFormat> updateInstanceCapabilityProperty(ComponentTypeEnum componentTypeEnum, String containerComponentId, String componentInstanceUniqueId, String capabilityType, String capabilityName,
+			ComponentInstanceProperty property, String userId) {
+		Either<ComponentInstanceProperty, ResponseFormat> resultOp = null;
+
+		Either<User, ResponseFormat> resp = validateUserExists(userId, "update instance capability property", false);
+		if (resp.isRight()) {
+			return Either.right(resp.right().value());
+		}
+
+		if (componentTypeEnum == null) {
+			BeEcompErrorManager.getInstance().logInvalidInputError("updateInstanceCapabilityProperty", "invalid component type", ErrorSeverity.INFO);
+			resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
+			return resultOp;
+		}
+		Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaFullElement(containerComponentId);
+
+		if (getResourceResult.isRight()) {
+			log.debug("Failed to retrieve component, component id {}", containerComponentId);
+			resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
+			return resultOp;
+		}
+		Component containerComponent = getResourceResult.left().value();
+
+		if (!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId)) {
+			log.info("Restricted operation for user: {} on component {}", userId, containerComponentId);
+			resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
+			return resultOp;
+		}
+		Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus = getResourceInstanceById(containerComponent, componentInstanceUniqueId);
+		if (resourceInstanceStatus.isRight()) {
+			resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, componentInstanceUniqueId, containerComponentId));
+			return resultOp;
+		}
+		ComponentInstance foundResourceInstance = resourceInstanceStatus.left().value();
+		// lock resource
+		StorageOperationStatus lockStatus = graphLockOperation.lockComponent(containerComponentId, componentTypeEnum.getNodeType());
+		if (lockStatus != StorageOperationStatus.OK) {
+			log.debug("Failed to lock component {}", containerComponentId);
+			resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
+			return resultOp;
+		}
+		String innerType = null;
+		String propertyType = property.getType();
+		ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
+		log.debug("The type of the property {} is {}", property.getUniqueId(), propertyType);
+
+		if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
+			SchemaDefinition def = property.getSchema();
+			if (def == null) {
+				log.debug("Schema doesn't exists for property of type {}", type);
+				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE)));
+			}
+			PropertyDataDefinition propDef = def.getProperty();
+			if (propDef == null) {
+				log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
+				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE)));
+			}
+			innerType = propDef.getType();
+		}
+		// Specific Update Logic
+		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = dataTypeCache.getAll();
+		if (allDataTypes.isRight()) {
+			TitanOperationStatus status = allDataTypes.right().value();
+			BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
+			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(status))));
+		}
+		Either<Object, Boolean> isValid = propertyOperation.validateAndUpdatePropertyValue(propertyType, property.getValue(), true, innerType, allDataTypes.left().value());
+
+		String newValue = property.getValue();
+		if (isValid.isRight()) {
+			Boolean res = isValid.right().value();
+			if (res == false) {
+				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ILLEGAL_ARGUMENT))));
+			}
+		} else {
+			Object object = isValid.left().value();
+			if (object != null) {
+				newValue = object.toString();
+			}
+		}
+
+		ImmutablePair<String, Boolean> pair = propertyOperation.validateAndUpdateRules(propertyType, property.getRules(), innerType, allDataTypes.left().value(), true);
+		if (pair.getRight() != null && pair.getRight() == false) {
+			BeEcompErrorManager.getInstance().logBeInvalidValueError("Add property value", pair.getLeft(), property.getName(), propertyType);
+			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ILLEGAL_ARGUMENT))));
+		}
+
+		try {
+			StringBuffer sb = new StringBuffer(componentInstanceUniqueId);
+			sb.append(ModelConverter.CAP_PROP_DELIM).append(property.getOwnerId()).append(ModelConverter.CAP_PROP_DELIM).append(capabilityType).append(ModelConverter.CAP_PROP_DELIM).append(capabilityName);
+			String capKey = sb.toString();
+
+			Map<String, List<CapabilityDefinition>> capabilities = foundResourceInstance.getCapabilities();
+			if (capabilities != null) {
+				List<CapabilityDefinition> capPerType = capabilities.get(capabilityType);
+				if (capPerType != null) {
+					Optional<CapabilityDefinition> cap = capPerType.stream().filter(c -> c.getName().equals(capabilityName)).findAny();
+
+					if ( cap.isPresent()) {
+						List<ComponentInstanceProperty> properties = cap.get().getProperties();
+						if (properties != null) {
+							Optional<ComponentInstanceProperty> instanceProperty = properties.stream().filter(p -> p.getUniqueId().equals(property.getUniqueId())).findAny();
+
+							StorageOperationStatus status;
+							if (instanceProperty.isPresent()) {
+								instanceProperty.get().setValue(newValue);
+								List<String> path = new ArrayList<>();
+								path.add(componentInstanceUniqueId);
+								path.add(capKey);
+								instanceProperty.get().setPath(path);
+								status = toscaOperationFacade.updateComponentInstanceCapabiltyProperty(containerComponent, componentInstanceUniqueId, capKey, instanceProperty.get());
+								if (status != StorageOperationStatus.OK) {
+									ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status);
+									resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
+									return resultOp;
+								}
+								foundResourceInstance.setCustomizationUUID(UUID.randomUUID().toString());
+								Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
+
+								if (updateContainerRes.isRight()) {
+									ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(updateContainerRes.right().value());
+									resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
+									return resultOp;
+								}
+								resultOp = Either.left(property);
+								return resultOp;
+							}
+						}
+					}
+				}
+			}
+			resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, property.getName()));
+			return resultOp;
+
+		} finally {
+			if (resultOp == null || resultOp.isRight()) {
+				titanDao.rollback();
+			} else {
+				titanDao.commit();
+			}
+			// unlock resource
+			graphLockOperation.unlockComponent(containerComponentId, componentTypeEnum.getNodeType());
+		}
 	}
 }

@@ -1,6 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>catalog-be</artifactId>
@@ -16,10 +15,7 @@
 		<swagger-ui-version>2.1.0-M2</swagger-ui-version>
 	</properties>
 
-
 	<dependencies>
-
-
 		<!--JSON and YAML Parsing-->
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -556,9 +552,13 @@
 
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${mockito.version}</version>
-			<!--<version>1.10.19</version>-->
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
 			<scope>test</scope>
 		</dependency>
 
@@ -619,53 +619,6 @@
 						<goals>
 							<goal>ajc</goal>
 						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-          			<execution>
-            			<id>copy-tosca-folder</id>
-            			<!-- here the phase you need -->
-            			<phase>install</phase>
-            			<goals>
-              				<goal>copy-resources</goal>
-            			</goals>
-            			<configuration>
-              				<outputDirectory>${project.parent.basedir}/asdctool/tosca</outputDirectory>
-              				<resources>          
-                				<resource>
-                  					<directory>${project.parent.basedir}/catalog-be/src/main/resources/import/tosca</directory>
-                  					<filtering>true</filtering>
-                				</resource>
-              				</resources>              
-            			</configuration>            
-          			</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.0.0</version>
-				<executions>
-					<execution>
-						<id>clean-static-files</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>clean</goal>
-						</goals>
-						<configuration>
-							<filesets>
-								<!-- tosca files -->
-								<fileset>
-									<directory>${project.parent.basedir}/asdctool/tosca</directory>
-									<followSymlinks>false</followSymlinks>
-								</fileset>
-							</filesets>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>

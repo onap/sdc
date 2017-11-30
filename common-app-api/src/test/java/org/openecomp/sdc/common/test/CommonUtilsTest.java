@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.util.GeneralUtility;

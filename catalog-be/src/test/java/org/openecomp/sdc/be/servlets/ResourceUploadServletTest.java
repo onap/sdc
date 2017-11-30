@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
@@ -58,7 +58,6 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.resources.api.IResourceUploader;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
-import org.openecomp.sdc.be.servlets.ResourceUploadServlet;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;

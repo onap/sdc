@@ -99,6 +99,12 @@ resources:
       VirtualLinks:
           name: "Virtual Links"
           icons: ['vl']
+  Configuration:
+    name: "Configuration"
+    subcategories:
+        Configuraion:
+            name: "Configuration"
+            icons: ['pmc']
   DcaeComponent:
     name: "DCAE Component"
     subcategories:
@@ -123,6 +129,9 @@ resources:
       Policy:
           name: "Policy"
           icons: ['dcae_policy']
+      MachineLearning:
+          name: "Machine Learning"
+          icons: ['dcae_machineLearning']
   Template:
     name: "Template"
     subcategories:

@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Generated;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;

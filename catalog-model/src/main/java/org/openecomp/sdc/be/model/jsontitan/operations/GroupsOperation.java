@@ -20,7 +20,12 @@
 
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
@@ -46,11 +51,7 @@ import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import fj.data.Either;
 
 @org.springframework.stereotype.Component("groups-operation")
 public class GroupsOperation extends BaseOperation {

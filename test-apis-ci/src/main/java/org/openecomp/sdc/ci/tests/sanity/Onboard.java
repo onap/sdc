@@ -21,9 +21,6 @@
 package org.openecomp.sdc.ci.tests.sanity;
 
 
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
-import fj.data.Either;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
@@ -33,24 +30,25 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.ExtentTestActions;
-import org.openecomp.sdc.ci.tests.dataProviders.OnboardingDataProviders;
+import org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.utils.CsarToscaTester;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtillViaApis;
 import org.openecomp.sdc.ci.tests.utils.rest.AssetRestUtils;
 import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
+
+import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
+
+import fj.data.Either;
 
 import java.io.File;
 
@@ -66,80 +64,81 @@ public class Onboard extends ComponentBaseTest {
 	}
 
 	protected String makeDistributionValue;
-	protected ISdcCsarHelper fdntCsarHelper;
-	protected SdcToscaParserFactory factory = SdcToscaParserFactory.getInstance();
-
+	protected String makeToscaValidationValue;
 
 
 	@Parameters({ "makeDistribution" })
-	@BeforeMethod
-	public void beforeTestReadParams(@Optional("true") String makeDistributionReadValue) {
-		makeDistributionValue = makeDistributionReadValue;                             
+	@BeforeClass
+	public void makeDistribution(@Optional("false") String makeDistributionReadValue) {
+		makeDistributionValue = makeDistributionReadValue;
+		logger.info("makeDistributionReadValue - > " + makeDistributionValue);
+	}
+
+	@Parameters({ "makeToscaValidation" })
+	@BeforeClass
+	public void makeToscaValidation(@Optional("false") String makeToscaValidationReadValue) {
+		makeToscaValidationValue = makeToscaValidationReadValue;
+		logger.info("makeToscaValidationReadValue - > " + makeToscaValidationValue);
 	}
 	
 
-	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "VNF_List")
-	public void onboardVNFShotFlow(String filepath, String vnfFile) throws Exception, Throwable {
+	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")
+	public void onboardVNFShotFlow(String filePath, String vnfFile) throws Exception, Throwable {
 		setLog(vnfFile);
 		logger.info("Onboarding - > " + vnfFile);
-//		System.out.println("Onboarding - > " + vnfFile);
-		runOnboardToDistributionFlow(filepath, vnfFile);
+		runOnboardToDistributionFlow(filePath, vnfFile);
 	}
 	
 
 	
 
 	
-	public void runOnboardToDistributionFlow(String filepath, String vnfFile) throws Exception {
+	public void runOnboardToDistributionFlow(String filePath, String vnfFile) throws Exception {
 
 		ExtentTestActions.log(Status.INFO, String.format("Going to onboard the VNF %s", vnfFile));
-		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-     
-		Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = OnboardingUtillViaApis.createVspViaApis(filepath, vnfFile, user);
+		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER3);
+     	ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+		Pair<String, VendorSoftwareProductObject> createVendorSoftwareProduct = OnboardingUtillViaApis.createVspViaApis(resourceReqDetails, filePath, vnfFile, user);
 		VendorSoftwareProductObject vendorSoftwareProductObject = createVendorSoftwareProduct.right;
-		vendorSoftwareProductObject.setVspName(createVendorSoftwareProduct.left);
+		vendorSoftwareProductObject.setName(createVendorSoftwareProduct.left);
 
 		//		create VF base on VNF imported from previous step - have, resourceReqDetails object include part of resource metadata
-		ResourceReqDetails resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(vendorSoftwareProductObject, vendorSoftwareProductObject.getVspName());
+//		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+		resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
 		ExtentTestActions.log(Status.INFO, String.format("Create VF %s From VSP", resourceReqDetails.getName()));
-		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails, vendorSoftwareProductObject.getVspName());
+		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails, UserRoleEnum.DESIGNER3);
 		ExtentTestActions.log(Status.INFO, String.format("Certify VF"));
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER3, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		//--------------------------SERVICE--------------------------------	
 		ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(user);
 		ExtentTestActions.log(Status.INFO, String.format("Create Service %s", serviceReqDetails.getName()));
-		Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+		Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER3, true).left().value();
 		ExtentTestActions.log(Status.INFO, String.format("add VF to Service"));
-		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER3, true);
 		addComponentInstanceToComponentContainer.left().value();
 		ExtentTestActions.log(Status.INFO, String.format("Certify Service"));
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER3, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
+		if (makeDistributionValue.equals("true")) {
+			ExtentTestActions.log(Status.INFO, String.format("Distribute Service"));
+			AtomicOperationUtils.distributeService(service, true);
+		}
 
-//		ExtentTestActions.log(Status.INFO, String.format("Distribute Service"));
-//		AtomicOperationUtils.distributeService(service, true);
-		try{
-//			HttpResponse assetResponse = AssetRestUtils.getComponentToscaModel(AssetTypeEnum.SERVICES, service.getUUID());
-//			InputStream inputStream = assetResponse.getEntity().getContent();
-			File csarFile = AssetRestUtils.getToscaModelCsarFile(AssetTypeEnum.SERVICES, service.getUUID(), vnfFile);
+		if (makeToscaValidationValue.equals("true")) {
 
-			ExtentTestActions.log(Status.INFO, "Tosca parser is going to convert service csar file to ISdcCsarHelper object...");
-			fdntCsarHelper = factory.getSdcCsarHelper(csarFile.getAbsolutePath());
-            CsarToscaTester.processCsar(fdntCsarHelper);
+			ExtentTestActions.log(Status.INFO, String.format("Start tosca validation"));
+			AtomicOperationUtils.toscaValidation(service ,vnfFile);
 
-			ExtentTestActions.log(Status.INFO, String.format("Tosca parser successfully parsed service CSAR"));
-
-			ExtentTestActions.log(Status.INFO, String.format("The onboarding %s test is passed ! ", vnfFile));
-
-		}catch(Exception e){
-			ExtentTestActions.log(Status.ERROR, "Tosca parser FAILED to convert service csar file to ISdcCsarHelper object...");
-			ExtentTestActions.log(Status.FAIL, e);
 
 		}
 
 
 
+
+		ExtentTestActions.log(Status.INFO, String.format("The onboarding %s test is passed ! ", vnfFile));
 	}
+
+
 
 }
