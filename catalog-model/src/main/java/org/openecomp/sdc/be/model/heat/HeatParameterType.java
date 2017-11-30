@@ -20,14 +20,12 @@
 
 package org.openecomp.sdc.be.model.heat;
 
-import org.openecomp.sdc.be.model.tosca.converters.DefaultConverter;
 import org.openecomp.sdc.be.model.tosca.converters.HeatBooleanConverter;
 import org.openecomp.sdc.be.model.tosca.converters.HeatCommaDelimitedListConverter;
 import org.openecomp.sdc.be.model.tosca.converters.HeatJsonConverter;
 import org.openecomp.sdc.be.model.tosca.converters.HeatNumberConverter;
 import org.openecomp.sdc.be.model.tosca.converters.HeatStringConverter;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
-import org.openecomp.sdc.be.model.tosca.converters.StringConvertor;
 import org.openecomp.sdc.be.model.tosca.validators.HeatBooleanValidator;
 import org.openecomp.sdc.be.model.tosca.validators.HeatCommaDelimitedListValidator;
 import org.openecomp.sdc.be.model.tosca.validators.HeatNumberValidator;

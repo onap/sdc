@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable} from '@angular/core';
+import {Injectable, Inject} from '@angular/core';
 import {Http, XHRBackend, RequestOptions, Request, RequestOptionsArgs, Response, Headers} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
 import {UUID} from 'angular2-uuid';
@@ -27,15 +27,15 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 import {Dictionary} from "../../utils/dictionary/dictionary";
 import {SharingService, CookieService} from "app/services";
-import {sdc2Config} from './../../../main';
 import { ModalService } from "app/ng2/services/modal.service";
 import { ServerErrorResponse } from "app/models";
-import { ErrorMessageComponent } from 'app/ng2/components/modal/error-message/error-message.component';
+import {ErrorMessageComponent} from "../components/ui/modal/error-message/error-message.component";
+import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 
 @Injectable()
 export class HttpService extends Http {
 
-    constructor(backend: XHRBackend, options: RequestOptions, private sharingService: SharingService, private cookieService: CookieService, private modalService: ModalService) {
+    constructor(backend: XHRBackend, options: RequestOptions, private sharingService: SharingService, private cookieService: CookieService, private modalService: ModalService, @Inject(SdcConfigToken) private sdcConfig:ISdcConfig) {
         super(backend, options);
         this._defaultOptions.withCredentials = true;
         this._defaultOptions.headers.append(cookieService.getUserIdSuffix(), cookieService.getUserId());
@@ -73,7 +73,7 @@ export class HttpService extends Http {
 
     private getUuidValue = (url: string) :string => {
         let map:Dictionary<string, string> = this.sharingService.getUuidMap();
-        if (map && url.indexOf(sdc2Config.api.root) > 0) {
+        if (map && url.indexOf(this.sdcConfig.api.root) > 0) {
             map.forEach((key:string) => {
                 if (url.indexOf(key) !== -1) {
                     return this.sharingService.getUuidValue(key);
@@ -92,5 +92,9 @@ export class HttpService extends Http {
         
         return Observable.throw(response);
     };
+
+    public static replaceUrlParams(url:string, urlParams:{[index:string]:any}):string {
+        return url.replace(/:(\w+)/g, (m, p1):string => urlParams[p1] || '');
+    }
 
 }

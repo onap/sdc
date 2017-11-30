@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactInfo;
-import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.LeftPanelCanvasItems;

@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.be.resources;
 
+import org.openecomp.sdc.be.dao.Account;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.MappingManager;
-
-import org.openecomp.sdc.be.dao.Account;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CassandraTest {
 	private static Logger log = LoggerFactory.getLogger(CassandraTest.class.getName());

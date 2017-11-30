@@ -9,6 +9,9 @@
         <name>sdc</name>	
 	<properties>
 
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+
 		<!-- ==================== -->
 		<!-- Generic properties -->
 		<!-- ==================== -->
@@ -34,6 +37,8 @@
 
 		<!-- Elastic Search mapper (reference the elastic search version actually). -->
 		<elastic-search.version>2.1.0</elastic-search.version>
+		<catalog-artifacts.version>1.0.0-SNAPSHOT</catalog-artifacts.version>
+		<catalog-builders.version>1.0.0-SNAPSHOT</catalog-builders.version>
 		<jetty.version>9.2.10.v20150310</jetty.version>
 
 		<!-- JSON and YAML Parsing -->
@@ -79,7 +84,7 @@
         <commons-jci-core.version>1.1</commons-jci-core.version>
 
 		<!--TESTING-->
-		<mockito.version>1.10.19</mockito.version>
+		<mockito.version>2.12.0</mockito.version>
 		<junit.version>4.12</junit.version>
 		<testng.version>6.9.10</testng.version>
 		<extentreports.version>3.0.3</extentreports.version>
@@ -89,16 +94,10 @@
 		
 		<!--JaCoCO -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-		<sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
-		<sonar.jacoco.itReportPath>${project.basedir}/target/it-jacoco.exec</sonar.jacoco.itReportPath>
+		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>${project.basedir}/../target/it-jacoco.exec</sonar.jacoco.itReportPath>
 		<sonar.language>java</sonar.language>
-		<sonar.version>${project.version}</sonar.version>
-
-		<!--cassandra -->
-		<cassandra.driver.version>3.0.0</cassandra.driver.version>
-		<!-- maven central (Nexus) -->
-		<nexus.id.release>nexus</nexus.id.release>
-		<nexus.id.snapshot>nexus</nexus.id.snapshot>
+		<sonar.branch>${project.version}</sonar.branch>
 		<!-- Sonar properties -->
 		<sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
 		<sonar.skipDesign>true</sonar.skipDesign>
@@ -109,6 +108,14 @@
 		<sonar.inclusions>app/**/*.js,server-mock/**/*.js,src/**/*.js,src/main/**/*.java</sonar.inclusions>
 		<sonar.branch>${project.version}</sonar.branch>
 
+		<assertj.version>3.8.0</assertj.version>
+
+		<!--cassandra -->
+		<cassandra.driver.version>3.0.0</cassandra.driver.version>
+		<!-- maven central (Nexus) -->
+		<nexus.id.release>nexus</nexus.id.release>
+		<nexus.id.snapshot>nexus</nexus.id.snapshot>
+
 		<!--nexus-->
 		<nexus.proxy>https://nexus.onap.org</nexus.proxy>
 		<sitePath>/content/sites/site/org/openecomp/sdc/${project.version}</sitePath>
@@ -116,6 +123,22 @@
 		<!--maven-->
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-core</artifactId>
+				<version>${assertj.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>${mockito.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<reporting>
 		<plugins>
@@ -230,40 +253,24 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.1.201405082137</version>
-				<inherited>True</inherited>
+				<version>0.7.9</version>
+				<configuration>
+					<append>true</append>
+					<destFile>${sonar.jacoco.reportPath}</destFile>
+					<dataFile>${sonar.jacoco.reportPath}</dataFile>
+				</configuration>
 				<executions>
-					<!-- Unit-Tests -->
 					<execution>
-						<id>prepare-agent</id>
+						<id>default-prepare-agent</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
-						<configuration>
-							<destFile>${sonar.jacoco.reportPath}</destFile>
-						</configuration>
 					</execution>
 					<execution>
-						<id>report</id>
+						<id>default-report</id>
 						<goals>
 							<goal>report</goal>
 						</goals>
-						<configuration>
-							<dataFile>${sonar.jacoco.reportPath}</dataFile>
-							<outputDirectory>${project.basedir}/target/site/jacoco</outputDirectory>
-						</configuration>
-					</execution>
-
-					<!-- Integration Tests (Only report goal) -->
-					<execution>
-						<id>report-integration</id>
-						<goals>
-							<goal>report-integration</goal>
-						</goals>
-						<configuration>
-							<dataFile>${sonar.jacoco.itReportPath}</dataFile>
-							<outputDirectory>${project.basedir}/target/site/it-jacoco</outputDirectory>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -364,6 +371,27 @@
 			</properties>
 		</profile>
 
+		<profile>
+			<id>catalog-be</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>security-utils</module>
+				<module>common-app-api</module>
+				<module>common-be</module>
+				<module>catalog-dao</module>
+				<module>catalog-model</module>
+				<module>catalog-be</module>
+			</modules>
+			<properties>
+				<ecomp.version>1.2.7</ecomp.version>
+				<artifact-generator-api.version>1710.0.0</artifact-generator-api.version>
+				<artifact-generator-core.version>1710.0.0</artifact-generator-core.version>
+				<dox-common-lib.version>1710.0.0</dox-common-lib.version>
+				<sdc-tosca-parser.version>1.1.14</sdc-tosca-parser.version>
+			</properties>
+		</profile>
 		<profile>
 			<id>onboarding</id>
 			<activation>

@@ -40,7 +40,7 @@ export interface IArtifactsViewModelScope extends ICompositionViewModelScope {
     artifactType:string;
     downloadFile:IFileDownload;
     isLoading:boolean;
-    displayDeleteButtonMap:Dictionary<string, boolean>;
+    allowDeleteAndUpdateArtifactMap:Dictionary<string, boolean>;
     getTitle():string;
     addOrUpdate(artifact:ArtifactModel):void;
     delete(artifact:ArtifactModel):void;
@@ -126,9 +126,9 @@ export class ResourceArtifactsViewModel {
             }
         }
         this.$scope.artifacts = artifacts;
-        this.$scope.displayDeleteButtonMap = new Dictionary<string, boolean>();
+        this.$scope.allowDeleteAndUpdateArtifactMap = new Dictionary<string, boolean>();
         _.forEach(this.$scope.artifacts, (artifact:ArtifactModel)=>{
-            this.$scope.displayDeleteButtonMap[artifact.artifactLabel] = this.displayDeleteButton(artifact);
+            this.$scope.allowDeleteAndUpdateArtifactMap[artifact.artifactLabel] = this.allowDeleteAndUpdateArtifact(artifact);
         });
         this.$scope.isLoading = false;
     };
@@ -234,8 +234,8 @@ export class ResourceArtifactsViewModel {
         });
     };
 
-    private displayDeleteButton = (artifact:ArtifactModel):boolean => {
-    if(!this.$scope.isViewMode() && artifact.esId){
+    private allowDeleteAndUpdateArtifact = (artifact:ArtifactModel):boolean => {
+    if(!this.$scope.isViewMode()){
         if(this.$scope.isComponentInstanceSelected()){//is artifact of instance
             return !this.$scope.selectedComponent.deploymentArtifacts || !this.$scope.selectedComponent.deploymentArtifacts[artifact.artifactLabel];//if the artifact is not from instance parent
         }else{//is artifact of main component

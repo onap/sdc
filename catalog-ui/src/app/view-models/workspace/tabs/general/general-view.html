@@ -343,9 +343,9 @@
                                data-ng-model-options="{ debounce: 500 }"
                                name="serviceType"
                                data-tests-id="serviceType"
-                               data-ng-maxlength="25"
-                               data-ng-pattern="validation.VendorReleaseValidationPattern"
-                               maxlength="25"
+                               data-ng-maxlength="256"
+                               data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
+                               maxlength="256"
                         />
                         <div class="input-error" data-ng-show="validateField(editForm.serviceType)">
                             <span ng-show="editForm.serviceType.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '25' }"></span>
@@ -365,9 +365,9 @@
                                data-ng-model-options="{ debounce: 500 }"
                                name="serviceRole"
                                data-tests-id="serviceRole"
-                               data-ng-maxlength="25"
-                               data-ng-pattern="validation.VendorReleaseValidationPattern"
-                               maxlength="25"
+                               data-ng-maxlength="256"
+                               data-ng-pattern="validation.ServiceTypeAndRoleValidationPattern"
+                               maxlength="256"
                         />
                         <div class="input-error" data-ng-show="validateField(editForm.serviceRole)">
                             <span ng-show="editForm.serviceRole.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '25' }"></span>
@@ -375,6 +375,26 @@
                         </div>
                     </div>
                     <!--------------------- Service Role -------------------->
+
+                    <!-------------------- ENVIRONMENT CONTEXT  ----------------->
+
+                    <div  ng-if="component.isService()" class="i-sdc-form-item">
+                        <loader data-display="!environmentContextObj && !initEnvironmentContext()" relative="true"></loader>
+                        <label class="i-sdc-form-label">Environment Context</label>
+                        <select class="i-sdc-form-select"
+                                name="environmentContext"
+                                data-ng-class="{'view-mode': isViewMode()}"
+                                data-ng-model="component.environmentContext"
+                                data-tests-id="environmentContext"
+                        >
+                            <option data-ng-repeat="environmentContextVal in (environmentContextObj.validValues) | orderBy"
+                                    value="{{environmentContextVal}}"
+                                    data-tests-id="{{environmentContextVal}}">{{environmentContextVal}}</option>
+                        </select>
+
+                    </div>
+                    <!--------------------- ENVIRONMENT CONTEXT ------------------>
+
 
                     <div class="meta-data" data-ng-if="component.creationDate">
                         <div>

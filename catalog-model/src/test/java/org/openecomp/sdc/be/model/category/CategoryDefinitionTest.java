@@ -2,11 +2,7 @@ package org.openecomp.sdc.be.model.category;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
-import java.util.*;
-import org.junit.Assert;
 
 
 public class CategoryDefinitionTest {

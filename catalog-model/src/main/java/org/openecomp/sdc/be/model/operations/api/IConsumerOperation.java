@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
+import java.util.List;
+
 import org.openecomp.sdc.be.resources.data.ConsumerData;
 
 import fj.data.Either;
-
-import java.util.List;
 
 public interface IConsumerOperation {
 

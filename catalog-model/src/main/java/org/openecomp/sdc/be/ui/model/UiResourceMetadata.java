@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.ui.model;
 
 import java.util.List;
+
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;

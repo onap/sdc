@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="uitests" configfailurepolicy="continue">
+  <test name="uitests">
+    <classes>
+    	<!--onboard-->
+   		<class name="org.openecomp.sdc.ci.tests.execute.sanity.Onboard">
+   			  <methods>
+				<include name="onboardVNFTestSanityOneFile"/>
+			  </methods>
+		</class>
+    </classes>
+  </test> <!-- uitests -->
+</suite> <!-- uisuite -->

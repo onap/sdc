@@ -22,6 +22,7 @@
 		org.openecomp.sdc.be.impl,
 		org.openecomp.sdc.be.auditing.impl,
 		org.openecomp.sdc.be.components.impl,
+		org.openecomp.sdc.be.components.merge,
 		org.openecomp.sdc.be.components.distribution.engine,
 		org.openecomp.sdc.be.distribution,
 		org.openecomp.sdc.be.components.clean,

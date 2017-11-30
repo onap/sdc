@@ -1,7 +1,5 @@
 package org.openecomp.sdc.asdctool.impl.validator.utils;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 

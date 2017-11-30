@@ -26,15 +26,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import org.json.simple.JSONObject;
-import org.littleshoot.proxy.impl.ClientToProxyConnection;
-import org.littleshoot.proxy.impl.ProxyToServerConnection;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.api.SomeInterface;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
 import org.openecomp.sdc.ci.tests.datatypes.UserCredentials;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
@@ -60,16 +55,15 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import groovyjarjarantlr.Utils;
-import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.core.har.Har;
 
 public abstract class SetupCDTest extends DriverFactory {
@@ -107,7 +101,8 @@ public abstract class SetupCDTest extends DriverFactory {
 	
 	/**************** METHODS ****************/
 	public static ExtentTest getExtendTest() {
-		return ExtentTestManager.getTest();
+		SomeInterface testManager = new ExtentTestManager(); 
+		return testManager.getTest();
 	}
 	public static WindowTest getWindowTest(){
 		return WindowTestManager.getWindowMap();
@@ -230,7 +225,7 @@ public abstract class SetupCDTest extends DriverFactory {
 	}
 	public void addResultToCSV(ITestResult result, ITestContext context) {
 		String suiteName = ExtentManager.getSuiteName(context);	    	
-		ExtentTest test = ExtentTestManager.getTest();
+		ExtentTest test = getExtendTest();
 		com.aventstack.extentreports.model.Test model = test.getModel();
 		String name = model.getName();
 		String status = model.getStatus().toString();
@@ -268,15 +263,19 @@ public abstract class SetupCDTest extends DriverFactory {
 	}
 	
 	
-		
-	@AfterSuite(alwaysRun = true)
-	
-	public void afterSuite2() throws Exception  {
+	@Parameters({ "eraseAfterTests" })
+	@AfterSuite(alwaysRun = true)	
+	public void afterSuite2(@Optional("true") String eraseAfterTestsReadValue) throws Exception  {
 //		public void afterSuite() throws Exception  {
 		
 		csvReport.closeFile();
 		generateReport4Jenkins(myContext);
-		RestCDUtils.deleteOnDemand();
+		
+		if (Boolean.parseBoolean(eraseAfterTestsReadValue)){
+			RestCDUtils.deleteOnDemand();
+		} else {
+			System.out.println("Resources will not be deleted according to suite configuration ...");
+		}
 		
 		if (getConfig().getUseBrowserMobProxy()){
 			MobProxy.getPoxyServer().stop();
@@ -506,7 +505,7 @@ public abstract class SetupCDTest extends DriverFactory {
 		navigateAndLogin(role);
 	}
 
-	public static void setLocalUrl(UserRoleEnum role) {
+	/*public static void setLocalUrl(UserRoleEnum role) {
 		switch (role) {
 			case ADMIN: {
 				url = "http://localhost:8181/sdc1/proxy-admin1#/dashboard";
@@ -548,7 +547,7 @@ public abstract class SetupCDTest extends DriverFactory {
 				break;
 			}
 		}
-	}
+	}*/
 	
 	public void addTrafficFileToReport(ITestResult result) {
 		try {				
@@ -600,8 +599,8 @@ public abstract class SetupCDTest extends DriverFactory {
 		System.out.println("attsdc.yaml file path is : " + attsdcFilePath);
 		
 		String filepath = FileHandling.getBasePath() + File.separator + "Files" + File.separator;
-		System.setProperty("filepath", filepath);
-		System.out.println("filepath is : " + System.getProperty("filepath"));
+		System.setProperty("filePath", filepath);
+		System.out.println("filePath is : " + System.getProperty("filePath"));
 		
 		Object[] testSuitsList = FileHandling.filterFileNamesFromFolder(FileHandling.getBasePath() + File.separator + "testSuites", ".xml");
 		if (testSuitsList != null) {

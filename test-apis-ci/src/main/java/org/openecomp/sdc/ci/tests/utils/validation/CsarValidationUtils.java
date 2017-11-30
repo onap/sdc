@@ -22,25 +22,14 @@ package org.openecomp.sdc.ci.tests.utils.validation;
 
 import static org.testng.AssertJUnit.assertTrue;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.ci.tests.datatypes.GroupHeatMetaDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.TypeHeatMetaDefinition;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.utils.CsarParserUtils;
-import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ImportRestUtils;
-import org.openecomp.sdc.common.rest.api.RestResponseAsByteArray;
-import org.openecomp.sdc.common.util.ZipUtil;
 
 public class CsarValidationUtils {
 

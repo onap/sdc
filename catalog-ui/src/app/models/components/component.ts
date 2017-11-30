@@ -356,7 +356,6 @@ export abstract class Component implements IComponent {
                 // find exist instance property in parent component for update the new value ( find bu uniqueId )
                 let existProperty:PropertyModel = <PropertyModel>_.find(this.properties, {uniqueId: newProperty.uniqueId});
                 let propertyIndex = this.properties.indexOf(existProperty);
-                newProperty.readonly = this.uniqueId != newProperty.parentUniqueId;
                 this.properties[propertyIndex] = newProperty;
                 deferred.resolve(newProperty);
             };

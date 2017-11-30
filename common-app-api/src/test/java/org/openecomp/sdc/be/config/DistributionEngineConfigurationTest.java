@@ -2,8 +2,6 @@ package org.openecomp.sdc.be.config;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.ComponentArtifactTypesConfig;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.CreateTopicConfig;

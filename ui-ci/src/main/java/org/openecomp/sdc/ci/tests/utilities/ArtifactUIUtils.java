@@ -501,18 +501,18 @@ public final class ArtifactUIUtils {
 
 		Map<String, Object> mapExpectedFile = FileHandling.parseYamlFileToMapByPattern(expectedFile, pattern);
 		Map<String, Object> mapActualFile = FileHandling.parseYamlFileToMapByPattern(actualFile, pattern);
-		SetupCDTest.getExtendTest().log(Status.INFO, "Going to compare files ...");
+		SetupCDTest.getExtendTest().log(Status.INFO, "Going to compare file " + expectedFile.getName());
 		assertTrue("File" + actualFile.getName() + " contains different parameters number from expected file", mapActualFile.size() == mapExpectedFile.size());
-		assertTrue("File " + actualFile.getName() + " does not contains all expected parametrs", mapActualFile.entrySet().containsAll(mapExpectedFile.entrySet()));
+		assertTrue("File " + actualFile.getName() + " does not contains all expected parameters", mapActualFile.entrySet().containsAll(mapExpectedFile.entrySet()));
 	}
 	
-	public static void compareYamlParametersByPattern(Map<String, Object> mapExpectedproperties, File actualFileproperties, String pattern) throws Exception {
+	public static void compareYamlParametersByPattern(Map<String, Object> mapExpectedProperties, File actualFileProperties, String pattern) throws Exception {
 
-		Map<String, Object> mapActualFileProerties = FileHandling.parseYamlFileToMapByPattern(actualFileproperties, pattern);
+		Map<String, Object> mapActualFileProerties = FileHandling.parseYamlFileToMapByPattern(actualFileProperties, pattern);
 		SetupCDTest.getExtendTest().log(Status.INFO, "Going to compare files ...");
-		assertTrue("Actual file contains different parameters number from expected file", mapActualFileProerties.size() == mapExpectedproperties.size());
+		assertTrue("Actual file contains different parameters number from expected file", mapActualFileProerties.size() == mapExpectedProperties.size());
 		Map<String, Object> newMap = new HashMap<>(mapActualFileProerties);		
-		assertTrue("Actual file does not contains all expected parametrs", newMap.entrySet().containsAll(mapExpectedproperties.entrySet()));
+		assertTrue("Actual file does not contains all expected parameters", newMap.entrySet().containsAll(mapExpectedProperties.entrySet()));
 	}
 	
 

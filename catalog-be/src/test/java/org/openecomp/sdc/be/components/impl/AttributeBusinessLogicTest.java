@@ -2,9 +2,6 @@ package org.openecomp.sdc.be.components.impl;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
-import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.exception.ResponseFormat;

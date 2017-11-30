@@ -37,7 +37,6 @@ public class ExpectedExternalAudit {
 
 	public ExpectedExternalAudit() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getRESOURCE_NAME() {

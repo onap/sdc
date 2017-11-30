@@ -32,13 +32,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.tosca.CsarUtils.NonMetaArtifactInfo;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
-import org.openecomp.sdc.exception.ResponseFormat;
 
 import fj.data.Either;
 

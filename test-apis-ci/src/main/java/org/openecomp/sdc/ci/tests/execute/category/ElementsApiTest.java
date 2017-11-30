@@ -26,7 +26,6 @@ import static org.testng.AssertJUnit.assertNotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.lf5.util.ResourceUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -47,15 +46,6 @@ public class ElementsApiTest extends ComponentBaseTest {
 	public ElementsApiTest() {
 		super(name, ElementsApiTest.class.getName());
 	}
-
-	// public LCSbaseTest(TestName testName, String className) {
-	// super(testName, className);
-	// }
-
-	// public ElementsApiTest(TestName name, String name2) {
-	//// super(name, name2);
-	// // TODO Auto-generated constructor stub
-	// }
 
 	// Expected 200 Keep
 	@Test

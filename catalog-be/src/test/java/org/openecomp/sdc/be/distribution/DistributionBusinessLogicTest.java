@@ -37,8 +37,6 @@ import org.openecomp.sdc.be.components.distribution.engine.CambriaHandler;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineInitTask;
 import org.openecomp.sdc.be.components.distribution.engine.SubscriberTypeEnum;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
-import org.openecomp.sdc.be.distribution.AuditHandler;
-import org.openecomp.sdc.be.distribution.DistributionBusinessLogic;
 import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 import org.openecomp.sdc.be.distribution.api.client.RegistrationRequest;
 import org.openecomp.sdc.be.distribution.api.client.TopicRegistrationResponse;

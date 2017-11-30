@@ -3,8 +3,6 @@ package org.openecomp.sdc.be.resources.data.auditing;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

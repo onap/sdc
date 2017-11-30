@@ -1,10 +1,14 @@
 package org.openecomp.sdc.ci.tests.execute.imports;
 
+import static org.junit.Assert.assertEquals;
+
+import java.nio.file.Paths;
+import java.util.Map;
+
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
-import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
@@ -19,12 +23,6 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.nio.file.Paths;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 
 public class ToscaTemplateVersionTest extends ComponentBaseTest {
 

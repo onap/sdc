@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
-import org.openecomp.sdc.common.util.StreamUtils;
 
 import fj.data.Either;
 

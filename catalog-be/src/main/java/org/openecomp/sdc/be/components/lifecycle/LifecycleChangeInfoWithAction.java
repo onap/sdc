@@ -23,7 +23,7 @@ package org.openecomp.sdc.be.components.lifecycle;
 public class LifecycleChangeInfoWithAction extends LifecycleChangeInfoBase {
 
 	public enum LifecycleChanceActionEnum {
-		CREATE_FROM_CSAR, UPDATE_FROM_EXTERNAL_API
+		CREATE_FROM_CSAR, UPDATE_FROM_EXTERNAL_API, UPGRADE_MIGRATION
 	};
 
 	private LifecycleChanceActionEnum action;

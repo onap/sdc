@@ -1,9 +1,7 @@
 package org.openecomp.sdc.be.servlets;
 
-import javax.annotation.Generated;
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.datastax.driver.core.Configuration;

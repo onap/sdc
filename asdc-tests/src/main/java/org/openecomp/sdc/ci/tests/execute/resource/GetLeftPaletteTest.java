@@ -1,5 +1,10 @@
 package org.openecomp.sdc.ci.tests.execute.resource;
 
+import static org.testng.AssertJUnit.assertTrue;
+
+import java.io.IOException;
+import java.util.Arrays;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -19,14 +24,9 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.io.IOException;
-import java.util.Arrays;
-
-import static org.testng.AssertJUnit.assertTrue;
 
 /**
  * Created by chaya on 6/15/2017.

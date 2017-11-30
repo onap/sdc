@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.be.utils;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.openecomp.sdc.be.utils.CommonBeUtils;
 
 public class CommonBeUtilsTest {
 

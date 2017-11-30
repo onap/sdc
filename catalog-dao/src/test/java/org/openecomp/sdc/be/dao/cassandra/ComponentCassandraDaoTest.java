@@ -1,13 +1,7 @@
 package org.openecomp.sdc.be.dao.cassandra;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import javax.annotation.Generated;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.resources.data.ComponentCacheData;

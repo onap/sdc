@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,7 +40,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertTrue;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")

@@ -20,15 +20,10 @@
 
 package org.openecomp.sdc.be.model.tosca.validators;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
-import javax.validation.constraints.AssertTrue;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.openecomp.sdc.be.model.tosca.validators.IntegerValidator;
 
 public class IntegerValidatorTest {
 	private static IntegerValidator validator = IntegerValidator.getInstance();

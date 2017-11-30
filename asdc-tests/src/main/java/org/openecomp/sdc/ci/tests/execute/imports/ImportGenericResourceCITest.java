@@ -46,7 +46,6 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -66,7 +65,6 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.execute.TODO.ImportCapabilityTypeCITest;
 import org.openecomp.sdc.ci.tests.utils.DbUtils;
 import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ImportRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;

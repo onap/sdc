@@ -20,26 +20,12 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.resources.data.AttributeValueData;
-import org.openecomp.sdc.be.resources.data.CapabilityData;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
-import org.openecomp.sdc.be.resources.data.RequirementData;
-import org.openecomp.sdc.exception.ResponseFormat;
 
 import fj.data.Either;
 

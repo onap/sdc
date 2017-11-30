@@ -20,10 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.execute.setup;
 
-import org.testng.Assert;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
-import org.testng.annotations.Test;
 
 public class Retry implements IRetryAnalyzer {
     private int retryCount = 0;

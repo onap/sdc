@@ -36,7 +36,6 @@ public class HeatMetaFirstLevelDefinition {
 	
 	public HeatMetaFirstLevelDefinition() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getFileName() {

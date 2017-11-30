@@ -134,9 +134,16 @@ public class RequirementAndRelationshipPair implements Serializable {
 		if ( savedRelation == null ){
 			return false;
 		}
-		if ( !savedRelation.getType().equals(this.getRelationship().getType()) ){
-			return false;
-		}	
+		if(getRelationship().getType() == null ){
+			if(savedRelation.getType() != null){
+				return false;
+			}
+		}
+		else { 
+			if ( !savedRelation.getType().equals(this.getRelationship().getType()) ){
+				return false;
+			}	
+		}
 		if ( !savedRelation.getCapabilityOwnerId().equals(this.getCapabilityOwnerId()) ){
 			return false;
 		}
