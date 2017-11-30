@@ -46,12 +46,12 @@ import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
 import org.openecomp.sdc.ci.tests.utilities.DownloadManager;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.OnboardingUtils;
+import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
 import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.RestCDUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.openecomp.sdc.ci.tests.verificator.VFCArtifactVerificator;
-import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -73,10 +73,6 @@ public class VFCArtifacts extends SetupCDTest {
 	@Test
 	public void ImportMultiVFCTest_TC1407998() throws Exception{
 		
-		if(true){
-			throw new SkipException("Open bug 294400");			
-		}
-		
 		String csarFile = "Import_Multi_VFC.csar";
 		
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
@@ -95,10 +91,6 @@ public class VFCArtifacts extends SetupCDTest {
 
 	@Test
 	public void updateCsarWithVFCArtifacts_ModifyArtifacts_TC1449482() throws Exception{
-		
-		if(true){
-			throw new SkipException("Open bug 294400");			
-		}
 		
 		String csarFile = "LDSA-ORIG.csar";
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
@@ -125,10 +117,6 @@ public class VFCArtifacts extends SetupCDTest {
 	@Test
 	public void updateCsarWithVFCArtifacts_DeleteAndAddArtifacts_TC1449473() throws Exception{
 		
-		if(true){
-			throw new SkipException("Open bug 294400");			
-		}
-		
 		String csarFile = "LDSA-ORIG.csar";
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		resourceMetaData.setVersion("0.1");
@@ -142,10 +130,6 @@ public class VFCArtifacts extends SetupCDTest {
 	
 	@Test
 	public void updateCsarWithVFCArtifacts_AddFirstVFCIdentifier_TC1425896() throws Exception{
-		
-		if(true){
-			throw new SkipException("Open bug 294400");			
-		}
 		
 		String csarFile = "LDSA-ORIG-OLD_STRUCTURE.csar";
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
@@ -172,10 +156,6 @@ public class VFCArtifacts extends SetupCDTest {
 	@Test
 	public void updateCsarWithVFCArtifacts_AddAdditionalVFCIdentifier_TC1425898() throws Exception{
 		
-		if(true){
-			throw new SkipException("Open bug 294400");			
-		}
-	
 		String csarFile = "LDSA-SINGLE.csar";
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		resourceMetaData.setVersion("0.1");
@@ -210,6 +190,7 @@ public class VFCArtifacts extends SetupCDTest {
 	
 	@Test
 	public void updateCsarWithVFCArtifacts_DeleteAll_TC1425581() throws Exception{
+		
 		String csarFile = "LDSA-ORIG.csar";
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
 		resourceMetaData.setVersion("0.1");
@@ -232,30 +213,26 @@ public class VFCArtifacts extends SetupCDTest {
 	@Test
 	public void importComplexVFCArtifacts_Onboarding_TC1484153() throws Exception{
 		
-		if(true){
-			throw new SkipException("Open bug 294400");			
-		}
-		
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 		
 		String vnfFile = "vProbes_FE.zip";
 		String snmpFile = "Fault-alarms-ASDC-vprobes-vLB.zip";
 		
-		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
-		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(vnfFile, filePath, getUser(), amdocsLicenseMembers);
+		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUiUtils.createVendorLicense(getUser());
+		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(), amdocsLicenseMembers);
 		String vspName = createVSP.left;
 		resourceMetaData.setName(vspName);
 		Map<String, String> resourceMeta = createVSP.right;
 		String vspid = resourceMeta.get("vspId");
 		OnboardingUtils.addVFCArtifacts(filePath, snmpFile, null, vspid, getUser());
-		OnboardingUtils.prepareVspForUse(getUser(), vspid);
+		OnboardingUtils.prepareVspForUse(getUser(), vspid, "0.1");
 		
 		String downloadDirectory = getWindowTest().getDownloadDirectory();
 		String csarFile = vspid + ".csar";
 		
 		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, vspid);
 		HomePage.showVspRepository();
-		OnboardingUtils.importVSP(createVSP);
+		OnboardingUiUtils.importVSP(createVSP);
 		resourceMetaData.setVersion("0.1");
 		
 		verifyVfcArtifacts(downloadDirectory, csarFile, resourceMetaData, null);
@@ -268,10 +245,6 @@ public class VFCArtifacts extends SetupCDTest {
 	@Test
 	public void updateComplexVFCArtifacts_AddRemove_Onboarding_TC1484185() throws Exception{
 		
-		if(true){
-			throw new SkipException("Open bug 294400");			
-		}
-		
 		//check of version is 1
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 		
@@ -279,21 +252,21 @@ public class VFCArtifacts extends SetupCDTest {
 		String snmpPollFile = "vprobes-vLB.zip";
 		String updatedSnmpPollFile = "vprobes-vLBAgent.zip";
 		
-		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
-		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(vnfFile, filePath, getUser(), amdocsLicenseMembers);
+		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUiUtils.createVendorLicense(getUser());
+		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(), amdocsLicenseMembers);
 		String vspName = createVSP.left;
 		resourceMetaData.setName(vspName);
 		Map<String, String> resourceMeta = createVSP.right;
 		String vspid = resourceMeta.get("vspId");
 		String montoringComponentId = OnboardingUtils.addVFCArtifacts(filePath, snmpPollFile, null, vspid, getUser());
-		OnboardingUtils.prepareVspForUse(getUser(), vspid);
+		OnboardingUiUtils.prepareVspForUse(getUser(), vspid, "0.1");
 		
 		String downloadDirectory = getWindowTest().getDownloadDirectory();
 		String csarFile = vspid + ".csar";
 		
 		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, vspid);
 		HomePage.showVspRepository();
-		OnboardingUtils.importVSP(createVSP);
+		OnboardingUiUtils.importVSP(createVSP);
 		
 		ResourceGeneralPage.clickSubmitForTestingButton(vspName);
 		
@@ -302,10 +275,10 @@ public class VFCArtifacts extends SetupCDTest {
 		TesterOperationPage.certifyComponent(vspName);
 		
 		reloginWithNewRole(UserRoleEnum.DESIGNER);
-		OnboardingUtils.updateVspWithVfcArtifacts(filePath, vspid, updatedSnmpPollFile, null, montoringComponentId, getUser());
+		OnboardingUtils.updateVspWithVfcArtifacts(filePath, vspid, updatedSnmpPollFile, null, montoringComponentId, getUser(), "0.1");
 		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, vspid);
 		HomePage.showVspRepository();
-		OnboardingUtils.updateVSP(createVSP);
+		OnboardingUiUtils.updateVSP(createVSP);
 		resourceMetaData.setVersion("1.1");
 		
 		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
@@ -318,10 +291,6 @@ public class VFCArtifacts extends SetupCDTest {
 	@Test
 	public void updateComplexVFCArtifacts_Modify_Onboarding_TC1484195() throws Exception{
 		
-		if(true){
-			throw new SkipException("Open bug 294400");			
-		}
-		
 		//check of version is 2
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 		
@@ -329,21 +298,21 @@ public class VFCArtifacts extends SetupCDTest {
 		String snmpFile = "vprobes-vLB.zip";
 		String updatedSnmpFile = "vprobes-vLB-Modified.zip";
 		
-		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
-		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(vnfFile, filePath, getUser(), amdocsLicenseMembers);
+		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUiUtils.createVendorLicense(getUser());
+		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(), amdocsLicenseMembers);
 		String vspName = createVSP.left;
 		resourceMetaData.setName(vspName);
 		Map<String, String> resourceMeta = createVSP.right;
 		String vspid = resourceMeta.get("vspId");
 		String monitoringId = OnboardingUtils.addVFCArtifacts(filePath, snmpFile, null, vspid, getUser());
-		OnboardingUtils.prepareVspForUse(getUser(), vspid);
+		OnboardingUiUtils.prepareVspForUse(getUser(), vspid, "0.1");
 		
 		String downloadDirectory = getWindowTest().getDownloadDirectory();
 		String csarFile = vspid + ".csar";
 		
 		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, vspid);
 		HomePage.showVspRepository();
-		OnboardingUtils.importVSP(createVSP);
+		OnboardingUiUtils.importVSP(createVSP);
 		
 		Map<String, Object> artifactsFromCsar = ArtifactFromCsar.getVFCArtifacts(downloadDirectory + csarFile);
 		List<String> vfcKeys = artifactsFromCsar.keySet().stream().filter(p -> p.contains("vfc")).collect(Collectors.toList());
@@ -359,10 +328,10 @@ public class VFCArtifacts extends SetupCDTest {
 		TesterOperationPage.certifyComponent(vspName);
 		
 		reloginWithNewRole(UserRoleEnum.DESIGNER);
-		OnboardingUtils.updateVspWithVfcArtifacts(filePath, vspid, updatedSnmpFile, null, monitoringId, getUser());
+		OnboardingUtils.updateVspWithVfcArtifacts(filePath, vspid, updatedSnmpFile, null, monitoringId, getUser(), "0.1");
 		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, vspid);
 		HomePage.showVspRepository();
-		OnboardingUtils.updateVSP(createVSP);
+		OnboardingUiUtils.updateVSP(createVSP);
 		resourceMetaData.setVersion("1.1");
 		
 		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
@@ -378,12 +347,6 @@ public class VFCArtifacts extends SetupCDTest {
 	}
 	
 	
-	
-	
-	
-	
-	
-
 	@Override
 	protected UserRoleEnum getRole() {
 		return UserRoleEnum.DESIGNER;
@@ -391,6 +354,7 @@ public class VFCArtifacts extends SetupCDTest {
 	
 	private Map<String, LinkedList<HeatMetaFirstLevelDefinition>> verifyVfcArtifacts(String filepath, String csarFile,
 			ResourceReqDetails resourceMetaData, RestResponse getResponse) throws Exception {
+		
 		ExtentTestActions.log(Status.INFO, "Verifying VFC artifacts");
 		Map<String, LinkedList<HeatMetaFirstLevelDefinition>> expectedArtifactMap = null;
 		ExtentTestActions.log(Status.INFO, "Reading artifacts in CSAR file");
@@ -408,7 +372,7 @@ public class VFCArtifacts extends SetupCDTest {
 		Map<String, LinkedList<HeatMetaFirstLevelDefinition>> expectedArtifactMap;
 		Map<String,LinkedList<HeatMetaFirstLevelDefinition>> vfcDeploymentArtifacts = (Map<String,LinkedList<HeatMetaFirstLevelDefinition>>)artifactsFromCsar.get(key);
 		LinkedList<HeatMetaFirstLevelDefinition> deploymentList = vfcDeploymentArtifacts.get(DEPLOYMENT);
-		LinkedList<HeatMetaFirstLevelDefinition> informationalList = (LinkedList<HeatMetaFirstLevelDefinition>) artifactsFromCsar.get(INFORMATIONAL);
+		LinkedList<HeatMetaFirstLevelDefinition> informationalList = (LinkedList<HeatMetaFirstLevelDefinition>) vfcDeploymentArtifacts.get(INFORMATIONAL);
 		
 		expectedArtifactMap = new HashMap<String, LinkedList<HeatMetaFirstLevelDefinition>>();
 		if(deploymentList == null){
@@ -421,7 +385,6 @@ public class VFCArtifacts extends SetupCDTest {
 		}else{
 			expectedArtifactMap.put(ARTIFACTS, informationalList);
 		}
-		
 		
 		VFCArtifactVerificator.verifyVfcArtifacts(resourceMetaData, getUser(), key, expectedArtifactMap, getResponse);
 		return expectedArtifactMap;

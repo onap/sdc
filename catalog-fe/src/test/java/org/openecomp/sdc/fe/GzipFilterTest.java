@@ -1,10 +1,6 @@
 package org.openecomp.sdc.fe;
 
-import javax.annotation.Generated;
-import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 
 import org.junit.Test;
 

@@ -14,6 +14,7 @@
 		<!--maven-->
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
 		<nexus.proxy>https://nexus.onap.org</nexus.proxy>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
@@ -161,7 +162,7 @@
 						<executions>
 							<execution>
 								<id>copy-resources-simulator</id>
-								<phase>validate</phase>
+								<phase>package</phase>
 								<goals>
 									<goal>copy-resources</goal>
 								</goals>
@@ -223,7 +224,7 @@
 									<alias>sdc-simulator</alias>
 									<build>
 										<cleanup>try</cleanup>
-										<dockerFileDir>${basedir}\sdc-simulator</dockerFileDir>
+										<dockerFileDir>${basedir}/sdc-simulator</dockerFileDir>
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>

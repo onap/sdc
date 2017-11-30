@@ -5,8 +5,7 @@
         <punch-out name="'onboarding/vendor'" data="vendorData"  user="user" on-event="onVendorEvent"></punch-out>
     </div>
 
-    <top-nav top-lvl-selected-index="2" search-bind="search.filterTerm" menu-model="topNavMenuModel" version="{{version}}" hide-search="true"></top-nav>
+    <top-nav [top-lvl-selected-index]="2" [menu-model]="topNavMenuModel" [version]="version" [hide-search]="true"></top-nav>
 
-    <ecomp-footer></ecomp-footer>
 
 </div>

@@ -28,7 +28,7 @@
     "GENERAL_LABEL_SERVICE_TYPE": "Service Type:",
     "GENERAL_LABEL_SERVICE_ROLE": "Service Role:",
     "GENERAL_LABEL_STATUS": "Status:",
-    "GENERAL_LABEL_PROJECT_CODE": "Project code:",
+    "GENERAL_LABEL_PROJECT_CODE": "Project Code:",
     "GENERAL_LABEL_DESCRIPTION": "Description:",
     "GENERAL_LABEL_TAGS": "Tags:",
     "GENERAL_LABEL_RESOURCE_TYPE": "Resource Type:",
@@ -40,6 +40,9 @@
     "GENERAL_LABEL_LIFE_CYCLE_STATUS": "Life Cycle Status:",
     "GENERAL_LABEL_DISTRIBUTION_STATUS": "Distribution Status:",
     "GENERAL_LABEL_SYSTEM_NAME": "System Name:",
+    "GENERAL_LABEL_SOURCE_SERVICE_NAME": "Source Service Name:",
+    "GENERAL_LABEL_RESOURCE_CUSTOMIZATION_UUID": "Resource Customization UUID:",
+    
 
     "=========== GENERAL_TAB ===========": "",
     "GENERAL_TAB_LABEL_RESOURCE_MODEL_NUMBER":"Vendor Model Number",

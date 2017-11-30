@@ -27,11 +27,9 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.LoggerFactory;
 
-import com.aventstack.extentreports.ExtentTest;
 import com.github.markusbernhardt.proxy.ProxySearch;
 import com.github.markusbernhardt.proxy.ProxySearch.Strategy;
 import com.github.markusbernhardt.proxy.util.PlatformUtil;

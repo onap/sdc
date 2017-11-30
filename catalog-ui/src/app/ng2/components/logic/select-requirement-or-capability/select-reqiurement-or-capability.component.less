@@ -1,0 +1,77 @@
+@import './../../../../../assets/styles/variables.less';
+@import './../../../../../assets/styles/mixins.less';
+.main-container{
+  color: @main_color_m;
+}
+.select-req-or-cap-span {
+  float: left;
+  margin-right: 15px;
+  font-size: 13px;
+}
+.select-type-label{
+  .m_12_m;
+  margin-bottom: 2px;
+}
+.select-type{
+  display: flex;
+  margin-bottom: 10px;
+  ui-element-dropdown{
+    width: 40%;
+    font-size: 13px;
+    /deep/ select{
+      height: 31px;
+    }
+  }
+}
+.table-and-list-container{
+  display: flex;
+  padding-top: 10px;
+  .inner-container{
+    height: 300px;
+    overflow-y: auto;
+    border: @main_color_o solid 1px;
+  }
+  .inner-container:not(:last-of-type){
+    border-right: none;
+  }
+  .requirements-or-capabilities-container {
+    width: 40%;
+    &.empty-list{
+      background-color: @tlv_color_t;
+      text-align: center;
+      &:before{
+        content: 'Select "type" above';
+        line-height: 298px;
+      }
+    }
+    .req-or-cap-item{
+      border-bottom: @main_color_o solid 1px;
+      padding: 10px;
+      font-size: 13px;
+      &:hover:not(.selected){
+        background-color:@tlv_color_t; cursor:pointer;
+      }
+    }
+  }
+  .properties-table-container{
+    width: 60%;
+    display: flex;
+    &.cap-selected{
+      background-color: @tlv_color_t;
+      border: @main_color_a solid 1px;
+      -webkit-box-shadow: inset 8px -2px 7px -9px rgba(84,84,84,1);
+      -moz-box-shadow: inset 8px -2px 7px -9px rgba(84,84,84,1);
+      box-shadow: inset 8px -2px 7px -9px rgba(84,84,84,1);
+    }
+    properties-table{
+      margin: 15px;
+      width: 100%;
+    }
+  }
+}
+
+.selected{
+  color: @main_color_a;
+  background-color: @tlv_color_v;
+  border-left: @main_color_a solid 4px;
+}

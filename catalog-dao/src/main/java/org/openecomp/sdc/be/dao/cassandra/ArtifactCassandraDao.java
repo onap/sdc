@@ -22,7 +22,6 @@ package org.openecomp.sdc.be.dao.cassandra;
 
 import javax.annotation.PostConstruct;
 
-import com.datastax.driver.core.ResultSet;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
@@ -30,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.mapping.MappingManager;
 

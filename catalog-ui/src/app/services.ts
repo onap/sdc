@@ -46,6 +46,5 @@ export * from './services/progress-service';
 export * from './services/sdc-version-service';
 export * from './services/sharing-service';
 export * from './services/url-tobase64-service';
-export * from './services/user-resource-service';
 export * from './services/angular-js-bridge-service';
 

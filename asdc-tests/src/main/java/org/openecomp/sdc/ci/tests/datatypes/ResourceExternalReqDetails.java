@@ -23,7 +23,6 @@ package org.openecomp.sdc.ci.tests.datatypes;
 import java.util.List;
 
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.Resource;
 
 public class ResourceExternalReqDetails extends ComponentReqDetails {
 	String vendorName;

@@ -26,7 +26,6 @@ import static org.testng.AssertJUnit.assertNotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.lf5.util.ResourceUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;

@@ -1,0 +1,140 @@
+
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  org.openecomp.resource.cp.v2.extNeutronCP:
+    derived_from: org.openecomp.resource.cp.v2.extCP
+    properties:
+      # copied from the org.openecomp.resource.cp.nodes.heat.network.neutron.Port type
+      port_security_enabled:
+        type: boolean
+        description: Flag to enable/disable port security on the network
+        required: false
+        status: SUPPORTED
+      device_id:
+        type: string
+        description: Device ID of this port
+        required: false
+        status: SUPPORTED
+      qos_policy:
+        type: string
+        description: The name or ID of QoS policy to attach to this network
+        required: false
+        status: SUPPORTED
+      allowed_address_pairs:
+        type: list
+        description: Additional MAC/IP address pairs allowed to pass through the port
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.AddressPair
+      binding:vnic_type:
+        type: string
+        description: The vnic type to be bound on the neutron port
+        required: false
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - macvtap
+          - direct
+          - normal
+      value_specs:
+        type: map
+        description: Extra parameters to include in the request
+        required: false
+        default: {
+          }
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      device_owner:
+        type: string
+        description: Name of the network owning the port
+        required: false
+        status: SUPPORTED
+      network:
+        type: string
+        description: Network this port belongs to
+        required: false
+        status: SUPPORTED
+      replacement_policy:
+        type: string
+        description: Policy on how to respond to a stack-update for this resource
+        required: false
+        default: AUTO
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - REPLACE_ALWAYS
+          - AUTO
+      security_groups:
+        type: list
+        description: List of security group names or IDs
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      fixed_ips:
+        type: list
+        description: Desired IPs for this port
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+      mac_address:
+        type: string
+        description: MAC address to give to this port
+        required: false
+        status: SUPPORTED
+      admin_state_up:
+        type: boolean
+        description: A boolean value specifying the administrative status of the network
+        required: false
+        default: true
+        status: SUPPORTED
+      name:
+        type: string
+        description: A symbolic name for this port
+        required: false
+        status: SUPPORTED
+    attributes:
+      # copied from the org.openecomp.resource.cp.nodes.heat.network.neutron.Port type
+      tenant_id:
+        type: string
+        description: Tenant owning the port
+        status: SUPPORTED
+      network_id:
+        type: string
+        description: Unique identifier for the network owning the port
+        status: SUPPORTED
+      qos_policy_id:
+        type: string
+        description: The QoS policy ID attached to this network
+        status: SUPPORTED
+      show:
+        type: string
+        description: Detailed information about resource
+        status: SUPPORTED
+      subnets:
+        type: list
+        description: Subnets of this network
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      status:
+        type: string
+        description: The status of the network
+        status: SUPPORTED
+    capabilities:
+      # copied from the org.openecomp.resource.cp.nodes.heat.network.neutron.Port type
+      attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED

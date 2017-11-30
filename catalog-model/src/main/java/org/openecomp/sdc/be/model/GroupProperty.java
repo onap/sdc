@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.model;
 
-import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 public class GroupProperty extends PropertyDefinition {

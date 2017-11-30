@@ -47,29 +47,30 @@
                 </div>
 
                 <!-- Tile new -->
-                <div class="sdc-tile-catalog sdc-tile-fix-width" data-ng-repeat="component in components | filter:{resourceType:('!'+vfcmtType)} | entityFilter:checkboxesFilter | filter:search">
-
-                    <div class="sdc-tile-header">
-                        <div class='sdc-tile-header-type' data-ng-class="{'purple': component.isResource(), 'blue': !component.isResource()}">
-                            <div data-ng-if="component.isResource()" data-tests-id="asset-type">{{component.getComponentSubType()}}</div>
-                            <div data-ng-if="component.isService()">S</div>
-                        </div>
+                <div class="sdc-tile sdc-tile-fix-width" data-ng-repeat="component in components | filter:{resourceType:('!'+vfcmtType)} | entityFilter:checkboxesFilter | filter:search">
+                 
+                    <div class='sdc-tile-header' data-ng-class="{'purple': component.isResource(), 'blue': !component.isResource()}">
+                        <div data-ng-if="component.isResource()" data-tests-id="asset-type">{{component.getComponentSubType()}}</div>
+                        <div data-ng-if="component.isService()">S</div>
                     </div>
+
                     <div class='sdc-tile-content' data-tests-id="dashboard-Elements" data-ng-click="goToComponent(component)">
                         <div class='sdc-tile-content-icon'>
                             <div class="{{component.iconSprite}} {{component.icon}}"
                                 data-ng-class="{'sprite-resource-icons': component.isResource(), 'sprite-services-icons': component.isService()}"
                                 data-tests-id="{{component.name}}"></div>
                         </div>
+
                         <div class='sdc-tile-content-info'>
-                            <div class="sdc-tile-content-info-item-name" data-tests-id="{{component.name | resourceName}}" sdc-smart-tooltip>{{component.name | resourceName}}</div>
-                            <div class="sdc-tile-content-info-version-info">
-                                <div class="sdc-tile-content-info-version-info-text" data-tests-id="{{component.name}}Version">V {{component.version}}</div>
-                            </div>
+                            <div class="sdc-tile-info-line title" data-tests-id="{{component.name | resourceName}}" sdc-smart-tooltip>{{component.name | resourceName}}</div>
+                            <div class="sdc-tile-info-line subtitle" data-tests-id="{{component.name}}Version">V {{component.version}}</div>
                         </div>
                     </div>
+
                     <div class='sdc-tile-footer'>
-                        <div class='sdc-tile-footer-text'>{{component.getStatus(sdcMenu)}}</div>
+                        <div class="sdc-tile-footer-content">
+                            <div class='sdc-tile-footer-text'>{{component.getStatus(sdcMenu)}}</div>
+                        </div>
                     </div>
 
                 </div>
@@ -103,10 +104,9 @@
 
     </div>
 
-    <top-nav top-lvl-selected-index="0" version="{{version}}" search-bind="search.filterTerm" notification-icon-callback="notificationIconCallback" version="{{version}}"></top-nav>
+    <top-nav [top-lvl-selected-index]="0" [version]="version" [search-term]="search.filterTerm" (search-term-change)="search.filterTerm=$event" [notification-icon-callback]="notificationIconCallback"></top-nav>
 
 </div>
 <div data-ui-view=""></div>
 
 
-<ecomp-footer></ecomp-footer>

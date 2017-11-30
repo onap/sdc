@@ -1,8 +1,5 @@
 package org.openecomp.sdc.asdctool.migration.scanner;
 
-import org.apache.commons.io.FileUtils;
-import org.openecomp.sdc.asdctool.migration.core.MigrationException;
-
 import java.io.File;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -11,6 +8,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import org.apache.commons.io.FileUtils;
+import org.openecomp.sdc.asdctool.migration.core.MigrationException;
 
 /**
  * scan and instantiate classes of given type in the class path

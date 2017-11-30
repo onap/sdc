@@ -2,8 +2,6 @@ package org.openecomp.sdc.be.tosca;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.Component;

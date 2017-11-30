@@ -23,16 +23,8 @@ package org.openecomp.sdc.be.model.operations.api;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.resources.data.CapabilityData;
-import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
-import org.openecomp.sdc.be.resources.data.PropertyData;
-
-import com.thinkaurelius.titan.core.TitanVertex;
 
 import fj.data.Either;
 

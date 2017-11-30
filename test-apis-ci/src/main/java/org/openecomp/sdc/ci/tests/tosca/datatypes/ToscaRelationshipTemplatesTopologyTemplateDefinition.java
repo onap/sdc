@@ -25,7 +25,6 @@ import java.util.Map;
 public class ToscaRelationshipTemplatesTopologyTemplateDefinition {
 
 	public ToscaRelationshipTemplatesTopologyTemplateDefinition() {
-		// TODO Auto-generated constructor stub
 	}
 
 	private String type;

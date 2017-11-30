@@ -20,13 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.devCI;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Base64.Decoder;
-
-import javax.json.Json;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,75 +27,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.cassandra.cli.CliParser.operator_return;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.graph.datatype.ActionEnum;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ArtifactUiDownloadData;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
-import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceDetailedAssetStructure;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.DistributionNotificationStatusEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.SearchCriteriaEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedExternalAudit;
-import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedResourceAuditJavaObject;
-import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.AssetRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.CategoryRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
-import org.openecomp.sdc.ci.tests.utils.validation.DistributionValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
-import org.openecomp.sdc.common.api.ApplicationErrorCodesEnum;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.api.UploadArtifactInfo;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
-import org.openecomp.sdc.common.util.GeneralUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -110,20 +61,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import org.openecomp.sdc.utils.Pair;
-import com.google.common.base.CaseFormat;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.relevantcodes.extentreports.LogStatus;
-
-import fj.P;
-import fj.data.Either;
-import it.unimi.dsi.fastutil.bytes.ByteSortedSets.SynchronizedSortedSet;
-
-import static java.util.Arrays.asList;
 
 public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 

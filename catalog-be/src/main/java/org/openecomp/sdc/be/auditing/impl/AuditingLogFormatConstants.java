@@ -20,14 +20,13 @@
 
 package org.openecomp.sdc.be.auditing.impl;
 
-import org.apache.commons.lang3.StringUtils;
-import org.openecomp.sdc.be.components.impl.ImportUtils;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
-public interface AuditingLogFormatConstants {
+class AuditingLogFormatConstants {
 
-	static AuditingFieldsKeysEnum[] DISTRIBUTION_REGISTRATION_TEMPLATE_ARRAY = {
+	private AuditingLogFormatConstants() {}
+
+	static final AuditingFieldsKeysEnum[] DISTRIBUTION_REGISTRATION_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_API_KEY,
@@ -37,7 +36,7 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_NOTIFICATION_TOPIC_NAME,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_STATUS_TOPIC_NAME};
 	
-	static AuditingFieldsKeysEnum[] DISTRIBUTION_DOWNLOAD_TEMPLATE_ARRAY = {
+	static final AuditingFieldsKeysEnum[] DISTRIBUTION_DOWNLOAD_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL,
@@ -45,7 +44,7 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
 	
-	static AuditingFieldsKeysEnum[] GET_UEB_CLUSTER_ARRAY = {
+	static final AuditingFieldsKeysEnum[] GET_UEB_CLUSTER_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_STATUS_TIME,
@@ -53,7 +52,7 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_STATUS_DESC
 	};
 	
-	static AuditingFieldsKeysEnum[] DISTRIBUTION_DEPLOY_ARRAY = {
+	static final AuditingFieldsKeysEnum[] DISTRIBUTION_DEPLOY_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME,
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE,
@@ -65,7 +64,7 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
 	
-	static AuditingFieldsKeysEnum[] DISTRIBUTION_STATUS_TEMPLATE_ARRAY = {
+	static final AuditingFieldsKeysEnum[] DISTRIBUTION_STATUS_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ID,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID,
@@ -76,7 +75,7 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_DESC		
 	};
 	
-	static AuditingFieldsKeysEnum[] DISTRIBUTION_NOTIFY_ARRAY = {
+	static final AuditingFieldsKeysEnum[] DISTRIBUTION_NOTIFY_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME,
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE,
@@ -90,7 +89,7 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
 	
-	static AuditingFieldsKeysEnum[] ADD_REMOVE_TOPIC_KEY_ACL_TEMPLATE_ARRAY = {
+	static final AuditingFieldsKeysEnum[] ADD_REMOVE_TOPIC_KEY_ACL_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ENVRIONMENT_NAME,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_TOPIC_NAME,
@@ -99,14 +98,14 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_STATUS
 	};
 	
-	static AuditingFieldsKeysEnum[] CREATE_TOPIC_TEMPLATE_ARRAY = {
+	static final AuditingFieldsKeysEnum[] CREATE_TOPIC_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_ENVRIONMENT_NAME,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_TOPIC_NAME,
 		AuditingFieldsKeysEnum.AUDIT_STATUS
 	};
 	
-	static AuditingFieldsKeysEnum[] ACTIVATE_DISTRIBUTION_ARRAY ={
+	static final AuditingFieldsKeysEnum[] ACTIVATE_DISTRIBUTION_ARRAY ={
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME,
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE,
@@ -121,7 +120,7 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
 	
-	static AuditingFieldsKeysEnum[] CHANGE_DISTRIBUTION_STATUS_ARRAY = {
+	static final AuditingFieldsKeysEnum[] CHANGE_DISTRIBUTION_STATUS_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME,
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE,
@@ -136,12 +135,12 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_COMMENT
 	};
 	
-	static AuditingFieldsKeysEnum[] CREATE_RESOURCE_TEMPLATE_SUFFIX_ARRAY = {
+	static final AuditingFieldsKeysEnum[] CREATE_RESOURCE_TEMPLATE_SUFFIX_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_STATUS,
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
 	
-	static AuditingFieldsKeysEnum[] CREATE_RESOURCE_TEMPLATE_PREFIX_ARRAY = {
+	static final AuditingFieldsKeysEnum[] CREATE_RESOURCE_TEMPLATE_PREFIX_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME,
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE,
@@ -155,14 +154,14 @@ public interface AuditingLogFormatConstants {
 
 	};
 	
-	static AuditingFieldsKeysEnum[] USER_ACCESS_TEMPLATE_ARRAY = {
+	static final AuditingFieldsKeysEnum[] USER_ACCESS_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION, 
 		AuditingFieldsKeysEnum.AUDIT_USER_UID,
 		AuditingFieldsKeysEnum.AUDIT_STATUS, 
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
 	
-	static AuditingFieldsKeysEnum[] USER_TEMPLATE_ARRAY = {
+	static final AuditingFieldsKeysEnum[] USER_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID,
 		AuditingFieldsKeysEnum.AUDIT_USER_UID,
@@ -170,7 +169,7 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
 	
-	static AuditingFieldsKeysEnum[] AUTH_TEMPLATE_ARRAY = {
+	static final AuditingFieldsKeysEnum[] AUTH_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION, 
 		AuditingFieldsKeysEnum.AUDIT_AUTH_URL,
 		AuditingFieldsKeysEnum.AUDIT_AUTH_USER, 
@@ -178,7 +177,7 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_AUTH_REALM
 	};
 	
-	static  AuditingFieldsKeysEnum[] ECOMP_USER_TEMPLATE_ARRAY = {
+	static final  AuditingFieldsKeysEnum[] ECOMP_USER_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION, 
 		AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID,
 		AuditingFieldsKeysEnum.AUDIT_ECOMP_USER, 
@@ -186,7 +185,7 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
 
-	static  AuditingFieldsKeysEnum[] CATEGORY_TEMPLATE_ARRAY = {
+	static final  AuditingFieldsKeysEnum[] CATEGORY_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION, 
 		AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID,
 		AuditingFieldsKeysEnum.AUDIT_CATEGORY_NAME,
@@ -197,7 +196,7 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
 	
-	static  AuditingFieldsKeysEnum[] GET_USERS_LIST_TEMPLATE_ARRAY = {
+	static final  AuditingFieldsKeysEnum[] GET_USERS_LIST_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION, 
 		AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID,
 		AuditingFieldsKeysEnum.AUDIT_USER_DETAILS, 
@@ -205,14 +204,14 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
 	
-	static  AuditingFieldsKeysEnum[] GET_CATEGORY_HIERARCHY_TEMPLATE_ARRAY = {
+	static final  AuditingFieldsKeysEnum[] GET_CATEGORY_HIERARCHY_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION, 
 		AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID,
 		AuditingFieldsKeysEnum.AUDIT_DETAILS, 
 		AuditingFieldsKeysEnum.AUDIT_STATUS,
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
-	static AuditingFieldsKeysEnum[] USER_ADMIN_TEMPLATE_ARRAY = {
+	static final AuditingFieldsKeysEnum[] USER_ADMIN_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID,
 		AuditingFieldsKeysEnum.AUDIT_USER_BEFORE,
@@ -220,14 +219,14 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_STATUS,
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
-	static AuditingFieldsKeysEnum[] EXTERNAL_GET_ASSET_LIST_TEMPLATE_ARRAY = {
+	static final AuditingFieldsKeysEnum[] EXTERNAL_GET_ASSET_LIST_TEMPLATE_ARRAY = {
 			AuditingFieldsKeysEnum.AUDIT_ACTION,
 			AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID,
 			AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL,
 			AuditingFieldsKeysEnum.AUDIT_STATUS,
 			AuditingFieldsKeysEnum.AUDIT_DESC
 	};
-	static AuditingFieldsKeysEnum[] EXTERNAL_GET_ASSET_TEMPLATE_ARRAY = {
+	static final AuditingFieldsKeysEnum[] EXTERNAL_GET_ASSET_TEMPLATE_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL,
@@ -237,13 +236,13 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_STATUS,
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
-	static AuditingFieldsKeysEnum[] EXTERNAL_DOWNLOAD_ARTIFACT_ARRAY = {
+	static final AuditingFieldsKeysEnum[] EXTERNAL_DOWNLOAD_ARTIFACT_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL,
 		AuditingFieldsKeysEnum.AUDIT_STATUS,
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
-	static AuditingFieldsKeysEnum[] EXTERNAL_CRUD_API_ARTIFACT_ARRAY = {
+	static final AuditingFieldsKeysEnum[] EXTERNAL_CRUD_API_ARTIFACT_ARRAY = {
 		AuditingFieldsKeysEnum.AUDIT_ACTION,
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME,
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE,
@@ -257,7 +256,7 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
 	
-	static AuditingFieldsKeysEnum[] EXTERNAL_CRUD_API_ARRAY = {
+	static final AuditingFieldsKeysEnum[] EXTERNAL_CRUD_API_ARRAY = {
 			AuditingFieldsKeysEnum.AUDIT_ACTION,
 			AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME,
 			AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE,
@@ -278,7 +277,7 @@ public interface AuditingLogFormatConstants {
 			AuditingFieldsKeysEnum.AUDIT_DESC	
 	};
 	
-	static AuditingFieldsKeysEnum[] EXTERNAL_LYFECYCLE_API_ARRAY = {
+	static final AuditingFieldsKeysEnum[] EXTERNAL_LYFECYCLE_API_ARRAY = {
 			AuditingFieldsKeysEnum.AUDIT_ACTION,
 			AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME,
 			AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE,

@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.components.clean;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

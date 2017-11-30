@@ -71,7 +71,6 @@ import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
-import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -93,7 +92,7 @@ public class ImportDCAE extends SetupCDTest {
 
 		// update Resource
 		ResourceReqDetails updatedResource = new ResourceReqDetails();
-		updatedResource.setName("ciUpdatedNameImportDCAE");
+		updatedResource.setName(ElementFactory.getResourcePrefix() + "UpdatedName" + resourceMetaData.getName());
 		updatedResource.setDescription("kuku");
 		updatedResource.setVendorName("updatedVendor");
 		updatedResource.setVendorRelease("updatedRelease");

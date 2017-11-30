@@ -30,7 +30,7 @@ export class CompositionCiNodeService extends CompositionCiNodeBase {
     }
 
     private initService():void {
-
+        this.imagesPath = this.imagesPath + ImagesUrl.SERVICE_ICONS;
         this.img = this.imagesPath + ImagesUrl.SERVICE_ICONS + this.componentInstance.icon + '.png';
         this.imgWidth = GraphUIObjects.DEFAULT_RESOURCE_WIDTH;
         this.classes = 'service-node'

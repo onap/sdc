@@ -31,7 +31,7 @@ public class PropertyConvertorTest {
         property = new PropertyDefinition();
         property.setName("myProperty");
         property.setType(ToscaPropertyType.INTEGER.getType());
-        dataTypes = new HashMap<String, DataTypeDefinition>();
+        dataTypes = new HashMap();
         dataTypes.put(property.getName(), new DataTypeDefinition());
     }
 
@@ -60,7 +60,7 @@ public class PropertyConvertorTest {
         property1.setDefaultValue("2");
         dataTypes.put(property1.getName(), new DataTypeDefinition());
         Resource resource = new Resource();
-        List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+        List<PropertyDefinition> properties = new ArrayList();
         properties.add(property);
         properties.add(property1);
         resource.setProperties(properties);
@@ -86,7 +86,7 @@ public class PropertyConvertorTest {
         property.setDefaultValue("1");
         dataTypes.put(property1.getName(), new DataTypeDefinition());
         Resource resource = new Resource();
-        List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+        List<PropertyDefinition> properties = new ArrayList();
         properties.add(property);
         properties.add(property1);
         resource.setProperties(properties);
@@ -106,7 +106,7 @@ public class PropertyConvertorTest {
         property1.setType(ToscaPropertyType.INTEGER.getType());
         dataTypes.put(property1.getName(), new DataTypeDefinition());
         Resource resource = new Resource();
-        List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+        List<PropertyDefinition> properties = new ArrayList();
         properties.add(property);
         properties.add(property1);
         resource.setProperties(properties);

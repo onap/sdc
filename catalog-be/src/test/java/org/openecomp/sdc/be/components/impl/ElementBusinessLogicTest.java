@@ -2,48 +2,23 @@ package org.openecomp.sdc.be.components.impl;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
-import javax.annotation.Generated;
-
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.tinkerpop.gremlin.structure.T;
-import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
-import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
-import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactType;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PropertyScope;
-import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
-import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.category.SubCategoryData;
 import org.openecomp.sdc.be.ui.model.UiCategories;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import com.google.common.util.concurrent.Service;
-import com.thinkaurelius.titan.core.TitanGraph;
-
 import fj.data.Either;
-import io.swagger.annotations.Tag;
 
 
 public class ElementBusinessLogicTest {

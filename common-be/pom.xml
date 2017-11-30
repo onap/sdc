@@ -11,8 +11,11 @@
 		<version>1.2.0-SNAPSHOT</version>
 	</parent>
 
+	<properties>
+		<sonar.skip>true</sonar.skip>
+	</properties>
+
 	<dependencies>
-	
 		<!-- Common of SD&C -->
 		<dependency>
 			<groupId>org.openecomp.sdc</groupId>

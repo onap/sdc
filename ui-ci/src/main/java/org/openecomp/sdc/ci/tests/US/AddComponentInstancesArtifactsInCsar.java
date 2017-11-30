@@ -49,9 +49,10 @@ import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
 import org.openecomp.sdc.ci.tests.pages.ToscaArtifactsPage;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.OnboardingUtils;
+import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.testng.Assert;
 import org.testng.SkipException;
@@ -67,7 +68,7 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 	private String filePath;
 	@BeforeClass
 	public void beforeClass(){
-		filePath = System.getProperty("filepath");
+		filePath = System.getProperty("filePath");
 		if (filePath == null && System.getProperty("os.name").contains("Windows")) {
 			filePath = FileHandling.getResourcesFilesPath() + "AddComponentInstancesArtifactsInCsar"+ File.separator;
 		}
@@ -86,16 +87,17 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 		String snmpFile = "Fault-alarms-ASDC-vprobes-vLB.zip";
 		
 		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
-		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(vnfFile, filePath, getUser(), amdocsLicenseMembers);
+		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+		Pair<String, Map<String, String>> createVSP = OnboardingUtils.createVSP(resourceReqDetails, vnfFile, filePath, getUser(), amdocsLicenseMembers);
 		String vspName = createVSP.left;
 		resourceMetaData.setName(vspName);
 		Map<String, String> resourceMeta = createVSP.right;
 		String vspid = resourceMeta.get("vspId");
 		OnboardingUtils.addVFCArtifacts(filePath, snmpFile, null, vspid, getUser());
-		OnboardingUtils.prepareVspForUse(getUser(), vspid);
+		OnboardingUtils.prepareVspForUse(getUser(), vspid, "0.1");
 
 		HomePage.showVspRepository();
-		OnboardingUtils.importVSP(createVSP);
+		OnboardingUiUtils.importVSP(createVSP);
 		resourceMetaData.setVersion("0.1");
 		Resource vfResource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), resourceMetaData.getVersion());
 
@@ -196,10 +198,6 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 			} else {
 				compareArtifacts(artifactFromJavaObject.get(key), artifactsFromFileStructure.get(key));
 			}
-			
-			
-			
-			
 		}
 	}
 	

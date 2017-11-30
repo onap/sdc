@@ -170,8 +170,10 @@
             line-height: 110px;
             .f-type ._28;
         }
-        &.composition .w-sdc-main-container-body-content {
-            height: calc(~'100% - @{action_nav_height}'); //composition is the only tab without a tab title. need to exclude from calculation.
+        &.composition, &.deployment{
+            .w-sdc-main-container-body-content {
+                height: 100%;
+            }
         }
         .w-sdc-main-container-body-content {
             // height:calc(~'100% - @{action_nav_height} - @{tab_title}');

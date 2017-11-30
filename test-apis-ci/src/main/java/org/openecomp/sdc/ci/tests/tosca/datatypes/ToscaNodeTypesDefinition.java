@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
+import java.util.HashMap;
 import java.util.Map;
 
 // spec page 88
@@ -29,12 +30,12 @@ public class ToscaNodeTypesDefinition {
 	private String derived_from;
 	private String version;
 	private String description;
-	private Map<String, Object> properties;
-	private Map<String, Object> attributes;
-	private Map<String, Object> requirements;
-	private Map<String, Object> capabilities;
-	private Map<String, Object> interfaces;
-	private Map<String, Object> artifacts;
+	private Map<String, Object> properties = new HashMap<>();
+	private Map<String, Object> attributes = new HashMap<>();
+	private Map<String, Object> requirements = new HashMap<>();
+	private Map<String, Object> capabilities = new HashMap<>();
+	private Map<String, Object> interfaces = new HashMap<>();
+	private Map<String, Object> artifacts = new HashMap<>();
 	
 	public ToscaNodeTypesDefinition() {
 		super();

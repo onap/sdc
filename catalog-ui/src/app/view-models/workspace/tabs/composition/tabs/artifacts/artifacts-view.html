@@ -1,5 +1,6 @@
 <perfect-scrollbar class="w-sdc-designer-sidebar-tab-content artifacts">
     <div class="w-sdc-designer-sidebar-section">
+        <loader data-display="isLoading"></loader>
         <expand-collapse
             expanded-selector=".w-sdc-designer-sidebar-section-content" class="w-sdc-designer-sidebar-section-title">
             <span class="w-sdc-designer-sidebar-section-title-text" data-ng-bind="getTitle()" tooltips tooltip-content="{{getTitle()}}"></span>
@@ -19,8 +20,8 @@
                               data-ng-if="artifact.artifactName"></div>
                         <div>
                             <span class="i-sdc-designer-sidebar-section-content-item-artifact-details-name" data-tests-id="artifact_Display_Name-{{artifact.artifactDisplayName}}"
-                                  data-ng-class="{'hand enabled': !isViewMode() && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact)}"
-                                  data-ng-bind="artifact.artifactDisplayName" data-ng-click="!isViewMode() && !isLoading && !isComponentInstanceSelected() && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact) && addOrUpdate(artifact)"
+                                  data-ng-class="{'hand enabled': allowDeleteAndUpdateArtifactMap[artifact.artifactLabel]}"
+                                  data-ng-bind="artifact.artifactDisplayName" data-ng-click="!isLoading && allowDeleteAndUpdateArtifactMap[artifact.artifactLabel] && addOrUpdate(artifact)"
                                   tooltips tooltip-content="{{artifact.artifactDisplayName}}"></span>
                             <div class="i-sdc-designer-sidebar-section-content-item-artifact-heat-env" ng-if="artifact.heatParameters.length">
                                 <span data-ng-bind="getEnvArtifactName(artifact)"data-tests-id="heat_env_{{artifact.artifactDisplayName}}"></span>
@@ -36,7 +37,7 @@
                             <span class="i-sdc-designer-sidebar-section-content-item-artifact-details-desc-label" data-ng-show="artifact.description">Description:</span>{{artifact.description}}
                         </div>
                     </div>
-                    <button ng-if="displayDeleteButtonMap[artifact.artifactLabel]" class="i-sdc-designer-sidebar-section-content-item-button delete sprite e-sdc-small-icon-delete"
+                    <button ng-if="artifact.esId && allowDeleteAndUpdateArtifactMap[artifact.artifactLabel]" class="i-sdc-designer-sidebar-section-content-item-button delete sprite e-sdc-small-icon-delete"
                             data-tests-id="delete_{{artifact.artifactDisplayName}}" data-ng-click="delete(artifact)" type="button"></button>
                     <button ng-if="!isViewMode()  && artifact.isHEAT() && isComponentInstanceSelected() && artifact.heatParameters.length"
                             class="i-sdc-designer-sidebar-section-content-item-button attach sprite e-sdc-small-icon-pad"

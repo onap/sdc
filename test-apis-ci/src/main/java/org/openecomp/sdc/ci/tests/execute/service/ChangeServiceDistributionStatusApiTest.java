@@ -32,7 +32,6 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -45,7 +44,6 @@ import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedResourceAuditJavaObject;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
@@ -60,8 +58,6 @@ import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ServiceValidationUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import fj.data.Either;
 
 public class ChangeServiceDistributionStatusApiTest extends ComponentBaseTest {
 

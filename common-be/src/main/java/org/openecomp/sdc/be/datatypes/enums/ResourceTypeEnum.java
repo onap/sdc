@@ -33,7 +33,9 @@ public enum ResourceTypeEnum {
 	PNF("PNF"/* (Physical Network Function)" */),
 	CVFC("CVFC"/*Complex Virtual Function Component*/),
 	VL( "VL (Virtual Link)"), 
-	VFCMT("VFCMT (VFC Monitoring Template)"), 
+	VFCMT("VFCMT (VFC Monitoring Template)"),
+	Configuration("Configuration ()"),
+	ServiceProxy("ServiceProxy ()"),
 	ABSTRACT("Abstract (Generic VFC/VF/PNF/Service Type)");
 
 	private String value;

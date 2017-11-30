@@ -20,11 +20,21 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
-import com.google.gson.Gson;
-import fj.data.Either;
+import static org.testng.AssertJUnit.assertTrue;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.codec.binary.Base64;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
@@ -34,9 +44,7 @@ import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-
 import org.openecomp.sdc.ci.tests.datatypes.VendorSoftwareProductObject;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
@@ -45,14 +53,11 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import org.apache.commons.codec.binary.Base64;
+import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
+import com.google.gson.Gson;
 
-
-
-import static org.testng.AssertJUnit.assertTrue;
+import fj.data.Either;
 
 public class OnboardingUtillViaApis {
 
@@ -64,13 +69,12 @@ public class OnboardingUtillViaApis {
 		return headersMap;
 	}
 	
-	public static Pair<String, VendorSoftwareProductObject> createVspViaApis(String filepath, String vnfFile, User user) throws Exception {
-		
+	public static Pair<String, VendorSoftwareProductObject> createVspViaApis(ResourceReqDetails resourceReqDetails, String filepath, String vnfFile, User user) throws Exception {
+
 		VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductObject();
 		ExtentTestActions.log(Status.INFO, String.format("Create Vendor License"));
 		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(user);
-		ExtentTestActions.log(Status.INFO, String.format("Create Vendor Software Product"));
-		Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(vnfFile, filepath, user, amdocsLicenseMembers);
+		Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user, amdocsLicenseMembers);
 		Map<String, String> map = createVendorSoftwareProduct.right;
 		vendorSoftwareProductObject.setAttContact(map.get("attContact"));
 		vendorSoftwareProductObject.setCategory(map.get("category"));
@@ -105,27 +109,17 @@ public class OnboardingUtillViaApis {
 		
 		return resource; 
 	}*/
-	public static Resource createResourceFromVSP(ResourceReqDetails resourceDetails, String vspName) throws Exception {
-//		List<String> tags = new ArrayList<>();
-//		tags.add(vspName);
-//		Map<String, String> map = createVendorSoftwareProduct.right;
-//		ResourceReqDetails resourceDetails = new ResourceReqDetails();
-//		resourceDetails.setCsarUUID(map.get("vspId"));
-//		resourceDetails.setCsarVersion("1.0");
-//		resourceDetails.setName(vspName);
-//		resourceDetails.setTags(tags);
-//		resourceDetails.setDescription(map.get("description"));
-//		resourceDetails.setResourceType(map.get("componentType"));
-//		resourceDetails.addCategoryChain(ResourceCategoryEnum.GENERIC_DATABASE.getCategory(), ResourceCategoryEnum.GENERIC_DATABASE.getSubCategory());
-//		resourceDetails.setVendorName(map.get("vendorName"));
-//		resourceDetails.setVendorRelease("1.0");
-//		resourceDetails.setResourceType("VF");
-//		resourceDetails.setResourceVendorModelNumber("666");
-//		resourceDetails.setContactId(map.get("attContact"));
-//		resourceDetails.setIcon("defaulticon");
+
+	public static Resource createResourceFromVSP(ResourceReqDetails resourceDetails, UserRoleEnum user) throws Exception {
+		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, user, true).left().value();
+
+		return resource;
+	}
+
+	public static Resource createResourceFromVSP(ResourceReqDetails resourceDetails) throws Exception {
 		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
 		
-		return resource; 
+		return resource;
 	}
 	public static void downloadToscaCsarToDirectory(Component component, File file) {
 		try {
@@ -134,7 +128,6 @@ public class OnboardingUtillViaApis {
 				convertPayloadToFile(componentToscaArtifactPayload.left().value(), file);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -258,25 +251,25 @@ public class OnboardingUtillViaApis {
 		return Either.left(response.getResponse());
 		
 	}
-	
-	public static ResourceReqDetails prepareOnboardedResourceDetailsBeforeCreate(VendorSoftwareProductObject vendorSoftwareProductObject, String vspName) {
+
+	public static ResourceReqDetails prepareOnboardedResourceDetailsBeforeCreate(ResourceReqDetails resourceDetails, VendorSoftwareProductObject vendorSoftwareProductObject) {
 
 		List<String> tags = new ArrayList<>();
-		tags.add(vspName);
-		ResourceReqDetails resourceDetails = new ResourceReqDetails();
+		tags.add(vendorSoftwareProductObject.getName());
+//		ResourceReqDetails resourceDetails = new ResourceReqDetails();
 		resourceDetails.setCsarUUID(vendorSoftwareProductObject.getVspId());
-		resourceDetails.setCsarVersion("1.0");
-		resourceDetails.setName(vspName);
+		resourceDetails.setCsarVersion(vendorSoftwareProductObject.getVersion());
+		resourceDetails.setName(vendorSoftwareProductObject.getName());
 		resourceDetails.setTags(tags);
 		resourceDetails.setDescription(vendorSoftwareProductObject.getDescription());
-		resourceDetails.addCategoryChain(ResourceCategoryEnum.GENERIC_DATABASE.getCategory(), ResourceCategoryEnum.GENERIC_DATABASE.getSubCategory());
+//		resourceDetails.addCategoryChain(ResourceCategoryEnum.GENERIC_DATABASE.getCategory(), ResourceCategoryEnum.GENERIC_DATABASE.getSubCategory());
 		resourceDetails.setVendorName(vendorSoftwareProductObject.getVendorName());
-		resourceDetails.setVendorRelease("1.0");
+//		resourceDetails.setVendorRelease("1.0");
 		resourceDetails.setResourceType("VF");
 		resourceDetails.setResourceVendorModelNumber("666");
 		resourceDetails.setContactId(vendorSoftwareProductObject.getAttContact());
-		resourceDetails.setIcon("defaulticon");
-		
+//		resourceDetails.setIcon("defaulticon");
+
 		return resourceDetails;
 	}
 	

@@ -20,8 +20,8 @@
 
 'use strict';
 import {ModalsHandler} from "app/utils";
-import {IUserResource, IUserResourceClass} from "app/services";
 import {User, IUserProperties, IUser, IAppConfigurtaion} from "app/models";
+import {UserService} from "../../../ng2/services/user.service";
 
 interface IUserManagementViewModelScope extends ng.IScope {
     sdcConfig:IAppConfigurtaion;
@@ -33,7 +33,7 @@ interface IUserManagementViewModelScope extends ng.IScope {
     tableHeadersList:any;
     roles:Array<string>;
     newUser:IUser;
-    currentUser:IUserResource;
+    currentUser:IUserProperties;
     userIdValidationPattern:RegExp;
     editForm:ng.IFormController;
     getAllUsers():void;
@@ -53,7 +53,7 @@ export class UserManagementViewModel {
     static '$inject' = [
         '$scope',
         'sdcConfig',
-        'Sdc.Services.UserResourceService',
+        'UserServiceNg2',
         'UserIdValidationPattern',
         '$filter',
         'ModalsHandler'
@@ -61,7 +61,7 @@ export class UserManagementViewModel {
 
     constructor(private $scope:IUserManagementViewModelScope,
                 private sdcConfig:IAppConfigurtaion,
-                private userResourceService:IUserResourceClass,
+                private userService:UserService,
                 private UserIdValidationPattern:RegExp,
                 private $filter:ng.IFilterService,
                 private ModalsHandler:ModalsHandler) {
@@ -85,7 +85,7 @@ export class UserManagementViewModel {
             });
             this.$scope.isLoading = false;
         };
-        this.userResourceService.getAllUsers(onSuccess, onError);
+        this.userService.getAllUsers().subscribe(onSuccess, onError);
     };
 
     private updateUserFilterTerm = (user:IUserProperties):void => {
@@ -111,11 +111,11 @@ export class UserManagementViewModel {
         this.$scope.reverse = false;
         this.$scope.roles = this.sdcConfig.roles;
         this.$scope.isNewUser = false;
-        this.$scope.currentUser = this.userResourceService.getLoggedinUser();
+        this.$scope.currentUser = this.userService.getLoggedinUser();
         this.getAllUsers();
 
-        let resource:IUserResource = <IUserResource>{};
-        this.$scope.newUser = new User(resource);
+        let userInfo:IUserProperties = <IUserProperties>{};
+        this.$scope.newUser = new User(userInfo);
 
         this.$scope.sort = (sortBy:string):void => {//default sort by descending last update. default for alphabetical = ascending
             this.$scope.isNewUser = false;
@@ -131,13 +131,12 @@ export class UserManagementViewModel {
             };
 
             let onSuccess = (response:IUserProperties) => {
-                this.$scope.newUser.resource['index'] = this.$scope.usersList.length;
-                this.$scope.newUser.resource.lastLoginTime = "0";
-                this.$scope.newUser.resource.status = response.status;
-                this.updateUserFilterTerm(this.$scope.newUser.resource);
-                this.$scope.usersList.unshift(this.$scope.newUser.resource);
+                this.$scope.newUser.userInfo.lastLoginTime = "0";
+                this.$scope.newUser.userInfo.status = response.status;
+                this.updateUserFilterTerm(this.$scope.newUser.userInfo);
+                this.$scope.usersList.push(this.$scope.newUser.userInfo);
                 this.$scope.isNewUser = true;
-                this.$scope.sortBy = 'index';
+                this.$scope.sortBy = null;
                 this.$scope.reverse = true;
                 this.$scope.isLoading = false;
                 this.$scope.newUser = new User(null);
@@ -147,10 +146,10 @@ export class UserManagementViewModel {
                     _self.$scope.isNewUser = false;
                 }, 7000);
             };
-            this.userResourceService.createUser({
-                userId: this.$scope.newUser.resource.userId,
-                role: this.$scope.newUser.resource.role
-            }, onSuccess, onError);
+            this.userService.createUser({
+                userId: this.$scope.newUser.userInfo.userId,
+                role: this.$scope.newUser.userInfo.role
+            }).subscribe(onSuccess, onError);
         };
 
 
@@ -174,7 +173,7 @@ export class UserManagementViewModel {
                 this.updateUserFilterTerm(user);
             };
 
-            this.userResourceService.editUserRole({id: user.userId, role: user.role}, onSuccess, onError);
+            this.userService.editUserRole(user.userId, user.role).subscribe(onSuccess, onError);
         };
 
         this.$scope.saveUserChanges = (user:IUserProperties):void => {
@@ -198,7 +197,7 @@ export class UserManagementViewModel {
                     _.remove(this.$scope.usersList, {userId: userId});
                     this.$scope.isLoading = false;
                 };
-                this.userResourceService.deleteUser({id: userId}, onSuccess, onError);
+                this.userService.deleteUser(userId).subscribe(onSuccess, onError);
             };
 
             let title:string = this.$filter('translate')("USER_MANAGEMENT_VIEW_DELETE_MODAL_TITLE");

@@ -143,7 +143,9 @@ public class ToscaParserUtils {
         	toscaDefinition = (ToscaDefinition) yaml.load(payload);
 		} catch (Exception e) {
 			log.debug("Failed to parse tosca yaml file");
+			log.debug("Exception: " + e);
 			System.out.println("Exception: " + e);
+			assertTrue("Exception: " + e, false);
 		}
         return toscaDefinition;
         
@@ -160,6 +162,7 @@ public class ToscaParserUtils {
     	toscaStructure.addTypeDescription(ToscaImportsDefinition.getTypeDescription());
     	toscaStructure.addTypeDescription(ToscaMetadataDefinition.getTypeDescription());
     	toscaStructure.addTypeDescription(ToscaInputsTopologyTemplateDefinition.getTypeDescription());
+//    	toscaStructure.addTypeDescription(ToscaInputsDefinition.getTypeDescription());
 //    	Skip properties which are found in YAML, but not found in POJO
     	PropertyUtils propertyUtils = new PropertyUtils();
     	propertyUtils.setSkipMissingProperties(true);

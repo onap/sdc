@@ -17,70 +17,43 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 import { NgModule } from "@angular/core";
-import { PropertiesAssignmentComponent } from "./properties-assignment.page.component";
-import { HierarchyNavigationComponent } from "./../../components/hierarchy-navigtion/hierarchy-navigation.component";
-import { BrowserModule } from "@angular/platform-browser";
-import { FormsModule } from "@angular/forms";
-import { HttpModule } from "@angular/http";
-import { TabModule } from '../../shared/tabs/tabs.module';
-import { CheckboxModule} from '../../shared/checkbox/checkbox.module';
-import { PropertiesTableComponent } from '../../components/properties-table/properties-table.component';
-import { InputsTableComponent } from '../../components/inputs-table/inputs-table.component';
-import { ContentAfterLastDotPipe } from "../../pipes/contentAfterLastDot.pipe";
-import { SearchFilterPipe } from "../../pipes/searchFilter.pipe";
-import { FilterChildPropertiesPipe } from "../../pipes/filterChildProperties.pipe";
-import { DataTypeService } from './../../services/data-type.service';
-import { PropertiesService } from './../../services/properties.service';
-import { HierarchyNavService } from './../../services/hierarchy-nav.service';
-import { PropertiesUtils } from './properties.utils';
-import { DynamicElementModule } from 'app/ng2/components/dynamic-element/dynamic-element.module';
-import { DynamicPropertyComponent } from './../../components/properties-table/dynamic-property/dynamic-property.component';
-import { PopoverModule } from "../../components/popover/popover.module";
-import { ModalModule } from "../../components/modal/modal.module";
-import { FilterPropertiesAssignmentComponent } from "./../../components/filter-properties-assignment/filter-properties-assignment.component";
-import { GroupByPipe } from 'app/ng2/pipes/groupBy.pipe';
-import { KeysPipe } from 'app/ng2/pipes/keys.pipe';
-import {TooltipModule} from "../../components/tooltip/tooltip.module";
-import { ComponentModeService } from "app/ng2/services/component-mode.service"
-import {LoaderComponent} from "app/ng2/components/loader/loader.component"
+import {HierarchyNavigationComponent} from "../../components/logic/hierarchy-navigtion/hierarchy-navigation.component";
+import {HttpModule} from "@angular/http";
+import {FormsModule} from "@angular/forms";
+import {PropertyTableModule} from "../../components/logic/properties-table/property-table.module";
+import {UiElementsModule} from "../../components/ui/ui-elements.module";
+import {GlobalPipesModule} from "../../pipes/global-pipes.module";
+import {BrowserModule} from "@angular/platform-browser";
+import {FilterPropertiesAssignmentComponent} from "../../components/logic/filter-properties-assignment/filter-properties-assignment.component";
+import {InputsTableComponent} from "../../components/logic/inputs-table/inputs-table.component";
+import {PropertiesService} from "../../services/properties.service";
+import {DataTypeService} from "../../services/data-type.service";
+import {PropertiesAssignmentComponent} from "./properties-assignment.page.component";
+import {HierarchyNavService} from "./services/hierarchy-nav.service";
+import {PropertiesUtils} from "./services/properties.utils";
+import {ComponentModeService} from "../../services/component-services/component-mode.service";
 
 @NgModule({
     declarations: [
         PropertiesAssignmentComponent,
-        PropertiesTableComponent,
         InputsTableComponent,
-        ContentAfterLastDotPipe,
-        GroupByPipe,
-        KeysPipe,
-        SearchFilterPipe,
-        FilterChildPropertiesPipe,
         HierarchyNavigationComponent,
-        DynamicPropertyComponent,
-        // PopoverContentComponent,
-        // PopoverComponent,
-        FilterPropertiesAssignmentComponent,
-        LoaderComponent
+        FilterPropertiesAssignmentComponent
     ],
     imports: [
         BrowserModule,
         FormsModule,
         HttpModule,
-        TabModule,
-        CheckboxModule,
-        DynamicElementModule,
-        PopoverModule,
-        TooltipModule,
-        ModalModule
-    ],
+        GlobalPipesModule,
+        PropertyTableModule,
+        UiElementsModule],
+    
     entryComponents: [PropertiesAssignmentComponent],
     exports: [
         PropertiesAssignmentComponent
-        // PopoverContentComponent,
-        // PopoverComponent
     ],
-    providers: [PropertiesService, HierarchyNavService, PropertiesUtils, DataTypeService, ContentAfterLastDotPipe, GroupByPipe, KeysPipe, ComponentModeService]
+    providers: [PropertiesService, HierarchyNavService, PropertiesUtils, DataTypeService, ComponentModeService]
 })
 export class PropertiesAssignmentModule {
 

@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
@@ -33,9 +36,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import fj.data.Either;
-
-import java.util.Collections;
-import java.util.List;
 
 @Component("consumer-operation")
 public class ConsumerOperation implements IConsumerOperation {

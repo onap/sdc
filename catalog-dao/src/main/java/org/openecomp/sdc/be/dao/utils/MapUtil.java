@@ -20,8 +20,14 @@
 
 package org.openecomp.sdc.be.dao.utils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Utility class to ease map manipulation.
@@ -60,6 +66,38 @@ public final class MapUtil {
 			}
 			return value;
 		}
+	}
+
+	/**
+	 *
+	 * @param valuesToMap the list of values to group
+	 * @param groupingFunction the function to group the list values by
+	 * @return a map of list of values grouped by a key, as specified in the {@code groupingFunction}
+	 */
+	public static <K,V> Map<K,List<V>> groupListBy(Collection<V> valuesToMap, Function<V,K> groupingFunction) {
+		return valuesToMap.stream().collect(Collectors.groupingBy(groupingFunction));
+	}
+
+	/**
+	 *
+	 * @param valuesToMap list of values to map
+	 * @param mappingFunction a function which specifies how to map each element on the list
+	 * @return a map created by mapping each element from the {@code valuesToMap} as specified in the {@code mappingFunction}
+	 */
+	public static <K,V> Map<K,V> toMap(Collection<V> valuesToMap, Function<V,K> mappingFunction) {
+		return Optional.ofNullable(valuesToMap).orElse(new ArrayList<>()).stream().collect(Collectors.toMap(mappingFunction, Function.identity()));
+	}
+
+	/**
+	 *
+	 * @param map the map of which it keys to convert
+	 * @param keyMappingFunction a function which converts the key object
+	 * @return a map with converted keys.
+	 */
+	public static <K,U, V> Map<U, List<V>> convertMapKeys(Map<K, List<V>> map, Function<K,U> keyMappingFunction) {
+		return map.entrySet().stream()
+				.collect(Collectors.toMap(entry -> keyMappingFunction.apply(entry.getKey()),
+										  Map.Entry::getValue));
 	}
 
 	/**

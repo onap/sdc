@@ -49,8 +49,6 @@ import org.openecomp.sdc.common.transaction.api.TransactionUtils.ESActionTypeEnu
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.LogMessages;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.TransactionCodeEnum;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.TransactionStatusEnum;
-import org.openecomp.sdc.common.transaction.mngr.CommitManager;
-import org.openecomp.sdc.common.transaction.mngr.TransactionSdncImpl;
 import org.slf4j.Logger;
 
 import fj.data.Either;

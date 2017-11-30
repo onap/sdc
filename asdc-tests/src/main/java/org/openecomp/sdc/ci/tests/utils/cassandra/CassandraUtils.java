@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.utils.cassandra;
 
-import com.datastax.driver.core.*;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
-import com.datastax.driver.core.querybuilder.Select.Where;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.javatuples.Pair;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
@@ -32,10 +32,15 @@ import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.KeyspaceMetadata;
+import com.datastax.driver.core.Metadata;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.TableMetadata;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select;
+import com.datastax.driver.core.querybuilder.Select.Where;
 
 public final class CassandraUtils {
 	private static Logger logger = LoggerFactory.getLogger(CassandraUtils.class.getName());

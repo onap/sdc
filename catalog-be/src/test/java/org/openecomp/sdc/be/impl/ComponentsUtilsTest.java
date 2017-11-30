@@ -1,31 +1,15 @@
 package org.openecomp.sdc.be.impl;
 
 import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.tinkerpop.gremlin.structure.T;
-import org.codehaus.jackson.map.module.SimpleModule;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.auditing.api.IAuditingManager;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.graph.datatype.AdditionalInformationEnum;
-import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ConsumerDefinition;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GroupTypeDefinition;
-import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -33,10 +17,6 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import com.fasterxml.jackson.databind.JsonDeserializer;
-
-import fj.data.Either;
 
 public class ComponentsUtilsTest {
 

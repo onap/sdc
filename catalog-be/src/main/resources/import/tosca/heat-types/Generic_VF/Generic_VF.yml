@@ -23,5 +23,6 @@ node_types:
         type: integer 
       max_instances:
         type: integer 
-
-    
+      multi_stage_design:
+        type: boolean
+        default: false

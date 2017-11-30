@@ -1,12 +1,8 @@
 package org.openecomp.sdc.be.components.impl;
 
-import javax.annotation.Generated;
-
-import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.ConsumerDefinition;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import fj.data.Either;

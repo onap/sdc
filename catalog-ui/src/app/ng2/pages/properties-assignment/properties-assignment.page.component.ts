@@ -20,21 +20,22 @@
 
 import {Component, ViewChild, ElementRef, Renderer, Inject} from "@angular/core";
 import { PropertiesService } from "../../services/properties.service";
-import { HierarchyNavService } from "../../services/hierarchy-nav.service";
-import { PropertiesUtils } from './properties.utils';
 import { PropertyFEModel, InstanceFePropertiesMap, InstanceBePropertiesMap, InstancePropertiesAPIMap, Component as ComponentData, FilterPropertiesAssignmentData } from "app/models";
-import { PROPERTY_TYPES, ResourceType } from "app/utils";
+import { ResourceType } from "app/utils";
 import property = require("lodash/property");
 import {ComponentServiceNg2} from "../../services/component-services/component.service";
 import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service"
-import { InputBEModel, InputFEModel, ComponentInstance, PropertyBEModel, DerivedPropertyType, DerivedFEProperty, ResourceInstance, SimpleFlatProperty } from "app/models";
-import {HierarchyDisplayOptions} from "../../components/hierarchy-navigtion/hierarchy-display-options"
-import {PropertyRowSelectedEvent} from "./../../components/properties-table/properties-table.component";
+import { InputBEModel, InputFEModel, ComponentInstance, PropertyBEModel, DerivedFEProperty, ResourceInstance, SimpleFlatProperty } from "app/models";
 import { KeysPipe } from 'app/ng2/pipes/keys.pipe';
-import {FilterPropertiesAssignmentComponent} from "../../components/filter-properties-assignment/filter-properties-assignment.component";
-import { ComponentModeService } from "app/ng2/services/component-mode.service"
 import {WorkspaceMode, EVENTS} from "../../../utils/constants";
 import {EventListenerService} from "app/services/event-listener-service"
+import {HierarchyDisplayOptions} from "../../components/logic/hierarchy-navigtion/hierarchy-display-options";
+import {FilterPropertiesAssignmentComponent} from "../../components/logic/filter-properties-assignment/filter-properties-assignment.component";
+import {PropertyRowSelectedEvent} from "../../components/logic/properties-table/properties-table.component";
+import {HierarchyNavService} from "./services/hierarchy-nav.service";
+import {PropertiesUtils} from "./services/properties.utils";
+import {ComponentModeService} from "../../services/component-services/component-mode.service";
+
 @Component({
     templateUrl: './properties-assignment.page.component.html',
     styleUrls: ['./properties-assignment.page.component.less']

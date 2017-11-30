@@ -42,8 +42,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.CapabilityTypeImportManager;
 import org.openecomp.sdc.be.components.impl.CategoriesImportManager;
@@ -60,21 +58,21 @@ import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerTwoParam;
+import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.jcabi.aspects.Loggable;
+
+import fj.data.Either;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
-import fj.data.Either;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog/uploadType")
