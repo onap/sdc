@@ -20,14 +20,28 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import java.util.LinkedList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.cache.*;
-import org.openecomp.sdc.be.model.cache.jobs.*;
+import org.openecomp.sdc.be.model.cache.ComponentCache;
+import org.openecomp.sdc.be.model.cache.DaoInfo;
+import org.openecomp.sdc.be.model.cache.jobs.CheckAndUpdateJob;
+import org.openecomp.sdc.be.model.cache.jobs.DeleteJob;
+import org.openecomp.sdc.be.model.cache.jobs.Job;
+import org.openecomp.sdc.be.model.cache.jobs.OverrideJob;
+import org.openecomp.sdc.be.model.cache.jobs.StoreJob;
 import org.openecomp.sdc.be.model.cache.workers.CacheWorker;
 import org.openecomp.sdc.be.model.cache.workers.IWorker;
 import org.openecomp.sdc.be.model.cache.workers.SyncWorker;
@@ -39,10 +53,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.util.LinkedList;
-import java.util.concurrent.*;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 /**
  * Created by mlando on 9/5/2016. the class is responsible for handling all cache update operations asynchronously including sync between the graph and cache and on demand update requests

@@ -30,10 +30,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.BaseConfDependentTest;
-import org.openecomp.sdc.be.components.distribution.engine.CambriaErrorResponse;
-import org.openecomp.sdc.be.components.distribution.engine.CambriaHandler;
-import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth;
-import org.openecomp.sdc.be.components.distribution.engine.UebHealthCheckCall;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 

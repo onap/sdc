@@ -20,48 +20,25 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.antlr.misc.Graph;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
-import org.openecomp.sdc.be.dao.graph.GraphElementFactory;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.resources.data.CapabilityData;
 import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
-import org.openecomp.sdc.be.resources.data.PropertyData;
-import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
-import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.annotation.JsonAppend.Prop;
-import com.thinkaurelius.titan.core.TitanVertex;
 
 import fj.data.Either;
 

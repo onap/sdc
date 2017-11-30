@@ -20,7 +20,10 @@
 
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import fj.data.Either;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
@@ -32,9 +35,7 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import fj.data.Either;
 
 @Component("derived-resource-resolver")
 public class ByToscaNameDerivedNodeTypeResolver implements DerivedNodeTypeResolver {

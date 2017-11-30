@@ -6,11 +6,17 @@
   <test name="uiSanity">
     <classes>
     	
+    	<class name="org.openecomp.sdc.ci.tests.dataProvider.OnbordingDataProviders">
+   			  <methods>
+				<include name="OnbordingDataProviders"/>
+			  </methods>
+		</class>
    		<class name="org.openecomp.sdc.ci.tests.execute.sanity.Onboard">
    			  <methods>
 				<exclude name="onboardVNFTestSanity"/>
 				<exclude name="onboardVNFShotFlow"/>
-				<exclude name="onboardRandomVNFsTest"/>
+				<exclude name="onboardVNFTest"/>
+				<exclude name="onboardVNFTestSanityOneFile"/>
 			  </methods>
 		</class>
    		<class name="org.openecomp.sdc.ci.tests.execute.sanity.CatalogLeftPanelTest"/>
@@ -23,12 +29,15 @@
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.VfArtifacts"/>
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.VfDeploymentInformationalArtifacts"/>
 		<class name="org.openecomp.sdc.ci.tests.execute.sanity.AdminUserManagment"/>
+		<class name="org.openecomp.sdc.ci.tests.execute.sanity.PNF"/>
+		<class name="org.openecomp.sdc.ci.tests.execute.sanity.PropertiesAssignment"/>
 		<!--  <class name="org.openecomp.sdc.ci.tests.execute.sanity.Product"/> -->
 		
 		<class name="org.openecomp.sdc.ci.tests.US.ImportUpdateInformationalDeploymentArtifacts"/>
         <class name="org.openecomp.sdc.ci.tests.US.MIBsArtifactsOnResourceInstance"/>
         <class name="org.openecomp.sdc.ci.tests.US.NewArtifactTypeGuide"/>
         <class name="org.openecomp.sdc.ci.tests.US.RemoveRestrictionOfDeploymentArtifacts"/>
+		<class name="org.openecomp.sdc.ci.tests.execute.sanity.OnboardingFlows"/>
         
         <!--  <class name="org.openecomp.sdc.ci.tests.US.AddComponentInstancesArtifactsInCsar"/> -->
 						

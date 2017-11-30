@@ -20,13 +20,20 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -44,46 +51,40 @@ import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
-import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
-import org.openecomp.sdc.be.tosca.ToscaRepresentation;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.ArrayList;
-import java.util.List;
+import fj.data.Either;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class CertificationRequestTest extends LifecycleTestBase {
 
 	private ComponentsUtils componentsUtils = new ComponentsUtils();
+	@Mock
+	private ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder;
+	@Mock
+	private ServiceBusinessLogic serviceBusinessLogic;
+	@Mock
+	private CapabilityOperation capabilityOperation;
+	@Mock
+	private ToscaExportHandler toscaExportUtils;
 
-	protected ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder = Mockito.mock(ServiceDistributionArtifactsBuilder.class);
-	protected ServiceBusinessLogic serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
-	protected CapabilityOperation capabilityOperation = Mockito.mock(CapabilityOperation.class);
-	protected ToscaExportHandler toscaExportUtils = Mockito.mock(ToscaExportHandler.class);
-	@InjectMocks
-	private CertificationRequestTransition rfcObj = new CertificationRequestTransition(componentsUtils, toscaElementLifecycleOperation, serviceDistributionArtifactsBuilder, serviceBusinessLogic, capabilityOperation, toscaExportUtils,  toscaOperationFacade,  titanDao);
+	private CertificationRequestTransition rfcObj;
 
-	protected ToscaRepresentation toscaRepresentation = Mockito.mock(ToscaRepresentation.class);
 
 	@Before
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
 		super.setup();
-
+		rfcObj = new CertificationRequestTransition(componentsUtils, toscaElementLifecycleOperation, serviceDistributionArtifactsBuilder, serviceBusinessLogic, capabilityOperation, toscaExportUtils, toscaOperationFacade, titanDao);
 		// checkout transition object
-		rfcObj.setLifeCycleOperation(toscaElementLifecycleOperation);
+//		rfcObj.setLifeCycleOperation(toscaElementLifecycleOperation);
 		// checkoutObj.setAuditingManager(iAuditingManager);
 		rfcObj.setConfigurationManager(configurationManager);
 		componentsUtils.Init();
 
-		Either<ToscaRepresentation, ToscaError> either = Either.left(toscaRepresentation);
-		when(toscaExportUtils.exportComponent(Mockito.anyObject())).thenReturn(either);
-
+//		Either<ToscaRepresentation, ToscaError> either = Either.left(toscaRepresentation);
+//		when(toscaExportUtils.exportComponent(Mockito.any())).thenReturn(either);
 	}
 
 	@Test
@@ -109,7 +110,7 @@ public class CertificationRequestTest extends LifecycleTestBase {
 	@Test
 	public void testCheckoutStateValidation() {
 		Either<? extends Component, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 		Either<User, ResponseFormat> ownerResponse = rfcObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
@@ -130,7 +131,7 @@ public class CertificationRequestTest extends LifecycleTestBase {
 	@Test
 	public void testAlreadyRfc() {
 		Either<Resource, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		resource.setLifecycleState(LifecycleStateEnum.READY_FOR_CERTIFICATION);
 		Either<User, ResponseFormat> ownerResponse = rfcObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
@@ -146,7 +147,7 @@ public class CertificationRequestTest extends LifecycleTestBase {
 	@Test
 	public void testCertificationInProgress() {
 		Either<Resource, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		resource.setLifecycleState(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
 		Either<User, ResponseFormat> ownerResponse = rfcObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
@@ -162,7 +163,7 @@ public class CertificationRequestTest extends LifecycleTestBase {
 	@Test
 	public void testAlreadyCertified() {
 		Either<Resource, ResponseFormat> changeStateResult;
-		Resource resource = createResourceObject(false);
+		Resource resource = createResourceObject();
 
 		resource.setLifecycleState(LifecycleStateEnum.CERTIFIED);
 		Either<User, ResponseFormat> ownerResponse = rfcObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);

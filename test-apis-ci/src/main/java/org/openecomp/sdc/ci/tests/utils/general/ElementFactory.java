@@ -80,6 +80,20 @@ public class ElementFactory {
 	private static final String RESOURCE_INSTANCE_POS_X = "20";
 	private static final String RESOURCE_INSTANCE_POS_Y = "20";
 	private static final String RESOURCE_INSTANCE_DESCRIPTION = "description";
+	
+	// *** Getters ***
+	
+	public static String getServicePrefix() {
+		return CI_SERVICE;
+	}
+
+	public static String getResourcePrefix() {
+		return CI_RES;
+	}
+
+	public static String getProductPrefix() {
+		return CI_PRODUCT;
+	}
 
 	// *** RESOURCE ***
 
@@ -149,6 +163,7 @@ public class ElementFactory {
 		String icon = "defaulticon";
 		ResourceReqDetails resourceDetails = new ResourceReqDetails(resourceName, description, resourceTags, null, derivedFrom, vendorName, vendorRelease, contactId, icon);
 		resourceDetails.addCategoryChain(category.getCategory(), category.getSubCategory());
+		resourceDetails.setResourceVendorModelNumber("vendorNumber-1.5.7");
 
 		return resourceDetails;
 
@@ -196,9 +211,15 @@ public class ElementFactory {
 		String icon = "defaulticon";
 		ResourceReqDetails resourceDetails = new ResourceReqDetails(resourceName, description, resourceTags, null, derivedFrom, vendorName, vendorRelease, contactId, icon, resourceType.toString());
 		resourceDetails.addCategoryChain(category.getCategory(), category.getSubCategory());
+		resourceDetails.setResourceVendorModelNumber("vendorNumber-1.5.7");
 		return resourceDetails;
 	}
-	
+
+	public static ResourceReqDetails getRandomCategoryResource() {
+		ResourceReqDetails resourceDetails = getDefaultResource(ResourceCategoryEnum.getRandomElement());
+		return resourceDetails;
+	}
+
 	public static ResourceExternalReqDetails getDefaultResourceByType(String resourceName, ResourceCategoryEnum category, String contactId, String resourceType) {
 		resourceName = (resourceName + resourceType + generateUUIDforSufix());
 		String description = "Represents a generic software component that can be managed and run by a Compute Node Type.";
@@ -278,7 +299,7 @@ public class ElementFactory {
 		return getDefaultService(CI_SERVICE, ServiceCategoriesEnum.MOBILITY, user.getUserId());
 	}
 
-	public static ServiceReqDetails getService(ServiceCategoriesEnum category) {
+	public static ServiceReqDetails getServiceByCategory(ServiceCategoriesEnum category) {
 		return getDefaultService(CI_SERVICE, category, "al1976");
 	}
 
@@ -298,6 +319,11 @@ public class ElementFactory {
 		ServiceReqDetails serviceDetails = new ServiceReqDetails(serviceName, category.getValue(), tags, description, contactId, icon);
 
 		return serviceDetails;
+	}
+
+	public static ServiceReqDetails getRandomCategoryService() {
+		ServiceReqDetails serviceReqDetails = getServiceByCategory(ServiceCategoriesEnum.getRandomElement());
+		return serviceReqDetails;
 	}
 
 	// ***** PROPERTY ***
@@ -851,7 +877,6 @@ public class ElementFactory {
 		try {
 			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_CATEGORY_NOT_FOUND.name());
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String desc = (errorInfo.getMessageId() + ": " + errorInfo.getMessage()).replace("%2", "category").replace("%3", category).replace("%1", "resource");

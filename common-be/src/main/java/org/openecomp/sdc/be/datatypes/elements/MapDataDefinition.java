@@ -22,6 +22,8 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonValue;
@@ -79,7 +81,7 @@ public  class MapDataDefinition <T extends ToscaDataDefinition>  extends ToscaDa
 
 
 	public String findKeyByItemUidMatch(String uid){
-		if(null == mapToscaDataDefinition)
+		if(null == mapToscaDataDefinition || uid == null)
 			return null;
 		Map.Entry<String, T> entry = mapToscaDataDefinition.entrySet().stream().filter(e ->
 				e.getValue().findUidMatch(uid))
@@ -88,5 +90,32 @@ public  class MapDataDefinition <T extends ToscaDataDefinition>  extends ToscaDa
 			return null;
 		return entry.getKey();
 	}
-	
+	@Override
+	public <T extends ToscaDataDefinition>  T removeByOwnerId(Set<String> ownerIdList) {
+		Map<String, T > collect = (Map<String, T >)mapToscaDataDefinition.entrySet().stream().filter(e -> ownerIdList.contains(e.getValue().getOwnerId())).collect(Collectors.toMap(Map.Entry::getKey, (Map.Entry::getValue)));
+		
+		MapDataDefinition collectMap = new MapDataDefinition<>(collect);
+		
+		mapToscaDataDefinition.entrySet().removeIf(e -> ownerIdList.contains(e.getValue().getOwnerId()));
+		
+		return (T) collectMap;
+	}
+
+	@Override
+	public <T extends ToscaDataDefinition> T updateIfExist(T other, boolean allowDefaultValueOverride) {
+		
+		Map<String, T > map = ((MapDataDefinition)other).getMapToscaDataDefinition();
+		
+		map.entrySet().forEach(e ->{
+			String key = e.getKey();
+			if ( mapToscaDataDefinition.containsKey(key) ){
+				e.getValue().mergeFunction(mapToscaDataDefinition.get(key), allowDefaultValueOverride);
+			}
+		});
+		return other;
+	}
+	@Override
+	public boolean isEmpty(){
+		return mapToscaDataDefinition == null || mapToscaDataDefinition.isEmpty();
+	}
 }

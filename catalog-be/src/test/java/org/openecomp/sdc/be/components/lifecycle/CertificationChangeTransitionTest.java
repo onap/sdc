@@ -22,23 +22,16 @@ package org.openecomp.sdc.be.components.lifecycle;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
-import org.openecomp.sdc.be.components.lifecycle.CertificationChangeTransition;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -51,10 +44,7 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
 	private CertificationChangeTransition certificationFailObj = null;
 
 	private ComponentsUtils componentsUtils = new ComponentsUtils();
-	private String resourceName = "myResource";
 	private User owner = null;
-
-	protected ArtifactsBusinessLogic artifactsManager = Mockito.mock(ArtifactsBusinessLogic.class);
 
 	Resource resource;
 
@@ -79,8 +69,7 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
 		
 		owner = new User("cs0008", "Carlos", "Santana", "cs@sdc.com", "DESIGNER", null);
 
-		when(artifactsManager.deleteAllComponentArtifactsIfNotOnGraph(Mockito.anyList())).thenReturn(StorageOperationStatus.OK);
-		resource = createResourceObject(false);
+		resource = createResourceObject();
 	}
 	
 	@Test

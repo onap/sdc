@@ -1,7 +1,7 @@
 package org.openecomp.sdc.asdctool.migration.core.execution;
 
 import org.openecomp.sdc.asdctool.migration.core.MigrationException;
-import org.openecomp.sdc.asdctool.migration.core.task.Migration;
+import org.openecomp.sdc.asdctool.migration.core.task.IMigrationStage;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ public class MigrationExecutorImpl implements MigrationExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(MigrationExecutorImpl.class);
 
     @Override
-    public MigrationExecutionResult execute(Migration migration) throws MigrationException {
+    public MigrationExecutionResult execute(IMigrationStage migration) throws MigrationException {
         try {
             LOGGER.info("starting migration {}. description: {}. version {}", migration.getClass().getName(), migration.description(),  migration.getVersion().toString());
             StopWatch stopWatch = new StopWatch();
@@ -29,12 +29,12 @@ public class MigrationExecutorImpl implements MigrationExecutor {
         }
     }
 
-    private MigrationExecutionResult logAndCreateExecutionResult(Migration migration, MigrationResult migrationResult, double executionTime) {
+    private MigrationExecutionResult logAndCreateExecutionResult(IMigrationStage migration, MigrationResult migrationResult, double executionTime) {
         LOGGER.info("finished migration {}. with version {}. migration status: {}, migration message: {}, execution time: {}", migration.getClass().getName(),  migration.getVersion().toString(), migrationResult.getMigrationStatus().name(), migrationResult.getMsg(), executionTime);
         return createMigrationTask(migration, migrationResult, executionTime);
     }
 
-    private MigrationExecutionResult createMigrationTask(Migration migration, MigrationResult migrationResult, double totalTimeSeconds) {
+    private MigrationExecutionResult createMigrationTask(IMigrationStage migration, MigrationResult migrationResult, double totalTimeSeconds) {
         MigrationExecutionResult migrationExecutionResult = new MigrationExecutionResult();
         migrationExecutionResult.setExecutionTime(totalTimeSeconds);
         migrationExecutionResult.setMigrationStatus(migrationResult.getMigrationStatus());

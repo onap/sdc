@@ -25,8 +25,6 @@ import static org.mockito.Mockito.when;
 import java.util.EnumMap;
 import java.util.UUID;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -38,10 +36,8 @@ import org.openecomp.sdc.be.dao.impl.AuditingDao;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
-import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
+import junit.framework.Assert;
 
 public class AuditingManagerTest extends BaseConfDependentTest{
 

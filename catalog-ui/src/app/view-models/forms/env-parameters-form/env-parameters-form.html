@@ -46,7 +46,8 @@
                                         <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm[parameter.name].$dirty && forms.editForm[parameter.name].$invalid), required: (parameter.defaultValue)}">
                                             <span class="required-symbol">*</span>
                                             <div class="input-parameter">
-                                                <input class="i-sdc-form-input" data-ng-class="{error: (forms.editForm[parameter.name].$invalid)}"
+                                                <input class="i-sdc-form-input" data-ng-class="{error: (forms.editForm[parameter.name].$invalid),
+                                                                                                'default-value':(parameter.defaultValue && parameter.currentValue === parameter.defaultValue)}"
                                                        data-ng-model-options="{ debounce: 200 }"
                                                        data-ng-model="parameter.currentValue"
                                                        value="{{parameter.currentValue}}"
@@ -54,7 +55,7 @@
                                                        name="{{parameter.name}}"
                                                        data-ng-pattern="getValidationPattern(parameter.type, 'heat')"
                                                        data-ng-required="parameter.defaultValue"
-                                                       data-ng-change="'json'==parameter.type && forms.editForm[parameter.name].$setValidity('pattern', validateJson(parameter.currentValue))"
+                                                       data-ng-change="onValueChanged(parameter)"
                                                        data-ng-blur="(forms.editForm[parameter.name].$error.required && (parameter.currentValue=parameter.defaultValue))"
                                                        data-tests-id="value-field-of-{{parameter.name}}"/>
 

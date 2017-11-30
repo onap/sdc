@@ -38,6 +38,7 @@ export class PropertyFEModel extends PropertyBEModel {
 
     constructor(property: PropertyBEModel){
         super(property);
+        this.value = property.value ? property.value : property.defaultValue;//In FE if a property doesn't have value - display the default value
         this.isSimpleType = PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) > -1;
         this.setNonDeclared();
         this.derivedDataType = this.getDerivedPropertyType();

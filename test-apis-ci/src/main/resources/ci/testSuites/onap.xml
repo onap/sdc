@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="externalApis" configfailurepolicy="continue" verbose="2" parallel="methods" thread-count="1" data-provider-thread-count="1">
+	<parameter name="makeDistribution"  value="false"/>
+	<parameter name="makeToscaValidation"  value="true"/>
 	<test name="ExternalApis"> 
 		<classes>	
 			

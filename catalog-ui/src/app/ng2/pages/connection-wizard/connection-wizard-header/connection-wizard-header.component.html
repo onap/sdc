@@ -1,0 +1,36 @@
+<div class="header-main-container">
+    <div class="inner-container">
+        <div class="node from-node" [ngClass]="{'selected':currentStepIndex == 0}">
+            <div class="text">
+                <div class="node-name">
+                    {{connectWizardService.connectRelationModel.fromNode.componentInstance.name}}
+                </div>
+                <div class="selected-req-or-cap" [ngClass]="{'selected': currentStepIndex == 2 && !connectWizardService.selectedMatch.isFromTo}">
+                    {{getSelectedReqOrCapName(true)}}
+                </div>
+            </div>
+            <div class="icon">
+                <div class="small medium {{connectWizardService.connectRelationModel.fromNode.componentInstance.iconSprite}} {{connectWizardService.connectRelationModel.fromNode.componentInstance.icon}}">
+                </div>
+            </div>
+        </div>
+        <div class="connection">
+
+        </div>
+        <div class="node to-node"  [ngClass]="{'selected':currentStepIndex == 1}">
+            <div class="icon">
+                <div class="small medium {{connectWizardService.connectRelationModel.toNode.componentInstance.iconSprite}} {{connectWizardService.connectRelationModel.toNode.componentInstance.icon}}">
+                </div>
+            </div>
+
+            <div class="text">
+                <div class="node-name">
+                    {{connectWizardService.connectRelationModel.toNode.componentInstance.name}}
+                </div>
+                <div class="selected-req-or-cap"  [ngClass]="{'selected': currentStepIndex == 2 && connectWizardService.selectedMatch.isFromTo}">
+                    {{getSelectedReqOrCapName(false)}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

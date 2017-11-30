@@ -20,7 +20,11 @@
 
 package org.openecomp.sdc.be.model.cache.workers;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
@@ -33,8 +37,7 @@ import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import fj.data.Either;
 
 /**
  * the class creates a worker that is used to update cache date, in case of

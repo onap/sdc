@@ -20,18 +20,11 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.tosca.ToscaUtils;
-import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import fj.data.Either;
 
 @Component("vfComponentInstanceBusinessLogic")
 public class VFComponentInstanceBusinessLogic extends ComponentInstanceBusinessLogic {

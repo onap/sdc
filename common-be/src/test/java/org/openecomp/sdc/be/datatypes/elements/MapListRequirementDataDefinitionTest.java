@@ -1,11 +1,7 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Generated;
 
 import org.junit.Test;
 

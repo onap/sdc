@@ -20,16 +20,10 @@
 
 package org.openecomp.sdc.be.model.operations.api;
 
-import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.resources.data.InputValueData;
-import org.openecomp.sdc.be.resources.data.InputsData;
-
-import java.util.List;
 
 public interface IInputsOperation {
 

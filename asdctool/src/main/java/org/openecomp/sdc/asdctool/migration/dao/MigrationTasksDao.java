@@ -1,11 +1,9 @@
 package org.openecomp.sdc.asdctool.migration.dao;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.MappingManager;
-import fj.data.Either;
+import java.math.BigInteger;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.cassandra.CassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
@@ -13,10 +11,14 @@ import org.openecomp.sdc.be.resources.data.MigrationTaskEntry;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.math.BigInteger;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.mapping.Mapper;
+import com.datastax.driver.mapping.MappingManager;
+
+import fj.data.Either;
 
 public class MigrationTasksDao extends CassandraDao {
 

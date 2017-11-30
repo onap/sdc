@@ -23,7 +23,8 @@
       "jquery",
       "core-js",
       "node"
-    ]
+    ],
+    "forceConsistentCasingInFileNames": true
   },
   "exclude": [
     "test.ts",

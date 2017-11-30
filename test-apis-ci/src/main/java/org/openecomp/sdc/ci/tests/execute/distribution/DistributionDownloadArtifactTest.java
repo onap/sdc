@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.lf5.util.ResourceUtils;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
@@ -53,7 +52,6 @@ import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedDistDownloadAudit;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
@@ -66,7 +64,6 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.testng.AssertJUnit;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

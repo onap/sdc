@@ -35,17 +35,11 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.log4j.PropertyConfigurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.utils.Utils;
-//import org.junit.runner.JUnitCore;
-//import org.junit.runner.Result;
-//import org.junit.runner.notification.Failure;
-import org.testng.TestListenerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.TestNG;
-import org.testng.reporters.TestHTMLReporter;
-import org.testng.xml.XmlSuite;
 
 public class StartTest {
 
@@ -73,7 +67,6 @@ public class StartTest {
 		try {
 			config = Utils.getConfig();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

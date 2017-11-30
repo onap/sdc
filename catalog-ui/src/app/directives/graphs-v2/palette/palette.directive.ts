@@ -132,7 +132,7 @@ export class Palette implements ng.IDirective {
 
     private initLeftPanel(leftPanelComponents:Array<LeftPaletteComponent>, resourceFilterTypes:Array<string>):LeftPanelModel {
         let leftPanelModel = new LeftPanelModel();
-
+       
         if (resourceFilterTypes && resourceFilterTypes.length) {
             leftPanelComponents = this.leftPanelResourceFilter(leftPanelComponents, resourceFilterTypes);
         }
@@ -171,40 +171,6 @@ export class Palette implements ng.IDirective {
 
             this.EventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HOVER_IN, displayComponent);
             this.$log.debug('palette::onMouseOver:: fired');
-            //
-            // if (this.CompositionGraphGeneralUtils.componentRequirementsAndCapabilitiesCaching.containsKey(displayComponent.uniqueId)) {
-            //     this.$log.debug(`palette::onMouseOver:: component id ${displayComponent.uniqueId} found in cache`);
-            //     let cacheComponent:Component = this.CompositionGraphGeneralUtils.componentRequirementsAndCapabilitiesCaching.getValue(displayComponent.uniqueId);
-            //
-            //     //TODO: Danny: fire event to highlight matching nodes
-            //     //showMatchingNodes(cacheComponent);
-            //     return;
-            // }
-            //
-            // this.$log.debug(`palette::onMouseOver:: component id ${displayComponent.uniqueId} not found in cache, initiating server get`);
-            // // This will bring the component from the server including requirements and capabilities
-            // // Check that we do not fetch many times, because only in the success we add the component to componentRequirementsAndCapabilitiesCaching
-            // if (this.fetchingComponentFromServer) {
-            //     return;
-            // }
-            //
-            // this.fetchingComponentFromServer = true;
-            // this.ComponentFactory.getComponentFromServer(displayComponent.componentSubType, displayComponent.uniqueId)
-            //     .then((component:Component) => {
-            //         this.$log.debug(`palette::onMouseOver:: component id ${displayComponent.uniqueId} fetch success`);
-            //         // this.LeftPaletteLoaderService.updateSpecificComponentLeftPalette(component, scope.currentComponent.componentType);
-            //         this.CompositionGraphGeneralUtils.componentRequirementsAndCapabilitiesCaching.setValue(component.uniqueId, component);
-            //         this.fetchingComponentFromServer = false;
-            //
-            //         //TODO: Danny: fire event to highlight matching nodes
-            //         //showMatchingNodes(component);
-            //     })
-            //     .catch(() => {
-            //         this.$log.debug('palette::onMouseOver:: component id fetch error');
-            //         this.fetchingComponentFromServer = false;
-            //     });
-
-
         };
 
         scope.onMouseOut = () => {
@@ -226,8 +192,13 @@ export class Palette implements ng.IDirective {
     private updateLeftPanelDisplay(scope:IPaletteScope) {
         let entityType:string = scope.currentComponent.componentType.toLowerCase();
         let resourceFilterTypes:Array<string> = this.sdcConfig.resourceTypesFilter[entityType];
-        scope.components = this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent);
-        scope.model = this.initLeftPanel(scope.components, resourceFilterTypes);
+         scope.components = this.LeftPaletteLoaderService.getLeftPanelComponentsForDisplay(scope.currentComponent);
+        //remove the container component  from the list 
+        let componentTempToDisplay = angular.copy(scope.components);
+        componentTempToDisplay = _.remove(componentTempToDisplay, function (component) {
+            return component.component.invariantUUID !== scope.currentComponent.invariantUUID;
+        });
+        scope.model = this.initLeftPanel(componentTempToDisplay, resourceFilterTypes);
         scope.displaySortedCategories = angular.copy(scope.model.sortedCategories);
     };
 

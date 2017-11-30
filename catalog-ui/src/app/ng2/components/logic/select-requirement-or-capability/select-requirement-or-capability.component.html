@@ -1,0 +1,36 @@
+<div class="main-container">
+    <span class="select-req-or-cap-span">Select:</span><radio-buttons
+        [(value)]="selectedReqOrCapOption"
+        [options]="selectOptions"
+        [readonly]="disabledSelectReqOrCapOption"
+        [direction]="'horizontal'"
+        (valueChange)="onSelectRequirementOrCapability($event)">
+
+</radio-buttons>
+    <label class="select-type-label">Select type:</label>
+    <div class="select-type">
+        <ui-element-dropdown [values]="types" [(value)]="selectedType" (valueChange)="onTypeSelected($event)"></ui-element-dropdown>
+    </div>
+
+    <div class="table-and-list-container">
+        <div class="inner-container requirements-or-capabilities-container" [ngClass]="{'empty-list':!selectedType}">
+            <div *ngFor="let item of displayCapReqListFilterByType"
+                 class="req-or-cap-item"
+                 (click)="selectReqOrCapFromList(item)"
+                 [ngClass]="{'selected':selectedReqOrCapModel && (item.uniqueId + item.ownerId + item.name) == (selectedReqOrCapModel.uniqueId + selectedReqOrCapModel.ownerId + selectedReqOrCapModel.name)}">
+                {{item.getFullTitle()}}
+            </div>
+        </div>
+        <div class="inner-container properties-table-container" *ngIf="selectedReqOrCapOption == 'Capability'" [ngClass]="{'cap-selected':selectedReqOrCapModel}">
+            <properties-table *ngIf="selectedReqOrCapModel"
+                              class="properties-table"
+                              [readonly]="true"
+                              [fePropertiesMap]="capabilityProperties"
+                              [selectedPropertyId]="''"
+                              [hidePropertyType]="true">
+            </properties-table>
+        </div>
+
+    </div>
+</div>
+

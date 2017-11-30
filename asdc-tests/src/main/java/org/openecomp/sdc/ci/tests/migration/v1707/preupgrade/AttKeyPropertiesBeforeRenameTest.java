@@ -20,7 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.migration.v1707.preupgrade;
 
-import com.thinkaurelius.titan.core.TitanVertex;
+import static org.testng.Assert.assertTrue;
+
+import java.io.IOException;
+
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
@@ -28,9 +31,7 @@ import org.openecomp.sdc.ci.tests.migration.v1707.CommonMigrationUtils;
 import org.openecomp.sdc.ci.tests.utils.graph.GraphFileUtils;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-
-import static org.testng.Assert.assertTrue;
+import com.thinkaurelius.titan.core.TitanVertex;
 
 public class AttKeyPropertiesBeforeRenameTest extends ComponentBaseTest {
 

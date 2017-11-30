@@ -2,11 +2,8 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.junit.Assert;
 import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
 
 public class PropertyDataDefinitionTest {

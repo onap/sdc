@@ -21,7 +21,6 @@
 package org.openecomp.sdc.ci.tests.datatypes;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ServiceRespJavaObject {
 
@@ -50,7 +49,6 @@ public class ServiceRespJavaObject {
 
 	public ServiceRespJavaObject() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ServiceRespJavaObject(String category, String creatorUserId, String creatorFullName,

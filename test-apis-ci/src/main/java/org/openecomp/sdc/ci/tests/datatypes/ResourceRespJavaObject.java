@@ -144,7 +144,6 @@ public class ResourceRespJavaObject {
 
 	public ResourceRespJavaObject() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	// public ResourceRespJavaObject(String uniqueId, String resourceName,

@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.be.workers;
 
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by michael on 6/24/2016.

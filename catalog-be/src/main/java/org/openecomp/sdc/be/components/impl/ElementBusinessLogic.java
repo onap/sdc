@@ -20,10 +20,20 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import fj.data.Either;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -38,10 +48,27 @@ import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
 import org.openecomp.sdc.be.datamodel.utils.NodeTypeConvertUtils;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.*;
+import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactType;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DistributionStatusEnum;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Product;
+import org.openecomp.sdc.be.model.PropertyScope;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.ResourceMetadataDefinition;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.Tag;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
@@ -64,10 +91,9 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import com.thinkaurelius.titan.core.TitanGraph;
+
+import fj.data.Either;
 
 @org.springframework.stereotype.Component("elementsBusinessLogic")
 public class ElementBusinessLogic extends BaseBusinessLogic {

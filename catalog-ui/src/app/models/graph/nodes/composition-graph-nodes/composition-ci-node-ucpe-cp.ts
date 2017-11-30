@@ -20,6 +20,7 @@
 
 import {CompositionCiNodeCp, ComponentInstance} from "./../../../../models";
 import {ImageCreatorService} from "../../../../directives/graphs-v2/image-creator/image-creator.service";
+import { ImagesUrl} from "../../../../utils/constants";
 
 export class CompositionCiNodeUcpeCp extends CompositionCiNodeCp {
 
@@ -31,5 +32,6 @@ export class CompositionCiNodeUcpeCp extends CompositionCiNodeCp {
         this.parent = instance.uniqueId;
         this.type = 'ucpe-cp-node'; //the type is for the handle (plus icon) extension
         this.isDraggable = false;
+        this.imagesPath = this.imagesPath + ImagesUrl.RESOURCE_ICONS;
     }
 }

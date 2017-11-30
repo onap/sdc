@@ -81,7 +81,6 @@ import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.DistributionValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
@@ -1164,7 +1163,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 			{ComponentTypeEnum.SERVICE, UserRoleEnum.GOVERNOR, LifeCycleStatesEnum.CHECKOUT},
 			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.GOVERNOR, LifeCycleStatesEnum.CHECKOUT},
 			
-			{ComponentTypeEnum.RESOURCE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKIN},
+			/*due to those roles are not exists in the system		{ComponentTypeEnum.RESOURCE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKIN},
 			{ComponentTypeEnum.SERVICE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKIN},
 			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKIN},
 			{ComponentTypeEnum.RESOURCE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKOUT},
@@ -1176,7 +1175,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKIN},
 			{ComponentTypeEnum.RESOURCE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKOUT},
 			{ComponentTypeEnum.SERVICE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKOUT},
-			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKOUT},
+			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKOUT},*/
 			};
 	}
 		
@@ -1737,7 +1736,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 			{ComponentTypeEnum.SERVICE, UserRoleEnum.GOVERNOR, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.OTHER.getType()},
 			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.GOVERNOR, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.DCAE_INVENTORY_TOSCA.getType()},
 			
-			{ComponentTypeEnum.RESOURCE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKIN, ArtifactTypeEnum.OTHER.getType()},
+			/*due to those roles are not exists in the system		{ComponentTypeEnum.RESOURCE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKIN, ArtifactTypeEnum.OTHER.getType()},
 			{ComponentTypeEnum.SERVICE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKIN, ArtifactTypeEnum.OTHER.getType()},
 			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKIN, ArtifactTypeEnum.DCAE_INVENTORY_TOSCA.getType()},
 			{ComponentTypeEnum.RESOURCE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.OTHER.getType()},
@@ -1749,7 +1748,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKIN, ArtifactTypeEnum.DCAE_INVENTORY_TOSCA.getType()},
 			{ComponentTypeEnum.RESOURCE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.OTHER.getType()},
 			{ComponentTypeEnum.SERVICE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.OTHER.getType()},
-			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.DCAE_INVENTORY_TOSCA.getType()},
+			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.DCAE_INVENTORY_TOSCA.getType()},*/
 			};
 	}
 		
@@ -2803,7 +2802,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 			{ComponentTypeEnum.SERVICE, UserRoleEnum.GOVERNOR, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.OTHER.getType()},
 			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.GOVERNOR, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.DCAE_INVENTORY_TOSCA.getType()},
 			
-			{ComponentTypeEnum.RESOURCE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKIN, ArtifactTypeEnum.OTHER.getType()},
+			/*due to those roles are not exists in the system		{ComponentTypeEnum.RESOURCE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKIN, ArtifactTypeEnum.OTHER.getType()},
 			{ComponentTypeEnum.SERVICE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKIN, ArtifactTypeEnum.OTHER.getType()},
 			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKIN, ArtifactTypeEnum.DCAE_INVENTORY_TOSCA.getType()},
 			{ComponentTypeEnum.RESOURCE, UserRoleEnum.PRODUCT_STRATEGIST1, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.OTHER.getType()},
@@ -2815,7 +2814,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKIN, ArtifactTypeEnum.DCAE_INVENTORY_TOSCA.getType()},
 			{ComponentTypeEnum.RESOURCE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.OTHER.getType()},
 			{ComponentTypeEnum.SERVICE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.OTHER.getType()},
-			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.DCAE_INVENTORY_TOSCA.getType()},
+			{ComponentTypeEnum.RESOURCE_INSTANCE, UserRoleEnum.PRODUCT_MANAGER1, LifeCycleStatesEnum.CHECKOUT, ArtifactTypeEnum.DCAE_INVENTORY_TOSCA.getType()},*/
 			};
 	}
 		

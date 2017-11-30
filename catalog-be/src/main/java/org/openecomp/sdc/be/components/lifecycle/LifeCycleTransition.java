@@ -145,10 +145,12 @@ public abstract class LifeCycleTransition {
 		if (getAuthorizedRoles(componentType).contains(Role.valueOf(modifier.getRole())) || userResourceRoleValidation(component,componentType,modifier)) {
 			return Either.left(true);
 		}
-		// this is only when creating vfc/cp when import vf from csar - when we
+		// this is only used in 2 cases
+		//1. when creating vfc/cp when import vf from csar - when we
 		// create resources from node type, we create need to change the state
 		// to certified
-		if (lifecycleChangeInfo != null && lifecycleChangeInfo.getAction() != null && lifecycleChangeInfo.getAction() == LifecycleChanceActionEnum.CREATE_FROM_CSAR) {
+		//2. certification flow upno upgrade migration
+		if (lifecycleChangeInfo != null && lifecycleChangeInfo.getAction() != null && (lifecycleChangeInfo.getAction() == LifecycleChanceActionEnum.CREATE_FROM_CSAR|| lifecycleChangeInfo.getAction() == LifecycleChanceActionEnum.UPGRADE_MIGRATION)) {
 			return Either.left(true);
 		}
 

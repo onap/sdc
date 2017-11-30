@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
-import java.util.Map;
 
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 

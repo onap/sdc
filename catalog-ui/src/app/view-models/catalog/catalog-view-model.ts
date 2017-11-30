@@ -20,8 +20,9 @@
 
 'use strict';
 import {Component, IMainCategory, IGroup, IConfigStatuses, IAppMenu, IAppConfigurtaion, IUserProperties, ISubCategory} from "app/models";
-import {EntityService, IUserResourceClass, CacheService} from "app/services";
+import {EntityService, CacheService} from "app/services";
 import {ComponentFactory, ResourceType, MenuHandler, ChangeLifecycleStateHandler} from "app/utils";
+import {UserService} from "../../ng2/services/user.service";
 
 
 interface Checkboxes {
@@ -87,7 +88,7 @@ export class CatalogViewModel {
         'sdcMenu',
         '$state',
         '$q',
-        'Sdc.Services.UserResourceService',
+        'UserServiceNg2',
         'Sdc.Services.CacheService',
         'ComponentFactory',
         'ChangeLifecycleStateHandler',
@@ -101,7 +102,7 @@ export class CatalogViewModel {
                 private sdcMenu:IAppMenu,
                 private $state:ng.ui.IStateService,
                 private $q:ng.IQService,
-                private userResourceService:IUserResourceClass,
+                private userService:UserService,
                 private cacheService:CacheService,
                 private ComponentFactory:ComponentFactory,
                 private ChangeLifecycleStateHandler:ChangeLifecycleStateHandler,
@@ -138,7 +139,7 @@ export class CatalogViewModel {
         this.$scope.sdcMenu = this.sdcMenu;
         this.$scope.confStatus = this.sdcMenu.statuses;
         this.$scope.expandedSection = ["type", "category", "status"];
-        this.$scope.user = this.userResourceService.getLoggedinUser();
+        this.$scope.user = this.userService.getLoggedinUser();
         this.$scope.catalogMenuItem = this.sdcMenu.catalogMenuItem;
         this.$scope.version = this.cacheService.get('version');
         this.$scope.sortBy = 'lastUpdateDate';
@@ -158,8 +159,6 @@ export class CatalogViewModel {
         this.$scope.checkboxesFilter.selectedStatuses = [];
 
         //      this.$scope.isAllItemDisplay = this.$scope.numberOfItemToDisplay >= this.$scope.catalogFilterdItems.length;
-
-        this.$scope.vfcmtType = ResourceType.VFCMT;
     };
 
     private initScopeMethods = ():void => {

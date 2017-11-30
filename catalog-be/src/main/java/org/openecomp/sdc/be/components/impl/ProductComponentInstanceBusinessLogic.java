@@ -22,10 +22,7 @@ package org.openecomp.sdc.be.components.impl;
 
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
-
-import fj.data.Either;
 
 @Component("productComponentInstanceBusinessLogic")
 public class ProductComponentInstanceBusinessLogic extends ComponentInstanceBusinessLogic {

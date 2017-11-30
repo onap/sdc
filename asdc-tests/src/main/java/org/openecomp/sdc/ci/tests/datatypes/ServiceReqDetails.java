@@ -29,6 +29,7 @@ public class ServiceReqDetails extends ComponentReqDetails {
 	
 	String serviceType;
 	String serviceRole;
+	String environmentContext;
 
 	public ServiceReqDetails(String serviceName, String category, ArrayList<String> tags, String description,
 			String contactId, String icon) {
@@ -45,7 +46,7 @@ public class ServiceReqDetails extends ComponentReqDetails {
 		categoryDefinition.setName(category);
 		categories = new ArrayList<>();
 		categories.add(categoryDefinition);
-
+		this.environmentContext = "";
 	}
 
 	public ServiceReqDetails(Service service) {
@@ -63,7 +64,7 @@ public class ServiceReqDetails extends ComponentReqDetails {
 		this.version = service.getVersion();
 		this.serviceType = service.getServiceType();
 		this.serviceRole = service.getServiceRole();
-
+		this.environmentContext = service.getEnvironmentContext();
 	}
 
 	public ServiceReqDetails() {
@@ -95,4 +96,11 @@ public class ServiceReqDetails extends ComponentReqDetails {
 		return null;
 	}
 
+	public String getEnvironmentContext() {
+		return environmentContext;
+	}
+
+	public void setEnvironmentContext(String environmentContext) {
+		this.environmentContext = environmentContext;
+	}
 }

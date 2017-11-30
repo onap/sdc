@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="uitests" configfailurepolicy="continue" parallel="instances" thread-count="2" data-provider-thread-count="2">
+<suite name="uitests" configfailurepolicy="continue" parallel="methods" thread-count="2" data-provider-thread-count="2">
  <parameter name="makeDistribution"  value="false"/>
 
   <test name="OnbordingDataProviders">

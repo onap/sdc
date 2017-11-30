@@ -20,7 +20,14 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import fj.data.Either;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
@@ -32,7 +39,15 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
@@ -48,14 +63,7 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
+import fj.data.Either;
 
 public class CertificationRequestTransition extends LifeCycleTransition {
 
@@ -229,12 +237,12 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 	} finally {
 		if (result == null || result.isRight()) {
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState");
-			if (inTransaction == false) {
+			if (!inTransaction) {
 				log.debug("operation failed. do rollback");
 				titanDao.rollback();
 			}
 		} else {
-			if (inTransaction == false) {
+			if (!inTransaction) {
 				log.debug("operation success. do commit");
 				titanDao.commit();
 			}

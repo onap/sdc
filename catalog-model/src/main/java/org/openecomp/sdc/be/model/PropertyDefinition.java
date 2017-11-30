@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.model;
 
 import java.io.Serializable;
 import java.util.List;
+
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 

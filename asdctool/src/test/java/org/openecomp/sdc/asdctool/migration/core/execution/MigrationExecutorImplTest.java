@@ -1,13 +1,12 @@
 package org.openecomp.sdc.asdctool.migration.core.execution;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
 import org.openecomp.sdc.asdctool.migration.DummyMigrationFactory;
-import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
 import org.testng.annotations.Test;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
 public class MigrationExecutorImplTest {
 

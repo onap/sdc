@@ -48,12 +48,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.jcabi.aspects.Loggable;
+
+import fj.data.Either;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
-import fj.data.Either;
 
 /**
  * Root resource (exposed at "/" path)

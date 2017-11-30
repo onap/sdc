@@ -113,11 +113,11 @@ public class UserAPIs extends ComponentBaseTest {
 				sizeAfterChange = allusersList.size();
 				Assert.assertEquals(sizeBeforeChange, sizeAfterChange + 1, "Expected that list will change.");
 				
-			} finally {
+				} finally {
 				deleteUser(ecompUser.getLoginId());
 			}
 							
-			}
+		}
 					
 	}
 	
@@ -179,7 +179,7 @@ public class UserAPIs extends ComponentBaseTest {
 			allusersList = getAllusersList();
 			int sizeAfterChange = allusersList.size();
 					
-			assertTrue("List is Equel" , sizeBeforeChange != sizeAfterChange );
+			assertTrue("Lists are Equal" , sizeBeforeChange != sizeAfterChange );
 			
 			//update role
 			ecompRole.setId((long) 2);

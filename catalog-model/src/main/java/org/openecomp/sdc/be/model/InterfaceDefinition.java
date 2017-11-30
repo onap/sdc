@@ -21,12 +21,10 @@
 package org.openecomp.sdc.be.model;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 

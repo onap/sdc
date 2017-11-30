@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openecomp.sdc.webseal.simulator.User;
+
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 

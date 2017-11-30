@@ -1,0 +1,57 @@
+.search-bar-container {
+    display:flex;
+    border-radius: 4px;
+    box-shadow: 0px 2px 3.88px 0.12px rgba(0, 0, 0, 0.29);
+
+    .search-bar-input {
+        border: 1px solid #cdcdcd;
+        border-radius: 4px;
+        border-right:none;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        outline:none;
+        padding:2px 50px 2px 10px;
+        color:  #5a5a5a;
+        font-size: 1em;
+        font-style: italic;
+    }
+
+    .clear-search-x {
+        position:absolute;
+        right:40px;
+        top:5px;
+        padding: 0 5px;
+        
+        &:hover {
+            border-radius:2px;
+            background-color: #ebebeb;
+            cursor:pointer;
+        }
+    }
+
+    .search-bar-button {
+        background: url('../../../../../assets/styles/images/sprites/sprite-global.png') no-repeat -206px -1275px;
+        background-color:  rgba(234, 234, 234, 0.88);
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        cursor:pointer;
+        border:solid 1px #cdcdcd;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+
+        &:hover {
+            background-position:-126px -1275px;
+        }
+
+        &:active {
+            background-color:  rgba(31, 171, 223, 0.88);
+            background-position:-45px -1275px;
+            border-left:none;
+        }
+        &:focus {
+            outline:none;
+        }
+
+    }
+}
