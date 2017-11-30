@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.openecomp.sdc.asdctool.migration.core.execution.MigrationExecutionResult;
 import org.openecomp.sdc.asdctool.migration.core.execution.MigrationExecutorImpl;
+import org.openecomp.sdc.asdctool.migration.core.task.IMigrationStage;
+import org.openecomp.sdc.asdctool.migration.core.task.IMigrationStage.AspectMigrationEnum;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
 import org.openecomp.sdc.asdctool.migration.resolver.MigrationResolver;
@@ -30,16 +32,17 @@ public class SdcMigrationTool {
     public boolean migrate(boolean enforceAll) {
         LOGGER.info("starting migration process");
         handleEnforceMigrationFlag(enforceAll);
-        List<Migration> migrations = migrationsResolver.resolveMigrations();
+        List<IMigrationStage> migrations = migrationsResolver.resolveMigrations();
         LOGGER.info("there are {} migrations task to execute", migrations.size());
-        for (Migration migration : migrations) {
+        for (IMigrationStage migration : migrations) {
             try {
                 MigrationExecutionResult executionResult = new MigrationExecutorImpl().execute(migration);
                 if (migrationHasFailed(executionResult)) {
                     LOGGER.error("migration {} with version {} has failed. error msg: {}", migration.getClass().getName(), migration.getVersion().toString(), executionResult.getMsg());
                     return false;
                 }
-                sdcRepoService.createMigrationTask(executionResult.toMigrationTaskEntry());
+                if(migration.getAspectMigration() == AspectMigrationEnum.MIGRATION)
+                	sdcRepoService.createMigrationTask(executionResult.toMigrationTaskEntry());
             } catch (RuntimeException e) {
                 LOGGER.error("migration {} with version {} has failed. error msg: {}", migration.getClass().getName(), migration.getVersion().toString(), e);
                 return false;

@@ -42,6 +42,8 @@ def importHeatTypes(beHost, bePort, adminUser, fileDir, updateversion):
 				  "Generic_Service",
 				  "contrailNetworkRules",
 				  "contrailPort",
+				  "portMirroring",
+				  "serviceProxy",
 				  "contrailV2NetworkRules",
 				  "contrailV2VirtualNetwork",
 				  "securityRules",
@@ -52,9 +54,13 @@ def importHeatTypes(beHost, bePort, adminUser, fileDir, updateversion):
 				  "contrailV2VLANSubInterface",
 				  "multiFlavorVFC",
 				  "vnfConfiguration",
+				  "extCp2",
+				  "extNeutronCP",
+                  		  "extContrailCP",
 				  "underlayVpn",
 				  "overlayTunnel",
 				  "genericNeutronNet"
+				  "portMirroringByPolicy"
 				  ]
 		
 	responseCodes = [200, 201]

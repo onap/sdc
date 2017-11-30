@@ -121,7 +121,6 @@ public class ValidateArtResponse extends ComponentBaseTest {
 	}
 
 	protected void assertnull(String string, boolean equals) {
-		// TODO Auto-generated method stub
 
 	}
 

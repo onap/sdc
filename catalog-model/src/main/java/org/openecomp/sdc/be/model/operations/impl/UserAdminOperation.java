@@ -98,7 +98,7 @@ public class UserAdminOperation implements IUserAdminOperation {
 
 			return resultWrapper.getInnerElement();
 		} finally {
-			if (false == inTransaction) {
+			if (!inTransaction) {
 				titanGenericDao.commit();
 			}
 			log.debug("getUserData - end");

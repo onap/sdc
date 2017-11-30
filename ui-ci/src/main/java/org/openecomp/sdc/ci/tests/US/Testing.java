@@ -179,7 +179,7 @@ public class Testing {
 				additionalInputs = objectHelper.getNode_types().get(key).getProperties();
 			}
 		}
-		topologyTemplate.addInputs(additionalInputs);
+//		topologyTemplate.addInputs(additionalInputs);
 
 		
 		

@@ -108,11 +108,22 @@ public class CheckoutTransition extends LifeCycleTransition {
 			} else {
 			
 				Component clonedComponent = ModelConverter.convertFromToscaElement(checkoutResourceResult.left().value());
+				if ( checkoutResourceResult.left().value().getToscaType() == ToscaElementTypeEnum.NodeType ){
+					Either<Component, ActionStatus> upgradeToLatestDerived = componentBl.shouldUpgradeToLatestDerived(clonedComponent);
+					if (upgradeToLatestDerived.isRight() && ActionStatus.OK != upgradeToLatestDerived.right().value()){
+						result = Either.right(componentUtils.getResponseFormat(upgradeToLatestDerived.right().value()));
+						return result;
+					}
+					if ( upgradeToLatestDerived.isLeft() ){
+						//get resource after update derived 
+						clonedComponent = upgradeToLatestDerived.left().value();
+					}
+				}
 				result = Either.left(clonedComponent); 
 				Either<Boolean, ResponseFormat> upgradeToLatestGeneric = componentBl.shouldUpgradeToLatestGeneric(clonedComponent);
 				if (upgradeToLatestGeneric.isRight())
 					result = Either.right(upgradeToLatestGeneric.right().value());
-				else if (upgradeToLatestGeneric.left().value()) {
+				else if (upgradeToLatestGeneric.left().value()  ) {
 					StorageOperationStatus response = upgradeToLatestGenericData(clonedComponent);
 					if (StorageOperationStatus.OK != response) {
 						ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);

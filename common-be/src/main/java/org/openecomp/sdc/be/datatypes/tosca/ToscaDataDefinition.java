@@ -36,17 +36,18 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import fj.data.Either;
 
 public abstract class ToscaDataDefinition {
-	
+
 	protected Map<String, Object> toscaPresentation;
 
-	
-	public ToscaDataDefinition(){
+	public ToscaDataDefinition() {
 		toscaPresentation = new HashMap<String, Object>();
 	}
+
 	@JsonCreator
-	public ToscaDataDefinition(Map<String, Object> art){
+	public ToscaDataDefinition(Map<String, Object> art) {
 		toscaPresentation = art;
 	}
+
 	@JsonValue
 	public Object getToscaPresentationValue(JsonPresentationFields name) {
 		if (toscaPresentation != null && toscaPresentation.containsKey(name.getPresentation())) {
@@ -54,57 +55,63 @@ public abstract class ToscaDataDefinition {
 		}
 		return null;
 	}
-	
+
 	public void setToscaPresentationValue(JsonPresentationFields name, Object value) {
-		if (toscaPresentation == null && value !=null) {
-			toscaPresentation = new HashMap<String, Object>();			
+		if (toscaPresentation == null && value != null) {
+			toscaPresentation = new HashMap<String, Object>();
 		}
 		toscaPresentation.put(name.getPresentation(), value);
-		
+
 	}
-	public void setOwnerIdIfEmpty(String ownerId){
-		if (  getOwnerId() == null ){
+
+	public void setOwnerIdIfEmpty(String ownerId) {
+		if (getOwnerId() == null) {
 			setOwnerId(ownerId);
 		}
 	}
-	public void setOwnerId(String ownerId){
+
+	public void setOwnerId(String ownerId) {
 		setToscaPresentationValue(JsonPresentationFields.OWNER_ID, ownerId);
 	}
 
-	public String getOwnerId(){
+	public String getOwnerId() {
 		return (String) getToscaPresentationValue(JsonPresentationFields.OWNER_ID);
 	}
-	
-	
-	//default merge function for merging data maps - implement where needed and use mergeDataMaps method where applicable instead of map1.putAll(map2) 
-	public <T extends ToscaDataDefinition> T mergeFunction(T other, boolean allowDefaultValueOverride){
+
+	// default merge function for merging data maps - implement where needed and use mergeDataMaps method where applicable instead of map1.putAll(map2)
+	public <T extends ToscaDataDefinition> T mergeFunction(T other, boolean allowDefaultValueOverride) {
 		other.setOwnerId(getOwnerId());
 		return other;
 	}
-	
-	public static <T extends ToscaDataDefinition> Either<Map<String, T>, String> mergeDataMaps(Map<String, T> map1, Map<String, T> map2){
+
+	public static <T extends ToscaDataDefinition> Either<Map<String, T>, String> mergeDataMaps(Map<String, T> map1, Map<String, T> map2) {
 		return mergeDataMaps(map1, map2, false);
 	}
-	
-	//return Either.right(item key) if an illegal merge was attempted (overriding data type is forbidden)
-	public static <T extends ToscaDataDefinition> Either<Map<String, T>, String> mergeDataMaps(Map<String, T> map1, Map<String, T> map2, boolean allowDefaultValueOverride){
-		for(Entry<String, T> entry : map2.entrySet()){
+
+	// return Either.right(item key) if an illegal merge was attempted (overriding data type is forbidden)
+	public static <T extends ToscaDataDefinition> Either<Map<String, T>, String> mergeDataMaps(Map<String, T> map1, Map<String, T> map2, boolean allowDefaultValueOverride) {
+		for (Entry<String, T> entry : map2.entrySet()) {
 			map1.merge(entry.getKey(), entry.getValue(), (item1, item2) -> item1.mergeFunction(item2, allowDefaultValueOverride));
-		    //validate merge success
-		    if(!map1.containsKey(entry.getKey()))
-		    	return Either.right(entry.getKey());
+			// validate merge success
+			if (!map1.containsKey(entry.getKey()))
+				return Either.right(entry.getKey());
 		}
 		return Either.left(map1);
 	}
-	
+
 	public static <T extends ToscaDataDefinition> Map<String, T> listToMapByName(List<T> dataList) {
-		return null == dataList? new HashMap<>() : dataList.stream()
-		.collect(Collectors.toMap(p -> (String)p.getToscaPresentationValue(JsonPresentationFields.NAME), p -> p));
+		return null == dataList ? new HashMap<>() : dataList.stream().collect(Collectors.toMap(p -> (String) p.getToscaPresentationValue(JsonPresentationFields.NAME), p -> p));
 	}
 
-	public boolean findUidMatch(String uid){
+	public boolean findUidMatch(String uid) {
 		return uid.equals(getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID));
+
 	}
+
+	public <T extends ToscaDataDefinition> T updateIfExist(T other, boolean allowDefaultValueOverride) {
+		return other;
+	}
+
 	public <T extends ToscaDataDefinition>  T removeByOwnerId(Set<String> ownerIdList) {
 		return (T) this;
 	}

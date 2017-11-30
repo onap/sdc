@@ -32,6 +32,12 @@ onboarding:
   port: 8181
   healthCheckUri: "/onboarding/v1.0/healthcheck"
 
+dcae:
+  protocol: http
+  host: localhost
+  port: 8181
+  healthCheckUri: "/dcae/healthCheck"
+
 identificationHeaderFields:
    -
         - &HTTP_IV_USER HTTP_IV_USER

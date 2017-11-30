@@ -19,14 +19,20 @@
  */
 
 import {
-    MatchBase,
+    Match,
     LinkMenu,
     ComponentInstance,
     LeftPaletteComponent,
+    Capability,
+    Requirement,
+    Relationship,
+    PropertyModel,
     Component,
-    RelationMenuDirectiveObj,
+    ConnectRelationModel,
     CompositionCiNodeBase,
     CompositionCiNodeVl,
+    ModalModel,
+    ButtonModel,
     NodesFactory/*,
     AssetPopoverObj*/
 } from "app/models";
@@ -42,6 +48,17 @@ import {ComponentInstanceNodesStyle} from "../common/style/component-instances-n
 import {CytoscapeEdgeEditation} from 'third-party/cytoscape.js-edge-editation/CytoscapeEdgeEditation.js';
 import {ComponentServiceNg2} from "../../../ng2/services/component-services/component.service";
 import {ComponentGenericResponse} from "../../../ng2/services/responses/component-generic-response";
+import {ModalService} from "../../../ng2/services/modal.service";
+
+import {ConnectionWizardService} from "../../../ng2/pages/connection-wizard/connection-wizard.service";
+import {StepModel} from "../../../models/wizard-step";
+import {FromNodeStepComponent} from "app/ng2/pages/connection-wizard/from-node-step/from-node-step.component";
+import {PropertiesStepComponent} from "app/ng2/pages/connection-wizard/properties-step/properties-step.component";
+import {ToNodeStepComponent} from "app/ng2/pages/connection-wizard/to-node-step/to-node-step.component";
+import {ConnectionWizardHeaderComponent} from "app/ng2/pages/connection-wizard/connection-wizard-header/connection-wizard-header.component";
+import {ConnectionPropertiesViewComponent} from "../../../ng2/pages/connection-wizard/connection-properties-view/connection-properties-view.component";
+import {ComponentInstanceServiceNg2} from "../../../ng2/services/component-instance-services/component-instance.service";
+import {EVENTS} from "../../../utils/constants";
 
 interface ICompositionGraphScope extends ng.IScope {
 
@@ -50,9 +67,9 @@ interface ICompositionGraphScope extends ng.IScope {
     isViewOnly: boolean;
     withSidebar: boolean;
     // Link menu - create link menu
-    relationMenuDirectiveObj:RelationMenuDirectiveObj;
+    relationMenuDirectiveObj:ConnectRelationModel;
     isLinkMenuOpen:boolean;
-    createLinkFromMenu:(chosenMatch:MatchBase, vl:Component)=>void;
+    createLinkFromMenu:(chosenMatch:Match, vl:Component)=>void;
 
     //modify link menu - for now only delete menu
     relationMenuTimeout:ng.IPromise<any>;
@@ -64,6 +81,7 @@ interface ICompositionGraphScope extends ng.IScope {
     verifyDrop(event:JQueryEventObject, ui:any):void;
 
     //Links menus
+    viewRelation(link:Cy.CollectionEdges):void;
     deleteRelation(link:Cy.CollectionEdges):void;
     hideRelationMenu();
 
@@ -73,6 +91,8 @@ interface ICompositionGraphScope extends ng.IScope {
     zoomAll(nodes?:Cy.CollectionNodes): void;
     getAutoCompleteValues(searchTerm: string):void;
     highlightSearchMatches(searchTerm: string): void;
+
+    canvasMenuProps:any;
     
     /*//asset popover menu
     assetPopoverObj:AssetPopoverObj;
@@ -102,7 +122,10 @@ export class CompositionGraph implements ng.IDirective {
                 private commonGraphUtils:CommonGraphUtils,
                 private matchCapabilitiesRequirementsUtils:MatchCapabilitiesRequirementsUtils,
                 private CompositionGraphPaletteUtils:CompositionGraphPaletteUtils,
-                private ComponentServiceNg2: ComponentServiceNg2) {
+                private ComponentServiceNg2: ComponentServiceNg2,
+                private ModalServiceNg2: ModalService,
+                private ConnectionWizardServiceNg2: ConnectionWizardService,
+                private ComponentInstanceServiceNg2: ComponentInstanceServiceNg2) {
 
     }
 
@@ -131,6 +154,8 @@ export class CompositionGraph implements ng.IDirective {
             _.forEach(GRAPH_EVENTS, (event) => {
                 this.eventListenerService.unRegisterObserver(event);
             });
+            this.eventListenerService.unRegisterObserver(EVENTS.SHOW_LOADER_EVENT + 'composition-graph');
+            this.eventListenerService.unRegisterObserver(EVENTS.HIDE_LOADER_EVENT + 'composition-graph');
         });
 
     };
@@ -190,7 +215,7 @@ export class CompositionGraph implements ng.IDirective {
 
             if (this.GeneralGraphUtils.componentRequirementsAndCapabilitiesCaching.containsKey(leftPaletteComponent.uniqueId)) {
                 let cacheComponent = this.GeneralGraphUtils.componentRequirementsAndCapabilitiesCaching.getValue(leftPaletteComponent.uniqueId);
-                let filteredNodesData = this.matchCapabilitiesRequirementsUtils.findByMatchingCapabilitiesToRequirements(cacheComponent, nodesData, nodesLinks);
+                let filteredNodesData = this.matchCapabilitiesRequirementsUtils.findMatchingNodes(cacheComponent, nodesData, nodesLinks);
 
                 this.matchCapabilitiesRequirementsUtils.highlightMatchingComponents(filteredNodesData, this._cy);
                 this.matchCapabilitiesRequirementsUtils.fadeNonMachingComponents(filteredNodesData, nodesData, this._cy);
@@ -207,7 +232,7 @@ export class CompositionGraph implements ng.IDirective {
                     component.capabilities = response.capabilities;
                     component.requirements = response.requirements;
                     this.GeneralGraphUtils.componentRequirementsAndCapabilitiesCaching.setValue(leftPaletteComponent.uniqueId, component);
-                    let filteredNodesData = this.matchCapabilitiesRequirementsUtils.findByMatchingCapabilitiesToRequirements(component, nodesData, nodesLinks);
+                    let filteredNodesData = this.matchCapabilitiesRequirementsUtils.findMatchingNodes(component, nodesData, nodesLinks);
                     this.matchCapabilitiesRequirementsUtils.fadeNonMachingComponents(filteredNodesData, nodesData, this._cy);
                     this.matchCapabilitiesRequirementsUtils.highlightMatchingComponents(filteredNodesData, this._cy)
                 });
@@ -321,18 +346,44 @@ export class CompositionGraph implements ng.IDirective {
             scope.zoomAll(matchingNodes);
         };
 
-        scope.createLinkFromMenu = (chosenMatch:MatchBase):void => {
+        scope.createLinkFromMenu = ():void => {
             scope.isLinkMenuOpen = false;
-            this.CompositionGraphLinkUtils.createLinkFromMenu(this._cy, chosenMatch, scope.component);
+            this.CompositionGraphLinkUtils.createLinkFromMenu(this._cy, this.ConnectionWizardServiceNg2.selectedMatch, scope.component);
         };
 
         scope.hideRelationMenu = () => {
             this.commonGraphUtils.safeApply(scope, () => {
-                scope.linkMenuObject = null;
+                delete scope.canvasMenuProps;
                 this.$timeout.cancel(scope.relationMenuTimeout);
             });
         };
 
+        scope.viewRelation = (link:Cy.CollectionEdges) => {
+            scope.hideRelationMenu();
+
+            const linkData = link.data();
+            const sourceNode:CompositionCiNodeBase = link.source().data();
+            const targetNode:CompositionCiNodeBase = link.target().data();
+            const relationship:Relationship = linkData.relation.relationships[0];
+
+            this.ConnectionWizardServiceNg2.currentComponent = scope.component;
+            this.ConnectionWizardServiceNg2.connectRelationModel = new ConnectRelationModel(sourceNode, targetNode, []);
+            this.ConnectionWizardServiceNg2.selectedMatch = new Match(null, null, true, linkData.source, linkData.target);
+            this.ConnectionWizardServiceNg2.selectedMatch.relationship = relationship;
+
+            const title = `Connect: ${sourceNode.name} to ${targetNode.name}`;
+            let closeButton: ButtonModel = new ButtonModel('Close', 'blue', () => { this.ModalServiceNg2.closeCurrentModal(); });
+            const modal = new ModalModel('xl', title, '', [closeButton]);
+            const modalInstance = this.ModalServiceNg2.createCustomModal(modal);
+            this.ModalServiceNg2.addDynamicContentToModal(modalInstance, ConnectionPropertiesViewComponent);
+            modalInstance.instance.open();
+
+            this.ComponentInstanceServiceNg2.getInstanceCapabilityProperties(scope.component, linkData.target, relationship.relationship.type, relationship.capability)
+                .subscribe((response:Array<PropertyModel>) => {
+                    this.ConnectionWizardServiceNg2.selectedMatch.capabilityProperties = response;
+                    this.ModalServiceNg2.addDynamicContentToModal(modalInstance, ConnectionPropertiesViewComponent);
+                }, error => {});
+        };
 
         scope.deleteRelation = (link:Cy.CollectionEdges) => {
             scope.hideRelationMenu();
@@ -367,9 +418,26 @@ export class CompositionGraph implements ng.IDirective {
         this._cy.on('addedgemouseup', (event, data) => {
             scope.relationMenuDirectiveObj = this.CompositionGraphLinkUtils.onLinkDrawn(this._cy, data.source, data.target);
             if (scope.relationMenuDirectiveObj != null) {
-                scope.$apply(() => {
-                    scope.isLinkMenuOpen = true;
-                });
+                this.ConnectionWizardServiceNg2.setRelationMenuDirectiveObj(scope.relationMenuDirectiveObj);
+                this.ConnectionWizardServiceNg2.currentComponent = scope.component;
+                //TODO: init with the selected values
+                this.ConnectionWizardServiceNg2.selectedMatch = null;
+                
+                let steps:Array<StepModel> = [];
+                let fromNodeName:string = scope.relationMenuDirectiveObj.fromNode.componentInstance.name;
+                let toNodeName:string = scope.relationMenuDirectiveObj.toNode.componentInstance.name;
+                steps.push(new StepModel(fromNodeName, FromNodeStepComponent));
+                steps.push(new StepModel(toNodeName, ToNodeStepComponent));
+                steps.push(new StepModel('Properties', PropertiesStepComponent));
+                let wizardTitle = 'Connect: ' + fromNodeName + ' to ' + toNodeName;
+                let modalInstance = this.ModalServiceNg2.createMultiStepsWizard(wizardTitle, steps, scope.createLinkFromMenu, ConnectionWizardHeaderComponent);
+                modalInstance.instance.open();
+
+                //
+                // this.ModalServiceNg2.createMultiStepsWizard('Connect', )Connect
+                // scope.$apply(() => {
+                //     scope.isLinkMenuOpen = true;
+                // });
             }
         });
         this._cy.on('tapstart', 'node', (event:Cy.EventObject) => {
@@ -424,7 +492,7 @@ export class CompositionGraph implements ng.IDirective {
             let nodesLinks = this.GeneralGraphUtils.getAllCompositionCiLinks(this._cy);
 
             let linkableNodes = this.commonGraphUtils.getLinkableNodes(this._cy, payload.node);
-            let filteredNodesData = this.matchCapabilitiesRequirementsUtils.findByMatchingCapabilitiesToRequirements(payload.node.data().componentInstance, linkableNodes, nodesLinks);
+            let filteredNodesData = this.matchCapabilitiesRequirementsUtils.findMatchingNodes(payload.node.data().componentInstance, linkableNodes, nodesLinks);
             this.matchCapabilitiesRequirementsUtils.highlightMatchingComponents(filteredNodesData, this._cy);
             this.matchCapabilitiesRequirementsUtils.fadeNonMachingComponents(filteredNodesData, nodesData, this._cy, payload.node.data());
             
@@ -498,14 +566,39 @@ export class CompositionGraph implements ng.IDirective {
 
     };*/
     private openModifyLinkMenu = (scope:ICompositionGraphScope, linkMenuObject:LinkMenu, timeOutInMilliseconds?:number) => {
+        scope.hideRelationMenu();
+        this.$timeout(() => {
+            scope.canvasMenuProps = {
+                open: true,
+                styleClass: 'w-sdc-canvas-menu-list',
+                items: [],
+                position: {
+                    x: `${linkMenuObject.position.x}px`,
+                    y: `${linkMenuObject.position.y}px`
+                }
+            };
 
-        this.commonGraphUtils.safeApply(scope, () => {
-            scope.linkMenuObject = linkMenuObject;
+            if (this._cy.$('edge:selected').length === 1) {
+                scope.canvasMenuProps.items.push({
+                    contents: 'View',
+                    styleClass: 'w-sdc-canvas-menu-item-view',
+                    action: () => {
+                        scope.viewRelation(<Cy.CollectionEdges>linkMenuObject.link);
+                    }
+                });
+            }
+            scope.canvasMenuProps.items.push({
+                contents: 'Delete',
+                styleClass: 'w-sdc-canvas-menu-item-delete',
+                action: () => {
+                    scope.deleteRelation(<Cy.CollectionEdges>linkMenuObject.link);
+                }
+            });
+
+            scope.relationMenuTimeout = this.$timeout(() => {
+                scope.hideRelationMenu();
+            }, timeOutInMilliseconds ? timeOutInMilliseconds : 6000);
         });
-
-        scope.relationMenuTimeout = this.$timeout(() => {
-            scope.hideRelationMenu();
-        }, timeOutInMilliseconds ? timeOutInMilliseconds : 6000);
     };
 
     private initGraphNodes(componentInstances:ComponentInstance[], isViewOnly:boolean) {
@@ -571,7 +664,10 @@ export class CompositionGraph implements ng.IDirective {
                              CommonGraphUtils,
                              MatchCapabilitiesRequirementsUtils,
                              CompositionGraphPaletteUtils,
-                             ComponentServiceNg2) => {
+                             ComponentServiceNg2,
+                             ModalService,
+                             ConnectionWizardService,
+                             ComponentInstanceServiceNg2) => {
         return new CompositionGraph(
             $q,
             $log,
@@ -587,7 +683,10 @@ export class CompositionGraph implements ng.IDirective {
             CommonGraphUtils,
             MatchCapabilitiesRequirementsUtils,
             CompositionGraphPaletteUtils,
-            ComponentServiceNg2);
+            ComponentServiceNg2,
+            ModalService,
+            ConnectionWizardService,
+            ComponentInstanceServiceNg2);
     }
 }
 
@@ -606,5 +705,8 @@ CompositionGraph.factory.$inject = [
     'CommonGraphUtils',
     'MatchCapabilitiesRequirementsUtils',
     'CompositionGraphPaletteUtils',
-    'ComponentServiceNg2'
+    'ComponentServiceNg2',
+    'ModalServiceNg2',
+    'ConnectionWizardServiceNg2',
+    'ComponentInstanceServiceNg2'
 ];

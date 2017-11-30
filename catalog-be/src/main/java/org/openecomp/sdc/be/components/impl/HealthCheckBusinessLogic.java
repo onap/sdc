@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.components.impl;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +37,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
@@ -54,18 +55,18 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.IEsHealthCheckDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.switchover.detector.SwitchoverDetector;
+import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
-import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckComponent;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
-import org.openecomp.sdc.common.api.HealthCheckWrapper;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.util.HealthCheckUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component("healthCheckBusinessLogic")
 public class HealthCheckBusinessLogic {
@@ -135,11 +136,25 @@ public class HealthCheckBusinessLogic {
 		return true;
 	}
 
-	public List<HealthCheckInfo> getBeHealthCheckInfosStatus() {
+	public Pair<Boolean, List<HealthCheckInfo>> getBeHealthCheckInfosStatus() {
 
-		return prevBeHealthCheckInfos;
+		return new ImmutablePair<Boolean, List<HealthCheckInfo>>(getAggregateBeStatus(prevBeHealthCheckInfos), prevBeHealthCheckInfos);
 
 	}
+
+	private Boolean getAggregateBeStatus(List<HealthCheckInfo> beHealthCheckInfos) {
+
+		Boolean status = true;
+
+		for (HealthCheckInfo healthCheckInfo : beHealthCheckInfos) {
+			if (healthCheckInfo.getHealthCheckStatus().equals(HealthCheckStatus.DOWN) && !healthCheckInfo.getHealthCheckComponent().equals(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE)) {
+				status = false;
+				break;
+			}
+		}
+		return status;
+	}
+
 
 	private List<HealthCheckInfo> getBeHealthCheckInfos() {
 
@@ -149,9 +164,6 @@ public class HealthCheckBusinessLogic {
 
 		// BE
 		getBeHealthCheck(healthCheckInfos);
-
-		/*// ES
-		getEsHealthCheck(healthCheckInfos);*/
 
 		// Titan
 		getTitanHealthCheck(healthCheckInfos);
@@ -165,18 +177,21 @@ public class HealthCheckBusinessLogic {
 		// Amdocs
 		getAmdocsHealthCheck(healthCheckInfos);
 
+		//DCAE
+		getDcaeHealthCheck(healthCheckInfos);
+
 		return healthCheckInfos;
 	}
 
 	private List<HealthCheckInfo> getBeHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
 		String appVersion = ExternalConfiguration.getAppVersion();
 		String description = "OK";
-		healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.BE, HealthCheckStatus.UP, appVersion, description));
+		healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_BE, HealthCheckStatus.UP, appVersion, description));
 		return healthCheckInfos;
 	}
 
 	//Removed from aggregate HC - TDP 293490
-/*	private List<HealthCheckInfo> getEsHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
+	/*	private List<HealthCheckInfo> getEsHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
 
 		// ES health check and version
 		HealthCheckStatus healthCheckStatus;
@@ -198,7 +213,7 @@ public class HealthCheckBusinessLogic {
 		healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.ES, healthCheckStatus, null, description));
 		return healthCheckInfos;
 	}
-*/
+	 */
 	public List<HealthCheckInfo> getTitanHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
 		// Titan health check and version
 		String description;
@@ -208,15 +223,15 @@ public class HealthCheckBusinessLogic {
 			isTitanUp = titanGenericDao.isGraphOpen();
 		} catch (Exception e) {
 			description = "Titan error: " + e.getMessage();
-			healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.TITAN, HealthCheckStatus.DOWN, null, description));
+			healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_TITAN, HealthCheckStatus.DOWN, null, description));
 			return healthCheckInfos;
 		}
 		if (isTitanUp) {
 			description = "OK";
-			healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.TITAN, HealthCheckStatus.UP, null, description));
+			healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_TITAN, HealthCheckStatus.UP, null, description));
 		} else {
 			description = "Titan graph is down";
-			healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.TITAN, HealthCheckStatus.DOWN, null, description));
+			healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_TITAN, HealthCheckStatus.DOWN, null, description));
 		}
 		return healthCheckInfos;
 	}
@@ -234,10 +249,10 @@ public class HealthCheckBusinessLogic {
 		}
 		if (isCassandraUp) {
 			description = "OK";
-			healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.CASSANDRA, HealthCheckStatus.UP, null, description));
+			healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_CASSANDRA, HealthCheckStatus.UP, null, description));
 		} else {
 			description = "Cassandra is down";
-			healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.CASSANDRA, HealthCheckStatus.DOWN, null, description));
+			healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_CASSANDRA, HealthCheckStatus.DOWN, null, description));
 		}
 		return healthCheckInfos;
 
@@ -252,71 +267,92 @@ public class HealthCheckBusinessLogic {
 	}
 
 	private List<HealthCheckInfo> getAmdocsHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
+		HealthCheckInfo beHealthCheckInfo = getHostedComponentsBeHealthCheck(Constants.HC_COMPONENT_ON_BOARDING, buildOnBoardingHealthCheckUrl());
+		healthCheckInfos.add(beHealthCheckInfo);
+		return healthCheckInfos;
+	}
+
+	private List<HealthCheckInfo> getDcaeHealthCheck(List<HealthCheckInfo> healthCheckInfos) {
+		HealthCheckInfo beHealthCheckInfo = getHostedComponentsBeHealthCheck(Constants.HC_COMPONENT_DCAE, buildDcaeHealthCheckUrl());
+		healthCheckInfos.add(beHealthCheckInfo);
+		return healthCheckInfos;
+	}
+
+	private HealthCheckInfo getHostedComponentsBeHealthCheck(String componentName, String healthCheckUrl) {
 		HealthCheckStatus healthCheckStatus;
 		String description;
 		String version = null;
 		List<HealthCheckInfo> componentsInfo = new ArrayList<>();
 
 		CloseableHttpClient httpClient = getHttpClient();
-		String amdocsHealtchCheckUrl = buildHealthCheckUrl();
-		HttpGet httpGet = new HttpGet(amdocsHealtchCheckUrl);
-		CloseableHttpResponse beResponse;
-		int beStatus;
-		try {
-			beResponse = httpClient.execute(httpGet);
-			beStatus = beResponse.getStatusLine().getStatusCode();
 
-			StringBuilder sb = new StringBuilder();
+		if (healthCheckUrl != null) {
+			HttpGet httpGet = new HttpGet(healthCheckUrl);
+			CloseableHttpResponse beResponse;
+			int beStatus;
+			try {
+				beResponse = httpClient.execute(httpGet);
+				beStatus = beResponse.getStatusLine().getStatusCode();
 
-			if (beStatus == HttpStatus.SC_OK || beStatus == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-				HttpEntity entity = beResponse.getEntity();
-				String beJsonResponse = EntityUtils.toString(entity);
-				Gson gson = new Gson();
-				HealthCheckWrapper healthCheckWrapper = gson.fromJson(beJsonResponse, HealthCheckWrapper.class);
-				version = healthCheckWrapper.getSdcVersion();
-				componentsInfo = healthCheckWrapper.getComponentsInfo();
+				String aggDescription = "";
 
-				if (componentsInfo != null) {
-					componentsInfo.forEach(x -> {
-						if (x.getHealthCheckStatus() == HealthCheckStatus.DOWN) {
-							sb.append("Component " + x.getHealthCheckComponent().name() + " is Down, ");
-						}
-					});
+				if (beStatus == HttpStatus.SC_OK || beStatus == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+					HttpEntity entity = beResponse.getEntity();
+					String beJsonResponse = EntityUtils.toString(entity);
+					log.trace("{} Health Check response: {}", componentName, beJsonResponse);
+
+					ObjectMapper mapper = new ObjectMapper();
+					Map<String, Object> healthCheckMap = mapper.readValue(beJsonResponse, new TypeReference<Map<String, Object>>(){});
+					version = healthCheckMap.get("sdcVersion") != null ? healthCheckMap.get("sdcVersion").toString() : null;
+					if (healthCheckMap.containsKey("componentsInfo")) {
+						componentsInfo = mapper.convertValue(healthCheckMap.get("componentsInfo"), new TypeReference<List<HealthCheckInfo>>() {});
+					}
+
+					if (componentsInfo.size() > 0) {
+						aggDescription = HealthCheckUtil.getAggregateDescription(componentsInfo, null);
+					} else {
+						componentsInfo.add(new HealthCheckInfo(Constants.HC_COMPONENT_BE, HealthCheckStatus.DOWN, null, null));
+					}
 				} else {
-					componentsInfo.add(new HealthCheckInfo(HealthCheckComponent.BE, HealthCheckStatus.DOWN, null, null));
+					log.trace("{} Health Check Response code: {}", componentName, beStatus);
 				}
-			}
 
-			if (beStatus != HttpStatus.SC_OK) {
+				if (beStatus != HttpStatus.SC_OK) {
+					healthCheckStatus = HealthCheckStatus.DOWN;
+					description = aggDescription.length() > 0
+							? aggDescription
+							: componentName + " is Down, specific reason unknown";//No inner component returned DOWN, but the status of HC is still DOWN.
+							if (componentsInfo.size() == 0) {
+								componentsInfo.add(new HealthCheckInfo(Constants.HC_COMPONENT_BE, HealthCheckStatus.DOWN, null, description));
+							}
+				} else {
+					healthCheckStatus = HealthCheckStatus.UP;
+					description = "OK";
+				}
+
+			} catch (Exception e) {
+				log.error("{} unexpected response: ", componentName, e);
 				healthCheckStatus = HealthCheckStatus.DOWN;
-				//Removing the last comma
-				description = sb.length()>0 
-						? sb.substring(0, sb.length()-1) 
-								: "Onboarding is Down, specific reason unknown";//No Amdocs inner component returned DOWN, but the status of Amdocs HC is still DOWN.
-				if (componentsInfo.size() == 0) {
-					componentsInfo.add(new HealthCheckInfo(HealthCheckComponent.BE, HealthCheckStatus.DOWN, null, description));
+				description = componentName + " unexpected response: " + e.getMessage();
+				if (componentsInfo != null && componentsInfo.size() == 0) {
+					componentsInfo.add(new HealthCheckInfo(Constants.HC_COMPONENT_BE, HealthCheckStatus.DOWN, null, description));
 				}
-			} else {
-				healthCheckStatus = HealthCheckStatus.UP;
-				description = "OK";
+			} finally {
+				if (httpClient != null) {
+					try {
+						httpClient.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
-
-		} catch (Exception e) {
+		} else {
 			healthCheckStatus = HealthCheckStatus.DOWN;
-			description = "Onboarding unexpected response: " + e.getMessage();
-			componentsInfo.add(new HealthCheckInfo(HealthCheckComponent.BE, HealthCheckStatus.DOWN, null, description));
-		} finally {
-			if (httpClient != null) {
-				try {
-					httpClient.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			description = componentName + " health check Configuration is missing";
+			componentsInfo.add(new HealthCheckInfo(Constants.HC_COMPONENT_BE, HealthCheckStatus.DOWN, null, description));
 		}
 
-		healthCheckInfos.add(new HealthCheckInfo(HealthCheckComponent.ON_BOARDING, healthCheckStatus, version, description, componentsInfo));
-		return healthCheckInfos;
+		return new HealthCheckInfo(componentName, healthCheckStatus, version, description, componentsInfo);
 	}
 
 	private CloseableHttpClient getHttpClient() {
@@ -371,20 +407,6 @@ public class HealthCheckBusinessLogic {
 			}
 
 		}
-
-		private boolean getAggregateBeStatus(List<HealthCheckInfo> beHealthCheckInfos) {
-
-			boolean status = true;
-
-			for (HealthCheckInfo healthCheckInfo : beHealthCheckInfos) {
-				if (healthCheckInfo.getHealthCheckStatus().equals(HealthCheckStatus.DOWN) && healthCheckInfo.getHealthCheckComponent() != HealthCheckComponent.DE) {
-					status = false;
-					break;
-				}
-			}
-			return status;
-		}
-
 	}
 
 	private void logAlarm(boolean prevHealthState) {
@@ -410,8 +432,8 @@ public class HealthCheckBusinessLogic {
 
 		if (beHealthCheckInfos != null && prevBeHealthCheckInfos != null) {
 
-			Map<HealthCheckComponent, HealthCheckStatus> currentValues = beHealthCheckInfos.stream().collect(Collectors.toMap(p -> p.getHealthCheckComponent(), p -> p.getHealthCheckStatus()));
-			Map<HealthCheckComponent, HealthCheckStatus> prevValues = prevBeHealthCheckInfos.stream().collect(Collectors.toMap(p -> p.getHealthCheckComponent(), p -> p.getHealthCheckStatus()));
+			Map<String, HealthCheckStatus> currentValues = beHealthCheckInfos.stream().collect(Collectors.toMap(p -> p.getHealthCheckComponent(), p -> p.getHealthCheckStatus()));
+			Map<String, HealthCheckStatus> prevValues = prevBeHealthCheckInfos.stream().collect(Collectors.toMap(p -> p.getHealthCheckComponent(), p -> p.getHealthCheckStatus()));
 
 			if (currentValues != null && prevValues != null) {
 				int currentSize = currentValues.size();
@@ -421,7 +443,7 @@ public class HealthCheckBusinessLogic {
 
 					result = true; //extra/missing component
 
-					Map<HealthCheckComponent, HealthCheckStatus> notPresent = null;
+					Map<String, HealthCheckStatus> notPresent = null;
 					if (currentValues.keySet().containsAll(prevValues.keySet())) {
 						notPresent = new HashMap<>(currentValues);
 						notPresent.keySet().removeAll(prevValues.keySet());
@@ -430,15 +452,15 @@ public class HealthCheckBusinessLogic {
 						notPresent.keySet().removeAll(currentValues.keySet());
 					}
 
-					for (HealthCheckComponent component : notPresent.keySet()) {
+					for (String component : notPresent.keySet()) {
 						logAlarm(String.format(COMPONENT_CHANGED_MESSAGE, component, prevValues.get(component), currentValues.get(component)));
 					}
 					//					HealthCheckComponent changedComponent = notPresent.keySet().iterator().next();
 
 				} else {
 
-					for (Entry<HealthCheckComponent, HealthCheckStatus> entry : currentValues.entrySet()) {
-						HealthCheckComponent key = entry.getKey();
+					for (Entry<String, HealthCheckStatus> entry : currentValues.entrySet()) {
+						String key = entry.getKey();
 						HealthCheckStatus value = entry.getValue();
 
 						if (!prevValues.containsKey(key)) {
@@ -468,15 +490,37 @@ public class HealthCheckBusinessLogic {
 		return result;
 	}
 
-	private String buildHealthCheckUrl() {
+	private String buildOnBoardingHealthCheckUrl() {
 
 		Configuration.OnboardingConfig onboardingConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getOnboarding();
 
-		String protocol = onboardingConfig.getProtocol();
-		String host = onboardingConfig.getHost();
-		Integer port = onboardingConfig.getPort();
-		String uri = onboardingConfig.getHealthCheckUri();
+		if (onboardingConfig != null) {
+			String protocol = onboardingConfig.getProtocol();
+			String host = onboardingConfig.getHost();
+			Integer port = onboardingConfig.getPort();
+			String uri = onboardingConfig.getHealthCheckUri();
 
-		return protocol + "://" + host + ":" + port + uri;
+			return protocol + "://" + host + ":" + port + uri;
+		}
+
+		log.error("onboarding health check configuration is missing.");
+		return null;
+	}
+
+	private String buildDcaeHealthCheckUrl() {
+
+		Configuration.DcaeConfig dcaeConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getDcae();
+
+		if (dcaeConfig != null) {
+			String protocol = dcaeConfig.getProtocol();
+			String host = dcaeConfig.getHost();
+			Integer port = dcaeConfig.getPort();
+			String uri = dcaeConfig.getHealthCheckUri();
+
+			return protocol + "://" + host + ":" + port + uri;
+		}
+
+		log.error("dcae health check configuration is missing.");
+		return null;
 	}
 }

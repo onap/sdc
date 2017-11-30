@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -63,8 +64,8 @@ public class DistributionEngineInitTaskTest {
 	// public static final IAuditingDao iAuditingDao =
 	// Mockito.mock(AuditingDao.class);
 
-	@Before
-	public void setup() {
+	@BeforeClass
+	public static void setup() {
 		// ExternalConfiguration.setAppName("distribEngine1");
 		ExternalConfiguration.setAppName("catalog-be");
 		ExternalConfiguration.setConfigDir("src/test/resources/config");
@@ -128,11 +129,11 @@ public class DistributionEngineInitTaskTest {
 
 		String realNotifTopic = notifTopic + "-" + envName.toUpperCase();
 		String realStatusTopic = statusTopic + "-" + envName.toUpperCase();
-		when(cambriaHandler.createTopic(Mockito.any(Collection.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.eq(realNotifTopic), Mockito.eq(1), Mockito.eq(1))).thenReturn(cambriaErrorResponse);
-		when(cambriaHandler.createTopic(Mockito.any(Collection.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.eq(realStatusTopic), Mockito.eq(1), Mockito.eq(1))).thenReturn(cambriaErrorResponse);
+		when(cambriaHandler.createTopic(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.eq(realNotifTopic), Mockito.eq(1), Mockito.eq(1))).thenReturn(cambriaErrorResponse);
+		when(cambriaHandler.createTopic(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.eq(realStatusTopic), Mockito.eq(1), Mockito.eq(1))).thenReturn(cambriaErrorResponse);
 
 		cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.OK);
-		when(cambriaHandler.registerToTopic(Mockito.any(Collection.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(SubscriberTypeEnum.class)))
+		when(cambriaHandler.registerToTopic(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
 				.thenReturn(cambriaErrorResponse);
 
 		DistributionEngineInitTask initTask = new DistributionEngineInitTask(0l, deConfiguration, envName, new AtomicBoolean(false), componentsUtils, null);
@@ -159,7 +160,6 @@ public class DistributionEngineInitTaskTest {
 
 		List<String> uebServers = new ArrayList<>();
 		uebServers.add("server1");
-		CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.NOT_FOUND);
 		Either<Set<String>, CambriaErrorResponse> left = Either.left(topics);
 
 		when(cambriaHandler.getTopics(Mockito.any(List.class))).thenReturn(left);
@@ -177,8 +177,8 @@ public class DistributionEngineInitTaskTest {
 		createTopic.setReplicationCount(1);
 		deConfiguration.setCreateTopic(createTopic);
 
-		cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.OK);
-		when(cambriaHandler.registerToTopic(Mockito.any(Collection.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(SubscriberTypeEnum.class)))
+		CambriaErrorResponse cambriaErrorResponse = new CambriaErrorResponse(CambriaOperationStatus.OK);
+		when(cambriaHandler.registerToTopic(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
 				.thenReturn(cambriaErrorResponse);
 
 		DistributionEngineInitTask initTask = new DistributionEngineInitTask(0l, deConfiguration, envName, new AtomicBoolean(false), componentsUtils, null);
@@ -224,14 +224,15 @@ public class DistributionEngineInitTaskTest {
 
 		String realNotifTopic = notifTopic + "-" + envName.toUpperCase();
 		String realStatusTopic = statusTopic + "-" + envName.toUpperCase();
-		when(cambriaHandler.createTopic(Mockito.any(Collection.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.eq(realNotifTopic), Mockito.eq(1), Mockito.eq(1))).thenReturn(cambriaErrorResponse);
-		when(cambriaHandler.createTopic(Mockito.any(Collection.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.eq(realStatusTopic), Mockito.eq(1), Mockito.eq(1))).thenReturn(cambriaErrorResponse);
+		when(cambriaHandler.createTopic(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.eq(realNotifTopic), Mockito.eq(1), Mockito.eq(1))).thenReturn(cambriaErrorResponse);
+		when(cambriaHandler.createTopic(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.eq(realStatusTopic), Mockito.eq(1), Mockito.eq(1))).thenReturn(cambriaErrorResponse);
 
-		when(cambriaHandler.registerToTopic(Mockito.any(Collection.class), Mockito.eq(realNotifTopic), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(SubscriberTypeEnum.class)))
+		when(cambriaHandler.registerToTopic(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(SubscriberTypeEnum.class)))
 				.thenReturn(new CambriaErrorResponse(CambriaOperationStatus.OK));
 
-		when(cambriaHandler.registerToTopic(Mockito.any(Collection.class), Mockito.eq(realStatusTopic), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(SubscriberTypeEnum.class)))
+		when(cambriaHandler.registerToTopic(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(SubscriberTypeEnum.class)))
 				.thenReturn(new CambriaErrorResponse(CambriaOperationStatus.CONNNECTION_ERROR));
+
 
 		DistributionEngineInitTask initTask = new DistributionEngineInitTask(0l, deConfiguration, envName, new AtomicBoolean(false), componentsUtils, null);
 		initTask.setCambriaHandler(cambriaHandler);

@@ -23,11 +23,15 @@ package org.openecomp.sdc.be.model;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+
+import static java.util.stream.Collectors.groupingBy;
 
 public class Resource extends Component implements Serializable {
 	/**
@@ -299,5 +303,15 @@ public class Resource extends Component implements Serializable {
 	public boolean deriveFromGeneric(){	
 		return this.shouldGenerateInputs() || (derivedFrom != null && derivedFrom.contains(fetchGenericTypeToscaNameFromConfig()));
 	}
-	
+
+	public Map<String, List<RequirementCapabilityRelDef>> groupRelationsByInstanceName(Resource resource) {
+		Map<String, List<RequirementCapabilityRelDef>> relationsByInstanceId = MapUtil.groupListBy(resource.getComponentInstancesRelations(), RequirementCapabilityRelDef::getFromNode);
+		return MapUtil.convertMapKeys(relationsByInstanceId, (instId) -> getInstanceNameFromInstanceId(resource, instId));
+	}
+
+	private String getInstanceNameFromInstanceId(Resource resource, String instId) {
+		return resource.getComponentInstanceById(instId).get().getName();
+	}
+
+
 }

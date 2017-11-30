@@ -161,6 +161,7 @@ public class ModelConverter {
 		service.setDistributionStatus(DistributionStatusEnum.findState((String) toscaElement.getMetadataValue(JsonPresentationFields.DISTRIBUTION_STATUS)));
 		service.setEcompGeneratedNaming((Boolean) toscaElement.getMetadataValueOrDefault(JsonPresentationFields.ECOMP_GENERATED_NAMING, true));
 		service.setNamingPolicy((String) toscaElement.getMetadataValueOrDefault(JsonPresentationFields.NAMING_POLICY, StringUtils.EMPTY));
+		service.setEnvironmentContext((String) toscaElement.getMetadataValue(JsonPresentationFields.ENVIRONMENT_CONTEXT));
 	}
 
 	private static Resource convertToResource(ToscaElement toscaElement) {
@@ -408,7 +409,7 @@ public class ModelConverter {
 								sb.append(cap.getOwnerId());
 							}
 							sb.append(CAP_PROP_DELIM).append(s).append(CAP_PROP_DELIM).append(cap.getName());
-							toscaCapPropMap.put(sb.toString(), dataToCreate);
+							toscaCapPropMap.put(sb.toString(), new MapPropertiesDataDefinition(dataToCreate));
 						}
 					}
 
@@ -909,6 +910,7 @@ public class ModelConverter {
 		topologyTemplate.setMetadataValue(JsonPresentationFields.PROJECT_CODE, service.getProjectCode());
 		topologyTemplate.setMetadataValue(JsonPresentationFields.ECOMP_GENERATED_NAMING, service.isEcompGeneratedNaming());
 		topologyTemplate.setMetadataValue(JsonPresentationFields.NAMING_POLICY, service.getNamingPolicy());
+		topologyTemplate.setMetadataValue(JsonPresentationFields.ENVIRONMENT_CONTEXT, service.getEnvironmentContext());
 
 	}
 
@@ -1125,10 +1127,15 @@ public class ModelConverter {
 					} else {
 						instancesCapabilities.put(capabilityType, caps);
 					}
-					if (MapUtils.isEmpty(instancesMap.get(instanceId).getCapabilities())) {
-						instancesMap.get(instanceId).setCapabilities(new HashMap<>());
+					ComponentInstance instance = instancesMap.get(instanceId);
+					if (instance == null) {
+						log.error("instance is null for id {} entry {}", instanceId, entry.getValue().getToscaPresentationValue(JsonPresentationFields.NAME));
+					} else {
+						if (MapUtils.isEmpty(instance.getCapabilities())) {
+							instance.setCapabilities(new HashMap<>());
+						}
+						instance.getCapabilities().put(capabilityType, new ArrayList<>(caps));
 					}
-					instancesMap.get(instanceId).getCapabilities().put(capabilityType, new ArrayList<>(caps));
 				}
 			}
 			component.setCapabilities(instancesCapabilities);

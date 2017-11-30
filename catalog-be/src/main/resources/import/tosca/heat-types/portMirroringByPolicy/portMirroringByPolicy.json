@@ -1,0 +1,21 @@
+{
+  "payloadName": "portMirroringByPolicy.yml",
+  "contactId": "jh0003",
+  "name": "Port Mirroring Configuration By Policy",
+  "description": "A port mirroring configuration by policy object",
+  "resourceIconPath": "pmc",
+  "resourceType": "Configuration",
+  "categories": [
+  {
+    "name": "Configuration",
+    "subcategories": [
+      {
+        "name": "Configuration"
+      }
+    ]
+  }
+],
+  "tags": [
+    "Port Mirroring Configuration By Policy"
+  ]
+}

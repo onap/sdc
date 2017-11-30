@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
@@ -32,14 +29,11 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -51,55 +45,31 @@ import org.openecomp.sdc.be.auditing.api.IAuditingManager;
 import org.openecomp.sdc.be.auditing.impl.AuditingLogFormatUtil;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationInfo;
+import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
-import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
-import org.openecomp.sdc.be.info.MergedArtifactInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.CsarInfo;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupProperty;
-import org.openecomp.sdc.be.model.GroupTypeDefinition;
-import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.NodeTypeInfo;
-import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.UploadCapInfo;
-import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
-import org.openecomp.sdc.be.model.UploadPropInfo;
-import org.openecomp.sdc.be.model.UploadReqInfo;
-import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.NodeTypeOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
@@ -110,15 +80,12 @@ import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.CsarUtils.NonMetaArtifactInfo;
-import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
-import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.util.GeneralUtility;
@@ -127,10 +94,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
-
-import com.att.nsa.cambria.test.support.CambriaBatchingPublisherMock.Entry;
-import com.google.common.base.Equivalence.Wrapper;
-import com.netflix.astyanax.connectionpool.Operation;
 
 import fj.data.Either;
 
@@ -145,10 +108,10 @@ public class ResourceBusinessLogicTest {
 	public static final String UPDATED_SUBCATEGORY = "Gateway";
 
 	public static final String RESOURCE_NAME = "My-Resource_Name with   space";
-	private static final String GENERIC_VF_NAME = "org.openecomp.resource.abstract.nodes.VF";
-	private static final String GENERIC_VFC_NAME = "org.openecomp.resource.abstract.nodes.VFC";
-	private static final String GENERIC_PNF_NAME = "org.openecomp.resource.abstract.nodes.PNF";
-
+    private static final String GENERIC_VF_NAME = "org.openecomp.resource.abstract.nodes.VF";
+    private static final String GENERIC_VFC_NAME = "org.openecomp.resource.abstract.nodes.VFC";
+    private static final String GENERIC_PNF_NAME = "org.openecomp.resource.abstract.nodes.PNF";
+    
 	final ServletContext servletContext = Mockito.mock(ServletContext.class);
 	IAuditingManager iAuditingManager = null;
 	IElementOperation mockElementDao;
@@ -179,8 +142,9 @@ public class ResourceBusinessLogicTest {
 	ArtifactsBusinessLogic artifactManager = new ArtifactsBusinessLogic();
 	CsarOperation csarOperation = Mockito.mock(CsarOperation.class);
 	Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<String, DataTypeDefinition>();
-
+	private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
 	CacheMangerOperation cacheManager = Mockito.mock(CacheMangerOperation.class);
+
 
 	public ResourceBusinessLogicTest() {
 
@@ -195,8 +159,7 @@ public class ResourceBusinessLogicTest {
 
 		// Init Configuration
 		String appConfigDir = "src/test/resources/config/catalog-be";
-		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-				appConfigDir);
+		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
 		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
 		// Elements
@@ -214,38 +177,30 @@ public class ResourceBusinessLogicTest {
 
 		// Servlet Context attributes
 		when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
-		when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
-				.thenReturn(webAppContextWrapper);
+		when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
 		when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
 		when(webAppContext.getBean(IElementOperation.class)).thenReturn(mockElementDao);
 
 		Either<Integer, StorageOperationStatus> eitherCountRoot = Either.left(1);
 		Either<Boolean, StorageOperationStatus> eitherFalse = Either.left(true);
-		when(toscaOperationFacade.validateComponentNameExists("Root", ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE))
-				.thenReturn(eitherFalse);
+		when(toscaOperationFacade.validateComponentNameExists("Root", ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE)).thenReturn(eitherFalse);
 
 		Either<Boolean, StorageOperationStatus> eitherCountExist = Either.left(true);
-		when(toscaOperationFacade.validateComponentNameExists("alreadyExists", ResourceTypeEnum.VFC,
-				ComponentTypeEnum.RESOURCE)).thenReturn(eitherCountExist);
-
+		when(toscaOperationFacade.validateComponentNameExists("alreadyExists", ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCountExist);
+		
 		Either<Boolean, StorageOperationStatus> eitherCount = Either.left(false);
-		when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.VFC,
-				ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
-		when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.VF,
-				ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
-		when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.PNF,
-				ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
-
+		when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
+		when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.VF, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
+		when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.PNF, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
+		
 		Either<Boolean, StorageOperationStatus> validateDerivedExists = Either.left(true);
 		when(toscaOperationFacade.validateToscaResourceNameExists("Root")).thenReturn(validateDerivedExists);
-
+		
 		Either<Boolean, StorageOperationStatus> validateDerivedNotExists = Either.left(false);
 		when(toscaOperationFacade.validateToscaResourceNameExists("kuku")).thenReturn(validateDerivedNotExists);
-		when(graphLockOperation.lockComponent(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Resource)))
-				.thenReturn(StorageOperationStatus.OK);
-		when(graphLockOperation.lockComponentByName(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Resource)))
-				.thenReturn(StorageOperationStatus.OK);
-
+		when(graphLockOperation.lockComponent(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Resource))).thenReturn(StorageOperationStatus.OK);
+		when(graphLockOperation.lockComponentByName(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Resource))).thenReturn(StorageOperationStatus.OK);
+		
 		// createResource
 		resourceResponse = createResourceObject(true);
 		Either<Resource, StorageOperationStatus> eitherCreate = Either.left(resourceResponse);
@@ -272,6 +227,7 @@ public class ResourceBusinessLogicTest {
 		bl.setApplicationDataTypeCache(applicationDataTypeCache);
 		bl.setCsarOperation(csarOperation);
 		bl.setCacheManagerOperation(cacheManager);
+		bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);
 		toscaOperationFacade.setNodeTypeOperation(nodeTypeOperation);
 		toscaOperationFacade.setTopologyTemplateOperation(topologyTemplateOperation);
 		bl.setToscaOperationFacade(toscaOperationFacade);
@@ -334,7 +290,7 @@ public class ResourceBusinessLogicTest {
 		if (afterCreate) {
 			resource.setName(resource.getName());
 			resource.setVersion("0.1");
-
+			
 			resource.setUniqueId(resource.getName().toLowerCase() + ":" + resource.getVersion());
 			resource.setCreatorUserId(user.getUserId());
 			resource.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
@@ -352,8 +308,7 @@ public class ResourceBusinessLogicTest {
 	@Test
 	public void testHappyScenario() {
 		Resource resource = createResourceObject(false);
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 
 		if (createResponse.isRight()) {
 			assertEquals(new Integer(200), createResponse.right().value().getStatus());
@@ -365,17 +320,15 @@ public class ResourceBusinessLogicTest {
 	public void testUpdateHappyScenario() {
 		Resource resource = createResourceObjectCsar(true);
 		setCanWorkOnResource(resource);
-
+		
 		Either<Resource, StorageOperationStatus> resourceLinkedToCsarRes = Either.left(resource);
-		when(toscaOperationFacade.getLatestComponentByCsarOrName(ComponentTypeEnum.RESOURCE, resource.getCsarUUID(),
-				resource.getSystemName())).thenReturn(resourceLinkedToCsarRes);
+		when(toscaOperationFacade.getLatestComponentByCsarOrName(ComponentTypeEnum.RESOURCE, resource.getCsarUUID(), resource.getSystemName())).thenReturn(resourceLinkedToCsarRes);
 		Either<Boolean, StorageOperationStatus> validateDerivedExists = Either.left(true);
 		when(toscaOperationFacade.validateToscaResourceNameExists("Root")).thenReturn(validateDerivedExists);
-
+		
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> updateResponse = bl.validateAndUpdateResourceFromCsar(resource, user, null,
-				null, resource.getUniqueId());
+		Either<Resource, ResponseFormat> updateResponse = bl.validateAndUpdateResourceFromCsar(resource, user, null, null, resource.getUniqueId());
 		if (updateResponse.isRight()) {
 			assertEquals(new Integer(200), updateResponse.right().value().getStatus());
 		}
@@ -403,7 +356,7 @@ public class ResourceBusinessLogicTest {
 		testTagsExceedsLimitCreate();
 		testTagsNoServiceName();
 		testInvalidTag();
-
+		
 		testContactIdTooLong();
 		testContactIdWrongFormatCreate();
 		testResourceContactIdEmpty();
@@ -431,18 +384,15 @@ public class ResourceBusinessLogicTest {
 		resourceExist.setName(resourceName);
 		resourceExist.getTags().add(resourceName);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
-		assertResponse(createResponse, ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(),
-				resourceName);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		assertResponse(createResponse, ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), resourceName);
 	}
 
 	private void testResourceNameEmpty() {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setName(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertResponse(createResponse, ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue());
 	}
 
@@ -452,11 +402,9 @@ public class ResourceBusinessLogicTest {
 		String tooLongResourceName = "zCRCAWjqte0DtgcAAMmcJcXeNubeX1p1vOZNTShAHOYNAHvV3iK";
 		resourceExccedsNameLimit.setName(tooLongResourceName);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
-		assertResponse(createResponse, ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(),
-				"" + ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
+		assertResponse(createResponse, ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
 	}
 
 	private void testResourceNameWrongFormat() {
@@ -465,8 +413,7 @@ public class ResourceBusinessLogicTest {
 		String nameWrongFormat = "ljg?fd";
 		resource.setName(nameWrongFormat);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue());
 	}
@@ -487,11 +434,9 @@ public class ResourceBusinessLogicTest {
 
 		resourceExccedsDescLimit.setDescription(tooLongResourceDesc);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsDescLimit,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsDescLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
-		assertResponse(createResponse, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT,
-				ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
+		assertResponse(createResponse, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
 	}
 
 	private void testResourceDescNotEnglish() {
@@ -500,35 +445,29 @@ public class ResourceBusinessLogicTest {
 		String notEnglishDesc = "\uC2B5";
 		notEnglish.setDescription(notEnglishDesc);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(notEnglish,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(notEnglish, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
-		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_DESCRIPTION,
-				ComponentTypeEnum.RESOURCE.getValue());
+		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_DESCRIPTION, ComponentTypeEnum.RESOURCE.getValue());
 	}
 
 	private void testResourceDescriptionEmpty() {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setDescription("");
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
-		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_DESCRIPTION,
-				ComponentTypeEnum.RESOURCE.getValue());
+		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.RESOURCE.getValue());
 	}
 
 	private void testResourceDescriptionMissing() {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setDescription(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
-		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_DESCRIPTION,
-				ComponentTypeEnum.RESOURCE.getValue());
+		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.RESOURCE.getValue());
 	}
 	// Resource description - end
 	// Resource icon start
@@ -537,8 +476,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setIcon(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_ICON, ComponentTypeEnum.RESOURCE.getValue());
@@ -548,8 +486,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setIcon("kjk3453^&");
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_ICON, ComponentTypeEnum.RESOURCE.getValue());
@@ -559,12 +496,10 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setIcon("dsjfhskdfhskjdhfskjdhkjdhfkshdfksjsdkfhsdfsdfsdfsfsdfsf");
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
-		assertResponse(createResponse, ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(),
-				"" + ValidationUtils.ICON_MAX_LENGTH);
+		assertResponse(createResponse, ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.ICON_MAX_LENGTH);
 	}
 
 	// Resource icon end
@@ -573,8 +508,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setTags(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_TAGS);
@@ -584,8 +518,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setTags(new ArrayList<String>());
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_TAGS);
@@ -641,11 +574,9 @@ public class ResourceBusinessLogicTest {
 
 		resourceExccedsNameLimit.setTags(tagsList);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
-		assertResponse(createResponse, ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT,
-				"" + ValidationUtils.TAG_LIST_MAX_LENGTH);
+		assertResponse(createResponse, ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
 
 	}
 
@@ -659,11 +590,9 @@ public class ResourceBusinessLogicTest {
 
 		resourceExccedsNameLimit.setTags(tagsList);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
-		assertResponse(createResponse, ActionStatus.COMPONENT_SINGLE_TAG_EXCEED_LIMIT,
-				"" + ValidationUtils.TAG_MAX_LENGTH);
+		assertResponse(createResponse, ActionStatus.COMPONENT_SINGLE_TAG_EXCEED_LIMIT, "" + ValidationUtils.TAG_MAX_LENGTH);
 
 	}
 
@@ -674,8 +603,7 @@ public class ResourceBusinessLogicTest {
 		tagsList.add(tag1);
 		serviceExccedsNameLimit.setTags(tagsList);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(serviceExccedsNameLimit,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(serviceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_TAGS_NO_COMP_NAME);
 
@@ -688,8 +616,7 @@ public class ResourceBusinessLogicTest {
 		tagsList.add(tag1);
 		serviceExccedsNameLimit.setTags(tagsList);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(serviceExccedsNameLimit,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(serviceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_FIELD_FORMAT, new String[] { "Resource", "tag" });
 
@@ -697,15 +624,14 @@ public class ResourceBusinessLogicTest {
 
 	// Resource tags - stop
 	// Resource contact start
-
+	
 	private void testContactIdTooLong() {
 		Resource resourceContactId = createResourceObject(false);
 		// 59 chars instead of 50
 		String contactIdTooLong = "thisNameIsVeryLongAndExeccedsTheNormalLengthForContactId";
 		resourceContactId.setContactId(contactIdTooLong);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceContactId,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceContactId, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
 	}
@@ -716,8 +642,7 @@ public class ResourceBusinessLogicTest {
 		String contactIdFormatWrong = "yrt134!!!";
 		resourceContactId.setContactId(contactIdFormatWrong);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceContactId,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceContactId, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
 	}
@@ -726,8 +651,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setContactId("");
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
@@ -737,8 +661,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setContactId(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
@@ -749,23 +672,19 @@ public class ResourceBusinessLogicTest {
 		String tooLongVendorName = "h1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9E";
 		resourceExccedsVendorNameLimit.setVendorName(tooLongVendorName);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsVendorNameLimit,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsVendorNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
-		assertResponse(createResponse, ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT,
-				"" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
+		assertResponse(createResponse, ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
 	}
-
+	
 	private void testResourceVendorModelNumberExceedsLimit() {
 		Resource resourceExccedsVendorModelNumberLimit = createResourceObject(false);
 		String tooLongVendorModelNumber = "h1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9E";
 		resourceExccedsVendorModelNumberLimit.setResourceVendorModelNumber(tooLongVendorModelNumber);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsVendorModelNumberLimit,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsVendorModelNumberLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
-		assertResponse(createResponse, ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT,
-				"" + ValidationUtils.RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH);
+		assertResponse(createResponse, ActionStatus.RESOURCE_VENDOR_MODEL_NUMBER_EXCEEDS_LIMIT, "" + ValidationUtils.RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH);
 	}
 
 	private void testVendorNameWrongFormatCreate() {
@@ -774,8 +693,7 @@ public class ResourceBusinessLogicTest {
 		String nameWrongFormat = "ljg*fd";
 		resource.setVendorName(nameWrongFormat);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_VENDOR_NAME);
 	}
@@ -786,8 +704,7 @@ public class ResourceBusinessLogicTest {
 		String nameWrongFormat = "1>2";
 		resource.setVendorRelease(nameWrongFormat);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_VENDOR_RELEASE);
 
@@ -798,19 +715,16 @@ public class ResourceBusinessLogicTest {
 		String tooLongVendorRelease = "h1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9E";
 		resourceExccedsNameLimit.setVendorRelease(tooLongVendorRelease);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
-		assertResponse(createResponse, ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT,
-				"" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
+		assertResponse(createResponse, ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
 	}
 
 	private void testResourceVendorNameMissing() {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setVendorName(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.MISSING_VENDOR_NAME);
@@ -820,8 +734,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setVendorRelease(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.MISSING_VENDOR_RELEASE);
@@ -833,8 +746,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setCategories(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
@@ -846,8 +758,7 @@ public class ResourceBusinessLogicTest {
 		resourceExist.setCategories(null);
 		resourceExist.addCategory("koko", "koko");
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
@@ -866,8 +777,7 @@ public class ResourceBusinessLogicTest {
 		String licenseType = "User";
 		createResourceObject.setCost(cost);
 		createResourceObject.setLicenseType(licenseType);
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(createResourceObject,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(createResourceObject, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 
 		if (createResponse.isRight()) {
 			assertEquals(new Integer(200), createResponse.right().value().getStatus());
@@ -883,8 +793,7 @@ public class ResourceBusinessLogicTest {
 		String cost = "12356,464";
 		resourceCost.setCost(cost);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceCost,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceCost, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_CONTENT);
 	}
@@ -897,8 +806,7 @@ public class ResourceBusinessLogicTest {
 		String licenseType = "cpu";
 		resourceLicenseType.setLicenseType(licenseType);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceLicenseType,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceLicenseType, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_CONTENT);
 	}
@@ -910,8 +818,7 @@ public class ResourceBusinessLogicTest {
 		List<String> list = null;
 		resourceExist.setDerivedFrom(list);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
@@ -921,8 +828,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setDerivedFrom(new ArrayList<String>());
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
@@ -934,21 +840,18 @@ public class ResourceBusinessLogicTest {
 		derivedFrom.add("kuku");
 		resourceExist.setDerivedFrom(derivedFrom);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.PARENT_RESOURCE_NOT_FOUND);
 	}
 	// Derived from stop
 
-	private void assertResponse(Either<Resource, ResponseFormat> createResponse, ActionStatus expectedStatus,
-			String... variables) {
+	private void assertResponse(Either<Resource, ResponseFormat> createResponse, ActionStatus expectedStatus, String... variables) {
 		ResponseFormat expectedResponse = responseManager.getResponseFormat(expectedStatus, variables);
 		ResponseFormat actualResponse = createResponse.right().value();
 		assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
-		assertEquals("assert error description", expectedResponse.getFormattedMessage(),
-				actualResponse.getFormattedMessage());
+		assertEquals("assert error description", expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
 	}
 
 	// UPDATE tests - start
@@ -967,9 +870,8 @@ public class ResourceBusinessLogicTest {
 
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(),
-				updatedResource, null, user, false);
+		
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue());
 
@@ -988,12 +890,11 @@ public class ResourceBusinessLogicTest {
 		String name = "ljg";
 		updatedResource.setName(name);
 		resource.setVersion("1.0");
-
+	
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(),
-				updatedResource, null, user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.RESOURCE_NAME_CANNOT_BE_CHANGED);
 
@@ -1014,11 +915,9 @@ public class ResourceBusinessLogicTest {
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(),
-				updatedResource, null, user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
-		assertResponse(createResponse, ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(),
-				"" + ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
+		assertResponse(createResponse, ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
 	}
 
 	@Test
@@ -1034,11 +933,9 @@ public class ResourceBusinessLogicTest {
 		updatedResource.setName(resourceName);
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(updatedResource);
 		when(toscaOperationFacade.updateToscaElement(updatedResource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(),
-				updatedResource, null, user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
-		assertResponse(createResponse, ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(),
-				resourceName);
+		assertResponse(createResponse, ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), resourceName);
 	}
 
 	//
@@ -1064,11 +961,9 @@ public class ResourceBusinessLogicTest {
 		updatedResource.setDescription(tooLongResourceDesc);
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(),
-				updatedResource, null, user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
-		assertResponse(createResponse, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT,
-				ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
+		assertResponse(createResponse, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
 
 	}
 
@@ -1087,8 +982,7 @@ public class ResourceBusinessLogicTest {
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(),
-				updatedResource, null, user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_ICON, ComponentTypeEnum.RESOURCE.getValue());
 
@@ -1111,8 +1005,7 @@ public class ResourceBusinessLogicTest {
 		;
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(),
-				updatedResource, null, user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.RESOURCE_ICON_CANNOT_BE_CHANGED);
 
@@ -1176,12 +1069,10 @@ public class ResourceBusinessLogicTest {
 		updatedResource.setTags(tagsList);
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(),
-				updatedResource, null, user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 
-		assertResponse(createResponse, ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT,
-				"" + ValidationUtils.TAG_LIST_MAX_LENGTH);
+		assertResponse(createResponse, ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
 	}
 
 	@Test
@@ -1198,8 +1089,7 @@ public class ResourceBusinessLogicTest {
 		updatedResource.setVendorName(nameWrongFormat);
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(),
-				updatedResource, null, user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_VENDOR_NAME);
 
@@ -1221,8 +1111,7 @@ public class ResourceBusinessLogicTest {
 		;
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(),
-				updatedResource, null, user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.RESOURCE_VENDOR_NAME_CANNOT_BE_CHANGED);
 
@@ -1241,11 +1130,9 @@ public class ResourceBusinessLogicTest {
 		updatedResource.setVendorRelease(tooLongVendorRelease);
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(),
-				updatedResource, null, user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
-		assertResponse(createResponse, ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT,
-				"" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
+		assertResponse(createResponse, ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
 	}
 
 	@Ignore
@@ -1263,8 +1150,7 @@ public class ResourceBusinessLogicTest {
 		updatedResource.setContactId(contactIdTooLong);
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null,
-				user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
@@ -1285,8 +1171,7 @@ public class ResourceBusinessLogicTest {
 		updatedResource.addCategory(badCategory, "fikt");
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null,
-				user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
@@ -1308,8 +1193,7 @@ public class ResourceBusinessLogicTest {
 		;
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null,
-				user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.RESOURCE_CATEGORY_CANNOT_BE_CHANGED);
@@ -1330,8 +1214,7 @@ public class ResourceBusinessLogicTest {
 		updatedResource.setDerivedFrom(list);
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null,
-				user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
@@ -1350,8 +1233,7 @@ public class ResourceBusinessLogicTest {
 		updatedResource.setDerivedFrom(new ArrayList<String>());
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null,
-				user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
@@ -1372,8 +1254,7 @@ public class ResourceBusinessLogicTest {
 		updatedResource.setDerivedFrom(derivedFrom);
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null,
-				user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.PARENT_RESOURCE_NOT_FOUND);
@@ -1388,16 +1269,13 @@ public class ResourceBusinessLogicTest {
 		// this is in order to prevent failing with 403 earlier
 		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
 		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
-
+		
 		Either<Boolean, StorageOperationStatus> isToscaNameExtending = Either.left(true);
-		when(toscaOperationFacade.validateToscaResourceNameExtends(Mockito.anyString(), Mockito.anyString()))
-				.thenReturn(isToscaNameExtending);
-
-		Either<Map<String, PropertyDefinition>, StorageOperationStatus> findPropertiesOfNode = Either
-				.left(new HashMap<>());
-		when(propertyOperation.deleteAllPropertiesAssociatedToNode(Mockito.any(NodeTypeEnum.class),
-				Mockito.anyString())).thenReturn(findPropertiesOfNode);
-
+		when(toscaOperationFacade.validateToscaResourceNameExtends(Mockito.anyString(), Mockito.anyString())).thenReturn(isToscaNameExtending);
+		
+		Either<Map<String, PropertyDefinition>, StorageOperationStatus> findPropertiesOfNode = Either.left(new HashMap<>());
+		when(propertyOperation.deleteAllPropertiesAssociatedToNode(Mockito.any(NodeTypeEnum.class), Mockito.anyString())).thenReturn(findPropertiesOfNode);
+		
 		resource.setVersion("1.0");
 
 		ArrayList<String> derivedFrom = new ArrayList<String>();
@@ -1405,11 +1283,10 @@ public class ResourceBusinessLogicTest {
 		updatedResource.setDerivedFrom(derivedFrom);
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(updatedResource);
 		when(toscaOperationFacade.updateToscaElement(updatedResource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null,
-				user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
 		assertTrue(createResponse.isLeft());
 	}
-
+	
 	@Test
 	public void testResourceTemplateCertify_UPDATE_SAD() {
 		Resource resource = createResourceObject(true);
@@ -1419,7 +1296,7 @@ public class ResourceBusinessLogicTest {
 		// this is in order to prevent failing with 403 earlier
 		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
 		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
-
+		
 		Either<Boolean, StorageOperationStatus> isToscaNameExtending = Either.left(false);
 		when(toscaOperationFacade.validateToscaResourceNameExtends(Mockito.anyString(), Mockito.anyString()))
 				.thenReturn(isToscaNameExtending);
@@ -1431,8 +1308,8 @@ public class ResourceBusinessLogicTest {
 		updatedResource.setDerivedFrom(derivedFrom);
 		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
-		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null,
-				user, false);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user,
+				false);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.PARENT_RESOURCE_DOES_NOT_EXTEND);
@@ -1443,28 +1320,23 @@ public class ResourceBusinessLogicTest {
 	public void createOrUpdateResourceAlreadyCheckout() {
 		Resource resourceExist = createResourceObject(false);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 
 		createResponse.left().value().setLastUpdaterUserId(user.getUserId());
 		assertTrue(createResponse.isLeft());
 
-		Either<Component, StorageOperationStatus> getLatestResult = Either.left(createResponse.left().value());
-		when(toscaOperationFacade.getLatestByName(resourceExist.getName())).thenReturn(getLatestResult);
-		when(toscaOperationFacade.overrideComponent(Mockito.any(Component.class), Mockito.any(Component.class)))
-				.thenReturn(getLatestResult);
+		Either<Resource, StorageOperationStatus> getLatestResult = Either.left(createResponse.left().value());
+		Either<Component, StorageOperationStatus> getCompLatestResult = Either.left(createResponse.left().value());
+		when(toscaOperationFacade.getLatestByName(resourceExist.getName())).thenReturn(getCompLatestResult);
+		when(toscaOperationFacade.overrideComponent(Mockito.any(Resource.class), Mockito.any(Resource.class))).thenReturn(getLatestResult);
 
 		Resource resourceToUpdtae = createResourceObject(false);
 
-		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl
-				.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null);
+		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null, null, false);
 		assertTrue(createOrUpdateResource.isLeft());
 
-		Mockito.verify(toscaOperationFacade, Mockito.times(1)).overrideComponent(Mockito.any(Resource.class),
-				Mockito.any(Resource.class));
-		Mockito.verify(lifecycleBl, Mockito.times(0)).changeState(Mockito.anyString(), Mockito.eq(user),
-				Mockito.eq(LifeCycleTransitionEnum.CHECKOUT), Mockito.any(LifecycleChangeInfoWithAction.class),
-				Mockito.anyBoolean(), Mockito.anyBoolean());
+		Mockito.verify(toscaOperationFacade, Mockito.times(1)).overrideComponent(Mockito.any(Resource.class), Mockito.any(Resource.class));
+		Mockito.verify(lifecycleBl, Mockito.times(0)).changeState(Mockito.anyString(), Mockito.eq(user), Mockito.eq(LifeCycleTransitionEnum.CHECKOUT), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
 
 	}
 
@@ -1472,34 +1344,28 @@ public class ResourceBusinessLogicTest {
 	public void createOrUpdateResourceCertified() {
 		Resource resourceExist = createResourceObject(false);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 
 		assertTrue(createResponse.isLeft());
 		Resource certifiedResource = createResponse.left().value();
 		certifiedResource.setLifecycleState(LifecycleStateEnum.CERTIFIED);
 		certifiedResource.setVersion("1.0");
+		
 
-		Either<Component, StorageOperationStatus> getLatestResult = Either.left(certifiedResource);
-		when(toscaOperationFacade.getLatestByName(resourceExist.getName())).thenReturn(getLatestResult);
-		when(toscaOperationFacade.overrideComponent(Mockito.any(Component.class), Mockito.any(Component.class)))
-				.thenReturn(getLatestResult);
+		Either<Resource, StorageOperationStatus> getLatestResult = Either.left(certifiedResource);
+		Either<Component, StorageOperationStatus> getCompLatestResult = Either.left(createResponse.left().value());
+		when(toscaOperationFacade.getLatestByName(resourceExist.getName())).thenReturn(getCompLatestResult);
+		when(toscaOperationFacade.overrideComponent(Mockito.any(Resource.class), Mockito.any(Resource.class))).thenReturn(getLatestResult);
 
-		when(lifecycleBl.changeState(Mockito.anyString(), Mockito.eq(user),
-				Mockito.eq(LifeCycleTransitionEnum.CHECKOUT), Mockito.any(LifecycleChangeInfoWithAction.class),
-				Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(createResponse);
+		when(lifecycleBl.changeState(Mockito.anyString(), Mockito.eq(user), Mockito.eq(LifeCycleTransitionEnum.CHECKOUT), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(createResponse);
 
 		Resource resourceToUpdtae = createResourceObject(false);
 
-		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl
-				.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null);
+		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null, null, false);
 		assertTrue(createOrUpdateResource.isLeft());
 
-		Mockito.verify(toscaOperationFacade, Mockito.times(1)).overrideComponent(Mockito.any(Component.class),
-				Mockito.any(Component.class));
-		Mockito.verify(lifecycleBl, Mockito.times(1)).changeState(Mockito.anyString(), Mockito.eq(user),
-				Mockito.eq(LifeCycleTransitionEnum.CHECKOUT), Mockito.any(LifecycleChangeInfoWithAction.class),
-				Mockito.anyBoolean(), Mockito.anyBoolean());
+		Mockito.verify(toscaOperationFacade, Mockito.times(1)).overrideComponent(Mockito.any(Resource.class), Mockito.any(Resource.class));
+		Mockito.verify(lifecycleBl, Mockito.times(1)).changeState(Mockito.anyString(), Mockito.eq(user), Mockito.eq(LifeCycleTransitionEnum.CHECKOUT), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
 
 	}
 
@@ -1510,20 +1376,14 @@ public class ResourceBusinessLogicTest {
 		Either<Component, StorageOperationStatus> getLatestResult = Either.right(StorageOperationStatus.NOT_FOUND);
 		when(toscaOperationFacade.getLatestByName(resourceToUpdtae.getName())).thenReturn(getLatestResult);
 
-		Either<Component, StorageOperationStatus> getLatestToscaNameResult = Either
-				.right(StorageOperationStatus.NOT_FOUND);
-		when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdtae.getToscaResourceName()))
-				.thenReturn(getLatestToscaNameResult);
+		Either<Component, StorageOperationStatus> getLatestToscaNameResult = Either.right(StorageOperationStatus.NOT_FOUND);
+		when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdtae.getToscaResourceName())).thenReturn(getLatestToscaNameResult);
 
-		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl
-				.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null);
+		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null, null, false);
 		assertTrue(createOrUpdateResource.isLeft());
 
-		Mockito.verify(toscaOperationFacade, Mockito.times(0)).overrideComponent(Mockito.any(Component.class),
-				Mockito.any(Component.class));
-		Mockito.verify(lifecycleBl, Mockito.times(0)).changeState(Mockito.anyString(), Mockito.eq(user),
-				Mockito.eq(LifeCycleTransitionEnum.CHECKOUT), Mockito.any(LifecycleChangeInfoWithAction.class),
-				Mockito.anyBoolean(), Mockito.anyBoolean());
+		Mockito.verify(toscaOperationFacade, Mockito.times(0)).overrideComponent(Mockito.any(Resource.class), Mockito.any(Resource.class));
+		Mockito.verify(lifecycleBl, Mockito.times(0)).changeState(Mockito.anyString(), Mockito.eq(user), Mockito.eq(LifeCycleTransitionEnum.CHECKOUT), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
 
 	}
 
@@ -1567,381 +1427,294 @@ public class ResourceBusinessLogicTest {
 		assertTrue(validatePropertiesDefaultValues.isRight());
 	}
 
-	// @Test
-	// public void testDeleteMarkedResourcesNoResources() {
-	// List<GraphVertex> ids = new ArrayList<>();
-	// Either<List<GraphVertex>, StorageOperationStatus> eitherNoResources =
-	// Either.left(ids);
-	// when(topologyTemplateOperation.getAllComponentsMarkedForDeletion(ComponentTypeEnum.RESOURCE)).thenReturn(eitherNoResources);
-	//
-	// Either<List<String>, ResponseFormat> deleteMarkedResources =
-	// bl.deleteMarkedComponents();
-	// assertTrue(deleteMarkedResources.isLeft());
-	// assertTrue(deleteMarkedResources.left().value().isEmpty());
-	//
-	// Mockito.verify(artifactManager,
-	// Mockito.times(0)).deleteAllComponentArtifactsIfNotOnGraph(Mockito.anyList());
-	//
-	// }
-	//
-	// @Test
-	// public void testDeleteMarkedResources() {
-	// List<String> ids = new ArrayList<String>();
-	// String resourceInUse = "123";
-	// ids.add(resourceInUse);
-	// String resourceFree = "456";
-	// ids.add(resourceFree);
-	// Either<List<String>, StorageOperationStatus> eitherNoResources =
-	// Either.left(ids);
-	// when(toscaOperationFacade.getAllComponentsMarkedForDeletion()).thenReturn(eitherNoResources);
-	//
-	// Either<Boolean, StorageOperationStatus> resourceInUseResponse =
-	// Either.left(true);
-	// Either<Boolean, StorageOperationStatus> resourceFreeResponse =
-	// Either.left(false);
-	//
-	// List<ArtifactDefinition> artifacts = new ArrayList<ArtifactDefinition>();
-	// Either<List<ArtifactDefinition>, StorageOperationStatus>
-	// getArtifactsResponse = Either.left(artifacts);
-	// when(toscaOperationFacade.getComponentArtifactsForDelete(resourceFree,
-	// NodeTypeEnum.Resource, true)).thenReturn(getArtifactsResponse);
-	//
-	// when(toscaOperationFacade.isComponentInUse(resourceFree)).thenReturn(resourceFreeResponse);
-	// when(toscaOperationFacade.isComponentInUse(resourceInUse)).thenReturn(resourceInUseResponse);
-	//
-	// Either<Component, StorageOperationStatus> eitherDelete = Either.left(new
-	// Resource());
-	// when(toscaOperationFacade.deleteToscaComponent(resourceFree)).thenReturn(eitherDelete);
-	//
-	// when(artifactManager.deleteAllComponentArtifactsIfNotOnGraph(artifacts)).thenReturn(StorageOperationStatus.OK);
-	// List<String> deletedComponents = new ArrayList<>();
-	// deletedComponents.add(resourceFree);
-	// when(toscaOperationFacade.deleteMarkedElements(ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(deletedComponents));
-	//
-	// Either<List<String>, ResponseFormat> deleteMarkedResources =
-	// bl.deleteMarkedComponents();
-	// assertTrue(deleteMarkedResources.isLeft());
-	// List<String> resourceIdList = deleteMarkedResources.left().value();
-	// assertFalse(resourceIdList.isEmpty());
-	// assertTrue(resourceIdList.contains(resourceFree));
-	// assertFalse(resourceIdList.contains(resourceInUse));
-	//
-	// Mockito.verify(artifactManager,
-	// Mockito.times(1)).deleteAllComponentArtifactsIfNotOnGraph(artifacts);
-	// }
-
+//	@Test
+//	public void testDeleteMarkedResourcesNoResources() {
+//		List<GraphVertex> ids = new ArrayList<>();
+//		Either<List<GraphVertex>, StorageOperationStatus> eitherNoResources = Either.left(ids);
+//		when(topologyTemplateOperation.getAllComponentsMarkedForDeletion(ComponentTypeEnum.RESOURCE)).thenReturn(eitherNoResources);
+//
+//		Either<List<String>, ResponseFormat> deleteMarkedResources = bl.deleteMarkedComponents();
+//		assertTrue(deleteMarkedResources.isLeft());
+//		assertTrue(deleteMarkedResources.left().value().isEmpty());
+//
+//		Mockito.verify(artifactManager, Mockito.times(0)).deleteAllComponentArtifactsIfNotOnGraph(Mockito.anyList());
+//
+//	}
+//
+//	@Test
+//	public void testDeleteMarkedResources() {
+//		List<String> ids = new ArrayList<String>();
+//		String resourceInUse = "123";
+//		ids.add(resourceInUse);
+//		String resourceFree = "456";
+//		ids.add(resourceFree);
+//		Either<List<String>, StorageOperationStatus> eitherNoResources = Either.left(ids);
+//		when(toscaOperationFacade.getAllComponentsMarkedForDeletion()).thenReturn(eitherNoResources);
+//
+//		Either<Boolean, StorageOperationStatus> resourceInUseResponse = Either.left(true);
+//		Either<Boolean, StorageOperationStatus> resourceFreeResponse = Either.left(false);
+//
+//		List<ArtifactDefinition> artifacts = new ArrayList<ArtifactDefinition>();
+//		Either<List<ArtifactDefinition>, StorageOperationStatus> getArtifactsResponse = Either.left(artifacts);
+//		when(toscaOperationFacade.getComponentArtifactsForDelete(resourceFree, NodeTypeEnum.Resource, true)).thenReturn(getArtifactsResponse);
+//
+//		when(toscaOperationFacade.isComponentInUse(resourceFree)).thenReturn(resourceFreeResponse);
+//		when(toscaOperationFacade.isComponentInUse(resourceInUse)).thenReturn(resourceInUseResponse);
+//
+//		Either<Component, StorageOperationStatus> eitherDelete = Either.left(new Resource());
+//		when(toscaOperationFacade.deleteToscaComponent(resourceFree)).thenReturn(eitherDelete);
+//
+//		when(artifactManager.deleteAllComponentArtifactsIfNotOnGraph(artifacts)).thenReturn(StorageOperationStatus.OK);
+//		List<String> deletedComponents = new ArrayList<>();
+//		deletedComponents.add(resourceFree);
+//		when(toscaOperationFacade.deleteMarkedElements(ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(deletedComponents));
+//		
+//		Either<List<String>, ResponseFormat> deleteMarkedResources = bl.deleteMarkedComponents();
+//		assertTrue(deleteMarkedResources.isLeft());
+//		List<String> resourceIdList = deleteMarkedResources.left().value();
+//		assertFalse(resourceIdList.isEmpty());
+//		assertTrue(resourceIdList.contains(resourceFree));
+//		assertFalse(resourceIdList.contains(resourceInUse));
+//
+//		Mockito.verify(artifactManager, Mockito.times(1)).deleteAllComponentArtifactsIfNotOnGraph(artifacts);
+//	}
 	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testFindVfCsarArtifactsToHandle() {
-
+		
 		Class<ResourceBusinessLogic> targetClass = ResourceBusinessLogic.class;
 		String methodName = "findVfCsarArtifactsToHandle";
 		Resource resource = new Resource();
 		String deploymentArtifactToUpdateFileName = "deploymentArtifactToUpdate.yaml";
 		String deploymentArtifactToDeleteFileName = "deploymentArtifactToDelete.yaml";
 		String deploymentArtifactToCreateFileName = "deploymentArtifactToCreate.yaml";
-
+		
 		String artifactInfoToUpdateFileName = "infoArtifactToUpdate.yaml";
 		String artifactInfoToDeleteFileName = "infoArtifactToDelete.yaml";
 		String artifactInfoToCreateFileName = "infoArtifactToCreate.yaml";
-
+		
 		byte[] oldPayloadData = "oldPayloadData".getBytes();
 		byte[] newPayloadData = "newPayloadData".getBytes();
-		Map<String, ArtifactDefinition> deploymentArtifacts = new HashMap<>();
-
+		Map<String, ArtifactDefinition> deploymentArtifacts =new HashMap<>();
+		
 		ArtifactDefinition deploymentArtifactToUpdate = new ArtifactDefinition();
 		deploymentArtifactToUpdate.setMandatory(false);
 		deploymentArtifactToUpdate.setArtifactName(deploymentArtifactToUpdateFileName);
 		deploymentArtifactToUpdate.setArtifactType("SNMP_POLL");
 		deploymentArtifactToUpdate.setPayload(oldPayloadData);
-		deploymentArtifactToUpdate
-				.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
-
+		deploymentArtifactToUpdate.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
+		
 		ArtifactDefinition deploymentArtifactToDelete = new ArtifactDefinition();
 		deploymentArtifactToDelete.setMandatory(false);
 		deploymentArtifactToDelete.setArtifactName(deploymentArtifactToDeleteFileName);
 		deploymentArtifactToDelete.setArtifactType("SNMP_TRAP");
 		deploymentArtifactToDelete.setPayload(oldPayloadData);
-		deploymentArtifactToDelete
-				.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
-
+		deploymentArtifactToDelete.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
+		
 		ArtifactDefinition deploymentArtifactToIgnore = new ArtifactDefinition();
-
-		deploymentArtifacts.put(ValidationUtils.normalizeArtifactLabel(deploymentArtifactToUpdate.getArtifactName()),
-				deploymentArtifactToUpdate);
-		deploymentArtifacts.put(ValidationUtils.normalizeArtifactLabel(deploymentArtifactToDelete.getArtifactName()),
-				deploymentArtifactToDelete);
+		
+		deploymentArtifacts.put(ValidationUtils.normalizeArtifactLabel(deploymentArtifactToUpdate.getArtifactName()), deploymentArtifactToUpdate);
+		deploymentArtifacts.put(ValidationUtils.normalizeArtifactLabel(deploymentArtifactToDelete.getArtifactName()), deploymentArtifactToDelete);
 		deploymentArtifacts.put("ignore", deploymentArtifactToIgnore);
-
+		
 		Map<String, ArtifactDefinition> artifacts = new HashMap<>();
-
+		
 		ArtifactDefinition artifactToUpdate = new ArtifactDefinition();
 		artifactToUpdate.setMandatory(false);
 		artifactToUpdate.setArtifactName(artifactInfoToUpdateFileName);
 		artifactToUpdate.setArtifactType("SNMP_POLL");
 		artifactToUpdate.setPayload(oldPayloadData);
 		artifactToUpdate.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
-
+		
 		ArtifactDefinition artifactToDelete = new ArtifactDefinition();
 		artifactToDelete.setMandatory(false);
 		artifactToDelete.setArtifactName(artifactInfoToDeleteFileName);
 		artifactToDelete.setArtifactType("SNMP_TRAP");
 		artifactToDelete.setPayload(oldPayloadData);
 		artifactToDelete.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(oldPayloadData));
-
+		
 		ArtifactDefinition artifactToIgnore = new ArtifactDefinition();
-
-		artifacts.put(ValidationUtils.normalizeArtifactLabel(artifactToUpdate.getArtifactName()), artifactToUpdate);
-		artifacts.put(ValidationUtils.normalizeArtifactLabel(artifactToDelete.getArtifactName()), artifactToDelete);
-		artifacts.put("ignore", artifactToIgnore);
-
+		
+		artifacts.put(ValidationUtils.normalizeArtifactLabel(artifactToUpdate.getArtifactName()),artifactToUpdate);
+		artifacts.put(ValidationUtils.normalizeArtifactLabel(artifactToDelete.getArtifactName()),artifactToDelete);
+		artifacts.put("ignore",artifactToIgnore);
+		
 		resource.setDeploymentArtifacts(deploymentArtifacts);
 		resource.setArtifacts(artifacts);
-
+		
 		List<NonMetaArtifactInfo> artifactPathAndNameList = new ArrayList<>();
-		NonMetaArtifactInfo deploymentArtifactInfoToUpdate = new NonMetaArtifactInfo(
-				deploymentArtifactToUpdate.getArtifactName(), null,
-				ArtifactTypeEnum.findType(deploymentArtifactToUpdate.getArtifactType()),
-				ArtifactGroupTypeEnum.DEPLOYMENT, newPayloadData, deploymentArtifactToUpdate.getArtifactName());
-
-		NonMetaArtifactInfo informationalArtifactInfoToUpdate = new NonMetaArtifactInfo(
-				artifactToUpdate.getArtifactName(), null, ArtifactTypeEnum.findType(artifactToUpdate.getArtifactType()),
-				ArtifactGroupTypeEnum.DEPLOYMENT, newPayloadData, artifactToUpdate.getArtifactName());
-
-		NonMetaArtifactInfo deploymentArtifactInfoToCreate = new NonMetaArtifactInfo(deploymentArtifactToCreateFileName,
-				null, ArtifactTypeEnum.OTHER, ArtifactGroupTypeEnum.DEPLOYMENT, newPayloadData,
-				deploymentArtifactToCreateFileName);
-
-		NonMetaArtifactInfo informationalArtifactInfoToCreate = new NonMetaArtifactInfo(artifactInfoToCreateFileName,
-				null, ArtifactTypeEnum.OTHER, ArtifactGroupTypeEnum.DEPLOYMENT, newPayloadData,
-				artifactInfoToCreateFileName);
-
+		NonMetaArtifactInfo deploymentArtifactInfoToUpdate = new NonMetaArtifactInfo(deploymentArtifactToUpdate.getArtifactName(), null, 
+			ArtifactTypeEnum.findType(deploymentArtifactToUpdate.getArtifactType()), ArtifactGroupTypeEnum.DEPLOYMENT,
+			newPayloadData, deploymentArtifactToUpdate.getArtifactName());
+		
+		NonMetaArtifactInfo informationalArtifactInfoToUpdate = new NonMetaArtifactInfo(artifactToUpdate.getArtifactName(), null, 
+				ArtifactTypeEnum.findType(artifactToUpdate.getArtifactType()), ArtifactGroupTypeEnum.DEPLOYMENT,
+				newPayloadData, artifactToUpdate.getArtifactName());
+		
+		NonMetaArtifactInfo deploymentArtifactInfoToCreate = new NonMetaArtifactInfo(deploymentArtifactToCreateFileName, null, 
+				ArtifactTypeEnum.OTHER, ArtifactGroupTypeEnum.DEPLOYMENT, newPayloadData, deploymentArtifactToCreateFileName);
+			
+			NonMetaArtifactInfo informationalArtifactInfoToCreate = new NonMetaArtifactInfo(artifactInfoToCreateFileName, null, 
+					ArtifactTypeEnum.OTHER, ArtifactGroupTypeEnum.DEPLOYMENT,
+					newPayloadData, artifactInfoToCreateFileName);
+		
 		artifactPathAndNameList.add(deploymentArtifactInfoToUpdate);
 		artifactPathAndNameList.add(informationalArtifactInfoToUpdate);
 		artifactPathAndNameList.add(deploymentArtifactInfoToCreate);
 		artifactPathAndNameList.add(informationalArtifactInfoToCreate);
-
-		Object[] argObjects = { resource, artifactPathAndNameList, user };
-		Class[] argClasses = { Resource.class, List.class, User.class };
-		try {
-			Method method = targetClass.getDeclaredMethod(methodName, argClasses);
-			method.setAccessible(true);
-			Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat> findVfCsarArtifactsToHandleRes = (Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat>) method
-					.invoke(bl, argObjects);
-			assertTrue(findVfCsarArtifactsToHandleRes.isLeft());
-			EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>> foundVfArtifacts = findVfCsarArtifactsToHandleRes
-					.left().value();
-			assertTrue(foundVfArtifacts.get(ArtifactOperationEnum.Create).size() == 2);
-			assertTrue(foundVfArtifacts.get(ArtifactOperationEnum.Update).size() == 2);
-			assertTrue(foundVfArtifacts.get(ArtifactOperationEnum.Create).size() == 2);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
+		Object[] argObjects = {resource, artifactPathAndNameList, user};
+		Class[] argClasses = {Resource.class, List.class, User.class};
+	    try {
+	    	Method method = targetClass.getDeclaredMethod(methodName, argClasses);
+	    	method.setAccessible(true);
+	    	Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat> findVfCsarArtifactsToHandleRes = 
+	    			(Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat>) method.invoke(bl, argObjects);
+	    	 assertTrue(findVfCsarArtifactsToHandleRes.isLeft());
+	    	 EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>> foundVfArtifacts = findVfCsarArtifactsToHandleRes.left().value();
+	    	 assertTrue(foundVfArtifacts.get(ArtifactOperationEnum.Create).size()==2);
+	    	 assertTrue(foundVfArtifacts.get(ArtifactOperationEnum.Update).size()==2);
+	    	 assertTrue(foundVfArtifacts.get(ArtifactOperationEnum.Create).size()==2);
+	    	 
+	    }
+	    catch (Exception e) {
+	    	e.printStackTrace();
+	    }
 	}
-
-	@SuppressWarnings("rawtypes")
-	@Test
-	public void testBuildNestedVfcToscaNamespace() {
-
-		Class<ResourceBusinessLogic> targetClass = ResourceBusinessLogic.class;
-		String methodName = "buildNestedVfcToscaNamespace";
-		String nodeTypeFullName = "org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vLBAgentTemplate";
-		String expectedNestedVfcToscaNamespace = "org.openecomp.resource.vfc.nodes.heat.FEAdd_On_Module_vLBAgentTemplate";
-		Object[] argObjects = { nodeTypeFullName };
-		Class[] argClasses = { String.class };
-		try {
-			Method method = targetClass.getDeclaredMethod(methodName, argClasses);
-			method.setAccessible(true);
-			String actualNestedVfcToscaNamespace = (String) method.invoke(bl, argObjects);
-			assertTrue(!actualNestedVfcToscaNamespace.isEmpty());
-			assertTrue(actualNestedVfcToscaNamespace.equals(expectedNestedVfcToscaNamespace));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	@Test
-	public void testBuildNestedVfcToscaResourceName() {
-
-		Class<ResourceBusinessLogic> targetClass = ResourceBusinessLogic.class;
-		String methodName = "buildNestedVfcToscaResourceName";
-		String vfResourceName = "vfname";
-		String nodeTypeFullName = "org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vLBAgentTemplate";
-		String expectedNestedVfcToscaResourceName = "org.openecomp.resource.vfc.vfname.abstract.nodes.heat.FEAdd_On_Module_vLBAgentTemplate";
-		Object[] argObjects = { vfResourceName, nodeTypeFullName };
-		Class[] argClasses = { String.class, String.class };
-		try {
-			Method method = targetClass.getDeclaredMethod(methodName, argClasses);
-			method.setAccessible(true);
-			String actualNestedVfcToscaResourceName = (String) method.invoke(bl, argObjects);
-			assertTrue(!actualNestedVfcToscaResourceName.isEmpty());
-			assertTrue(actualNestedVfcToscaResourceName.equals(expectedNestedVfcToscaResourceName));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	@Test
-	public void testBuildNestedSubstituteYamlName() {
-
-		Class<ResourceBusinessLogic> targetClass = ResourceBusinessLogic.class;
-		String methodName = "buildNestedSubstituteYamlName";
-		String nodeTypeFullName = "org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vLBAgentTemplate";
-		String expectedNestedSubstituteYamlName = "Definitions/FEAdd_On_Module_vLBAgentTemplateServiceTemplate.yaml";
-		Object[] argObjects = { nodeTypeFullName };
-		Class[] argClasses = { String.class };
-		try {
-			Method method = targetClass.getDeclaredMethod(methodName, argClasses);
-			method.setAccessible(true);
-			String actualNestedSubstituteYamlName = (String) method.invoke(bl, argObjects);
-			assertTrue(!actualNestedSubstituteYamlName.isEmpty());
-			assertTrue(actualNestedSubstituteYamlName.equals(expectedNestedSubstituteYamlName));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
+	
 	@Test
 	public void testVFGeneratedInputs() {
-
+		
 		Resource resource = createVF();
 		List<InputDefinition> inputs = resource.getInputs();
 		assertTrue(8 == inputs.size());
-		for (InputDefinition input : inputs) {
+		for(InputDefinition input : inputs){
 			assertNotNull(input.getOwnerId());
 		}
 		assertTrue(resource.getDerivedFromGenericType().equals(genericVF.getToscaResourceName()));
 		assertTrue(resource.getDerivedFromGenericVersion().equals(genericVF.getVersion()));
 	}
-
+	
 	@Test
 	public void testVFUpdateGenericInputsToLatestOnCheckout() {
-
-		// create a VF that is derived from generic version 1.0
-		Resource resource = createVF();
+		
+		//create a VF that is derived from generic version 1.0
+		Resource resource = createVF();	
 		// create a new generic version without properties
 		genericVF.setVersion("2.0");
 		genericVF.setProperties(null);
 		String currentDerivedFromVersion = resource.getDerivedFromGenericVersion();
 		List<InputDefinition> currentInputs = resource.getInputs();
-		// verify previous inputs ownerId fields exist - user may not delete
-		// generated inputs
+		//verify previous inputs ownerId fields exist - user may not delete generated inputs
 		assertTrue(8 == currentInputs.stream().filter(p -> null != p.getOwnerId()).collect(Collectors.toList()).size());
 		Either<Boolean, ResponseFormat> upgradeToLatestGeneric = bl.shouldUpgradeToLatestGeneric(resource);
-		// verify success
+		//verify success
 		assertTrue(upgradeToLatestGeneric.isLeft());
-		// verify update required and valid
+		//verify update required and valid
 		assertTrue(upgradeToLatestGeneric.left().value());
-		// verify version was upgraded
+		//verify version was upgraded	
 		assertFalse(resource.getDerivedFromGenericVersion().equals(currentDerivedFromVersion));
-		// verify inputs were not deleted
+		//verify inputs were not deleted
 		assertTrue(8 == resource.getInputs().size());
-		// verify inputs ownerId fields were removed - user may delete/edit
-		// inputs
-		assertTrue(8 == resource.getInputs().stream().filter(p -> null == p.getOwnerId()).collect(Collectors.toList())
-				.size());
+		//verify inputs ownerId fields were removed - user may delete/edit inputs
+		assertTrue(8 == resource.getInputs().stream().filter(p -> null == p.getOwnerId()).collect(Collectors.toList()).size());		
 	}
-
+	
+	
 	@Test
 	public void testVFUpdateGenericInputsToLatestOnCheckoutNotPerformed() {
-
-		// create a VF that is derived from generic version 1.0
+		
+		//create a VF that is derived from generic version 1.0
 		Resource resource = createVF();
-
-		// add an input to the VF
+		
+		//add an input to the VF
 		PropertyDefinition newProp = new PropertyDefinition();
 		newProp.setType("integer");
 		newProp.setName("newProp");
 		resource.getInputs().add(new InputDefinition(newProp));
-
-		// create a new generic version with a new property which has the same
-		// name as a user defined input on the VF with a different type
+		
+		//create a new generic version with a new property which has the same name as a user defined input on the VF with a different type	
 		genericVF.setVersion("2.0");
 		newProp.setType("string");
 		genericVF.setProperties(new ArrayList<PropertyDefinition>());
 		genericVF.getProperties().add(newProp);
-
+		when(genericTypeBusinessLogic.fetchDerivedFromGenericType(resource)).thenReturn(Either.left(genericVF));
+		when(genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericVF.getProperties(), genericVF.getUniqueId())).thenCallRealMethod();
 		String currentDerivedFromVersion = resource.getDerivedFromGenericVersion();
-		assertTrue(8 == resource.getInputs().stream().filter(p -> null != p.getOwnerId()).collect(Collectors.toList())
-				.size());
+		assertTrue(8 == resource.getInputs().stream().filter(p -> null != p.getOwnerId()).collect(Collectors.toList()).size());
 		Either<Boolean, ResponseFormat> upgradeToLatestGeneric = bl.shouldUpgradeToLatestGeneric(resource);
-		// verify success
+		//verify success
 		assertTrue(upgradeToLatestGeneric.isLeft());
-		// verify update is invalid an void
+		//verify update is invalid an void
 		assertFalse(upgradeToLatestGeneric.left().value());
-		// verify version was not upgraded
+		//verify version was not upgraded	
 		assertTrue(resource.getDerivedFromGenericVersion().equals(currentDerivedFromVersion));
-		// verify inputs were not removed
+		//verify inputs were not removed
 		assertTrue(9 == resource.getInputs().size());
-		// verify user defined input exists
-		assertTrue(1 == resource.getInputs().stream().filter(p -> null == p.getOwnerId()).collect(Collectors.toList())
-				.size());
-		assertTrue(resource.getInputs().stream().filter(p -> null == p.getOwnerId()).findAny().get().getType()
-				.equals("integer"));
+		//verify user defined input exists
+		assertTrue(1 == resource.getInputs().stream().filter(p -> null == p.getOwnerId()).collect(Collectors.toList()).size());
+		assertTrue(resource.getInputs().stream().filter(p -> null == p.getOwnerId()).findAny().get().getType().equals("integer"));		
 	}
-
+	
 	@Test
 	public void testPNFGeneratedInputsNoGeneratedInformationalArtifacts() {
-
+		
 		Resource resource = createPNF();
 		List<InputDefinition> inputs = resource.getInputs();
 		assertTrue(8 == inputs.size());
-		for (InputDefinition input : inputs) {
+		for(InputDefinition input : inputs){
 			assertNotNull(input.getOwnerId());
 		}
 		assertTrue(resource.getDerivedFromGenericType().equals(genericPNF.getToscaResourceName()));
 		assertTrue(resource.getDerivedFromGenericVersion().equals(genericPNF.getVersion()));
 		assertTrue(0 == resource.getArtifacts().size());
 	}
-
+	
+	
 	private Resource createVF() {
-
+		
 		genericVF = setupGenericTypeMock(GENERIC_VF_NAME);
-		when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_VF_NAME))
-				.thenReturn(Either.left(genericVF));
+		when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_VF_NAME)).thenReturn(Either.left(genericVF));
 		Resource resource = createResourceObject(true);
 		resource.setDerivedFrom(null);
 		resource.setResourceType(ResourceTypeEnum.VF);
 		when(toscaOperationFacade.createToscaComponent(resource)).thenReturn(Either.left(resource));
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		when(genericTypeBusinessLogic.fetchDerivedFromGenericType(resource)).thenReturn(Either.left(genericVF));
+		when(genericTypeBusinessLogic.generateInputsFromGenericTypeProperties(genericVF)).thenCallRealMethod();
+		when(genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericVF.getProperties(), resource.getUniqueId())).thenCallRealMethod();
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isLeft());
 		return createResponse.left().value();
 	}
-
-	private Resource createPNF() {
-
+	
+     private Resource createPNF() {
+		
 		genericPNF = setupGenericTypeMock(GENERIC_PNF_NAME);
-		when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_PNF_NAME))
-				.thenReturn(Either.left(genericPNF));
+		when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_PNF_NAME)).thenReturn(Either.left(genericPNF));
 		Resource resource = createResourceObject(true);
 		resource.setDerivedFrom(null);
 		resource.setResourceType(ResourceTypeEnum.PNF);
 		when(toscaOperationFacade.createToscaComponent(resource)).thenReturn(Either.left(resource));
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource,
-				AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		when(genericTypeBusinessLogic.fetchDerivedFromGenericType(resource)).thenReturn(Either.left(genericPNF));
+		when(genericTypeBusinessLogic.generateInputsFromGenericTypeProperties(genericPNF)).thenCallRealMethod();
+		when(genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericPNF.getProperties(), resource.getUniqueId())).thenCallRealMethod();
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isLeft());
 		return createResponse.left().value();
 	}
+	
 
-	private Resource setupGenericTypeMock(String toscaName) {
-
+	
+    private Resource setupGenericTypeMock(String toscaName) {
+		
 		Resource genericType = createResourceObject(true);
 		genericType.setVersion("1.0");
 		genericType.setToscaResourceName(toscaName);
-		String[] propNames = { "nf_function", "nf_role", "nf_naming_code", "nf_type", "nf_naming",
-				"availability_zone_max_count", "min_instances", "max_instances" };
-		String[] propTypes = { "string", "string", "string", "string", "org.openecomp.datatypes.Naming", "integer",
-				"integer", "integer" };
+		String[] propNames = {"nf_function", "nf_role", "nf_naming_code", "nf_type", "nf_naming", "availability_zone_max_count", "min_instances", "max_instances"};
+		String[] propTypes = {"string", "string", "string", "string", "org.openecomp.datatypes.Naming", "integer", "integer", "integer"};
 		List<PropertyDefinition> genericProps = new ArrayList<>();
-		for (int i = 0; i < 8; ++i) {
+		for(int i = 0; i < 8; ++i){
 			PropertyDefinition prop = new PropertyDefinition();
 			prop.setName(propNames[i]);
 			prop.setType(propTypes[i]);
@@ -1951,427 +1724,6 @@ public class ResourceBusinessLogicTest {
 		return genericType;
 	}
 
-	private ResourceBusinessLogic createTestSubject() {
-		return new ResourceBusinessLogic();
-	}
-
-	@Test
-	public void testGetCsarOperation() throws Exception {
-		ResourceBusinessLogic testSubject;
-		CsarOperation result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCsarOperation();
-	}
-
-	@Test
-	public void testSetCsarOperation() throws Exception {
-		ResourceBusinessLogic testSubject;
-		CsarOperation csarOperation = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setCsarOperation(csarOperation);
-	}
-
-	
-	@Test
-	public void testGetLifecycleBusinessLogic() throws Exception {
-		ResourceBusinessLogic testSubject;
-		LifecycleBusinessLogic result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getLifecycleBusinessLogic();
-	}
-
-	
-	@Test
-	public void testSetLifecycleManager() throws Exception {
-		ResourceBusinessLogic testSubject;
-		LifecycleBusinessLogic lifecycleBusinessLogic = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setLifecycleManager(lifecycleBusinessLogic);
-	}
-
-	
-	@Test
-	public void testGetElementDao() throws Exception {
-		ResourceBusinessLogic testSubject;
-		IElementOperation result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getElementDao();
-	}
-
-	
-	@Test
-	public void testSetElementDao() throws Exception {
-		ResourceBusinessLogic testSubject;
-		IElementOperation elementDao = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setElementDao(elementDao);
-	}
-
-	
-	@Test
-	public void testGetUserAdmin() throws Exception {
-		ResourceBusinessLogic testSubject;
-		IUserBusinessLogic result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getUserAdmin();
-	}
-
-	
-	@Test
-	public void testSetUserAdmin() throws Exception {
-		ResourceBusinessLogic testSubject;
-		UserBusinessLogic userAdmin = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setUserAdmin(userAdmin);
-	}
-
-	
-	@Test
-	public void testGetComponentsUtils() throws Exception {
-		ResourceBusinessLogic testSubject;
-		ComponentsUtils result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getComponentsUtils();
-	}
-
-	
-	@Test
-	public void testSetComponentsUtils() throws Exception {
-		ResourceBusinessLogic testSubject;
-		ComponentsUtils componentsUtils = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setComponentsUtils(componentsUtils);
-	}
-
-	
-	@Test
-	public void testGetArtifactsManager() throws Exception {
-		ResourceBusinessLogic testSubject;
-		ArtifactsBusinessLogic result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getArtifactsManager();
-	}
-
-	
-	@Test
-	public void testSetArtifactsManager() throws Exception {
-		ResourceBusinessLogic testSubject;
-		ArtifactsBusinessLogic artifactsManager = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setArtifactsManager(artifactsManager);
-	}
-
-	
-	@Test
-	public void testSetPropertyOperation() throws Exception {
-		ResourceBusinessLogic testSubject;
-		IPropertyOperation propertyOperation = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setPropertyOperation(propertyOperation);
-	}
-
-	
-	@Test
-	public void testGetApplicationDataTypeCache() throws Exception {
-		ResourceBusinessLogic testSubject;
-		ApplicationDataTypeCache result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getApplicationDataTypeCache();
-	}
-
-	
-	@Test
-	public void testSetApplicationDataTypeCache() throws Exception {
-		ResourceBusinessLogic testSubject;
-		ApplicationDataTypeCache applicationDataTypeCache = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setApplicationDataTypeCache(applicationDataTypeCache);
-	}
-	
-	@Test
-	public void testSetDeploymentArtifactsPlaceHolder() throws Exception {
-		ResourceBusinessLogic testSubject;
-		Component component = new Resource() {
-		};
-		User user = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setDeploymentArtifactsPlaceHolder(component, user);
-	}
-
-
-	
-	@Test
-	public void testValidateVendorReleaseName_1() throws Exception {
-		ResourceBusinessLogic testSubject;
-		String vendorRelease = "";
-		Either<Boolean, ResponseFormat> result;
-
-		// test 1
-		testSubject = createTestSubject();
-		vendorRelease = null;
-		result = testSubject.validateVendorReleaseName(vendorRelease);
-		Assert.assertEquals(false, result.left().value());
-
-	}
-
-	
-
-
-
-	
-	@Test
-	public void testGetCapabilityTypeOperation() throws Exception {
-		ResourceBusinessLogic testSubject;
-		ICapabilityTypeOperation result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCapabilityTypeOperation();
-	}
-
-	
-	@Test
-	public void testSetCapabilityTypeOperation() throws Exception {
-		ResourceBusinessLogic testSubject;
-		ICapabilityTypeOperation capabilityTypeOperation = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setCapabilityTypeOperation(capabilityTypeOperation);
-	}
-
-	
-	@Test
-	public void testValidatePropertiesDefaultValues() throws Exception {
-		ResourceBusinessLogic testSubject;
-		Resource resource = new Resource();
-		Either<Boolean, ResponseFormat> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.validatePropertiesDefaultValues(resource);
-	}
-
-	
-	@Test
-	public void testGetComponentInstanceBL() throws Exception {
-		ResourceBusinessLogic testSubject;
-		ComponentInstanceBusinessLogic result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getComponentInstanceBL();
-	}
-
-
-	
-	@Test
-	public void testGetComponentInstancesFilteredByPropertiesAndInputs() throws Exception {
-		ResourceBusinessLogic testSubject;
-		String componentId = "";
-		ComponentTypeEnum componentTypeEnum = null;
-		String userId = "";
-		String searchText = "";
-		Either<List<ComponentInstance>, ResponseFormat> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getComponentInstancesFilteredByPropertiesAndInputs(componentId, componentTypeEnum, userId,
-				searchText);
-	}
-
-
-	
-	@Test
-	public void testGetCacheManagerOperation() throws Exception {
-		ResourceBusinessLogic testSubject;
-		ICacheMangerOperation result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getCacheManagerOperation();
-	}
-
-	
-	@Test
-	public void testSetCacheManagerOperation() throws Exception {
-		ResourceBusinessLogic testSubject;
-		ICacheMangerOperation cacheManagerOperation = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setCacheManagerOperation(cacheManagerOperation);
-	}
-
-	
-	@Test
-	public void testGetElementDao_1() throws Exception {
-	ResourceBusinessLogic testSubject;IElementOperation result;
-	
-	// default test
-	testSubject=createTestSubject();result=testSubject.getElementDao();
-	}
-
-	
-	@Test
-	public void testGetAllCertifiedResources() throws Exception {
-	ResourceBusinessLogic testSubject;boolean getAbstract = false;
-	HighestFilterEnum highestFilter = null;
-	String userId = "";
-	Either<List<Resource>,ResponseFormat> result;
-	
-	// default test
-	}
-
-	
-	@Test
-	public void testValidateResourceNameExists() throws Exception {
-	ResourceBusinessLogic testSubject;String resourceName = "";
-	ResourceTypeEnum resourceTypeEnum = null;
-	String userId = "";
-	Either<Map<String,Boolean>,ResponseFormat> result;
-	
-	// default test
-	}
-
-	
-	@Test
-	public void testCreateResource() throws Exception {
-	ResourceBusinessLogic testSubject;Resource resource = null;
-	AuditingActionEnum auditingAction = null;
-	User user = null;
-	Map<String,byte[]> csarUIPayload = null;
-	String payloadName = "";
-	Either<Resource,ResponseFormat> result;
-	
-	// test 1
-	testSubject=createTestSubject();payloadName = null;
-	
-	// test 2
-	testSubject=createTestSubject();payloadName = "";
-	}
-
-	
-	@Test
-	public void testValidateAndUpdateResourceFromCsar() throws Exception {
-	ResourceBusinessLogic testSubject;Resource resource = null;
-	User user = null;
-	Map<String,byte[]> csarUIPayload = null;
-	String payloadName = "";
-	String resourceUniqueId = "";
-	Either<Resource,ResponseFormat> result;
-	
-	// test 1
-	testSubject=createTestSubject();payloadName = null;
-	
-	// test 2
-	testSubject=createTestSubject();payloadName = "";
-	}
-
-	
-
-
-	
-
-
-
-
-	
-	
-	@Test
-	public void testCreateResourceFromCsar() throws Exception {
-	ResourceBusinessLogic testSubject;Resource resource = null;
-	User user = null;
-	Either<Map<String,byte[]>,StorageOperationStatus> csarUIPayload = null;
-	String csarUUID = "";
-	Either<Resource,ResponseFormat> result;
-	
-	// test 1
-	testSubject=createTestSubject();csarUIPayload = null;
-	}
-
-	
-
-
-	
-	
-	
-	@Test
-	public void testCreateResourcesFromYamlNodeTypesList() throws Exception {
-	ResourceBusinessLogic testSubject;String yamlName = "";
-	Resource resource = null;
-	Map<String,Object> mappedToscaTemplate = null;
-	boolean needLock = false;
-	Map<String,EnumMap<ArtifactOperationEnum,List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = null;
-	List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = null;
-	Map<String,NodeTypeInfo> nodeTypesInfo = null;
-	CsarInfo csarInfo = null;
-	Either<Map<String,Resource>,ResponseFormat> result;
-	
-	// default test
-	}
-
-	
-
-
-
-	
-	@Test
-	public void testValidateResourceCreationFromNodeType() throws Exception {
-	ResourceBusinessLogic testSubject;Resource resource = null;
-	User creator = null;
-	Either<Boolean,ResponseFormat> result;
-	
-	// default test
-	}
-
-	
-	@Test
-	public void testCreateResourceFromNodeType() throws Exception {
-	ResourceBusinessLogic testSubject;String nodeTypeYaml = "";
-	UploadResourceInfo resourceMetaData = null;
-	User creator = null;
-	boolean isInTransaction = false;
-	boolean needLock = false;
-	Map<ArtifactOperationEnum,List<ArtifactDefinition>> nodeTypeArtifactsToHandle = null;
-	List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = null;
-	boolean forceCertificationAllowed = false;
-	CsarInfo csarInfo = null;
-	Either<ImmutablePair<Resource,ActionStatus>,ResponseFormat> result;
-	
-	// default test
-	}
-
+	 
+    
 }

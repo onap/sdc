@@ -516,8 +516,7 @@
 
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${mockito.version}</version>
+			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<!-- testing end -->
@@ -525,6 +524,7 @@
 	</dependencies>
 
 	<build>
+	<finalName>${project.artifactId}-${project.version}-jar-with-dependencies</finalName>
 		<plugins>
 
 			<plugin>
@@ -539,19 +539,8 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>create.jar.with.dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-						</configuration>
-					</execution>
+				<version>2.6</version>
+    			<executions>
 					<execution>
 						<configuration>
 							<finalName>sdctool</finalName>
@@ -559,7 +548,7 @@
 							<descriptor>${project.basedir}/tarball.xml</descriptor>
 						</configuration>
 						<id>assemble-file</id>
-						<phase>package</phase>
+						<phase>verify</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>
@@ -567,32 +556,89 @@
 				</executions>
 			</plugin>
 
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+					<phase>package</phase>
+					<goals>
+						<goal>shade</goal>
+					</goals>
+					<configuration>
+						<filters>
+							<filter>
+								<artifact>org.openecomp.sdc:*</artifact>
+								<excludes>
+									<exclude>**/elasticsearch.yml</exclude>
+								</excludes>
+							</filter>
+							<filter>
+								<artifact>*:*</artifact>
+								<excludes>
+									<exclude>META-INF/*.SF</exclude>
+									<exclude>META-INF/*.DSA</exclude>
+									<exclude>META-INF/*.RSA</exclude>
+								</excludes>
+							</filter>
+						</filters>
+						<transformers>
+                        	<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                        </transformers>
+					</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>clean-static-files</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<filesets>
+								<!-- tosca files -->
+								<fileset>
+									<directory>${project.parent.basedir}/asdctool/tosca</directory>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.0.2</version>
-
                 <executions>
-
-                    <execution>
-                        <id>copy-sdctool</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>./target</directory>
-                                    <includes>
-                                        <include>sdctool.tar</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-
+                    
+                	<execution>
+            			<id>copy-tosca-folder</id>
+            			<!-- here the phase you need -->
+            			<phase>install</phase>
+            			<goals>
+              				<goal>copy-resources</goal>
+            			</goals>
+            			<configuration>
+              				<outputDirectory>${project.parent.basedir}/asdctool/tosca</outputDirectory>
+              				<resources>          
+                				<resource>
+                  					<directory>${project.parent.basedir}/catalog-be/src/main/resources/import/tosca</directory>
+                  					<filtering>true</filtering>
+                				</resource>
+              				</resources>              
+            			</configuration>            
+          			</execution>
+          			
                 </executions>
             </plugin>
 		</plugins>

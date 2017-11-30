@@ -106,7 +106,7 @@ public class GroupServlet extends AbstractValidationsServlet {
 			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
 					actionResponse.left().value());
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("getGroupArtifactById");
 			log.debug("getGroupArtifactById unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));

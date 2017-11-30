@@ -26,8 +26,8 @@ import {AppModule} from './app/ng2/app.module';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {IAppConfigurtaion} from "./app/models/app-config";
 
-declare var __ENV__: string;
-export declare var sdc2Config: IAppConfigurtaion;
+declare const __ENV__: string;
+export declare let sdc2Config: IAppConfigurtaion;
 
 if (__ENV__==='prod') {
     sdc2Config = require('./../configurations/prod.js');
@@ -37,7 +37,6 @@ if (__ENV__==='prod') {
 }
 
 // Ugliy fix because the cookie recieved from webseal change his value after some seconds.
-declare var __ENV__: string;
 let timeout:number = 0;
 if (__ENV__==='dev'){
     timeout=0;

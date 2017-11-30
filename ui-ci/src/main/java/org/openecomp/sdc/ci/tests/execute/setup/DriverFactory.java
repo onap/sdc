@@ -59,7 +59,10 @@ public class DriverFactory {
 	
 	@BeforeSuite(alwaysRun = true)
 	public static void instantiateDriverObject() {
-		
+
+		// Selenium 3.4.0 change, location of gecko driver, set system property
+//        System.setProperty("webdriver.gecko.driver","C:\\Gekko18\\geckodriver-v0.18.0-win64\\geckodriver.exe"); //change for 3.4.0, gecko driver location
+		// End of Selenium 3.4.0 change 
 		
 		File basePath = new File(FileHandling.getBasePath());
 		File[] listFiles = basePath.listFiles(new FilenameFilter() {

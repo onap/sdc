@@ -7,6 +7,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.openecomp.sdc.asdctool.configuration.ConfigurationUploader;
 import org.openecomp.sdc.asdctool.migration.config.MigrationSpringConfig;
 import org.openecomp.sdc.asdctool.migration.core.SdcMigrationTool;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -25,7 +26,7 @@ public class MigrationMenu {
         CommandLine commandLine = initCmdLineOptions(args);
         String appConfigDir = commandLine.getOptionValue("c");
         boolean enforceAll = commandLine.hasOption("e");
-        uploadConfiguration(appConfigDir);
+        ConfigurationUploader.uploadConfigurationFiles(appConfigDir);
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MigrationSpringConfig.class);
         doMigrate(enforceAll, context);
 
@@ -90,11 +91,5 @@ public class MigrationMenu {
                     .desc("path to sdc configuration folder - required")
                     .build();
     }
-
-    private static void uploadConfiguration(String appConfigDir) {
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-        ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-    }
-
 
 }

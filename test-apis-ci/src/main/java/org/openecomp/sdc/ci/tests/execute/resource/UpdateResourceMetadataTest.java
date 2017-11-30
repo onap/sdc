@@ -432,7 +432,6 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
 			return ResourceResponse;
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

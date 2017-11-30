@@ -467,6 +467,7 @@ public class ElementServlet extends BeGenericServlet {
 				configuration.put("componentTypes", elementBL.getAllComponentTypesParamNames());
 				configuration.put("roles", elementBL.getAllSupportedRoles());
 				configuration.put("resourceTypes", resourceTypesMap.left().value());
+				configuration.put("environmentContext", ConfigurationManager.getConfigurationManager().getConfiguration().getEnvironmentContext());
 				return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), configuration);
 			}
 

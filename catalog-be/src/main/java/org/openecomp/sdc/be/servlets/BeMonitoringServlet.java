@@ -34,6 +34,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.impl.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -41,8 +42,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
-import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckComponent;
-import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
 import org.openecomp.sdc.common.api.HealthCheckWrapper;
 import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.common.monitoring.MonitoringEvent;
@@ -54,12 +53,12 @@ import org.springframework.web.context.WebApplicationContext;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jcabi.aspects.Loggable;
+
+import fj.data.Either;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
-import fj.data.Either;
 
 @Loggable(prepend = true, value = Loggable.TRACE, trim = false)
 @Path("/")
@@ -75,22 +74,20 @@ public class BeMonitoringServlet extends BeGenericServlet {
 	@Path("/healthCheck")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "return aggregate BE health check of Titan, ES and BE", notes = "return BE health check", response = String.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Titan, ES and BE are all up"), @ApiResponse(code = 500, message = "One or more BE components (Titan, ES, BE) are down") })
+	@ApiOperation(value = "Return aggregate BE health check of SDC BE components", notes = "return BE health check", response = String.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "SDC BE components are all up"), @ApiResponse(code = 500, message = "One or more SDC BE components are down") })
 	public Response getHealthCheck(@Context final HttpServletRequest request) {
 		try {
 			HealthCheckBusinessLogic healthCheckBusinessLogic = getHealthCheckBL(request.getSession().getServletContext());
-			List<HealthCheckInfo> beHealthCheckInfos = healthCheckBusinessLogic.getBeHealthCheckInfosStatus();
-
-			// List<HealthCheckInfo> beHealthCheckInfos =
-			// HealthCheckBusinessLogic.getInstance().getBeHealthCheckInfos(request.getSession().getServletContext());
-			ActionStatus status = getAggregateBeStatus(beHealthCheckInfos);
+			Pair<Boolean, List<HealthCheckInfo>> beHealthCheckInfosStatus = healthCheckBusinessLogic.getBeHealthCheckInfosStatus();
+			Boolean aggregateStatus = beHealthCheckInfosStatus.getLeft();
+			ActionStatus status = aggregateStatus ? ActionStatus.OK : ActionStatus.GENERAL_ERROR;
 			String sdcVersion = getVersionFromContext(request);
 			if (sdcVersion == null || sdcVersion.isEmpty()) {
 				sdcVersion = "UNKNOWN";
 			}
 			String siteMode = healthCheckBusinessLogic.getSiteMode();
-			HealthCheckWrapper healthCheck = new HealthCheckWrapper(beHealthCheckInfos, sdcVersion, siteMode);
+			HealthCheckWrapper healthCheck = new HealthCheckWrapper(beHealthCheckInfosStatus.getRight(), sdcVersion, siteMode);
 			// The response can be either with 200 or 500 aggregate status - the
 			// body of individual statuses is returned either way
 
@@ -166,17 +163,6 @@ public class BeMonitoringServlet extends BeGenericServlet {
 		ServletContext servletContext = request.getSession().getServletContext();
 		String version = (String) servletContext.getAttribute(Constants.ASDC_RELEASE_VERSION_ATTR);
 		return version;
-	}
-
-	private ActionStatus getAggregateBeStatus(List<HealthCheckInfo> beHealthCheckInfos) {
-		ActionStatus status = ActionStatus.OK;
-		for (HealthCheckInfo healthCheckInfo : beHealthCheckInfos) {
-			if (healthCheckInfo.getHealthCheckStatus().equals(HealthCheckStatus.DOWN) && healthCheckInfo.getHealthCheckComponent() != HealthCheckComponent.DE) {
-				status = ActionStatus.GENERAL_ERROR;
-				break;
-			}
-		}
-		return status;
 	}
 
 	protected MonitoringEvent convertContentToJson(String content, Class<MonitoringEvent> clazz) {

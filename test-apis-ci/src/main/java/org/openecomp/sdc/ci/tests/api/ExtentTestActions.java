@@ -28,17 +28,20 @@ import com.aventstack.extentreports.markuputils.Markup;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 
 import java.io.File;
+import org.openecomp.sdc.ci.tests.api.ExtentTestManager;
 
 
 public class ExtentTestActions {
 	
+	public static SomeInterface testManager = new ExtentTestManager();
+	
 	public static void log(Status logStatus, Markup mark){
-		ExtentTest test = ExtentTestManager.getTest();
+		ExtentTest test = testManager.getTest();
 		test.log(logStatus, mark);
 	}
 
 	public static void log(Status logStatus, String message){
-		ExtentTest test = ExtentTestManager.getTest();
+		ExtentTest test = testManager.getTest();
 		test.log(logStatus, message);
 	}
 	
@@ -47,7 +50,7 @@ public class ExtentTestActions {
 	}
 	
 	public static void log(Status logStatus, Throwable throwabel){
-		ExtentTest test = ExtentTestManager.getTest();
+		ExtentTest test = testManager.getTest();
 		test.log(logStatus, throwabel);
 	}
 	

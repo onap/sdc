@@ -20,48 +20,18 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ComponentReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.PropertyReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceExternalReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.PropertyTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
+import org.openecomp.sdc.ci.tests.datatypes.*;
+import org.openecomp.sdc.ci.tests.datatypes.enums.*;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedExternalAudit;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedResourceAuditJavaObject;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
@@ -70,6 +40,13 @@ import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.util.ValidationUtils;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class ElementFactory {
 
@@ -80,6 +57,20 @@ public class ElementFactory {
 	private static final String RESOURCE_INSTANCE_POS_X = "20";
 	private static final String RESOURCE_INSTANCE_POS_Y = "20";
 	private static final String RESOURCE_INSTANCE_DESCRIPTION = "description";
+	
+	// *** Getters ***
+	
+	public static String getServicePrefix() {
+		return CI_SERVICE;
+	}
+
+	public static String getResourcePrefix() {
+		return CI_RES;
+	}
+
+	public static String getProductPrefix() {
+		return CI_PRODUCT;
+	}
 
 	// *** RESOURCE ***
 
@@ -149,6 +140,7 @@ public class ElementFactory {
 		String icon = "defaulticon";
 		ResourceReqDetails resourceDetails = new ResourceReqDetails(resourceName, description, resourceTags, null, derivedFrom, vendorName, vendorRelease, contactId, icon);
 		resourceDetails.addCategoryChain(category.getCategory(), category.getSubCategory());
+		resourceDetails.setResourceVendorModelNumber("vendorNumber-1.5.7");
 
 		return resourceDetails;
 
@@ -196,9 +188,15 @@ public class ElementFactory {
 		String icon = "defaulticon";
 		ResourceReqDetails resourceDetails = new ResourceReqDetails(resourceName, description, resourceTags, null, derivedFrom, vendorName, vendorRelease, contactId, icon, resourceType.toString());
 		resourceDetails.addCategoryChain(category.getCategory(), category.getSubCategory());
+		resourceDetails.setResourceVendorModelNumber("vendorNumber-1.5.7");
 		return resourceDetails;
 	}
-	
+
+	public static ResourceReqDetails getRandomCategoryResource() {
+		ResourceReqDetails resourceDetails = getDefaultResource(ResourceCategoryEnum.getRandomElement());
+		return resourceDetails;
+	}
+
 	public static ResourceExternalReqDetails getDefaultResourceByType(String resourceName, ResourceCategoryEnum category, String contactId, String resourceType) {
 		resourceName = (resourceName + resourceType + generateUUIDforSufix());
 		String description = "Represents a generic software component that can be managed and run by a Compute Node Type.";
@@ -278,7 +276,7 @@ public class ElementFactory {
 		return getDefaultService(CI_SERVICE, ServiceCategoriesEnum.MOBILITY, user.getUserId());
 	}
 
-	public static ServiceReqDetails getService(ServiceCategoriesEnum category) {
+	public static ServiceReqDetails getServiceByCategory(ServiceCategoriesEnum category) {
 		return getDefaultService(CI_SERVICE, category, "al1976");
 	}
 
@@ -298,6 +296,11 @@ public class ElementFactory {
 		ServiceReqDetails serviceDetails = new ServiceReqDetails(serviceName, category.getValue(), tags, description, contactId, icon);
 
 		return serviceDetails;
+	}
+
+	public static ServiceReqDetails getRandomCategoryService() {
+		ServiceReqDetails serviceReqDetails = getServiceByCategory(ServiceCategoriesEnum.getRandomElement());
+		return serviceReqDetails;
 	}
 
 	// ***** PROPERTY ***
@@ -851,7 +854,6 @@ public class ElementFactory {
 		try {
 			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_CATEGORY_NOT_FOUND.name());
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String desc = (errorInfo.getMessageId() + ": " + errorInfo.getMessage()).replace("%2", "category").replace("%3", category).replace("%1", "resource");

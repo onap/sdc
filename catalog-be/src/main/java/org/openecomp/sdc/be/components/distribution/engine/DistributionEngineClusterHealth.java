@@ -39,8 +39,8 @@ import javax.annotation.PreDestroy;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
+import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
-import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckComponent;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
 import org.openecomp.sdc.common.config.EcompErrorName;
 import org.slf4j.Logger;
@@ -72,10 +72,10 @@ public class DistributionEngineClusterHealth {
 
 	public enum HealthCheckInfoResult {
 
-		OK(new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.UP, null, ClusterStatusDescription.OK.getDescription())), 
-		UNAVAILABLE(new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.UNAVAILABLE.getDescription())), 
-		NOT_CONFIGURED(new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.NOT_CONFIGURED.getDescription())), 
-		DISABLED(new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.DISABLED.getDescription()));
+		OK(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.UP, null, ClusterStatusDescription.OK.getDescription())), 
+		UNAVAILABLE(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.UNAVAILABLE.getDescription())), 
+		NOT_CONFIGURED(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.NOT_CONFIGURED.getDescription())), 
+		DISABLED(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.DISABLED.getDescription()));
 
 		private HealthCheckInfo healthCheckInfo;
 

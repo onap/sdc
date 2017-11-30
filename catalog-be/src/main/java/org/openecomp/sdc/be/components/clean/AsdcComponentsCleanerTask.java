@@ -162,7 +162,7 @@ public class AsdcComponentsCleanerTask implements Runnable {
 	public void run() {
 		try {
 			componentsCleanBusinessLogic.cleanComponents(componentsToClean);
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			log.error("unexpected error occured", e);
 			String methodName = new Object() {
 			}.getClass().getEnclosingMethod().getName();

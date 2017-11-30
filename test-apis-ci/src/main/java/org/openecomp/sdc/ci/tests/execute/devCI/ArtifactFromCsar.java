@@ -53,7 +53,6 @@ public class ArtifactFromCsar {
 	
 
 	public static void main(String[] args) throws Exception {
-		// TODO Auto-generated method stub
 		String zipFile = "C:\\Users\\rp955r\\Documents\\InTesting\\resource-CivfonboardedFdnt2f792348-csar.csar";
 		
 //		Map<String, Object> combinedMap = combineHeatArtifacstWithFolderArtifacsToMap(zipFile);
@@ -138,7 +137,6 @@ public class ArtifactFromCsar {
 						try {
 							map.put(file.getName(), getMapArtifactFromFolderStructure(file));
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}

@@ -27,23 +27,32 @@ import java.util.List;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
+import com.google.common.collect.Lists;
+/**
+ * Represents the requirement of the component or component instance
+ */
 public class RequirementDataDefinition extends ToscaDataDefinition implements Serializable {
 	/**
 	 * 
 	 */
-	public final static String MIN_OCCURRENCES = "1";
-	public final static String MAX_OCCURRENCES = "UNBOUNDED";
-	public final static String MAX_DEFAULT_OCCURRENCES = "1";
+	public static final String MIN_OCCURRENCES = "1";
+	public static final String MAX_OCCURRENCES = "UNBOUNDED";
+	public static final String MAX_DEFAULT_OCCURRENCES = "1";
 
 	private static final long serialVersionUID = -8840549489409274532L;
-
+	/**
+	 * The default constructor initializing limits of the occurrences
+	 */
 	public RequirementDataDefinition() {
 		super();
 		this.setMinOccurrences(  MIN_OCCURRENCES );
 		this.setMaxOccurrences(  MAX_OCCURRENCES);
 		this.setLeftOccurrences(  MAX_OCCURRENCES);
 	}
-
+	/**
+	 * Deep copy constructor
+	 * @param other
+	 */
 	public RequirementDataDefinition(RequirementDataDefinition other) {
 		this.setUniqueId(other.getUniqueId());
 		this.setName(other.getName());
@@ -56,9 +65,11 @@ public class RequirementDataDefinition extends ToscaDataDefinition implements Se
 		this.setMinOccurrences(other.getMinOccurrences());
 		this.setMaxOccurrences(other.getMaxOccurrences());
 		this.setLeftOccurrences(other.getLeftOccurrences());
-		this.setPath(other.getPath());
+		if(other.getPath() == null)
+			this.setPath(Lists.newArrayList());
+		else
+			this.setPath(Lists.newArrayList(other.getPath()));
 		this.setSource(other.getSource());
-
 	}
 
 	/**
@@ -122,19 +133,15 @@ public class RequirementDataDefinition extends ToscaDataDefinition implements Se
 		setToscaPresentationValue(JsonPresentationFields.RELATIONSHIP, relationship);
 	}
 
-	// public RequirementImplDef getRequirementImpl() {
-	// return requirementImpl;
-	// }
-	//
-	// public void setRequirementImpl(RequirementImplDef requirementImpl) {
-	// this.requirementImpl = requirementImpl;
-	// }
-
-	// specifies the resource instance holding this requirement
+	/**
+	 *  specifies the resource instance holding this requirement
+	 */
+	@Override
 	public String getOwnerId() {
 		return (String) getToscaPresentationValue(JsonPresentationFields.OWNER_ID);
 	}
-
+	
+	@Override
 	public void setOwnerId(String ownerId) {
 		setToscaPresentationValue(JsonPresentationFields.OWNER_ID, ownerId);
 	}
@@ -175,6 +182,7 @@ public class RequirementDataDefinition extends ToscaDataDefinition implements Se
 		setToscaPresentationValue(JsonPresentationFields.PATH, path);
 	}
 
+	@SuppressWarnings({ "unchecked" })
 	public List<String> getPath() {
 		return (List<String>) getToscaPresentationValue(JsonPresentationFields.PATH);
 	}
@@ -187,12 +195,18 @@ public class RequirementDataDefinition extends ToscaDataDefinition implements Se
 		return (String) getToscaPresentationValue(JsonPresentationFields.SOURCE);
 	}
 
+	/**
+	 * Adds the element to the path avoiding duplication
+	 * @param elementInPath
+	 */
 	public void addToPath(String elementInPath) {
 		List<String> path = getPath();
 		if (path == null) {
 			path = new ArrayList<>();
 		}
-		path.add(elementInPath);
+		if(!path.contains(elementInPath)){
+			path.add(elementInPath);
+		}
 		setPath(path);
 	}
 

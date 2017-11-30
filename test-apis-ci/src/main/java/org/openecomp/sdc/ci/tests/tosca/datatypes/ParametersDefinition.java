@@ -34,7 +34,6 @@ public class ParametersDefinition {
 	
 	public ParametersDefinition() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ParametersDefinition(String type, String description, Object default1, String status, String entry_schema, Object value) {

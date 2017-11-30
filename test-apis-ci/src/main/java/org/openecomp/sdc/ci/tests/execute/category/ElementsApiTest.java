@@ -48,15 +48,6 @@ public class ElementsApiTest extends ComponentBaseTest {
 		super(name, ElementsApiTest.class.getName());
 	}
 
-	// public LCSbaseTest(TestName testName, String className) {
-	// super(testName, className);
-	// }
-
-	// public ElementsApiTest(TestName name, String name2) {
-	//// super(name, name2);
-	// // TODO Auto-generated constructor stub
-	// }
-
 	// Expected 200 Keep
 	@Test
 	public void getAllPropertyScopesSuccess() throws Exception {

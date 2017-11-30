@@ -112,6 +112,7 @@ export class PropertyFormViewModel {
     private initResource = ():void => {
         this.$scope.editPropertyModel.property = new PropertyModel(this.property);
         this.$scope.editPropertyModel.property.type = this.property.type ? this.property.type : null;
+        this.$scope.editPropertyModel.property.value = this.$scope.editPropertyModel.property.value || this.$scope.editPropertyModel.property.defaultValue;
         this.setMaxLength();
         this.initAddOnLabels();
     };
@@ -241,7 +242,7 @@ export class PropertyFormViewModel {
             let onPropertySuccess = (propertyFromBE:PropertyModel):void => {
                 console.info('onPropertyResourceSuccess : ', propertyFromBE);
                 this.$scope.isLoading = false;
-
+                this.filteredProperties[this.$scope.currentPropertyIndex] = propertyFromBE;
                 if (!doNotCloseModal) {
                     this.$uibModalInstance.close(propertyFromBE);
                 } else {

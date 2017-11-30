@@ -32,12 +32,12 @@ export class LoaderService {
 
     }
 
-    public showLoader(...args) {
-        this.eventListenerService.notifyObservers(EVENTS.SHOW_LOADER_EVENT, ...args);
+    public showLoader(loaderType:string, ...args) {
+        this.eventListenerService.notifyObservers(EVENTS.SHOW_LOADER_EVENT + loaderType, ...args);
     }
 
-    public hideLoader(...args) {
-        this.eventListenerService.notifyObservers(EVENTS.HIDE_LOADER_EVENT, ...args);
+    public hideLoader(loaderType:string, ...args) {
+        this.eventListenerService.notifyObservers(EVENTS.HIDE_LOADER_EVENT + loaderType, ...args);
     }
 }
 

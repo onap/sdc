@@ -1,0 +1,21 @@
+{
+  "payloadName": "serviceProxy.yml",
+  "contactId": "jh0003",
+  "name": "serviceProxy",
+  "description": "Represents a proxy to a service VFC.",
+  "resourceIconPath": "defaulticon",
+  "resourceType": "ServiceProxy",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Abstract"
+      }
+    ]
+  }
+],
+  "tags": [
+    "serviceProxy"
+  ]
+}

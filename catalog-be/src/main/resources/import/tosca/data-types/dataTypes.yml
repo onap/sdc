@@ -55,6 +55,18 @@ tosca.datatypes.Credential:
       type: string
       required: false
 
+org.openecomp.datatypes.PortMirroringConnectionPointDescription:
+  derived_from: tosca.datatypes.Root
+  properties:
+    nf_type: 
+        type: string
+    nfc_type: 
+        type: string
+    network_role: 
+        type: string 
+    pps_capacity: 
+        type: string
+
 tosca.datatypes.TimeInterval: 
   derived_from: tosca.datatypes.Root
   properties:
@@ -346,6 +358,11 @@ org.openecomp.datatypes.heat.neutron.port.FixedIps:
     ip_address:
       type: string
       description: IP address desired in the subnet for this port
+      required: false
+      status: SUPPORTED
+    subnet_id:
+      type: string
+      description: Subnet in which to allocate the IP address for this port
       required: false
       status: SUPPORTED
 

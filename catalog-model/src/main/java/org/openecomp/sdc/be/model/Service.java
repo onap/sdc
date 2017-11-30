@@ -89,7 +89,13 @@ public class Service extends Component {
 	public String getNamingPolicy() {
 		return getServiceMetadataDefinition().getNamingPolicy();
 	}
-	
+
+	public String getEnvironmentContext() { return getServiceMetadataDefinition().getEnvironmentContext();  }
+
+	public void setEnvironmentContext(String environmentContext) {
+		getServiceMetadataDefinition().setEnvironmentContext(environmentContext);
+	}
+
 	public void setServiceType(String serviceType){
 		getServiceMetadataDefinition().setServiceType(serviceType);
 	}

@@ -21,6 +21,7 @@
 'use strict';
 import {SchemaPropertyGroupModel, SchemaProperty} from "./aschema-property";
 import {InputPropertyBase} from "./input-property-base";
+import {PropertyBEModel} from "./properties-inputs/property-be-model";
 
 export class PropertiesGroup {
     constructor(propertiesObj?:PropertiesGroup) {
@@ -54,8 +55,7 @@ export interface IPropertyModel extends InputPropertyBase {
     simpleType:string;
 }
 
-export class PropertyModel implements IPropertyModel {
-
+export class PropertyModel extends PropertyBEModel implements IPropertyModel {
     //server data
     uniqueId:string;
     name:string;
@@ -90,19 +90,10 @@ export class PropertyModel implements IPropertyModel {
 
 
     constructor(property?:PropertyModel) {
+        super(property);
         if (property) {
-            this.uniqueId = property.uniqueId;
-            this.name = property.name;
             this.constraints = property.constraints;
-            this.defaultValue = property.defaultValue;
-            this.description = property.description;
-            this.password = property.password;
-            this.required = property.required;
-            this.type = property.type;
             this.source = property.source;
-            this.parentUniqueId = property.parentUniqueId;
-            this.schema = property.schema;
-            this.value = property.value ? property.value : property.defaultValue;
             this.valueUniqueUid = property.valueUniqueUid;
             this.path = property.path;
             this.rules = property.rules;

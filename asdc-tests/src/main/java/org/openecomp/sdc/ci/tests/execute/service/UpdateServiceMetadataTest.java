@@ -523,6 +523,15 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 	}
 
+	@Test
+	public void environmentContextService() throws Exception {
+		updatedServiceDetails.setEnvironmentContext("General_Revenue-Bearing");
+		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		validateResponse(updateServiceResponse, 200, null, listForMessage);
+		Service actualService = ResponseParser.convertServiceResponseToJavaObject(updateServiceResponse.getResponse());
+		assertEquals(updatedServiceDetails.getEnvironmentContext(), actualService.getEnvironmentContext());
+	}
+
 	// TODO Irrelevant
 	@Test(enabled = false)
 	public void missingProjectCodeTest1() throws Exception {

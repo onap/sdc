@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.BiConsumer;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -59,23 +60,13 @@ import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabiltyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
@@ -138,6 +129,7 @@ public class NodeTemplateOperation extends BaseOperation {
 		}
 
 		if (result == null) {
+
 			newInstanceNameRes = buildValidateInstanceName(container, originToscaElement, componentInstance, instanceNumberSuffix);
 			if (newInstanceNameRes.isRight()) {
 				result = Either.right(newInstanceNameRes.right().value());
@@ -155,6 +147,14 @@ public class NodeTemplateOperation extends BaseOperation {
 				}
 				result = Either.right(status);
 			}
+			if(componentInstance.getOriginType()  == OriginTypeEnum.ServiceProxy){
+				TopologyTemplate updatedContainer = addComponentInstanceRes.left().value();
+				result = addServerCapAndReqToProxyServerInstance(
+						updatedContainer, componentInstance, componentInstanceData);
+				
+
+			
+			}
 		}
 		if (result == null) {
 			result = Either.left(new ImmutablePair<>(addComponentInstanceRes.left().value(), componentInstanceData.getUniqueId()));
@@ -162,11 +162,130 @@ public class NodeTemplateOperation extends BaseOperation {
 		return result;
 	}
 
+	private Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> addServerCapAndReqToProxyServerInstance(TopologyTemplate updatedContainer, ComponentInstance componentInstance,
+			
+			ComponentInstanceDataDefinition componentInstanceData) {
+		
+		Either<ImmutablePair<TopologyTemplate, String>, StorageOperationStatus> result;
+		
+	
+		Map<String, MapListCapabiltyDataDefinition> calcCap = updatedContainer.getCalculatedCapabilities();
+		Map<String, MapListRequirementDataDefinition>  calcReg = updatedContainer.getCalculatedRequirements();
+		Map<String, MapCapabiltyProperty> calcCapProp = updatedContainer.getCalculatedCapabilitiesProperties();
+		
+		
+		Map<String, List<CapabilityDefinition>> additionalCap = componentInstance.getCapabilities();
+		Map<String, List<RequirementDefinition>> additionalReq = componentInstance.getRequirements();
+		
+		MapListCapabiltyDataDefinition	allCalculatedCap = calcCap==null ||!calcCap.containsKey(componentInstanceData.getUniqueId())?new MapListCapabiltyDataDefinition() :calcCap.get(componentInstanceData.getUniqueId());
+		/********capability****************************/
+		StorageOperationStatus status = deleteToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES, componentInstanceData.getUniqueId());
+		if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
+			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to remove calculated capabilty  for instance {} in container {}. error {] ", componentInstanceData.getUniqueId(), updatedContainer.getUniqueId(), status);
+			return Either.right(status);
+		}
+		
+		if(additionalCap != null && !additionalCap.isEmpty()){
+			
+			Map<String, ListCapabilityDataDefinition> serverCap = additionalCap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, en -> new ListCapabilityDataDefinition(en.getValue().stream().map(iCap -> new CapabilityDataDefinition(iCap)).collect(Collectors.toList()))));
+			
+			serverCap.entrySet().forEach(entryPerType -> {
+					entryPerType.getValue().getListToscaDataDefinition().forEach(cap -> {
+						cap.addToPath(componentInstance.getUniqueId());							
+						allCalculatedCap.add(entryPerType.getKey(), cap);
+					});
+				});
+			
+			status = addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES, allCalculatedCap,
+					componentInstance.getUniqueId());
+			
+			/********capability property****************************/
+			status = deleteToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, componentInstanceData.getUniqueId());
+			if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
+				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to remove calculated capabilty properties for instance {} in container {}. error {] ", componentInstanceData.getUniqueId(), updatedContainer.getUniqueId(), status);
+				return Either.right(status);
+			}
+			
+			
+			MapCapabiltyProperty	allCalculatedCapProp = calcCapProp==null ||!calcCapProp.containsKey(componentInstanceData.getUniqueId())?new MapCapabiltyProperty() :calcCapProp.get(componentInstanceData.getUniqueId());
+			
+
+			additionalCap.forEach(new BiConsumer<String, List<CapabilityDefinition>>() {
+				@Override
+				public void accept(String s, List<CapabilityDefinition> caps) {
+
+					if (caps != null && !caps.isEmpty()) {
+
+						MapPropertiesDataDefinition dataToCreate = new MapPropertiesDataDefinition();
+
+						for (CapabilityDefinition cap : caps) {
+							List<ComponentInstanceProperty> capPrps = cap.getProperties();
+							if (capPrps != null) {
+
+								for (ComponentInstanceProperty cip : capPrps) {
+									dataToCreate.put(cip.getName(), new PropertyDataDefinition(cip));
+								}
+							
+
+								StringBuffer sb = new StringBuffer(componentInstance.getUniqueId());
+								sb.append(ModelConverter.CAP_PROP_DELIM);
+								
+								sb.append(cap.getOwnerId());
+								
+								sb.append(ModelConverter.CAP_PROP_DELIM).append(s).append(ModelConverter.CAP_PROP_DELIM).append(cap.getName());
+								allCalculatedCapProp.put(sb.toString(), dataToCreate);
+							}
+						}
+
+					}
+
+				}
+			});
+			
+			status = addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, allCalculatedCapProp,
+					componentInstance.getUniqueId());
+		}
+		
+		/********Requirements property****************************/
+		if(additionalReq != null && !additionalReq.isEmpty()){
+		
+			MapListRequirementDataDefinition	allCalculatedReq = calcReg==null ||!calcReg.containsKey(componentInstanceData.getUniqueId())?new MapListRequirementDataDefinition() :calcReg.get(componentInstanceData.getUniqueId());
+			status = deleteToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_REQUIREMENTS, VertexTypeEnum.CALCULATED_REQUIREMENTS, componentInstanceData.getUniqueId());
+			if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
+				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to remove calculated Requirements for instance {} in container {}. error {] ", componentInstanceData.getUniqueId(), updatedContainer.getUniqueId(), status);
+				return Either.right(status);
+			}
+			
+			Map<String, ListRequirementDataDefinition> serverReq = additionalReq.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, en -> new ListRequirementDataDefinition(en.getValue().stream().map(iCap -> new RequirementDataDefinition(iCap)).collect(Collectors.toList()))));
+				
+			serverReq.entrySet().forEach(entryPerType -> {
+					entryPerType.getValue().getListToscaDataDefinition().forEach(cap -> {
+						cap.addToPath(componentInstance.getUniqueId());							
+						allCalculatedReq.add(entryPerType.getKey(), cap);
+					});
+				});
+			
+			status = addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_REQUIREMENTS, VertexTypeEnum.CALCULATED_REQUIREMENTS, allCalculatedReq,
+					componentInstance.getUniqueId());
+		
+		}
+
+
+		Either<ToscaElement, StorageOperationStatus> updatedComponentInstanceRes = topologyTemplateOperation.getToscaElement(updatedContainer.getUniqueId());
+		if (updatedComponentInstanceRes.isRight()) {
+			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to fetch updated topology template {} with new component instance {}. ", updatedContainer.getName(), componentInstance.getName());
+			result = Either.right(updatedComponentInstanceRes.right().value());
+		}
+		result = Either.left(new ImmutablePair<>((TopologyTemplate)updatedComponentInstanceRes.left().value(), componentInstanceData.getUniqueId()));
+		return result;
+	}
+	
+
 	private Either<String, StorageOperationStatus> buildValidateInstanceName(TopologyTemplate container, ToscaElement originToscaElement, ComponentInstance componentInstance, String instanceNumberSuffix) {
 
 		Either<String, StorageOperationStatus> result = null;
 		String instanceName = componentInstance.getName();
-		if (StringUtils.isEmpty(instanceName) || instanceName.equalsIgnoreCase(originToscaElement.getName())) {
+		if (StringUtils.isEmpty(instanceName) || instanceName.equalsIgnoreCase(originToscaElement.getName()) || componentInstance.getOriginType() == OriginTypeEnum.ServiceProxy) {
 			instanceName = buildComponentInstanceName(instanceNumberSuffix, instanceName);
 		} else if (!isUniqueInstanceName(container, componentInstance.getName())) {
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to create component instance with name {} on component container {}. The instance with the same name already exists. ", componentInstance.getName(), container.getName());
@@ -265,7 +384,7 @@ public class NodeTemplateOperation extends BaseOperation {
 		return result;
 	}
 
-	public Either<TopologyTemplate, StorageOperationStatus> updateComponentInstanceMetadataOfTopologyTemplate(TopologyTemplate container) {
+	public Either<TopologyTemplate, StorageOperationStatus> updateComponentInstanceMetadataOfTopologyTemplate(TopologyTemplate container, ComponentParametersView filter) {
 
 		Either<TopologyTemplate, StorageOperationStatus> result = null;
 		Either<ToscaElement, StorageOperationStatus> updateContainerComponentRes = null;
@@ -291,7 +410,7 @@ public class NodeTemplateOperation extends BaseOperation {
 			}
 		}
 		if (result == null) {
-			updateContainerComponentRes = topologyTemplateOperation.getToscaElement(containerComponentId);
+			updateContainerComponentRes = topologyTemplateOperation.getToscaElement(containerComponentId, filter);
 			if (updateContainerComponentRes.isRight()) {
 				CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to fetch updated topology template {}. ", container.getName());
 				result = Either.right(updateContainerComponentRes.right().value());
@@ -368,8 +487,8 @@ public class NodeTemplateOperation extends BaseOperation {
 				Map<String, MapListCapabiltyDataDefinition> calculatedCapabilty = capResult.left().value().getRight();
 
 				Either<Pair<GraphVertex, Map<String, MapListCapabiltyDataDefinition>>, StorageOperationStatus> capFullResult = fetchContainerCalculatedCapability(containerV, EdgeLabelEnum.FULLFILLED_CAPABILITIES);
-				if (capResult.isRight()) {
-					return capResult.right().value();
+				if (capFullResult.isRight()) {
+					return capFullResult.right().value();
 
 				}
 				Map<String, MapListCapabiltyDataDefinition> fullFilledCapabilty = capFullResult.left().value().getRight();
@@ -594,14 +713,14 @@ public class NodeTemplateOperation extends BaseOperation {
 		if (status != StorageOperationStatus.OK) {
 			return status;
 		}
-		
+
 		return addCalculatedCapReqFromNodeType(originNodeType, componentInstance, updatedContainerVertex);
 	}
 
 	public MapArtifactDataDefinition prepareInstDeploymentArtifactPerInstance(Map<String, ArtifactDataDefinition> deploymentArtifacts, String componentInstanceId, User user, String envType) {
 		if (deploymentArtifacts != null && envType.equals(HEAT_VF_ENV_NAME)) {
 			Map<String, ArtifactDataDefinition> instDeploymentArtifacts = new HashMap<>();
-			
+
 			deploymentArtifacts.entrySet().forEach(e -> {
 				ArtifactDataDefinition artifact = e.getValue();
 				String type = artifact.getArtifactType();
@@ -610,10 +729,10 @@ public class NodeTemplateOperation extends BaseOperation {
 					instDeploymentArtifacts.put(artifactEnv.getArtifactLabel(), artifactEnv);
 				}
 			});
-			
+
 			deploymentArtifacts.putAll(instDeploymentArtifacts);
 			MapArtifactDataDefinition instArtifacts = new MapArtifactDataDefinition(deploymentArtifacts);
-			
+
 			return instArtifacts;
 		}
 		return null;
@@ -744,13 +863,21 @@ public class NodeTemplateOperation extends BaseOperation {
 		sb.append(ModelConverter.CAP_PROP_DELIM).append(instanceId).append(ModelConverter.CAP_PROP_DELIM).append(key);
 		return sb.toString();
 	}
-
+	
+	/**
+	 * Prepares a map of capabilities lists
+	 * Produces a deep copy of the received map of capabilities
+	 * Sets values to the specific fields according to received component instance 
+	 * @param capabilities
+	 * @param componentInstance
+	 * @return
+	 */
 	public MapListCapabiltyDataDefinition prepareCalculatedCapabiltyForNodeType(Map<String, ListCapabilityDataDefinition> capabilities, ComponentInstanceDataDefinition componentInstance) {
 		if (capabilities != null) {
 			MapListCapabiltyDataDefinition allCalculatedCap = new MapListCapabiltyDataDefinition();
 
 			capabilities.entrySet().forEach(e -> {
-				List<CapabilityDataDefinition> listCapabilities = e.getValue().getListToscaDataDefinition();
+				List<CapabilityDataDefinition> listCapabilities = e.getValue().getListToscaDataDefinition().stream().map(c -> new CapabilityDataDefinition(c)).collect(Collectors.toList());
 				listCapabilities.forEach(cap -> {
 					cap.setSource(componentInstance.getComponentUid());
 					cap.addToPath(componentInstance.getUniqueId());
@@ -765,13 +892,21 @@ public class NodeTemplateOperation extends BaseOperation {
 		return null;
 	}
 
+	/**
+	 * Prepares a map of requirements lists
+	 * Produces a deep copy of the received map of requirements
+	 * Sets values to the specific fields according to received component instance 
+	 * @param requirements
+	 * @param componentInstance
+	 * @return
+	 */
 	public MapListRequirementDataDefinition prepareCalculatedRequirementForNodeType(Map<String, ListRequirementDataDefinition> requirements, ComponentInstanceDataDefinition componentInstance) {
 		if (requirements != null) {
 			MapListRequirementDataDefinition allCalculatedReq = new MapListRequirementDataDefinition();
 
 			requirements.entrySet().forEach(e -> {
-				List<RequirementDataDefinition> listCapabilities = e.getValue().getListToscaDataDefinition();
-				listCapabilities.forEach(req -> {
+				List<RequirementDataDefinition> listRequirements = e.getValue().getListToscaDataDefinition().stream().map(r -> new RequirementDataDefinition(r)).collect(Collectors.toList());
+				listRequirements.forEach(req -> {
 					req.setSource(componentInstance.getComponentUid());
 					req.addToPath(componentInstance.getUniqueId());
 					req.setOwnerId(componentInstance.getUniqueId());
@@ -809,8 +944,6 @@ public class NodeTemplateOperation extends BaseOperation {
 		return result;
 	}
 
-	
-
 	private ComponentInstanceDataDefinition buildComponentInstanceDataDefinition(ComponentInstance resourceInstance, String containerComponentId, String instanceNewName, boolean generateUid, ToscaElement originToscaElement) {
 		String ciOriginComponentUid = resourceInstance.getComponentUid();
 
@@ -845,7 +978,7 @@ public class NodeTemplateOperation extends BaseOperation {
 			dataDefinition.setComponentVersion((String) originToscaElement.getMetadataValue(JsonPresentationFields.VERSION));
 		if (StringUtils.isEmpty(dataDefinition.getComponentName()) && originToscaElement != null)
 			dataDefinition.setComponentName((String) originToscaElement.getMetadataValue(JsonPresentationFields.NAME));
-		if (originToscaElement != null)
+		if (originToscaElement != null && dataDefinition.getToscaComponentName() == null)
 			dataDefinition.setToscaComponentName((String) originToscaElement.getMetadataValue(JsonPresentationFields.TOSCA_RESOURCE_NAME));
 		if (dataDefinition.getOriginType() == null && originToscaElement != null) {
 			ResourceTypeEnum resourceType = originToscaElement.getResourceType();
@@ -869,11 +1002,20 @@ public class NodeTemplateOperation extends BaseOperation {
 			case PNF:
 				originType = OriginTypeEnum.PNF;
 				break;
+			case ServiceProxy:
+				originType = OriginTypeEnum.ServiceProxy;
+				break;
+			case Configuration:
+				originType = OriginTypeEnum.Configuration;
+				break;
 			default:
 				break;
 			}
 			dataDefinition.setOriginType(originType);
 		}
+		if(dataDefinition.getOriginType()  == OriginTypeEnum.ServiceProxy)
+			dataDefinition.setIsProxy(true);
+	
 		return dataDefinition;
 	}
 
@@ -887,10 +1029,6 @@ public class NodeTemplateOperation extends BaseOperation {
 		}
 		return isUniqueName;
 	}
-
-	
-
-	
 
 	private String buildComponentInstanceName(String instanceSuffixNumber, String instanceName) {
 		return instanceName + " " + (instanceSuffixNumber == null ? 0 : instanceSuffixNumber);
@@ -1196,7 +1334,6 @@ public class NodeTemplateOperation extends BaseOperation {
 		return status;
 	}
 
-
 	private StorageOperationStatus updateCalculatedCapabiltyAfterDeleteRelation(Map<String, MapListCapabiltyDataDefinition> calculatedCapability, Map<String, MapListCapabiltyDataDefinition> fullFilledCapability, String toResInstanceUid,
 			RelationshipInstDataDefinition relation) {
 		StorageOperationStatus status;
@@ -1208,8 +1345,8 @@ public class NodeTemplateOperation extends BaseOperation {
 		} else {
 			hereIsTheKey = capByInstance.findKeyByItemUidMatch(relation.getCapabilityId());
 			ListCapabilityDataDefinition capByType = capByInstance.findByKey(hereIsTheKey);
-			Optional<CapabilityDataDefinition> capabilityOptional = capByType.getListToscaDataDefinition().stream()
-						.filter(cap -> cap.getOwnerId().equals(relation.getCapabilityOwnerId()) && cap.getUniqueId().equals(relation.getCapabilityId())).findFirst();
+			Optional<CapabilityDataDefinition> capabilityOptional = capByType.getListToscaDataDefinition().stream().filter(cap -> cap.getOwnerId().equals(relation.getCapabilityOwnerId()) && cap.getUniqueId().equals(relation.getCapabilityId()))
+					.findFirst();
 
 			if (capabilityOptional.isPresent()) {
 
@@ -1230,7 +1367,7 @@ public class NodeTemplateOperation extends BaseOperation {
 	}
 
 	private StorageOperationStatus moveFromFullFilledCapabilty(Map<String, MapListCapabiltyDataDefinition> calculatedCapability, Map<String, MapListCapabiltyDataDefinition> fullFilledCapability, String toResInstanceUid,
-															   RelationshipInstDataDefinition relation, String hereIsTheKey) {
+			RelationshipInstDataDefinition relation, String hereIsTheKey) {
 		MapListCapabiltyDataDefinition capByInstance = fullFilledCapability.get(toResInstanceUid);
 		if (capByInstance == null) {
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "No capability in fulfilled list for instance {} ", toResInstanceUid);
@@ -1277,13 +1414,13 @@ public class NodeTemplateOperation extends BaseOperation {
 	}
 
 	private StorageOperationStatus moveFromFullFilledRequirement(Map<String, MapListRequirementDataDefinition> calculatedRequirement, Map<String, MapListRequirementDataDefinition> fullFilledRequirement, String fromResInstanceUid,
-																 RelationshipInstDataDefinition relation, String hereIsTheKey) {
+			RelationshipInstDataDefinition relation, String hereIsTheKey) {
 		MapListRequirementDataDefinition reqByInstance = fullFilledRequirement.get(fromResInstanceUid);
 		if (reqByInstance == null) {
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "No requirement in fullfilled list for instance {} ", fromResInstanceUid);
 			return StorageOperationStatus.GENERAL_ERROR;
 		}
-		if(null == hereIsTheKey)
+		if (null == hereIsTheKey)
 			hereIsTheKey = reqByInstance.findKeyByItemUidMatch(relation.getRequirementId());
 		if (null == hereIsTheKey) {
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "No requirement with id {} in fulfilled list for instance {} ", relation.getRequirementId(), fromResInstanceUid);
@@ -1506,13 +1643,14 @@ public class NodeTemplateOperation extends BaseOperation {
 			}
 		}
 		if (!capabilityForRelation.getType().equals(requirementForRelation.getCapability())) {
-			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "No math for capability from type {} and requirement {} from {} to {} in container {}.", capabilityForRelation.getType(), requirementForRelation.getCapability(), fromInstId, toInstId,
-					containerId);
+			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "No math for capability from type {} and requirement {} from {} to {} in container {}.", capabilityForRelation.getType(), requirementForRelation.getCapability(), fromInstId,
+					toInstId, containerId);
 			return Either.right(StorageOperationStatus.MATCH_NOT_FOUND);
 		}
 
 		RelationshipInstDataDefinition relationshipTypeData = buildRelationshipInstData(fromInstId, toInstId, relationPair);
-		relationshipTypeData.setType(requirementForRelation.getRelationship());
+		if(requirementForRelation.getRelationship() != null)
+			relationshipTypeData.setType(requirementForRelation.getRelationship());
 		return Either.left(relationshipTypeData);
 	}
 
@@ -1620,13 +1758,13 @@ public class NodeTemplateOperation extends BaseOperation {
 	}
 
 	public StorageOperationStatus addDeploymentArtifactsToInstance(String toscaElementId, String instanceId, Map<String, ArtifactDataDefinition> instDeplArtifacts) {
-		return addArtifactsToInstance(toscaElementId, instanceId, instDeplArtifacts,  EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS);
+		return addArtifactsToInstance(toscaElementId, instanceId, instDeplArtifacts, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS);
 	}
-	
+
 	public StorageOperationStatus addInformationalArtifactsToInstance(String toscaElementId, String instanceId, Map<String, ArtifactDataDefinition> instDeplArtifacts) {
-		return addArtifactsToInstance(toscaElementId, instanceId, instDeplArtifacts,  EdgeLabelEnum.INSTANCE_ARTIFACTS, VertexTypeEnum.INSTANCE_ARTIFACTS);
+		return addArtifactsToInstance(toscaElementId, instanceId, instDeplArtifacts, EdgeLabelEnum.INSTANCE_ARTIFACTS, VertexTypeEnum.INSTANCE_ARTIFACTS);
 	}
-	
+
 	public StorageOperationStatus addArtifactsToInstance(String toscaElementId, String instanceId, Map<String, ArtifactDataDefinition> instDeplArtifacts, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexType) {
 		Either<GraphVertex, TitanOperationStatus> metadataVertex = titanDao.getVertexById(toscaElementId, JsonParseFlagEnum.NoParse);
 		if (metadataVertex.isRight()) {
@@ -1637,7 +1775,7 @@ public class NodeTemplateOperation extends BaseOperation {
 			return DaoStatusConverter.convertTitanStatusToStorageStatus(status);
 		}
 		MapArtifactDataDefinition instArtifacts = new MapArtifactDataDefinition(instDeplArtifacts);
-		return addToscaDataDeepElementsBlockToToscaElement(metadataVertex.left().value(),edgeLabel, vertexType, instArtifacts, instanceId);
+		return addToscaDataDeepElementsBlockToToscaElement(metadataVertex.left().value(), edgeLabel, vertexType, instArtifacts, instanceId);
 
 	}
 
@@ -1710,12 +1848,24 @@ public class NodeTemplateOperation extends BaseOperation {
 		pathKeys.add(componentInstanceId);
 		return updateToscaDataDeepElementOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, property, pathKeys, JsonPresentationFields.NAME);
 	}
-	
-	
+
+	public StorageOperationStatus updateComponentInstanceCapabilityProperty(Component containerComponent, String componentInstanceId, String capabilityUniqueId, ComponentInstanceProperty property) {
+		List<String> pathKeys = new ArrayList<>();
+		pathKeys.add(componentInstanceId);
+		pathKeys.add(capabilityUniqueId);
+		return updateToscaDataDeepElementOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, property, pathKeys, JsonPresentationFields.NAME);
+	}
+
 	public StorageOperationStatus addComponentInstanceProperty(Component containerComponent, String componentInstanceId, ComponentInstanceProperty property) {
 		List<String> pathKeys = new ArrayList<>();
 		pathKeys.add(componentInstanceId);
 		return addToscaDataDeepElementToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, property, pathKeys, JsonPresentationFields.NAME);
+	}
+
+	public StorageOperationStatus updateComponentInstanceProperties(Component containerComponent, String componentInstanceId, List<ComponentInstanceProperty> properties) {
+		List<String> pathKeys = new ArrayList<>();
+		pathKeys.add(componentInstanceId);
+		return updateToscaDataDeepElementsOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, properties, pathKeys, JsonPresentationFields.NAME);
 	}
 
 	public StorageOperationStatus updateComponentInstanceInput(Component containerComponent, String componentInstanceId, ComponentInstanceInput property) {
@@ -1725,11 +1875,16 @@ public class NodeTemplateOperation extends BaseOperation {
 		return updateToscaDataDeepElementOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS, property, pathKeys, JsonPresentationFields.NAME);
 	}
 
+	public StorageOperationStatus updateComponentInstanceInputs(Component containerComponent, String componentInstanceId, List<ComponentInstanceInput> properties) {
+		List<String> pathKeys = new ArrayList<>();
+		pathKeys.add(componentInstanceId);
+		return updateToscaDataDeepElementsOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS, properties, pathKeys, JsonPresentationFields.NAME);
+	}
+
 	public StorageOperationStatus addComponentInstanceInput(Component containerComponent, String componentInstanceId, ComponentInstanceInput property) {
 		List<String> pathKeys = new ArrayList<>();
 		pathKeys.add(componentInstanceId);
 		return addToscaDataDeepElementToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS, property, pathKeys, JsonPresentationFields.NAME);
 	}
-
 
 }

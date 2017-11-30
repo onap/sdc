@@ -73,7 +73,6 @@ public class StartTest {
 		try {
 			config = Utils.getConfig();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
