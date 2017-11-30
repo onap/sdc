@@ -20,10 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.pages;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.aventstack.extentreports.Status;
 import org.apache.commons.lang.WordUtils;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactInfo;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;
@@ -37,7 +34,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.collections.Lists;
 
-import com.aventstack.extentreports.Status;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DeploymentArtifactPage extends GeneralPageElements {
 
@@ -109,6 +108,7 @@ public class DeploymentArtifactPage extends GeneralPageElements {
 	}
 	
 	public static void clickOK(){
+		SetupCDTest.getExtendTest().log(Status.INFO, "Artifact Page, Clicking OK");
 		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.OK.getValue()).click();
 		GeneralUIUtils.getWebElementBy(By.className("flex-container"));
 		GeneralUIUtils.waitForAngular();

@@ -1,0 +1,9 @@
+<div
+    class="w-sdc-menu-list"
+    *ngIf="isOpen"
+    [ngClass]="styleClass"
+    [ngStyle]="{'left': position?.x || 0, 'top': position?.y || 0}">
+
+    <ng-content></ng-content>
+
+</div>

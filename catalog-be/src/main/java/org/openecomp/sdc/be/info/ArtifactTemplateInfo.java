@@ -177,13 +177,17 @@ public class ArtifactTemplateInfo {
 		String correctType = type;
 		if (type.equalsIgnoreCase(CSAR_NESTED))
 			correctType = ArtifactTypeEnum.HEAT_NESTED.getType();
-		else if ((type.equalsIgnoreCase(CSAR_VOLUME)))
+		else if (type.equalsIgnoreCase(CSAR_VOLUME))
 			correctType = ArtifactTypeEnum.HEAT_VOL.getType();
-		else if ((type.equalsIgnoreCase(CSAR_NETWORK)))
+		else if (type.equalsIgnoreCase(CSAR_NETWORK))
 			correctType = ArtifactTypeEnum.HEAT_NET.getType();
-		else if ((type.equalsIgnoreCase(CSAR_ARTIFACT)))
-			correctType = ArtifactTypeEnum.HEAT_ARTIFACT.getType();
-		else if ((type.equalsIgnoreCase(CSAR_HEAT)))
+		else if (type.equalsIgnoreCase(CSAR_ARTIFACT)){
+			if( parentArtifact != null)
+				correctType = ArtifactTypeEnum.HEAT_ARTIFACT.getType();
+			else
+				correctType = resourceInfo.type;
+		}
+		else if (type.equalsIgnoreCase(CSAR_HEAT))
 			correctType = ArtifactTypeEnum.HEAT.getType();
 		else
 			correctType = ArtifactTypeEnum.OTHER.getType();

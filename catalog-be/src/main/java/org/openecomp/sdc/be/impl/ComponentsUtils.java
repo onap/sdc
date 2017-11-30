@@ -160,6 +160,10 @@ public class ComponentsUtils {
 		return responseFormatManager.getResponseFormat(actionStatus, params);
 	}
 
+	public ResponseFormat getResponseFormat(StorageOperationStatus storageStatus, String... params) {
+		return responseFormatManager.getResponseFormat(this.convertFromStorageResponse(storageStatus), params);
+	}
+
 	/**
 	 * Returns the response format of resource error with respective variables according to actionStatus. This is needed for cases where actionStatus is anonymously converted from storage operation, and the caller doesn't know what actionStatus he
 	 * received. It's caller's Responsibility to fill the resource object passed to this function with needed fields.

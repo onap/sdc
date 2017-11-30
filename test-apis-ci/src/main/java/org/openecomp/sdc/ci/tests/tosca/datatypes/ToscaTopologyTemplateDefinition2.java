@@ -36,7 +36,6 @@ public class ToscaTopologyTemplateDefinition2 {
 	
 	public ToscaTopologyTemplateDefinition2() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getDescription() {

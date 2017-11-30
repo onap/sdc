@@ -20,57 +20,42 @@
 
 package org.openecomp.sdc.ci.tests.execute.sanity;
 
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
-import java.awt.AWTException;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
 import org.openecomp.sdc.ci.tests.dataProvider.OnbordingDataProviders;
-import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
-import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
-import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.*;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.ArtifactsCorrelationManager;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
-import org.openecomp.sdc.ci.tests.pages.CompositionPage;
-import org.openecomp.sdc.ci.tests.pages.DeploymentArtifactPage;
-import org.openecomp.sdc.ci.tests.pages.GovernorOperationPage;
-import org.openecomp.sdc.ci.tests.pages.HomePage;
-import org.openecomp.sdc.ci.tests.pages.OpsOperationPage;
-import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.ServiceGeneralPage;
-import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
+import org.openecomp.sdc.ci.tests.pages.*;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.OnboardingUtils;
+import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
+import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.openecomp.sdc.ci.tests.utilities.ServiceUIUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.verificator.ServiceVerificator;
 import org.openqa.selenium.WebElement;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.aventstack.extentreports.Status;
-import com.clearspring.analytics.util.Pair;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class Onboard extends SetupCDTest {
 	
-	protected static String filepath = FileHandling.getVnfRepositoryPath();
+	protected static String filePath = FileHandling.getVnfRepositoryPath();
 	protected String makeDistributionValue;
 	
 	@Parameters({ "makeDistribution" })
@@ -80,19 +65,35 @@ public class Onboard extends SetupCDTest {
 	}
 	
 	@Test
+	public void onboardVNFTestSanityOneFile() throws Exception, Throwable {
+//		List<String> fileNamesFromFolder = OnboardingUiUtils.getVnfNamesFileList();
+//		String vnfFile = fileNamesFromFolder.get(0).toString();
+		String vnfFile = "2017-302_vNSO.zip";
+//		String vnfFile = "1-Fn-vprobe-be-11-2-5-1-vf-(MOBILITY)_v5.0.zip";
+		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+		ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();//getServiceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+		runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
+	}
+	
+	@Test
 	public void onboardVNFTestSanity() throws Exception, Throwable {
 		List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileList();
 		String vnfFile = fileNamesFromFolder.get(0).toString();
-		runOnboardToDistributionFlow(filepath, vnfFile);
+		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+		ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();//getServiceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+		runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
 	}
 
 	
-	public void runOnboardToDistributionFlow(String filepath, String vnfFile) throws Exception, AWTException {
-		String vspName = onboardAndCertify(filepath, vnfFile);
+	public void runOnboardToDistributionFlow(ResourceReqDetails resourceReqDetails, ServiceReqDetails serviceMetadata, String filePath, String vnfFile) throws Exception, AWTException {
+		getExtendTest().log(Status.INFO, "Going to create resource with category: " + resourceReqDetails.getCategories().get(0).getName()
+				+ " subCategory: " +  resourceReqDetails.getCategories().get(0).getSubcategories().get(0).getName()
+				+ " and service category: " + serviceMetadata.getCategory());
+		String vspName = onboardAndCertify(resourceReqDetails, filePath, vnfFile);
 
 		reloginWithNewRole(UserRoleEnum.DESIGNER);
 		// create service
-		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+//		ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
 		ServiceUIUtils.createService(serviceMetadata, getUser());
 
 		ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -135,8 +136,8 @@ public class Onboard extends SetupCDTest {
 		getExtendTest().log(Status.INFO, String.format("The onboarding %s test is passed ! ", vnfFile));
 	}
 
-	public String onboardAndCertify(String filepath, String vnfFile) throws Exception, IOException {
-		Pair<String,Map<String,String>> onboardAndValidate = OnboardingUtils.onboardAndValidate(filepath, vnfFile, getUser());
+	public String onboardAndCertify(ResourceReqDetails resourceReqDetails, String filePath, String vnfFile) throws Exception, IOException {
+		Pair<String,Map<String,String>> onboardAndValidate = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, filePath, vnfFile, getUser());
 		String vspName = onboardAndValidate.left;
 		
 		DeploymentArtifactPage.getLeftPanel().moveToCompositionScreen();
@@ -152,36 +153,41 @@ public class Onboard extends SetupCDTest {
 	
 	
 	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")
-	public void onboardVNFTest(String filepath, String vnfFile) throws Exception, Throwable {
+	public void onboardVNFTest(String filePath, String vnfFile) throws Exception, Throwable {
 		setLog(vnfFile);
 		System.out.println("printttttttttttttt - >" + makeDistributionValue);
-		runOnboardToDistributionFlow(filepath, vnfFile);
+		ResourceReqDetails resourceReqDetails = ElementFactory.getRandomCategoryResource();
+		ServiceReqDetails serviceReqDetails = ElementFactory.getRandomCategoryService();
+		runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
 	}
 	
 	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")
-	public void onboardVNFShotFlow(String filepath, String vnfFile) throws Exception, Throwable {
+	public void onboardVNFShotFlow(String filePath, String vnfFile) throws Exception, Throwable {
 		setLog(vnfFile);
 		System.out.println("printttttttttttttt - >" + makeDistributionValue);
-		onboardAndCertify(filepath, vnfFile);
+		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+		onboardAndCertify(resourceReqDetails, filePath, vnfFile);
 	}
 
 	@Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "randomVNF_List")
-	public void onboardRandomVNFsTest(String filepath, String vnfFile) throws Exception, Throwable {
+	public void onboardRandomVNFsTest(String filePath, String vnfFile) throws Exception, Throwable {
 		setLog(vnfFile);
 		System.out.println("printttttttttttttt - >" + makeDistributionValue);
 		System.out.println("Vnf File name is: " + vnfFile);
-		runOnboardToDistributionFlow(filepath, vnfFile);
+		ResourceReqDetails resourceReqDetails = ElementFactory.getRandomCategoryResource();
+		ServiceReqDetails serviceReqDetails = ElementFactory.getRandomCategoryService();
+		runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
 	}
 	
 	
 	@Test
 	public void onboardUpdateVNFTest() throws Exception, Throwable {
-//		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
-		List<String> fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
+//		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filePath);
+		List<String> fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filePath);
 //		String vnfFile = fileNamesFromFolder[0].toString();
 		String vnfFile = fileNamesFromFolder.get(0);
-		
-		Pair<String,Map<String,String>> vsp = OnboardingUtils.onboardAndValidate(filepath, vnfFile, getUser());
+		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+		Pair<String,Map<String,String>> vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, filePath, vnfFile, getUser());
 		String vspName = vsp.left;
 		ResourceGeneralPage.clickSubmitForTestingButton(vspName);
 
@@ -209,7 +215,7 @@ public class Onboard extends SetupCDTest {
 
 		getExtendTest().log(Status.INFO, String.format("Going to update the VNF with %s......", updatedVnfFile));
 		// update VendorSoftwareProduct
-		OnboardingUtils.updateVnfAndValidate(filepath, vsp, updatedVnfFile, getUser());
+		OnboardingUiUtils.updateVnfAndValidate(filePath, vsp, updatedVnfFile, getUser());
 		
 		ResourceGeneralPage.clickSubmitForTestingButton(vspName);
 
@@ -257,9 +263,10 @@ public class Onboard extends SetupCDTest {
 
 	@Test
 	public void threeVMMSCsInServiceTest() throws Exception{
-		
+
+		String pathFile = FileHandling.getFilePath("VmmscArtifacts");
 		List<String> vmmscList = new ArrayList<String>();
-		vmmscList = Arrays.asList(new File(filepath).list()).stream().filter(e -> e.contains("vmmsc") && e.endsWith(".zip")).collect(Collectors.toList());
+		vmmscList = Arrays.asList(new File(pathFile).list()).stream().filter(e -> e.contains("vmmsc") && e.endsWith(".zip")).collect(Collectors.toList());
 		assertTrue("Did not find vMMSCs", vmmscList.size() > 0);
 		
 		Map<String, String> vspNames = new HashMap<String, String>(); 
@@ -267,16 +274,17 @@ public class Onboard extends SetupCDTest {
 			getExtendTest().log(Status.INFO, String.format("Going to onboard the VNF %s......", vnfFile));
 			System.out.println(String.format("Going to onboard the VNF %s......", vnfFile));
 
-			AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
-			Pair<String,Map<String,String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(vnfFile, filepath, getUser(), amdocsLicenseMembers);
+			AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUiUtils.createVendorLicense(getUser());
+			ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+			Pair<String,Map<String,String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, pathFile, getUser(), amdocsLicenseMembers);
 
 			getExtendTest().log(Status.INFO, String.format("Searching for onboarded %s", vnfFile));
 			HomePage.showVspRepository();
 			getExtendTest().log(Status.INFO,String.format("Going to import %s......", vnfFile.substring(0, vnfFile.indexOf("."))));
-			OnboardingUtils.importVSP(createVendorSoftwareProduct);
+			OnboardingUiUtils.importVSP(createVendorSoftwareProduct);
 			
 			ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
-			DeploymentArtifactPage.verifyArtifactsExistInTable(filepath, vnfFile);
+			DeploymentArtifactPage.verifyArtifactsExistInTable(pathFile, vnfFile);
 			
 			String vspName = createVendorSoftwareProduct.left;
 			DeploymentArtifactPage.clickSubmitForTestingButton(vspName);

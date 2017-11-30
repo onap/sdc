@@ -311,6 +311,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 			}
 
 			currentInput.setDefaultValue(newValue);
+			currentInput.setOwnerId(userId);
 
 			Either<InputDefinition, StorageOperationStatus> status = toscaOperationFacade.updateInputOfComponent(component, currentInput);
 
@@ -473,6 +474,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 			}
 
+			assignOwnerIdToInputs(userId, inputsToCreate);
 
 			Either<List<InputDefinition>, StorageOperationStatus> assotiateInputsEither = toscaOperationFacade.addInputsToComponent(inputsToCreate, component.getUniqueId());
 			if(assotiateInputsEither.isRight()){
@@ -522,6 +524,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 		}
 
+	}
+
+	private void assignOwnerIdToInputs(String userId, Map<String, InputDefinition> inputsToCreate) {
+		inputsToCreate.values().forEach(inputDefinition -> inputDefinition.setOwnerId(userId));
 	}
 
 	private StorageOperationStatus addInputsToComponent(String componentId, Map<String, InputDefinition> inputsToCreate, Map<String, List<ComponentInstanceInput>> inputsValueToCreateMap,  Map<String, DataTypeDefinition> allDataTypes, List<InputDefinition> resList, int index,
@@ -642,7 +648,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 				}
 				Map<String, InputDefinition> inputs = inputsDefinitions.stream().collect(Collectors.toMap( o -> o.getName(), o -> o));
 
-				result = createInputsInGraph(inputs, component, user, inTransaction);
+				result = createInputsInGraph(inputs, component);
 			}
 
 			return result;
@@ -669,7 +675,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 	}
 
-	public Either<List<InputDefinition>, ResponseFormat> createInputsInGraph(Map<String, InputDefinition> inputs, org.openecomp.sdc.be.model.Component component, User user, boolean inTransaction) {
+	public Either<List<InputDefinition>, ResponseFormat> createInputsInGraph(Map<String, InputDefinition> inputs, org.openecomp.sdc.be.model.Component component) {
 
 		List<InputDefinition> resList = inputs.values().stream().collect(Collectors.toList());
 		Either<List<InputDefinition>, ResponseFormat> result = Either.left(resList);
@@ -1212,7 +1218,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 					propInput.setOwnerId(null);
 					propInput.setParentUniqueId(null);
 
-					Either<InputDefinition, StorageOperationStatus> createInputRes = createInputForComponentInstance(component, origComponent,ci, inputsToCreate, propertiesToCreate, inputsValueToCreate, dataTypes, inputName, propInput, isInputValue);
+					Either<InputDefinition, StorageOperationStatus> createInputRes = createInputForComponentInstance(component, ci, inputsToCreate, propertiesToCreate, inputsValueToCreate, inputName, propInput, isInputValue);
 
 					if (createInputRes.isRight()) {
 						log.debug("Failed to create input  of resource instance for id {} error {}", compInstId, createInputRes.right().value());
@@ -1235,7 +1241,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		return Either.left(resList);
 	}
 
-	private Either<InputDefinition, StorageOperationStatus> createInputForComponentInstance(org.openecomp.sdc.be.model.Component component,org.openecomp.sdc.be.model.Component orignComponent, ComponentInstance ci, Map<String, InputDefinition> inputsToCreate, List<ComponentInstanceProperty> propertiesToCreate, List<ComponentInstanceInput> inputsValueToCreate, Map<String, DataTypeDefinition> dataTypes, String inputName, ComponentInstancePropInput propInput, boolean isInputValue) {
+	private Either<InputDefinition, StorageOperationStatus> createInputForComponentInstance(org.openecomp.sdc.be.model.Component component, ComponentInstance ci, Map<String, InputDefinition> inputsToCreate, List<ComponentInstanceProperty> propertiesToCreate, List<ComponentInstanceInput> inputsValueToCreate, String inputName, ComponentInstancePropInput propInput, boolean isInputValue) {
 		String propertiesName = propInput.getPropertiesName() ;
 		PropertyDefinition selectedProp = propInput.getInput();
 		String[] parsedPropNames = propInput.getParsedPropNames();

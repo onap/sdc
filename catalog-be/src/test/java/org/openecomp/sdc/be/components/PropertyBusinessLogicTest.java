@@ -195,7 +195,7 @@ public class PropertyBusinessLogicTest {
 		resource.setUniqueId(resourceId);
 
 		Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
-		Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> notFoundProperty = bl.getProperty(resourceId, property1.getUniqueId(), user.getUserId());
+		Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> notFoundProperty = bl.getProperty(resourceId, "invalidId", user.getUserId());
 		assertTrue(notFoundProperty.isRight());
 		Mockito.verify(componentsUtils).getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, "");
 	}

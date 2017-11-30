@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
+import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.BufferedOutputStream;
@@ -47,10 +49,20 @@ import org.apache.commons.io.FileUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.config.Config;
+
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.yaml.snakeyaml.Yaml;
 
 import com.aventstack.extentreports.Status;
+import java.io.*;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+
+import static org.testng.AssertJUnit.assertTrue;
 
 public class FileHandling {
 
@@ -95,19 +107,22 @@ public class FileHandling {
 	}
 //	-------------------------------------------------------------------------------------------------
 	
+
+	/**
+	 * @param folder, folder name under "Files" folder
+	 * @return path to given folder from perspective of working directory or sdc-vnfs repository
+	 */
 	public static String getFilePath(String folder) {
-		String filepath = System.getProperty("filepath");
-		if (filepath == null && System.getProperty("os.name").contains("Windows")) {
-			filepath = FileHandling.getResourcesFilesPath() + folder + File.separator;
+		String filepath = System.getProperty("filePath");
+		boolean isFilePathEmptyOrNull = (filepath == null || filepath.isEmpty());
+
+		// return folder from perspective of sdc-vnfs repository
+		if (isFilePathEmptyOrNull && ( System.getProperty("os.name").contains("Windows") || System.getProperty("os.name").contains("Mac"))) {
+			return FileHandling.getResourcesFilesPath() + folder + File.separator;
 		}
-		
-		else if(filepath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
-				filepath = FileHandling.getBasePath() + "Files" + File.separator + folder + File.separator;
-		}
-		
-		System.out.println(filepath);
-		
-		return filepath;
+
+		// return folder from perspective of working directory ( in general for nightly run from Linux, should already contain "Files" directory )
+		return FileHandling.getBasePath() + "Files" + File.separator + folder + File.separator;
 	}
 
 	public static String getBasePath() {
@@ -188,6 +203,7 @@ public class FileHandling {
 		List<String> filenames = new ArrayList<String>();
 		try {
 			File dir = new File(filepath);
+			filenames = new ArrayList<String>();
 			
 			FilenameFilter extensionFilter = new FilenameFilter() {
 				public boolean accept(File dir, String name) {
@@ -209,7 +225,7 @@ public class FileHandling {
 	}
 	
 	public static String[] getArtifactsFromZip(String filepath, String zipFilename){
-		try{
+		try {
 			ZipFile zipFile = new ZipFile(filepath + File.separator + zipFilename);
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			
@@ -227,8 +243,7 @@ public class FileHandling {
 			}
 			zipFile.close();
 			return artifactNames;
-		}
-		catch(ZipException zipEx){
+		} catch(ZipException zipEx) {
 			System.err.println("Error in zip file named : " +  zipFilename);	
 			zipEx.printStackTrace();
 		} catch (IOException e) {
@@ -240,6 +255,34 @@ public class FileHandling {
 		
 	}
 
+	public static List<String> getFileNamesFromZip(String zipFileLocation){
+		try{
+			ZipFile zipFile = new ZipFile(zipFileLocation);
+			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+			
+			List<String> artifactNames = new ArrayList<>();
+
+			int i = 0;
+			while(entries.hasMoreElements()){
+				ZipEntry nextElement = entries.nextElement();
+				if (!nextElement.isDirectory()){ 
+					String name = nextElement.getName();
+					artifactNames.add(name);
+				}
+			}
+			zipFile.close();
+			return artifactNames;
+		}
+		catch(ZipException zipEx){
+			System.err.println("Error in zip file named : " +  zipFileLocation);	
+			zipEx.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("Unhandled exception : ");
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 //	public static Object[] getZipFileNamesFromFolder(String filepath) {
 //		return filterFileNamesFromFolder(filepath, ".zip");
 //	}
@@ -298,7 +341,7 @@ public class FileHandling {
 	public static void deleteDirectory(String directoryPath) {
 		File dir = new File(directoryPath);
 		try {
-			FileUtils.cleanDirectory(dir);
+			FileUtils.deleteDirectory(dir);
 		} catch (IOException e) {
 			System.out.println("Failed to delete " + dir);
 			ComponentBaseTest.getExtendTest().log(Status.INFO, "Failed to delete " + dir);

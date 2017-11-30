@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.ci.tests.dataProviders.OnbordingDataProviders;
 import org.openecomp.sdc.ci.tests.datatypes.AmdocsLicenseMembers;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
@@ -49,7 +50,7 @@ import org.openecomp.sdc.ci.tests.utilities.ArtifactUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.DownloadManager;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.OnboardingUtils;
+import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
 import org.openecomp.sdc.ci.tests.utilities.ServiceUIUtils;
 import org.openecomp.sdc.ci.tests.utils.CsarParserUtils;
 import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
@@ -57,6 +58,8 @@ import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.verificator.ServiceVerificator;
 import org.openecomp.sdc.ci.tests.verificator.VfModuleVerificator;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.utils.general.OnboardingUtils;
 import org.testng.annotations.Test;
 
 import com.aventstack.extentreports.Status;
@@ -73,15 +76,20 @@ public class VfModule extends SetupCDTest {
 	@Test
 	public void checkVfModulesCountAndStructure() throws Exception, AWTException {
 
-//		String filepath = "src\\main\\resources\\Files\\VNFs";
+//		String filePath = "src\\main\\resources\\Files\\VNFs";
 		String filepath = FileHandling.getVnfRepositoryPath();
 //		String vnfFile = "LDSA.zip";
-		String vnfFile = "FDNT.zip";
+//		String vnfFile = "FDNT.zip";
+		List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileListExcludeToscaParserFailure();
+		List<String> newRandomFileNamesFromFolder = OnbordingDataProviders.getRandomElements(1, fileNamesFromFolder);
+		String filePath = org.openecomp.sdc.ci.tests.utils.general.FileHandling.getVnfRepositoryPath();
+		String vnfFile = newRandomFileNamesFromFolder.get(0);
 		getExtendTest().log(Status.INFO, String.format("Going to onboard the VNF %s......", vnfFile));
 		System.out.println(String.format("Going to onboard the VNF %s......", vnfFile));
 
-		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUtils.createVendorLicense(getUser());
-		Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(vnfFile, filepath, getUser(), amdocsLicenseMembers);
+		AmdocsLicenseMembers amdocsLicenseMembers = OnboardingUiUtils.createVendorLicense(getUser());
+		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+		Pair<String, Map<String, String>> createVendorSoftwareProduct = OnboardingUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, getUser(), amdocsLicenseMembers);
 		String vspName = createVendorSoftwareProduct.left;
 		//
 		DownloadManager.downloadCsarByNameFromVSPRepository(vspName, createVendorSoftwareProduct.right.get("vspId"));
@@ -92,7 +100,7 @@ public class VfModule extends SetupCDTest {
 		HomePage.showVspRepository();
 		getExtendTest().log(Status.INFO, String.format("Going to import %s......", vnfFile.substring(0, vnfFile.indexOf("."))));
 
-		OnboardingUtils.importVSP(createVendorSoftwareProduct);
+		OnboardingUiUtils.importVSP(createVendorSoftwareProduct);
 
 		ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
 		

@@ -8,7 +8,7 @@
             <div tooltips tooltip-content="{{property.name}}">
                 <input class="i-sdc-form-input"
                        type="text"
-                       data-ng-disabled="true"
+                       readonly="readonly"
                        value="{{property.name}}"/>
             </div>
         </div>
@@ -48,7 +48,7 @@
                                data-tests-id="{{fieldsPrefixName+property.name}}"
                                ng-if="!((property.simpleType||property.type) == 'boolean')"
                                data-ng-maxlength="100"
-                               data-ng-disabled="readOnly"
+                               data-ng-readonly="readOnly"
                                maxlength="{{(property.simpleType||property.type) == 'integer'? 10 : 100}}"
                                data-ng-model="valueObjRef[property.name]"
                                type="text"

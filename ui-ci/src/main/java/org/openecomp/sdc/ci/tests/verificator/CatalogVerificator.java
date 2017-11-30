@@ -54,26 +54,14 @@ public class CatalogVerificator {
 		Map<String, List<Component>> catalogAsMap = RestCDUtils.getCatalogAsMap();
 		switch (enumtype) {
 		case RESOURCE:
-			return getResourceNumber(catalogAsMap);
+			return catalogAsMap.get("resources").size();
 		case SERVICE:
-			return getServiceNumber(catalogAsMap);
+			return catalogAsMap.get("services").size();
 		case PRODUCT:
-			return getProductsNumber(catalogAsMap);
+			return catalogAsMap.get("products").size();
 		default:
 			return getResourceNumber(ResourceTypeEnum.valueOf(enumtype.name()), catalogAsMap);
 		}		
-	}
-	
-	public static int getResourceNumber(Map<String, List<Component>> catalogAsMap) throws Exception {
-		return catalogAsMap.get("resources").size();
-	}
-	
-	public static int getServiceNumber(Map<String, List<Component>> catalogAsMap) throws Exception {
-		return catalogAsMap.get("services").size();
-	}
-	
-	public static int getProductsNumber(Map<String, List<Component>> catalogAsMap) throws Exception {
-		return catalogAsMap.get("products").size();
 	}
 	
 	public static void validateType(TypesEnum enumtype) throws Exception{		

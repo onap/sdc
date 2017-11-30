@@ -93,7 +93,7 @@ public class ImportDCAE extends SetupCDTest {
 
 		// update Resource
 		ResourceReqDetails updatedResource = new ResourceReqDetails();
-		updatedResource.setName("ciUpdatedNameImportDCAE");
+		updatedResource.setName(ElementFactory.getResourcePrefix() + "UpdatedName" + resourceMetaData.getName());
 		updatedResource.setDescription("kuku");
 		updatedResource.setVendorName("updatedVendor");
 		updatedResource.setVendorRelease("updatedRelease");

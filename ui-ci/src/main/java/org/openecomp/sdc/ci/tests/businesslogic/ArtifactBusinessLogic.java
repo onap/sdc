@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import ch.qos.logback.classic.util.ContextInitializer;
+import com.google.gson.Gson;
 import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.HeatAndHeatEnvNamesPair;
@@ -175,7 +177,18 @@ public class ArtifactBusinessLogic {
 						pair = Pair.create(envParametersMap.get(key).left, "\"" + parameter.getValue() + "\"");
 					}else if(envParametersMap.get(key).left.equals("string") && parameter.getValue() == null){
 						pair = Pair.create(envParametersMap.get(key).left, "");
-					}else if(parameter.getValue() == null){
+					}else if(parameter.getValue() == null) {
+						pair = Pair.create(envParametersMap.get(key).left, "");
+					} else if(envParametersMap.get(key).left.equals("json") && parameter.getValue() != null){
+						String pairValue = "";
+						Gson gson = new Gson();
+						if(parameter.getValue() instanceof java.util.LinkedHashMap){
+							pairValue = gson.toJson(parameter.getValue());
+						}
+//						pair = Pair.create(envParametersMap.get(key).left, "\"" + pairValue + "\"");
+						pair = Pair.create(envParametersMap.get(key).left, pairValue );
+
+					}else if(envParametersMap.get(key).left.equals("json") && parameter.getValue() == null){
 						pair = Pair.create(envParametersMap.get(key).left, "");
 					}else{
 						pair = Pair.create(envParametersMap.get(key).left, parameter.getValue());

@@ -32,6 +32,7 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+//import org.openqa.selenium.firefox.FirefoxOptions; // Selenium 3.4.0 change
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -74,12 +75,21 @@ public class WebDriverThread {
 				if (mobProxyStatus){
 					setWebDriverWithMobProxy();
 				} else {
+					
+                    // Selenium 3.4.0 change, add firefox options : set, add firefox 5.X location and enable 
+//					FirefoxOptions options = new FirefoxOptions();
+//					options.setBinary("C:\\Program Files (x86)\\Mozilla Firefox5\\firefox.exe"); //Location where Firefox is installed
+//					options.addPreference("dom.file.createInChild", true); // Enable file upload with sendKeys
+					// End of Selenium 3.4.0 change 
+					
 					System.out.println("Opening LOCAL browser");
 					DesiredCapabilities cap = new DesiredCapabilities();
 									
 					cap = DesiredCapabilities.firefox();
 					cap.setBrowserName("firefox");
 					cap.setCapability(FirefoxDriver.PROFILE, initFirefoxProfile());
+					
+//					cap.setCapability("moz:firefoxOptions", options); //Add options to Capabilities, Selenium 3.4.0 change
 					
 			        firefoxProfile.setPreference("network.proxy.type", 2);
 					firefoxProfile.setPreference("network.proxy.autoconfig_url", "http://emea-auto.proxy.att.com:8001/");

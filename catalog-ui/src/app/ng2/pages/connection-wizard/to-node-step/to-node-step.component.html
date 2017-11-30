@@ -1,0 +1,9 @@
+<select-requirement-or-capability [optionalRequirementsMap]="optionalRequirementsMap"
+                                  [optionalCapabilitiesMap]="optionalCapabilitiesMap"
+                                  [selectedReqOrCapModel]="connectWizardService.selectedMatch.isFromTo ? connectWizardService.selectedMatch.capability : connectWizardService.selectedMatch.requirement"
+                                  [selectedReqOrCapOption]="displayRequirementsOrCapabilities"
+                                  [currentComponent]="connectWizardService.currentComponent"
+                                  [componentInstanceId]="connectWizardService.connectRelationModel.toNode.componentInstance.uniqueId"
+                                  (updateSelectedReqOrCap)="updateSelectedReqOrCap($event)"
+                                  (updateCapabilityProperties)="onCapabilityPropertiesUpdate($event)">
+</select-requirement-or-capability>

@@ -142,7 +142,7 @@ public interface Urls {
 
 	final String GET_FOLLWED_LIST = "http://%s:%s/sdc2/rest/v1/followed";
 
-	final String GET_CATALOG_DATA = "http://%s:%s/sdc2/rest/v1/screen";
+	final String GET_CATALOG_DATA = "http://%s:%s/sdc2/rest/v1/screen/?excludeTypes=VFCMT&excludeTypes=Configuration";
 
 	// *****************************************Resources
 	// **********************************************************************
@@ -179,6 +179,7 @@ public interface Urls {
 	final String CHANGE_COMPONENT_LIFECYCLE_STATE = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/lifecycleState/%s";
 
 	final String CREATE_PROPERTY = "http://%s:%s/sdc2/rest/v1/catalog/resources/%s/properties";
+	final String DECLARE_PROPERTIES  = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/create/inputs";
 
 	final String UPDATE_RESOURCE_METADATA = "http://%s:%s/sdc2/rest/v1/catalog/resources/%s/metadata";
 
@@ -285,6 +286,7 @@ public interface Urls {
 	final String DISTRIBUTION_DOWNLOAD_ARTIFACT = "http://%s:%s/download";
 	final String ACTIVATE_DISTRIBUTION = "http://%s:%s/sdc2/rest/v1/catalog/services/%s/distribution/%s/activate";
 	final String DISTRIBUTION_SERVICE_LIST = "http://%s:%s/sdc2/rest/v1/catalog/services/%s/distribution";
+	final String DISTRIBUTION_SERVICE_MONITOR = "http://%s:%s/sdc2/rest/v1/catalog/services/distribution/%s";
 
 	final String DEPLOY_SERVICE = "http://%s:%s/sdc2/rest/v1/catalog/services/%s/distribution/%s/markDeployed";
 	final String UPDATE_SERVICE_METADATA = "http://%s:%s/sdc2/rest/v1/catalog/services/%s/metadata";
@@ -366,5 +368,22 @@ public interface Urls {
 	
 //	amdocs APIs
 	final String GET_VENDOR_SOFTWARE_PRODUCT = "http://%s:%s/onboarding-api/v1.0/vendor-software-products/packages/%s";
-	
+	final String UPLOAD_SNMP_POLL_ARTIFACT = "http://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/0.1/components/%s/uploads/types/SNMP_POLL";
+	final String UPLOAD_SNMP_TRAP_ARTIFACT = "http://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/0.1/components/%s/uploads/types/SNMP_TRAP";
+	final String UPLOAD_VES_EVENTS_ARTIFACT = "http://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/0.1/components/%s/uploads/types/VES_EVENTS";
+	final String UPLOAD_AMDOCS_ARTIFACT = "http://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/0.1/components/%s/uploads/types/%s";
+	final String DELETE_AMDOCS_ARTIFACT_BY_TYPE = "http://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/0.1/components/%s/monitors/%s";
+	final String GET_VSP_COMPONENTS = "http://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/0.1/components";
+	final String CREATE_VENDOR_LISENCE_MODELS = "http://%s:%s/onboarding-api/v1.0/vendor-license-models";
+	final String CREATE_VENDOR_LISENCE_AGREEMENT = "http://%s:%s/onboarding-api/v1.0/vendor-license-models/%s/versions/0.1/license-agreements";
+	final String CREATE_VENDOR_LISENCE_FEATURE_GROUPS = "http://%s:%s/onboarding-api/v1.0/vendor-license-models/%s/versions/0.1/feature-groups";
+	final String CREATE_VENDOR_LISENCE_ENTITLEMENT_POOL = "http://%s:%s/onboarding-api/v1.0/vendor-license-models/%s/versions/0.1/entitlement-pools";
+	final String CREATE_VENDOR_LISENCE_KEY_GROUPS = "http://%s:%s/onboarding-api/v1.0/vendor-license-models/%s/versions/0.1/license-key-groups";
+	final String CREATE_VENDOR_SOFTWARE_PRODUCT = "http://%s:%s/onboarding-api/v1.0/vendor-software-products";
+	final String VALIDATE_UPLOAD = "http://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/0.1/orchestration-template-candidate/process";
+	final String UPLOAD_HEAT_PACKAGE = "http://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/%s/orchestration-template-candidate";
+	final String ACTION_ON_COMPONENT = "http://%s:%s/onboarding-api/v1.0/%s/%s/versions/%s/actions";
+	final String UPDATE_VSP = "http://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/%s";
+	final String GET_VSP_COMPONENT_BY_VERSION = "http://%s:%s/onboarding-api/v1.0/vendor-software-products/%s/versions/%s";
+	final String GET_VLM_COMPONENT_BY_VERSION = "http://%s:%s/onboarding-api/v1.0/vendor-license-models/%s/versions/%s";
 }

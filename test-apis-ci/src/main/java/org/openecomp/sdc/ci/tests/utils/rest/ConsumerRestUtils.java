@@ -123,6 +123,7 @@ public class ConsumerRestUtils extends BaseRestUtils {
 
 		String bodyToParse = restResponse.getResponse();
 		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		try {
 			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			ConsumerDataDefinition component = mapper.readValue(bodyToParse, ConsumerDataDefinition.class);

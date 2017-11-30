@@ -253,23 +253,26 @@ public class RestCDUtils {
 		final String userId = defaultAdminUser.getUserId();
 		
 		List<Component> resourcesArrayList = map.get("products");
-		List<String>  collect = resourcesArrayList.stream().filter(s -> s.getName().startsWith("Ci")).map(e -> e.getUniqueId())
-				.collect(Collectors.toList());
+		List<String>  collect = resourcesArrayList.stream().filter(s -> s.getName().startsWith(ElementFactory.getProductPrefix())).
+																										 map(e -> e.getUniqueId()).
+				                                                                                         collect(Collectors.toList());
 		for (String uId : collect) {
 			ProductRestUtils.deleteProduct(uId, userId);
 		}
 		
 		resourcesArrayList = map.get("services");
-		collect = resourcesArrayList.stream().filter(s -> s.getName().startsWith("ci")).map(e -> e.getUniqueId())
-				.collect(Collectors.toList());
+		collect = resourcesArrayList.stream().filter(s -> s.getName().startsWith(ElementFactory.getServicePrefix())).
+				                                                                            map(e -> e.getUniqueId()).
+				                                                                            collect(Collectors.toList());
 		for (String uId : collect) {
 			ServiceRestUtils.markServiceToDelete(uId, userId);
 		}
 		ServiceRestUtils.deleteMarkedServices(userId);		
 		
 		resourcesArrayList = map.get("resources");
-		collect = resourcesArrayList.stream().filter(s -> s.getName().startsWith("ci"))
-				.map(e -> e.getUniqueId()).collect(Collectors.toList());
+		collect = resourcesArrayList.stream().filter(s -> s.getName().startsWith(ElementFactory.getResourcePrefix())).
+				                                                                            map(e -> e.getUniqueId()).
+				                                                                            collect(Collectors.toList());
 		for (String uId : collect) {			
 			ResourceRestUtils.markResourceToDelete(uId, userId);
 		}

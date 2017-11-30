@@ -726,56 +726,22 @@ public class AuditValidationUtils {
 
 		Map auditingMessage = null;
 		auditingMessage = retrieveAuditMessagesByPattern(action, body, false);
-
 		return auditingMessage;
 
 	}
 
-	// public static List<Map<String, Object>>
-	// parseAuditResourceByActionToList(String action, String body) throws
-	// Exception {
-	//
-	// List<Map<String, Object>> auditList = new ArrayList<Map<String,
-	// Object>>();
-	//
-	//// String auditingMessage = null;
-	//
-	// Map auditingMessage = null;
-	// auditingMessage = retrieveAuditMessagesByPattern(action);
-	//
-	// if (body == null) {
-	//// String pattern = "/_search?q=ACTION:\"" + action + "\"";
-	//// auditingMessage = retrieveAuditMessagesByPattern(action);
-	//// auditingMessage = retrieveAuditMessagesByPattern(pattern);
-	// } else {
-	//// auditingMessage = retrieveAuditMessagesUsingBody(body);
-	// }
-	//
-	// return ResponseParser.getAuditFromMessage(auditingMessage);
-	//
-	// }
-
 	public static List<Map<String, Object>> parseAuditResourceByActionToList(String action,
 			Map<AuditingFieldsKeysEnum, String> body) throws Exception {
-
-		List<Map<String, Object>> auditList = new ArrayList<Map<String, Object>>();
-
-		// String auditingMessage = null;
 
 		Map auditingMessage = null;
 
 		if (body == null || body.isEmpty()) {
 			auditingMessage = retrieveAuditMessagesByPattern(action, null, false);
-			// String pattern = "/_search?q=ACTION:\"" + action + "\"";
-			// auditingMessage = retrieveAuditMessagesByPattern(action);
-			// auditingMessage = retrieveAuditMessagesByPattern(pattern);
 		} else {
 			auditingMessage = retrieveAuditMessagesByPattern(action, body, false);
-			// auditingMessage = retrieveAuditMessagesUsingBody(body);
 		}
 
 		return ResponseParser.getAuditFromMessage(auditingMessage);
-
 	}
 
 	public JSONObject buildElasticQueryStringObject(String defaultField, String queryValue) throws JSONException {

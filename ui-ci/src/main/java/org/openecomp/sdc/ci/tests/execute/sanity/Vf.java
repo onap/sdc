@@ -60,13 +60,9 @@ import org.openecomp.sdc.ci.tests.pages.ResourceGeneralPage;
 import org.openecomp.sdc.ci.tests.pages.TesterOperationPage;
 import org.openecomp.sdc.ci.tests.pages.ToscaArtifactsPage;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
-import org.openecomp.sdc.ci.tests.utilities.ArtifactUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.FileHandling;
-import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.OnboardingUtils;
-import org.openecomp.sdc.ci.tests.utilities.PropertiesUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.RestCDUtils;
+import org.openecomp.sdc.ci.tests.utilities.*;
+import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
+import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
@@ -78,7 +74,6 @@ import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.AssertJUnit;
-import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -111,7 +106,7 @@ public class Vf extends SetupCDTest {
 
 		// update Resource
 		ResourceReqDetails updatedResource = new ResourceReqDetails();
-		updatedResource.setName("ciUpdatedName");
+		updatedResource.setName(ElementFactory.getResourcePrefix() + "UpdatedName" + resourceMetaData.getName());
 		updatedResource.setDescription("kuku");
 		updatedResource.setVendorName("updatedVendor");
 		updatedResource.setVendorRelease("updatedRelease");
@@ -646,8 +641,9 @@ public class Vf extends SetupCDTest {
 	
 	@Test
 	public void exportToscaWithModulePropertiesVFTest() throws AWTException, Exception {
-		String vnfFile = "2016-042_vmsp_pxmc_30_1607_e2e.zip";
-		Pair<String, Map<String, String>> vsp=OnboardingUtils.onboardAndValidate(FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
+		String vnfFile = "1-Vf-zrdm5bpxmc02-092017-(MOBILITY)_v2.0.zip";
+		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+		Pair<String, Map<String, String>> vsp= OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		String vspName = vsp.left;
 		ResourceGeneralPage.clickSubmitForTestingButton(vsp.left);
 		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
@@ -656,14 +652,17 @@ public class Vf extends SetupCDTest {
 	
 	@Test
 	public void exportToscaWithModulePropertiesTemplateCheckVFTest() throws AWTException, Exception {
-		String vnfFile = "2016-042_vmsp_pxmc_30_1607_e2e.zip";
-		OnboardingUtils.onboardAndValidate(FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
+		String vnfFile = "1-Vf-zrdm5bpxmc02-092017-(MOBILITY)_v2.0.zip";
+		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+		OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		ResourceGeneralPage.getLeftMenu().moveToToscaArtifactsScreen();
 		GeneralUIUtils.clickOnElementByTestId(ToscaArtifactsScreenEnum.TOSCA_MODEL.getValue());
 		File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
-		ToscaDefinition toscaDefinition = VfModuleVerificator.getToscaTemplate(latestFilefromDir.getAbsolutePath());
+		ToscaDefinition toscaDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(latestFilefromDir);
 		VfModuleVerificator.validateSpecificModulePropertiesFromFile(toscaDefinition);
 	}
+	
+
 
 	@Override
 	protected UserRoleEnum getRole() {

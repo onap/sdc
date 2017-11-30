@@ -26,31 +26,35 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 
 public enum PropertyTypeEnum {
-	INTEGER("defaultIntegerPropName1", "integer", "125", "default integer type property description", null), 
-	STRING("defaultStringPropName1", "string", "string", "default string type property description", null), 
-	BOOLEAN("defaultBooleanPropName1", "boolean", "true", "default boolean type property description", null),
-	FLOAT("defaultBooleanPropName1", "float", "1.2", "default float type property description", null),
-	STRING_LIST("defaultStringListPropName", "list", "[a,b]", "outer description", getDefaultStringSchema(ToscaPropertyType.STRING.getType())), 
-	INTEGER_LIST("defaultIntegerListPropName", "list", "[1,2]", "outer description", getDefaultStringSchema(ToscaPropertyType.INTEGER.getType())), 
-	BOOLEAN_LIST("defaultBooleanListPropName", "list", "[true,false]", "outer description", getDefaultStringSchema(ToscaPropertyType.BOOLEAN.getType())), 
-	FLOAT_LIST("defaultFloatMapPropName", "list", "[1.0,2.0]", "outer description", getDefaultStringSchema(ToscaPropertyType.FLOAT.getType())), 
-	STRING_MAP("defaultStringMapPropName", "map", "{\"key1\":val1 , \"key2\":val2}", "outer description", getDefaultStringSchema(ToscaPropertyType.STRING.getType())), 
-	INTEGER_MAP("defaultIntegerMapPropName", "map", "{\"key1\":123 , \"key2\":-456}", "outer description", getDefaultStringSchema(ToscaPropertyType.INTEGER.getType())), 
-	BOOLEAN_MAP("defaultBooleanMapPropName", "map", "{\"key1\":true , \"key2\":false}", "outer description", getDefaultStringSchema(ToscaPropertyType.BOOLEAN.getType())), 
-	FLOAT_MAP("defaultFloatMapPropName", "map", "{\"key1\":0.2123 , \"key2\":43.545f}", "outer description", getDefaultStringSchema(ToscaPropertyType.FLOAT.getType()));
+	INTEGER("defaultIntegerPropName1", "integer", "125", "346", "default integer type property description", "updated integer type property description",null), 
+	STRING("defaultStringPropName1", "string", "string", "updated string","default string type property description", "updated string type property description",null), 
+	BOOLEAN("defaultBooleanPropName1", "boolean", "true", "false","default boolean type property description", "updated boolean type property description",null),
+	FLOAT("defaultFloatPropName1", "float", "1.2", "3.4","default float type property description", "updated float type property description",null),
+	STRING_LIST("defaultStringListPropName", "list", "[a,b]", "[c,d]","outer description", "updated outer description", getDefaultStringSchema(ToscaPropertyType.STRING.getType())), 
+	INTEGER_LIST("defaultIntegerListPropName", "list", "[1,2]", "[3,4]","outer description", "updated outer description", getDefaultStringSchema(ToscaPropertyType.INTEGER.getType())), 
+	BOOLEAN_LIST("defaultBooleanListPropName", "list", "[true,false]", "[false,true]","outer description", "updated outer description", getDefaultStringSchema(ToscaPropertyType.BOOLEAN.getType())), 
+	FLOAT_LIST("defaultFloatMapPropName", "list", "[1.0,2.0]", "[3.0,4.0]","outer description", "updated outer description", getDefaultStringSchema(ToscaPropertyType.FLOAT.getType())), 
+	STRING_MAP("defaultStringMapPropName", "map", "{\"key1\":val1 , \"key2\":val2}", "{\"key1\":val11 , \"key2\":val22}", "outer description", "updated outer description",getDefaultStringSchema(ToscaPropertyType.STRING.getType())), 
+	INTEGER_MAP("defaultIntegerMapPropName", "map", "{\"key1\":123 , \"key2\":-456}", "{\"key1\":456 , \"key2\":-789}", "outer description", "updated outer description", getDefaultStringSchema(ToscaPropertyType.INTEGER.getType())), 
+	BOOLEAN_MAP("defaultBooleanMapPropName", "map", "{\"key1\":true , \"key2\":false}", "{\"key1\":false , \"key2\":true}", "outer description", "updated outer description",getDefaultStringSchema(ToscaPropertyType.BOOLEAN.getType())), 
+	FLOAT_MAP("defaultFloatMapPropName", "map", "{\"key1\":0.2123 , \"key2\":43.545f}", "{\"key1\":0.5678 , \"key2\":12.789f}","outer description", "updated outer description", getDefaultStringSchema(ToscaPropertyType.FLOAT.getType()));
 
 	private String name;
 	private String type;
 	private String value;
+	private String updateValue;
 	private String description;
+	private String updateDescription;
 	private SchemaDefinition schemaDefinition;
 
-	private PropertyTypeEnum(String name, String type, String value, String description,
+	private PropertyTypeEnum(String name, String type, String value, String updateValue,String description,String updateDescription,
 			SchemaDefinition schemaDefinition) {
 		this.name = name;
 		this.type = type;
 		this.value = value;
+		this.updateValue = updateValue;
 		this.description = description;
+		this.updateDescription = updateDescription;
 		this.schemaDefinition = schemaDefinition;
 	}
 
@@ -77,6 +81,14 @@ public enum PropertyTypeEnum {
 	public void setValue(String value) {
 		this.value = value;
 	}
+	
+	public String getUpdateValue() {
+		return updateValue;
+	}
+	
+	public void setUpdateValue(String updateValue) {
+		this.updateValue = updateValue;
+	}
 
 	public String getDescription() {
 		return description;
@@ -84,6 +96,14 @@ public enum PropertyTypeEnum {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public String getUpdateDescription() {
+		return updateDescription;
+	}
+	
+	public void setUpdateDescription(String updateDescription) {
+		this.updateDescription = updateDescription;
 	}
 
 	public SchemaDefinition getSchemaDefinition() {

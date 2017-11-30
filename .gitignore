@@ -1,20 +1,52 @@
+# Eclipse IDE
+#------------------------------------------------------------
+**/.classpath
+**/.project
+**/.tern-project
+**/.settings/**
+**/bin/
+
+
+# IntelliJ IDE
+#------------------------------------------------------------
+**/.idea/
+/out/
+*.iml
 
 !catalog-fe/src/main/webapp/META-INF/
 !catalog-fe/src/main/webapp/WEB-INF/
 # Eclipse
 # Maven
-# Package Files #
+#------------------------------------------------------------
+**/target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+version.properties
+dependency-reduced-pom.xml
+
 ## sdc-os-chef
 *.class
+# Package Files
+#------------------------------------------------------------
 *.ear
 *.iml
 *.jar
+#Gradle
+build.gradle
+.gradle/*
+
+/log
 *.kpf
 *.orig
 *.war
 .classpath
 .delivery
 .idea/*
+
+
+# catalog-ui
+#------------------------------------------------------------
 .metadata/
 .metadata/*
 .project
@@ -39,6 +71,7 @@ catalog-fe/bin
 catalog-fe/src/main/webapp/*
 catalog-ui/*.tmp.txt
 catalog-ui/.*
+catalog-ui/app/dist/*
 catalog-ui/.editorconfig
 catalog-ui/.jshintrc
 catalog-ui/.yo-rc.json
@@ -53,7 +86,12 @@ catalog-ui/app/scripts/references.ts
 catalog-ui/app/scripts/tsconfig.json
 catalog-ui/app/tsconfig.json
 catalog-ui/bower_components/
+catalog-ui/package-lock.json
 catalog-ui/dist
+catalog-ui/*.tmp.txt
+catalog-ui/tests/Coverage/*
+catalog-ui/Chrome*
+catalog-ui/PhantomJS_1.9.8_(Windows_7_0.0.0)/*
 catalog-ui/node/*
 catalog-ui/node_modules/
 catalog-ui/npm-debug.log
@@ -81,6 +119,7 @@ data/root.png
 data/router.png
 data/software.png
 data/volume.png
+
 distribution-ci/logs/wordnik.log
 distribution-ci/logs/wordnik.log.1
 distribution-ci/logs/wordnik.log.10
@@ -93,6 +132,7 @@ distribution-ci/logs/wordnik.log.7
 distribution-ci/logs/wordnik.log.8
 distribution-ci/logs/wordnik.log.9
 dox-sequence-diagram-ui/node/*
+
 log.home_IS_UNDEFINED/ASDC/ASDC-BE/Error.log
 log.home_IS_UNDEFINED/ASDC/ASDC-BE/audit.log
 log.home_IS_UNDEFINED/ASDC/ASDC-BE/debug.log
@@ -147,3 +187,7 @@ ui-ci/test-output/testng-failed.xml
 ui-ci/test-output/testng-results.xml
 utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/files/default/logback.xml
 vagrant-asdc-all-in-one/
+
+
+sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
+/asdctool/*.xls

@@ -18,19 +18,19 @@
  * ============LICENSE_END=========================================================
  */
 'use strict'
-import {MatchBase, RelationMenuDirectiveObj} from "app/models";
+import {Match, ConnectRelationModel} from "app/models";
 import {Component} from "../../../models/components/component";
 
 export interface IRelationMenuScope extends ng.IScope {
-    relationMenuDirectiveObj:RelationMenuDirectiveObj;
+    relationMenuDirectiveObj:ConnectRelationModel;
     createRelation:Function;
     isLinkMenuOpen:boolean;
     hideRelationMatch:Function;
     cancel:Function;
 
     saveRelation();
-    showMatch(arr1:Array<MatchBase>, arr2:Array<MatchBase>):boolean;
-    hasMatchesToShow(matchesObj:MatchBase, selectedMatch:Array<MatchBase>);
+    showMatch(arr1:Array<Match>, arr2:Array<Match>):boolean;
+    hasMatchesToShow(matchesObj:Match, selectedMatch:Array<Match>);
     updateSelectionText():void;
 
 }
@@ -58,7 +58,7 @@ export class RelationMenuDirective implements ng.IDirective {
 
         scope.saveRelation = ():void=> {
             let chosenMatches:Array<any> = _.intersection(scope.relationMenuDirectiveObj.rightSideLink.selectedMatch, scope.relationMenuDirectiveObj.leftSideLink.selectedMatch);
-            let chosenMatch:MatchBase = chosenMatches[0];
+            let chosenMatch:Match = chosenMatches[0];
             scope.createRelation()(chosenMatch);
         };
 
@@ -69,14 +69,14 @@ export class RelationMenuDirective implements ng.IDirective {
         };
 
         //to show options in link menu
-        scope.showMatch = (arr1:Array<MatchBase>, arr2:Array<MatchBase>):boolean => {
+        scope.showMatch = (arr1:Array<Match>, arr2:Array<Match>):boolean => {
             return !arr1 || !arr2 || _.intersection(arr1, arr2).length > 0;
         };
 
         //to show requirements/capabilities title
-        scope.hasMatchesToShow = (matchesObj:MatchBase, selectedMatch:Array<MatchBase>):boolean => {
+        scope.hasMatchesToShow = (matchesObj:Match, selectedMatch:Array<Match>):boolean => {
             let result:boolean = false;
-            _.forEach(matchesObj, (matchesArr:Array<MatchBase>) => {
+            _.forEach(matchesObj, (matchesArr:Array<Match>) => {
                 if (!result) {
                     result = scope.showMatch(matchesArr, selectedMatch);
                 }

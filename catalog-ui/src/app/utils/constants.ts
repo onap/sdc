@@ -29,6 +29,7 @@ export let CHANGE_COMPONENT_CSAR_VERSION_FLAG = 'changeComponentCsarVersion';
 export class ComponentType {
     static SERVICE = 'SERVICE';
     static RESOURCE = 'RESOURCE';
+    static SERVICE_PROXY = 'ServiceProxy'
 }
 
 export class ServerTypeUrl {
@@ -44,6 +45,7 @@ export class ResourceType {
     static VFCMT = 'VFCMT';
     static PNF = 'PNF';
     static CVFC = 'CVFC';
+    static CONFIGURATION = 'Configuration';
 }
 
 export class ComponentState {
@@ -114,6 +116,7 @@ export class SOURCES {
 export class PROPERTY_DATA {
     public static TYPES = [PROPERTY_TYPES.STRING, PROPERTY_TYPES.INTEGER, PROPERTY_TYPES.FLOAT, PROPERTY_TYPES.BOOLEAN, PROPERTY_TYPES.JSON, PROPERTY_TYPES.SCALAR, PROPERTY_TYPES.SCALAR_FREQUENCY, PROPERTY_TYPES.SCALAR_SIZE, PROPERTY_TYPES.SCALAR_TIME, PROPERTY_TYPES.LIST, PROPERTY_TYPES.MAP];
     public static SIMPLE_TYPES = [PROPERTY_TYPES.STRING, PROPERTY_TYPES.INTEGER, PROPERTY_TYPES.FLOAT, PROPERTY_TYPES.BOOLEAN, PROPERTY_TYPES.JSON, PROPERTY_TYPES.SCALAR, PROPERTY_TYPES.SCALAR_FREQUENCY, PROPERTY_TYPES.SCALAR_SIZE, PROPERTY_TYPES.SCALAR_TIME];
+    public static SCALAR_TYPES = [PROPERTY_TYPES.SCALAR, PROPERTY_TYPES.SCALAR_FREQUENCY, PROPERTY_TYPES.SCALAR_SIZE, PROPERTY_TYPES.SCALAR_TIME];
     public static ROOT_DATA_TYPE = "tosca.datatypes.Root";
     public static OPENECOMP_ROOT = "org.openecomp.datatypes.Root";
     public static SUPPLEMENTAL_DATA = "supplemental_data";
@@ -150,6 +153,7 @@ export class WorkspaceMode {
 export class ImagesUrl {
     public static RESOURCE_ICONS = '/assets/styles/images/resource-icons/';
     public static SERVICE_ICONS = '/assets/styles/images/service-icons/';
+    public static SERVICE_PROXY_ICONS = '/assets/styles/images/service-proxy-icons/';
     public static SELECTED_UCPE_INSTANCE = '/assets/styles/images/resource-icons/selectedUcpeInstance.png';
     public static SELECTED_CP_INSTANCE = '/assets/styles/images/resource-icons/selectedCPInstance.png';
     public static SELECTED_VL_INSTANCE = '/assets/styles/images/resource-icons/selectedVLInstance.png';
@@ -249,6 +253,7 @@ export class EVENTS {
     static ON_WORKSPACE_SAVE_BUTTON_SUCCESS = "onWorkspaceSaveButtonSuccess";
     static ON_WORKSPACE_SAVE_BUTTON_ERROR = "onWorkspaceSaveButtonError";
     static ON_CHECKOUT = "onCheckout";
+    static ON_REVERT = "onRevert";
 
     //Loader events
     static SHOW_LOADER_EVENT = "showLoaderEvent";

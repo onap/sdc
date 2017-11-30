@@ -99,18 +99,6 @@ public class ValidationToolConfigurationTest {
 		testSubject = createTestSubject();
 		result = testSubject.basicVfValidator();
 	}
-
-	
-	@Test
-	public void testReportManager() throws Exception {
-		ValidationToolConfiguration testSubject;
-		ReportManager result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.reportManager();
-	}
-
 	
 	@Test
 	public void testArtifactCassandraDao() throws Exception {

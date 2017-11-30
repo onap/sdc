@@ -229,12 +229,12 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 	} finally {
 		if (result == null || result.isRight()) {
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState");
-			if (inTransaction == false) {
+			if (!inTransaction) {
 				log.debug("operation failed. do rollback");
 				titanDao.rollback();
 			}
 		} else {
-			if (inTransaction == false) {
+			if (!inTransaction) {
 				log.debug("operation success. do commit");
 				titanDao.commit();
 			}

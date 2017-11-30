@@ -19,8 +19,8 @@
  */
 'use strict';
 
-import {CompositionCiNodeUcpeCp, Module, ModuleNodeBase, CompositionCiNodeVf, CompositionCiNodeVl, CompositionCiNodeCp,
-    NodeUcpe, CompositionCiNodeService, CompositionCiNodeBase, ComponentInstance} from "./../../../models";
+import {CompositionCiNodeUcpeCp, Module, ModuleNodeBase, CompositionCiNodeVf, CompositionCiNodeVl, CompositionCiNodeCp, CompositionCiNodeConfiguration,
+    NodeUcpe, CompositionCiNodeService,CompositionCiNodeServiceProxy, CompositionCiNodeBase, ComponentInstance} from "./../../../models";
 import {ComponentType, ResourceType} from "../../../utils/constants";
 import {ImageCreatorService} from "../../../directives/graphs-v2/image-creator/image-creator.service";
 
@@ -37,11 +37,17 @@ export class NodesFactory {
         if (instance.originType === ComponentType.SERVICE) {
             return new CompositionCiNodeService(instance, this.imageCreator);
         }
+        if (instance.originType === ComponentType.SERVICE_PROXY) {
+            return new CompositionCiNodeServiceProxy(instance, this.imageCreator);
+        }
         if (instance.originType === ResourceType.CP) {
             return new CompositionCiNodeCp(instance, this.imageCreator);
         }
         if (instance.originType === ResourceType.VL) {
             return new CompositionCiNodeVl(instance, this.imageCreator);
+        }
+        if (instance.originType === ResourceType.CONFIGURATION) {
+            return new CompositionCiNodeConfiguration(instance, this.imageCreator);
         }
 
         return new CompositionCiNodeVf(instance, this.imageCreator);

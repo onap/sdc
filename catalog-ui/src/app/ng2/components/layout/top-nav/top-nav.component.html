@@ -1,0 +1,53 @@
+<nav class="top-nav">
+
+    <div class="asdc-app-title-wrapper">
+        <a class="asdc-app-title">{{ 'PROJECT_TITLE'|translate }}</a>
+        <div class="asdc-version"> v.{{version}}</div>
+    </div>
+
+    <ul class="top-menu" *ngIf="!menuModel && topLvlMenu">
+        <!-- no hierarchy & dropdowns mode -->
+        <li *ngFor="let item of topLvlMenu.menuItems; let i = index"
+            [ngClass]="{'selected': i == topLvlMenu.selectedIndex}">
+            <a (click)="menuItemClick(topLvlMenu, item)"
+               [attr.data-tests-id]="'main-menu-button-' + item.text.toLowerCase()">{{item.text}}</a>
+        </li>
+    </ul>
+
+    <ul class="top-menu" *ngIf="menuModel">
+        <!-- with hierarchy & dropdowns mode -->
+        <ng-container *ngFor="let groupItem of menuModel; let $index = index; let $last = last">
+            <li [ngClass]="{'selected': $last }">
+                <a (click)="menuItemClick(groupItem, groupItem.menuItems[groupItem.selectedIndex])"
+                   [attr.data-tests-id]="'breadcrumbs-button-' + $index">
+                    {{groupItem.menuItems[groupItem.selectedIndex].text}}
+                </a>
+            </li>
+            <li class="triangle-dropdown"
+                [ngClass]="{'item-click': groupItem.itemClick}" (mouseover)="groupItem.itemClick = true">
+                <div class="triangle"><span class="sprite-new arrow-right"></span></div>
+                <ul class="sub-menu">
+                    <li *ngFor="let ddItem of groupItem.menuItems; let $index2 = index"
+                        (click)="menuItemClick(groupItem, ddItem)"
+                        [ngClass]="{'selected': $index2 == groupItem.selectedIndex, 'disabled': ddItem.isDisabled}"
+                        [attr.data-tests-id]="'sub-menu-button-' + ddItem.text.toLowerCase()">
+                        <span sdc-smart-tooltip="">{{ddItem.text}}</span>
+                    </li>
+                </ul>
+            </li>
+        </ng-container>
+    </ul>
+
+    <div class="top-search" [hidden]="hideSearch === true">
+        <input type="text"
+               class="search-text"
+               placeholder="Search"
+               [ngModel]="searchTerm"
+               (ngModelChange)="emitSearchTerm($event)"
+               data-tests-id="main-menu-input-search" />
+        <span class="w-sdc-search-icon magnification"></span>
+    </div>
+
+    <div class="notification-icon" [ngClass]="{'disabled' : progress > 0}" *ngIf="user.role === 'DESIGNER' && notificationIconCallback" (click)="notificationIconCallback()" tooltip="Vendor Software Product Repository" tooltipPlacement="left" data-tests-id="repository-icon"></div>
+
+</nav>

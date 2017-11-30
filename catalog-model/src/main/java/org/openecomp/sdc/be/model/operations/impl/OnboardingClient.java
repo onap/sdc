@@ -39,6 +39,7 @@ import org.openecomp.sdc.be.dao.rest.HttpRestClient;
 import org.openecomp.sdc.be.dao.rest.RestConfigurationInfo;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.rest.api.RestResponse;
 import org.openecomp.sdc.common.rest.api.RestResponseAsByteArray;
 import org.openecomp.sdc.common.util.ZipUtil;
 import org.slf4j.Logger;
@@ -147,6 +148,41 @@ public class OnboardingClient {
 				log.debug("Data received from rest is null or empty");
 				return Either.right(StorageOperationStatus.NOT_FOUND);
 			}
+
+		case HttpStatus.SC_NOT_FOUND:
+			return Either.right(StorageOperationStatus.CSAR_NOT_FOUND);
+
+		default:
+			return Either.right(StorageOperationStatus.GENERAL_ERROR);
+		}
+
+	}
+	
+	public Either<String, StorageOperationStatus> getPackages(String userId) {
+
+		if (httpRestClient == null) {
+			BeEcompErrorManager.getInstance().logInternalFlowError("RestClient", "Rest Client could not be initialized", ErrorSeverity.ERROR);
+			return Either.right(StorageOperationStatus.GENERAL_ERROR);
+		}
+
+		String url = buildDownloadCsarUrl();
+
+		Properties headers = new Properties();
+		headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+
+		if (userId != null) {
+			headers.put(Constants.USER_ID_HEADER, userId);
+		}
+
+		log.debug("Url for downloading packages is {}. Headers are {}", url, headers);
+
+		RestResponse restResponse = httpRestClient.doGET(url, headers);
+		log.debug("After fetching packages. Http return code is {}", restResponse.getHttpStatusCode());
+
+		switch (restResponse.getHttpStatusCode()) {
+		case HttpStatus.SC_OK:
+			String data = restResponse.getResponse();
+			return Either.left(data);
 
 		case HttpStatus.SC_NOT_FOUND:
 			return Either.right(StorageOperationStatus.CSAR_NOT_FOUND);

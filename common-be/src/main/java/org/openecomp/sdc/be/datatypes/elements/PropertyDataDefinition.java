@@ -20,17 +20,12 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import fj.data.Either;
-
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 public class PropertyDataDefinition extends ToscaDataDefinition implements Serializable {
 
@@ -63,20 +58,19 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 	private String label;
 	protected Boolean hidden = Boolean.FALSE;
 	private Boolean immutable = Boolean.FALSE;
-	
+
 	private String inputPath;
-    private String status;
-    private String inputId;
-    private String instanceUniqueId;
-    private String propertyId;
+	private String status;
+	private String inputId;
+	private String instanceUniqueId;
+	private String propertyId;
 	/**
 	 * The resource id which this property belongs to
 	 */
 	private String parentUniqueId;
 
-
 	private List<GetInputValueDataDefinition> getInputValues;
-	
+
 	public PropertyDataDefinition() {
 		super();
 	}
@@ -200,6 +194,13 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 		this.schema = entrySchema;
 	}
 
+	public String getSchemaType() {
+		if (schema != null && schema.getProperty() != null) {
+			return schema.getProperty().getType();
+		}
+		return null;
+	}
+
 	public String getLabel() {
 		return label;
 	}
@@ -223,8 +224,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 	public void setImmutable(Boolean immutable) {
 		this.immutable = immutable;
 	}
-	
-	
+
 	public String getParentUniqueId() {
 		return getOwnerId();
 	}
@@ -233,7 +233,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 		setOwnerId(parentUniqueId);
 	}
 
-
 	public List<GetInputValueDataDefinition> getGetInputValues() {
 		return getInputValues;
 	}
@@ -241,15 +240,15 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 	public void setGetInputValues(List<GetInputValueDataDefinition> getInputValues) {
 		this.getInputValues = getInputValues;
 	}
-	
+
 	public String getStatus() {
 		return status;
-    }
+	}
 
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
+
 	public String getInputId() {
 		return inputId;
 	}
@@ -274,7 +273,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 		this.propertyId = propertyId;
 	}
 
-
 	@Override
 	public String toString() {
 		return "PropertyDataDefinition [uniqueId=" + uniqueId + ", type=" + type + ", required=" + required + ", definition=" + definition + ", defaultValue=" + defaultValue + ", description=" + description + ", schema=" + schema + ", password="
@@ -297,6 +295,27 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 		result = prime * result + ((parentUniqueId == null) ? 0 : parentUniqueId.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		return result;
+	}
+
+	public boolean typeEquals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PropertyDataDefinition other = (PropertyDataDefinition) obj;
+		if (this.getType() == null)
+			return other.getType() == null;
+		if (!this.type.equals(other.type)) {
+			return false;
+		}
+		String thisSchemaType = this.getSchemaType();
+		String otherSchemaType = other.getSchemaType();
+		if (thisSchemaType == null) {
+			return otherSchemaType == null;
+		}
+		return thisSchemaType.equals(otherSchemaType);
 	}
 
 	@Override
@@ -377,28 +396,31 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 		}
 	}
 
-	private <T extends ToscaDataDefinition> boolean compareSchemaType(T other){
-		return !"list".equals(type) && !"map".equals(type) || this.getSchema().getProperty().getType().equals(((PropertyDataDefinition)other).getSchema().getProperty().getType());
+	private <T extends ToscaDataDefinition> boolean compareSchemaType(T other) {
+		return !"list".equals(type) && !"map".equals(type) || this.getSchema().getProperty().getType().equals(((PropertyDataDefinition) other).getSchema().getProperty().getType());
 	}
-	
-	
+
 	@Override
-	public <T extends ToscaDataDefinition> T mergeFunction(T other, boolean allowDefaultValueOverride){
-		if(this.getType().equals(other.getToscaPresentationValue(JsonPresentationFields.TYPE)) && compareSchemaType(other)){
+	public <T extends ToscaDataDefinition> T mergeFunction(T other, boolean allowDefaultValueOverride) {
+		if (this.getType().equals(other.getToscaPresentationValue(JsonPresentationFields.TYPE)) && compareSchemaType(other)) {
 			other.setOwnerId(getOwnerId());
-			if(allowDefaultValueOverride)
-				other.setToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE, getDefaultValue());
+			if (allowDefaultValueOverride) {
+				if (getDefaultValue() != null && !getDefaultValue().isEmpty()) {
+					other.setToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE, getDefaultValue());
+				}
+			}
 			return other;
 		}
 		return null;
 	}
-	
-	public void convertPropertyDataToInstancePropertyData(){
-		if(null != value)
+
+	public void convertPropertyDataToInstancePropertyData() {
+		if (null != value)
 			defaultValue = value;
 	}
-		
 
-
+	public boolean isGetInputProperty() {
+		return this.getGetInputValues() != null && !this.getGetInputValues().isEmpty();
+	}
 
 }

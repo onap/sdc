@@ -4,6 +4,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
+import org.openecomp.sdc.asdctool.migration.core.task.IMigrationStage;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.MigrationResult;
 import org.openecomp.sdc.asdctool.migration.service.SdcRepoService;
@@ -38,7 +39,8 @@ public class SpringBeansMigrationResolverTest {
     @Test
     public void testResolveMigrations_getMigrationsWithVersionGreaterThanLatest() throws Exception {
         when(sdcRepoServiceMock.getLatestDBVersion()).thenReturn(DBVersion.fromString("1710.2"));
-        List<Migration> resolvedMigrations = testInstance.resolveMigrations();
+        testInstance.setPostMigrations(Collections.emptyList());
+        List<IMigrationStage> resolvedMigrations = testInstance.resolveMigrations();
         assertEquals(resolvedMigrations.size(), 2);
         assertEquals(resolvedMigrations.get(0).getVersion(), DBVersion.fromString("1710.3"));
         assertEquals(resolvedMigrations.get(1).getVersion(), DBVersion.fromString("1710.22"));
@@ -47,7 +49,8 @@ public class SpringBeansMigrationResolverTest {
     @Test
     public void testResolveMigration_noLatestVersionForCurrentMajorVersion() throws Exception {
         when(sdcRepoServiceMock.getLatestDBVersion()).thenReturn(DBVersion.fromString("1710.-1"));
-        List<Migration> resolvedMigrations = testInstance.resolveMigrations();
+        testInstance.setPostMigrations(Collections.emptyList());
+        List<IMigrationStage> resolvedMigrations = testInstance.resolveMigrations();
         assertEquals(resolvedMigrations.size(), 3);
         assertEquals(resolvedMigrations.get(0).getVersion(), DBVersion.fromString("1710.1"));
         assertEquals(resolvedMigrations.get(1).getVersion(), DBVersion.fromString("1710.3"));
@@ -57,8 +60,9 @@ public class SpringBeansMigrationResolverTest {
     @Test
     public void testResolveMigrations_emptyMigrationsList() throws Exception {
         testInstance.setMigrations(Collections.emptyList());
+        testInstance.setPostMigrations(Collections.emptyList());
         when(sdcRepoServiceMock.getLatestDBVersion()).thenReturn(DBVersion.fromString("1710.-1"));
-        List<Migration> resolvedMigrations = testInstance.resolveMigrations();
+        List<IMigrationStage> resolvedMigrations = testInstance.resolveMigrations();
         assertTrue(resolvedMigrations.isEmpty());
     }
 

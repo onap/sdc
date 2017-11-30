@@ -254,7 +254,8 @@ public class CsarUtils {
 			String cassandraId = artifactDefinition.getEsId();
 			Either<byte[], ActionStatus> fromCassandra = getFromCassandra(cassandraId);
 			if (fromCassandra.isRight()) {
-				ResponseFormat responseFormat = componentsUtils.getResponseFormat(fromCassandra.right().value());
+                log.debug("ArtifactName {}, unique ID {}", artifactDefinition.getArtifactName(), artifactDefinition.getUniqueId());
+                ResponseFormat responseFormat = componentsUtils.getResponseFormat(fromCassandra.right().value());
 				return Either.right(responseFormat);
 			}
 			mainYaml = fromCassandra.left().value();
@@ -328,6 +329,12 @@ public class CsarUtils {
 
 				// add component to zip
 				Either<byte[], ActionStatus> entryData = getEntryData(innerComponentTriple.getLeft(), innerComponent);
+				if (entryData.isRight()) {
+					ResponseFormat responseFormat = componentsUtils.getResponseFormat(entryData.right().value());
+					log.debug("Failed adding to zip component {}, error {}", innerComponentTriple.getLeft(),
+																				entryData.right().value());
+					return Either.right(responseFormat);
+				}
 				byte[] content = entryData.left().value();
 				zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + icFileName));
 				zip.write(content);
@@ -394,7 +401,7 @@ public class CsarUtils {
 		
 		final int initSize = 2048;
 		
-		log.debug("Starting coppy from Schema file zip to CSAR zip");
+		log.debug("Starting copy from Schema file zip to CSAR zip");
 		
 		try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -657,7 +664,7 @@ public class CsarUtils {
 					null, null, user, component, shouldLock, inTransaction, false);
 
 			if (validateAndHandleArtifact.isRight()) {
-				if (ArtifactOperationEnum.Create == operationType.getArtifactOperationEnum() || ArtifactOperationEnum.Update == operationType.getArtifactOperationEnum()) {
+				if (ArtifactOperationEnum.isCreateOrLink(operationType.getArtifactOperationEnum()) || ArtifactOperationEnum.Update == operationType.getArtifactOperationEnum()) {
 					ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.AAI_ARTIFACT_GENERATION_FAILED, componentType.getValue(), component.getName(), validateAndHandleArtifact.right().value().toString());
 
 					Either.right(responseFormat);
@@ -739,7 +746,7 @@ public class CsarUtils {
 		} else {
 			Either<byte[], ActionStatus> fromCassandra = getFromCassandra(cassandraId);
 			if (fromCassandra.isRight()) {
-				return Either.right(fromCassandra.right().value());
+ 				return Either.right(fromCassandra.right().value());
 			} else {
 				content = fromCassandra.left().value();
 			}
@@ -773,19 +780,16 @@ public class CsarUtils {
 		Either<ESArtifactData, CassandraOperationStatus> artifactResponse = artifactCassandraDao.getArtifact(cassandraId);
 
 		if (artifactResponse.isRight()) {
-			log.debug("In createCsar fetching of artifact from CS failed");
-			log.debug("Failed to fetch from Cassandra by id {} error {} ", cassandraId, artifactResponse.right().value());
+			log.debug("Failed to fetch artifact from Cassandra by id {} error {} ", cassandraId, artifactResponse.right().value());
 
 			StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(artifactResponse.right().value());
 			ActionStatus convertedFromStorageResponse = componentsUtils.convertFromStorageResponse(storageStatus);
 			return Either.right(convertedFromStorageResponse);
-		} else {
-			ESArtifactData artifactData = artifactResponse.left().value();
-			return Either.left(artifactData.getDataAsArray());
-
 		}
+		ESArtifactData artifactData = artifactResponse.left().value();
+		return Either.left(artifactData.getDataAsArray());
 	}
-	
+
 	private String createCsarBlock0(String metaFileVersion, String toscaConformanceLevel) {
 		final String BLOCK_0_TEMPLATE = 
 				"SDC-TOSCA-Meta-File-Version: %s\nSDC-TOSCA-Definitions-Version: %s\n";
@@ -1201,18 +1205,20 @@ public class CsarUtils {
 		
 		for (ArtifactDefinition artifactDefinition : artifactDefinitionList) {
 			if (!isInCertificationRequest && componentType == ComponentTypeEnum.SERVICE
-					&& artifactDefinition.getArtifactType().equals(heatEnvType)){
+					&& artifactDefinition.getArtifactType().equals(heatEnvType) ||
+                    //this is placeholder
+                    (artifactDefinition.getEsId() == null && artifactDefinition.getMandatory())){
 				continue;
 			}
 			
-			String esId = artifactDefinition.getEsId();
 			byte[] payloadData = artifactDefinition.getPayloadData();
 			String artifactFileName = artifactDefinition.getArtifactName();
 			
 			if (payloadData == null) {
-				Either<byte[], ActionStatus> fromCassandra = getFromCassandra(esId);
+				Either<byte[], ActionStatus> fromCassandra = getFromCassandra(artifactDefinition.getEsId());
 
 				if (fromCassandra.isRight()) {
+                    log.debug("ArtifactName {}, unique ID {}", artifactDefinition.getArtifactName(), artifactDefinition.getUniqueId());
 					log.debug("Failed to get {} payload from DB reason: {}", artifactFileName, fromCassandra.right().value());
 					continue;
 				}

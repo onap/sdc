@@ -50,7 +50,6 @@ public class ServiceRespJavaObject {
 
 	public ServiceRespJavaObject() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ServiceRespJavaObject(String category, String creatorUserId, String creatorFullName,

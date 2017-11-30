@@ -53,6 +53,7 @@ import org.openecomp.sdc.ci.tests.utilities.PropertiesUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.ResourceUIUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
+import org.openecomp.sdc.ci.tests.verificator.PropertyVerificator;
 import org.openecomp.sdc.ci.tests.verificator.VFCverificator;
 import org.openecomp.sdc.ci.tests.verificator.VfVerificator;
 import org.testng.Assert;
@@ -234,6 +235,37 @@ public class ImportVFCAsset extends SetupCDTest {
 		
 	}
 	
+	@Test
+	public void updateAfterCheckoutNewSimplePropertiesVFCTest() throws Exception{
+		String fileName = "importVFC_VFC16.yml";
+		atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, 
+				ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+		ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
+			
+		ResourceGeneralPage.getLeftMenu().moveToPropertiesScreen();
+		List<PropertyTypeEnum> propertyList = Arrays.asList(PropertyTypeEnum.STRING, PropertyTypeEnum.INTEGER, PropertyTypeEnum.FLOAT);
+		int propertiesCount = PropertiesPage.getElemenetsFromTable().size();	
+		for (PropertyTypeEnum prop : propertyList){
+			PropertiesUIUtils.addNewProperty(prop);
+		}
+		ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
+		GeneralUIUtils.findComponentAndClick(atomicResourceMetaData.getName());
+		GeneralPageElements.clickCheckoutButton();
+		ResourceGeneralPage.getLeftMenu().moveToPropertiesScreen();
+		
+		for (PropertyTypeEnum prop : propertyList){
+			PropertiesUIUtils.updateProperty(prop);
+		}
+		assertTrue(GeneralUIUtils.checkElementsCountInTable(propertiesCount + propertyList.size(), () -> PropertiesPage.getElemenetsFromTable()));
+		
+		for (PropertyTypeEnum prop : propertyList){
+				PropertiesPage.clickOnProperty(prop.getName());
+				PropertyVerificator.validateEditVFCPropertiesPopoverFields(prop);
+				PropertiesPage.getPropertyPopup().clickCancel();	
+		}
+		
+	}
+	
 		
 	@Test(dataProvider = "assetFiles")
 	public void checkinCheckoutChangeDeleteVersionVFCTest(String customfileName) throws Exception{
@@ -285,12 +317,7 @@ public class ImportVFCAsset extends SetupCDTest {
 	}
 	
 	@Test
-	public void activityLogVFCTest() throws Exception{
-		
-		if(true){
-			throw new SkipException("Open bug 291623");			
-		}
-		
+	public void activityLogVFCTest() throws Exception{		
 		String fileName = "importVFC_VFC11.yml";
 		atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, 
 				ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());

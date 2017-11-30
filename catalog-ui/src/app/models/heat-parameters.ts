@@ -31,6 +31,7 @@ export class HeatParameterModel {
     currentValue:string;
     defaultValue:string;
 
+    filterTerm:string;
     constructor(parameter?:HeatParameterModel) {
     }
 

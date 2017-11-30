@@ -31,15 +31,15 @@ import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.StepsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.execute.sanity.Onboard;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.CompositionPage;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
-import org.openecomp.sdc.ci.tests.utilities.OnboardingUtils;
+import org.openecomp.sdc.ci.tests.utilities.OnboardingUiUtils;
 import org.openecomp.sdc.ci.tests.utilities.ServiceUIUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.testng.annotations.Test;
 
 import com.clearspring.analytics.util.Pair;
@@ -47,14 +47,14 @@ import com.clearspring.analytics.util.Pair;
 public class Service_Tests_UI extends SetupCDTest{
 
 	public Service_Tests_UI() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	// US839610 - E2E Declare VL / CP properties as inputs in service level
 	@Test
 	public void declareVL_CP_InputsInServiceLevel() throws Exception {
 		String vnfFile = "FDNT.zip";
-		Pair<String,Map<String,String>> VspName =OnboardingUtils.onboardAndValidate(FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
+		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+		Pair<String,Map<String,String>> VspName = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		ServiceReqDetails servicemetadata = ElementFactory.getDefaultService(getUser());
 		ServiceUIUtils.createService(servicemetadata, getUser());
 		GeneralUIUtils.moveToStep(StepsEnum.COMPOSITION);
@@ -72,7 +72,8 @@ public class Service_Tests_UI extends SetupCDTest{
 	@Test
 	public void CreateServiceWithCpInstance() throws Exception {
 		String vnfFile = "FDNT.zip";
-		Pair<String,Map<String,String>> VspName =OnboardingUtils.onboardAndValidate(FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
+		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+		Pair<String,Map<String,String>> VspName = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
 		ServiceReqDetails servicemetadata = ElementFactory.getDefaultService(getUser());
 		ServiceUIUtils.createService(servicemetadata, getUser());
 		GeneralUIUtils.moveToStep(StepsEnum.COMPOSITION);
@@ -99,7 +100,6 @@ public class Service_Tests_UI extends SetupCDTest{
 
 	@Override
 	protected UserRoleEnum getRole() {
-		// TODO Auto-generated method stub
 		return UserRoleEnum.DESIGNER;
 	}
 	

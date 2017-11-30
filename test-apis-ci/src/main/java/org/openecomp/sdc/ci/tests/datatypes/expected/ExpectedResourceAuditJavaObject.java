@@ -142,7 +142,6 @@ public class ExpectedResourceAuditJavaObject {
 
 	public ExpectedResourceAuditJavaObject() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ExpectedResourceAuditJavaObject(String action, String modifierName, String modifierUid, String status,

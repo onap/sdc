@@ -207,7 +207,7 @@ public class LifecycleBusinessLogic {
 		LifecycleStateEnum resourceCurrState = component.getLifecycleState();
 
 		// lock resource
-		if (inTransaction == false && needLock) {
+		if (!inTransaction && needLock) {
 			log.info("lock component {}", componentId);
 			Either<Boolean, ResponseFormat> eitherLockResource = lockComponent(componentType, component);
 			if (eitherLockResource.isRight()) {
@@ -216,7 +216,7 @@ public class LifecycleBusinessLogic {
 				log.error("lock component {} failed", componentId);
 				return Either.right(errorResponse);
 			}
-			log.info("after lock component {}", componentId);
+			log.debug("after lock component {}", componentId);
 		}
 		try {
 			Either<String, ResponseFormat> commentValidationResult = validateComment(changeInfo, transitionEnum);
@@ -228,12 +228,12 @@ public class LifecycleBusinessLogic {
 				return Either.right(errorResponse);
 			}
 			changeInfo.setUserRemarks(commentValidationResult.left().value());
-			log.info("after validate component");
+			log.debug("after validate component");
 			Either<Boolean, ResponseFormat> validateHighestVersion = validateHighestVersion(modifier, lifeCycleTransition, component, resourceCurrVersion, componentType);
 			if (validateHighestVersion.isRight()) {
 				return Either.right(validateHighestVersion.right().value());
 			}
-			log.info("after validate Highest Version");
+			log.debug("after validate Highest Version");
 			if (isComponentVFCMT(component,componentType)){
 				Either<? extends Component, ResponseFormat> changeVFCMTStateResponse = changeVFCMTState(componentType, modifier, transitionEnum, changeInfo, inTransaction, component);
 				if (changeVFCMTStateResponse.isRight()){
@@ -243,11 +243,11 @@ public class LifecycleBusinessLogic {
 
 			return changeState(component, lifeCycleTransition, componentType, modifier, changeInfo, inTransaction);
 		} finally {
-			log.info("unlock component {}", componentId);
-			if (inTransaction == false && needLock && component != null) {
-				component.setUniqueId(componentId);
+			component.setUniqueId(componentId);
+			if (!inTransaction && needLock) {
+				log.info("unlock component {}", componentId);
 				NodeTypeEnum nodeType = componentType.getNodeType();
-						log.info("During change state, another component {} has been created/updated", componentId);
+				log.info("During change state, another component {} has been created/updated", componentId);
 				graphLockOperation.unlockComponent(componentId, nodeType);
 
 			}

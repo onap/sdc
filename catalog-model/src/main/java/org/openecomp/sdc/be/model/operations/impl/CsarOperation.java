@@ -25,15 +25,21 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
-
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import fj.data.Either;
 
@@ -104,6 +110,41 @@ public class CsarOperation {
 		}
 
 		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Either<String, StorageOperationStatus> getCsarLatestVersion(String csarUuid, User user) {
+
+		Either<String, StorageOperationStatus> result = onboardingClient.getPackages(user.getUserId());
+
+		if (result.isRight()) {
+			log.debug("Cannot find version for package with Id {}. Status returned is {}", csarUuid, result.right().value());
+		} else {
+			String latestVersion = null;
+			JsonElement root = new JsonParser().parse(result.left().value());
+			JsonArray csarsInfo = root.getAsJsonObject().get("results").getAsJsonArray();
+			for (JsonElement csarInfo : csarsInfo) {
+				Map<String, String> csarInfoMap = new Gson().fromJson(csarInfo, Map.class);
+				if(csarInfoMap.get("packageId").equals(csarUuid)){
+				    String curVersion = csarInfoMap.get("version");
+				    if(latestVersion == null || isGreater(latestVersion, curVersion)){
+				    	latestVersion = curVersion;
+				    }
+				}
+			}
+			if (latestVersion != null) {
+				result = Either.left(latestVersion);
+			} else {
+				log.debug("The returned packages are {}. Failed to find latest version for package with Id {}. ", result.left().value(), csarUuid);
+				result = Either.right(StorageOperationStatus.NOT_FOUND);
+			}
+		}
+
+		return result;
+	}
+
+	private boolean isGreater(String latestVersion, String currentVersion) {
+		return Double.parseDouble(latestVersion) < Double.parseDouble(currentVersion);
 	}
 
 	public OnboardingClient getOnboardingClient() {

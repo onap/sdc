@@ -1,26 +1,17 @@
 package org.openecomp.sdc.be.tosca;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
+import static org.junit.Assert.*;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 
-import fj.data.Either;
+import java.util.*;
 
 public class PropertyConvertorTest {
     private PropertyDefinition property;
@@ -31,7 +22,7 @@ public class PropertyConvertorTest {
         property = new PropertyDefinition();
         property.setName("myProperty");
         property.setType(ToscaPropertyType.INTEGER.getType());
-        dataTypes = new HashMap<String, DataTypeDefinition>();
+        dataTypes = new HashMap();
         dataTypes.put(property.getName(), new DataTypeDefinition());
     }
 
@@ -60,7 +51,7 @@ public class PropertyConvertorTest {
         property1.setDefaultValue("2");
         dataTypes.put(property1.getName(), new DataTypeDefinition());
         Resource resource = new Resource();
-        List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+        List<PropertyDefinition> properties = new ArrayList();
         properties.add(property);
         properties.add(property1);
         resource.setProperties(properties);
@@ -86,7 +77,7 @@ public class PropertyConvertorTest {
         property.setDefaultValue("1");
         dataTypes.put(property1.getName(), new DataTypeDefinition());
         Resource resource = new Resource();
-        List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+        List<PropertyDefinition> properties = new ArrayList();
         properties.add(property);
         properties.add(property1);
         resource.setProperties(properties);
@@ -106,7 +97,7 @@ public class PropertyConvertorTest {
         property1.setType(ToscaPropertyType.INTEGER.getType());
         dataTypes.put(property1.getName(), new DataTypeDefinition());
         Resource resource = new Resource();
-        List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+        List<PropertyDefinition> properties = new ArrayList();
         properties.add(property);
         properties.add(property1);
         resource.setProperties(properties);

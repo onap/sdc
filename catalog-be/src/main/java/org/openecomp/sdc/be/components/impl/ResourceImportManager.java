@@ -110,7 +110,7 @@ public class ResourceImportManager {
 		lifecycleChangeInfo.setUserRemarks("certification on import");
 		Function<Resource, Either<Boolean, ResponseFormat>> validator = (resource) -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
 
-		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null, false, null);
+		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null, false, null, null, false);
 	}
 	
 	public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> importNormativeResourceFromCsar(String resourceYml, UploadResourceInfo resourceMetaData, User creator, boolean createNewVersion, boolean needLock) {
@@ -119,11 +119,11 @@ public class ResourceImportManager {
 		lifecycleChangeInfo.setUserRemarks("certification on import");
 		Function<Resource, Either<Boolean, ResponseFormat>> validator = (resource) -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
 
-		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null, false, null);
+		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null, false, null, null, false);
 	}
 
 	public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> importCertifiedResource(String resourceYml, UploadResourceInfo resourceMetaData, User creator, Function<Resource, Either<Boolean, ResponseFormat>> validationFunction,
-			LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean isInTransaction, boolean createNewVersion, boolean needLock, Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed, CsarInfo csarInfo) {
+			LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean isInTransaction, boolean createNewVersion, boolean needLock, Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, boolean forceCertificationAllowed, CsarInfo csarInfo, String nodeName, boolean isNested) {
 		Resource resource = new Resource();
 		ImmutablePair<Resource, ActionStatus> responsePair = new ImmutablePair<>(resource, ActionStatus.CREATED);
 		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> response = Either.left(responsePair);
@@ -152,7 +152,7 @@ public class ResourceImportManager {
 					}
 				}
 
-				response = resourceBusinessLogic.createOrUpdateResourceByImport(resource, creator, true, isInTransaction, needLock, csarInfo);
+				response = resourceBusinessLogic.createOrUpdateResourceByImport(resource, creator, true, isInTransaction, needLock, csarInfo, nodeName, isNested);
 				Either<Resource, ResponseFormat> changeStateResponse;
 				if (response.isLeft()) {
 					resource = response.left().value().left;
@@ -240,7 +240,7 @@ public class ResourceImportManager {
 			Either<Boolean, ResponseFormat> validatePropertiesTypes = resourceBusinessLogic.validatePropertiesDefaultValues(resource);
 
 			if (validatePropertiesTypes.isLeft()) {
-				response = resourceBusinessLogic.createOrUpdateResourceByImport(resource, creator, false, isInTransaction, true, null);
+				response = resourceBusinessLogic.createOrUpdateResourceByImport(resource, creator, false, isInTransaction, true, null, null, false);
 			} else {
 				ResponseFormat validationErrorResponse = validatePropertiesTypes.right().value();
 				auditErrorImport(resourceMetaData, creator, validationErrorResponse, false);

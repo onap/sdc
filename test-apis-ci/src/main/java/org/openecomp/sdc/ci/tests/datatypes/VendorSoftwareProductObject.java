@@ -1,47 +1,27 @@
 package org.openecomp.sdc.ci.tests.datatypes;
 
-public class VendorSoftwareProductObject {
+public class VendorSoftwareProductObject extends VendorSoftwareProductObjectReqDetails {
 
-	private String vendorName;
 	private String vspId;
-	private String category;
-	private String subCategory;
 	private String componentId;
-	private String description;
 	private String attContact;
-	private String vspName;
-	
-	public VendorSoftwareProductObject() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+	private String version;
 
-	public VendorSoftwareProductObject(String vendorName, String vspId, String category, String subCategory, String componentId, String description, String attContact) {
-		super();
-		this.vendorName = vendorName;
+	public VendorSoftwareProductObject(){super();}
+
+	public VendorSoftwareProductObject(String vspId, String componentId, String attContact, String version) {
 		this.vspId = vspId;
-		this.category = category;
-		this.subCategory = subCategory;
 		this.componentId = componentId;
-		this.description = description;
 		this.attContact = attContact;
+		this.version = version;
 	}
 
-	
-	public String getVspName() {
-		return vspName;
-	}
-
-	public void setVspName(String vspName) {
-		this.vspName = vspName;
-	}
-
-	public String getVendorName() {
-		return vendorName;
-	}
-
-	public void setVendorName(String vendorName) {
-		this.vendorName = vendorName;
+	public VendorSoftwareProductObject(String name, String description, String category, String subCategory, String vendorId, String vendorName, LicensingVersion licensingVersion, LicensingData licensingData, String onboardingMethod, String networkPackageName, String onboardingOrigin, String vspId, String componentId, String attContact, String version) {
+		super(name, description, category, subCategory, vendorId, vendorName, licensingVersion, licensingData, onboardingMethod, networkPackageName, onboardingOrigin);
+		this.vspId = vspId;
+		this.componentId = componentId;
+		this.attContact = attContact;
+		this.version = version;
 	}
 
 	public String getVspId() {
@@ -52,36 +32,12 @@ public class VendorSoftwareProductObject {
 		this.vspId = vspId;
 	}
 
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
-	public String getSubCategory() {
-		return subCategory;
-	}
-
-	public void setSubCategory(String subCategory) {
-		this.subCategory = subCategory;
-	}
-
 	public String getComponentId() {
 		return componentId;
 	}
 
 	public void setComponentId(String componentId) {
 		this.componentId = componentId;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getAttContact() {
@@ -92,11 +48,21 @@ public class VendorSoftwareProductObject {
 		this.attContact = attContact;
 	}
 
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
 	@Override
 	public String toString() {
-		return "VendorSoftwareProductObject [vendorName=" + vendorName + ", vspId=" + vspId + ", category=" + category + ", subCategory=" + subCategory + ", componentId=" + componentId + ", description=" + description + ", attContact="
-				+ attContact + "]";
+		return "VendorSoftwareProductObject{" +
+				"vspId='" + vspId + '\'' +
+				", componentId='" + componentId + '\'' +
+				", attContact='" + attContact + '\'' +
+				", version='" + version + '\'' +
+				'}';
 	}
-	
-	
 }

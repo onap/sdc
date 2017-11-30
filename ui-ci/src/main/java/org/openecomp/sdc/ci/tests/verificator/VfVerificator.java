@@ -20,15 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.verificator;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
+import com.aventstack.extentreports.Status;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -54,7 +46,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
-import com.aventstack.extentreports.Status;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import static org.testng.Assert.*;
 
 public final class VfVerificator {
 	
@@ -124,18 +121,21 @@ public final class VfVerificator {
 	}
 
 	public static void verifyVFLifecycle(ResourceReqDetails vf, User user, LifecycleStateEnum expectedLifecycleState) {
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verfiying that object %s version is %s", vf.getName(),expectedLifecycleState));
 		String responseAfterDrag = RestCDUtils.getResource(vf, user).getResponse();
 		JSONObject jsonResource = (JSONObject) JSONValue.parse(responseAfterDrag);
 		String actualLifecycleState = jsonResource.get("lifecycleState").toString();
 		assertTrue(expectedLifecycleState.name().equals(actualLifecycleState), "actual: " + actualLifecycleState + "-- expected: " + expectedLifecycleState);
 	}
-	
+
 	public static void verifyVfLifecycleInUI(LifeCycleStateEnum lifecycleState){
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verfiying that object version is %s", lifecycleState.getValue()));
 		GeneralUIUtils.ultimateWait();
 		assertTrue(ResourceGeneralPage.getLifeCycleState().equals(lifecycleState.getValue()));
 	}
 	
 	public static void verifyInstanceVersion(ResourceReqDetails vf, User user, String instanceName, String instanceVersion){
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Verfiying that instance %s version is %s", instanceName,instanceVersion));
 		String responseAfterDrag = RestCDUtils.getResource(vf, user).getResponse();
 		JSONObject jsonResource = (JSONObject) JSONValue.parse(responseAfterDrag);
 		JSONArray jsonArrayResource = (JSONArray) jsonResource.get("componentInstances");
@@ -157,6 +157,7 @@ public final class VfVerificator {
 	}
 	
 	public static void verifyVfDeleted(ResourceReqDetails vf, User user){
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Validating resource %s was deleted", vf.getName()));
 		RestResponse response = RestCDUtils.getResource(vf, user);
 		assertTrue(response.getErrorCode().intValue() == 404);
 	}
@@ -182,6 +183,7 @@ public final class VfVerificator {
 	}
 	
 	public static void verifyToscaArtifactsInfo(ResourceReqDetails vf, User user){
+		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Validating Tosca Aritfact Info of resource %s", vf.getName()));
 		String responseAfterDrag = RestCDUtils.getResource(vf, user).getResponse();
 		JSONObject jsonResource = (JSONObject) JSONValue.parse(responseAfterDrag);
 		JSONObject toscaArtifacts = (JSONObject) jsonResource.get("toscaArtifacts");
@@ -216,7 +218,7 @@ public final class VfVerificator {
 		SetupCDTest.getExtendTest().log(Status.INFO, "Verifying metadata");
 		assertTrue(vspName.equals(ResourceGeneralPage.getNameText()), "VSP name is not valid.");
 		assertTrue(vspMetadata.get("description").equals(ResourceGeneralPage.getDescriptionText()), "VSP description is not valid.");
-		assertTrue(vspMetadata.get("subCategory").equals(GeneralUIUtils.getSelectedElementFromDropDown(ResourceGeneralPage.getCategoryDataTestsIdAttribute()).getText().toLowerCase().trim()), "VSP category is not valid.");
+		assertTrue(vspMetadata.get("subCategory").equals(GeneralUIUtils.getSelectedElementFromDropDown(ResourceGeneralPage.getCategoryDataTestsIdAttribute()).getText().trim()), "VSP category is not valid.");
 		assertTrue(vspMetadata.get("vendorName").equals(ResourceGeneralPage.getVendorNameText()), "VSP vendor name is not valid.");
 		assertTrue("1.0".equals(ResourceGeneralPage.getVendorReleaseText()), "VSP version is not valid.");
 		List<WebElement> tagsList = ResourceGeneralPage.getElementsFromTagsTable();
@@ -236,7 +238,6 @@ public final class VfVerificator {
 			String expectedMd5OfFile = FileHandling.getMD5OfFile(expected);
 			Assert.assertEquals(expectedMd5OfFile, actualMd5OfFile, "File does not exist");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		 

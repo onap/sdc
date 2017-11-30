@@ -41,11 +41,16 @@ export class componentCategories {//categories field bind to this obj in order t
     selectedCategory:string;
 }
 
+export interface IEnvironmentContext {
+    defaultValue:string;
+    validValues:Array<string>;
+}
 
 export interface IGeneralScope extends IWorkspaceViewModelScope {
     validation:Validation;
     editForm:ng.IFormController;
     categories:Array<IMainCategory>;
+    environmentContextObj:IEnvironmentContext;
     latestCategoryId:string;
     latestVendorName:string;
     importedFileExtension:any;
@@ -67,6 +72,7 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     onEcompGeneratedNamingChange():void;
     openOnBoardingModal():void;
     initCategoreis():void;
+    initEnvironmentContext():void;
     updateIcon():void;
     possibleToUpdateIcon():boolean;
 }
@@ -195,6 +201,9 @@ export class GeneralViewModel {
         // Init categories
         this.$scope.initCategoreis();
 
+        // Init Environment Context
+        this.$scope.initEnvironmentContext();
+
         // Init the decision if to show file browse.
         this.$scope.isShowFileBrowse = false;
         if (this.$scope.component.isResource()) {
@@ -239,6 +248,7 @@ export class GeneralViewModel {
         //TODO remove this after handling contact in UI
         if (this.$scope.isCreateMode()) {
             this.$scope.component.contactId = this.cacheService.get("user").userId;
+            this.$scope.originComponent.contactId = this.$scope.component.contactId;
         }
 
     };
@@ -285,6 +295,19 @@ export class GeneralViewModel {
             }
             if (this.$scope.componentType === ComponentType.SERVICE) {
                 this.$scope.categories = this.cacheService.get('serviceCategories');
+            }
+        };
+
+
+        this.$scope.initEnvironmentContext = ():void => {
+            if (this.$scope.componentType === ComponentType.SERVICE) {
+                this.$scope.environmentContextObj = this.cacheService.get('UIConfiguration').environmentContext;
+                var environmentContext:string =(<Service>this.$scope.component).environmentContext;
+                var isCheckout:boolean = ComponentState.NOT_CERTIFIED_CHECKOUT === this.$scope.component.lifecycleState;
+                // In creation new service OR check outing old service without environmentContext parameter - set default value
+                if(this.$scope.isCreateMode() || (isCheckout && !environmentContext)){
+                    (<Service>this.$scope.component).environmentContext = this.$scope.environmentContextObj.defaultValue;
+                }
             }
         };
 
@@ -416,5 +439,8 @@ export class GeneralViewModel {
             }
         };
         this.EventListenerService.registerObserverCallback(EVENTS.ON_CHECKOUT, this.$scope.reload);
+        this.EventListenerService.registerObserverCallback(EVENTS.ON_REVERT, ()=>{
+            this.$scope.componentCategories.selectedCategory = this.$scope.originComponent.selectedCategory;
+        });
     };
 }

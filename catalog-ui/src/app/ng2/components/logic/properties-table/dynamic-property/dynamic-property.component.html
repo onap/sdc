@@ -1,0 +1,67 @@
+<div *ngIf="!property.hidden" class="dynamic-property-row nested-level-{{nestedLevel}}" [@fadeIn]
+    [ngClass]="{'selected': selectedPropertyId && selectedPropertyId === property.propertiesName }"
+    [class.with-top-border]="property.isChildOfListOrMap"
+    (click)="onClickPropertyRow(property, $event)">
+    <!-- LEFT CELL -->
+    <ng-container *ngIf="!isPropertyFEModel">
+        <div class="table-cell" *ngIf="canBeDeclared" [ngClass]="{'filtered':property.name === propertyNameSearchText}" [class.round-checkbox]="property.isDeclared"> <!-- simple children of complex type [@checkEffect]="property.isDeclared"-->
+            <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected" [disabled]="property.isDisabled ||property.isDeclared || readonly" (checkedChange)="checkProperty.emit(property.propertiesName)" ></checkbox>
+            <div class="inner-cell-div" tooltip="{{property.name}}"><span>{{property.name}}</span></div>
+        </div>
+        <div class="table-cell" *ngIf="!canBeDeclared && !property.isChildOfListOrMap">{{property.name}}</div> <!-- simple children of complex type within map or list -->
+        <div class="table-cell map-entry" *ngIf="property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP"><!-- map left cell -->
+            <input [value]="property.mapKey" #mapKey (change)="mapKeyChanged.emit(mapKey)" [readonly]="readonly" type="text" [ngClass]="{'disabled':readonly, 'error':!mapKey.validity.valid}" required/>
+        </div>
+    </ng-container>
+    <!-- RIGHT CELL OR FULL WIDTH CELL-->
+    <ng-container *ngIf="propType == derivedPropertyTypes.SIMPLE || property.isDeclared || (property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP && property.schema.property.isSimpleType)">
+        <div class="table-cell">
+            <dynamic-element class="value-input"
+                pattern="validationUtils.getValidationPattern(property.type)"
+                [(value)]="property.valueObj"
+                [type]="property.isDeclared ? 'string' : property.type"
+                [name]="property.name"
+                [path]="property.propertiesName"
+                (valueChange)="valueChanged.emit();"
+                [readonly]="readonly || property.isDeclared || property.isDisabled"
+            ></dynamic-element>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!isPropertyFEModel && propType != derivedPropertyTypes.SIMPLE && !property.isDeclared"> <!-- right cell for complex elements, or list complex -->
+        <div class="table-cell" *ngIf="propType == derivedPropertyTypes.COMPLEX">{{property.type | contentAfterLastDot }}</div>
+        <div class="table-cell" *ngIf="propType == derivedPropertyTypes.MAP && !property.schema.property.isSimpleType">{{property.schema.property.type | contentAfterLastDot }}</div>
+    </ng-container>
+    <ng-container *ngIf="isPropertyFEModel && (propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && !property.isDeclared"><!-- empty, full-width table cell - for PropertyFEModel of type list or map -->
+        <div class="table-cell empty"></div>
+    </ng-container>
+    <!-- ICONS: add, delete, and expand -->
+    <ng-container *ngIf="!property.isDeclared">
+            <a *ngIf="(propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && !property.isChildOfListOrMap" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(property)}">Add value to list</a>
+            <span *ngIf="property.isChildOfListOrMap" (click)="deleteItem.emit(property);" class="property-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}"></span>
+            <span *ngIf="!isPropertyFEModel && (propType == derivedPropertyTypes.COMPLEX || ((propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && hasChildren))" (click)="expandChildById(propPath)" class="property-icon sprite-new round-expand-icon" [class.open]="expandedChildId.indexOf(propPath) == 0"></span>
+    </ng-container>
+
+</div>
+<!-- FLAT CHILDREN -->
+<div class="flat-children-container" *ngIf="isPropertyFEModel && !property.isDeclared">
+    <ng-container *ngFor="let prop of property.flattenedChildren | filterChildProperties: expandedChildId; trackBy:prop?.propertiesName">
+        <dynamic-property
+            [selectedPropertyId]="selectedPropertyId"
+            [hasDeclareOption]="hasDeclareOption"
+            [canBeDeclared]="hasDeclareOption && prop.canBeDeclared"
+            [property]="prop"
+            [expandedChildId]="expandedChildId"
+            [propertyNameSearchText]="propertyNameSearchText"
+            [readonly]="readonly"
+            [hasChildren]="getHasChildren(prop)"
+            (valueChanged)="childValueChanged(prop)"
+            (mapKeyChanged)="removeValueFromParent(prop, $event)"
+            (expandChild)="expandChildById($event)"
+            (deleteItem)="deleteListOrMapItem($event)"
+            (clickOnPropertyRow)="onClickPropertyRow($event)"
+            (checkProperty)="checkedChange($event)"
+            (addChildPropsToParent)="addChildProps($event, prop.propertiesName)"
+            >
+        </dynamic-property>
+    </ng-container>
+</div>

@@ -71,7 +71,8 @@ export class PropertiesViewModel {
     }
 
     private openEditPropertyModal = (property:PropertyModel):void => {
-        this.ModalsHandler.openEditPropertyModal(property, this.$scope.component, this.$scope.filteredProperties, false).then(() => {
+        this.ModalsHandler.openEditPropertyModal(property, this.$scope.component, this.$scope.filteredProperties, false).then((updatedProperty:PropertyModel) => {
+            //property = updatedProperty;
         });
     };
 

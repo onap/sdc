@@ -7,11 +7,11 @@
                 {{menuComponentTitle}}
             </div>
             <div class="i-sdc-designer-sidebar-section-content-item" ng-class="{'selected': menuItem.state == $state.current.name}" ng-repeat="menuItem in leftBarTabs.menuItems track by $index">
-                <div class="expand-collapse-menu-box-item-text" ng-click="onMenuItemPressed(menuItem.state)" ng-class="{'disabled': menuItem.isDisabled }" data-tests-id="{{menuItem.text}}">{{menuItem.text}}</div>
+                <div class="expand-collapse-menu-box-item-text" ng-click="onMenuItemPressed(menuItem.state)" ng-class="{'disabled': menuItem.isDisabled }" data-tests-id="{{menuItem.text}}LeftSideMenu">{{menuItem.text}}</div>
             </div>
         </div>
 
-        <div include-padding="true" class="w-sdc-main-right-container" data-ng-class="{'composition':isComposition}">
+        <div include-padding="true" class="w-sdc-main-right-container" data-ng-class="{'composition':isComposition, 'deployment':isDeployment}">
             <loader data-display="isCreateProgress" data-ng-show="isCreateProgress" relative="false"></loader>
 
             <div class="sdc-workspace-top-bar">
@@ -63,8 +63,7 @@
 
                     <span data-ng-if="isDesigner()" data-ng-class="{'disabled' :isDisableMode() || isViewMode()}"  ng-click="revert()" class="sprite-new revert-btn" data-tests-id="revert"
                           data-ng-show="showFullIcons()" sdc-smart-tooltip="">Revert</span>
-
-                    <span  data-ng-if="isComposition" class="sprite-new print-screen-btn" entity="component" print-graph-screen data-tests-id="printScreen"></span>
+                    
                     <span class="delimiter"></span>
                     <span class="sprite-new x-btn" data-ng-click="goToBreadcrumbHome()" sdc-smart-tooltip="">Close</span>
 
@@ -78,6 +77,5 @@
             </div>
         </div>
     </div>
-    <top-nav search-bind="search.filterTerm" hide-search="true" menu-model="breadcrumbsModel" version="{{version}}"></top-nav>
-    <ecomp-footer></ecomp-footer>
+    <top-nav [hide-search]="true" [menu-model]="breadcrumbsModel" [version]="version"></top-nav>
 </div>

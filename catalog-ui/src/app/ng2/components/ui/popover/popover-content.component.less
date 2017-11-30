@@ -1,0 +1,77 @@
+@import '../../../../../assets/styles/variables';
+@import '../../../../../assets/styles/mixins';
+@import '../../../../../assets/styles/sprite-old';
+.popover .virtual-area {
+    height: 11px;
+    width: 100%;
+    position: absolute;
+}
+.popover.top .virtual-area {
+    bottom: -11px;
+}
+.popover.bottom .virtual-area {
+    top: -11px;
+}
+.popover.left .virtual-area {
+    right: -11px;
+}
+.popover.right .virtual-area {
+    left: -11px;
+}
+.popover.hide-arrow{
+    margin: 0;
+}
+
+.popover-header{
+    .m_14_m;
+    font-weight: bold;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    height: 40px;
+    line-height: 48px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    text-align: left;
+    border-bottom: solid 1px @main_color_o;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 0px 20px;
+    max-width:350px;
+
+    .title{
+        flex: 1;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .close-button{
+        .sprite;
+        .sprite.x-btn-black;
+        cursor: pointer;
+    }
+}
+
+.popover-footer{
+    background-color: @tlv_color_t;
+    height: 40px;
+    clear: both;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+    button{
+        margin: 8px 12px 8px 6px;
+    }
+}

@@ -323,10 +323,28 @@
 									</resources>
 								</configuration>
 							</execution>
+							
+	                        <execution>
+	                        	<id>copy-sdctool</id>
+	                        	<phase>install</phase>
+	                        	<goals>
+	                            	<goal>copy-resources</goal>
+	                        	</goals>
+	                        	<configuration>
+	                            	<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default</outputDirectory>
+	                            	<resources>
+	                                	<resource>
+	                                    	<directory>./target</directory>
+	                                    	<includes>
+	                                        	<include>sdctool.tar</include>
+	                                    	</includes>
+	                                	</resource>
+	                            	</resources>
+	                        	</configuration>
+	                    	</execution>
                         </executions>
                     </plugin>
-
-
+                        
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>

@@ -229,7 +229,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, ""));
 		}
 		for (PropertyDefinition property : properties) {
-			if (property.getUniqueId().equals(propertyId) && isPropertyBelongsToResource(property, resourceId)) {
+			if (property.getUniqueId().equals(propertyId) ) {
 				Map<String, PropertyDefinition> propMap = new HashMap<>();
 				propMap.put(property.getName(), property);
 				return Either.left(propMap.entrySet().iterator().next());

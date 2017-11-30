@@ -28,12 +28,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
 public abstract class Component implements Serializable {
 
@@ -342,6 +344,27 @@ public abstract class Component implements Serializable {
 		return componentInstances;
 	}
 
+	public Map<String, ArtifactDefinition> safeGetComponentInstanceDeploymentArtifacts(String componentInstanceId) {
+		Optional<ComponentInstance> componentInstanceById = getComponentInstanceById(componentInstanceId);
+		Map<String, ArtifactDefinition> instanceDeploymentArtifacts = componentInstanceById.get().safeGetDeploymentArtifacts();
+		return instanceDeploymentArtifacts != null ? instanceDeploymentArtifacts : Collections.EMPTY_MAP;
+	}
+
+	public Map<String, ArtifactDefinition> safeGetComponentInstanceInformationalArtifacts(String componentInstanceId) {
+		Optional<ComponentInstance> componentInstanceById = getComponentInstanceById(componentInstanceId);
+		Map<String, ArtifactDefinition> instanceInformationalArtifacts = componentInstanceById.get().safeGetInformationalArtifacts();
+		return instanceInformationalArtifacts != null ? instanceInformationalArtifacts : Collections.EMPTY_MAP;
+	}
+
+	public List<ArtifactDefinition> safeGetComponentInstanceHeatArtifacts(String componentInstanceId) {
+		Optional<ComponentInstance> componentInstanceById = getComponentInstanceById(componentInstanceId);
+		List<ArtifactDefinition> instanceHeatEnvArtifacts = Optional.ofNullable(componentInstanceById.get().safeGetDeploymentArtifacts().values()).orElse(new ArrayList<ArtifactDefinition>())
+				.stream()
+				.filter(artifact -> artifact.getArtifactType() != null && artifact.getArtifactType().equals(ArtifactTypeEnum.HEAT_ENV.name()))
+				.collect(Collectors.toList());
+		return instanceHeatEnvArtifacts == null ? Collections.EMPTY_LIST : instanceHeatEnvArtifacts;
+	}
+
 	public void setComponentInstances(List<ComponentInstance> resourceInstances) {
 		this.componentInstances = resourceInstances;
 	}
@@ -356,6 +379,14 @@ public abstract class Component implements Serializable {
 
 	public Map<String, List<ComponentInstanceProperty>> getComponentInstancesProperties() {
 		return componentInstancesProperties;
+	}
+
+	public List<ComponentInstanceProperty> safeGetComponentInstanceProperties(String cmptInstacneId) {
+		return this.safeGetComponentInstanceEntity(cmptInstacneId, this.componentInstancesProperties);
+	}
+
+	public List<ComponentInstanceInput> safeGetComponentInstanceInput(String comptInstanceId) {
+		return this.safeGetComponentInstanceEntity(comptInstanceId, this.componentInstancesInputs);
 	}
 
 	public void setComponentInstancesProperties(
@@ -409,6 +440,10 @@ public abstract class Component implements Serializable {
 
 	public void setInvariantUUID(String invariantUUID) {
 		componentMetadataDefinition.getMetadataDataDefinition().setInvariantUUID(invariantUUID);
+	}
+
+	public Optional<ComponentInstance> getComponentInstanceById(String id) {
+		return componentInstances.stream().filter(instance -> id.equals(instance.getUniqueId())).findFirst();
 	}
 
 	public List<GroupDefinition> getGroups() {
@@ -631,6 +666,30 @@ public abstract class Component implements Serializable {
 	public Map<String, List<ComponentInstanceInput>> getComponentInstancesInputs() {
 		return componentInstancesInputs;
 	}
+
+	public List<ComponentInstanceInput> safeGetComponentInstanceInputsByName(String cmptInstanceName) {
+		List<ComponentInstanceInput> emptyPropsList = Collections.emptyList();
+		if (this.componentInstancesInputs == null) {
+			return emptyPropsList;
+		}
+		Optional<List<ComponentInstanceInput>> instanceInputsByName = this.componentInstances.stream()
+				.filter(ci -> ci.getName().equals(cmptInstanceName))
+				.map(ComponentInstance::getUniqueId)
+				.map(instanceId -> safeGetComponentInstanceEntity(instanceId, this.componentInstancesInputs))
+				.findAny();
+		return instanceInputsByName.orElse(emptyPropsList);
+	}
+
+	private <T> List<T> safeGetComponentInstanceEntity(String cmptInstanceId, Map<String, List<T>> instanceEntities) {
+		List<T> emptyPropsList = Collections.emptyList();
+		if (instanceEntities == null) {
+			return emptyPropsList;
+		}
+		List<T> cmptInstanceProps = instanceEntities.get(cmptInstanceId);
+		return cmptInstanceProps == null ? emptyPropsList : cmptInstanceProps;
+	}
+
+
 
 	public void setComponentInstancesInputs(Map<String, List<ComponentInstanceInput>> componentInstancesInputs) {
 		this.componentInstancesInputs = componentInstancesInputs;

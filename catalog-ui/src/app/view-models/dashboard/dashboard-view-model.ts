@@ -20,9 +20,10 @@
 
 'use strict';
 import {IConfigRoles, IAppConfigurtaion, IAppMenu, IUserProperties, Component} from "app/models";
-import {EntityService, IUserResourceClass, SharingService, CacheService} from "app/services";
+import {EntityService, SharingService, CacheService} from "app/services";
 import {ComponentType, ResourceType, MenuHandler, ModalsHandler, ChangeLifecycleStateHandler, SEVERITY, ComponentFactory} from "app/utils";
 import {IClientMessageModalModel} from "../modals/message-modal/message-client-modal/client-message-modal-view-model";
+import {UserService} from "../../ng2/services/user.service";
 
 export interface IDashboardViewModelScope extends ng.IScope {
 
@@ -171,7 +172,7 @@ export class DashboardViewModel {
         'sdcMenu',
         '$state',
         '$stateParams',
-        'Sdc.Services.UserResourceService',
+        'UserServiceNg2',
         'Sdc.Services.SharingService',
         'Sdc.Services.CacheService',
         '$q',
@@ -191,7 +192,7 @@ export class DashboardViewModel {
                 private sdcMenu:IAppMenu,
                 private $state:any,
                 private $stateParams:any,
-                private userResourceService:IUserResourceClass,
+                private userService:UserService,
                 private sharingService:SharingService,
                 private cacheService:CacheService,
                 private $q:ng.IQService,
@@ -239,7 +240,7 @@ export class DashboardViewModel {
         this.$scope.isLoading = false;
         this.$scope.sdcConfig = this.sdcConfig;
         this.$scope.sdcMenu = this.sdcMenu;
-        this.$scope.user = this.userResourceService.getLoggedinUser();
+        this.$scope.user = this.userService.getLoggedinUser();
         this.$scope.roles = this.sdcMenu.roles;
         this.$scope.showTutorial = false;
         this.$scope.isFirstTime = false;

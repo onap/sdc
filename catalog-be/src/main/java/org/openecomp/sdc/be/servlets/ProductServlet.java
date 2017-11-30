@@ -99,7 +99,7 @@ public class ProductServlet extends BeGenericServlet {
 			response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), result);
 			return response;
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Create Product");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create Product");
 			log.debug("create product failed with error ", e);
@@ -141,7 +141,7 @@ public class ProductServlet extends BeGenericServlet {
 			Object product = RepresentationUtils.toRepresentation(actionResponse.left().value());
 			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), product);
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Get Product");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Product");
 			log.debug("get product failed with error ", e);
@@ -221,7 +221,7 @@ public class ProductServlet extends BeGenericServlet {
 			response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), product);
 			return response;
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Delete Resource");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Resource");
 			log.debug("delete resource failed with error ", e);

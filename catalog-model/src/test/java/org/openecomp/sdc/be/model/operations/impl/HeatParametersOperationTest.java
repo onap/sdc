@@ -21,6 +21,8 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
@@ -73,8 +75,8 @@ public class HeatParametersOperationTest extends ModelTestBase {
 		GraphRelation graphRelation = new GraphRelation();
 		Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
 
-		when(titanGenericDao.createNode((HeatParameterData) anyObject(), eq(HeatParameterData.class))).thenReturn(either);
-		when(titanGenericDao.createRelation((GraphNode) anyObject(), (GraphNode) anyObject(), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
+		when(titanGenericDao.createNode(any(HeatParameterData.class), eq(HeatParameterData.class))).thenReturn(either);
+		when(titanGenericDao.createRelation(any(GraphNode.class), (GraphNode) any(GraphNode.class), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
 
 		Either<HeatParameterData, TitanOperationStatus> result = heatParametersOperation.addPropertyToGraph(propName, property, "resourceId.artifactId", NodeTypeEnum.ArtifactRef);
 
@@ -100,8 +102,8 @@ public class HeatParametersOperationTest extends ModelTestBase {
 		GraphRelation graphRelation = new GraphRelation();
 		Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
 
-		when(titanGenericDao.createNode((HeatParameterData) anyObject(), eq(HeatParameterData.class))).thenReturn(either);
-		when(titanGenericDao.createRelation((GraphNode) anyObject(), (GraphNode) anyObject(), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
+		when(titanGenericDao.createNode(any(HeatParameterData.class), eq(HeatParameterData.class))).thenReturn(either);
+		when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.HEAT_PARAMETER), anyMap())).thenReturn(relationResult);
 
 		StorageOperationStatus result = heatParametersOperation.addPropertiesToGraph(parameters, "resourceId.artifactId", NodeTypeEnum.ArtifactRef);
 
@@ -190,31 +192,6 @@ public class HeatParametersOperationTest extends ModelTestBase {
 			assertEquals("false", propertyDefinition.getDefaultValue());
 		}
 
-		// assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN,
-		// "true"));
-		// assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN,
-		// "t"));
-		// assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN,
-		// "1"));
-		// assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN,
-		// "on"));
-		// assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN,
-		// "y"));
-		// assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN,
-		// "yes"));
-		// assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN,
-		// "false"));
-		// assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN,
-		// "f"));
-		// assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN,
-		// "0"));
-		// assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN,
-		// "off"));
-		// assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN,
-		// "n"));
-		// assertTrue(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN,
-		// "no"));
-
 		assertFalse(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, "blabla"));
 		assertFalse(heatParametersOperation.isValidValue(HeatParameterType.BOOLEAN, "2"));
 	}
@@ -256,9 +233,9 @@ public class HeatParametersOperationTest extends ModelTestBase {
 		GraphRelation graphRelation = new GraphRelation();
 		Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
 
-		when(titanGenericDao.createNode((HeatParameterValueData) anyObject(), eq(HeatParameterValueData.class))).thenReturn(either);
-		when(titanGenericDao.createRelation((GraphNode) anyObject(), (GraphNode) anyObject(), eq(GraphEdgeLabels.PARAMETER_VALUE), anyMap())).thenReturn(relationResult);
-		when(titanGenericDao.createRelation((GraphNode) anyObject(), (GraphNode) anyObject(), eq(GraphEdgeLabels.PARAMETER_IMPL), anyMap())).thenReturn(relationResult);
+		when(titanGenericDao.createNode(any(HeatParameterValueData.class), eq(HeatParameterValueData.class))).thenReturn(either);
+		when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.PARAMETER_VALUE), anyMap())).thenReturn(relationResult);
+		when(titanGenericDao.createRelation(any(GraphNode.class), any(GraphNode.class), eq(GraphEdgeLabels.PARAMETER_IMPL), isNull())).thenReturn(relationResult);
 
 		Either<HeatParameterValueData, TitanOperationStatus> result = heatParametersOperation.addHeatValueToGraph(property, "artifactLabel", "resourceInstanceId.artifactId", "resourceInstanceId");
 

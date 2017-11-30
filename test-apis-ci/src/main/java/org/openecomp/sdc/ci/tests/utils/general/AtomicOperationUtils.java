@@ -27,16 +27,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.bind.helpers.AbstractUnmarshallerImpl;
-import javax.xml.ws.Response;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.Pair;
-import org.aspectj.apache.bcel.classfile.Code;
 import org.json.JSONException;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -50,14 +46,17 @@ import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.DistributionMonitorObject;
 import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.PropertyReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
@@ -69,6 +68,7 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.utils.DistributionUtils;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
@@ -83,6 +83,7 @@ import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.testng.SkipException;
 
+import com.aventstack.extentreports.Status;
 import com.google.gson.Gson;
 
 import fj.data.Either;
@@ -194,6 +195,25 @@ public final class AtomicOperationUtils {
 		return Either.right(resourceResp);
 	}
 
+	public static Either<Resource, RestResponse> updateResource(ResourceReqDetails resourceReqDetails, User defaultUser, Boolean validateState) {
+		try {
+
+			RestResponse resourceResp = ResourceRestUtils.updateResource(resourceReqDetails, defaultUser, resourceReqDetails.getUniqueId());
+
+			if (validateState) {
+				assertTrue(resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS);
+			}
+
+			if (resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS) {
+				Resource resourceResponseObject = ResponseParser.convertResourceResponseToJavaObject(resourceResp.getResponse());
+				return Either.left(resourceResponseObject);
+			}
+			return Either.right(resourceResp);
+		} catch (Exception e) {
+			throw new AtomicOperationException(e);
+		}
+	}
+	
 	// *********** SERVICE ****************
 
 	public static Either<Service, RestResponse> createDefaultService(UserRoleEnum userRole, Boolean validateState) throws Exception {
@@ -361,7 +381,7 @@ public final class AtomicOperationUtils {
 		RestResponse distributionService = null;
 
 		RestResponse approveDistribution = LifecycleRestUtils.changeDistributionStatus(serviceDetails, null, governotUser, "approveService", DistributionStatusEnum.DISTRIBUTION_APPROVED);
-		if (approveDistribution.getErrorCode() == 200) {
+		if (approveDistribution.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS) {
 			distributionService = LifecycleRestUtils.changeDistributionStatus(serviceDetails, null, opsUser, "approveService", DistributionStatusEnum.DISTRIBUTED);
 		}
 
@@ -769,11 +789,88 @@ public final class AtomicOperationUtils {
 		}
 		HttpRequest http = new HttpRequest();
 		RestResponse response = http.httpSendGet(url, headersMap);
-		if (response.getErrorCode() != 200 && response.getResponse().getBytes() == null && response.getResponse().getBytes().length == 0) {
+		if (response.getErrorCode() != BaseRestUtils.STATUS_CODE_SUCCESS && response.getResponse().getBytes() == null && response.getResponse().getBytes().length == 0) {
 			return Either.right(response);
 		}
 		return Either.left(response.getResponse());
 
+	}
+
+	public static RestResponse getDistributionStatusByDistributionId(String distributionId ,Boolean validateState) {
+
+		try {
+			User defaultUser = ElementFactory.getDefaultUser(UserRoleEnum.OPS);
+			RestResponse response = DistributionUtils.getDistributionStatus(defaultUser, distributionId);
+
+			if (validateState) {
+				assertTrue(response.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS);
+			}
+			return response;
+		
+		} catch (Exception e) {
+			throw new AtomicOperationException(e);
+		}
+	}
+	
+	public static Either <RestResponse, Map<String, List<DistributionMonitorObject>>> getSortedDistributionStatusMap(Service service ,Boolean validateState) {
+		
+		try {
+			ServiceDistributionStatus serviceDistributionObject = DistributionUtils.getLatestServiceDistributionObject(service);
+			RestResponse response = getDistributionStatusByDistributionId(serviceDistributionObject.getDistributionID(), true);
+
+			if(validateState) {
+				assertTrue(response.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS);
+			}
+			if(response.getErrorCode() == ResourceRestUtils.STATUS_CODE_SUCCESS){
+				Map<String, List<DistributionMonitorObject>> parsedDistributionStatus = DistributionUtils.getSortedDistributionStatus(response);
+				return Either.right(parsedDistributionStatus);
+			}
+			return Either.left(response);
+		} catch (Exception e) {
+			throw new AtomicOperationException(e);
+		}
+		
+	}
+	
+	
+	/**
+	 * @param service
+	 * @param pollingCount
+	 * @param pollingInterval
+	 * Recommended values for service distribution for pollingCount is 4 and for pollingInterval is 15000ms
+	 * @throws Exception
+	 */
+	public static Boolean distributeAndValidateService(Service service, int pollingCount, int pollingInterval) throws Exception {
+
+		Boolean statusFlag = true;
+		AtomicOperationUtils.distributeService(service,  true);
+		TimeUnit.MILLISECONDS.sleep(pollingInterval);
+		int timeOut = pollingCount * pollingInterval;
+		while (timeOut > 0) {
+			Map<String,List<DistributionMonitorObject>> sortedDistributionStatusMap = AtomicOperationUtils.getSortedDistributionStatusMap(service, true).right().value();
+			com.clearspring.analytics.util.Pair<Boolean,Map<String,List<String>>> verifyDistributionStatus = DistributionUtils.verifyDistributionStatus(sortedDistributionStatusMap);
+			if(verifyDistributionStatus.left.equals(false)){
+				if((verifyDistributionStatus.right != null && ! verifyDistributionStatus.right.isEmpty()) && timeOut == 0){
+					for(Entry<String, List<String>> entry : verifyDistributionStatus.right.entrySet()){
+						if(ComponentBaseTest.getExtendTest() != null){
+							ComponentBaseTest.getExtendTest().log(Status.INFO, "Consumer: " + entry.getKey() + " failed on following: "+ entry.getValue());
+							statusFlag = false;
+						}else{
+							System.out.println("Consumer: " + entry.getKey() + " failed on following: "+ entry.getValue());
+						}
+					}
+				}
+				TimeUnit.MILLISECONDS.sleep(pollingInterval);
+				timeOut-=pollingInterval;
+			}else {
+				timeOut = 0;
+			}
+		}
+		return statusFlag;
+	}
+	
+	public static Boolean distributeAndValidateService(Service service) throws Exception {
+		return distributeAndValidateService(service, 6, 10000);
 	}
 
 	

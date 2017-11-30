@@ -205,7 +205,6 @@ public class AttFtpClient {
 			try {
 				deleted = apacheFtpClient.deleteFile(file.getName());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

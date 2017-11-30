@@ -20,17 +20,14 @@
 
 package org.openecomp.sdc.ci.tests.datatypes;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
+import com.aventstack.extentreports.Status;
+import com.clearspring.analytics.util.Pair;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum.LeftPanelCanvasItems;
+import org.openecomp.sdc.ci.tests.datatypes.enums.CircleSize;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
+import org.openecomp.sdc.ci.tests.pages.CompositionPage;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -38,7 +35,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
 
-import com.aventstack.extentreports.Status;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public final class CanvasManager {
 	private Map<String, CanvasElement> canvasElements;
@@ -50,6 +49,9 @@ public final class CanvasManager {
 	// connect links
 	private static final int CANVAS_ELEMENT_Y_OFFSET = 30;
 	private static final int CANVAS_ELEMENT_X_OFFSET = 18; // 14 - 27
+
+	private static final int CANVAS_SMALL_ELEMENT_Y_OFFSET = 12;
+	private static final int CANVAS_SMALL_ELEMENT_X_OFFSET = 7;
 
 	private CanvasManager() {
 		canvasElements = new HashMap<>();
@@ -115,9 +117,11 @@ public final class CanvasManager {
 		actions.release();
 		actions.perform();
 		actions.click().perform();
-		GeneralUIUtils.ultimateWait();
+		GeneralUIUtils.ultimateWait();				
+	
+	    validateInstanceSelected(canvasElement);
 		ExtentTestActions.log(Status.INFO, String.format("Canvas element %s selected", canvasElement.getElementType()));
-	}
+	}	
 
 	public void moveElementOnCanvas(CanvasElement canvasElement) throws Exception {
 		moveElementOnCanvas(canvasElement, getFreePosition());
@@ -218,6 +222,7 @@ public final class CanvasManager {
 		return new ImmutablePair<Integer, Integer>(xElement, yElement);
 	}
 
+	// Will work only if 2 elements are big sized (VF size), if one of the elements is Small use the function linkElements
 	public void linkElements(CanvasElement firstElement, CanvasElement secondElement) throws Exception {
 		ExtentTestActions.log(Status.INFO, String.format("Linking between the %s instance and the %s instance.", firstElement.getElementType(), secondElement.getElementType()));
 		drawSimpleLink(firstElement, secondElement);
@@ -225,16 +230,38 @@ public final class CanvasManager {
 		ExtentTestActions.log(Status.INFO, String.format("The instances %s and %s should now be connected.", firstElement.getElementType(), secondElement.getElementType()));
 	}
 
-	private void selectReqAndCapAndConnect() throws Exception {
-		// Select First Cap
-		GeneralUIUtils.getWebElementsListByTestID(DataTestIdEnum.LinkMenuItems.LINK_ITEM_CAP.getValue()).get(0).click();
-		// Select First Req
-		GeneralUIUtils.getWebElementsListByTestID(DataTestIdEnum.LinkMenuItems.LINK_ITEM_REQ.getValue()).get(0).click();
-		// Connect
-		GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.LinkMenuItems.CONNECT_BUTTON.getValue()).click();
-
-		GeneralUIUtils.waitForLoader();
+	public void linkElements(CanvasElement firstElement, CircleSize firstElementSize, CanvasElement secondElement, CircleSize secondElementSize) throws Exception {
+		ExtentTestActions.log(Status.INFO, String.format("Linking between the %s instance and the %s instance.", firstElement.getElementType(), secondElement.getElementType()));
+		drawSimpleLink(firstElement,firstElementSize, secondElement,secondElementSize);
+		selectReqAndCapAndConnect();
+		ExtentTestActions.log(Status.INFO, String.format("The instances %s and %s should now be connected.", firstElement.getElementType(), secondElement.getElementType()));
 	}
+
+	private void selectReqAndCapAndConnect() throws Exception {
+		addFitstReqOrCapAndPressNext();
+		addFitstReqOrCapAndPressNext();		
+		linkMenuClickOnFinishButton();
+	}
+
+	private void addFitstReqOrCapAndPressNext() throws Exception {
+		addFirstReqOrCap();
+		linkMenuClickOnNextButton();
+	}
+
+	private void addFirstReqOrCap() {
+		GeneralUIUtils.getWebElementsListByClassName(DataTestIdEnum.LinkMenuItems.LINK_ITEM_CAP_Or_REQ.getValue()).get(0).click();
+	}
+	
+	private void linkMenuClickOnNextButton() throws Exception {
+		GeneralUIUtils.clickOnElementByText("Next");		
+		GeneralUIUtils.ultimateWait();
+	}
+	
+	private void linkMenuClickOnFinishButton() throws Exception {
+		GeneralUIUtils.clickOnElementByText("Finish");		
+		GeneralUIUtils.ultimateWait();
+	}
+	
 
 	private void drawSimpleLink(CanvasElement firstElement, CanvasElement secondElement) throws Exception {
 		int yOffset = CANVAS_ELEMENT_Y_OFFSET;
@@ -248,6 +275,40 @@ public final class CanvasManager {
 		actions.release();
 		actions.perform();
 		GeneralUIUtils.ultimateWait();
+	}
+
+	private void drawSimpleLink(CanvasElement firstElement, CircleSize firstElementSize, CanvasElement secondElement, CircleSize secondElementSize) throws Exception {
+		Integer yOffset = getCircleOffset(firstElementSize).right;
+		Integer xOffset = getCircleOffset(firstElementSize).left;
+		firstElement.getElementType();
+
+
+				actions.moveToElement(canvas, firstElement.getLocation().left + xOffset,
+				firstElement.getLocation().right - yOffset);
+
+		actions.clickAndHold();
+
+		yOffset = getCircleOffset(secondElementSize).right;
+		xOffset = getCircleOffset(secondElementSize).left;
+
+		actions.moveToElement(canvas, secondElement.getLocation().left + xOffset, secondElement.getLocation().right - yOffset);
+		actions.release();
+		actions.perform();
+		GeneralUIUtils.ultimateWait();
+	}
+
+	private Pair<Integer,Integer> getCircleOffset(CircleSize circleSize)
+	{
+		Pair<Integer,Integer> circleSizes;
+		if(circleSize.equals(CircleSize.BIG))
+		{
+			circleSizes = new Pair <Integer,Integer> (CANVAS_ELEMENT_X_OFFSET,CANVAS_ELEMENT_Y_OFFSET);
+		}
+		else
+		{
+			circleSizes = new Pair <Integer,Integer> (CANVAS_SMALL_ELEMENT_X_OFFSET,CANVAS_SMALL_ELEMENT_Y_OFFSET);
+		}
+		return circleSizes;
 	}
 
 	public String updateElementNameInCanvas(CanvasElement canvasElement, String newInstanceName) throws Exception {
@@ -264,5 +325,32 @@ public final class CanvasManager {
 		GeneralUIUtils.waitForElementInVisibilityByTestId(By.className("w-sdc-modal-resource-instance-name"));
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Name of element instance changed from %s to %s", oldInstanceName, newInstanceName));
 		return oldInstanceName;
+	}
+	
+	/**
+	 * @param canvasElement
+	 * Validate that instance was selected on right sidebar
+	 */
+	public void validateInstanceSelected(CanvasElement canvasElement) {
+		long maxWait = 3000;
+		long sumOfWaiting = 0;
+		long napPeriod = 200;
+		boolean isInstanceSelected;
+		do {
+			isInstanceSelected = CompositionPage.getSelectedInstanceName().contains(canvasElement.getElementType());
+			
+			if (!isInstanceSelected) {				
+				try {
+					TimeUnit.MILLISECONDS.sleep(napPeriod);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			sumOfWaiting += napPeriod;
+			if (sumOfWaiting > maxWait) {
+				Assert.fail(String.format("Can't select instance properly, waited for %s seconds", (int) (maxWait/1000)));
+			}
+		} while (!isInstanceSelected);
 	}
 }
