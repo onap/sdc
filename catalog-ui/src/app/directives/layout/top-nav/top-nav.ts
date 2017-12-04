@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -106,10 +106,11 @@ export class TopNavDirective implements ng.IDirective {
         // Only designer can perform onboarding
         if (scope.user && scope.user.role === 'DESIGNER') {
             tmpArray.push(new MenuItem(this.$filter('translate')("TOP_MENU_ON_BOARD_BUTTON"), null, "onboardVendor", "goToState", null, null));
+            tmpArray.push(new MenuItem("Workflow Designer", null, "workflowDesigner", "goToState", null, null));
             _.each(this.sdcConfig.hostedApplications, (hostedApp:IHostedApplication)=> {
-                if (hostedApp.exists) {
+               // if (hostedApp.exists) {
                     tmpArray.push(new MenuItem(hostedApp.navTitle, null, hostedApp.defaultState, "goToState", null, null));
-                }
+                //}
             });
         }
 

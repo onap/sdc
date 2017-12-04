@@ -39,7 +39,7 @@ module.exports = function(env) {
             // Redirect all '/sdc1/feProxy/rest' to feHost
             middlewares.push(
                 proxy(['/sdc1/feProxy/rest'],{
-                    target: 'http://localhost:' + fePort,
+                    target: 'http://192.168.50.5:' + fePort,
                     changeOrigin: true,
 				    secure: false
                 }));
@@ -47,7 +47,7 @@ module.exports = function(env) {
             // Redirect dcae urls to feHost
             middlewares.push(
                 proxy(['/dcae','/sdc1/feProxy/dcae-api'],{
-                    target: 'http://localhost:' + fePort,
+                    target: 'http://192.168.50.5:' + fePort,
                     changeOrigin: true,
 				    secure: false,
                     onProxyRes: (proxyRes, req, res) => {
@@ -61,7 +61,7 @@ module.exports = function(env) {
             // Redirect onboarding urls to feHost
             middlewares.push(
                 proxy(['/onboarding','/sdc1/feProxy/onboarding-api'],{
-                    target: 'http://localhost:' + fePort,
+                    target: 'http://192.168.50.5:' + fePort,
                     changeOrigin: true,
 				    secure: false,
                     onProxyRes: (proxyRes, req, res) => {
