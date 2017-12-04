@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_751443f5",
+        "filename": "openecomp-ui/src/nfvo-components/vnfMarketPlace/VnfRepositorySearchBox.jsx",
+        "patchSetId": 11
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-12-04T08:41:11Z",
+      "side": 1,
+      "message": "this is not used.",
+      "range": {
+        "startLine": 42,
+        "startChar": 2,
+        "endLine": 42,
+        "endChar": 51
+      },
+      "revId": "baebe989f102c10d5077fb24a6948893284a236d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_15f93fc8",
+        "filename": "openecomp-ui/src/sdc-app/config/config.json",
+        "patchSetId": 11
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-12-04T08:41:11Z",
+      "side": 1,
+      "message": "maybe make this a toggled feature in the future",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 23
+      },
+      "revId": "baebe989f102c10d5077fb24a6948893284a236d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_35f6bbd8",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/landingPage/SoftwareProductLandingPageView.jsx",
+        "patchSetId": 11
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-12-04T08:41:11Z",
+      "side": 1,
+      "message": "i would add the if only to inner div but this is also ok.",
+      "range": {
+        "startLine": 109,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 3
+      },
+      "revId": "baebe989f102c10d5077fb24a6948893284a236d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d502f7b3",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportActionHelper.js",
+        "patchSetId": 11
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-12-04T08:41:11Z",
+      "side": 1,
+      "message": "this can be moved into a utility class since it is used by a few classes now. i will do this as part of the restful-js replacement in the near future",
+      "range": {
+        "startLine": 102,
+        "startChar": 0,
+        "endLine": 126,
+        "endChar": 1
+      },
+      "revId": "baebe989f102c10d5077fb24a6948893284a236d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b5316ba4",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/softwareProduct/vnfMarketPlace/VNFImportView.jsx",
+        "patchSetId": 11
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1877
+      },
+      "writtenOn": "2017-12-04T08:41:11Z",
+      "side": 1,
+      "message": "i would suggest to always sort and decide on the comparison objects depending on the sortDesc instead of assuming we always start from ascending even at the expense of the slight overhead.",
+      "range": {
+        "startLine": 151,
+        "startChar": 0,
+        "endLine": 167,
+        "endChar": 3
+      },
+      "revId": "baebe989f102c10d5077fb24a6948893284a236d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
