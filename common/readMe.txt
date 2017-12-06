@@ -14,17 +14,17 @@ In 1707, Artifact Generator will generate artifacts only for A&AI.
 ###Common can be compiled easily with a `mvn clean install` at the following locations :
 
 #### common\openecomp-sdc-artifact-generator-lib
-#### common\openecomp-logging-lib
+#### common\openecomp-sdc-logging-lib
 
 ### For artifact generator, the resultant jar files are located at :
 
 #### common\openecomp-sdc-artifact-generator-lib\openecomp-sdc-artifact-generator-api\target
 #### common\openecomp-sdc-artifact-generator-lib\openecomp-sdc-artifact-generator-core\target
 
-### For openecomp-logging, the resultant jar files are located at :
+### For openecomp-sdc-logging, the resultant jar files are located at :
 
-#### common\openecomp-logging-lib\openecomp-logging-api\target
-#### common\openecomp-logging-lib\openecomp-logging-core\target
+#### common\openecomp-sdc-logging-lib\openecomp-sdc-logging-api\target
+#### common\openecomp-sdc-logging-lib\openecomp-sdc-logging-core\target
 
 ### For configuration-management, the resultant jar files are located at :
 
@@ -61,16 +61,16 @@ In 1707, Artifact Generator will generate artifacts only for A&AI.
 #### api :
 
  <dependency>
-    <groupId>org.openecomp.sdc.common</groupId>
-    <artifactId>openecomp-logging-api</artifactId>
+    <groupId>org.openecomp.sdc</groupId>
+    <artifactId>openecomp-sdc-logging-api</artifactId>
     <version>?</version>
  </dependency>
 
 #### core :
 
  <dependency>
-    <groupId>org.openecomp.sdc.common</groupId>
-    <artifactId>openecomp-logging-core</artifactId>
+    <groupId>org.openecomp.sdc</groupId>
+    <artifactId>openecomp-sdc-logging-core</artifactId>
     <version>?</version>
  </dependency>
 
