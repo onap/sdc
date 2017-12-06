@@ -15,6 +15,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-logging-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.10</version>
@@ -51,14 +56,10 @@
             <artifactId>reflections</artifactId>
             <version>${org.reflections.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>org.openecomp.sdc.common</groupId>
-            <artifactId>openecomp-logging-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.common</groupId>
-            <artifactId>openecomp-logging-core</artifactId>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-logging-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -79,6 +80,7 @@
             <scope>test</scope>
             <version>${junit.version}</version>
         </dependency>
+
     </dependencies>
     <build>
         <plugins>

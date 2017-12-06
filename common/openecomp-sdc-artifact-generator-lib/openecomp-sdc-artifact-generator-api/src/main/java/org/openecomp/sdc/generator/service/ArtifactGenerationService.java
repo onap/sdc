@@ -28,8 +28,8 @@ import static org.openecomp.sdc.generator.data.GeneratorConstants.GENERATOR_ERRO
 import static org.openecomp.sdc.generator.data.GeneratorConstants.GENERATOR_PARTNER_NAME;
 import static org.openecomp.sdc.generator.data.GeneratorConstants.PARTNER_NAME;
 
-import org.openecomp.core.logging.api.Logger;
-import org.openecomp.core.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.generator.data.Artifact;
 import org.openecomp.sdc.generator.data.GenerationData;
 import org.openecomp.sdc.generator.logging.CategoryLogLevel;
@@ -37,7 +37,6 @@ import org.slf4j.MDC;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
