@@ -1,0 +1,197 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_9146be22",
+        "filename": "common/openecomp-sdc-artifact-generator-lib/openecomp-sdc-artifact-generator-api/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-06T14:30:08Z",
+      "side": 1,
+      "message": "Please move this next to openecomp-sdc-logging-core",
+      "revId": "6fddacd7ce9d4df56d488dde89f9ac6e5592323b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_314b2a2d",
+        "filename": "common/openecomp-sdc-artifact-generator-lib/openecomp-sdc-artifact-generator-api/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-06T14:30:08Z",
+      "side": 1,
+      "message": "Check if this can be referenced with scope \"runtime\"",
+      "revId": "6fddacd7ce9d4df56d488dde89f9ac6e5592323b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5148362d",
+        "filename": "common/openecomp-sdc-artifact-generator-lib/openecomp-sdc-artifact-generator-core/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-06T14:30:08Z",
+      "side": 1,
+      "message": "Can this have scope \"runtime\"?",
+      "revId": "6fddacd7ce9d4df56d488dde89f9ac6e5592323b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f154e2cb",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-core/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-06T14:30:08Z",
+      "side": 1,
+      "message": "If this dependency is not needed, please delete it.",
+      "revId": "6fddacd7ce9d4df56d488dde89f9ac6e5592323b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d163e6af",
+        "filename": "openecomp-be/lib/openecomp-healing-lib/openecomp-sdc-healing-impl/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-06T14:30:08Z",
+      "side": 1,
+      "message": "Check if this change is correct. Also, don\u0027t use the hard-coded version. It probably should be ${project.version}",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 21
+      },
+      "revId": "6fddacd7ce9d4df56d488dde89f9ac6e5592323b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_516fd692",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-06T14:30:08Z",
+      "side": 1,
+      "message": "Please use 4 spaces instead of tabs.",
+      "revId": "6fddacd7ce9d4df56d488dde89f9ac6e5592323b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f16b8283",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/SLF4JLoggerCreationService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-06T14:30:08Z",
+      "side": 1,
+      "message": "The naming is inconsistent - SLF4J in the service class name, while Slf4J in the wrapper.",
+      "revId": "6fddacd7ce9d4df56d488dde89f9ac6e5592323b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b105fac3",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/main/java/org/openecomp/sdc/logging/aspects/MetricsAspect.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-06T14:30:08Z",
+      "side": 1,
+      "message": "logger.metrics() should be used here.",
+      "revId": "6fddacd7ce9d4df56d488dde89f9ac6e5592323b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_31f9eac8",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/test/java/org/openecomp/sdc/logging/aspects/MetricsAspectTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-06T14:30:08Z",
+      "side": 1,
+      "message": "Why is this test disabled?",
+      "revId": "6fddacd7ce9d4df56d488dde89f9ac6e5592323b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_51f6f6d8",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/test/java/org/openecomp/sdc/logging/aspects/MetricsAspectTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-06T14:30:08Z",
+      "side": 1,
+      "message": "Why disabled?",
+      "revId": "6fddacd7ce9d4df56d488dde89f9ac6e5592323b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f102a2b3",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-core/src/test/java/org/openecomp/sdc/logging/context/MDCPropagationFactoryTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-06T14:30:08Z",
+      "side": 1,
+      "message": "Why is this test disabled?",
+      "revId": "6fddacd7ce9d4df56d488dde89f9ac6e5592323b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
