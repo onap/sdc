@@ -346,7 +346,7 @@
 
                                 <!-- Build backend image -->
                                 <image>
-                                    <name>openecomp/sdc-backend</name>
+                                    <name>onap/sdc-backend</name>
                                     <alias>sdc-backend</alias>
                                     <build>
                                         <cleanup>try</cleanup>
@@ -361,7 +361,7 @@
 
                                 <!-- Build frontend image -->
                                 <image>
-                                    <name>openecomp/sdc-frontend</name>
+                                    <name>onap/sdc-frontend</name>
                                     <alias>sdc-frontend</alias>
                                     <build>
                                         <cleanup>try</cleanup>
@@ -376,7 +376,7 @@
 
                                 <!-- Build elastic search image -->
                                 <image>
-                                    <name>openecomp/sdc-elasticsearch</name>
+                                    <name>onap/sdc-elasticsearch</name>
                                     <alias>sdc-elasticsearch</alias>
                                     <build>
                                         <cleanup>try</cleanup>
@@ -391,7 +391,7 @@
 
                                 <!-- Build kibana image -->
                                 <image>
-                                    <name>openecomp/sdc-kibana</name>
+                                    <name>onap/sdc-kibana</name>
                                     <alias>sdc-kibana</alias>
                                     <build>
                                         <cleanup>try</cleanup>
@@ -406,7 +406,7 @@
 
                                 <!-- Build cassandra image -->
                                 <image>
-                                    <name>openecomp/sdc-cassandra</name>
+                                    <name>onap/sdc-cassandra</name>
                                     <alias>sdc-cassandra</alias>
                                     <build>
                                         <cleanup>try</cleanup>
@@ -421,7 +421,7 @@
 
                                 <!-- Build sanity image -->
                                 <image>
-                                    <name>openecomp/sdc-sanity</name>
+                                    <name>onap/sdc-sanity</name>
                                     <alias>sdc-sanity</alias>
                                     <build>
                                         <cleanup>try</cleanup>
@@ -445,7 +445,7 @@
                                 </goals>
                                 <configuration>
                                     <removeAll>true</removeAll>
-                                    <image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana,openecomp/sdc-sanity<!-- ,openecomp/sdc-sanity --></image>
+                                    <image>onap/sdc-backend,onap/sdc-frontend,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra,onap/sdc-sanity</image>
                                 </configuration>
                             </execution>
 
@@ -465,7 +465,7 @@
                                 </goals>
                                 <configuration>
                                     <image>
-                                        openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana,openecomp/sdc-sanity<!-- ,openecomp/sdc-sanity --></image>
+                                        onap/sdc-backend,onap/sdc-frontend,onap/sdc-elasticsearch,onap/sdc-kibana,onap/sdc-cassandra,onap/sdc-sanity</image>
                                 </configuration>
                             </execution>
                         </executions>
