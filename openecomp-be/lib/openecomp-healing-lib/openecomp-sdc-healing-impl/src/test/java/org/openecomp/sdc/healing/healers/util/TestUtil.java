@@ -1,5 +1,6 @@
 package org.openecomp.sdc.healing.healers.util;
 
+import org.junit.Assert;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -7,7 +8,6 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
-import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -98,8 +98,7 @@ public class TestUtil {
       ServiceTemplate actualServiceTemplate =
           actualServiceTemplates.get(serviceTemplateName);
 
-      Assert.notNull(actualServiceTemplate,
-          "Missing service template in service model : " + serviceTemplateName);
+      Assert.assertNotNull("Missing service template in service model : " + serviceTemplateName, actualServiceTemplate);
       org.junit.Assert.assertEquals("Difference in file " + serviceTemplateName,
           JsonUtil.object2Json(expectedServiceTemplateEntry.getValue()),
           JsonUtil.object2Json(actualServiceTemplate));
