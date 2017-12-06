@@ -1,0 +1,57 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
+package org.openecomp.sdc.logging.context;
+
+import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.slf4j.MDC;
+
+
+public class MdcUtil {
+
+  /**
+   * Sets values for mdc.
+   *
+   * @param targetEntity      the target entity
+   * @param targetServiceName the target service name
+   * @param errorCategory     the error category
+   * @param errorCode         the error code
+   * @param errorDescription  the error description
+   */
+  public static void setValuesForMdc(String targetEntity, String targetServiceName,
+                                     String errorCategory, String errorCode,
+                                     String errorDescription) {
+    MDC.put(LoggerConstants.TARGET_ENTITY, targetEntity);
+    MDC.put(LoggerConstants.TARGET_SERVICE_NAME, targetServiceName);
+    MDC.put(LoggerConstants.ERROR_CATEGORY, errorCategory);
+    MDC.put(LoggerConstants.ERROR_CODE, errorCode);
+    MDC.put(LoggerConstants.ERROR_DESCRIPTION, errorDescription);
+  }
+
+
+  /**
+   * Init mdc.
+   *  @param serviceName the service name
+   *
+   */
+  public static void initMdc(String serviceName) {
+    MDC.put(LoggerConstants.SERVICE_NAME, serviceName);
+  }
+}

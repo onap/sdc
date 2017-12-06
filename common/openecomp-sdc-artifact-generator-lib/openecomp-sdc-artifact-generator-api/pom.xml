@@ -3,7 +3,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>openecomp-sdc-artifact-generator-api</name>
-    <groupId>org.openecomp.sdc.common</groupId>
     <artifactId>openecomp-sdc-artifact-generator-api</artifactId>
 
     <parent>
@@ -14,6 +13,17 @@
     </parent>
 
     <dependencies>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-logging-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-logging-core</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -52,16 +62,6 @@
             <version>${org.reflections.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.sdc.common</groupId>
-            <artifactId>openecomp-logging-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.common</groupId>
-            <artifactId>openecomp-logging-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>
@@ -79,6 +79,7 @@
             <scope>test</scope>
             <version>${junit.version}</version>
         </dependency>
+
     </dependencies>
     <build>
         <plugins>

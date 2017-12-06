@@ -78,8 +78,8 @@ import static org.openecomp.sdc.generator.logging.ArtifactGeneratorLogResponseCo
 import static org.openecomp.sdc.generator.logging.ArtifactGeneratorLogResponseCode.SERVICE_TOSCA_MISSING;
 import static org.openecomp.sdc.generator.logging.ArtifactGeneratorLogResponseCode.UNABLE_TO_GENERATE_ARTIFACT;
 
-import org.openecomp.core.logging.api.Logger;
-import org.openecomp.core.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.generator.data.Artifact;
 import org.openecomp.sdc.generator.logging.ArtifactGeneratorLogResponseCode;
 import org.openecomp.sdc.generator.logging.CategoryLogLevel;

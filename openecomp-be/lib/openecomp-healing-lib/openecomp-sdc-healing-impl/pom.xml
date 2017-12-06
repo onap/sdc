@@ -18,6 +18,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-vendor-software-product-api</artifactId>
             <version>${project.version}</version>
@@ -32,12 +38,6 @@
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-vendor-license-api</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>

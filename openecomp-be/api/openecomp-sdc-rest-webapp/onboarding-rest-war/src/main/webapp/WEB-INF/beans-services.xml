@@ -35,7 +35,6 @@
     <bean id="applicationConfigManager" class="org.openecomp.sdc.applicationconfig.impl.ApplicationConfigManagerImpl"/>
 
     <!-- aspect beans -->
-    <bean id = "debugAspect" class="org.openecomp.sdc.logging.aspects.DebugAspect"/>
     <bean id = "healthCheck" class="org.openecomp.sdcrests.health.rest.services.HealthCheckImpl"/>
     <!--aop:config>
         < aspect pointcuts>
