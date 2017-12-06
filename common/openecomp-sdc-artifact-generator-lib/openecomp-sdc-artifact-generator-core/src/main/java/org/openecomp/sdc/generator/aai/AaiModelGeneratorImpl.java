@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.generator.aai;
 
-import org.openecomp.core.logging.api.Logger;
-import org.openecomp.core.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.generator.aai.model.Resource;
 import org.openecomp.sdc.generator.aai.model.Service;
 import org.openecomp.sdc.generator.aai.model.Widget;

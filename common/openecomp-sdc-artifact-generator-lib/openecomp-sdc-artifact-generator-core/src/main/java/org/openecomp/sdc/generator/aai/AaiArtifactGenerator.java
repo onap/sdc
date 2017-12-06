@@ -28,8 +28,8 @@ import static org.openecomp.sdc.generator.data.GeneratorConstants.GENERATOR_AAI_
 import static org.openecomp.sdc.generator.data.GeneratorConstants.ID_LENGTH;
 import static org.openecomp.sdc.generator.util.ArtifactGeneratorUtil.logError;
 
-import org.openecomp.core.logging.api.Logger;
-import org.openecomp.core.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.generator.aai.model.AllotedResource;
 import org.openecomp.sdc.generator.aai.model.ProvidingService;
 import org.openecomp.sdc.generator.aai.model.L3NetworkWidget;

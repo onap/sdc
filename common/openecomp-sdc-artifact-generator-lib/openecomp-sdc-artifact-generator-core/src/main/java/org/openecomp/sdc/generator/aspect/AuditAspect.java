@@ -44,8 +44,8 @@ import static org.openecomp.sdc.generator.util.ArtifactGeneratorUtil.resetLoggin
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.openecomp.core.logging.api.Logger;
-import org.openecomp.core.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.generator.data.GenerationData;
 import org.openecomp.sdc.generator.logging.CategoryLogLevel;
 import org.openecomp.sdc.generator.logging.StatusCode;

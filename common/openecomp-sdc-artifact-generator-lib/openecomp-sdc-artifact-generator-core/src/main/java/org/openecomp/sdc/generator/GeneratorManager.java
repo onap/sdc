@@ -24,8 +24,8 @@ import static org.openecomp.sdc.generator.data.GeneratorConstants.GENERATOR_ERRO
 import static org.openecomp.sdc.generator.util.ArtifactGeneratorUtil.logError;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openecomp.core.logging.api.Logger;
-import org.openecomp.core.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.generator.data.ArtifactType;
 import org.openecomp.sdc.generator.data.GeneratorConfiguration;
 import org.openecomp.sdc.generator.intf.ArtifactGenerator;

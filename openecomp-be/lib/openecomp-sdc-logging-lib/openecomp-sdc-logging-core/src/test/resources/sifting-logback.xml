@@ -1,0 +1,42 @@
+<configuration scan="true" scanPeriod="3 seconds" debug="true">
+
+    <property name="logDir" value="logs" />
+    <property name="componentName" value="SDC" />
+
+    <property name="defaultPattern" value="%date{ISO8601,UTC}|%X{RequestId}|%X{ServiceInstanceId}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{ServerFQDN}|%X{RemoteHost}|%X{ClassName}|%X{Timer}| %msg%n" />
+
+    <property name="debugPattern" value="%date{ISO8601,UTC}|%X{RequestId}|%X{ServiceInstanceId}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{ServerFQDN}|%X{RemoteHost}|%X{ClassName}|%X{Timer}|[%caller{3}]| %msg%n" />
+
+    <property name="logDirectory" value="${logDir}/${componentName}" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${defaultPattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="DISPATCHER" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator class="org.openecomp.sdc.logging.logback.EventTypeDiscriminator"/>
+        <sift>
+            <appender name="${eventType}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${logDirectory}/${eventType}.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                    <fileNamePattern>${logDirectory}/${eventType}.%i.log.zip</fileNamePattern>
+                    <minIndex>1</minIndex>
+                    <maxIndex>9</maxIndex>
+                </rollingPolicy>
+                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <maxFileSize>5MB</maxFileSize>
+                </triggeringPolicy>
+                <encoder>
+                    <pattern>${defaultPattern}</pattern>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>
+
+    <root level="DEBUG" additivity="false">
+        <appender-ref ref="DISPATCHER" />
+    </root>
+
+</configuration>

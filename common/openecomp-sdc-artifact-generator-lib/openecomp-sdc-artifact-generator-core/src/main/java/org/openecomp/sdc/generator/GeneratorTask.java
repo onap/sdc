@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.generator;
 
-import org.openecomp.core.logging.api.Logger;
-import org.openecomp.core.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.generator.data.Artifact;
 import org.openecomp.sdc.generator.data.GenerationData;
 import org.openecomp.sdc.generator.intf.ArtifactGenerator;
