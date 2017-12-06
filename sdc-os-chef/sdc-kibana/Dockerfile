@@ -1,4 +1,4 @@
-FROM openecomp/base_sdc-kibana:v1.0.0
+FROM onap/base_sdc-kibana:1.2.0-SNAPSHOT-latest
 
 COPY chef-solo /root/chef-solo/
 

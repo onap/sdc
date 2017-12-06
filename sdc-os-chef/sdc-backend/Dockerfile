@@ -1,4 +1,4 @@
-FROM openecomp/base_sdc-backend:v1.0.0
+FROM onap/base_sdc-jetty:1.2.0-SNAPSHOT-latest
 
 COPY chef-solo /root/chef-solo/
 
