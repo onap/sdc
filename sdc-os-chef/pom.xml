@@ -182,7 +182,7 @@
 											<include>Artifact-Generator.properties</include>
 											<include>error-configuration.yaml</include>
 											<include>ecomp-error-configuration.yaml</include>
-                                                                                        <include>config-vnfsdk.yaml</include>
+											<include>config-vnfrepo.yaml</include>
 											<include>logback.xml</include>
 										</includes>
 									</resource>

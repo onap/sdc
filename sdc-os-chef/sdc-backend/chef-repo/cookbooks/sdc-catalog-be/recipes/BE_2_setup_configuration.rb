@@ -54,7 +54,7 @@ end
 
 
 template "VnfrepoConfiguration" do
-   path "/#{jetty_base}/config/onboarding-be/config-vnfsdk.yaml"
+   path "/#{jetty_base}/config/onboarding-be/config-vnfrepo.yaml"
    source "BE-vnfrepo-configuration.yaml.erb"
    owner "jetty"
    group "jetty"

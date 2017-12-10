@@ -66,10 +66,10 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 	private static boolean initFlag = false;
 
 	// Default VNF Repository configuration
-	private static final String CONFIG_NAMESPACE = "vnfsdk";
+	private static final String CONFIG_NAMESPACE = "vnfrepo";
 
 	// Default address for VNF repository docker
-	private static final String DEF_DOCKER_COMPOSE_ADDR = "172.18.0.1";
+	private static final String DEF_DOCKER_COMPOSE_ADDR = "127.0.0.1";
 	private static String ipAddress = DEF_DOCKER_COMPOSE_ADDR;
 
 	// Default Download package URI and Get VNF package meta-data URI -
