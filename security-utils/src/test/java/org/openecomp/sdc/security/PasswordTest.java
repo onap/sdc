@@ -20,10 +20,9 @@
 
 package org.openecomp.sdc.security;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.openecomp.sdc.security.Passwords;
 
 public class PasswordTest {
 

@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.servlets;
 
-import javax.annotation.Generated;
-
 import org.apache.tinkerpop.gremlin.structure.T;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.ArtifactDefinition;

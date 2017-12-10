@@ -23,7 +23,6 @@ package org.openecomp.sdc.fe.config;
 import org.openecomp.sdc.common.config.AbsEcompErrorManager;
 import org.openecomp.sdc.common.config.EcompErrorEnum;
 import org.openecomp.sdc.common.config.IEcompConfigurationManager;
-import org.openecomp.sdc.fe.config.ConfigurationManager;
 
 public class FeEcompErrorManager extends AbsEcompErrorManager {
 

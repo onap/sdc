@@ -2,7 +2,6 @@ package org.openecomp.sdc.be.components.impl;
 
 import java.util.List;
 
-import javax.annotation.Generated;
 import javax.servlet.ServletContext;
 
 import org.junit.Test;

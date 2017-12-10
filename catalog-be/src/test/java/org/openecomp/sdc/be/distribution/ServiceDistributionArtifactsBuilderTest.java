@@ -26,6 +26,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.openecomp.sdc.be.components.BaseConfDependentTest;
@@ -33,6 +35,7 @@ import org.openecomp.sdc.be.components.distribution.engine.ArtifactInfoImpl;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
 public class ServiceDistributionArtifactsBuilderTest extends BaseConfDependentTest {
@@ -63,11 +66,24 @@ public class ServiceDistributionArtifactsBuilderTest extends BaseConfDependentTe
 		toscaTemplateArtifact.setArtifactType(ArtifactTypeEnum.TOSCA_TEMPLATE.getType());
 		toscaTemplateArtifact.setArtifactLabel(artifactLabel);
 		toscaTemplateArtifact.setEsId(esArtifactId);
+		toscaTemplateArtifact.setUniqueId(esArtifactId);
 		toscaTemplateArtifact.setPayload(payload);
 		
 		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
 		toscaArtifacts.put(artifactLabel, toscaTemplateArtifact);
 		service.setToscaArtifacts(toscaArtifacts);
+		
+		ArtifactDefinition deploymentArtifact = new ArtifactDefinition();
+		deploymentArtifact.setArtifactName("deployment.yaml");
+		deploymentArtifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+		deploymentArtifact.setArtifactType(ArtifactTypeEnum.OTHER.getType());
+		deploymentArtifact.setArtifactLabel("deployment");
+		deploymentArtifact.setEsId("deployment007");
+		deploymentArtifact.setUniqueId("deployment007");
+		deploymentArtifact.setPayload(payload);
+		Map<String, ArtifactDefinition> deploymentArtifacts = new HashMap<>();
+		deploymentArtifacts.put("deployment", deploymentArtifact);
+		service.setDeploymentArtifacts(deploymentArtifacts);
 		
 		Class<ServiceDistributionArtifactsBuilder> targetClass = ServiceDistributionArtifactsBuilder.class;
 		String methodName = "convertServiceArtifactsToArtifactInfo";
@@ -79,8 +95,9 @@ public class ServiceDistributionArtifactsBuilderTest extends BaseConfDependentTe
 	    	List<ArtifactInfoImpl> convertServiceArtifactsToArtifactInfoRes =
 	    			(List<ArtifactInfoImpl>) method.invoke(serviceDistributionArtifactsBuilder, argObjects);
 	    	assertTrue(convertServiceArtifactsToArtifactInfoRes != null);
-	    	assertTrue(convertServiceArtifactsToArtifactInfoRes.size() == 1);
-	    	assertTrue(convertServiceArtifactsToArtifactInfoRes.get(0).getArtifactName().equals(artifactName));
+	    	assertTrue(convertServiceArtifactsToArtifactInfoRes.size() == 2);
+	    	List<String> artifactsNames = convertServiceArtifactsToArtifactInfoRes.stream().map(a->a.getArtifactName()).collect(Collectors.toList());
+	    	assertTrue(artifactsNames.contains(artifactName) && artifactsNames.contains("deployment.yaml"));
 	    }
 	    catch (Exception e) {
 	    	e.printStackTrace();

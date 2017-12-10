@@ -1,0 +1,21 @@
+{
+  "payloadName": "extContrailCP.yml",
+  "contactId": "DS200P",
+  "name": "extContrailCP",
+  "description": "The AT&T Connection Point base type all other CP derive from",
+  "resourceIconPath": "network",
+  "resourceType": "CP",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+     {
+        "name": "Network Elements"
+      }
+    ]
+  }
+],  
+ "tags": [
+    "extContrailCP"
+  ]
+}

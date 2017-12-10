@@ -3,8 +3,6 @@ package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Generated;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 

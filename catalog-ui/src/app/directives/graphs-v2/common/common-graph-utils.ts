@@ -164,12 +164,54 @@ export class CommonGraphUtils {
         if (!this.isRelationCertified(cy.nodes(), link.source, link.target)) {
             link.classes = 'not-certified-link';
         }
-        cy.add({
+        let linkElement = cy.add({
             group: 'edges',
             data: link,
             classes: link.classes
         });
+        this.initLinkTooltip(linkElement, link);
+    };
 
+    /**
+     * This function will init qtip tooltip on the link
+     * @params linkElement - the link we want the tooltip to apply on,
+     * link - the link obj
+     */
+    public initLinkTooltip(linkElement:Cy.CollectionElements, link:CompositionCiLinkBase) {
+
+        let opts = {
+            content: function () {
+                return '<div class="line">' +
+                            '<span class="req-cap-label">R: </span>' +
+                            '<span>'+ link.relation.relationships[0].relation.requirement + '</span>' +
+                        '</div>' +
+                        '<div class="line">' +
+                            '<div class="sprite-new link-tooltip-arrow"></div>' +
+                            '<span class="req-cap-label">C: </span>' +
+                            '<span>' + link.relation.relationships[0].relation.capability + '</span>' +
+                        '</div>';
+            },
+            position: {
+                my: 'top center',
+                at: 'bottom center',
+                adjust: {x:0, y:0}
+            },
+            style: {
+                classes: 'qtip-dark qtip-rounded qtip-custom link-qtip',
+                tip: {
+                    width: 16,
+                    height: 8
+                }
+            },
+            show: {
+                event: 'mouseover',
+                delay: 1000
+            },
+            hide: {event: 'mouseout mousedown'},
+            includeLabels: true
+        };
+
+        linkElement.qtip(opts);
     };
 
     /**

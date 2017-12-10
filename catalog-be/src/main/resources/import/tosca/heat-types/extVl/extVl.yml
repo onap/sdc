@@ -10,7 +10,7 @@ node_types:
         description: ECOMP supported network types. 
       network_role:
         type: string
-        required: ture
+        required: true
         description: >
           Unique label that defines the role that this network performs.  
           example: vce oam network, vnat sr-iov1 network

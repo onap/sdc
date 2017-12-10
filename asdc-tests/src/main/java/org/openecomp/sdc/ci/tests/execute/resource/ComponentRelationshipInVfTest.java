@@ -39,9 +39,10 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.CapReqDef;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
+import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -71,16 +72,12 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 
 	private ResourceReqDetails resourceDetailsVF;
 	private User designerUser;
-	private User adminUser;
-	private User testerUser;
 	private ResourceReqDetails resourceDetailsReq;
 	private ResourceReqDetails resourceDetailsCap;
 
 	@BeforeMethod
 	public void before() throws Exception {
 		designerUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		adminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
-		testerUser = ElementFactory.getDefaultUser(UserRoleEnum.TESTER);
 
 		resourceDetailsVF = ElementFactory.getDefaultResourceByType("VF100", NormativeTypesEnum.ROOT,
 				ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, designerUser.getUserId(), ResourceTypeEnum.VF.toString());
@@ -119,7 +116,7 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 		requirementDef.setFromNode(riReq.getUniqueId());
 		requirementDef.setToNode(riCap.getUniqueId());
 
-		RequirementAndRelationshipPair pair = new RequirementAndRelationshipPair();
+		RelationshipInfo pair = new RelationshipInfo();
 		pair.setRequirementOwnerId(riReq.getUniqueId());
 		pair.setCapabilityOwnerId(riCap.getUniqueId());
 		pair.setRequirement("host");
@@ -128,8 +125,10 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 		pair.setRelationships(relationship);
 		pair.setCapabilityUid(capbilityUid);
 		pair.setRequirementUid(requirementUid);
-		List<RequirementAndRelationshipPair> relationships = new ArrayList<>();
-		relationships.add(pair);
+		List<CapabilityRequirementRelationship> relationships = new ArrayList<>();
+		CapabilityRequirementRelationship capReqRel = new CapabilityRequirementRelationship();
+		capReqRel.setRelation(pair);
+		relationships.add(capReqRel);
 		requirementDef.setRelationships(relationships);
 		return requirementDef;
 	}
@@ -179,7 +178,7 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 		requirementDef.setFromNode(riReq.getUniqueId());
 		requirementDef.setToNode(riCap.getUniqueId());
 
-		RequirementAndRelationshipPair pair = new RequirementAndRelationshipPair();
+		RelationshipInfo pair = new RelationshipInfo();
 		pair.setRequirementOwnerId(riReq.getUniqueId());
 		pair.setCapabilityOwnerId(riCap.getUniqueId());
 		pair.setRequirement("host");
@@ -188,8 +187,10 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 		pair.setRelationships(relationship);
 		pair.setCapabilityUid(capList.get(0).getUniqueId());
 		pair.setRequirementUid(reqList.get(0).getUniqueId());
-		List<RequirementAndRelationshipPair> relationships = new ArrayList<>();
-		relationships.add(pair);
+		List<CapabilityRequirementRelationship> relationships = new ArrayList<>();
+		CapabilityRequirementRelationship capReqRel = new CapabilityRequirementRelationship();
+		capReqRel.setRelation(pair);
+		relationships.add(capReqRel);
 		requirementDef.setRelationships(relationships);
 
 		RestResponse associateInstances = ComponentInstanceRestUtils.associateInstances(requirementDef, designerUser,
@@ -367,10 +368,8 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 	public void associateCpToVfTest() throws Exception {
 		createTwoAtomicResourcesByType(ResourceTypeEnum.CP.toString(), ResourceTypeEnum.VL.toString());
 
-		ComponentInstance riCapInVfInstance = createComponentInstance(resourceDetailsCap, designerUser,
-				resourceDetailsVF);
-		ComponentInstance riReqInVfInstance = createComponentInstance(resourceDetailsReq, designerUser,
-				resourceDetailsVF);
+		createComponentInstance(resourceDetailsCap, designerUser, resourceDetailsVF);
+		createComponentInstance(resourceDetailsReq, designerUser, resourceDetailsVF);
 
 		ResourceReqDetails vfHigh = new ResourceReqDetails(resourceDetailsVF, "0.1");
 		vfHigh.setName("vfHigh");
@@ -510,10 +509,6 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 		ComponentInstance riCap = createComponentInstance(resourceDetailsCap);
 
 		CapReqDef capReqDefBeforeAssociate = getResourceReqCap();
-		Map<String, List<CapabilityDefinition>> capabilitiesBeforeAssociate = capReqDefBeforeAssociate
-				.getCapabilities();
-		Map<String, List<RequirementDefinition>> requirementsBeforeAssociate = capReqDefBeforeAssociate
-				.getRequirements();
 
 		RequirementCapabilityRelDef requirementDef = setRelationshipBetweenInstances(riReq, riCap,
 				capReqDefBeforeAssociate);
@@ -544,10 +539,6 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 		ComponentInstance riCap = createComponentInstance(resourceDetailsCap);
 
 		CapReqDef capReqDefBeforeAssociate = getResourceReqCap();
-		Map<String, List<CapabilityDefinition>> capabilitiesBeforeAssociate = capReqDefBeforeAssociate
-				.getCapabilities();
-		Map<String, List<RequirementDefinition>> requirementsBeforeAssociate = capReqDefBeforeAssociate
-				.getRequirements();
 
 		RequirementCapabilityRelDef requirementDef = setRelationshipBetweenInstances(riReq, riCap,
 				capReqDefBeforeAssociate);
@@ -979,7 +970,7 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 		RequirementCapabilityRelDef requirementDef = setRelationshipBetweenInstances(riReq, riCap,
 				capReqDefBeforeAssociate);
 		assertTrue(requirementDef.getRelationships().size() == 1);
-		String requirement = requirementDef.getRelationships().get(0).getRequirement();
+		String requirement = requirementDef.getRelationships().get(0).getRelation().getRequirement();
 		RestResponse associateInstances = ComponentInstanceRestUtils.associateInstances(requirementDef, designerUser,
 				resourceDetailsVF.getUniqueId(), ComponentTypeEnum.RESOURCE);
 		assertEquals("Check response code ", 404, associateInstances.getErrorCode().intValue());
@@ -1122,7 +1113,7 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 				.getCapabilities();
 		Map<String, List<RequirementDefinition>> requirementsBeforeAssociate = capReqDefBeforeAssociate
 				.getRequirements();
-		String requirementName = requirementDef.getRelationships().get(0).getRequirement();
+		String requirementName = requirementDef.getRelationships().get(0).getRelation().getRequirement();
 
 		RestResponse dissociateInstances = ComponentInstanceRestUtils.dissociateInstances(requirementDef, designerUser,
 				resourceDetailsVF.getUniqueId(), ComponentTypeEnum.RESOURCE);
@@ -1152,10 +1143,6 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 
 		RequirementCapabilityRelDef requirementDef = setRelationshipBetweenInstances(riReq, riCap,
 				capReqDefBeforeAssociate);
-		Map<String, List<CapabilityDefinition>> capabilitiesBeforeAssociate = capReqDefBeforeAssociate
-				.getCapabilities();
-		Map<String, List<RequirementDefinition>> requirementsBeforeAssociate = capReqDefBeforeAssociate
-				.getRequirements();
 
 		String uidNotFound = "123";
 		RestResponse dissociateInstances = ComponentInstanceRestUtils.dissociateInstances(requirementDef, designerUser,
@@ -1326,7 +1313,7 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 		Map<String, List<RequirementDefinition>> requirementsBeforeAssociate = capReqDefBeforeAssociate
 				.getRequirements();
 
-		RestResponse associateInstances = ComponentInstanceRestUtils.associateInstances(requirementDef, designerUser,
+		ComponentInstanceRestUtils.associateInstances(requirementDef, designerUser,
 				resourceDetailsVF.getUniqueId(), ComponentTypeEnum.RESOURCE);
 
 		RestResponse deleteResourceResponse = ResourceRestUtils.deleteResource(resourceDetailsCap.getUniqueId(),

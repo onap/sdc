@@ -30,9 +30,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.openecomp.sdc.common.config.EcompErrorEnum;
-import org.openecomp.sdc.common.config.EcompErrorLogUtil;
 import org.openecomp.sdc.common.config.EcompErrorEnum.AlarmSeverity;
 import org.openecomp.sdc.common.config.EcompErrorEnum.ErrorType;
+import org.openecomp.sdc.common.config.EcompErrorLogUtil;
 
 public class GenerateEcompErrorsCsv {
 

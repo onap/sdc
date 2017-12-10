@@ -29,7 +29,7 @@ export class CompositionCiUcpeLink extends CompositionCiLinkBase {
         super(relation, singleRelation);
         this.isFromUcpe = from;
         this.target = relation.toNode;
-        this.source = singleRelation.requirementOwnerId;
+        this.source = singleRelation.relation.requirementOwnerId;
         this.relation.relationships = [singleRelation];
         this.color = GraphColors.BASE_LINK;
     }

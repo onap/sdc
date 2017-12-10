@@ -20,13 +20,8 @@
 
 package org.openecomp.sdc.be.resources.api;
 
-import java.util.List;
-import java.util.Map;
-
 import org.openecomp.sdc.be.dao.api.ResourceUploadStatus;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
-import org.openecomp.sdc.be.resources.data.ServiceArtifactsDataCollection;
-import org.openecomp.sdc.be.resources.exception.ResourceDAOException;
 
 import fj.data.Either;
 

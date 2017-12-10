@@ -27,50 +27,72 @@ import java.util.List;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
+import com.google.common.collect.Lists;
 
-
+/**
+ * Represents the capability of the component or component instance
+ */
 public class CapabilityDataDefinition extends ToscaDataDefinition implements Serializable {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7544984873506188920L;
-	public final static String MIN_OCCURRENCES = "1"; // occurrences
-	public final static String MAX_OCCURRENCES = "UNBOUNDED";
+	public static final String MIN_OCCURRENCES = "1";
+	public static final String MAX_OCCURRENCES = "UNBOUNDED";
 
-	
+	/**
+	 * The default constructor initializing limits of the occurrences
+	 */
 	public CapabilityDataDefinition() {
 		super();
 		this.setMinOccurrences(  MIN_OCCURRENCES );
 		this.setMaxOccurrences(  MAX_OCCURRENCES);
 		this.setLeftOccurrences(  MAX_OCCURRENCES);
 	}
-
-	public CapabilityDataDefinition(CapabilityDataDefinition a) {
+	/**
+	 * Deep copy constructor
+	 * @param other
+	 */
+	public CapabilityDataDefinition(CapabilityDataDefinition other) {
 		super();		
-		this.setUniqueId(a.getUniqueId());
-		this.setType(a.getType());		
-		this.setDescription (  a.getDescription());
-		this.setName(  a.getName());
-		this.setParentName(  a.getParentName());
-		this.setValidSourceTypes( a.getValidSourceTypes());
-		this.setCapabilitySources( a.getCapabilitySources());
-		this.setOwnerId( a.getOwnerId());
-		this.setOwnerName( a.getOwnerName());
-		this.setMinOccurrences(  a.getMinOccurrences());
-		this.setMaxOccurrences(  a.getMaxOccurrences());
-		this.setLeftOccurrences(a.getLeftOccurrences());
-		this.setPath(a.getPath());
-		this.setSource(a.getSource());
+		this.setUniqueId(other.getUniqueId());
+		this.setType(other.getType());		
+		this.setDescription (  other.getDescription());
+		this.setName(  other.getName());
+		this.setParentName(  other.getParentName());
+		
+		if(other.getValidSourceTypes() == null)
+			this.setValidSourceTypes(Lists.newArrayList());
+		else
+			this.setValidSourceTypes(Lists.newArrayList(other.getValidSourceTypes()));
+		
+		if(other.getCapabilitySources() == null)
+			this.setCapabilitySources(Lists.newArrayList());
+		else
+			this.setCapabilitySources(Lists.newArrayList(other.getCapabilitySources()));
+		
+		this.setOwnerId( other.getOwnerId());
+		this.setOwnerName( other.getOwnerName());
+		this.setMinOccurrences(  other.getMinOccurrences());
+		this.setMaxOccurrences(  other.getMaxOccurrences());
+		this.setLeftOccurrences(other.getLeftOccurrences());
+		
+		if(other.getPath() == null)
+			this.setPath(Lists.newArrayList());
+		else
+			this.setPath(Lists.newArrayList(other.getPath()));
+		
+		this.setSource(other.getSource());
 		
 	}
 
-	
-
+	@Override
 	public String getOwnerId() {
 		return (String) getToscaPresentationValue(JsonPresentationFields.OWNER_ID);
 	}
-
+	
+	@Override
 	public void setOwnerId(String ownerId) {
 		setToscaPresentationValue(JsonPresentationFields.OWNER_ID, ownerId);
 	}
@@ -146,6 +168,7 @@ public class CapabilityDataDefinition extends ToscaDataDefinition implements Ser
 		setToscaPresentationValue(JsonPresentationFields.TYPE, type);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<String> getValidSourceTypes() {
 		return (List<String>) getToscaPresentationValue(JsonPresentationFields.VALID_SOURCE_TYPE);
 	}
@@ -154,6 +177,7 @@ public class CapabilityDataDefinition extends ToscaDataDefinition implements Ser
 		setToscaPresentationValue(JsonPresentationFields.VALID_SOURCE_TYPE, validSourceTypes);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<String> getCapabilitySources() {
 		return (List<String>) getToscaPresentationValue(JsonPresentationFields.CAPABILITY_SOURCES);
 	}
@@ -165,6 +189,7 @@ public class CapabilityDataDefinition extends ToscaDataDefinition implements Ser
 	public void setPath(List<String> path){
 		setToscaPresentationValue(JsonPresentationFields.PATH, path);
 	}
+	@SuppressWarnings("unchecked")
 	public List<String> getPath() {
 		return (List<String>) getToscaPresentationValue(JsonPresentationFields.PATH);
 	}
@@ -174,12 +199,19 @@ public class CapabilityDataDefinition extends ToscaDataDefinition implements Ser
 	public String getSource() {
 		return (String) getToscaPresentationValue(JsonPresentationFields.SOURCE);
 	}
+	
+	/**
+	 * Adds the element to the path avoiding duplication
+	 * @param elementInPath
+	 */
 	public void addToPath(String elementInPath){
 		List<String> path = getPath();
 		if ( path == null ){
 			path = new ArrayList<>();
 		}
-		path.add(elementInPath);
+		if(!path.contains(elementInPath)){
+			path.add(elementInPath);
+		}
 		setPath(path);
 	}
 	

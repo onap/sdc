@@ -48,11 +48,12 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.CapReqDef;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
+import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -93,8 +94,6 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import aj.org.objectweb.asm.Attribute;
 
 /**
  * 
@@ -1341,7 +1340,7 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		requirementDef.setFromNode(riReq.getUniqueId());
 		requirementDef.setToNode(riCap.getUniqueId());
 
-		RequirementAndRelationshipPair pair = new RequirementAndRelationshipPair();
+		RelationshipInfo pair = new RelationshipInfo();
 		pair.setRequirementOwnerId(riReq.getUniqueId());
 		pair.setCapabilityOwnerId(riCap.getUniqueId());
 		pair.setRequirement("VirtualBinding");
@@ -1350,8 +1349,10 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		pair.setRelationships(relationship);
 		pair.setCapabilityUid(capbilityUid);
 		pair.setRequirementUid(requirementUid);
-		List<RequirementAndRelationshipPair> relationships = new ArrayList<>();
-		relationships.add(pair);
+		List<CapabilityRequirementRelationship> relationships = new ArrayList<>();
+		CapabilityRequirementRelationship capReqRel = new CapabilityRequirementRelationship();
+		relationships.add(capReqRel);
+		capReqRel.setRelation(pair);
 		requirementDef.setRelationships(relationships);
 
 		RestResponse associateInstances = ComponentInstanceRestUtils.associateInstances(requirementDef, sdncUserDetails,

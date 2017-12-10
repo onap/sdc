@@ -26,9 +26,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -51,7 +52,6 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
@@ -61,6 +61,7 @@ import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.enums.JsonConstantKeysEnum;
+import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -1071,6 +1072,70 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 			result = Either.left(serviceVertex);
 		}
 		return result;
+	}
+	/**
+	 * Returns list of ComponentInstanceProperty belonging to component instance capability specified by name and type
+	 * @param componentId
+	 * @param instanceId
+	 * @param capabilityName
+	 * @param capabilityType
+	 * @return
+	 */
+	public Either<List<ComponentInstanceProperty>, StorageOperationStatus> getComponentInstanceCapabilityProperties(String componentId, String instanceId, String capabilityName, String capabilityType) {
+
+		Either<List<ComponentInstanceProperty>, StorageOperationStatus> result = null;
+		Map<String, MapCapabiltyProperty> mapPropertiesDataDefinition = null;
+		Either<GraphVertex, StorageOperationStatus> componentByLabelAndId = getComponentByLabelAndId(componentId, ToscaElementTypeEnum.TopologyTemplate, JsonParseFlagEnum.NoParse);
+		if (componentByLabelAndId.isRight()) {
+			result = Either.right(componentByLabelAndId.right().value());
+		}
+		if(componentByLabelAndId.isLeft()){
+			Either<Map<String, MapCapabiltyProperty>, TitanOperationStatus> getDataRes = getDataFromGraph(componentByLabelAndId.left().value(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES);
+			if (getDataRes.isRight()) {
+				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getDataRes.right().value()));
+			} else {
+				mapPropertiesDataDefinition = getDataRes.left().value();
+			}
+		}
+		if(isNotEmptyMapOfProperties(instanceId, mapPropertiesDataDefinition)){
+			result = Either.left(findComponentInstanceCapabilityProperties(instanceId, capabilityName, capabilityType, mapPropertiesDataDefinition.get(instanceId).getMapToscaDataDefinition()));
+		}
+		return result; 
+	}
+
+	private boolean isNotEmptyMapOfProperties(String instanceId, Map<String, MapCapabiltyProperty> mapPropertiesDataDefinition) {
+		return  MapUtils.isNotEmpty(mapPropertiesDataDefinition) &&
+				mapPropertiesDataDefinition.get(instanceId) != null &&
+				MapUtils.isNotEmpty(mapPropertiesDataDefinition.get(instanceId).getMapToscaDataDefinition());
+	}
+
+	private List<ComponentInstanceProperty> findComponentInstanceCapabilityProperties(String instanceId, String capabilityName, String capabilityType, Map<String, MapPropertiesDataDefinition> propertiesMap) {
+		List<ComponentInstanceProperty> capPropsList = null;
+		for(Entry<String, MapPropertiesDataDefinition> capProp : propertiesMap.entrySet()){
+			if (isBelongingPropertyMap(instanceId, capabilityName, capabilityType, capProp)) {
+				Map<String, PropertyDataDefinition> capMap = capProp.getValue().getMapToscaDataDefinition();
+				if (capMap != null && !capMap.isEmpty()) {
+					capPropsList = capMap.values().stream().map(o -> new ComponentInstanceProperty(o)).collect(Collectors.toList());
+					break;
+				}
+			}
+		}
+		if(capPropsList == null){
+			capPropsList = new ArrayList<>();
+		}
+		return capPropsList;
+	}
+
+	private boolean isBelongingPropertyMap(String instanceId, String capabilityName, String capabilityType, Entry<String, MapPropertiesDataDefinition> capProp) {
+		if (capProp != null) {
+			String[] path = capProp.getKey().split(ModelConverter.CAP_PROP_DELIM );
+			if (path.length < 4) {
+				log.debug("wrong key format for capabilty, key {}", capProp);
+				return false;
+			}
+			return path[path.length - 2].equals(capabilityType) && path[path.length - 1].equals(capabilityName) && path[0].equals(instanceId);
+		}
+		return false;
 	}
 
 }

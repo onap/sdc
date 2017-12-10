@@ -33,10 +33,11 @@ import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
+import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -51,7 +52,6 @@ import org.openecomp.sdc.ci.tests.datatypes.ComponentReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.PropertyReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceAssetStructure;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceExternalReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
@@ -70,8 +70,6 @@ import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.util.ValidationUtils;
-
-import com.google.common.base.CaseFormat;
 
 public class ElementFactory {
 
@@ -915,7 +913,7 @@ public class ElementFactory {
 		RequirementCapabilityRelDef requirementDef = new RequirementCapabilityRelDef();
 		requirementDef.setFromNode(fromCompInstId);
 		requirementDef.setToNode(toCompInstId);
-		RequirementAndRelationshipPair pair = new RequirementAndRelationshipPair();
+		RelationshipInfo pair = new RelationshipInfo();
 		pair.setRequirementOwnerId(reqOwnerId);
 		pair.setCapabilityOwnerId(capOwnerId);
 		pair.setRequirement(reqCapName);
@@ -924,8 +922,10 @@ public class ElementFactory {
 		pair.setRelationships(relationship);
 		pair.setCapabilityUid(capList.get(0).getUniqueId());
 		pair.setRequirementUid(reqList.get(0).getUniqueId());
-		List<RequirementAndRelationshipPair> relationships = new ArrayList<>();
-		relationships.add(pair);
+		List<CapabilityRequirementRelationship> relationships = new ArrayList<>();
+		CapabilityRequirementRelationship capReqRel = new CapabilityRequirementRelationship();
+		relationships.add(capReqRel);
+		capReqRel.setRelation(pair);
 		requirementDef.setRelationships(relationships);
 		return requirementDef;
 	}

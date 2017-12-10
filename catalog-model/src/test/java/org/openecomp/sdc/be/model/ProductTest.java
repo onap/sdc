@@ -2,10 +2,7 @@ package org.openecomp.sdc.be.model;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.ProductMetadataDataDefinition;
 
 
 public class ProductTest {

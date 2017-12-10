@@ -35,13 +35,32 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapCapabiltyProperty;
+import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListCapabiltyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
@@ -53,7 +72,7 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
+import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -161,6 +180,7 @@ public class ModelConverter {
 		service.setDistributionStatus(DistributionStatusEnum.findState((String) toscaElement.getMetadataValue(JsonPresentationFields.DISTRIBUTION_STATUS)));
 		service.setEcompGeneratedNaming((Boolean) toscaElement.getMetadataValueOrDefault(JsonPresentationFields.ECOMP_GENERATED_NAMING, true));
 		service.setNamingPolicy((String) toscaElement.getMetadataValueOrDefault(JsonPresentationFields.NAMING_POLICY, StringUtils.EMPTY));
+		service.setEnvironmentContext((String) toscaElement.getMetadataValue(JsonPresentationFields.ENVIRONMENT_CONTEXT));
 	}
 
 	private static Resource convertToResource(ToscaElement toscaElement) {
@@ -309,10 +329,8 @@ public class ModelConverter {
 		RequirementCapabilityRelDef requirementCapabilityRelDef = new RequirementCapabilityRelDef();
 		requirementCapabilityRelDef.setFromNode(relation.getFromId());
 		requirementCapabilityRelDef.setToNode(relation.getToId());
-		List<RequirementAndRelationshipPair> relationships = new ArrayList<>();
-		RequirementAndRelationshipPair relationshipPair = new RequirementAndRelationshipPair();
+		RelationshipInfo relationshipPair = new RelationshipInfo();
 		relationshipPair.setId(relation.getUniqueId());
-
 		relationshipPair.setCapabilityOwnerId(relation.getCapabilityOwnerId());
 		relationshipPair.setCapabilityUid(relation.getCapabilityId());
 		relationshipPair.setCapability(relation.getCapability());
@@ -322,8 +340,10 @@ public class ModelConverter {
 		RelationshipImpl relationship = new RelationshipImpl();
 		relationship.setType(relation.getType());
 		relationshipPair.setRelationships(relationship);
-
-		relationships.add(relationshipPair);
+		CapabilityRequirementRelationship rel = new CapabilityRequirementRelationship();
+		rel.setRelation(relationshipPair);
+		List<CapabilityRequirementRelationship> relationships = new ArrayList<>();
+		relationships.add(rel);
 		requirementCapabilityRelDef.setRelationships(relationships);
 		return requirementCapabilityRelDef;
 	}
@@ -332,19 +352,19 @@ public class ModelConverter {
 
 		List<RelationshipInstDataDefinition> relationsList = new ArrayList<>();
 
-		List<RequirementAndRelationshipPair> relationship = relation.getRelationships();
+		List<CapabilityRequirementRelationship> relationship = relation.getRelationships();
 		relationship.forEach(p -> {
 			RelationshipInstDataDefinition requirementCapabilityRelDef = new RelationshipInstDataDefinition();
 			requirementCapabilityRelDef.setFromId(relation.getFromNode());
 			requirementCapabilityRelDef.setToId(relation.getToNode());
-			requirementCapabilityRelDef.setUniqueId(p.getId());
-			requirementCapabilityRelDef.setCapabilityOwnerId(p.getCapabilityOwnerId());
-			requirementCapabilityRelDef.setCapabilityId(p.getCapabilityUid());
-			requirementCapabilityRelDef.setRequirementOwnerId(p.getRequirementOwnerId());
-			requirementCapabilityRelDef.setRequirementId(p.getRequirementUid());
-			requirementCapabilityRelDef.setRequirement(p.getRequirement());
-			requirementCapabilityRelDef.setType(p.getRelationship().getType());
-			requirementCapabilityRelDef.setCapability(p.getCapability());
+			requirementCapabilityRelDef.setUniqueId(p.getRelation().getId());
+			requirementCapabilityRelDef.setCapabilityOwnerId(p.getRelation().getCapabilityOwnerId());
+			requirementCapabilityRelDef.setCapabilityId(p.getRelation().getCapabilityUid());
+			requirementCapabilityRelDef.setRequirementOwnerId(p.getRelation().getRequirementOwnerId());
+			requirementCapabilityRelDef.setRequirementId(p.getRelation().getRequirementUid());
+			requirementCapabilityRelDef.setRequirement(p.getRelation().getRequirement());
+			requirementCapabilityRelDef.setType(p.getRelation().getRelationship().getType());
+			requirementCapabilityRelDef.setCapability(p.getRelation().getCapability());
 
 			relationsList.add(requirementCapabilityRelDef);
 		});
@@ -408,7 +428,7 @@ public class ModelConverter {
 								sb.append(cap.getOwnerId());
 							}
 							sb.append(CAP_PROP_DELIM).append(s).append(CAP_PROP_DELIM).append(cap.getName());
-							toscaCapPropMap.put(sb.toString(), dataToCreate);
+							toscaCapPropMap.put(sb.toString(), new MapPropertiesDataDefinition(dataToCreate));
 						}
 					}
 
@@ -453,54 +473,6 @@ public class ModelConverter {
 		}
 
 		return new MapListRequirementDataDefinition(mapToscaDataDefinition);
-	}
-
-	private static void convertRequirements(TopologyTemplate toscaElement, Component component) {
-
-		if (CollectionUtils.isNotEmpty(component.getComponentInstances())) {
-			for (ComponentInstance instance : component.getComponentInstances()) {
-				Map<String, List<RequirementDefinition>> instanceRequirements = instance.getRequirements();
-				if (MapUtils.isNotEmpty(instanceRequirements)) {
-					addRequirementsByInstanceId(instance.getUniqueId(), instanceRequirements, component);
-				}
-			}
-		}
-	}
-
-	private static void addRequirementsByInstanceId(String instanceId, Map<String, List<RequirementDefinition>> instanceRequirementsMap, Component component) {
-
-		if (component.getCapabilities() == null) {
-			component.setCapabilities(new HashMap<>());
-		}
-		List<RequirementDefinition> instanceRequirements = new ArrayList<>();
-		for (List<RequirementDefinition> instRequirements : instanceRequirementsMap.values()) {
-			instanceRequirements.addAll(instRequirements);
-		}
-		component.getRequirements().put(instanceId, instanceRequirements);
-	}
-
-	private static void convertCapabilities(TopologyTemplate toscaElement, Component component) {
-
-		if (CollectionUtils.isNotEmpty(component.getComponentInstances())) {
-			for (ComponentInstance instance : component.getComponentInstances()) {
-				Map<String, List<CapabilityDefinition>> instanceCapabilities = instance.getCapabilities();
-				if (MapUtils.isNotEmpty(instanceCapabilities)) {
-					addCapabilitiesByInstanceId(instance.getUniqueId(), instanceCapabilities, component);
-				}
-			}
-		}
-	}
-
-	private static void addCapabilitiesByInstanceId(String instanceId, Map<String, List<CapabilityDefinition>> instanceCapabilitiesMap, Component component) {
-
-		if (component.getCapabilities() == null) {
-			component.setCapabilities(new HashMap<>());
-		}
-		List<CapabilityDefinition> instanceCapabilities = new ArrayList<>();
-		for (List<CapabilityDefinition> instCapabilitis : instanceCapabilitiesMap.values()) {
-			instanceCapabilities.addAll(instCapabilitis);
-		}
-		component.getCapabilities().put(instanceId, instanceCapabilities);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -909,6 +881,7 @@ public class ModelConverter {
 		topologyTemplate.setMetadataValue(JsonPresentationFields.PROJECT_CODE, service.getProjectCode());
 		topologyTemplate.setMetadataValue(JsonPresentationFields.ECOMP_GENERATED_NAMING, service.isEcompGeneratedNaming());
 		topologyTemplate.setMetadataValue(JsonPresentationFields.NAMING_POLICY, service.getNamingPolicy());
+		topologyTemplate.setMetadataValue(JsonPresentationFields.ENVIRONMENT_CONTEXT, service.getEnvironmentContext());
 
 	}
 
@@ -1125,10 +1098,15 @@ public class ModelConverter {
 					} else {
 						instancesCapabilities.put(capabilityType, caps);
 					}
-					if (MapUtils.isEmpty(instancesMap.get(instanceId).getCapabilities())) {
-						instancesMap.get(instanceId).setCapabilities(new HashMap<>());
+					ComponentInstance instance = instancesMap.get(instanceId);
+					if (instance == null) {
+						log.error("instance is null for id {} entry {}", instanceId, entry.getValue().getToscaPresentationValue(JsonPresentationFields.NAME));
+					} else {
+						if (MapUtils.isEmpty(instance.getCapabilities())) {
+							instance.setCapabilities(new HashMap<>());
+						}
+						instance.getCapabilities().put(capabilityType, new ArrayList<>(caps));
 					}
-					instancesMap.get(instanceId).getCapabilities().put(capabilityType, new ArrayList<>(caps));
 				}
 			}
 			component.setCapabilities(instancesCapabilities);
@@ -1303,11 +1281,6 @@ public class ModelConverter {
 		if (MapUtils.isNotEmpty(groups)) {
 			groupDefinitions = groups.values().stream().map(g -> new GroupDefinition(g)).collect(Collectors.toList());
 		}
-		/*
-		 * if (CollectionUtils.isNotEmpty(groupDefinitions) && MapUtils.isNotEmpty(groupsProperties)) { for (GroupDefinition groupDefinition : groupDefinitions) { if (groupsProperties.containsKey(groupDefinition.getName())) { Map<String,
-		 * PropertyDataDefinition> properties = groupsProperties.get(groupDefinition.getName()).getMapToscaDataDefinition(); if (MapUtils.isNotEmpty(properties)) { groupDefinition.setProperties(properties.values().stream().map(p -> new
-		 * GroupProperty(p)).collect(Collectors.toList())); } } } }
-		 */
 		return groupDefinitions;
 	}
 

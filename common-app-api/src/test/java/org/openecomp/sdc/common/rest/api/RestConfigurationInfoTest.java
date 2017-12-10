@@ -1,7 +1,5 @@
 package org.openecomp.sdc.common.rest.api;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

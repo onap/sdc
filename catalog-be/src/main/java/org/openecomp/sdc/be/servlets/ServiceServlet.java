@@ -70,13 +70,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.reflect.TypeToken;
 import com.jcabi.aspects.Loggable;
+
+import fj.data.Either;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
-import fj.data.Either;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -763,7 +763,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
 		} catch (Exception e) {
 			log.error("Failed runnign the command {}", command, e);
-			e.printStackTrace();
 			return Either.right(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
 

@@ -8,7 +8,7 @@
     top: @header_height + @top_nav_height;
     left: 0;
     right: 0;
-    bottom: @footer_height;
+    bottom: 0;
 
     .w-sdc-main-right-container {
         .bg_n;
@@ -24,8 +24,15 @@
             padding-bottom: 80px;
         }
 
-        .sdc-tile-catalog {
+        .sdc-tile {
             margin: 10px;
+            .sdc-tile-content {
+                .sdc-tile-content-info {
+                    .sdc-tile-info-line {
+                        display: inline-block;
+                    }
+                }
+            }
         }
 
     }

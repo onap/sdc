@@ -10,6 +10,7 @@ template "catalog-fe-config" do
    variables({
       :fe_host_ip   => node['HOST_IP'],
       :be_host_ip   => node['HOST_IP'],
+      :kb_host_ip   => node['HOST_IP'],
       :catalog_port => node['BE'][:http_port],
       :ssl_port     => node['BE'][:https_port]
    })

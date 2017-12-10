@@ -27,6 +27,7 @@ import { ModulesNodesStyle } from "../common/style/module-node-style";
 import { GRAPH_EVENTS } from "app/utils";
 import { EventListenerService } from "app/services";
 import '@bardit/cytoscape-expand-collapse';
+import {AngularJSBridge} from "../../../services/angular-js-bridge-service";
 
 interface IDeploymentGraphScope extends ng.IScope {
     component: Component;
@@ -105,6 +106,7 @@ export class DeploymentGraph implements ng.IDirective {
     private loadGraph = (scope: IDeploymentGraphScope, el: JQuery) => {
 
         let graphEl = el.find('.sdc-deployment-graph-wrapper');
+        const imagePath = AngularJSBridge.getAngularConfig().imagesPath;
         this._cy = cytoscape({
             container: graphEl,
             style: ComponentInstanceNodesStyle.getCompositionGraphStyle().concat(ModulesNodesStyle.getModuleGraphStyle()),
@@ -124,8 +126,8 @@ export class DeploymentGraph implements ng.IDirective {
             fisheye: false,
             undoable: false,
             expandCollapseCueSize: 18,
-            expandCueImage: '/assets/styles/images/resource-icons/' + 'closeModule.png',
-            collapseCueImage: '/assets/styles/images/resource-icons/' + 'openModule.png',
+            expandCueImage: imagePath + '/assets/styles/images/resource-icons/' + 'closeModule.png',
+            collapseCueImage: imagePath + '/assets/styles/images/resource-icons/' + 'openModule.png',
             expandCollapseCueSensitivity: 2,
             cueOffset: -20
         });

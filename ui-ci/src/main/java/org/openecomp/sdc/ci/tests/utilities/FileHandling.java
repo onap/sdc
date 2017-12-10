@@ -26,7 +26,6 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
@@ -47,7 +46,6 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FileUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
 import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.common.util.GeneralUtility;
@@ -63,7 +61,8 @@ public class FileHandling {
 		Yaml yaml = new Yaml();
 		File file = new File(filePath);
 		InputStream inputStream = new FileInputStream(file);
-		Map<?, ?> map = (Map<?, ?>) yaml.load(inputStream);
+		Map<?, ?> map = new HashMap<>();
+		map = (Map<?, ?>) yaml.load(inputStream);
 		return map;
 	}
 	
@@ -99,19 +98,22 @@ public class FileHandling {
 	}
 //	-------------------------------------------------------------------------------------------------
 	
+	
+	/**
+	 * @param folder, folder name under "Files" folder
+	 * @return path to given folder from perspective of working directory or sdc-vnfs repository
+	 */
 	public static String getFilePath(String folder) {
-		String filepath = System.getProperty("filepath");
-		if (filepath == null && System.getProperty("os.name").contains("Windows")) {
-			filepath = FileHandling.getResourcesFilesPath() + folder + File.separator;
+		String filepath = System.getProperty("filePath");
+		boolean isFilePathEmptyOrNull = (filepath == null || filepath.isEmpty());
+		
+		// return folder from perspective of sdc-vnfs repository
+		if (isFilePathEmptyOrNull && ( System.getProperty("os.name").contains("Windows") || System.getProperty("os.name").contains("Mac"))) {
+			return FileHandling.getResourcesFilesPath() + folder + File.separator;
 		}
 		
-		else if(filepath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
-				filepath = FileHandling.getBasePath() + "Files" + File.separator + folder + File.separator;
-		}
-		
-		System.out.println(filepath);
-		
-		return filepath;
+		// return folder from perspective of working directory ( in general for nightly run from Linux, should already contain "Files" directory )
+		return FileHandling.getBasePath() + "Files" + File.separator + folder + File.separator;
 	}
 
 	public static String getBasePath() {
@@ -154,6 +156,10 @@ public class FileHandling {
 	
 	public static String getVnfRepositoryPath() {
 		return getFilePath("VNFs");
+	}
+
+	public static String getUpdateVSPVnfRepositoryPath() {
+		return getFilePath("UpdateVSP");
 	}
 	
 	public static File getConfigFile(String configFileName) throws Exception {
@@ -244,8 +250,8 @@ public class FileHandling {
 		
 	}
 
-//	public static Object[] getZipFileNamesFromFolder(String filepath) {
-//		return filterFileNamesFromFolder(filepath, ".zip");
+//	public static Object[] getZipFileNamesFromFolder(String filePath) {
+//		return filterFileNamesFromFolder(filePath, ".zip");
 //	}
 	
 	public static List<String> getZipFileNamesFromFolder(String filepath) {

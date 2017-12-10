@@ -48,7 +48,6 @@ import org.openecomp.sdc.ci.tests.verificator.UserManagementVerificator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
-import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -98,6 +97,7 @@ public class AdminUserManagment extends SetupCDTest {
 		UserRoleEnum userRole = UserRoleEnum.DESIGNER;
 		AdminWorkspaceUIUtilies.createNewUser(userId, userRole);
 		ExtentTestActions.log(Status.INFO, "Trying to create the same user once again.");
+		GeneralUIUtils.ultimateWait(); // extra wait, necessary for system with large user list
 		AdminWorkspaceUIUtilies.createNewUser(userId, userRole);
 		ErrorMessageUIVerificator.validateErrorMessage(ActionStatus.USER_ALREADY_EXIST);
 	}
@@ -106,9 +106,9 @@ public class AdminUserManagment extends SetupCDTest {
 	@Test
 	public void createInvalidMacIdTest(){
 		
-		if(true){
-			throw new SkipException("Open bug 324032");			
-		}
+//		if(true){
+//			throw new SkipException("Open bug 324032");			
+//		}
 		
 		String macId = generateValidMacId();
 		StringBuilder invalidMacId = new StringBuilder(macId);

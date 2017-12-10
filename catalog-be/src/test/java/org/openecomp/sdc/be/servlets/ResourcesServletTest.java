@@ -3,11 +3,9 @@ package org.openecomp.sdc.be.servlets;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Generated;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;

@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,11 +47,12 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.CapReqDef;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
+import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -94,8 +94,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import aj.org.objectweb.asm.Attribute;
-
 /**
  * 
  * @author Andrey + Pavel + Shay
@@ -115,7 +113,6 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 	protected static User testerUser;
 	protected String testResourcesPath;
 	protected ResourceReqDetails resourceDetails;
-	private HashSet<String> capabilitySources;
 	private int actualNumOfReqOrCap;
 
 	@Rule
@@ -130,7 +127,6 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		String sourceDir = config.getResourceConfigDir();
 		final String workDir = "importToscaResourceByCreateUrl";
 		testResourcesPath = sourceDir + File.separator + workDir;
-		capabilitySources = new HashSet<String>();
 		actualNumOfReqOrCap = 0;
 	}
 
@@ -1341,7 +1337,7 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		requirementDef.setFromNode(riReq.getUniqueId());
 		requirementDef.setToNode(riCap.getUniqueId());
 
-		RequirementAndRelationshipPair pair = new RequirementAndRelationshipPair();
+		RelationshipInfo pair = new RelationshipInfo();
 		pair.setRequirementOwnerId(riReq.getUniqueId());
 		pair.setCapabilityOwnerId(riCap.getUniqueId());
 		pair.setRequirement("VirtualBinding");
@@ -1350,8 +1346,10 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		pair.setRelationships(relationship);
 		pair.setCapabilityUid(capbilityUid);
 		pair.setRequirementUid(requirementUid);
-		List<RequirementAndRelationshipPair> relationships = new ArrayList<>();
-		relationships.add(pair);
+		CapabilityRequirementRelationship capReqRel = new CapabilityRequirementRelationship();
+		capReqRel.setRelation(pair);
+		List<CapabilityRequirementRelationship> relationships = new ArrayList<>();
+		relationships.add(capReqRel);
 		requirementDef.setRelationships(relationships);
 
 		RestResponse associateInstances = ComponentInstanceRestUtils.associateInstances(requirementDef, sdncUserDetails,

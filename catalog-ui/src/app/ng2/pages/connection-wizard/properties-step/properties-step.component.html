@@ -1,0 +1,13 @@
+<div class="title">
+    <span class="capability-name">
+        {{(connectWizardService.selectedMatch.capability && connectWizardService.selectedMatch.capability.getTitle()) || connectWizardService.selectedMatch.relationship.relation.capability}}
+    </span>
+</div>
+<div class="properties-table-container">
+    <properties-table class="properties-table"
+                      (valueChanged)="propertyValueChanged($event)"
+                      [fePropertiesMap]="capabilityPropertiesMap"
+                      [selectedPropertyId]="''"
+                      [hidePropertyType]="true">
+    </properties-table>
+</div>

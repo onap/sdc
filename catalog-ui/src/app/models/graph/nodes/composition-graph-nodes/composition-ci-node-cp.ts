@@ -34,7 +34,8 @@ export class CompositionCiNodeCp extends CompositionCiNodeBase {
 
     private initCp():void {
         let sdcConfig = AngularJSBridge.getAngularConfig();
-        this.img = sdcConfig.imagesPath + ImagesUrl.RESOURCE_ICONS + this.componentInstance.icon + '.png';
+        this.imagesPath = this.imagesPath + ImagesUrl.RESOURCE_ICONS;
+        this.img =  this.imagesPath + this.componentInstance.icon + '.png';
         this.imgWidth = GraphUIObjects.SMALL_RESOURCE_WIDTH;
         this.type = "basic-small-node";
         //if the cp from type cpEndPointInstances create with another template

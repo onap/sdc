@@ -21,27 +21,18 @@
 package org.openecomp.sdc.ci.tests.execute.devCI;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
 import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaTopologyTemplateDefinition;
 import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
-import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.openecomp.sdc.tosca.parser.exceptions.SdcToscaParserException;
-import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
-//import org.openecomp.sdc.toscaparser.api.Metadata;
-import org.openecomp.sdc.toscaparser.api.Capability;
-import org.openecomp.sdc.toscaparser.api.NodeTemplate;
-import org.openecomp.sdc.toscaparser.api.common.JToscaException;
-import org.testng.annotations.Test;
 
 public class AndreyTest {
 
@@ -70,14 +61,14 @@ public class AndreyTest {
 		toscaMainAmdocsDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + amdocsCsarFileName));
 		toscaMainVfDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + VfCsarFileName));
 		toscaMainServiceDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + serviceCsarFileName));
-//		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, "Generic_VF", "1.0");
+		Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, "Generic_VF", "1.0");
 		ToscaTopologyTemplateDefinition topologyTemplate = toscaMainAmdocsDefinition.getTopology_template();
 //		FileHandling.parseYamlFileToMapByPattern("","");
 		
-//		Map<String, Object> newInput = new HashMap<String, Object>();
-//		for (PropertyDefinition property : resource.getProperties()) {
-//			newInput.put(property.getName(),property);
-//		}
+		Map<String, Object> newInput = new HashMap<String, Object>();
+		for (PropertyDefinition property : resource.getProperties()) {
+			newInput.put(property.getName(),property);
+		}
 		
 //		topologyTemplate.addInputs(newInput);
 //		
@@ -104,7 +95,7 @@ public class AndreyTest {
 	}
 	
 	
-	@Test
+	/*@Test
 	public void distributionTest() throws SdcToscaParserException, JToscaException, IOException {
 		//String serviceName = import and create().getName();
 		//getServiceObject();
@@ -157,6 +148,6 @@ public class AndreyTest {
         	ArrayList<Object> requirements2 = nodeTemplate.getRequirements();
 		}
         
-	}
+	}*/
 	
 }

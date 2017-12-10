@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints.exception;
 
-import org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil;
 import org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil.ConstraintInformation;
 
 /**

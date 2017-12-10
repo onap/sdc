@@ -58,7 +58,8 @@ export class RelationType {
     }
 }
 
-export class Relationship {
+export class RelationshipType {
+    id:string;
     capability:string;
     capabilityOwnerId:string;
     capabilityUid:string;
@@ -67,8 +68,9 @@ export class Relationship {
     requirementOwnerId:string;
     requirementUid:string;
 
-    constructor(relationship?:Relationship) {
+    constructor(relationship?:RelationshipType) {
         if (relationship) {
+            this.id = relationship.id;
             this.capability = relationship.capability;
             this.capabilityOwnerId = relationship.capabilityOwnerId;
             this.capabilityUid = relationship.capabilityUid;
@@ -79,17 +81,41 @@ export class Relationship {
         } else {
             this.relationship = new RelationType();
         }
-
     }
 
-    public setRelationProperties = (capability:Capability, requirement:Requirement)=> {
-        this.capability = capability.name;
-        this.capabilityOwnerId = capability.ownerId;
-        this.capabilityUid = capability.uniqueId;
-        this.relationship = new RelationType(capability.type);
-        this.requirement = requirement.name;
-        this.requirementOwnerId = requirement.ownerId;
-        this.requirementUid = requirement.uniqueId;
+    public setRelationProperties = (capability?:Capability, requirement?:Requirement)=> {
+        if (capability) {
+            this.capability = capability.name;
+            this.capabilityOwnerId = capability.ownerId;
+            this.capabilityUid = capability.uniqueId;
+            this.relationship = new RelationType(capability.type);
+        }
+        if (requirement) {
+            this.requirement = requirement.name;
+            this.requirementOwnerId = requirement.ownerId;
+            this.requirementUid = requirement.uniqueId;
+        }
     };
+}
 
+export class Relationship {
+    relation: RelationshipType;
+    capability?: Capability;
+    requirement?: Requirement;
+
+    constructor(fullRelationship?:Relationship) {
+        if (fullRelationship) {
+            this.relation = new RelationshipType(fullRelationship.relation);
+            this.capability = fullRelationship.capability && new Capability(fullRelationship.capability);
+            this.requirement = fullRelationship.requirement && new Requirement(fullRelationship.requirement);
+        } else {
+            this.relation = new RelationshipType();
+        }
+    }
+
+    public setRelationProperties(capability?:Capability, requirement?:Requirement) {
+        this.relation.setRelationProperties(capability, requirement);
+        this.capability = capability;
+        this.requirement = requirement;
+    };
 }

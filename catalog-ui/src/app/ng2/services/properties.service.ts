@@ -19,16 +19,12 @@
  */
 
 import { Injectable } from '@angular/core';
-import { DataTypeModel, PropertyFEModel, PropertyBEModel, SchemaProperty, PropertyDeclareAPIModel, DerivedFEProperty, DerivedFEPropertyMap, DerivedPropertyType, InputFEModel} from "app/models";
-import { DataTypeService } from "./data-type.service";
-import { PROPERTY_TYPES } from "app/utils";
-import { ContentAfterLastDotPipe } from "../pipes/contentAfterLastDot.pipe";
-import { UUID } from "angular2-uuid";
+import { PropertyFEModel, PropertyBEModel, PropertyDeclareAPIModel, DerivedFEProperty} from "app/models";
 
 @Injectable()
 export class PropertiesService {
 
-    constructor(private dataTypeService: DataTypeService, private contentAfterLastDotPipe: ContentAfterLastDotPipe) {
+    constructor() {
     }
 
     public getParentPropertyFEModelFromPath = (properties: Array<PropertyFEModel>, path: string) => {

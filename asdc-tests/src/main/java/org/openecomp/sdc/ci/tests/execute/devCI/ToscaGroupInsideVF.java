@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.execute.devCI;
 
-import static org.testng.AssertJUnit.assertEquals;
-
 import java.util.HashMap;
 import java.util.Map;
 

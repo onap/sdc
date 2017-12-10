@@ -95,19 +95,22 @@ public class FileHandling {
 	}
 //	-------------------------------------------------------------------------------------------------
 	
+
+	/**
+	 * @param folder, folder name under "Files" folder
+	 * @return path to given folder from perspective of working directory or sdc-vnfs repository
+	 */
 	public static String getFilePath(String folder) {
-		String filepath = System.getProperty("filepath");
-		if (filepath == null && System.getProperty("os.name").contains("Windows")) {
-			filepath = FileHandling.getResourcesFilesPath() + folder + File.separator;
+		String filepath = System.getProperty("filePath");
+		boolean isFilePathEmptyOrNull = (filepath == null || filepath.isEmpty());
+
+		// return folder from perspective of sdc-vnfs repository
+		if (isFilePathEmptyOrNull && ( System.getProperty("os.name").contains("Windows") || System.getProperty("os.name").contains("Mac"))) {
+			return FileHandling.getResourcesFilesPath() + folder + File.separator;
 		}
-		
-		else if(filepath.isEmpty() && !System.getProperty("os.name").contains("Windows")){
-				filepath = FileHandling.getBasePath() + "Files" + File.separator + folder + File.separator;
-		}
-		
-		System.out.println(filepath);
-		
-		return filepath;
+
+		// return folder from perspective of working directory ( in general for nightly run from Linux, should already contain "Files" directory )
+		return FileHandling.getBasePath() + "Files" + File.separator + folder + File.separator;
 	}
 
 	public static String getBasePath() {
@@ -150,6 +153,10 @@ public class FileHandling {
 	
 	public static String getVnfRepositoryPath() {
 		return getFilePath("VNFs");
+	}
+	
+	public static String getPortMirroringRepositoryPath() {
+		return getFilePath("PortMirroring");
 	}
 	
 	public static File getConfigFile(String configFileName) throws Exception {
@@ -209,7 +216,7 @@ public class FileHandling {
 	}
 	
 	public static String[] getArtifactsFromZip(String filepath, String zipFilename){
-		try{
+		try {
 			ZipFile zipFile = new ZipFile(filepath + File.separator + zipFilename);
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			
@@ -227,8 +234,7 @@ public class FileHandling {
 			}
 			zipFile.close();
 			return artifactNames;
-		}
-		catch(ZipException zipEx){
+		} catch(ZipException zipEx) {
 			System.err.println("Error in zip file named : " +  zipFilename);	
 			zipEx.printStackTrace();
 		} catch (IOException e) {
@@ -240,6 +246,34 @@ public class FileHandling {
 		
 	}
 
+	public static List<String> getFileNamesFromZip(String zipFileLocation){
+		try{
+			ZipFile zipFile = new ZipFile(zipFileLocation);
+			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+			
+			List<String> artifactNames = new ArrayList<>();
+
+			int i = 0;
+			while(entries.hasMoreElements()){
+				ZipEntry nextElement = entries.nextElement();
+				if (!nextElement.isDirectory()){ 
+					String name = nextElement.getName();
+					artifactNames.add(name);
+				}
+			}
+			zipFile.close();
+			return artifactNames;
+		}
+		catch(ZipException zipEx){
+			System.err.println("Error in zip file named : " +  zipFileLocation);	
+			zipEx.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("Unhandled exception : ");
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 //	public static Object[] getZipFileNamesFromFolder(String filepath) {
 //		return filterFileNamesFromFolder(filepath, ".zip");
 //	}
@@ -562,4 +596,10 @@ public class FileHandling {
 
 		return value.replaceAll("\"","");
 	}
+
+    public static void overWriteExistindDir(String outputCsar) throws IOException {
+		String basePath = getBasePath();
+		String csarDir = FileHandling.getCreateDirByName("outputCsar");
+		FileUtils.cleanDirectory(new File(csarDir));
+    }
 }

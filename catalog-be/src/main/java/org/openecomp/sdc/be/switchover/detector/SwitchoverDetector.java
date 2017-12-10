@@ -34,8 +34,8 @@ import javax.annotation.PreDestroy;
 
 import org.apache.commons.codec.binary.Base64;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.Configuration.SwitchoverDetectorConfig;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.rest.HttpRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

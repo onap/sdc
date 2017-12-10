@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.resources.data;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

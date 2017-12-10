@@ -145,7 +145,7 @@ public class PropertyConvertor {
 				}
 	
 				innerConverter = type.getValueConverter();
-				if (ToscaPropertyType.STRING.equals(type) && value.startsWith("/")) {
+				if (ToscaPropertyType.STRING.equals(type) && valueStartsWithNonJsonChar(value)) {
 					return innerConverter.convertToToscaValue(value, innerType, dataTypes);
 				}
 			}
@@ -190,6 +190,10 @@ public class PropertyConvertor {
 			return null;
 		}
 
+	}
+
+	private boolean valueStartsWithNonJsonChar(String value) {
+		return value.startsWith("/") || value.startsWith(":");
 	}
 
 }

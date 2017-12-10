@@ -61,7 +61,7 @@ const SDC_CONFIG = {
 	},
 	"resourceTypesFilter":{
         "resource":["CP","VFC","VL"],
-        "service":["CP","VF","VL", "PNF","CVFC"]
+        "service":["CP","VF","VL", "PNF","CVFC","SERVICE", "Configuration"]
 	},
 	"logConfig": {
 		"minLogLevel": "debug",

@@ -1,12 +1,3 @@
-cookbook_file "/usr/share/elasticsearch/config/kibana_dashboard_virtualization.json" do
-   source "kibana_dashboard_virtualization.json"
-   owner "elasticsearch"
-   group "elasticsearch"
-   mode "0755"
-end
-
-
-
 ruby_block "check_ElasticSearch_Cluster_Health" do
     block do
       #tricky way to load this Chef::Mixin::ShellOut utilities
@@ -29,12 +20,6 @@ ruby_block "check_ElasticSearch_Cluster_Health" do
    retry_delay 2
 end
 
-bash "echo status" do
-   code <<-EOH
-     echo "DOCKER STARTED"
-   EOH
-end
-
 bash "create Kibana dashboard" do
     code <<-EOH
         for file in /root/chef-solo/cookbooks/sdc-elasticsearch/files/default/dashboard_*.json; do 
@@ -55,4 +40,10 @@ bash "create Kibana visualization" do
             echo 
         done 
     EOH
+end
+
+bash "echo status" do
+   code <<-EOH
+     echo "DOCKER STARTED"
+   EOH
 end

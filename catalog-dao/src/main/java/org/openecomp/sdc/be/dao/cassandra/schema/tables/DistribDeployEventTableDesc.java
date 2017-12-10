@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.DistribDownloadEventTableDesc.DSEFieldsDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
 import com.datastax.driver.core.DataType;

@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.ci.tests.utilities;
 
-import org.openecomp.sdc.ci.tests.datatypes.TopMenuButtonsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.CheckBoxStatusEnum;
 import org.openecomp.sdc.ci.tests.datatypes.CreateAndImportButtonsEnum;
 import org.openecomp.sdc.ci.tests.datatypes.DataTestIdEnum;

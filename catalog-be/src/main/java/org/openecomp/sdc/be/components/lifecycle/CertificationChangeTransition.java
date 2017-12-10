@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.components.lifecycle;
 
 import java.util.Arrays;
+
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;

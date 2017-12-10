@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.migration.v1707;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+
+import com.thinkaurelius.titan.core.TitanGraph;
 
 public class CommonMigrationUtils {
 

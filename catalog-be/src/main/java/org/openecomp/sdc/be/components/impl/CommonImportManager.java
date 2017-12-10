@@ -31,8 +31,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import jersey.repackaged.com.google.common.base.Function;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -52,6 +50,7 @@ import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 
 import fj.data.Either;
+import jersey.repackaged.com.google.common.base.Function;
 
 @Component("commonImportManager")
 public class CommonImportManager {

@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.lf5.util.ResourceUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.junit.Rule;
@@ -46,7 +45,6 @@ import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.preRequisites.SimpleOneRsrcOneServiceTest;
-import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.PropertyRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
@@ -56,8 +54,6 @@ import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.gson.Gson;
 
 public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 

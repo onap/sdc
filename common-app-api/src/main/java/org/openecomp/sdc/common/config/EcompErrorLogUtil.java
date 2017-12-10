@@ -25,9 +25,7 @@ import java.util.IllegalFormatException;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openecomp.sdc.common.config.EcompErrorConfiguration.EcompAlarmSeverity;
 import org.openecomp.sdc.common.config.EcompErrorConfiguration.EcompErrorSeverity;
-import org.openecomp.sdc.common.config.EcompErrorConfiguration.EcompErrorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;

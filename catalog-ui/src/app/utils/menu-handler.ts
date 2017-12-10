@@ -116,7 +116,11 @@ export class MenuHandler {
                 });
             }
 
-            result.selectedIndex = components.indexOf(selectedItem);
+            if(!selectedItem){
+                result.selectedIndex = components.length;
+            }else{
+                result.selectedIndex = components.indexOf(selectedItem);
+            }
             components[result.selectedIndex] = selected;
             let clickItemCallback = (component:Component):ng.IPromise<boolean> => {
                 this.$state.go('workspace.general', {

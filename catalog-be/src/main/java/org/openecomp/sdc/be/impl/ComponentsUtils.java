@@ -21,8 +21,11 @@
 package org.openecomp.sdc.be.impl;
 
 import java.lang.reflect.Type;
-import java.security.cert.CollectionCertStoreParameters;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
@@ -39,20 +42,28 @@ import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.AdditionalInformationEnum;
-import org.openecomp.sdc.be.dao.utils.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ConsumerDefinition;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserialiser;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.common.util.ValidationUtils;
@@ -91,7 +102,6 @@ public class ComponentsUtils {
 
 	public <T> Either<T, ResponseFormat> convertJsonToObject(String data, User user, Class<T> clazz, AuditingActionEnum actionEnum) {
 		if (data == null) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeInvalidJsonInput, "convertJsonToObject");
 			BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
 			log.debug("object is null after converting from json");
 			ResponseFormat responseFormat = getInvalidContentErrorAndAudit(user, actionEnum);
@@ -102,7 +112,6 @@ public class ComponentsUtils {
 			return Either.left(obj);
 		} catch (Exception e) {
 			// INVALID JSON
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeInvalidJsonInput, "convertJsonToObject");
 			BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
 			log.debug("failed to convert from json {}", data, e);
 			ResponseFormat responseFormat = getInvalidContentErrorAndAudit(user, actionEnum);
@@ -134,14 +143,12 @@ public class ComponentsUtils {
 
 			component = mapper.readValue(data, clazz);
 			if (component == null) {
-				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeInvalidJsonInput, "convertJsonToObject");
 				BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
 				log.debug("object is null after converting from json");
 				ResponseFormat responseFormat = getInvalidContentErrorAndAuditComponent(user, actionEnum, typeEnum);
 				return Either.right(responseFormat);
 			}
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeInvalidJsonInput, "convertJsonToObject");
 			BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
 			log.debug("failed to convert from json {}", data, e);
 			ResponseFormat responseFormat = getInvalidContentErrorAndAuditComponent(user, actionEnum, typeEnum);
@@ -158,6 +165,10 @@ public class ComponentsUtils {
 
 	public ResponseFormat getResponseFormat(ActionStatus actionStatus, String... params) {
 		return responseFormatManager.getResponseFormat(actionStatus, params);
+	}
+
+	public ResponseFormat getResponseFormat(StorageOperationStatus storageStatus, String... params) {
+		return responseFormatManager.getResponseFormat(this.convertFromStorageResponse(storageStatus), params);
 	}
 
 	/**
@@ -238,8 +249,8 @@ public class ComponentsUtils {
 
 		switch (actionStatus) {
 			case MISSING_CAPABILITY_TYPE:
-				if (obj instanceof List && org.apache.commons.collections.CollectionUtils.isNotEmpty((List) obj)){
-					List list = (List)obj;
+				if (obj instanceof List && org.apache.commons.collections.CollectionUtils.isNotEmpty((List<?>) obj)){
+					List<?> list = (List<?>)obj;
 					if ( list.get(0) instanceof RequirementDefinition ) {
 						responseFormat = getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, ((RequirementDefinition) list.get(0)).getName());    //Arbitray index, all we need is single object
 						return responseFormat;

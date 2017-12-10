@@ -21,6 +21,11 @@
             }
         }
     }
+
+    .custom-modal {
+        /* Hack solution to hide canvas tooltips under modals */
+        z-index: 20000 !important;
+    }
 }
 
 .workspace-composition {
@@ -68,7 +73,7 @@
     .w-sdc-designer-sidebar {
         background-color:@main_color_p ;
         .noselect;
-        bottom: @footer_height;
+        bottom: 0;
         position: fixed;
         right: -302px;
         width: 302px;
@@ -92,8 +97,8 @@
     .w-sdc-designer-sidebar-logo-ph {
         display: inline-block;
         vertical-align: middle;
-        line-height: 48px;
-        height: 48px;
+        line-height: 60px;
+        height: 60px;
     }
 
     .w-sdc-designer-sidebar-logo {
@@ -129,7 +134,7 @@
     }
 
     .w-sdc-designer-sidebar-tabs {
-        .bg_e;
+        .bg_c;
     }
 
     .w-sdc-designer-sidebar-tabs::after {
@@ -275,7 +280,9 @@
         .g_7;
         .bg_c;
         border-radius: 4px;
-        display: inline-block;
+        //fix long name for firefox:
+        display: block;
+        float: left;
         line-height: 25px;
         margin: 0 4px 6px 0;
         min-width: 50px;
@@ -620,7 +627,11 @@
         display: inline-block;
         margin: 12px 0 12px 10px;
         pointer-events: auto;
-
+        height: 45px;
+        width: 40px;
+        float: left;
+        display: flex;
+        align-items: center;
         .non-certified {
             position: relative;
             left: 27px;
@@ -849,82 +860,30 @@
     // ---------------------------------------------------------------------------------------------------
     // Canvas inline menu
     // ---------------------------------------------------------------------------------------------------
-    .w-sdc-canvas-menu {
-        position: fixed;
-        z-index: 100;
+    .w-sdc-canvas-menu-list {
+        .w-sdc-canvas-menu-item-view {
+            &::before {
+                content: '';
+                display: inline-block;
 
-        border-style: solid;
-        border-width: 1px;
-        border-color: #d8d8d8;
-        box-sizing: border-box;
-        background-color: #ffffff;
-        box-shadow: 0px 2px 2px 0px rgba(24, 24, 25, 0.1);
-        width: 91px;
-
-        /*        &.vl-type-select{
-                    width: 173px;
-                }
-        */
-
-        h3 {
-            color: @func_color_s;
-            font-size: 14px;
-            font-weight: bold;
-            margin: 0;
-            padding: 7px 11px;
-            border-bottom: 1px solid #e5e5e5;
-        }
-
-        .w-sdc-canvas-menu-content {
-            padding: 5px 5px;
-
-            &.vl-select{
-                border-bottom: #d8d8d8 solid 1px;
-                line-height: 15px;
-
-                .tlv-radio {
-                    padding: 3px 0px;
-
-                    .tlv-radio-label {
-                        padding: 3px 0px;
-
-                        &::before {
-                            margin-right: 10px;
-                        }
-                    }
-                }
-            }
-
-            .w-sdc-canvas-menu-content-update-button {
-                .sprite;
-                .sprite.e-sdc-small-icon-delete;
-                .hand;
-                position: absolute;
-                top: 15px;
-                right: 10px;
-            }
-            .w-sdc-canvas-menu-content-delete-button {
-                .sprite;
-                .sprite.e-sdc-small-icon-delete;
-                .hand;
-                margin: 0 8px 0 6px;
+                .sprite-new;
+                .view-icon;
+                vertical-align: top;
+                margin: 2px 6px 2px 4px;
             }
         }
 
-        .w-sdc-canvas-menu-arrow {
-            //TODO: Missing image for small blue triangle.
-            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAFCAYAAAB4ka1VAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDE0IDc5LjE1Njc5NywgMjAxNC8wOC8yMC0wOTo1MzowMiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTQgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkE1OTIzNDI1MENFQjExRTU4ODRERTI1MDM2REZCOUYzIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkE1OTIzNDI2MENFQjExRTU4ODRERTI1MDM2REZCOUYzIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QTU5MjM0MjMwQ0VCMTFFNTg4NERFMjUwMzZERkI5RjMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QTU5MjM0MjQwQ0VCMTFFNTg4NERFMjUwMzZERkI5RjMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4gBXTlAAAAOElEQVR42mK0rp7NgASMgZgFiE/CBJjQJPcA8U4gNkdXAJMUAGJ+ZEVMaJIwAFfEhEUSRRFAgAEAVtgJyiLAPWAAAAAASUVORK5CYII=');
-            content: '';
-            display: block;
-            height: 21px;
-            position: absolute;
-            right: 12px;
-            top: -24px;
-            width: 184px;
-            background-repeat: no-repeat;
-            background-position: 175px 16px;
-        }
+        .w-sdc-canvas-menu-item-delete {
+            &::before {
+                content: '';
+                display: inline-block;
 
+                .sprite-new;
+                .delete-icon;
+                vertical-align: bottom;
+                margin: 1px 10px 0 7px;
+            }
+        }
     }
 }
 /*.right-tab-loader {

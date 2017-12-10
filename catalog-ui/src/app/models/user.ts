@@ -19,7 +19,6 @@
  */
 
 'use strict';
-import {IUserResource} from "../services/user-resource-service";
 
 export enum UserRole {
     ADMIN,
@@ -46,7 +45,7 @@ export interface IUserProperties extends IUserManager {
 }
 
 export interface IUser {
-    resource:IUserResource;
+    userInfo:IUserProperties;
     getRole():UserRole;
     getRoleToView():string;
     getName():string;
@@ -56,32 +55,32 @@ export interface IUser {
 
 export class User implements IUser {
 
-    constructor(public resource:IUserResource) {
+    constructor(public userInfo:IUserProperties) {
     }
 
     public getLastName = () => {
-        return this.resource.lastName;
-    }
+        return this.userInfo.lastName;
+    };
 
     public getFirstName = () => {
-        return this.resource.firstName;
-    }
+        return this.userInfo.firstName;
+    };
 
     public getName = () => {
-        return this.resource.firstName + ' ' + this.resource.lastName;
-    }
+        return this.userInfo.firstName + ' ' + this.userInfo.lastName;
+    };
 
     public getLastLogin = () => {
-        if (!this.resource.lastLoginTime || this.resource.lastLoginTime === "0") {
+        if (!this.userInfo.lastLoginTime || this.userInfo.lastLoginTime === "0") {
             return "";
         } else {
-            return this.resource.lastLoginTime;
+            return this.userInfo.lastLoginTime;
         }
-    }
+    };
 
     public getRole = ():UserRole => {
         let role:UserRole;
-        switch (UserRole[this.resource.role.toUpperCase()]) {
+        switch (UserRole[this.userInfo.role.toUpperCase()]) {
             case UserRole.ADMIN:
                 role = UserRole.ADMIN;
                 break;
@@ -99,10 +98,10 @@ export class User implements IUser {
                 break;
         }
         return role;
-    }
+    };
 
     public getRoleToView = ():string => {
-        let role:string = this.resource.role.toLowerCase().replace('governor', 'governance_Rep');
+        let role:string = this.userInfo.role.toLowerCase().replace('governor', 'governance_Rep');
         return role.charAt(0).toUpperCase() + role.slice(1).replace('_', ' ');
     }
 }

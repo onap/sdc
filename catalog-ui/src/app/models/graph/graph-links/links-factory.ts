@@ -46,7 +46,7 @@ export class LinksFactory {
     //     newRelation = new CompositionCiUcpeLink(relation, fromNode.isUcpePart, singleRelation);
     //   }
     // } else
-     if (singleRelation.relationship.type && _.includes(singleRelation.relationship.type.toLowerCase(), 'link')) {
+     if (singleRelation.relation.relationship.type && _.includes(singleRelation.relation.relationship.type.toLowerCase(), 'link')) {
       newRelation = new CompositionCiVLink(relation, singleRelation);
     } else {
       newRelation = new CompositionCiSimpleLink(relation, singleRelation);
@@ -68,7 +68,7 @@ export class LinksFactory {
 
     let newRelation:ModuleCiLinkBase;
 
-    if (_.includes(singleRelation.relationship.type.toLowerCase(), 'link')) {
+    if (_.includes(singleRelation.relation.relationship.type.toLowerCase(), 'link')) {
       newRelation = new ModuleCiVlLink(relation, singleRelation);
     } else {
       newRelation = new ModuleCiLinkBase(relation, singleRelation);

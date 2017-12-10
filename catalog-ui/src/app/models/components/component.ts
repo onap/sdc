@@ -29,6 +29,8 @@ import {CommonUtils} from "../../utils/common-utils";
 import {QueueUtils} from "../../utils/functions";
 import {ArtifactGroupType} from "../../utils/constants";
 import {ComponentMetadata} from "../component-metadata";
+import {Capability} from "../capability";
+import {Requirement} from "../requirement";
 
 // import {}
 export interface IComponent {
@@ -82,6 +84,7 @@ export interface IComponent {
 
     createRelation(link:RelationshipModel):ng.IPromise<RelationshipModel>;
     deleteRelation(link:RelationshipModel):ng.IPromise<RelationshipModel>;
+    fetchRelation(linkId:string):ng.IPromise<RelationshipModel>;
 
 
     //Modules
@@ -356,7 +359,6 @@ export abstract class Component implements IComponent {
                 // find exist instance property in parent component for update the new value ( find bu uniqueId )
                 let existProperty:PropertyModel = <PropertyModel>_.find(this.properties, {uniqueId: newProperty.uniqueId});
                 let propertyIndex = this.properties.indexOf(existProperty);
-                newProperty.readonly = this.uniqueId != newProperty.parentUniqueId;
                 this.properties[propertyIndex] = newProperty;
                 deferred.resolve(newProperty);
             };
@@ -607,6 +609,58 @@ export abstract class Component implements IComponent {
     };
 
 
+    public syncComponentByRelation(relation:RelationshipModel) {
+        relation.relationships.forEach((rel) => {
+            if (rel.capability) {
+                const toComponentInstance:ComponentInstance = this.componentInstances.find((inst) => inst.uniqueId === relation.toNode);
+                const toComponentInstanceCapability:Capability = toComponentInstance.findCapability(
+                    rel.capability.type, rel.capability.uniqueId, rel.capability.ownerId, rel.capability.name);
+                const isCapabilityFulfilled:boolean = rel.capability.isFulfilled();
+                if (isCapabilityFulfilled && toComponentInstanceCapability) {
+                    // if capability is fulfilled and in component, then remove it
+                    console.log('Capability is fulfilled', rel.capability.getFullTitle(), rel.capability.leftOccurrences);
+                    toComponentInstance.capabilities[rel.capability.type].splice(
+                        toComponentInstance.capabilities[rel.capability.type].findIndex((cap) => cap === toComponentInstanceCapability), 1
+                    )
+                } else if (!isCapabilityFulfilled && !toComponentInstanceCapability) {
+                    // if capability is unfulfilled and not in component, then add it
+                    console.log('Capability is unfulfilled', rel.capability.getFullTitle(), rel.capability.leftOccurrences);
+                    toComponentInstance.capabilities[rel.capability.type].push(rel.capability);
+                }
+            }
+            if (rel.requirement) {
+                const fromComponentInstance:ComponentInstance = this.componentInstances.find((inst) => inst.uniqueId === relation.fromNode);
+                const fromComponentInstanceRequirement:Requirement = fromComponentInstance.findRequirement(
+                    rel.requirement.capability, rel.requirement.uniqueId, rel.requirement.ownerId, rel.requirement.name);
+                const isRequirementFulfilled:boolean = rel.requirement.isFulfilled();
+                if (isRequirementFulfilled && fromComponentInstanceRequirement) {
+                    // if requirement is fulfilled and in component, then remove it
+                    console.log('Requirement is fulfilled', rel.requirement.getFullTitle(), rel.requirement.leftOccurrences);
+                    fromComponentInstance.requirements[rel.requirement.capability].splice(
+                        fromComponentInstance.requirements[rel.requirement.capability].findIndex((req) => req === fromComponentInstanceRequirement), 1
+                    )
+                } else if (!isRequirementFulfilled && !fromComponentInstanceRequirement) {
+                    // if requirement is unfulfilled and not in component, then add it
+                    console.log('Requirement is unfulfilled', rel.requirement.getFullTitle(), rel.requirement.leftOccurrences);
+                    fromComponentInstance.requirements[rel.requirement.capability].push(rel.requirement);
+                }
+            }
+        });
+    }
+
+    public fetchRelation = (linkId:string):ng.IPromise<RelationshipModel> => {
+        let deferred = this.$q.defer<RelationshipModel>();
+        let onSuccess = (relation:RelationshipModel):void => {
+            this.syncComponentByRelation(relation);
+            deferred.resolve(relation);
+        };
+        let onFailed = (error:any):void => {
+            deferred.reject(error);
+        };
+        this.componentService.fetchRelation(this.uniqueId, linkId).then(onSuccess, onFailed);
+        return deferred.promise;
+    };
+
     public createRelation = (relation:RelationshipModel):ng.IPromise<RelationshipModel> => {
         let deferred = this.$q.defer();
         let onSuccess = (relation:RelationshipModel):void => {
@@ -615,6 +669,7 @@ export abstract class Component implements IComponent {
                 this.componentInstancesRelations = [];
             }
             this.componentInstancesRelations.push(new RelationshipModel(relation));
+            this.syncComponentByRelation(relation);
             deferred.resolve(relation);
         };
         let onFailed = (error:any):void => {
@@ -627,11 +682,11 @@ export abstract class Component implements IComponent {
 
     public deleteRelation = (relation:RelationshipModel):ng.IPromise<RelationshipModel> => {
         let deferred = this.$q.defer();
-        let onSuccess = (responseRelation:RelationshipModel):void => {
+        let onSuccess = (relation:RelationshipModel):void => {
             console.log("Link Deleted In Server");
             let relationToDelete = _.find(this.componentInstancesRelations, (item) => {
                 return item.fromNode === relation.fromNode && item.toNode === relation.toNode && _.some(item.relationships, (relationship)=> {
-                        return angular.equals(relation.relationships[0], relationship);
+                        return angular.equals(relation.relationships[0].relation, relationship.relation);
                     });
             });
             let index = this.componentInstancesRelations.indexOf(relationToDelete);
@@ -640,11 +695,14 @@ export abstract class Component implements IComponent {
                     this.componentInstancesRelations.splice(index, 1);
                 } else {
                     this.componentInstancesRelations[index].relationships =
-                        _.reject(this.componentInstancesRelations[index].relationships, relation.relationships[0]);
+                        _.reject(this.componentInstancesRelations[index].relationships, (relationship) => {
+                            return angular.equals(relation.relationships[0].relation, relationship.relation);
+                        });
                 }
             } else {
                 console.error("Error while deleting relation - the return delete relation from server was not found in UI")
             }
+            this.syncComponentByRelation(relation);
             deferred.resolve(relation);
         };
         let onFailed = (error:any):void => {
@@ -658,8 +716,8 @@ export abstract class Component implements IComponent {
     public updateRequirementsCapabilities = ():ng.IPromise<any> => {
         let deferred = this.$q.defer();
         let onSuccess = (response:any):void => {
-            this.capabilities = response.capabilities;
-            this.requirements = response.requirements;
+            this.capabilities = new CapabilitiesGroup(response.capabilities);
+            this.requirements = new RequirementsGroup(response.requirements);
             deferred.resolve(response);
         };
         let onFailed = (error:any):void => {

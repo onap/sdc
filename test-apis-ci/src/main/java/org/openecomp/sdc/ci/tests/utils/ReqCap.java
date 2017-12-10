@@ -31,8 +31,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Function;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -42,7 +42,7 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Product;
-import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
+import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -580,7 +580,7 @@ public class ReqCap {
 
 	private static void deleteAssociatedFromExpected(RequirementCapabilityRelDef requirementDef) {
 		// removing from requirements
-		RequirementAndRelationshipPair relationship = requirementDef.getRelationships().get(0);
+		RelationshipInfo relationship = requirementDef.getRelationships().get(0).getRelation();
 		String type = relationship.getRelationship().getType();
 		String fromId = requirementDef.getFromNode();
 		List<RequirementDefinition> reqList = expectedContainerRequirements.get(type);
@@ -612,7 +612,7 @@ public class ReqCap {
 
 	private static void addDissociatedToExpected(RequirementCapabilityRelDef requirementDef) {
 		// adding to requirements
-		RequirementAndRelationshipPair relationship = requirementDef.getRelationships().get(0);
+		RelationshipInfo relationship = requirementDef.getRelationships().get(0).getRelation();
 		String type = relationship.getRelationship().getType();
 		String fromId = requirementDef.getFromNode();
 		String key = type + " " + fromId;

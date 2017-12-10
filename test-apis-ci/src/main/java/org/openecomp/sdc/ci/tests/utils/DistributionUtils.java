@@ -29,17 +29,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.ci.tests.api.Urls;
+import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.datatypes.DistributionMonitorObject;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
+import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
+//import org.openecomp.sdc.be.components.distribution.engine.DistributionStatusNotificationEnum;
 
- public class DistributionUtils {
+import com.clearspring.analytics.util.Pair;
+import com.google.gson.Gson;
+
+
+ public class DistributionUtils extends BaseRestUtils{
 	 
 	 final static String serviceDistributionSuffix = "/sdc/v1/catalog/services/";
 
@@ -140,5 +153,112 @@ import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 		return distributionArtifactMap;
 	}
 	 
-	 
+	
+	
+	public static RestResponse getDistributionStatus(User sdncModifierDetails, String distributionId) throws IOException {
+
+		Config config = Utils.getConfig();
+		String url = String.format(Urls.DISTRIBUTION_SERVICE_MONITOR, config.getCatalogBeHost(), config.getCatalogBePort(), distributionId);
+		return sendGet(url, sdncModifierDetails.getUserId());
+		
+	}
+	
+	
+	/**
+	 * @param response
+	 * @return parsed distribution list of DistributionMonitorObject java objects
+	 * @throws JSONException
+	 */
+	public static Map<String, List<DistributionMonitorObject>> getSortedDistributionStatus(RestResponse response) throws JSONException{
+		
+		ArrayList<DistributionMonitorObject> distributionStatusList = new ArrayList<DistributionMonitorObject>();
+		String responseString = response.getResponse();
+		JSONObject jObject;
+		JSONArray jsonArray = null;
+		jObject = new JSONObject(responseString);
+		jsonArray = jObject.getJSONArray("distributionStatusList");
+		
+		Gson gson = new Gson();
+		for(int i=0; i<jsonArray.length(); i++){
+			String jsonElement = jsonArray.get(i).toString();
+			DistributionMonitorObject distributionStatus = gson.fromJson(jsonElement, DistributionMonitorObject.class);
+			distributionStatusList.add(distributionStatus);
+		}
+			Map<String, List<DistributionMonitorObject>> sortedDistributionMapByConsumer = sortDistributionStatusByConsumer(distributionStatusList);
+		
+		return sortedDistributionMapByConsumer;
+	}
+
+	/**
+	 * @param distributionStatusList
+	 * @return sorted distribution map where key is consumer name and value contains list of corresponded DistributionMonitorObject java object
+	 */
+	public static Map<String, List<DistributionMonitorObject>> sortDistributionStatusByConsumer(ArrayList<DistributionMonitorObject> distributionStatusList) {
+		//		sort distribution status list per consumer
+				Map<String, List<DistributionMonitorObject>> distributionStatusMapByConsumer = new HashMap<String, List<DistributionMonitorObject>>();
+				for(DistributionMonitorObject distributionListElement : distributionStatusList){
+					String key = distributionListElement.getOmfComponentID();
+					List<DistributionMonitorObject> list = new ArrayList<>();
+					if(distributionStatusMapByConsumer.get(key) != null){
+						list = distributionStatusMapByConsumer.get(key);
+						list.add(distributionListElement);
+						distributionStatusMapByConsumer.put(key, list);
+					}else{
+						list.add(distributionListElement);
+						distributionStatusMapByConsumer.put(key, list);
+					}
+					
+				}
+				return distributionStatusMapByConsumer;
+	}
+	
+	
+	/**
+	 * @param pair
+	 * @return consumer Status map: if map is empty - all consumers successes download and deploy the artifacts,
+	 * else - return failed consumer status per url 
+	 */
+	public static Pair<Boolean, Map<String, List<String>>> verifyDistributionStatus(Map<String, List<DistributionMonitorObject>> map){
+		
+		Map<String, List<String>> consumerStatusMap = new HashMap<>();
+		List<Boolean> flag = new ArrayList<>();
+		for (Entry<String, List<DistributionMonitorObject>> distributionMonitor : map.entrySet()){
+			int notifiedCount = 0, downloadCount = 0, deployCount = 0;
+			List<String> failedList = new ArrayList<>();
+			List<DistributionMonitorObject> listValue = distributionMonitor.getValue();
+			for(DistributionMonitorObject distributionStatus : listValue){
+				String status = distributionStatus.getStatus();
+				switch (status) {
+				case "NOTIFIED": notifiedCount++;
+					break;
+				case "NOT_NOTIFIED":
+				break;
+				case "DOWNLOAD_OK": downloadCount++;
+				break;
+				case "DEPLOY_OK": deployCount++;
+				break;
+				default:
+					failedList.add("Url " + distributionStatus.getUrl() + " failed with status " + distributionStatus.getStatus());
+					break;
+				}
+			}
+			if((notifiedCount != downloadCount || notifiedCount != deployCount) && notifiedCount != 0){
+				consumerStatusMap.put(distributionMonitor.getKey(), failedList);
+				flag.add(false);
+			}
+			if(notifiedCount == 0){
+				flag.add(true);
+			}
+		}
+	
+		if(!flag.contains(false)){
+			return Pair.create(true, consumerStatusMap);
+		}else{
+			return Pair.create(false, consumerStatusMap);
+		}
+
+	}
+	
+	
+	
  }

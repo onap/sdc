@@ -3,8 +3,6 @@ package org.openecomp.sdc.be.resources.data;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

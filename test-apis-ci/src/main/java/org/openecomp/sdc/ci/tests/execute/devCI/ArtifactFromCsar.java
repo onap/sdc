@@ -28,10 +28,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,7 +51,6 @@ public class ArtifactFromCsar {
 	
 
 	public static void main(String[] args) throws Exception {
-		// TODO Auto-generated method stub
 		String zipFile = "C:\\Users\\rp955r\\Documents\\InTesting\\resource-CivfonboardedFdnt2f792348-csar.csar";
 		
 //		Map<String, Object> combinedMap = combineHeatArtifacstWithFolderArtifacsToMap(zipFile);
@@ -138,7 +135,6 @@ public class ArtifactFromCsar {
 						try {
 							map.put(file.getName(), getMapArtifactFromFolderStructure(file));
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}

@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.common.test.config;
 
+import static java.lang.String.format;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.openecomp.sdc.common.api.BasicConfiguration;
-
-import static java.lang.String.format;
 
 public class TestConfiguration extends BasicConfiguration {
 

@@ -125,6 +125,7 @@ export class OnboardingModalViewModel {
             this.cacheService.set(CHANGE_COMPONENT_CSAR_VERSION_FLAG, (<Resource>this.$scope.selectedComponent).csarVersion);
             this.$state.go('workspace.general', {
                 id: this.$scope.componentFromServer.uniqueId,
+                componentCsar: this.$scope.selectedComponent,
                 type: this.$scope.componentFromServer.componentType.toLowerCase(),
                 disableButtons: true
             });

@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.execute.devCI;
 
+import static java.util.Arrays.asList;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -98,9 +100,6 @@ import com.google.gson.JsonObject;
 import com.relevantcodes.extentreports.LogStatus;
 
 import fj.data.Either;
-
-
-import static java.util.Arrays.asList;
 
 public class CRUDExternalAPI extends ComponentBaseTest {
 

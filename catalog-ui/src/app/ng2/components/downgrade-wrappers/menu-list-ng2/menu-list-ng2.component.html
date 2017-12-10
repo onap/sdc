@@ -1,0 +1,7 @@
+<menu-list [open]="props?.open" [position]="props?.position" [styleClass]="props?.styleClass">
+    <menu-item *ngFor="let item of props?.items"
+               [action]="item?.action"
+               [styleClass]="item?.styleClass">
+        {{ item?.contents }}
+    </menu-item>
+</menu-list>

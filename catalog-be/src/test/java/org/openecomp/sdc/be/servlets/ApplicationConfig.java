@@ -31,7 +31,6 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.mockito.Mockito;
-import org.openecomp.sdc.be.servlets.ResourceUploadServlet;
 
 public class ApplicationConfig extends Application {
 
