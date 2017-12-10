@@ -33,15 +33,13 @@ public class TargetCapabilityRelDef implements Serializable {
 	private String uid;
 	private String toNode;
 
-	// private List<ImmutablePair<String, RelationshipImpl>> relationships;
-
-	private List<RequirementAndRelationshipPair> relationships;
+	private List<CapabilityRequirementRelationship> relationships;
 
 	public TargetCapabilityRelDef() {
 		super();
 	}
 
-	public TargetCapabilityRelDef(String toNode, List<RequirementAndRelationshipPair> relationships) {
+	public TargetCapabilityRelDef(String toNode, List<CapabilityRequirementRelationship> relationships) {
 		super();
 		this.toNode = toNode;
 		this.relationships = relationships;
@@ -63,8 +61,13 @@ public class TargetCapabilityRelDef implements Serializable {
 	// this.capabilityOwnerId = capabilityOwnerId;
 	// }
 
-	public List<RequirementAndRelationshipPair> getRelationships() {
+	public List<CapabilityRequirementRelationship> getRelationships() {
 		return relationships;
+	}
+
+
+	public CapabilityRequirementRelationship getSingleRelationship() {//currently only single relationship is supported
+		return relationships == null || relationships.isEmpty() ? null : relationships.get(0);
 	}
 
 	public String getUid() {
@@ -75,7 +78,7 @@ public class TargetCapabilityRelDef implements Serializable {
 		this.uid = uid;
 	}
 
-	public void setRelationships(List<RequirementAndRelationshipPair> relationships) {
+	public void setRelationships(List<CapabilityRequirementRelationship> relationships) {
 		this.relationships = relationships;
 	}
 

@@ -94,8 +94,8 @@ public class PropertiesUIUtils {
 	public static void updateProperty(PropertyTypeEnum property) {
 		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Updating property: %s", property.name()));
 		PropertiesPage.clickOnProperty(property.getName());
-		PropertiesPage.getPropertyPopup().insertPropertyDescription(property.getDescription());
-		PropertiesPage.getPropertyPopup().insertPropertyDefaultValue(property.getValue());
+		PropertiesPage.getPropertyPopup().insertPropertyDescription(property.getUpdateDescription());
+		PropertiesPage.getPropertyPopup().insertPropertyDefaultValue(property.getUpdateValue());
 		PropertiesPage.getPropertyPopup().clickSave();
 	}
 	

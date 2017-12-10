@@ -20,19 +20,19 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import org.openecomp.sdc.be.components.ArtifactsResolver;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Service;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.openecomp.sdc.be.components.ArtifactsResolver;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.Service;
 
 @org.springframework.stereotype.Component("artifact-resolver")
 public class ArtifactResolverImpl implements ArtifactsResolver {

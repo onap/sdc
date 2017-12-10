@@ -22,8 +22,6 @@ package org.openecomp.sdc.be.auditing.api;
 
 import java.util.EnumMap;
 
-import javax.servlet.ServletContext;
-
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 public interface IAuditingManager {

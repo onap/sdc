@@ -32,9 +32,6 @@ import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_RE
 import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_SUCCESS;
 import static org.testng.AssertJUnit.assertEquals;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -47,7 +44,6 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedCategoryAudit;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.DbUtils;
-import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.CategoryRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;

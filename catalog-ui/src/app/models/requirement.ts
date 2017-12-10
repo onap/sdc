@@ -22,6 +22,7 @@
  * Created by obarda on 4/20/2016.
  */
 'use strict';
+import {RequirementCapabilityModel} from "./capability";
 //this is an object contains keys, when each key has matching array.
 // for example: key = tosca.capabilities.network. and the match array is array of requirements objects
 export class RequirementsGroup {
@@ -36,7 +37,7 @@ export class RequirementsGroup {
     }
 }
 
-export class Requirement {
+export class Requirement implements RequirementCapabilityModel{
 
     //server data
     capability:string;
@@ -46,6 +47,7 @@ export class Requirement {
     node:string;
     uniqueId:string;
     relationship:string;
+    leftOccurrences:string;
     minOccurrences:string;
     maxOccurrences:string;
     //custom
@@ -61,6 +63,7 @@ export class Requirement {
             this.node = requirement.node;
             this.uniqueId = requirement.uniqueId;
             this.relationship = requirement.relationship;
+            this.leftOccurrences = requirement.leftOccurrences;
             this.minOccurrences = requirement.minOccurrences;
             this.maxOccurrences = requirement.maxOccurrences;
             this.initFilterTerm();
@@ -68,9 +71,12 @@ export class Requirement {
         }
     }
 
+    public getTitle():string {
+        return this.ownerName + ': ' + this.name;
+    }
+
     public getFullTitle():string {
-        return this.ownerName + ': ' + this.name +
-            ': [' + this.minOccurrences + ', ' + this.maxOccurrences + ']';
+         return this.getTitle() + ': [' + this.minOccurrences + ', ' + this.maxOccurrences + ']';
     }
 
     public toJSON = ():any => {
@@ -85,6 +91,10 @@ export class Requirement {
             (this.node ? (this.node.substring("tosca.nodes.".length) + " ") : "") +
             (this.relationship ? (this.relationship.substring("tosca.relationships.".length) + " ") : "") +
             this.minOccurrences + "," + this.maxOccurrences;
+    }
+
+    public isFulfilled() {
+        return parseInt(this.leftOccurrences) === 0;
     }
 }
 

@@ -1,11 +1,13 @@
 package org.openecomp.sdc.be.tosca;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -31,7 +34,7 @@ public class PropertyConvertorTest {
         property = new PropertyDefinition();
         property.setName("myProperty");
         property.setType(ToscaPropertyType.INTEGER.getType());
-        dataTypes = new HashMap<String, DataTypeDefinition>();
+        dataTypes = new HashMap();
         dataTypes.put(property.getName(), new DataTypeDefinition());
     }
 
@@ -49,7 +52,7 @@ public class PropertyConvertorTest {
         property.setDefaultValue(def);
         ToscaProperty result = PropertyConvertor.getInstance().convertProperty(dataTypes, property, false);
         assertNotNull(result);
-        assertEquals(Integer.valueOf(def).intValue(), result.getDefaultp());
+        assertEquals(Integer.valueOf(def), result.getDefaultp());
     }
 
     @Test
@@ -60,7 +63,7 @@ public class PropertyConvertorTest {
         property1.setDefaultValue("2");
         dataTypes.put(property1.getName(), new DataTypeDefinition());
         Resource resource = new Resource();
-        List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+        List<PropertyDefinition> properties = new ArrayList();
         properties.add(property);
         properties.add(property1);
         resource.setProperties(properties);
@@ -86,7 +89,7 @@ public class PropertyConvertorTest {
         property.setDefaultValue("1");
         dataTypes.put(property1.getName(), new DataTypeDefinition());
         Resource resource = new Resource();
-        List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+        List<PropertyDefinition> properties = new ArrayList();
         properties.add(property);
         properties.add(property1);
         resource.setProperties(properties);
@@ -106,7 +109,7 @@ public class PropertyConvertorTest {
         property1.setType(ToscaPropertyType.INTEGER.getType());
         dataTypes.put(property1.getName(), new DataTypeDefinition());
         Resource resource = new Resource();
-        List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+        List<PropertyDefinition> properties = new ArrayList();
         properties.add(property);
         properties.add(property1);
         resource.setProperties(properties);
@@ -118,4 +121,25 @@ public class PropertyConvertorTest {
             assertNull(prop.getDefaultp());
         }
      }
+
+    @Test
+    public void convertPropertyWhichStartsWithSemiColon() throws Exception {
+        PropertyDefinition property1 = new PropertyDataDefinitionBuilder()
+                .setDefaultValue("::")
+                .setType(ToscaPropertyType.STRING.getType())
+                .build();
+        ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(Collections.emptyMap(), property1, false);
+        assertThat(toscaProperty.getDefaultp()).isEqualTo("::");
+    }
+
+    @Test
+    public void convertPropertyWhichStartsWithSlash() throws Exception {
+        PropertyDefinition property1 = new PropertyDataDefinitionBuilder()
+                .setDefaultValue("/")
+                .setType(ToscaPropertyType.STRING.getType())
+                .build();
+        ToscaProperty toscaProperty = PropertyConvertor.getInstance().convertProperty(Collections.emptyMap(), property1, false);
+        assertThat(toscaProperty.getDefaultp()).isEqualTo("/");
+    }
+
 }

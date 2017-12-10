@@ -12,20 +12,21 @@
         "BE_VIP": "yyy",
         "FE_VIP": "yyy",
         "ES_VIP": "yyy",
+        "KB_VIP": "yyy",
         "interfaces": {
             "application": "eth0",
             "private": "eth1"
         },
 		"ECompP": {
 		    "ecomp_rest_url": "http://portal.api.simpledemo.onap.org:8989/ONAPPORTAL/auxapi",
-            "ueb_url_list": "10.0.11.1,10.0.11.1", 
-            "app_secret": "XftIATw9Jr3VzAcPqt3NnJOu", 
-            "app_key": "x9UfO7JsDn8BESVX", 
-            "inbox_name": "ECOMP-PORTAL-INBOX", 
-            "ecomp_redirect_url": "http://portal.api.simpledemo.openecomp.org:8989/ECOMPPORTAL/login.htm", 
+            "ueb_url_list": "10.0.11.1,10.0.11.1",
+            "app_secret": "XftIATw9Jr3VzAcPqt3NnJOu",
+            "app_key": "x9UfO7JsDn8BESVX",
+            "inbox_name": "ECOMP-PORTAL-INBOX",
+            "ecomp_redirect_url": "http://portal.api.simpledemo.openecomp.org:8989/ECOMPPORTAL/login.htm",
             "app_topic_name": "ECOMP-PORTAL-OUTBOX-SDC1",
 			"decryption_key": "AGLDdG4D04BKm2IxIWEr8o=="
-        }, 
+        },
         "UEB": {
             "PublicKey": "iPIxkpAMI8qTcQj8",
             "SecretKey": "Ehq3WyT4bkif4zwgEbvshGal",
@@ -35,7 +36,8 @@
             "CS": "yyy",
             "BE": "yyy",
             "FE": "yyy",
-            "ES": "yyy"
+            "ES": "yyy",
+            "KB": "yyy"
         }
     },
     "override_attributes": {

@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.model;
 
 import org.openecomp.sdc.be.datatypes.elements.InputsValueDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 public class PropertyValueDefinition extends InputsValueDataDefinition implements IOperationParameter {
 

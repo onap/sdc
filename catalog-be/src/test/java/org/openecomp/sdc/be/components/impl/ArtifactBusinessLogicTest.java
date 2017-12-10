@@ -20,20 +20,36 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_ENV_NAME;
+import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_VF_ENV_NAME;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.utils.ArtifactBuilder;
+import org.openecomp.sdc.be.components.utils.ObjectGenerator;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -45,10 +61,13 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ArtifactType;
+import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.operations.ArtifactsOperations;
+import org.openecomp.sdc.be.model.jsontitan.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
@@ -57,6 +76,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -64,30 +84,40 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 public class ArtifactBusinessLogicTest {
 
+	public static final User USER = new User("John", "Doh", "jh0003", "jh0003@gmail.com", "ADMIN", System.currentTimeMillis());
 	static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
 	static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
 	@InjectMocks
-	static ArtifactsBusinessLogic artifactBL = new ArtifactsBusinessLogic();
-
-	public static final ArtifactOperation artifactOperation = Mockito.mock(ArtifactOperation.class);
-	public static final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
-	public static final IInterfaceLifecycleOperation lifecycleOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
-	public static final IUserAdminOperation userOperation = Mockito.mock(IUserAdminOperation.class);
-	public static final IElementOperation elementOperation = Mockito.mock(IElementOperation.class);
-	public static final ArtifactCassandraDao artifactCassandraDao =  Mockito.mock(ArtifactCassandraDao.class);
-	public static final ToscaOperationFacade toscaOperationFacade =  Mockito.mock(ToscaOperationFacade.class);
+	private static ArtifactsBusinessLogic artifactBL;
+	@Mock
+	private ArtifactOperation artifactOperation;
+	@Mock
+	public ComponentsUtils componentsUtils;
+	@Mock
+	private IInterfaceLifecycleOperation lifecycleOperation;
+	@Mock
+	private IUserAdminOperation userOperation;
+	@Mock
+	private IElementOperation elementOperation;
+	@Mock
+	private ArtifactCassandraDao artifactCassandraDao;
+	@Mock
+	public ToscaOperationFacade toscaOperationFacade;
+	@Mock
+	private UserBusinessLogic userBusinessLogic;
+	@Mock
+	private NodeTemplateOperation nodeTemplateOperation;
+	@Mock
+	private ArtifactsOperations artifactsOperations;
 
 	// public static final InformationDeployedArtifactsBusinessLogic
 	// informationDeployedArtifactsBusinessLogic =
@@ -96,31 +126,6 @@ public class ArtifactBusinessLogicTest {
 	public static final Resource resource = Mockito.mock(Resource.class);
 	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-	@BeforeClass
-	public static void setup() {
-
-		Either<ArtifactDefinition, StorageOperationStatus> NotFoundResult = Either.right(StorageOperationStatus.NOT_FOUND);
-//		when(artifactOperation.getArtifactById(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(NotFoundResult);
-
-		Either<Map<String, ArtifactDefinition>, StorageOperationStatus> NotFoundResult2 = Either.right(StorageOperationStatus.NOT_FOUND);
-		when(artifactOperation.getArtifacts(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Service), Mockito.anyBoolean())).thenReturn(NotFoundResult2);
-		when(artifactOperation.getArtifacts(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Resource), Mockito.anyBoolean())).thenReturn(NotFoundResult2);
-
-		Either<Map<String, InterfaceDefinition>, StorageOperationStatus> notFoundInterfaces = Either.right(StorageOperationStatus.NOT_FOUND);
-		when(lifecycleOperation.getAllInterfacesOfResource(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(notFoundInterfaces);
-
-		User userJH = new User("John", "Doh", "jh0003", "jh0003@gmail.com", "ADMIN", System.currentTimeMillis());
-		Either<User, ActionStatus> getUserResult = Either.left(userJH);
-
-		when(userOperation.getUserData("jh0003", false)).thenReturn(getUserResult);
-
-		Either<List<ArtifactType>, ActionStatus> getType = Either.left(getAllTypes());
-		when(elementOperation.getAllArtifactTypes()).thenReturn(getType);
-
-		when(resource.getResourceType()).thenReturn(ResourceTypeEnum.VFC);
-		// when(informationDeployedArtifactsBusinessLogic.getAllDeployableArtifacts(Mockito.any(Resource.class))).thenReturn(new
-		// ArrayList<ArtifactDefinition>());
-	}
 
 	private static List<ArtifactType> getAllTypes() {
 		List<ArtifactType> artifactTypes = new ArrayList<ArtifactType>();
@@ -136,6 +141,23 @@ public class ArtifactBusinessLogicTest {
 	@Before
 	public void initMocks() {
 		MockitoAnnotations.initMocks(this);
+		Either<ArtifactDefinition, StorageOperationStatus> NotFoundResult = Either.right(StorageOperationStatus.NOT_FOUND);
+
+		Either<Map<String, ArtifactDefinition>, StorageOperationStatus> NotFoundResult2 = Either.right(StorageOperationStatus.NOT_FOUND);
+		when(artifactOperation.getArtifacts(Mockito.anyString(), eq(NodeTypeEnum.Service), Mockito.anyBoolean())).thenReturn(NotFoundResult2);
+		when(artifactOperation.getArtifacts(Mockito.anyString(), eq(NodeTypeEnum.Resource), Mockito.anyBoolean())).thenReturn(NotFoundResult2);
+
+		Either<Map<String, InterfaceDefinition>, StorageOperationStatus> notFoundInterfaces = Either.right(StorageOperationStatus.NOT_FOUND);
+		when(lifecycleOperation.getAllInterfacesOfResource(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(notFoundInterfaces);
+
+		Either<User, ActionStatus> getUserResult = Either.left(USER);
+
+		when(userOperation.getUserData("jh0003", false)).thenReturn(getUserResult);
+
+		Either<List<ArtifactType>, ActionStatus> getType = Either.left(getAllTypes());
+		when(elementOperation.getAllArtifactTypes()).thenReturn(getType);
+
+		when(resource.getResourceType()).thenReturn(ResourceTypeEnum.VFC);
 	}
 
 	@Test
@@ -283,9 +305,59 @@ public class ArtifactBusinessLogicTest {
 		assertTrue(downloadServiceArtifactByNamesRes.isLeft());
 		assertTrue(downloadServiceArtifactByNamesRes.left().value() !=null && downloadServiceArtifactByNamesRes.left().value().length == payload.length);
 	}
-		
 
-	// @Test
+	@Test
+	public void createHeatEnvPlaceHolder_vf_emptyHeatParameters() throws Exception {
+		ArtifactDefinition heatArtifact = new ArtifactBuilder()
+				.addHeatParam(ObjectGenerator.buildHeatParam("defVal1", "val1"))
+				.addHeatParam(ObjectGenerator.buildHeatParam("defVal2", "val2"))
+				.build();
+
+		Resource component = new Resource();
+		when(userBusinessLogic.getUser(anyString(), anyBoolean())).thenReturn(Either.left(USER));
+		when(artifactsOperations.addHeatEnvArtifact(any(ArtifactDefinition.class), any(ArtifactDefinition.class), eq(component.getUniqueId()), eq(NodeTypeEnum.Resource), eq(true), eq("parentId")))
+				.thenReturn(Either.left(new ArtifactDefinition()));
+		Either<ArtifactDefinition, ResponseFormat> heatEnvPlaceHolder = artifactBL.createHeatEnvPlaceHolder(heatArtifact, HEAT_VF_ENV_NAME, "parentId", NodeTypeEnum.Resource, "parentName", USER, component, Collections.emptyMap());
+		assertTrue(heatEnvPlaceHolder.isLeft());
+		assertNull(heatEnvPlaceHolder.left().value().getListHeatParameters());
+	}
+
+	@Test
+	public void createHeatEnvPlaceHolder_resourceInstance_copyHeatParamasCurrValuesToHeatEnvDefaultVal() throws Exception {
+		HeatParameterDefinition heatParam1 = ObjectGenerator.buildHeatParam("defVal1", "val1");
+		HeatParameterDefinition heatParam2 = ObjectGenerator.buildHeatParam("defVal2", "val2");
+		HeatParameterDefinition heatParam3 = ObjectGenerator.buildHeatParam("defVal3", "val3");
+		ArtifactDefinition heatArtifact = new ArtifactBuilder()
+				.addHeatParam(heatParam1)
+				.addHeatParam(heatParam2)
+				.addHeatParam(heatParam3)
+				.build();
+
+		Resource component = new Resource();
+
+		when(userBusinessLogic.getUser(anyString(), anyBoolean())).thenReturn(Either.left(USER));
+		when(artifactsOperations.addHeatEnvArtifact(any(ArtifactDefinition.class), any(ArtifactDefinition.class), eq(component.getUniqueId()), eq(NodeTypeEnum.Resource), eq(true), eq("parentId")))
+				.thenReturn(Either.left(new ArtifactDefinition()));
+
+		Either<ArtifactDefinition, ResponseFormat> heatEnvPlaceHolder = artifactBL.createHeatEnvPlaceHolder(heatArtifact, HEAT_ENV_NAME, "parentId", NodeTypeEnum.ResourceInstance, "parentName", USER, component, Collections.emptyMap());
+
+		assertTrue(heatEnvPlaceHolder.isLeft());
+		ArtifactDefinition heatEnvArtifact = heatEnvPlaceHolder.left().value();
+		List<HeatParameterDefinition> listHeatParameters = heatEnvArtifact.getListHeatParameters();
+		assertEquals(listHeatParameters.size(), 3);
+		verifyHeatParam(listHeatParameters.get(0), heatParam1);
+		verifyHeatParam(listHeatParameters.get(1), heatParam2);
+		verifyHeatParam(listHeatParameters.get(2), heatParam3);
+	}
+
+	private void verifyHeatParam(HeatParameterDefinition heatEnvParam, HeatParameterDefinition heatYamlParam) {
+		assertEquals(heatEnvParam.getDefaultValue(), heatYamlParam.getCurrentValue());
+		assertNull(heatEnvParam.getCurrentValue());
+	}
+
+
+
+// @Test
 	// public void convertAndValidateDeploymentArtifactNonHeatSuccess(){
 	// ArtifactDefinition createArtifactDef = createArtifactDef();
 	// createArtifactDef.setArtifactType(ArtifactTypeEnum.YANG_XML.getType());

@@ -11,7 +11,7 @@ bash "upgrade-normatives" do
     cd normatives/scripts/import/tosca/
     /bin/chmod +x upgradeNormative.py importGroupTypes.py
 # add --debug=true to the importNormativeAll.py arguments to enable debug
-    python upgradeNormative.py -i localhost > /var/lib/jetty/logs/upgradeNormative.log
+    python upgradeONAPNormative.py -i localhost > /var/lib/jetty/logs/upgradeNormative.log
   EOH
 end
 

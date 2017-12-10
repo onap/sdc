@@ -20,28 +20,17 @@
 
 package org.openecomp.sdc.be.components;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.junit.Test;
 import org.openecomp.sdc.be.components.impl.HealthCheckBusinessLogic;
-import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils;
-import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
-import org.openecomp.sdc.be.resources.data.UserData;
+import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
-import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckComponent;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
-
-import com.datastax.driver.core.Cluster;
-
-import fj.data.Either;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 public class HealthCheckBusinessLogicTest {
 
 	HealthCheckBusinessLogic healthCheckBusinessLogic = new HealthCheckBusinessLogic();
@@ -58,8 +47,8 @@ public class HealthCheckBusinessLogicTest {
 		statusChanged = healthCheckBusinessLogic.anyStatusChanged(checkInfosLeft, checkInfosRight);
 		assertFalse("check false", statusChanged);
 
-		HealthCheckInfo checkInfoTitanUp = new HealthCheckInfo(HealthCheckComponent.TITAN, HealthCheckStatus.UP, null, null);
-		HealthCheckInfo checkInfoTitanDown = new HealthCheckInfo(HealthCheckComponent.TITAN, HealthCheckStatus.DOWN, null, null);
+		HealthCheckInfo checkInfoTitanUp = new HealthCheckInfo(Constants.HC_COMPONENT_TITAN, HealthCheckStatus.UP, null, null);
+		HealthCheckInfo checkInfoTitanDown = new HealthCheckInfo(Constants.HC_COMPONENT_TITAN, HealthCheckStatus.DOWN, null, null);
 
 		/*
 		 * HealthCheckInfo checkInfoUebUp = new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.UP, null, null); HealthCheckInfo checkInfoUebDown = new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.DOWN, null, null);

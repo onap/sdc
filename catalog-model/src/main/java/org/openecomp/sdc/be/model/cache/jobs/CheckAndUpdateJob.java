@@ -20,7 +20,8 @@
 
 package org.openecomp.sdc.be.model.cache.jobs;
 
-import fj.data.Either;
+import java.util.function.Function;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -31,7 +32,7 @@ import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.function.Function;
+import fj.data.Either;
 
 /**
  * Created by mlando on 9/7/2016.

@@ -21,7 +21,6 @@
 package org.openecomp.sdc.ci.tests.execute.imports;
 
 import static org.testng.AssertJUnit.assertTrue;
-import static org.testng.AssertJUnit.assertEquals;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

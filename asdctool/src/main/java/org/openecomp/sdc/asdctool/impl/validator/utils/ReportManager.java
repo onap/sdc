@@ -34,7 +34,7 @@ public class ReportManager {
     }
 
     private void initReportFile() throws IOException {
-        reportOutputFilePath = ValidationConfigManager.getOutputFilePath();
+        reportOutputFilePath = ValidationConfigManager.getOutputFullFilePath();
         StrBuilder sb = new StrBuilder();
         sb.appendln("-----------------------Validation Tool Results:-------------------------");
         Files.write(Paths.get(reportOutputFilePath), sb.toString().getBytes());

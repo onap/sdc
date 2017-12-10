@@ -20,80 +20,49 @@
 'use strict';
 import {Requirement} from "../requirement";
 import {Capability} from "../capability";
-import {Relationship, RelationshipModel, RelationType} from "./relationship";
+import {Relationship, RelationshipModel} from "./relationship";
+import {PropertyModel} from "../properties";
 
-export class MatchBase {
+export class Match {
     requirement:Requirement;
+    capability:Capability;
     isFromTo:boolean;
     fromNode:string;
     toNode:string;
+    capabilityProperties:Array<PropertyModel>;  // use this to store the capability properties, since there are times the capability itself is not available (when fulfilled).
+    private _relationship:Relationship;
 
-    constructor(requirement:Requirement, isFromTo:boolean, fromNode:string, toNode:string) {
+    constructor(requirement:Requirement, capability:Capability, isFromTo:boolean, fromNode:string, toNode:string) {
         this.requirement = requirement;
+        this.capability = capability;
         this.isFromTo = isFromTo;
         this.fromNode = fromNode;
         this.toNode = toNode;
     }
 
-    public getDisplayText = (menuSide:string):string => {
-        return '';
-    };
-
-    public isOwner = (id:string):boolean => {
-        return false;
-    }
-
-}
-
-export class MatchReqToReq extends MatchBase {
-
-    secondRequirement:Requirement;
-
-    constructor(requirement:Requirement, secondRequirement:Requirement, isFromTo:boolean, fromNode:string, toNode:string) {
-        super(requirement, isFromTo, fromNode, toNode);
-        this.secondRequirement = secondRequirement;
-    }
-
-    public getDisplayText = (menuSide:string):string => {
-        if ('left' == menuSide) {
-            return this.requirement.getFullTitle();
+    // NOTE: Hold the relationship instance for cases capability / requirement are not available (when fulfilled).
+    //      In case relationship instance is not manually saved to here, then build the relationship from the given capability and requirement.
+    public get relationship():Relationship {
+        if (!this._relationship) {
+            this._relationship = this.matchToRelation();
         }
-        return this.secondRequirement.getFullTitle();
-    };
-
-    public isOwner = (id:string):boolean => {
-        return this.secondRequirement.ownerId === id || this.requirement.ownerId === id;
+        return this._relationship;
     }
-}
-
-export class MatchReqToCapability extends MatchBase {
-
-    capability:Capability;
-
-    constructor(requirement:Requirement, capability:Capability, isFromTo:boolean, fromNode:string, toNode:string) {
-        super(requirement, isFromTo, fromNode, toNode);
-        this.capability = capability;
+    public set relationship(relationship) {
+        this._relationship = relationship;
     }
 
     public matchToRelation = ():Relationship => {
-        let relationship:Relationship = new Relationship();
-        relationship.capability = this.capability.name;
-        relationship.capabilityOwnerId = this.capability.ownerId;
-        relationship.capabilityUid = this.capability.uniqueId;
-        relationship.relationship = new RelationType(this.capability.type);
-        relationship.requirement = this.requirement.name;
-        relationship.requirementOwnerId = this.requirement.ownerId;
-        relationship.requirementUid = this.requirement.uniqueId;
+        const relationship:Relationship = new Relationship();
+        relationship.setRelationProperties(this.capability, this.requirement);
         return relationship;
     };
-
 
     public getDisplayText = (menuSide:string):string => {
         if (this.isFromTo && 'left' == menuSide || !this.isFromTo && 'right' == menuSide) {
             return this.requirement.getFullTitle();
         }
         return this.capability.getFullTitle();
-
     };
 
     public isOwner = (id:string):boolean => {
@@ -107,5 +76,4 @@ export class MatchReqToCapability extends MatchBase {
         return relationshipModel;
     };
 }
-
 

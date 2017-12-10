@@ -33,7 +33,6 @@ public class ComponentInstanceReqDetails {
 
 	public ComponentInstanceReqDetails() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ComponentInstanceReqDetails(ComponentInstance componentInstance) {

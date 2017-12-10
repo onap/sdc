@@ -20,13 +20,11 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.ErrorConfiguration;
 import org.openecomp.sdc.be.config.ErrorInfo;
 import org.openecomp.sdc.be.config.ErrorInfo.ErrorInfoType;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.exception.OkResponseInfo;
 import org.openecomp.sdc.exception.PolicyException;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -60,7 +58,6 @@ public class ResponseFormatManager {
 		ErrorConfiguration errorConfiguration = configurationManager.getErrorConfiguration();
 		ErrorInfo errorInfo = errorConfiguration.getErrorInfo(responseEnum.name());
 		if (errorInfo == null) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.EcompErrorNotFound, "ResponseFormatManager", responseEnum.name());
 			log.debug("failed to locate {} in error configuration", responseEnum.name());
 			errorInfo = errorConfiguration.getErrorInfo(ActionStatus.GENERAL_ERROR.name());
 		}

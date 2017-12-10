@@ -42,6 +42,7 @@ public enum JsonPresentationFields {
 	IS_DELETED						("isDeleted", 				GraphPropertyEnum.IS_DELETED),
 	ECOMP_GENERATED_NAMING          ("ecompGeneratedNaming",    null),
 	NAMING_POLICY                   ("namingPolicy",            null),
+	ENVIRONMENT_CONTEXT             ("environmentContext",      null),
 	TOSCA_RESOURCE_NAME				("toscaResourceName", 		GraphPropertyEnum.TOSCA_RESOURCE_NAME),
 	DESCRIPTION						("description",				null),
 	TYPE							("type",					null),
@@ -174,6 +175,11 @@ public enum JsonPresentationFields {
 	CI_TOSCA_COMPONENT_NAME 		("toscaComponentName", null),
 	CI_INVARIANT_NAME 				("invariantName", null),
 	CI_ICON 						("icon", null),
+	CI_SOURCE_MODEL_UUID			("sourceModelUuid", null),
+	CI_SOURCE_MODEL_UID				("sourceModelUid", null),
+	CI_SOURCE_MODEL_INVARIANT		("sourceModelInvariant", null),
+	CI_SOURCE_MODEL_NAME			("sourceModelName", null),
+	CI_IS_PROXY						("isProxy", null),
 
 	;
 	

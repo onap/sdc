@@ -3,10 +3,7 @@ package org.openecomp.sdc.fe.config;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
-import org.openecomp.sdc.be.config.Configuration.OnboardingConfig;
 import org.openecomp.sdc.fe.config.Configuration.FeMonitoringConfig;
 
 

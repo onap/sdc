@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -90,6 +89,9 @@ public abstract class BaseOperation {
 	@Autowired
 	protected TopologyTemplateOperation topologyTemplateOperation;
 
+	public void setTitanDao(TitanDao titanDao) {
+		this.titanDao = titanDao;
+	}
 	/**
 	 * Returns reference to appropriate toscaTemplateOperation
 	 * 

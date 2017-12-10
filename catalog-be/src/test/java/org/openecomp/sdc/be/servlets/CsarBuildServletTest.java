@@ -1,15 +1,9 @@
 package org.openecomp.sdc.be.servlets;
 
-import javax.annotation.Generated;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
-import org.openecomp.sdc.be.resources.data.ESArtifactData;
-
-import ch.qos.logback.classic.Logger;
-import java.util.*;
-import org.junit.Assert;
 
 
 public class CsarBuildServletTest {

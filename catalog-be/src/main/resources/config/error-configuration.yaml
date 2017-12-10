@@ -1852,3 +1852,29 @@ errors:
         message: 'Error: VSP %1 cannot be imported. The VSP contains internal loop in VFC %2',
         messageId: "SVC4671"
     }
+#---------SVC4672------------------------------ 
+# %1 - capability uniqueId
+# %2 - instance uniqueId
+# %3 - container uniqueId
+    CAPABILITY_OF_INSTANCE_NOT_FOUND_ON_CONTAINER: {
+        code: 404,
+        message: "Error: Requested capability %1 of instance %2 was not found on the container %3.",
+        messageId: "SVC4672"
+    }
+#---------SVC4673------------------------------ 
+# %1 - requirement uniqueId
+# %2 - instance uniqueId
+# %3 - container uniqueId
+    REQUIREMENT_OF_INSTANCE_NOT_FOUND_ON_CONTAINER: {
+        code: 404,
+        message: "Error: Requested requirement %1 of instance %2 was not found on the container %3.",
+        messageId: "SVC4673"
+    }
+#---------SVC4674-----------------------------     
+# %1 - relation Id
+# %2 - container uniqueId
+    RELATION_NOT_FOUND: {
+        code: 404,
+        message: "Error: Requested relation %1 was not found on the container %2.",
+        messageId: "SVC4674"
+    }

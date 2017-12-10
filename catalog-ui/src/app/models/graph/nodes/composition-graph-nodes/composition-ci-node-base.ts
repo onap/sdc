@@ -48,7 +48,6 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
         this.isGroup = false;
         this.isUcpePart = false;
         this.isInsideGroup = false;
-
     }
 
     public initUncertifiedImage(node:Cy.Collection, nodeMinSize:number):string {
@@ -61,8 +60,10 @@ export abstract class CompositionCiNodeBase extends CommonCINodeBase implements 
             uncertifiedCanvasWidth = nodeWidth + uncertifiedIconWidth/2; //expand canvas so that only half of the icon overlaps with the node
         }
         
-        this.imageCreator.getImageBase64(this.imagesPath + ImagesUrl.RESOURCE_ICONS + this.componentInstance.icon + '.png',
-            this.imagesPath + ImagesUrl.RESOURCE_ICONS + 'uncertified.png', nodeWidth, uncertifiedCanvasWidth, uncertifiedIconWidth) 
+
+
+        this.imageCreator.getImageBase64(this.imagesPath + this.componentInstance.icon + '.png',
+            this.imagesPath + 'uncertified.png', nodeWidth, uncertifiedCanvasWidth, uncertifiedIconWidth) 
             .then(imageBase64 => {
                 this.img = imageBase64;
                 node.style({

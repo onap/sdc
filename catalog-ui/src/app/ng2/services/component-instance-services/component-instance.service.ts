@@ -18,22 +18,23 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable} from '@angular/core';
+import {Injectable, Inject} from '@angular/core';
 import {Response, RequestOptions, Headers} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import {sdc2Config} from "../../../../main";
-import {PropertyBEModel} from "app/models";
+import {PropertyFEModel, PropertyBEModel} from "app/models";
 import {CommonUtils} from "app/utils";
 import {Component, ComponentInstance, InputModel} from "app/models";
 import { HttpService } from '../http.service';
+import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
+import {isEqual} from "lodash";
 
 @Injectable()
 export class ComponentInstanceServiceNg2 {
 
     protected baseUrl;
 
-    constructor(private http: HttpService) {
-        this.baseUrl = sdc2Config.api.root + sdc2Config.api.component_api_root;
+    constructor(private http: HttpService, @Inject(SdcConfigToken) sdcConfig:ISdcConfig) {
+        this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
     }
 
     getComponentInstanceProperties(component: Component, componentInstanceId: string): Observable<Array<PropertyBEModel>> {
@@ -59,6 +60,24 @@ export class ComponentInstanceServiceNg2 {
         })
     }
 
+    getInstanceCapabilityProperties(component: Component, componentInstanceId: string, capabilityType: string, capabilityName: string): Observable<Array<PropertyBEModel>> {
+
+        return this.http.get(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstanceId + '/capability/' + capabilityType +
+            '/capabilityName/' +  capabilityName + '/properties')
+            .map((res: Response) => {
+                return CommonUtils.initBeProperties(res.json());
+            })
+    }
+
+    updateInstanceCapabilityProperties(component: Component, componentInstanceId: string, capabilityType: string, capabilityName: string, properties: PropertyBEModel[]): Observable<PropertyBEModel[]> {
+
+        return this.http.put(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstanceId + '/capability/' +  capabilityType +
+            '/capabilityName/' +  capabilityName +'/properties', properties)
+            .map((res: Response) => {
+                return res.json().map((resProperty) => new PropertyBEModel(resProperty));
+            })
+    }
+
     updateInstanceInput(component: Component, componentInstanceId: string, input: PropertyBEModel): Observable<PropertyBEModel> {
 
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstance/' + componentInstanceId + '/input', input)
@@ -67,5 +86,9 @@ export class ComponentInstanceServiceNg2 {
             })
     }
 
-
+    hasPropertyChanged(property: PropertyFEModel) {
+        let oldValue: any = property.value;
+        const newValue = property.getJSONValue();
+        return ((oldValue || newValue) && !isEqual(oldValue, newValue));
+    }
 }

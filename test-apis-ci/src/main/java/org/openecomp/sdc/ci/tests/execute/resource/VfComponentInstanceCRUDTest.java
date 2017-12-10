@@ -40,10 +40,11 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.CapReqDef;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
+import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -1686,7 +1687,7 @@ public class VfComponentInstanceCRUDTest extends ComponentInstanceBaseTest {
 		requirementDef.setFromNode(riReq.getUniqueId());
 		requirementDef.setToNode(riCap.getUniqueId());
 
-		RequirementAndRelationshipPair pair = new RequirementAndRelationshipPair();
+		RelationshipInfo pair = new RelationshipInfo();
 		pair.setRequirementOwnerId(riReq.getUniqueId());
 		pair.setCapabilityOwnerId(riCap.getUniqueId());
 		pair.setRequirement("host");
@@ -1695,8 +1696,10 @@ public class VfComponentInstanceCRUDTest extends ComponentInstanceBaseTest {
 		pair.setRelationships(relationship);
 		pair.setCapabilityUid(capList.get(0).getUniqueId());
 		pair.setRequirementUid(reqList.get(0).getUniqueId());
-		List<RequirementAndRelationshipPair> relationships = new ArrayList<>();
-		relationships.add(pair);
+		List<CapabilityRequirementRelationship> relationships = new ArrayList<>();
+		CapabilityRequirementRelationship capReqRel = new CapabilityRequirementRelationship();
+		relationships.add(capReqRel);
+		capReqRel.setRelation(pair);
 		requirementDef.setRelationships(relationships);
 
 		RestResponse associateInstances = ComponentInstanceRestUtils.associateInstances(requirementDef,

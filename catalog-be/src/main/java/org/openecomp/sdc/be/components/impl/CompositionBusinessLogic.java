@@ -69,7 +69,7 @@ public class CompositionBusinessLogic {
 		boolean isNotAllPositionsCalculated = resource.getComponentInstances() == null
 				|| resource.getComponentInstances().stream().filter(p -> (p.getPosX() == null || p.getPosX().isEmpty()) || (p.getPosY() == null || p.getPosY().isEmpty())).findAny().isPresent();
 
-		if (isNotAllPositionsCalculated) {
+		if (isNotAllPositionsCalculated &&  resource.getComponentInstances() != null) {
 			// Arrange Icons In Spiral Pattern
 			Map<ImmutablePair<Double, Double>, ComponentInstance> componentInstanceLocations = buildSpiralPatternPositioningForComponentInstances(resource);
 

@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.model;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 

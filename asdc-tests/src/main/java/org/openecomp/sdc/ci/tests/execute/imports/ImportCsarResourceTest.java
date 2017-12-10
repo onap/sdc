@@ -39,8 +39,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.WordUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -48,14 +46,12 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
@@ -82,7 +78,6 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1502,8 +1497,8 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		String cp1Uid = nodes.get("cp1node").getUniqueId();
 		String cp2Uid = nodes.get("cp2node").getUniqueId();
 		Map<String, List<RequirementCapabilityRelDef>> mappedByReqOwner = resource.getComponentInstancesRelations().stream().collect(Collectors.groupingBy(e -> e.getFromNode()));
-		assertEquals(mappedByReqOwner.get(cp1Uid).get(0).getRelationships().get(0).getCapabilityUid(), capabilities.get("virtual_linkable").getUniqueId());
-		assertEquals(mappedByReqOwner.get(cp2Uid).get(0).getRelationships().get(0).getCapabilityUid(), capabilities.get("link").getUniqueId());
+		assertEquals(mappedByReqOwner.get(cp1Uid).get(0).getRelationships().get(0).getRelation().getCapabilityUid(), capabilities.get("virtual_linkable").getUniqueId());
+		assertEquals(mappedByReqOwner.get(cp2Uid).get(0).getRelationships().get(0).getRelation().getCapabilityUid(), capabilities.get("link").getUniqueId());
 	}
 
 	@Test(enabled = true)

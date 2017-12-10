@@ -1,0 +1,59 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  org.openecomp.resource.cp.v2.extContrailCP:
+    derived_from: org.openecomp.resource.cp.v2.extCP
+    properties:
+      # copied from the org.openecomp.resource.cp.nodes.heat.network.contrail.Port type
+      static_routes:
+        type: list
+        description: An ordered list of static routes to be added to this interface
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.contrail.port.StaticRoute
+      virtual_network:
+        type: string
+        description: Virtual Network for this interface
+        required: true
+        status: SUPPORTED
+      static_route:
+        type: boolean
+        description: Static route enabled
+        required: false
+        default: false
+        status: SUPPORTED
+      allowed_address_pairs:
+        type: list
+        description: List of allowed address pair for this interface
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.contrail.AddressPair
+      shared_ip:
+        type: boolean
+        description: Shared ip enabled
+        required: false
+        default: false
+        status: SUPPORTED
+      ip_address:
+        type: string
+        description: IP for this interface
+        required: false
+        status: SUPPORTED
+      interface_type:
+        type: string
+        description: Interface type
+        required: true
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - management
+          - left
+          - right
+          - other
+    attributes:
+      # copied from the org.openecomp.resource.cp.nodes.heat.network.contrail.Port type
+      fq_name:
+        type: string
+        description: fq_name
+        status: SUPPORTED

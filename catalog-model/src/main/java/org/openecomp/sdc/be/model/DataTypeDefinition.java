@@ -24,8 +24,6 @@ import java.util.List;
 
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class DataTypeDefinition extends DataTypeDataDefinition {
 
 	// @JsonIgnore

@@ -1,3 +1,0 @@
-<select name='{{name}}' [(ngModel)]="value" #t (change)="onSave()"  [ngClass]="{'disabled':readonly}">
-  <option *ngFor="let ddvalue of values" [value]="ddvalue.value">{{ddvalue.label}}</option>
-</select>

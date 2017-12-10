@@ -22,13 +22,11 @@
  * Created by ob0695 on 4/9/2017.
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import {IAppConfigurtaion, ValidationConfiguration, Validations} from "app/models";
-import {sdc2Config} from './../../../main';
-
-declare var __ENV__: string;
+import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
 
 @Injectable()
 export class ConfigService {
@@ -36,12 +34,12 @@ export class ConfigService {
     private baseUrl;
     public configuration: IAppConfigurtaion;
 
-    constructor(private http: Http) {
-        this.baseUrl = sdc2Config.api.root + sdc2Config.api.component_api_root;
+    constructor(private http: Http, @Inject(SdcConfigToken) private sdcConfig:ISdcConfig) {
+        this.baseUrl = this.sdcConfig.api.root + this.sdcConfig.api.component_api_root;
     }
 
     loadValidationConfiguration(): Promise<ValidationConfiguration> {
-        let url: string = sdc2Config.validationConfigPath;
+        let url: string = this.sdcConfig.validationConfigPath;
         let promise: Promise<ValidationConfiguration> = this.http.get(url).map((res: Response) => res.json()).toPromise();
         promise.then((validationData: Validations) => {
             ValidationConfiguration.validation = validationData;

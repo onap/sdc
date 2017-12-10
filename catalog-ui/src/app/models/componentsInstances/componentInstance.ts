@@ -23,7 +23,9 @@
  */
 'use strict';
 import {ArtifactGroupModel, CapabilitiesGroup,RequirementsGroup, PropertyModel, InputModel, Module} from "../../models";
-import {ResourceType} from "../../utils/constants";
+import {ResourceType,ComponentType} from "../../utils/constants";
+import {Capability} from "../capability";
+import {Requirement} from "../requirement";
 
 export class ComponentInstance {
 
@@ -46,6 +48,10 @@ export class ComponentInstance {
     public capabilities:CapabilitiesGroup;
     public requirements:RequirementsGroup;
     public customizationUUID:string;
+    public sourceModelInvariant:string;
+    public sourceModelName:string;
+    public sourceModelUid:string;
+    public sourceModelUuid:string;
     //custom properties
     public certified:boolean;
     public iconSprite:string;
@@ -79,6 +85,10 @@ export class ComponentInstance {
             this.updatePosition(componentInstance.posX, componentInstance.posY);
             this.groupInstances = componentInstance.groupInstances;
             this.invariantName = componentInstance.invariantName;
+            this.sourceModelInvariant = componentInstance.sourceModelInvariant;
+            this.sourceModelName = componentInstance.sourceModelName;
+            this.sourceModelUid = componentInstance.sourceModelUid;
+            this.sourceModelUuid = componentInstance.sourceModelUuid;
         }
     }
 
@@ -95,6 +105,10 @@ export class ComponentInstance {
 
     public isComplex = () : boolean => {
         return this.originType === ResourceType.VF || this.originType === ResourceType.PNF || this.originType === ResourceType.CVFC  ;
+    }
+
+    public isServiceProxy = () :boolean => {
+        return this.originType === ComponentType.SERVICE_PROXY;
     }
 
     public setInstanceRC = ():void=> {
@@ -119,6 +133,30 @@ export class ComponentInstance {
     public updatePosition(posX:number, posY:number) {
         this.posX = posX;
         this.posY = posY;
+    }
+
+    public findRequirement(reqType:string, uniqueId:string, ownerId:string, name:string):Requirement|undefined {
+        let requirement:Requirement = undefined;
+        const searchGroup = (reqType) ? [this.requirements[reqType]] : this.requirements;
+        _.some(_.keys(searchGroup), (searchType) => {
+            requirement = _.find<Requirement>(searchGroup[searchType], (req:Requirement) => (
+                req.uniqueId === uniqueId && req.ownerId === ownerId && req.name === name
+            ));
+            return requirement;
+        });
+        return requirement;
+    }
+
+    public findCapability(capType:string, uniqueId:string, ownerId:string, name:string):Capability|undefined {
+        let capability:Capability = undefined;
+        const searchGroup = (capType) ? [this.capabilities[capType]] : this.capabilities;
+        _.some(_.keys(searchGroup), (searchType) => {
+            capability = _.find<Capability>(searchGroup[searchType], (cap:Capability) => (
+                cap.uniqueId === uniqueId && cap.ownerId === ownerId && cap.name === name
+            ));
+            return capability;
+        });
+        return capability;
     }
 
     public toJSON = ():any => {

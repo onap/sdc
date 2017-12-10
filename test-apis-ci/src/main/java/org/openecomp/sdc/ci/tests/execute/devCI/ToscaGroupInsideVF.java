@@ -20,41 +20,11 @@
 
 package org.openecomp.sdc.ci.tests.execute.devCI;
 
-import static org.testng.AssertJUnit.assertEquals;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Rule;
 import org.junit.rules.TestName;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
-import org.openecomp.sdc.ci.tests.api.Urls;
-import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
-import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
-import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
-import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
-import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
-import org.openecomp.sdc.ci.tests.utils.ToscaParserUtils;
-import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
-import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
-import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
-import org.openecomp.sdc.ci.tests.utils.validation.CsarValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.Test;
 
 public class ToscaGroupInsideVF extends ComponentBaseTest {
 	private static Logger logger = LoggerFactory.getLogger(ToscaGroupInsideVF.class.getName());

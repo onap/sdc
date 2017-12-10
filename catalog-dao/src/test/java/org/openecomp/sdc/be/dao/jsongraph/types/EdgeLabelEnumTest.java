@@ -1,7 +1,5 @@
 package org.openecomp.sdc.be.dao.jsongraph.types;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
 
 

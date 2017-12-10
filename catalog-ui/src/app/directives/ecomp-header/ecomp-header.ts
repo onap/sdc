@@ -20,7 +20,8 @@
 
 'use strict';
 import {IAppConfigurtaion, User, IUser} from "app/models";
-import {IUserResourceClass, IUserResource} from "app/services";
+import {IUserProperties} from "../../models/user";
+import {UserService} from "../../ng2/services/user.service";
 
 export class MenuItem {
     menuId:number;
@@ -55,7 +56,7 @@ export class EcompHeaderDirective implements ng.IDirective {
 
     constructor(private $http:ng.IHttpService,
                 private sdcConfig:IAppConfigurtaion,
-                private UserResourceClass:IUserResourceClass) {
+                private userService:UserService) {
 
     }
 
@@ -90,14 +91,14 @@ export class EcompHeaderDirective implements ng.IDirective {
 
         let initUser = ():void => {
             let defaultUserId:string;
-            let user:IUserResource = this.UserResourceClass.getLoggedinUser();
-            if (!user) {
+            let userInfo:IUserProperties = this.userService.getLoggedinUser();
+            if (!userInfo) {
                 defaultUserId = this.$http.defaults.headers.common[this.sdcConfig.cookie.userIdSuffix];
-                user = this.UserResourceClass.get({id: defaultUserId}, ():void => {
-                    $scope.user = new User(user);
+                this.userService.getUser(defaultUserId).subscribe((defaultUserInfo):void => {
+                    $scope.user = new User(defaultUserInfo);
                 });
             } else {
-                $scope.user = new User(user);
+                $scope.user = new User(userInfo);
             }
         };
 
@@ -135,8 +136,8 @@ export class EcompHeaderDirective implements ng.IDirective {
 
     public static factory = ($http:ng.IHttpService,
                              sdcConfig:IAppConfigurtaion,
-                             UserResourceClass:IUserResourceClass)=> {
-        return new EcompHeaderDirective($http, sdcConfig, UserResourceClass);
+                             userService:UserService)=> {
+        return new EcompHeaderDirective($http, sdcConfig, userService);
     };
 
 }
@@ -229,7 +230,7 @@ export class EcompHeaderController {
     };
 }
 
-EcompHeaderDirective.factory.$inject = ['$http', 'sdcConfig', 'Sdc.Services.UserResourceService'];
+EcompHeaderDirective.factory.$inject = ['$http', 'sdcConfig', 'UserServiceNg2'];
 
 
 

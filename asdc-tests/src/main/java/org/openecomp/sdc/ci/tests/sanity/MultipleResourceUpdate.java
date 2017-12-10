@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.ci.tests.sanity;
 
+import static org.testng.AssertJUnit.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
@@ -43,7 +43,6 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ProductRestUtils;
 import org.testng.annotations.Test;
-import static org.testng.AssertJUnit.assertTrue;
 
 public class MultipleResourceUpdate extends ComponentBaseTest {
 

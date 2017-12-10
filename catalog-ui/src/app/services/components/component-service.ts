@@ -52,6 +52,7 @@ export interface IComponentService {
     deleteComponentInstance(componentId:string, componentInstanceId:string):ng.IPromise<ComponentInstance>;
     createRelation(componentId:string, link:RelationshipModel):ng.IPromise<RelationshipModel>;
     deleteRelation(componentId:string, link:RelationshipModel):ng.IPromise<RelationshipModel>;
+    fetchRelation(componentId:string, linkId:string):ng.IPromise<RelationshipModel>;
     getRequirementsCapabilities(componentId:string):ng.IPromise<any>;
     updateInstanceProperty(componentId:string, property:PropertyModel):ng.IPromise<PropertyModel>;
     updateInstanceAttribute(componentId:string, attribute:AttributeModel):ng.IPromise<AttributeModel>;
@@ -513,7 +514,12 @@ export class ComponentService implements IComponentService {
 
     public createRelation = (componentId:string, link:RelationshipModel):ng.IPromise<RelationshipModel> => {
         let deferred = this.$q.defer();
-        this.restangular.one(componentId).one("resourceInstance").one("associate").customPOST(JSON.stringify(link)).then((response:any) => {
+        const linkPayload:RelationshipModel = new RelationshipModel(link);
+        linkPayload.relationships.forEach((rel) => {
+            delete rel.capability;
+            delete rel.requirement;
+        });
+        this.restangular.one(componentId).one("resourceInstance").one("associate").customPOST(JSON.stringify(linkPayload)).then((response:any) => {
             let relation:RelationshipModel = new RelationshipModel(response.plain());
             console.log("Link created successfully ", relation);
             deferred.resolve(relation);
@@ -526,12 +532,30 @@ export class ComponentService implements IComponentService {
 
     public deleteRelation = (componentId:string, link:RelationshipModel):ng.IPromise<RelationshipModel> => {
         let deferred = this.$q.defer();
-        this.restangular.one(componentId).one("resourceInstance").one("dissociate").customPUT(JSON.stringify(link)).then((response:any) => {
+        const linkPayload:RelationshipModel = new RelationshipModel(link);
+        linkPayload.relationships.forEach((rel) => {
+            delete rel.capability;
+            delete rel.requirement;
+        });
+        this.restangular.one(componentId).one("resourceInstance").one("dissociate").customPUT(JSON.stringify(linkPayload)).then((response:any) => {
             let relation:RelationshipModel = new RelationshipModel(response);
             console.log("Link deleted successfully ", relation);
             deferred.resolve(relation);
         }, (err)=> {
             console.log("Failed to delete Link From: " + link.fromNode + "To: " + link.toNode);
+            deferred.reject(err);
+        });
+        return deferred.promise;
+    };
+
+    public fetchRelation = (componentId:string, linkId:string):ng.IPromise<RelationshipModel> => {
+        let deferred = this.$q.defer<RelationshipModel>();
+        this.restangular.one(componentId).one("relationId").one(linkId).get().then((response:any) => {
+            let relation:RelationshipModel = new RelationshipModel(response);
+            console.log("Link fetched successfully ", relation);
+            deferred.resolve(relation);
+        }, (err)=> {
+            console.log("Failed to fetch Link Id: " + linkId);
             deferred.reject(err);
         });
         return deferred.promise;

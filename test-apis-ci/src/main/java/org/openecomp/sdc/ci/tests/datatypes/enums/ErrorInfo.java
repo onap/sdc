@@ -28,7 +28,6 @@ public class ErrorInfo {
 
 	public ErrorInfo() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ErrorInfo(Integer code, String message, String messageId) {

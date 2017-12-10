@@ -1,0 +1,9 @@
+<div class="tabs {{tabStyle}}">
+    <div class="tab" *ngFor="let tab of tabs" (click)="selectTab(tab)" [class.active]="tab.active"  [attr.data-tests-id]="tab.title">
+        {{tab.title}}
+        <div class="tab-indication" *ngIf="tab.indication" [@indicatorAnimation]="tab.indication">{{tab.indication}}</div>
+    </div>
+</div>
+<div class="tab-content-container">
+    <ng-content></ng-content>
+</div>

@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
+import org.junit.BeforeClass;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -39,7 +40,6 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -67,11 +67,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import fj.data.Either;
-import junit.framework.Assert;
 
 public class LifecycleTestBase {
 	private static Logger log = LoggerFactory.getLogger(LifecycleTestBase.class.getName());
@@ -86,19 +82,22 @@ public class LifecycleTestBase {
 	protected User user = null;
 	protected Resource resourceResponse;
 	protected Service serviceResponse;
-	protected ConfigurationManager configurationManager = null;
+	protected static ConfigurationManager configurationManager = null;
 	protected ResponseFormatManager responseManager = null;
 	protected TitanDao titanDao = Mockito.mock(TitanDao.class);
 	protected ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
 
-	public void setup() {
-
+	@BeforeClass
+	public static void setupClass() {
 		ExternalConfiguration.setAppName("catalog-be");
 
 		// Init Configuration
 		String appConfigDir = "src/test/resources/config/catalog-be";
 		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
 		configurationManager = new ConfigurationManager(configurationSource);
+	}
+
+	public void setup() {
 
 		// Auditing
 		iAuditingManager = new AuditingMockManager("lll");
@@ -124,7 +123,7 @@ public class LifecycleTestBase {
 		// getCount
 
 		// createResource
-		resourceResponse = createResourceObject(true);
+		resourceResponse = createResourceObject();
 		Either<ToscaElement, StorageOperationStatus> eitherComponent = Either.left(ModelConverter.convertToToscaElement(resourceResponse));
 		when(toscaElementLifecycleOperation.checkoutToscaElement(Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class)))
 				.thenAnswer(createAnswer(eitherComponent));
@@ -137,7 +136,10 @@ public class LifecycleTestBase {
 
 		Either<User, StorageOperationStatus> getOwnerResult = Either.left(user);
 		when(toscaElementLifecycleOperation.getToscaElementOwner(Mockito.anyString())).thenReturn(getOwnerResult);
-
+		
+		Either<Component, StorageOperationStatus> eitherlatestDerived = Either.right(StorageOperationStatus.OK);
+		when(toscaOperationFacade.shouldUpgradeToLatestDerived(Mockito.any(Resource.class))).thenReturn(eitherlatestDerived);
+		
 		responseManager = ResponseFormatManager.getInstance();
 
 	}
@@ -153,9 +155,10 @@ public class LifecycleTestBase {
 		return dummy;
 	}
 
-	protected Resource createResourceObject(boolean afterCreate) {
+	protected Resource createResourceObject() {
 		Resource resource = new Resource();
 		resource.setName("MyResourceName");
+		resource.setUniqueId("uid");
 		resource.addCategory("VoIP", "INfra");
 		resource.setDescription("My short description");
 		List<String> tgs = new ArrayList<String>();
@@ -179,6 +182,7 @@ public class LifecycleTestBase {
 		ComponentMetadataDefinition cMetadataDataDefinition = new ComponentMetadataDefinition(rMetadataDataDefinition) ;
 		
 		Resource resource = new Resource(cMetadataDataDefinition);
+		resource.setUniqueId("rid");
 		resource.setName("MyResourceVFCMTName");
 		resource.addCategory("VoIP", "INfra");
 		resource.setDescription("My short description");
@@ -200,6 +204,7 @@ public class LifecycleTestBase {
 	protected Service createServiceObject(boolean b) {
 		Service service = new Service();
 		service.setName("MyServiceName");
+		service.setUniqueId("sid");
 		service.addCategory("VoIP", null);
 		service.setDescription("My short description");
 		List<String> tgs = new ArrayList<String>();

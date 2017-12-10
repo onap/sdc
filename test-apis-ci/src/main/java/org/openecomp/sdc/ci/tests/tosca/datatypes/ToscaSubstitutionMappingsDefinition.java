@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.yaml.snakeyaml.TypeDescription;
@@ -27,12 +28,11 @@ import org.yaml.snakeyaml.TypeDescription;
 public class ToscaSubstitutionMappingsDefinition {
 
 	private String node_type;
-	private Map<String, Object> requirements;
-	private Map<String, Object> capabilities;
+	private Map<String, Object> requirements = new HashMap<>();
+	private Map<String, Object> capabilities = new HashMap<>();
 
 	public ToscaSubstitutionMappingsDefinition() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	public String getNode_type() {

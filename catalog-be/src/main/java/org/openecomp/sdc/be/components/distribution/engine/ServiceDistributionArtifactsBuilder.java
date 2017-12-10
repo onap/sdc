@@ -101,7 +101,10 @@ public class ServiceDistributionArtifactsBuilder {
 		notificationData.setServiceUUID(service.getUUID());
 		notificationData.setServiceDescription(service.getDescription());
 		notificationData.setServiceInvariantUUID(service.getInvariantUUID());
-
+		String workloadContext= ConfigurationManager.getConfigurationManager().getConfiguration().getWorkloadContext();
+		if(workloadContext!=null){
+			notificationData.setWorkloadContext(workloadContext);
+		}
 		logger.debug("Before returning notification data object {}", notificationData);
 
 		return notificationData;
@@ -198,7 +201,7 @@ public class ServiceDistributionArtifactsBuilder {
 				}
 
 				JsonContainerResourceInstance jsonContainer = new JsonContainerResourceInstance(resourceInstance, resoucreType,
-						artifacts);
+						rebuildArtifactswith120TimeoutInsteadOf60(artifacts)/*TODO used to send artifacts, the function is a fix to the short timeout bug in distribution*/);
 				jsonContainer.setResourceInvariantUUID(resourceInvariantUUID);
 				jsonContainer.setCategory(resourceCategory);
 				jsonContainer.setSubcategory(resourceSubcategory);
@@ -206,6 +209,15 @@ public class ServiceDistributionArtifactsBuilder {
 			}
 		}
 		return ret;
+	}
+
+	private List<ArtifactInfoImpl> rebuildArtifactswith120TimeoutInsteadOf60(List<ArtifactInfoImpl> artifacts) {
+		for(ArtifactInfoImpl artifact : artifacts){
+			if(artifact.getArtifactTimeout().equals(60)){
+				artifact.setArtifactTimeout(120);
+			}
+		}
+		return artifacts;
 	}
 
 	private List<ArtifactDefinition> getArtifactsWithPayload(ComponentInstance resourceInstance) {

@@ -64,4 +64,8 @@ public class ResourceLeftMenu implements ComponentLeftMenu {
 	public void moveToInputsScreen() {
 		GeneralUIUtils.moveToStep(StepsEnum.INPUTS);
 	}
+	
+	public void moveToPropertiesAssignmentScreen() {
+		GeneralUIUtils.moveToStep(StepsEnum.PROPERTIES_ASSIGNMENT);
+	}
 }

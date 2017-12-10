@@ -31,9 +31,7 @@ import java.util.Set;
 
 import org.junit.Rule;
 import org.junit.rules.TestName;
-import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
-import org.openecomp.sdc.ci.tests.tosca.datatypes.ToscaDefinition;
 import org.openecomp.sdc.common.util.ZipUtil;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.Yaml;

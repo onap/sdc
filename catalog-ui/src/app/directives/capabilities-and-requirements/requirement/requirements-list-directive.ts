@@ -28,7 +28,7 @@
  * Created by obarda on 1/8/2017.
  */
 'use strict';
-import {RequirementsGroup, Component} from "app/models";
+import {RequirementsGroup, Component, Relationship, RelationshipModel} from "app/models";
 
 export interface IRequirementsListScope extends ng.IScope {
 
@@ -62,12 +62,11 @@ export class RequirementsListDirective implements ng.IDirective {
 
         scope.getRelation = (requirement:any):any => {
             if (scope.isInstanceSelected() && scope.component.componentInstancesRelations) {
-                let relationItem = _.filter(scope.component.componentInstancesRelations, (relation:any) => {
+                let relationItem:Array<RelationshipModel> = _.filter((<Component>scope.component).componentInstancesRelations, (relation:RelationshipModel) => {
                     return relation.fromNode === scope.component.selectedInstance.uniqueId &&
-                        _.some(relation.relationships, {
-                            'requirement': requirement.name,
-                            'requirementOwnerId': requirement.ownerId
-                        });
+                        _.filter(relation.relationships, (relationship:Relationship) => {
+                            return relationship.relation.requirement == requirement.name && relationship.relation.requirementOwnerId == requirement.ownerId;
+                        }).length;
                 });
 
                 if (relationItem && relationItem.length) {

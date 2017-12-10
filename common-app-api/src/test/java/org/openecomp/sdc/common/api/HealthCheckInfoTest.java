@@ -2,10 +2,7 @@ package org.openecomp.sdc.common.api;
 
 import java.util.List;
 
-import javax.annotation.Generated;
-
 import org.junit.Test;
-import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckComponent;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
 
 
@@ -19,7 +16,7 @@ public class HealthCheckInfoTest {
 	@Test
 	public void testGetHealthCheckComponent() throws Exception {
 		HealthCheckInfo testSubject;
-		HealthCheckComponent result;
+		String result;
 
 		// default test
 		testSubject = createTestSubject();

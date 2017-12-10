@@ -20,7 +20,8 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.be.components.distribution.engine.DistributionEngine;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.ComponentArtifactTypesConfig;

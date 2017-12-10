@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.lf5.util.ResourceUtils;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
@@ -38,7 +37,6 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.DbUtils;
-import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;

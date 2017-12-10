@@ -1,12 +1,11 @@
 package org.openecomp.sdc.be.resources.data;
 
+import java.util.Date;
+
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
-
-import java.math.BigInteger;
-import java.util.Date;
 
 @Table(keyspace = "sdcrepository", name = "migrationTasks")
 public class MigrationTaskEntry {

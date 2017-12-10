@@ -93,6 +93,7 @@ public class UserManagementTab {
 	}
 	
 	public void updateUser(int index){
+		GeneralUIUtils.ultimateWait();
 		GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.UserManagementEnum.UPDATE_USER_BUTTON.getValue() + index);
 	}
 	

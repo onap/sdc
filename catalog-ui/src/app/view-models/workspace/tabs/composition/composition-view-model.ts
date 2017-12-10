@@ -25,7 +25,7 @@ import {IWorkspaceViewModelScope} from "../../workspace-view-model";
 import {ComponentServiceNg2} from "app/ng2/services/component-services/component.service";
 import {ComponentGenericResponse} from "app/ng2/services/responses/component-generic-response";
 import {Resource} from "app/models/components/resource";
-import {ResourceType} from "../../../../utils/constants";
+import {ResourceType,ComponentType} from "../../../../utils/constants";
 
 export interface ICompositionViewModelScope extends IWorkspaceViewModelScope {
 
@@ -48,6 +48,7 @@ export interface ICompositionViewModelScope extends IWorkspaceViewModelScope {
     setSelectedInstance(componentInstance:ComponentInstance):void;
     printScreen():void;
     isPNF():boolean;
+    isConfiguration():boolean;
 
     cacheComponentsInstancesFullData:Component;
 }
@@ -167,9 +168,12 @@ export class CompositionViewModel {
 
         this.$scope.updateSelectedComponent = ():void => {
             if (this.$scope.currentComponent.selectedInstance) {
-
+                let parentComponentUid = this.$scope.currentComponent.selectedInstance.componentUid
+                if(this.$scope.currentComponent.selectedInstance.originType === ComponentType.SERVICE_PROXY){
+                    parentComponentUid = this.$scope.currentComponent.selectedInstance.sourceModelUid;
+                }
                 let componentParent = _.find(this.cacheComponentsInstancesFullData, (component) => {
-                    return component.uniqueId === this.$scope.currentComponent.selectedInstance.componentUid;
+                    return component.uniqueId === parentComponentUid;
                 });
                 if (componentParent) {
                     this.$scope.selectedComponent = componentParent;
@@ -185,7 +189,7 @@ export class CompositionViewModel {
                             console.log("Error updating selected component");
                             this.$scope.isLoadingRightPanel = false;
                         };
-                        this.ComponentFactory.getComponentFromServer(this.$scope.currentComponent.selectedInstance.originType, this.$scope.currentComponent.selectedInstance.componentUid).then(onSuccess, onError);
+                        this.ComponentFactory.getComponentFromServer(this.$scope.currentComponent.selectedInstance.originType, parentComponentUid).then(onSuccess, onError);
                     } catch (e) {
                         console.log("Error updating selected component", e);
                         this.$scope.isLoadingRightPanel = false;
@@ -245,6 +249,10 @@ export class CompositionViewModel {
 
         this.$scope.isPNF = (): boolean => {
             return this.$scope.selectedComponent.isResource() && (<Resource>this.$scope.selectedComponent).resourceType === ResourceType.PNF;
+        };
+
+        this.$scope.isConfiguration = (): boolean => {
+            return this.$scope.selectedComponent.isResource() && (<Resource>this.$scope.selectedComponent).resourceType === ResourceType.CONFIGURATION;
         };
 
         this.eventListenerService.registerObserverCallback(EVENTS.ON_CHECKOUT, this.$scope.reload);

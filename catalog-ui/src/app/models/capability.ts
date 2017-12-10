@@ -23,7 +23,9 @@
  */
 'use strict';
 import {PropertyModel} from "./properties";
+import {Requirement} from "./requirement";
 
+export interface RequirementCapabilityModel{};
 //this is an object contains keys, when each key has matching array.
 // for example: key = tosca.capabilities.network.Linkable and the match array is array of capabilities objects
 export class CapabilitiesGroup {
@@ -44,7 +46,7 @@ export class CapabilitiesGroup {
     }
 }
 
-export class Capability {
+export class Capability implements RequirementCapabilityModel{
 
     //server data
     name:string;
@@ -53,11 +55,12 @@ export class Capability {
     type:string;
     uniqueId:string;
     capabilitySources:Array<String>;
+    leftOccurrences:string;
     minOccurrences:string;
     maxOccurrences:string;
-    properties:Array<PropertyModel>;
     description:string;
     validSourceTypes:Array<string>;
+    properties:Array<PropertyModel>;
     //custom
     selected:boolean;
     filterTerm:string;
@@ -72,6 +75,7 @@ export class Capability {
             this.type = capability.type;
             this.uniqueId = capability.uniqueId;
             this.capabilitySources = capability.capabilitySources;
+            this.leftOccurrences = capability.leftOccurrences;
             this.minOccurrences = capability.minOccurrences;
             this.maxOccurrences = capability.maxOccurrences;
             this.properties = capability.properties;
@@ -83,9 +87,13 @@ export class Capability {
         }
     }
 
+    public getTitle():string {
+        return this.ownerName + ': ' + this.name;
+    }
+
     public getFullTitle():string {
         let maxOccurrences:string = this.maxOccurrences === 'UNBOUNDED' ? '∞' : this.maxOccurrences;
-        return this.ownerName + ': ' + this.name + ': [' + this.minOccurrences + ', ' + maxOccurrences + ']';
+        return this.getTitle() + ': [' + this.minOccurrences + ', ' + maxOccurrences + ']';
     }
 
     public toJSON = ():any => {
@@ -109,6 +117,10 @@ export class Capability {
                     (prop.schema && prop.schema.property ? (" " + prop.schema.property.type) : "");
             });
         }
+    }
+
+    public isFulfilled() {
+        return parseInt(this.leftOccurrences) === 0;
     }
 }
 

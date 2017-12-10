@@ -151,11 +151,13 @@ public final class DataTestIdEnum {
 	}
 
 	public enum LinkMenuItems {
-		CANCEL_BUTTON("link-menu-button-cancel"), 
-		CONNECT_BUTTON("link-menu-button-connect"), 
-		LINK_ITEM_CAP("link-item-capabilities"), 
-		LINK_ITEM_REQ("link-item-requirements"), 
-		LINK_MENU("link-menu-open");
+//		CANCEL_BUTTON("link-menu-button-cancel"), 
+//		CONNECT_BUTTON("link-menu-button-connect"), 
+//		LINK_ITEM_CAP("link-item-capabilities"), 
+//		LINK_ITEM_REQ("link-item-requirements"), 
+//		LINK_MENU("link-menu-open");
+		LINK_ITEM_CAP_Or_REQ("req-or-cap-item"),
+		REQ_CAP_SELECT_DATA_TESTS_ID("SelectType");
 
 		private String value;
 
@@ -167,6 +169,9 @@ public final class DataTestIdEnum {
 			this.value = value;
 		}
 	}
+	
+
+
 
 	public enum GeneralCanvasItems {
 		CANVAS("canvas"), 
@@ -434,19 +439,20 @@ public final class DataTestIdEnum {
 	}
 
 	public enum StepsEnum {
-		GENERAL("General"), 
+		GENERAL("GeneralLeftSideMenu"), 
 		ICON("Iconstep"), 
-		DEPLOYMENT_ARTIFACT("Deployment Artifact"), 
-		INFORMATION_ARTIFACT("Information Artifact"), 
-		PROPERTIES("Properties"), 
-		COMPOSITION("Composition"), 
-		ACTIVITY_LOG("Activity Log"), 
-		DEPLOYMENT_VIEW("Deployment"), 
-		TOSCA_ARTIFACTS("TOSCA Artifacts"), 
-		MONITOR("Monitor "), 
-		MANAGEMENT_WORKFLOW("Management Workflow"), 
+		DEPLOYMENT_ARTIFACT("Deployment ArtifactLeftSideMenu"), 
+		INFORMATION_ARTIFACT("Information ArtifactLeftSideMenu"), 
+		PROPERTIES("PropertiesLeftSideMenu"), 
+		COMPOSITION("CompositionLeftSideMenu"), 
+		ACTIVITY_LOG("Activity LogLeftSideMenu"), 
+		DEPLOYMENT_VIEW("DeploymentLeftSideMenu"), 
+		TOSCA_ARTIFACTS("TOSCA ArtifactsLeftSideMenu"), 
+		MONITOR("Monitor LeftSideMenu"),
+		MANAGEMENT_WORKFLOW("Management WorkflowLeftSideMenu"), 
 		INPUTS("Inputs"), 
-		HIERARCHY("Hierarchy");
+		HIERARCHY("Hierarchy"),
+		PROPERTIES_ASSIGNMENT("Properties AssignmentLeftSideMenu");
 
 		private String value;
 
@@ -797,6 +803,36 @@ public final class DataTestIdEnum {
 		private DeploymentScreen(String value) {
 			this.value = value;
 		}
+	}
+	
+	public enum PropertiesAssignmentScreen {
+
+		PROPERTIES_TAB("Properties"),
+		INPUTS_TAB("Inputs"),
+		COMPOSITION_TAB("Composition"),
+		PROPERTY_STRUCTURE_TAB("Property Structure"),
+		DECLARE_BUTTON("declare-button"),
+		SEARCH_BOX("search-box"),
+		SEARCH_BUTTON("search-button"),
+		FILTER_BUTTON("filter-button"),
+		FILTER_BOX("filter-box"),
+		CLEAR_FILTER_BUTTON("clear-filter-button"),
+		INPUT_DELETE_BUTTON("delete-input-button"),
+		INPUT_DELETE_DIALOG_DELETE("Delete"),
+		INPUT_DELETE_DIALOG_CLOSE("Close"),
+		FILTER_CHECKBOX_ALL("filter-checkbox-all");
+		
+		
+		private String value;
+
+		public String getValue() {
+			return value;
+		}
+
+		private PropertiesAssignmentScreen(String value) {
+			this.value = value;
+		}
+		
 	}
 	
 	public enum ImportVfRepository {

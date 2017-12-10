@@ -11,7 +11,7 @@
         <div class="w-sdc-designer-sidebar-section-content general">
             <div class="i-sdc-designer-sidebar-section-content-item">
                 <span class="i-sdc-designer-sidebar-section-content-item-label">Type:</span>
-                <span class="i-sdc-designer-sidebar-section-content-item-value"  data-tests-id="rightTab_componentType" data-ng-bind="selectedComponent.componentType"></span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value"  data-tests-id="rightTab_componentType" data-ng-bind="isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy() ? 'Service Proxy' : selectedComponent.componentType"></span>
             </div>
             <div class="i-sdc-designer-sidebar-section-content-item" data-ng-if="selectedComponent.isResource()">
                 <span class="i-sdc-designer-sidebar-section-content-item-label">Resource Type:</span>
@@ -103,8 +103,15 @@
                 <span class="i-sdc-designer-sidebar-section-content-item-value" data-ng-bind="selectedComponent.contactId"
                       data-tests-id="rightTab_contactId"></span>
             </div>
+
+            <div class="i-sdc-designer-sidebar-section-content-item" data-ng-if="isComponentInstanceSelected() && currentComponent.selectedInstance.isServiceProxy()">
+                <span class="i-sdc-designer-sidebar-section-content-item-label" translate="GENERAL_LABEL_SOURCE_SERVICE_NAME"></span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value" data-ng-bind="currentComponent.selectedInstance.sourceModelName"  tooltips tooltip-class="tooltip-custom break-word-tooltip" tooltip-content="&#8203;{{currentComponent.selectedInstance.sourceModelName}}"
+                      data-tests-id="rightTab_sourceModelName"></span>
+            </div>
+
             <div class="i-sdc-designer-sidebar-section-content-item" data-ng-if="isViewMode() && currentComponent.isService() && selectedComponent.isResource()">
-                <span class="i-sdc-designer-sidebar-section-content-item-label">Resource Customization UUID:</span><br>
+                <span class="i-sdc-designer-sidebar-section-content-item-label" translate="GENERAL_LABEL_RESOURCE_CUSTOMIZATION_UUID"></span><br>
                 <span class="customization-uuid selectable" data-ng-bind="currentComponent.selectedInstance.customizationUUID"
                       data-tests-id="rightTab_customizationModuleUUID"></span><br>
             </div>
