@@ -39,16 +39,16 @@ public class BaseFactory {
         ServiceLoader<T> loader = ServiceLoader.load(clazz);
         Iterator<T> iterator = loader.iterator();
         if (iterator.hasNext()) {
-
             service = iterator.next();
-            if (iterator.hasNext()) {
-                System.err.println(String.format("Warning! Configured more than one implementation of %s",
-                        clazz.getName()));
-            }
 
             return service;
         }
 
-        throw new IllegalArgumentException((String.format("No implementations configured for %s", clazz.getName())));
+        throw new IllegalArgumentException(String.format("No implementations configured for %s", clazz.getName()));
+    }
+
+    @Override
+    public String toString() {
+        return "BaseFactory{}";
     }
 }
