@@ -16,13 +16,13 @@
 
 package org.openecomp.sdc.logging.types;
 
-/**
- * Created by TALIO on 1/10/2017.
- */
 public class DebugConstants {
   public static final String EXIT = "Exit";
   public static final String EXIT_DEFAULT = "Exit_Default";
   public static final String ENTER = "Enter";
   public static final String ENTER_DEFAULT = "Enter_Default";
   public static final String DEFAULT = "Default";
+  private DebugConstants(){
+
+  }
 }
