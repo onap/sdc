@@ -40,7 +40,7 @@ public class LoggerFactory extends BaseFactory {
     try {
       service = locateService(LoggerCreationService.class);
     } catch (Exception ex) {
-      new RuntimeException("Failed to instantiate logger factory", ex).printStackTrace();
+      new RuntimeException("Failed to instantiate logger factory", ex);
       // use the no-op service to prevent recursion in case of an attempt to log an exception as a
       // result of a logger initialization error
       service = new NoOpLoggerCreationService();
@@ -58,9 +58,7 @@ public class LoggerFactory extends BaseFactory {
   }
 
   private static class NoOpLoggerCreationService implements LoggerCreationService {
-
-    private static final Logger NO_OP_LOGGER = new Logger() {
-
+    private static class NoOpLogger implements Logger{
       @Override
       public String getName() {
         return "No-Op Logger";
@@ -73,22 +71,27 @@ public class LoggerFactory extends BaseFactory {
 
       @Override
       public void metrics(String msg) {
+        //this is no_op_method
       }
 
       @Override
       public void metrics(String msg, Object arg) {
+        //this is no_op_method
       }
 
       @Override
       public void metrics(String msg, Object arg1, Object arg2) {
+        //this is no_op_method
       }
 
       @Override
       public void metrics(String msg, Object... arguments) {
+        //this is no_op_method
       }
 
       @Override
       public void metrics(String msg, Throwable t) {
+        //this is no_op_method
       }
 
       @Override
@@ -98,22 +101,27 @@ public class LoggerFactory extends BaseFactory {
 
       @Override
       public void audit(String msg) {
+        //this is no_op_method
       }
 
       @Override
       public void audit(String msg, Object arg) {
+        //this is no_op_method
       }
 
       @Override
       public void audit(String msg, Object arg1, Object arg2) {
+        //this is no_op_method
       }
 
       @Override
       public void audit(String msg, Object... arguments) {
+        //this is no_op_method
       }
 
       @Override
       public void audit(String msg, Throwable t) {
+        //this is no_op_method
       }
 
       @Override
@@ -123,22 +131,27 @@ public class LoggerFactory extends BaseFactory {
 
       @Override
       public void debug(String msg) {
+        //this is no_op_method
       }
 
       @Override
       public void debug(String msg, Object arg) {
+        //this is no_op_method
       }
 
       @Override
       public void debug(String msg, Object arg1, Object arg2) {
+        //this is no_op_method
       }
 
       @Override
       public void debug(String msg, Object... arguments) {
+        //this is no_op_method
       }
 
       @Override
       public void debug(String msg, Throwable t) {
+        //this is no_op_method
       }
 
       @Override
@@ -148,22 +161,27 @@ public class LoggerFactory extends BaseFactory {
 
       @Override
       public void info(String msg) {
+        //this is no_op_method
       }
 
       @Override
       public void info(String msg, Object arg) {
+        //this is no_op_method
       }
 
       @Override
       public void info(String msg, Object arg1, Object arg2) {
+        //this is no_op_method
       }
 
       @Override
       public void info(String msg, Object... arguments) {
+        //this is no_op_method
       }
 
       @Override
       public void info(String msg, Throwable t) {
+        //this is no_op_method
       }
 
       @Override
@@ -173,22 +191,27 @@ public class LoggerFactory extends BaseFactory {
 
       @Override
       public void warn(String msg) {
+        //this is no_op_method
       }
 
       @Override
       public void warn(String msg, Object arg) {
+        //this is no_op_method
       }
 
       @Override
       public void warn(String msg, Object... arguments) {
+        //this is no_op_method
       }
 
       @Override
       public void warn(String msg, Object arg1, Object arg2) {
+        //this is no_op_method
       }
 
       @Override
       public void warn(String msg, Throwable t) {
+        //this is no_op_method
       }
 
       @Override
@@ -198,24 +221,30 @@ public class LoggerFactory extends BaseFactory {
 
       @Override
       public void error(String msg) {
+        //this is no_op_method
       }
 
       @Override
       public void error(String msg, Object arg) {
+        //this is no_op_method
       }
 
       @Override
       public void error(String msg, Object arg1, Object arg2) {
+        //this is no_op_method
       }
 
       @Override
       public void error(String msg, Object... arguments) {
+        //this is no_op_method
       }
 
       @Override
       public void error(String msg, Throwable t) {
+        //this is no_op_method
       }
-    };
+    }
+    private static final Logger NO_OP_LOGGER = new NoOpLogger();
 
     @Override
     public Logger getLogger(String className) {
