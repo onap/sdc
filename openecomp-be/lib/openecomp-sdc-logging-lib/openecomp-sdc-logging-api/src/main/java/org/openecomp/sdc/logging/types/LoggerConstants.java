@@ -34,4 +34,7 @@ public class LoggerConstants {
   public static final String ERROR_CATEGORY = "ErrorCategory";
   public static final String ERROR_CODE = "ErrorCode";
   public static final String ERROR_DESCRIPTION = "ErrorDescription";
+  private LoggerConstants(){
+
+  }
 }
