@@ -22,6 +22,8 @@ package org.openecomp.sdc.logging.api.context;
  * @author evitaliy
  * @since 12/09/2016.
  */
+
+@FunctionalInterface
 public interface ContextPropagationService {
 
     Runnable create(Runnable task);
