@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_f73ccd95",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/types/LoggerTragetServiceName.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-11T19:50:07Z",
+      "side": 1,
+      "message": "This is misspelled",
+      "revId": "aba97ea0a9d7ff742bb6cb44bbb6c8283529a88d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
