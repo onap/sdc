@@ -26,5 +26,8 @@ public class DebugMessages {
 
   public static final String ENTER_METHOD_FORMATTED = "Entering %s with %s";
   public static final String EXIT_METHOD_FORMATTED = "Exiting %s with %s";
+  private DebugMessages(){
+
+  }
 
 }
