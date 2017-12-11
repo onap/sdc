@@ -104,4 +104,7 @@ public class LoggerErrorDescription {
       "Can't insert value into application config table";
 
   public static final String CANT_HEAL = "Can't perform healing operation";
+  private LoggerErrorDescription(){
+
+  }
 }
