@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_14585755",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/LoggerFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-11T16:06:36Z",
+      "side": 1,
+      "message": "This is not a good resolution. The purpose was to let a user know that the requested logger creation service could not be created - using the only available way, which is System.out/System.err (because this class itself is the logger). But now, a new exception is created without ever being printed or thrown.",
+      "revId": "8459ca7cec669952ae49bf1b0f614ee62696aa43",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_745bdb54",
+        "filename": "openecomp-be/lib/openecomp-sdc-logging-lib/openecomp-sdc-logging-api/src/main/java/org/openecomp/sdc/logging/api/LoggerFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-11T16:06:36Z",
+      "side": 1,
+      "message": "Move it to the top of the class.",
+      "revId": "8459ca7cec669952ae49bf1b0f614ee62696aa43",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
