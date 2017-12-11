@@ -199,4 +199,7 @@ public class LoggerTragetServiceName {
       + "Model";
 
   public static final String READ_RESOURCE_FILE = "Read Resource File";
+  private LoggerTragetServiceName(){
+    
+  }
 }
