@@ -40,11 +40,6 @@
             <artifactId>healthcheck-rest-services</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--dependency>
-            <groupId>org.openecomp.sdc.onboarding</groupId>
-            <artifactId>application-config-rest-services</artifactId>
-            <version>${project.version}</version>
-        </dependency-->
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>application-config-rest-services</artifactId>
@@ -180,9 +175,32 @@
                         <resource>
                             <!-- this is relative to the pom.xml directory -->
                             <directory>${basedir}/target/generated/swagger-ui</directory>
+                            <directory>${basedir}/target</directory>
+                            <includes>
+                                <include>docs/*.*</include>
+                            </includes>
                         </resource>
                     </webResources>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <property name="version" value="${project.version}"/>
+                                <mkdir dir="target/docs"/>
+                                <echo file="target/docs/build-info.json">{"Version": "${version}"}</echo>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>com.github.kongchen</groupId>
@@ -221,7 +239,6 @@
             </plugin>
         </plugins>
 
-        <!--finalName>onboarding-api</finalName-->
     </build>
 
 </project>
