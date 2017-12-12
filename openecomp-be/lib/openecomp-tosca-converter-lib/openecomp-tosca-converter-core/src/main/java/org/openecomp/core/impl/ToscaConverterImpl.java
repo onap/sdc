@@ -57,9 +57,7 @@ import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.GLOBAL_S
 
 public class ToscaConverterImpl implements ToscaConverter {
 
-    public ToscaConverterImpl() {
-
-    }
+    private static final String ORIGINAL = ".original";
 
     @Override
     public ToscaServiceModel convert(FileContentHandler fileContentHandler)
@@ -88,6 +86,9 @@ public class ToscaConverterImpl implements ToscaConverter {
                 case definitionsFile:
                     handleDefintionTemplate(fileEntry.getKey(), csarFiles, gsst);
                     break;
+
+                default:
+                    break;
             }
         }
         handleMetadataFile(csarFiles);
@@ -98,7 +99,7 @@ public class ToscaConverterImpl implements ToscaConverter {
     private void handleMetadataFile(Map<String, byte[]> csarFiles) {
         byte[] bytes = csarFiles.remove(metadataFile);
         if (bytes != null) {
-            csarFiles.put(metadataFile + ".original", bytes);
+            csarFiles.put(metadataFile + ORIGINAL, bytes);
         }
     }
 
@@ -106,9 +107,6 @@ public class ToscaConverterImpl implements ToscaConverter {
                                          GlobalSubstitutionServiceTemplate gsst) {
         try {
             ServiceTemplateReaderService readerService = new ServiceTemplateReaderServiceImpl(csarFiles.get(key));
-            if (readerService == null) {
-                return;
-            }
             Object nodeTypes = readerService.getNodeTypes();
             if (nodeTypes instanceof Map) {
                 Map<String, NodeType> nodeTypeMap = (Map<String, NodeType>) nodeTypes;
@@ -142,8 +140,8 @@ public class ToscaConverterImpl implements ToscaConverter {
         addGlobalServiceTemplates(globalServiceTemplates, serviceTemplates);
         toscaServiceModel.setEntryDefinitionServiceTemplate(mainStName);
         toscaServiceModel.setServiceTemplates(serviceTemplates);
-        externalFilesHandler.addFile(metadataFile + ".original",
-            csarFiles.get(metadataFile + ".original"));
+        externalFilesHandler.addFile(metadataFile + ORIGINAL,
+            csarFiles.get(metadataFile + ORIGINAL));
         toscaServiceModel.setArtifactFiles(externalFilesHandler);
 
         if(MapUtils.isNotEmpty(globalSubstitutionServiceTemplate.getNode_types())) {
@@ -259,7 +257,7 @@ public class ToscaConverterImpl implements ToscaConverter {
     }
 
     private void convertNodeTypes(ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService) {
-        Map<String, Object> nodeTypes = (Map<String, Object>) readerService.getNodeTypes();
+        Map<String, Object> nodeTypes = readerService.getNodeTypes();
         if (MapUtils.isEmpty(nodeTypes)) {
             return;
         }
@@ -321,14 +319,12 @@ public class ToscaConverterImpl implements ToscaConverter {
                                                         String inputsOrOutputs,
                                                         String parameterId,
                                                         ParameterDefinition parameterDefinition) {
-        switch (inputsOrOutputs) {
-            case inputs:
-                DataModelUtil
-                    .addInputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
-                break;
-            case outputs:
-                DataModelUtil
-                    .addOutputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
+        if (inputsOrOutputs.equals(inputs)) {
+            DataModelUtil
+                .addInputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
+        } else if (inputsOrOutputs.equals(outputs)) {
+            DataModelUtil
+                .addOutputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
         }
     }
 
@@ -451,7 +447,7 @@ public class ToscaConverterImpl implements ToscaConverter {
     private List<Map<String, CapabilityAssignment>> convertCapabilities(Map<String, Object> capabilities) {
         List<Map<String, CapabilityAssignment>> convertedCapabilities = new ArrayList<>();
         if (MapUtils.isEmpty(capabilities)) {
-            return null;
+            return Collections.emptyList();
         }
         for (Map.Entry<String, Object> capabilityAssignmentEntry : capabilities.entrySet()) {
             Map<String, CapabilityAssignment> tempMap = new HashMap<>();
