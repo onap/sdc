@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ca37a4af",
+        "filename": "common/openecomp-common-configuration-management/openecomp-configuration-management-core/src/main/resources/config-system.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-12T11:34:38Z",
+      "side": 1,
+      "message": "It\u0027s a \"magical\" address. However this particular value doesn\u0027t seem to have a clear meaning. A quick googling shows that 127.0.0.2 can be a valid loopback address.",
+      "revId": "c4ba63006034cdec84c901852b48379c08ffdf57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2abba80f",
+        "filename": "common/openecomp-common-configuration-management/openecomp-configuration-management-test/src/test/resources/config-system.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-12T11:34:38Z",
+      "side": 1,
+      "message": "What about 0.0.0.0 or leaving it blank? To my understanding the goal was to indicate a \"not configured\" value, wasn\u0027t it? However, 127.0.0.2 may be confusing.",
+      "revId": "c4ba63006034cdec84c901852b48379c08ffdf57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
