@@ -67,6 +67,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,9 +78,7 @@ import java.util.regex.Pattern;
 
 public class ToscaConverterImpl implements ToscaConverter {
 
-    public ToscaConverterImpl() {
-
-    }
+    private static final String ORIGINAL = ".original";
 
     @Override
     public ToscaServiceModel convert(FileContentHandler fileContentHandler)
@@ -108,6 +107,9 @@ public class ToscaConverterImpl implements ToscaConverter {
                 case definitionsFile:
                     handleDefintionTemplate(fileEntry.getKey(), csarFiles, gsst);
                     break;
+
+                default:
+                    break;
             }
         }
         handleMetadataFile(csarFiles);
@@ -118,7 +120,7 @@ public class ToscaConverterImpl implements ToscaConverter {
     private void handleMetadataFile(Map<String, byte[]> csarFiles) {
         byte[] bytes = csarFiles.remove(metadataFile);
         if (bytes != null) {
-            csarFiles.put(metadataFile + ".original", bytes);
+            csarFiles.put(metadataFile + ORIGINAL, bytes);
         }
     }
 
@@ -159,8 +161,8 @@ public class ToscaConverterImpl implements ToscaConverter {
         addGlobalServiceTemplates(globalServiceTemplates, serviceTemplates);
         toscaServiceModel.setEntryDefinitionServiceTemplate(mainStName);
         toscaServiceModel.setServiceTemplates(serviceTemplates);
-        externalFilesHandler.addFile(metadataFile + ".original",
-            csarFiles.get(metadataFile + ".original"));
+        externalFilesHandler.addFile(metadataFile + ORIGINAL,
+            csarFiles.get(metadataFile + ORIGINAL));
         toscaServiceModel.setArtifactFiles(externalFilesHandler);
 
         if(MapUtils.isNotEmpty(globalSubstitutionServiceTemplate.getNode_types())) {
@@ -277,7 +279,7 @@ public class ToscaConverterImpl implements ToscaConverter {
     }
 
     private void convertNodeTypes(ServiceTemplate serviceTemplate, ServiceTemplateReaderService readerService) {
-        Map<String, Object> nodeTypes = (Map<String, Object>) readerService.getNodeTypes();
+        Map<String, Object> nodeTypes = readerService.getNodeTypes();
         if (MapUtils.isEmpty(nodeTypes)) {
             return;
         }
@@ -339,14 +341,12 @@ public class ToscaConverterImpl implements ToscaConverter {
                                                         String inputsOrOutputs,
                                                         String parameterId,
                                                         ParameterDefinition parameterDefinition) {
-        switch (inputsOrOutputs) {
-            case inputs:
-                DataModelUtil
-                    .addInputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
-                break;
-            case outputs:
-                DataModelUtil
-                    .addOutputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
+        if (inputsOrOutputs.equals(inputs)) {
+            DataModelUtil
+                .addInputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
+        } else if (inputsOrOutputs.equals(outputs)) {
+            DataModelUtil
+                .addOutputParameterToTopologyTemplate(serviceTemplate, parameterId, parameterDefinition);
         }
     }
 
