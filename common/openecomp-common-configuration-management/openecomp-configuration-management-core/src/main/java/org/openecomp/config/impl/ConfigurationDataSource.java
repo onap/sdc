@@ -52,6 +52,9 @@ public final class ConfigurationDataSource {
   public static BasicDataSource initDataSource() throws Exception {
     ImmutableConfiguration dbConfig = ConfigurationRepository.lookup()
         .getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE);
+    if ("0.0.0.0".equals(dbConfig.getString("dbhost"))) {
+      return null;
+    }
     BasicDataSource datasource = new BasicDataSource();
     String driverClassName = dbConfig.getString("driverClassName");
     String jdbcUrl = dbConfig.getString("jdbcURL");
