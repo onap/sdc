@@ -489,6 +489,11 @@ public class ConfigurationUtils {
    */
   public static boolean executeDdlSql(String sql) throws Exception {
     DataSource datasource = ConfigurationDataSource.lookup();
+    if (datasource == null) {
+      System.err.println("DB configuration not found. Configuration management will be using "
+          + "in-memory persistence.");
+      return false;
+    }
     try (Connection con = datasource.getConnection(); Statement stmt = con.createStatement()) {
       stmt.executeQuery(sql);
     } catch (Exception exception) {
