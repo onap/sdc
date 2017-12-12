@@ -2,6 +2,7 @@ package org.openecomp.config.impl;
 
 import org.apache.commons.configuration2.ImmutableConfiguration;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.config.ConfigurationUtils;
 import org.openecomp.config.Constants;
 
@@ -52,6 +53,9 @@ public final class ConfigurationDataSource {
   public static BasicDataSource initDataSource() throws Exception {
     ImmutableConfiguration dbConfig = ConfigurationRepository.lookup()
         .getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE);
+    if (StringUtils.isEmpty(dbConfig.getString("dbhost"))) {
+      return null;
+    }
     BasicDataSource datasource = new BasicDataSource();
     String driverClassName = dbConfig.getString("driverClassName");
     String jdbcUrl = dbConfig.getString("jdbcURL");
