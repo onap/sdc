@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6aac50ee",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-core/src/main/java/org/openecomp/core/zusammen/impl/CassandraConnectionInitializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-12T09:48:56Z",
+      "side": 1,
+      "message": "I\u0027d probably make \"cassandra\" a constant to avoid spelling mistakes. PREIX \u003d \"cassandra.\"; DATA_CENTER_PROPERY_NAME \u003d PREFIX + \"datacenter\";",
+      "revId": "be70cf81c1641745a6f4e064372eeb09867a57fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2a5f2810",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-core/src/main/java/org/openecomp/core/zusammen/impl/CassandraConnectionInitializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-12T09:48:56Z",
+      "side": 1,
+      "message": "Was this a creative way to silence Sonar? :) It doesn\u0027t seem to distinguish between a password and a password property name. You should have suppressed the rule for the particular line of code.",
+      "revId": "be70cf81c1641745a6f4e064372eeb09867a57fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_2ab6483e",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-core/src/main/java/org/openecomp/core/zusammen/impl/CassandraConnectionInitializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-12T09:48:56Z",
+      "side": 1,
+      "message": "I see a problem calling a static initialization method every time an instance is created. If it\u0027s a one-time initialization, then make it such. Internal singleton or just a static {} block.",
+      "revId": "be70cf81c1641745a6f4e064372eeb09867a57fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8aa51c06",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-core/src/main/java/org/openecomp/core/zusammen/impl/CassandraConnectionInitializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-12T09:48:56Z",
+      "side": 1,
+      "message": "This looks like a good candidate for a method.\n\nsetProperty(String key, String value) {\n  if (!System.getProperties().containsKey(key)) {\n     System.setProperty(key, value);\n  }\n}\n\nand then \n\nsetProperty(TRUSTSTORE_PROPERTY_NAME, CassandraUtils.getTruststore());\n\nand so on.\n\nAnother such method for boolean.\n\nIt can be even made more efficient (avoid unnecessary initialization/calls) using functional:\n\nsetProperty(String key, Supplier\u003cString\u003e supplier) {\n  if (!System.getProperties().containsKey(key)) {\n     System.setProperty(supplier.get());\n  }\n}\n\nand setProperty(TRUSTSTORE_PROPERTY_NAME, () -\u003e CassandraUtils.getTruststore());",
+      "revId": "be70cf81c1641745a6f4e064372eeb09867a57fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4aaf14e4",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-core/src/main/java/org/openecomp/core/zusammen/impl/CassandraConnectionInitializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-12T09:48:56Z",
+      "side": 1,
+      "message": "Is this comment needed? If no, please remove it. If yes, do you think it makes sense to convert it into a Javadoc (of the class, for instance)?",
+      "revId": "be70cf81c1641745a6f4e064372eeb09867a57fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_aaaa58d2",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-zusammen-lib/openecomp-zusammen-core/src/main/java/org/openecomp/core/zusammen/impl/CassandraConnectionInitializer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-12T09:48:56Z",
+      "side": 1,
+      "message": "You can just write something like \"Required by interface\". so that it\u0027s clear why the method is there.",
+      "revId": "be70cf81c1641745a6f4e064372eeb09867a57fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
