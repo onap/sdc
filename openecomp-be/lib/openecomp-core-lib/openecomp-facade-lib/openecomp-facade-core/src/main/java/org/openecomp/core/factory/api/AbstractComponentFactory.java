@@ -1,9 +1,6 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.core.factory.api;
@@ -36,6 +32,7 @@ public abstract class AbstractComponentFactory<I> extends AbstractFactory<I> {
     InitializationHelper.registerFactoryMapping(registry);
   }
 
+  @FunctionalInterface
   interface Registry {
     void register(String factory, String impl);
   }
@@ -55,22 +52,16 @@ public abstract class AbstractComponentFactory<I> extends AbstractFactory<I> {
     private InitializationHelper() {
     }
 
-    static synchronized boolean registerFactoryMapping(Registry registry) {
-
-      boolean done = !isRegistered;
-
+    static synchronized void registerFactoryMapping(Registry registry) {
       if (!isRegistered) {
         registerFactoryMappingImpl(registry);
         isRegistered = true;
       }
-
-      return done;
     }
 
     private static void registerFactoryMappingImpl(Registry registry) {
       Map<String, String> factoryMap = FactoryConfig.getFactoriesMap();
 
-      try {
         for (Map.Entry<String, String> entry : factoryMap.entrySet()) {
           String abstractClassName = entry.getKey();
           String concreteTypeName = entry.getValue();
@@ -82,23 +73,8 @@ public abstract class AbstractComponentFactory<I> extends AbstractFactory<I> {
                     .withCategory(ErrorCategory.SYSTEM).build());
 
           }
-
           registry.register(abstractClassName, concreteTypeName);
         }
-      } catch (RuntimeException exception) {
-        throw exception;
-      } catch (Exception exception) {
-        throw new RuntimeException(exception);
-      }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> Class<T> unsecureCast(Class<?> cls) {
-      return (Class<T>) cls;
-    }
-
-    private static String nameOf(Class<?> clazz) {
-      return (clazz != null) ? clazz.getName() : "null";
     }
   }
 
