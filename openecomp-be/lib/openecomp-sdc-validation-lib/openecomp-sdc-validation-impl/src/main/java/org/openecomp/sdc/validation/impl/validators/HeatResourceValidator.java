@@ -1,24 +1,33 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.validation.impl.validators;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.types.GlobalValidationContext;
-import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
-import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Output;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
-import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.base.ResourceBaseValidator;
 import org.openecomp.sdc.validation.type.ConfigConstants;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
-import org.openecomp.sdc.validation.util.ValidationUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +40,7 @@ import java.util.Set;
 
 public class HeatResourceValidator extends ResourceBaseValidator {
   private static final Logger LOGGER = LoggerFactory.getLogger(ResourceBaseValidator.class);
-  private static final ErrorMessageCode ERROR_CODE_HTR_1 = new ErrorMessageCode("HTR1");
+  private static final String GET_ATTR = "get_attr";
 
   @Override
   public void init(Map<String, Object> properties) {
@@ -43,21 +52,6 @@ public class HeatResourceValidator extends ResourceBaseValidator {
                                                    String envFileName,
                                                    HeatOrchestrationTemplate heatOrchestrationTemplate,
                                                    GlobalValidationContext globalContext) {
-    ManifestContent manifestContent = new ManifestContent();
-    try {
-      manifestContent = ValidationUtil.validateManifest(globalContext);
-    } catch (Exception exception) {
-      LOGGER.debug("", exception);
-    }
-    Set<String> baseFiles = ManifestUtil.getBaseFiles(manifestContent);
-    String baseFileName = CollectionUtils.isEmpty(baseFiles) ? null : baseFiles.iterator().next();
-    globalContext.setMessageCode(ERROR_CODE_HTR_1);
-    HeatOrchestrationTemplate baseHot =
-        ValidationUtil.checkHeatOrchestrationPreCondition(baseFileName, globalContext);
-    Set<String> securityGroupsNamesFromBaseFileOutputs = baseFileName == null ? new HashSet<>()
-        : checkForBaseFilePortsExistenceAndReturnSecurityGroupNamesFromOutputsIfNot
-            (baseHot);
-
     Map<String, Resource> resourcesMap =
         heatOrchestrationTemplate.getResources() == null ? new HashMap<>()
             : heatOrchestrationTemplate.getResources();
@@ -68,52 +62,44 @@ public class HeatResourceValidator extends ResourceBaseValidator {
     Map<String, Map<String, Map<String, List<String>>>>
         typeToPointingResourcesMap = new HashMap<>();
 
-    initTypeRelationsMap
-        (fileName, resourcesMap, outputMap,
-            securityGroupsNamesFromBaseFileOutputs, typeToPointingResourcesMap, globalContext);
+    initTypeRelationsMap (fileName, resourcesMap, outputMap,
+             typeToPointingResourcesMap, globalContext);
 
-    return new HeatResourceValidationContext
-        (heatOrchestrationTemplate, typeToPointingResourcesMap, envFileName);
+    return new HeatResourceValidationContext (heatOrchestrationTemplate, typeToPointingResourcesMap,
+            envFileName );
   }
 
-  private void initTypeRelationsMap(String fileName,
-                                    Map<String, Resource> resourceMap,
-                                    Map<String, Output> outputMap,
-                                    Set<String> securityGroupsNamesFromBaseFileOutputs,
-                                    Map<String, Map<String, Map<String, List<String>>>> typeToPointingResourcesMap,
-                                    GlobalValidationContext globalContext) {
-
-    initTypeRelationsMapFromResourcesMap
-        (fileName, resourceMap,
+  private void initTypeRelationsMap (String fileName,
+                     Map<String, Resource> resourceMap,
+                     Map<String, Output> outputMap,
+                     Map<String, Map<String, Map<String, List<String>>>> typeToPointingResourcesMap,
+                     GlobalValidationContext globalContext ) {
+    initTypeRelationsMapFromResourcesMap (fileName, resourceMap,
             typeToPointingResourcesMap, globalContext);
 
-    initTypeRelationsMapFromOutputsMap
-        (fileName, resourceMap, outputMap,
+    initTypeRelationsMapFromOutputsMap (fileName, resourceMap, outputMap,
             typeToPointingResourcesMap, globalContext);
   }
 
-  private void initTypeRelationsMapFromOutputsMap(String fileName,
+  private void initTypeRelationsMapFromOutputsMap (String fileName,
                                                   Map<String, Resource> resourceMap,
                                                   Map<String, Output> outputMap,
                                                   Map<String, Map<String, Map<String, List<String>>>> typeToPointingResourcesMap,
-                                                  GlobalValidationContext globalContext) {
+                                                  GlobalValidationContext globalContext ) {
     for (Map.Entry<String, Output> outputEntry : outputMap.entrySet()) {
       Object outputValue = outputEntry.getValue().getValue();
       Set<String> referencedResources = HeatStructureUtil
           .getReferencedValuesByFunctionName(fileName,
               ResourceReferenceFunctions.GET_RESOURCE.getFunction(), outputValue, globalContext);
 
-      updateRelationsMapWithOutputsReferences
-          (outputEntry, resourceMap, referencedResources, typeToPointingResourcesMap);
-
-
+      updateRelationsMapWithOutputsReferences (outputEntry, resourceMap, referencedResources, typeToPointingResourcesMap);
     }
   }
 
-  private void updateRelationsMapWithOutputsReferences(Map.Entry<String, Output> outputEntry,
+  private void updateRelationsMapWithOutputsReferences (Map.Entry<String, Output> outputEntry,
                                                        Map<String, Resource> resourceMap,
                                                        Set<String> referencedResources,
-                                                       Map<String, Map<String, Map<String, List<String>>>> typeToPointingResourcesMap) {
+                                                       Map<String, Map<String, Map<String, List<String>>>> typeToPointingResourcesMap ) {
 
     for (String pointedResourceName : referencedResources) {
       Resource pointedResource = resourceMap.get(pointedResourceName);
@@ -149,45 +135,8 @@ public class HeatResourceValidator extends ResourceBaseValidator {
       referencedResourcesByGetResource.addAll(referencedResourcesByGetAttr);
 
       updateRelationsMapWithCurrentResourceReferences
-          (resourceMap, resourceEntry, referencedResourcesByGetResource,
-              typeToPointingResourcesMap);
+          (resourceMap, resourceEntry, referencedResourcesByGetResource, typeToPointingResourcesMap);
     }
-  }
-
-  private void updateRelationsMapWithSecurityGroupsFromBaseFileOutput(String fileName,
-                                                                      Map<String, Resource> resourcesMap,
-                                                                      Map.Entry<String, Resource> resourceEntry,
-                                                                      Map<String, Object> properties,
-                                                                      Set<String> securityGroupsNamesFromBaseFileOutputs,
-                                                                      Map<String, Map<String, Map<String, List<String>>>> typeToPointingResourcesMap,
-                                                                      GlobalValidationContext globalContext) {
-
-    Set<String> candidateSecurityGroupUsedFromBaseFile = getResourcesIdsPointedByCurrentResource
-        (fileName, ResourceReferenceFunctions.GET_PARAM, properties, globalContext);
-    removeNonSecurityGroupNamesFromList
-        (candidateSecurityGroupUsedFromBaseFile, securityGroupsNamesFromBaseFileOutputs);
-
-    for (String usedSecurityGroupId : candidateSecurityGroupUsedFromBaseFile) {
-      updateMapWithRelationsBetweenResources
-          (usedSecurityGroupId,
-              HeatResourcesTypes.NEUTRON_SECURITY_GROUP_RESOURCE_TYPE.getHeatResource(),
-              resourceEntry, typeToPointingResourcesMap);
-
-    }
-  }
-
-  private void removeNonSecurityGroupNamesFromList(
-      Set<String> candidateSecurityGroupUsedFromBaseFile,
-      Set<String> securityGroupsNamesFromBaseFileOutputs) {
-
-    Set<String> nonSecurityGroupNames = new HashSet<>();
-    for (String candidateSecurityGroup : candidateSecurityGroupUsedFromBaseFile) {
-      if (!securityGroupsNamesFromBaseFileOutputs.contains(candidateSecurityGroup)) {
-        nonSecurityGroupNames.add(candidateSecurityGroup);
-      }
-    }
-
-    candidateSecurityGroupUsedFromBaseFile.removeAll(nonSecurityGroupNames);
   }
 
   private void updateRelationsMapWithCurrentResourceReferences(Map<String, Resource> resourceMap,
@@ -200,8 +149,7 @@ public class HeatResourceValidator extends ResourceBaseValidator {
       if (Objects.nonNull(pointedResource)) {
         String pointedResourceType = pointedResource.getType();
 
-        updateMapWithRelationsBetweenResources
-            (pointedResourceName, pointedResourceType,
+        updateMapWithRelationsBetweenResources (pointedResourceName, pointedResourceType,
                 currentResourceEntry, typeToPointingResourcesMap);
       }
     }
@@ -215,8 +163,8 @@ public class HeatResourceValidator extends ResourceBaseValidator {
     initCurrentResourceTypeInMap(pointedResourceName, pointedResourceType,
         currentResourceEntry.getValue().getType(), typeToPointingResourcesMap);
 
-    typeToPointingResourcesMap.get(pointedResourceType).get(pointedResourceName).get
-        (currentResourceEntry.getValue().getType()).add(currentResourceEntry.getKey());
+    typeToPointingResourcesMap.get(pointedResourceType).get(pointedResourceName)
+            .get(currentResourceEntry.getValue().getType()).add(currentResourceEntry.getKey());
   }
 
   private void initCurrentResourceTypeInMap(String resourceName, String resourceType,
@@ -225,11 +173,11 @@ public class HeatResourceValidator extends ResourceBaseValidator {
 
     typeToPointingResourcesMap.putIfAbsent(resourceType, new HashMap<>());
     typeToPointingResourcesMap.get(resourceType).putIfAbsent(resourceName, new HashMap<>());
-    typeToPointingResourcesMap.get(resourceType).get(resourceName).putIfAbsent
-        (pointingResourceType, new ArrayList<>());
+    typeToPointingResourcesMap.get(resourceType).get(resourceName)
+            .putIfAbsent (pointingResourceType, new ArrayList<>());
   }
 
-  private Set<String> handleGetAttrBetweenResources(Map<String, Object> properties) {
+  private Set<String> handleGetAttrBetweenResources (Map<String, Object> properties) {
     Set<String> referencedResourcesByGetAttr = new HashSet<>();
     for (Map.Entry<String, Object> proprtyEntry : properties.entrySet()) {
       referencedResourcesByGetAttr.addAll(getGetAttrReferencesInCaseOfContrail(proprtyEntry
@@ -241,21 +189,12 @@ public class HeatResourceValidator extends ResourceBaseValidator {
 
 
   private Set<String> getGetAttrReferencesInCaseOfContrail(Object propertyValue) {
-    Object value;
     Set<String> getAttrReferences = new HashSet<>();
 
     if (propertyValue instanceof Map) {
-      if (((Map) propertyValue).containsKey("get_attr")) {
-        value = ((Map) propertyValue).get("get_attr");
-        if (value instanceof List) {
-          if (((List) value).size() == 2 && ((List) value).get(1).equals("fq_name")) {
-            if (((List) value).get(0) instanceof String) {
-              getAttrReferences.add((String) ((List) value).get(0));
-              return getAttrReferences;
-            } else {
-              LOGGER.warn("invalid format of 'get_attr' function - " + propertyValue.toString());
-            }
-          }
+      if (((Map) propertyValue).containsKey(GET_ATTR)) {
+        if (validatePropertyValueAndAddAttrReferencesInSet(propertyValue, getAttrReferences)) {
+          return getAttrReferences;
         }
       } else {
         Collection<Object> valCollection = ((Map) propertyValue).values();
@@ -270,6 +209,22 @@ public class HeatResourceValidator extends ResourceBaseValidator {
     }
 
     return getAttrReferences;
+  }
+
+  private boolean validatePropertyValueAndAddAttrReferencesInSet(Object propertyValue,
+                                                     Set<String> getAttrReferences) {
+    Object value = ((Map) propertyValue).get(GET_ATTR );
+    if (value instanceof List && ((List) value).size() == 2
+            && ("fq_name").equals(((List) value).get(1))) {
+      if (((List) value).get(0) instanceof String) {
+        String attrReference = (((List) value).get(0)).toString();
+        getAttrReferences.add(attrReference);
+        return true;
+      } else {
+        LOGGER.warn("invalid format of 'get_attr' function - " + propertyValue.toString());
+      }
+  }
+    return false;
   }
 
 
@@ -289,52 +244,5 @@ public class HeatResourceValidator extends ResourceBaseValidator {
     }
 
     return referencedResources;
-  }
-
-  private Set<String> checkForBaseFilePortsExistenceAndReturnSecurityGroupNamesFromOutputsIfNot(
-      HeatOrchestrationTemplate heatOrchestrationTemplate) {
-    Set<String> securityGroupsNamesFromOutputsMap = new HashSet<>();
-
-    if (heatOrchestrationTemplate != null) {
-      Map<String, Resource> resourceMap = heatOrchestrationTemplate.getResources();
-      if (!isPortResourceExistInBaseFile(resourceMap)) {
-        getSecurityGroupsReferencedResourcesFromOutputs(securityGroupsNamesFromOutputsMap,
-            heatOrchestrationTemplate.getOutputs(), resourceMap);
-      }
-    }
-    return securityGroupsNamesFromOutputsMap;
-  }
-
-  private boolean isPortResourceExistInBaseFile(Map<String, Resource> resourceMap) {
-    for (Map.Entry<String, Resource> resourceEntry : resourceMap.entrySet()) {
-      if (resourceEntry.getValue().getType()
-          .equals(HeatResourcesTypes.NEUTRON_PORT_RESOURCE_TYPE.getHeatResource())) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  private void getSecurityGroupsReferencedResourcesFromOutputs(
-      Set<String> securityGroupsNamesFromOutputsMap, Map<String, Output> outputMap,
-      Map<String, Resource> resourceMap) {
-
-    if (MapUtils.isNotEmpty(outputMap)) {
-      for (Map.Entry<String, Output> outputEntry : outputMap.entrySet()) {
-        Object outputValue = outputEntry.getValue().getValue();
-        if (Objects.nonNull(outputValue) && outputValue instanceof Map) {
-          String resourceName = (String) ((Map) outputValue)
-              .get(ResourceReferenceFunctions.GET_RESOURCE.getFunction());
-          if (Objects.nonNull(resourceName)) {
-            Resource resource = resourceMap.get(resourceName);
-            if (Objects.nonNull(resource) && resource.getType().equals(
-                HeatResourcesTypes.NEUTRON_SECURITY_GROUP_RESOURCE_TYPE.getHeatResource())) {
-              securityGroupsNamesFromOutputsMap.add(outputEntry.getKey());
-            }
-          }
-        }
-      }
-    }
   }
 }
