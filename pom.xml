@@ -396,6 +396,20 @@
 				<module>onboarding</module>
 			</modules>
 		</profile>
+
+		<profile>
+			<id>dev-integ</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.togglz</groupId>
+					<artifactId>togglz-console</artifactId>
+					<version>${togglz.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
 	</profiles>
 
 	<repositories>
