@@ -1,0 +1,12 @@
+designersList:
+   - DCAE:
+        displayName: DCAE
+        designerHost: 192.168.50.5
+        designerPort: 8080
+        designerPath: /dcae
+        
+    - WORKFLOW:
+        displayName: WORKFLOW
+        designerHost: 192.168.50.5
+        designerPort: 9752
+        designerPath: /workflow
