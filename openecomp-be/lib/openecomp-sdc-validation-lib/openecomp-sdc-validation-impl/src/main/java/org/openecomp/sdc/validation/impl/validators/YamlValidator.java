@@ -1,21 +1,17 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ============LICENSE_END=========================================================
  */
 
 package org.openecomp.sdc.validation.impl.validators;
@@ -27,8 +23,6 @@ import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
@@ -40,22 +34,21 @@ import java.util.Map;
 import java.util.Optional;
 
 public class YamlValidator implements Validator {
-  public static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  private static final Logger logger = (Logger) LoggerFactory.getLogger(YamlValidator.class);
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final ErrorMessageCode ERROR_CODE_YML_1 = new ErrorMessageCode("YML1");
   private static final ErrorMessageCode ERROR_CODE_YML_2 = new ErrorMessageCode("YML2");
 
   @Override
   public void validate(GlobalValidationContext globalContext) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage(null, null);
 
     Collection<String> files = globalContext.files(
-        (fileName, globalValidationContext) -> (fileName.endsWith(".yaml")
-            || fileName.endsWith(".yml") || fileName.endsWith(".env")));
+        (fileName, globalValidationContext) -> fileName.endsWith(".yaml")
+            || fileName.endsWith(".yml") || fileName.endsWith(".env"));
 
     files.stream().forEach(fileName -> validate(fileName, globalContext));
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage(null, null);
   }
 
   private void validate(String fileName, GlobalValidationContext globalContext) {
