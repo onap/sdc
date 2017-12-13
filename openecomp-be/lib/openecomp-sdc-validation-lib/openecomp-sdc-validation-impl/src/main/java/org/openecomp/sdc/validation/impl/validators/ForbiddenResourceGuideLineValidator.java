@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.validation.impl.validators;
 
 import org.apache.commons.collections4.MapUtils;
@@ -24,17 +40,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-/**
- * Created by TALIO on 2/15/2017.
- */
 public class ForbiddenResourceGuideLineValidator implements Validator {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static Set<String> forbiddenResources = new HashSet<>();
   private static final ErrorMessageCode ERROR_CODE_FRG_1 = new ErrorMessageCode("FRG1");
   private static final ErrorMessageCode ERROR_CODE_FRG_2 = new ErrorMessageCode("FRG2");
   private static final ErrorMessageCode ERROR_CODE_FRG_3 = new ErrorMessageCode("FRG3");
 
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+  private static final Logger LOGGER =  LoggerFactory
+          .getLogger(ForbiddenResourceGuideLineValidator.class);
 
   @Override
   public void init(Map<String, Object> properties) {
@@ -46,12 +60,12 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
         .forEach(entry -> forbiddenResources.add(entry.getKey()));
   }
 
-  private boolean isResourceEnabled(Object enableValue){
-    if(Objects.isNull(enableValue)){
+  private boolean isResourceEnabled(Object enableValue) {
+    if (Objects.isNull(enableValue)) {
       return true;
     }
 
-    if(enableValue instanceof Boolean){
+    if (enableValue instanceof Boolean) {
       return (Boolean)enableValue;
     }
 
@@ -65,7 +79,7 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
     try {
       manifestContent = ValidationUtil.checkValidationPreCondition(globalContext);
     } catch (Exception exception) {
-      log.debug("",exception);
+      LOGGER.debug("",exception);
       return;
     }
 
@@ -93,11 +107,11 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
                                                HeatOrchestrationTemplate heatOrchestrationTemplate,
                                                GlobalValidationContext globalContext) {
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
 
     Map<String, Resource> resourcesMap = heatOrchestrationTemplate.getResources();
     if (MapUtils.isEmpty(resourcesMap)) {
-      mdcDataDebugMessage.debugExitMessage("file", fileName);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
@@ -110,7 +124,7 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
                     resourceEntry.getKey()), LoggerTragetServiceName.VALIDATE_RESOURCE_TYPE,
             LoggerErrorDescription.INVALID_RESOURCE_TYPE);
       } else {
-        if (isResourceForbidden(resourceType)){
+        if (isResourceForbidden(resourceType)) {
            globalContext.addMessage(
               fileName,
               ErrorLevel.WARNING,
@@ -123,10 +137,10 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
         }
       }
     }
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
-  private boolean isResourceForbidden(String resourceType){
+  private boolean isResourceForbidden(String resourceType) {
     return forbiddenResources.contains(resourceType);
   }
 }
