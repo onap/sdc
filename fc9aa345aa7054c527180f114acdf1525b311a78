@@ -1,0 +1,257 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ad403257",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-13T09:56:45Z",
+      "side": 1,
+      "message": "unused parameter",
+      "range": {
+        "startLine": 72,
+        "startChar": 43,
+        "endLine": 72,
+        "endChar": 58
+      },
+      "revId": "fc9aa345aa7054c527180f114acdf1525b311a78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cd31fe0c",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-13T09:56:45Z",
+      "side": 1,
+      "message": "no need to check for non null, MapUtils.isNotEmpty already doing it",
+      "range": {
+        "startLine": 171,
+        "startChar": 8,
+        "endLine": 171,
+        "endChar": 35
+      },
+      "revId": "fc9aa345aa7054c527180f114acdf1525b311a78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ed363a03",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-13T09:56:45Z",
+      "side": 1,
+      "message": "why did you removed the null check? is resourceDefValueMap.get(TYPE) promise not to return null?",
+      "range": {
+        "startLine": 172,
+        "startChar": 13,
+        "endLine": 172,
+        "endChar": 28
+      },
+      "revId": "fc9aa345aa7054c527180f114acdf1525b311a78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6810d84e",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-13T09:56:45Z",
+      "side": 1,
+      "message": "no need to check for non null, MapUtils.isNotEmpty already doing it",
+      "range": {
+        "startLine": 193,
+        "startChar": 8,
+        "endLine": 193,
+        "endChar": 35
+      },
+      "revId": "fc9aa345aa7054c527180f114acdf1525b311a78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8d3bf6ea",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-13T09:56:45Z",
+      "side": 1,
+      "message": "no need to check for non null, MapUtils.isNotEmpty already doing it",
+      "range": {
+        "startLine": 213,
+        "startChar": 8,
+        "endLine": 213,
+        "endChar": 35
+      },
+      "revId": "fc9aa345aa7054c527180f114acdf1525b311a78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_88576402",
+        "filename": "openecomp-be/lib/openecomp-heat-lib/src/main/java/org/openecomp/sdc/heat/services/tree/HeatTreeManagerUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-13T09:56:45Z",
+      "side": 1,
+      "message": "no need to check for non null, MapUtils.isNotEmpty already doing it",
+      "range": {
+        "startLine": 236,
+        "startChar": 8,
+        "endLine": 236,
+        "endChar": 35
+      },
+      "revId": "fc9aa345aa7054c527180f114acdf1525b311a78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_c8748c9e",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/util/HeatValidationService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-13T09:56:45Z",
+      "side": 1,
+      "message": "why generating a generic exception? can you use more specific type or create one?",
+      "range": {
+        "startLine": 153,
+        "startChar": 32,
+        "endLine": 153,
+        "endChar": 41
+      },
+      "revId": "fc9aa345aa7054c527180f114acdf1525b311a78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_48415c38",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/util/HeatValidationService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-13T09:56:45Z",
+      "side": 1,
+      "message": "there is a constant for it NESTED_FILE",
+      "range": {
+        "startLine": 203,
+        "startChar": 45,
+        "endLine": 203,
+        "endChar": 58
+      },
+      "revId": "fc9aa345aa7054c527180f114acdf1525b311a78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e8870860",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/util/HeatValidationService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-13T09:56:45Z",
+      "side": 1,
+      "message": "rename the function to reflect a boolean value return. this function adds nothing that should be considered by the calling functions",
+      "range": {
+        "startLine": 313,
+        "startChar": 25,
+        "endLine": 313,
+        "endChar": 70
+      },
+      "revId": "fc9aa345aa7054c527180f114acdf1525b311a78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_886e84c8",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/util/HeatValidationService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-13T09:56:45Z",
+      "side": 1,
+      "message": "why generating a generic exception? can you use more specific type or create one?",
+      "range": {
+        "startLine": 341,
+        "startChar": 12,
+        "endLine": 341,
+        "endChar": 25
+      },
+      "revId": "fc9aa345aa7054c527180f114acdf1525b311a78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_086274d8",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/util/HeatValidationService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 1741
+      },
+      "writtenOn": "2017-12-13T09:56:45Z",
+      "side": 1,
+      "message": "unused",
+      "range": {
+        "startLine": 359,
+        "startChar": 47,
+        "endLine": 359,
+        "endChar": 62
+      },
+      "revId": "fc9aa345aa7054c527180f114acdf1525b311a78",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
