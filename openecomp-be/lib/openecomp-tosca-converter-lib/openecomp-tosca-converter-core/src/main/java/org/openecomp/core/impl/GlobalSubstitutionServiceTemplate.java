@@ -1,6 +1,25 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.core.impl;
 
+import static org.openecomp.core.converter.datatypes.Constants.ONAP_INDEX;
+
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
@@ -23,8 +42,10 @@ public class GlobalSubstitutionServiceTemplate extends ServiceTemplate {
     public static final String TEMPLATE_NAME_PROPERTY = "template_name";
     public static final String DEFININTION_VERSION = "tosca_simple_yaml_1_0_0";
     public static final String HEAT_INDEX = "openecomp_heat_index";
+    public static final String HEAT_INDEX_IMPORT_FILE = "openecomp-heat/_index.yml";
+    public static final String ONAP_INDEX_IMPORT_FILE = "onap/_index.yml";
     private static final Map<String, ServiceTemplate> globalServiceTemplates =
-        GlobalTypesGenerator.getGlobalTypesServiceTemplate();
+        GlobalTypesGenerator.getGlobalTypesServiceTemplate(OnboardingTypesEnum.CSAR);
 
     public GlobalSubstitutionServiceTemplate() {
         super();
@@ -52,8 +73,11 @@ public class GlobalSubstitutionServiceTemplate extends ServiceTemplate {
         imports.add(stringImportMap);
         setImports(imports);
         Import imprtObj = new Import();
-        imprtObj.setFile("openecomp-heat/_index.yml");
-        stringImportMap.put("openecomp_heat_index", imprtObj);
+        imprtObj.setFile(HEAT_INDEX_IMPORT_FILE);
+        stringImportMap.put(HEAT_INDEX, imprtObj);
+        Import onapDefinitionsImport = new Import();
+        onapDefinitionsImport.setFile(ONAP_INDEX_IMPORT_FILE);
+        stringImportMap.put(ONAP_INDEX, onapDefinitionsImport);
     }
 
 
