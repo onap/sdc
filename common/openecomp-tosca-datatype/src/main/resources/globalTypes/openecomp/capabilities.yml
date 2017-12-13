@@ -99,58 +99,8 @@ capability_types:
         type: string
         status: SUPPORTED
 
-  tosca.capabilities.nfv.VirtualLinkable:
-    derived_from: tosca.capabilities.Root
-
-  tosca.capabilities.nfv.Metric:
-    derived_from: tosca.capabilities.Root
-
-  tosca.capabilities.nfv.VirtualBindable:
-    derived_from: tosca.capabilities.Root
-
-  tosca.capabilities.nfv.VirtualCompute:
-    derived_from: tosca.capabilities.Root
-    properties:
-      virtual_memory:
-        type: tosca.datatypes.nfv.VirtualMemory
-      requested_additional_capabilities:
-        entry_schema:
-          type: tosca.datatypes.nfv.RequestedAdditionalCapability
-        required: false
-        type: map
-      virtual_cpu:
-        type: tosca.datatypes.nfv.VirtualCpu
-
-
-  tosca.capabilities.nfv.VirtualStorage:
-    derived_from: tosca.capabilities.Root
-
-  tosca.capabilities.nfv.Forwarder:
-    derived_from: tosca.capabilities.Root
-
   org.openecomp.capabilities.Forwarder:
       derived_from: tosca.capabilities.Root
-
-  tosca.capabilities.nfv.ext.Compute.Container.Architecture:
-    derived_from: tosca.capabilities.Root
-    properties:
-      num_cpus:
-        required: false
-        type: string
-      flavor_extra_specs:
-        entry_schema:
-          type: string
-        required: false
-        type: map
-      mem_size:
-        required: false
-        type: string
-
-  tosca.capabilities.nfv.ext.ImageFile:
-    derived_from: tosca.capabilities.Root
-
-  tosca.capabilities.nfv.ext.LocalAttachment:
-    derived_from: tosca.capabilities.Root
   # New capability types for Port Mirroring
   org.openecomp.capabilities.PortMirroring:
     derived_from: tosca.capabilities.Root

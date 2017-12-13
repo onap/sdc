@@ -53,19 +53,6 @@ relationship_types:
         type: string
         status: SUPPORTED
         required: false
-        
-  tosca.relationships.nfv.VDU.AttachedTo:
-    derived_from: tosca.relationships.Root
-    properties:
-      location:
-        required: false
-        type: string
-
-  tosca.relationships.nfv.VirtualBindsTo:
-    derived_from: tosca.relationships.Root
-
-  tosca.relationships.nfv.VirtualLinksTo:
-    derived_from: tosca.relationships.Root
 
   org.openecomp.relationships.ForwardsTo:
     derived_from: tosca.relationships.Root
