@@ -12,6 +12,8 @@ metadata:
 imports:
 - openecomp_heat_index:
     file: openecomp-heat/_index.yml
+- onap_index:
+    file: onap/_index.yml
 - GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 topology_template:
