@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.validation.impl.validators;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,12 +43,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by TALIO on 2/15/2017.
- */
 public class SharedResourceGuideLineValidator implements Validator {
-  public static final MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
+  private static final Logger LOGGER = LoggerFactory.getLogger(
+          SharedResourceGuideLineValidator.class);
   private static final ErrorMessageCode ERROR_CODE_SRG_1 = new ErrorMessageCode("SRG1");
   private static final ErrorMessageCode ERROR_CODE_SRG_2 = new ErrorMessageCode("SRG2");
   private static final ErrorMessageCode ERROR_CODE_SRG_3 = new ErrorMessageCode("SRG3");
@@ -46,19 +60,17 @@ public class SharedResourceGuideLineValidator implements Validator {
     try {
       manifestContent = ValidationUtil.checkValidationPreCondition(globalContext);
     } catch (Exception exception) {
-      log.debug("",exception);
+      LOGGER.error("Fialed to check  Validation PreCondition ",exception);
       return;
     }
 
     Set<String> baseFiles = validateManifest(manifestContent, globalContext);
 
     Map<String, FileData.Type> fileTypeMap = ManifestUtil.getFileTypeMap(manifestContent);
-    Map<String, FileData> fileEnvMap = ManifestUtil.getFileAndItsEnv(manifestContent);
     globalContext.getFiles().stream()
         .filter(fileName -> FileData
             .isHeatFile(fileTypeMap.get(fileName)))
         .forEach(fileName -> validate(fileName,
-            fileEnvMap.get(fileName) != null ? fileEnvMap.get(fileName).getFile() : null,
             fileTypeMap, baseFiles, globalContext));
 
 
@@ -66,9 +78,9 @@ public class SharedResourceGuideLineValidator implements Validator {
 
   private Set<String> validateManifest(ManifestContent manifestContent,
                                               GlobalValidationContext globalContext) {
-    mdcDataDebugMessage.debugEntryMessage("file", SdcCommon.MANIFEST_NAME);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", SdcCommon.MANIFEST_NAME);
     Set<String> baseFiles = ManifestUtil.getBaseFiles(manifestContent);
-    if (baseFiles == null || baseFiles.size() == 0) {
+    if (baseFiles == null || baseFiles.isEmpty()) {
       globalContext.addMessage(
           SdcCommon.MANIFEST_NAME,
           ErrorLevel.WARNING,
@@ -89,7 +101,7 @@ public class SharedResourceGuideLineValidator implements Validator {
           LoggerTragetServiceName.VALIDATE_BASE_FILE,
           LoggerErrorDescription.MULTI_BASE_HEAT);
     }
-    mdcDataDebugMessage.debugExitMessage("file", SdcCommon.MANIFEST_NAME);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", SdcCommon.MANIFEST_NAME);
     return baseFiles;
   }
 
@@ -99,7 +111,7 @@ public class SharedResourceGuideLineValidator implements Validator {
         +  "]";
   }
 
-  private void validate(String fileName, String envFileName, Map<String, FileData.Type> fileTypeMap,
+  private void validate(String fileName, Map<String, FileData.Type> fileTypeMap,
                         Set<String> baseFiles, GlobalValidationContext globalContext) {
     globalContext.setMessageCode(ERROR_CODE_SRG_5);
     HeatOrchestrationTemplate
@@ -119,17 +131,17 @@ public class SharedResourceGuideLineValidator implements Validator {
                                 GlobalValidationContext globalContext) {
 
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
     //if not base return
     if (baseFiles == null || !baseFiles.contains(fileName)) {
-      mdcDataDebugMessage.debugExitMessage("file", fileName);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
     //if no resources exist return
     if (heatOrchestrationTemplate.getResources() == null
         || heatOrchestrationTemplate.getResources().size() == 0) {
-      mdcDataDebugMessage.debugExitMessage("file", fileName);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
@@ -156,7 +168,7 @@ public class SharedResourceGuideLineValidator implements Validator {
 
     actualExposedResources.forEach(expectedExposedResources::remove);
 
-    if (expectedExposedResources.size() > 0) {
+    if (CollectionUtils.isNotEmpty(expectedExposedResources)) {
       expectedExposedResources
           .stream()
           .forEach(name -> globalContext.addMessage(
@@ -169,7 +181,7 @@ public class SharedResourceGuideLineValidator implements Validator {
               LoggerErrorDescription.RESOURCE_NOT_DEFINED_AS_OUTPUT));
     }
 
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private void validateHeatVolumeFile(String fileName, Map<String, FileData.Type> fileTypeMap,
@@ -177,18 +189,18 @@ public class SharedResourceGuideLineValidator implements Validator {
                                       GlobalValidationContext globalContext) {
 
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
 
     //if not heat volume return
     if (!fileTypeMap.get(fileName).equals(FileData.Type.HEAT_VOL)) {
-      mdcDataDebugMessage.debugExitMessage("file", fileName);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
     //if no resources exist return
     if (heatOrchestrationTemplate.getResources() == null
         || heatOrchestrationTemplate.getResources().size() == 0) {
-      mdcDataDebugMessage.debugExitMessage("file", fileName);
+      MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
       return;
     }
 
@@ -214,7 +226,7 @@ public class SharedResourceGuideLineValidator implements Validator {
 
     actualExposedResources.forEach(expectedExposedResources::remove);
 
-    if (expectedExposedResources.size() > 0) {
+    if (CollectionUtils.isNotEmpty(expectedExposedResources)) {
       expectedExposedResources
           .stream()
           .forEach(name -> globalContext.addMessage(
@@ -226,7 +238,7 @@ public class SharedResourceGuideLineValidator implements Validator {
               LoggerErrorDescription.VOLUME_FILE_NOT_EXPOSED));
     }
 
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
 
@@ -234,7 +246,7 @@ public class SharedResourceGuideLineValidator implements Validator {
                                              GlobalValidationContext globalContext) {
     Set<String> referenceValues = HeatStructureUtil.getReferencedValuesByFunctionName(filename,
         ResourceReferenceFunctions.GET_RESOURCE.getFunction(), value, globalContext);
-    return referenceValues != null && (referenceValues.size() > 0);
+    return referenceValues != null && (CollectionUtils.isNotEmpty(referenceValues));
   }
 
   private String getResourceIdFromPropertyValue(String filename, Object value,
