@@ -1,0 +1,215 @@
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+tosca_definitions_version: tosca_simple_onap_1_0
+
+metadata:
+  filename: onap/data.yml
+  version: '1.0'
+
+imports:
+- onap_index:
+    file: _index.yml
+
+data_types:
+
+  tosca.datatypes.nfv.RequestedAdditionalCapability:
+    derived_from: tosca.datatypes.Root
+    properties:
+      support_mandatory:
+        type: boolean
+        required: true
+      min_requested_additional_capability_version:
+        type: string
+        required: false
+      preferred_requested_additional_capability_version:
+        type: string
+        required: false
+      requested_additional_capability_name:
+        type: string
+        required: true
+      target_performance_parameters:
+        type: map
+        entry_schema:
+          type: string
+        required: true
+  tosca.datatypes.nfv.VirtualMemory:
+    derived_from: tosca.datatypes.Root
+    properties:
+      virtual_mem_size:
+        type: string
+        required: true
+      virtual_mem_oversubscription_policy:
+        type: string
+        required: false
+      numa_enabled:
+        type: boolean
+        required: false
+  tosca.datatypes.nfv.VirtualCpu:
+    derived_from: tosca.datatypes.Root
+    properties:
+      cpu_architecture:
+        type: string
+        required: false
+      num_virtual_cpu:
+        type: integer
+        required: true
+      virtual_cpu_clock:
+        type: scalar-unit.frequency
+        required: false
+      virtual_cpu_oversubscription_policy:
+        type: string
+        required: false
+      virtual_cpu_pinning:
+        type: tosca.datatypes.nfv.VirtualCpuPinning
+        required: false
+  tosca.datatypes.nfv.VirtualCpuPinning:
+    derived_from: tosca.datatypes.Root
+    properties:
+      cpu_pinning_policy:
+        type: string
+        constraints:
+          - valid_values: [ static, dynamic ]
+        required: false
+      cpu_pinning_map:
+        type: map
+        entry_schema:
+          type: string
+        required: false
+  tosca.datatypes.nfv.VnfcConfigurableProperties:
+    properties:
+      additional_vnfc_configurable_properties:
+        entry_schema:
+          type: string
+        required: false
+        type: map
+  tosca.datatypes.nfv.L3AddressData:
+    properties:
+      number_of_ip_address:
+        required: false
+        type: integer
+      ip_address_assignment:
+        type: boolean
+      ip_address_type:
+        constraints:
+        - valid_values:
+          - ipv4
+          - ipv6
+        required: false
+        type: string
+      floating_ip_activated:
+        type: string
+  tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements:
+    properties:
+      name:
+        required: false
+        type: string
+      support_mandatory:
+        type: boolean
+      description:
+        required: false
+        type: string
+      requirement:
+        entry_schema:
+          type: string
+        type: map
+  tosca.datatype.nfv.AddressData:
+    properties:
+      address_type:
+        constraints:
+        - valid_values:
+          - mac_address
+          - ip_address
+        type: string
+      l2_address_data:
+        required: false
+        type: tosca.datatypes.nfv.L2AddressData
+      l3_address_data:
+        required: false
+        type: tosca.datatypes.nfv.L3AddressData
+  tosca.datatypes.nfv.L2AddressData: {}
+  tosca.datatypes.nfv.ConnectivityType:
+    properties:
+      layer_protocol:
+        constraints:
+        - valid_values:
+          - ethernet
+          - mpls
+          - odu2
+          - ipv4
+          - ipv6
+          - pseudo_wire
+        type: string
+      flow_pattern:
+        required: false
+        type: string
+  tosca.datatypes.nfv.ext.FloatingIP:
+    properties:
+      external_network:
+        required: false
+        type: string
+      ip_address:
+        required: false
+        type: string
+  tosca.datatypes.nfv.ext.AddressPairs:
+    properties:
+      ip:
+        required: false
+        type: string
+      mac:
+        required: false
+        type: string
+  tosca.datatypes.nfv.ext.InjectData:
+    properties:
+      file_name:
+        required: false
+        type: string
+      file_data:
+        required: false
+        type: string
+  tosca.datatypes.nfv.ext.zte.WatchDog:
+    properties:
+      enable_delay:
+        required: false
+        type: integer
+      action:
+        required: false
+        type: string
+  tosca.datatypes.nfv.ext.LocalAffinityOrAntiAffinityRule:
+    properties:
+      scope:
+        required: false
+        type: string
+      affinity_antiaffinity:
+        required: false
+        type: string
+  tosca.datatypes.nfv.ext.LocationInfo:
+    properties:
+      availability_zone:
+        required: false
+        type: string
+      vimid:
+        required: false
+        type: integer
+      tenant:
+        required: false
+        type: string
+  tosca.datatypes.nfv.ext.HostRouteInfo:
+    properties:
+      destination:
+        required: false
+        type: string
+      nexthop:
+        required: false
+        type: string
