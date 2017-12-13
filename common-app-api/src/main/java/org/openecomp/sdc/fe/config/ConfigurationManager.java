@@ -50,6 +50,7 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 		loadConfigurationClass(Configuration.class);
 		loadConfigurationClass(RestConfigurationInfo.class);
 		loadConfigurationClass(EcompErrorConfiguration.class);
+		loadConfigurationClass(DesignersConfiguration.class);
 
 	}
 

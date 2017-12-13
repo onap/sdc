@@ -16,6 +16,14 @@ template "catalog-fe-config" do
    })
 end
 
+template "designers-fe-config" do
+   path "#{jetty_base}/config/catalog-fe/designers-configuration.yaml"
+   source "FE-designers-configuration.yaml.erb"
+   owner "jetty"
+   group "jetty"
+   mode "0755"
+end
+
 
 template "onboarding-fe-config" do
  path "#{jetty_base}/config/onboarding-fe/onboarding_configuration.yaml"
