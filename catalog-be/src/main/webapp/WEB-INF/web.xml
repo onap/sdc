@@ -194,8 +194,4 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 	
-	<context-param>
-		<param-name>org.togglz.FEATURE_MANAGER_PROVIDED</param-name>
-		<param-value>true</param-value>
-	</context-param>
 </web-app>
