@@ -215,3 +215,5 @@ sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
 /sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/tools/build/scripts/*
 
 sdc-os-chef/sdc-sanity/chef-repo/cookbooks/sdc-sanity/files/default/testSuites/*
+
+/sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/attributes/default.rb
