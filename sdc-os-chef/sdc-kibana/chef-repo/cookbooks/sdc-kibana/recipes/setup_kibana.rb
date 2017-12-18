@@ -19,7 +19,7 @@ end
 
 bash "echo status" do
    code <<-EOH
-     echo "DOCKER STARTED"
+      echo "DOCKER STARTED"
    EOH
 end
 
