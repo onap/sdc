@@ -590,17 +590,26 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 			validateToscaTemplatePayloadName(responseWrapper, uploadResourceInfoWrapper.getInnerElement(), userWrapper.getInnerElement());
 		}
 		if (responseWrapper.isEmpty()) {
-			validateResourceType(responseWrapper, uploadResourceInfoWrapper.getInnerElement(), userWrapper.getInnerElement());
+			validateResourceType(responseWrapper, uploadResourceInfoWrapper.getInnerElement(), userWrapper.getInnerElement(), resourceAuthorityEnum);
 		}
 
 	}
 
-	private void validateResourceType(Wrapper<Response> responseWrapper, UploadResourceInfo uploadResourceInfo, User user) {
+	private void validateResourceType(Wrapper<Response> responseWrapper, UploadResourceInfo uploadResourceInfo, User user, ResourceAuthorityTypeEnum resourceAuthorityEnum) {
 		String resourceType = uploadResourceInfo.getResourceType();
 		if (resourceType == null || !ResourceTypeEnum.containsName(resourceType)) {
 			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
 			Response errorResponse = buildErrorResponse(responseFormat);
-			EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
+			EnumMap additionalParam = new EnumMap(AuditingFieldsKeysEnum.class);
+			additionalParam.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, uploadResourceInfo.getName());
+			getComponentsUtils().auditResource(responseFormat, user, null, "", "", AuditingActionEnum.IMPORT_RESOURCE, additionalParam);
+			responseWrapper.setInnerElement(errorResponse);
+		}
+		if (resourceType.equals(ResourceTypeEnum.getTypeByName("VF").getValue()) && resourceAuthorityEnum.equals(ResourceAuthorityTypeEnum.NORMATIVE_TYPE_BE)){
+			log.debug("Import of VF resource type is forbidden - VF resource import can be done using onboarding flow only");
+			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_RESOURCE_TYPE);
+			Response errorResponse = buildErrorResponse(responseFormat);
+			EnumMap additionalParam = new EnumMap(AuditingFieldsKeysEnum.class);
 			additionalParam.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, uploadResourceInfo.getName());
 			getComponentsUtils().auditResource(responseFormat, user, null, "", "", AuditingActionEnum.IMPORT_RESOURCE, additionalParam);
 			responseWrapper.setInnerElement(errorResponse);
