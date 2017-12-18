@@ -236,3 +236,10 @@ bash "create audit mapping" do
         "aliases": { "last_3_months": {}}}' http://localhost:9200/_template/audit_template
 	EOH
 end
+
+bash "set default index for Kibana" do
+	code <<-EOH
+        curl -XPUT http://localhost:9200/.kibana/index-pattern/auditingevents-* -d '{"title" : "events-*",  "timeFieldName": "TIMESTAMP"}'
+        curl -XPUT http://localhost:9200/.kibana/config/4.3.3 -d '{"defaultIndex" : "auditingevents-*"}'
+    EOH
+end
