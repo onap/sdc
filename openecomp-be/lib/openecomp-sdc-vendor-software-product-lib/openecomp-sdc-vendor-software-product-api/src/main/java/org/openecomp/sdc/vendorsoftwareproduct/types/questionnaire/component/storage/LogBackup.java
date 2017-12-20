@@ -24,24 +24,24 @@ package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.st
  * Created by TALIO on 11/22/2016.
  */
 public class LogBackup {
-    private int sizeOfLogFiles;
-    private int logBackupFrequency;
+    private Number sizeOfLogFiles;
+    private Number logBackupFrequency;
     private int logRetentionPeriod;
     private String logFileLocation;
 
-    public int getSizeOfLogFiles() {
+    public Number getSizeOfLogFiles() {
         return sizeOfLogFiles;
     }
 
-    public void setSizeOfLogFiles(int sizeOfLogFiles) {
+    public void setSizeOfLogFiles(Number sizeOfLogFiles) {
         this.sizeOfLogFiles = sizeOfLogFiles;
     }
 
-    public int getLogBackupFrequency() {
+    public Number getLogBackupFrequency() {
         return logBackupFrequency;
     }
 
-    public void setLogBackupFrequency(int logBackupFrequency) {
+    public void setLogBackupFrequency(Number logBackupFrequency) {
         this.logBackupFrequency = logBackupFrequency;
     }
 

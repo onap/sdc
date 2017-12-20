@@ -14,34 +14,42 @@
  * permissions and limitations under the License.
  */
 import {connect} from 'react-redux';
-import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
 import LicenseModelCreationActionHelper from './LicenseModelCreationActionHelper.js';
 import LicenseModelCreationView from './LicenseModelCreationView.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
+import VersionsPageActionHelper from 'sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js';
+import {itemTypes as versionItemTypes} from 'sdc-app/onboarding/versionsPage/VersionsPageConstants.js';
+import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
+import {enums, screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
+import PermissionsActionHelper from 'sdc-app/onboarding/permissions/PermissionsActionHelper.js';
 
-export const mapStateToProps = ({licenseModelList, licenseModel: {licenseModelCreation}}) => {
+export const mapStateToProps = ({users: {usersList}, licenseModelList, licenseModel: {licenseModelCreation}}) => {
 	let {genericFieldInfo} = licenseModelCreation;
 	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 
 	let VLMNames = {};
 	for (let i = 0; i < licenseModelList.length; i++) {
-		VLMNames[licenseModelList[i].vendorName.toLowerCase()] = licenseModelList[i].id;
+		VLMNames[licenseModelList[i].name.toLowerCase()] = licenseModelList[i].id;
 	}
 
-	return {...licenseModelCreation, isFormValid: isFormValid, VLMNames};
+	return {...licenseModelCreation, isFormValid: isFormValid, VLMNames, usersList};
 };
 
 export const mapActionsToProps = (dispatch) => {
 	return {
 		onDataChanged: (deltaData, formName, customValidations) => ValidationHelper.dataChanged(dispatch, {deltaData, formName, customValidations}),
 		onCancel: () => LicenseModelCreationActionHelper.close(dispatch),
-		onSubmit: (licenseModel) => {
+		onSubmit: (licenseModel, usersList) => {
 			LicenseModelCreationActionHelper.close(dispatch);
 			LicenseModelCreationActionHelper.createLicenseModel(dispatch, {licenseModel}).then(response => {
-				LicenseModelActionHelper.fetchLicenseModels(dispatch).then(() => {
-					OnboardingActionHelper.navigateToLicenseModelOverview(dispatch, {licenseModelId: response.value});
-				});
+				let {itemId, version} = response;
+				LicenseModelActionHelper.fetchLicenseModels(dispatch).then(() =>
+					PermissionsActionHelper.fetchItemUsers(dispatch, {itemId, allUsers: usersList}).then(() =>
+						VersionsPageActionHelper.fetchVersions(dispatch, {itemType: versionItemTypes.LICENSE_MODEL, itemId}).then(() =>
+							ScreensHelper.loadScreen(dispatch, {screen: enums.SCREEN.LICENSE_MODEL_OVERVIEW, screenType: screenTypes.LICENSE_MODEL,
+								props: {licenseModelId: itemId, version}})
+				)));
 			});
 		},
 		onValidateForm: (formName) => ValidationHelper.validateForm(dispatch, formName)

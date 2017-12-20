@@ -20,13 +20,10 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
 import java.util.List;
-import java.util.Objects;
 
 
 public class VspDetails implements VersionableEntity {
@@ -55,17 +52,9 @@ public class VspDetails implements VersionableEntity {
 
   private List<String> featureGroups;
 
-  private String validationData;
-
-  private String oldVersion;
-
   private Long writetimeMicroSeconds;
 
   private String onboardingMethod;
-
-  private String onboardingOrigin;
-
-  private String networkPackageName;
 
   public VspDetails() {
   }
@@ -183,24 +172,6 @@ public class VspDetails implements VersionableEntity {
     this.featureGroups = featureGroups;
   }
 
-  public String getValidationData() {
-    return validationData;
-  }
-
-  public void setValidationData(String validationData) {
-    this.validationData = validationData;
-  }
-
-  public ValidationStructureList getValidationDataStructure() {
-    return validationData == null ? null
-        : JsonUtil.json2Object(validationData, ValidationStructureList.class);
-  }
-
-  public void setValidationDataStructure(ValidationStructureList validationData) {
-    this.validationData = validationData == null ? null
-        : JsonUtil.object2Json(validationData);
-  }
-
   public Long getWritetimeMicroSeconds() {
     return this.writetimeMicroSeconds;
   }
@@ -213,36 +184,14 @@ public class VspDetails implements VersionableEntity {
     return this.oldVersion;
   }*/
 
-  public String getOldVersion(){
-    return this.oldVersion;
-  }
-
-  public void setOldVersion(String oldVersion) {
-    this.oldVersion = oldVersion;
-  }
-
-  public String getOnboardingOrigin() {
-    return onboardingOrigin;
-  }
-
-  public void setOnboardingOrigin(String onboardingOrigin) {
-    this.onboardingOrigin = onboardingOrigin;
-  }
-
   public String getOnboardingMethod() {
     return onboardingMethod;
   }
+
   public void setOnboardingMethod(String onboardingMethod) {
     this.onboardingMethod = onboardingMethod;
   }
 
-  public String getNetworkPackageName() {
-    return networkPackageName;
-  }
-
-  public void setNetworkPackageName(String networkPackageName) {
-    this.networkPackageName = networkPackageName;
-  }
 
   @Override
   public String toString() {

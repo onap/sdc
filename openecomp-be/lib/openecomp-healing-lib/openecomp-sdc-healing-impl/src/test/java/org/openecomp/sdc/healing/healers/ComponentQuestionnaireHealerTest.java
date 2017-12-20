@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
@@ -20,10 +19,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doNothing;
@@ -47,7 +43,6 @@ public class ComponentQuestionnaireHealerTest {
   private static final String DUMMY_COMPONENT_ID = "2495ef442f964cbfb00d82bd54292f89";
   private static final String DUMMY_COMPUTE_ID = "3495ef442f964cbfb00d82bd54292f89";
   private static final String DUMMY_IMAGE_ID = "4495ef442f964cbfb00d82bd54292f89";
-  private static Map<String, Object> healingParams = new HashMap<>();
   private static final String componentQuestionnaireData = "{\"compute\": {" +
       "\"guestOS\": {\"bitSize\": 64},\"vmSizing\": {\"IOOperationsPerSec\": \"0\"}," +
       "\"numOfVMs\": {\"CpuOverSubscriptionRatio\": \"1:1\",\"MemoryRAM\": \"2 GB\"}}," +
@@ -131,16 +126,13 @@ public class ComponentQuestionnaireHealerTest {
   @Before
   public void init() throws Exception {
     MockitoAnnotations.initMocks(ComponentQuestionnaireHealerTest.this);
-
-    healingParams.put(SdcCommon.VSP_ID, DUMMY_VSP_ID);
-    healingParams.put(SdcCommon.VERSION, VERSION);
   }
 
   @Test
   public void healQuestionnaireNullTest() throws Exception {
     prepareHealingData();
     componentEntity.setQuestionnaireData(null);
-    Object returnObject = componentQuestionnaireHealer.heal(healingParams);
+    Object returnObject = componentQuestionnaireHealer.heal(DUMMY_VSP_ID, VERSION);
     Assert.assertTrue(returnObject instanceof Collection);
     Collection<ComponentEntity> componentEntities = (Collection<ComponentEntity>) returnObject;
     componentEntities.forEach(componentEntity -> {
@@ -152,7 +144,7 @@ public class ComponentQuestionnaireHealerTest {
   public void healAllCasesTest() throws Exception {
     prepareHealingData();
 
-    Object returnObject = componentQuestionnaireHealer.heal(healingParams);
+    Object returnObject = componentQuestionnaireHealer.heal(DUMMY_VSP_ID, VERSION);
     Assert.assertTrue(returnObject instanceof Collection);
     Collection<ComponentEntity> componentEntities = (Collection<ComponentEntity>) returnObject;
     componentEntities.forEach(componentEntity -> {
@@ -177,7 +169,7 @@ public class ComponentQuestionnaireHealerTest {
   public void healDiskAttrMissingTest() throws Exception {
     prepareHealingData();
     componentEntity.setQuestionnaireData(componentQuestionnaireMissingDiskAttrData);
-    Object returnObject = componentQuestionnaireHealer.heal(healingParams);
+    Object returnObject = componentQuestionnaireHealer.heal(DUMMY_VSP_ID, VERSION);
     Assert.assertTrue(returnObject instanceof Collection);
     Collection<ComponentEntity> componentEntities = (Collection<ComponentEntity>) returnObject;
     componentEntities.forEach(componentEntity -> {
@@ -238,7 +230,7 @@ public class ComponentQuestionnaireHealerTest {
         .getDeclaredMethod(methodName, JsonObject.class, JsonObject.class);
     method.setAccessible(true);
 
-    method.invoke(componentQuestionnaireHealer,jsonObject.getAsJsonObject(COMPUTE), null);
+    method.invoke(componentQuestionnaireHealer, jsonObject.getAsJsonObject(COMPUTE), null);
   }
 
   private void prepareHealingData() {

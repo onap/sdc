@@ -28,7 +28,7 @@ class ComponentCreationView extends React.Component {
 		let {data = {}, onDataChanged, onCancel, genericFieldInfo} = this.props;
 		let {displayName, description} = data;
 		return(
-			<div>			
+			<div>
 				{
 					genericFieldInfo && <Form
 						ref='validationForm'
@@ -41,8 +41,8 @@ class ComponentCreationView extends React.Component {
 						formReady={this.props.formReady}
 						onValidateForm={() => this.props.onValidateForm(forms.CREATE_FORM) }
 						className='entitlement-pools-form'>
-						<GridSection>
-							<GridItem colSpan={4}>
+						<GridSection hasLastColSet>
+							<GridItem colSpan={4} lastColInRow>
 								<Input
 									data-test-id='name'
 									onChange={displayName => onDataChanged({displayName})}
@@ -53,7 +53,7 @@ class ComponentCreationView extends React.Component {
 									value={displayName}
 									type='text'/>
 							</GridItem>
-							<GridItem colSpan={4}>
+							<GridItem colSpan={4} lastColInRow>
 								<Input
 									label={i18n('Description')}
 									onChange={description => onDataChanged({description})}
@@ -66,13 +66,13 @@ class ComponentCreationView extends React.Component {
 						</GridSection>
 					</Form>
 				}
-			</div>	
+			</div>
 		);
 	}
 
 	submit() {
-		const {onSubmit, data, version} = this.props;
-		onSubmit(data, version);
+		const {onSubmit, data} = this.props;
+		onSubmit(data);
 	}
 }
 

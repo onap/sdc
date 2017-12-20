@@ -28,27 +28,22 @@ import java.io.InputStream;
 import java.util.Collection;
 
 public interface ProcessManager {
-  Collection<ProcessEntity> listProcesses(String vspId, Version version, String componentId,
-                                          String user);
+  Collection<ProcessEntity> listProcesses(String vspId, Version version, String componentId);
 
-  void deleteProcesses(String vspId, Version version, String componentId, String user);
+  void deleteProcesses(String vspId, Version version, String componentId);
 
-  ProcessEntity createProcess(ProcessEntity processEntity, String user);
+  ProcessEntity createProcess(ProcessEntity processEntity);
 
-  ProcessEntity getProcess(String vspId, Version version, String componentId, String processId,
-                           String user);
+  ProcessEntity getProcess(String vspId, Version version, String componentId, String processId);
 
-  void updateProcess(ProcessEntity processEntity, String user);
+  void updateProcess(ProcessEntity processEntity);
 
-  void deleteProcess(String vspId, Version version, String componentId, String processId,
-                     String user);
+  void deleteProcess(String vspId, Version version, String componentId, String processId);
 
-  File getProcessArtifact(String vspId, Version version, String componentId, String processId,
-                          String user);
+  File getProcessArtifact(String vspId, Version version, String componentId, String processId);
 
-  void deleteProcessArtifact(String vspId, Version version, String componentId, String processId,
-                             String user);
+  void deleteProcessArtifact(String vspId, Version version, String componentId, String processId);
 
   void uploadProcessArtifact(InputStream uploadFile, String fileName, String vspId,
-                             Version version, String componentId, String processId, String user);
+                             Version version, String componentId, String processId);
 }

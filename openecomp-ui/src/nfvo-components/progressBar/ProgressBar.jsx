@@ -14,11 +14,12 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class ProgressBar extends React.Component {
 	static propTypes = {
-		label: React.PropTypes.string,
-		now: React.PropTypes.string.isRequired
+		label: PropTypes.string,
+		now: PropTypes.string.isRequired
 	}
 	render() {
 		let {label, now} = this.props;

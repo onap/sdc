@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil.getResource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -55,6 +53,8 @@ import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatT
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil.getResource;
 
 public class ResourceTranslationCinderVolumeAttachmentImpl extends ResourceTranslationBase {
   protected static Logger logger =

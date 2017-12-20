@@ -24,9 +24,9 @@ import org.hibernate.validator.group.GroupSequenceProvider;
 import org.openecomp.sdcrests.vendorlicense.types.validation.MultiChoiceOrOtherSequenceProvider;
 import org.openecomp.sdcrests.vendorlicense.types.validation.OtherChoiceValidation;
 
-import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 @GroupSequenceProvider(value = MultiChoiceOrOtherSequenceProvider.class)
 public class MultiChoiceOrOtherDto<E extends Enum<E>> {

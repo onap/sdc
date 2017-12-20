@@ -16,13 +16,23 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>item-rest-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.openecomp.sdc.onboarding</groupId>
             <artifactId>vendor-license-rest-services</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
-            <artifactId>activity-log-rest-services</artifactId>
+            <artifactId>openecomp-sdc-notification-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+	    <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-notification-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -38,6 +48,21 @@
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>healthcheck-rest-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>conflict-rest-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>item-permissions-rest-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>notifications-rest-services</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -105,6 +130,11 @@
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.framework.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

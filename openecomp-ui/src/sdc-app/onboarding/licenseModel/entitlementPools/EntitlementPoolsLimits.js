@@ -20,10 +20,10 @@ import Limits from 'sdc-app/onboarding/licenseModel/limits/Limits.jsx';
 import {actionTypes as globalModalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 import EntitlementPoolsActionHelper from './EntitlementPoolsActionHelper.js';
 
-const mapStateToProps = ({licenseModel: {entitlementPool: {entitlementPoolEditor: {data}}, limitEditor}, currentScreen}) => {	
+const mapStateToProps = ({licenseModel: {entitlementPool: {entitlementPoolEditor: {data}}, limitEditor}, currentScreen}) => {
 	let  {props: {licenseModelId, version}} = currentScreen;
 	return {
-		parent: data,		
+		parent: data,
 		limitEditor,
 		licenseModelId,
 		version
@@ -42,10 +42,10 @@ const mapActionsToProps = (dispatch) => {
 		onDelete: ({limit, parent, licenseModelId, version, onCloseLimitEditor, selectedLimit}) => dispatch({
 			type: globalModalActionTypes.GLOBAL_MODAL_WARNING,
 			data:{
-				msg: i18n(`Are you sure you want to delete ${limit.name}?`),
+				msg: i18n('Are you sure you want to delete {name}?', {name: limit.name}),
 				confirmationButtonText: i18n('Delete'),
 				title: i18n('Delete'),
-				onConfirmed: ()=> EntitlementPoolsActionHelper.deleteLimit(dispatch, {limit, entitlementPool: parent, licenseModelId, version}).then(() => 
+				onConfirmed: ()=> EntitlementPoolsActionHelper.deleteLimit(dispatch, {limit, entitlementPool: parent, licenseModelId, version}).then(() =>
 					selectedLimit === limit.id && onCloseLimitEditor()
 				)
 			}

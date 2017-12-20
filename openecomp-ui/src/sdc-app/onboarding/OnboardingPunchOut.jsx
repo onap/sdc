@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
 import isEqual from 'lodash/isEqual.js';
@@ -23,8 +24,10 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import Application from 'sdc-app/Application.jsx';
 import store from 'sdc-app/AppStore.js';
 import Configuration from 'sdc-app/config/Configuration.js';
+import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
 
 import Onboard from './onboard/Onboard.js';
+import VersionsPage from './versionsPage/VersionsPage.js';
 import LicenseModel from './licenseModel/LicenseModel.js';
 import LicenseModelOverview from './licenseModel/overview/LicenseModelOverview.js';
 import ActivityLog from 'sdc-app/common/activity-log/ActivityLog.js';
@@ -51,27 +54,21 @@ import SoftwareProductComponentsCompute from './softwareProduct/components/compu
 import SoftwareProductComponentLoadBalancing from './softwareProduct/components/loadBalancing/SoftwareProductComponentLoadBalancing.js';
 import SoftwareProductComponentsImageList from './softwareProduct/components/images/SoftwareProductComponentsImageList.js';
 import SoftwareProductComponentsMonitoring from './softwareProduct/components/monitoring/SoftwareProductComponentsMonitoring.js';
-import {
-	navigationItems as SoftwareProductNavigationItems,
-	onboardingMethod as onboardingMethodTypes,
-	actionTypes as SoftwareProductActionTypes,
-	onboardingOriginTypes
-} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
+import {onboardingMethod as onboardingMethodTypes, onboardingOriginTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 
-import {statusEnum as VCItemStatus} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
+import {itemTypes} from './versionsPage/VersionsPageConstants.js';
 
 import HeatSetupActionHelper from './softwareProduct/attachments/setup/HeatSetupActionHelper.js';
 
-import {actionTypes, enums} from './OnboardingConstants.js';
+import {actionTypes, enums, screenTypes} from './OnboardingConstants.js';
 import OnboardingActionHelper from './OnboardingActionHelper.js';
-
 
 class OnboardingView extends React.Component {
 	static propTypes = {
-		currentScreen: React.PropTypes.shape({
-			screen: React.PropTypes.oneOf(objectValues(enums.SCREEN)).isRequired,
-			props: React.PropTypes.object.isRequired
+		currentScreen: PropTypes.shape({
+			screen: PropTypes.oneOf(objectValues(enums.SCREEN)).isRequired,
+			props: PropTypes.object.isRequired,
+			itemPermission: PropTypes.object
 		}).isRequired
 	};
 
@@ -97,6 +94,8 @@ class OnboardingView extends React.Component {
 					switch (screen) {
 						case enums.SCREEN.ONBOARDING_CATALOG:
 							return <Onboard {...props}/>;
+						case enums.SCREEN.VERSIONS_PAGE:
+							return <VersionsPage {...props} />;
 
 						case enums.SCREEN.LICENSE_AGREEMENTS:
 						case enums.SCREEN.FEATURE_GROUPS:
@@ -106,24 +105,24 @@ class OnboardingView extends React.Component {
 						case enums.SCREEN.ACTIVITY_LOG:
 							return (
 								<LicenseModel currentScreen={currentScreen}>
-								{
-									(()=>{
-										switch(screen) {
-											case enums.SCREEN.LICENSE_MODEL_OVERVIEW:
-												return <LicenseModelOverview {...props}/>;
-											case enums.SCREEN.LICENSE_AGREEMENTS:
-												return <LicenseAgreementListEditor {...props}/>;
-											case enums.SCREEN.FEATURE_GROUPS:
-												return <FeatureGroupListEditor {...props}/>;
-											case enums.SCREEN.ENTITLEMENT_POOLS:
-												return <EntitlementPoolsListEditor {...props}/>;
-											case enums.SCREEN.LICENSE_KEY_GROUPS:
-												return <LicenseKeyGroupsListEditor {...props}/>;
-											case enums.SCREEN.ACTIVITY_LOG:
-												return <ActivityLog {...props}/>;
-										}
-									})()
-								}
+									{
+										(()=>{
+											switch(screen) {
+												case enums.SCREEN.LICENSE_MODEL_OVERVIEW:
+													return <LicenseModelOverview {...props}/>;
+												case enums.SCREEN.LICENSE_AGREEMENTS:
+													return <LicenseAgreementListEditor {...props}/>;
+												case enums.SCREEN.FEATURE_GROUPS:
+													return <FeatureGroupListEditor {...props}/>;
+												case enums.SCREEN.ENTITLEMENT_POOLS:
+													return <EntitlementPoolsListEditor {...props}/>;
+												case enums.SCREEN.LICENSE_KEY_GROUPS:
+													return <LicenseKeyGroupsListEditor {...props}/>;
+												case enums.SCREEN.ACTIVITY_LOG:
+													return <ActivityLog {...props}/>;
+											}
+										})()
+									}
 								</LicenseModel>
 							);
 
@@ -146,46 +145,46 @@ class OnboardingView extends React.Component {
 						case enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG:
 							return (
 								<SoftwareProduct currentScreen={currentScreen}>
-								{
-									(()=>{
-										switch(screen) {
-											case enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE:
-												return <SoftwareProductLandingPage {...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_DETAILS:
-												return <SoftwareProductDetails {...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS:
-												return <SoftwareProductAttachments  className='no-padding-content-area'   {...props} />;
-											case enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES:
-												return <SoftwareProductProcesses {...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT:
-												return <SoftwareProductDeployment {...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS:
-												return <SoftwareProductNetworks {...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES:
-												return <SoftwareProductDependencies {...props} />;
-											case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS:
-												return <SoftwareProductComponentsList  {...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_PROCESSES:
-												return <SoftwareProductComponentProcessesList  {...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_STORAGE:
-												return <SoftwareProductComponentStorage {...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_NETWORK:
-												return <SoftwareProductComponentsNetworkList {...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_GENERAL:
-												return <SoftwareProductComponentsGeneral{...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_COMPUTE:
-												return <SoftwareProductComponentsCompute {...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_LOAD_BALANCING:
-												return <SoftwareProductComponentLoadBalancing{...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES:
-												return <SoftwareProductComponentsImageList{...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING:
-												return <SoftwareProductComponentsMonitoring {...props}/>;
-											case enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG:
-												return <ActivityLog {...props}/>;
-										}
-									})()
-								}
+									{
+										(()=>{
+											switch(screen) {
+												case enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE:
+													return <SoftwareProductLandingPage {...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_DETAILS:
+													return <SoftwareProductDetails {...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS:
+													return <SoftwareProductAttachments className='no-padding-content-area' {...props} />;
+												case enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES:
+													return <SoftwareProductProcesses {...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT:
+													return <SoftwareProductDeployment {...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS:
+													return <SoftwareProductNetworks {...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES:
+													return <SoftwareProductDependencies {...props} />;
+												case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS:
+													return <SoftwareProductComponentsList  {...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_PROCESSES:
+													return <SoftwareProductComponentProcessesList  {...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_STORAGE:
+													return <SoftwareProductComponentStorage {...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_NETWORK:
+													return <SoftwareProductComponentsNetworkList {...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_GENERAL:
+													return <SoftwareProductComponentsGeneral{...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_COMPUTE:
+													return <SoftwareProductComponentsCompute {...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_LOAD_BALANCING:
+													return <SoftwareProductComponentLoadBalancing{...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES:
+													return <SoftwareProductComponentsImageList{...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING:
+													return <SoftwareProductComponentsMonitoring {...props}/>;
+												case enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG:
+													return <ActivityLog {...props}/>;
+											}
+										})()
+									}
 								</SoftwareProduct>
 							);
 					}
@@ -234,10 +233,10 @@ export default class OnboardingPunchOut {
 	handleData(data) {
 		let {breadcrumbs: {selectedKeys = []} = {}} = data;
 		let dispatch = action => store.dispatch(action);
-		let {currentScreen, softwareProductList, softwareProduct: {softwareProductEditor: {data: vspData = {}},
-			softwareProductComponents = {}, softwareProductQuestionnaire = {}},
-				licenseModelList, licenseModel: {licenseModelEditor: {data: {id: currentLicenseModelId, version: currentLicenseModelVersion} = {}}}} = store.getState();
-		let {id: currentSoftwareProductId, version: currentSoftwareProductVersion} = vspData;
+		let {currentScreen, users: {usersList}, softwareProductList, licenseModelList, softwareProduct: {softwareProductEditor: {data: vspData = {}},
+			softwareProductComponents = {}, softwareProductQuestionnaire = {}}} = store.getState();
+
+		let {props: {version, isReadOnlyMode}, screen} = currentScreen;
 		let {componentEditor: {data: componentData = {}, qdata: componentQData = {}}} = softwareProductComponents;
 		if (this.programmaticBreadcrumbsUpdate) {
 			this.prevSelectedKeys = selectedKeys;
@@ -249,11 +248,11 @@ export default class OnboardingPunchOut {
 
 			const [, screenType, prevVspId, , prevComponentId] = this.prevSelectedKeys || [];
 			let preNavigate = Promise.resolve();
-			if(screenType === enums.BREADCRUMS.SOFTWARE_PRODUCT && vspData.status === VCItemStatus.CHECK_OUT_STATUS && VersionControllerUtils.isCheckedOutByCurrentUser(vspData)) {
+			if(screenType === enums.BREADCRUMS.SOFTWARE_PRODUCT && screen !== 'VERSIONS_PAGE' && !isReadOnlyMode) {
 				let dataToSave = prevVspId ? prevComponentId ? {componentData, qdata: componentQData} : {softwareProduct: vspData, qdata: softwareProductQuestionnaire.qdata} : {};
 				preNavigate = OnboardingActionHelper.autoSaveBeforeNavigate(dispatch, {
 					softwareProductId: prevVspId,
-					version: currentSoftwareProductVersion,
+					version,
 					vspComponentId: prevComponentId,
 					dataToSave
 				});
@@ -261,40 +260,19 @@ export default class OnboardingPunchOut {
 
 			let {currentScreen: {props: {softwareProductId}}, softwareProduct: {softwareProductAttachments: {heatSetup, heatSetupCache}}} = store.getState();
 			let heatSetupPopupPromise = currentScreen.screen === enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS ?
-								HeatSetupActionHelper.heatSetupLeaveConfirmation(dispatch, {softwareProductId, heatSetup, heatSetupCache}) :
-								Promise.resolve();
+				HeatSetupActionHelper.heatSetupLeaveConfirmation(dispatch, {softwareProductId, heatSetup, heatSetupCache}) :
+				Promise.resolve();
 			Promise.all([preNavigate, heatSetupPopupPromise]).then(() => {
 				this.prevSelectedKeys = selectedKeys;
 				if (selectedKeys.length === 0) {
-					OnboardingActionHelper.navigateToOnboardingCatalog(dispatch);
+					ScreensHelper.loadScreen(dispatch, {screen: enums.SCREEN.ONBOARDING_CATALOG});
+
 				} else if (selectedKeys.length === 1 || selectedKeys[1] === enums.BREADCRUMS.LICENSE_MODEL) {
 					let [licenseModelId, , licenseModelScreen] = selectedKeys;
-					if (!licenseModelScreen) {
-						licenseModelScreen = enums.BREADCRUMS.LICENSE_MODEL_OVERVIEW;
-					}
-					if (currentLicenseModelId !== licenseModelId) {
-						currentLicenseModelVersion = licenseModelList.find(lm => lm.id === licenseModelId).version;
-					}
-					switch (licenseModelScreen) {
-						case enums.BREADCRUMS.LICENSE_MODEL_OVERVIEW:
-							OnboardingActionHelper.navigateToLicenseModelOverview(dispatch, {licenseModelId, version: currentLicenseModelVersion});
-							break;
-						case enums.BREADCRUMS.LICENSE_AGREEMENTS:
-							OnboardingActionHelper.navigateToLicenseAgreements(dispatch, {licenseModelId, version: currentLicenseModelVersion});
-							break;
-						case enums.BREADCRUMS.FEATURE_GROUPS:
-							OnboardingActionHelper.navigateToFeatureGroups(dispatch, {licenseModelId, version: currentLicenseModelVersion});
-							break;
-						case enums.BREADCRUMS.ENTITLEMENT_POOLS:
-							OnboardingActionHelper.navigateToEntitlementPools(dispatch, {licenseModelId, version: currentLicenseModelVersion});
-							break;
-						case enums.BREADCRUMS.LICENSE_KEY_GROUPS:
-							OnboardingActionHelper.navigateToLicenseKeyGroups(dispatch, {licenseModelId, version: currentLicenseModelVersion});
-							break;
-						case enums.BREADCRUMS.ACTIVITY_LOG:
-							OnboardingActionHelper.navigateToLicenseModelActivityLog(dispatch, {licenseModelId, version: currentLicenseModelVersion});
-							break;
-					}
+					let licenseModel = licenseModelList.find(vlm => vlm.id === licenseModelId);
+					ScreensHelper.loadScreen(dispatch, {screen: licenseModelScreen, screenType: screenTypes.LICENSE_MODEL,
+						props: {licenseModelId, version, licenseModel, usersList}});
+
 				} else if (selectedKeys.length <= 4 && selectedKeys[1] === enums.BREADCRUMS.SOFTWARE_PRODUCT) {
 					let [licenseModelId, , softwareProductId, softwareProductScreen] = selectedKeys;
 					let softwareProduct = softwareProductId ?
@@ -303,52 +281,20 @@ export default class OnboardingPunchOut {
 					if (!softwareProductId) {
 						softwareProductId = softwareProduct.id;
 					}
-					if (currentSoftwareProductId !== softwareProductId) {
-						currentSoftwareProductVersion = softwareProduct.version;
+					if (softwareProductScreen === enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS) {
+						softwareProduct = vspData;
+						//check current vsp fields to determine which file has uploaded
+						if(vspData.onboardingOrigin === onboardingOriginTypes.ZIP || vspData.candidateOnboardingOrigin === onboardingOriginTypes.ZIP) {
+							softwareProductScreen = enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS_SETUP;
+						}
+						else if(vspData.onboardingOrigin === onboardingOriginTypes.CSAR) {
+							softwareProductScreen = enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS_VALIDATION;
+						}
 					}
-					switch (softwareProductScreen) {
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_LANDING_PAGE:
-							OnboardingActionHelper.navigateToSoftwareProductLandingPage(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_DETAILS:
-							OnboardingActionHelper.navigateToSoftwareProductDetails(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_ATTACHMENTS:
-							if(softwareProduct.onboardingOrigin === onboardingOriginTypes.ZIP) {
-								OnboardingActionHelper.navigateToSoftwareProductAttachmentsSetupTab(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
-							}
-							else if(softwareProduct.onboardingOrigin === onboardingOriginTypes.CSAR) {
-								OnboardingActionHelper.navigateToSoftwareProductAttachmentsValidationTab(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
-							}
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_PROCESSES:
-							OnboardingActionHelper.navigateToSoftwareProductProcesses(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_DEPLOYMENT:
-							OnboardingActionHelper.navigateToSoftwareProductDeployment(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_NETWORKS:
-							OnboardingActionHelper.navigateToSoftwareProductNetworks(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_DEPENDENCIES:
-							OnboardingActionHelper.navigateToSoftwareProductDependencies(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_ACTIVITY_LOG:
-							OnboardingActionHelper.navigateToSoftwareProductActivityLog(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENTS:
-							OnboardingActionHelper.navigateToSoftwareProductComponents(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
-							dispatch({
-								type: SoftwareProductActionTypes.TOGGLE_NAVIGATION_ITEM,
-								mapOfExpandedIds: {
-									[SoftwareProductNavigationItems.COMPONENTS]: true
-								}
-							});
-							break;
-						default:
-							OnboardingActionHelper.navigateToSoftwareProductLandingPage(dispatch, {softwareProductId, version: currentSoftwareProductVersion});
-							break;
-					}
+
+					ScreensHelper.loadScreen(dispatch, {screen: softwareProductScreen, screenType: screenTypes.SOFTWARE_PRODUCT,
+						props: {softwareProductId, softwareProduct, version, usersList}});
+
 				} else if (selectedKeys.length === 5 && selectedKeys[1] === enums.BREADCRUMS.SOFTWARE_PRODUCT && selectedKeys[3] === enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENTS) {
 					let [licenseModelId, , softwareProductId, , componentId] = selectedKeys;
 					let softwareProduct = softwareProductId ?
@@ -357,10 +303,9 @@ export default class OnboardingPunchOut {
 					if (!softwareProductId) {
 						softwareProductId = softwareProduct.id;
 					}
-					if (currentSoftwareProductId !== softwareProductId) {
-						currentSoftwareProductVersion = softwareProduct.version;
-					}
-					OnboardingActionHelper.navigateToSoftwareProductComponentGeneralAndUpdateLeftPanel(dispatch, {softwareProductId, componentId, version: currentSoftwareProductVersion});
+					ScreensHelper.loadScreen(dispatch, {screen: enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS, screenType: screenTypes.SOFTWARE_PRODUCT,
+						props: {softwareProductId, softwareProduct, componentId, version, usersList}});
+
 				} else if (selectedKeys.length === 6 && selectedKeys[1] === enums.BREADCRUMS.SOFTWARE_PRODUCT && selectedKeys[3] === enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENTS) {
 					let [licenseModelId, , softwareProductId, , componentId, componentScreen] = selectedKeys;
 					let softwareProduct = softwareProductId ?
@@ -369,39 +314,9 @@ export default class OnboardingPunchOut {
 					if (!softwareProductId) {
 						softwareProductId = softwareProduct.id;
 					}
-					if (currentSoftwareProductId !== softwareProductId) {
-						currentSoftwareProductVersion = softwareProduct.version;
-					}
-					switch (componentScreen) {
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENT_GENERAL:
-							OnboardingActionHelper.navigateToSoftwareProductComponentGeneral(dispatch, {softwareProductId, componentId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENT_COMPUTE:
-							OnboardingActionHelper.navigateToComponentCompute(dispatch, {softwareProductId, componentId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENT_LOAD_BALANCING:
-							OnboardingActionHelper.navigateToComponentLoadBalancing(dispatch, {softwareProductId, componentId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENT_NETWORK:
-							OnboardingActionHelper.navigateToComponentNetwork(dispatch, {softwareProductId, componentId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENT_STORAGE:
-							OnboardingActionHelper.navigateToComponentStorage(dispatch, {softwareProductId, componentId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENT_PROCESSES:
-							OnboardingActionHelper.navigateToSoftwareProductComponentProcesses(dispatch, {softwareProductId, componentId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENT_MONITORING:
-							OnboardingActionHelper.navigateToSoftwareProductComponentMonitoring(dispatch, {softwareProductId, componentId, version: currentSoftwareProductVersion});
-							break;
-						case enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENT_IMAGES:
-							OnboardingActionHelper.navigateToComponentImages(dispatch, {
-								softwareProductId,
-								componentId,
-								version: currentSoftwareProductVersion
-							});
-							break;
-					}
+					ScreensHelper.loadScreen(dispatch, {screen: componentScreen, screenType: screenTypes.SOFTWARE_PRODUCT,
+						props: {softwareProductId, softwareProduct, componentId, version, usersList}});
+
 				} else {
 					console.error('Unknown breadcrumbs path: ', selectedKeys);
 				}
@@ -418,11 +333,14 @@ export default class OnboardingPunchOut {
 	}
 
 	handleStoreChange() {
-		let {currentScreen, licenseModelList, softwareProductList,
-			softwareProduct: {softwareProductEditor: {data = {onboardingMethod: ''}},
+		let {currentScreen, licenseModelList, finalizedLicenseModelList, softwareProductList, finalizedSoftwareProductList, versionsPage:
+			{versionsList: {itemType, itemId}},
+			softwareProduct: {softwareProductEditor: {data: currentSoftwareProduct = {onboardingMethod: ''}},
 				softwareProductComponents: {componentsList}}} = store.getState();
-		let {onboardingMethod, onboardingOrigin} = data;
-		let breadcrumbsData = {onboardingMethod, currentScreen, licenseModelList, softwareProductList, componentsList, onboardingOrigin};
+		const wholeSoftwareProductList = [...softwareProductList, ...finalizedSoftwareProductList];
+		const wholeLicenseModelList = [...licenseModelList, ...finalizedLicenseModelList];
+		let breadcrumbsData = {itemType, itemId, currentScreen, wholeLicenseModelList, wholeSoftwareProductList, currentSoftwareProduct, componentsList};
+
 		if (currentScreen.forceBreadCrumbsUpdate || !isEqual(breadcrumbsData, this.prevBreadcrumbsData) || this.breadcrumbsPrefixSelected) {
 			this.prevBreadcrumbsData = breadcrumbsData;
 			this.breadcrumbsPrefixSelected = false;
@@ -439,11 +357,57 @@ export default class OnboardingPunchOut {
 		}
 	}
 
-	buildBreadcrumbs({currentScreen: {screen, props}, onboardingMethod, licenseModelList, softwareProductList, componentsList, onboardingOrigin}) {
+	buildBreadcrumbs({currentScreen: {screen, props}, itemType, itemId, currentSoftwareProduct,
+		wholeLicenseModelList, wholeSoftwareProductList, componentsList}) {
+		let {onboardingMethod, onboardingOrigin, candidateOnboardingOrigin} = currentSoftwareProduct;
 		let screenToBreadcrumb;
 		switch (screen) {
 			case enums.SCREEN.ONBOARDING_CATALOG:
 				return [];
+
+			case enums.SCREEN.VERSIONS_PAGE:
+				let firstMenuItems = itemType === itemTypes.LICENSE_MODEL ? [
+					{
+						selectedKey: itemId,
+						menuItems: wholeLicenseModelList.map(({id, name}) => ({
+							key: id,
+							displayText: name
+						}))
+					}] : [
+						{
+							selectedKey: props.additionalProps.licenseModelId || currentSoftwareProduct.vendorId,
+							menuItems: wholeLicenseModelList.map(({id, name}) => ({
+								key: id,
+								displayText: name
+							}))
+						},
+						{
+							selectedKey: enums.BREADCRUMS.SOFTWARE_PRODUCT,
+							menuItems: [{
+								key: enums.BREADCRUMS.LICENSE_MODEL,
+								displayText: i18n('License Model')
+							}, {
+								key: enums.BREADCRUMS.SOFTWARE_PRODUCT,
+								displayText: i18n('Software Products')
+							}]
+						},
+						{
+							selectedKey: itemId,
+							menuItems: wholeSoftwareProductList
+								.filter(({id, vendorId}) => vendorId === currentSoftwareProduct.vendorId || id === itemId)
+								.map(({id, name}) => ({
+									key: id,
+									displayText: name
+								}))
+						},
+					];
+				return [
+					...firstMenuItems,
+					{
+						selectedKey: enums.BREADCRUMS.VERSIONS_PAGE,
+						menuItems: [{key: enums.BREADCRUMS.VERSIONS_PAGE, displayText: i18n('Versions Page')}]
+					}
+				];
 
 			case enums.SCREEN.LICENSE_AGREEMENTS:
 			case enums.SCREEN.FEATURE_GROUPS:
@@ -462,9 +426,9 @@ export default class OnboardingPunchOut {
 				return [
 					{
 						selectedKey: props.licenseModelId,
-						menuItems: licenseModelList.map(({id, vendorName}) => ({
+						menuItems: wholeLicenseModelList.map(({id, name}) => ({
 							key: id,
-							displayText: vendorName
+							displayText: name
 						}))
 					},
 					{
@@ -473,10 +437,10 @@ export default class OnboardingPunchOut {
 							key: enums.BREADCRUMS.LICENSE_MODEL,
 							displayText: i18n('License Model')
 						},
-							...(softwareProductList.findIndex(({vendorId}) => vendorId === props.licenseModelId) === -1 ? [] : [{
-								key: enums.BREADCRUMS.SOFTWARE_PRODUCT,
-								displayText: i18n('Software Products')
-							}])]
+						...(wholeSoftwareProductList.findIndex(({vendorId}) => vendorId === props.licenseModelId) === -1 ? [] : [{
+							key: enums.BREADCRUMS.SOFTWARE_PRODUCT,
+							displayText: i18n('Software Products')
+						}])]
 					}, {
 						selectedKey: screenToBreadcrumb[screen],
 						menuItems: [{
@@ -540,13 +504,13 @@ export default class OnboardingPunchOut {
 					[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES]: enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENT_IMAGES,
 					[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING]: enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENT_MONITORING
 				};
-				let licenseModelId = softwareProductList.find(({id}) => id === props.softwareProductId).vendorId;
+				let licenseModelId = currentSoftwareProduct.vendorId;
 				let returnedBreadcrumb = [
 					{
 						selectedKey: licenseModelId,
-						menuItems: licenseModelList.map(({id, vendorName}) => ({
+						menuItems: wholeLicenseModelList.map(({id, name}) => ({
 							key: id,
-							displayText: vendorName
+							displayText: name
 						}))
 					},
 					{
@@ -561,8 +525,8 @@ export default class OnboardingPunchOut {
 					},
 					{
 						selectedKey: props.softwareProductId,
-						menuItems: softwareProductList
-							.filter(({vendorId}) => vendorId === licenseModelId)
+						menuItems: wholeSoftwareProductList
+							.filter(({vendorId, id}) => vendorId === licenseModelId || id === props.softwareProductId)
 							.map(({id, name}) => ({
 								key: id,
 								displayText: name
@@ -598,14 +562,14 @@ export default class OnboardingPunchOut {
 							key: enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENTS,
 							displayText: i18n('Components')
 						}].filter(item => {
-							let isHeatData = onboardingOrigin !== onboardingOriginTypes.NONE;
-							let isManualMode = onboardingMethod === onboardingMethodTypes.MANUAL;
 							switch (item.key) {
 								case enums.BREADCRUMS.SOFTWARE_PRODUCT_ATTACHMENTS:
+									let isHeatData = onboardingOrigin !== onboardingOriginTypes.NONE || candidateOnboardingOrigin === onboardingOriginTypes.ZIP;
 									return isHeatData;
 								case enums.BREADCRUMS.SOFTWARE_PRODUCT_COMPONENTS:
 									return (componentsList.length > 0);
 								case enums.BREADCRUMS.SOFTWARE_PRODUCT_DEPLOYMENT:
+									let isManualMode = onboardingMethod === onboardingMethodTypes.MANUAL;
 									return isManualMode;
 								case enums.BREADCRUMS.SOFTWARE_PRODUCT_DEPENDENCIES:
 									return (componentsList.length > 1);

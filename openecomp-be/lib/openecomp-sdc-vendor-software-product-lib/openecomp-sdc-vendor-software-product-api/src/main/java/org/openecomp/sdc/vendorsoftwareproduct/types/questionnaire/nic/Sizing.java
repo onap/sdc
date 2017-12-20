@@ -25,7 +25,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic;
  */
 public class Sizing {
     private String describeQualityOfService;
-    private int acceptablePacketLoss;
+    private Number acceptablePacketLoss;
     private PacketsAndBytes inflowTrafficPerSecond;
     private PacketsAndBytes outflowTrafficPerSecond;
     private PacketsAndBytes flowLength;
@@ -39,11 +39,11 @@ public class Sizing {
         this.describeQualityOfService = describeQualityOfService;
     }
 
-    public int getAcceptablePacketLoss() {
+    public Number getAcceptablePacketLoss() {
         return acceptablePacketLoss;
     }
 
-    public void setAcceptablePacketLoss(int acceptablePacketLoss) {
+    public void setAcceptablePacketLoss(Number acceptablePacketLoss) {
         this.acceptablePacketLoss = acceptablePacketLoss;
     }
 

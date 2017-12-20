@@ -38,32 +38,39 @@ import static org.openecomp.sdc.generator.data.GeneratorConstants.*;
 
 public class SampleJUnitTest extends TestCase {
 
-    public static final String aaiArtifactType = ArtifactType.AAI.name();
-    public static final String aaiArtifactGroupType = GroupType.DEPLOYMENT.name();
-    public static final String generatorConfig = "{\"artifactTypes\": [\"OTHER\",\"AAI\"]}";
-    public static final String ARTIFACTGENERATOR_CONFIG = "artifactgenerator.config";
-    public static final String CONFIG_PATH = "/qa-test-repo/jmeter3/apache-jmeter-3" +
+    private static final String AAI_ARTIFACT_TYPE = ArtifactType.AAI.name();
+    private static final String AAI_ARTIFACT_GROUP_TYPE = GroupType.DEPLOYMENT.name();
+    private static final String GENERATOR_CONFIG = "{\"artifactTypes\": [\"OTHER\",\"AAI\"]}";
+    private static final String ARTIFACT_GENERATOR_CONFIG = "artifactgenerator.config";
+    private static final String CONFIG_PATH = "/qa-test-repo/jmeter3/apache-jmeter-3" +
         ".0/lib/junit/";
-    //public static final String CONFIG_PATH ="C:\\Jmeter-Copy\\jmeter3\\apache-jmeter-3" +
-        //".0\\lib\\junit\\";
-    public static final String GENERATOR_AAI_CONFIGLPROP_NOT_FOUND =
+    private static final String GENERATOR_AAI_CONFIGLPROP_NOT_FOUND =
         "Cannot generate artifacts. Widget configuration not found for %s";
-    public static final String GENERATOR_AAI_CONFIGFILE_NOT_FOUND =
+    private static final String GENERATOR_AAI_CONFIGFILE_NOT_FOUND =
         "Cannot generate artifacts. Artifact Generator Configuration file not found at %s";
-    public static final String GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND =
+    private static final String GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND =
         "Cannot generate artifacts. artifactgenerator.config system property not configured";
-    public static final String INVALID_VALUE_INVARIANT =
+    private static final String INVALID_VALUE_INVARIANT =
         "Invalid value for mandatory attribute <invariantUUID> in Artifact";
-    public static final String INVALID_VALUE_UUID =
+    private static final String INVALID_VALUE_UUID =
         "Invalid value for mandatory attribute <UUID> in Artifact:";
-    public static final Map<String, String> additionalParams = new HashMap<>();
+    static final Map<String, String> additionalParams = new HashMap<>();
+    public static final String ARTIFACT_GENERATOR_PROPERTIES = "Artifact-Generator.properties";
+    public static final String VF_VMME_TEMPLATE_NO_SYSTEM_PROP_CONFIGURED_YML = "vf_vmme_template_NoSystemPropConfigured.yml";
+    public static final String SERVICE_VMME_TEMPLATE_NO_SYSTEM_PROP_CONFIGURED_YML = "service_vmme_template_NoSystemPropConfigured.yml";
 
     static{
         additionalParams.put(AdditionalParams.ServiceVersion.getName(),"1.0");
     }
 
+    public SampleJUnitTest(String name) throws IOException {
+        super(name);
+        System.setProperty(ARTIFACT_GENERATOR_CONFIG,CONFIG_PATH + ARTIFACT_GENERATOR_PROPERTIES);
+        loadConfig(ArtifactGenerationServiceTest.properties);
+    }
+
     private void loadConfig(Properties properties) throws IOException {
-        String configLocation = System.getProperty(ARTIFACTGENERATOR_CONFIG);
+        String configLocation = System.getProperty(ARTIFACT_GENERATOR_CONFIG);
         if (configLocation != null) {
             File file = new File(configLocation);
             if (file.exists()) {
@@ -74,15 +81,10 @@ public class SampleJUnitTest extends TestCase {
             }
         }
     }
-    public SampleJUnitTest(String name) throws Exception {
-        super(name);
-        System.setProperty(ARTIFACTGENERATOR_CONFIG,CONFIG_PATH+"Artifact-Generator.properties");
-        loadConfig(ArtifactGenerationServiceTest.properties);
-    }
 
     public SampleJUnitTest() {
         super();
-        System.setProperty(ARTIFACTGENERATOR_CONFIG,CONFIG_PATH+"Artifact-Generator.properties");
+        System.setProperty(ARTIFACT_GENERATOR_CONFIG,CONFIG_PATH + ARTIFACT_GENERATOR_PROPERTIES);
     }
 
     @Test
@@ -95,7 +97,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -128,7 +130,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -161,7 +163,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -180,7 +182,7 @@ public class SampleJUnitTest extends TestCase {
             readPayloadFromResource(inputArtifacts2, "service_vmme_template_SameWidget2.yml");
             ArtifactGenerationServiceImpl obj2 = new ArtifactGenerationServiceImpl();
 
-            GenerationData data2 = obj2.generateArtifact(inputArtifacts2, generatorConfig,additionalParams);
+            GenerationData data2 = obj2.generateArtifact(inputArtifacts2, GENERATOR_CONFIG,additionalParams);
             List<Artifact> resultData2 = data2.getResultData();
 
             List<ToscaTemplate> toscas2 = new LinkedList();
@@ -210,8 +212,8 @@ public class SampleJUnitTest extends TestCase {
                 }
             }
             Assert.assertEquals(map.size(),map2.size());
-            for(String name : map.keySet()){
-                Assert.assertEquals(map.get(name),map2.get(name));
+            for(Map.Entry<String, String> entry : map.entrySet()){
+                Assert.assertEquals(entry.getValue(), map2.get(entry.getKey()));
             }
 
         } catch (Exception e) {
@@ -223,7 +225,6 @@ public class SampleJUnitTest extends TestCase {
     public void testArtifactGenerationMulVFModule() {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            String[] resourceFileList = {};
             readPayloadFromResource(inputArtifacts, "vf_vmme_template_MulVFVFMod.yml");
 
             readPayloadFromResource(inputArtifacts, "service_vmme_template_MulVFVFMod.yml");
@@ -231,7 +232,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
                 for (Artifact inputArtifact : inputArtifacts) {
                     toscas.add(getToscaModel(inputArtifact));
@@ -270,7 +271,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -303,7 +304,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
                 for (Artifact inputArtifact : inputArtifacts) {
                     toscas.add(getToscaModel(inputArtifact));
@@ -336,7 +337,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
                 for (Artifact inputArtifact : inputArtifacts) {
                     toscas.add(getToscaModel(inputArtifact));
@@ -368,7 +369,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
                 for (Artifact inputArtifact : inputArtifacts) {
                     toscas.add(getToscaModel(inputArtifact));
@@ -400,7 +401,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
                 for (Artifact inputArtifact : inputArtifacts) {
                     toscas.add(getToscaModel(inputArtifact));
@@ -431,7 +432,7 @@ public class SampleJUnitTest extends TestCase {
             readPayloadFromResource(inputArtifacts, "service_vmme_template_NullFields.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             Assert.assertEquals(false,data.getErrorData().isEmpty());
 
             Assert.assertEquals("Invalid Service/Resource definition mandatory attribute <UUID> missing in Artifact: <"+inputArtifacts.get(0).getName()+">",data.getErrorData().get("AAI").get(0));
@@ -439,7 +440,6 @@ public class SampleJUnitTest extends TestCase {
             Assert.assertEquals(2,data.getResultData().size());
 
         } catch (Exception e) {
-            e.printStackTrace();
             Assert.fail(e.getMessage());
         }
     }
@@ -459,7 +459,7 @@ public class SampleJUnitTest extends TestCase {
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             Assert.assertEquals(false,data.getErrorData().isEmpty());
 
             Assert.assertEquals("Invalid format for Tosca YML  : "+inputArtifacts.get(1).getName(),data.getErrorData().get("AAI").get(0));
@@ -481,7 +481,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
                 for (Artifact inputArtifact : inputArtifacts) {
                     toscas.add(getToscaModel(inputArtifact));
@@ -517,7 +517,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
                 for (Artifact inputArtifact : inputArtifacts) {
                     toscas.add(getToscaModel(inputArtifact));
@@ -549,7 +549,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
                 for (Artifact inputArtifact : inputArtifacts) {
                     toscas.add(getToscaModel(inputArtifact));
@@ -587,7 +587,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
                 for (Artifact inputArtifact : inputArtifacts) {
                     toscas.add(getToscaModel(inputArtifact));
@@ -606,7 +606,6 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceTest.validateName(data.getResultData());
 
         } catch (Exception e) {
-            e.printStackTrace();
             Assert.fail(e.getMessage());
         }
     }
@@ -618,7 +617,7 @@ public class SampleJUnitTest extends TestCase {
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             Assert.assertEquals(false,data.getErrorData().isEmpty());
             Assert.assertEquals("Service tosca missing from list of input artifacts",data.getErrorData().get("AAI").get(0));
 
@@ -665,7 +664,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -699,7 +698,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -733,7 +732,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -775,7 +774,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -811,7 +810,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -851,7 +850,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -891,7 +890,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -929,7 +928,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -971,7 +970,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -1004,7 +1003,7 @@ public class SampleJUnitTest extends TestCase {
             readPayloadFromResource(inputArtifacts, "service_vmme_template_WithInvIdGreaterThanSpecifiedLimit.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             Assert.assertEquals(false,data.getErrorData().isEmpty());
 
             Assert.assertEquals(INVALID_VALUE_INVARIANT + ": <" +inputArtifacts.get(1).getName()+">",data.getErrorData().get("AAI").get(0));
@@ -1012,7 +1011,6 @@ public class SampleJUnitTest extends TestCase {
             Assert.assertEquals(2,data.getResultData().size());
 
         } catch (Exception e) {
-            e.printStackTrace();
             Assert.fail(e.getMessage());
         }
     }
@@ -1026,7 +1024,7 @@ public class SampleJUnitTest extends TestCase {
             readPayloadFromResource(inputArtifacts, "service_vmme_template_WithInvIdLesserThanSpecifiedLimit.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             Assert.assertEquals(false,data.getErrorData().isEmpty());
 
             Assert.assertEquals(INVALID_VALUE_UUID + " <"
@@ -1035,26 +1033,24 @@ public class SampleJUnitTest extends TestCase {
             Assert.assertEquals(2,data.getResultData().size());
 
         } catch (Exception e) {
-            e.printStackTrace();
             Assert.fail(e.getMessage());
         }
     }
 
 
     @Test
-    public void testErrorWhenNoSystemPropConfigured() throws Exception  {
-        String configLoc = System.getProperty(ARTIFACTGENERATOR_CONFIG);
+    public void testErrorWhenNoSystemPropConfigured() {
+        String configLoc = System.getProperty(ARTIFACT_GENERATOR_CONFIG);
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            readPayloadFromResource(inputArtifacts, "vf_vmme_template_NoSystemPropConfigured.yml");
+            readPayloadFromResource(inputArtifacts, VF_VMME_TEMPLATE_NO_SYSTEM_PROP_CONFIGURED_YML);
 
-            readPayloadFromResource(inputArtifacts, "service_vmme_template_NoSystemPropConfigured.yml");
+            readPayloadFromResource(inputArtifacts, SERVICE_VMME_TEMPLATE_NO_SYSTEM_PROP_CONFIGURED_YML);
 
-            System.clearProperty(ARTIFACTGENERATOR_CONFIG);
+            System.clearProperty(ARTIFACT_GENERATOR_CONFIG);
 
-            Map<String, Model> outputArtifactMap = new HashMap<>();
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             Assert.assertEquals(false,data.getErrorData().isEmpty());
             Assert.assertEquals(data.getErrorData().
                 get("AAI").get(0), GENERATOR_AAI_CONFIGLOCATION_NOT_FOUND);
@@ -1062,48 +1058,46 @@ public class SampleJUnitTest extends TestCase {
             Assert.fail(e.getMessage());
         }
         finally{
-            System.setProperty(ARTIFACTGENERATOR_CONFIG,configLoc);
+            System.setProperty(ARTIFACT_GENERATOR_CONFIG,configLoc);
         }
     }
 
     @Test
-    public void testErrorWhenNoFileAtConfigLocation() throws Exception  {
-        String configLoc = System.getProperty(ARTIFACTGENERATOR_CONFIG);
+    public void testErrorWhenNoFileAtConfigLocation() {
+        String configLoc = System.getProperty(ARTIFACT_GENERATOR_CONFIG);
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            readPayloadFromResource(inputArtifacts, "vf_vmme_template_NoSystemPropConfigured.yml");
+            readPayloadFromResource(inputArtifacts, VF_VMME_TEMPLATE_NO_SYSTEM_PROP_CONFIGURED_YML);
 
-            readPayloadFromResource(inputArtifacts, "service_vmme_template_NoSystemPropConfigured.yml");
+            readPayloadFromResource(inputArtifacts, SERVICE_VMME_TEMPLATE_NO_SYSTEM_PROP_CONFIGURED_YML);
 
-            System.setProperty(ARTIFACTGENERATOR_CONFIG,configLoc + File.separator + "testErrorWhenNoFileAtConfigLocation");
-            Map<String, Model> outputArtifactMap = new HashMap<>();
+            System.setProperty(ARTIFACT_GENERATOR_CONFIG,configLoc + File.separator + "testErrorWhenNoFileAtConfigLocation");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             Assert.assertEquals(data.getErrorData().isEmpty(),false);
             Assert.assertEquals(data.getErrorData().get("AAI").get(0),String.format(
                 GENERATOR_AAI_CONFIGFILE_NOT_FOUND,System.getProperty
-                (ARTIFACTGENERATOR_CONFIG)));
+                (ARTIFACT_GENERATOR_CONFIG)));
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         }
         finally{
-            System.setProperty(ARTIFACTGENERATOR_CONFIG,configLoc);
+            System.setProperty(ARTIFACT_GENERATOR_CONFIG,configLoc);
         }
     }
 
     @Test
-    public void testErrorWhenNoWidgetInConfig() throws Exception  {
-        System.setProperty(ARTIFACTGENERATOR_CONFIG,CONFIG_PATH+"Artifact-Generator1.properties");
+    public void testErrorWhenNoWidgetInConfig() throws IOException {
+        System.setProperty(ARTIFACT_GENERATOR_CONFIG,CONFIG_PATH+"Artifact-Generator1.properties");
         loadConfig(ArtifactGenerationServiceTest.properties);
         try {
             List<Artifact> inputArtifacts = new ArrayList();
-            readPayloadFromResource(inputArtifacts, "vf_vmme_template_NoSystemPropConfigured.yml");
+            readPayloadFromResource(inputArtifacts, VF_VMME_TEMPLATE_NO_SYSTEM_PROP_CONFIGURED_YML);
 
-            readPayloadFromResource(inputArtifacts, "service_vmme_template_NoSystemPropConfigured.yml");
+            readPayloadFromResource(inputArtifacts, SERVICE_VMME_TEMPLATE_NO_SYSTEM_PROP_CONFIGURED_YML);
 
-            Map<String, Model> outputArtifactMap = new HashMap<>();
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             String assertMsg = ArtifactType.AAI.name() + ".model-version-id." + Widget.getWidget
                 (Widget.Type.SERVICE).getName();
@@ -1114,13 +1108,13 @@ public class SampleJUnitTest extends TestCase {
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         } finally {
-            System.setProperty(ARTIFACTGENERATOR_CONFIG, CONFIG_PATH+"Artifact-Generator.properties");
+            System.setProperty(ARTIFACT_GENERATOR_CONFIG, CONFIG_PATH + ARTIFACT_GENERATOR_PROPERTIES);
             loadConfig(ArtifactGenerationServiceTest.properties);
         }
     }
 
     @Test
-    public void testArtifactGenerationWithUpdatedUUIDInConfig() throws Exception  {
+    public void testArtifactGenerationWithUpdatedUUIDInConfig() throws IOException {
         try {
             List<Artifact> inputArtifacts = new ArrayList();
             readPayloadFromResource(inputArtifacts, "vf_vmme_template_WithUpdatedUUIDInConfig.yml");
@@ -1128,7 +1122,7 @@ public class SampleJUnitTest extends TestCase {
             readPayloadFromResource(inputArtifacts, "service_vmme_template_WithUpdatedUUIDInConfig.yml");
 
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             List<ToscaTemplate> toscas = new LinkedList();
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -1139,14 +1133,14 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceTest.testServiceTosca(outputArtifactMap, toscas);
             testResourceTosca(toscas.iterator(), outputArtifactMap);
 
-            System.setProperty(ARTIFACTGENERATOR_CONFIG,CONFIG_PATH+"Artifact-Generator2.properties");
+            System.setProperty(ARTIFACT_GENERATOR_CONFIG,CONFIG_PATH+"Artifact-Generator2.properties");
             loadConfig(ArtifactGenerationServiceTest.properties);
 
             List<ToscaTemplate> toscas2 = new LinkedList();
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas2.add(getToscaModel(inputArtifact));
             }
-            GenerationData data2 = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data2 = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             Map<String, Model> outputArtifactMap2 = new HashMap<>();
             ArtifactGenerationServiceTest.populateAAIGeneratedModelStore(outputArtifactMap2,
                 data2.getResultData());
@@ -1156,7 +1150,7 @@ public class SampleJUnitTest extends TestCase {
         } catch (Exception e) {
             Assert.fail(e.getMessage());
         } finally {
-            System.setProperty(ARTIFACTGENERATOR_CONFIG,CONFIG_PATH+"Artifact-Generator.properties");
+            System.setProperty(ARTIFACT_GENERATOR_CONFIG,CONFIG_PATH + ARTIFACT_GENERATOR_PROPERTIES);
             loadConfig(ArtifactGenerationServiceTest.properties);
         }
     }
@@ -1170,8 +1164,7 @@ public class SampleJUnitTest extends TestCase {
             readPayloadFromResource(inputArtifacts, "service_vmme_template_VerifyMandatoryParameterServiceVersion.yml");
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, new HashMap<String, String>());
-            List<Artifact> resultData = data.getResultData();
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, new HashMap<String, String>());
 
             Assert.assertEquals(data.getErrorData().isEmpty(),false);
             Assert.assertEquals(data.getErrorData().get("AAI").get(0),GENERATOR_AAI_ERROR_MISSING_SERVICE_VERSION);
@@ -1190,23 +1183,20 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
 
             additionalParams.put(AdditionalParams.ServiceVersion.getName(),"1");
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
-            List<Artifact> resultData = data.getResultData();
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             Assert.assertEquals(data.getErrorData().isEmpty(),false);
             Assert.assertEquals(data.getErrorData().get("AAI").get(0),GENERATOR_AAI_INVALID_SERVICE_VERSION);
 
             additionalParams.put(AdditionalParams.ServiceVersion.getName(),"0.1");
-            GenerationData data2 = obj.generateArtifact(inputArtifacts, generatorConfig,
+            GenerationData data2 = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG,
                 additionalParams);
-            List<Artifact> resultData2 = data.getResultData();
             Assert.assertEquals(data2.getErrorData().isEmpty(),false);
             Assert.assertEquals(data2.getErrorData().get("AAI").get(0),
                 GENERATOR_AAI_INVALID_SERVICE_VERSION);
 
             additionalParams.put(AdditionalParams.ServiceVersion.getName(),"0.0");
-            GenerationData data3 = obj.generateArtifact(inputArtifacts, generatorConfig,
+            GenerationData data3 = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG,
                 additionalParams);
-            List<Artifact> resultData3 = data.getResultData();
             Assert.assertEquals(data3.getErrorData().isEmpty(),false);
             Assert.assertEquals(data3.getErrorData().get("AAI").get(0),
                 GENERATOR_AAI_INVALID_SERVICE_VERSION);
@@ -1228,7 +1218,7 @@ public class SampleJUnitTest extends TestCase {
             List<ToscaTemplate> toscas = new LinkedList();
 
             additionalParams.put(AdditionalParams.ServiceVersion.getName(),"9.0");
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -1270,8 +1260,7 @@ public class SampleJUnitTest extends TestCase {
                 toscas.add(getToscaModel(inputArtifact));
             }
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
-            List<Artifact> resultData = data.getResultData();
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             Assert.assertEquals(data.getErrorData().isEmpty(),false);
             Assert.assertEquals(data.getErrorData().get("AAI").get(0),
                 String.format(GENERATOR_AAI_ERROR_INVALID_RESOURCE_VERSION_IN_SERVICE_TOSCA,
@@ -1280,9 +1269,8 @@ public class SampleJUnitTest extends TestCase {
             inputArtifacts.remove(1);
 
             readPayloadFromResource(inputArtifacts, "service_vmme_template_VerifyResourceVersionFormat2.yml");
-            GenerationData data2 = obj.generateArtifact(inputArtifacts, generatorConfig,
+            GenerationData data2 = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG,
                 additionalParams);
-            List<Artifact> resultData2 = data2.getResultData();
             Assert.assertEquals(data2.getErrorData().isEmpty(),false);
             Assert.assertEquals(data2.getErrorData().get("AAI").get(0),
                 String.format(GENERATOR_AAI_ERROR_INVALID_RESOURCE_VERSION_IN_SERVICE_TOSCA,
@@ -1306,8 +1294,7 @@ public class SampleJUnitTest extends TestCase {
                 toscas.add(getToscaModel(inputArtifact));
             }
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
-            List<Artifact> resultData = data.getResultData();
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             Assert.assertEquals(data.getErrorData().isEmpty(),false);
             Assert.assertEquals(data.getErrorData().get("AAI").get(0),String.format(GENERATOR_AAI_ERROR_NULL_RESOURCE_VERSION_IN_SERVICE_TOSCA,toscas.get(0).getMetadata().get("UUID")));
         } catch (Exception e) {
@@ -1330,9 +1317,8 @@ public class SampleJUnitTest extends TestCase {
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
             }
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
-            List<Artifact> resultData = data.getResultData();
             Assert.assertEquals(data.getErrorData().isEmpty(),false);
             Assert.assertEquals(data.getErrorData().get("AAI").get(0),String.format
                 (GENERATOR_AAI_PROVIDING_SERVICE_MISSING, toscas.get(1).getModelId()));
@@ -1354,7 +1340,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -1391,7 +1377,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -1427,7 +1413,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -1465,7 +1451,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
 
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
@@ -1509,8 +1495,7 @@ public class SampleJUnitTest extends TestCase {
                 toscas.add(getToscaModel(inputArtifact));
             }
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
-            List<Artifact> resultData = data.getResultData();
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             Assert.assertEquals(data.getErrorData().isEmpty(),false);
             Assert.assertEquals(data.getErrorData().get("AAI").get(0),String.format
                 (GENERATOR_AAI_PROVIDING_SERVICE_METADATA_MISSING, toscas.get(2).getModelId()));
@@ -1537,7 +1522,7 @@ public class SampleJUnitTest extends TestCase {
             ArtifactGenerationServiceImpl obj = new ArtifactGenerationServiceImpl();
             List<ToscaTemplate> toscas = new LinkedList();
 
-            GenerationData data = obj.generateArtifact(inputArtifacts, generatorConfig, additionalParams);
+            GenerationData data = obj.generateArtifact(inputArtifacts, GENERATOR_CONFIG, additionalParams);
             for (Artifact inputArtifact : inputArtifacts) {
                 toscas.add(getToscaModel(inputArtifact));
             }
@@ -1563,12 +1548,10 @@ public class SampleJUnitTest extends TestCase {
         fis.read(payload);
         String checksum = GeneratorUtil.checkSum(payload);
         byte[] encodedPayload = GeneratorUtil.encode(payload);
-        Artifact artifact = new Artifact(aaiArtifactType, aaiArtifactGroupType, checksum, encodedPayload);
+        Artifact artifact = new Artifact(AAI_ARTIFACT_TYPE, AAI_ARTIFACT_GROUP_TYPE, checksum, encodedPayload);
         artifact.setName(fileName);
         artifact.setLabel(fileName);
         artifact.setDescription(fileName);
-        //artifact.setVersion("1.0");
-        System.out.println(artifact.getName());
         inputArtifacts.add(artifact);
     }
 
@@ -1580,14 +1563,13 @@ public class SampleJUnitTest extends TestCase {
      * @return Translated {@link ToscaTemplate tosca} object
      * @throws SecurityException
      */
-    public static ToscaTemplate getToscaModel(Artifact input) throws SecurityException {
+    public static ToscaTemplate getToscaModel(Artifact input) {
         byte[] decodedInput = GeneratorUtil.decoder(input.getPayload());
         String checksum = GeneratorUtil.checkSum(decodedInput);
         if (checksum.equals(input.getChecksum())) {
             try {
                 return GeneratorUtil.translateTosca(new String(decodedInput), ToscaTemplate.class);
             } catch (Exception e) {
-                e.printStackTrace();
                 throw new IllegalArgumentException(String.format(GENERATOR_AAI_ERROR_INVALID_TOSCA, input.getName()));
             }
         } else {
@@ -1602,15 +1584,6 @@ public class SampleJUnitTest extends TestCase {
             }
         }
     }
-
-    /*public static void testResourceTosca(Iterator<ToscaTemplate> itr, Map<String, Model> outputArtifactMap) {
-        while(itr.hasNext()){
-            ToscaTemplate toscaTemplate = itr.next();
-            if("VF".equals(toscaTemplate.getMetadata().get("type"))){
-                ArtifactGenerationServiceTest.testResourceTosca(outputArtifactMap, toscaTemplate);
-            }
-        }
-    }*/
 
     private void readPayloadFromResource(List<Artifact> inputArtifacts, String fileName) throws IOException {
 

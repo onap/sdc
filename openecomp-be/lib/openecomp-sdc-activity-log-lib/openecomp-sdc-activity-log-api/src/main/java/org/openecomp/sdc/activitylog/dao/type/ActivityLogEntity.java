@@ -16,107 +16,130 @@
 
 package org.openecomp.sdc.activitylog.dao.type;
 
-import com.datastax.driver.mapping.annotations.*;
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.Enumerated;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Calendar;
 import java.util.Date;
 
 @Table(keyspace = "dox", name = "activity_log")
 public class ActivityLogEntity {
-    @PartitionKey
-    @Column(name = "item_id")
-    private String itemId;
-    @ClusteringColumn(value = 1)
-    @Column(name = "version_id")
-    private String versionId;
-    @ClusteringColumn
-    @Column(name = "activity_id")
-    private String id;
-    private String type;
-    private String user;
-    private Date timestamp;
-    private boolean success;
-    private String message;
-    private String comment;
+  @PartitionKey
+  @Column(name = "item_id")
+  private String itemId;
+  @ClusteringColumn(value = 1)
+  @Column(name = "version_id")
+  private String versionId;
+  @ClusteringColumn
+  @Column(name = "activity_id")
+  private String id;
+  @Enumerated
+  private ActivityType type;
+  private String user;
+  private Date timestamp;
+  private boolean success;
+  private String message;
+  private String comment;
 
-    public ActivityLogEntity() {}
+  public ActivityLogEntity() {
+  }
 
-    public ActivityLogEntity(String itemId, String versionId, String type, String user, boolean success, String message, String comment) {
-        this.itemId = itemId;
-        this.versionId = versionId;
-        this.type = type;
-        this.user = user;
-        this.success = success;
-        this.message = message;
-        this.comment = comment;
-        Calendar now = Calendar.getInstance();
-        this.timestamp = now.getTime();
-    }
+  public ActivityLogEntity(String itemId, Version version) {
+    this.itemId = itemId;
+    setVersion(version);
+  }
 
-    public String getItemId() { return itemId; }
+  public ActivityLogEntity(String itemId, Version version, ActivityType type, String user,
+                           boolean success, String message, String comment) {
+    this(itemId, version);
+    this.type = type;
+    this.user = user;
+    this.success = success;
+    this.message = message;
+    this.comment = comment;
+    this.timestamp = new Date();
+  }
 
-    public void setItemId(String itemId) {
-        this.itemId = itemId;
-    }
+  public String getItemId() {
+    return itemId;
+  }
 
-    public String getVersionId() {
-        return versionId;
-    }
+  public void setItemId(String itemId) {
+    this.itemId = itemId;
+  }
 
-    public void setVersionId(String versionId) {
-        this.versionId = versionId;
-    }
+  public Version getVersion() {
+    return versionId == null ? null : new Version(versionId);
+  }
 
-    public String getId() { return id; }
+  public void setVersion(Version version) {
+    this.versionId = version == null ? null : version.getId();
+  }
 
-    public void setId(String id) { this.id = id; }
+  public String getVersionId() {
+    return versionId;
+  }
 
-    public String getType() {
-        return type;
-    }
+  public void setVersionId(String versionId) {
+    this.versionId = versionId;
+  }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public String getUser() {
-        return user;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
+  public ActivityType getType() {
+    return type;
+  }
 
-    public Date getTimestamp() {
-        return timestamp;
-    }
+  public void setType(ActivityType type) {
+    this.type = type;
+  }
 
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
+  public String getUser() {
+    return user;
+  }
 
-    public boolean isSuccess() {
-        return success;
-    }
+  public void setUser(String user) {
+    this.user = user;
+  }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
+  public Date getTimestamp() {
+    return timestamp;
+  }
 
-    public String getMessage() {
-        return message;
-    }
+  public void setTimestamp(Date timestamp) {
+    this.timestamp = timestamp;
+  }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+  public boolean isSuccess() {
+    return success;
+  }
 
-    public String getComment() {
-        return comment;
-    }
+  public void setSuccess(boolean success) {
+    this.success = success;
+  }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
+  public String getComment() {
+    return comment;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
 }

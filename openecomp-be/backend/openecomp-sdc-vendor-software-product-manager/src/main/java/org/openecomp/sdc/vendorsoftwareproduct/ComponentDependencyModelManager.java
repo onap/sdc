@@ -4,12 +4,17 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModel
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface ComponentDependencyModelManager {
 
-  void createComponentDependencyModel(List<ComponentDependencyModelEntity> entities, String
-      vspId, Version version, String user);
+  Collection<ComponentDependencyModelEntity> list(String vspId, Version version);
 
-  Collection<ComponentDependencyModelEntity> list(String vspId, Version version, String user);
+  ComponentDependencyModelEntity createComponentDependency(ComponentDependencyModelEntity entity,
+                                                           String vspId, Version version);
+
+  void delete(String vspId, Version version, String dependencyId);
+
+  void update(ComponentDependencyModelEntity entity);
+
+  ComponentDependencyModelEntity get(String vspId, Version version, String dependencyId);
 }

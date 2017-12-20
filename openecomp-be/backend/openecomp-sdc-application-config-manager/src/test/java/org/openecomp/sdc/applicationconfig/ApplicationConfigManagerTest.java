@@ -20,14 +20,7 @@
 
 package org.openecomp.sdc.applicationconfig;
 
-import org.openecomp.core.utilities.applicationconfig.dao.type.ApplicationConfigEntity;
-import org.openecomp.core.utilities.applicationconfig.type.ConfigurationData;
 import org.openecomp.sdc.applicationconfig.impl.ApplicationConfigManagerImpl;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import java.util.Collection;
 
 /**
  * Created by Talio on 8/9/2016.

@@ -60,9 +60,6 @@ public class VendorSoftwareProductErrorCodes {
 
   public static final String SAME_SOURCE_TARGET_COMPONENT = "SAME_SOURCE_TARGET_COMPONENT";
 
-  public static final String VSP_ONBOARD_METHOD_UPDATE_NOT_ALLOWED =
-      "VSP_ONBOARD_METHOD_UPDATE_NOT_ALLOWED";
-
   public static final String DUPLICATE_NIC_NAME_NOT_ALLOWED = "DUPLICATE_NIC_NAME_NOT_ALLOWED";
   public static final String NIC_NAME_FORMAT_NOT_ALLOWED = "NIC_NAME_FORMAT_NOT_ALLOWED";
 
@@ -128,5 +125,8 @@ public class VendorSoftwareProductErrorCodes {
   public static final String UPDATE_IMAGE_NOT_ALLOWED = "UPDATE_IMAGE_NOT_ALLOWED";
 
   public static final String INVALID_EXTENSION = "INVALID_EXTENSION";
+
+  public static final String VSP_ONBOARD_METHOD_UPDATE_NOT_ALLOWED =
+      "VSP_ONBOARD_METHOD_UPDATE_NOT_ALLOWED";
 
 }

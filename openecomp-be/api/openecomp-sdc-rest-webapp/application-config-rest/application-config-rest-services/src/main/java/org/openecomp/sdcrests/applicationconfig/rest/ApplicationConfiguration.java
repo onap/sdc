@@ -26,7 +26,6 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.openecomp.sdcrests.applicationconfiguration.types.ConfigurationDataDto;
 import org.springframework.validation.annotation.Validated;
 
-import java.io.InputStream;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -36,6 +35,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.InputStream;
 
 @Path("/v1.0/application-configuration")
 @Produces(MediaType.APPLICATION_JSON)

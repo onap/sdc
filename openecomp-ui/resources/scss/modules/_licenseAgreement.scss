@@ -2,10 +2,6 @@
 .license-agreement-list-editor {
 
   .list-editor-view-list {
-    .list-editor-item-view {
-      min-height: 110px;
-      height: 110px;
-    }
     .list-editor-item-view-field {
       .list-editor-item-view-field-tight {
         vertical-align: top;
@@ -17,46 +13,14 @@
           overflow-wrap: break-word;
         }
       }
-      .feature-groups-count, .contract-number, .type {
+      .feature-groups-count, .type {
         color: $light-green;
       }
       .feature-groups-count {
         @extend .heading-1;
         padding-top: 2px;
-        text-align: center;
       }
-      .contract-number {
-        margin-bottom: 8px;
-      }
-    }
-  }
-}
 
-.license-agreement-modal {
-  .modal-body {
-    padding: 0;
-  }
-  .license-agreement-form {
-    .no-items-msg {
-      margin-top: 55px;
-      color: $dark-gray;
-    }
-    .tab-content {
-      padding: 50px;
-      .list-editor-item-view-content {
-        white-space: nowrap;
-        overflow: hidden;
-        > div {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          &:not(:last-of-type) {
-            margin-right: 24px;
-          }
-        }
-      }
-    }
-    .validation-buttons {
-      padding: 20px 50px;
     }
   }
 }

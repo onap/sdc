@@ -16,16 +16,14 @@
 
 import mockRest from 'test-utils/MockRest.js';
 import {storeCreator} from 'sdc-app/AppStore.js';
-import SoftwareProductComponentsMonitoringConstants from 'sdc-app/onboarding/softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringConstants.js';
 import SoftwareProductComponentsMonitoringActionHelper from 'sdc-app/onboarding/softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringActionHelper.js';
 import {fileTypes} from 'sdc-app/onboarding/softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringConstants.js';
-
+import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 import {VSPComponentsMonitoringRestFactory, trap, poll, ves} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsMonitoringFactories.js';
-import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
 
 const softwareProductId = '123';
 const componentId = '123';
-const version = VersionControllerUtilsFactory.build().version;
+const version = VersionFactory.build();
 
 describe('Software Product Components Monitoring Module Tests', function () {
 
@@ -132,7 +130,7 @@ describe('Software Product Components Monitoring Module Tests', function () {
 			version,
 			componentId,
 			type: fileTypes.SNMP_TRAP
-		}).then((dispatch) => {
+		}).then(() => {
 			var {softwareProduct: {softwareProductComponents: {monitoring}}} = store.getState();
 			expect(monitoring[trap]).toEqual(undefined);
 			done();

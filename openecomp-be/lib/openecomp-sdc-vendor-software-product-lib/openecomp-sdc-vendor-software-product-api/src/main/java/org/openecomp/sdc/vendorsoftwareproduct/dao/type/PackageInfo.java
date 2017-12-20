@@ -21,7 +21,6 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
 import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -38,8 +37,7 @@ public class PackageInfo {
   private String vspId;
 
   @PartitionKey(value = 1)
-  @Frozen
-  private Version version;
+  private String version;
 
   @Column(name = "display_name")
   private String displayName;
@@ -75,7 +73,7 @@ public class PackageInfo {
 
   public PackageInfo(String packageId, Version version) {
     this.vspId = packageId;
-    this.version = version;
+    this.version = version.getName();
   }
 
   public String getDisplayName() {
@@ -94,11 +92,11 @@ public class PackageInfo {
     this.vspDescription = vspDescription;
   }
 
-  public Version getVersion() {
+  public String getVersion() {
     return version;
   }
 
-  public void setVersion(Version version) {
+  public void setVersion(String version) {
     this.version = version;
   }
 

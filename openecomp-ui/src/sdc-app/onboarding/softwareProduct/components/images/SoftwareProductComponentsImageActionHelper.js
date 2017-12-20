@@ -87,7 +87,7 @@ const SoftwareProductComponentImagesActionHelper = {
 		return fetchImage({softwareProductId, componentId, imageId, version});
 	},
 
-	openEditImageEditor(dispatch, {image, softwareProductId, componentId, version, isReadOnlyMode, modalClassName}) {
+	openEditImageEditor(dispatch, {image, softwareProductId, componentId, version, isReadOnlyMode}) {
 		return SoftwareProductComponentImagesActionHelper.loadImageData({softwareProductId, componentId, imageId: image.id, version}).then(({data}) => {
 			SoftwareProductComponentImagesActionHelper.loadImageQuestionnaire(dispatch, {
 				softwareProductId,
@@ -100,7 +100,6 @@ const SoftwareProductComponentImagesActionHelper = {
 					componentId,
 					version,
 					isReadOnlyMode,
-					modalClassName,
 					image,
 					data
 				});
@@ -110,12 +109,13 @@ const SoftwareProductComponentImagesActionHelper = {
 
 	openImageEditor(dispatch, {image = {}, data = {}, softwareProductId, componentId, version, isReadOnlyMode}) {
 
-		let title = (image && image.id) ?  i18n('Edit Image') : i18n('Create New Image');
-		let className = (image && image.id) ? 'image-edit-editor-model' : 'image-new-editor-modal';
+		let {id} = image;
+		let title = id ?  i18n('Edit Image') : i18n('Create New Image');
+		let className = id ? 'image-modal-edit' : 'image-modal-new';
 
 		dispatch({
 			type: actionTypes.ImageEditor.OPEN,
-			image: {...data, id: image.id}
+			image: {...data, id}
 		});
 
 		dispatch({
@@ -123,9 +123,11 @@ const SoftwareProductComponentImagesActionHelper = {
 			data: {
 				modalComponentName: modalContentMapper.SOFTWARE_PRODUCT_COMPONENT_IMAGE_EDITOR,
 				title: title,
-				modalComponentProps: {softwareProductId, componentId, version, isReadOnlyMode, dialogClassName:className}
+				modalClassName: className,
+				modalComponentProps: {softwareProductId, componentId, version, isReadOnlyMode}
 			}
 		});
+
 	},
 
 	closeImageEditor(dispatch) {
@@ -137,6 +139,7 @@ const SoftwareProductComponentImagesActionHelper = {
 		dispatch({
 			type: actionTypes.ImageEditor.CLOSE
 		});
+
 	},
 
 	loadImageQuestionnaire(dispatch, {softwareProductId, componentId, imageId, version}) {
@@ -166,4 +169,5 @@ const SoftwareProductComponentImagesActionHelper = {
 		}
 	}
 };
+
 export default SoftwareProductComponentImagesActionHelper;

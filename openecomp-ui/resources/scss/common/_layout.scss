@@ -27,3 +27,9 @@
     text-transform: uppercase;
   }
 }
+.page-title {
+  @extend .heading-1;
+  @extend .text-uppercase !optional;
+  margin-bottom: 20px;
+  color: $blue;
+}

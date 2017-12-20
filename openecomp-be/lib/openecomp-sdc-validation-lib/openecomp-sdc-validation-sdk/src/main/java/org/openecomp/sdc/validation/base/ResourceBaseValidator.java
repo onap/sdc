@@ -4,7 +4,9 @@ import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
+import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
@@ -12,15 +14,13 @@ import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.Validator;
-import org.openecomp.core.validation.types.GlobalValidationContext;
-import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.validation.type.ConfigConstants;
 import org.openecomp.sdc.validation.util.ValidationUtil;
 
@@ -54,7 +54,7 @@ public class ResourceBaseValidator implements Validator {
   public void validate(GlobalValidationContext globalContext) {
     ManifestContent manifestContent;
     try {
-      manifestContent = ValidationUtil.checkValidationPreCondition(globalContext);
+      manifestContent = ValidationUtil.validateManifest(globalContext);
     } catch (Exception exception) {
       logger.debug("",exception);
       return;

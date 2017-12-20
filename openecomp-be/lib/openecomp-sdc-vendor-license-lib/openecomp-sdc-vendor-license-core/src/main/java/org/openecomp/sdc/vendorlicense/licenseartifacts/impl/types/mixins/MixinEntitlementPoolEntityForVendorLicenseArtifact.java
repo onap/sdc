@@ -62,11 +62,17 @@ public abstract class MixinEntitlementPoolEntityForVendorLicenseArtifact {
   @JsonProperty(value = "version")
   abstract String getVersionForArtifact();
 
-  @JsonProperty(value = "start-date")
+  @JsonIgnore
   abstract String getStartDate();
 
-  @JsonProperty(value = "expiry-date")
+  @JsonIgnore
   abstract String getExpiryDate();
+
+  @JsonProperty(value = "start-date")
+  abstract String getIsoFormatStartDate();
+
+  @JsonProperty(value = "expiry-date")
+  abstract String getIsoFormatExpiryDate();
 
   @JsonIgnore
   abstract String getVendorLicenseModelId();

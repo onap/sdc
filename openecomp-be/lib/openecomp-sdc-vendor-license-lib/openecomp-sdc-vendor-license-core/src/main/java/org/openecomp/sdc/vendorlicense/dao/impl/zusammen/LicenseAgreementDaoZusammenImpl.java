@@ -29,18 +29,20 @@ import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
-import org.openecomp.core.zusammen.api.ZusammenUtil;
+import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao;
-import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
+import org.openecomp.sdc.vendorlicense.dao.impl.zusammen.convertor.ElementToLicenseAgreementConvertor;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseTerm;
-import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.types.ElementPropertyName;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 
 public class LicenseAgreementDaoZusammenImpl implements LicenseAgreementDao {
@@ -61,16 +63,17 @@ public class LicenseAgreementDaoZusammenImpl implements LicenseAgreementDao {
     ZusammenElement licenseAgreementElement =
         buildLicenseAgreementElement(licenseAgreement, Action.CREATE);
     ZusammenElement licenseAgreementsElement =
-        VlmZusammenUtil.buildStructuralElement(StructureElement.LicenseAgreements, null);
+        buildStructuralElement(ElementType.LicenseAgreements, Action.IGNORE);
     licenseAgreementsElement.addSubElement(licenseAgreementElement);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(licenseAgreement.getVendorLicenseModelId());
-    Optional<Element> savedElement = zusammenAdaptor.saveElement(context, new ElementContext(itemId,
-            VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
-        licenseAgreementsElement, "Create license agreement");
-    savedElement.ifPresent(element -> licenseAgreement
-        .setId(element.getSubElements().iterator().next().getElementId().getValue()));
+    SessionContext context = createSessionContext();
+    Element licenseAgreementsSavedElement = zusammenAdaptor.saveElement(context,
+        new ElementContext(licenseAgreement.getVendorLicenseModelId(),
+            licenseAgreement.getVersion().getId()), licenseAgreementsElement,
+        "Create license agreement");
+    licenseAgreement
+        .setId(licenseAgreementsSavedElement.getSubElements().iterator().next().getElementId()
+            .getValue());
   }
 
   @Override
@@ -78,38 +81,36 @@ public class LicenseAgreementDaoZusammenImpl implements LicenseAgreementDao {
     ZusammenElement licenseAgreementElement =
         buildLicenseAgreementElement(licenseAgreement, Action.UPDATE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(licenseAgreement.getVendorLicenseModelId());
-    zusammenAdaptor.saveElement(context, new ElementContext(itemId,
-            VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
-        licenseAgreementElement,
+    SessionContext context = createSessionContext();
+    zusammenAdaptor.saveElement(context,
+        new ElementContext(licenseAgreement.getVendorLicenseModelId(),
+            licenseAgreement.getVersion().getId()), licenseAgreementElement,
         String.format("Update license agreement with id %s", licenseAgreement.getId()));
   }
 
   @Override
   public LicenseAgreementEntity get(LicenseAgreementEntity licenseAgreement) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(licenseAgreement.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VlmZusammenUtil.getVersionTag(licenseAgreement.getVersion()));
-
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(licenseAgreement.getVendorLicenseModelId(),
+        licenseAgreement.getVersion().getId());
+    ElementToLicenseAgreementConvertor convertor = new ElementToLicenseAgreementConvertor();
     return zusammenAdaptor.getElementInfo(context, elementContext, new Id(licenseAgreement.getId()))
-        .map(elementInfo -> mapElementInfoToLicenseAgreement(
-            licenseAgreement.getVendorLicenseModelId(), licenseAgreement.getVersion(), elementInfo))
+        .map(elementInfo -> {
+          LicenseAgreementEntity entity = convertor.convert(elementInfo);
+          entity.setVendorLicenseModelId(licenseAgreement.getVendorLicenseModelId());
+          entity.setVersion(licenseAgreement.getVersion());
+          return entity;
+        })
         .orElse(null);
   }
 
   @Override
   public void delete(LicenseAgreementEntity licenseAgreement) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    ZusammenElement zusammenElement = new ZusammenElement();
-    zusammenElement.setAction(Action.DELETE);
-    zusammenElement.setElementId(new Id(licenseAgreement.getId()));
+    ZusammenElement zusammenElement = buildElement(new Id(licenseAgreement.getId()), Action.DELETE);
 
-    Id itemId = new Id(licenseAgreement.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(licenseAgreement.getVendorLicenseModelId(),
+        licenseAgreement.getVersion().getId());
     zusammenAdaptor.saveElement(context, elementContext, zusammenElement,
         "delete license agreement. id:" + licenseAgreement.getId() + ".");
   }
@@ -117,30 +118,30 @@ public class LicenseAgreementDaoZusammenImpl implements LicenseAgreementDao {
 
   @Override
   public Collection<LicenseAgreementEntity> list(LicenseAgreementEntity licenseAgreement) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(licenseAgreement.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VlmZusammenUtil.getVersionTag(licenseAgreement.getVersion()));
-
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(licenseAgreement.getVendorLicenseModelId(),
+        licenseAgreement.getVersion().getId());
+    ElementToLicenseAgreementConvertor convertor = new ElementToLicenseAgreementConvertor();
     return zusammenAdaptor
         .listElementsByName(context, elementContext, null,
-            StructureElement.LicenseAgreements.name())
-        .stream().map(elementInfo -> mapElementInfoToLicenseAgreement(
-            licenseAgreement.getVendorLicenseModelId(), licenseAgreement.getVersion(), elementInfo))
+            ElementType.LicenseAgreements.name())
+        .stream().map(elementInfo -> {
+          LicenseAgreementEntity entity = convertor.convert(elementInfo);
+          entity.setVendorLicenseModelId(licenseAgreement.getVendorLicenseModelId());
+          entity.setVersion(licenseAgreement.getVersion());
+          return entity;
+        })
         .collect(Collectors.toList());
   }
 
   @Override
   public long count(LicenseAgreementEntity licenseAgreement) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(licenseAgreement.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VlmZusammenUtil.getVersionTag(licenseAgreement.getVersion()));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(licenseAgreement.getVendorLicenseModelId(),
+        licenseAgreement.getVersion().getId());
 
     return zusammenAdaptor.listElementsByName(context, elementContext, null,
-        StructureElement.LicenseAgreements.name())
+        ElementType.LicenseAgreements.name())
         .size();
   }
 
@@ -151,10 +152,9 @@ public class LicenseAgreementDaoZusammenImpl implements LicenseAgreementDao {
 
   @Override
   public void removeFeatureGroup(LicenseAgreementEntity licenseAgreement, String featureGroupId) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(licenseAgreement.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(licenseAgreement.getVendorLicenseModelId(),
+        licenseAgreement.getVersion().getId());
 
     Optional<ElementInfo> elementInfo = zusammenAdaptor.getElementInfo(context,
         elementContext, new Id(licenseAgreement.getId()));
@@ -175,23 +175,22 @@ public class LicenseAgreementDaoZusammenImpl implements LicenseAgreementDao {
     ZusammenElement licenseAgreementElement =
         buildLicenseAgreementElement(licenseAgreement, Action.UPDATE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(licenseAgreement.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
-
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(licenseAgreement.getVendorLicenseModelId(),
+        licenseAgreement.getVersion().getId());
+    ElementToLicenseAgreementConvertor convertor = new ElementToLicenseAgreementConvertor();
     Optional<ElementInfo> elementInfo =
         zusammenAdaptor.getElementInfo(context, elementContext, new Id(licenseAgreement.getId()));
     if (elementInfo.isPresent()) {
       LicenseAgreementEntity currentLicenseAgreement =
-          mapElementInfoToLicenseAgreement(licenseAgreement.getId(), licenseAgreement.getVersion(),
-              elementInfo.get());
-
-      if (! (removedFeatureGroupIds == null) ) {
+          convertor.convert(elementInfo.get());
+      currentLicenseAgreement.setVendorLicenseModelId(licenseAgreement.getVendorLicenseModelId());
+      currentLicenseAgreement.setVersion(licenseAgreement.getVersion());
+      if (!(removedFeatureGroupIds == null)) {
         currentLicenseAgreement.getFeatureGroupIds().removeAll(removedFeatureGroupIds);
       }
 
-      if (! (addedFeatureGroupIds == null)) {
+      if (!(addedFeatureGroupIds == null)) {
         currentLicenseAgreement.getFeatureGroupIds().addAll(addedFeatureGroupIds);
       }
       licenseAgreementElement.setRelations(currentLicenseAgreement.getFeatureGroupIds().stream()
@@ -203,41 +202,15 @@ public class LicenseAgreementDaoZusammenImpl implements LicenseAgreementDao {
     }
   }
 
-  private LicenseAgreementEntity mapElementInfoToLicenseAgreement(String vlmId, Version version,
-                                                                  ElementInfo elementInfo) {
-    LicenseAgreementEntity licenseAgreement =
-        new LicenseAgreementEntity(vlmId, version, elementInfo.getId().getValue());
-    licenseAgreement.setName(elementInfo.getInfo().getName());
-    licenseAgreement.setDescription(elementInfo.getInfo().getDescription());
-
-    licenseAgreement
-        .setLicenseTerm(getCoiceOrOther(elementInfo.getInfo().getProperty("licenseTerm")));
-    licenseAgreement.setRequirementsAndConstrains(
-        elementInfo.getInfo().getProperty("requirementsAndConstrains"));
-    if (elementInfo.getRelations() != null && elementInfo.getRelations().size() > 0) {
-      licenseAgreement.setFeatureGroupIds(elementInfo.getRelations().stream()
-          .map(relation -> relation.getEdge2().getElementId().getValue())
-          .collect(Collectors.toSet()));
-    }
-    return licenseAgreement;
-  }
-
-  private ChoiceOrOther<LicenseTerm> getCoiceOrOther(Map licenseTerm) {
-    return new ChoiceOrOther(LicenseTerm.valueOf((String) licenseTerm.get("choice")),
-        (String) licenseTerm.get("other"));
-  }
-
-
   private ZusammenElement buildLicenseAgreementElement(LicenseAgreementEntity licenseAgreement,
                                                        Action action) {
-    ZusammenElement licenseAgreementElement = new ZusammenElement();
-    licenseAgreementElement.setAction(action);
-    if (licenseAgreement.getId() != null) {
-      licenseAgreementElement.setElementId(new Id(licenseAgreement.getId()));
-    }
+    ZusammenElement licenseAgreementElement =
+        buildElement(licenseAgreement.getId() == null ? null : new Id(licenseAgreement.getId()),
+            action);
     Info info = new Info();
     info.setName(licenseAgreement.getName());
     info.setDescription(licenseAgreement.getDescription());
+    info.addProperty(ElementPropertyName.elementType.name(), ElementType.LicenseAgreement);
     info.addProperty("licenseTerm", licenseAgreement.getLicenseTerm());
     info.addProperty("requirementsAndConstrains", licenseAgreement.getRequirementsAndConstrains());
     licenseAgreementElement.setInfo(info);

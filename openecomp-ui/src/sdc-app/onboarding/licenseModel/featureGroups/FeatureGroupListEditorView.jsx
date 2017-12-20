@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Modal from 'nfvo-components/modal/Modal.jsx';
@@ -24,18 +25,18 @@ import FeatureGroupEditor from './FeatureGroupEditor.js';
 
 class FeatureGroupListEditorView extends React.Component {
 	static propTypes = {
-		vendorName: React.PropTypes.string,
-		licenseModelId: React.PropTypes.string.isRequired,
-		featureGroupsModal: React.PropTypes.shape({
-			show: React.PropTypes.bool,
-			editMode: React.PropTypes.bool
+		vendorName: PropTypes.string,
+		licenseModelId: PropTypes.string.isRequired,
+		featureGroupsModal: PropTypes.shape({
+			show: PropTypes.bool,
+			editMode: PropTypes.bool
 		}),
-		isReadOnlyMode: React.PropTypes.bool.isRequired,
-		onAddFeatureGroupClick: React.PropTypes.func,
-		onEditFeatureGroupClick: React.PropTypes.func,
-		onDeleteFeatureGroupClick: React.PropTypes.func,
-		onCancelFeatureGroupsEditor: React.PropTypes.func,
-		featureGroupsList: React.PropTypes.array
+		isReadOnlyMode: PropTypes.bool.isRequired,
+		onAddFeatureGroupClick: PropTypes.func,
+		onEditFeatureGroupClick: PropTypes.func,
+		onDeleteFeatureGroupClick: PropTypes.func,
+		onCancelFeatureGroupsEditor: PropTypes.func,
+		featureGroupsList: PropTypes.array
 	};
 
 	static defaultProps = {
@@ -54,7 +55,7 @@ class FeatureGroupListEditorView extends React.Component {
 		let {licenseModelId, featureGroupsModal, isReadOnlyMode, onAddFeatureGroupClick, version} = this.props;
 		const {localFilter} = this.state;
 		return (
-			<div className='feature-groups-list-editor'>
+			<div className='license-model-list-editor feature-groups-list-editor'>
 				<ListEditorView
 					title={i18n('Feature Groups')}
 					plusButtonTitle={i18n('Add Feature Group')}
@@ -155,7 +156,7 @@ export default FeatureGroupListEditorView;
 
 export function generateConfirmationMsg(featureGroupToDelete) {
 	let name = featureGroupToDelete ? featureGroupToDelete.name : '';
-	let msg = i18n(`Are you sure you want to delete "${name}"?`);
+	let msg = i18n('Are you sure you want to delete "{name}"?', {name: name});
 	let subMsg = featureGroupToDelete.referencingLicenseAgreements
 	&& featureGroupToDelete.referencingLicenseAgreements.length > 0 ?
 		i18n('This feature group is associated with one ore more license agreements') :

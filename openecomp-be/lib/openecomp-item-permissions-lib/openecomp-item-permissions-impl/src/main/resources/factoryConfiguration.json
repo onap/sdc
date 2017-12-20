@@ -1,0 +1,3 @@
+{
+   "org.openecomp.sdc.itempermissions.PermissionsRulesFactory": "org.openecomp.sdc.itempermissions.impl.PermissionsRulesFactoryImpl"
+}

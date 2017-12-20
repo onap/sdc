@@ -1,0 +1,86 @@
+.manage-revisions-modal {
+  .modal-dialog {
+    width: 700px;
+  }
+  .modal-content {
+    .modal-body {
+      .validation-form-content {
+        padding-top: 30px;
+      }
+      //.selected {
+      //  .selectable {
+      //    border-color: $light-blue;
+      //  }
+      //  .selectable:hover{
+      //    border-color: hotpink;
+      //  }
+      //}
+
+      .revision-list-item {
+        &.selected {
+          .selectable, .selectable:hover {
+            border-width: 2px;
+            border-color: $light-blue;
+          }
+        }
+        .selectable:hover{
+          border-color: $gray;
+        }
+        .selectable:active {
+          border-color: $light-blue;
+        }
+      }
+
+      .list-editor-view-list-scroller {
+        margin-top : 0px;
+      }
+
+      .list-editor-view-header {
+        border-bottom: none;
+        .list-editor-view-title {
+          @extend .heading-5;
+          text-transform: none;
+          color: $blue;
+        }
+      }
+
+      .list-editor-item-view-content {
+        background-color: $background-gray;
+      }
+      .revision-list-item-fields {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        .revision-user {
+          flex-basis: 50%;
+          fill: transparent;
+          stroke: $blue;
+          .svg-icon-label {
+            margin-left: 13px;
+          }
+        }
+
+        .revision-date {
+          flex-basis: 50%;
+          text-align: right;
+          @extend .body-3;
+          color: $gray;
+          .revision-time {
+            margin-left: 5px;
+          }
+        }
+
+        .revision-message {
+          flex-basis: 100%;
+          margin-top: 5px;
+          @extend .body-2;
+          .more-less {
+            @extend .body-3;
+            color: $blue;
+            margin-left: 5px;
+          }
+        }
+      }
+    }
+  }
+}

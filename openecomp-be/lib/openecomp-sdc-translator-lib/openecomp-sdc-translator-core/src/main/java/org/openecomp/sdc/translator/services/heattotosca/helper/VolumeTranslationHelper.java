@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.helper;
 
-import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
@@ -44,6 +42,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE;
 
 public class VolumeTranslationHelper {
   private final Logger logger;

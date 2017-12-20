@@ -16,7 +16,6 @@
 import {connect} from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import SoftwareProductComponentProcessesActionHelper from './SoftwareProductComponentProcessesActionHelper.js';
 
 import SoftwareProductComponentsProcessesListView from './SoftwareProductComponentsProcessesListView.jsx';
@@ -26,28 +25,26 @@ export const mapStateToProps = ({softwareProduct}) => {
 	let {softwareProductEditor: {data:currentSoftwareProduct = {},  isValidityData = true}, softwareProductComponents: {componentProcesses = {}}} = softwareProduct;
 	let{processesList = [], processesEditor = {}} = componentProcesses;
 	let {data} = processesEditor;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
 
 	return {
 		currentSoftwareProduct,
 		isValidityData,
 		processesList,
 		isDisplayModal: Boolean(data),
-		isModalInEditMode: Boolean(data && data.id),
-		isReadOnlyMode
+		isModalInEditMode: Boolean(data && data.id)
 	};
 
 };
 
-const mapActionsToProps = (dispatch, {componentId, softwareProductId}) => {
+const mapActionsToProps = (dispatch, {componentId, softwareProductId, version}) => {
 
 	return {
 		onAddProcess: () => SoftwareProductComponentProcessesActionHelper.openEditor(dispatch),
-		onEditProcessClick: (process) => SoftwareProductComponentProcessesActionHelper.openEditor(dispatch, process),
-		onDeleteProcessClick: (process, version) => dispatch({
+		onEditProcess: (process) => SoftwareProductComponentProcessesActionHelper.openEditor(dispatch, process),
+		onDeleteProcess: (process) => dispatch({
 			type: modalActionTypes.GLOBAL_MODAL_WARNING,
 			data:{
-				msg: i18n(`Are you sure you want to delete "${process.name}"?`),
+				msg: i18n('Are you sure you want to delete "{name}"?', {name: process.name}),
 				confirmationButtonText: i18n('Delete'),
 				title: i18n('Delete'),
 				onConfirmed: ()=> SoftwareProductComponentProcessesActionHelper.deleteProcess(dispatch,

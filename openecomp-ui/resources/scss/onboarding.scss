@@ -130,6 +130,16 @@ div[data-reactroot].tooltip {
       border-top-color: $dark-gray !important;
     }
   }
+  &.right {
+    .tooltip-arrow {
+      border-right-color: $dark-gray !important;
+    }
+  }
+  &.left {
+    .tooltip-arrow {
+      border-left-color: $dark-gray !important;
+    }
+  }
   .tooltip-inner {
     @extend .body-1;
     max-width: 100%;
@@ -147,6 +157,18 @@ div[data-reactroot].tooltip {
     .message-block {
       text-align: left;
       padding: 3px 12px;
+    }
+  }
+  // manage permisions modal
+  &.manage-permissions-owner-tooltip {
+    .tooltip-inner {
+      width: 400px;
+    }
+  }
+  // WS/Catalog Tile
+  &.tile-super-info {
+    .tooltip-inner {
+      font-size: $body-font-3;
     }
   }
   //dependency table error tooltip

@@ -32,7 +32,7 @@ import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import java.util.Optional;
 
 public class UniqueValueUtil {
-  public static final String UNIQUE_VALUE_VIOLATION = "UNIQUE_VALUE_VIOLATION";
+  private static final String UNIQUE_VALUE_VIOLATION = "UNIQUE_VALUE_VIOLATION";
   private static final String UNIQUE_VALUE_VIOLATION_MSG = "%s with the value '%s' already exists.";
 
   private static final UniqueValueDao uniqueValueDao =
@@ -46,9 +46,7 @@ public class UniqueValueUtil {
    * @param uniqueCombination the unique combination
    */
   public static void createUniqueValue(String type, String... uniqueCombination) {
-
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
 
     Optional<String> value = formatValue(uniqueCombination);
     if (!value.isPresent()) {
@@ -57,7 +55,7 @@ public class UniqueValueUtil {
     validateUniqueValue(type, value.get(), uniqueCombination);
     uniqueValueDao.create(new UniqueValueEntity(type, value.get()));
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   /**
@@ -69,7 +67,7 @@ public class UniqueValueUtil {
   public static void deleteUniqueValue(String type, String... uniqueCombination) {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
 
     Optional<String> value = formatValue(uniqueCombination);
     if (!value.isPresent()) {
@@ -77,7 +75,7 @@ public class UniqueValueUtil {
     }
     uniqueValueDao.delete(new UniqueValueEntity(type, value.get()));
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   /**
@@ -92,17 +90,14 @@ public class UniqueValueUtil {
                                        String... uniqueContext) {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
 
-    boolean nonEqual = (newValue != null) && (oldValue != null)
-            && !newValue.toLowerCase().equals(oldValue.toLowerCase());
-
-    if (nonEqual || newValue == null || oldValue == null) {
+    if (newValue == null || oldValue == null || !newValue.equalsIgnoreCase(oldValue)) {
       createUniqueValue(type, CommonMethods.concat(uniqueContext, new String[]{newValue}));
       deleteUniqueValue(type, CommonMethods.concat(uniqueContext, new String[]{oldValue}));
     }
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   /**
@@ -112,7 +107,7 @@ public class UniqueValueUtil {
    * @param uniqueCombination the unique combination
    */
   public static void validateUniqueValue(String type, String... uniqueCombination) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
 
     Optional<String> value = formatValue(uniqueCombination);
     if (!value.isPresent()) {
@@ -120,11 +115,11 @@ public class UniqueValueUtil {
     }
     validateUniqueValue(type, value.get(), uniqueCombination);
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private static void validateUniqueValue(String type, String value, String... uniqueCombination) {
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
 
     if (uniqueValueDao.get(new UniqueValueEntity(type, value)) != null) {
       throw new CoreException(new ErrorCode.ErrorCodeBuilder()
@@ -134,13 +129,13 @@ public class UniqueValueUtil {
               uniqueCombination[uniqueCombination.length - 1])).build());
     }
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private static Optional<String> formatValue(String[] uniqueCombination) {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
 
     if (uniqueCombination == null || uniqueCombination.length == 0
         || uniqueCombination[uniqueCombination.length - 1] == null) {
@@ -150,7 +145,7 @@ public class UniqueValueUtil {
     uniqueCombination[uniqueCombination.length - 1] =
         uniqueCombination[uniqueCombination.length - 1].toLowerCase();
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
     return Optional.of(CommonMethods.arrayToSeparatedString(uniqueCombination, '_'));
   }
 }

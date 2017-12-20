@@ -20,7 +20,12 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.slf4j.MDC;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -58,7 +63,7 @@ public class LoggingFilter implements Filter {
     private static final HostAddressCache HOST_ADDRESS = new HostAddressCache();
     private static final String UNKNOWN = "UNKNOWN";
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(LoggingFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFilter.class);
 
     public void destroy() {
     }
@@ -80,7 +85,8 @@ public class LoggingFilter implements Filter {
 
             InetAddress host = HOST_ADDRESS.get();
 
-            String ipAddress, hostName;
+            String ipAddress;
+            String hostName;
             if (host == null) {
                 ipAddress = UNKNOWN;
                 hostName = UNKNOWN;

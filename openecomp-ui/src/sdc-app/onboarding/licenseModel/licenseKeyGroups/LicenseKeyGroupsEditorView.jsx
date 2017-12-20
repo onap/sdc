@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Validator from 'nfvo-utils/Validator.js';
 
@@ -36,26 +37,26 @@ import {DATE_FORMAT} from 'sdc-app/onboarding/OnboardingConstants.js';
 import LicenseKeyGroupsLimits from './LicenseKeyGroupsLimits.js';
 import {limitType, NEW_LIMIT_TEMP_ID} from '../limits/LimitEditorConstants.js';
 
- const LicenseKeyGroupPropType = React.PropTypes.shape({
-	id: React.PropTypes.string,
-	name: React.PropTypes.string,
-	description: React.PropTypes.string,
-	increments: React.PropTypes.string,
-	operationalScope: React.PropTypes.shape({
-		choices: React.PropTypes.array,
-		other: React.PropTypes.string
+ const LicenseKeyGroupPropType = PropTypes.shape({
+	id: PropTypes.string,
+	name: PropTypes.string,
+	description: PropTypes.string,
+	increments: PropTypes.string,
+	operationalScope: PropTypes.shape({
+		choices: PropTypes.array,
+		other: PropTypes.string
 	}),
-	type: React.PropTypes.string,
-	 thresholdUnits: React.PropTypes.string,
-	 thresholdValue: React.PropTypes.number,
-	 startDate: React.PropTypes.string,
-	 expiryDate: React.PropTypes.string
+	type: PropTypes.string,
+	 thresholdUnits: PropTypes.string,
+	 thresholdValue: PropTypes.number,
+	 startDate: PropTypes.string,
+	 expiryDate: PropTypes.string
 });
 
 const LicenseKeyGroupFormContent = ({data, onDataChanged, genericFieldInfo, validateName, validateStartDate, thresholdValueValidation}) => {
 	let {name, description, increments, operationalScope, type, thresholdUnits, thresholdValue, startDate, expiryDate} = data;
 	return (
-		<GridSection>
+		<GridSection hasLostColSet>
 			<GridItem colSpan={2}>
 				<Input
 					onChange={name => onDataChanged({name}, LKG_FORM_NAME, {name: validateName})}
@@ -67,7 +68,7 @@ const LicenseKeyGroupFormContent = ({data, onDataChanged, genericFieldInfo, vali
 					isRequired={true}
 					type='text'/>
 			</GridItem>
-			<GridItem colSpan={2}>
+			<GridItem colSpan={2} lastColInRow>
 				<InputOptions
 					onInputChange={()=>{}}
 					isMultiSelect={true}
@@ -95,7 +96,7 @@ const LicenseKeyGroupFormContent = ({data, onDataChanged, genericFieldInfo, vali
 					type='textarea'
 					overlayPos='bottom' />
 			</GridItem>
-			<GridItem colSpan={2}>
+			<GridItem colSpan={2} lastColInRow>
 				<Input
 					isRequired={true}
 					onChange={e => { const selectedIndex = e.target.selectedIndex;
@@ -108,6 +109,7 @@ const LicenseKeyGroupFormContent = ({data, onDataChanged, genericFieldInfo, vali
 					errorText={genericFieldInfo.type.errorText}
 					groupClassName='bootstrap-input-options'
 					className='input-options-select'
+					overlayPos='bottom'
 					type='select' >
 					{
 						licenseKeyGroupOptionsInputValues.TYPE.map(type =>
@@ -167,7 +169,7 @@ const LicenseKeyGroupFormContent = ({data, onDataChanged, genericFieldInfo, vali
 					errorText={genericFieldInfo.startDate.errorText}
 					selectsStart/>
 			</GridItem>
-			<GridItem>
+			<GridItem lastColInRow>
 				<Input
 					type='date'
 					label={i18n('Expiry Date')}
@@ -199,18 +201,18 @@ class LicenseKeyGroupsEditorView extends React.Component {
 	static propTypes = {
 		data: LicenseKeyGroupPropType,
 		previousData: LicenseKeyGroupPropType,
-		LKGNames: React.PropTypes.object,
-		isReadOnlyMode: React.PropTypes.bool,
-		onDataChanged: React.PropTypes.func.isRequired,
-		onSubmit: React.PropTypes.func.isRequired,
-		onCancel: React.PropTypes.func.isRequired
+		LKGNames: PropTypes.object,
+		isReadOnlyMode: PropTypes.bool,
+		onDataChanged: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired
 	};
 
 	static defaultProps = {
 		data: {}
 	};
 
-	componentDidUpdate(prevProps) {				
+	componentDidUpdate(prevProps) {
 		if (this.props.formReady && this.props.formReady !== prevProps.formReady) { // if form validation succeeded -> continue with submit
 			this.submit();
 		}
@@ -229,8 +231,8 @@ class LicenseKeyGroupsEditorView extends React.Component {
 		return (
 			<div className='license-keygroup-editor'>
 				<Tabs
-					type='menu' 
-					activeTab={selectedTab} 
+					type='menu'
+					activeTab={selectedTab}
 					onTabClick={(tabIndex)=>{
 						if (tabIndex === tabIds.ADD_LIMIT_BUTTON)  {
 							this.onAddLimit();
@@ -239,7 +241,7 @@ class LicenseKeyGroupsEditorView extends React.Component {
 							onCloseLimitEditor();
 							this.setState({selectedLimit: ''});
 						}
-					}} 
+					}}
 					invalidTabs={[]}>
 					<Tab tabId={tabIds.GENERAL} data-test-id='general-tab' title={i18n('General')}>
 						{ genericFieldInfo &&
@@ -292,10 +294,10 @@ class LicenseKeyGroupsEditorView extends React.Component {
 								{i18n('Add Limit')}
 							</Button>
 						:
-						<div></div> // Render empty div to not break tabs
+							<div></div> // Render empty div to not break tabs
 					}
 				</Tabs>
-				
+
 				<GridSection className='license-model-modal-buttons license-key-group-editor-buttons'>
 					{!this.state.selectedLimit &&
 						<Button btnType='default' disabled={!this.props.isFormValid || isReadOnlyMode} onClick={() => this.submit()} type='reset'>

@@ -20,6 +20,18 @@
 
 package org.openecomp.sdc.action.util;
 
+import org.openecomp.sdc.action.logging.CategoryLogLevel;
+import org.openecomp.sdc.action.logging.StatusCode;
+import org.openecomp.sdc.action.types.ActionLogResponseCode;
+import org.openecomp.sdc.action.types.ActionSubOperation;
+import org.slf4j.MDC;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.TimeZone;
+
 import static org.openecomp.sdc.action.ActionConstants.BEGIN_TIMESTAMP;
 import static org.openecomp.sdc.action.ActionConstants.ELAPSED_TIME;
 import static org.openecomp.sdc.action.ActionConstants.END_TIMESTAMP;
@@ -103,18 +115,6 @@ import static org.openecomp.sdc.action.types.ActionLogResponseCode.UNDO_CHECKOUT
 import static org.openecomp.sdc.action.types.ActionLogResponseCode.UPDATE_NOT_ALLOWED;
 import static org.openecomp.sdc.action.types.ActionLogResponseCode.UPDATE_ON_LOCKED_ENTITY;
 import static org.openecomp.sdc.action.types.ActionLogResponseCode.UPDATE_ON_UNLOCKED_ENTITY;
-
-import org.openecomp.sdc.action.logging.CategoryLogLevel;
-import org.openecomp.sdc.action.logging.StatusCode;
-import org.openecomp.sdc.action.types.ActionLogResponseCode;
-import org.openecomp.sdc.action.types.ActionSubOperation;
-import org.slf4j.MDC;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.TimeZone;
 
 public class ActionUtil {
 

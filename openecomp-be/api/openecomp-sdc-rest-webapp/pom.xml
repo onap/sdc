@@ -22,8 +22,12 @@
 		<module>/validation-rest</module>
 		<module>/action-library-rest</module>
 		<module>/application-config-rest</module>
-		<module>/activity-log-rest</module>
 		<module>/healthcheck-rest</module>
+		<module>conflict-rest</module>
+		<module>item-permissions-rest</module>
+		<module>item-rest</module>
+		<module>notifications-fe</module>
+		<module>notifications-rest</module>
 	</modules>
 
 </project>

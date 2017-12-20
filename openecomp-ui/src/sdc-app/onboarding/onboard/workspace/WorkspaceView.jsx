@@ -15,26 +15,13 @@
  */
 import React from 'react';
 import DetailsCatalogView from '../DetailsCatalogView.jsx';
-import {statusEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import {tabsMapping} from 'sdc-app/onboarding/onboard/OnboardConstants.js';
 
 const WorkspaceView = (props) => {
 	let {
-		licenseModelList, softwareProductList, onAddLicenseModelClick,
+		licenseModelList, softwareProductList, onAddLicenseModelClick, users,
 		onAddSoftwareProductClick, onSelectLicenseModel, onSelectSoftwareProduct, searchValue, onMigrate
 	} = props;
-
-	let {getCheckOutStatusKindByUserID} = VersionControllerUtils;
-	let unfinalizedLicenseModelList = licenseModelList.filter(vlm => {
-		let {status} = getCheckOutStatusKindByUserID(vlm.status, vlm.lockingUser);
-		return status !== statusEnum.SUBMIT_STATUS && status !== statusEnum.LOCK_STATUS;
-	});
-	let unfinalizedSoftwareProductList = softwareProductList.filter(vsp =>{
-		let {status} = getCheckOutStatusKindByUserID(vsp.status, vsp.lockingUser);
-		return status !== statusEnum.SUBMIT_STATUS && status !== statusEnum.LOCK_STATUS;
-	});
 
 	return (
 		<div className='catalog-wrapper workspace-view'>
@@ -42,16 +29,17 @@ const WorkspaceView = (props) => {
 				{i18n('WORKSPACE')}
 			</div>
 			<DetailsCatalogView
-				VLMList={unfinalizedLicenseModelList}
-				VSPList={unfinalizedSoftwareProductList}
+				VLMList={licenseModelList}
+				VSPList={softwareProductList}
+				users={users}
 				onAddVLM={onAddLicenseModelClick}
 				onAddVSP={onAddSoftwareProductClick}
 				onSelectVLM={onSelectLicenseModel}
 				onSelectVSP={onSelectSoftwareProduct}
 				onMigrate={onMigrate}
-				filter={searchValue}
-				tileType={tabsMapping.WORKSPACE} />
-		</div>);
+				filter={searchValue} />
+		</div>
+	);
 };
 
 export default WorkspaceView;

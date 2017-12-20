@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
@@ -28,26 +29,26 @@ const mapActionsToProps = (dispatch, {softwareProductId, componentId, version}) 
 		onDeleteCompute: ({id, name}) => dispatch({
 			type: modalActionTypes.GLOBAL_MODAL_WARNING,
 			data:{
-				msg: i18n(`Are you sure you want to delete "${name}"?`),
+				msg: i18n('Are you sure you want to delete "{name}"?', {name: name}),
 				onConfirmed: () => ComputeFlavorActionHelper.deleteCompute(dispatch, {softwareProductId, componentId, computeId: id, version})
 			}
 		})
 	};
 };
 
-const computeItemPropType = React.PropTypes.shape({
-	id: React.PropTypes.string,
-	name: React.PropTypes.string,
-	description: React.PropTypes.string
+const computeItemPropType = PropTypes.shape({
+	id: PropTypes.string,
+	name: PropTypes.string,
+	description: PropTypes.string
 });
 
 class ComputeFlavors extends React.Component {
 
 	static propTypes = {
-		isReadOnlyMode: React.PropTypes.bool,
-		isManual: React.PropTypes.bool,
-		onAddComputeClick: React.PropTypes.func,
-		computeFlavorsList: React.PropTypes.arrayOf(computeItemPropType)
+		isReadOnlyMode: PropTypes.bool,
+		isManual: PropTypes.bool,
+		onAddComputeClick: PropTypes.func,
+		computeFlavorsList: PropTypes.arrayOf(computeItemPropType)
 	};
 
 	state = {

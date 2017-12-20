@@ -63,6 +63,7 @@
             },
             "storageReplicationSize": {
               "type": "number",
+			  "minimum": 0,
               "maximum": 100,
               "exclusiveMaximum": true
             },

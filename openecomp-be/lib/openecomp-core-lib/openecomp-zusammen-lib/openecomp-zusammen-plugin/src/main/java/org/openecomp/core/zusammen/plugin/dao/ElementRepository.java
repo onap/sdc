@@ -1,15 +1,18 @@
 package org.openecomp.core.zusammen.plugin.dao;
 
+import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.plugin.statestore.cassandra.dao.types.ElementEntityContext;
 import org.openecomp.core.zusammen.plugin.dao.types.ElementEntity;
 
-import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ElementRepository {
 
-  Collection<ElementEntity> list(SessionContext context, ElementEntityContext elementContext);
+  Map<Id,Id> listIds(SessionContext context, ElementEntityContext elementContext);
+
+/*  void createVersionData(SessionContext context, ElementEntityContext elementContext, VersionDataElement element);*/
 
   void create(SessionContext context, ElementEntityContext elementContext, ElementEntity element);
 
@@ -20,8 +23,28 @@ public interface ElementRepository {
   Optional<ElementEntity> get(SessionContext context, ElementEntityContext elementContext,
                               ElementEntity element);
 
+  Optional<ElementEntity> getDescriptor(SessionContext context, ElementEntityContext elementContext,
+                                        ElementEntity element);
+
   void createNamespace(SessionContext context, ElementEntityContext elementContext,
                        ElementEntity element);
 
-  boolean checkHealth(SessionContext context);
+  Optional<Id> getHash(SessionContext context, ElementEntityContext elementEntityContext,
+               ElementEntity element);
+
+
+
+
+/*  Collection<SynchronizationStateEntity> listSynchronizationStates(SessionContext context,
+                                              ElementEntityContext elementContext);
+
+  void updateSynchronizationState(SessionContext context, ElementEntityContext elementContext,
+              SynchronizationStateEntity elementSyncState);
+
+  void markAsDirty(SessionContext context, ElementEntityContext elementContext,
+                   SynchronizationStateEntity elementSyncState);
+
+  Optional<SynchronizationStateEntity> getSynchronizationState(SessionContext context,
+                                           ElementEntityContext elementContext,
+                                           SynchronizationStateEntity elementSyncState);*/
 }

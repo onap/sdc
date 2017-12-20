@@ -3,13 +3,10 @@ package org.openecomp.sdc.validation.impl.validators;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.validation.ErrorMessageCode;
-import org.openecomp.sdc.common.utils.SdcCommon;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.validation.Validator;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
@@ -18,9 +15,12 @@ import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
+import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.util.ValidationUtil;
 
 import java.util.HashSet;
@@ -44,7 +44,7 @@ public class SharedResourceGuideLineValidator implements Validator {
   public void validate(GlobalValidationContext globalContext) {
     ManifestContent manifestContent;
     try {
-      manifestContent = ValidationUtil.checkValidationPreCondition(globalContext);
+      manifestContent = ValidationUtil.validateManifest(globalContext);
     } catch (Exception exception) {
       log.debug("",exception);
       return;

@@ -1,45 +1,14 @@
 package org.openecomp.sdc.enrichment.impl.external.artifact;
 
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.openecomp.core.enrichment.types.ArtifactCategory;
-import org.openecomp.core.model.dao.EnrichedServiceModelDao;
-import org.openecomp.core.model.types.ServiceArtifact;
-import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.enrichment.EnrichmentInfo;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessType;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.io.File;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.when;
-
 public class ProcessArtifactEnricherTest {
   /*@Mock
   ProcessDao processDaoMock;
   @Mock
   EnrichedServiceModelDao enrichedServiceModelDaoMock;
   @Mock
-  VendorSoftwareProductDao vendorSoftwareProductDaoMock;
-
+  ComponentDao componentDaoMock;
   @InjectMocks
   ProcessArtifactEnricher processArtifactEnricher;
-
 
   @BeforeMethod(alwaysRun = true)
   public void injectDoubles() {
@@ -65,11 +34,11 @@ public class ProcessArtifactEnricherTest {
     processEntity.setArtifactName("artifact_1kb.txt");
     processEntity.setArtifact(getMibByteBuffer("/mock/enrichProcess/artifact_1kb.txt"));
 
-    Collection<ComponentEntity> componentList = new ArrayList<ComponentEntity>();
+    Collection<ComponentEntity> componentList = new ArrayList<>();
     componentList.add(componentEntity);
-    when(vendorSoftwareProductDaoMock.listComponents(vspId, version)).thenReturn(componentList);
+    when(componentDaoMock.list(anyObject())).thenReturn(componentList);
 
-    Collection<ProcessEntity> list = new ArrayList<ProcessEntity>();
+    Collection<ProcessEntity> list = new ArrayList<>();
     list.add(processEntity);
     when(processDaoMock.list(entity)).thenReturn(list);
 
@@ -111,7 +80,7 @@ public class ProcessArtifactEnricherTest {
 
   private ByteBuffer getMibByteBuffer(String fileName) {
     byte[] mibBytes = FileUtils.readViaInputStream(this.getClass().getResource(fileName),
-            stream -> FileUtils.toByteArray(stream));
+        stream -> FileUtils.toByteArray(stream));
     return ByteBuffer.wrap(mibBytes);
   }*/
 }

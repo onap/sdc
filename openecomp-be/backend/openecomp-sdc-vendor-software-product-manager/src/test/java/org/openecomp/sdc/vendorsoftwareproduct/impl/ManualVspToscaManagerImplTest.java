@@ -1,57 +1,10 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.ALLOWED_FLAVORS_PROPERTY;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.IMAGES_PROPERTY;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_NODE_TEMPLATE_ID_SUFFIX;
-import static org.openecomp.sdc.tosca.services.ToscaConstants.BINDING_REQUIREMENT_ID;
-import static org.openecomp.sdc.tosca.services.ToscaConstants.COUNT_PROPERTY_NAME;
-import static org.openecomp.sdc.tosca.services.ToscaConstants.SERVICE_TEMPLATE_FILTER_PROPERTY_NAME;
-import static org.openecomp.sdc.tosca.services.ToscaConstants.SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME;
-import static org.openecomp.sdc.translator.services.heattotosca.Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME;
-
-import org.junit.Assert;
-import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.openecomp.sdc.generator.core.utils.GeneratorUtils;
-import org.openecomp.sdc.generator.datatypes.tosca.ComputeFlavor;
-import org.openecomp.sdc.generator.datatypes.tosca.DeploymentFlavorModel;
-import org.openecomp.sdc.generator.datatypes.tosca.LicenseFlavor;
-import org.openecomp.sdc.generator.datatypes.tosca.MultiFlavorVfcImage;
-import org.openecomp.sdc.generator.datatypes.tosca.VendorInfo;
-import org.openecomp.sdc.generator.datatypes.tosca.VspModelInfo;
-import org.openecomp.sdc.generator.util.GeneratorConstants;
-import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
-import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
-import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
-import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.NodeType;
-import org.openecomp.sdc.tosca.datatypes.model.PropertyDefinition;
-import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
-import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.datatypes.model.SubstitutionMapping;
-import org.openecomp.sdc.tosca.services.ToscaConstants;
-import org.openecomp.sdc.tosca.services.ToscaUtil;
-import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.ManualVspToscaManager;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.vendorsoftwareproduct.services.ManualVspDataCollectionService;
-import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public class ManualVspToscaManagerImplTest {
 
@@ -96,36 +49,27 @@ public class ManualVspToscaManagerImplTest {
   private ManualVspDataCollectionService manualVspDataCollectionServiceMock;
   /*
 
-  private static List<String> supportedCapabilities = new ArrayList<>();
-  private static List<String> supportedRequirements = new ArrayList<>();
-
-  static {
-    //TODO : Read from configuration
-    supportedCapabilities.addAll(Arrays.asList("host", "os", "endpoint", "scalable"));
-    supportedRequirements.addAll(Arrays.asList("link"));
-  }
-
   @Test
   public void testGatherVspInformationInvalidVsp() {
     MockitoAnnotations.initMocks(this);
     VspModelInfo expectedVspData = new VspModelInfo();
     doThrow(new RuntimeException())
         .when(manualVspDataCollectionServiceMock)
-        .getReleaseVendor(INVALID_VSP_ID, Version.valueOf(VSP_VERSION), USER);
+        .getReleaseVendor(INVALID_VSP_ID, Version.valueOf(VSP_VERSION));
     doThrow(new RuntimeException())
         .when(manualVspDataCollectionServiceMock)
-        .getAllowedFlavors(INVALID_VSP_ID, Version.valueOf(VSP_VERSION), USER);
+        .getAllowedFlavors(INVALID_VSP_ID, Version.valueOf(VSP_VERSION));
     doThrow(new RuntimeException())
         .when(manualVspDataCollectionServiceMock)
-        .getVspComponentImages(INVALID_VSP_ID, Version.valueOf(VSP_VERSION), USER);
+        .getVspComponentImages(INVALID_VSP_ID, Version.valueOf(VSP_VERSION));
     doThrow(new RuntimeException())
         .when(manualVspDataCollectionServiceMock)
-        .getVspComponents(INVALID_VSP_ID, Version.valueOf(VSP_VERSION), USER);
+        .getVspComponents(INVALID_VSP_ID, Version.valueOf(VSP_VERSION));
     doThrow(new RuntimeException())
         .when(manualVspDataCollectionServiceMock)
-        .getVspComponentNics(INVALID_VSP_ID, Version.valueOf(VSP_VERSION), USER);
+        .getVspComponentNics(INVALID_VSP_ID, Version.valueOf(VSP_VERSION));
     VspModelInfo vspModelInfo = manualVspToscaManagerMock.gatherVspInformation(INVALID_VSP_ID,
-        Version.valueOf(VSP_VERSION), USER);
+        Version.valueOf(VSP_VERSION));
     Assert.assertEquals(expectedVspData, vspModelInfo);
   }
 
@@ -138,17 +82,17 @@ public class ManualVspToscaManagerImplTest {
     Map<String, String> componentData = getComponentData();
     Map<String, List<MultiFlavorVfcImage>> vfcImageData = getVfcImageData();
     doReturn(Optional.of(RELEASE_VENDOR)).when(manualVspDataCollectionServiceMock)
-        .getReleaseVendor(VSP_ID, Version.valueOf(VSP_VERSION), USER);
+        .getReleaseVendor(VSP_ID, Version.valueOf(VSP_VERSION));
     doReturn(deploymentFlavorData).when(manualVspDataCollectionServiceMock)
-        .getAllowedFlavors(VSP_ID, Version.valueOf(VSP_VERSION), USER);
+        .getAllowedFlavors(VSP_ID, Version.valueOf(VSP_VERSION));
     doReturn(vfcImageData).when(manualVspDataCollectionServiceMock)
-        .getVspComponentImages(VSP_ID, Version.valueOf(VSP_VERSION), USER);
+        .getVspComponentImages(VSP_ID, Version.valueOf(VSP_VERSION));
     doReturn(componentData).when(manualVspDataCollectionServiceMock)
-        .getVspComponents(VSP_ID, Version.valueOf(VSP_VERSION), USER);
+        .getVspComponents(VSP_ID, Version.valueOf(VSP_VERSION));
     doReturn(componentNics).when(manualVspDataCollectionServiceMock)
-        .getVspComponentNics(VSP_ID, Version.valueOf(VSP_VERSION), USER);
+        .getVspComponentNics(VSP_ID, Version.valueOf(VSP_VERSION));
     VspModelInfo vspModelInfo = manualVspToscaManagerMock.gatherVspInformation(VSP_ID,
-        Version.valueOf(VSP_VERSION), USER);
+        Version.valueOf(VSP_VERSION));
 
     VspModelInfo expectedVspData = new VspModelInfo();
     expectedVspData.setReleaseVendor(RELEASE_VENDOR);
@@ -449,9 +393,9 @@ public class ManualVspToscaManagerImplTest {
 
   private void validateSubstitutionCapabilities(Map<String, List<String>> capabilities,
                                                 String componentName) {
-    List<String> SupportedCapabilities = supportedCapabilities;
-    Assert.assertEquals(SupportedCapabilities.size(), capabilities.size());
-    for (String capability : SupportedCapabilities) {
+    List<String> supportedCapabilities = GeneratorUtils.supportedCapabilities;
+    Assert.assertEquals(supportedCapabilities.size(), capabilities.size());
+    for (String capability : supportedCapabilities) {
       String expectedCapabilityId = capability + "_" + componentName;
       Assert.assertEquals(true, capabilities.containsKey(expectedCapabilityId));
       List<String> expectedCapabilityValue = new ArrayList<>(2);
@@ -464,10 +408,10 @@ public class ManualVspToscaManagerImplTest {
 
   private void validateSubstitutionRequirements(Map<String, List<String>> requirements,
                                                 List<Nic> nics) {
-    List<String> SupportedRequirements = supportedRequirements;
+    List<String> supportedRequirements = GeneratorUtils.supportedRequirements;
     for(Nic nic : nics) {
       String nicNodeTemplateId = nic.getName() + PORT_NODE_TEMPLATE_ID_SUFFIX;
-      for (String requirement : SupportedRequirements) {
+      for (String requirement : supportedRequirements) {
         String expectedRequirementId = requirement + "_" + nicNodeTemplateId;
         Assert.assertEquals(true, requirements.containsKey(expectedRequirementId));
         List<String> expectedRequirementValue = new ArrayList<>(2);
@@ -508,11 +452,11 @@ public class ManualVspToscaManagerImplTest {
 
     List<Map<String, RequirementDefinition>> requirements =
         deploymentFlavorNodeType.getRequirements();
-    List<String> SupportedRequirements = supportedRequirements;
+    List<String> supportedRequirements = GeneratorUtils.supportedRequirements;
     for (Nic nic : nics) {
       boolean found = false;
       String nicNodeTemplateId = nic.getName() + PORT_NODE_TEMPLATE_ID_SUFFIX;
-      for (String requirementId : SupportedRequirements) {
+      for (String requirementId : supportedRequirements) {
         String expectedRequirementId = requirementId + "_" + nicNodeTemplateId;
         for (Map<String, RequirementDefinition> requirement : requirements) {
           if (requirement.containsKey(expectedRequirementId)) {
@@ -525,8 +469,8 @@ public class ManualVspToscaManagerImplTest {
     }
 
     Map<String, CapabilityDefinition> capabilities = deploymentFlavorNodeType.getCapabilities();
-    List<String> SupportedCapabilities = supportedCapabilities;
-    for (String capabilityId : SupportedCapabilities) {
+    List<String> supportedCapabilities = GeneratorUtils.supportedCapabilities;
+    for (String capabilityId : supportedCapabilities) {
       String expectedCapabilityId = capabilityId + "_" + componentName;
       Assert.assertEquals (true, capabilities.containsKey(expectedCapabilityId));
     }

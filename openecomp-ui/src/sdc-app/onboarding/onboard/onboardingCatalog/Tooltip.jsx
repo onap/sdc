@@ -16,9 +16,16 @@
 
 import React from 'react';
 import Tooltip from 'react-bootstrap/lib/Tooltip.js';
+import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
 
-export default function tooltip (msg)  {
-	return (
-  		<Tooltip className='tile-tooltip' id='tile-tooltip'>{msg}</Tooltip>
-	);
-};
+const tooltip = (msg, className = '') => (
+	<Tooltip className={className} id={className}>{msg}</Tooltip>
+);
+
+export const TooltipWrapper = ({placement = 'top', className = '', tooltipClassName = '', dataTestId, delayShow = 0, children}) => (
+	<OverlayTrigger placement={placement} overlay={tooltip(children, tooltipClassName)} delayShow={delayShow}>
+		<div className={className} data-test-id={dataTestId}>{children}</div>
+	</OverlayTrigger>
+);
+
+export default tooltip;

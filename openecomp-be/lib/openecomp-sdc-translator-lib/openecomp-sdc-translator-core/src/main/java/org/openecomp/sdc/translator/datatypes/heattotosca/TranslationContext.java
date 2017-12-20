@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.translator.datatypes.heattotosca;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.config.api.Configuration;
 import org.openecomp.config.api.ConfigurationManager;

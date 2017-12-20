@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
@@ -79,11 +80,11 @@ const TextAreaItem = ({item, toggle, expanded, genericFieldInfo, dataMap, onQDat
 
 class SoftwareProductComponentLoadBalancingView extends React.Component {
 	static propTypes = {
-		componentId: React.PropTypes.string.isRequired,
-		softwareProductId: React.PropTypes.string.isRequired,
-		qdata: React.PropTypes.object,
-		qschema: React.PropTypes.object,
-		currentSoftwareProduct: React.PropTypes.object
+		componentId: PropTypes.string.isRequired,
+		softwareProductId: PropTypes.string.isRequired,
+		qdata: PropTypes.object,
+		qschema: PropTypes.object,
+		currentSoftwareProduct: PropTypes.object
 	};
 
 	state = {

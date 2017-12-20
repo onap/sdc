@@ -2,7 +2,7 @@ import React from 'react';
 import {storiesOf, action} from '@kadira/storybook';
 import ListEditorView from './ListEditorView.jsx';
 import ListEditorItemView from './ListEditorItemView.jsx';
-import ListEditorItemViewField from './ListEditorItemViewField.jsx';
+import ListEditorItemField from './ListEditorItemViewField.jsx';
 import {text, number} from '@kadira/storybook-addon-knobs';
 import {withKnobs} from '@kadira/storybook-addon-knobs';
 
@@ -13,12 +13,12 @@ function makeChildren({onEdit = false, onDelete = false} = {}) {
                 key={index} 
                 onEdit={onEdit ? onEdit : undefined}
                 onDelete={onDelete ? onDelete : undefined}>
-                <ListEditorItemViewField>
+				<ListEditorItemField>
                     <div>{text('field 1', 'Lorum Ipsum')}</div>
-                </ListEditorItemViewField>
-                <ListEditorItemViewField>
+				</ListEditorItemField>
+				<ListEditorItemField>
                     <div>{text('field 2', 'Lorum Ipsum')}</div>
-                </ListEditorItemViewField>
+				</ListEditorItemField>
             </ListEditorItemView>)
         )
     );

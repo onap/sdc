@@ -16,13 +16,14 @@
 
 
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
+
 import TestUtils from 'react-addons-test-utils';
-import {mount} from 'enzyme';
 import VersionController from 'nfvo-components/panel/versionController/VersionController.jsx';
-import {actionsEnum, statusEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
+import {actionsEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
 import {scryRenderedDOMComponentsWithTestId} from 'test-utils/Util.js';
 import {VSPComponentsVersionControllerFactory} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsNetworkFactories.js';
+import { Provider } from 'react-redux';
+import {storeCreator} from 'sdc-app/AppStore.js';
 
 describe('versionController UI Component', () => {
 	let onSave, onClose, onVersionSwitching = onSave = onClose = () => {return Promise.resolve();};
@@ -30,42 +31,42 @@ describe('versionController UI Component', () => {
 	const isFormDataValid = true;
 	const viewableVersions = versionData.viewableVersions;
 	const version = versionData.version;
-	const props = {onSave, onClose, isFormDataValid, viewableVersions, version, onVersionSwitching};
+	const itemPermission = {isCertified: false, isCollaborator: true, isDirty: false};
+	const props = {onSave, onClose, isFormDataValid, viewableVersions, version, onVersionSwitching, itemPermission};
+	const store = storeCreator();
 
 	it('function does exist', () => {
 		var renderer = TestUtils.createRenderer();
-		renderer.render(<VersionController isCheckedOut={false} status={statusEnum.CHECK_OUT_STATUS} {...props} />);
+
+		renderer.render(<Provider store={store}><VersionController {...props} /></Provider>);
 		var renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();
 	});
 
-	it('validating checkin function', () => {
-		let versionController = TestUtils.renderIntoDocument(<VersionController isCheckedOut={true} status={statusEnum.CHECK_OUT_STATUS} {...props} />);
-		let cb = action => expect(action).toBe(actionsEnum.CHECK_IN);
-		versionController.checkin(cb);
-	});
-
-	it('validating checkout function', () => {
-		let versionController = TestUtils.renderIntoDocument(<VersionController isCheckedOut={false} status={statusEnum.CHECK_IN_STATUS} {...props} />);
-		let cb = action => expect(action).toBe(actionsEnum.CHECK_OUT);
-		versionController.checkout(cb);
-	});
-
 	it('validating submit function', () => {
-		let versionController = TestUtils.renderIntoDocument(<VersionController isCheckedOut={false} status={statusEnum.CHECK_IN_STATUS} {...props} />);
+		let provider = TestUtils.renderIntoDocument(<Provider store={store}>
+			<VersionController {...props} /></Provider>);
+		let versionController = TestUtils.findRenderedComponentWithType(
+			provider,
+			VersionController
+		);
 		let cb = action => expect(action).toBe(actionsEnum.SUBMIT);
 		versionController.submit(cb);
 	});
 
 	it('validating revert function', () => {
-		let versionController = TestUtils.renderIntoDocument(<VersionController isCheckedOut={true} status={statusEnum.CHECK_OUT_STATUS} {...props} />);
-		let cb = action => expect(action).toBe(actionsEnum.UNDO_CHECK_OUT);
-		versionController.revertCheckout(cb);
+		let provider = TestUtils.renderIntoDocument(<Provider store={store}><VersionController {...props} /></Provider>);
+		let versionController = TestUtils.findRenderedComponentWithType(
+			provider,
+			VersionController
+		);
+		let cb = action => expect(action).toBe(actionsEnum.REVERT);
+		versionController.revert(cb);
 	});
 
 	it('does not show the save button when no onSave available', () => {
 		let noSaveProps = {...props, onSave: null };
-		let versionController = TestUtils.renderIntoDocument(<VersionController isCheckedOut={true} status={statusEnum.CHECK_OUT_STATUS} {...noSaveProps} />);
+		let versionController = TestUtils.renderIntoDocument(<Provider store={store}><VersionController {...noSaveProps} /></Provider>);
 		let elem = scryRenderedDOMComponentsWithTestId(versionController,'vc-save-btn');
 		expect(elem).toBeTruthy();
 		expect(elem.length).toBe(0);
@@ -73,7 +74,7 @@ describe('versionController UI Component', () => {
 
 	it('does not show the submit button when no callVCAction available', () => {
 		let callVCActionProps = {...props, callVCAction: null};
-		let versionController = TestUtils.renderIntoDocument(<VersionController isCheckedOut={false} status={statusEnum.CHECK_IN_STATUS} {...callVCActionProps} />);
+		let versionController = TestUtils.renderIntoDocument(<Provider store={store}><VersionController {...callVCActionProps} /></Provider>);
 		let elem = scryRenderedDOMComponentsWithTestId(versionController,'vc-submit-btn');
 		expect(elem).toBeTruthy();
 		expect(elem.length).toBe(0);
@@ -81,72 +82,45 @@ describe('versionController UI Component', () => {
 
 	it('does not show the revert button when no callVCAction available', () => {
 		let callVCActionProps = {...props, callVCAction: null};
-		let versionController = TestUtils.renderIntoDocument(<VersionController isCheckedOut={true} status={statusEnum.CHECK_OUT_STATUS} {...callVCActionProps} />);
+		let versionController = TestUtils.renderIntoDocument(<Provider store={store}><VersionController {...callVCActionProps} /></Provider>);
 		let elem = scryRenderedDOMComponentsWithTestId(versionController,'vc-revert-btn');
 		expect(elem).toBeTruthy();
 		expect(elem.length).toBe(0);
 	});
 
 	it('Shows the save button when onSave available', () => {
-		let versionController = TestUtils.renderIntoDocument(<VersionController isCheckedOut={true} status={statusEnum.CHECK_OUT_STATUS} {...props} />);
+		let versionController = TestUtils.renderIntoDocument(<Provider store={store}><VersionController {...props} /></Provider>);
 		let elem = scryRenderedDOMComponentsWithTestId(versionController,'vc-save-btn');
 		expect(elem).toBeTruthy();
 		expect(elem.length).toBe(1);
 	});
 
-	it('Shows the submit button when callVCAction available', () => {
-		let callVCActionProps = { ...props, callVCAction: function(){} };
-		let versionController = TestUtils.renderIntoDocument(<VersionController isCheckedOut={false} status={statusEnum.CHECK_IN_STATUS} {...callVCActionProps} />);
+	it('Shows the submit button when callVCAction available and user is owner', () => {
+		const permissions = {owner: {userId: '111'}},
+			userInfo = {userId: '111'};
+		let callVCActionProps = { ...props, callVCAction: function(){}, permissions, userInfo};
+		let versionController = TestUtils.renderIntoDocument(<Provider store={store}><VersionController {...callVCActionProps} /></Provider>);
 		let elem = scryRenderedDOMComponentsWithTestId(versionController,'vc-submit-btn');
 		expect(elem).toBeTruthy();
 		expect(elem.length).toBe(1);
 	});
 
+	it('Doesn\'t show the submit button when user is not owner', () => {
+		const permissions = {owner: {userId: '111'}},
+			userInfo = {userId: '222'};
+		let callVCActionProps = { ...props, callVCAction: function(){}, permissions, userInfo};
+		let versionController = TestUtils.renderIntoDocument(<Provider store={store}><VersionController {...callVCActionProps} /></Provider>);
+		let elem = scryRenderedDOMComponentsWithTestId(versionController,'vc-submit-btn');
+		expect(elem).toBeTruthy();
+		expect(elem.length).toBe(0);
+	});
+
 	it('Shows the revert button when callVCAction available', () => {
 		let callVCActionProps = { ...props, callVCAction: function(){} };
-		let versionController = TestUtils.renderIntoDocument(<VersionController isCheckedOut={true} status={statusEnum.CHECK_OUT_STATUS} {...callVCActionProps} />);
+		let versionController = TestUtils.renderIntoDocument(<Provider store={store}><VersionController {...callVCActionProps} /></Provider>);
 		let elem = scryRenderedDOMComponentsWithTestId(versionController,'vc-revert-btn');
 		expect(elem).toBeTruthy();
 		expect(elem.length).toBe(1);
-	});
-
-	it('Shows the checkin button', () => {
-		let callVCActionProps = { ...props, callVCAction: function(){} };
-		let versionController = TestUtils.renderIntoDocument(<VersionController isCheckedOut={true} status={statusEnum.CHECK_OUT_STATUS} {...callVCActionProps} />);
-		let elem = scryRenderedDOMComponentsWithTestId(versionController,'vc-checkout-btn');
-		expect(elem).toBeTruthy();
-		expect(elem.length).toBe(1);
-	});
-
-	it('Shows the checkout button', () => {
-		let callVCActionProps = { ...props, callVCAction: function(){} };
-		let versionController = TestUtils.renderIntoDocument(<VersionController isCheckedOut={false} status={statusEnum.CHECK_IN_STATUS} {...callVCActionProps} />);
-		let elem = scryRenderedDOMComponentsWithTestId(versionController,'vc-checkout-btn');
-		expect(elem).toBeTruthy();
-		expect(elem.length).toBe(1);
-
-	});
-
-	it('Doesn\'t show the checkin button for prev version', () => {
-		let callVCActionProps = { ...props, version: '1.0', callVCAction: function(){} };
-		let versionController = mount(<VersionController isCheckedOut={true} status={statusEnum.CHECK_OUT_STATUS} {...callVCActionProps} />);
-		let elem = versionController.find('[data-test-id="vc-checkout-btn"]');
-
-		expect(elem).toBeTruthy();
-		expect(elem.length).toEqual(1);
-		expect(elem.find('.svg-icon').length).toEqual(1);
-		expect(elem.find('.svg-icon').hasClass('disabled')).toBe(true);
-	});
-
-	it('Doesn\'t show the checkout button', () => {
-		let callVCActionProps = { ...props, version: '1.0', callVCAction: function(){} };
-		let versionController = mount(<VersionController isCheckedOut={false} status={statusEnum.CHECK_IN_STATUS} {...callVCActionProps} />);
-		let elem = versionController.find('[data-test-id="vc-checkout-btn"]');
-		expect(elem).toBeTruthy();
-		expect(elem.length).toBe(1);
-		expect(elem.find('.svg-icon').length).toEqual(1);
-		expect(elem.find('.svg-icon').hasClass('disabled')).toBe(true);
-
 	});
 
 });

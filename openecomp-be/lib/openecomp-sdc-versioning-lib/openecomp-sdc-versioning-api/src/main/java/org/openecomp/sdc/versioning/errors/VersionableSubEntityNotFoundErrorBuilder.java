@@ -53,7 +53,7 @@ public class VersionableSubEntityNotFoundErrorBuilder extends BaseErrorBuilder {
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
     getErrorCodeBuilder().withMessage(String
         .format(SUB_ENTITY_NOT_FOUND_MSG, entityType, entityId, containingEntityType,
-            containingEntityId, version.toString()));
+            containingEntityId, version.getId()));
   }
 
   /**

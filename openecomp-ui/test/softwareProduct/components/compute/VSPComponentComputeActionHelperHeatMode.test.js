@@ -22,11 +22,11 @@ import Configuration from 'sdc-app/config/Configuration.js';
 import SoftwareProductComponentsActionHelper from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsActionHelper.js';
 
 import {ComputeFlavorQData, VSPComponentsComputeDataMapFactory} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsComputeFactory.js';
-import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
+import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 
 const softwareProductId = '123';
 const vspComponentId = '111';
-const version = VersionControllerUtilsFactory.build().version;
+const version = VersionFactory.build();
 
 describe('Software Product Components Compute Module Tests - HEAT mode', function () {
 

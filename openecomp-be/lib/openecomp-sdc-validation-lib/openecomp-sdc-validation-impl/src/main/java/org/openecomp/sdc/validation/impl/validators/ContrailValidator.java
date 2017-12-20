@@ -22,9 +22,7 @@ package org.openecomp.sdc.validation.impl.validators;
 
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.validation.ErrorMessageCode;
-import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
-import org.openecomp.sdc.validation.Validator;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -39,6 +37,8 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
+import org.openecomp.sdc.tosca.services.YamlUtil;
+import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.tos.ContrailResourcesMappingTo;
 import org.openecomp.sdc.validation.util.ValidationUtil;
 
@@ -62,7 +62,7 @@ public class ContrailValidator implements Validator {
 
     ManifestContent manifestContent;
     try {
-      manifestContent = ValidationUtil.checkValidationPreCondition(globalContext);
+      manifestContent = ValidationUtil.validateManifest(globalContext);
     } catch (Exception exception) {
       logger.debug("",exception);
       return;

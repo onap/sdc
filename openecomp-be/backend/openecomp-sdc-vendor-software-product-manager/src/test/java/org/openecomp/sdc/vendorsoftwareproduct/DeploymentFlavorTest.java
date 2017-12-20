@@ -1,33 +1,5 @@
 package org.openecomp.sdc.vendorsoftwareproduct;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.CREATE_DEPLOYMENT_FLAVOR_NOT_ALLOWED_IN_HEAT_ONBOARDING;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.DUPLICATE_DEPLOYMENT_FLAVOR_MODEL_NOT_ALLOWED;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.FEATURE_GROUP_NOT_EXIST_FOR_VSP;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.INVALID_COMPONENT_COMPUTE_ASSOCIATION;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.INVALID_COMPUTE_FLAVOR_ID;
-import static org.openecomp.sdc.versioning.errors.VersioningErrorCodes.VERSIONABLE_ENTITY_NOT_EXIST;
-import static org.openecomp.sdc.versioning.errors.VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND;
-
-import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.impl.VendorSoftwareProductManagerImpl;
-
-import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 public class DeploymentFlavorTest {
   /*private static final String USER1 = "deploymentTestUser1";
   private static final String USER2 = "deploymentTestUser2";

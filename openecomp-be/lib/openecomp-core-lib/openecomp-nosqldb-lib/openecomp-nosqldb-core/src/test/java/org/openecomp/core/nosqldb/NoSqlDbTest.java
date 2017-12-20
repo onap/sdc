@@ -20,14 +20,7 @@
 
 package org.openecomp.core.nosqldb;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import java.util.List;
 
 
 public class NoSqlDbTest {

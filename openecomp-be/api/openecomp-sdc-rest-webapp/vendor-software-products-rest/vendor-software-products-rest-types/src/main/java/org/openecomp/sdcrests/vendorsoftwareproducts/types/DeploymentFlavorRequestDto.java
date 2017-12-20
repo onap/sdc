@@ -4,8 +4,8 @@ package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
 
-import java.util.List;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 public class DeploymentFlavorRequestDto {
     @NotBlank(message = "is mandatory and should not be empty")

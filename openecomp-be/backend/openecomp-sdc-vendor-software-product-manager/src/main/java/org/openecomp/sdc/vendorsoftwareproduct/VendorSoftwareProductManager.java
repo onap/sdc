@@ -20,65 +20,55 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct;
 
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.VersionedVendorSoftwareProductInfo;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionInfo;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface VendorSoftwareProductManager {
 
-  Version checkout(String vendorSoftwareProductId, String user);
+  VspDetails createVsp(VspDetails vspDetails);
 
-  Version undoCheckout(String vendorSoftwareProductId, String user);
+  void updateVsp(VspDetails vspDetails);
 
-  Version checkin(String vendorSoftwareProductId, String user);
+  VspDetails getVsp(String vspId, Version version);
 
-  ValidationResponse submit(String vendorSoftwareProductId, String user) throws IOException;
+  void deleteVsp(String vspIdToDelete);
 
+  ValidationResponse validate(String vspId, Version version) throws IOException;
 
-  List<VersionedVendorSoftwareProductInfo> listVsps(String versionFilter, String user);
-
-  VspDetails createVsp(VspDetails vspDetails, String user);
-
-  void updateVsp(VspDetails vspDetails, String user);
-
-  VspDetails getVsp(String vspId, Version version, String user);
-
-  Version callAutoHeal(String vspId, VersionInfo versionInfo,
-                       VspDetails vendorSoftwareProductInfo, String user) throws Exception;
-
-  void deleteVsp(String vspIdToDelete, String user);
-
-  QuestionnaireResponse getVspQuestionnaire(String vspId, Version version, String user);
-
-  void updateVspQuestionnaire(String vspId, Version version, String questionnaireData, String user);
+  Map<String, List<ErrorMessage>> compile(String vspId, Version version);
 
 
-  byte[] getOrchestrationTemplateFile(String vspId, Version version, String user);
+  QuestionnaireResponse getVspQuestionnaire(String vspId, Version version);
 
-  PackageInfo createPackage(String vspId, Version version, String user) throws IOException;
+  void updateVspQuestionnaire(String vspId, Version version, String questionnaireData);
+
+
+  byte[] getOrchestrationTemplateFile(String vspId, Version version);
+
+  OrchestrationTemplateEntity getOrchestrationTemplateInfo(String vspId, Version version);
+
+
+  PackageInfo createPackage(String vspId, Version version) throws IOException;
 
   List<PackageInfo> listPackages(String category, String subCategory);
 
-  File getTranslatedFile(String vspId, Version version, String user);
 
-  void heal(String vspId, Version version, String user);
+  File getTranslatedFile(String vspId, Version version);
 
-  File getInformationArtifact(String vspId, Version version, String user);
+  File getInformationArtifact(String vspId, Version version);
 
-  String fetchValidationVsp(String user);
 
-  Collection<ComputeEntity> getComputeByVsp(String vspId, Version version, String user);
-
-  Version healAndAdvanceFinalVersion(String vspId, VspDetails vendorSoftwareProductInfo,
-                                     String user) throws IOException;
+  Collection<ComputeEntity> getComputeByVsp(String vspId, Version version);
 }

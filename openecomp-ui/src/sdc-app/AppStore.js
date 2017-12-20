@@ -19,6 +19,7 @@ import onBoardingReducersMap from './onboarding/OnboardingReducersMap.js';
 import flowsReducersMap from './flows/FlowsReducersMap.js';
 import loaderReducer from 'nfvo-components/loader/LoaderReducer.js';
 import globalModalReducer from 'nfvo-components/modal/GlobalModalReducer.js';
+import notificationsReducer from 'sdc-app/onboarding/userNotifications/NotificationsReducer.js';
 const thunk = store => next => action =>
 	typeof action === 'function' ?
 		action(store.dispatch, store.getState) :
@@ -33,7 +34,8 @@ export const storeCreator = (initialState) => createStore(combineReducers({
 	// flows reducers
 	...flowsReducersMap,
 	modal: globalModalReducer,
-	loader: loaderReducer
+	loader: loaderReducer,
+	notifications: notificationsReducer
 }), initialState, composeEnhancers(applyMiddleware(thunk)));
 
 

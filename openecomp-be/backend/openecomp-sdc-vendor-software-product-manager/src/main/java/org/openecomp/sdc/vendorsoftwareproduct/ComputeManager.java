@@ -12,23 +12,20 @@ import java.util.Collection;
 
 public interface ComputeManager {
 
-  Collection<ListComputeResponse> listCompute(String vspId, Version version, String
-      componentId, String user);
+  Collection<ListComputeResponse> listComputes(String vspId, Version version, String componentId);
 
-  ComputeEntity createCompute(ComputeEntity compute, String user);
+  ComputeEntity createCompute(ComputeEntity compute);
 
-  CompositionEntityResponse<ComputeData> getCompute(String vspId, Version version, String
-      componentId, String computeFlavorId, String user);
+  CompositionEntityResponse<ComputeData> getCompute(String vspId, Version version,
+                                                    String componentId, String computeFlavorId);
 
-  QuestionnaireResponse getComputeQuestionnaire(String vspId, Version version, String
-      componentId, String computeFlavorId, String user);
+  QuestionnaireResponse getComputeQuestionnaire(String vspId, Version version, String componentId,
+                                                String computeFlavorId);
 
-  void updateComputeQuestionnaire(String vspId, Version version, String componentId, String
-      computeId, String
-      questionnaireData, String user);
+  void updateComputeQuestionnaire(String vspId, Version version, String componentId,
+                                  String computeId, String questionnaireData);
 
-  CompositionEntityValidationData updateCompute(ComputeEntity compute, String user);
+  CompositionEntityValidationData updateCompute(ComputeEntity compute);
 
-  void deleteCompute(String vspId, Version version,String componentId, String computeFlavorId,
-                     String user);
+  void deleteCompute(String vspId, Version version, String componentId, String computeFlavorId);
 }

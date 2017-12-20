@@ -16,24 +16,19 @@
 import {connect} from 'react-redux';
 import SoftwareProductComponentComputeView from './SoftwareProductComponentComputeView.jsx';
 import SoftwareProductComponentsActionHelper from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsActionHelper.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import {COMPONENTS_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import {onboardingMethod} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 
 
-const mapStateToProps = ({softwareProduct, currentScreen: {props: {softwareProductId, componentId}}}) => {
+const mapStateToProps = ({softwareProduct}) => {
 	let {softwareProductEditor: {data: currentVSP}, softwareProductComponents} = softwareProduct;
 	let {componentEditor: {qdata, dataMap, qgenericFieldInfo}, computeFlavor: {computesList: computeFlavorsList}} = softwareProductComponents;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentVSP);
 
 	return {
 		qdata,
 		dataMap,
 		qgenericFieldInfo,
-		isReadOnlyMode,
-		softwareProductId,
-		componentId,
 		computeFlavorsList,
 		isManual: currentVSP.onboardingMethod === onboardingMethod.MANUAL
 	};

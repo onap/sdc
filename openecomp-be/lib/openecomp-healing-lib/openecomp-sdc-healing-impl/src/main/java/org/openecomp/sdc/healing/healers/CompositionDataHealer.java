@@ -31,7 +31,6 @@ import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.utils.CommonUtil;
-import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.healing.interfaces.Healer;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -57,7 +56,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadDataEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionDataExtractorFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionDataExtractor;
@@ -69,7 +68,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -102,13 +100,9 @@ public class CompositionDataHealer implements Healer {
   }
 
   @Override
-  public Optional<CompositionData> heal(Map<String, Object> healingParams) throws IOException {
+  public Optional<CompositionData> heal(String vspId,
+                                        Version version) throws IOException {
     mdcDataDebugMessage.debugEntryMessage(null);
-
-    String vspId = (String) healingParams.get(SdcCommon.VSP_ID);
-    Version version = VERSION00.equals(healingParams.get(SdcCommon.VERSION))
-        ? VERSION01
-        : (Version) healingParams.get(SdcCommon.VERSION);
 
     Collection<ComponentEntity> componentEntities =
         componentDao.list(new ComponentEntity(vspId, version, null));
@@ -131,7 +125,7 @@ public class CompositionDataHealer implements Healer {
           serviceModels.get()) : null;
     }
 
-    if(serviceModels.isPresent()) {
+    if (serviceModels.isPresent()) {
       compositionData =
           getCompositionDataForHealing(vspId, version, serviceModels.get());
       HealNfodData(vspId, version, compositionData);
@@ -150,16 +144,16 @@ public class CompositionDataHealer implements Healer {
     if (CollectionUtils.isEmpty(computeEntities) && CollectionUtils.isEmpty(imageEntities)) {
       for (Component component : compositionData.getComponents()) {
         String componentId = null;
-        for (ComponentEntity componentEntity:componentEntities) {
+        for (ComponentEntity componentEntity : componentEntities) {
           if (componentEntity.getComponentCompositionData().getName().equals(component.getData()
               .getName())) {
             componentId = componentEntity.getId();
             break;
           }
         }
-        compositionEntityDataManager.saveComputesFlavorByComponent(vspId,version,component,
+        compositionEntityDataManager.saveComputesFlavorByComponent(vspId, version, component,
             componentId);
-        compositionEntityDataManager.saveImagesByComponent(vspId,version,component,
+        compositionEntityDataManager.saveImagesByComponent(vspId, version, component,
             componentId);
       }
 
@@ -228,13 +222,15 @@ public class CompositionDataHealer implements Healer {
   }
 
   private Optional<Pair<ToscaServiceModel, ToscaServiceModel>> getServiceModelForHealing(String
-                                                                                             vspId, Version
+                                                                                             vspId,
+                                                                                         Version
                                                                                              version)
       throws IOException {
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
 
-    UploadDataEntity uploadData =
-        orchestrationTemplateDataDao.getOrchestrationTemplate(vspId, version);
+    /*OrchestrationTemplateEntity uploadData =
+        vendorSoftwareProductDao.getUploadData(new OrchestrationTemplateEntity(vspId, version));*/
+    OrchestrationTemplateEntity uploadData = orchestrationTemplateDataDao.get(vspId, version);
 
     if (Objects.isNull(uploadData) || Objects.isNull(uploadData.getContentData())) {
       return Optional.empty();
@@ -259,7 +255,7 @@ public class CompositionDataHealer implements Healer {
         .getNonUnifiedToscaServiceModel()));
   }
 
-  private TranslatorOutput getTranslatorOutputForHealing(UploadDataEntity uploadData) {
+  private TranslatorOutput getTranslatorOutputForHealing(OrchestrationTemplateEntity uploadData) {
 
     FileContentHandler fileContentHandler;
     try {

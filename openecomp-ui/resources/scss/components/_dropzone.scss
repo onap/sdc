@@ -6,3 +6,26 @@
     opacity: 0.5;
   }
 }
+.file-upload-box {
+  @extend .body-1;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  border: 2px dashed $light-gray;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 382px;
+  align-items: center;
+  .upload-btn {
+    padding: 4px 20px;
+  }
+  .drag-text {
+    color: $blue;
+    @extend .body-1-semibold;
+  }
+  .or-text {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}

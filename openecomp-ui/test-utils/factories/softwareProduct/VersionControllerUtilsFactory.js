@@ -14,17 +14,9 @@
  * permissions and limitations under the License.
  */
 import {Factory} from 'rosie';
-import {statusEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
 
 export default new Factory()
 	.attrs({
 		version: { id: '1.2', label: '1.2'},
-		viewableVersions: [{id: '1.0', label: '1.0'}, {id: '1.1', label: '1.1'}, {id: '1.2', label: '1.2'}],
-		status: statusEnum.CHECK_OUT_STATUS,
-		lockingUser: 'current'
-	}).after(function(inst) {
-		if (inst.status !== statusEnum.CHECK_OUT_STATUS) {
-			delete inst.lockingUser;
-		}
+		viewableVersions: [{id: '1.0', label: '1.0'}, {id: '1.1', label: '1.1'}, {id: '1.2', label: '1.2'}]
 	});
-

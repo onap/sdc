@@ -15,12 +15,20 @@
  */
 import {connect} from 'react-redux';
 import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import LicenseModelOverviewView from './LicenseModelOverviewView.jsx';
 import {overviewEditorHeaders, selectedButton} from './LicenseModelOverviewConstants.js';
 import licenseModelOverviewActionHelper from './licenseModelOverviewActionHelper.js';
 
-export const mapStateToProps = ({licenseModel: {licenseModelEditor, entitlementPool, licenseAgreement, featureGroup, licenseKeyGroup, licenseModelOverview}}) => {
+export const mapStateToProps = ({
+	licenseModel: {
+		licenseModelEditor,
+		entitlementPool,
+		licenseAgreement,
+		featureGroup,
+		licenseKeyGroup,
+		licenseModelOverview
+	}
+}) => {
 
 	let modalHeader, licensingDataList;
 	let isDisplayModal = false;
@@ -128,6 +136,7 @@ export const mapStateToProps = ({licenseModel: {licenseModelEditor, entitlementP
 		modalHeader = overviewEditorHeaders.LICENSE_KEY_GROUP;
 		isDisplayModal = true;
 	}
+
 	let orphanDataList = [
 		...featureGroup.featureGroupsList.reduce(checkFG, []),
 		...entitlementPool.entitlementPoolsList.reduce(checkEP, []),
@@ -140,8 +149,8 @@ export const mapStateToProps = ({licenseModel: {licenseModelEditor, entitlementP
 	if (selectedTab === null) {
 		selectedTab = (licensingDataList.length) ? selectedButton.VLM_LIST_VIEW : selectedButton.NOT_IN_USE;
 	}
+
 	return {
-		isReadOnlyMode: VersionControllerUtils.isReadOnly(licenseModelEditor.data),
 		isDisplayModal,
 		modalHeader,
 		licenseModelId: licenseModelEditor.data.id,

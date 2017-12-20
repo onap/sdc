@@ -13,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.sdc.common.togglz.ToggleableFeature;
-import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.healing.healers.util.TestUtil;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
@@ -32,13 +31,14 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
 
 public class ForwarderCapabilityHealerTest {
+  private static final String vspId = "1";
+  private static final Version version = new Version(1, 1);
   private static final String IN_SUFFIX = "/in";
   private static final String OUT_SUFFIX = "/out";
   private static final String BASE_DIRECTORY = "/mock/healers/forwarder";
   private static final String ENTRY_DEFINITION_SERVICE_TEMPLATE = "MainServiceTemplate.yaml";
   private static TestFeatureManager manager;
 
-  private Map<String,Object> params = new HashMap<>();
 
   @Mock
   private ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao;
@@ -65,8 +65,6 @@ public class ForwarderCapabilityHealerTest {
   @Before
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(ForwarderCapabilityHealerTest.this);
-    params.put(SdcCommon.VSP_ID,"1");
-    params.put(SdcCommon.VERSION, new Version(1,1));
   }
 
 
@@ -127,7 +125,7 @@ public class ForwarderCapabilityHealerTest {
 
   private void validateServiceModelAfterHealing(String testDirectory) throws Exception {
     Optional<ToscaServiceModel> serviceModelObject =
-        (Optional<ToscaServiceModel>) forwarderCapabilityHealer.heal(params);
+        (Optional<ToscaServiceModel>) forwarderCapabilityHealer.heal(vspId, version);
 
     Assert.assertTrue(serviceModelObject.isPresent());
     TestUtil

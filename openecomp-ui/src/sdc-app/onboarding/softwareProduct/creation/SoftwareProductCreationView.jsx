@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Validator from 'nfvo-utils/Validator.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
@@ -27,25 +28,26 @@ import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 import SoftwareProductCategoriesHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductCategoriesHelper.js';
 import {onboardingMethod as onboardingMethodConst} from '../SoftwareProductConstants.js';
 
-const SoftwareProductPropType = React.PropTypes.shape({
-	id: React.PropTypes.string,
-	name: React.PropTypes.string,
-	description: React.PropTypes.string,
-	category: React.PropTypes.string,
-	subCategory: React.PropTypes.string,
-	vendorId: React.PropTypes.string
+const SoftwareProductPropType = PropTypes.shape({
+	id: PropTypes.string,
+	name: PropTypes.string,
+	description: PropTypes.string,
+	category: PropTypes.string,
+	subCategory: PropTypes.string,
+	vendorId: PropTypes.string
 });
 
 class SoftwareProductCreationView extends React.Component {
 
 	static propTypes = {
 		data: SoftwareProductPropType,
-		finalizedLicenseModelList: React.PropTypes.array,
-		softwareProductCategories: React.PropTypes.array,
-		VSPNames: React.PropTypes.object,
-		onDataChanged: React.PropTypes.func.isRequired,
-		onSubmit: React.PropTypes.func.isRequired,
-		onCancel: React.PropTypes.func.isRequired
+		finalizedLicenseModelList: PropTypes.array,
+		softwareProductCategories: PropTypes.array,
+		VSPNames: PropTypes.object,
+		usersList: PropTypes.array,
+		onDataChanged: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired
 	};
 
 	render() {
@@ -65,7 +67,7 @@ class SoftwareProductCreationView extends React.Component {
 					submitButtonText={i18n('Create')}
 					formReady={this.props.formReady}
 					onValidateForm={() => this.validate() }>
-					<GridSection>
+					<GridSection hasLastColSet>
 						<GridItem colSpan='2'>
 							<Input
 								value={name}
@@ -115,7 +117,7 @@ class SoftwareProductCreationView extends React.Component {
 								}
 							</Input>
 						</GridItem>
-						<GridItem colSpan='2' stretch>
+						<GridItem colSpan='2' stretch lastColInRow>
 							<Input
 								value={description}
 								label={i18n('Description')}
@@ -139,10 +141,10 @@ class SoftwareProductCreationView extends React.Component {
 		let {finalizedLicenseModelList} =  this.props;
 
 		return [{enum: '', title: i18n('please select...')}].concat(
-			sortByStringProperty(finalizedLicenseModelList, 'vendorName').map(vendor => {
+			sortByStringProperty(finalizedLicenseModelList, 'name').map(vendor => {
 				return {
 					enum: vendor.id,
-					title: vendor.vendorName
+					title: vendor.name
 				};
 			})
 		);
@@ -163,9 +165,9 @@ class SoftwareProductCreationView extends React.Component {
 	}
 
 	submit() {
-		let  {data:softwareProduct, finalizedLicenseModelList} = this.props;
-		softwareProduct.vendorName = finalizedLicenseModelList.find(vendor => vendor.id === softwareProduct.vendorId).vendorName;
-		this.props.onSubmit(softwareProduct);
+		let  {data:softwareProduct, finalizedLicenseModelList, usersList} = this.props;
+		softwareProduct.vendorName = finalizedLicenseModelList.find(vendor => vendor.id === softwareProduct.vendorId).name;
+		this.props.onSubmit(softwareProduct, usersList);
 	}
 
 	validateName(value) {

@@ -1,0 +1,325 @@
+.dox-ui-punch-out {
+  background-color: $content-background-color;
+}
+
+.dox-ui-punch-out.dox-ui-punch-out-full-page {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+}
+
+@mixin version-page-box-shadow() {
+	box-shadow: 0 1px 4px 0 rgba(24, 24, 24, 0.06);
+}
+
+@mixin version-page-sub-title(){
+	color: $text-black;
+	text-transform: uppercase;
+	background-color: $white;
+	border-bottom: 1px solid $light-gray;
+	padding: 12px 0 10px 23px;
+}
+
+.versions-tree-modal {
+	.modal-dialog {
+		width: 800px;
+	}
+
+	.tree-view {
+		display: flex;
+    align-items: center;
+	}
+}
+
+.versions-page-view {
+	height: 100%;
+	background-color: $background-gray;
+	overflow: auto;
+	padding: 35px 50px 20px 50px;
+
+	.svg-icon-wrapper {
+		justify-content: flex-start;
+	}
+
+	.versions-page-title {
+		@extend .heading-1;
+		text-transform: uppercase;
+		margin-bottom: 29px;
+		color: $blue;
+	}
+
+	.versions-page-permissions-view-wrapper {
+		@extend .body-1-semibold;
+		@include version-page-box-shadow();
+
+		.permissions-view-wrapper-title {
+			@include version-page-sub-title();
+		}
+
+		.svg-icon-wrapper.user-view {
+			fill: transparent;
+			stroke: $blue;
+			.svg-icon {
+				height: 18px;
+				width: 16px;
+				margin: 0 7px;
+			}
+			&.current-user {
+				.svg-icon {
+					background-color: $blue;
+					stroke: $white;
+					padding-top: 5px;
+					padding-bottom: 3px;
+					height: 29px;
+					width: 29px;
+					border-radius: 20px;
+					border: 1px solid $blue;
+					box-shadow: inset 0px 0px 0px 2px $white;
+					margin: 0;
+				}
+				.svg-icon-label {
+					margin-left: 7px;
+				}
+			}
+			.svg-icon-label {
+				@extend .body-2;
+				color: $dark-gray;
+				margin-left: 6px;
+			}
+		}
+
+		.permissions-view-content {
+			padding: 20px 40px 20px 25px;
+			background-color: $white;
+
+			height: 120px;
+			display: flex;
+		}
+
+		.permissions-view {
+			display: flex;
+			flex: 1;
+			flex-direction: column;
+			justify-content: space-around;
+
+			.permissions-view-title {
+				text-transform: uppercase;
+				color: $dark-gray;
+			}
+
+			.contributors-view, .owner-view {
+				display: flex;
+				height: 16px;
+				@extend .body-1-semibold;
+
+				.permissions-view-title {
+					width: 130px;
+					line-height: 16px;
+				}
+
+				.extra-contributors {
+					border-radius: 30px;
+					background-color: $gray;
+					width: 26px;
+					height: 26px;
+					padding-right: 2px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					color: $white;
+					cursor: default;
+					&:hover {
+						background-color: $dark-gray;
+					}
+				}
+
+				.user-view {
+					margin-right: 38px;
+				}
+
+				.manage-permissions {
+					color: $blue;
+					margin-left: auto;
+					cursor: pointer;
+
+					&:hover {
+						color: $dark-blue;
+					}
+				}
+			}
+		}
+	}
+
+	.versions-page-list-and-tree {
+		display: flex;
+		margin-top: 20px;
+
+		.version-tree-wrapper {
+			display: flex;
+			flex-direction: column;
+			margin-right:10px;
+			transition: all 1s ease;
+			@include version-page-box-shadow();
+
+			.version-tree-title-container {
+				display: flex;
+				align-items: center;
+				height: 40px;
+				@include version-page-sub-title();
+				padding-right: 10px;
+
+				.version-tree-full-screen {
+					margin-left: auto;
+				}
+			}
+
+			.tree-view {
+				background-color: $white;
+				flex: 1;
+			}
+		}
+	}
+
+	.version-list {
+		flex: 1;
+		@extend .body-1-semibold;
+		color: $text-black;
+		display: flex;
+		flex-direction: column;
+
+		.version-list-items {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+
+			.version-item-row {
+				border-bottom: 1px solid $tlv-light-gray;
+
+				&:last-child {
+					border-bottom: none;
+				}
+			}
+		}
+
+		.version-item-row {
+			$row-hover-color: lighten($blue, 54%);
+			$row-active-color: lighten($blue, 51%);
+
+			display: flex;
+			align-items: center;
+			padding: 15px 30px;
+			@include version-page-box-shadow();
+			background-color: $white;
+			height: 70px;
+
+			&:hover {
+				background-color: $row-hover-color;
+			}
+
+			&.selected {
+				box-shadow: 0 1px 4px 0 rgba(24, 24, 24, 0.06), inset 5px 0 0 0 $blue;
+				background-color: $row-active-color;
+				&:hover {
+					background-color: $row-hover-color;
+					box-shadow: 0 1px 4px 0 rgba(24, 24, 24, 0.06), inset 5px 0 0 0 lighten($blue, 35%);
+				}
+			}
+
+			&.header-row {
+				height: 40px;
+
+				@extend .body-1-semibold;
+				@include version-page-sub-title();
+				padding: 15px 27px;
+
+				&:hover {
+					background-color: $white;
+					pointer-events: none;
+					&:active {
+						background-color: $white;
+						@include version-page-box-shadow();
+					}
+				}
+				.header-field.actions {
+					margin-right: 57px;
+				}
+			}
+
+			.version-item-field {
+				flex: 1;
+				display: flex;
+				margin-right: 10px;
+
+				&.item-version, &.item-status {
+					flex: 0 1 10%;
+					@extend .body-1-semibold;
+					color: $text-black;
+				}
+
+				&.item-description, &.item-last-edited {
+					@extend .body-1;
+					color: $dark-gray;
+				}
+
+				&.item-description, &.header-description {
+					flex: 2 1 0;
+				}
+
+				&.item-description > .description-text {
+					margin-right: 10px;
+					@include ellipsis($max-width: 300px);
+				}
+
+				&.item-actions {
+					display: flex;
+					flex: 1 1 3%;
+					justify-content: space-between;
+				}
+
+				&.item-select, &.item-create {
+					@extend .body-1;
+					flex: 0 1 auto;
+					margin-right: 0;
+
+					.svg-icon-wrapper {
+						fill: $blue;
+						color: $blue;
+
+						&[disabled] {
+							cursor: default;
+						}
+
+						.svg-icon {
+							width: 16px;
+							height: 16px;
+						}
+
+						&:hover:not([disabled]) {
+							fill: $dark-blue;
+							color: $dark-blue;
+						}
+					}
+				}
+
+			}
+
+			/* To keep ellipsis hider's background the same color as row background */
+			&:not(.selected):hover .item-description > .description-text:after {
+				background: $row-hover-color
+			}
+
+			&:hover:active .item-description > .description-text:after {
+				background: $row-active-color;
+			}
+
+		}
+
+	}
+
+	&.clickable {
+		cursor: pointer;
+	}
+}

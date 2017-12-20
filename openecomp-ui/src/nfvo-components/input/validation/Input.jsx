@@ -17,7 +17,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import Checkbox from 'react-bootstrap/lib/Checkbox.js';
-import Radio from 'react-bootstrap/lib/Radio.js';
+import Radio from 'sdc-ui/lib/react/Radio.js';
 import FormGroup from 'react-bootstrap/lib/FormGroup.js';
 import FormControl from 'react-bootstrap/lib/FormControl.js';
 import Overlay from 'react-bootstrap/lib/Overlay.js';
@@ -85,7 +85,7 @@ class Input extends React.Component {
 						className={classNames({'required' : isRequired , 'has-error' : !isValid})}
 						onChange={(e)=>this.onChangeCheckBox(e)}
 						disabled={isReadOnlyMode || Boolean(disabled)}
-						checked={value}
+						checked={checked}
 						data-test-id={this.props['data-test-id']}>{label}</Checkbox>}
 
 					{type === 'radio' &&
@@ -93,9 +93,10 @@ class Input extends React.Component {
 						   checked={checked}
 						   disabled={isReadOnlyMode || Boolean(disabled)}
 						   value={value}
-						   onChange={(e)=>this.onChangeRadio(e)}
+						onChange={(isChecked)=>this.onChangeRadio(isChecked)}
 						   inputRef={(input) => this.input = input}
-						   data-test-id={this.props['data-test-id']}>{label}</Radio>}
+						label={label}
+						data-test-id={this.props['data-test-id']} />}
 					{type === 'select' &&
 					<FormControl onClick={ (e) => this.optionSelect(e) }
 						 componentClass={type}
@@ -156,16 +157,17 @@ class Input extends React.Component {
 
 	onChangeCheckBox(e) {
 		let {onChange} = this.props;
+		let checked = e.target.checked;
 		this.setState({
-			checked: e.target.checked
+			checked
 		});
-		onChange(e.target.checked);
+		onChange(checked);
 	}
 
-	onChangeRadio(e) {
+	onChangeRadio(isChecked) {
 		let {onChange} = this.props;
 		this.setState({
-			checked: e.target.checked
+			checked: isChecked
 		});
 		onChange(this.state.value);
 	}

@@ -31,41 +31,31 @@ import java.util.Map;
 
 public class CandidateDataEntityTo {
   private final String vspId;
-  private final String user;
-//  private final UploadFileResponse uploadFileResponse;
-  private Map<String, List<ErrorMessage>> errors = new HashMap<>();
+  private final Version version;
   private final byte[] uploadedFileData;
   private final HeatStructureTree tree;
-  private final Version activeVersion;
   private final FileContentHandler contentMap;
+  private Map<String, List<ErrorMessage>> errors = new HashMap<>();
 
   /**
    * Instantiates a new Candidate data entity to.
-   *  @param vspId              the vsp id
-   * @param user               the user
-   * @param uploadedFileData   the uploaded file data
-   * @param tree               the tree
-   * @param contentMap         the content map
-   * @param activeVersion      the active version
+   *
+   * @param vspId            the vsp id
+   * @param uploadedFileData the uploaded file data
+   * @param tree             the tree
+   * @param contentMap       the content map
    */
-  public CandidateDataEntityTo(String vspId, String user,
-                               byte[] uploadedFileData, HeatStructureTree tree,
-                               FileContentHandler contentMap, Version activeVersion) {
+  public CandidateDataEntityTo(String vspId, Version version, byte[] uploadedFileData,
+                               HeatStructureTree tree, FileContentHandler contentMap) {
     this.vspId = vspId;
-    this.user = user;
-    this.errors = errors;
+    this.version = version;
     this.uploadedFileData = uploadedFileData;
     this.tree = tree;
-    this.activeVersion = activeVersion;
     this.contentMap = contentMap;
   }
 
   public String getVspId() {
     return vspId;
-  }
-
-  public String getUser() {
-    return user;
   }
 
   public byte[] getUploadedFileData() {
@@ -76,15 +66,19 @@ public class CandidateDataEntityTo {
     return tree;
   }
 
-  public Version getActiveVersion() {
-    return activeVersion;
+  public Version getVersion() {
+    return version;
   }
 
   public FileContentHandler getContentMap() {
     return contentMap;
   }
 
-  public Map<String, List<ErrorMessage>> getErrors() {return errors;}
+  public Map<String, List<ErrorMessage>> getErrors() {
+    return errors;
+  }
 
-  public void setErrors(Map<String, List<ErrorMessage>> errors) {this.errors = errors;}
+  public void setErrors(Map<String, List<ErrorMessage>> errors) {
+    this.errors = errors;
+  }
 }

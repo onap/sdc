@@ -16,14 +16,18 @@
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import {actionTypes as featureGroupsActionConstants} from './FeatureGroupsConstants.js';
-import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
 import EntitlementPoolsActionHelper from 'sdc-app/onboarding/licenseModel/entitlementPools/EntitlementPoolsActionHelper.js';
 import LicenseKeyGroupsActionHelper from 'sdc-app/onboarding/licenseModel/licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
+import ItemsHelper from 'sdc-app/common/helpers/ItemsHelper.js';
 
 function baseUrl(licenseModelId, version) {
 	const restPrefix = Configuration.get('restPrefix');
 	const {id: versionId} = version;
 	return `${restPrefix}/v1.0/vendor-license-models/${licenseModelId}/versions/${versionId}/feature-groups`;
+}
+
+function fetchFeatureGroup(licenseModelId, featureGroupId, version) {
+	return RestAPIUtil.fetch(`${baseUrl(licenseModelId, version)}/${featureGroupId}`);
 }
 
 function fetchFeatureGroupsList(licenseModelId, version) {
@@ -65,6 +69,10 @@ function updateFeatureGroup(licenseModelId, previousFeatureGroup, featureGroup, 
 }
 
 export default {
+	fetchFeatureGroup(dispatch, {licenseModelId, featureGroupId, version}) {
+		return fetchFeatureGroup(licenseModelId, featureGroupId, version);
+	},
+
 	fetchFeatureGroupsList(dispatch, {licenseModelId, version}) {
 		return fetchFeatureGroupsList(licenseModelId, version).then(response => dispatch({
 			type: featureGroupsActionConstants.FEATURE_GROUPS_LIST_LOADED,
@@ -73,10 +81,13 @@ export default {
 	},
 
 	deleteFeatureGroup(dispatch, {licenseModelId, featureGroupId, version}) {
-		return deleteFeatureGroup(licenseModelId, featureGroupId, version).then(() => dispatch({
-			type: featureGroupsActionConstants.DELETE_FEATURE_GROUPS,
-			featureGroupId
-		}));
+		return deleteFeatureGroup(licenseModelId, featureGroupId, version).then(() => {
+			dispatch({
+				type: featureGroupsActionConstants.DELETE_FEATURE_GROUPS,
+				featureGroupId
+			});
+			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+		});
 	},
 
 	saveFeatureGroup(dispatch, {licenseModelId, previousFeatureGroup, featureGroup, version}) {
@@ -88,6 +99,7 @@ export default {
 				});
 				EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId, version});
 				LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version});
+				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 		else {
@@ -102,6 +114,7 @@ export default {
 				});
 				EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId, version});
 				LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version});
+				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 	},
@@ -114,24 +127,20 @@ export default {
 	},
 
 	openFeatureGroupsEditor(dispatch, {featureGroup, licenseModelId, version}) {
-		EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId, version});
-		LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version});
-		dispatch({
-			type: featureGroupsActionConstants.featureGroupsEditor.OPEN,
-			featureGroup
+		return Promise.all([
+			EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId, version}),
+			LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version})
+		]).then(() => {
+			dispatch({
+				type: featureGroupsActionConstants.featureGroupsEditor.OPEN,
+				featureGroup
+			});
 		});
 	},
 
 	closeFeatureGroupsEditor(dispatch) {
 		dispatch({
 			type: featureGroupsActionConstants.featureGroupsEditor.CLOSE
-		});
-	},
-
-
-	switchVersion(dispatch, {licenseModelId, version}) {
-		LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version}).then(() => {
-			this.fetchFeatureGroupsList(dispatch, {licenseModelId, version});
 		});
 	}
 };

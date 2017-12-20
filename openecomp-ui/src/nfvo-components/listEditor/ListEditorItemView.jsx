@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
@@ -22,11 +23,11 @@ import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModal
 
 class ListEditorItem extends React.Component {
 	static propTypes = {
-		onSelect:  React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.bool]),
-		onDelete:  React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.bool]),
-		onEdit:  React.PropTypes.oneOfType([React.PropTypes.func, React.PropTypes.bool]),
-		children: React.PropTypes.node,
-		isReadOnlyMode: React.PropTypes.bool
+		onSelect:  PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+		onDelete:  PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+		onEdit:  PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+		children: PropTypes.node,
+		isReadOnlyMode: PropTypes.bool
 	};
 
 	render() {

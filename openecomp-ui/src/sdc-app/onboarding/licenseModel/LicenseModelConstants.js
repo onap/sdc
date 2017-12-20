@@ -20,18 +20,9 @@ export const actionTypes = keyMirror({
 	LICENSE_MODEL_LOADED: null,
 	LICENSE_MODELS_LIST_LOADED: null,
 	FINALIZED_LICENSE_MODELS_LIST_LOADED: null,
-	ADD_LICENSE_MODEL: null,
 	EDIT_LICENSE_MODEL: null
 });
 
-export const navigationItems = keyMirror({
-	LICENSE_MODEL_OVERVIEW: 'overview',
-	LICENSE_AGREEMENTS: 'license-agreements',
-	FEATURE_GROUPS: 'feature-groups',
-	ENTITLEMENT_POOLS: 'entitlement-pools',
-	LICENSE_KEY_GROUPS: 'license-key-groups',
-	ACTIVITY_LOG: 'activity-log'
-});
 
 export const thresholdUnitType = {
 	ABSOLUTE: 'Absolute',

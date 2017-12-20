@@ -34,7 +34,12 @@ import org.openecomp.core.zusammen.plugin.dao.types.ElementEntity;
 
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CassandraElementRepository {
@@ -61,18 +66,18 @@ public class CassandraElementRepository {
                                      ElementEntity element) {
     Row row = getElementAccessor(context).get(
         elementContext.getSpace(),
-        elementContext.getItemId().toString(),
+        elementContext.getItemId().getValue(),
         getVersionId(elementContext),
-        element.getId().toString()).one();
+        element.getId().getValue()).one();
 
     return row == null ? Optional.empty() : Optional.of(getElementEntity(element, row));
   }
 
 
   private String getVersionId(ElementEntityContext elementContext) {
-    return elementContext.getChangeRef() == null
-        ? elementContext.getVersionId().toString()
-        : elementContext.getChangeRef();
+    return elementContext.getRevisionId() == null
+        ? elementContext.getVersionId().getValue()
+        : elementContext.getRevisionId().getValue();
   }
 
 
@@ -92,7 +97,7 @@ public class CassandraElementRepository {
   private void updateElement(SessionContext context, ElementEntityContext elementContext,
                              ElementEntity element) {
 
-    if (elementContext.getChangeRef() == null) {
+    if (elementContext.getRevisionId() == null) {
 
       getElementAccessor(context).update(
           JsonUtil.object2Json(element.getInfo()),
@@ -113,7 +118,7 @@ public class CassandraElementRepository {
           element.getVisualization(),
           elementContext.getSpace(),
           elementContext.getItemId().toString(),
-          elementContext.getChangeRef(),
+          elementContext.getRevisionId().getValue(),
           element.getId().toString());
     }
   }
@@ -154,7 +159,7 @@ public class CassandraElementRepository {
         getVersionId(elementContext)).one();
     return row == null
         ? new HashSet<>()
-        : row.getSet(CassandraElementRepository.VersionElementsField.ELEMENT_IDS, String.class);
+        : row.getSet(VersionElementsField.ELEMENT_IDS, String.class);
   }
 
   /*

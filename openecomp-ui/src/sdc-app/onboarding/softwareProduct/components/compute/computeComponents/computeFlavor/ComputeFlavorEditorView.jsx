@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
@@ -24,15 +25,15 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 class ComputeEditorView extends React.Component {
 
 	static propTypes = {
-		data: React.PropTypes.object,
-		qdata: React.PropTypes.object,
-		qschema: React.PropTypes.object,
-		isReadOnlyMode: React.PropTypes.bool,
-		isManual: React.PropTypes.bool,
-		onDataChanged: React.PropTypes.func.isRequired,
-		onQDataChanged: React.PropTypes.func.isRequired,
-		onSubmit: React.PropTypes.func.isRequired,
-		onCancel: React.PropTypes.func.isRequired
+		data: PropTypes.object,
+		qdata: PropTypes.object,
+		qschema: PropTypes.object,
+		isReadOnlyMode: PropTypes.bool,
+		isManual: PropTypes.bool,
+		onDataChanged: PropTypes.func.isRequired,
+		onQDataChanged: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired
 	};
 
 	render() {
@@ -57,8 +58,8 @@ class ComputeEditorView extends React.Component {
 					onValidateForm={() => onValidateForm() }
 					className='component-questionnaire-validation-form'
 					submitButtonText={edittingComputeMode ? i18n('Save') : i18n('Create')}>
-					<GridSection>
-						<GridItem colSpan={edittingComputeMode ? 2 : 4}>
+					<GridSection hasLostColSet>
+						<GridItem colSpan={edittingComputeMode ? 2 : 4} lastColInRow={!edittingComputeMode}>
 							<Input
 								disabled={!isManual}
 								data-test-id='name'
@@ -70,7 +71,7 @@ class ComputeEditorView extends React.Component {
 								errorText={genericFieldInfo['name'].errorText}
 								isRequired/>
 							</GridItem>
-							<GridItem colSpan={edittingComputeMode ? 2 : 4}>
+							<GridItem colSpan={edittingComputeMode ? 2 : 4} lastColInRow>
 							<Input
 								data-test-id='description'
 								type='textarea'

@@ -23,8 +23,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.co
 public class VmSizing {
     private int numOfCPUs;
     private String fileSystemSizeGB;
-    private int persistentStorageVolumeSize;
-    private int IOOperationsPerSec;
+    private Number persistentStorageVolumeSize;
+    private Number IOOperationsPerSec;
     private String cpuOverSubscriptionRatio;
     private String memoryRAM;
 
@@ -44,19 +44,19 @@ public class VmSizing {
         this.fileSystemSizeGB = fileSystemSizeGB;
     }
 
-    public int getPersistentStorageVolumeSize() {
+    public Number getPersistentStorageVolumeSize() {
         return persistentStorageVolumeSize;
     }
 
-    public void setPersistentStorageVolumeSize(int persistentStorageVolumeSize) {
+    public void setPersistentStorageVolumeSize(Number persistentStorageVolumeSize) {
         this.persistentStorageVolumeSize = persistentStorageVolumeSize;
     }
 
-    public int getIOOperationsPerSec() {
+    public Number getIOOperationsPerSec() {
         return IOOperationsPerSec;
     }
 
-    public void setIOOperationsPerSec(int IOOperationsPerSec) {
+    public void setIOOperationsPerSec(Number IOOperationsPerSec) {
         this.IOOperationsPerSec = IOOperationsPerSec;
     }
 

@@ -23,12 +23,9 @@ package org.openecomp.sdc.model.impl;
 import org.openecomp.core.model.dao.EnrichedServiceArtifactDaoFactory;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
 import org.openecomp.core.model.dao.EnrichedServiceTemplateDaoFactory;
-import org.openecomp.core.model.types.ServiceArtifact;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.util.List;
 
 public class EnrichedServiceModelDaoImpl extends AbstractServiceModelDao
     implements EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> {

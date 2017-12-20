@@ -33,7 +33,6 @@ import org.openecomp.sdc.generator.aai.xml.ModelVers;
 import org.openecomp.sdc.generator.aai.xml.Relationship;
 import org.openecomp.sdc.generator.aai.xml.RelationshipData;
 import org.openecomp.sdc.generator.aai.xml.RelationshipList;
-import org.openecomp.sdc.generator.logging.annotations.Audit;
 import org.openecomp.sdc.generator.logging.annotations.Metrics;
 import org.w3c.dom.DOMException;
 
@@ -271,12 +270,9 @@ public class AaiModelGeneratorImpl implements AaiModelGenerator {
       jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
       jaxbMarshaller.marshal(model, modelStringWriter);
     } catch (JAXBException jaxbException) {
-      //jaxbException.printStackTrace();
-      log.error(jaxbException.getMessage());
       throw new DOMException(DOMException.SYNTAX_ERR, jaxbException.getMessage());
     }
 
-    //System.out.println(modelStringWriter.toString());
     return modelStringWriter.toString();
   }
 }

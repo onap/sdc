@@ -59,7 +59,7 @@ public class NetworkManagerImpl implements NetworkManager {
   }
 
   @Override
-  public Collection<NetworkEntity> listNetworks(String vspId, Version version, String user) {
+  public Collection<NetworkEntity> listNetworks(String vspId, Version version) {
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
 
@@ -67,7 +67,7 @@ public class NetworkManagerImpl implements NetworkManager {
   }
 
   @Override
-  public NetworkEntity createNetwork(NetworkEntity network, String user) {
+  public NetworkEntity createNetwork(NetworkEntity network) {
     mdcDataDebugMessage.debugEntryMessage("VSP id", network.getVspId());
 
     if (!isManual(network.getVspId(), network.getVersion())) {
@@ -87,16 +87,12 @@ public class NetworkManagerImpl implements NetworkManager {
     return null;
   }
 
-  private NetworkEntity createNetwork(NetworkEntity network) {
-    return compositionEntityDataManager.createNetwork(network);
-  }
-
   @Override
-  public CompositionEntityValidationData updateNetwork(NetworkEntity network, String user) {
+  public CompositionEntityValidationData updateNetwork(NetworkEntity network) {
     mdcDataDebugMessage
         .debugEntryMessage("VSP id, network id", network.getVspId(), network.getId());
 
-    NetworkEntity retrieved = getNetwork(network.getVspId(), network.getVersion(), network.getId());
+    NetworkEntity retrieved = getValidatedNetwork(network.getVspId(), network.getVersion(), network.getId());
 
     NetworkCompositionSchemaInput schemaInput = new NetworkCompositionSchemaInput();
     schemaInput.setManual(isManual(network.getVspId(), network.getVersion()));
@@ -119,10 +115,10 @@ public class NetworkManagerImpl implements NetworkManager {
 
   @Override
   public CompositionEntityResponse<Network> getNetwork(String vspId, Version version,
-                                                       String networkId, String user) {
+                                                       String networkId) {
     mdcDataDebugMessage.debugEntryMessage("VSP id, network id", vspId, networkId);
 
-    NetworkEntity networkEntity = getNetwork(vspId, version, networkId);
+    NetworkEntity networkEntity = getValidatedNetwork(vspId, version, networkId);
     Network network = networkEntity.getNetworkCompositionData();
 
     NetworkCompositionSchemaInput schemaInput = new NetworkCompositionSchemaInput();
@@ -140,7 +136,7 @@ public class NetworkManagerImpl implements NetworkManager {
   }
 
 
-  private NetworkEntity getNetwork(String vspId, Version version, String networkId) {
+  private NetworkEntity getValidatedNetwork(String vspId, Version version, String networkId) {
     NetworkEntity retrieved = networkDao.get(new NetworkEntity(vspId, version, networkId));
     VersioningUtil.validateEntityExistence(retrieved, new NetworkEntity(vspId, version, networkId),
         VspDetails.ENTITY_TYPE);
@@ -148,7 +144,7 @@ public class NetworkManagerImpl implements NetworkManager {
   }
 
   @Override
-  public void deleteNetwork(String vspId, Version version, String networkId, String user) {
+  public void deleteNetwork(String vspId, Version version, String networkId) {
     mdcDataDebugMessage.debugEntryMessage("VSP id, network id", vspId, networkId);
 
     if (!isManual(vspId, version)) {

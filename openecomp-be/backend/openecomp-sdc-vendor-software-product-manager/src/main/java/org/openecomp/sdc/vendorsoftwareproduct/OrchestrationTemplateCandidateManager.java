@@ -21,6 +21,7 @@
 package org.openecomp.sdc.vendorsoftwareproduct;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
@@ -33,14 +34,16 @@ import java.util.Optional;
 
 public interface OrchestrationTemplateCandidateManager {
   UploadFileResponse upload(String vspId, Version version, InputStream heatFileToUpload,
-                            String user, String filePrefix, String networkPackageName);
+                            String fileSuffix, String networkPackageName);
 
-  OrchestrationTemplateActionResponse process(String vspId, Version version, String user);
+  OrchestrationTemplateActionResponse process(String vspId, Version version);
 
-  Optional<FilesDataStructure> getFilesDataStructure(String vspId, Version version, String user);
+  Optional<FilesDataStructure> getFilesDataStructure(String vspId, Version version);
 
-  ValidationResponse updateFilesDataStructure(String vspId, Version version, String user,
+  ValidationResponse updateFilesDataStructure(String vspId, Version version,
                                               FilesDataStructure fileDataStructure);
 
-  Optional<Pair<String, byte[]>> get(String vspId, Version version, String user) throws IOException;
+  Optional<Pair<String, byte[]>> get(String vspId, Version version) throws IOException;
+
+  OrchestrationTemplateCandidateData getInfo(String vspId, Version version);
 }

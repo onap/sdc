@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.heat.services.tree;
 
-import org.openecomp.config.ConfigurationUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
@@ -33,9 +32,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class HeatTreeManagerTest {

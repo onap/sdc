@@ -23,12 +23,13 @@ package org.openecomp.sdcrests.vsp.rest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.openecomp.sdcrests.item.types.ItemCreationDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.PackageInfoDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VersionSoftwareProductActionRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspComputeDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspCreationDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.validation.IsValidJson;
 import org.springframework.validation.annotation.Validated;
 
@@ -51,6 +52,7 @@ import java.io.IOException;
 
 import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
 import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
+
 @Path("/v1.0/vendor-software-products")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -61,8 +63,8 @@ public interface VendorSoftwareProducts extends VspEntities {
   @POST
   @Path("/")
   @ApiOperation(value = "Create a new vendor software product",
-      response = VspCreationDto.class)
-  Response createVsp(@Valid VspDescriptionDto vspDescriptionDto,
+      response = ItemCreationDto.class)
+  Response createVsp(@Valid VspRequestDto vspRequestDto,
                      @NotNull(message = USER_MISSING_ERROR_MSG)
                      @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
@@ -71,12 +73,11 @@ public interface VendorSoftwareProducts extends VspEntities {
   @ApiOperation(value = "Get list of vendor software products and their description",
       responseContainer = "List")
   Response listVsps(@ApiParam(
-      value = "Currently supported values: 'Final' - only vendor software products with final "
+      value = "Currently supported values: 'Certified' - only vendor software products with final "
           + " version will be return - with their latest final version")
-                    @QueryParam("versionFilter") String versionFilter,
+                    @QueryParam("versionFilter") String versionStatus,
                     @NotNull(message = USER_MISSING_ERROR_MSG)
                     @HeaderParam(USER_ID_HEADER_PARAM) String user);
-
 
   @GET
   @Path("/{vspId}/versions/{versionId}")
@@ -140,9 +141,9 @@ public interface VendorSoftwareProducts extends VspEntities {
           + "Checkin: Unlocks it and activates the edited version to all users.| "
           + "Submit: Finalize its active version.|"
           + "Create_Package: Creates a CSAR zip file.|")
-  Response actOnVendorSoftwareProduct(@PathParam("vspId") String vspId,
+  Response actOnVendorSoftwareProduct(VersionSoftwareProductActionRequestDto request,
+                                      @PathParam("vspId") String vspId,
                                       @PathParam("versionId") String versionId,
-                                      VersionSoftwareProductActionRequestDto request,
                                       @NotNull(message = USER_MISSING_ERROR_MSG)
                                       @HeaderParam(USER_ID_HEADER_PARAM) String user)
       throws IOException;
@@ -201,18 +202,9 @@ public interface VendorSoftwareProducts extends VspEntities {
   @ApiOperation(value = "Get list of vendor software product compute-flavors",
       response = VspComputeDto.class,
       responseContainer = "List")
-  Response listCompute(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String
-                           vspId,
-                       @PathParam("versionId") String versionId,
-                       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
-                           String user);
-
-  @PUT
-  @Path("/reSubmitAll")
-  @ApiOperation(value = "Performs healing ,check out, check in and submit for Network Package " +
-      "Based VSPs",
-      notes
-      = "Please note - only submitted VSPs will be processed")
-  Response reSubmitAll(@NotNull(message = USER_MISSING_ERROR_MSG)
-                       @HeaderParam(USER_ID_HEADER_PARAM) String user) throws IOException;
+  Response listComputes(@ApiParam(value = "Vendor software product Id")
+                        @PathParam("vspId") String vspId,
+                        @PathParam("versionId") String versionId,
+                        @NotNull(message = USER_MISSING_ERROR_MSG)
+                        @HeaderParam(USER_ID_HEADER_PARAM) String user);
 }

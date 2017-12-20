@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import Button from 'sdc-ui/lib/react/Button.js';
 import classnames from 'classnames';
 import ExpandableInput from 'nfvo-components/input/ExpandableInput.jsx';
@@ -60,15 +61,15 @@ class ListEditorView extends React.Component {
 	};
 
 	static propTypes = {
-		title: React.PropTypes.string,
-		plusButtonTitle: React.PropTypes.string,
-		children: React.PropTypes.node,
-		filterValue: React.PropTypes.string,
-		onFilter: React.PropTypes.func,
-		className: React.PropTypes.string,
-		isReadOnlyMode: React.PropTypes.bool,
-		placeholder: React.PropTypes.string,
-		twoColumns: React.PropTypes.bool
+		title: PropTypes.string,
+		plusButtonTitle: PropTypes.string,
+		children: PropTypes.node,
+		filterValue: PropTypes.string,
+		onFilter: PropTypes.func,
+		className: PropTypes.string,
+		isReadOnlyMode: PropTypes.bool,
+		placeholder: PropTypes.string,
+		twoColumns: PropTypes.bool
 	};
 
 	render() {

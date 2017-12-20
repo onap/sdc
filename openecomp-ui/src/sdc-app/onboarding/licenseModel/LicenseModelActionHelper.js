@@ -23,7 +23,14 @@ import LicenseAgreementActionHelper from './licenseAgreement/LicenseAgreementAct
 import FeatureGroupsActionHelper from './featureGroups/FeatureGroupsActionHelper.js';
 import EntitlementPoolsActionHelper from './entitlementPools/EntitlementPoolsActionHelper.js';
 import LicenseKeyGroupsActionHelper from './licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
-import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
+import ItemsHelper from '../../common/helpers/ItemsHelper.js';
+import MergeEditorActionHelper from 'sdc-app/common/merge/MergeEditorActionHelper.js';
+import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
+import {CommitModalType} from 'nfvo-components/panel/versionController/components/CommitCommentModal.jsx';
+import versionPageActionHelper from 'sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js';
+import {itemTypes} from 'sdc-app/onboarding/versionsPage/VersionsPageConstants.js';
+import {catalogItemStatuses} from 'sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogConstants.js';
+import {actionsEnum as VersionControllerActionsEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
 
 function baseUrl() {
 	const restPrefix = Configuration.get('restPrefix');
@@ -31,21 +38,16 @@ function baseUrl() {
 }
 
 function fetchLicenseModels() {
-	return RestAPIUtil.fetch(baseUrl());
+	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=Draft`);
 }
 
 function fetchFinalizedLicenseModels() {
-	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=Final`);
+	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=Certified`);
 }
 
 function fetchLicenseModelById(licenseModelId, version) {
 	const {id: versionId} = version;
 	return RestAPIUtil.fetch(`${baseUrl()}${licenseModelId}/versions/${versionId}`);
-}
-
-function putLicenseModelAction(id, action, version) {
-	const {id: versionId} = version;
-	return RestAPIUtil.put(`${baseUrl()}${id}/versions/${versionId}/actions`, {action: action});
 }
 
 function putLicenseModel(licenseModel) {
@@ -57,14 +59,9 @@ function putLicenseModel(licenseModel) {
 	});
 }
 
-function adjustMinorVersion(version, value) {
-	let ar = version.split('.');
-	return ar[0] + '.' + (parseInt(ar[1]) + value);
-}
-
-function adjustMajorVersion(version, value) {
-	let ar = version.split('.');
-	return (parseInt(ar[0]) + value) + '.0';
+function putLicenseModelAction({itemId, action, version}) {
+	const {id: versionId} = version;
+	return RestAPIUtil.put(`${baseUrl()}${itemId}/versions/${versionId}/actions`, {action: action});
 }
 
 const LicenseModelActionHelper = {
@@ -87,19 +84,12 @@ const LicenseModelActionHelper = {
 	},
 
 	fetchLicenseModelById(dispatch, {licenseModelId, version}) {
-		
-		return fetchLicenseModelById(licenseModelId, version).then(response => {		
+
+		return fetchLicenseModelById(licenseModelId, version).then(response => {
 			dispatch({
 				type: actionTypes.LICENSE_MODEL_LOADED,
 				response: {...response, version}
 			});
-		});
-	},
-
-	addLicenseModel(dispatch, {licenseModel}){
-		dispatch({
-			type: actionTypes.ADD_LICENSE_MODEL,
-			licenseModel
 		});
 	},
 
@@ -112,57 +102,93 @@ const LicenseModelActionHelper = {
 		]);
 	},
 
-	performVCAction(dispatch, {licenseModelId, action, version}) {
-		return putLicenseModelAction(licenseModelId, action, version).then(() => {
-			if(action === vcActionsEnum.SUBMIT){
+	manageSubmitAction(dispatch, {licenseModelId, version, isDirty}) {
+		if(isDirty) {
+			const onCommit = comment => {
+				return this.performVCAction(dispatch, {licenseModelId, action: vcActionsEnum.COMMIT, version, comment}).then(() => {
+					return this.performSubmitAction(dispatch, {licenseModelId, version});
+				});
+			};
+			dispatch({
+				type: modalActionTypes.GLOBAL_MODAL_SHOW,
+				data: {
+					modalComponentName: modalContentMapper.COMMIT_COMMENT,
+					modalComponentProps: {
+						onCommit,
+						type: CommitModalType.COMMIT_SUBMIT
+					},
+					title: i18n('Commit & Submit')
+				}
+			});
+			return Promise.reject();
+		}
+		return this.performSubmitAction(dispatch, {licenseModelId, version});
+	},
+
+	performSubmitAction(dispatch, {licenseModelId, version}) {
+		return putLicenseModelAction({itemId: licenseModelId, action: vcActionsEnum.SUBMIT, version}).then(() => {
+			return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id}).then(updatedVersion => {
 				dispatch({
 					type: modalActionTypes.GLOBAL_MODAL_SUCCESS,
 					data: {
-						title: i18n('Submit Succeeded'), 
+						title: i18n('Submit Succeeded'),
 						msg: i18n('This license model successfully submitted'),
-						cancelButtonText: i18n('OK'),						
+						cancelButtonText: i18n('OK'),
 						timeout: 2000
 					}
 				});
-			}
-
-			let newVersionId = version.id;
-			/*
-				TODO Temorary switch to change version label
-			*/
-			switch(action) {
-				case vcActionsEnum.CHECK_OUT:
-					newVersionId = adjustMinorVersion(version.label, 1);
-					break;
-				case vcActionsEnum.UNDO_CHECK_OUT:
-					newVersionId = adjustMinorVersion(version.label, -1);
-					break;
-				case vcActionsEnum.SUBMIT:
-					newVersionId = adjustMajorVersion(version.label, 1);
-			}
-
-			OnboardingActionHelper.updateCurrentScreenVersion(dispatch, {label: newVersionId, id: newVersionId});
-
-			LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version:{id: newVersionId, label: newVersionId}});
-			return Promise.resolve({id: newVersionId, label: newVersionId});
+				versionPageActionHelper.fetchVersions(dispatch, {itemType: itemTypes.LICENSE_MODEL, itemId: licenseModelId});
+				return Promise.resolve(updatedVersion);
+			});
 		});
 	},
 
-	switchVersion(dispatch, {licenseModelId, version}) {		
-		LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version: {id: version.id, label: version.label}}).then(() => {
-			LicenseModelActionHelper.fetchLicenseModelItems(dispatch, {licenseModelId, version});
+	performVCAction(dispatch, {licenseModelId, action, version, comment}) {
+		return MergeEditorActionHelper.analyzeSyncResult(dispatch, {itemId: licenseModelId, version}).then(({inMerge, isDirty, updatedVersion}) => {
+			if (updatedVersion.status === catalogItemStatuses.CERTIFIED &&
+				(action === VersionControllerActionsEnum.COMMIT || action === VersionControllerActionsEnum.SYNC)) {
+				versionPageActionHelper.fetchVersions(dispatch, {itemType: itemTypes.LICENSE_MODEL, itemId: licenseModelId});
+				dispatch({
+					type: modalActionTypes.GLOBAL_MODAL_WARNING,
+					data: {
+						title: i18n('Commit error'),
+						msg: i18n('Item version already Certified'),
+						cancelButtonText: i18n('Cancel')
+					}
+				});
+				return Promise.resolve(updatedVersion);
+			}
+			if (!inMerge) {
+				if(action === vcActionsEnum.SUBMIT) {
+					return this.manageSubmitAction(dispatch, {licenseModelId, version, isDirty});
+				}
+				else {
+					return ItemsHelper.performVCAction({itemId: licenseModelId, action, version, comment}).then(() => {
+						versionPageActionHelper.fetchVersions(dispatch, {itemType: itemTypes.LICENSE_MODEL, itemId: licenseModelId});
+						if (action === vcActionsEnum.SYNC) {
+							return MergeEditorActionHelper.analyzeSyncResult(dispatch, {itemId: licenseModelId, version}).then(({updatedVersion}) => {
+								return Promise.resolve(updatedVersion);
+							});
+						} else {
+							return ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
+						}
+					});
+				}
+			}
 		});
 	},
 
 	saveLicenseModel(dispatch, {licenseModel}) {
 		return putLicenseModel(licenseModel).then(() => {
 			dispatch({
-				type: actionTypes.ADD_LICENSE_MODEL,
-				licenseModel
-			});
-			dispatch({
 				type: actionTypes.LICENSE_MODEL_LOADED,
 				response: licenseModel
+			});
+			const {id, version: {id: versionId}} = licenseModel;
+			return ItemsHelper.checkItemStatus(dispatch, {itemId: id, versionId}).then(updatedVersion => {
+				if (updatedVersion.status !== licenseModel.version.status) {
+					versionPageActionHelper.fetchVersions(dispatch, {itemType: itemTypes.LICENSE_MODEL, itemId: licenseModel.id});
+				}
 			});
 		});
 	}

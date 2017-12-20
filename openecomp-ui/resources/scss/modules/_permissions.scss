@@ -1,0 +1,55 @@
+.modal-content {
+	.modal-body {
+		.manage-permissions-page {
+			.validation-form-content {
+				overflow-y: visible;
+			}
+
+			.manage-permissions-title {
+				@extend .body-1-semibold;
+				margin-bottom: 10px;
+			}
+			.owner-details {
+				@extend .body-2;
+				display: flex;
+				margin-bottom: 30px;
+				.change-owner {
+					margin-left: auto;
+					color: $blue;
+					cursor: pointer;
+					&:hover {
+						color: $dark-blue;
+					}
+				}
+			}
+			.change-owner-wrapper {
+				.form-group {
+					margin-bottom: 30px;
+				}
+
+			}
+			.change-owner-title {
+				display: flex;
+				align-items: center;
+				margin-bottom: 10px;
+				.manage-permissions-title {
+					margin-bottom: 0;
+				}
+				.svg-icon-wrapper {
+					margin-left: 5px;
+					.svg-icon {
+						width: 13px;
+						height: 13px;
+						fill: $dark-gray;
+					}
+				}
+			}
+			.contributors-select {
+				.Select-menu {
+					max-height: 150px;
+					overflow-y: auto
+				}
+			}
+		}
+	}
+}

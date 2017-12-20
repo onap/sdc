@@ -36,24 +36,14 @@
 
     <!-- aspect beans -->
     <bean id = "healthCheck" class="org.openecomp.sdcrests.health.rest.services.HealthCheckImpl"/>
-    <!--aop:config>
-        < aspect pointcuts>
-        <aop:pointcut id="loggingDebugPointcut" expression="execution(* org.openecomp.sdc.*.*.*(..))"/>
-
-        <advices>
-        <aop:aspect id="logDebugAspect" ref="debugAspect">
-            <aop:before pointcut-ref="loggingDebugPointcut" method="debugEnterMethod"/>
-            <aop:after-returning pointcut-ref="loggingDebugPointcut" method="debugExitMethod"/>
-        </aop:aspect>
-    </aop:config-->
-
-
-
-
+    <bean id = "itemPermissions" class="org.openecomp.sdcrests.itempermissions.rest.services.ItemPermissionsImpl"/>
+    <bean id = "notifications" class="org.openecomp.sdcrests.notifications.rest.services.impl.NotificationsImpl"/>
     <!-- RESTful Services -->
     <jaxrs:server id="restContainer" address="/">
 
         <jaxrs:serviceBeans>
+            <ref bean="versions"/>
+            <ref bean="conflicts"/>
             <ref bean="vendorLicenseModels"/>
             <ref bean="licenseAgreements"/>
             <ref bean="featureGroups"/>
@@ -75,9 +65,10 @@
             <ref bean="deploymentFlavors"/>
 	        <ref bean="images"/>
             <ref bean="orchestrationTemplateCandidate"/>
-            <ref bean="componentDependencyModel"/>
-            <ref bean="activityLog"/>
+            <ref bean="componentDependencies"/>
             <ref bean="healthCheck"/>
+            <ref bean="itemPermissions"/>
+            <ref bean="notifications"/>
         </jaxrs:serviceBeans>
 
         <jaxrs:providers>

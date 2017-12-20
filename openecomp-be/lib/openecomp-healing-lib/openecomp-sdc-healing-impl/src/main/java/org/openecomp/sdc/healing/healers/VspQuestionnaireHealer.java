@@ -21,7 +21,6 @@
 package org.openecomp.sdc.healing.healers;
 
 import org.openecomp.core.utilities.json.JsonSchemaDataGenerator;
-import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.healing.interfaces.Healer;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -35,7 +34,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTempl
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -50,15 +48,12 @@ public class VspQuestionnaireHealer implements Healer {
   }
 
   @Override
-  public Object heal(Map<String, Object> healingParams) throws IOException {
+  public Object heal(String vspId, Version version) throws IOException {
 
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
     Optional<String> questionnaireData = null;
-    String vspId = (String) healingParams.get(SdcCommon.VSP_ID);
-    Version version = (Version) healingParams.get(SdcCommon.VERSION);
-
     VspQuestionnaireEntity vspQuestionnaireEntity =
         vspInfoDao.getQuestionnaire(vspId, version);
 

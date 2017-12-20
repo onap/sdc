@@ -5,7 +5,9 @@ let path = require('path');
 let localDevConfig = {};
 try {
 	localDevConfig = require('./devConfig');
-} catch (e) {}
+} catch (e) {
+	console.log('Could not find local dev config.');
+}
 let devConfig = Object.assign({}, require('./devConfig.defaults'), localDevConfig);
 
 module.exports = {
@@ -23,11 +25,11 @@ module.exports = {
 	},
 	module: {
 		rules: [
-			{test: /\.(js|jsx)$/, loader: 'source-map-loader', exclude: /node_modules/, enforce: 'pre'},
+			{test: /\.(js|jsx)$/, loader: 'source-map-loader', exclude: [/node_modules/, path.resolve(__dirname, '../dox-sequence-diagram/')], enforce: 'pre'},
 			{test: /\.(js|jsx)$/, use: [
 				{loader : 'react-hot-loader'},
 				{loader : 'babel-loader'},
-				{loader : 'eslint-loader'}], exclude: /node_modules/},
+				{loader : 'eslint-loader'}], exclude: [/node_modules/, path.resolve(__dirname, '../dox-sequence-diagram/')]},
 			{test: /\.(css|scss)$/, use: [
 				{loader: 'style-loader'},
 				{loader: 'css-loader?sourceMap'},

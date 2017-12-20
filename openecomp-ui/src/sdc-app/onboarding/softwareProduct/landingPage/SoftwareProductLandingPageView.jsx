@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Dropzone from 'react-dropzone';
 
@@ -22,25 +23,25 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
 
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
-import SoftwareProductComponentsList from '../components/SoftwareProductComponentsList.js';
+import SoftwareProductComponentsList from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponents.js';
 
-const SoftwareProductPropType = React.PropTypes.shape({
-	name: React.PropTypes.string,
-	description: React.PropTypes.string,
-	version: React.PropTypes.object,
-	id: React.PropTypes.string,
-	categoryId: React.PropTypes.string,
-	vendorId: React.PropTypes.string,
-	status: React.PropTypes.string,
-	licensingData: React.PropTypes.object,
-	validationData: React.PropTypes.object
+const SoftwareProductPropType = PropTypes.shape({
+	name: PropTypes.string,
+	description: PropTypes.string,
+	version: PropTypes.object,
+	id: PropTypes.string,
+	categoryId: PropTypes.string,
+	vendorId: PropTypes.string,
+	status: PropTypes.string,
+	licensingData: PropTypes.object,
+	validationData: PropTypes.object
 });
 
-const ComponentPropType = React.PropTypes.shape({
-	id: React.PropTypes.string,
-	name: React.PropTypes.string,
-	displayName: React.PropTypes.string,
-	description: React.PropTypes.string
+const ComponentPropType = PropTypes.shape({
+	id: PropTypes.string,
+	name: PropTypes.string,
+	displayName: PropTypes.string,
+	description: PropTypes.string
 });
 
 class SoftwareProductLandingPageView extends React.Component {
@@ -54,18 +55,19 @@ class SoftwareProductLandingPageView extends React.Component {
 
 	static propTypes = {
 		currentSoftwareProduct: SoftwareProductPropType,
-		isReadOnlyMode: React.PropTypes.bool,
-		componentsList: React.PropTypes.arrayOf(ComponentPropType),
-		onDetailsSelect: React.PropTypes.func,
-		onUpload: React.PropTypes.func,
-		onUploadConfirmation: React.PropTypes.func,
-		onInvalidFileSizeUpload: React.PropTypes.func,
-		onComponentSelect: React.PropTypes.func,
-		onAddComponent: React.PropTypes.func
+		isReadOnlyMode: PropTypes.bool,
+		componentsList: PropTypes.arrayOf(ComponentPropType),
+		version: PropTypes.object,
+		onDetailsSelect: PropTypes.func,
+		onUpload: PropTypes.func,
+		onUploadConfirmation: PropTypes.func,
+		onInvalidFileSizeUpload: PropTypes.func,
+		onComponentSelect: PropTypes.func,
+		onAddComponent: PropTypes.func
 	};
 
 	render() {
-		let {currentSoftwareProduct, isReadOnlyMode, isManual, onDetailsSelect, componentsList} =  this.props;
+		let {currentSoftwareProduct, isReadOnlyMode, isManual, onDetailsSelect} =  this.props;
 		return (
 			<div className='software-product-landing-wrapper'>
 				<Dropzone
@@ -88,11 +90,7 @@ class SoftwareProductLandingPageView extends React.Component {
 						</div>
 					</div>
 				</Dropzone>
-				<SoftwareProductComponentsList
-					isReadOnlyMode={isReadOnlyMode}
-					componentsList={componentsList}
-					isManual={isManual}
-					currentSoftwareProduct={currentSoftwareProduct}/>
+				<SoftwareProductComponentsList/>
 			</div>
 		);
 	}

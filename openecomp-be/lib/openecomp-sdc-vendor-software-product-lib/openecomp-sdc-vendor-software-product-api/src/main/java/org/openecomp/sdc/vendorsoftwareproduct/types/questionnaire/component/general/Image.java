@@ -26,8 +26,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.ge
 public class Image {
     private String format;
     private String providedBy;
-    private int bootDiskSizePerVM;
-    private int ephemeralDiskSizePerVM;
+    private Number bootDiskSizePerVM;
+    private Number ephemeralDiskSizePerVM;
 
     public String getFormat() {
         return format;
@@ -45,19 +45,19 @@ public class Image {
         this.providedBy = providedBy;
     }
 
-    public int getBootDiskSizePerVM() {
+    public Number getBootDiskSizePerVM() {
         return bootDiskSizePerVM;
     }
 
-    public void setBootDiskSizePerVM(int bootDiskSizePerVM) {
+    public void setBootDiskSizePerVM(Number bootDiskSizePerVM) {
         this.bootDiskSizePerVM = bootDiskSizePerVM;
     }
 
-    public int getEphemeralDiskSizePerVM() {
+    public Number getEphemeralDiskSizePerVM() {
         return ephemeralDiskSizePerVM;
     }
 
-    public void setEphemeralDiskSizePerVM(int ephemeralDiskSizePerVM) {
+    public void setEphemeralDiskSizePerVM(Number ephemeralDiskSizePerVM) {
         this.ephemeralDiskSizePerVM = ephemeralDiskSizePerVM;
     }
 }

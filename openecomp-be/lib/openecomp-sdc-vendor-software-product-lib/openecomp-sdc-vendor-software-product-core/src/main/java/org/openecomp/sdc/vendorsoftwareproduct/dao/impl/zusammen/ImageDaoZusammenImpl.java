@@ -2,7 +2,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
@@ -11,17 +10,23 @@ import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
-import org.openecomp.core.zusammen.api.ZusammenUtil;
+import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToImageConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.types.ElementPropertyName;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class ImageDaoZusammenImpl implements ImageDao {
 
@@ -37,32 +42,27 @@ public class ImageDaoZusammenImpl implements ImageDao {
 
   @Override
   public Collection<ImageEntity> list(ImageEntity image) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(image.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(image.getVersion()));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(image.getVspId(), image.getVersion().getId());
 
     return listImages(context, elementContext, image);
   }
 
   private Collection<ImageEntity> listImages(SessionContext context,
-                                                 ElementContext elementContext, ImageEntity image) {
+                                             ElementContext elementContext, ImageEntity image) {
+    ElementToImageConvertor convertor = new ElementToImageConvertor();
     return zusammenAdaptor
         .listElementsByName(context, elementContext, new Id(image.getComponentId()),
-            StructureElement.Images.name())
-        .stream().map(elementInfo -> mapElementInfoToImage(
-            image.getVspId(), image.getVersion(), image.getComponentId(), elementInfo))
+            ElementType.Images.name())
+        .stream().map(convertor::convert)
+        .map(imageEntity -> {
+          imageEntity.setComponentId(image.getComponentId());
+          imageEntity.setVspId(image.getVspId());
+          imageEntity.setVersion(image.getVersion());
+          return imageEntity;
+        })
         .collect(Collectors.toList());
-  }
-
-  private static ImageEntity mapElementInfoToImage(String vspId, Version version,
-                                                       String componentId, ElementInfo elementInfo) {
-    ImageEntity imageEntity =
-        new ImageEntity(vspId, version, componentId, elementInfo.getId().getValue());
-    imageEntity.setCompositionData(
-        elementInfo.getInfo().getProperty(ElementPropertyName.compositionData.name()));
-    return imageEntity;
   }
 
   @Override
@@ -70,50 +70,48 @@ public class ImageDaoZusammenImpl implements ImageDao {
     ZusammenElement imageElement = imageToZusammen(image, Action.CREATE);
 
     ZusammenElement imagesElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.Images, null);
+        buildStructuralElement(ElementType.Images, Action.IGNORE);
     imagesElement.setSubElements(Collections.singletonList(imageElement));
 
-    ZusammenElement componentElement = new ZusammenElement();
-    componentElement.setElementId(new Id(image.getComponentId()));
-    componentElement.setAction(Action.IGNORE);
+    ZusammenElement componentElement = buildElement(new Id(image.getComponentId()), Action.IGNORE);
     componentElement.setSubElements(Collections.singletonList(imagesElement));
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(image.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(image.getVspId(), image.getVersion().getId());
 
-    Optional<Element> savedElement =
+    Element savedElement =
         zusammenAdaptor.saveElement(context, elementContext, componentElement, "Create image");
-    savedElement.ifPresent(element ->
-        image.setId(element.getSubElements().iterator().next()
-            .getSubElements().iterator().next().getElementId().getValue()));
+    image.setId(savedElement.getSubElements().iterator().next()
+        .getSubElements().iterator().next().getElementId().getValue());
   }
 
   @Override
   public void update(ImageEntity image) {
     ZusammenElement imageElement = imageToZusammen(image, Action.UPDATE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(image.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(image.getVspId(), image.getVersion().getId());
     zusammenAdaptor.saveElement(context, elementContext, imageElement,
         String.format("Update image with id %s", image.getId()));
   }
 
   @Override
   public ImageEntity get(ImageEntity image) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(image.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(image.getVersion()));
+    SessionContext context = createSessionContext();
+
+    ElementContext elementContext =
+        new ElementContext(image.getVspId(), image.getVersion().getId());
     Optional<Element> element = zusammenAdaptor.getElement(context, elementContext, image.getId());
 
     if (element.isPresent()) {
-      image.setCompositionData(new String(FileUtils.toByteArray(element.get().getData())));
-      return image;
+      ElementToImageConvertor convertor = new ElementToImageConvertor();
+      ImageEntity entity = convertor.convert(element.get());
+      entity.setComponentId(image.getComponentId());
+      entity.setVspId(image.getVspId());
+      entity.setVersion(image.getVersion());
+      return entity;
     } else {
       return null;
     }
@@ -121,41 +119,41 @@ public class ImageDaoZusammenImpl implements ImageDao {
 
   @Override
   public void delete(ImageEntity image) {
-    ZusammenElement imageElement = new ZusammenElement();
-    imageElement.setElementId(new Id(image.getId()));
-    imageElement.setAction(Action.DELETE);
+    ZusammenElement imageElement = buildElement(new Id(image.getId()), Action.DELETE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(image.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(image.getVspId(), image.getVersion().getId());
     zusammenAdaptor.saveElement(context, elementContext, imageElement,
         String.format("Delete image with id %s", image.getId()));
   }
 
   @Override
   public void deleteByVspId(String vspId, Version version) {
-    ZusammenElement imagesElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.Images, Action.DELETE);
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    zusammenAdaptor.saveElement(context,
-        new ElementContext(itemId,
-            VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
-        imagesElement, String.format("Delete all images with vsp id %s", vspId));
+    Optional<Element> elementOptional = zusammenAdaptor.getElementByName(context, elementContext,
+        null, ElementType.Images.name());
+
+    if (elementOptional.isPresent()) {
+      Element ImagesElement = elementOptional.get();
+      Collection<Element> Images = ImagesElement.getSubElements();
+      Images.forEach(image -> {
+        ZusammenElement imageZusammenElement = buildElement(image.getElementId(), Action.DELETE);
+        zusammenAdaptor.saveElement(context, elementContext, imageZusammenElement, "Delete image " +
+            "with id " + image.getElementId());
+      });
+    }
   }
 
   @Override
   public Collection<ImageEntity> listByVsp(String vspId, Version version) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(version));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
 
     Collection<ComponentEntity> components = ComponentDaoZusammenImpl
-        .listComponents(zusammenAdaptor, context, elementContext, vspId, version);
+        .listComponents(zusammenAdaptor, context, vspId, version);
 
     return components.stream()
         .map(component ->
@@ -169,12 +167,9 @@ public class ImageDaoZusammenImpl implements ImageDao {
 
   @Override
   public ImageEntity getQuestionnaireData(String vspId, Version version, String componentId,
-                                            String imageId) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(version));
+                                          String imageId) {
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
 
     return getQuestionnaire(context, elementContext,
         new ImageEntity(vspId, version, componentId, imageId));
@@ -184,7 +179,7 @@ public class ImageDaoZusammenImpl implements ImageDao {
                                        ImageEntity image) {
     Optional<Element> questionnaireElement = zusammenAdaptor
         .getElementByName(context, elementContext, new Id(image.getId()),
-            StructureElement.Questionnaire.name());
+            ElementType.ImageQuestionnaire.name());
     return questionnaireElement.map(
         element -> element.getData() == null
             ? null
@@ -202,19 +197,14 @@ public class ImageDaoZusammenImpl implements ImageDao {
     ZusammenElement questionnaireElement =
         imageQuestionnaireToZusammen(questionnaireData, Action.UPDATE);
 
-    ZusammenElement imageElement = new ZusammenElement();
-    imageElement.setAction(Action.IGNORE);
-    imageElement.setElementId(new Id(imageId));
+    ZusammenElement imageElement = buildElement(new Id(imageId), Action.IGNORE);
     imageElement.setSubElements(Collections.singletonList(questionnaireElement));
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
     zusammenAdaptor.saveElement(context, elementContext, imageElement, "Update image "
         + "questionnaire");
   }
-
 
 
   private ZusammenElement imageToZusammen(ImageEntity image, Action action) {
@@ -227,21 +217,18 @@ public class ImageDaoZusammenImpl implements ImageDao {
   }
 
   private ZusammenElement imageQuestionnaireToZusammen(String questionnaireData,
-                                                         Action action) {
+                                                       Action action) {
     ZusammenElement questionnaireElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.Questionnaire, action);
+        buildStructuralElement(ElementType.ImageQuestionnaire, action);
     questionnaireElement.setData(new ByteArrayInputStream(questionnaireData.getBytes()));
     return questionnaireElement;
   }
 
   private ZusammenElement buildImageElement(ImageEntity image, Action action) {
-    ZusammenElement imageElement = new ZusammenElement();
-    imageElement.setAction(action);
-    if (image.getId() != null) {
-      imageElement.setElementId(new Id(image.getId()));
-    }
+    ZusammenElement imageElement =
+        buildElement(image.getId() == null ? null : new Id(image.getId()), action);
     Info info = new Info();
-    info.addProperty(ElementPropertyName.type.name(), ElementType.Image);
+    info.addProperty(ElementPropertyName.elementType.name(), ElementType.Image);
     info.addProperty(ElementPropertyName.compositionData.name(), image.getCompositionData());
     imageElement.setInfo(info);
     imageElement.setData(new ByteArrayInputStream(image.getCompositionData().getBytes()));

@@ -25,7 +25,6 @@ import org.testng.Assert;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
@@ -97,7 +96,7 @@ public class ValidationTestUtil {
                                                             String resourceTypeToValidate, String path) {
 
     GlobalValidationContext globalContext = createGlobalContextFromPath(path);
-    ManifestContent manifestContent = ValidationUtil.checkValidationPreCondition(globalContext);
+    ManifestContent manifestContent = ValidationUtil.validateManifest(globalContext);
     Map<String, FileData.Type> fileTypeMap = ManifestUtil.getFileTypeMap(manifestContent);
     Map<String, FileData> fileEnvMap = ManifestUtil.getFileAndItsEnv(manifestContent);
 

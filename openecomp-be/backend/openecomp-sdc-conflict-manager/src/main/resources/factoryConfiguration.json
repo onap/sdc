@@ -1,0 +1,3 @@
+{
+  "org.openecomp.sdc.conflicts.ConflictsManagerFactory": "org.openecomp.sdc.conflicts.impl.ConflictsManagerFactoryImpl"
+}

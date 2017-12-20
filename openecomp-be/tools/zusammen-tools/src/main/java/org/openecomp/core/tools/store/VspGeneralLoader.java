@@ -4,14 +4,13 @@ import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Info;
 import com.amdocs.zusammen.plugin.statestore.cassandra.dao.types.ElementEntityContext;
-import org.openecomp.core.zusammen.plugin.dao.impl.CassandraElementRepository;
 import org.openecomp.core.zusammen.plugin.dao.types.ElementEntity;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Objects;
+import java.util.Optional;
 
 public class VspGeneralLoader {
 
@@ -56,24 +55,24 @@ public class VspGeneralLoader {
 
     for (Map.Entry<String, List<String>> entry : vspItemChangeRefssMap.entrySet()) {
 
-      for (String changeRef : entry.getValue()) {
+      for (String revisionId : entry.getValue()) {
 
 
         itemId = new Id(entry.getKey());
 
-        entityId = getEntityIdByInfoNameValue(context, itemId, null, changeRef,null, NAME,
+        entityId = getEntityIdByInfoNameValue(context, itemId, null, revisionId,null, NAME,
                 GENERAL);
         if (entityId != null) {
           ElementEntityContext elementContext = new ElementEntityContext(
                   context.getUser().getUserName(),
                   itemId,
                   null);
-          elementContext.setChangeRef(changeRef);
+          elementContext.setRevisionId(new Id(revisionId));
           Optional<ElementEntity> result =
                   cassandraElementRepository.get(context, elementContext,
                           new ElementEntity(entityId));
           if (result.isPresent()) {
-            elementEntityMap.put(buildKey(context, entry, changeRef), result.get());
+            elementEntityMap.put(buildKey(context, entry, revisionId), result.get());
           }
         }
       }
@@ -90,7 +89,7 @@ public class VspGeneralLoader {
   private static Id getEntityIdByInfoNameValue(SessionContext context,
                                                Id itemId,
                                                Id versionId,
-                                               String changeRef,
+                                               String revisionId,
                                                Id elementId,
                                                String name,
                                                String value) {
@@ -100,8 +99,8 @@ public class VspGeneralLoader {
             context.getUser().getUserName(),
             itemId,
             versionId);
-    if (changeRef != null) {
-      elementContext.setChangeRef(changeRef);
+    if (revisionId != null) {
+      elementContext.setRevisionId(new Id(revisionId));
     }
     Optional<ElementEntity> result =
             cassandraElementRepository.get(context, elementContext,
@@ -113,8 +112,8 @@ public class VspGeneralLoader {
                 context.getUser().getUserName(),
                 itemId,
                 versionId);
-        if(changeRef!= null){
-          subElementContext.setChangeRef(changeRef);
+        if(revisionId!= null){
+          subElementContext.setRevisionId(new Id(revisionId));
         }
         Optional<ElementEntity> subElementEntityOptional =
                 cassandraElementRepository.get(context, subElementContext,

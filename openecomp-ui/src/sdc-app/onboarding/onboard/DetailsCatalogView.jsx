@@ -14,7 +14,8 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
-import {catalogItemTypes, modalMapper, catalogItemTypeClasses} from './onboardingCatalog/OnboardingCatalogConstants.js';
+import PropTypes from 'prop-types';
+import {catalogItemTypes} from './onboardingCatalog/OnboardingCatalogConstants.js';
 import {filterCatalogItemsByType} from './onboardingCatalog/OnboardingCatalogUtils.js';
 import CatalogList from './CatalogList.jsx';
 import CatalogItemDetails from './CatalogItemDetails.jsx';
@@ -22,33 +23,32 @@ import CatalogItemDetails from './CatalogItemDetails.jsx';
 class DetailsCatalogView extends React.Component{
 
 	static propTypes = {
-		VLMList: React.PropTypes.array,
-		VSPList: React.PropTypes.array,
-		onSelectVLM: React.PropTypes.func.isRequired,
-		onSelectVSP: React.PropTypes.func.isRequired,
-		onAddVLM: React.PropTypes.func.isRequired,
-		onAddVSP: React.PropTypes.func.isRequired,
-		filter: React.PropTypes.string.isRequired
+		VLMList: PropTypes.array,
+		VSPList: PropTypes.array,
+		onSelectVLM: PropTypes.func.isRequired,
+		onSelectVSP: PropTypes.func.isRequired,
+		onAddVLM: PropTypes.func.isRequired,
+		onAddVSP: PropTypes.func.isRequired,
+		filter: PropTypes.string.isRequired
 	};
 
-	renderCatalogItems(items, type, filter, onSelect, onMigrate, tileType){
-		return filterCatalogItemsByType(items, type, filter).map(item =>
-		<CatalogItemDetails
-			key={item.id}
-			catalogItemData={type === catalogItemTypes.LICENSE_MODEL ? {...item, name: item.vendorName} : item}
-			catalogItemTypeClass={catalogItemTypeClasses[modalMapper[type]]}
-			onMigrate={onMigrate}
-			onSelect={() => onSelect(item)}
-			tileType={tileType} />
+	renderCatalogItems({items, type, filter, onSelect, onMigrate, users}){
+		return filterCatalogItemsByType({items, filter}).map(item =>
+			<CatalogItemDetails
+				key={item.id}
+				catalogItemData={item}
+				catalogItemTypeClass={type}
+				onMigrate={onMigrate}
+				onSelect={() => onSelect(item, users)} />
 		);
 	}
 
 	render() {
-		let {VLMList, VSPList, onAddVSP, onAddVLM, onSelectVLM, onSelectVSP, filter = '', onMigrate, tileType} = this.props;
+		let {VLMList, VSPList, users, onAddVSP, onAddVLM, onSelectVLM, onSelectVSP, filter = '', onMigrate} = this.props;
 		return (
 			<CatalogList onAddVLM={onAddVLM} onAddVSP={onAddVSP}>
-				{this.renderCatalogItems(VLMList, catalogItemTypes.LICENSE_MODEL, filter, onSelectVLM, onMigrate, tileType)}
-				{this.renderCatalogItems(VSPList, catalogItemTypes.SOFTWARE_PRODUCT, filter, onSelectVSP, onMigrate, tileType)}
+				{this.renderCatalogItems({items: VLMList, type: catalogItemTypes.LICENSE_MODEL, filter, onSelect: onSelectVLM, onMigrate, users})}
+				{this.renderCatalogItems({items: VSPList, type: catalogItemTypes.SOFTWARE_PRODUCT, filter, onSelect: onSelectVSP, onMigrate, users})}
 			</CatalogList>
 		);
 	}

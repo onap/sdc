@@ -18,9 +18,10 @@
       .group-name {
         @extend .heading-4-semibold;
         @include ellipsis;
-        min-height: 56px;
+        min-height: 70px;
         display: block;
-        padding: 18px 12px 13px 40px;
+        height: 70px;
+        padding: 24px 12px 13px 40px;
         background-color: $white;
         border-bottom: 1px solid $tlv-light-gray;
       }

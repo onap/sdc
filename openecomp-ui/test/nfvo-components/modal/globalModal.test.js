@@ -81,10 +81,10 @@ describe('Global Modal tests: ', function () {
 
 
 	it('checking component default render', ()=> {
-		expect(window.document).toBeTruthy();		
-		let globalModalView = TestUtils.renderIntoDocument(
-			<GlobalModalView show={true} type={typeEnum.WARNING} title={title} msg={msg} onDeclined={()=>{}} />
-		);
+		expect(window.document).toBeTruthy();
+		let renderer = TestUtils.createRenderer();
+		renderer.render(<GlobalModalView show={true} type={typeEnum.WARNING} title={title} msg={msg} onDeclined={()=>{}} />);
+		let globalModalView = renderer.getRenderOutput();
 		expect(globalModalView).toBeTruthy();
 	});
 

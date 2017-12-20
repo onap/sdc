@@ -22,9 +22,9 @@ package org.openecomp.core.validation.types;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.validation.ErrorMessageCode;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.context.MdcUtil;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;

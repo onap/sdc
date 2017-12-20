@@ -24,8 +24,8 @@ public class OrchestrationUploadFactory {
 
     }
 
-    public static final OrchestrationTemplateFileHandler createOrchestrationTemplateFileHandler(String filePrefix) {
-        String fileExtension = filePrefix.toLowerCase();
+    public static final OrchestrationTemplateFileHandler createOrchestrationTemplateFileHandler(String fileSuffix) {
+        String fileExtension = fileSuffix.toLowerCase();
         ImplementationConfiguration orchestrationTemplateFileHandler = fileHanlders.get(fileExtension);
 
         if(Objects.isNull(orchestrationTemplateFileHandler)){

@@ -45,6 +45,11 @@ export default (state = {}, action) => {
 				...state,
 				mapOfExpandedIds: action.mapOfExpandedIds
 			};
+		case actionTypes.LOAD_LICENSING_VERSIONS_LIST:
+			return {
+				...state,
+				licensingVersionsList: action.licensingVersionsList
+			};
 		default:
 			return state;
 	}

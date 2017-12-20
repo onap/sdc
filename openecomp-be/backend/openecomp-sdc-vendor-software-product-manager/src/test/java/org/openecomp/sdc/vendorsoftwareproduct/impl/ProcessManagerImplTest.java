@@ -1,19 +1,18 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.openecomp.sdc.activityLog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessType;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -28,12 +27,13 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Matchers.eq;
 
 public class ProcessManagerImplTest {
 
@@ -48,9 +48,7 @@ public class ProcessManagerImplTest {
   private static final String ARTIFACT_NAME = "artifact.sh";
 
   @Mock
-  private VendorSoftwareProductDao vendorSoftwareProductDaoMock;
-  @Mock
-  private ActivityLogManager activityLogManagerMock;
+  private ProcessDao processDaoMock;
 
   @InjectMocks
   @Spy
@@ -66,7 +64,7 @@ public class ProcessManagerImplTest {
   @Test
   public void testListWhenNone() {
     Collection<ProcessEntity> processes =
-        processManager.listProcesses(VSP_ID, VERSION, COMPONENT_ID, USER1);
+        processManager.listProcesses(VSP_ID, VERSION, COMPONENT_ID);
     Assert.assertEquals(processes.size(), 0);
   }
 
@@ -75,17 +73,17 @@ public class ProcessManagerImplTest {
     doReturn(Arrays.asList(
         createProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID),
         createProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS2_ID)))
-        .when(vendorSoftwareProductDaoMock).listProcesses(VSP_ID, VERSION, COMPONENT_ID);
+        .when(processDaoMock).list(any(ProcessEntity.class));
 
     Collection<ProcessEntity> actual =
-        processManager.listProcesses(VSP_ID, VERSION, COMPONENT_ID, USER1);
+        processManager.listProcesses(VSP_ID, VERSION, COMPONENT_ID);
     Assert.assertEquals(actual.size(), 2);
   }
 
   @Test
   public void testDeleteListWhenNone() {
-    processManager.deleteProcesses(VSP_ID, VERSION, COMPONENT_ID, USER1);
-    verify(vendorSoftwareProductDaoMock, never()).deleteProcesses(VSP_ID, VERSION, COMPONENT_ID);
+    processManager.deleteProcesses(VSP_ID, VERSION, COMPONENT_ID);
+    verify(processDaoMock, never()).delete(any(ProcessEntity.class));
   }
 
   @Test
@@ -93,15 +91,15 @@ public class ProcessManagerImplTest {
     ProcessEntity process1 = createProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
     ProcessEntity process2 = createProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS2_ID);
     doReturn(Arrays.asList(process1, process2))
-        .when(vendorSoftwareProductDaoMock).listProcesses(VSP_ID, VERSION, COMPONENT_ID);
+        .when(processDaoMock).list(any(ProcessEntity.class));
     doNothing().when(processManager)
         .deleteUniqueValue(VSP_ID, VERSION, COMPONENT_ID, process1.getName());
     doNothing().when(processManager)
         .deleteUniqueValue(VSP_ID, VERSION, COMPONENT_ID, process2.getName());
 
-    processManager.deleteProcesses(VSP_ID, VERSION, COMPONENT_ID, USER1);
+    processManager.deleteProcesses(VSP_ID, VERSION, COMPONENT_ID);
 
-    verify(vendorSoftwareProductDaoMock).deleteProcesses(VSP_ID, VERSION, COMPONENT_ID);
+    verify(processDaoMock).deleteAll(eq(new ProcessEntity(VSP_ID, VERSION, COMPONENT_ID, null)));
     verify(processManager)
         .deleteUniqueValue(VSP_ID, VERSION, COMPONENT_ID, process1.getName());
     verify(processManager)
@@ -118,7 +116,7 @@ public class ProcessManagerImplTest {
     doNothing().when(processManager)
         .createUniqueName(VSP_ID, VERSION, COMPONENT_ID, processToCreate.getName());
 
-    ProcessEntity process = processManager.createProcess(processToCreate, USER1);
+    ProcessEntity process = processManager.createProcess(processToCreate);
     Assert.assertNotNull(process);
     process.setId(process.getId());
 
@@ -134,13 +132,12 @@ public class ProcessManagerImplTest {
         new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).build()))
         .when(processManager).validateUniqueName(VSP_ID, VERSION, COMPONENT_ID, process.getName());
 
-    processManager.createProcess(process, USER1);
+    processManager.createProcess(process);
   }
 
   @Test
   public void testUpdateNonExistingProcessId_negative() {
-    doReturn(null).when(vendorSoftwareProductDaoMock)
-        .getProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    doReturn(null).when(processDaoMock).get(any(ProcessEntity.class));
 
     testUpdate_negative(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID, USER1,
         VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
@@ -149,8 +146,7 @@ public class ProcessManagerImplTest {
   @Test(expectedExceptions = CoreException.class)
   public void testUpdateWithExistingName_negative() {
     ProcessEntity existingProcess = createProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
-    doReturn(existingProcess).when
-        (vendorSoftwareProductDaoMock).getProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    doReturn(existingProcess).when(processDaoMock).get(any(ProcessEntity.class));
 
     ProcessEntity processToUpdate = createProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
     doThrow(new CoreException(
@@ -159,22 +155,21 @@ public class ProcessManagerImplTest {
         .updateUniqueName(VSP_ID, VERSION, COMPONENT_ID, existingProcess.getName(),
             processToUpdate.getName());
 
-    processManager.updateProcess(processToUpdate, USER1);
+    processManager.updateProcess(processToUpdate);
   }
 
   @Test
   public void testUpdate() {
     ProcessEntity existingProcess = createProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
-    doReturn(existingProcess).when
-        (vendorSoftwareProductDaoMock).getProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    doReturn(existingProcess).when(processDaoMock).get(any(ProcessEntity.class));
 
     ProcessEntity processToUpdate = createProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
     doNothing().when(processManager)
         .updateUniqueName(VSP_ID, VERSION, COMPONENT_ID, existingProcess.getName(),
             processToUpdate.getName());
 
-    processManager.updateProcess(processToUpdate, USER1);
-    verify(vendorSoftwareProductDaoMock).updateProcess(processToUpdate);
+    processManager.updateProcess(processToUpdate);
+    verify(processDaoMock).update(processToUpdate);
   }
 
 
@@ -187,10 +182,9 @@ public class ProcessManagerImplTest {
   @Test
   public void testGet() {
     ProcessEntity process = createProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
-    doReturn(process).when
-        (vendorSoftwareProductDaoMock).getProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    doReturn(process).when(processDaoMock).get(any(ProcessEntity.class));
     ProcessEntity actual =
-        processManager.getProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID, USER1);
+        processManager.getProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
     Assert.assertEquals(actual, process);
     Assert.assertNull(actual.getArtifactName());
   }
@@ -199,29 +193,28 @@ public class ProcessManagerImplTest {
   public void testGetAfterUploadArtifact() {
     ProcessEntity process = createProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
     process.setArtifactName(ARTIFACT_NAME);
-    doReturn(process).when
-        (vendorSoftwareProductDaoMock).getProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    doReturn(process).when(processDaoMock).get(any(ProcessEntity.class));
     ProcessEntity actual =
-        processManager.getProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID, USER1);
+        processManager.getProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
     Assert.assertEquals(actual, process);
     Assert.assertEquals(actual.getArtifactName(), ARTIFACT_NAME);
   }
 
   @Test(expectedExceptions = CoreException.class)
   public void testDeleteNonExistingProcessId_negative() {
-    processManager.deleteProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID, USER1);
+    processManager.deleteProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
   }
 
   @Test
   public void testDelete() {
     ProcessEntity processToDelete = createProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
-    doReturn(processToDelete).when
-        (vendorSoftwareProductDaoMock).getProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    doReturn(processToDelete).when(processDaoMock)
+        .get(any(ProcessEntity.class));
     doNothing().when(processManager).deleteUniqueValue(VSP_ID, VERSION, COMPONENT_ID,
         processToDelete.getName());
 
-    processManager.deleteProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID, USER1);
-    verify(vendorSoftwareProductDaoMock).deleteProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    processManager.deleteProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    verify(processDaoMock).delete(any(ProcessEntity.class));
     verify(processManager)
         .deleteUniqueValue(VSP_ID, VERSION, COMPONENT_ID, processToDelete.getName());
   }
@@ -235,21 +228,13 @@ public class ProcessManagerImplTest {
   @Test
   public void testUploadArtifact() {
     ProcessEntity process = createProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
-    doReturn(process).when
-        (vendorSoftwareProductDaoMock).getProcess(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    doReturn(process).when(processDaoMock).get(any(ProcessEntity.class));
 
     byte[] artifactBytes = "bla bla".getBytes();
     processManager
         .uploadProcessArtifact(new ByteArrayInputStream(artifactBytes), ARTIFACT_NAME,
-            VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID, USER1);
-    verify(vendorSoftwareProductDaoMock)
-        .uploadProcessArtifact(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID, artifactBytes,
-            ARTIFACT_NAME);
-
-    verify(activityLogManagerMock).addActionLog(activityLogEntityArg.capture(), eq(USER1));
-    ActivityLogEntity activityLogEntity = activityLogEntityArg.getValue();
-    Assert.assertEquals(activityLogEntity.getVersionId(), String.valueOf(VERSION.getMajor()+1));
-    Assert.assertTrue(activityLogEntity.isSuccess());
+            VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    verify(processDaoMock).uploadArtifact(any(ProcessEntity.class));
   }
 
   @Test
@@ -269,11 +254,11 @@ public class ProcessManagerImplTest {
     ProcessEntity processArtifact =
         new ProcessEntity(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
     processArtifact.setArtifact(ByteBuffer.wrap("bla bla".getBytes()));
-    doReturn(processArtifact).when(vendorSoftwareProductDaoMock)
-        .getProcessArtifact(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    doReturn(processArtifact).when(processDaoMock)
+        .getArtifact(any(ProcessEntity.class));
 
     File actual =
-        processManager.getProcessArtifact(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID, USER1);
+        processManager.getProcessArtifact(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
     Assert.assertNotNull(actual);
   }
 
@@ -294,12 +279,12 @@ public class ProcessManagerImplTest {
     ProcessEntity processArtifact =
         new ProcessEntity(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
     processArtifact.setArtifact(ByteBuffer.wrap("bla bla".getBytes()));
-    doReturn(processArtifact).when(vendorSoftwareProductDaoMock)
-        .getProcessArtifact(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    doReturn(processArtifact).when(processDaoMock)
+        .getArtifact(any(ProcessEntity.class));
 
-    processManager.deleteProcessArtifact(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID, USER1);
-    verify(vendorSoftwareProductDaoMock)
-        .deleteProcessArtifact(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    processManager.deleteProcessArtifact(VSP_ID, VERSION, COMPONENT_ID, PROCESS1_ID);
+    verify(processDaoMock)
+        .deleteArtifact(any(ProcessEntity.class));
   }
 
 
@@ -315,10 +300,10 @@ public class ProcessManagerImplTest {
   private void testGet_negative(String vspId, Version version, String componentId, String processId,
                                 String user, String expectedErrorCode) {
     try {
-      processManager.getProcess(vspId, version, componentId, processId, user);
+      processManager.getProcess(vspId, version, componentId, processId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("",exception);
+      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -328,10 +313,10 @@ public class ProcessManagerImplTest {
                                    String expectedErrorCode) {
     try {
       processManager
-          .updateProcess(new ProcessEntity(vspId, version, componentId, processId), user);
+          .updateProcess(new ProcessEntity(vspId, version, componentId, processId));
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("",exception);
+      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -339,10 +324,10 @@ public class ProcessManagerImplTest {
   private void testGetFile_negative(String vspId, Version version, String componentId,
                                     String processId, String user, String expectedErrorCode) {
     try {
-      processManager.getProcessArtifact(vspId, version, componentId, processId, user);
+      processManager.getProcessArtifact(vspId, version, componentId, processId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("",exception);
+      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -353,10 +338,10 @@ public class ProcessManagerImplTest {
     try {
       processManager
           .uploadProcessArtifact(new ByteArrayInputStream("bla bla".getBytes()), "artifact.sh",
-              vspId, version, componentId, processId, user);
+              vspId, version, componentId, processId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.error("",exception);
+      log.error("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
@@ -364,10 +349,10 @@ public class ProcessManagerImplTest {
   private void testDeleteArtifact_negative(String vspId, String componentId, String processId,
                                            String user, String expectedErrorCode) {
     try {
-      processManager.deleteProcessArtifact(vspId, VERSION, componentId, processId, user);
+      processManager.deleteProcessArtifact(vspId, VERSION, componentId, processId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("",exception);
+      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }

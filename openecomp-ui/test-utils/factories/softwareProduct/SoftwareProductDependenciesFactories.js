@@ -23,10 +23,10 @@ const SoftwareProductDependenciesBaseFactory = new Factory()
     .attrs({ sourceId: () => randomstring.generate(),
         targetId: () => randomstring.generate(),
         relationType: relationTypes.DEPENDS_ON
-    });
+    }).extend(IdMixin);
 
 export const SoftwareProductDependenciesResponseFactory = new Factory()
-    .extend(SoftwareProductDependenciesBaseFactory);
+    .extend(SoftwareProductDependenciesBaseFactory).extend(IdMixin);
 
 export const SoftwareProductDependenciesStoreFactory = new Factory()
 .extend(SoftwareProductDependenciesBaseFactory)

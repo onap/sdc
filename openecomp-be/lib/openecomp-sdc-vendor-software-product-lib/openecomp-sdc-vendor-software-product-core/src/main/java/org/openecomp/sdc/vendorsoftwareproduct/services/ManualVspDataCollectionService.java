@@ -23,12 +23,12 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ImageDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
@@ -57,10 +57,10 @@ import java.util.Optional;
 
 public class ManualVspDataCollectionService {
 
-  private static final VendorSoftwareProductDao vendorSoftwareProductDao =
-      VendorSoftwareProductDaoFactory.getInstance().createInterface();
   private static final VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao =
       VendorSoftwareProductInfoDaoFactory.getInstance().createInterface();
+  private static final DeploymentFlavorDao deploymentFlavorDao =
+      DeploymentFlavorDaoFactory.getInstance().createInterface();
   private static final ComputeDao computeDao =
       ComputeDaoFactory.getInstance().createInterface();
   private static final ImageDao imageDao =
@@ -75,16 +75,14 @@ public class ManualVspDataCollectionService {
 
   private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
-
   /**
    * Gets vendor name for the vsp.
    *
    * @param vspId   the vsp id
    * @param version the version
-   * @param user    the user
    * @return the release vendor name
    */
-  public Optional<String> getReleaseVendor(String vspId, Version version, String user) {
+  public Optional<String> getReleaseVendor(String vspId, Version version) {
     String vendorName = null;
     VspDetails vspDetails = vendorSoftwareProductInfoDao.get(new VspDetails(vspId, version));
     if (Objects.nonNull(vspDetails)) {
@@ -98,14 +96,12 @@ public class ManualVspDataCollectionService {
    *
    * @param vspId   the vsp id
    * @param version the version
-   * @param user    the user
    * @return the allowed flavors
    */
-  public Map<String, DeploymentFlavorModel> getAllowedFlavors(String vspId, Version version,
-                                                              String user) {
+  public Map<String, DeploymentFlavorModel> getAllowedFlavors(String vspId, Version version) {
     Map<String, DeploymentFlavorModel> allowedFlavors = new HashMap<>();
     Collection<DeploymentFlavorEntity> deploymentFlavorEntities =
-        vendorSoftwareProductDao.listDeploymentFlavors(vspId, version);
+        deploymentFlavorDao.list(new DeploymentFlavorEntity(vspId, version, null));
     if (CollectionUtils.isNotEmpty(deploymentFlavorEntities)) {
       for (DeploymentFlavorEntity deploymentFlavorEntity : deploymentFlavorEntities) {
         DeploymentFlavor deploymentFlavorCompositionData =
@@ -129,13 +125,12 @@ public class ManualVspDataCollectionService {
             LicenseFlavor licenseFlavor = getLicenseFlavor(featureGroupId);
             deploymentFlavorModel.setLicense_flavor(licenseFlavor);
             //Get sp_part_number
-            Optional<String> partNumber = getPartNumber(vspVlmId, vlmVersion, featureGroupId,
-                user);
+            Optional<String> partNumber = getPartNumber(vspVlmId, vlmVersion, featureGroupId);
             partNumber.ifPresent(deploymentFlavorModel::setSp_part_number);
             //Gather and set Vendor Info
             String vendorModel = deploymentFlavorCompositionData.getModel();
             Optional<VendorInfo> vendorInfo = getVendorInfo(vspVlmId, vendorModel, vlmVersion,
-                featureGroupId, user);
+                featureGroupId);
             vendorInfo.ifPresent(deploymentFlavorModel::setVendor_info);
             //Gather and set Compute info
             List<ComponentComputeAssociation> componentComputeAssociations =
@@ -146,7 +141,7 @@ public class ManualVspDataCollectionService {
                 String componentId = componentComputeAssociation.getComponentId();
                 String computeFlavorId = componentComputeAssociation.getComputeFlavorId();
                 Optional<ComputeFlavor> computeFlavor =
-                    getComputeFlavor(vspId, version, componentId, computeFlavorId, user);
+                    getComputeFlavor(vspId, version, componentId, computeFlavorId);
                 computeFlavor.ifPresent(deploymentFlavorModel::setCompute_flavor);
               }
             }
@@ -164,15 +159,13 @@ public class ManualVspDataCollectionService {
    *
    * @param vspId   the vsp id
    * @param version the version
-   * @param user    the user
    * @return the vsp component images
    */
   public Map<String, List<MultiFlavorVfcImage>> getVspComponentImages(String vspId,
-                                                                      Version version,
-                                                                      String user) {
+                                                                      Version version) {
     Map<String, List<MultiFlavorVfcImage>> vspComponentImages = new HashMap<>();
     Collection<DeploymentFlavorEntity> deploymentFlavorEntities =
-        vendorSoftwareProductDao.listDeploymentFlavors(vspId, version);
+        deploymentFlavorDao.list(new DeploymentFlavorEntity(vspId, version, null));
     for (DeploymentFlavorEntity deploymentFlavorEntity : deploymentFlavorEntities) {
       DeploymentFlavor deploymentFlavorCompositionData =
           deploymentFlavorEntity.getDeploymentFlavorCompositionData();
@@ -184,7 +177,7 @@ public class ManualVspDataCollectionService {
             componentComputeAssociations) {
           String componentId = componentComputeAssociation.getComponentId();
           List<MultiFlavorVfcImage> componentImages =
-              getComponentImages(vspId, version, componentId, user);
+              getComponentImages(vspId, version, componentId);
           if (CollectionUtils.isNotEmpty(componentImages)) {
             vspComponentImages.put(componentId, componentImages);
           }
@@ -199,13 +192,12 @@ public class ManualVspDataCollectionService {
    *
    * @param vspId   the vsp id
    * @param version the version
-   * @param user    the user
    * @return the vsp components
    */
-  public Map<String, String> getVspComponents(String vspId, Version version, String user) {
+  public Map<String, String> getVspComponents(String vspId, Version version) {
     Map<String, String> componentIdNameMap = new HashMap<>();
     Collection<DeploymentFlavorEntity> deploymentFlavorEntities =
-        vendorSoftwareProductDao.listDeploymentFlavors(vspId, version);
+        deploymentFlavorDao.list(new DeploymentFlavorEntity(vspId, version, null));
     for (DeploymentFlavorEntity deploymentFlavorEntity : deploymentFlavorEntities) {
       DeploymentFlavor deploymentFlavorCompositionData =
           deploymentFlavorEntity.getDeploymentFlavorCompositionData();
@@ -216,7 +208,7 @@ public class ManualVspDataCollectionService {
         for (ComponentComputeAssociation componentComputeAssociation :
             componentComputeAssociations) {
           String componentId = componentComputeAssociation.getComponentId();
-          Optional<String> componentName = getComponentName(vspId, version, componentId, user);
+          Optional<String> componentName = getComponentName(vspId, version, componentId);
           componentName.ifPresent(name -> componentIdNameMap.put(componentId, name));
         }
       }
@@ -229,13 +221,12 @@ public class ManualVspDataCollectionService {
    *
    * @param vspId   the vsp id
    * @param version the version
-   * @param user    the user
    * @return the vsp component nics
    */
-  public Map<String, List<Nic>> getVspComponentNics(String vspId, Version version, String user) {
+  public Map<String, List<Nic>> getVspComponentNics(String vspId, Version version) {
     Map<String, List<Nic>> vspComponentNics = new HashMap<>();
     Collection<DeploymentFlavorEntity> deploymentFlavorEntities =
-        vendorSoftwareProductDao.listDeploymentFlavors(vspId, version);
+        deploymentFlavorDao.list(new DeploymentFlavorEntity(vspId, version, null));
     if (CollectionUtils.isNotEmpty(deploymentFlavorEntities)) {
       for (DeploymentFlavorEntity deploymentFlavorEntity : deploymentFlavorEntities) {
         DeploymentFlavor deploymentFlavorCompositionData =
@@ -247,7 +238,7 @@ public class ManualVspDataCollectionService {
             for (ComponentComputeAssociation componentComputeAssociation :
                 componentComputeAssociations) {
               String componentId = componentComputeAssociation.getComponentId();
-              List<Nic> componentNics = getComponentNics(vspId, version, componentId, user);
+              List<Nic> componentNics = getComponentNics(vspId, version, componentId);
               if (CollectionUtils.isNotEmpty(componentNics)) {
                 vspComponentNics.put(componentId, componentNics);
               }
@@ -259,8 +250,7 @@ public class ManualVspDataCollectionService {
     return vspComponentNics;
   }
 
-  private List<Nic> getComponentNics(String vspId, Version version, String componentId,
-                                     String user) {
+  private List<Nic> getComponentNics(String vspId, Version version, String componentId) {
     List<Nic> componentNics = new ArrayList<>();
     Collection<NicEntity> nics = nicDao.list(new NicEntity(vspId, version, componentId, null));
     if (Objects.nonNull(nics)) {
@@ -283,8 +273,8 @@ public class ManualVspDataCollectionService {
   }
 
   private Optional<String> getPartNumber(String vlmId, Version version,
-                                         String featureGroupId, String user) {
-    FeatureGroupModel featureGroup = getFeatureGroup(vlmId, version, featureGroupId, user);
+                                         String featureGroupId) {
+    FeatureGroupModel featureGroup = getFeatureGroup(vlmId, version, featureGroupId);
     if (Objects.nonNull(featureGroup)) {
       return Optional.ofNullable(featureGroup.getFeatureGroup().getPartNumber());
     }
@@ -292,9 +282,9 @@ public class ManualVspDataCollectionService {
   }
 
   private Optional<VendorInfo> getVendorInfo(String vlmId, String vendorModel, Version version,
-                                             String featureGroupId, String user) {
+                                             String featureGroupId) {
     VendorInfo vendorInfo = null;
-    FeatureGroupModel featureGroup = getFeatureGroup(vlmId, version, featureGroupId, user);
+    FeatureGroupModel featureGroup = getFeatureGroup(vlmId, version, featureGroupId);
     if (Objects.nonNull(featureGroup)) {
       //Process Feature group to get Manufacturer ref no.
       String manufacturerReferenceNumber = featureGroup.getEntityManufacturerReferenceNumber();
@@ -308,29 +298,28 @@ public class ManualVspDataCollectionService {
   }
 
   private Optional<ComputeFlavor> getComputeFlavor(String vspId, Version version,
-                                                   String componentId, String computeFlavorId,
-                                                   String user) {
+                                                   String componentId, String computeFlavorId) {
     ComputeFlavor computeFlavor = null;
     ComputeEntity computeQuestionnaire = null;
     try {
       computeQuestionnaire = computeDao.getQuestionnaireData(vspId, version, componentId,
           computeFlavorId);
     } catch (Exception ex) {
-      log.debug("",ex);
+      log.debug("", ex);
       computeQuestionnaire = null;
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
           LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), "Failed to get compute questionnaire : "
               + ex.getMessage());
     }
-    if (computeQuestionnaire != null && Objects.nonNull(computeQuestionnaire)) {
+    if (Objects.nonNull(computeQuestionnaire)) {
       String computeQuestionnaireData = computeQuestionnaire.getQuestionnaireData();
       if (Objects.nonNull(computeQuestionnaireData)) {
         Compute compute;
         try {
           compute = JsonUtil.json2Object(computeQuestionnaireData, Compute.class);
         } catch (Exception ex) {
-          log.debug("",ex);
+          log.debug("", ex);
           compute = null;
           MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
               LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
@@ -354,17 +343,15 @@ public class ManualVspDataCollectionService {
     return Optional.ofNullable(computeFlavor);
   }
 
-  private FeatureGroupModel getFeatureGroup(String vlmId, Version version, String featureGroupId,
-                                            String user) {
+  private FeatureGroupModel getFeatureGroup(String vlmId, Version version, String featureGroupId) {
     FeatureGroupEntity fgInput = new FeatureGroupEntity();
     fgInput.setVendorLicenseModelId(vlmId);
     fgInput.setVersion(version);
     fgInput.setId(featureGroupId);
-    return vendorLicenseFacade.getFeatureGroupModel(fgInput, user);
+    return vendorLicenseFacade.getFeatureGroupModel(fgInput);
   }
 
-  private Optional<String> getComponentName(String vspId, Version version, String componentId,
-                                            String user) {
+  private Optional<String> getComponentName(String vspId, Version version, String componentId) {
 
     ComponentEntity componentEntity =
         componentDao.get(new ComponentEntity(vspId, version, componentId));
@@ -377,18 +364,16 @@ public class ManualVspDataCollectionService {
   }
 
   private List<MultiFlavorVfcImage> getComponentImages(String vspId, Version version,
-                                                       String componentId, String user) {
+                                                       String componentId) {
     List<MultiFlavorVfcImage> multiFlavorVfcImages = new ArrayList<>();
-    MultiFlavorVfcImage multiFlavorVfcImage = null;
+    MultiFlavorVfcImage multiFlavorVfcImage;
     Collection<ImageEntity> componentImages =
-        vendorSoftwareProductDao.listImages(vspId, version, componentId);
+        imageDao.list(new ImageEntity(vspId, version, componentId, null));
     if (Objects.nonNull(componentImages)) {
       for (ImageEntity componentImage : componentImages) {
-        String imageId = componentImage.getId();
-        ImageEntity imageEntity = vendorSoftwareProductDao.getImage(vspId, version, componentId,
-            imageId);
+        ImageEntity imageEntity = imageDao.get(componentImage);
         ImageEntity imageQuestionnaireDataEntity = imageDao.getQuestionnaireData(vspId, version,
-            componentId, imageId);
+            componentId, componentImage.getId());
         Image imageCompositionData = imageEntity.getImageCompositionData();
         if (Objects.nonNull(imageEntity)
             && Objects.nonNull(imageQuestionnaireDataEntity)
@@ -398,14 +383,14 @@ public class ManualVspDataCollectionService {
             imageDetails = JsonUtil.json2Object(imageQuestionnaireDataEntity
                 .getQuestionnaireData(), ImageDetails.class);
           } catch (Exception ex) {
-            log.debug("",ex);
+            log.debug("", ex);
             imageDetails = null;
             MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
                 LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
                 LoggerErrorCode.DATA_ERROR.getErrorCode(), "Unable to parse image questionnaire : "
                     + ex.getMessage());
           }
-          if (imageDetails != null && Objects.nonNull(imageDetails)
+          if (Objects.nonNull(imageDetails)
               && Objects.nonNull(imageDetails.getVersion())) {
             //Image version is used as a key for the image block
             //So excluding the population if questionnaire data is absent or invalid

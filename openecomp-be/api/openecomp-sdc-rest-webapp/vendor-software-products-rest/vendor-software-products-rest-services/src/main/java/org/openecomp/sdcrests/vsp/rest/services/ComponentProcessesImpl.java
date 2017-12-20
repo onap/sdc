@@ -21,6 +21,10 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.openecomp.sdc.activitylog.ActivityLogManager;
+import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
+import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
+import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.MdcUtil;
@@ -30,10 +34,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ProcessManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ProcessManagerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ProcessEntityDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ProcessRequestDto;
 import org.openecomp.sdcrests.vsp.rest.ComponentProcesses;
@@ -50,8 +52,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Collection;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.GENERAL_COMPONENT_ID;
-
 @Named
 @Service("componentProcesses")
 @Scope(value = "prototype")
@@ -60,21 +60,18 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   private ProcessManager processManager = ProcessManagerFactory.getInstance().createInterface();
   private ComponentManager componentManager =
       ComponentManagerFactory.getInstance().createInterface();
-    private static final Logger logger =
-            LoggerFactory.getLogger(ComponentProcessesImpl.class);
+  private ActivityLogManager activityLogManager =
+      ActivityLogManagerFactory.getInstance().createInterface();
+
+  private static final Logger logger =
+      LoggerFactory.getLogger(ComponentProcessesImpl.class);
 
   @Override
   public Response list(String vspId, String versionId, String componentId, String user) {
     MdcUtil.initMdc(LoggerServiceName.List_Component_Processes.toString());
-    Version vspVersion = resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read);
-    validateComponentExistence(vspId, vspVersion, componentId, user);
-    Collection<ProcessEntity> processes;
-    if (componentId.equals(VendorSoftwareProductConstants.GENERAL_COMPONENT_ID)) {
-      processes = processManager.listProcesses(vspId, vspVersion, null, user);
-    } else {
-      processes = processManager.listProcesses(vspId, vspVersion, componentId, user);
-    }
-
+    Version version = new Version(versionId);
+    validateComponentExistence(vspId, version, componentId, user);
+    Collection<ProcessEntity> processes = processManager.listProcesses(vspId, version, componentId);
 
     MapProcessEntityToProcessEntityDto mapper = new MapProcessEntityToProcessEntityDto();
     GenericCollectionWrapper<ProcessEntityDto> results = new GenericCollectionWrapper<>();
@@ -88,9 +85,9 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   @Override
   public Response deleteList(String vspId, String versionId, String componentId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Delete_List_Component_Processes.toString());
-    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
+    Version version = new Version(versionId);
     validateComponentExistence(vspId, version, componentId, user);
-    processManager.deleteProcesses(vspId, version, componentId, user);
+    processManager.deleteProcesses(vspId, version, componentId);
 
     return Response.ok().build();
   }
@@ -102,13 +99,11 @@ public class ComponentProcessesImpl implements ComponentProcesses {
     ProcessEntity process =
         new MapProcessRequestDtoToProcessEntity().applyMapping(request, ProcessEntity.class);
     process.setVspId(vspId);
-    process.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
-    if (!componentId.equals(VendorSoftwareProductConstants.GENERAL_COMPONENT_ID)) {
-      process.setComponentId(componentId);
-    }
+    process.setVersion(new Version(versionId));
+    process.setComponentId(componentId);
 
     validateComponentExistence(vspId, process.getVersion(), componentId, user);
-    ProcessEntity createdProcess = processManager.createProcess(process, user);
+    ProcessEntity createdProcess = processManager.createProcess(process);
 
     return Response
         .ok(createdProcess != null ? new StringWrapperResponse(createdProcess.getId()) : null)
@@ -119,10 +114,9 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   public Response get(String vspId, String versionId, String componentId, String processId,
                       String user) {
     MdcUtil.initMdc(LoggerServiceName.Get_Component_Processes.toString());
-    Version vspVersion = resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read);
-    validateComponentExistence(vspId, vspVersion, componentId, user);
-    ProcessEntity process =
-        processManager.getProcess(vspId, vspVersion, componentId, processId, user);
+    Version version = new Version(versionId);
+    validateComponentExistence(vspId, version, componentId, user);
+    ProcessEntity process = processManager.getProcess(vspId, version, componentId, processId);
     ProcessEntityDto result =
         new MapProcessEntityToProcessEntityDto().applyMapping(process, ProcessEntityDto.class);
     return Response.ok(result).build();
@@ -132,9 +126,9 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   public Response delete(String vspId, String versionId, String componentId, String processId,
                          String user) {
     MdcUtil.initMdc(LoggerServiceName.Delete_Component_Processes.toString());
-    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
+    Version version = new Version(versionId);
     validateComponentExistence(vspId, version, componentId, user);
-    processManager.deleteProcess(vspId, version, componentId, processId, user);
+    processManager.deleteProcess(vspId, version, componentId, processId);
     return Response.ok().build();
   }
 
@@ -146,11 +140,11 @@ public class ComponentProcessesImpl implements ComponentProcesses {
     ProcessEntity process =
         new MapProcessRequestDtoToProcessEntity().applyMapping(request, ProcessEntity.class);
     process.setVspId(vspId);
-    process.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
+    process.setVersion(new Version(versionId));
     process.setComponentId(componentId);
     process.setId(processId);
     validateComponentExistence(vspId, process.getVersion(), componentId, user);
-    processManager.updateProcess(process, user);
+    processManager.updateProcess(process);
     return Response.ok().build();
   }
 
@@ -158,9 +152,9 @@ public class ComponentProcessesImpl implements ComponentProcesses {
   public Response getUploadedFile(String vspId, String versionId, String componentId,
                                   String processId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Get_Uploaded_File_Component_Processes.toString());
-    Version vspVersion = resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read);
+    Version vspVersion = new Version(versionId);
     validateComponentExistence(vspId, vspVersion, componentId, user);
-    File file = processManager.getProcessArtifact(vspId, vspVersion, componentId, processId, user);
+    File file = processManager.getProcessArtifact(vspId, vspVersion, componentId, processId);
 
     Response.ResponseBuilder response = Response.ok(file);
     if (file == null) {
@@ -175,9 +169,9 @@ public class ComponentProcessesImpl implements ComponentProcesses {
                                      String processId,
                                      String user) {
     MdcUtil.initMdc(LoggerServiceName.Delete_Uploaded_File_Component_Processes.toString());
-    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
+    Version version = new Version(versionId);
     validateComponentExistence(vspId, version, componentId, user);
-    processManager.deleteProcessArtifact(vspId, version, componentId, processId, user);
+    processManager.deleteProcessArtifact(vspId, version, componentId, processId);
     return Response.ok().build();
   }
 
@@ -186,21 +180,26 @@ public class ComponentProcessesImpl implements ComponentProcesses {
                              String componentId,
                              String processId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Upload_File_Component_Processes.toString());
-      logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.UPLOAD_PROCESS_ARTIFACT + vspId);
-    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.UPLOAD_PROCESS_ARTIFACT + vspId);
+    Version version = new Version(versionId);
     validateComponentExistence(vspId, version, componentId, user);
     processManager.uploadProcessArtifact(attachment.getObject(InputStream.class),
         attachment.getContentDisposition().getParameter("filename"), vspId, version, componentId,
-        processId, user);
+        processId);
+
+
+    activityLogManager.logActivity(new ActivityLogEntity(vspId, version,
+        ActivityType.Upload_Artifact, user, true, "", ""));
+
     return Response.ok().build();
   }
 
 
   private void validateComponentExistence(String vspId, Version version, String componentId,
                                           String user) {
-    if (GENERAL_COMPONENT_ID.equals(componentId)) {
+    if (componentId == null) {
       return;
     }
-    componentManager.validateComponentExistence(vspId, version, componentId, user);
+    componentManager.validateComponentExistence(vspId, version, componentId);
   }
 }

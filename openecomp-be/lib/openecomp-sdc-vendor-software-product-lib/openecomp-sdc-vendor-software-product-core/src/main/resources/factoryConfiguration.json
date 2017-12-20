@@ -1,0 +1,3 @@
+{
+  "org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeDaoFactory": "org.openecomp.sdc.vendorsoftwareproduct.dao.impl.VspMergeDaoFactoryImpl"
+}

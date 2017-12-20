@@ -20,27 +20,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator;
 
-import org.everit.json.schema.EmptySchema;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONObject;
-import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.NetworkType;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
-import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.ComponentCompositionSchemaInput;
-import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.ComponentQuestionnaireSchemaInput;
-import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.NetworkCompositionSchemaInput;
-import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.NicCompositionSchemaInput;
-import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateContext;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import java.util.Arrays;
-import java.util.Map;
-
 public class SchemaGeneratorTest {
   /*
 

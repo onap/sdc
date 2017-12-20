@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Modal from 'nfvo-components/modal/Modal.jsx';
 import classNames from 'classnames';
@@ -47,25 +48,25 @@ const setModalClassName = (modalHeader) => {
 class LicenseModelOverviewView extends React.Component {
 
 	static propTypes = {
-		isDisplayModal: React.PropTypes.bool,
-		isReadOnlyMode: React.PropTypes.bool,
-		licenseModelId: React.PropTypes.string,
-		licensingDataList: React.PropTypes.array,
-		orphanDataList: React.PropTypes.array,
-		modalHeader: React.PropTypes.string,
-		selectedTab: React.PropTypes.string,
-		onTabSelect: React.PropTypes.func,
-		onCallVCAction: React.PropTypes.func,
-		onClose: React.PropTypes.func
+		isDisplayModal: PropTypes.bool,
+		isReadOnlyMode: PropTypes.bool,
+		licenseModelId: PropTypes.string,
+		licensingDataList: PropTypes.array,
+		orphanDataList: PropTypes.array,
+		modalHeader: PropTypes.string,
+		selectedTab: PropTypes.string,
+		onTabSelect: PropTypes.func,
+		onCallVCAction: PropTypes.func,
+		onClose: PropTypes.func
 	};
 
 	render() {
-		let {isDisplayModal, modalHeader, licensingDataList, selectedTab, onTabSelect, orphanDataList} = this.props;
+		let {isDisplayModal, modalHeader, licensingDataList, selectedTab, onTabSelect, orphanDataList, isReadOnlyMode} = this.props;
 		let selectedInUse = selectedTab !== selectedButton.NOT_IN_USE;
 		let dataList = selectedInUse ? licensingDataList : orphanDataList;
 		return(
 			<div className='license-model-overview'>
-				<SummaryView/>
+				<SummaryView  isReadOnlyMode={isReadOnlyMode}/>
 				<div className={classNames('overview-list-section ', !selectedInUse ? 'overview-list-orphans' : '' )}>
 					<div className='vlm-list-tab-panel'>
 						<ListButtons onTabSelect={onTabSelect}
@@ -91,16 +92,16 @@ class LicenseModelOverviewView extends React.Component {
 	}
 
 	renderModalBody(modalHeader) {
-		let {licenseModelId, version} = this.props;
+		let {licenseModelId, version, isReadOnlyMode} = this.props;
 		switch (modalHeader) {
 			case overviewEditorHeaders.ENTITLEMENT_POOL:
-				return <EntitlementPoolsEditor version={version} licenseModelId={licenseModelId} isReadOnlyMode={false}/>;
+				return <EntitlementPoolsEditor version={version} licenseModelId={licenseModelId} isReadOnlyMode={isReadOnlyMode}/>;
 			case overviewEditorHeaders.LICENSE_AGREEMENT:
-				return <LicenseAgreementEditor version={version} licenseModelId={licenseModelId} isReadOnlyMode={false}/>;
+				return <LicenseAgreementEditor version={version} licenseModelId={licenseModelId} isReadOnlyMode={isReadOnlyMode}/>;
 			case overviewEditorHeaders.FEATURE_GROUP:
-				return <FeatureGroupEditor version={version} licenseModelId={licenseModelId} isReadOnlyMode={false}/>;
+				return <FeatureGroupEditor version={version} licenseModelId={licenseModelId} isReadOnlyMode={isReadOnlyMode}/>;
 			case overviewEditorHeaders.LICENSE_KEY_GROUP:
-				return <LicenseKeyGroupsEditor version={version} licenseModelId={licenseModelId} isReadOnlyMode={false}/>;
+				return <LicenseKeyGroupsEditor version={version} licenseModelId={licenseModelId} isReadOnlyMode={isReadOnlyMode}/>;
 		}
 	}
 }

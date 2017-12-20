@@ -21,13 +21,13 @@
 package org.openecomp.sdc.validation.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.core.validation.api.ValidationManager;
-import org.openecomp.sdc.validation.Validator;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.core.validation.types.MessageContainer;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.services.ValidationFactory;
 
 import java.util.HashMap;

@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.TRANSLATION_FILE_CREATION;
-
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
+
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.TRANSLATION_FILE_CREATION;
 
 public class TranslationFileCreationErrorBuilder {
   private static final String TRANSLATION_FILE_CREATION_ERROR_MSG =

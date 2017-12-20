@@ -22,8 +22,6 @@ export default (state = [], action) => {
 		case actionTypes.SOFTWARE_PRODUCT_LIST_EDIT:
 			const indexForEdit = state.findIndex(vsp => vsp.id === action.payload.softwareProduct.id);
 			return [...state.slice(0, indexForEdit), action.payload.softwareProduct, ...state.slice(indexForEdit + 1)];
-		case actionTypes.ADD_SOFTWARE_PRODUCT:
-			return [...state, action.softwareProduct];
 		default:
 			return state;
 	}

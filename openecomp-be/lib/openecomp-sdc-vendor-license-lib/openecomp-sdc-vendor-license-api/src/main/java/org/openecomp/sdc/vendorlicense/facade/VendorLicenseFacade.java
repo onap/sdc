@@ -29,72 +29,52 @@ import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementModel;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
-import org.openecomp.sdc.vendorlicense.types.VersionedVendorLicenseModel;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionInfo;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 
 import java.util.Collection;
 
 public interface VendorLicenseFacade {
 
-  Version checkin(String vendorLicenseModelId, String user);
-
-  Version submit(String vendorLicenseModelId, String user);
-
-  FeatureGroupEntity getFeatureGroup(FeatureGroupEntity featureGroup, String user);
-
-  FeatureGroupModel getFeatureGroupModel(FeatureGroupEntity featureGroup, String user);
-
   LicenseAgreementEntity getLicenseAgreement(String vlmId, Version version,
-                                             String licenseAgreementId, String user);
+                                             String licenseAgreementId);
 
   LicenseAgreementModel getLicenseAgreementModel(String vlmId, Version version,
-                                                 String licenseAgreementId, String user);
+                                                 String licenseAgreementId);
 
-  EntitlementPoolEntity createEntitlementPool(EntitlementPoolEntity entitlementPool, String user);
+  LicenseAgreementEntity createLicenseAgreement(LicenseAgreementEntity licenseAgreement);
 
-  void updateEntitlementPool(EntitlementPoolEntity entitlementPool, String user);
+  Collection<FeatureGroupEntity> listFeatureGroups(String vlmId, Version version);
 
-  Collection<LicenseKeyGroupEntity> listLicenseKeyGroups(String vlmId, Version version,
-                                                         String user);
+  FeatureGroupEntity getFeatureGroup(FeatureGroupEntity featureGroup);
 
-  Collection<EntitlementPoolEntity> listEntitlementPools(String vlmId, Version version,
-                                                         String user);
+  FeatureGroupModel getFeatureGroupModel(FeatureGroupEntity featureGroup);
 
-  void updateLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup, String user);
+  FeatureGroupEntity createFeatureGroup(FeatureGroupEntity featureGroup);
 
-  LicenseKeyGroupEntity createLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup, String user);
+  Collection<EntitlementPoolEntity> listEntitlementPools(String vlmId, Version version);
 
+  EntitlementPoolEntity createEntitlementPool(EntitlementPoolEntity entitlementPool);
 
-  VersionedVendorLicenseModel getVendorLicenseModel(String vlmId, Version version, String user);
+  void updateEntitlementPool(EntitlementPoolEntity entitlementPool);
 
-  VendorLicenseModelEntity createVendorLicenseModel(
-      VendorLicenseModelEntity vendorLicenseModelEntity, String user);
+  Collection<LicenseKeyGroupEntity> listLicenseKeyGroups(String vlmId, Version version);
 
+  LicenseKeyGroupEntity createLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup);
 
-  LicenseAgreementEntity createLicenseAgreement(LicenseAgreementEntity licenseAgreement,
-                                                String user);
+  void updateLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup);
 
-  Collection<FeatureGroupEntity> listFeatureGroups(String vlmId, Version version,
-                                                         String user);
+  Collection<LimitEntity> listLimits(String vlmId, Version version, String epLkgId);
 
-  FeatureGroupEntity createFeatureGroup(FeatureGroupEntity featureGroup, String user);
+  LimitEntity createLimit(LimitEntity limit);
+
+  void updateLimit(LimitEntity limit);
+
+  VendorLicenseModelEntity getVendorLicenseModel(String vlmId, Version version);
 
 
   Collection<ErrorCode> validateLicensingData(String vlmId, Version vlmVersion,
                                               String licenseAgreementId,
                                               Collection<String> featureGroupIds);
 
-  VersionInfo getVersionInfo(String vendorLicenseModelId, VersionableEntityAction action,
-                             String user);
-
-  void updateVlmLastModificationTime(String vendorLicenseModelId, Version version);
-
-  LimitEntity createLimit(LimitEntity limit, String user);
-
-  Collection<LimitEntity> listLimits(String vlmId, Version version, String epLkgId
-                                               ,String user);
-
-  void updateLimit(LimitEntity limit, String user);
+  void validate(String vendorLicenseModelId, Version version);
 }

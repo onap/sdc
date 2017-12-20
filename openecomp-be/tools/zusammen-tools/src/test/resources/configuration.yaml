@@ -1,0 +1,251 @@
+identificationHeaderFields:
+   - HTTP_IV_USER
+   - HTTP_CSP_FIRSTNAME
+   - HTTP_CSP_LASTNAME
+   - HTTP_IV_REMOTE_ADDRESS
+   - HTTP_CSP_WSTYPE
+
+
+
+# catalog backend http port
+beHttpPort: 8080
+
+# catalog backend http context
+beContext: /sdc/rest/config/get
+
+# catalog backend protocol
+beProtocol: http
+
+# catalog backend ssl port
+beSslPort: 8443
+
+version: 1.0
+released: 2012-11-30
+
+titanCfgFile: /home/vagrant/catalog-be/config/catalog-be/titan.properties
+titanInMemoryGraph: false
+titanLockTimeout: 30
+titanReconnectIntervalInSeconds: 3
+titanHealthCheckReadTimeout: 1
+esReconnectIntervalInSeconds: 3
+uebHealthCheckReconnectIntervalInSeconds: 15
+uebHealthCheckReadTimeout: 4
+
+# Protocols
+protocols:
+   - http
+   - https
+
+# Users
+users:
+    tom: passwd
+    bob: passwd
+
+neo4j:
+    host: neo4jhost
+    port: 7474
+    user: neo4j
+    password: "12345"
+
+cassandraConfig:
+    cassandraHosts: ['localhost']
+    reconnectTimeout : 30000
+    authenticate: true
+    username: asdc_user
+    password: password
+    ssl: false
+    truststorePath : /path/path
+    truststorePassword : password
+    keySpaces:
+        - { name: dox, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+        - { name:  zusammen_dox, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+        - { name: sdcartifact, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+
+#Application-specific settings of ES
+elasticSearch:
+    # Mapping of index prefix to time-based frame. For example, if below is configured:
+    #
+    # - indexPrefix: auditingevents
+    #    creationPeriod: minute
+    #
+    # then ES object of type which is mapped to "auditingevents-*" template, and created on 2015-12-23 13:24:54, will enter "auditingevents-2015-12-23-13-24" index.
+    # Another object created on 2015-12-23 13:25:54, will enter "auditingevents-2015-12-23-13-25" index.
+    # If creationPeriod: month, both of the above will enter "auditingevents-2015-12" index.
+    #
+    # PLEASE NOTE: the timestamps are created in UTC/GMT timezone! This is needed so that timestamps will be correctly presented in Kibana.
+    #
+    # Legal values for creationPeriod - year, month, day, hour, minute, none (meaning no time-based behaviour).
+    #
+    # If no creationPeriod is configured for indexPrefix, default behavour is creationPeriod: month.
+
+    indicesTimeFrequency:
+      - indexPrefix: auditingevents
+        creationPeriod: month
+      - indexPrefix: monitoring_events
+        creationPeriod: month
+
+artifactTypes:
+   - CHEF
+   - PUPPET
+   - SHELL
+   - YANG
+   - YANG_XML
+   - HEAT
+   - BPEL
+   - DG_XML
+   - MURANO_PKG
+   - OTHER
+
+licenseTypes:
+   - User
+   - Installation
+   - CPU
+
+#Deployment artifacts placeHolder
+deploymentResourceArtifacts:
+  heat:
+      displayName: "HEAT Template"
+      type: HEAT
+
+deploymentResourceInstanceArtifacts:
+  heatEnv:
+      displayName: "HEAT ENV"
+      type: HEAT_ENV
+      description: "Auto-generated HEAT Environment deployment artifact"
+      fileExtension: "env"
+
+#Informational artifacts placeHolder
+excludeResourceCategory:
+  - Generic
+informationalResourceArtifacts:
+  features:
+      displayName: Features
+      type: OTHER
+  capacity:
+      displayName: Capacity
+      type: OTHER
+  vendorTestResult:
+      displayName: Vendor Test Result
+      type: OTHER
+  testScripts:
+      displayName: Test Scripts
+      type: OTHER
+  cloudQuestionnaire:
+      displayName: Cloud Questionnaire (completed)
+      type: OTHER
+  HEATTemplateFromVendor:
+      displayName: HEAT Template from Vendor
+      type: HEAT
+
+excludeServiceCategory:
+
+informationalServiceArtifacts:
+  messageFlows:
+      displayName: Message Flows
+      type: OTHER
+  instantiationFlows:
+      displayName: Management Flows
+      type: OTHER
+  serviceArtifactPlan:
+      displayName: Service Artifact Plan
+      type: OTHER
+  summaryOfImpactsToECOMPElements:
+      displayName: Summary of impacts to OPENECOMP elements,OSSs, BSSs
+      type: OTHER
+  controlLoopFunctions:
+      displayName: Control Loop Functions
+      type: OTHER
+  dimensioningInfo:
+      displayName: Dimensioning Info
+      type: OTHER
+  affinityRules:
+      displayName: Affinity Rules
+      type: OTHER
+  operationalPolicies:
+      displayName: Operational Policies
+      type: OTHER
+  serviceSpecificPolicies:
+      displayName: Service-specific Policies
+      type: OTHER
+  engineeringRules:
+      displayName: Engineering Rules (ERD)
+      type: OTHER
+  distributionInstructions:
+      displayName: Distribution Instructions
+      type: OTHER
+  certificationTestResults:
+      displayName: TD Certification Test Results
+      type: OTHER
+  deploymentVotingRecord:
+      displayName: Deployment Voting Record
+      type: OTHER
+  serviceQuestionnaire:
+      displayName: Service Questionnaire
+      type: OTHER
+
+serviceApiArtifacts:
+  configuration:
+      displayName: Configuration
+      type: OTHER
+  instantiation:
+      displayName: Instantiation
+      type: OTHER
+  monitoring:
+      displayName: Monitoring
+      type: OTHER
+  reporting:
+      displayName: Reporting
+      type: OTHER
+  logging:
+      displayName: Logging
+      type: OTHER
+  testing:
+      displayName: Testing
+      type: OTHER
+
+
+additionalInformationMaxNumberOfKeys: 50
+
+systemMonitoring:
+    enabled: false
+    isProxy: false
+    probeIntervalInSeconds: 15
+
+defaultHeatArtifactTimeoutMinutes: 60
+
+serviceDeploymentArtifacts:
+
+resourceDeploymentArtifacts:
+    HEAT:
+        acceptedTypes:
+            - yaml
+            - yml
+
+resourceInformationalDeployedArtifacts:
+    YANG_XML:
+        acceptedTypes:
+            - xml
+
+
+unLoggedUrls:
+   - /sdc2/rest/healthCheck
+
+cleanComponentsConfiguration:
+    cleanIntervalInMinutes: 1440
+    componentsToClean:
+       - Resource
+
+artifactsIndex: resources
+
+heatEnvArtifactHeader:
+    " # _______________________________________________________________________________________________________________________________________\n
+  #|                                    					    AT&T Proprietary (Restricted)           								 	  |\n
+  #|                                     Only for use by authorized individuals or any above-designated team(s)                            |\n
+  #|                                          within the AT&T companies and not for general distribution      							  |\n
+  #|_______________________________________________________________________________________________________________________________________|\n"
+heatEnvArtifactFooter:
+    " # _______________________________________________________________________________________________________________________________________\n
+  #|                                    					    AT&T Proprietary (Restricted)           								 	  |\n
+  #|                                     Only for use by authorized individuals or any above-designated team(s)                            |\n
+  #|                                          within the AT&T companies and not for general distribution      							  |\n
+  #|_______________________________________________________________________________________________________________________________________|\n"

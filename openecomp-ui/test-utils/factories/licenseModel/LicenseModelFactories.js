@@ -17,7 +17,6 @@ import { Factory } from 'rosie';
 import { selectedButton } from 'sdc-app/onboarding/licenseModel/overview/LicenseModelOverviewConstants.js';
 import IdMixin from 'test-utils/factories/mixins/IdMixin.js';
 import randomstring from 'randomstring';
-import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
 
 Factory.define('LicenseModelBaseFactory')
 	.attrs({
@@ -29,7 +28,7 @@ Factory.define('LicenseModelBaseFactory')
 export const LicenseModelCreationFactory = new Factory()
 	.attrs({
 		data: {
-			vendorName: () => randomstring.generate(),
+			name: () => randomstring.generate(),
 			description: () => randomstring.generate()
 		}
 	});
@@ -48,13 +47,8 @@ export const LicenseModelStoreFactory = new Factory()
 export const FinalizedLicenseModelFactory = new Factory()
 	.extend(IdMixin)
 	.attrs({
-		vendorName: randomstring.generate(),
-		description: randomstring.generate(),
-		iconRef: 'iconRef_lBpEgzhuiY1',
-		version: {id: '1.0', label: '1.0'},
-		status: 'Final',
-		viewableVersion: [{id: '1.0', label: '1.0'}],
-		finalVersions: [{id: '1.0', label: '1.0'}]
+		name: randomstring.generate(),
+		description: randomstring.generate()
 	});
 
 export const LicenseModelOverviewFactory = new Factory()
@@ -62,8 +56,10 @@ export const LicenseModelOverviewFactory = new Factory()
 	licenseModelEditor: {
 		data: {
 			...Factory.attributes('LicenseModelBaseFactory'),
-			id: () => Math.floor(Math.random() * (1000 - 1) + 1),
-			...VersionControllerUtilsFactory.build()
+			id: () => Math.floor(Math.random() * 1000 + 1),
+			version: {
+				id: Math.floor(Math.random() * 1000 + 1)
+			}
 		}
 	},
 	entitlementPool: {},

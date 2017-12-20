@@ -20,17 +20,30 @@
 
 package org.openecomp.sdcrests.vendorlicense.types;
 
-import org.openecomp.sdcrests.versioning.types.VersioningAction;
+import org.openecomp.sdcrests.item.types.SubmitRequestDto;
 
 public class VendorLicenseModelActionRequestDto {
 
-  private VersioningAction action;
+  private VendorLicenseModelAction action;
+  private SubmitRequestDto submitRequest;
 
-  public VersioningAction getAction() {
+  public VendorLicenseModelAction getAction() {
     return action;
   }
 
-  public void setAction(VersioningAction action) {
+  public void setAction(VendorLicenseModelAction action) {
     this.action = action;
+  }
+
+  public SubmitRequestDto getSubmitRequest() {
+    return submitRequest;
+  }
+
+  public void setSubmitRequest(SubmitRequestDto submitRequest) {
+    this.submitRequest = submitRequest;
+  }
+
+  public enum VendorLicenseModelAction {
+    Submit
   }
 }

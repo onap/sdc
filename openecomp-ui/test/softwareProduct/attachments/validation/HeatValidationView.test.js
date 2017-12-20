@@ -19,8 +19,6 @@ import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps}  from 'sdc-app/onboarding/softwareProduct/attachments/validation/HeatValidation.js';
 
 import HeatValidationView from 'sdc-app/onboarding/softwareProduct/attachments/validation/HeatValidationView.jsx';
-import {statusEnum as versionStatusEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
-
 
 describe('SoftwareProductAttachments Modal Mapper and View Classes', () => {
 
@@ -41,7 +39,6 @@ describe('SoftwareProductAttachments Modal Mapper and View Classes', () => {
 			id: 'D4774719D085414E9D5642D1ACD59D20',
 			version: '0.10',
 			viewableVersions: ['0.1', '0.2'],
-			status: versionStatusEnum.CHECK_OUT_STATUS,
 			lockingUser: 'cs0008'
 		};
 		const atTree = {

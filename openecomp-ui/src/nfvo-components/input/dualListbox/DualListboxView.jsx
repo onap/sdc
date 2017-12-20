@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import Input from 'nfvo-components/input/validation/InputWrapper.jsx';
 
@@ -21,17 +22,17 @@ class DualListboxView extends React.Component {
 
 	static propTypes = {
 
-		availableList: React.PropTypes.arrayOf(React.PropTypes.shape({
-			id: React.PropTypes.string.isRequired,
-			name: React.PropTypes.string.isRequired
+		availableList: PropTypes.arrayOf(PropTypes.shape({
+			id: PropTypes.string.isRequired,
+			name: PropTypes.string.isRequired
 		})),
-		filterTitle: React.PropTypes.shape({
-			left: React.PropTypes.string,
-			right: React.PropTypes.string
+		filterTitle: PropTypes.shape({
+			left: PropTypes.string,
+			right: PropTypes.string
 		}),
-		selectedValuesList: React.PropTypes.arrayOf(React.PropTypes.string),
+		selectedValuesList: PropTypes.arrayOf(PropTypes.string),
 
-		onChange: React.PropTypes.func.isRequired
+		onChange: PropTypes.func.isRequired
 	};
 
 	static defaultProps = {

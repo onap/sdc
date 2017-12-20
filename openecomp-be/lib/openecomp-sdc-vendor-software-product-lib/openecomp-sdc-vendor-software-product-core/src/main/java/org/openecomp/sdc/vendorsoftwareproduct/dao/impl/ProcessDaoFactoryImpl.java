@@ -21,8 +21,8 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
 
 import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.ProcessDaoZusammenImpl;
 
 public class ProcessDaoFactoryImpl extends ProcessDaoFactory {

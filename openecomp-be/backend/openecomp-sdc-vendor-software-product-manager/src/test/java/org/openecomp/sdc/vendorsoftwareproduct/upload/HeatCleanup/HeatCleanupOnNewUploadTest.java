@@ -38,7 +38,7 @@ public class HeatCleanupOnNewUploadTest {/*
     UploadDataEntity uploadDataEntity =
         vendorSoftwareProductDao.getUploadData(new UploadDataEntity(vspId, vspActiveVersion));
     Assert.assertTrue((uploadDataEntity.getContentData() != null) == exist);
-    Assert.assertTrue((uploadDataEntity.getValidationData() != null) == exist);
+    Assert.assertTrue((uploadDataEntity.getInfo() != null) == exist);
     Assert.assertTrue((uploadDataEntity.getPackageName() != null) == exist);
     Assert.assertTrue((uploadDataEntity.getPackageVersion() != null) == exist);
     //TODO: talio - delete enrich data on new upload

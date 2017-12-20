@@ -3,6 +3,8 @@ package org.openecomp.core.tools.Commands;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.core.tools.concurrent.ItemHealingTask;
 import org.openecomp.core.tools.loaders.VersionInfoCassandraLoader;
+import org.openecomp.sdc.healing.api.HealingManager;
+import org.openecomp.sdc.healing.factory.HealingManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
@@ -31,18 +33,20 @@ import java.util.stream.Stream;
 public class HealAll {
 
   private static final String HEALING_USER = "healing_user";
-  private static final int defaulThreadNumber =100;
+  private static final int defaulThreadNumber = 100;
   private static BufferedWriter log;
   private static List<ItemHealingTask> tasks = new ArrayList<>();
   private static VendorSoftwareProductManager vspManager = VspManagerFactory
       .getInstance().createInterface();
+  private static HealingManager healingManager = HealingManagerFactory.getInstance()
+      .createInterface();
   private static VersioningManager versioningManager = VersioningManagerFactory.getInstance()
       .createInterface();
 
   static {
     try {
       log =
-          new BufferedWriter(new FileWriter("healing.log",true));
+          new BufferedWriter(new FileWriter("healing.log", true));
     } catch (IOException e) {
       if (log != null) {
         try {
@@ -64,13 +68,13 @@ public class HealAll {
         defaulThreadNumber;
     ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
 
-   filterByEntityType(VersionInfoCassandraLoader.list(),
+    filterByEntityType(VersionInfoCassandraLoader.list(),
         VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE).forEach
-       (HealAll::addTaskToTasks);
+        (HealAll::addTaskToTasks);
 
     executeAllTasks(executor);
 
-    writeToLog("----finished healing------" );
+    writeToLog("----finished healing------");
     Instant endTime = Instant.now();
     writeToLog("Total runtime was: " + Duration.between(startTime, endTime));
 
@@ -112,7 +116,7 @@ public class HealAll {
     if (Objects.nonNull(versionInfoEntity.getCandidate())) {
       return versionInfoEntity.getCandidate().getVersion();
     } else if (!CollectionUtils.isEmpty(versionInfoEntity.getViewableVersions())) {
-     return versionInfoEntity.getViewableVersions().stream().max(Version::compateTo).get();
+      return versionInfoEntity.getViewableVersions().stream().max(Version::compateTo).get();
     }
     return versionInfoEntity.getActiveVersion();
   }
@@ -126,17 +130,16 @@ public class HealAll {
     }
   }
 
-  private static Stream<VersionInfoEntity> filterByEntityType(Collection<VersionInfoEntity>
-                                                             versionInfoEntities,
-                                                     String entityType){
+  private static Stream<VersionInfoEntity> filterByEntityType(
+      Collection<VersionInfoEntity> versionInfoEntities, String entityType) {
     return versionInfoEntities.stream().filter(versionInfoEntity -> versionInfoEntity
         .getEntityType().equals(entityType));
   }
-  private static void addTaskToTasks(VersionInfoEntity versionInfoEntity){
+
+  private static void addTaskToTasks(VersionInfoEntity versionInfoEntity) {
     tasks.add(new ItemHealingTask(versionInfoEntity.getEntityId(), resolveVersion
-            (versionInfoEntity).toString(), versionInfoEntity.getCandidate() == null ?
-            HEALING_USER : versionInfoEntity.getCandidate().getUser(),
-            vspManager, versioningManager));
+        (versionInfoEntity).toString(),
+        vspManager, healingManager));
   }
 
 }

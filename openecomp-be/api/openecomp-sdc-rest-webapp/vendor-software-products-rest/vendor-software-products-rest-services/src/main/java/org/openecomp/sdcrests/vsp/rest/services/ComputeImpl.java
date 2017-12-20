@@ -14,7 +14,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComputeData;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityValidationDataDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComputeCreationDto;
@@ -33,9 +32,9 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
+import java.util.Collection;
 
 @Named
 @Service("computes")
@@ -47,13 +46,12 @@ public class ComputeImpl implements Compute {
       ComponentManagerFactory.getInstance().createInterface();
 
   @Override
-  public Response list(String vspId, String version, String componentId, String user) {
+  public Response list(String vspId, String versionId, String componentId, String user) {
     MdcUtil.initMdc(LoggerServiceName.List_Computes.toString());
-    Version vspVersion = resolveVspVersion(vspId, version, user, VersionableEntityAction.Read);
-    componentManager.validateComponentExistence(vspId, vspVersion, componentId, user);
+    Version version = new Version(versionId);
+    componentManager.validateComponentExistence(vspId, version, componentId);
     Collection<ListComputeResponse> computes =
-        computetManager
-            .listCompute(vspId, vspVersion, componentId, user);
+        computetManager.listComputes(vspId, version, componentId);
 
     MapComputeEntityToComputeDto mapper = new MapComputeEntityToComputeDto();
     GenericCollectionWrapper<ComputeDto> results = new GenericCollectionWrapper<>();
@@ -65,13 +63,13 @@ public class ComputeImpl implements Compute {
   }
 
   @Override
-  public Response get(String vspId, String version, String componentId, String computeId,
+  public Response get(String vspId, String versionId, String componentId, String computeId,
                       String user) {
     MdcUtil.initMdc(LoggerServiceName.Get_Compute.toString());
-    Version vspVersion = resolveVspVersion(vspId, version, user, VersionableEntityAction.Read);
-    componentManager.validateComponentExistence(vspId, vspVersion, componentId, user);
-    CompositionEntityResponse<ComputeData> response = computetManager
-        .getCompute(vspId, vspVersion, componentId, computeId, user);
+    Version version = new Version(versionId);
+    componentManager.validateComponentExistence(vspId, version, componentId);
+    CompositionEntityResponse<ComputeData> response =
+        computetManager.getCompute(vspId, version, componentId, computeId);
 
     CompositionEntityResponseDto<ComputeDetailsDto> responseDto = new
         CompositionEntityResponseDto<>();
@@ -87,33 +85,31 @@ public class ComputeImpl implements Compute {
     ComputeEntity compute = new MapComputeDetailsDtoToComputeEntity().applyMapping(request,
         ComputeEntity.class);
     compute.setVspId(vspId);
+    compute.setVersion(new Version(versionId));
     compute.setComponentId(componentId);
-    compute.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
-    componentManager.validateComponentExistence(vspId, compute.getVersion(), componentId, user);
+    componentManager.validateComponentExistence(vspId, compute.getVersion(), componentId);
 
-    ComputeEntity createdCompute = computetManager.createCompute(compute, user);
+    ComputeEntity createdCompute = computetManager.createCompute(compute);
 
     MapComputeEntityToComputeCreationDto mapper = new MapComputeEntityToComputeCreationDto();
-    ComputeCreationDto createdComputeDto = mapper.applyMapping(createdCompute, ComputeCreationDto
-        .class);
-    return Response.ok(createdComputeDto != null ? createdComputeDto : null)
-        .build();
+    ComputeCreationDto createdComputeDto =
+        mapper.applyMapping(createdCompute, ComputeCreationDto.class);
+    return Response.ok(createdComputeDto != null ? createdComputeDto : null).build();
   }
 
   @Override
-  public Response update(ComputeDetailsDto request, String vspId, String versionId, String
-      componentId, String computeFlavorId, String user) {
+  public Response update(ComputeDetailsDto request, String vspId, String versionId,
+                         String componentId, String computeFlavorId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Update_Compute.toString());
-    ComputeEntity compute = new MapComputeDetailsDtoToComputeEntity().applyMapping(request,
-        ComputeEntity.class);
+    ComputeEntity compute =
+        new MapComputeDetailsDtoToComputeEntity().applyMapping(request, ComputeEntity.class);
     compute.setVspId(vspId);
+    compute.setVersion(new Version(versionId));
     compute.setComponentId(componentId);
-    compute.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
     compute.setId(computeFlavorId);
 
-    componentManager.validateComponentExistence(vspId, compute.getVersion(), componentId, user);
-    CompositionEntityValidationData validationData =
-        computetManager.updateCompute(compute, user);
+    componentManager.validateComponentExistence(vspId, compute.getVersion(), componentId);
+    CompositionEntityValidationData validationData = computetManager.updateCompute(compute);
     return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors())
         ? Response.status(Response.Status.EXPECTATION_FAILED).entity(
         new MapCompositionEntityValidationDataToDto().applyMapping(validationData,
@@ -121,23 +117,23 @@ public class ComputeImpl implements Compute {
   }
 
   @Override
-  public Response delete(String vspId, String versionId, String componentId, String
-      computeFlavorId, String user) {
+  public Response delete(String vspId, String versionId, String componentId, String computeFlavorId,
+                         String user) {
     MdcUtil.initMdc(LoggerServiceName.Delete_Compute.toString());
-    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
-    componentManager.validateComponentExistence(vspId, version, componentId, user);
-    computetManager.deleteCompute(vspId, version, componentId, computeFlavorId, user);
+    Version version = new Version(versionId);
+    componentManager.validateComponentExistence(vspId, version, componentId);
+    computetManager.deleteCompute(vspId, version, componentId, computeFlavorId);
     return Response.ok().build();
   }
 
   @Override
-  public Response getQuestionnaire(String vspId, String versionId, String componentId, String
-      computeFlavorId, String user) {
+  public Response getQuestionnaire(String vspId, String versionId, String componentId,
+                                   String computeFlavorId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Get_Questionnaire_Compute.toString());
-    Version vspVersion = resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read);
-    componentManager.validateComponentExistence(vspId, vspVersion, componentId, user);
-    QuestionnaireResponse questionnaireResponse = computetManager
-        .getComputeQuestionnaire(vspId, vspVersion, componentId, computeFlavorId, user);
+    Version version = new Version(versionId);
+    componentManager.validateComponentExistence(vspId, version, componentId);
+    QuestionnaireResponse questionnaireResponse =
+        computetManager.getComputeQuestionnaire(vspId, version, componentId, computeFlavorId);
 
     QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
         .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
@@ -146,16 +142,12 @@ public class ComputeImpl implements Compute {
 
   @Override
   public Response updateQuestionnaire(String questionnaireData, String vspId, String versionId,
-                                      String componentId,
-                                      String computeFlavorId, String user) {
-    MdcUtil
-        .initMdc(LoggerServiceName.Update_Questionnaire_Compute.toString()
-        );
-    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
-    componentManager.validateComponentExistence(vspId, version, componentId, user);
-    computetManager
-        .updateComputeQuestionnaire(vspId, version, componentId, computeFlavorId,
-            questionnaireData, user);
+                                      String componentId, String computeFlavorId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Update_Questionnaire_Compute.toString());
+    Version version = new Version(versionId);
+    componentManager.validateComponentExistence(vspId, version, componentId);
+    computetManager.updateComputeQuestionnaire(vspId, version, componentId, computeFlavorId,
+        questionnaireData);
     return Response.ok().build();
   }
 }

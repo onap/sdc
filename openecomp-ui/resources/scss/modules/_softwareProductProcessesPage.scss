@@ -1,10 +1,5 @@
 .edit-process-modal {
-  background-color: $white;
   height: 100%;
-  &.modal-body {
-    padding: 0;
-    background-color: $white;
-  }
   .vsp-processes-editor {
     padding-left: 0;
     padding-right: 0;
@@ -23,40 +18,21 @@
       padding-top: 20px;
       padding-bottom: 20px;
 
-      align-items: center;
-      .upload-btn {
-        padding: 4px 20px;
-      }
-      .drag-text {
-        color: $blue;
-        @extend .body-1-semibold;
-      }
-      .or-text {
-        margin-top: 10px;
-        margin-bottom: 10px;
+      .process-type {
+        width: 100%;
       }
     }
     .vsp-processes-editor-data {
-      transition: border .2s;
-      .vsp-process-dropzone-view {
-        background-color: transparent;
-        &.active-dragging {
-          border: 3px dashed $dark-blue;
-          border-radius: 20px;
-          .draggable-wrapper {
-            opacity: 0.5;
-          }
-        }
-        .grid-section {
-          .section-title {
-            padding-bottom: 0;
-          }
-        }
-      }
       .validation-input-wrapper {
         .form-group.vsp-process-description > textarea {
             height: 113px;
         }
+      }
+      .process-type {
+        width: 100%;
+      }
+      .process-editor-file-box {
+        width: 380px;
       }
     }
   }

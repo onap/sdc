@@ -39,10 +39,10 @@ import javax.ws.rs.core.Response;
 @Validated
 public interface HealthCheck {
 
-    @GET
-    @ApiOperation(value = "Perform health check",
-            response = HealthInfoDtos.class,
-            responseContainer = "List")
-    Response checkHealth( );
+  @GET
+  @ApiOperation(value = "Perform health check",
+      response = HealthInfoDtos.class,
+      responseContainer = "List")
+  Response checkHealth();
 
 }

@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_GROUP_POSITIVE;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataValidationType;
 
 import java.io.IOException;
+
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_GROUP_POSITIVE;
 
 
 public class ResourceTranslationNovaServerGroupsImplTest extends BaseResourceTranslationTest {

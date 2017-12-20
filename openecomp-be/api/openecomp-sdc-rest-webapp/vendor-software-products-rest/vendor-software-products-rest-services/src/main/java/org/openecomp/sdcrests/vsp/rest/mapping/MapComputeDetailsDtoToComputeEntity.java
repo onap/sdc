@@ -12,6 +12,6 @@ public class MapComputeDetailsDtoToComputeEntity extends MappingBase<ComputeDeta
   public void doMapping(ComputeDetailsDto source, ComputeEntity target) {
     ComputeDescription computeDesc = new ComputeDescription(source.getName(), source
         .getDescription());
-    target.setCompositionData(JsonUtil.object2Json(computeDesc));
+    target.setCompositionData(computeDesc == null ? null : JsonUtil.object2Json(computeDesc));
   }
 }

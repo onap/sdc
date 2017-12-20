@@ -1,7 +1,6 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
@@ -10,10 +9,10 @@ import com.amdocs.zusammen.datatypes.item.ElementContext;
 import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
-import org.openecomp.core.zusammen.api.ZusammenUtil;
+import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentArtifactDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToComponentMonitoringUploadConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
-import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
@@ -21,13 +20,17 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
+
 /**
  * @author Avrahamg.
  * @since March 21, 2017
  */
 public class ComponentArtifactDaoZusammenImpl implements ComponentArtifactDao {
 
-  private static final String ARTIFACT_NAME = "name";
+  private static final String ARTIFACT_NAME = "artifactName";
 
   private ZusammenAdaptor zusammenAdaptor;
 
@@ -43,28 +46,25 @@ public class ComponentArtifactDaoZusammenImpl implements ComponentArtifactDao {
   @Override
   public Optional<ComponentMonitoringUploadEntity> getByType(
       ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(componentMonitoringUploadEntity.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(componentMonitoringUploadEntity.getVersion()));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(componentMonitoringUploadEntity.getVspId(),
+            componentMonitoringUploadEntity.getVersion().getId());
+
     Optional<Element> mibsElement =
-        zusammenAdaptor.getElementByName(context, elementContext, new Id(
-            componentMonitoringUploadEntity
-            .getComponentId()), StructureElement.Mibs.toString());
+        zusammenAdaptor.getElementByName(context, elementContext,
+            new Id(componentMonitoringUploadEntity.getComponentId()), ElementType.Mibs.toString());
     if (mibsElement.isPresent()) {
       Optional<Element> monitoringElement = zusammenAdaptor
           .getElementByName(context, elementContext, mibsElement.get().getElementId(),
-              getMonitoringStructuralElement(componentMonitoringUploadEntity.getType())
-                  .toString());
+              getMonitoringStructuralElement(componentMonitoringUploadEntity.getType()).toString());
       if (monitoringElement.isPresent()) {
-        componentMonitoringUploadEntity.setId(monitoringElement.get().getElementId().getValue());
-        componentMonitoringUploadEntity
-            .setArtifactName(
-                (String) monitoringElement.get().getInfo().getProperties().get(ARTIFACT_NAME));
-        componentMonitoringUploadEntity
-            .setArtifact(ByteBuffer.wrap(FileUtils.toByteArray(monitoringElement.get().getData())));
-        return Optional.of(componentMonitoringUploadEntity);
+        ComponentMonitoringUploadEntity entity =
+            new ElementToComponentMonitoringUploadConvertor().convert(monitoringElement.get());
+        entity.setVspId(componentMonitoringUploadEntity.getVspId());
+        entity.setVersion(componentMonitoringUploadEntity.getVersion());
+        entity.setComponentId(componentMonitoringUploadEntity.getComponentId());
+        return Optional.of(entity);
       }
     }
 
@@ -75,93 +75,113 @@ public class ComponentArtifactDaoZusammenImpl implements ComponentArtifactDao {
   public void create(ComponentMonitoringUploadEntity entity) {
     ZusammenElement mibElement = buildMibElement(entity);
 
-    ZusammenElement mibsElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.Mibs, null);
+    ZusammenElement mibsElement = buildStructuralElement(ElementType.Mibs, null);
 
-    ZusammenElement componentElement = buildComponentElement(entity);
+    ZusammenElement componentElement = buildElement(new Id(entity.getComponentId()), Action.IGNORE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(entity.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(entity.getVspId(), entity.getVersion().getId());
 
-    Optional<Element> savedElement = zusammenAdaptor.saveElement(context, elementContext,
+    Element savedElement = zusammenAdaptor.saveElement(context, elementContext,
         VspZusammenUtil.aggregateElements(componentElement, mibsElement, mibElement),
         "Create monitoring upload");
-    savedElement.ifPresent(element ->
-        entity.setId(element.getSubElements().iterator().next()
-            .getSubElements().iterator().next().getElementId().getValue()));
+    entity.setId(savedElement.getSubElements().iterator().next()
+        .getSubElements().iterator().next().getElementId().getValue());
   }
 
   @Override
   public void delete(ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
-    ZusammenElement mibElement = new ZusammenElement();
-    mibElement.setElementId(new Id(componentMonitoringUploadEntity.getId()));
-    mibElement.setAction(Action.DELETE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(componentMonitoringUploadEntity.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    ZusammenElement mibElement = buildMibElementStructure(componentMonitoringUploadEntity);
+    mibElement.setElementId(new Id(componentMonitoringUploadEntity.getId()));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(componentMonitoringUploadEntity.getVspId(),
+            componentMonitoringUploadEntity.getVersion().getId());
 
     zusammenAdaptor.saveElement(context, elementContext, mibElement,
         String.format("Delete mib with id %s", componentMonitoringUploadEntity.getId()));
   }
 
-  @Override
-  public Collection<ComponentMonitoringUploadEntity> list(ComponentMonitoringUploadEntity mib) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(mib.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(mib.getVersion()));
 
-    return zusammenAdaptor.listElementsByName(context, elementContext, new Id(mib.getComponentId()),
-        StructureElement.Mibs.toString()).stream()
-        .map(elementInfo ->
-            mapElementInfoToMib(mib.getVspId(), mib.getVersion(), mib.getComponentId(),
-                elementInfo))
+
+  @Override
+  public Collection<ComponentMonitoringUploadEntity> list(
+      ComponentMonitoringUploadEntity mibEntity) {
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(mibEntity.getVspId(), mibEntity.getVersion().getId());
+    ElementToComponentMonitoringUploadConvertor
+        convertor = new ElementToComponentMonitoringUploadConvertor();
+    return zusammenAdaptor
+        .listElementsByName(context, elementContext, new Id(mibEntity.getComponentId()),
+            ElementType.Mibs.toString()).stream()
+        .map(elementInfo -> convertor.convert(elementInfo))
+        .map(mib -> {
+          mib.setVspId(mibEntity.getVspId());
+          mib.setVersion(mibEntity.getVersion());
+          mib.setComponentId(mibEntity.getComponentId());
+          return mib;
+        })
         .collect(Collectors.toList());
   }
 
   @Override
   public void deleteAll(ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
-    ZusammenElement mibsElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.Mibs, Action.DELETE);
+    /*ZusammenElement mibsElement =
+        buildStructuralElement(ElementType.Mibs, Action.DELETE);
 
     ZusammenElement componentElement = buildComponentElement(componentMonitoringUploadEntity);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(componentMonitoringUploadEntity.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(componentMonitoringUploadEntity.getVspId(),
+            componentMonitoringUploadEntity.getVersion().getId());
 
     zusammenAdaptor.saveElement(context, elementContext,
-        VspZusammenUtil.aggregateElements(componentElement, mibsElement), "Delete mibs");
+        VspaggregateElements(componentElement, mibsElement), "Delete mibs");
+
+*/
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(componentMonitoringUploadEntity.getVspId(),
+            componentMonitoringUploadEntity.getVersion().getId());
+
+    Optional<Element> optionalElement = zusammenAdaptor.getElementByName(context,
+        elementContext, new Id(componentMonitoringUploadEntity.getComponentId()), ElementType.Mibs
+            .name());
+
+    if (optionalElement.isPresent()) {
+      Element mibsElement = optionalElement.get();
+      Collection<Element> mibs = mibsElement.getSubElements();
+
+      mibs.forEach(mib -> {
+        ZusammenElement mibZusammenElement = buildElement(mib.getElementId(), Action.DELETE);
+        zusammenAdaptor.saveElement(context, elementContext, mibZusammenElement,
+            "Delete mib with id " + mib.getElementId());
+      });
+    }
   }
 
   @Override
   public Collection<ComponentMonitoringUploadEntity> listArtifacts(
       ComponentMonitoringUploadEntity monitoringUploadEntity) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(monitoringUploadEntity.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(monitoringUploadEntity.getVersion()));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(monitoringUploadEntity.getVspId(),
+        monitoringUploadEntity.getVersion().getId());
 
     final Optional<Element> elementByName =
         zusammenAdaptor.getElementByName(context, elementContext,
-            new Id(monitoringUploadEntity.getComponentId()
-        ), StructureElement.Mibs.name());
+            new Id(monitoringUploadEntity.getComponentId()), ElementType.Mibs.name());
 
-    if(!elementByName.isPresent())
+    if (!elementByName.isPresent()) {
       return null;
-    else {
+    } else {
       final Id elementId = elementByName.get().getElementId();
       return zusammenAdaptor.listElementData(context, elementContext, elementId).stream()
-          .map(element ->
-              buildMibEntity(element, monitoringUploadEntity)
-          ).collect(Collectors.toList());
+          .map(element -> buildMibEntity(element, monitoringUploadEntity))
+          .collect(Collectors.toList());
     }
   }
 
@@ -179,18 +199,10 @@ public class ComponentArtifactDaoZusammenImpl implements ComponentArtifactDao {
     return createdMib;
   }
 
-  private ZusammenElement buildComponentElement(
-      ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
-    ZusammenElement componentElement = new ZusammenElement();
-    componentElement.setElementId(new Id(componentMonitoringUploadEntity.getComponentId()));
-    componentElement.setAction(Action.IGNORE);
-    return componentElement;
-  }
+  private ZusammenElement buildMibElement(
+      ComponentMonitoringUploadEntity monitoringUploadEntity) {
 
-  private ZusammenElement buildMibElement(ComponentMonitoringUploadEntity monitoringUploadEntity) {
-    ZusammenElement monitoringElement = VspZusammenUtil
-        .buildStructuralElement(getMonitoringStructuralElement(monitoringUploadEntity.getType()),
-            Action.UPDATE);
+    ZusammenElement monitoringElement = buildMibElementStructure(monitoringUploadEntity);
     monitoringElement.getInfo().getProperties()
         .put(ARTIFACT_NAME, monitoringUploadEntity.getArtifactName());
     monitoringElement
@@ -198,27 +210,23 @@ public class ComponentArtifactDaoZusammenImpl implements ComponentArtifactDao {
     return monitoringElement;
   }
 
-  private ComponentMonitoringUploadEntity mapElementInfoToMib(String vspId, Version version,
-                                                              String componentId,
-                                                              ElementInfo elementInfo) {
-    ComponentMonitoringUploadEntity
-        monitoringUploadEntity = new ComponentMonitoringUploadEntity(vspId, version, componentId,
-        elementInfo.getId().getValue());
-    monitoringUploadEntity
-        .setArtifactName((String) elementInfo.getInfo().getProperties().get(ARTIFACT_NAME));
-    monitoringUploadEntity.setType(MonitoringUploadType.valueOf(elementInfo.getInfo().getName()));
-    return monitoringUploadEntity;
+  private ZusammenElement buildMibElementStructure(
+      ComponentMonitoringUploadEntity componentMonitoringUploadEntity) {
+    ZusammenElement monitoringElement =
+        buildStructuralElement(getMonitoringStructuralElement(componentMonitoringUploadEntity.getType()),
+            Action.UPDATE);
+    return monitoringElement;
   }
 
-  private StructureElement getMonitoringStructuralElement(MonitoringUploadType type)
+  private ElementType getMonitoringStructuralElement(MonitoringUploadType type)
       throws IllegalArgumentException {
     switch (type) {
       case SNMP_POLL:
-        return StructureElement.SNMP_POLL;
+        return ElementType.SNMP_POLL;
       case SNMP_TRAP:
-        return StructureElement.SNMP_TRAP;
+        return ElementType.SNMP_TRAP;
       case VES_EVENTS:
-        return StructureElement.VES_EVENTS;
+        return ElementType.VES_EVENTS;
       default:
         throw new IllegalArgumentException();
     }

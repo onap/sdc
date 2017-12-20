@@ -23,17 +23,19 @@ import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import licenseModelOverviewActionHelper from '../licenseModelOverviewActionHelper.js';
 import LicenseModelActionHelper from '../../LicenseModelActionHelper.js';
 import LicenseModelDescriptionEdit from './LicenseModelDescriptionEdit.jsx';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import {VLM_DESCRIPTION_FORM} from '../LicenseModelOverviewConstants.js';
 
-export const mapStateToProps = ({licenseModel: {licenseModelEditor: {data}, licenseModelOverview: {descriptionEditor: {data: descriptionData = {}, genericFieldInfo} }}}) => {
+export const mapStateToProps = ({
+	licenseModel: {
+		licenseModelEditor: {data},
+		licenseModelOverview: {descriptionEditor: {data: descriptionData = {}, genericFieldInfo}}
+	}
+}) => {
 	let {description} = descriptionData;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(data);
 	return {
 		data,
 		description,
-		genericFieldInfo,
-		isReadOnlyMode
+		genericFieldInfo
 	};
 };
 

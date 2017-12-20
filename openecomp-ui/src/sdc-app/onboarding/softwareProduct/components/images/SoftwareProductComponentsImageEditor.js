@@ -17,18 +17,19 @@ import {connect} from 'react-redux';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import SoftwareProductComponentsImageActionHelper from './SoftwareProductComponentsImageActionHelper.js';
 import SoftwareProductComponentsImageEditorView from './SoftwareProductComponentsImageEditorView.jsx';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import {onboardingMethod as onboardingMethodTypes} from '../../SoftwareProductConstants.js';
 import {forms} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
 import {IMAGE_QUESTIONNAIRE} from './SoftwareProductComponentsImageConstants.js';
 
-export const mapStateToProps = ({softwareProduct}) => {
+export const mapStateToProps = ({
+	softwareProduct,
+	currentScreen: {props: {isReadOnlyMode}}
+}) => {
 
 	let {softwareProductEditor: {data:currentSoftwareProduct = {},  isValidityData = true}, softwareProductComponents} = softwareProduct;
 
 	let {images: {imageEditor = {}}} = softwareProductComponents;
 	let {data, qdata, genericFieldInfo, qgenericFieldInfo, dataMap, formReady} = imageEditor;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
 	let {version, onboardingMethod} = currentSoftwareProduct;
 	let isManual =  onboardingMethod === onboardingMethodTypes.MANUAL;
 	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo) &&  ValidationHelper.checkFormValid(qgenericFieldInfo);
@@ -47,6 +48,7 @@ export const mapStateToProps = ({softwareProduct}) => {
 		isReadOnlyMode,
 		isManual: isManual
 	};
+
 };
 
 const mapActionsToProps = (dispatch, {softwareProductId, componentId, version}) => {

@@ -21,10 +21,10 @@ import Limits from 'sdc-app/onboarding/licenseModel/limits/Limits.jsx';
 
 import LicenseKeyGroupsActionHelper from './LicenseKeyGroupsActionHelper.js';
 
-const mapStateToProps = ({licenseModel: {licenseKeyGroup: {licenseKeyGroupsEditor: {data}}, limitEditor}, currentScreen}) => {	
+const mapStateToProps = ({licenseModel: {licenseKeyGroup: {licenseKeyGroupsEditor: {data}}, limitEditor}, currentScreen}) => {
 	let  {props: {licenseModelId, version}} = currentScreen;
 	return {
-		parent: data,		
+		parent: data,
 		limitEditor,
 		licenseModelId,
 		version
@@ -39,14 +39,14 @@ const mapActionsToProps = (dispatch) => {
 				limit,
 				licenseKeyGroup,
 				licenseModelId,
-				version}),		
+				version}),
 		onDelete: ({limit, parent, licenseModelId, version, onCloseLimitEditor, selectedLimit}) => dispatch({
 			type: globalModalActionTypes.GLOBAL_MODAL_WARNING,
 			data:{
-				msg: i18n(`Are you sure you want to delete ${limit.name}?`),
+				msg: i18n('Are you sure you want to delete {name}?', {name: limit.name}),
 				confirmationButtonText: i18n('Delete'),
 				title: i18n('Delete'),
-				onConfirmed: ()=> LicenseKeyGroupsActionHelper.deleteLimit(dispatch, {limit, licenseKeyGroup: parent, licenseModelId, version}).then(() => 
+				onConfirmed: ()=> LicenseKeyGroupsActionHelper.deleteLimit(dispatch, {limit, licenseKeyGroup: parent, licenseModelId, version}).then(() =>
 					selectedLimit === limit.id && onCloseLimitEditor()
 				)
 			}

@@ -26,9 +26,12 @@ import com.datastax.driver.mapping.annotations.Enumerated;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.vendorlicense.VendorLicenseUtil;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LicenseKeyTypeForXml;
-import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitForXml;
+import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.OperationalScopeForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -41,6 +44,8 @@ import java.util.Set;
 
 @Table(keyspace = "dox", name = "license_key_group")
 public class LicenseKeyGroupEntity implements VersionableEntity {
+
+  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static final String ENTITY_TYPE = "License Key Group";
 
   @PartitionKey
@@ -164,7 +169,7 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
   }
 
   public void setOperationalScope(MultiChoiceOrOther<OperationalScope> operationalScope) {
-    if(operationalScope != null)  {
+    if (operationalScope != null) {
       operationalScope.resolveEnum(OperationalScope.class);
     }
     this.operationalScope = operationalScope;
@@ -217,17 +222,18 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
     this.limits = limits;
   }
 
-  public LimitForXml getSPLimits(){
-    if(limits != null){
+  public LimitForXml getSPLimits() {
+    if (limits != null) {
       Set<LimitXml> hs = new HashSet<>();
-      for(LimitEntity obj : limits){
-        if(obj.getType().equals(LimitType.ServiceProvider)){
+      for (LimitEntity obj : limits) {
+        if (obj.getType().equals(LimitType.ServiceProvider)) {
           LimitXml xmlObj = new LimitXml();
           xmlObj.setDescription(obj.getDescription());
           xmlObj.setMetric(obj.getMetric());
           xmlObj.setValues(obj.getValue());
           xmlObj.setUnit(obj.getUnit());
-          xmlObj.setAggregationFunction(obj.getAggregationFunction()!=null?obj.getAggregationFunction().name():null);
+          xmlObj.setAggregationFunction(
+              obj.getAggregationFunction() != null ? obj.getAggregationFunction().name() : null);
           xmlObj.setTime(obj.getTime());
           hs.add(xmlObj);
         }
@@ -240,17 +246,18 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
     return null;
   }
 
-  public LimitForXml getVendorLimits(){
-    if(limits != null){
+  public LimitForXml getVendorLimits() {
+    if (limits != null) {
       Set<LimitXml> hs = new HashSet<>();
-      for(LimitEntity obj : limits){
-        if(obj.getType().equals(LimitType.Vendor)){
+      for (LimitEntity obj : limits) {
+        if (obj.getType().equals(LimitType.Vendor)) {
           LimitXml xmlObj = new LimitXml();
           xmlObj.setDescription(obj.getDescription());
           xmlObj.setMetric(obj.getMetric());
           xmlObj.setValues(obj.getValue());
           xmlObj.setUnit(obj.getUnit());
-          xmlObj.setAggregationFunction(obj.getAggregationFunction()!=null?obj.getAggregationFunction().name():null);
+          xmlObj.setAggregationFunction(
+              obj.getAggregationFunction() != null ? obj.getAggregationFunction().name() : null);
           xmlObj.setTime(obj.getTime());
           hs.add(xmlObj);
         }
@@ -297,6 +304,7 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
     }
     LicenseKeyGroupEntity that = (LicenseKeyGroupEntity) obj;
     return Objects.equals(vendorLicenseModelId, that.vendorLicenseModelId)
+        && Objects.equals(version, that.version)
         && Objects.equals(id, that.id)
         && Objects.equals(name, that.name)
         && Objects.equals(description, that.description)
@@ -307,7 +315,8 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
         && Objects.equals(expiryDate, that.expiryDate)
         && Objects.equals(thresholdValue, that.thresholdValue)
         && Objects.equals(thresholdUnits, that.thresholdUnits)
-        && Objects.equals(increments, that.increments);
+        && Objects.equals(increments, that.increments)
+        && Objects.equals(manufacturerReferenceNumber, that.manufacturerReferenceNumber);
   }
 
   @Override
@@ -337,7 +346,7 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
   public OperationalScopeForXml getOperationalScopeForArtifact() {
     OperationalScopeForXml obj = new OperationalScopeForXml();
     if (operationalScope != null) {
-      if(operationalScope.getResults().size() > 0) {
+      if (operationalScope.getResults().size() > 0) {
         obj.setValue(operationalScope.getResults());
       }
     }
@@ -346,6 +355,7 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
 
   /**
    * Gets version for artifact.
+   *
    * @return version in format suitable for artifact
    */
   public String getVersionForArtifact() {
@@ -375,4 +385,29 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
   public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
     this.manufacturerReferenceNumber = manufacturerReferenceNumber;
   }
+
+  public String getIsoFormatStartDate() {
+    mdcDataDebugMessage.debugEntryMessage("start date", startDate);
+    String isoFormatStartDate = null;
+    if (!StringUtils.isEmpty(startDate)) {
+      isoFormatStartDate = VendorLicenseUtil.getIsoFormatDate(startDate);
+      mdcDataDebugMessage.debugExitMessage("start date", "iso format start date", startDate,
+          isoFormatStartDate);
+    }
+    return isoFormatStartDate;
+  }
+
+
+  public String getIsoFormatExpiryDate() {
+    mdcDataDebugMessage.debugEntryMessage("expiry date", expiryDate);
+    String isoFormatExpDate = null;
+    if (!StringUtils.isEmpty(expiryDate)) {
+      isoFormatExpDate = VendorLicenseUtil.getIsoFormatDate(expiryDate);
+      mdcDataDebugMessage.debugExitMessage("expiry date", "iso format expiry date", expiryDate,
+          isoFormatExpDate);
+    }
+    return isoFormatExpDate;
+  }
+
+
 }

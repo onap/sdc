@@ -5,8 +5,8 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
+import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.utils.ResourceWalker;
 
 import java.util.HashMap;

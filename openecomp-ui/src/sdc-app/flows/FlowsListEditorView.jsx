@@ -13,8 +13,8 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import React, {PropTypes, Component} from 'react';
-
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Modal from 'nfvo-components/modal/Modal.jsx';
 

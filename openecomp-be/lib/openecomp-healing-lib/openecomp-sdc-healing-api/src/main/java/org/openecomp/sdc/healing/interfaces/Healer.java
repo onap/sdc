@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.healing.interfaces;
 
-import java.util.Map;
+import org.openecomp.sdc.versioning.dao.types.Version;
 
 /**
  * Created by Talio on 11/29/2016.
  */
 public interface Healer {
-    Object heal(Map<String, Object> healingParams) throws Exception;
+    Object heal(String itemId, Version version) throws Exception;
 }

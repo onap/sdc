@@ -17,7 +17,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import Checkbox from 'react-bootstrap/lib/Checkbox.js';
-import Radio from 'react-bootstrap/lib/Radio.js';
+import Radio from 'sdc-ui/lib/react/Radio.js';
 import FormGroup from 'react-bootstrap/lib/FormGroup.js';
 import FormControl from 'react-bootstrap/lib/FormControl.js';
 
@@ -72,8 +72,8 @@ class InputWrapper extends React.Component {
 						disabled={isReadOnlyMode || Boolean(disabled)}
 						value={value}
 						ref={(input) => this.inputWrapper = input}
-						onChange={(e)=>this.onChangeRadio(e)}
-						data-test-id={this.props['data-test-id']}>{label}</Radio>}
+						onChange={(isChecked)=>this.onChangeRadio(isChecked)} label={label}
+						data-test-id={this.props['data-test-id']} />}
 				{type === 'select' &&
 					<FormControl onClick={ (e) => this.optionSelect(e) }
 						componentClass={type}
@@ -119,10 +119,10 @@ class InputWrapper extends React.Component {
 		onChange(e.target.checked);
 	}
 
-	onChangeRadio(e) {
+	onChangeRadio(isChecked) {
 		let {onChange} = this.props;
 		this.setState({
-			checked: e.target.checked
+			checked: isChecked
 		});
 		onChange(this.state.value);
 	}

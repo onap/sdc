@@ -41,14 +41,13 @@ import org.openecomp.sdcrests.vendorlicense.types.LicenseAgreementRequestDto;
 import org.openecomp.sdcrests.vendorlicense.types.LicenseAgreementUpdateRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.HashSet;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
+import java.util.Collection;
+import java.util.HashSet;
 
 @Named
 @Service("licenseAgreements")
@@ -62,9 +61,9 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
   /**
    * List license agreements response.
    *
-   * @param vlmId   the vlm id
+   * @param vlmId     the vlm id
    * @param versionId the version
-   * @param user    the user
+   * @param user      the user
    * @return the response
    */
   public Response listLicenseAgreements(String vlmId, String versionId, String user) {
@@ -73,7 +72,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
 
     MdcUtil.initMdc(LoggerServiceName.List_LA.toString());
     Collection<LicenseAgreementEntity> licenseAgreements =
-        vendorLicenseManager.listLicenseAgreements(vlmId, Version.valueOf(versionId), user);
+        vendorLicenseManager.listLicenseAgreements(vlmId, new Version(versionId));
 
     GenericCollectionWrapper<LicenseAgreementEntityDto> results = new GenericCollectionWrapper<>();
     MapLicenseAgreementEntityToLicenseAgreementDescriptorDto outputMapper =
@@ -100,7 +99,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    * @return the response
    */
   public Response createLicenseAgreement(LicenseAgreementRequestDto request, String vlmId,
-                                         String versionId,String user) {
+                                         String versionId, String user) {
 
     mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
 
@@ -109,11 +108,11 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
         new MapLicenseAgreementDescriptorDtoToLicenseAgreementEntity()
             .applyMapping(request, LicenseAgreementEntity.class);
     licenseAgreementEntity.setVendorLicenseModelId(vlmId);
-    licenseAgreementEntity.setVersion(Version.valueOf(versionId));
+    licenseAgreementEntity.setVersion(new Version(versionId));
     licenseAgreementEntity.setFeatureGroupIds(request.getAddedFeatureGroupsIds());
 
     LicenseAgreementEntity createdLicenseAgreement =
-        vendorLicenseManager.createLicenseAgreement(licenseAgreementEntity, user);
+        vendorLicenseManager.createLicenseAgreement(licenseAgreementEntity);
     StringWrapperResponse result =
         createdLicenseAgreement != null ? new StringWrapperResponse(createdLicenseAgreement.getId())
             : null;
@@ -133,7 +132,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    * @return the response
    */
   public Response updateLicenseAgreement(LicenseAgreementUpdateRequestDto request, String vlmId,
-                                         String versionId,String licenseAgreementId, String user) {
+                                         String versionId, String licenseAgreementId, String user) {
 
     mdcDataDebugMessage.debugEntryMessage("VLM id, LA id", vlmId, licenseAgreementId);
 
@@ -142,12 +141,12 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
         new MapLicenseAgreementDescriptorDtoToLicenseAgreementEntity()
             .applyMapping(request, LicenseAgreementEntity.class);
     licenseAgreementEntity.setVendorLicenseModelId(vlmId);
-    licenseAgreementEntity.setVersion(Version.valueOf(versionId));
+    licenseAgreementEntity.setVersion(new Version(versionId));
     licenseAgreementEntity.setId(licenseAgreementId);
 
     vendorLicenseManager
         .updateLicenseAgreement(licenseAgreementEntity, request.getAddedFeatureGroupsIds(),
-            request.getRemovedFeatureGroupsIds(), user);
+            request.getRemovedFeatureGroupsIds());
 
     mdcDataDebugMessage.debugExitMessage("VLM id, LA id", vlmId, licenseAgreementId);
 
@@ -158,7 +157,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    * Gets license agreement.
    *
    * @param vlmId              the vlm id
-   * @param versionId            the version
+   * @param versionId          the version
    * @param licenseAgreementId the license agreement id
    * @param user               the user
    * @return the license agreement
@@ -170,7 +169,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
 
     MdcUtil.initMdc(LoggerServiceName.Get_LA.toString());
     LicenseAgreementModel licenseAgreementModel = vendorLicenseManager
-        .getLicenseAgreementModel(vlmId, Version.valueOf(versionId), licenseAgreementId, user);
+        .getLicenseAgreementModel(vlmId, new Version(versionId), licenseAgreementId);
 
     if (licenseAgreementModel == null) {
       return Response.ok().build();
@@ -206,18 +205,18 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
    * Delete license agreement response.
    *
    * @param vlmId              the vlm id
-   * @param versionId           the version id
-                               * @param licenseAgreementId the license agreement id
+   * @param versionId          the version id
+   * @param licenseAgreementId the license agreement id
    * @param user               the user
    * @return the response
    */
-  public Response deleteLicenseAgreement(String vlmId,String versionId, String licenseAgreementId,
+  public Response deleteLicenseAgreement(String vlmId, String versionId, String licenseAgreementId,
                                          String user) {
 
     mdcDataDebugMessage.debugEntryMessage("VLM id, LA id", vlmId, licenseAgreementId);
 
     MdcUtil.initMdc(LoggerServiceName.Delete_LA.toString());
-    vendorLicenseManager.deleteLicenseAgreement(vlmId, Version.valueOf(versionId), licenseAgreementId, user);
+    vendorLicenseManager.deleteLicenseAgreement(vlmId, new Version(versionId), licenseAgreementId);
 
     mdcDataDebugMessage.debugExitMessage("VLM id, LA id", vlmId, licenseAgreementId);
 

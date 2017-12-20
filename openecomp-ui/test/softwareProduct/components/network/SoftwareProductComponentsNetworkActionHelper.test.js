@@ -19,15 +19,20 @@ import {cloneAndSet} from 'test-utils/Util.js';
 import {storeCreator} from 'sdc-app/AppStore.js';
 import SoftwareProductComponentsNetworkActionHelper from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNetworkActionHelper.js';
 
-import {VSPComponentsNicPostFactory, VSPComponentsNicFactory, VSPComponentsNetworkFactory, VSPComponentsNetworkQDataFactory, VSPComponentsNetworkDataMapFactory, VSPComponentsNicFactoryGenericFieldInfo} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsNetworkFactories.js';
-import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
+import {VSPComponentsNicFactory,
+    VSPComponentsNicPostFactory,
+	VSPComponentsNetworkFactory,
+	VSPComponentsNetworkQDataFactory,
+	VSPComponentsNetworkDataMapFactory,
+	VSPComponentsNicFactoryGenericFieldInfo} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsNetworkFactories.js';
+import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 import VSPQSchemaFactory from 'test-utils/factories/softwareProduct/SoftwareProductQSchemaFactory.js';
 import {forms} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
 
 const softwareProductId = '123';
 const componentId = '321';
 const nicId = '111';
-const version = VersionControllerUtilsFactory.build().version;
+const version = VersionFactory.build();
 
 describe('Software Product Components Network Action Helper Tests', function () {
 
@@ -55,60 +60,62 @@ describe('Software Product Components Network Action Helper Tests', function () 
 		});
 
 	});
+
 	it('Add NIC', () => {
-			const store = storeCreator();
-			deepFreeze(store.getState());
+		const store = storeCreator();
+		deepFreeze(store.getState());
 
-			const NICPostRequest = VSPComponentsNicPostFactory.build();
+		const NICPostRequest = VSPComponentsNicPostFactory.build();
 
-			const expectedNIC = VSPComponentsNicFactory.build({...NICPostRequest, id: nicId});
+		const expectedNIC = VSPComponentsNicFactory.build({...NICPostRequest, id: nicId});
 
-			mockRest.addHandler('post', ({options, data, baseUrl}) => {
-				expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/nics`);
-				expect(data).toEqual(NICPostRequest);
-				expect(options).toEqual(undefined);
-				return {
-					nicId
-				};
-			});
-
-			mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-				expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/nics`);
-				expect(data).toEqual(undefined);
-				expect(options).toEqual(undefined);
-				return {results: [expectedNIC]};
-			});
-
-			mockRest.addHandler('destroy', ({options, data, baseUrl}) => {
-				expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/nics/${nicId}`);
-				expect(data).toEqual(undefined);
-				expect(options).toEqual(undefined);
-				return {};
-			});
-
-			mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-				expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/nics`);
-				expect(data).toEqual(undefined);
-				expect(options).toEqual(undefined);
-				return {results: []};
-			});
-
-			const network = VSPComponentsNetworkFactory.build({
-				nicList: [expectedNIC]
-			});
-
-			const networkAfterDelete = VSPComponentsNetworkFactory.build();
-
-			let expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductComponents.network', network);
-
-			return SoftwareProductComponentsNetworkActionHelper.createNIC(store.dispatch, {nic: NICPostRequest, softwareProductId, componentId, version}).then(() => {
-				expect(store.getState()).toEqual(expectedStore);
-				return SoftwareProductComponentsNetworkActionHelper.deleteNIC(store.dispatch, {softwareProductId, componentId, nicId, version});
-			}).then(() => {
-				let expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductComponents.network', networkAfterDelete);
-				expect(store.getState()).toEqual(expectedStore);
-			});
+		mockRest.addHandler('post', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/nics`);
+			expect(data).toEqual(NICPostRequest);
+			expect(options).toEqual(undefined);
+			return {
+				nicId
+			};
 		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/nics`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: [expectedNIC]};
+		});
+
+		mockRest.addHandler('destroy', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/nics/${nicId}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {};
+		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/nics`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: []};
+		});
+
+		const network = VSPComponentsNetworkFactory.build({
+			nicList: [expectedNIC]
+		});
+
+		const networkAfterDelete = VSPComponentsNetworkFactory.build();
+
+		let expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductComponents.network', network);
+
+		return SoftwareProductComponentsNetworkActionHelper.createNIC(store.dispatch, {nic: NICPostRequest, softwareProductId, componentId, version}).then(() => {
+			expect(store.getState()).toEqual(expectedStore);
+			return SoftwareProductComponentsNetworkActionHelper.deleteNIC(store.dispatch, {softwareProductId, componentId, nicId, version});
+		}).then(() => {
+			let expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductComponents.network', networkAfterDelete);
+			expect(store.getState()).toEqual(expectedStore);
+		});
+	});
+
 	it('open NICE editor', () => {
 
 		const store = storeCreator();
@@ -171,7 +178,6 @@ describe('Software Product Components Network Action Helper Tests', function () 
 			expect(data).toEqual(expectedData);
 		});
 	});
-
 
 	it('load NIC Questionnaire', () => {
 		mockRest.resetQueue();

@@ -13,9 +13,15 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Set;
 
-import static org.openecomp.sdc.common.utils.CommonUtil.*;
-import static org.junit.Assert.*;
-import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.DEFININTION_VERSION;
+import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME;
+import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.HEAT_INDEX;
+import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.TEMPLATE_NAME_PROPERTY;
+import static org.openecomp.sdc.common.utils.CommonUtil.validateAndUploadFileContent;
 public class ToscaConvertorDefinitionsTest {
 
 

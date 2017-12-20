@@ -20,9 +20,6 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -45,6 +42,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
 
 @Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/processes")
 @Produces(MediaType.APPLICATION_JSON)

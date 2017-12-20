@@ -21,7 +21,6 @@
 package org.openecomp.sdc.healing.healers;
 
 import org.openecomp.core.utilities.json.JsonSchemaDataGenerator;
-import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.healing.interfaces.Healer;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
@@ -30,8 +29,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.CompositionEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
@@ -42,15 +39,12 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTempl
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
 
 public class SubEntitiesQuestionnaireHealer implements Healer {
   private static Version version00 = new Version(0, 0);
   private MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
-  private static final VendorSoftwareProductDao vendorSoftwareProductDao =
-      VendorSoftwareProductDaoFactory.getInstance().createInterface();
   private static ComponentDao componentDao = ComponentDaoFactory.getInstance().createInterface();
   private static NicDao nicDao = NicDaoFactory.getInstance().createInterface();
   private static NetworkDao networkDao = NetworkDaoFactory.getInstance().createInterface();
@@ -59,22 +53,17 @@ public class SubEntitiesQuestionnaireHealer implements Healer {
   private static String emptyJson = "{}";
 
   @Override
-  public Object heal(Map<String, Object> healingParams) throws Exception {
+  public Object heal(String vspId, Version version) throws Exception {
 
 
     mdcDataDebugMessage.debugEntryMessage(null);
-
-    String vspId = (String) healingParams.get(SdcCommon.VSP_ID);
-    Version version = version00.equals(healingParams.get(SdcCommon.VERSION)) ? new Version
-        (0, 1)
-        : (Version) healingParams.get(SdcCommon.VERSION);
 
     Collection<ComponentEntity> componentEntities =
         componentDao.listCompositionAndQuestionnaire(vspId, version);
 
     networkDao.list(new NetworkEntity(vspId, version, null));
 
-    Collection<NicEntity> nicEntities = vendorSoftwareProductDao.listNicsByVsp(vspId, version);
+    Collection<NicEntity> nicEntities = nicDao.listByVsp(vspId, version);
 
     healCompositionEntityQuestionnaire(componentEntities, version, CompositionEntityType.component);
     healCompositionEntityQuestionnaire(nicEntities, version, CompositionEntityType.nic);

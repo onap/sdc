@@ -29,7 +29,7 @@ export default class SoftwareProductDeploymentEditorView extends React.Component
 					isValid={this.props.isFormValid}
 					formReady={this.props.formReady}
 					className='vsp-deployment-editor'>
-					<GridSection>
+					<GridSection hasLastColSet>
 						<GridItem colSpan={1}>
 							<Input
 								onChange={model => onDataChanged({model}, {model: model => this.validateName(model)})}
@@ -41,7 +41,7 @@ export default class SoftwareProductDeploymentEditorView extends React.Component
 								isRequired={true}
 								type='text'/>
 						</GridItem>
-						<GridItem colSpan={3}>
+						<GridItem colSpan={3} lastColInRow>
 							<Input
 								onChange={description => onDataChanged({description})}
 								label={i18n('Description')}
@@ -52,7 +52,7 @@ export default class SoftwareProductDeploymentEditorView extends React.Component
 								type='text'/>
 						</GridItem>
 					</GridSection>
-					<GridSection className={`deployment-feature-groups-section${!featureGroupsExist ? ' no-feature-groups' : ''}`} title={i18n('License Details')}>
+					<GridSection className={`deployment-feature-groups-section${!featureGroupsExist ? ' no-feature-groups' : ''}`} title={i18n('License Details')} hasLastColSet>
 						<GridItem colSpan={1}>
 							<SelectInput
 								data-test-id='deployment-feature-groups'
@@ -71,8 +71,8 @@ export default class SoftwareProductDeploymentEditorView extends React.Component
 							<span>{i18n('Please assign Feature Groups in VSP General')}</span>
 						</GridItem>
 					</GridSection>}
-					<GridSection title={i18n('Assign VFCs and Compute Flavors')} className='vfc-table'>
-						<GridItem colSpan={4}>
+					<GridSection title={i18n('Assign VFCs and Compute Flavors')} className='vfc-table' hasLastColSet>
+						<GridItem colSpan={4} lastColInRow>
 							<SelectActionTable
 								columns={['Virtual Function Components', 'Compute Flavors']}
 								numOfIcons={0}>

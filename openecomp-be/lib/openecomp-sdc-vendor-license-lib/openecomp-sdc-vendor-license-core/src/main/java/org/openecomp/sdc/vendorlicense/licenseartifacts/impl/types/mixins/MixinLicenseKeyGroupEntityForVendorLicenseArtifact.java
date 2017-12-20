@@ -79,11 +79,17 @@ public abstract class MixinLicenseKeyGroupEntityForVendorLicenseArtifact {
   @JsonIgnore
   abstract Collection<LimitEntity> getLimits();
 
-  @JsonProperty(value = "start-date")
+  @JsonIgnore
   abstract String getStartDate();
 
-  @JsonProperty(value = "expiry-date")
+  @JsonIgnore
   abstract String getExpiryDate();
+
+  @JsonProperty(value = "start-date")
+  abstract String getIsoFormatStartDate();
+
+  @JsonProperty(value = "expiry-date")
+  abstract String getIsoFormatExpiryDate();
 
   @JsonProperty(value = "threshold-value")
   abstract ThresholdForXml getThresholdForArtifact();

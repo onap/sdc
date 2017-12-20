@@ -47,7 +47,6 @@ describe('License Model Overview: ', function () {
 		};
 
 		var props = mapStateToProps(state);
-		expect(props.isReadOnlyMode).toEqual(true);
 		expect(props.isDisplayModal).toEqual(false);
 		expect(props.modalHeader).toEqual(undefined);
 		expect(props.licenseModelId).toEqual(VLM1.licenseModelEditor.data.id);
@@ -79,7 +78,6 @@ describe('License Model Overview: ', function () {
 		};
 
 		var props = mapStateToProps(state);
-		expect(props.isReadOnlyMode).toEqual(true);
 		expect(props.isDisplayModal).toEqual(true);
 		expect(props.modalHeader).toEqual(overviewEditorHeaders.LICENSE_AGREEMENT);
 		expect(props.licenseModelId).toEqual(VLM1.licenseModelEditor.data.id);
@@ -112,7 +110,6 @@ describe('License Model Overview: ', function () {
 		};
 
 		var props = mapStateToProps(state);
-		expect(props.isReadOnlyMode).toEqual(true);
 		expect(props.isDisplayModal).toEqual(true);
 		expect(props.modalHeader).toEqual(overviewEditorHeaders.FEATURE_GROUP);
 		expect(props.licenseModelId).toEqual(VLM1.licenseModelEditor.data.id);
@@ -121,7 +118,7 @@ describe('License Model Overview: ', function () {
 	});
 
 	it('should mapper return overview data for show EP modal', () => {
-		const VLM1 = LicenseModelOverviewFactory.build(	{
+		const VLM1 = LicenseModelOverviewFactory.build({
 			featureGroup: {
 				featureGroupsList: [],
 			},
@@ -141,7 +138,6 @@ describe('License Model Overview: ', function () {
 		};
 
 		var props = mapStateToProps(state);
-		expect(props.isReadOnlyMode).toEqual(true);
 		expect(props.isDisplayModal).toEqual(true);
 		expect(props.modalHeader).toEqual(overviewEditorHeaders.ENTITLEMENT_POOL);
 		expect(props.licenseModelId).toEqual(VLM1.licenseModelEditor.data.id);
@@ -173,7 +169,6 @@ describe('License Model Overview: ', function () {
 		};
 
 		var props = mapStateToProps(state);
-		expect(props.isReadOnlyMode).toEqual(true);
 		expect(props.isDisplayModal).toEqual(true);
 		expect(props.modalHeader).toEqual(overviewEditorHeaders.LICENSE_KEY_GROUP);
 		expect(props.licenseModelId).toEqual(VLM1.licenseModelEditor.data.id);
@@ -233,7 +228,6 @@ describe('License Model Overview: ', function () {
 
 		var props = mapStateToProps(state);
 
-		expect(props.isReadOnlyMode).toEqual(true);
 		expect(props.isDisplayModal).toEqual(false);
 		expect(props.modalHeader).toEqual(undefined);
 		expect(props.licenseModelId).toEqual(VLM1.licenseModelEditor.data.id);
@@ -282,7 +276,6 @@ describe('License Model Overview: ', function () {
 
 		var props = mapStateToProps(state);
 
-		expect(props.isReadOnlyMode).toEqual(true);
 		expect(props.isDisplayModal).toEqual(false);
 		expect(props.modalHeader).toEqual(undefined);
 		expect(props.licenseModelId).toEqual(VLM1.licenseModelEditor.data.id);
@@ -310,6 +303,7 @@ describe('License Model Overview: ', function () {
 				selectedTab: selectedButton.NOT_IN_USE
 			}
 		});
+
 		const state = {
 			licenseModel: VLM1
 		};
@@ -322,7 +316,6 @@ describe('License Model Overview: ', function () {
 
 		var props = mapStateToProps(state);
 
-		expect(props.isReadOnlyMode).toEqual(true);
 		expect(props.isDisplayModal).toEqual(false);
 		expect(props.modalHeader).toEqual(undefined);
 		expect(props.licenseModelId).toEqual(VLM1.licenseModelEditor.data.id);
@@ -372,7 +365,6 @@ describe('License Model Overview: ', function () {
 
 		var props = mapStateToProps(state);
 
-		expect(props.isReadOnlyMode).toEqual(true);
 		expect(props.isDisplayModal).toEqual(false);
 		expect(props.modalHeader).toEqual(undefined);
 		expect(props.licenseModelId).toEqual(VLM1.licenseModelEditor.data.id);
@@ -380,5 +372,4 @@ describe('License Model Overview: ', function () {
 		expect(props.orphanDataList).toEqual(expectedLicensingDataList);
 		expect(props.selectedTab).toEqual(selectedButton.NOT_IN_USE);
 	});
-
 });

@@ -75,7 +75,7 @@ class SoftwareProductComponentsImageListView extends React.Component {
 
 	renderImagesList() {
 		const {localFilter} = this.state;
-		let {isReadOnlyMode, onAddImage, isManual, version} = this.props;
+		let {isReadOnlyMode, onAddImage, isManual} = this.props;
 
 		return (
 			<ListEditorView
@@ -84,7 +84,7 @@ class SoftwareProductComponentsImageListView extends React.Component {
 				placeholder={i18n('Filter Images by Name')}
 				isReadOnlyMode={isReadOnlyMode}
 				onFilter={value => this.setState({localFilter: value})}
-				onAdd={isManual ? () => onAddImage(version, isReadOnlyMode) : null}
+				onAdd={isManual ? () => onAddImage(isReadOnlyMode) : null}
 				plusButtonTitle={i18n('Add Image')}
 				twoColumns>
 				{this.filterList().map(image => this.renderImagesListItem(image, isReadOnlyMode))}
@@ -95,13 +95,13 @@ class SoftwareProductComponentsImageListView extends React.Component {
 
 	renderImagesListItem(image, isReadOnlyMode) {
 		let {id, fileName} = image;
-		let {onEditImageClick, version, isManual, onDeleteImage} =  this.props;
+		let {onEditImageClick, isManual, onDeleteImage} =  this.props;
 		return (
 			<ListEditorItemView
 				key={id}
 				isReadOnlyMode={isReadOnlyMode}
-				onSelect={() => onEditImageClick(image, version, isReadOnlyMode)}
-				onDelete={isManual ? () => onDeleteImage(image, version) : null}>
+				onSelect={() => onEditImageClick(image, isReadOnlyMode)}
+				onDelete={isManual ? () => onDeleteImage(image) : null}>
 
 				<ListEditorItemViewField>
 					<div className='image-filename-cell'><span className='image-filename'>{fileName}</span></div>
@@ -125,8 +125,8 @@ class SoftwareProductComponentsImageListView extends React.Component {
 	}
 
 	save() {
-		let {onSubmit, qdata, version} = this.props;
-		return onSubmit(version, qdata);
+		let {onSubmit, qdata} = this.props;
+		return onSubmit(qdata);
 	}
 }
 export default SoftwareProductComponentsImageListView;

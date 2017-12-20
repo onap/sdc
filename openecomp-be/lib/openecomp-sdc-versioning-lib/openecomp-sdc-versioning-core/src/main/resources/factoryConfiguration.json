@@ -1,0 +1,3 @@
+{
+  "org.openecomp.sdc.versioning.VersionCalculatorFactory": "org.openecomp.sdc.versioning.impl.MajorVersionCalculatorFactoryImpl"
+}

@@ -4,5 +4,8 @@
 	"build": "dev",
 	"appContextPath" : "/onboarding",
 	"defaultRestPrefix": "/onboarding-api",
-	"defaultRestATTPrefix": "/sdc1/feProxy/rest"
+	"defaultRestATTPrefix": "/sdc1/feProxy/rest",
+	"defaultWebsocketPort" : "8181",
+	"defaultDebugWebsocketPort" : "9000",
+	"defaultWebsocketPath" : "notification-api/ws/notificationHandler"
 }

@@ -26,7 +26,7 @@ describe('Error Response Handler Util', () => {
 		deepFreeze(store.getState());
 	});
 
-	it('validating error in policyException', done => {
+	it('validating error in policyException', () => {
 		let textStatus = '', errorThrown = '';
 		let xhr = {
 			responseJSON: {
@@ -53,13 +53,10 @@ describe('Error Response Handler Util', () => {
 
 		errorResponseHandler(xhr, textStatus, errorThrown);
 
-		setTimeout(function () {			
-			expect(store.getState()).toEqual(expectedStore);
-			done();
-		}, 100);
+		expect(store.getState()).toEqual(expectedStore);
 	});
 
-	it('validating error in serviceException with variables', done => {
+	it('validating error in serviceException with variables', () => {
 		let textStatus = '', errorThrown = '';
 		let xhr = {
 			responseJSON: {
@@ -85,13 +82,10 @@ describe('Error Response Handler Util', () => {
 
 		errorResponseHandler(xhr, textStatus, errorThrown);
 
-		setTimeout(function () {
-			expect(store.getState()).toEqual(expectedStore);
-			done();
-		}, 100);
+		expect(store.getState()).toEqual(expectedStore);
 	});
 
-	it('validating error in response', done => {
+	it('validating error in response', () => {
 		let textStatus = '', errorThrown = '';
 		let xhr = {
 			responseJSON: {
@@ -112,13 +106,10 @@ describe('Error Response Handler Util', () => {
 
 		errorResponseHandler(xhr, textStatus, errorThrown);
 
-		setTimeout(function () {
-			expect(store.getState()).toEqual(expectedStore);
-			done();
-		}, 100);
+		expect(store.getState()).toEqual(expectedStore);
 	});
 
-	it('validating error in request', done => {
+	it('validating error in request', () => {
 		let textStatus = '', errorThrown = '';
 		let xhr = {
 			statusText: '500',
@@ -137,9 +128,6 @@ describe('Error Response Handler Util', () => {
 
 		errorResponseHandler(xhr, textStatus, errorThrown);
 
-		setTimeout(function () {
-			expect(store.getState()).toEqual(expectedStore);
-			done();
-		}, 100);
+		expect(store.getState()).toEqual(expectedStore);
 	});
 });

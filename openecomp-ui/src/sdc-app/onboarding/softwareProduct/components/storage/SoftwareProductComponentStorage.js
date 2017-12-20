@@ -15,7 +15,6 @@
  */
 import {connect} from 'react-redux';
 
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 
 import SoftwareProductComponentsActionHelper from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsActionHelper.js';
@@ -23,26 +22,21 @@ import SoftwareProductComponentStorageView from './SoftwareProductComponentStora
 
 import {COMPONENTS_QUESTIONNAIRE} from '../SoftwareProductComponentsConstants.js';
 
-const mapStateToProps = ({softwareProduct}) => {
-	let {softwareProductEditor: {data: currentVSP}, softwareProductComponents} = softwareProduct;
-	let {componentEditor: {data: componentData , qdata, qgenericFieldInfo : qGenericFieldInfo, dataMap}} = softwareProductComponents;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentVSP);
+const mapStateToProps = ({softwareProduct: {softwareProductComponents}}) => {
+	let {componentEditor: {qdata, qgenericFieldInfo : qGenericFieldInfo, dataMap}} = softwareProductComponents;
 
 	return {
-		componentData,
 		qdata,
-		isReadOnlyMode,
 		qGenericFieldInfo,
-		dataMap,
-		version: currentVSP.version
+		dataMap
 	};
 };
 
-const mapActionToProps = (dispatch, {softwareProductId, componentId}) => {
+const mapActionToProps = (dispatch, {softwareProductId, version, componentId}) => {
 	return {
 		onQDataChanged: (deltaData) => ValidationHelper.qDataChanged(dispatch, {deltaData, qName: COMPONENTS_QUESTIONNAIRE}),
-		onSubmit: ({componentData, qdata, version}) => { return SoftwareProductComponentsActionHelper.updateSoftwareProductComponent(dispatch,
-			{softwareProductId, version, vspComponentId: componentId, componentData, qdata});
+		onSubmit: ({qdata}) => {
+			return SoftwareProductComponentsActionHelper.updateSoftwareProductComponentQuestionnaire(dispatch, {softwareProductId, version, vspComponentId: componentId, qdata});
 		}
 	};
 };

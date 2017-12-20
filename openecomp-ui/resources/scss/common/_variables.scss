@@ -21,12 +21,10 @@ $white: #ffffff;
 $red: #cf2a2a;
 $crimson: #a94442;
 
-$background-alice-blue: #e5f5fb;
 $background-gray: #f2f2f2;
 $text-black: #191919;
 $link-blue: #056bae;
 $functional-green: #007a3e;
-$functional-yellow: #ffb81c;
 $tlv-gray: #f8f8f8;
 $tlv-light-gray: #eaeaea;
 $tlv-hover: #e6f6fb;
@@ -34,7 +32,7 @@ $highlight-gray: #eceff3;
 
 $content-background-color: $white;
 
-$scroll-bar-color: $text-black;//$light-gray;
+$scroll-bar-color: $text-black;
 $vc-status-text-color: #42b72a;
 
 // sizes
@@ -45,72 +43,8 @@ $tablet-max-width: 1024px;
 $laptop-min-width: 1224px;
 $desktop-min-width: 1824px;
 
-/* Textures */
-$images-folder-name: "../images";
-/*
-$plus-circle-icon: $images-folder-name + "/plus-circle-icon.svg";
-$interface-icon: $images-folder-name + "/interface.svg";
-$sdc-logo: $images-folder-name + "/logo.svg";
-$warning-icon: $images-folder-name + "/warning.svg";
-*/
 
-/* Icons */
-$icons-folder: "../images/icons";
-/*
-$plus-circle-icon: $images-folder-name + "/plus-circle-icon.svg";
-$interface-icon: $images-folder-name + "/interface.svg";
-$sdc-logo: $images-folder-name + "/logo.svg";
-$warning-icon: $images-folder-name + "/warning.svg";
-*/
-$pencil-icon: $images-folder-name + "/pencil_icon-01.svg";
-/*
-$vc-check-in-icon: $icons-folder + "/checked_in.png";
-$vc-checkout-icon: $icons-folder + "/checked_out.png";
-$vc-revert-icon: $icons-folder + "/reverticon.png";
-$vc-revert-disabled-icon: $icons-folder + "/revert_icon_disabled.png";
-$vc-save-icon: $icons-folder + "/saveicon.png";
-$vc-save-disabled-icon: $icons-folder + "/save_icon_disable.png";
-$vc-submit-icon: $icons-folder + "/submiticonactive.png";
-$vc-submit-disabled-icon: $icons-folder + "/submit_icon_disable.png";
-$trash-icon: $images-folder-name + "/trash_icon.png";
-$download-icon: $images-folder-name + "/download_icon.png";
-$upload-icon: $images-folder-name + "/upload_icon.png";
-*/
 
-/*****
-// catalog icons
-$back-icon: $icons-folder + "/back_icon.png";
-// validation icons
-$artifacts-selected-icon: $icons-folder + "/artifacts_blue_icon.png";
-$artifacts-regular-icon: $icons-folder + "/artifacts_grey_icon.png";
-$chevron_down: $icons-folder + "/down_chevron.png";
-$error-icon-lg: $icons-folder + "/error_icon_big.png";
-$error-icon-sm: $icons-folder + "/error_icon_small.png";
-$go-to-overview-icon: $icons-folder + "/go_to_overview_icon.png";
-$go-to-overview-disabled-icon: $icons-folder + "/go_to_overview_disable_icon.png";
-$network-selected-icon: $icons-folder + "/network_blue_icon.png";
-$network-icon: $icons-folder + "/network_icon.png";
-$others-selected-icon: $icons-folder + "/others_blue_icon.png";
-$others-icon: $icons-folder + "/others_icon.png";
-$volume-selected-icon: $icons-folder + "/volume_blue_icon.png";
-$volume-icon: $icons-folder + "/volume_icon.png";
-$warning-icon-lg: $icons-folder + "/warning_icon_big.png";
-$warning-icon-sm: $icons-folder + "/warning_icon_small.png";
-$zip-icon: $icons-folder + "/ZIP_icon.png";
-$zip-selected-icon: $icons-folder + "/ZIP_blue_icon.png";
-$heat-icon: $icons-folder + "/nested_heat_icon.png";
-$heat-selected-icon: $icons-folder + "/nested_HEAT_icon_blue.png";
-$env-icon: $icons-folder + "/env_icon.png";
-$env-selected-icon: $icons-folder + "/env_icon_blue.png";
 
-// vlm summary icons
 
-$vlm-summary-plus-blue: $icons-folder + "/plus_vlm_summary_icon_blue.png";
-$vlm-summary-plus: $icons-folder + "/plus_vlm_summary_icon.png";
-$vlm-summary-plus-disabled: $icons-folder + "/plus_vlm_summary_disabled_icon.png";
-$vlm-summary-orphans: $icons-folder + "/orphans_grey_icon.png";
-$vlm-summary-orphans-blue: $icons-folder + "/orphans_blue_icon-n.png";
-$vlm-summary-used: $icons-folder + "/vlm_list_view_grey_icon.png";
-$vlm-summary-used-blue: $icons-folder + "/vlm_list_view_blue_icon.png";
-*****/
 

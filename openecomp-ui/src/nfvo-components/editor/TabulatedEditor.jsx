@@ -22,7 +22,8 @@ import NavigationSideBar from 'nfvo-components/panel/NavigationSideBar.jsx';
 export default class TabulatedEditor extends React.Component {
 
 	render() {
-		const {navigationBarProps, onToggle, onVersionSwitching, onCreate, onSave, onClose, onVersionControllerAction, onNavigate, children, meta} = this.props;
+		const {navigationBarProps, onToggle, onVersionSwitching, onMoreVersionsClick, onCreate, onSave, onClose,
+				onVersionControllerAction, onNavigate, children, meta, onManagePermissions, onOpenCommentCommitModal, onOpenPermissions, onOpenRevisionsModal} = this.props;
 		let {versionControllerProps} = this.props;
 		const {className = ''} = React.Children.only(children).props;
 		const child = this.prepareChild();
@@ -42,7 +43,12 @@ export default class TabulatedEditor extends React.Component {
 					<VersionController
 						{...versionControllerProps}
 						onVersionSwitching={version => onVersionSwitching(version, meta)}
-						callVCAction={(action, version) => onVersionControllerAction(action, version, meta)}
+						onMoreVersionsClick={onMoreVersionsClick}
+						onManagePermissions={onManagePermissions}
+						onOpenCommentCommitModal={onOpenCommentCommitModal}
+						onOpenPermissions={onOpenPermissions}
+						onOpenRevisionsModal={onOpenRevisionsModal}
+						callVCAction={(action, version, comment) => onVersionControllerAction(action, version, comment, meta)}
 						onCreate={onCreate && this.handleCreate}
 						onSave={onSave && this.handleSave}/>
 					<div className={classnames('content-area', `${className}`)}>

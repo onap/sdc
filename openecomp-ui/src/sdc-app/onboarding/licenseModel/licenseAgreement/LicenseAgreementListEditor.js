@@ -17,24 +17,22 @@ import {connect} from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import LicenseAgreementActionHelper from './LicenseAgreementActionHelper.js';
 import LicenseAgreementListEditorView from './LicenseAgreementListEditorView.jsx';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import {actionTypes as globalMoadlActions}  from 'nfvo-components/modal/GlobalModalConstants.js';
 
 const mapStateToProps = ({licenseModel: {licenseAgreement, licenseModelEditor}}) => {
+
 	let {licenseAgreementList} = licenseAgreement;
 	let {data} = licenseAgreement.licenseAgreementEditor;
 	let {vendorName, version} = licenseModelEditor.data;
-
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(licenseModelEditor.data);
 
 	return {
 		vendorName,
 		version,
 		licenseAgreementList,
-		isReadOnlyMode,
 		isDisplayModal: Boolean(data),
 		isModalInEditMode: Boolean(data && data.id)
 	};
+
 };
 
 const mapActionsToProps = (dispatch, {licenseModelId}) => {
@@ -44,7 +42,7 @@ const mapActionsToProps = (dispatch, {licenseModelId}) => {
 		onDeleteLicenseAgreement: (licenseAgreement, version) => dispatch({
 			type: globalMoadlActions.GLOBAL_MODAL_WARNING,
 			data:{
-				msg: i18n(`Are you sure you want to delete "${licenseAgreement.name}"?`),
+				msg: i18n('Are you sure you want to delete "{name}"?', {name: licenseAgreement.name}),
 				confirmationButtonText: i18n('Delete'),
 				title: i18n('Delete'),
 				onConfirmed: ()=>LicenseAgreementActionHelper.deleteLicenseAgreement(dispatch, {licenseModelId, licenseAgreementId: licenseAgreement.id, version})

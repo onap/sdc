@@ -35,7 +35,6 @@ import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentArtifactDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -59,8 +58,6 @@ public class MonitoringMibEnricherTest {
   private ComponentArtifactDao componentArtifactDaoMock;
   @Mock
   private EnrichedServiceModelDao enrichedServiceModelDaoMock;
-  @Mock
-  private VendorSoftwareProductDao vendorSoftwareProductDaoMock;
   @Mock
   private ComponentDao componentDaoMock;
 
@@ -157,7 +154,7 @@ public class MonitoringMibEnricherTest {
 
   private ByteBuffer getMibByteBuffer(String fileName) {
     byte[] mibBytes = FileUtils.readViaInputStream(this.getClass().getResource(fileName),
-            stream -> FileUtils.toByteArray(stream));
+        stream -> FileUtils.toByteArray(stream));
     return ByteBuffer.wrap(mibBytes);
   }
 

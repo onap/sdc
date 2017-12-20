@@ -26,14 +26,14 @@ import com.amdocs.zusammen.datatypes.SessionContext;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.core.zusammen.api.ZusammenUtil;
+import org.openecomp.sdc.health.HealthCheckDao;
+import org.openecomp.sdc.health.HealthCheckDaoFactory;
 import org.openecomp.sdc.health.HealthCheckManager;
 import org.openecomp.sdc.health.data.HealthCheckStatus;
 import org.openecomp.sdc.health.data.MonitoredModules;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
-import org.openecomp.sdc.health.HealthCheckDao;
-import org.openecomp.sdc.health.HealthCheckDaoFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;

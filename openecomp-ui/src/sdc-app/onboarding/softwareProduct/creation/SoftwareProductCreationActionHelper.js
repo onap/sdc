@@ -48,10 +48,10 @@ const SoftwareProductCreationActionHelper = {
 			type: modalActionTypes.GLOBAL_MODAL_SHOW,
 			data: {
 				modalComponentName: modalContentMapper.SOFTWARE_PRODUCT_CREATION,
-				title: i18n('New Software Product'),				
+				title: i18n('New Software Product'),
 				modalComponentProps: {
 					vendorId,
-					size: modalSizes.LARGE					
+					size: modalSizes.LARGE
 				}
 			}
 		});
@@ -70,7 +70,13 @@ const SoftwareProductCreationActionHelper = {
 	},
 
 	createSoftwareProduct(dispatch, {softwareProduct}) {
-		return createSoftwareProduct(softwareProduct);
+		return createSoftwareProduct(softwareProduct).then(result => {
+			dispatch({
+				type: actionTypes.SOFTWARE_PRODUCT_CREATED,
+				result
+			});
+			return result;
+		});
 	}
 
 };

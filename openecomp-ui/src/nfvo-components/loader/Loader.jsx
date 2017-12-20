@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 const mapStateToProps = ({loader}) => {
@@ -25,7 +26,7 @@ const mapStateToProps = ({loader}) => {
 class Loader extends React.Component {
 
 	static propTypes = {
-		isLoading: React.PropTypes.bool.isRequired
+		isLoading: PropTypes.bool.isRequired
 	};
 
 	static defaultProps = {

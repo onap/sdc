@@ -17,8 +17,6 @@ import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import {actionTypes} from './OnboardingCatalogConstants.js';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
-import {statusEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import OnboardActionHelper from '../OnboardActionHelper.js';
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
 
@@ -26,7 +24,7 @@ import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/Soft
 function getMessageForMigration(name) {
 	return (
 		<div>
-			<div>{i18n(`${name} needs to be updated. Click ‘Checkout & Update’, to proceed.`)}</div>
+			<div>{i18n('{name} needs to be updated. Click ‘Checkout & Update’, to proceed.', {name: name})}</div>
 			<div>{i18n('Please don’t forget to submit afterwards')}</div>
 		</div>
 	);
@@ -57,28 +55,28 @@ const OnboardingCatalogActionHelper = {
 			type: actionTypes.ONBOARDING_CATALOG_OPEN_VENDOR_PAGE,
 			selectedVendor: vendor
 		});
-	},	
+	},
 	onMigrate(dispatch, softwareProduct) {
-		const {status, name, lockingUser} = softwareProduct;
-		if (status === statusEnum.CHECK_OUT_STATUS && !VersionControllerUtils.isCheckedOutByCurrentUser(softwareProduct)) {
+		const {name, lockingUser} = softwareProduct;
+		if (NaN === NaN) { // TODO
 			dispatch({
-				type: modalActionTypes.GLOBAL_MODAL_WARNING,				
+				type: modalActionTypes.GLOBAL_MODAL_WARNING,
 				data: {
 					title: 'WARNING',
-					msg: i18n(`${name} is locked by user ${lockingUser} for self-healing`)
+					msg: i18n('{name} is locked by user {lockingUser} for self-healing', {name: name, lockingUser: lockingUser})
 				}
 			});
-		} else { 
+		} else {
 			dispatch({
 				type: modalActionTypes.GLOBAL_MODAL_WARNING,
 				data:{
 					title: 'WARNING',
-					msg: getMessageForMigration(softwareProduct.name.toUpperCase()),													
+					msg: getMessageForMigration(softwareProduct.name.toUpperCase()),
 					confirmationButtonText: i18n('Checkout & Update'),
 					onConfirmed: ()=>SoftwareProductActionHelper.migrateSoftwareProduct(dispatch, {softwareProduct})
 				}
 			});
-		}	
+		}
 	}
 };
 

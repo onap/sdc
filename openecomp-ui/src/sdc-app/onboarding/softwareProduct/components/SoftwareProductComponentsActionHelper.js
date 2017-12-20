@@ -74,6 +74,7 @@ const SoftwareProductComponentsActionHelper = {
 				type: actionTypes.COMPONENTS_LIST_UPDATE,
 				componentsList: response.results
 			});
+			return response;
 		});
 	},
 

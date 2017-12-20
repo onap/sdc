@@ -2,7 +2,6 @@ package org.openecomp.sdc.validation.impl.validators.heatresource;
 
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.validation.ErrorMessageCode;
-import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
@@ -15,6 +14,7 @@ import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
+import org.openecomp.sdc.validation.ResourceValidator;
 import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.type.HeatResourceValidationContext;
 

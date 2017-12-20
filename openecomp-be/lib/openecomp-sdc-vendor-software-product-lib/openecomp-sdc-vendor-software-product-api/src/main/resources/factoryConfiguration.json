@@ -1,8 +1,6 @@
 {
-  "org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory": "org.openecomp.sdc.vendorsoftwareproduct.dao.impl.VendorSoftwareProductDaoFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.dao.VspDaoFactory": "org.openecomp.sdc.vendorsoftwareproduct.dao.impl.VspDaoFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory": "org.openecomp.sdc.vendorsoftwareproduct.dao.impl.VendorSoftwareProductInfoDaoFactoryImpl",
-  "org.openecomp.sdc.vendorsoftwareproduct.dao.UploadDataDaoFactory": "org.openecomp.sdc.vendorsoftwareproduct.dao.impl.UploadDataDaoFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateCandidateDaoFactory": "org.openecomp.sdc.vendorsoftwareproduct.dao.impl.OrchestrationTemplateCandidateDaoFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFactory": "org.openecomp.sdc.vendorsoftwareproduct.dao.impl.OrchestrationTemplateDaoFactoryImpl",
   "org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDaoFactory": "org.openecomp.sdc.vendorsoftwareproduct.dao.impl.PackageInfoDaoFactoryImpl",

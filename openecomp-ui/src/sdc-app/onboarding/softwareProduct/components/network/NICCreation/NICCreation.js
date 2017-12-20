@@ -36,13 +36,13 @@ export const mapStateToProps = ({softwareProduct}) => {
 	};
 };
 
-const mapActionsToProps = (dispatch) => {
+const mapActionsToProps = (dispatch, {softwareProductId, version}) => {
 	return {
 		onDataChanged: deltaData => ValidationHelper.dataChanged(dispatch, {deltaData, formName: NIC_CREATION_FORM_NAME}),
 		onCancel: () => NICCreationActionHelper.close(dispatch),
-		onSubmit: ({nic, softwareProductId, componentId, version}) => {
-			NICCreationActionHelper.close(dispatch);
+		onSubmit: ({nic, componentId}) => {
 			SoftwareProductComponentsNetworkActionHelper.createNIC(dispatch, {nic, softwareProductId, componentId, version});
+			NICCreationActionHelper.close(dispatch);
 		},
 		onValidateForm: () => ValidationHelper.validateForm(dispatch, NIC_CREATION_FORM_NAME)
 	};

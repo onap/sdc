@@ -21,7 +21,7 @@
         <module>/lib</module>
         <module>/configuration</module>
         <module>/tools/swagger-ui</module>
-        <module>/tools/migration/1702_to_1707_zusammen</module>
+        <!--<module>/tools/migration/1702_to_1707_zusammen</module>-->
         <module>/tools/zusammen-tools</module>
         <module>/backend</module>
     </modules>
@@ -159,7 +159,7 @@
                 </executions>
             </plugin>
             <!-- Jacoco consolidation Report -->
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>${mvn.antrun.version}</version>
@@ -171,7 +171,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <!-- Execute an ant task within maven -->
+                                &lt;!&ndash; Execute an ant task within maven &ndash;&gt;
                                 <echo message="Generating JaCoCo Reports" />
                                 <taskdef name="report" classname="org.jacoco.ant.ReportTask">
                                     <classpath path="${basedir}/target/jacoco-jars/org.jacoco.ant.jar" />
@@ -212,7 +212,7 @@
                         <version>${jacoco.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
+            </plugin>-->
 
         </plugins>
     </build>
@@ -262,7 +262,7 @@
                 <artifactId>classmate</artifactId>
                 <version>${classmate.version}</version>
             </dependency>
-	    <!--1702 -->
+            <!--1702 -->
             <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -274,7 +274,7 @@
                 <artifactId>groovy-all</artifactId>
                 <version>${groovy.version}</version>
             </dependency>
-             <dependency>
+            <dependency>
                 <groupId>org.codehaus.janino</groupId>
                 <artifactId>janino</artifactId>
                 <version>${janino.version}</version>

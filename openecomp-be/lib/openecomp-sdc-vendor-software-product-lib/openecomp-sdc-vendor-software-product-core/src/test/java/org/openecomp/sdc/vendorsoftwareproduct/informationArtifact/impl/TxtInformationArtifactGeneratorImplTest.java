@@ -21,41 +21,9 @@
 package org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.impl;
 
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.impl.TxtInformationArtifactConstants.HEADER;
-import static org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.impl.TxtInformationArtifactConstants.VFC_COMPUTE_CPU_OVER_SUBSCRIPTION;
-
-import org.junit.Assert;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactData;
 import org.openecomp.sdc.vendorsoftwareproduct.questionnaire.QuestionnaireDataService;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.ComponentQuestionnaire;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.compute.Compute;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.compute.GuestOS;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.compute.NumOfVMs;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.general.Hypervisor;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.general.Recovery;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.network.NetworkCapacity;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic.IpConfiguration;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic.Network;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic.NicQuestionnaire;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic.Protocols;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.vsp.VspQuestionnaire;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.vsp.general.Availability;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.vsp.general.General;
-import org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.vsp.general.StorageDataReplication;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TxtInformationArtifactGeneratorImplTest {
 

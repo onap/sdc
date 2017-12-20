@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 function ArrowCol ({isCollapsed, length}) {
@@ -28,8 +29,8 @@ function ArrowCol ({isCollapsed, length}) {
 }
 
 ArrowCol.propTypes = {
-	isCollapsed: React.PropTypes.bool,
-	length: React.PropTypes.number
+	isCollapsed: PropTypes.bool,
+	length: PropTypes.number
 };
 
 export default ArrowCol;

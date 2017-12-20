@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Modal from 'nfvo-components/modal/Modal.jsx';
 
@@ -24,15 +25,15 @@ import {extractValue} from './LicenseAgreementConstants';
 
 class LicenseAgreementListEditorView extends React.Component {
 	static propTypes = {
-		vendorName: React.PropTypes.string,
-		licenseModelId: React.PropTypes.string.isRequired,
-		licenseAgreementList: React.PropTypes.array,
-		isReadOnlyMode: React.PropTypes.bool.isRequired,
-		isDisplayModal: React.PropTypes.bool,
-		isModalInEditMode: React.PropTypes.bool,
-		onAddLicenseAgreementClick: React.PropTypes.func,
-		onEditLicenseAgreementClick: React.PropTypes.func,
-		onDeleteLicenseAgreement: React.PropTypes.func,
+		vendorName: PropTypes.string,
+		licenseModelId: PropTypes.string.isRequired,
+		licenseAgreementList: PropTypes.array,
+		isReadOnlyMode: PropTypes.bool.isRequired,
+		isDisplayModal: PropTypes.bool,
+		isModalInEditMode: PropTypes.bool,
+		onAddLicenseAgreementClick: PropTypes.func,
+		onEditLicenseAgreementClick: PropTypes.func,
+		onDeleteLicenseAgreement: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -49,7 +50,7 @@ class LicenseAgreementListEditorView extends React.Component {
 		const {localFilter} = this.state;
 
 		return (
-			<div className='license-agreement-list-editor'>
+			<div className='license-model-list-editor license-agreement-list-editor'>
 				<ListEditorView
 					title={i18n('License Agreements')}
 					plusButtonTitle={i18n('Add License Agreement')}

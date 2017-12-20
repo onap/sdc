@@ -22,17 +22,9 @@ package org.openecomp.sdc.vendorsoftwareproduct.dao;
 
 import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
-import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
 public interface PackageInfoDao extends BaseDao<PackageInfo> {
   List<PackageInfo> listByCategory(String category, String subCategory);
-
-  public void deleteRowTranslateContent(String vspId, Version version);
-
-  void updateTranslatedContent(String vspId, Version version, ByteBuffer translateContent);
-
-
 }

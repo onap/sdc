@@ -20,12 +20,11 @@ import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/Soft
 import HeatSetupActionHelper from './setup/HeatSetupActionHelper.js';
 import SoftwareProductAttachmentsView from './SoftwareProductAttachmentsView.jsx';
 import {errorLevels} from 'sdc-app/onboarding/softwareProduct/attachments/validation/HeatValidationConstants.js';
-import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
 import HeatSetup from './setup/HeatSetup.js';
 import {doesHeatDataExist} from './SoftwareProductAttachmentsUtils.js';
+import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
+import {enums, screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
 import SoftwareProductAttachmentsActionHelper from './SoftwareProductAttachmentsActionHelper.js';
-
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 
 export const mapStateToProps = (state) => {
 	let {
@@ -46,8 +45,6 @@ export const mapStateToProps = (state) => {
 	}
 	let heatDataExist = doesHeatDataExist(heatSetup);
 
-	let isReadOnlyMode = currentSoftwareProduct && currentSoftwareProduct.version ?
-			VersionControllerUtils.isReadOnly(currentSoftwareProduct) : false;
 	let {version, onboardingOrigin} = currentSoftwareProduct;
 	return {
 		isValidationAvailable: unassigned.length === 0 && modules.length > 0,
@@ -56,17 +53,16 @@ export const mapStateToProps = (state) => {
 		heatDataExist,
 		goToOverview,
 		HeatSetupComponent: HeatSetup,
-		isReadOnlyMode,
 		version,
 		onboardingOrigin,
 		activeTab
 	};
 };
 
-export const mapActionsToProps = (dispatch, {softwareProductId}) => {
+export const mapActionsToProps = (dispatch, {softwareProductId, version}) => {
 	return {
-		onDownload: ({heatCandidate, isReadOnlyMode, version}) => SoftwareProductActionHelper.downloadHeatFile(dispatch, {softwareProductId, heatCandidate, isReadOnlyMode, version}),
-		onUpload: (formData, version) => dispatch({
+		onDownload: ({heatCandidate, isReadOnlyMode}) => SoftwareProductActionHelper.downloadHeatFile(dispatch, {softwareProductId, heatCandidate, isReadOnlyMode, version}),
+		onUpload: (formData) => dispatch({
 			type: modalActionTypes.GLOBAL_MODAL_WARNING,
 			data:{
 				msg: i18n('Upload will erase existing data. Do you want to continue?'),
@@ -79,15 +75,25 @@ export const mapActionsToProps = (dispatch, {softwareProductId}) => {
 				})
 			}
 		}),
-		onSave: (heatCandidate, version) => SoftwareProductActionHelper.updateSoftwareProductHeatCandidate(dispatch, {softwareProductId, heatCandidate, version}),
-		onGoToOverview: ({version}) => {
-			OnboardingActionHelper.navigateToSoftwareProductLandingPage(dispatch, {softwareProductId, version});
-		},
-		onProcessAndValidate: ({heatData, heatDataCache, isReadOnlyMode, version}) => {
+		onInvalidFileUpload: () => dispatch({
+			type: modalActionTypes.GLOBAL_MODAL_ERROR,
+			data: {
+				title: i18n('Upload Failed'),
+				confirmationButtonText: i18n('Continue'),
+				msg: i18n('no zip or csar file was uploaded or expected file doesn\'t exist')
+			}
+		}),
+		onSave: (heatCandidate) => SoftwareProductActionHelper.updateSoftwareProductHeatCandidate(dispatch, {softwareProductId, heatCandidate, version}),
+		onGoToOverview: () => ScreensHelper.loadScreen(dispatch, {
+			screen: enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, screenType: screenTypes.SOFTWARE_PRODUCT,
+			props: {softwareProductId, version}
+		}),
+		onProcessAndValidate: ({heatData, heatDataCache, isReadOnlyMode}) => {
 			return HeatSetupActionHelper.processAndValidateHeat(dispatch,
 				{softwareProductId, heatData, heatDataCache, isReadOnlyMode, version});
 		},
 		setActiveTab: ({activeTab}) => SoftwareProductAttachmentsActionHelper.setActiveTab(dispatch, {activeTab})
+
 	};
 };
 

@@ -20,30 +20,6 @@
 
 package org.openecomp.sdc.action.dao.impl;
 
-import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.in;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
-import static org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory.getSession;
-import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_CATEGORY;
-import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_OPEN_ECOMP_COMPONENT;
-import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_MODEL;
-import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_NAME;
-import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_NONE;
-import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_VENDOR;
-import static org.openecomp.sdc.action.ActionConstants.STATUS;
-import static org.openecomp.sdc.action.ActionConstants.TARGET_ENTITY;
-import static org.openecomp.sdc.action.ActionConstants.TARGET_ENTITY_DB;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_NOT_EXIST;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_NOT_EXIST_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INTERNAL_SERVER_ERR_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_NOT_LOCKED_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_NOT_LOCKED_MSG;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_FAILURE_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_FAILURE_MSG;
-
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Statement;
@@ -56,8 +32,6 @@ import com.datastax.driver.mapping.UDTMapper;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.core.utilities.json.JsonUtil;
@@ -73,6 +47,8 @@ import org.openecomp.sdc.action.types.ActionStatus;
 import org.openecomp.sdc.action.types.ActionSubOperation;
 import org.openecomp.sdc.action.types.OpenEcompComponent;
 import org.openecomp.sdc.action.util.ActionUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.VersionInfoDao;
 import org.openecomp.sdc.versioning.dao.VersionInfoDaoFactory;
@@ -92,6 +68,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.in;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
+import static org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory.getSession;
+import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_CATEGORY;
+import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_MODEL;
+import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_NAME;
+import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_NONE;
+import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_OPEN_ECOMP_COMPONENT;
+import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_VENDOR;
+import static org.openecomp.sdc.action.ActionConstants.STATUS;
+import static org.openecomp.sdc.action.ActionConstants.TARGET_ENTITY;
+import static org.openecomp.sdc.action.ActionConstants.TARGET_ENTITY_DB;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_NOT_EXIST;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_NOT_EXIST_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INTERNAL_SERVER_ERR_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_NOT_LOCKED_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_NOT_LOCKED_MSG;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_FAILURE_CODE;
+import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_FAILURE_MSG;
 
 
 public class ActionDaoImpl extends CassandraBaseDao<ActionEntity> implements ActionDao {

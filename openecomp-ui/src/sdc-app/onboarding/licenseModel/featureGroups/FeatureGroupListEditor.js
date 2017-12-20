@@ -14,17 +14,16 @@
  * permissions and limitations under the License.
  */
 import {connect} from 'react-redux';
-
 import FeatureGroupsActionHelper  from './FeatureGroupsActionHelper.js';
 import FeatureGroupListEditorView, {generateConfirmationMsg} from './FeatureGroupListEditorView.jsx';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import {actionTypes as globalMoadlActions}  from 'nfvo-components/modal/GlobalModalConstants.js';
 
 export const mapStateToProps = ({licenseModel: {featureGroup, licenseModelEditor}}) => {
+
 	const {featureGroupEditor: {data}, featureGroupsList} = featureGroup;
-	let {vendorName, version} = licenseModelEditor.data;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(licenseModelEditor.data);
+	const {vendorName, version} = licenseModelEditor.data;
+
 	return {
 		vendorName,
 		version,
@@ -32,9 +31,9 @@ export const mapStateToProps = ({licenseModel: {featureGroup, licenseModelEditor
 			show: Boolean(data),
 			editMode: Boolean(data && data.id)
 		},
-		featureGroupsList,
-		isReadOnlyMode
+		featureGroupsList
 	};
+
 };
 
 

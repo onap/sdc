@@ -20,23 +20,6 @@
 
 package org.openecomp.sdc.applicationconfig.dao;
 
-import org.openecomp.core.utilities.applicationconfig.ApplicationConfig;
-import org.openecomp.core.utilities.applicationconfig.ApplicationConfigFactory;
-import org.openecomp.core.utilities.applicationconfig.dao.ApplicationConfigDao;
-import org.openecomp.core.utilities.applicationconfig.dao.ApplicationConfigDaoFactory;
-import org.openecomp.core.utilities.applicationconfig.dao.type.ApplicationConfigEntity;
-import org.openecomp.core.utilities.applicationconfig.type.ConfigurationData;
-import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-
 public class ApplicationConfigImplDaoTest {
 
   /*

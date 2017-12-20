@@ -14,26 +14,24 @@
  * permissions and limitations under the License.
  */
 import {connect} from 'react-redux';
-import i18n from 'nfvo-utils/i18n/i18n.js'; 
+import i18n from 'nfvo-utils/i18n/i18n.js';
 import EntitlementPoolsActionHelper from './EntitlementPoolsActionHelper.js';
 import EntitlementPoolsListEditorView, {generateConfirmationMsg} from './EntitlementPoolsListEditorView.jsx';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import {actionTypes as globalMoadlActions}  from 'nfvo-components/modal/GlobalModalConstants.js';
 
 const mapStateToProps = ({licenseModel: {entitlementPool, licenseModelEditor}}) => {
-	let {entitlementPoolsList} = entitlementPool;
-	let {data} = entitlementPool.entitlementPoolEditor;
 
-	let {vendorName} = licenseModelEditor.data;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(licenseModelEditor.data);
+	const {entitlementPoolsList} = entitlementPool;
+	const {data} = entitlementPool.entitlementPoolEditor;
+	const {vendorName} = licenseModelEditor.data;
 
 	return {
 		vendorName,
 		entitlementPoolsList,
-		isReadOnlyMode,
 		isDisplayModal: Boolean(data),
 		isModalInEditMode: Boolean(data && data.id),
 	};
+
 };
 
 const mapActionsToProps = (dispatch, {licenseModelId, version}) => {
@@ -46,7 +44,7 @@ const mapActionsToProps = (dispatch, {licenseModelId, version}) => {
 				msg: generateConfirmationMsg(entitlementPool),
 				confirmationButtonText: i18n('Delete'),
 				title: i18n('Delete'),
-				onConfirmed: ()=>EntitlementPoolsActionHelper.deleteEntitlementPool(dispatch, {
+				onConfirmed: () => EntitlementPoolsActionHelper.deleteEntitlementPool(dispatch, {
 					licenseModelId,
 					entitlementPoolId: entitlementPool.id,
 					version

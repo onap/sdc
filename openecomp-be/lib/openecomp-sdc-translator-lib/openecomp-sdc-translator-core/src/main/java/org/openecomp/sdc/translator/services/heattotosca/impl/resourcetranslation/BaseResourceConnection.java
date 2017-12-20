@@ -21,7 +21,6 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
 import org.apache.commons.collections4.MapUtils;
-import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -44,6 +43,7 @@ import org.openecomp.sdc.tosca.datatypes.model.RequirementDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;

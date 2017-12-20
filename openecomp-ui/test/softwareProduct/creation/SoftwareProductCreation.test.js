@@ -35,6 +35,9 @@ describe('Software Product Creation Module Tests', function() {
 				softwareProductCreation: {
 					data: {}
 				}
+			},
+			users: {
+				usersList: []
 			}
 		};
 		let props = mapStateToProps(state);
@@ -54,6 +57,9 @@ describe('Software Product Creation Module Tests', function() {
 				softwareProductCreation: {
 					data: {}
 				}
+			},
+			users: {
+				usersList: []
 			}
 		};
 		let props = mapStateToProps(state);
@@ -71,7 +77,10 @@ describe('Software Product Creation Module Tests', function() {
 				softwareProductCreation: SoftwareProductCreationFactory.build(),
 				softwareProductCategories: CategoryWithSubFactory.buildList({}, {quantity: 2})
 			},
-			finalizedLicenseModelList: FinalizedLicenseModelFactory.buildList(3)
+			finalizedLicenseModelList: FinalizedLicenseModelFactory.buildList(3),
+			users: {
+				usersList: []
+			}
 		};
 		let props = Object.assign({}, mapStateToProps(state), mapActionsToProps(dispatch));
 		var renderer = TestUtils.createRenderer();
@@ -92,7 +101,10 @@ describe('Software Product Creation Module Tests', function() {
 				softwareProductCreation: SoftwareProductCreationFactoryWithSelectedVendor.build({selectedVendorId: finalizedLicenseModelList[0].id}),
 				softwareProductCategories: CategoryWithSubFactory.buildList({}, {quantity: 2})
 			},
-			finalizedLicenseModelList
+			finalizedLicenseModelList,
+			users: {
+				usersList: []
+			}
 		};
 		let props = Object.assign({}, mapStateToProps(state), mapActionsToProps(dispatch));
 		let renderer = TestUtils.createRenderer();

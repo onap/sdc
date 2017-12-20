@@ -26,58 +26,34 @@ import org.openecomp.sdc.activitylog.dao.ActivityLogDao;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 
 import java.util.Collection;
-import java.util.Date;
 
-public class ActivityLogDaoCassandraImpl extends CassandraBaseDao<ActivityLogEntity> implements ActivityLogDao{
-    private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static final Mapper<ActivityLogEntity> mapper =
-            noSqlDb.getMappingManager().mapper(ActivityLogEntity.class);
-    private static final ActivityLogAccessor accessor =
-            noSqlDb.getMappingManager().createAccessor(ActivityLogAccessor.class);
+public class ActivityLogDaoCassandraImpl extends CassandraBaseDao<ActivityLogEntity>
+    implements ActivityLogDao {
+  private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
+  private static final Mapper<ActivityLogEntity> mapper =
+      noSqlDb.getMappingManager().mapper(ActivityLogEntity.class);
+  private static final ActivityLogAccessor accessor =
+      noSqlDb.getMappingManager().createAccessor(ActivityLogAccessor.class);
 
-    @Override
-    protected Mapper<ActivityLogEntity> getMapper() {
-        return mapper;
-    }
+  @Override
+  protected Mapper<ActivityLogEntity> getMapper() {
+    return mapper;
+  }
 
-    @Override
-    protected Object[] getKeys(ActivityLogEntity entity) {
-        return new Object[0];
-    }
+  @Override
+  protected Object[] getKeys(ActivityLogEntity entity) {
+    return new Object[]{entity.getItemId(), entity.getVersionId(), entity.getId()};
+  }
 
-    @Override
-    public Collection<ActivityLogEntity> list(ActivityLogEntity entity) {
-        return accessor.list().all();
-    }
+  @Override
+  public Collection<ActivityLogEntity> list(ActivityLogEntity entity) {
+    return accessor.listByItemVersion(entity.getItemId(), entity.getVersionId()).all();
+  }
 
-    @Override
-    public void create(ActivityLogEntity activityLogEntity) {
-        accessor.create(activityLogEntity.getItemId(), activityLogEntity.getVersionId(),activityLogEntity.getId(),
-                activityLogEntity.getType(),activityLogEntity.getUser(), activityLogEntity.getTimestamp(), activityLogEntity.isSuccess(),
-                activityLogEntity.getMessage(), activityLogEntity.getComment());
-    }
+  @Accessor
+  interface ActivityLogAccessor {
 
-    @Override
-    public Collection<ActivityLogEntity> getActivityLogListForItem(String itemId, String versionId) {
-        return accessor.getForItem(itemId, versionId).all();
-    }
-
-
-    @Accessor
-    interface ActivityLogAccessor {
-        @Query("select item_id, version_id, activity_id, type, user, timestamp, success, message, comment"
-                        + " from activity_log")
-        Result<ActivityLogEntity> list();
-
-        @Query("select item_id, version_id, activity_id, type, user, timestamp, success, message, comment"
-                        + " from activity_log where item_id=? and version_id=?")
-        Result<ActivityLogEntity> getForItem(String itemId, String versionId);
-
-        @Query("insert into activity_log " +
-                " (item_id, version_id, activity_id, type, user, timestamp, success, message, comment)" +
-                " values (?,?,?,?,?,?,?,?,?)")
-        Result<ActivityLogEntity> create(String itemId, String versionId, String id, String type,
-                                         String user, Date timestamp, boolean success,
-                                         String message, String comment);
-    }
+    @Query("select * from activity_log where item_id=? and version_id=?")
+    Result<ActivityLogEntity> listByItemVersion(String itemId, String versionId);
+  }
 }

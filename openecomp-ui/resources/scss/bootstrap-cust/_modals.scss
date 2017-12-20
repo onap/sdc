@@ -11,8 +11,12 @@
     padding: 0;
     .validation-form-content {
       padding: 50px;
+      padding-bottom: 30px;
         overflow-y: auto;
         max-height: 490px;
+    }
+    .validation-buttons {
+      padding-right: 50px;
     }
   }
 

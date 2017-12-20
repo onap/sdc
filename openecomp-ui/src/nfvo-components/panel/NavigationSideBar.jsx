@@ -14,15 +14,16 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Collapse from 'react-bootstrap/lib/Collapse.js';
 
 class NavigationSideBar extends React.Component {
 	static PropTypes = {
-		activeItemId: React.PropTypes.string.isRequired,
-		onSelect: React.PropTypes.func,
-		onToggle: React.PropTypes.func,
-		groups: React.PropTypes.array
+		activeItemId: PropTypes.string.isRequired,
+		onSelect: PropTypes.func,
+		onToggle: PropTypes.func,
+		groups: PropTypes.array
 	};
 
 	constructor(props) {
@@ -61,9 +62,9 @@ class NavigationSideBar extends React.Component {
 
 class NavigationMenu extends React.Component {
 	static PropTypes = {
-		activeItemId: React.PropTypes.string.isRequired,
-		onNavigationItemClick: React.PropTypes.func,
-		menu: React.PropTypes.array
+		activeItemId: PropTypes.string.isRequired,
+		onNavigationItemClick: PropTypes.func,
+		menu: PropTypes.array
 	};
 
 	render() {
@@ -80,6 +81,9 @@ function NavigationMenuHeader(props) {
 	return <div className='group-name' data-test-id='navbar-group-name'>{props.title}</div>;
 }
 
+function getItemDataTestId(itemId) {
+	return itemId.split('|')[0];
+}
 function NavigationMenuItems(props) {
 	const {items, activeItemId, onNavigationItemClick} = props;
 	return (
@@ -97,7 +101,7 @@ function NavigationMenuItem(props) {
 	return (
 		<div className={classnames('navigation-group-item', {'selected-item': item.id === activeItemId})} key={'item_' + item.id}>
 			<NavigationLink item={item} activeItemId={activeItemId} onClick={onNavigationItemClick} />
-			{isGroup && <Collapse in={item.expanded} data-test-id={'navigation-group-' + item.id}>
+			{isGroup && <Collapse in={item.expanded} data-test-id={'navigation-group-' + getItemDataTestId(item.id)}>
 				<div>
 						{item.items.map(subItem => (<NavigationMenuItem key={'menuItem_' + subItem.id} item={subItem} onNavigationItemClick={onNavigationItemClick} activeItemId={activeItemId}  />)) }
 				</div>
@@ -120,7 +124,7 @@ function NavigationLink(props) {
 				'hidden': item.hidden
 			})}
 			onClick={(event) => onClick(event, item)}
-			data-test-id={'navbar-group-item-' + item.id}>
+			data-test-id={'navbar-group-item-' + getItemDataTestId(item.id)}>
 			{item.name}
 		</div>
 	);

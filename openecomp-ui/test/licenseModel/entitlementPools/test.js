@@ -19,14 +19,18 @@ import {cloneAndSet, buildListFromFactory} from 'test-utils/Util.js';
 import {storeCreator} from 'sdc-app/AppStore.js';
 import EntitlementPoolsActionHelper from 'sdc-app/onboarding/licenseModel/entitlementPools/EntitlementPoolsActionHelper.js';
 import {EntitlementPoolStoreFactory, EntitlementPoolPostFactory} from 'test-utils/factories/licenseModel/EntitlementPoolFactories.js';
-import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
+import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 import {LimitItemFactory, LimitPostFactory} from 'test-utils/factories/licenseModel/LimitFactories.js';
 import {getStrValue} from 'nfvo-utils/getValue.js';
+import {SyncStates} from 'sdc-app/common/merge/MergeEditorConstants.js';
+import CurrentScreenFactory from 'test-utils/factories/common/CurrentScreenFactory.js';
 
 describe('Entitlement Pools Module Tests', function () {
 
 	const LICENSE_MODEL_ID = '555';
-	const version = VersionControllerUtilsFactory.build().version;
+	const version = VersionFactory.build();
+	const itemPermissionAndProps = CurrentScreenFactory.build({}, {version});
+	const returnedVersionFields = {baseId: version.baseId, description: version.description, id: version.id, name: version.name, status: version.status};
 
 	it('Load Entitlement Pools List', () => {
 
@@ -54,6 +58,7 @@ describe('Entitlement Pools Module Tests', function () {
 		const entitlementPoolsList = buildListFromFactory(EntitlementPoolStoreFactory,1);
 		deepFreeze(entitlementPoolsList);
 		const store = storeCreator({
+			currentScreen: {...itemPermissionAndProps},
 			licenseModel: {
 				entitlementPool: {
 					entitlementPoolsList
@@ -62,7 +67,16 @@ describe('Entitlement Pools Module Tests', function () {
 		});
 		deepFreeze(store.getState());
 
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolsList', []);
+		const expectedCurrentScreenProps = {
+			...itemPermissionAndProps,
+			itemPermission: {
+				...itemPermissionAndProps.itemPermission,
+				isDirty: true
+			}
+		};
+
+		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolsList', []);
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
 
 		mockRest.addHandler('destroy', ({data, options, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/entitlement-pools/${entitlementPoolsList[0].id}`);
@@ -73,6 +87,13 @@ describe('Entitlement Pools Module Tests', function () {
 					returnCode: 'OK'
 				}
 			};
+		});
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
 		});
 
 		return EntitlementPoolsActionHelper.deleteEntitlementPool(store.dispatch, {
@@ -86,7 +107,9 @@ describe('Entitlement Pools Module Tests', function () {
 
 	it('Add Entitlement Pool', () => {
 
-		const store = storeCreator();
+		const store = storeCreator({
+			currentScreen: {...itemPermissionAndProps}
+		});
 		deepFreeze(store.getState());
 
 		const EntitlementPoolPostRequest = EntitlementPoolPostFactory.build();
@@ -97,7 +120,16 @@ describe('Entitlement Pools Module Tests', function () {
 		const entitlementPoolAfterAdd = EntitlementPoolStoreFactory.build({id: entitlementPoolIdFromResponse});
 		deepFreeze(entitlementPoolAfterAdd);
 
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolsList', [entitlementPoolAfterAdd]);
+		const expectedCurrentScreenProps = {
+			...itemPermissionAndProps,
+			itemPermission: {
+				...itemPermissionAndProps.itemPermission,
+				isDirty: true
+			}
+		};
+
+		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolsList', [entitlementPoolAfterAdd]);
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
 
 		mockRest.addHandler('post', ({data, options, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/entitlement-pools`);
@@ -107,6 +139,13 @@ describe('Entitlement Pools Module Tests', function () {
 				returnCode: 'OK',
 				value: entitlementPoolIdFromResponse
 			};
+		});
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
 		});
 
 		return EntitlementPoolsActionHelper.saveEntitlementPool(store.dispatch,
@@ -127,6 +166,7 @@ describe('Entitlement Pools Module Tests', function () {
 		deepFreeze(entitlementPoolsList);
 
 		const store = storeCreator({
+			currentScreen: {...itemPermissionAndProps},
 			licenseModel: {
 				entitlementPool: {
 					entitlementPoolsList
@@ -144,7 +184,16 @@ describe('Entitlement Pools Module Tests', function () {
 		const entitlementPoolPutRequest = EntitlementPoolPostFactory.build({name: 'ep1_UPDATED', description: 'string_UPDATED'});
 		deepFreeze(entitlementPoolPutRequest);
 
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolsList', [entitlementPoolUpdateData]);
+		const expectedCurrentScreenProps = {
+			...itemPermissionAndProps,
+			itemPermission: {
+				...itemPermissionAndProps.itemPermission,
+				isDirty: true
+			}
+		};
+
+		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolsList', [entitlementPoolUpdateData]);
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
 
 
 		mockRest.addHandler('put', ({data, options, baseUrl}) => {
@@ -152,6 +201,13 @@ describe('Entitlement Pools Module Tests', function () {
 			expect(data).toEqual(entitlementPoolPutRequest);
 			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
+		});
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
 		});
 
 		return EntitlementPoolsActionHelper.saveEntitlementPool(store.dispatch, {
@@ -187,7 +243,9 @@ describe('Entitlement Pools Module Tests', function () {
 
 	it('Add Limit', () => {
 
-		const store = storeCreator();
+		const store = storeCreator({
+			currentScreen: {...itemPermissionAndProps}
+		});
 		deepFreeze(store.getState());
 
 		const limitToAdd = LimitPostFactory.build();
@@ -203,7 +261,16 @@ describe('Entitlement Pools Module Tests', function () {
 		deepFreeze(limitAddedItem);
 		const entitlementPool = EntitlementPoolStoreFactory.build();
 
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolEditor.limitsList', [limitAddedItem]);
+		const expectedCurrentScreenProps = {
+			...itemPermissionAndProps,
+			itemPermission: {
+				...itemPermissionAndProps.itemPermission,
+				isDirty: true
+			}
+		};
+
+		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolEditor.limitsList', [limitAddedItem]);
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
 
 		mockRest.addHandler('post', ({data, options, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/entitlement-pools/${entitlementPool.id}/limits`);
@@ -221,6 +288,13 @@ describe('Entitlement Pools Module Tests', function () {
 			expect(options).toEqual(undefined);
 			return {results: [limitAddedItem]};
 		 });
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
+		});
 
 		return EntitlementPoolsActionHelper.submitLimit(store.dispatch,
 			{
@@ -241,6 +315,7 @@ describe('Entitlement Pools Module Tests', function () {
 		deepFreeze(limitsList);
 
 		const store = storeCreator({
+			currentScreen: {...itemPermissionAndProps},
 			licenseModel: {
 				entitlementPool: {
 					entitlementPoolEditor: {
@@ -252,7 +327,17 @@ describe('Entitlement Pools Module Tests', function () {
 		deepFreeze(store.getState());
 
 		const entitlementPool = EntitlementPoolStoreFactory.build();
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolEditor.limitsList', []);
+
+		const expectedCurrentScreenProps = {
+			...itemPermissionAndProps,
+			itemPermission: {
+				...itemPermissionAndProps.itemPermission,
+				isDirty: true
+			}
+		};
+
+		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolEditor.limitsList', []);
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
 
 		mockRest.addHandler('destroy', ({data, options, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/entitlement-pools/${entitlementPool.id}/limits/${limitsList[0].id}`);
@@ -272,6 +357,13 @@ describe('Entitlement Pools Module Tests', function () {
 			return {results: []};
 		 });
 
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
+		});
+
 		return EntitlementPoolsActionHelper.deleteLimit(store.dispatch, {
 			licenseModelId: LICENSE_MODEL_ID,
 			version,
@@ -288,6 +380,7 @@ describe('Entitlement Pools Module Tests', function () {
 		deepFreeze(limitsList);
 		const entitlementPool = EntitlementPoolStoreFactory.build();
 		const store = storeCreator({
+			currentScreen: {...itemPermissionAndProps},
 			licenseModel: {
 				entitlementPool: {
 					entitlementPoolEditor: {
@@ -312,7 +405,16 @@ describe('Entitlement Pools Module Tests', function () {
 		updatedLimit.unit = {choice: updatedLimit.unit, other: ''};
 		deepFreeze(updatedLimit);
 
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolEditor.limitsList', [updatedLimitForPut]);
+		const expectedCurrentScreenProps = {
+			...itemPermissionAndProps,
+			itemPermission: {
+				...itemPermissionAndProps.itemPermission,
+				isDirty: true
+			}
+		};
+
+		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.entitlementPool.entitlementPoolEditor.limitsList', [updatedLimitForPut]);
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
 
 
 		mockRest.addHandler('put', ({data, options, baseUrl}) => {
@@ -328,6 +430,13 @@ describe('Entitlement Pools Module Tests', function () {
 			expect(options).toEqual(undefined);
 			return {results: [updatedLimitForPut]};
 		 });
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
+		});
 
 		return EntitlementPoolsActionHelper.submitLimit(store.dispatch,
 			{

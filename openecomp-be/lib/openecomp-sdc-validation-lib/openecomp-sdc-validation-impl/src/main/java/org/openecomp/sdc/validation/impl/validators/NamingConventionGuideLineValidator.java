@@ -1,8 +1,8 @@
 package org.openecomp.sdc.validation.impl.validators;
 
-import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
+import org.openecomp.sdc.validation.ValidationContext;
 import org.openecomp.sdc.validation.base.ResourceBaseValidator;
 import org.openecomp.sdc.validation.type.ConfigConstants;
 import org.openecomp.sdc.validation.type.NamingConventionValidationContext;

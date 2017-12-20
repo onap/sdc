@@ -1,0 +1,207 @@
+$yours-bg-color: $tlv-gray;
+$theirs-bg-color: $tlv-light-gray;
+$error-text-color: $red;
+$selected-width: 1px;
+$selected-color: $blue;
+
+@mixin levels {
+	@for $i from 1 to 6 {
+		.level-#{$i} {
+			padding-left: 18px + 10 * $i;
+		}
+	}
+}
+
+.merge-editor-modal {
+	.modal-lg {
+		width: 1300px;
+	}
+}
+
+.merge-editor {
+	margin: 30px 40px;
+	max-height: 600px;
+	border: 1px solid $light-gray;
+	.grid-section {
+		&.conflict-titles-section {
+			@extend .body-1;
+			background-color: $blue;
+			height: 33px;
+			padding-top: 6px;
+			padding-bottom: 3px;
+			color: $white;
+			position: sticky;
+			top: 0;
+			z-index: 2;
+			border-bottom: 1px solid $tlv-light-gray;
+			.grid-item {
+				padding-left: 10px;
+			}
+			.form-group {
+				margin-bottom: 0;
+				.checkbox {
+					label {
+						margin-right: 0;
+					}
+
+					text-align: right;
+
+					input[type="checkbox"] {
+						cursor: pointer;
+						margin-top: 1px;
+					}
+				}
+			}
+		}
+	}
+	.merge-editor-body {
+		max-height: 500px;
+		overflow-y: scroll;
+		padding: 10px;
+		.conflict-section {
+			margin-bottom: 0;
+			border-left: 0;
+			border-right: 0;
+			padding: 5px 0;
+
+			.conflict-resolve-btn {
+				align-self: flex-end;
+			}
+
+			.grid-items {
+				align-items: center;
+
+				input[type="radio"]:not(:checked) {
+					cursor: pointer;
+				}
+			}
+		}
+
+		.collapsible-section {
+			display: flex;
+			cursor: pointer;
+
+			.conflict-title {
+				@extend .heading-5-semibold;
+				text-transform: uppercase;
+			}
+		}
+
+		.merge-chevron {
+			margin-right: 7px;
+			&.right {
+				transform: rotate(90deg);
+			}
+		}
+
+		.grid-section .grid-items .field-col:not(.grid-col-title) {
+			&.grid-col-yours {
+				border-top: $selected-width solid $yours-bg-color;
+				border-bottom: $selected-width solid $yours-bg-color;
+			}
+
+			&.theirs-color {
+				border-top: $selected-width solid $theirs-bg-color;
+				border-bottom: $selected-width solid $theirs-bg-color;
+			}
+		}
+
+		.merge-editor-text-field {
+			display: flex;
+			justify-content: space-between;
+			// margin: 0 0 10px 0;
+			margin: 0;
+
+			.field {
+				color: $text-black;
+
+				&.field-name:not(.field-object-name) {
+					color: $gray;
+				}
+			}
+
+			&.diff {
+				.field {
+					color: $red;
+				}
+			}
+
+			&.grid-section {
+				padding-bottom: 0;
+
+				.grid-items {
+					flex: 1;
+
+
+					.field-col {
+						padding: 7px 0;
+						height: 100%;
+
+						&:not(:first-child) {
+							padding-left: 8px;
+						}
+
+						&.grid-col-yours {
+							background-color: $yours-bg-color;
+						}
+
+						&.grid-col-theirs {
+							background-color: $theirs-bg-color;
+						}
+
+						@include levels;
+
+
+						.field {
+							@extend .body-1;
+							flex: 2;
+							min-width: 0;
+
+							&.field-name {
+								@include multiline-ellipsis($bgColor: white);
+								&.diff {
+									color: $red;
+								}
+								text-transform: uppercase;
+								&.field-object-name {
+									@extend .body-1-semibold;
+									margin-bottom: 5px;
+									margin-top: 10px;
+
+								}
+							}
+
+							&.field-yours {
+								@include multiline-ellipsis($bgColor: $yours-bg-color);
+							}
+
+							&.field-theirs {
+								@include multiline-ellipsis($bgColor: $theirs-bg-color);
+							}
+							&.field-name, &.field.field-yours, &.field.field-theirs {
+								word-break: break-word;
+								text-align: initial;
+							}
+							&.empty-field {
+								padding-top: 2px;
+							}
+						}
+
+						*::after {
+							bottom: 0;
+						}
+					}
+				}
+			}
+
+			&.field-error {
+				@extend .body-1;
+				color: $error-text-color;
+				min-width: 0;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
+	}
+}

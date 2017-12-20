@@ -15,21 +15,20 @@
  */
 import {connect} from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
+
+import {actionTypes as globalMoadlActions}  from 'nfvo-components/modal/GlobalModalConstants.js';
+
 import LicenseKeyGroupsActionHelper from './LicenseKeyGroupsActionHelper.js';
 import LicenseKeyGroupsListEditorView, {generateConfirmationMsg} from './LicenseKeyGroupsListEditorView.jsx';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
-import {actionTypes as globalMoadlActions}  from 'nfvo-components/modal/GlobalModalConstants.js';
 
 const mapStateToProps = ({licenseModel: {licenseKeyGroup, licenseModelEditor}}) => {
 	let {licenseKeyGroupsList} = licenseKeyGroup;
 	let {data} = licenseKeyGroup.licenseKeyGroupsEditor;
 	let {vendorName} = licenseModelEditor.data;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(licenseModelEditor.data);
 
 	return {
 		vendorName,
 		licenseKeyGroupsList,
-		isReadOnlyMode,
 		isDisplayModal: Boolean(data),
 		isModalInEditMode: Boolean(data && data.id)
 	};
@@ -45,11 +44,10 @@ const mapActionsToProps = (dispatch, {licenseModelId, version}) => {
 				msg: generateConfirmationMsg(licenseKeyGroup),
 				confirmationButtonText: i18n('Delete'),
 				title: i18n('Delete'),
-				onConfirmed: ()=>LicenseKeyGroupsActionHelper.deleteLicenseKeyGroup(dispatch, {licenseModelId, licenseKeyGroupId:licenseKeyGroup.id, version})
+				onConfirmed: () => LicenseKeyGroupsActionHelper.deleteLicenseKeyGroup(dispatch, {licenseModelId, licenseKeyGroupId:licenseKeyGroup.id, version})
 			}
 		})
 	};
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(LicenseKeyGroupsListEditorView);
-

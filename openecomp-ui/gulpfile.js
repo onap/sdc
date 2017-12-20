@@ -38,7 +38,7 @@ const path = {
 	// output
 	output: dist,
 	css: dist + '/css',
-	svg: dist + '/resources/images/svg',
+//	svg: dist + '/resources/images/svg',
 	appinf_output: dist + '/webapp-onboarding',
 	healthCheckOutput: dist + '/v1.0',
 	// war
@@ -48,8 +48,8 @@ const path = {
 	// storybook
 	storybookFonts: './.storybook/fonts/*',
 	storybookDist: './.storybook-dist',
-	storybookResources: './.storybook/resources/onboarding/resources/images/svg',
-	storybookDistResources: './.storybook-dist/onboarding/resources/images/svg'
+	//storybookResources: './.storybook/resources/onboarding/resources/images/svg',
+	//storybookDistResources: './.storybook-dist/onboarding/resources/images/svg'
 };
 // cleans up the output directory
 taskMaker.defineTask('clean', {taskName: 'clean', src: path.output});
@@ -57,10 +57,10 @@ taskMaker.defineTask('clean', {taskName: 'clean', src: path.output});
 taskMaker.defineTask('copy', {taskName: 'copy-json', src: path.json, dest: path.output, changed: {extension: '.json'}});
 taskMaker.defineTask('copy', {taskName: 'copy-index.html', src: path.index, dest: path.output, rename: 'index.html'});
 taskMaker.defineTask('copy', {taskName: 'copy-heat.html', src: path.heat, dest: path.output, rename: 'heat.html'});
-taskMaker.defineTask('copy', {taskName: 'copy-svg', src: path.svgSrc, dest: path.svg});
+//taskMaker.defineTask('copy', {taskName: 'copy-svg', src: path.svgSrc, dest: path.svg});
 taskMaker.defineTask('copy', {taskName: 'copy-storybook-fonts', src: path.storybookFonts, dest: path.storybookDist});
-taskMaker.defineTask('copy', {taskName: 'copy-storybook-resources', src: path.svgSrc, dest: path.storybookResources});
-taskMaker.defineTask('copy', {taskName: 'copy-storybook-resources-prod', src: path.svgSrc, dest: path.storybookDistResources});
+//taskMaker.defineTask('copy', {taskName: 'copy-storybook-resources', src: path.svgSrc, dest: path.storybookResources});
+//taskMaker.defineTask('copy', {taskName: 'copy-storybook-resources-prod', src: path.svgSrc, dest: path.storybookDistResources});
 // used for compressing war files
 taskMaker.defineTask('compress', {taskName: 'compress-war', src: path.war, filename: appName + '.war', dest: path.wardest});
 taskMaker.defineTask('compress', {taskName: 'compress-heat-war', src: path.heatWar, filename: 'heat-validation.war', dest: path.wardest});
@@ -94,7 +94,7 @@ gulp.task('app-context', function(){
 		})
 });
 // aggregates all copy tasks
-gulp.task('copy-stuff', callback => runSequence(['copy-json', 'copy-index.html', 'copy-heat.html', 'copy-svg', 'app-context'], callback));
+gulp.task('copy-stuff', callback => runSequence(['copy-json', 'copy-index.html', 'copy-heat.html', 'app-context'], callback));
 
 // minimum build for dev
 gulp.task('dev', callback => runSequence('clean', 'copy-stuff', callback));

@@ -20,11 +20,13 @@
 
 package org.openecomp.sdc.enrichment.impl.tosca;
 
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.inter.Enricher;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,13 +47,19 @@ public class ToscaEnricher extends Enricher {
   private Map<String, List<ErrorMessage>> enrichAbstractSubstitute() {
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
-    Map<String, List<ErrorMessage>> enrichErrors;
+    Map<String, List<ErrorMessage>> enrichErrors = new HashMap<>();
 
     ToscaServiceModel toscaModel = (ToscaServiceModel) model;
     AbstractSubstituteToscaEnricher abstractSubstituteToscaEnricher =
         new AbstractSubstituteToscaEnricher();
-    enrichErrors = abstractSubstituteToscaEnricher.enrich(toscaModel, data.getKey(),
-        data.getVersion());
+
+    try {
+      enrichErrors = abstractSubstituteToscaEnricher.enrich(toscaModel, data.getKey(),
+          data.getVersion());
+    }catch (Exception e){
+      enrichErrors.put("Tosca Enrich", Arrays.asList(new ErrorMessage(ErrorLevel.ERROR, e
+          .getMessage())));
+    }
 
     mdcDataDebugMessage.debugExitMessage(null, null);
     return enrichErrors;
@@ -59,10 +67,16 @@ public class ToscaEnricher extends Enricher {
 
   private Map<String, List<ErrorMessage>> enrichPortMirroring() {
     mdcDataDebugMessage.debugEntryMessage(null, null);
-    Map<String, List<ErrorMessage>> enrichErrors;
+    Map<String, List<ErrorMessage>> enrichErrors = new HashMap<>();
     ToscaServiceModel toscaModel = (ToscaServiceModel) model;
     PortMirroringEnricher portMirroringEnricher = new PortMirroringEnricher();
-    enrichErrors = portMirroringEnricher.enrich(toscaModel);
+
+    try {
+      enrichErrors = portMirroringEnricher.enrich(toscaModel);
+    }catch (Exception e){
+      enrichErrors.put("Tosca Enrich", Arrays.asList(new ErrorMessage(ErrorLevel.ERROR, e
+          .getMessage())));
+    }
     mdcDataDebugMessage.debugExitMessage(null, null);
     return enrichErrors;
   }

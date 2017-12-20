@@ -20,12 +20,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
-import static org.openecomp.sdc.tosca.services.DataModelUtil.getClonedObject;
-import static org.openecomp.sdc.translator.services.heattotosca.Constants.ABSTRACT_NODE_TEMPLATE_ID_PREFIX;
-import static org.openecomp.sdc.translator.services.heattotosca.Constants.COMPUTE_IDENTICAL_VALUE_PROPERTY_PREFIX;
-import static org.openecomp.sdc.translator.services.heattotosca.Constants.COMPUTE_IDENTICAL_VALUE_PROPERTY_SUFFIX;
-import static org.openecomp.sdc.translator.services.heattotosca.Constants.PORT_IDENTICAL_VALUE_PROPERTY_PREFIX;
-
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -93,6 +87,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import static org.openecomp.sdc.tosca.services.DataModelUtil.getClonedObject;
+import static org.openecomp.sdc.translator.services.heattotosca.Constants.ABSTRACT_NODE_TEMPLATE_ID_PREFIX;
+import static org.openecomp.sdc.translator.services.heattotosca.Constants.COMPUTE_IDENTICAL_VALUE_PROPERTY_PREFIX;
+import static org.openecomp.sdc.translator.services.heattotosca.Constants.COMPUTE_IDENTICAL_VALUE_PROPERTY_SUFFIX;
+import static org.openecomp.sdc.translator.services.heattotosca.Constants.PORT_IDENTICAL_VALUE_PROPERTY_PREFIX;
 
 public class UnifiedCompositionService {
 

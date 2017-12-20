@@ -44,18 +44,14 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
   private VendorSoftwareProductInfoDao vspInfoDao;
   private DeploymentFlavorDao deploymentFlavorDao;
   private CompositionEntityDataManager compositionEntityDataManager;
-  private  ComponentDao componentDao;
+  private ComponentDao componentDao;
   private ComputeDao computeDao;
 
-  public DeploymentFlavorManagerImpl(
-      VendorSoftwareProductInfoDao vspInfoDao,
-      DeploymentFlavorDao deploymentFlavorDao,
-      CompositionEntityDataManager compositionEntityDataManager,
-      ComponentDao componentDao,
-      ComputeDao computeDao
-
-  ) {
-
+  public DeploymentFlavorManagerImpl(VendorSoftwareProductInfoDao vspInfoDao,
+                                     DeploymentFlavorDao deploymentFlavorDao,
+                                     CompositionEntityDataManager compositionEntityDataManager,
+                                     ComponentDao componentDao,
+                                     ComputeDao computeDao) {
     this.vspInfoDao = vspInfoDao;
     this.deploymentFlavorDao = deploymentFlavorDao;
     this.compositionEntityDataManager = compositionEntityDataManager;
@@ -65,31 +61,17 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
   }
 
   @Override
-  public Collection<DeploymentFlavorEntity> listDeploymentFlavors(String vspId, Version version,
-                                                                  String user) {
+  public Collection<DeploymentFlavorEntity> listDeploymentFlavors(String vspId, Version version) {
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
-    /*version = VersioningUtil
-        .resolveVersion(version, getVersionInfo(vspId, VersionableEntityAction.Read, user));*/
-
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
-    return listDeploymentFlavors(vspId, version);
-  }
-
-  private Collection<DeploymentFlavorEntity> listDeploymentFlavors(String vspId, Version version) {
-    Collection<DeploymentFlavorEntity> deploymentFlavorEntities =
-        deploymentFlavorDao.list(new DeploymentFlavorEntity(vspId, version, null));
-    return deploymentFlavorEntities;
+    return deploymentFlavorDao.list(new DeploymentFlavorEntity(vspId, version, null));
   }
 
   @Override
   public DeploymentFlavorEntity createDeploymentFlavor(
-      DeploymentFlavorEntity deploymentFlavorEntity, String user) {
-    DeploymentFlavorEntity createDeploymentFlavor = null;
+      DeploymentFlavorEntity deploymentFlavorEntity) {
+    DeploymentFlavorEntity createDeploymentFlavor;
     mdcDataDebugMessage.debugEntryMessage("VSP id ", deploymentFlavorEntity.getVspId());
-    /*Version activeVersion =
-        getVersionInfo(deploymentFlavorEntity.getVspId(), VersionableEntityAction.Write, user)
-            .getActiveVersion();
-    deploymentFlavorEntity.setVersion(activeVersion);*/
 
     if (!vspInfoDao.isManual(deploymentFlavorEntity.getVspId(),
         deploymentFlavorEntity.getVersion())) {
@@ -100,31 +82,30 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
           LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), deploymentFlavorErrorBuilder.message());
       throw new CoreException(deploymentFlavorErrorBuilder);
     } else {
-      validateDeploymentFlavor(deploymentFlavorEntity, user, deploymentFlavorEntity.getVersion());
+      validateDeploymentFlavor(deploymentFlavorEntity, deploymentFlavorEntity.getVersion());
       createDeploymentFlavor =
           compositionEntityDataManager.createDeploymentFlavor(deploymentFlavorEntity);
     }
     return createDeploymentFlavor;
   }
 
-  private void validateDeploymentFlavor(DeploymentFlavorEntity deploymentFlavorEntity, String
-      user, Version activeVersion) {
-
+  private void validateDeploymentFlavor(DeploymentFlavorEntity deploymentFlavorEntity,
+                                        Version version) {
     //Validation for unique model.
     Collection<DeploymentFlavorEntity> listDeploymentFlavors =
         listDeploymentFlavors(deploymentFlavorEntity.getVspId(),
-            activeVersion);
+            version);
     isDeploymentFlavorModelDuplicate(deploymentFlavorEntity, listDeploymentFlavors);
 
     List<String> featureGroups =
-        getFeatureGroupListForVsp(deploymentFlavorEntity.getVspId(), user, activeVersion);
+        getFeatureGroupListForVsp(deploymentFlavorEntity.getVspId(), version);
     String featureGroup = deploymentFlavorEntity.getDeploymentFlavorCompositionData()
         .getFeatureGroupId();
-    if (featureGroup != null && featureGroup.trim().length()>0) {
+    if (featureGroup != null && featureGroup.trim().length() > 0) {
       if (isEmpty(featureGroups) || (!(validFeatureGroup(featureGroups, featureGroup)))) {
         ErrorCode deploymentFlavorErrorBuilder = DeploymentFlavorErrorBuilder
             .getFeatureGroupNotexistErrorBuilder(featureGroup, deploymentFlavorEntity.getVspId(),
-                activeVersion);
+                version);
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
             LoggerTragetServiceName.CREATE_DEPLOYMENT_FLAVOR, ErrorLevel.ERROR.name(),
             LoggerErrorCode.DATA_ERROR.getErrorCode(), deploymentFlavorErrorBuilder.message());
@@ -132,7 +113,7 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
       }
     }
 
-    validateComponentComputeAssociation(deploymentFlavorEntity, activeVersion);
+    validateComponentComputeAssociation(deploymentFlavorEntity, version);
   }
 
   private void isDeploymentFlavorModelDuplicate(DeploymentFlavorEntity deploymentFlavorEntity,
@@ -152,14 +133,8 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
     });
   }
 
-  private List<String> getFeatureGroupListForVsp(String vspId,
-                                                 String user, Version activeVersion) {
-    /*VersionedVendorSoftwareProductInfo versionedVendorSoftwareProductInfo = getVspDetails(
-        vspId,activeVersion, user);
-    return versionedVendorSoftwareProductInfo.getVspDetails()
-        .getFeatureGroups();*/
-
-    final VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, activeVersion));
+  private List<String> getFeatureGroupListForVsp(String vspId, Version version) {
+    final VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, version));
     return vspDetails.getFeatureGroups();
   }
 
@@ -183,7 +158,7 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
   }
 
   private void validateComponentComputeAssociation(DeploymentFlavorEntity deploymentFlavorEntity,
-                                                   Version activeVersion) {
+                                                   Version version) {
     List<ComponentComputeAssociation> componentComputeAssociationList = deploymentFlavorEntity
         .getDeploymentFlavorCompositionData().getComponentComputeAssociations();
     List<String> vfcList = new ArrayList<>();
@@ -201,14 +176,14 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
               LoggerErrorCode.DATA_ERROR.getErrorCode(), invalidAssociationErrorBuilder.message());
           throw new CoreException(invalidAssociationErrorBuilder);
         } else if (componentComputeAssociation.getComponentId() != null &&
-            componentComputeAssociation.getComponentId().trim().length() > 0 ) {
-          ComponentEntity component = getComponent(deploymentFlavorEntity.getVspId(), activeVersion,
+            componentComputeAssociation.getComponentId().trim().length() > 0) {
+          ComponentEntity component = getComponent(deploymentFlavorEntity.getVspId(), version,
               componentComputeAssociation.getComponentId());
           if (componentComputeAssociation
               .getComputeFlavorId() != null && componentComputeAssociation
-              .getComputeFlavorId().trim().length() > 0 ) {
+              .getComputeFlavorId().trim().length() > 0) {
             ComputeEntity computeFlavor = computeDao.get(new ComputeEntity(deploymentFlavorEntity
-                    .getVspId(), activeVersion, componentComputeAssociation.getComponentId(),
+                .getVspId(), version, componentComputeAssociation.getComponentId(),
                 componentComputeAssociation.getComputeFlavorId()));
             if (computeFlavor == null) {
               ErrorCode invalidComputeIdErrorBuilder = DeploymentFlavorErrorBuilder
@@ -251,22 +226,19 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
   @Override
   public CompositionEntityResponse<DeploymentFlavor> getDeploymentFlavor(String vspId,
                                                                          Version version,
-                                                                         String deploymentFlavorId,
-                                                                         String user) {
+                                                                         String deploymentFlavorId) {
     mdcDataDebugMessage
         .debugEntryMessage("VSP id, deployment flavor id", vspId, deploymentFlavorId);
 
-    /*version = VersioningUtil
-        .resolveVersion(version, getVersionInfo(vspId, VersionableEntityAction.Read, user));*/
-    DeploymentFlavorEntity deploymentFlavorEntity = getDeploymentFlavor(vspId,version,
-        deploymentFlavorId);
+    DeploymentFlavorEntity deploymentFlavorEntity =
+        getValidatedDeploymentFlavor(vspId, version, deploymentFlavorId);
     DeploymentFlavor deploymentFlavor = deploymentFlavorEntity.getDeploymentFlavorCompositionData();
     DeploymentFlavorCompositionSchemaInput schemaInput = new
         DeploymentFlavorCompositionSchemaInput();
     schemaInput.setManual(vspInfoDao.isManual(vspId, version));
     schemaInput.setDeploymentFlavor(deploymentFlavor);
     List<String> featureGroups =
-        getFeatureGroupListForVsp(vspId, user, version);
+        getFeatureGroupListForVsp(vspId, version);
     schemaInput.setFeatureGroupIds(featureGroups);
     CompositionEntityResponse<DeploymentFlavor> response = new CompositionEntityResponse<>();
     response.setId(deploymentFlavorId);
@@ -280,27 +252,24 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
     return response;
   }
 
-  private DeploymentFlavorEntity getDeploymentFlavor(String vspId, Version version, String
+  private DeploymentFlavorEntity getValidatedDeploymentFlavor(String vspId, Version version, String
       deploymentFlavorId) {
     DeploymentFlavorEntity retrieved = deploymentFlavorDao.get(new DeploymentFlavorEntity(vspId,
         version, deploymentFlavorId));
     VersioningUtil
         .validateEntityExistence(retrieved, new DeploymentFlavorEntity(vspId, version,
-            deploymentFlavorId ), VspDetails.ENTITY_TYPE);
+            deploymentFlavorId), VspDetails.ENTITY_TYPE);
     return retrieved;
   }
 
   @Override
   public CompositionEntityResponse<DeploymentFlavor> getDeploymentFlavorSchema(String vspId,
-                                                                               Version version,
-                                                                               String user) {
-    /*version = VersioningUtil
-        .resolveVersion(version, getVersionInfo(vspId, VersionableEntityAction.Read, user));*/
-    DeploymentFlavorCompositionSchemaInput schemaInput= new
-        DeploymentFlavorCompositionSchemaInput();
+                                                                               Version version) {
+    DeploymentFlavorCompositionSchemaInput schemaInput =
+        new DeploymentFlavorCompositionSchemaInput();
     schemaInput.setManual(vspInfoDao.isManual(vspId, version));
     List<String> featureGroups =
-        getFeatureGroupListForVsp(vspId, user, version);
+        getFeatureGroupListForVsp(vspId, version);
     schemaInput.setFeatureGroupIds(featureGroups);
     CompositionEntityResponse<DeploymentFlavor> response = new CompositionEntityResponse<>();
     response.setSchema((SchemaGenerator
@@ -310,14 +279,13 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
   }
 
   @Override
-  public void deleteDeploymentFlavor(String vspId, Version version, String deploymentFlavorId,
-                                     String user) {
+  public void deleteDeploymentFlavor(String vspId, Version version, String deploymentFlavorId) {
     mdcDataDebugMessage
         .debugEntryMessage("VSP id, deployment flavor id", vspId, deploymentFlavorId);
     /*Version activeVersion =
         getVersionInfo(vspId, VersionableEntityAction.Write, user).getActiveVersion();*/
-    DeploymentFlavorEntity deploymentFlavorEntity = getDeploymentFlavor(vspId,version,
-        deploymentFlavorId);
+    DeploymentFlavorEntity deploymentFlavorEntity =
+        getValidatedDeploymentFlavor(vspId, version, deploymentFlavorId);
     if (!vspInfoDao.isManual(vspId, version)) {
       final ErrorCode deleteDeploymentFlavorErrorBuilder =
           NotSupportedHeatOnboardMethodErrorBuilder
@@ -328,7 +296,7 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
           deleteDeploymentFlavorErrorBuilder.message());
       throw new CoreException(deleteDeploymentFlavorErrorBuilder);
     }
-    if(deploymentFlavorEntity != null) {
+    if (deploymentFlavorEntity != null) {
       deploymentFlavorDao.delete(new DeploymentFlavorEntity(vspId, version, deploymentFlavorId));
 
     }
@@ -336,8 +304,8 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
         .debugExitMessage("VSP id, deployment flavor id", vspId, deploymentFlavorId);
   }
 
-  public CompositionEntityValidationData updateDeploymentFlavor(DeploymentFlavorEntity
-                                                                    deploymentFlavorEntity, String user) {
+  public CompositionEntityValidationData updateDeploymentFlavor(
+      DeploymentFlavorEntity deploymentFlavorEntity) {
     mdcDataDebugMessage.debugEntryMessage("VSP id, deploymentFlavor id", deploymentFlavorEntity
         .getVspId(), deploymentFlavorEntity.getId());
     /*Version activeVersion =
@@ -355,9 +323,9 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
           updateDeploymentFlavorErrorBuilder.message());
       throw new CoreException(updateDeploymentFlavorErrorBuilder);
     }
-    //deploymentFlavorEntity.setVersion(activeVersion);
     DeploymentFlavorEntity retrieved =
-        getDeploymentFlavor(deploymentFlavorEntity.getVspId(), deploymentFlavorEntity.getVersion(),
+        getValidatedDeploymentFlavor(deploymentFlavorEntity.getVspId(),
+            deploymentFlavorEntity.getVersion(),
             deploymentFlavorEntity.getId());
 
 
@@ -367,7 +335,8 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
     isDeploymentFlavorModelDuplicate(deploymentFlavorEntity, listDeploymentFlavors);
 
     //validateComponentComputeAssociation(deploymentFlavorEntity, activeVersion);
-    validateComponentComputeAssociation(deploymentFlavorEntity, deploymentFlavorEntity.getVersion());
+    validateComponentComputeAssociation(deploymentFlavorEntity,
+        deploymentFlavorEntity.getVersion());
 
     DeploymentFlavorCompositionSchemaInput schemaInput = new
         DeploymentFlavorCompositionSchemaInput();
@@ -376,7 +345,7 @@ public class DeploymentFlavorManagerImpl implements DeploymentFlavorManager {
     schemaInput.setDeploymentFlavor(retrieved.getDeploymentFlavorCompositionData());
 
     List<String> featureGroups =
-        getFeatureGroupListForVsp(deploymentFlavorEntity.getVspId(), user,
+        getFeatureGroupListForVsp(deploymentFlavorEntity.getVspId(),
             deploymentFlavorEntity.getVersion());
     schemaInput.setFeatureGroupIds(featureGroups);
 

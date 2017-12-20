@@ -1,31 +1,5 @@
 package org.openecomp.sdc.enrichment.impl.tosca;
 
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.mockito.Mockito.doReturn;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.HIGH_AVAIL_MODE;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MANDATORY;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MAX_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INSTANCES;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_CODE;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_FUNCTION;
-import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
-
 public class ComponentQuestionnaireDataTest {
   /*private static String VSP_ID = "vspId";
   public static final Version VERSION01 = new Version(0, 1);

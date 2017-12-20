@@ -25,8 +25,14 @@ function getValueFromVariable(variable) {
 	return variable ? variable : undefined;
 }
 
+function getArrayData(variable) {
+	return variable.length ? variable : undefined;
+}
+
  let getValue = element => {
-	return typeof element === 'object' ? getValueFromObject(element) : getValueFromVariable(element);
+	return typeof element === 'object' ?
+		element instanceof Array ? getArrayData(element) : getValueFromObject(element) :
+		getValueFromVariable(element);
  };
 
 export function getStrValue(choiceObject) {

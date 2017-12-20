@@ -10,21 +10,22 @@ import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
 import com.amdocs.zusammen.datatypes.item.Relation;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
-import org.openecomp.core.zusammen.api.ZusammenUtil;
+import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao;
+import org.openecomp.sdc.vendorlicense.dao.impl.zusammen.convertor.ElementToFeatureGroupConvertor;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
-import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.types.ElementPropertyName;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Created by ayalaben on 3/27/2017.
- */
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
+
 public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
 
   private ZusammenAdaptor zusammenAdaptor;
@@ -40,88 +41,86 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
 
   @Override
   public void create(FeatureGroupEntity featureGroup) {
-    ZusammenElement featureGroupElement =
-        buildFeatureGroupElement(featureGroup, Action.CREATE);
+    ZusammenElement featureGroupElement = buildFeatureGroupElement(featureGroup, Action.CREATE);
 
     ZusammenElement featureGroupsElement =
-        VlmZusammenUtil.buildStructuralElement(StructureElement.FeatureGroups, null);
+        buildStructuralElement(ElementType.FeatureGroups, Action.IGNORE);
 
     featureGroupsElement.addSubElement(featureGroupElement);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(featureGroup.getVendorLicenseModelId());
-    Optional<Element> savedElement = zusammenAdaptor.saveElement(context, new ElementContext(itemId,
-            VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
-        featureGroupsElement, "Create feature group");
+    SessionContext context = createSessionContext();
+    Element featureGroupsSavedElement = zusammenAdaptor.saveElement(context,
+        new ElementContext(featureGroup.getVendorLicenseModelId(),
+            featureGroup.getVersion().getId()), featureGroupsElement, "Create feature group");
 
-    savedElement.ifPresent(element -> featureGroup
-        .setId(element.getSubElements().iterator().next().getElementId().getValue()));
+    featureGroup.setId(
+        featureGroupsSavedElement.getSubElements().iterator().next().getElementId().getValue());
   }
 
   @Override
   public void update(FeatureGroupEntity featureGroup) {
     ZusammenElement featureGroupElement = buildFeatureGroupElement(featureGroup, Action.UPDATE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(featureGroup.getVendorLicenseModelId());
-    zusammenAdaptor.saveElement(context, new ElementContext(itemId,
-            VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)), featureGroupElement,
+    SessionContext context = createSessionContext();
+    zusammenAdaptor.saveElement(context, new ElementContext(featureGroup.getVendorLicenseModelId(),
+            featureGroup.getVersion().getId()), featureGroupElement,
         String.format("Update feature group with id %s", featureGroup.getId()));
   }
 
   @Override
   public FeatureGroupEntity get(FeatureGroupEntity featureGroup) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(featureGroup.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VlmZusammenUtil.getVersionTag(featureGroup.getVersion()));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(featureGroup.getVendorLicenseModelId(),
+        featureGroup.getVersion().getId());
 
     return zusammenAdaptor.getElementInfo(context, elementContext, new Id(featureGroup.getId()))
-        .map(elementInfo -> mapElementInfoToFeatureGroup(
-            featureGroup.getVendorLicenseModelId(), featureGroup.getVersion(), elementInfo))
+        .map(elementInfo -> {
+          FeatureGroupEntity entity = new ElementToFeatureGroupConvertor().convert(elementInfo);
+          entity.setVendorLicenseModelId(featureGroup.getVendorLicenseModelId());
+          entity.setVersion(featureGroup.getVersion());
+          return entity;
+        })
         .orElse(null);
   }
 
   @Override
   public void delete(FeatureGroupEntity featureGroup) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    ZusammenElement zusammenElement = new ZusammenElement();
-    zusammenElement.setAction(Action.DELETE);
-    zusammenElement.setElementId(new Id(featureGroup.getId()));
+    ZusammenElement zusammenElement = buildElement(new Id(featureGroup.getId()), Action.DELETE);
 
-    Id itemId = new Id(featureGroup.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(featureGroup.getVendorLicenseModelId(),
+        featureGroup.getVersion().getId());
     zusammenAdaptor.saveElement(context, elementContext, zusammenElement,
         "delete feature group. id:" + featureGroup.getId() + ".");
   }
 
   @Override
   public Collection<FeatureGroupEntity> list(FeatureGroupEntity featureGroup) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(featureGroup.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VlmZusammenUtil.getVersionTag(featureGroup.getVersion()));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(featureGroup.getVendorLicenseModelId(),
+        featureGroup.getVersion().getId());
 
+    ElementToFeatureGroupConvertor convertor = new ElementToFeatureGroupConvertor();
     return zusammenAdaptor
-        .listElementsByName(context, elementContext, null, StructureElement.FeatureGroups.name())
-        .stream().map(elementInfo -> mapElementInfoToFeatureGroup(
-            featureGroup.getVendorLicenseModelId(), featureGroup.getVersion(), elementInfo))
+        .listElementsByName(context, elementContext, null, ElementType.FeatureGroups.name())
+        .stream().map(elementInfo -> {
+          FeatureGroupEntity entity = convertor.convert(
+              elementInfo);
+          entity.setVendorLicenseModelId(featureGroup.getVendorLicenseModelId());
+          entity.setVersion(featureGroup.getVersion());
+          return entity;
+        })
         .collect(Collectors.toList());
   }
 
   @Override
   public long count(FeatureGroupEntity featureGroup) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(featureGroup.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VlmZusammenUtil.getVersionTag(featureGroup.getVersion()));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(featureGroup.getVendorLicenseModelId(),
+        featureGroup.getVersion().getId());
 
     return zusammenAdaptor
-        .listElementsByName(context, elementContext, null, StructureElement.FeatureGroups.name())
+        .listElementsByName(context, elementContext, null, ElementType.FeatureGroups.name())
         .size();
   }
 
@@ -138,10 +137,9 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
   private void removeRelationToContainedEntity(FeatureGroupEntity featureGroup,
                                                String containedEntityId,
                                                String containedEntityType) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(featureGroup.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(featureGroup.getVendorLicenseModelId(),
+        featureGroup.getVersion().getId());
 
     Optional<ElementInfo> elementInfo = zusammenAdaptor.getElementInfo(context,
         elementContext, new Id(featureGroup.getId()));
@@ -158,25 +156,23 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
   }
 
   @Override
-  public void updateFeatureGroup(FeatureGroupEntity
-                                     featureGroup, Set<String> addedEntitlementPools,
+  public void updateFeatureGroup(FeatureGroupEntity featureGroup,
+                                 Set<String> addedEntitlementPools,
                                  Set<String> removedEntitlementPools,
                                  Set<String> addedLicenseKeyGroups,
                                  Set<String> removedLicenseKeyGroups) {
     ZusammenElement featureGroupElement = buildFeatureGroupElement(featureGroup, Action.UPDATE);
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(featureGroup.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
-
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(featureGroup.getVendorLicenseModelId(),
+        featureGroup.getVersion().getId());
+    ElementToFeatureGroupConvertor convertor = new ElementToFeatureGroupConvertor();
     Optional<ElementInfo> elementInfo = zusammenAdaptor.getElementInfo(context,
         elementContext, new Id(featureGroup.getId()));
     if (elementInfo.isPresent()) {
-      FeatureGroupEntity currentFeatureGroup =
-          mapElementInfoToFeatureGroup(featureGroup.getId(), featureGroup.getVersion(),
-              elementInfo.get());
-
-      if (!(removedEntitlementPools == null )) {
+      FeatureGroupEntity currentFeatureGroup = convertor.convert(elementInfo.get());
+      currentFeatureGroup.setVendorLicenseModelId(featureGroup.getVendorLicenseModelId());
+      currentFeatureGroup.setVersion(featureGroup.getVersion());
+      if (!(removedEntitlementPools == null)) {
         currentFeatureGroup.getEntitlementPoolIds().removeAll(removedEntitlementPools);
       }
       if (!(addedEntitlementPools == null)) {
@@ -192,22 +188,24 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
                   .createRelation(RelationType.FeatureGroupToEntitlmentPool, relation))
               .collect(Collectors.toList()));
 
-      if (! ( removedLicenseKeyGroups == null)) {
+      if (!(removedLicenseKeyGroups == null)) {
         currentFeatureGroup.getLicenseKeyGroupIds().removeAll(removedLicenseKeyGroups);
       }
-      if (! ( addedLicenseKeyGroups == null)) {
+      if (!(addedLicenseKeyGroups == null)) {
         currentFeatureGroup.getLicenseKeyGroupIds().addAll(addedLicenseKeyGroups);
       }
+
       featureGroupElement.getRelations()
           .addAll(currentFeatureGroup.getLicenseKeyGroupIds().stream()
               .map(relation -> VlmZusammenUtil
                   .createRelation(RelationType.FeatureGroupToLicenseKeyGroup, relation))
               .collect(Collectors.toList()));
 
-      Collection<Relation> LaRelations =  elementInfo.get().getRelations().stream().filter
-          (rel->rel.getType().equals(RelationType.FeatureGroupToReferencingLicenseAgreement.name()))
-          .map(rel ->VlmZusammenUtil.createRelation(RelationType
-          .FeatureGroupToReferencingLicenseAgreement,rel.getEdge2().getElementId().toString()))
+      Collection<Relation> LaRelations = elementInfo.get().getRelations().stream().filter
+          (rel -> rel.getType()
+              .equals(RelationType.FeatureGroupToReferencingLicenseAgreement.name()))
+          .map(rel -> VlmZusammenUtil.createRelation(RelationType
+              .FeatureGroupToReferencingLicenseAgreement, rel.getEdge2().getElementId().toString()))
           .collect(Collectors.toList());
 
       featureGroupElement.getRelations().addAll(LaRelations);
@@ -226,10 +224,9 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
   @Override
   public void addReferencingLicenseAgreement(FeatureGroupEntity featureGroup,
                                              String licenseAgreementId) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(featureGroup.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(featureGroup.getVendorLicenseModelId(),
+        featureGroup.getVersion().getId());
 
     Optional<ElementInfo> elementInfo =
         zusammenAdaptor.getElementInfo(context, elementContext, new Id(featureGroup.getId()));
@@ -247,10 +244,9 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
   @Override
   public void removeReferencingLicenseAgreement(FeatureGroupEntity featureGroup,
                                                 String licenseAgreementId) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(featureGroup.getVendorLicenseModelId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(featureGroup.getVendorLicenseModelId(),
+        featureGroup.getVersion().getId());
 
     Optional<ElementInfo> elementInfo =
         zusammenAdaptor.getElementInfo(context, elementContext, new Id(featureGroup.getId()));
@@ -268,15 +264,12 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
   }
 
   private ZusammenElement buildFeatureGroupElement(FeatureGroupEntity featureGroup, Action action) {
-
-    ZusammenElement featureGroupElement = new ZusammenElement();
-    featureGroupElement.setAction(action);
-    if (featureGroup.getId() != null) {
-      featureGroupElement.setElementId(new Id(featureGroup.getId()));
-    }
+    ZusammenElement featureGroupElement =
+        buildElement(featureGroup.getId() == null ? null : new Id(featureGroup.getId()), action);
     Info info = new Info();
     info.setName(featureGroup.getName());
     info.setDescription(featureGroup.getDescription());
+    info.addProperty(ElementPropertyName.elementType.name(), ElementType.FeatureGroup);
     info.addProperty("partNumber", featureGroup.getPartNumber());
     info.addProperty("manufacturerReferenceNumber", featureGroup.getManufacturerReferenceNumber());
     featureGroupElement.setInfo(info);
@@ -310,39 +303,5 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
               .collect(Collectors.toList()));
     }
     return featureGroupElement;
-
-  }
-
-  private FeatureGroupEntity mapElementInfoToFeatureGroup(String vlmId, Version version,
-                                                          ElementInfo elementInfo) {
-    FeatureGroupEntity featureGroup =
-        new FeatureGroupEntity(vlmId, version, elementInfo.getId().getValue());
-    featureGroup.setName(elementInfo.getInfo().getName());
-    featureGroup.setDescription(elementInfo.getInfo().getDescription());
-    featureGroup.setPartNumber(elementInfo.getInfo().getProperty("partNumber"));
-    featureGroup.setManufacturerReferenceNumber(elementInfo.getInfo()
-        .getProperty("manufacturerReferenceNumber"));
-
-    Set<String> entitlementPoolIds = new HashSet<>();
-    Set<String> licenseAgreements = new HashSet<>();
-    Set<String> licenseKeyGroupIds = new HashSet<>();
-
-    if (elementInfo.getRelations() != null) {
-      for (Relation relation : elementInfo.getRelations()) {
-        if (RelationType.FeatureGroupToEntitlmentPool.name().equals(relation.getType())) {
-          entitlementPoolIds.add(relation.getEdge2().getElementId().getValue());
-        } else if (RelationType.FeatureGroupToLicenseKeyGroup.name().equals(relation.getType())) {
-          licenseKeyGroupIds.add(relation.getEdge2().getElementId().getValue());
-        } else if (RelationType.FeatureGroupToReferencingLicenseAgreement.name()
-            .equals(relation.getType())) {
-          licenseAgreements.add(relation.getEdge2().getElementId().getValue());
-        }
-      }
-    }
-    featureGroup.setEntitlementPoolIds(entitlementPoolIds);
-    featureGroup.setLicenseKeyGroupIds(licenseKeyGroupIds);
-    featureGroup.setReferencingLicenseAgreements(licenseAgreements);
-
-    return featureGroup;
   }
 }

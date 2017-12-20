@@ -45,19 +45,23 @@ public interface CandidateService {
   Optional<ErrorMessage> validateRawZipData(byte[] uploadedFileData);
 
   OrchestrationTemplateCandidateData createCandidateDataEntity(
-          CandidateDataEntityTo candidateDataEntityTo, InputStream zipFileManifest, AnalyzedZipHeatFiles analyzedZipHeatFiles) throws Exception;
+      CandidateDataEntityTo candidateDataEntityTo, InputStream zipFileManifest,
+      AnalyzedZipHeatFiles analyzedZipHeatFiles) throws Exception;
 
-  void updateCandidateUploadData(OrchestrationTemplateCandidateData uploadData, String
-      itemId);
+  void updateCandidateUploadData(String vspId, Version version,
+                                 OrchestrationTemplateCandidateData uploadData);
 
   Optional<FilesDataStructure> getOrchestrationTemplateCandidateFileDataStructure(String vspId,
-                               Version activeVersion);
+                                                                                  Version version);
 
-  void updateOrchestrationTemplateCandidateFileDataStructure(String vspId, Version activeVersion,
-        FilesDataStructure fileDataStructure);
+  void updateOrchestrationTemplateCandidateFileDataStructure(String vspId, Version version,
+                                                             FilesDataStructure fileDataStructure);
 
   OrchestrationTemplateCandidateData getOrchestrationTemplateCandidate(String vspId,
-                                                                       Version activeVersion);
+                                                                       Version version);
+
+  OrchestrationTemplateCandidateData getOrchestrationTemplateCandidateInfo(String vspId,
+                                                                       Version version);
 
   Optional<ByteArrayInputStream> fetchZipFileByteArrayInputStream(String vspId,
                                                                   OrchestrationTemplateCandidateData candidateDataEntity,
@@ -66,11 +70,11 @@ public interface CandidateService {
                                                                   Map<String, List<ErrorMessage>> uploadErrors);
 
   byte[] replaceManifestInZip(ByteBuffer contentData, String manifest, String vspId,
-                              OnboardingTypesEnum type)
-      throws IOException;
+                              OnboardingTypesEnum type) throws IOException;
 
   Optional<ManifestContent> createManifest(VspDetails vspDetails,
-                                           FileContentHandler fileContentHandler, AnalyzedZipHeatFiles analyzedZipHeatFiles);
+                                           FileContentHandler fileContentHandler,
+                                           AnalyzedZipHeatFiles analyzedZipHeatFiles);
 
   String createManifest(VspDetails vspDetails, FilesDataStructure structure);
 

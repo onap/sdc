@@ -22,6 +22,11 @@
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
+            <artifactId>item-rest-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-vendor-software-product-manager</artifactId>
             <version>${project.version}</version>
         </dependency>

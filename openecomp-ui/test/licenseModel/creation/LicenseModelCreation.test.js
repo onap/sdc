@@ -32,6 +32,9 @@ describe('License Model Creation Module Tests', function() {
 				licenseModelCreation: {
 					data: {}
 				}
+			},
+			users: {
+				usersList: []
 			}
 		};
 		let props = mapStateToProps(state);
@@ -41,16 +44,19 @@ describe('License Model Creation Module Tests', function() {
 	it ('should return vlm names list', () => {
 		let state = {
 			licenseModelList: [{
-				vendorName: 'vlm1',
+				name: 'vlm1',
 				id: 'vlm1_id'
 			}, {
-				vendorName: 'vlm2',
+				name: 'vlm2',
 				id: 'vlm2_id'
 			}],
 			licenseModel: {
 				licenseModelCreation: {
 					data: {}
 				}
+			},
+			users: {
+				usersList: []
 			}
 		};
 		let props = mapStateToProps(state);

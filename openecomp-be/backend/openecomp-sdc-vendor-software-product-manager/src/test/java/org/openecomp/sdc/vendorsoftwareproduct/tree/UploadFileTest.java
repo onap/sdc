@@ -21,9 +21,6 @@
 package org.openecomp.sdc.vendorsoftwareproduct.tree;
 
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -32,13 +29,10 @@ import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.healing.api.HealingManager;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadDataEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.OrchestrationTemplateCandidateManagerImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionDataExtractor;
@@ -50,7 +44,11 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.zip.ZipOutputStream;
 
@@ -59,70 +57,69 @@ import static org.mockito.Mockito.doReturn;
 import static org.testng.Assert.assertEquals;
 
 public class UploadFileTest {
-    private static final String USER1 = "vspTestUser1";
+  private static final String USER1 = "vspTestUser1";
 
-    public static final Version VERSION01 = new Version(0, 1);
-    @Mock
-    private VendorSoftwareProductDao vendorSoftwareProductDaoMock;
-    @Mock
-    private OrchestrationTemplateDao orchestrationTemplateDataDaoMock;
-    @Spy
-    private CandidateServiceImpl candidateService;
-    @Mock
-    private HealingManager healingManagerMock;
-    @Mock
-    private CompositionDataExtractor compositionDataExtractorMock;
-    @Mock
-    private ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDaoMock;
-    @Mock
-    private CompositionEntityDataManager compositionEntityDataManagerMock;
-    @Mock
-    private VendorSoftwareProductInfoDao vspInfoDaoMock;
+  public static final Version VERSION01 = new Version(0, 1);
 
-    @InjectMocks
-    private OrchestrationTemplateCandidateManagerImpl candidateManager;
+  @Mock
+  private OrchestrationTemplateDao orchestrationTemplateDataDaoMock;
+  @Spy
+  private CandidateServiceImpl candidateService;
+  @Mock
+  private HealingManager healingManagerMock;
+  @Mock
+  private CompositionDataExtractor compositionDataExtractorMock;
+  @Mock
+  private ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDaoMock;
+  @Mock
+  private CompositionEntityDataManager compositionEntityDataManagerMock;
+  @Mock
+  private VendorSoftwareProductInfoDao vspInfoDaoMock;
 
-    private static String vlm1Id;
-    public static String id001 = null;
-    public static String id002 = null;
+  @InjectMocks
+  private OrchestrationTemplateCandidateManagerImpl candidateManager;
 
-    public static Version activeVersion002 = null;
+  private static String vlm1Id;
+  public static String id001 = null;
+  public static String id002 = null;
+
+  public static Version activeVersion002 = null;
 
 
-    @BeforeMethod
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+  @BeforeMethod
+  public void setUp() throws Exception {
+    MockitoAnnotations.initMocks(this);
+  }
+
+  @Test
+  public void testUploadFile() {
+    VspDetails vspDetails = new VspDetails("dummyId", new Version(1, 0));
+    doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
+    candidateManager.upload(id001, activeVersion002, getZipInputStream("/legalUpload"),
+        OnboardingTypesEnum.ZIP.toString(), "legalUpload");
+  }
+
+
+  private void testLegalUpload(String vspId, Version version, InputStream upload, String user) {
+    UploadFileResponse uploadFileResponse = candidateManager.upload(vspId, activeVersion002,
+        upload, OnboardingTypesEnum.ZIP.toString(), "file");
+    assertEquals(uploadFileResponse.getOnboardingType(), OnboardingTypesEnum.ZIP);
+    OrchestrationTemplateEntity uploadData = orchestrationTemplateDataDaoMock.get(vspId, version);
+
+  }
+
+  public InputStream getZipInputStream(String name) {
+    URL url = this.getClass().getResource(name);
+    File templateDir = new File(url.getFile());
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+      VSPCommon.zipDir(templateDir, "", zos, true);
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-
-    @Test
-    public void testUploadFile() {
-        VspDetails vspDetails = new VspDetails("dummyId", new Version(1, 0));
-        doReturn(vspDetails).when(vspInfoDaoMock).get(any(VspDetails.class));
-        candidateManager.upload(id001, activeVersion002, getZipInputStream("/legalUpload"), USER1, OnboardingTypesEnum.ZIP.toString(), "legalUpload");
-    }
-
-
-    private void testLegalUpload(String vspId, Version version, InputStream upload, String user) {
-        UploadFileResponse uploadFileResponse = candidateManager.upload(vspId, activeVersion002,
-            upload, user, OnboardingTypesEnum.ZIP.toString(),"file" );
-        assertEquals(uploadFileResponse.getOnboardingType(), OnboardingTypesEnum.ZIP);
-        UploadDataEntity uploadData =
-                orchestrationTemplateDataDaoMock.getOrchestrationTemplate(vspId, version);
-
-    }
-
-    public InputStream getZipInputStream(String name) {
-        URL url = this.getClass().getResource(name);
-        File templateDir = new File(url.getFile());
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
-            VSPCommon.zipDir(templateDir, "", zos, true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new ByteArrayInputStream(baos.toByteArray());
-    }
+    return new ByteArrayInputStream(baos.toByteArray());
+  }
 
 
 }

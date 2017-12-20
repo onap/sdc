@@ -32,8 +32,6 @@ import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
@@ -61,8 +59,6 @@ public class VspInformationArtifactEnricher implements ExternalArtifactEnricherI
       EnrichedServiceModelDaoFactory.getInstance().createInterface();
   private VendorSoftwareProductInfoDao vspInfoDao = VendorSoftwareProductInfoDaoFactory
       .getInstance().createInterface();
-  private OrchestrationTemplateDao orchestrationTemplateDataDao =
-      OrchestrationTemplateDaoFactory.getInstance().createInterface();
 
   public VspInformationArtifactEnricher() {
   }
@@ -81,7 +77,7 @@ public class VspInformationArtifactEnricher implements ExternalArtifactEnricherI
       throws IOException {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
 
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
     ByteBuffer infoArtifactByteBuffer = ByteBuffer.wrap(informationArtifactGenerator.generate(
@@ -94,13 +90,13 @@ public class VspInformationArtifactEnricher implements ExternalArtifactEnricherI
           vspId, version.toString())));
       //TODO: add error to map (what is the key?)
 
-      mdcDataDebugMessage.debugExitMessage(null, null);
+      mdcDataDebugMessage.debugExitMessage(null);
       return errors;
     }
 
     enrichInformationArtifact(vspId, version, infoArtifactByteBuffer);
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
     return errors;
   }
 
@@ -108,10 +104,7 @@ public class VspInformationArtifactEnricher implements ExternalArtifactEnricherI
                                          ByteBuffer infoArtifactByteBuffer) {
     ServiceArtifact infoArtifactServiceArtifact = new ServiceArtifact();
 
-    VspDetails vspDetails = getVspDetails(vspId, version);
-
-    String vspName = vspDetails.getName();
-
+    String vspName = vspInfoDao.get(new VspDetails(vspId, version)).getName();
 
     infoArtifactServiceArtifact.setVspId(vspId);
     infoArtifactServiceArtifact.setVersion(version);
@@ -126,9 +119,5 @@ public class VspInformationArtifactEnricher implements ExternalArtifactEnricherI
     enrichedServiceModelDao.storeExternalArtifact(infoArtifactServiceArtifact);
 
   }
-  public VspDetails getVspDetails(String vspId,Version version){
-    VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId,version));
-    vspDetails.setValidationData(orchestrationTemplateDataDao.getValidationData(vspId,version));
-    return vspDetails;
-  }
+
 }

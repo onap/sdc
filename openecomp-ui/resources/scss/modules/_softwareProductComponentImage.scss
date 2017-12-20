@@ -23,9 +23,6 @@
 }
 
 .image-modal-edit, .image-modal-new {
-  .modal-body {
-    padding: 0;
-  }
   .vsp-components-image-editor {
 
     .image-format, .image-md5, .image-version {
@@ -35,13 +32,19 @@
       padding-left: 30px;
     }
     .section-title {
-      text-transform: capitalize;
+      text-transform: uppercase;
       font-size: 18px;
     }
   }
 }
 
 .vsp-components-image {
+  .list-editor-view {
+    margin-top: 50px;
+    .manual-title {
+      @extend .body-1-semibold;
+    }
+  }
   .list-editor-item-view-content {
     flex:1;
     min-width: 0;

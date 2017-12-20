@@ -34,7 +34,6 @@ import org.openecomp.sdcrests.vendorlicense.types.LicenseKeyGroupEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.LicenseKeyGroupRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -67,7 +66,7 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
 
     MdcUtil.initMdc(LoggerServiceName.List_LKG.toString());
     Collection<LicenseKeyGroupEntity> licenseKeyGroups =
-        vendorLicenseManager.listLicenseKeyGroups(vlmId, Version.valueOf(versionId), user);
+        vendorLicenseManager.listLicenseKeyGroups(vlmId, new Version(versionId));
 
     GenericCollectionWrapper<LicenseKeyGroupEntityDto> result = new GenericCollectionWrapper<>();
     MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto outputMapper =
@@ -99,9 +98,10 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
         new MapLicenseKeyGroupRequestDtoToLicenseKeyGroupEntity()
             .applyMapping(request, LicenseKeyGroupEntity.class);
     licenseKeyGroupEntity.setVendorLicenseModelId(vlmId);
+    licenseKeyGroupEntity.setVersion(new Version(versionId));
 
     LicenseKeyGroupEntity createdLicenseKeyGroup =
-        vendorLicenseManager.createLicenseKeyGroup(licenseKeyGroupEntity, user);
+        vendorLicenseManager.createLicenseKeyGroup(licenseKeyGroupEntity);
     StringWrapperResponse result =
         createdLicenseKeyGroup != null ? new StringWrapperResponse(createdLicenseKeyGroup.getId())
             : null;
@@ -131,9 +131,10 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
         new MapLicenseKeyGroupRequestDtoToLicenseKeyGroupEntity()
             .applyMapping(request, LicenseKeyGroupEntity.class);
     licenseKeyGroupEntity.setVendorLicenseModelId(vlmId);
+    licenseKeyGroupEntity.setVersion(new Version(versionId));
     licenseKeyGroupEntity.setId(licenseKeyGroupId);
 
-    vendorLicenseManager.updateLicenseKeyGroup(licenseKeyGroupEntity, user);
+    vendorLicenseManager.updateLicenseKeyGroup(licenseKeyGroupEntity);
 
     mdcDataDebugMessage.debugExitMessage("VLM id, LKG id", vlmId, licenseKeyGroupId);
 
@@ -157,9 +158,9 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
     MdcUtil.initMdc(LoggerServiceName.Get_LKG.toString());
     LicenseKeyGroupEntity lkgInput = new LicenseKeyGroupEntity();
     lkgInput.setVendorLicenseModelId(vlmId);
-    lkgInput.setVersion(Version.valueOf(versionId));
+    lkgInput.setVersion(new Version(versionId));
     lkgInput.setId(licenseKeyGroupId);
-    LicenseKeyGroupEntity licenseKeyGroup = vendorLicenseManager.getLicenseKeyGroup(lkgInput, user);
+    LicenseKeyGroupEntity licenseKeyGroup = vendorLicenseManager.getLicenseKeyGroup(lkgInput);
 
     LicenseKeyGroupEntityDto licenseKeyGroupEntityDto = licenseKeyGroup == null ? null :
         new MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto()
@@ -186,8 +187,9 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
     MdcUtil.initMdc(LoggerServiceName.Delete_LKG.toString());
     LicenseKeyGroupEntity lkgInput = new LicenseKeyGroupEntity();
     lkgInput.setVendorLicenseModelId(vlmId);
+    lkgInput.setVersion(new Version(versionId));
     lkgInput.setId(licenseKeyGroupId);
-    vendorLicenseManager.deleteLicenseKeyGroup(lkgInput, user);
+    vendorLicenseManager.deleteLicenseKeyGroup(lkgInput);
 
     mdcDataDebugMessage.debugExitMessage("VLM id, LKG id", vlmId, licenseKeyGroupId);
 

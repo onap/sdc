@@ -128,6 +128,8 @@ public class LoggerTragetServiceName {
   public static final String CREATE_TRANSLATED_FILE = "Create Translated File";
   public static final String CREATE_PACKAGE = "Create Package";
 
+  public static final String CREATE_VERSION = "Create Version";
+
   public static final String SELF_HEALING = "Self Healing";
   public static final String WRITE_ARTIFACT_XML = "Write Artifact To XML File";
 

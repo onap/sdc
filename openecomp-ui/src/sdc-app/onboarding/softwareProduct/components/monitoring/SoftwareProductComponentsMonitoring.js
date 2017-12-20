@@ -14,7 +14,6 @@
  * permissions and limitations under the License.
  */
 import {connect} from 'react-redux';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import SoftwareProductComponentsMonitoringView from './SoftwareProductComponentsMonitoringView.jsx';
 import SoftwareProductComponentsMonitoringAction from './SoftwareProductComponentsMonitoringActionHelper.js';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
@@ -24,17 +23,15 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 
 export const mapStateToProps = ({softwareProduct}) => {
 
-	let {softwareProductEditor: {data:currentVSP = {}}, softwareProductComponents: {monitoring}} = softwareProduct;
-	let filenames = monitoring;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentVSP);
-
+	let {softwareProductComponents: {monitoring}} = softwareProduct;
 	return {
-		isReadOnlyMode,
-		filenames
+		filenames: monitoring
 	};
+
 };
 
 const mapActionsToProps = (dispatch, {softwareProductId, version, componentId}) => {
+
 	return {
 		onDropMibFileToUpload: (formData, type) =>
 			SoftwareProductComponentsMonitoringAction.uploadFile(dispatch, {
@@ -58,9 +55,9 @@ const mapActionsToProps = (dispatch, {softwareProductId, version, componentId}) 
 				title: i18n('Upload Failed'),
 				msg: i18n('Expected "zip" file. Please check the provided file type.')
 			}
-		}),
-
+		})
 	};
+
 };
 
 export default connect(mapStateToProps, mapActionsToProps, null, {withRef: true})(SoftwareProductComponentsMonitoringView);

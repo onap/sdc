@@ -14,81 +14,82 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
-import {catalogItemTypeClasses} from './OnboardingCatalogConstants.js';
-import CatalogTile from '../CatalogTile.jsx';
-import classnames from 'classnames';
-import VSPOverlay from './VSPOverlay.jsx';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
-import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
-import tooltip from './Tooltip.jsx';
+import {Tile, TileInfo, TileInfoLine, TileFooter, TileFooterCell, Button} from 'sdc-ui/lib/react';
 
+import VSPOverlay from './VSPOverlay.jsx';
+import {TooltipWrapper} from './Tooltip.jsx';
 
 class VendorItem extends React.Component {
 
 	static PropTypes = {
-		softwareProductList: React.PropTypes.array,
-		vendor: React.PropTypes.object,
-		onSelectVSP: React.PropTypes.func,
-		shouldShowOverlay: React.PropTypes.boolm,
-		onVendorSelect: React.PropTypes.func,
-		onAddVSP: React.PropTypes.func,
-		onVSPIconClick: React.PropTypes.func,
-
+		softwareProductList: PropTypes.array,
+		vendor: PropTypes.object,
+		shouldShowOverlay: PropTypes.bool,
+		onSelectVSP: PropTypes.func,
+		onVendorSelect: PropTypes.func,
+		onAddVSP: PropTypes.func,
+		onVSPButtonClick: PropTypes.func
 	};
 
 	render() {
 		let {vendor, onSelectVSP, shouldShowOverlay, onVendorSelect, onMigrate} = this.props;
-		let {softwareProductList = [], vendorName} = vendor;
+		let {softwareProductList = [], name} = vendor;
 		return (
-			<CatalogTile
-				catalogItemTypeClass={catalogItemTypeClasses.VENDOR}
-				onSelect={() =>  onVendorSelect(vendor)}>
-				<div className='catalog-tile-top'>
-					<div className='catalog-tile-icon vendor-type'>
-						<div className='icon'><SVGIcon name='vendor'/></div>
-					</div>
-					<OverlayTrigger placement='top' overlay={tooltip(vendorName)}>
-						<div className='catalog-tile-item-name'>{vendorName}</div>
-					</OverlayTrigger>
-					<div
-						className={classnames('catalog-tile-vsp-count', {active: shouldShowOverlay}, {clickable: softwareProductList.length})}
-						onClick={(event) => this.handleVspCountClick(event)}
-						data-test-id='catalog-vsp-count'>
-						{i18n(`${softwareProductList.length} VSPs`)}
-					</div>
-					<div className='catalog-tile-content' onClick={(event) => this.onCreateVspClick(event)} data-test-id='catalog-create-new-vsp-from-vendor'>
-						<div className='create-new-vsp-button'>
-							<SVGIcon name='plus'/>&nbsp;&nbsp;&nbsp;{i18n('Create new VSP')}
-						</div>
-					</div>
-				</div>
-
-				{shouldShowOverlay && softwareProductList.length > 0
-				&& <VSPOverlay onMigrate={onMigrate} VSPList={softwareProductList} onSelectVSP={onSelectVSP} onSeeMore={() => onVendorSelect(vendor)}/>}
-			</CatalogTile>
+			<Tile
+				iconName='vendor'
+				onClick={() => onVendorSelect(vendor)}>
+				<TileInfo align='center'>
+					<TileInfoLine type='title'>
+						<TooltipWrapper className='with-overlay' dataTestId='catalog-item-name'>{name}</TooltipWrapper>
+					</TileInfoLine>
+					<TileInfoLine>
+						<Button
+							btnType='outline-rounded'
+							color='dark-gray'
+							onClick={e => this.handleVspCountClick(e)}
+							data-test-id='catalog-vsp-count'
+							disabled={!softwareProductList.length}>
+							{i18n('{length} VSPs', {length: softwareProductList.length})}
+						</Button>
+						{shouldShowOverlay && softwareProductList.length > 0 &&
+							<VSPOverlay
+								onMigrate={onMigrate}
+								VSPList={softwareProductList}
+								onSelectVSP={onSelectVSP}
+								onSeeMore={() => onVendorSelect(vendor)} />
+						}
+					</TileInfoLine>
+				</TileInfo>
+				<TileFooter align='center'>
+					<TileFooterCell dataTestId='catalog-create-new-vsp-from-vendor'>
+						<Button
+							btnType='link'
+							color='primary'
+							iconName='plusThin'
+							onClick={e => this.onCreateVspClick(e)}>
+							{i18n('Create new VSP')}
+						</Button>
+					</TileFooterCell>
+				</TileFooter>
+			</Tile>
 		);
 	}
 
-	onClick(vlm) {
-		this.setState({
-			licenseModelToShow: vlm
-		});
-	}
-
-	onCreateVspClick(event) {
-		let {onAddVSP, vendor: {id}} = this.props;
-		event.stopPropagation();
-		event.preventDefault();
+	onCreateVspClick(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		const {onAddVSP, vendor: {id}} = this.props;
 		onAddVSP(id);
 	}
 
 	handleVspCountClick(e){
-		let {onVSPIconClick, vendor: {softwareProductList}} = this.props;
 		e.stopPropagation();
 		e.preventDefault();
+		const {onVSPButtonClick, vendor: {softwareProductList}} = this.props;
 		const hasVSP = Boolean(softwareProductList.length);
-		onVSPIconClick(hasVSP);
+		onVSPButtonClick(hasVSP);
 	}
 
 }

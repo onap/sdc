@@ -21,7 +21,6 @@
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 import org.openecomp.sdc.vendorsoftwareproduct.types.LicensingData;
-import org.openecomp.sdcrests.common.types.VersionDto;
 
 import javax.validation.constraints.NotNull;
 
@@ -39,13 +38,8 @@ public class VspDescriptionDto {
   private String vendorName;
   @NotNull
   private String vendorId;            // this will be populated with vlm id
-  private VersionDto licensingVersion;    // this will be populated with vlm version
+  private String licensingVersion;    // this will be populated with vlm version
   private LicensingData licensingData;
-
-  @NotNull
-  private String onboardingMethod;
-  private String onboardingOrigin;
-  private String networkPackageName;
 
   public String getName() {
     return name;
@@ -103,11 +97,11 @@ public class VspDescriptionDto {
     this.vendorId = vendorId;
   }
 
-  public VersionDto getLicensingVersion() {
+  public String getLicensingVersion() {
     return licensingVersion;
   }
 
-  public void setLicensingVersion(VersionDto licensingVersion) {
+  public void setLicensingVersion(String licensingVersion) {
     this.licensingVersion = licensingVersion;
   }
 
@@ -117,29 +111,5 @@ public class VspDescriptionDto {
 
   public void setLicensingData(LicensingData licensingData) {
     this.licensingData = licensingData;
-  }
-
-  public String getOnboardingMethod() {
-    return onboardingMethod;
-  }
-
-  public void setOnboardingMethod(String onboardingMethod) {
-    this.onboardingMethod = onboardingMethod;
-  }
-
-  public String getOnboardingOrigin() {
-    return onboardingOrigin;
-  }
-
-  public void setOnboardingOrigin(String onboardingOrigin) {
-    this.onboardingOrigin = onboardingOrigin;
-  }
-
-  public String getNetworkPackageName() {
-    return networkPackageName;
-  }
-
-  public void setNetworkPackageName(String networkPackageName) {
-    this.networkPackageName = networkPackageName;
   }
 }

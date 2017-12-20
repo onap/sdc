@@ -24,7 +24,7 @@ import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
 public interface HealingService {
 
-  VersionableEntity heal(VersionableEntity toHeal, String user);
+  VersionableEntity heal(VersionableEntity toHeal);
 
   void persistNoHealing(VersionableEntity alreadyHealed);
 }

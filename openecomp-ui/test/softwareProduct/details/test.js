@@ -30,10 +30,11 @@ import {heatSetupManifest} from 'test-utils/factories/softwareProduct/SoftwarePr
 
 import { FeatureGroupStoreFactory as FeatureGroup} from 'test-utils/factories/licenseModel/FeatureGroupFactories.js';
 import {LicenseAgreementStoreFactory as LicenseAgreement} from 'test-utils/factories/licenseModel/LicenseAgreementFactories.js';
-import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
 
+import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
+import {InitializedCurrentScreenFactory} from 'test-utils/factories/common/CurrentScreenFactory.js';
 
-describe('Software Product Module Tests', function () {
+describe('Software Product Details Module Tests', function () {
 	it('Get Software Products List', () => {
 		const store = storeCreator();
 		deepFreeze(store.getState());
@@ -43,14 +44,14 @@ describe('Software Product Module Tests', function () {
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProductList', softwareProductList);
 
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-			expect(baseUrl).toEqual('/onboarding-api/v1.0/vendor-software-products/');
+			expect(baseUrl).toEqual('/onboarding-api/v1.0/vendor-software-products/?versionFilter=Draft');
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
 			return {results: softwareProductList};
 		});
 
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-			expect(baseUrl).toEqual('/onboarding-api/v1.0/vendor-software-products/?versionFilter=Final');
+			expect(baseUrl).toEqual('/onboarding-api/v1.0/vendor-software-products/?versionFilter=Certified');
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
 			return {results: []};
@@ -130,6 +131,10 @@ describe('Software Product Module Tests', function () {
 		let manifest = heatSetupManifest.build();
 		expectedStore = cloneAndSet(expectedStore, 'softwareProduct.softwareProductAttachments.heatSetup', manifest);
 
+		const expectedCurrentScreen = InitializedCurrentScreenFactory.build();
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreen.itemPermission);
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.props', expectedCurrentScreen.props);
+
 		mockRest.addHandler('post', ({options, data, baseUrl}) => {
 			expect(baseUrl).toEqual('/onboarding-api/v1.0/vendor-software-products/');
 			expect(data).toEqual(softwareProductPostRequest);
@@ -184,7 +189,7 @@ describe('Software Product Module Tests', function () {
 		deepFreeze(softwareProductPostRequest);
 
 		const licenseModelId = softwareProductPostRequest.vendorId;
-		const LMVersion = VersionControllerUtilsFactory.build().version;
+		const LMVersion = VersionFactory.build();
 		const secondLicenseModelId = 'secondLicenseModelId';
 
 		let FG1 = FeatureGroup.build();
@@ -205,10 +210,17 @@ describe('Software Product Module Tests', function () {
 		});
 
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-			expect(baseUrl).toEqual('/onboarding-api/v1.0/vendor-license-models/?versionFilter=Final');
+			expect(baseUrl).toEqual('/onboarding-api/v1.0/vendor-license-models/?versionFilter=Certified');
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
 			return {results: []};
+		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${licenseModelId}/versions/${LMVersion.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: {}};
 		});
 
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
@@ -226,6 +238,13 @@ describe('Software Product Module Tests', function () {
 		});
 
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${secondLicenseModelId}/versions/${LMVersion.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: {}};
+		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${secondLicenseModelId}/versions/${LMVersion.id}/license-agreements`);
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
@@ -239,17 +258,18 @@ describe('Software Product Module Tests', function () {
 			return {results: [FG2]};
 		});
 
-		return SoftwareProductActionHelper.loadSoftwareProductDetailsData(store.dispatch, {licenseModelId, licensingVersion: LMVersion}).then(() => {
+		return SoftwareProductActionHelper.loadSoftwareProductDetailsData(store.dispatch, {licenseModelId, licensingVersion: LMVersion.id}).then(() => {
 			let state = store.getState();
 			expect(state.licenseModel.licenseAgreement.licenseAgreementList).toEqual([LA1]);
 			expect(state.licenseModel.featureGroup.featureGroupsList).toEqual([FG1]);
 			return SoftwareProductActionHelper.softwareProductEditorVendorChanged(store.dispatch,
-				{deltaData: {vendorId: secondLicenseModelId, licensingVersion: LMVersion},
-					formName: forms.VENDOR_SOFTWARE_PRODUCT_DETAILS});
-		}).then(() => {
-			let state = store.getState();
-			expect(state.licenseModel.licenseAgreement.licenseAgreementList).toEqual([LA2]);
-			expect(state.licenseModel.featureGroup.featureGroupsList).toEqual([FG2]);
+						{deltaData: {vendorId: secondLicenseModelId, licensingVersion: LMVersion.id},
+							formName: forms.VENDOR_SOFTWARE_PRODUCT_DETAILS}
+			).then(() => {
+				let state = store.getState();
+				expect(state.licenseModel.licenseAgreement.licenseAgreementList).toEqual([LA2]);
+				expect(state.licenseModel.featureGroup.featureGroupsList).toEqual([FG2]);
+			});
 		});
 	});
 
@@ -257,6 +277,8 @@ describe('Software Product Module Tests', function () {
 
 		const softwareProduct = VSPEditorFactoryWithLicensingData.build();
 		deepFreeze(softwareProduct);
+
+		const version = VersionFactory.build();
 
 		const store = storeCreator({
 			softwareProduct: {
@@ -291,13 +313,13 @@ describe('Software Product Module Tests', function () {
 		deepFreeze(questionnaireData);
 
 		mockRest.addHandler('put', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/versions/${softwareProduct.version.id}`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/versions/${version.id}`);
 			expect(data).toEqual(softwareProductUpdateData);
 			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
 		});
 		mockRest.addHandler('put', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/versions/${softwareProduct.version.id}/questionnaire`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/versions/${version.id}/questionnaire`);
 			expect(data).toEqual(questionnaireData);
 			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
@@ -305,7 +327,8 @@ describe('Software Product Module Tests', function () {
 
 		return SoftwareProductActionHelper.updateSoftwareProduct(store.dispatch, {
 			softwareProduct: softwareProductPutRequest,
-			qdata: questionnaireData
+			qdata: questionnaireData,
+			version
 		}).then(() => {
 			expect(store.getState()).toEqual(expectedStore);
 		});
@@ -315,6 +338,8 @@ describe('Software Product Module Tests', function () {
 
 		const softwareProduct = VSPEditorFactoryWithLicensingData.build();
 		deepFreeze(softwareProduct);
+
+		const version = VersionFactory.build();
 
 		const store = storeCreator({
 			softwareProduct: {
@@ -334,19 +359,20 @@ describe('Software Product Module Tests', function () {
 		let  softwareProductUpdateData = VSPEditorPostFactoryWithLicensingData.build(dataForUpdate);
 		delete softwareProductUpdateData.version;
 
-		const softwareProductPutRequest = buildFromExistingObject(VSPEditorFactoryWithLicensingData, softwareProductUpdateData, {id: toBeUpdatedSoftwareProductId, version: softwareProduct.version});
+		const softwareProductPutRequest = buildFromExistingObject(VSPEditorFactoryWithLicensingData, softwareProductUpdateData, {id: toBeUpdatedSoftwareProductId});
 
 		deepFreeze(softwareProductUpdateData);
 
 		mockRest.addHandler('put', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/versions/${softwareProduct.version.id}`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/versions/${version.id}`);
 			expect(data).toEqual(softwareProductUpdateData);
 			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
 		});
 
 		return SoftwareProductActionHelper.updateSoftwareProductData(store.dispatch, {
-			softwareProduct: softwareProductPutRequest
+			softwareProduct: softwareProductPutRequest,
+			version
 		}).then(() => {
 			expect(store.getState()).toEqual(expectedStore);
 		});
@@ -355,6 +381,8 @@ describe('Software Product Module Tests', function () {
 	it('Save Software product questionnaire only', () => {
 		const softwareProduct = VSPEditorFactoryWithLicensingData.build();
 		deepFreeze(softwareProduct);
+
+		const version = VersionFactory.build();
 
 		const store = storeCreator({
 			softwareProduct: {
@@ -377,7 +405,7 @@ describe('Software Product Module Tests', function () {
 		deepFreeze(questionnaireData);
 
 		mockRest.addHandler('put', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/versions/${softwareProduct.version.id}/questionnaire`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/versions/${version.id}/questionnaire`);
 			expect(data).toEqual(questionnaireData);
 			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
@@ -385,7 +413,7 @@ describe('Software Product Module Tests', function () {
 
 		return SoftwareProductActionHelper.updateSoftwareProductQuestionnaire(store.dispatch, {
 			softwareProductId: softwareProduct.id,
-			version: softwareProduct.version,
+			version,
 			qdata: questionnaireData
 		}).then(() => {
 			expect(store.getState()).toEqual(expectedStore);

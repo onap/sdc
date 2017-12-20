@@ -20,7 +20,42 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 import SelectActionTable from 'nfvo-components/table/SelectActionTable.jsx';
 import SelectActionTableRow from 'nfvo-components/table/SelectActionTableRow.jsx';
 import SelectActionTableCell from 'nfvo-components/table/SelectActionTableCell.jsx';
-import {relationTypesOptions} from './SoftwareProductDependenciesConstants.js';
+import {relationTypesOptions, NEW_RULE_TEMP_ID} from './SoftwareProductDependenciesConstants.js';
+
+
+const TableActionRow = ({onAction, actionIcon, showAction, dependency, sourceOptions, targetOptions, onDataChanged}) => {
+	return (
+		<SelectActionTableRow
+			key={dependency.id}
+			onAction={onAction}
+			overlayMsg={i18n('There is a loop between selections')}
+			hasError={dependency.hasCycle}
+			hasErrorIndication
+			showAction={showAction}
+			actionIcon={actionIcon}>
+			<SelectActionTableCell
+				options={sourceOptions}
+				selected={dependency.sourceId}
+				placeholder={i18n('Select VFC...')}
+				clearable={false}
+				onChange={newVal =>  {
+					dependency.sourceId = newVal;
+					onDataChanged(dependency);
+				}} />
+			<SelectActionTableCell options={relationTypesOptions} selected={dependency.relationType} clearable={false}/>
+			<SelectActionTableCell
+				placeholder={i18n('Select VFC...')}
+				options={targetOptions}
+				selected={dependency.targetId}
+				clearable={false}
+				onChange={newVal =>  {
+					dependency.targetId = newVal;
+					onDataChanged(dependency);
+				}} />
+		</SelectActionTableRow>
+	);
+};
+
 
 export default class SoftwareProductDependenciesView extends React.Component {
 	filterTargets({componentsOptions, sourceToTargetMapping, selectedSourceId, selectedTargetId}) {
@@ -46,8 +81,7 @@ export default class SoftwareProductDependenciesView extends React.Component {
 	}
 
 	render() {
-		let {componentsOptions, softwareProductDependencies, onDataChanged, onAddDependency, isReadOnlyMode} = this.props;
-		let canAdd = softwareProductDependencies.length < componentsOptions.length * (componentsOptions.length - 1);
+		let {componentsOptions, softwareProductDependencies, onDataChanged, onAddDependency, onDeleteDependency, isReadOnlyMode} = this.props;
 		let sourceToTargetMapping = {};
 		softwareProductDependencies.map(dependency => {
 			let isInMap = sourceToTargetMapping.hasOwnProperty(dependency.sourceId);
@@ -55,47 +89,42 @@ export default class SoftwareProductDependenciesView extends React.Component {
 				sourceToTargetMapping[dependency.sourceId] = isInMap ? [...sourceToTargetMapping[dependency.sourceId], dependency.targetId] : [dependency.targetId];
 			}
 		});
+		let depList = softwareProductDependencies.filter(dependency => dependency.id !== NEW_RULE_TEMP_ID);
+		let newDependency = softwareProductDependencies.find(dependency => dependency.id === NEW_RULE_TEMP_ID);
 		return (
 			<div className='software-product-dependencies'>
-				<div className='software-product-dependencies-title'>{i18n('Dependencies')}</div>
+				<div className='page-title'>{i18n('Dependencies')}</div>
 				<SelectActionTable
-					columns={['Source', 'Relation Type', 'Target']}
+					columns={[i18n('Source'), i18n('Relation Type'), i18n('Target')]}
 					numOfIcons={2}
-					isReadOnlyMode={isReadOnlyMode}
-					onAdd={canAdd ? onAddDependency : undefined}
-					onAddItem={i18n('Add Rule')}>
-					{softwareProductDependencies.map(dependency => (
-						<SelectActionTableRow
+					isReadOnlyMode={isReadOnlyMode}>
+					{!isReadOnlyMode && <TableActionRow
+						key={newDependency.id}
+						actionIcon='plusCircle'
+						onAction={() => onAddDependency(newDependency)}
+						dependency={newDependency}
+						componentsOptions={componentsOptions}
+						sourceToTargetMapping={sourceToTargetMapping}
+						onDataChanged={onDataChanged}
+						sourceOptions={this.filterSources({componentsOptions, sourceToTargetMapping, selectedSourceId: newDependency.sourceId, selectedTargetId: newDependency.targetId})}
+						targetOptions={this.filterTargets({componentsOptions, sourceToTargetMapping, selectedSourceId: newDependency.sourceId, selectedTargetId: newDependency.targetId})}
+						showAction={newDependency.targetId !== null && newDependency.relationType !== null && newDependency.sourceId !== null}/> }
+					{depList.map(dependency => (
+						<TableActionRow
 							key={dependency.id}
-							onDelete={() => onDataChanged(softwareProductDependencies.filter(currentDependency => currentDependency.id !== dependency.id))}
-							overlayMsg={i18n('There is a loop between selections')}
-							hasError={dependency.hasCycle}
-							hasErrorIndication
-							showDelete={dependency.id !== 'fake' || dependency.hasCycle !== undefined}>
-							<SelectActionTableCell
-								options={this.filterSources({componentsOptions, sourceToTargetMapping, selectedSourceId: dependency.sourceId, selectedTargetId: dependency.targetId})}
-								selected={dependency.sourceId}
-								placeholder={i18n('Select VFC...')}
-								onChange={newSourceId => onDataChanged(softwareProductDependencies.map(currentDependency =>
-									({...currentDependency, sourceId: currentDependency.id === dependency.id ? newSourceId : currentDependency.sourceId})
-								))} />
-							<SelectActionTableCell options={relationTypesOptions} selected={dependency.relationType} clearable={false}/>
-							<SelectActionTableCell
-								placeholder={i18n('Select VFC...')}
-								options={this.filterTargets({componentsOptions, sourceToTargetMapping, selectedSourceId: dependency.sourceId, selectedTargetId: dependency.targetId})}
-								selected={dependency.targetId}
-								onChange={newTargetId => onDataChanged(softwareProductDependencies.map(currentDependency =>
-									({...currentDependency, targetId: currentDependency.id === dependency.id ? newTargetId : currentDependency.targetId})
-								))} />
-						</SelectActionTableRow>
+							actionIcon='trashO'
+							onAction={() => onDeleteDependency(dependency)}
+							dependency={dependency}
+							componentsOptions={componentsOptions}
+							sourceToTargetMapping={sourceToTargetMapping}
+							sourceOptions={this.filterSources({componentsOptions, sourceToTargetMapping, selectedSourceId: dependency.sourceId, selectedTargetId: dependency.targetId})}
+							targetOptions={this.filterTargets({componentsOptions, sourceToTargetMapping, selectedSourceId: dependency.sourceId, selectedTargetId: dependency.targetId})}
+							onDataChanged={onDataChanged}
+							showAction={true}/>
 					))}
 				</SelectActionTable>
 			</div>
 		);
 	}
 
-	save() {
-		let {onSubmit, softwareProductDependencies} = this.props;
-		return onSubmit(softwareProductDependencies);
-	}
 }

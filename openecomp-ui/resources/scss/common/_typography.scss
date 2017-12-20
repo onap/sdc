@@ -31,9 +31,9 @@ $body-font-2: 13px;
 $body-font-3: 12px;
 $body-font-4: 10px;
 
-$icon-font-size: 11px;
+$icon-font-size: 10px;
 $icon-font-family: Arial;
-$radio-font-family: Arial;
+
 
 .heading-1 {
   @include base-font-light;
@@ -133,10 +133,6 @@ $radio-font-family: Arial;
   font-size: $body-font-3;
 }
 
-.circle-icon-text {
-  @include base-font-semibold;
-  font-size: $body-font-1;
-}
 
 .warning-text {
   color: $yellow;

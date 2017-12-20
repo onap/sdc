@@ -14,7 +14,6 @@
  * permissions and limitations under the License.
  */
 import keyMirror from 'nfvo-utils/KeyMirror.js';
-import {enums} from 'sdc-app/onboarding/OnboardingConstants.js';
 
 export const actionTypes = keyMirror({
 	SOFTWARE_PRODUCT_LOADED: null,
@@ -23,7 +22,7 @@ export const actionTypes = keyMirror({
 	SOFTWARE_PRODUCT_LIST_EDIT: null,
 	SOFTWARE_PRODUCT_CATEGORIES_LOADED: null,
 	SOFTWARE_PRODUCT_QUESTIONNAIRE_UPDATE: null,
-	ADD_SOFTWARE_PRODUCT: null,
+	LOAD_LICENSING_VERSIONS_LIST: null,
 	TOGGLE_NAVIGATION_ITEM: null,
 
 	softwareProductEditor: {
@@ -34,23 +33,7 @@ export const actionTypes = keyMirror({
 	}
 });
 
-export const navigationItems = keyMirror({
-	VENDOR_SOFTWARE_PRODUCT: 'vendor-software-product',
-	GENERAL: 'general',
-	PROCESS_DETAILS: 'process-details',
-	DEPLOYMENT_FLAVORS: 'deployment-flavor',
-	NETWORKS: 'networks',
-	IMAGES: 'images',
-	ATTACHMENTS: 'attachments',
-	ACTIVITY_LOG: 'activity-log',
-	COMPONENTS: 'components',
-	DEPENDENCIES: 'dependencies',
 
-	COMPUTE: 'compute',
-	LOAD_BALANCING: 'load-balancing',
-	STORAGE: 'storage',
-	MONITORING: 'monitoring'
-});
 
 export const onboardingMethod = {
 	MANUAL: 'Manual',
@@ -69,22 +52,3 @@ export const forms = keyMirror({
 
 export const PRODUCT_QUESTIONNAIRE = 'product';
 
-export const mapScreenToNavigationItem = {
-	[enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE]: navigationItems.VENDOR_SOFTWARE_PRODUCT,
-	[enums.SCREEN.SOFTWARE_PRODUCT_DETAILS]: navigationItems.GENERAL,
-	[enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS]: navigationItems.ATTACHMENTS,
-	[enums.SCREEN.SOFTWARE_PRODUCT_PROCESSES]: navigationItems.PROCESS_DETAILS,
-	[enums.SCREEN.SOFTWARE_PRODUCT_DEPLOYMENT]: navigationItems.DEPLOYMENT_FLAVORS,
-	[enums.SCREEN.SOFTWARE_PRODUCT_NETWORKS]: navigationItems.NETWORKS,
-	[enums.SCREEN.SOFTWARE_PRODUCT_ACTIVITY_LOG]: navigationItems.ACTIVITY_LOG,
-	[enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES]: navigationItems.DEPENDENCIES,
-	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS]: navigationItems.COMPONENTS,
-	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_GENERAL]: navigationItems.GENERAL,
-	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_COMPUTE]: navigationItems.COMPUTE,
-	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_LOAD_BALANCING]: navigationItems.LOAD_BALANCING,
-	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_NETWORK]: navigationItems.NETWORKS,
-	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES]: navigationItems.IMAGES,
-	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_STORAGE]: navigationItems.STORAGE,
-	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_PROCESSES]: navigationItems.PROCESS_DETAILS,
-	[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_MONITORING]: navigationItems.MONITORING,
-};

@@ -28,11 +28,10 @@ import java.io.InputStream;
 
 public interface MonitoringUploadsManager {
   void delete(String vspId, Version version, String componentId,
-              MonitoringUploadType monitoringUploadType, String user);
+              MonitoringUploadType monitoringUploadType);
 
   void upload(InputStream object, String filename, String vspId, Version version,
-              String componentId, MonitoringUploadType monitoringUploadType, String user);
+              String componentId, MonitoringUploadType monitoringUploadType);
 
-  MonitoringUploadStatus listFilenames(String vspId, Version version, String componentId,
-                                       String user);
+  MonitoringUploadStatus listFilenames(String vspId, Version version, String componentId);
 }

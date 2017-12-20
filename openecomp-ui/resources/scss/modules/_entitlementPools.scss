@@ -1,51 +1,22 @@
 
 .entitlement-pools-list-editor {  
-  .list-editor-view-list {
-    .list-editor-item-view {
-      min-height: 110px;
-      height: 110px;
-    }
     .list-editor-item-view-field {
 
-      .entitlement-pools-count, .contract-number, .type{
-        color: $purple;
-      }
       .entitlement-pools-count {
         @extend .heading-1;
-        margin-top: -10px;
-
-      }
+      color: $purple;
     }
   }
 }
 
 .entitlement-pools-modal {
-  .modal-body {
-    padding: 0;
-  }
-	.sdc-tab-content {
-		margin: 0;
-	}
   .entitlement-pools-form {
-		.threshold-section {
+    .threshold-section, .date-section {
 			display: flex;
 			justify-content: space-between;
 			.validation-input-wrapper {
 				flex: 0 0 46%;
 			}
     }
-    .date-section {
-			display: flex;
-			justify-content: space-between;
-			.validation-input-wrapper {
-				flex: 0 0 46%;
-			}
 		}
-		.validation-form-content {
-			padding: 20px 50px;
-		}
-  }
-  .validation-buttons {
-    padding: 20px 50px;
-  }
 }

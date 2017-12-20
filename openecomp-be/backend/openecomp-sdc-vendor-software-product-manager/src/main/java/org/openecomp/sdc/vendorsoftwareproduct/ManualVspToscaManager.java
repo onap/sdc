@@ -6,7 +6,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 public interface ManualVspToscaManager {
 
-  public VspModelInfo gatherVspInformation(String vspId, Version version, String user);
+  VspModelInfo gatherVspInformation(String vspId, Version version);
 
-  public ToscaServiceModel generateToscaModel(VspModelInfo vspModelInfo);
+  ToscaServiceModel generateToscaModel(VspModelInfo vspModelInfo);
 }

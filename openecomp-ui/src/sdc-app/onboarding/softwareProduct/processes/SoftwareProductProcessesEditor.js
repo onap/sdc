@@ -45,7 +45,7 @@ const mapActionsToProps = (dispatch, {softwareProductId, version}) => {
 			SoftwareProductProcessesActionHelper.closeEditor(dispatch);
 			SoftwareProductProcessesActionHelper.saveProcess(dispatch, {softwareProductId, version, previousProcess, process});
 		},
-		onClose: () => SoftwareProductProcessesActionHelper.closeEditor(dispatch),
+		onCancel: () => SoftwareProductProcessesActionHelper.closeEditor(dispatch),
 		onValidateForm: () => ValidationHelper.validateForm(dispatch, VSP_PROCESS_FORM)
 	};
 };

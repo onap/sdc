@@ -4,6 +4,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.core.converter.errors.CreateToscaObjectErrorBuilder;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
@@ -20,6 +22,8 @@ public class ToscaConverterUtil {
   private static final String DEFAULT_CAPITAL = "Default";
   private static Set<String> defaultValueKeys;
 
+  private static Logger LOGGER = LoggerFactory.getLogger(ToscaConverterUtil.class.getName());
+
   static {
     defaultValueKeys =
         Stream.of(DEFAULT, DEFAULT_CAPITAL).collect(Collectors.toSet());
@@ -30,10 +34,10 @@ public class ToscaConverterUtil {
                                                       Class<T> classToCreate) {
     try {
       return createObjectUsingSetters(objectCandidate, classToCreate);
-    } catch (Exception e) {
+    } catch (Exception ex) {
       throw new CoreException(
-          new CreateToscaObjectErrorBuilder(classToCreate.getSimpleName(), objectId, e.getMessage())
-              .build());
+          new CreateToscaObjectErrorBuilder(classToCreate.getSimpleName(), objectId)
+              .build(), ex);
     }
   }
 
@@ -68,6 +72,8 @@ public class ToscaConverterUtil {
       return Objects.nonNull(fieldValueToAssign)
           && Objects.nonNull(classToCreate.getMethod(methodName, field.getType()));
     } catch (NoSuchMethodException e) {
+      LOGGER.debug(String.format("Could not extract method '%s' from class '%s'. returning false " +
+              "with filedType '%s'.", methodName, classToCreate, field.getType()), e);
       return false;
     }
   }

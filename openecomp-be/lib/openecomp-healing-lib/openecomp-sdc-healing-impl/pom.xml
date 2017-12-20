@@ -39,6 +39,11 @@
             <artifactId>openecomp-sdc-vendor-license-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-item-permissions-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
     </dependencies>
 

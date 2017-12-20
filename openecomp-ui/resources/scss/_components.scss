@@ -1,5 +1,4 @@
 @import "components/punchOut";
-@import "components/buttons";
 @import "components/forms";
 @import "components/validationForm";
 @import "components/dualListBox";
@@ -19,6 +18,10 @@
 @import "components/activityLog";
 @import "components/selectActionTable";
 @import "components/datepicker";
+@import "components/tree";
+@import "components/commitModal";
+@import "components/userNotifications";
+@import "components/overlay";
 
 %noselect {
   -webkit-touch-callout: none;
@@ -70,10 +73,6 @@
   }
 }
 
-.warning-icon {
-  margin-left: 50%;
-  color: $yellow;
-}
 
 .chevron::before {
   border-style: solid;

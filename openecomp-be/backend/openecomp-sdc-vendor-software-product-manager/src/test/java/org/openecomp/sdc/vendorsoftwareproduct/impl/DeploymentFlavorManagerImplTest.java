@@ -1,18 +1,12 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComputeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
@@ -23,7 +17,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
-import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
@@ -39,13 +32,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+
 public class DeploymentFlavorManagerImplTest {
-
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
-
-  private static final String USER = "depFlavorTestUser";
   private static final String VSP_ID = "VSP_ID";
-  private static final Version VERSION = new Version(0, 1);
+  private static final Version VERSION = new Version("version_id");
   private static final String COMPONENT_ID = "COMPONENT_ID";
   private static final String DF1_ID = "df1";
   private static final String DF2_ID = "df2";
@@ -55,11 +48,11 @@ public class DeploymentFlavorManagerImplTest {
   @Mock
   private VendorSoftwareProductInfoDao vspInfoDao;
   @Mock
-  DeploymentFlavorDao deploymentFlavorDaoMock;
+  private DeploymentFlavorDao deploymentFlavorDaoMock;
   @Mock
-  ComponentDao componentDaoMock;
+  private ComponentDao componentDaoMock;
   @Mock
-  ComputeDao computeDaoMock;
+  private ComputeDao computeDaoMock;
   @InjectMocks
   @Spy
   private DeploymentFlavorManagerImpl deploymentFlavorManager;
@@ -72,26 +65,26 @@ public class DeploymentFlavorManagerImplTest {
   @Test
   public void testListWhenNone() {
     final Collection<DeploymentFlavorEntity> deploymentFlavorEntities =
-        deploymentFlavorManager.listDeploymentFlavors(VSP_ID, VERSION,  USER);
+        deploymentFlavorManager.listDeploymentFlavors(VSP_ID, VERSION);
     Assert.assertEquals(deploymentFlavorEntities.size(), 0);
   }
 
   @Test
   public void testCreateOnNotManual_negative() {
 
-    testCreate_negative(new DeploymentFlavorEntity(VSP_ID, VERSION,  null), USER,
+    testCreate_negative(new DeploymentFlavorEntity(VSP_ID, VERSION, null),
         VendorSoftwareProductErrorCodes.CREATE_DEPLOYMENT_FLAVOR_NOT_ALLOWED_IN_HEAT_ONBOARDING);
   }
 
   @Test
   public void testCreateManualDepFlavor() {
-    DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION,  DF1_ID);
+    DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
 
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
-    deploymentFlavorManager.createDeploymentFlavor(expected, USER);
+    deploymentFlavorManager.createDeploymentFlavor(expected);
     verify(compositionEntityDataManagerMock).createDeploymentFlavor(expected);
   }
 
@@ -104,17 +97,16 @@ public class DeploymentFlavorManagerImplTest {
     DeploymentFlavor deploymentFlavor = expectedDiffName.getDeploymentFlavorCompositionData();
     deploymentFlavor.setModel(DF1_ID + "Name");
     expectedDiffName.setDeploymentFlavorCompositionData(deploymentFlavor);
-    List<DeploymentFlavorEntity> list = new ArrayList<DeploymentFlavorEntity>();
+    List<DeploymentFlavorEntity> list = new ArrayList<>();
     list.add(expectedDiffName);
     doReturn(list).when(deploymentFlavorDaoMock).list(anyObject());
 
     try {
-      deploymentFlavorManager.createDeploymentFlavor(expected, USER);
+      deploymentFlavorManager.createDeploymentFlavor(expected);
       Assert.fail();
-    }
-    catch (CoreException ex) {
-      log.debug("",ex);
-      Assert.assertEquals(VendorSoftwareProductErrorCodes.DUPLICATE_DEPLOYMENT_FLAVOR_MODEL_NOT_ALLOWED,
+    } catch (CoreException ex) {
+      Assert.assertEquals(
+          VendorSoftwareProductErrorCodes.DUPLICATE_DEPLOYMENT_FLAVOR_MODEL_NOT_ALLOWED,
           ex.code().id());
     }
   }
@@ -129,7 +121,7 @@ public class DeploymentFlavorManagerImplTest {
 
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
 
-    List<String> featureGrps = new ArrayList<String>();
+    List<String> featureGrps = new ArrayList<>();
     featureGrps.add("fg1");
     featureGrps.add("fg2");
 
@@ -139,11 +131,9 @@ public class DeploymentFlavorManagerImplTest {
 
 
     try {
-      deploymentFlavorManager.createDeploymentFlavor(expected, USER);
+      deploymentFlavorManager.createDeploymentFlavor(expected);
       Assert.fail();
-    }
-    catch (CoreException ex) {
-      log.debug("",ex);
+    } catch (CoreException ex) {
       Assert.assertEquals(VendorSoftwareProductErrorCodes.FEATURE_GROUP_NOT_EXIST_FOR_VSP,
           ex.code().id());
     }
@@ -151,13 +141,13 @@ public class DeploymentFlavorManagerImplTest {
 
   @Test
   public void testCreateManualDepFlavorWithNullCompInAssociation() {
-    DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION,  DF1_ID);
+    DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
     final DeploymentFlavor deploymentFlavor =
         JsonUtil.json2Object(expected.getCompositionData(), DeploymentFlavor.class);
     ComponentComputeAssociation association = new ComponentComputeAssociation();
     association.setComponentId(null);
     association.setComputeFlavorId("CF1");
-    List<ComponentComputeAssociation> list = new ArrayList<ComponentComputeAssociation>();
+    List<ComponentComputeAssociation> list = new ArrayList<>();
     list.add(association);
     deploymentFlavor.setComponentComputeAssociations(list);
     expected.setCompositionData(JsonUtil.object2Json(deploymentFlavor));
@@ -168,26 +158,25 @@ public class DeploymentFlavorManagerImplTest {
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
     try {
-      deploymentFlavorManager.createDeploymentFlavor(expected, USER);
-    }
-    catch (CoreException ex) {
-      log.debug("",ex);
+      deploymentFlavorManager.createDeploymentFlavor(expected);
+    } catch (CoreException ex) {
       Assert.assertEquals(VendorSoftwareProductErrorCodes.INVALID_COMPONENT_COMPUTE_ASSOCIATION,
           ex.code().id());
-      Assert.assertEquals("Invalid request,for valid association please provide ComponentId for Compute Flavor",
+      Assert.assertEquals(
+          "Invalid request,for valid association please provide ComponentId for Compute Flavor",
           ex.getMessage());
     }
   }
 
   @Test
   public void testCreateManualDepFlavorWithInvalidComputeInAssociation() {
-    DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION,  DF1_ID);
+    DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
     final DeploymentFlavor deploymentFlavor =
         JsonUtil.json2Object(expected.getCompositionData(), DeploymentFlavor.class);
     ComponentComputeAssociation association = new ComponentComputeAssociation();
     association.setComponentId(COMPONENT_ID);
     association.setComputeFlavorId("CF1");
-    List<ComponentComputeAssociation> list = new ArrayList<ComponentComputeAssociation>();
+    List<ComponentComputeAssociation> list = new ArrayList<>();
     list.add(association);
     deploymentFlavor.setComponentComputeAssociations(list);
     expected.setCompositionData(JsonUtil.object2Json(deploymentFlavor));
@@ -197,16 +186,14 @@ public class DeploymentFlavorManagerImplTest {
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
-    ComponentEntity component = new ComponentEntity(VSP_ID, VERSION, USER);
+    ComponentEntity component = new ComponentEntity(VSP_ID, VERSION, null);
     doReturn(component).when(componentDaoMock).get(anyObject());
 
     doReturn(null).when(computeDaoMock).get(anyObject());
 
     try {
-      deploymentFlavorManager.createDeploymentFlavor(expected, USER);
-    }
-    catch (CoreException ex) {
-      log.debug("",ex);
+      deploymentFlavorManager.createDeploymentFlavor(expected);
+    } catch (CoreException ex) {
       Assert.assertEquals(VendorSoftwareProductErrorCodes.INVALID_COMPUTE_FLAVOR_ID,
           ex.code().id());
     }
@@ -214,13 +201,13 @@ public class DeploymentFlavorManagerImplTest {
 
   @Test
   public void testCreateManualDepFlavorWithDuplicateVfcAssociation() {
-    DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION,  DF1_ID);
+    DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
     final DeploymentFlavor deploymentFlavor =
         JsonUtil.json2Object(expected.getCompositionData(), DeploymentFlavor.class);
     ComponentComputeAssociation association = new ComponentComputeAssociation();
     association.setComponentId(COMPONENT_ID);
     association.setComputeFlavorId("CF1");
-    List<ComponentComputeAssociation> list = new ArrayList<ComponentComputeAssociation>();
+    List<ComponentComputeAssociation> list = new ArrayList<>();
     list.add(association);
     list.add(association);
     deploymentFlavor.setComponentComputeAssociations(list);
@@ -231,18 +218,17 @@ public class DeploymentFlavorManagerImplTest {
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
-    ComponentEntity component = new ComponentEntity(VSP_ID, VERSION, USER);
+    ComponentEntity component = new ComponentEntity(VSP_ID, VERSION, null);
     doReturn(component).when(componentDaoMock).get(anyObject());
 
     ComputeEntity computeEntity = new ComputeEntity(VSP_ID, VERSION, COMPONENT_ID, "CF1");
     doReturn(computeEntity).when(computeDaoMock).get(anyObject());
 
     try {
-      deploymentFlavorManager.createDeploymentFlavor(expected, USER);
-    }
-    catch (CoreException ex) {
-      log.debug("",ex);
-      Assert.assertEquals(VendorSoftwareProductErrorCodes.SAME_VFC_ASSOCIATION_MORE_THAN_ONCE_NOT_ALLOWED,
+      deploymentFlavorManager.createDeploymentFlavor(expected);
+    } catch (CoreException ex) {
+      Assert.assertEquals(
+          VendorSoftwareProductErrorCodes.SAME_VFC_ASSOCIATION_MORE_THAN_ONCE_NOT_ALLOWED,
           ex.code().id());
     }
   }
@@ -251,30 +237,30 @@ public class DeploymentFlavorManagerImplTest {
   public void testList() {
 
     doReturn(Arrays.asList(
-        createDeploymentFlavor(VSP_ID, VERSION,  DF1_ID),
-        createDeploymentFlavor(VSP_ID, VERSION,  DF2_ID)))
+        createDeploymentFlavor(VSP_ID, VERSION, DF1_ID),
+        createDeploymentFlavor(VSP_ID, VERSION, DF2_ID)))
         .when(deploymentFlavorDaoMock).list(anyObject());
 
 
     final Collection<DeploymentFlavorEntity> deploymentFlavorEntities =
-        deploymentFlavorManager.listDeploymentFlavors(VSP_ID, VERSION,  USER);
+        deploymentFlavorManager.listDeploymentFlavors(VSP_ID, VERSION);
     Assert.assertEquals(deploymentFlavorEntities.size(), 2);
     for (DeploymentFlavorEntity deploymentFlavorEntity : deploymentFlavorEntities) {
       Assert.assertEquals(deploymentFlavorEntity.getDeploymentFlavorCompositionData().getModel()
-          , DF1_ID.equals(deploymentFlavorEntity.getId()) ? DF1_ID+"name" : DF2_ID+"name" );
+          , DF1_ID.equals(deploymentFlavorEntity.getId()) ? DF1_ID + "name" : DF2_ID + "name");
     }
   }
 
   @Test
   public void testUpdateHeatDepFlavor() {
-    testUpdate_negative(VSP_ID, VERSION, DF1_ID, USER,
+    testUpdate_negative(VSP_ID, VERSION, DF1_ID,
         VendorSoftwareProductErrorCodes.EDIT_DEPLOYMENT_FLAVOR_NOT_ALLOWED_IN_HEAT_ONBOARDING);
   }
 
   @Test
   public void testUpdateNonExistingManualDepFlavorId_negative() {
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
-    testUpdate_negative(VSP_ID, VERSION, DF1_ID, USER,
+    testUpdate_negative(VSP_ID, VERSION, DF1_ID,
         VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
   }
 
@@ -292,21 +278,22 @@ public class DeploymentFlavorManagerImplTest {
     VspDetails vspDetails = new VspDetails(VSP_ID, VERSION);
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
-    DeploymentFlavorEntity deploymentFlavorEntity = new DeploymentFlavorEntity(VSP_ID, VERSION, DF1_ID);
+    DeploymentFlavorEntity deploymentFlavorEntity =
+        new DeploymentFlavorEntity(VSP_ID, VERSION, DF1_ID);
     DeploymentFlavor deploymentFlavor = new DeploymentFlavor();
     deploymentFlavor.setModel(DF1_ID + "_name");
     deploymentFlavor.setDescription(DF1_ID + " desc updated");
     deploymentFlavorEntity.setDeploymentFlavorCompositionData(deploymentFlavor);
 
     CompositionEntityValidationData validationData =
-        deploymentFlavorManager.updateDeploymentFlavor(deploymentFlavorEntity, USER);
+        deploymentFlavorManager.updateDeploymentFlavor(deploymentFlavorEntity);
     Assert.assertTrue(validationData == null || validationData.getErrors() == null);
     verify(deploymentFlavorDaoMock).update(deploymentFlavorEntity);
   }
 
   @Test
   public void testGetNonExistingDepFlavorId_negative() {
-    testGet_negative(VSP_ID, VERSION, "non existing image id", USER,
+    testGet_negative(VSP_ID, VERSION, "non existing image id",
         VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
   }
 
@@ -320,25 +307,27 @@ public class DeploymentFlavorManagerImplTest {
     doReturn(vspDetails).when(vspInfoDao).get(anyObject());
 
     CompositionEntityResponse<DeploymentFlavor> response =
-        deploymentFlavorManager.getDeploymentFlavor(VSP_ID, VERSION, DF1_ID, USER);
+        deploymentFlavorManager.getDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
     Assert.assertEquals(response.getId(), expected.getId());
-    Assert.assertEquals(response.getData().getModel(), expected.getDeploymentFlavorCompositionData().
-        getModel());
-    Assert.assertEquals(response.getData().getDescription(), expected.getDeploymentFlavorCompositionData().
-        getDescription());
+    Assert
+        .assertEquals(response.getData().getModel(), expected.getDeploymentFlavorCompositionData().
+            getModel());
+    Assert.assertEquals(response.getData().getDescription(),
+        expected.getDeploymentFlavorCompositionData().
+            getDescription());
   }
 */
   @Test
   public void testDeleteDepFlavorOnHEAT() {
     DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
     doReturn(expected).when(deploymentFlavorDaoMock).get(anyObject());
-    testDelete_negative(VSP_ID, VERSION,  DF1_ID, USER,
+    testDelete_negative(VSP_ID, VERSION, DF1_ID,
         VendorSoftwareProductErrorCodes.DELETE_DEPLOYMENT_FLAVOR_NOT_ALLOWED_IN_HEAT_ONBOARDING);
   }
 
   @Test
   public void testDeleteOnNotExistImage() {
-    testDelete_negative(VSP_ID, VERSION,  DF1_ID, USER,
+    testDelete_negative(VSP_ID, VERSION, DF1_ID,
         VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
   }
 
@@ -347,48 +336,35 @@ public class DeploymentFlavorManagerImplTest {
     DeploymentFlavorEntity expected = createDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
     doReturn(expected).when(deploymentFlavorDaoMock).get(anyObject());
     doReturn(true).when(vspInfoDao).isManual(anyObject(), anyObject());
-    deploymentFlavorManager.deleteDeploymentFlavor(VSP_ID, VERSION, DF1_ID, USER);
+    deploymentFlavorManager.deleteDeploymentFlavor(VSP_ID, VERSION, DF1_ID);
     verify(deploymentFlavorDaoMock).delete(anyObject());
   }
 
-  private void testList_negative(String vspId, Version version, String componentId, String user,
-                                 String expectedErrorCode, String expectedErrorMsg) {
+  private void testCreate_negative(DeploymentFlavorEntity deploymentFlavorEntity,
+                                   String expectedErrorCode) {
     try {
-      deploymentFlavorManager.listDeploymentFlavors(vspId, version, user);
+      deploymentFlavorManager.createDeploymentFlavor(deploymentFlavorEntity);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("",exception);
-      Assert.assertEquals(exception.code().id(), expectedErrorCode);
-      Assert.assertEquals(exception.getMessage(), expectedErrorMsg);
-    }
-  }
-
-  private void testCreate_negative(DeploymentFlavorEntity deploymentFlavorEntity, String user, String
-      expectedErrorCode) {
-    try {
-      deploymentFlavorManager.createDeploymentFlavor(deploymentFlavorEntity, user);
-      Assert.fail();
-    } catch (CoreException exception) {
-      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
 
   private void testDelete_negative(String vspId, Version version, String deploymentFlavorId,
-                                   String user,
                                    String expectedErrorCode) {
     try {
-      deploymentFlavorManager.deleteDeploymentFlavor(vspId, version, deploymentFlavorId, user);
+      deploymentFlavorManager.deleteDeploymentFlavor(vspId, version, deploymentFlavorId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
 
-  static DeploymentFlavorEntity createDeploymentFlavor(String vspId, Version version, String deploymentFlavorId) {
+  private static DeploymentFlavorEntity createDeploymentFlavor(String vspId, Version version,
+                                                               String deploymentFlavorId) {
 
-    DeploymentFlavorEntity deploymentFlavorEntity = new DeploymentFlavorEntity(vspId, version, deploymentFlavorId);
+    DeploymentFlavorEntity deploymentFlavorEntity =
+        new DeploymentFlavorEntity(vspId, version, deploymentFlavorId);
     DeploymentFlavor deploymentFlavor = new DeploymentFlavor();
     deploymentFlavor.setModel(deploymentFlavorId + "name");
     deploymentFlavor.setDescription(deploymentFlavorId + " desc");
@@ -397,29 +373,28 @@ public class DeploymentFlavorManagerImplTest {
     return deploymentFlavorEntity;
   }
 
-  private void testUpdate_negative(String vspId, Version version, String
-      deploymentFlavorId, String user, String expectedErrorCode) {
+  private void testUpdate_negative(String vspId, Version version, String deploymentFlavorId,
+                                   String expectedErrorCode) {
     try {
-      DeploymentFlavorEntity deploymentFlavorEntity = new DeploymentFlavorEntity(vspId, version, deploymentFlavorId);
+      DeploymentFlavorEntity deploymentFlavorEntity =
+          new DeploymentFlavorEntity(vspId, version, deploymentFlavorId);
       DeploymentFlavor deploymentFlavor = new DeploymentFlavor();
       deploymentFlavor.setModel("Name");
       deploymentFlavorEntity.setDeploymentFlavorCompositionData(deploymentFlavor);
       deploymentFlavorManager
-          .updateDeploymentFlavor(deploymentFlavorEntity, user);
+          .updateDeploymentFlavor(new DeploymentFlavorEntity(vspId, version, deploymentFlavorId));
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
 
   private void testGet_negative(String vspId, Version version, String deploymentFlavorId,
-                                String user, String expectedErrorCode) {
+                                String expectedErrorCode) {
     try {
-      deploymentFlavorManager.getDeploymentFlavor(vspId, version, deploymentFlavorId, user);
+      deploymentFlavorManager.getDeploymentFlavor(vspId, version, deploymentFlavorId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("",exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }

@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import classNames from 'classnames';
@@ -26,27 +27,27 @@ export const other = {OTHER: 'Other'};
 class InputOptions extends React.Component {
 
 	static propTypes = {
-		values: React.PropTypes.arrayOf(React.PropTypes.shape({
-			enum: React.PropTypes.string,
-			title: React.PropTypes.string
+		values: PropTypes.arrayOf(PropTypes.shape({
+			enum: PropTypes.string,
+			title: PropTypes.string
 		})),
-		isEnabledOther: React.PropTypes.bool,
-		label: React.PropTypes.string,
-		selectedValue: React.PropTypes.string,
-		multiSelectedEnum: React.PropTypes.oneOfType([
-			React.PropTypes.string,
-			React.PropTypes.array
+		isEnabledOther: PropTypes.bool,
+		label: PropTypes.string,
+		selectedValue: PropTypes.string,
+		multiSelectedEnum: PropTypes.oneOfType([
+			PropTypes.string,
+			PropTypes.array
 		]),
-		selectedEnum: React.PropTypes.string,
-		otherValue: React.PropTypes.string,
-		overlayPos: React.PropTypes.string,
-		onEnumChange: React.PropTypes.func,
-		onOtherChange: React.PropTypes.func,
-		onBlur: React.PropTypes.func,
-		isRequired: React.PropTypes.bool,
-		isMultiSelect: React.PropTypes.bool,
-		isValid: React.PropTypes.bool,
-		disabled: React.PropTypes.bool
+		selectedEnum: PropTypes.string,
+		otherValue: PropTypes.string,
+		overlayPos: PropTypes.string,
+		onEnumChange: PropTypes.func,
+		onOtherChange: PropTypes.func,
+		onBlur: PropTypes.func,
+		isRequired: PropTypes.bool,
+		isMultiSelect: PropTypes.bool,
+		isValid: PropTypes.bool,
+		disabled: PropTypes.bool
 	};
 
 	state = {

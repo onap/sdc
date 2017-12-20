@@ -26,7 +26,7 @@ import {actionTypes as HeatSetupActions} from '../onboarding/softwareProduct/att
 
 const options = {
 	headers: {
-		HTTP_CSP_ATTUID: 'validationOnlyVspUser'
+		USER_ID: 'validationOnlyVspUser'
 	}
 };
 
@@ -37,16 +37,18 @@ function getTimestampString() {
 	return `${date.getFullYear()}-${z(date.getMonth())}-${z(date.getDate())}_${z(date.getHours())}-${z(date.getMinutes())}`;
 }
 
-function fetchVspId() {
+function fetchVspIdAndVersion() {
 
 	let vspId = sessionStorage.getItem('validationAppVspId');
+	let versionId = sessionStorage.getItem('validationAppVersionId');
 	if (vspId) {
-		return  Promise.resolve({value: vspId});
+		return  Promise.resolve({value: vspId, versionId});
 	}else {
 		return RestAPIUtil.fetch('/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/validation-vsp', options)
 			.then(response => {
-				sessionStorage.setItem('validationAppVspId', response.value);
-				return Promise.resolve(response);
+				sessionStorage.setItem('validationAppVspId', response.itemId);
+				sessionStorage.setItem('validationAppVersionId', response.version.id);
+				return Promise.resolve({value: response.itemId, versionId: response.version.id});
 			});
 	}
 
@@ -82,16 +84,16 @@ function showFileSaveDialog({blob, xhr, defaultFilename, addTimestamp}) {
 
 
 function uploadFile(formData) {
-	return fetchVspId()
+	return fetchVspIdAndVersion()
 		.then(response => {
-			return RestAPIUtil.post(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/0.1/orchestration-template-candidate`, formData, options);
+			return RestAPIUtil.post(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/${response.versionId}/orchestration-template-candidate`, formData, options);
 		});
 }
 
 function loadSoftwareProductHeatCandidate(dispatch){
-	return fetchVspId()
+	return fetchVspIdAndVersion()
 		.then(response => {
-			return RestAPIUtil.fetch(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/0.1/orchestration-template-candidate/manifest`, options)
+			return RestAPIUtil.fetch(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/${response.versionId}/orchestration-template-candidate/manifest`, options)
 				.then(response => dispatch({
 					type: HeatSetupActions.MANIFEST_LOADED,
 					response
@@ -100,9 +102,9 @@ function loadSoftwareProductHeatCandidate(dispatch){
 }
 
 function updateHeatCandidate(dispatch, heatCandidate) {
-	return fetchVspId()
+	return fetchVspIdAndVersion()
 		.then(response => {
-			return RestAPIUtil.put(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/0.1/orchestration-template-candidate/manifest`,
+			return RestAPIUtil.put(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/${response.versionId}/orchestration-template-candidate/manifest`,
 				heatCandidate.heatData, options)
 				.then(null, error => {
 					dispatch({
@@ -122,16 +124,16 @@ function updateHeatCandidate(dispatch, heatCandidate) {
 }
 
 function fetchSoftwareProduct() {
-	return fetchVspId()
+	return fetchVspIdAndVersion()
 		.then(response => {
-			return RestAPIUtil.fetch(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/0.1`, options);
+			return RestAPIUtil.fetch(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/${response.versionId}`, options);
 		});
 }
 
 function downloadHeatFile() {
-	return fetchVspId()
+	return fetchVspIdAndVersion()
 		.then(response => {
-			RestAPIUtil.fetch(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/0.1/orchestration-template-candidate`, {
+			RestAPIUtil.fetch(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/${response.versionId}/orchestration-template-candidate`, {
 				...options,
 				dataType: 'binary'
 			})
@@ -145,9 +147,9 @@ function downloadHeatFile() {
 }
 
 function processAndValidateHeatCandidate(dispatch) {
-	return fetchVspId()
+	return fetchVspIdAndVersion()
 		.then(response => {
-			return RestAPIUtil.put(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/0.1/orchestration-template-candidate/process`, {}, options)
+			return RestAPIUtil.put(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/${response.versionId}/orchestration-template-candidate/process`, {}, options)
 				.then(response => {
 					if (response.status === 'Success') {
 						fetchSoftwareProduct().then(response => {

@@ -39,6 +39,8 @@ public enum Messages {
   FAILED_TO_TRANSLATE_ZIP_FILE("Failed to translate zip file"),
   ZIP_NOT_EXIST("Zip file doesn't exist"),
 
+  PERMISSIONS_ERROR("Permissions Error. The user does not have permission to perform this action."),
+
   ZIP_SHOULD_NOT_CONTAIN_FOLDERS("Zip file should not contain folders"),
   VES_ZIP_SHOULD_CONTAIN_YML_ONLY(
       "Wrong VES EVENT Artifact was uploaded - all files contained in Artifact must be YAML files" +
@@ -148,7 +150,11 @@ public enum Messages {
           + "Contrail 2 resources can be found in %s. Contrail 3 resources can be found in %s"),
   CONTRAIL_VM_TYPE_NAME_NOT_ALIGNED_WITH_NAMING_CONVENSION(
       "Service Template naming convention in Image and Flavor "
-          + "properties is not consistent in Resource, Resource ID %s");
+          + "properties is not consistent in Resource, Resource ID %s"),
+
+  /* Notifications */
+  FAILED_TO_MARK_NOTIFICATION_AS_READ("Failed to mark notifications as read"),
+  FAILED_TO_UPDATE_LAST_SEEN_NOTIFICATION("Failed to update last seen notification for user %s");
 
   private String errorMessage;
 

@@ -20,11 +20,14 @@
 
 package org.openecomp.sdc.versioning;
 
+import org.openecomp.sdc.versioning.dao.types.Revision;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.types.VersionCreationMethod;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
 
+import java.util.List;
 import java.util.Map;
 
 public interface VersioningManager {
@@ -53,5 +56,25 @@ public interface VersioningManager {
 
   Map<String, VersionInfo> listDeletedEntitiesVersionInfo(String entityType, String user,
                                                           VersionableEntityAction action);
+
+
+  List<Version> list(String itemId); // TODO: 5/24/2017 filter (by status for example)
+
+  Version get(String itemId, Version version);
+
+  Version create(String itemId, Version version,
+                 VersionCreationMethod creationMethod);
+
+  void submit(String itemId, Version version, String submitDescription);
+
+  void publish(String itemId, Version version, String message);
+
+  void sync(String itemId, Version version);
+
+  void forceSync(String itemId, Version version);
+
+  void revert(String itemId, Version version, String revisionId);
+
+  List<Revision> listRevisions(String itemId, Version version);
 
 }

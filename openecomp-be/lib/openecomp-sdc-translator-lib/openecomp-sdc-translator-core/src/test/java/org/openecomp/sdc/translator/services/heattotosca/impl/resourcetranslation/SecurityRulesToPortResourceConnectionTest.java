@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateNestedNodesConnectedInSecurityRuleToPort;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants;
 
 import java.io.IOException;
+
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataTestUtil.validateNestedNodesConnectedInSecurityRuleToPort;
 
 
 public class SecurityRulesToPortResourceConnectionTest extends BaseResourceTranslationTest {

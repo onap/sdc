@@ -20,14 +20,18 @@ import {storeCreator} from 'sdc-app/AppStore.js';
 import {LicenseKeyGroupStoreFactory, LicenseKeyGroupPostFactory} from 'test-utils/factories/licenseModel/LicenseKeyGroupFactories.js';
 
 import LicenseKeyGroupsActionHelper from 'sdc-app/onboarding/licenseModel/licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
-import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
+import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
+import CurrentScreenFactory from 'test-utils/factories/common/CurrentScreenFactory.js';
 import {LimitItemFactory, LimitPostFactory} from 'test-utils/factories/licenseModel/LimitFactories.js';
 import {getStrValue} from 'nfvo-utils/getValue.js';
+import {SyncStates} from 'sdc-app/common/merge/MergeEditorConstants.js';
 
 describe('License Key Groups Module Tests', function () {
 
 	const LICENSE_MODEL_ID = '555';
-	const version = VersionControllerUtilsFactory.build().version;
+	const version = VersionFactory.build();
+	const itemPermissionAndProps = CurrentScreenFactory.build({}, {version});
+	const returnedVersionFields = {baseId: version.baseId, description: version.description, id: version.id, name: version.name, status: version.status};
 
 	it('Load License Key Group', () => {
 
@@ -57,6 +61,7 @@ describe('License Key Groups Module Tests', function () {
 
 		deepFreeze(licenseKeyGroupsList);
 		const store = storeCreator({
+			currentScreen: {...itemPermissionAndProps},
 			licenseModel: {
 				licenseKeyGroup: {
 					licenseKeyGroupsList
@@ -65,12 +70,29 @@ describe('License Key Groups Module Tests', function () {
 		});
 		deepFreeze(store.getState());
 		const toBeDeletedLicenseKeyGroupId = licenseKeyGroupsList[0].id;
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsList', []);
+
+		const expectedCurrentScreenProps = {
+			...itemPermissionAndProps,
+			itemPermission: {
+				...itemPermissionAndProps.itemPermission,
+				isDirty: true
+			}
+		};
+
+		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsList', []);
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
 
 		mockRest.addHandler('destroy', ({data, options, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${toBeDeletedLicenseKeyGroupId}`);
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
+		});
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
 		});
 
 		return LicenseKeyGroupsActionHelper.deleteLicenseKeyGroup(store.dispatch, {
@@ -84,7 +106,9 @@ describe('License Key Groups Module Tests', function () {
 
 	it('Add License Key Group', () => {
 
-		const store = storeCreator();
+		const store = storeCreator({
+			currentScreen: {...itemPermissionAndProps}
+		});
 		deepFreeze(store.getState());
 
 		const LicenseKeyGroupPost = LicenseKeyGroupPostFactory.build();
@@ -93,7 +117,16 @@ describe('License Key Groups Module Tests', function () {
 		const LicenseKeyGroupStore = LicenseKeyGroupStoreFactory.build();
 		deepFreeze(LicenseKeyGroupStore);
 
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsList', [LicenseKeyGroupStore]);
+		const expectedCurrentScreenProps = {
+			...itemPermissionAndProps,
+			itemPermission: {
+				...itemPermissionAndProps.itemPermission,
+				isDirty: true
+			}
+		};
+
+		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsList', [LicenseKeyGroupStore]);
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
 
 		mockRest.addHandler('post', ({options, data, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups`);
@@ -102,6 +135,13 @@ describe('License Key Groups Module Tests', function () {
 			return {
 				value: LicenseKeyGroupStore.id
 			};
+		});
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
 		});
 
 		return LicenseKeyGroupsActionHelper.saveLicenseKeyGroup(store.dispatch, {
@@ -117,6 +157,7 @@ describe('License Key Groups Module Tests', function () {
 		const licenseKeyGroupsList = buildListFromFactory(LicenseKeyGroupStoreFactory, 1);
 		deepFreeze(licenseKeyGroupsList);
 		const store = storeCreator({
+			currentScreen: {...itemPermissionAndProps},
 			licenseModel: {
 				licenseKeyGroup: {
 					licenseKeyGroupsList
@@ -141,12 +182,28 @@ describe('License Key Groups Module Tests', function () {
 
 		deepFreeze(licenseKeyGroupPutRequest);
 
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsList', [licenseKeyGroupUpdatedData]);
+		const expectedCurrentScreenProps = {
+			...itemPermissionAndProps,
+			itemPermission: {
+				...itemPermissionAndProps.itemPermission,
+				isDirty: true
+			}
+		};
+
+		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsList', [licenseKeyGroupUpdatedData]);
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
 
 		mockRest.addHandler('put', ({data, options, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${toBeUpdatedLicenseKeyGroupId}`);
 			expect(data).toEqual(licenseKeyGroupPutRequest);
 			expect(options).toEqual(undefined);
+		});
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
 		});
 
 		return LicenseKeyGroupsActionHelper.saveLicenseKeyGroup(store.dispatch, {
@@ -182,7 +239,9 @@ describe('License Key Groups Module Tests', function () {
 
 	it('Add Limit', () => {
 
-		const store = storeCreator();
+		const store = storeCreator({
+			currentScreen: {...itemPermissionAndProps}
+		});
 		deepFreeze(store.getState());
 
 		const limitToAdd = LimitPostFactory.build();
@@ -198,7 +257,16 @@ describe('License Key Groups Module Tests', function () {
 		deepFreeze(limitAddedItem);
 		const licenseKeyGroup = LicenseKeyGroupStoreFactory.build();
 
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsEditor.limitsList', [limitAddedItem]);
+		const expectedCurrentScreenProps = {
+			...itemPermissionAndProps,
+			itemPermission: {
+				...itemPermissionAndProps.itemPermission,
+				isDirty: true
+			}
+		};
+
+		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsEditor.limitsList', [limitAddedItem]);
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
 
 		mockRest.addHandler('post', ({data, options, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${licenseKeyGroup.id}/limits`);
@@ -216,6 +284,13 @@ describe('License Key Groups Module Tests', function () {
 			expect(options).toEqual(undefined);
 			return {results: [limitAddedItem]};
 		 });
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
+		});
 
 		return LicenseKeyGroupsActionHelper.submitLimit(store.dispatch,
 			{
@@ -235,6 +310,7 @@ describe('License Key Groups Module Tests', function () {
 		deepFreeze(limitsList);
 
 		const store = storeCreator({
+			currentScreen: {...itemPermissionAndProps},
 			licenseModel: {
 				entitlementPool: {
 					entitlementPoolEditor: {
@@ -246,7 +322,17 @@ describe('License Key Groups Module Tests', function () {
 		deepFreeze(store.getState());
 
 		const licenseKeyGroup = LicenseKeyGroupStoreFactory.build();
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsEditor.limitsList', []);
+
+		const expectedCurrentScreenProps = {
+			...itemPermissionAndProps,
+			itemPermission: {
+				...itemPermissionAndProps.itemPermission,
+				isDirty: true
+			}
+		};
+
+		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsEditor.limitsList', []);
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
 
 		mockRest.addHandler('destroy', ({data, options, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${licenseKeyGroup.id}/limits/${limitsList[0].id}`);
@@ -266,6 +352,13 @@ describe('License Key Groups Module Tests', function () {
 			return {results: []};
 		 });
 
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
+		});
+
 		return LicenseKeyGroupsActionHelper.deleteLimit(store.dispatch, {
 			licenseModelId: LICENSE_MODEL_ID,
 			version,
@@ -282,6 +375,7 @@ describe('License Key Groups Module Tests', function () {
 		deepFreeze(limitsList);
 		const licenseKeyGroup = LicenseKeyGroupStoreFactory.build();
 		const store = storeCreator({
+			currentScreen: {...itemPermissionAndProps},
 			licenseModel: {
 				licenseKeyGroup: {
 					licenseKeyGroupsEditor: {
@@ -304,7 +398,16 @@ describe('License Key Groups Module Tests', function () {
 		updatedLimit.unit = {choice: updatedLimit.unit, other: ''};
 		deepFreeze(updatedLimit);
 
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsEditor.limitsList', [updatedLimitForPut]);
+		const expectedCurrentScreenProps = {
+			...itemPermissionAndProps,
+			itemPermission: {
+				...itemPermissionAndProps.itemPermission,
+				isDirty: true
+			}
+		};
+
+		let expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsEditor.limitsList', [updatedLimitForPut]);
+		expectedStore = cloneAndSet(expectedStore, 'currentScreen.itemPermission', expectedCurrentScreenProps.itemPermission);
 
 
 		mockRest.addHandler('put', ({data, options, baseUrl}) => {
@@ -320,6 +423,13 @@ describe('License Key Groups Module Tests', function () {
 			expect(options).toEqual(undefined);
 			return {results: [updatedLimitForPut]};
 		 });
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {...returnedVersionFields, state: {synchronizationState: SyncStates.UP_TO_DATE, dirty: true}};
+		});
 
 		return LicenseKeyGroupsActionHelper.submitLimit(store.dispatch,
 			{

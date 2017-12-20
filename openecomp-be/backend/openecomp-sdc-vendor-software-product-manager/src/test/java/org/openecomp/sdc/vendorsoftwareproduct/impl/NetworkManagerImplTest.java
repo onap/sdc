@@ -53,10 +53,8 @@ public class NetworkManagerImplTest {
 
   private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
-  private static final String USER1 = "networksTestUser1";
-  private static final String USER2 = "networksTestUser2";
   private static final String VSP_ID = "vsp";
-  private static final Version VERSION = new Version(0, 1);
+  private static final Version VERSION = new Version("version_id");
   private static final String NETWORK1_ID = "network1";
   private static final String NETWORK2_ID = "network2";
 
@@ -85,7 +83,7 @@ public class NetworkManagerImplTest {
   @Test
   public void testListWhenNone() {
     Collection<NetworkEntity> networks =
-        networkManager.listNetworks(VSP_ID, null, USER1);
+        networkManager.listNetworks(VSP_ID, null);
     Assert.assertEquals(networks.size(), 0);
   }
 
@@ -96,7 +94,7 @@ public class NetworkManagerImplTest {
         createNetwork(VSP_ID, VERSION, NETWORK2_ID)))
         .when(networkDaoMock).list(anyObject());
 
-    Collection<NetworkEntity> actual = networkManager.listNetworks(VSP_ID, VERSION, USER1);
+    Collection<NetworkEntity> actual = networkManager.listNetworks(VSP_ID, VERSION);
     Assert.assertEquals(actual.size(), 2);
   }
 
@@ -113,7 +111,7 @@ public class NetworkManagerImplTest {
         expected.setNetworkCompositionData(networkData);
 
 
-        NetworkEntity created = networkManager.createNetwork(expected, USER1);
+        NetworkEntity created = networkManager.createNetwork(expected);
         Assert.assertNotNull(created);
         expected.setId(created.getId());
         expected.setVersion(VERSION01);
@@ -131,12 +129,12 @@ public class NetworkManagerImplTest {
         networkData.setName("network1 name");
         networkData.setDhcp(true);
         network.setNetworkCompositionData(networkData);
-        testCreate_negative(network, USER1, UniqueValueUtil.UNIQUE_VALUE_VIOLATION);
+        testCreate_negative(network, UniqueValueUtil.UNIQUE_VALUE_VIOLATION);
     }*/
 
   @Test
   public void testCreateOnUploadVsp_negative() {
-    testCreate_negative(new NetworkEntity(VSP_ID, VERSION, null), USER1,
+    testCreate_negative(new NetworkEntity(VSP_ID, VERSION, null),
         VendorSoftwareProductErrorCodes.VSP_COMPOSITION_EDIT_NOT_ALLOWED);
   }
 
@@ -148,7 +146,7 @@ public class NetworkManagerImplTest {
 
   @Test
   public void testUpdateNonExistingNetworkId_negative() {
-    testUpdate_negative(VSP_ID, VERSION, NETWORK1_ID, USER1,
+    testUpdate_negative(VSP_ID, VERSION, NETWORK1_ID,
         VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
   }
 
@@ -171,7 +169,7 @@ public class NetworkManagerImplTest {
     networkEntity.setNetworkCompositionData(networkData);
 
     CompositionEntityValidationData validationData =
-        networkManager.updateNetwork(networkEntity, USER1);
+        networkManager.updateNetwork(networkEntity);
     Assert.assertNotNull(validationData);
     Assert.assertEquals(validationData.getErrors().size(), 2);
 
@@ -180,7 +178,7 @@ public class NetworkManagerImplTest {
 
   @Test
   public void testGetNonExistingNetworkId_negative() {
-    testGet_negative(VSP_ID, VERSION, NETWORK1_ID, USER1,
+    testGet_negative(VSP_ID, VERSION, NETWORK1_ID,
         VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
   }
 
@@ -192,7 +190,7 @@ public class NetworkManagerImplTest {
     doReturn("schema string").when(networkManager).getCompositionSchema(anyObject());
 
     CompositionEntityResponse<Network> response =
-        networkManager.getNetwork(VSP_ID, VERSION, NETWORK1_ID, USER1);
+        networkManager.getNetwork(VSP_ID, VERSION, NETWORK1_ID);
     Assert.assertEquals(response.getId(), network.getId());
     Assert.assertEquals(response.getData(), network.getNetworkCompositionData());
     Assert.assertNotNull(response.getSchema());
@@ -206,13 +204,13 @@ public class NetworkManagerImplTest {
 
     @Test(dependsOnMethods = "testList")
     public void testDeleteNonExistingNetworkId_negative() {
-        testDelete_negative(VSP_ID, "non existing network id", USER1, VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
+        testDelete_negative(VSP_ID, "non existing network id", VersioningErrorCodes.VERSIONABLE_SUB_ENTITY_NOT_FOUND);
     }*/
 
 /*
            @Test(dependsOnMethods = "testList")
            public void testDelete() {
-               networkManager.deleteNetwork(VSP_ID, NETWORK1_ID, USER1);
+               networkManager.deleteNetwork(VSP_ID, NETWORK1_ID);
                NetworkEntity actual = networkDaoMock.getNetwork(VSP_ID, VERSION01, NETWORK1_ID);
                Assert.assertNull(actual);
            }
@@ -224,70 +222,69 @@ public class NetworkManagerImplTest {
                NetworkEntity network3 = new NetworkEntity(VSP_ID, null, null);
                network3.setName("network3 name");
                network3.setDescription("network3 desc");
-               networkManager.createNetwork(network3, USER1);
+               networkManager.createNetwork(network3);
 
-               networkManager.deleteNetworks(VSP_ID, USER1);
+               networkManager.deleteNetworks(VSP_ID);
 
-               Collection<NetworkEntity> actual = networkManager.listNetworks(VSP_ID, null, USER1);
+               Collection<NetworkEntity> actual = networkManager.listNetworks(VSP_ID, null);
                Assert.assertEquals(actual.size(), 0);
            }*/
 
   @Test(dependsOnMethods = "testList")
   public void testDeleteOnUploadVsp_negative() {
-    testDelete_negative(VSP_ID, VERSION, NETWORK1_ID, USER1,
+    testDelete_negative(VSP_ID, VERSION, NETWORK1_ID,
         VendorSoftwareProductErrorCodes.VSP_COMPOSITION_EDIT_NOT_ALLOWED);
   }
 
-  private void testCreate_negative(NetworkEntity network, String user, String expectedErrorCode) {
+  private void testCreate_negative(NetworkEntity network, String expectedErrorCode) {
     try {
-      networkManager.createNetwork(network, user);
+      networkManager.createNetwork(network);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("",exception);
+      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
 
-  private void testGet_negative(String vspId, Version version, String networkId, String user,
+  private void testGet_negative(String vspId, Version version, String networkId,
                                 String expectedErrorCode) {
     try {
-      networkManager.getNetwork(vspId, version, networkId, user);
+      networkManager.getNetwork(vspId, version, networkId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("",exception);
+      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
 
-  private void testUpdate_negative(String vspId, Version version, String networkId, String user,
+  private void testUpdate_negative(String vspId, Version version, String networkId,
                                    String expectedErrorCode) {
     try {
-      networkManager.updateNetwork(new NetworkEntity(vspId, version, networkId), user);
+      networkManager.updateNetwork(new NetworkEntity(vspId, version, networkId));
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("",exception);
+      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
 
-  private void testList_negative(String vspId, Version version, String user,
-                                 String expectedErrorCode) {
+  private void testList_negative(String vspId, Version version, String expectedErrorCode) {
     try {
-      networkManager.listNetworks(vspId, version, user);
+      networkManager.listNetworks(vspId, version);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("",exception);
+      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }
 
-  private void testDelete_negative(String vspId, Version version, String networkId, String user,
+  private void testDelete_negative(String vspId, Version version, String networkId,
                                    String expectedErrorCode) {
     try {
-      networkManager.deleteNetwork(vspId, version, networkId, user);
+      networkManager.deleteNetwork(vspId, version, networkId);
       Assert.fail();
     } catch (CoreException exception) {
-      log.debug("",exception);
+      log.debug("", exception);
       Assert.assertEquals(exception.code().id(), expectedErrorCode);
     }
   }

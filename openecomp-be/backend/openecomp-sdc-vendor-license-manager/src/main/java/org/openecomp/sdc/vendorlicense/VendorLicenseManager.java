@@ -28,8 +28,6 @@ import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementModel;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LimitEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
-import org.openecomp.sdc.vendorlicense.errors.LimitErrorBuilder;
-import org.openecomp.sdc.vendorlicense.types.VersionedVendorLicenseModel;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.Collection;
@@ -37,88 +35,71 @@ import java.util.Set;
 
 public interface VendorLicenseManager {
 
-  void checkout(String vendorLicenseModelId, String user);
+  void validate(String vendorLicenseModelId, Version version);
 
-  void undoCheckout(String vendorLicenseModelId, String user);
+  VendorLicenseModelEntity createVendorLicenseModel(VendorLicenseModelEntity licenseModel);
 
-  void checkin(String vendorLicenseModelId, String user);
+  void updateVendorLicenseModel(VendorLicenseModelEntity licenseModel);
 
-  void submit(String vendorLicenseModelId, String user);
+  VendorLicenseModelEntity getVendorLicenseModel(String vlmId, Version version);
 
-  Collection<VersionedVendorLicenseModel> listVendorLicenseModels(String versionFilter,
-                                                                  String user);
-
-  VendorLicenseModelEntity createVendorLicenseModel(VendorLicenseModelEntity licenseModel,
-                                                    String user);
-
-  void updateVendorLicenseModel(VendorLicenseModelEntity licenseModel, String user);
-
-  VersionedVendorLicenseModel getVendorLicenseModel(String vlmId, Version version, String user);
-
-  void deleteVendorLicenseModel(String vlmId, String user);
+  void deleteVendorLicenseModel(String vlmId, Version version);
 
 
-  Collection<LicenseAgreementEntity> listLicenseAgreements(String vlmId, Version version,
-                                                           String user);
+  Collection<LicenseAgreementEntity> listLicenseAgreements(String vlmId, Version version);
 
-  LicenseAgreementEntity createLicenseAgreement(LicenseAgreementEntity licenseAgreement,
-                                                String user);
+  LicenseAgreementEntity createLicenseAgreement(LicenseAgreementEntity licenseAgreement);
 
   void updateLicenseAgreement(LicenseAgreementEntity licenseAgreement,
-                              Set<String> addedFeatureGroupIds, Set<String> removedFeatureGroupIds,
-                              String user);
+                              Set<String> addedFeatureGroupIds, Set<String> removedFeatureGroupIds);
 
   LicenseAgreementModel getLicenseAgreementModel(String vlmId, Version version,
-                                                 String licenseAgreementId, String user);
+                                                 String licenseAgreementId);
 
-  void deleteLicenseAgreement(String vlmId, Version version, String licenseAgreementId, String user);
+  void deleteLicenseAgreement(String vlmId, Version version, String licenseAgreementId);
 
 
-  Collection<FeatureGroupEntity> listFeatureGroups(String vlmId, Version version, String user);
+  Collection<FeatureGroupEntity> listFeatureGroups(String vlmId, Version version);
 
-  FeatureGroupEntity createFeatureGroup(FeatureGroupEntity fg, String user);
+  FeatureGroupEntity createFeatureGroup(FeatureGroupEntity fg);
 
   void updateFeatureGroup(FeatureGroupEntity featureGroup,
                           Set<String> addedLicenseKeyGroups, Set<String> removedLicenseKeyGroups,
-                          Set<String> addedEntitlementPools, Set<String> removedEntitlementPools,
-                          String user);
+                          Set<String> addedEntitlementPools, Set<String> removedEntitlementPools);
 
-  FeatureGroupModel getFeatureGroupModel(FeatureGroupEntity featureGroup, String user);
+  FeatureGroupModel getFeatureGroupModel(FeatureGroupEntity featureGroup);
 
-  void deleteFeatureGroup(FeatureGroupEntity featureGroup, String user);
-
-
-  Collection<EntitlementPoolEntity> listEntitlementPools(String vlmId, Version version,
-                                                         String user);
-
-  EntitlementPoolEntity createEntitlementPool(EntitlementPoolEntity entitlementPool, String user);
-
-  void updateEntitlementPool(EntitlementPoolEntity entitlementPool, String user);
-
-  EntitlementPoolEntity getEntitlementPool(EntitlementPoolEntity entitlementPool, String user);
-
-  void deleteEntitlementPool(EntitlementPoolEntity entitlementPool, String user);
+  void deleteFeatureGroup(FeatureGroupEntity featureGroup);
 
 
-  Collection<LicenseKeyGroupEntity> listLicenseKeyGroups(String vlmId, Version version,
-                                                         String user);
+  Collection<EntitlementPoolEntity> listEntitlementPools(String vlmId, Version version);
 
-  LicenseKeyGroupEntity createLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup, String user);
+  EntitlementPoolEntity createEntitlementPool(EntitlementPoolEntity entitlementPool);
 
-  void updateLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup, String user);
+  void updateEntitlementPool(EntitlementPoolEntity entitlementPool);
 
-  LicenseKeyGroupEntity getLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup, String user);
+  EntitlementPoolEntity getEntitlementPool(EntitlementPoolEntity entitlementPool);
 
-  void deleteLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup, String user);
+  void deleteEntitlementPool(EntitlementPoolEntity entitlementPool);
 
-  LimitEntity createLimit(LimitEntity limitEntity, String user);
 
-  Collection<LimitEntity> listLimits(String vlmId, Version version, String epLkgId, String user);
+  Collection<LicenseKeyGroupEntity> listLicenseKeyGroups(String vlmId, Version version);
 
-  void deleteLimit(LimitEntity limitEntity, String user);
+  LicenseKeyGroupEntity createLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup);
 
-  void updateLimit(LimitEntity limitEntity, String user);
+  void updateLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup);
 
-  LimitEntity getLimit(LimitEntity entitlementPool, String user);
+  LicenseKeyGroupEntity getLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup);
 
+  void deleteLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup);
+
+  LimitEntity createLimit(LimitEntity limitEntity);
+
+  Collection<LimitEntity> listLimits(String vlmId, Version version, String epLkgId);
+
+  void deleteLimit(LimitEntity limitEntity);
+
+  void updateLimit(LimitEntity limitEntity);
+
+  LimitEntity getLimit(LimitEntity entitlementPool);
 }

@@ -6,6 +6,7 @@ import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
@@ -176,7 +177,7 @@ public class ValidationUtil {
     return false;
   }
 
-  public static ManifestContent checkValidationPreCondition(GlobalValidationContext globalContext) {
+  public static ManifestContent validateManifest(GlobalValidationContext globalContext) {
     Optional<InputStream> manifest = globalContext.getFileContent(SdcCommon.MANIFEST_NAME);
     if (!manifest.isPresent()) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
@@ -192,7 +193,7 @@ public class ValidationUtil {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
           LoggerTragetServiceName.VALIDATE_MANIFEST_CONTENT, ErrorLevel.ERROR.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_MANIFEST);
-      throw new RuntimeException("Can't load manifest file for Heat Validator");
+      throw new SdcRuntimeException("Can't load manifest file for Heat Validator");
     }
 
     return manifestContent;

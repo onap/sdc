@@ -46,11 +46,16 @@ import static org.openecomp.sdc.generator.SampleJUnitTest.additionalParams;
 @SuppressWarnings("Duplicates")
 public class ArtifactGenerationServiceTest {
 
+    public static final String RESOURCE_MAPPING_NOT_FOUND = "Resource mapping not found for ";
+    public static final String INV_UID = "-INV_UID";
+    public static final String VF_MODULE_NAMESPACE = "org.openecomp.groups.VfModule";
+    public static final String VF_MODULE_DESCRIPTION = "vf_module_description";
+    public static final String CATEGORY = "category";
     static Map<String, String> resourcesVersion = new HashMap<>();
     public static Properties properties = new Properties();
 
     @SuppressWarnings("Since15")
-    public static void validateName(List<Artifact> artifactList) {
+    public static void validateName(List<Artifact> artifactList) throws JAXBException {
         for(Artifact artifact : artifactList){
             String xml = new String(Base64.getDecoder().decode(artifact.getPayload()));
             Model model = getUnmarshalledArtifactModel(xml);
@@ -90,10 +95,10 @@ public class ArtifactGenerationServiceTest {
             String resourceVersion= resourcesVersion.get(toscaTemplate.getMetadata().get("UUID"));
             toscaTemplate.getMetadata().put("version", resourceVersion);
             if("VF".equals(toscaTemplate.getMetadata().get("type")) && !("Allotted Resource".equals
-                (toscaTemplate.getMetadata().get("category"))) ){
+                (toscaTemplate.getMetadata().get(CATEGORY))) ){
                 testVfTosca(outputArtifactMap, toscaTemplate);
             } else if("VF".equals(toscaTemplate.getMetadata().get("type")) && ("Allotted Resource".equals
-                (toscaTemplate.getMetadata().get("category"))) ){
+                (toscaTemplate.getMetadata().get(CATEGORY))) ){
                 testAllottedResourceTosca(outputArtifactMap, toscaTemplate);
             } else if("VL".equals(toscaTemplate.getMetadata().get("type"))){
                 testL3NetworkResourceTosca(outputArtifactMap, toscaTemplate);
@@ -102,224 +107,212 @@ public class ArtifactGenerationServiceTest {
     }
 
     public static void testVfTosca(Map<String, Model> outputArtifactMap , ToscaTemplate resourceTosca) {
-        try {
-            //ToscaTemplate resourceTosca = getResourceTosca(toscas);
-            //resourceTosca.getTopology_template().getGroups().
-            if (resourceTosca != null) {
-                Resource resource = new Resource();
-                resource.populateModelIdentificationInformation(resourceTosca.getMetadata());
-                String resourceNameVersionId = resource.getModelNameVersionId();
-                Model resourceAAIModel =
-                    getAAIModelByNameVersionId(resourceNameVersionId, outputArtifactMap);
-                if (resourceAAIModel != null) {
-                    validateResourceModelMetadata(resource, resourceAAIModel);
-                    //Validate Resource instance base widget
 
-                    ModelVer modelVersion = resourceAAIModel.getModelVers().getModelVer().get(0);
+        if (resourceTosca != null) {
+            Resource resource = new Resource();
+            resource.populateModelIdentificationInformation(resourceTosca.getMetadata());
+            String resourceNameVersionId = resource.getModelNameVersionId();
+            Model resourceAAIModel =
+                getAAIModelByNameVersionId(resourceNameVersionId, outputArtifactMap);
+            if (resourceAAIModel != null) {
+                validateResourceModelMetadata(resource, resourceAAIModel);
+                //Validate Resource instance base widget
 
-                    List<ModelElement> matchedVFBaseWidgetElements =
-                        getModelElementbyRelationshipValue(modelVersion.getModelElements(),
-                            Widget.getWidget(Widget.Type.VF).getId());
-                    validateMatchedModelElementsInService(matchedVFBaseWidgetElements,
-                        Widget.getWidget(Widget.Type.VF).getName());
+                ModelVer modelVersion = resourceAAIModel.getModelVers().getModelVer().get(0);
 
-                    validateWidgetIds(matchedVFBaseWidgetElements, Widget.getWidget(Widget.Type.VF).getName(),
-                        Widget.getWidget(Widget.Type.VF).getWidgetId());
+                List<ModelElement> matchedVFBaseWidgetElements =
+                    getModelElementbyRelationshipValue(modelVersion.getModelElements(),
+                        Widget.getWidget(Widget.Type.VF).getId());
+                validateMatchedModelElementsInService(matchedVFBaseWidgetElements,
+                    Widget.getWidget(Widget.Type.VF).getName());
 
-                    ModelElements baseResourceWidgetModelElements =
-                        matchedVFBaseWidgetElements.get(0).getModelElements();
-                    if (resourceTosca.getTopology_template() != null) {
-                        Map<String, String> groupIdTypeStore = getGroupsTypeStore(resourceTosca);
+                validateWidgetIds(matchedVFBaseWidgetElements, Widget.getWidget(Widget.Type.VF).getName(),
+                    Widget.getWidget(Widget.Type.VF).getWidgetId());
 
-                        if (baseResourceWidgetModelElements.getModelElement().size() !=
-                            groupIdTypeStore.size()) {
-                            org.testng.Assert.fail("Missing VFModule in VF model.xml");
+                ModelElements baseResourceWidgetModelElements =
+                    matchedVFBaseWidgetElements.get(0).getModelElements();
+                if (resourceTosca.getTopology_template() != null) {
+                    Map<String, String> groupIdTypeStore = getGroupsTypeStore(resourceTosca);
+
+                    if (baseResourceWidgetModelElements.getModelElement().size() !=
+                        groupIdTypeStore.size()) {
+                        org.testng.Assert.fail("Missing VFModule in VF model.xml");
+                    }
+
+                    for (String key : groupIdTypeStore.keySet()) {
+
+                        List<ModelElement> matchedResourceElements =
+                            getModelElementbyRelationshipValue(baseResourceWidgetModelElements, key);
+                        validateMatchedModelElementsInService(matchedResourceElements,
+                            Widget.getWidget(Widget.Type.VFMODULE).getName());
+                        Model resourceAAIVFModel = getAAIModelByNameVersionId(key, outputArtifactMap);
+                        Map<String, String> vfModuleModelMetadata =
+                            getVFModuleMetadataTosca(resourceTosca, key);
+                        Map<String, Object> vfModuleMembers = getVFModuleMembersTosca(resourceTosca, key);
+
+                        validateVFModelMetadata(vfModuleModelMetadata, resourceAAIVFModel);
+
+
+                        ModelVer modelVfVersion = resourceAAIVFModel.getModelVers().getModelVer().get(0);
+
+                        List<ModelElement> matchedVFModuleBaseWidgetElements =
+                            getModelElementbyRelationshipValue(modelVfVersion.getModelElements(),
+                                Widget.getWidget(Widget.Type.VFMODULE).getId());
+                        validateMatchedModelElementsInService(matchedVFModuleBaseWidgetElements,
+                            Widget.getWidget(Widget.Type.VFMODULE).getName());
+                        validateWidgetIds(matchedVFModuleBaseWidgetElements, Widget.getWidget(Widget.Type.VFMODULE)
+                            .getName(), Widget.getWidget(Widget.Type.VFMODULE).getWidgetId());
+
+                        ModelElements baseResourceVFModuleWidgetModelElements =
+                            matchedVFModuleBaseWidgetElements.get(0).getModelElements();
+                        if (vfModuleMembers.containsKey("l3-network")) {
+                            //Validate l3
+                            List<ModelElement> matchedL3NetworkElements =
+                                getModelElementbyRelationshipValue(baseResourceVFModuleWidgetModelElements,
+                                    Widget.getWidget(Widget.Type.L3_NET).getId());
+                            validateMatchedModelElementsInService(matchedL3NetworkElements,
+                                Widget.getWidget(Widget.Type.L3_NET).getName());
+                            validateWidgetIds(matchedL3NetworkElements, Widget.getWidget(Widget.Type.L3_NET)
+                                .getName(), Widget.getWidget(Widget.Type.L3_NET).getWidgetId());
                         }
+                        if (vfModuleMembers.containsKey("vserver")) {
+                            //Validate vserver
+                            List<ModelElement> matchedVserverElements =
+                                getModelElementbyRelationshipValue(baseResourceVFModuleWidgetModelElements,
+                                    Widget.getWidget(Widget.Type.VSERVER).getId());
+                            validateMatchedModelElementsInService(matchedVserverElements,
+                                Widget.getWidget(Widget.Type.VSERVER).getName());
+                            ModelElements vserverWidgetModelElements =
+                                matchedVserverElements.get(0).getModelElements();
 
-                        for (String key : groupIdTypeStore.keySet()) {
-
-                            List<ModelElement> matchedResourceElements =
-                                getModelElementbyRelationshipValue(baseResourceWidgetModelElements, key);
-                            validateMatchedModelElementsInService(matchedResourceElements,
-                                Widget.getWidget(Widget.Type.VFMODULE).getName());
-                            Model resourceAAIVFModel = getAAIModelByNameVersionId(key, outputArtifactMap);
-                            Map<String, String> vfModuleModelMetadata =
-                                getVFModuleMetadataTosca(resourceTosca, key);
-                            Map<String, Object> vfModuleMembers = getVFModuleMembersTosca(resourceTosca, key);
-
-                            validateVFModelMetadata(vfModuleModelMetadata, resourceAAIVFModel);
+                            validateWidgetIds(matchedVserverElements, Widget.getWidget(Widget.Type.VSERVER)
+                                .getName(), Widget.getWidget(Widget.Type.VSERVER).getWidgetId());
 
 
-                            ModelVer modelVfVersion = resourceAAIVFModel.getModelVers().getModelVer().get(0);
+                            //Validate vserver->vfc
+                            List<ModelElement> matchedVfcElements =
+                                getModelElementbyRelationshipValue(vserverWidgetModelElements,
+                                    Widget.getWidget(Widget.Type.VFC).getId());
+                            validateMatchedModelElementsInService(matchedVfcElements,
+                                Widget.getWidget(Widget.Type.VFC).getName());
+                            validateWidgetIds(matchedVfcElements, Widget.getWidget(Widget.Type.VFC).getName(),
+                                Widget.getWidget(Widget.Type.VFC).getWidgetId());
 
-                            List<ModelElement> matchedVFModuleBaseWidgetElements =
-                                getModelElementbyRelationshipValue(modelVfVersion.getModelElements(),
-                                    Widget.getWidget(Widget.Type.VFMODULE).getId());
-                            validateMatchedModelElementsInService(matchedVFModuleBaseWidgetElements,
-                                Widget.getWidget(Widget.Type.VFMODULE).getName());
-                            validateWidgetIds(matchedVFModuleBaseWidgetElements, Widget.getWidget(Widget.Type.VFMODULE)
-                                .getName(), Widget.getWidget(Widget.Type.VFMODULE).getWidgetId());
+                            //Validate vserver->Image
+                            List<ModelElement> matchedImageElements =
+                                getModelElementbyRelationshipValue(vserverWidgetModelElements,
+                                    Widget.getWidget(Widget.Type.IMAGE).getId());
+                            validateMatchedModelElementsInService(matchedImageElements,
+                                Widget.getWidget(Widget.Type.IMAGE).getName());
+                            validateWidgetIds(matchedImageElements, Widget.getWidget(Widget.Type.IMAGE)
+                                .getName(), Widget.getWidget(Widget.Type.IMAGE).getWidgetId());
 
-                            ModelElements baseResourceVFModuleWidgetModelElements =
-                                matchedVFModuleBaseWidgetElements.get(0).getModelElements();
-                            if (vfModuleMembers.containsKey("l3-network")) {
-                                //Validate l3
-                                List<ModelElement> matchedL3NetworkElements =
-                                    getModelElementbyRelationshipValue(baseResourceVFModuleWidgetModelElements,
-                                        Widget.getWidget(Widget.Type.L3_NET).getId());
-                                validateMatchedModelElementsInService(matchedL3NetworkElements,
-                                    Widget.getWidget(Widget.Type.L3_NET).getName());
-                                validateWidgetIds(matchedL3NetworkElements, Widget.getWidget(Widget.Type.L3_NET)
-                                    .getName(), Widget.getWidget(Widget.Type.L3_NET).getWidgetId());
+
+                            //Validate vserver->Flavor
+                            List<ModelElement> matchedFlavorElements =
+                                getModelElementbyRelationshipValue(vserverWidgetModelElements,
+                                    Widget.getWidget(Widget.Type.FLAVOR).getId());
+                            validateMatchedModelElementsInService(matchedFlavorElements,
+                                Widget.getWidget(Widget.Type.FLAVOR).getName());
+                            validateWidgetIds(matchedFlavorElements, Widget.getWidget(Widget.Type.FLAVOR).getName(),
+                                Widget.getWidget(Widget.Type.FLAVOR).getWidgetId());
+
+                            //Validate vserver->Tenant
+                            List<ModelElement> matchedTenantElements =
+                                getModelElementbyRelationshipValue(vserverWidgetModelElements,
+                                    Widget.getWidget(Widget.Type.TENANT).getId());
+                            validateMatchedModelElementsInService(matchedTenantElements,
+                                Widget.getWidget(Widget.Type.TENANT).getName());
+                            validateWidgetIds(matchedTenantElements, Widget.getWidget(Widget.Type.TENANT).getName(),
+                                Widget.getWidget(Widget.Type.TENANT).getWidgetId());
+
+                            //Validate vserver->l-interface
+                            if (vfModuleMembers.containsKey("l-interface")) {
+                                List<ModelElement> matchedLinterfaceElements =
+                                    getModelElementbyRelationshipValue(vserverWidgetModelElements,
+                                        Widget.getWidget(Widget.Type.LINT).getId());
+                                validateMatchedModelElementsInService(matchedLinterfaceElements,
+                                    Widget.getWidget(Widget.Type.LINT).getName());
+                                validateWidgetIds(matchedLinterfaceElements, Widget.getWidget(Widget.Type.LINT).getName(),
+                                    Widget.getWidget(Widget.Type.LINT).getWidgetId());
                             }
-                            if (vfModuleMembers.containsKey("vserver")) {
-                                //Validate vserver
-                                List<ModelElement> matchedVserverElements =
-                                    getModelElementbyRelationshipValue(baseResourceVFModuleWidgetModelElements,
-                                        Widget.getWidget(Widget.Type.VSERVER).getId());
-                                validateMatchedModelElementsInService(matchedVserverElements,
-                                    Widget.getWidget(Widget.Type.VSERVER).getName());
-                                ModelElements vserverWidgetModelElements =
-                                    matchedVserverElements.get(0).getModelElements();
-
-                                validateWidgetIds(matchedVserverElements, Widget.getWidget(Widget.Type.VSERVER)
-                                    .getName(), Widget.getWidget(Widget.Type.VSERVER).getWidgetId());
-
-
-                                //Validate vserver->vfc
-                                List<ModelElement> matchedVfcElements =
+                            //Validate vserver->volume
+                            if (vfModuleMembers.containsKey("volume")) {
+                                List<ModelElement> matchedVolumeElements =
                                     getModelElementbyRelationshipValue(vserverWidgetModelElements,
-                                        Widget.getWidget(Widget.Type.VFC).getId());
-                                validateMatchedModelElementsInService(matchedVfcElements,
-                                    Widget.getWidget(Widget.Type.VFC).getName());
-                                validateWidgetIds(matchedVfcElements, Widget.getWidget(Widget.Type.VFC).getName(),
-                                    Widget.getWidget(Widget.Type.VFC).getWidgetId());
-
-                                //Validate vserver->Image
-                                List<ModelElement> matchedImageElements =
-                                    getModelElementbyRelationshipValue(vserverWidgetModelElements,
-                                        Widget.getWidget(Widget.Type.IMAGE).getId());
-                                validateMatchedModelElementsInService(matchedImageElements,
-                                    Widget.getWidget(Widget.Type.IMAGE).getName());
-                                validateWidgetIds(matchedImageElements, Widget.getWidget(Widget.Type.IMAGE)
-                                    .getName(), Widget.getWidget(Widget.Type.IMAGE).getWidgetId());
-
-
-                                //Validate vserver->Flavor
-                                List<ModelElement> matchedFlavorElements =
-                                    getModelElementbyRelationshipValue(vserverWidgetModelElements,
-                                        Widget.getWidget(Widget.Type.FLAVOR).getId());
-                                validateMatchedModelElementsInService(matchedFlavorElements,
-                                    Widget.getWidget(Widget.Type.FLAVOR).getName());
-                                validateWidgetIds(matchedFlavorElements, Widget.getWidget(Widget.Type.FLAVOR).getName(),
-                                    Widget.getWidget(Widget.Type.FLAVOR).getWidgetId());
-
-                                //Validate vserver->Tenant
-                                List<ModelElement> matchedTenantElements =
-                                    getModelElementbyRelationshipValue(vserverWidgetModelElements,
-                                        Widget.getWidget(Widget.Type.TENANT).getId());
-                                validateMatchedModelElementsInService(matchedTenantElements,
-                                    Widget.getWidget(Widget.Type.TENANT).getName());
-                                validateWidgetIds(matchedTenantElements, Widget.getWidget(Widget.Type.TENANT).getName(),
-                                    Widget.getWidget(Widget.Type.TENANT).getWidgetId());
-
-                                //Validate vserver->l-interface
-                                if (vfModuleMembers.containsKey("l-interface")) {
-                                    List<ModelElement> matchedLinterfaceElements =
-                                        getModelElementbyRelationshipValue(vserverWidgetModelElements,
-                                            Widget.getWidget(Widget.Type.LINT).getId());
-                                    validateMatchedModelElementsInService(matchedLinterfaceElements,
-                                        Widget.getWidget(Widget.Type.LINT).getName());
-                                    validateWidgetIds(matchedLinterfaceElements, Widget.getWidget(Widget.Type.LINT).getName(),
-                                        Widget.getWidget(Widget.Type.LINT).getWidgetId());
-                                }
-                                //Validate vserver->volume
-                                if (vfModuleMembers.containsKey("volume")) {
-                                    List<ModelElement> matchedVolumeElements =
-                                        getModelElementbyRelationshipValue(vserverWidgetModelElements,
-                                            Widget.getWidget(Widget.Type.VOLUME).getId());
-                                    validateMatchedModelElementsInService(matchedVolumeElements,
-                                        Widget.getWidget(Widget.Type.VOLUME).getName());
-                                    validateWidgetIds(matchedVolumeElements, Widget.getWidget(Widget.Type.VOLUME).getName(),
-                                        Widget.getWidget(Widget.Type.VOLUME).getWidgetId());
-                                }
+                                        Widget.getWidget(Widget.Type.VOLUME).getId());
+                                validateMatchedModelElementsInService(matchedVolumeElements,
+                                    Widget.getWidget(Widget.Type.VOLUME).getName());
+                                validateWidgetIds(matchedVolumeElements, Widget.getWidget(Widget.Type.VOLUME).getName(),
+                                    Widget.getWidget(Widget.Type.VOLUME).getWidgetId());
                             }
                         }
                     }
-                } else {
-                    System.out.println("Resource mapping not found for " + resourceNameVersionId);
                 }
+            } else {
+                System.out.println(RESOURCE_MAPPING_NOT_FOUND + resourceNameVersionId);
             }
-
-        } catch (IllegalArgumentException e) {
-            org.testng.Assert.fail(e.getMessage());    //Can come while populating metadata
         }
-
     }
 
     public static void testAllottedResourceTosca(Map<String, Model> outputArtifactMap , ToscaTemplate
         resourceTosca) {
-        try {
-            if (resourceTosca != null) {
-                Resource resource = new Resource();
-                resource.populateModelIdentificationInformation(resourceTosca.getMetadata());
-                String resourceNameVersionId = resource.getModelNameVersionId();
-                Model resourceAAIModel =
-                    getAAIModelByNameVersionId(resourceNameVersionId, outputArtifactMap);
-                if (resourceAAIModel != null) {
-                    validateResourceModelMetadata(resource, resourceAAIModel);
-                    //Validate Resource instance base widget
 
-                    ModelVer modelVersion = resourceAAIModel.getModelVers().getModelVer().get(0);
+        if (resourceTosca != null) {
+            Resource resource = new Resource();
+            resource.populateModelIdentificationInformation(resourceTosca.getMetadata());
+            String resourceNameVersionId = resource.getModelNameVersionId();
+            Model resourceAAIModel =
+                getAAIModelByNameVersionId(resourceNameVersionId, outputArtifactMap);
+            if (resourceAAIModel != null) {
+                validateResourceModelMetadata(resource, resourceAAIModel);
+                //Validate Resource instance base widget
 
-                    List<ModelElement> matchedVFBaseWidgetElements =
-                        getModelElementbyRelationshipValue(modelVersion.getModelElements(),
-                            Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getId());
-                    validateMatchedModelElementsInService(matchedVFBaseWidgetElements,
-                        Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getName());
+                ModelVer modelVersion = resourceAAIModel.getModelVers().getModelVer().get(0);
 
-                    validateWidgetIds(matchedVFBaseWidgetElements, Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getName(),
-                        Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getWidgetId());
+                List<ModelElement> matchedVFBaseWidgetElements =
+                    getModelElementbyRelationshipValue(modelVersion.getModelElements(),
+                        Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getId());
+                validateMatchedModelElementsInService(matchedVFBaseWidgetElements,
+                    Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getName());
 
-                    validateWidgetIds(matchedVFBaseWidgetElements, Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getName(),
-                        Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getWidgetId());
+                validateWidgetIds(matchedVFBaseWidgetElements, Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getName(),
+                    Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getWidgetId());
 
-                    Map<String, Object> providingServiceDetails = getProvidingServiceDetails(resourceTosca);
+                validateWidgetIds(matchedVFBaseWidgetElements, Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getName(),
+                    Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getWidgetId());
 
-                    ModelElements containedModelElements = modelVersion.getModelElements().getModelElement().
-                        get(0).getModelElements();
+                Map<String, Object> providingServiceDetails = getProvidingServiceDetails(resourceTosca);
 
-                    org.testng.Assert.assertEquals(containedModelElements.getModelElement().get(0).getRelationshipList()
-                         .getRelationship().get(0).getRelationshipData().get(0).getRelationshipValue(),
-                            providingServiceDetails.get("providing_service_uuid"));
+                ModelElements containedModelElements = modelVersion.getModelElements().getModelElement().
+                    get(0).getModelElements();
 
-                    org.testng.Assert.assertEquals(containedModelElements.getModelElement().get(0).getRelationshipList()
-                        .getRelationship().get(0).getRelationshipData().get(1).getRelationshipValue(),
-                            providingServiceDetails.get("providing_service_invariant_uuid"));
+                org.testng.Assert.assertEquals(containedModelElements.getModelElement().get(0).getRelationshipList()
+                     .getRelationship().get(0).getRelationshipData().get(0).getRelationshipValue(),
+                        providingServiceDetails.get("providing_service_uuid"));
+
+                org.testng.Assert.assertEquals(containedModelElements.getModelElement().get(0).getRelationshipList()
+                    .getRelationship().get(0).getRelationshipData().get(1).getRelationshipValue(),
+                        providingServiceDetails.get("providing_service_invariant_uuid"));
 
 
-                    if("Allotted Resource".equals(resourceTosca.getMetadata().get("category")) &&
-                        "Tunnel XConnect".equals(resourceTosca.getMetadata().get("subcategory"))) {
+                if("Allotted Resource".equals(resourceTosca.getMetadata().get(CATEGORY)) &&
+                    "Tunnel XConnect".equals(resourceTosca.getMetadata().get("subcategory"))) {
 
-                        List<ModelElement> matchedTunnelXConnectWidgetElements =
-                            getModelElementbyRelationshipValue(containedModelElements,
-                                Widget.getWidget(Widget.Type.TUNNEL_XCONNECT).getId());
-                        validateMatchedModelElementsInService(matchedTunnelXConnectWidgetElements,
-                            Widget.getWidget(Widget.Type.TUNNEL_XCONNECT).getName());
+                    List<ModelElement> matchedTunnelXConnectWidgetElements =
+                        getModelElementbyRelationshipValue(containedModelElements,
+                            Widget.getWidget(Widget.Type.TUNNEL_XCONNECT).getId());
+                    validateMatchedModelElementsInService(matchedTunnelXConnectWidgetElements,
+                        Widget.getWidget(Widget.Type.TUNNEL_XCONNECT).getName());
 
-                        validateWidgetIds(matchedTunnelXConnectWidgetElements, Widget.getWidget(Widget.Type.TUNNEL_XCONNECT).getName(),
-                            Widget.getWidget(Widget.Type.TUNNEL_XCONNECT).getWidgetId());
-                    }
-
-                }else {
-                    System.out.println("Resource mapping not found for " + resourceNameVersionId);
+                    validateWidgetIds(matchedTunnelXConnectWidgetElements, Widget.getWidget(Widget.Type.TUNNEL_XCONNECT).getName(),
+                        Widget.getWidget(Widget.Type.TUNNEL_XCONNECT).getWidgetId());
                 }
+
+            }else {
+                System.out.println(RESOURCE_MAPPING_NOT_FOUND + resourceNameVersionId);
             }
-
-        }catch (IllegalArgumentException e) {
-            org.testng.Assert.fail(e.getMessage());    //Can come while populating metadata
         }
-
     }
 
     public static Map<String, Object> getProvidingServiceDetails(ToscaTemplate resourceTemplate) {
@@ -329,7 +322,7 @@ public class ArtifactGenerationServiceTest {
         for(String key : keys) {
             NodeTemplate node = resourceTemplate.getTopology_template().getNode_templates().get(key);
             if(node.getType().contains("org.openecomp.resource.vfc") &&
-                node.getMetadata().get("category").equals("Allotted Resource")) {
+                node.getMetadata().get(CATEGORY).equals("Allotted Resource")) {
                 nodeProperties = node.getProperties();
             }
         }
@@ -339,114 +332,102 @@ public class ArtifactGenerationServiceTest {
 
     public static void testL3NetworkResourceTosca(Map<String, Model> outputArtifactMap , ToscaTemplate
         resourceTosca) {
-        try {
-            if (resourceTosca != null) {
-                Resource resource = new Resource();
-                resource.populateModelIdentificationInformation(resourceTosca.getMetadata());
-                String resourceNameVersionId = resource.getModelNameVersionId();
-                Model resourceAAIModel =
-                    getAAIModelByNameVersionId(resourceNameVersionId, outputArtifactMap);
-                if (resourceAAIModel != null) {
-                    validateResourceModelMetadata(resource, resourceAAIModel);
-                    //Validate Resource instance base widget
 
-                    ModelVer modelVersion = resourceAAIModel.getModelVers().getModelVer().get(0);
+        if (resourceTosca != null) {
+            Resource resource = new Resource();
+            resource.populateModelIdentificationInformation(resourceTosca.getMetadata());
+            String resourceNameVersionId = resource.getModelNameVersionId();
+            Model resourceAAIModel =
+                getAAIModelByNameVersionId(resourceNameVersionId, outputArtifactMap);
+            if (resourceAAIModel != null) {
+                validateResourceModelMetadata(resource, resourceAAIModel);
+                //Validate Resource instance base widget
 
-                    List<ModelElement> matchedVFBaseWidgetElements =
-                        getModelElementbyRelationshipValue(modelVersion.getModelElements(),
-                            Widget.getWidget(Widget.Type.L3_NET).getId());
-                    validateMatchedModelElementsInService(matchedVFBaseWidgetElements,
-                        Widget.getWidget(Widget.Type.L3_NET).getName());
+                ModelVer modelVersion = resourceAAIModel.getModelVers().getModelVer().get(0);
 
-                    validateWidgetIds(matchedVFBaseWidgetElements, Widget.getWidget(Widget.Type.L3_NET).getName(),
-                        Widget.getWidget(Widget.Type.L3_NET).getWidgetId());
+                List<ModelElement> matchedVFBaseWidgetElements =
+                    getModelElementbyRelationshipValue(modelVersion.getModelElements(),
+                        Widget.getWidget(Widget.Type.L3_NET).getId());
+                validateMatchedModelElementsInService(matchedVFBaseWidgetElements,
+                    Widget.getWidget(Widget.Type.L3_NET).getName());
 
-                }else {
-                    System.out.println("Resource mapping not found for " + resourceNameVersionId);
-                }
+                validateWidgetIds(matchedVFBaseWidgetElements, Widget.getWidget(Widget.Type.L3_NET).getName(),
+                    Widget.getWidget(Widget.Type.L3_NET).getWidgetId());
+
+            }else {
+                System.out.println(RESOURCE_MAPPING_NOT_FOUND + resourceNameVersionId);
             }
-
-        }catch (IllegalArgumentException e) {
-            org.testng.Assert.fail(e.getMessage());    //Can come while populating metadata
         }
-
     }
 
     public static void testServiceTosca(Map<String, Model> outputArtifactMap,List<ToscaTemplate>
         toscas) {
-        try {
-            ToscaTemplate serviceTosca = getServiceTosca(toscas);
-            if (serviceTosca == null) {
-                org.testng.Assert.fail("Service Tosca not found");
-            }
-            serviceTosca.getMetadata().put("version", additionalParams.get(AdditionalParams
-                .ServiceVersion.getName()));
-            Service service = new Service();
-            service.populateModelIdentificationInformation(serviceTosca.getMetadata());
-            String serviceNameVersionId = service.getModelNameVersionId();
-            Model serviceAAIModel = getAAIModelByNameVersionId(serviceNameVersionId, outputArtifactMap);
-            validateServiceModelMetadata(service, serviceAAIModel);
-            //Validate Service instance base widget
-            ModelVer modelVersion =  serviceAAIModel.getModelVers().getModelVer().get(0);
 
-            List<ModelElement> matchedServiceBaseWidgetElements =
-                getModelElementbyRelationshipValue( modelVersion.getModelElements(),
-                    Widget.getWidget(Widget.Type.SERVICE).getId());
-            validateMatchedModelElementsInService(matchedServiceBaseWidgetElements,
-                Widget.getWidget(Widget.Type.SERVICE).getName());
+        ToscaTemplate serviceTosca = getServiceTosca(toscas);
+        if (serviceTosca == null) {
+            org.testng.Assert.fail("Service Tosca not found");
+        }
+        serviceTosca.getMetadata().put("version", additionalParams.get(AdditionalParams
+            .ServiceVersion.getName()));
+        Service service = new Service();
+        service.populateModelIdentificationInformation(serviceTosca.getMetadata());
+        String serviceNameVersionId = service.getModelNameVersionId();
+        Model serviceAAIModel = getAAIModelByNameVersionId(serviceNameVersionId, outputArtifactMap);
+        validateServiceModelMetadata(service, serviceAAIModel);
+        //Validate Service instance base widget
+        ModelVer modelVersion =  serviceAAIModel.getModelVers().getModelVer().get(0);
 
-            validateWidgetIds(matchedServiceBaseWidgetElements, Widget.getWidget(Widget.Type.SERVICE).getName(),
-                Widget.getWidget(Widget.Type.SERVICE).getWidgetId());
+        List<ModelElement> matchedServiceBaseWidgetElements =
+            getModelElementbyRelationshipValue( modelVersion.getModelElements(),
+                Widget.getWidget(Widget.Type.SERVICE).getId());
+        validateMatchedModelElementsInService(matchedServiceBaseWidgetElements,
+            Widget.getWidget(Widget.Type.SERVICE).getName());
 
-            ModelElements baseServiceWidgetModelElements =
-                matchedServiceBaseWidgetElements.get(0).getModelElements();
+        validateWidgetIds(matchedServiceBaseWidgetElements, Widget.getWidget(Widget.Type.SERVICE).getName(),
+            Widget.getWidget(Widget.Type.SERVICE).getWidgetId());
+
+        ModelElements baseServiceWidgetModelElements =
+            matchedServiceBaseWidgetElements.get(0).getModelElements();
 
 
-            Map<String, String> nodeTemplateIdTypeStore = getNodeTemplateTypeStore(serviceTosca);
-            if (nodeTemplateIdTypeStore != null) {
-                for (String key : nodeTemplateIdTypeStore.keySet()) {
-                    if (nodeTemplateIdTypeStore.get(key).contains("org.openecomp.resource.vf")) {
-                        List<ModelElement> matchedResourceElements =
-                            getModelElementbyRelationshipValue(baseServiceWidgetModelElements, key);
-                        if (nodeTemplateIdTypeStore.get(key).contains("org.openecomp.resource.vf.allottedResource")){
-                            validateMatchedModelElementsInService(matchedResourceElements,
-                                Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getName());
-                        }else {
-                            validateMatchedModelElementsInService(matchedResourceElements,
-                                Widget.getWidget(Widget.Type.VF).getName());
-                        }
-
-                        //Validate uuid and invariantuuid are populated in model-ver.model-version-id and model.model-invariant-id
-                        org.testng.Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList()
-                            .getRelationship().get(0)
-                            .getRelationshipData().get(0).getRelationshipValue(),key);
-
-                        org.testng.Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList().getRelationship().get(0)
-                            .getRelationshipData().get(1).getRelationshipValue(), nodeTemplateIdTypeStore
-                            .get(key+"-INV_UID"));
-                    } else if(nodeTemplateIdTypeStore.get(key).contains("org.openecomp.resource.vl")){
-                        //validate l3-network in service tosca
-                        List<ModelElement> matchedResourceElements =
-                            getModelElementbyRelationshipValue(baseServiceWidgetModelElements, key);
+        Map<String, String> nodeTemplateIdTypeStore = getNodeTemplateTypeStore(serviceTosca);
+        if (nodeTemplateIdTypeStore != null) {
+            for (Map.Entry<String, String> entry : nodeTemplateIdTypeStore.entrySet()) {
+                if (entry.getValue().contains("org.openecomp.resource.vf")) {
+                    List<ModelElement> matchedResourceElements =
+                        getModelElementbyRelationshipValue(baseServiceWidgetModelElements, entry.getKey());
+                    if (entry.getValue().contains("org.openecomp.resource.vf.allottedResource")){
                         validateMatchedModelElementsInService(matchedResourceElements,
-                            Widget.getWidget(Widget.Type.L3_NET).getName());
-                        //Validate uuid and invariantuuid are populated in model-ver.model-version-id and model.model-invariant-id
-                        org.testng.Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList()
-                            .getRelationship().get(0)
-                            .getRelationshipData().get(0).getRelationshipValue(),key);
-
-                        org.testng.Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList().getRelationship().get(0)
-                            .getRelationshipData().get(1).getRelationshipValue(), nodeTemplateIdTypeStore
-                            .get(key+"-INV_UID"));
+                            Widget.getWidget(Widget.Type.ALLOTTED_RESOURCE).getName());
+                    }else {
+                        validateMatchedModelElementsInService(matchedResourceElements,
+                            Widget.getWidget(Widget.Type.VF).getName());
                     }
+
+                    //Validate uuid and invariantuuid are populated in model-ver.model-version-id and model.model-invariant-id
+                    org.testng.Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList()
+                        .getRelationship().get(0)
+                        .getRelationshipData().get(0).getRelationshipValue(),entry.getKey());
+
+                    org.testng.Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList().getRelationship().get(0)
+                        .getRelationshipData().get(1).getRelationshipValue(), nodeTemplateIdTypeStore
+                        .get(entry.getKey()+ INV_UID));
+                } else if(entry.getValue().contains("org.openecomp.resource.vl")){
+                    //validate l3-network in service tosca
+                    List<ModelElement> matchedResourceElements =
+                        getModelElementbyRelationshipValue(baseServiceWidgetModelElements, entry.getKey());
+                    validateMatchedModelElementsInService(matchedResourceElements,
+                        Widget.getWidget(Widget.Type.L3_NET).getName());
+                    //Validate uuid and invariantuuid are populated in model-ver.model-version-id and model.model-invariant-id
+                    org.testng.Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList()
+                        .getRelationship().get(0)
+                        .getRelationshipData().get(0).getRelationshipValue(),entry.getKey());
+
+                    org.testng.Assert.assertEquals(matchedResourceElements.get(0).getRelationshipList().getRelationship().get(0)
+                        .getRelationshipData().get(1).getRelationshipValue(), nodeTemplateIdTypeStore
+                        .get(entry.getKey() + INV_UID));
                 }
-
-
-                System.out.println();
-
             }
-        } catch (IllegalArgumentException e) {
-            org.testng.Assert.fail(e.getMessage());    //Can come while populating metadata
         }
     }
 
@@ -486,7 +467,7 @@ public class ArtifactGenerationServiceTest {
                         }
                     }
                     if(e.getValue().getType().contains("org.openecomp.resource.vf.")&& (e.getValue()
-                        .getMetadata().get("category").equals("Allotted Resource")))
+                        .getMetadata().get(CATEGORY).equals("Allotted Resource")))
                     {
                         e.getValue().setType("org.openecomp.resource.vf.allottedResource");
                     }
@@ -495,7 +476,7 @@ public class ArtifactGenerationServiceTest {
                         ("version"));
                     //Populate invraintUuId for V9
                     String invUuId = e.getValue().getMetadata().get("invariantUUID");
-                    nodeTemplateIdTypeStore.put(uuid+"-INV_UID" , invUuId);
+                    nodeTemplateIdTypeStore.put(uuid + INV_UID , invUuId);
                 }
             }
             return nodeTemplateIdTypeStore;
@@ -511,7 +492,7 @@ public class ArtifactGenerationServiceTest {
             Map<String, String> groupDefinitionIdTypeStore = new LinkedHashMap<>();
             if (groupDefinitionMap != null) {
                 for (Map.Entry<String, GroupDefinition> e : groupDefinitionMap.entrySet()) {
-                    if (e.getValue().getType().contains("org.openecomp.groups.VfModule")) {
+                    if (e.getValue().getType().contains(VF_MODULE_NAMESPACE)) {
                         String uuid = e.getValue().getMetadata().get("vfModuleModelUUID");
                         if (GeneratorUtil.isEmpty(uuid)) {
                             uuid = e.getValue().getMetadata().get("UUID");
@@ -561,7 +542,7 @@ public class ArtifactGenerationServiceTest {
             .getModelVer().get(0).getModelName());
         Assert.assertEquals(vfModuleModelMetadata.get("vfModuleModelVersion"), generatedAAIModel.getModelVers()
             .getModelVer().get(0).getModelVersion());
-        Assert.assertEquals(vfModuleModelMetadata.get("vf_module_description"), generatedAAIModel.getModelVers()
+        Assert.assertEquals(vfModuleModelMetadata.get(VF_MODULE_DESCRIPTION), generatedAAIModel.getModelVers()
             .getModelVer().get(0).getModelDescription());
 
     }
@@ -590,7 +571,7 @@ public class ArtifactGenerationServiceTest {
         return matchedModelElements;
     }
 
-    public static void populateAAIGeneratedModelStore(Map<String, Model> outputArtifactMap,List<Artifact> resultData) {
+    public static void populateAAIGeneratedModelStore(Map<String, Model> outputArtifactMap,List<Artifact> resultData) throws JAXBException {
         for (Artifact outputArtifact : resultData) {
             if (outputArtifact.getType().equals(ArtifactType.MODEL_INVENTORY_PROFILE.name())) {
                 byte[] decodedPayload = GeneratorUtil.decoder(outputArtifact.getPayload());
@@ -600,20 +581,16 @@ public class ArtifactGenerationServiceTest {
         }
     }
 
-    private static Model getUnmarshalledArtifactModel(String aaiModel) {
+    private static Model getUnmarshalledArtifactModel(String aaiModel) throws JAXBException {
         JAXBContext jaxbContext;
-        try {
-            jaxbContext = JAXBContext.newInstance(Model.class);
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
-            try (InputStream aaiModelStream = new ByteArrayInputStream(aaiModel.getBytes())) {
-                return (Model) unmarshaller.unmarshal(aaiModelStream);
-            } catch (IOException ignored) { /* ignore */ }
+        jaxbContext = JAXBContext.newInstance(Model.class);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
-        return null;
+        try (InputStream aaiModelStream = new ByteArrayInputStream(aaiModel.getBytes())) {
+            return (Model) unmarshaller.unmarshal(aaiModelStream);
+        } catch (IOException ignored) { /* ignore */ }
+        throw new RuntimeException("could not resolve artifact model");
     }
 
     /**
@@ -635,28 +612,15 @@ public class ArtifactGenerationServiceTest {
     }
 
 
-    private static ToscaTemplate getResourceTosca(List<ToscaTemplate> input) {
-        Iterator<ToscaTemplate> iter = input.iterator();
-        while (iter.hasNext()) {
-            ToscaTemplate tosca = iter.next();
-            if (!tosca.isService()) {
-                iter.remove();
-                return tosca;
-            }
-        }
-        return null;
-    }
-
-
     private static Map<String, String> getVFModuleMetadataTosca(ToscaTemplate toscaTemplate, String vfModuleModelUUID) {
         Map<String, GroupDefinition> groupDefinitionMap = toscaTemplate.getTopology_template().getGroups();
         Map<String, String> vfModuleModelMetadata = new LinkedHashMap<>();
         for (Map.Entry<String, GroupDefinition> e : groupDefinitionMap.entrySet()) {
-            if (e.getValue().getType().contains("org.openecomp.groups.VfModule")) {
+            if (e.getValue().getType().contains(VF_MODULE_NAMESPACE)) {
                 String uuid = e.getValue().getMetadata().get("vfModuleModelUUID");
                 if (uuid == vfModuleModelUUID) {
                     vfModuleModelMetadata = e.getValue().getMetadata();
-                    vfModuleModelMetadata.put("vf_module_description", (String) e.getValue().getProperties().get("vf_module_description"));
+                    vfModuleModelMetadata.put(VF_MODULE_DESCRIPTION, (String) e.getValue().getProperties().get(VF_MODULE_DESCRIPTION));
                 }
             }
         }
@@ -667,9 +631,9 @@ public class ArtifactGenerationServiceTest {
         Map<String, GroupDefinition> groupDefinitionMap = toscaTemplate.getTopology_template().getGroups();
         Map<String, NodeTemplate> nodeTemplateMaps = toscaTemplate.getTopology_template().getNode_templates();
         Map<String, Object> vfModuleMembers = new LinkedHashMap<>();
-        List<String> vfModuleModelMetadata = new ArrayList<>();
+        List<String> vfModuleModelMetadata;
         for (Map.Entry<String, GroupDefinition> e : groupDefinitionMap.entrySet()) {
-            if (e.getValue().getType().contains("org.openecomp.groups.VfModule")) {
+            if (e.getValue().getType().contains(VF_MODULE_NAMESPACE)) {
                 String uuid = e.getValue().getMetadata().get("vfModuleModelUUID");
                 if (uuid == vfModuleModelUUID) {
                     vfModuleModelMetadata = e.getValue().getMembers();
@@ -697,7 +661,7 @@ public class ArtifactGenerationServiceTest {
 
     private static String membersType(String toscaType) {
         String modelToBeReturned = null;
-        while (toscaType != null && toscaType.lastIndexOf(".") != -1 && modelToBeReturned == null) {
+        while (toscaType != null && toscaType.lastIndexOf('.') != -1 && modelToBeReturned == null) {
 
             switch (toscaType) {
 
@@ -714,7 +678,7 @@ public class ArtifactGenerationServiceTest {
                 case "org.openecomp.resource.vf":
                     modelToBeReturned = "generic-vnf";
                     break;
-                case "org.openecomp.groups.VfModule":
+                case VF_MODULE_NAMESPACE:
                     modelToBeReturned = "vf-module";
                     break;
                 case "org.openecomp.resource.vfc.nodes.heat.cinder":

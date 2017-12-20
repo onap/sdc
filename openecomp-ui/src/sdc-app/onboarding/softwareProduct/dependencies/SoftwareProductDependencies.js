@@ -16,24 +16,21 @@
 import {connect} from 'react-redux';
 
 import SoftwareProductDependenciesView from './SoftwareProductDependenciesView.jsx';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import SoftwareProductDependenciesActionHelper from './SoftwareProductDependenciesActionHelper.js';
 
 export const mapStateToProps = ({softwareProduct}) => {
-	let {softwareProductEditor: {data: currentSoftwareProduct = {}}, softwareProductDependencies, softwareProductComponents: {componentsList}} = softwareProduct;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
+	let {softwareProductDependencies, softwareProductComponents: {componentsList}} = softwareProduct;
 	return {
-		isReadOnlyMode,
-		softwareProductDependencies: softwareProductDependencies.length ? softwareProductDependencies : [{sourceId: '', targetId: '', relationType: 'dependsOn', id: 'fake'}],
+		softwareProductDependencies: softwareProductDependencies,
 		componentsOptions: componentsList.map(component => ({value: component.id, label: component.displayName}))
 	};
 };
 
 const mapActionsToProps = (dispatch, {softwareProductId, version}) => {
 	return {
-		onDataChanged: dependenciesList => SoftwareProductDependenciesActionHelper.updateDependencyList(dispatch, {dependenciesList}),
-		onAddDependency: () => SoftwareProductDependenciesActionHelper.addDependency(dispatch),
-		onSubmit: (dependenciesList) => SoftwareProductDependenciesActionHelper.saveDependencies(dispatch, {softwareProductId, version, dependenciesList})
+		onDataChanged: (item) => SoftwareProductDependenciesActionHelper.updateDependency(dispatch, {softwareProductId, version, item}),
+		onDeleteDependency: (item) => SoftwareProductDependenciesActionHelper.removeDependency(dispatch, {softwareProductId, version, item}),
+		onAddDependency: (item) => SoftwareProductDependenciesActionHelper.createDependency(dispatch, {softwareProductId, version, item})
 	};
 };
 

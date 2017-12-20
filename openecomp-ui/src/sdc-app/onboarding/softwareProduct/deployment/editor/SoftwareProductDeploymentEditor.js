@@ -16,12 +16,14 @@
 import {connect} from 'react-redux';
 import SoftwareProductDeploymentEditorView from './SoftwareProductDeploymentEditorView.jsx';
 import SoftwareProdcutDeploymentActionHelper from '../SoftwareProductDeploymentActionHelper.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
-
 import {DEPLOYMENT_FLAVORS_FORM_NAME} from '../SoftwareProductDeploymentConstants.js';
 
-export function mapStateToProps({licenseModel, softwareProduct}) {
+export function mapStateToProps({
+	licenseModel,
+	softwareProduct,
+	currentScreen: {props: {isReadOnlyMode}}
+}) {
 	let {
 		softwareProductEditor: {
 			data: currentSoftwareProduct = {}
@@ -48,7 +50,6 @@ export function mapStateToProps({licenseModel, softwareProduct}) {
 			}
 	} = licenseModel;
 
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
 	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 	let selectedFeatureGroupsIds = currentSoftwareProduct.licensingData ? currentSoftwareProduct.licensingData.featureGroups || [] : [];
 	let selectedFeatureGroupsList = featureGroupsList

@@ -13,9 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {catalogItemTypes} from './OnboardingCatalogConstants.js';
 
-export const filterCatalogItemsByType = (items, type, filter) => {
-	const fieldName = type === catalogItemTypes.LICENSE_MODEL ? 'vendorName' : 'name';
-	return items.filter(item => item[fieldName].toLowerCase().indexOf(filter.toLowerCase()) > -1);
+export const filterCatalogItemsByType = ({items, filter}) => {
+	return items.filter(item => item.name.toLowerCase().indexOf(filter.toLowerCase()) > -1);
 };

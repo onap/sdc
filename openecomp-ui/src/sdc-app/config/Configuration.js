@@ -50,6 +50,13 @@ const configuration = new Configuration();
 	configuration.set('restATTPrefix', configuration.get('defaultRestATTPrefix'));
 	configuration.set('appContextPath', configuration.get('appContextPath'));
 })(configuration);
-
+(function setDefaultWebsocketConfig(configuration) {
+	let websocketPort = configuration.get('defaultWebsocketPort');
+	if (DEBUG) {
+		websocketPort = configuration.get('defaultDebugWebsocketPort');
+	}
+	configuration.set('websocketPort', websocketPort);
+	configuration.set('websocketPath', configuration.get('defaultWebsocketPath'));
+})(configuration);
 
 export default configuration;

@@ -30,6 +30,7 @@ public class ElementEntity {
   private Id id;
   private Id parentId;
   private Namespace namespace;
+  private Id elementHash;
   private Info info;
   private Collection<Relation> relations = Collections.emptyList();
   private ByteBuffer data;
@@ -41,20 +42,16 @@ public class ElementEntity {
     this.id = id;
   }
 
+  public Id getId() {
+    return id;
+  }
+
   public Id getParentId() {
     return parentId;
   }
 
   public void setParentId(Id parentId) {
     this.parentId = parentId;
-  }
-
-  public Id getId() {
-    return id;
-  }
-
-  public void setId(Id id) {
-    this.id = id;
   }
 
   public Namespace getNamespace() {
@@ -127,8 +124,17 @@ public class ElementEntity {
     return id.equals(that.id);
   }
 
+  public Id getElementHash() {
+    return elementHash;
+  }
+
+  public void setElementHash(Id elementHash) {
+    this.elementHash = elementHash;
+  }
+
   @Override
   public int hashCode() {
     return id.hashCode();
   }
+
 }

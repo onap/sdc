@@ -31,20 +31,20 @@ import java.util.Collection;
 
 public interface NicManager {
 
-  Collection<NicEntity> listNics(String vspId, Version version, String componentId, String user);
+  Collection<NicEntity> listNics(String vspId, Version version, String componentId);
 
-  NicEntity createNic(NicEntity nic, String user);
+  NicEntity createNic(NicEntity nic);
 
-  CompositionEntityValidationData updateNic(NicEntity nicEntity, String user);
+  CompositionEntityValidationData updateNic(NicEntity nicEntity);
 
   CompositionEntityResponse<Nic> getNic(String vspId, Version version, String componentId,
-                                        String nicId, String user);
+                                        String nicId);
 
-  void deleteNic(String vspId, Version version, String componentId, String nicId, String user);
+  void deleteNic(String vspId, Version version, String componentId, String nicId);
 
   QuestionnaireResponse getNicQuestionnaire(String vspId, Version version, String componentId,
-                                            String nicId, String user);
+                                            String nicId);
 
   void updateNicQuestionnaire(String vspId, Version version, String componentId, String nicId,
-                              String questionnaireData, String user);
+                              String questionnaireData);
 }

@@ -16,7 +16,6 @@
 import {connect} from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 import SoftwareProductComponentsImageListView from './SoftwareProductComponentsImageListView.jsx';
 import ImageHelper from './SoftwareProductComponentsImageActionHelper.js';
@@ -31,38 +30,35 @@ export const mapStateToProps = ({softwareProduct}) => {
 
 	let {softwareProductEditor: {data: currentSoftwareProduct = {}, isValidityData = true}, softwareProductComponents} = softwareProduct;
 	let {images: {imagesList = []}, componentEditor: {data: componentData, qdata, dataMap, qgenericFieldInfo}} = softwareProductComponents;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
-	let {version, onboardingMethod} = currentSoftwareProduct;
+	let {onboardingMethod} = currentSoftwareProduct;
 	let isManual =  onboardingMethod === onboardingMethodTypes.MANUAL;
 
 	return {
-		version,
 		componentData,
 		qdata,
 		dataMap,
 		qgenericFieldInfo,
 		isValidityData,
 		imagesList,
-		isReadOnlyMode,
 		isManual : isManual
 	};
 };
 
-const mapActionsToProps = (dispatch, {softwareProductId, componentId}) => {
+const mapActionsToProps = (dispatch, {softwareProductId, componentId, version}) => {
 	return {
 		onQDataChanged: (deltaData) => ValidationHelper.qDataChanged(dispatch, {deltaData,
 			qName: COMPONENTS_QUESTIONNAIRE}),
-		onAddImage: (version, isReadOnlyMode) => {
+		onAddImage: (isReadOnlyMode) => {
 			SoftwareProductComponentsImagesActionHelper.openImageEditor(dispatch,
 				{isReadOnlyMode, softwareProductId,
 					componentId, version}
 			);},
-		onDeleteImage: ((image, version) => {
+		onDeleteImage: (image) => {
 			let shortenedFileName = (image.fileName.length > 40) ? image.fileName.substr(0,40) + '...' : image.fileName;
 			dispatch({
 				type: modalActionTypes.GLOBAL_MODAL_WARNING,
 				data: {
-					msg: i18n(`Are you sure you want to delete "${shortenedFileName}"?`),
+					msg: i18n('Are you sure you want to delete "{shortenedFileName}"?', {shortenedFileName: shortenedFileName}),
 					onConfirmed: () => ImageHelper.deleteImage(dispatch, {
 						softwareProductId,
 						componentId,
@@ -71,13 +67,13 @@ const mapActionsToProps = (dispatch, {softwareProductId, componentId}) => {
 					})
 				}
 			});
-		}),
-		onEditImageClick: (image, version, isReadOnlyMode) => {
+		},
+		onEditImageClick: (image, isReadOnlyMode) => {
 			SoftwareProductComponentsImagesActionHelper.openEditImageEditor(dispatch, {
 				image, isReadOnlyMode, softwareProductId, componentId, version, modalClassName: 'image-modal-edit'}
 			);
 		},
-		onSubmit: (version, qdata) => { return SoftwareProductComponentsActionHelper.updateSoftwareProductComponentQuestionnaire(dispatch,
+		onSubmit: (qdata) => { return SoftwareProductComponentsActionHelper.updateSoftwareProductComponentQuestionnaire(dispatch,
 			{softwareProductId,
 				vspComponentId: componentId,
 				version,

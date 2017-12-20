@@ -13,7 +13,8 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Collapse from 'react-bootstrap/lib/Collapse.js';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
@@ -95,7 +96,7 @@ function HeatFileTreeHeader(props) {
 			<div className='tree-header-title' >
 				{/*<SVGIcon name='zip' color={props.selectedNode === nodeFilters.ALL ? 'primary' : ''}  iconClassName='header-icon' />*/}
 				<span className={classNames({'tree-header-title-text' : true,
-					'tree-header-title-selected' : props.selectedNode === nodeFilters.ALL})}>{i18n(`${props.headerTitle} ${hasErrors ? '(Draft)' : ''}`)}</span>
+					'tree-header-title-selected' : props.selectedNode === nodeFilters.ALL})}>{i18n('{title} {hasErrors}', {title: props.headerTitle, hasErrors: hasErrors ? '(Draft)' : ''})}</span>
 			</div>
 			<ErrorsAndWarningsCount errorList={props.errorList} size='large' />
 		</div>);
@@ -199,7 +200,6 @@ class HeatMessageBoard extends Component {
 	}
 	renderError(error) {
 		let rand = Math.random() * (3000 - 1) + 1;
-		console.log(this.props.selectedNode );
 		return (
 			<div
 				key={error.name + error.errorMessage + error.parentName + rand}

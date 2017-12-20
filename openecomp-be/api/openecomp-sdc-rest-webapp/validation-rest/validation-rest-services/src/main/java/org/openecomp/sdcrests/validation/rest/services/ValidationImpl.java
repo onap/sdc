@@ -39,10 +39,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.InputStream;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Named
 @Service("validation")

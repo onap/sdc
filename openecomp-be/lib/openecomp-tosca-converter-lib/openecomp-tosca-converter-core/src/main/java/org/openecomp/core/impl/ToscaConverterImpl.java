@@ -12,7 +12,17 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.*;
+import org.openecomp.sdc.tosca.datatypes.model.ArtifactDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.CapabilityAssignment;
+import org.openecomp.sdc.tosca.datatypes.model.Import;
+import org.openecomp.sdc.tosca.datatypes.model.InterfaceDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.NodeFilter;
+import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
+import org.openecomp.sdc.tosca.datatypes.model.NodeType;
+import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
+import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.datatypes.model.SubstitutionMapping;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
@@ -21,11 +31,28 @@ import org.yaml.snakeyaml.error.YAMLException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 
-import static org.openecomp.core.converter.datatypes.Constants.*;
+import static org.openecomp.core.converter.datatypes.Constants.capabilities;
+import static org.openecomp.core.converter.datatypes.Constants.definitionsDir;
+import static org.openecomp.core.converter.datatypes.Constants.globalStName;
+import static org.openecomp.core.converter.datatypes.Constants.globalSubstitution;
+import static org.openecomp.core.converter.datatypes.Constants.inputs;
+import static org.openecomp.core.converter.datatypes.Constants.mainStName;
+import static org.openecomp.core.converter.datatypes.Constants.manifestFileName;
+import static org.openecomp.core.converter.datatypes.Constants.metadataFile;
+import static org.openecomp.core.converter.datatypes.Constants.nodeType;
+import static org.openecomp.core.converter.datatypes.Constants.openecompHeatIndex;
+import static org.openecomp.core.converter.datatypes.Constants.outputs;
+import static org.openecomp.core.converter.datatypes.Constants.requirements;
 import static org.openecomp.core.impl.GlobalSubstitutionServiceTemplate.GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME;
 
 public class ToscaConverterImpl implements ToscaConverter {
@@ -89,9 +116,8 @@ public class ToscaConverterImpl implements ToscaConverter {
             }
         } catch (YAMLException ye) {
             throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-                .withMessage("Invalid YAML content in file " + key + ". reason - "
-                    + ye.getMessage())
-                .withCategory(ErrorCategory.APPLICATION).build());
+                .withMessage("Invalid YAML content in file " + key)
+                .withCategory(ErrorCategory.APPLICATION).build(), ye);
         }
     }
 
@@ -181,9 +207,8 @@ public class ToscaConverterImpl implements ToscaConverter {
 
         } catch (YAMLException ye) {
             throw new CoreException(new ErrorCode.ErrorCodeBuilder()
-                .withMessage("Invalid YAML content in file" + serviceTemplateName + ". reason - "
-                    + ye.getMessage())
-                .withCategory(ErrorCategory.APPLICATION).build());
+                .withMessage("Invalid YAML content in file" + serviceTemplateName)
+                .withCategory(ErrorCategory.APPLICATION).build(), ye);
         }
 
 

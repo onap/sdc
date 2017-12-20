@@ -1,17 +1,13 @@
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
 
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes
-    .CYCLIC_DEPENDENCY_IN_COMPONENTS;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes
-    .INVALID_COMPONENT_RELATION_TYPE;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes
-    .NO_SOURCE_COMPONENT;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes
-    .SAME_SOURCE_TARGET_COMPONENT;
-
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.CYCLIC_DEPENDENCY_IN_COMPONENTS;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.INVALID_COMPONENT_RELATION_TYPE;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.NO_SOURCE_COMPONENT;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.SAME_SOURCE_TARGET_COMPONENT;
 
 public class ComponentDependencyModelErrorBuilder {
 

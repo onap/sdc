@@ -1,0 +1,3 @@
+{
+  "org.openecomp.config.api.ConfigurationManager": "org.openecomp.config.impl.ConfigurationImpl"
+}

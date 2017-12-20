@@ -20,16 +20,13 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import org.openecomp.sdc.activityLog.ActivityLogManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.ProcessManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ProcessManagerFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDaoFactory;
 
 public class ProcessManagerFactoryImpl extends ProcessManagerFactory {
   private static final ProcessManager INSTANCE =
-      new ProcessManagerImpl(
-              VendorSoftwareProductDaoFactory.getInstance().createInterface(),
-              ActivityLogManagerFactory.getInstance().createInterface());
+      new ProcessManagerImpl(ProcessDaoFactory.getInstance().createInterface());
 
   @Override
   public ProcessManager createInterface() {

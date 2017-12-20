@@ -14,22 +14,23 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
-import Input from 'nfvo-components/input/validation/Input.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
+import Input from 'nfvo-components/input/validation/Input.jsx';
 
 class LicenseModelDescriptionEdit extends React.Component {
 	render() {
 		//TODO check if buttons
 		let {onDataChanged, description, genericFieldInfo} = this.props;
-		let saveButtonClassName = (genericFieldInfo.description.isValid) ? 'description-save' : 'description-save disabled';
+		let {isValid, errorText} = genericFieldInfo.description;
+		let saveButtonClassName = isValid ? 'description-save' : 'description-save disabled';
 		return(
 			<div className='vendor-description-edit'>
 
 				<Input
 					onChange={description => onDataChanged({description})}
 					value={description}
-					isValid={genericFieldInfo.description.isValid}
-					errorText={genericFieldInfo.description.errorText}
+					isValid={isValid}
+					errorText={errorText}
 					className='description-edit-textarea'
 					type='textarea'/>
 				<div className='buttons-row'>
@@ -50,7 +51,7 @@ class LicenseModelDescriptionEdit extends React.Component {
 		let {onSubmit, data, description} = this.props;
 		onSubmit({
 			...data,
-			description: description
+			description: description.trim()
 		});
 	}
 }

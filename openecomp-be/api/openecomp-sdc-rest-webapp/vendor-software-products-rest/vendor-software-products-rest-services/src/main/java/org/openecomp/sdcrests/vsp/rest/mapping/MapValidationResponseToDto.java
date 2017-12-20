@@ -32,9 +32,7 @@ import org.openecomp.sdcrests.common.mapping.MapErrorMessageToDto;
 import org.openecomp.sdcrests.common.types.ErrorCodeDto;
 import org.openecomp.sdcrests.common.types.ErrorMessageDto;
 import org.openecomp.sdcrests.mapping.MappingBase;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentValidationResultDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityValidationDataDto;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.DeploymentFlavorValidationResultDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireValidationResultDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ValidationResponseDto;
 
@@ -47,30 +45,31 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MapValidationResponseToDto
-        extends MappingBase<ValidationResponse, ValidationResponseDto> {
+    extends MappingBase<ValidationResponse, ValidationResponseDto> {
   private static Map<String, List<ErrorMessageDto>> mapUploadDataErrors(
-          Map<String, List<ErrorMessage>> uploadDataErrors) {
+      Map<String, List<ErrorMessage>> uploadDataErrors) {
     if (MapUtils.isEmpty(uploadDataErrors)) {
       return null;
     }
     return uploadDataErrors.entrySet().stream().collect(
-            Collectors.toMap(entry -> entry.getKey(), entry -> mapErrorMessages(entry.getValue())));
+        Collectors.toMap(entry -> entry.getKey(), entry -> mapErrorMessages(entry.getValue())));
   }
 
   private static QuestionnaireValidationResultDto mapQuestionnaireValidationResult(
-          QuestionnaireValidationResult questionnaireValidationResult) {
+      QuestionnaireValidationResult questionnaireValidationResult) {
     if (Objects.isNull(questionnaireValidationResult)
-            || Objects.isNull(questionnaireValidationResult.getValidationData())) {
+        || Objects.isNull(questionnaireValidationResult.getValidationData())) {
       return null;
     }
     QuestionnaireValidationResultDto questionnaireValidationResultDto =
-            new QuestionnaireValidationResultDto();
+        new QuestionnaireValidationResultDto();
     questionnaireValidationResultDto.setValid(questionnaireValidationResult.isValid());
 
     Set<CompositionEntityValidationDataDto> validationDataDto = new HashSet<>();
-    for(CompositionEntityValidationData validationData : questionnaireValidationResult.getValidationData()){
+    for (CompositionEntityValidationData validationData : questionnaireValidationResult
+        .getValidationData()) {
       validationDataDto.add(new MapCompositionEntityValidationDataToDto().applyMapping
-              (validationData, CompositionEntityValidationDataDto.class));
+          (validationData, CompositionEntityValidationDataDto.class));
     }
 
     questionnaireValidationResultDto.setValidationData(validationDataDto);
@@ -87,7 +86,7 @@ public class MapValidationResponseToDto
     componentValidationResultDto.setValid(componentValidationResult.isValid());
 
     Set<CompositionEntityValidationDataDto> validationDataDto = new HashSet<>();
-    for(CompositionEntityValidationData validationData : componentValidationResult.getValidationData()){
+    for(CompositionEntityValidationData validationData : componentValidationResult.getInfo()){
       validationDataDto.add(new MapCompositionEntityValidationDataToDto().applyMapping
           (validationData, CompositionEntityValidationDataDto.class));
     }
@@ -106,7 +105,7 @@ public class MapValidationResponseToDto
     deploymentFlavorValidationResultDto.setValid(deploymentFlavorValidationResult.isValid());
 
     Set<CompositionEntityValidationDataDto> validationDataDto = new HashSet<>();
-    for(CompositionEntityValidationData validationData : deploymentFlavorValidationResult.getValidationData()){
+    for(CompositionEntityValidationData validationData : deploymentFlavorValidationResult.getInfo()){
       validationDataDto.add(new MapCompositionEntityValidationDataToDto().applyMapping
           (validationData, CompositionEntityValidationDataDto.class));
     }
@@ -117,14 +116,14 @@ public class MapValidationResponseToDto
 
   private static List<ErrorMessageDto> mapErrorMessages(List<ErrorMessage> errorMessages) {
     return errorMessages == null ? null : errorMessages.stream().map(
-            errorMessage -> new MapErrorMessageToDto()
-                    .applyMapping(errorMessage, ErrorMessageDto.class)).collect(Collectors.toList());
+        errorMessage -> new MapErrorMessageToDto()
+            .applyMapping(errorMessage, ErrorMessageDto.class)).collect(Collectors.toList());
   }
 
   private static Collection<ErrorCodeDto> mapErrorCodes(Collection<ErrorCode> errorCodes) {
     return CollectionUtils.isEmpty(errorCodes) ? null : errorCodes.stream()
-            .map(errorCode -> new MapErrorCodeToDto().applyMapping(errorCode, ErrorCodeDto.class))
-            .collect(Collectors.toList());
+        .map(errorCode -> new MapErrorCodeToDto().applyMapping(errorCode, ErrorCodeDto.class))
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -134,6 +133,6 @@ public class MapValidationResponseToDto
     target.setLicensingDataErrors(mapErrorCodes(source.getLicensingDataErrors()));
     target.setUploadDataErrors(mapUploadDataErrors(source.getUploadDataErrors()));
     target.setQuestionnaireValidationResult(
-            mapQuestionnaireValidationResult(source.getQuestionnaireValidationResult()));
+        mapQuestionnaireValidationResult(source.getQuestionnaireValidationResult()));
   }
 }

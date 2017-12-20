@@ -20,17 +20,16 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao;
 
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadData;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadDataEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public interface OrchestrationTemplateDao extends VersionableDao {
 
-  String getValidationData(String vspId, Version version);
+  OrchestrationTemplateEntity getInfo(String vspId, Version version);
 
-  UploadDataEntity getOrchestrationTemplate(String vspId, Version version);
+  OrchestrationTemplateEntity get(String vspId, Version version);
 
-  void updateOrchestrationTemplateData(String vspId, UploadData uploadData);
+  void update(String vspId, Version version, OrchestrationTemplateEntity uploadData);
 }
 

@@ -1,6 +1,7 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar;
 
 import com.google.common.collect.ImmutableSet;
+
 import static com.google.common.collect.ImmutableSet.of;
 public class CSARConstants {
 

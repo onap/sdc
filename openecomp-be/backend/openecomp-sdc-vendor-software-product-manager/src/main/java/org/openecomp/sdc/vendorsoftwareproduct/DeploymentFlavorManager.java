@@ -12,23 +12,19 @@ import java.util.Collection;
 public interface DeploymentFlavorManager {
 
 
-  DeploymentFlavorEntity createDeploymentFlavor(DeploymentFlavorEntity deploymentFlavorEntity,
-                                                String user);
+  DeploymentFlavorEntity createDeploymentFlavor(DeploymentFlavorEntity deploymentFlavorEntity);
 
-  Collection<DeploymentFlavorEntity> listDeploymentFlavors(String vspId, Version version,
-                                                           String user);
+  Collection<DeploymentFlavorEntity> listDeploymentFlavors(String vspId, Version version);
 
   CompositionEntityResponse<DeploymentFlavor> getDeploymentFlavor(String vspId, Version version,
-                                                                  String deploymentFlavorId,
-                                                                  String user);
+                                                                  String deploymentFlavorId);
 
-  CompositionEntityResponse<DeploymentFlavor> getDeploymentFlavorSchema(String vspId, Version
-      version, String user);
+  CompositionEntityResponse<DeploymentFlavor> getDeploymentFlavorSchema(String vspId,
+                                                                        Version version);
 
-  void deleteDeploymentFlavor(String vspId, Version version, String deploymentFlavorId, String
-      user);
+  void deleteDeploymentFlavor(String vspId, Version version, String deploymentFlavorId);
 
-  CompositionEntityValidationData updateDeploymentFlavor(DeploymentFlavorEntity
-                                                             deploymentFlavorEntity, String user);
+  CompositionEntityValidationData updateDeploymentFlavor(
+      DeploymentFlavorEntity deploymentFlavorEntity);
 
 }

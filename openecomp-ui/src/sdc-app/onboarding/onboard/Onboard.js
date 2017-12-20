@@ -16,20 +16,36 @@
 
 import {connect} from 'react-redux';
 import OnboardView from './OnboardView.jsx';
-import OnboardingActionHelper from '../OnboardingActionHelper.js';
 import OnboardingCatalogActionHelper from './onboardingCatalog/OnboardingCatalogActionHelper.js';
 import OnboardActionHelper from './OnboardActionHelper.js';
 import LicenseModelCreationActionHelper from '../licenseModel/creation/LicenseModelCreationActionHelper.js';
 import SoftwareProductCreationActionHelper from '../softwareProduct/creation/SoftwareProductCreationActionHelper.js';
 import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
+import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
+import {enums, screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
+
 
 export const mapStateToProps = ({
-	onboard: {onboardingCatalog, activeTab, searchValue}, licenseModelList, finalizedLicenseModelList, softwareProductList, finalizedSoftwareProductList
+	onboard: {
+		onboardingCatalog,
+		activeTab,
+		searchValue
+	},
+	licenseModelList,
+	users,
+	finalizedLicenseModelList,
+	softwareProductList,
+	finalizedSoftwareProductList
 }) => {
 
-	const reduceLicenseModelList = (accum, vlm)=> {
+	const fullSoftwareProducts = softwareProductList.filter(vsp =>
+		!finalizedSoftwareProductList
+			.find(fvsp => fvsp.id === vsp.id)
+	).concat(finalizedSoftwareProductList);
+
+	const reduceLicenseModelList = (accum, vlm) => {
 		let currentSoftwareProductList = sortByStringProperty(
-			finalizedSoftwareProductList
+			fullSoftwareProducts
 				.filter(vsp => vsp.vendorId === vlm.id),
 			'name'
 		);
@@ -37,19 +53,22 @@ export const mapStateToProps = ({
 		return accum;
 	};
 
-	finalizedLicenseModelList = sortByStringProperty(
+	licenseModelList = sortByStringProperty(
 		licenseModelList
-			.filter(vlm => finalizedLicenseModelList.map(finalVlm => finalVlm.id).includes(vlm.id))
 			.reduce(reduceLicenseModelList, []),
-		'vendorName'
-	);
-
-	finalizedSoftwareProductList = sortByStringProperty(
-		softwareProductList
-			.filter(vsp => finalizedSoftwareProductList.map(finalVsp => finalVsp.id).includes(vsp.id)),
 		'name'
 	);
 
+	finalizedLicenseModelList = sortByStringProperty(
+		finalizedLicenseModelList
+			.reduce(reduceLicenseModelList, []),
+		'name'
+	);
+
+	const fullLicenseModelList = licenseModelList.filter(vlm =>
+		!finalizedLicenseModelList
+			.find(fvlm => fvlm.id === vlm.id)
+	).concat(finalizedLicenseModelList);
 
 	let {activeTab: catalogActiveTab, vendorCatalog: {vspOverlay, selectedVendor}} = onboardingCatalog;
 
@@ -58,22 +77,32 @@ export const mapStateToProps = ({
 		finalizedSoftwareProductList,
 		licenseModelList,
 		softwareProductList,
+		fullLicenseModelList,
 		activeTab,
 		catalogActiveTab,
 		searchValue,
 		vspOverlay,
-		selectedVendor
+		selectedVendor,
+		users: users.usersList
 	};
+
 };
 
 const mapActionsToProps = (dispatch) => {
+
 	return {
-		onSelectLicenseModel({id: licenseModelId, version}) {
-			OnboardingActionHelper.navigateToLicenseModelOverview(dispatch, {licenseModelId, version});
+		onSelectLicenseModel({id: licenseModelId, name}, users) {
+			ScreensHelper.loadScreen(dispatch, {
+				screen: enums.SCREEN.VERSIONS_PAGE, screenType: screenTypes.LICENSE_MODEL,
+				props: {licenseModelId, licenseModel: {name}, usersList: users}
+			});
 		},
-		onSelectSoftwareProduct(softwareProduct) {
-			let {id: softwareProductId, vendorId: licenseModelId, licensingVersion, version} = softwareProduct;
-			OnboardingActionHelper.navigateToSoftwareProductLandingPage(dispatch, {softwareProductId, version, licenseModelId, licensingVersion});
+		onSelectSoftwareProduct(softwareProduct, users) {
+			let {id: softwareProductId, vendorId: licenseModelId, licensingVersion, name} = softwareProduct;
+			ScreensHelper.loadScreen(dispatch, {
+				screen: enums.SCREEN.SOFTWARE_PRODUCT_VERSIONS_PAGE, screenType: screenTypes.SOFTWARE_PRODUCT,
+				props: {softwareProductId, softwareProduct: {name, vendorId: licenseModelId, licensingVersion}, usersList: users}
+			});
 		},
 		onAddSoftwareProductClick: (vendorId) => SoftwareProductCreationActionHelper.open(dispatch, vendorId),
 		onAddLicenseModelClick: () => LicenseModelCreationActionHelper.open(dispatch),
@@ -85,6 +114,7 @@ const mapActionsToProps = (dispatch) => {
 		onVendorSelect: (vendor) => OnboardingCatalogActionHelper.onVendorSelect(dispatch, {vendor}),
 		onMigrate: ({softwareProduct}) => OnboardingCatalogActionHelper.onMigrate(dispatch, softwareProduct)
 	};
+
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(OnboardView);

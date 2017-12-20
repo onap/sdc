@@ -2,7 +2,6 @@ package org.openecomp.core.converter.impl;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.core.converter.ToscaConverter;
 import org.openecomp.core.impl.ToscaConverterImpl;

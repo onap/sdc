@@ -25,7 +25,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.nic;
  */
 public class PeakAndAvg {
     private int peak;
-    private int avg;
+    private Number avg;
 
     public int getPeak() {
         return peak;
@@ -35,11 +35,11 @@ public class PeakAndAvg {
         this.peak = peak;
     }
 
-    public int getAvg() {
+    public Number getAvg() {
         return avg;
     }
 
-    public void setAvg(int avg) {
+    public void setAvg(Number avg) {
         this.avg = avg;
     }
 }

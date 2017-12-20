@@ -1,18 +1,14 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
@@ -37,10 +33,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+
 public class OrchestrationTemplateCandidateManagerImplTest {
-  private static final String USER1 = "vspTestUser1";
   private static final String VSP_ID = "vspId";
-  private static final Version VERSION01 = new Version(0, 1);
+  private static final Version VERSION01 = new Version("versionId");
 
   private static final String COMPONENT_ORIG_ID_1 = "Component_Pd_Server_Id_Orig";
   private static final String COMPONENT_ORIG_ID_2 = "Component_Sm_Server_Id_Orig";
@@ -58,8 +57,6 @@ public class OrchestrationTemplateCandidateManagerImplTest {
   private static final String COMPONENT_NAME_4 = "ps_server";
 
   @Mock
-  private VendorSoftwareProductDao vendorSoftwareProductDaoMock;
-  @Mock
   private VendorSoftwareProductInfoDao vspInfoDaoMock;
   @Mock
   private CandidateService candidateServiceMock;
@@ -67,6 +64,8 @@ public class OrchestrationTemplateCandidateManagerImplTest {
   private OrchestrationTemplateDao orchestrationTemplateDaoMock;
   @Mock
   private ComponentDependencyModelDao componentDependencyModelDaoMock;
+  @Mock
+  private ComponentDao componentDaoMock;
 
   @InjectMocks
   private OrchestrationTemplateCandidateManagerImpl candidateManager;
@@ -100,7 +99,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
     doReturn(new VspDetails(VSP_ID, VERSION01))
         .when(vspInfoDaoMock).get(anyObject());
     doReturn(null)
-        .when(orchestrationTemplateDaoMock).getValidationData(anyObject(), anyObject());
+        .when(orchestrationTemplateDaoMock).getInfo(anyObject(), anyObject());
 
     doReturn("{}").when(candidateServiceMock).createManifest(anyObject(), anyObject());
     doReturn(Optional.empty()).when(candidateServiceMock)
@@ -109,7 +108,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
 
 
     OrchestrationTemplateActionResponse response =
-        candidateManager.process(VSP_ID, VERSION01, USER1);
+        candidateManager.process(VSP_ID, VERSION01);
 
     Assert.assertNotNull(response);
   }
@@ -118,12 +117,11 @@ public class OrchestrationTemplateCandidateManagerImplTest {
   public void testUpdateVspComponentDependenciesHeatReuploadMoreComponents() {
     Collection<ComponentDependencyModelEntity> existingComponentsDependencies =
         getExistingComponentDependencies();
-    doReturn(existingComponentsDependencies).
-        when(vendorSoftwareProductDaoMock).listComponentDependencies(anyObject(), anyObject());
+    doReturn(existingComponentsDependencies).when(componentDependencyModelDaoMock)
+        .list(anyObject());
     Collection<ComponentEntity> componentListWithMoreComponentsInHeat =
         getComponentListWithMoreComponentsInHeat();
-    doReturn(componentListWithMoreComponentsInHeat).when(vendorSoftwareProductDaoMock)
-        .listComponents(anyObject(), anyObject());
+    doReturn(componentListWithMoreComponentsInHeat).when(componentDaoMock).list(anyObject());
     Map<String, String> componentIdNameInfoBeforeProcess = getVspInitComponentIdNameInfo();
     orchestrationUtil.updateVspComponentDependencies(anyObject(), anyObject(),
         componentIdNameInfoBeforeProcess);
@@ -136,14 +134,14 @@ public class OrchestrationTemplateCandidateManagerImplTest {
     Collection<ComponentDependencyModelEntity> existingComponentsDependencies =
         getExistingComponentDependencies();
     doReturn(existingComponentsDependencies).
-        when(vendorSoftwareProductDaoMock).listComponentDependencies(anyObject(), anyObject());
+        when(componentDependencyModelDaoMock).list(anyObject());
     Collection<ComponentEntity> componentListWithLessComponentsInHeat =
         getComponentListWithLessComponentsInHeat();
-    doReturn(componentListWithLessComponentsInHeat).when(vendorSoftwareProductDaoMock)
-        .listComponents(anyObject(), anyObject());
+    doReturn(componentListWithLessComponentsInHeat).when(componentDaoMock).list(anyObject());
     Map<String, String> componentIdNameInfoBeforeProcess = getVspInitComponentIdNameInfo();
-    orchestrationUtil.updateVspComponentDependencies(anyObject(), anyObject(),
-        componentIdNameInfoBeforeProcess);
+    orchestrationUtil
+        .updateVspComponentDependencies(anyObject(), anyObject(),
+            componentIdNameInfoBeforeProcess);
     Mockito.verify(componentDependencyModelDaoMock, Mockito.times(1)).update(anyObject());
     Mockito.verify(componentDependencyModelDaoMock, Mockito.times(1)).delete(anyObject());
   }
@@ -152,12 +150,11 @@ public class OrchestrationTemplateCandidateManagerImplTest {
   public void testUpdateVspComponentDependenciesHeatReuploadSameComponents() {
     Collection<ComponentDependencyModelEntity> existingComponentsDependencies =
         getExistingComponentDependencies();
-    doReturn(existingComponentsDependencies).
-        when(vendorSoftwareProductDaoMock).listComponentDependencies(anyObject(), anyObject());
+    doReturn(existingComponentsDependencies).when(componentDependencyModelDaoMock)
+        .list(anyObject());
     Collection<ComponentEntity> componentListWithSameComponentsInHeat =
         getComponentListWithSameComponentsInHeat();
-    doReturn(componentListWithSameComponentsInHeat).when(vendorSoftwareProductDaoMock)
-        .listComponents(anyObject(), anyObject());
+    doReturn(componentListWithSameComponentsInHeat).when(componentDaoMock).list(anyObject());
     Map<String, String> componentIdNameInfoBeforeProcess = getVspInitComponentIdNameInfo();
     orchestrationUtil.updateVspComponentDependencies(anyObject(), anyObject(),
         componentIdNameInfoBeforeProcess);
@@ -169,12 +166,11 @@ public class OrchestrationTemplateCandidateManagerImplTest {
   public void testUpdateVspComponentDependenciesHeatReuploadNoComponents() {
     Collection<ComponentDependencyModelEntity> existingComponentsDependencies =
         getExistingComponentDependencies();
-    doReturn(existingComponentsDependencies).
-        when(vendorSoftwareProductDaoMock).listComponentDependencies(anyObject(), anyObject());
+    doReturn(existingComponentsDependencies).when(componentDependencyModelDaoMock)
+        .list(anyObject());
     Collection<ComponentEntity> componentListWithMoreComponentsInHeat =
         new ArrayList<>();
-    doReturn(componentListWithMoreComponentsInHeat).when(vendorSoftwareProductDaoMock)
-        .listComponents(anyObject(), anyObject());
+    doReturn(componentListWithMoreComponentsInHeat).when(componentDaoMock).list(anyObject());
     Map<String, String> componentIdNameInfoBeforeProcess = getVspInitComponentIdNameInfo();
     orchestrationUtil.updateVspComponentDependencies(anyObject(), anyObject(),
         componentIdNameInfoBeforeProcess);
@@ -193,8 +189,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
   @Test
   public void testVspComponentIdNameInfo() {
     Collection<ComponentEntity> initialVspComponents = getInitialVspComponents();
-    doReturn(initialVspComponents).when(vendorSoftwareProductDaoMock)
-        .listComponents(anyObject(), anyObject());
+    doReturn(initialVspComponents).when(componentDaoMock).list(anyObject());
     Map<String, String> vspComponentIdNameInfo =
         orchestrationUtil.getVspComponentIdNameInfo(anyObject(), anyObject());
     Assert.assertEquals(vspComponentIdNameInfo.size(), 3);
@@ -210,8 +205,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
     componentEntity.setId(COMPONENT_ORIG_ID_4);
     initialVspComponents.add(componentEntity);
 
-    doReturn(initialVspComponents).when(vendorSoftwareProductDaoMock)
-        .listComponents(anyObject(), anyObject());
+    doReturn(initialVspComponents).when(componentDaoMock).list(anyObject());
     Map<String, String> vspComponentIdNameInfo =
         orchestrationUtil.getVspComponentIdNameInfo(anyObject(), anyObject());
     Assert.assertEquals(vspComponentIdNameInfo.size(), 3);
@@ -250,7 +244,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
 
   private Collection<ComponentEntity> getComponentListWithLessComponentsInHeat() {
     Collection<ComponentEntity> vspComponents = getInitialVspComponents();
-    for (Iterator<ComponentEntity> iterator = vspComponents.iterator(); iterator.hasNext();) {
+    for (Iterator<ComponentEntity> iterator = vspComponents.iterator(); iterator.hasNext(); ) {
       ComponentEntity componentEntity = iterator.next();
       if (componentEntity.getComponentCompositionData().getName().equals(COMPONENT_NAME_1)) {
         iterator.remove();

@@ -24,4 +24,4 @@ import UploadScreen from './heatvalidation/UploadScreen.jsx';
 import Application from './Application.jsx';
 
 
-ReactDOM.render(<Application><UploadScreen/></Application>, document.getElementById('heat-validation-app'));
+ReactDOM.render(<Application openSocket={false}><UploadScreen/></Application>, document.getElementById('heat-validation-app'));

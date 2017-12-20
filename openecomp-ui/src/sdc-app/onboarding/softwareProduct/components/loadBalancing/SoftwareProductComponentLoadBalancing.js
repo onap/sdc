@@ -17,29 +17,25 @@ import {connect} from 'react-redux';
 import SoftwareProductComponentLoadBalancingView from './SoftwareProductComponentLoadBalancingRefView.jsx';
 import SoftwareProductComponentsActionHelper from '../SoftwareProductComponentsActionHelper.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import {COMPONENTS_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
 
-export const mapStateToProps = ({softwareProduct}) => {
-	let {softwareProductEditor: {data: currentVSP}, softwareProductComponents} = softwareProduct;
-	let {componentEditor: {qdata, qgenericFieldInfo : genericFieldInfo, dataMap}} = softwareProductComponents;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentVSP);
+export const mapStateToProps = ({softwareProduct: {softwareProductComponents}}) => {
+
+	let {componentEditor: {qdata, qgenericFieldInfo: genericFieldInfo, dataMap}} = softwareProductComponents;
 
 	return {
 		qdata,
 		genericFieldInfo,
-		dataMap,
-		isReadOnlyMode
+		dataMap
 	};
-};
 
+};
 
 const mapActionsToProps = (dispatch, {softwareProductId, version, componentId}) => {
 	return {
 		onQDataChanged: (deltaData) => ValidationHelper.qDataChanged(dispatch, {deltaData, qName: COMPONENTS_QUESTIONNAIRE}),
 		onSubmit: ({qdata}) =>{ return SoftwareProductComponentsActionHelper.updateSoftwareProductComponentQuestionnaire(dispatch, {softwareProductId, version, vspComponentId: componentId, qdata});}
 	};
-
 };
 
 export default connect(mapStateToProps, mapActionsToProps, null, {withRef: true})(SoftwareProductComponentLoadBalancingView);

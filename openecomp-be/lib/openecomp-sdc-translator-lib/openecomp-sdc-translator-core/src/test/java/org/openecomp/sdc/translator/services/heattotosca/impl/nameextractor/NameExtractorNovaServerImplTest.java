@@ -23,7 +23,6 @@ package org.openecomp.sdc.translator.services.heattotosca.impl.nameextractor;
 import org.junit.Test;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
-import org.openecomp.sdc.translator.services.heattotosca.impl.nameextractor.NameExtractorNovaServerImpl;
 import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationNovaServerImpl;
 
 import java.util.Arrays;
@@ -31,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author SHIRIA

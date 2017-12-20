@@ -10,7 +10,7 @@
         <artifactId>openecomp-sdc</artifactId>
         <groupId>org.openecomp.sdc</groupId>
         <version>1.2.0-SNAPSHOT</version>
-	<relativePath>..</relativePath>
+        <relativePath>..</relativePath>
     </parent>
 
     <modules>
@@ -33,5 +33,8 @@
         <module>openecomp-sdc-activity-log-lib</module>
         <module>openecomp-tosca-converter-lib</module>
         <module>openecomp-sdc-orchestration-lib</module>
+        <module>openecomp-sdc-notification-lib</module>
+        <module>openecomp-item-permissions-lib</module>
+        <module>openecomp-conflict-lib</module>
     </modules>
 </project>

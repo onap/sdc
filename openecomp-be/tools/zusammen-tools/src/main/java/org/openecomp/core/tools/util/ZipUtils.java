@@ -1,13 +1,17 @@
 package org.openecomp.core.tools.util;
 
 import com.google.common.io.ByteStreams;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
@@ -17,12 +21,23 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ZipUtils {
-    public static void createZip(String zipFileName, Path dir, Set<String> filterItem) throws Exception {
+
+    private static final Logger logger = LoggerFactory.getLogger(ZipUtils.class);
+
+    public static void createZip(String zipFileName, Path dir) throws IOException {
         File dirObj = dir.toFile();
+        Path zippedFile = Files.createFile(Paths.get(zipFileName));
         try (
-                FileOutputStream fileOutputStream = new FileOutputStream(zipFileName);
-                ZipOutputStream out = new ZipOutputStream(fileOutputStream)) {
-            addDir(dirObj, out, dir.toString(), filterItem);
+                FileOutputStream fileOutputStream = new FileOutputStream(File.separator + zippedFile.toFile());
+                BufferedOutputStream bos = new BufferedOutputStream(fileOutputStream);
+                ZipOutputStream out = new ZipOutputStream(bos)) {
+            File[] files = dirObj.listFiles();
+            for (File file : files) {
+                out.putNextEntry(new ZipEntry(file.getName()));
+                Files.copy(Paths.get(file.getPath()), out);
+                out.closeEntry();
+            }
+            Utils.printMessage(logger, "Zip file was created " + zipFileName);
         }
     }
 
@@ -47,7 +62,7 @@ public class ZipUtils {
         for (int i = 0; i < files.length; i++) {
             if (files[i].isDirectory()) {
                 addDir(files[i], out, root, filterItem);
-                String filePath = files[i].getAbsolutePath().replace(root + File.separator, "") + "/";
+                String filePath = files[i].getAbsolutePath().replace(root + File.separator, "") + File.separator;
                 out.putNextEntry(new ZipEntry(filePath));
                 continue;
             }
@@ -57,7 +72,6 @@ public class ZipUtils {
                     out.putNextEntry(new ZipEntry(filePath));
                     try {
                         ByteStreams.copy(in, out);
-
                     } finally {
                         out.closeEntry();
                     }
@@ -71,7 +85,7 @@ public class ZipUtils {
         if (zipFile == null || outputFolder == null) {
             return;
         }
-        if (!Files.exists(outputFolder)) {
+        if (!outputFolder.toFile().exists()) {
             Files.createDirectories(outputFolder);
         }
 
@@ -83,7 +97,7 @@ public class ZipUtils {
                 File newFile = new File(outputFolder.toString() + File.separator + fileName);
                 if (ze.isDirectory()) {
                     Path path = newFile.toPath();
-                    if (!Files.exists(path)) {
+                    if (!path.toFile().exists()) {
                         Files.createDirectories(path);
                     }
                 } else {

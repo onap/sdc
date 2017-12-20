@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
@@ -50,7 +51,7 @@ const NumberOfVms = ({qgenericFieldInfo, dataMap, onQDataChanged, qValidateData,
 };
 
 NumberOfVms.propTypes = {
-	minNumberOfVMsSelectedByUser: React.PropTypes.number
+	minNumberOfVMsSelectedByUser: PropTypes.number
 };
 
 export default NumberOfVms;

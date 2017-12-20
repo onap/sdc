@@ -14,17 +14,18 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 import ListEditorItemViewField from 'nfvo-components/listEditor/ListEditorItemViewField.jsx';
 
-const ComponentPropType = React.PropTypes.shape({
-	id: React.PropTypes.string,
-	name: React.PropTypes.string,
-	displayName: React.PropTypes.string,
-	description: React.PropTypes.string
+const ComponentPropType = PropTypes.shape({
+	id: PropTypes.string,
+	name: PropTypes.string,
+	displayName: PropTypes.string,
+	description: PropTypes.string
 });
 
 class SoftwareProductComponentsListView extends React.Component {
@@ -34,9 +35,9 @@ class SoftwareProductComponentsListView extends React.Component {
 	};
 
 	static propTypes = {
-		isReadOnlyMode: React.PropTypes.bool,
-		componentsList: React.PropTypes.arrayOf(ComponentPropType),
-		onComponentSelect: React.PropTypes.func
+		isReadOnlyMode: PropTypes.bool,
+		componentsList: PropTypes.arrayOf(ComponentPropType),
+		onComponentSelect: PropTypes.func
 	};
 
 	render() {
@@ -52,7 +53,7 @@ class SoftwareProductComponentsListView extends React.Component {
 
 	renderComponents() {
 		const {localFilter} = this.state;
-		const {isManual, onAddComponent, isReadOnlyMode, currentSoftwareProduct: {id: softwareProductId}, componentsList } = this.props;
+		const {isManual, onAddComponent, isReadOnlyMode, version, currentSoftwareProduct: {id: softwareProductId}, componentsList } = this.props;
 		return (
 			<ListEditorView
 				title={i18n('Virtual Function Components')}
@@ -61,7 +62,7 @@ class SoftwareProductComponentsListView extends React.Component {
 				onFilter={value => this.setState({localFilter: value})}
 				isReadOnlyMode={isReadOnlyMode || !!this.filterList().length}
 				plusButtonTitle={i18n('Add Component')}
-				onAdd={isManual && componentsList.length === 0 ? () => onAddComponent(softwareProductId) : false}
+				onAdd={isManual && componentsList.length === 0 ? () => onAddComponent(softwareProductId, version) : false}
 				twoColumns>
 				{this.filterList().map(component => this.renderComponentsListItem(component))}
 			</ListEditorView>
@@ -70,7 +71,7 @@ class SoftwareProductComponentsListView extends React.Component {
 
 	renderComponentsListItem(component) {
 		let {id: componentId, name, displayName, description = ''} = component;
-		let {currentSoftwareProduct: {id, version}, onComponentSelect} = this.props;
+		let {currentSoftwareProduct: {id}, onComponentSelect, version} = this.props;
 		return (
 			<ListEditorItemView
 				key={name + Math.floor(Math.random() * (100 - 1) + 1).toString()}

@@ -29,10 +29,10 @@ import {
 	VSPProcessStoreWithArtifactNameFactory } from 'test-utils/factories/softwareProduct/SoftwareProductProcessFactories.js';
 import {buildFromExistingObject} from 'test-utils/Util.js';
 import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';
-import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
+import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 
 const softwareProductId = '123';
-const version = VSPEditorFactory.build().version;
+const version = VersionFactory.build();
 
 describe('Software Product Processes Module Tests', function () {
 
@@ -317,7 +317,6 @@ describe('Software Product Processes Module Tests', function () {
 		});
 
 		const processId = softwareProductProcessesList[0].id;
-		const version = store.getState().softwareProduct.softwareProductEditor.data.version;
 		const versionId = version.id;
 		deepFreeze(store.getState());
 
@@ -343,7 +342,7 @@ describe('Software Product Processes Module Tests', function () {
 		});
 	});
 
-	it('Validating Software Products Processes Delete confirmation', done => {
+	it('Validating Software Products Processes Delete confirmation', () => {
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
@@ -352,15 +351,12 @@ describe('Software Product Processes Module Tests', function () {
 
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductProcesses.processToDelete', process);
 
-		SoftwareProductProcessesActionHelper.openDeleteProcessesConfirm(store.dispatch, {process});
+		return SoftwareProductProcessesActionHelper.openDeleteProcessesConfirm(store.dispatch, {process});
 
-		setTimeout(function(){
-			expect(store.getState()).toEqual(expectedStore);
-			done();
-		}, 100);
+		expect(store.getState()).toEqual(expectedStore);
 	});
 
-	it('Validating Software Products Processes Cancel Delete', done => {
+	it('Validating Software Products Processes Cancel Delete', () => {
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
@@ -368,10 +364,7 @@ describe('Software Product Processes Module Tests', function () {
 
 		SoftwareProductProcessesActionHelper.hideDeleteConfirm(store.dispatch);
 
-		setTimeout(function(){
-			expect(store.getState()).toEqual(expectedStore);
-			done();
-		}, 100);
+		expect(store.getState()).toEqual(expectedStore);
 	});
 
 	//**

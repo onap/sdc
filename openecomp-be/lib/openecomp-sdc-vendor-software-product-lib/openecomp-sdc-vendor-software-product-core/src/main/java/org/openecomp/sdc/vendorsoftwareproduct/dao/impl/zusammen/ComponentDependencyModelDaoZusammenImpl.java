@@ -9,16 +9,22 @@ import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
-import org.openecomp.core.zusammen.api.ZusammenUtil;
+import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDependencyModelDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToComponentDependencyModelConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
-import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.types.ElementPropertyName;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 /**
  * Created by ayalaben on 5/16/2017.
@@ -35,19 +41,22 @@ public class ComponentDependencyModelDaoZusammenImpl implements ComponentDepende
   }
 
   @Override
-  public ComponentDependencyModelEntity get(ComponentDependencyModelEntity entity) {
+  public ComponentDependencyModelEntity get(ComponentDependencyModelEntity dependency) {
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(entity.getVspId()); // entity.getId()?
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(entity.getVersion()));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(dependency.getVspId(), dependency.getVersion().getId());
 
     Optional<ElementInfo> componentDependencyElement =
-        zusammenAdaptor.getElementInfo(context, elementContext, new Id(entity.getId()));
+        zusammenAdaptor.getElementInfo(context, elementContext, new Id(dependency.getId()));
 
     if (componentDependencyElement.isPresent()) {
-      addComponentDependencyData(entity, componentDependencyElement.get());
+      ElementToComponentDependencyModelConvertor convertor = new
+          ElementToComponentDependencyModelConvertor();
+
+      ComponentDependencyModelEntity entity = convertor.convert(componentDependencyElement.get());
+      entity.setVspId(dependency.getVspId());
+      entity.setVersion(dependency.getVersion());
       return entity;
     }
 
@@ -55,70 +64,52 @@ public class ComponentDependencyModelDaoZusammenImpl implements ComponentDepende
   }
 
   @Override
-  public void create(ComponentDependencyModelEntity entity) {
+  public void create(ComponentDependencyModelEntity dependency) {
+    ZusammenElement componentDependency =
+        buildComponentDependencyElement(dependency, Action.CREATE);
 
     ZusammenElement componentDependencies =
-        VspZusammenUtil.buildStructuralElement(StructureElement.ComponentDependencies, null);
+        buildStructuralElement(ElementType.ComponentDependencies, Action.IGNORE);
+    componentDependencies.addSubElement(componentDependency);
 
-    ZusammenElement componentDependency = buildComponentDependencyElement(entity);
-    componentDependency.setAction(Action.CREATE);
+    ZusammenElement vspModel = buildStructuralElement(ElementType.VspModel, Action.IGNORE);
+    vspModel.addSubElement(componentDependencies);
 
-    Id itemId = new Id(entity.getVspId());
-    SessionContext context = ZusammenUtil.createSessionContext();
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(dependency.getVspId(), dependency.getVersion().getId());
 
-    Optional<Element> savedElement = zusammenAdaptor.saveElement(context, elementContext,
-        VspZusammenUtil.aggregateElements(componentDependencies, componentDependency),
-        "Create component dependency model");
+    Element compDepsSavedElement = zusammenAdaptor
+        .saveElement(context, elementContext, vspModel, "Create component dependency model");
 
-    savedElement.ifPresent(element ->
-        entity.setId(element.getSubElements().iterator().next().getElementId().getValue()));
+    dependency.setId(compDepsSavedElement.getSubElements().iterator().next()
+        .getSubElements().iterator().next().getElementId().getValue());
   }
 
   @Override
-  public void update(ComponentDependencyModelEntity entity) {
-    ZusammenElement componentDependencyElement = buildComponentDependencyElement(entity);
-    componentDependencyElement.setAction(Action.UPDATE);
+  public void update(ComponentDependencyModelEntity dependency) {
+    ZusammenElement componentDependencyElement =
+        buildComponentDependencyElement(dependency, Action.UPDATE);
 
-    Id itemId = new Id(entity.getVspId());
-    SessionContext context = ZusammenUtil.createSessionContext();
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(dependency.getVspId(), dependency.getVersion().getId());
 
-    zusammenAdaptor.saveElement(context, elementContext,
-        componentDependencyElement,
-        String.format("Update component dependency model with id %s", entity.getId()));
+    zusammenAdaptor.saveElement(context, elementContext, componentDependencyElement,
+        String.format("Update component dependency model with id %s", dependency.getId()));
   }
 
   @Override
-  public void delete(ComponentDependencyModelEntity entity) {
-    ZusammenElement componentDependencyElement = new ZusammenElement();
-    componentDependencyElement.setElementId(new Id(entity.getId()));
-    componentDependencyElement.setAction(Action.DELETE);
+  public void delete(ComponentDependencyModelEntity dependency) {
+    ZusammenElement componentDependencyElement =
+        buildElement(new Id(dependency.getId()), Action.DELETE);
 
-    Id itemId = new Id(entity.getVspId());
-    SessionContext context = ZusammenUtil.createSessionContext();
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(dependency.getVspId(), dependency.getVersion().getId());
 
-
-    zusammenAdaptor.saveElement(context, elementContext,
-        componentDependencyElement,
-        String.format("Delete component dependency model with id %s", entity.getId()));
-  }
-
-  @Override
-  public void deleteAll(String vspId, Version version) {
-    ZusammenElement componentDependenciesElement =
-        VspZusammenUtil
-            .buildStructuralElement(StructureElement.ComponentDependencies, Action.DELETE);
-
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    zusammenAdaptor.saveElement(context, new ElementContext(itemId,
-            VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
-        componentDependenciesElement, "Delete all component dependencies");
+    zusammenAdaptor.saveElement(context, elementContext, componentDependencyElement,
+        String.format("Delete component dependency model with id %s", dependency.getId()));
   }
 
   @Override
@@ -127,69 +118,50 @@ public class ComponentDependencyModelDaoZusammenImpl implements ComponentDepende
   }
 
   @Override
-  public Collection<ComponentDependencyModelEntity> list(ComponentDependencyModelEntity entity) {
+  public Collection<ComponentDependencyModelEntity> list(
+      ComponentDependencyModelEntity dependency) {
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(dependency.getVspId(), dependency.getVersion().getId());
 
-    Id itemId = new Id(entity.getVspId());
-    SessionContext context = ZusammenUtil.createSessionContext();
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(entity.getVersion()));
+    Optional<ElementInfo> vspModel = zusammenAdaptor
+        .getElementInfoByName(context, elementContext, null, ElementType.VspModel.name());
+    if (!vspModel.isPresent()) {
+      return new ArrayList<>();
+    }
 
-    return zusammenAdaptor.listElementsByName(context, elementContext,
-        null, StructureElement.ComponentDependencies.name())
-        .stream().map(elementInfo -> mapElementInfoToComponentDependencyModel(entity.getVspId(),
-            entity.getVersion(), elementInfo))
+    ElementToComponentDependencyModelConvertor convertor =
+        new ElementToComponentDependencyModelConvertor();
+    return zusammenAdaptor.listElementsByName(context, elementContext, vspModel.get().getId(),
+        ElementType.ComponentDependencies.name()).stream()
+        .map(elementInfo -> {
+          ComponentDependencyModelEntity entity = convertor.convert(elementInfo);
+          entity.setVspId(dependency.getVspId());
+          entity.setVersion(dependency.getVersion());
+          entity.setId(elementInfo.getId().getValue());
+          return entity;
+        })
         .collect(Collectors.toList());
   }
 
-  private static ComponentDependencyModelEntity mapElementInfoToComponentDependencyModel(
-      String vspId, Version version,
-      ElementInfo elementInfo) {
-    ComponentDependencyModelEntity componentDependencyModelEntity =
-        new ComponentDependencyModelEntity(vspId, version, elementInfo.getId().getValue());
-    componentDependencyModelEntity.setSourceComponentId(elementInfo.getInfo()
-        .getProperty(ComponentDependencyModelPropertyName.sourcecomponent_id.name()));
-    componentDependencyModelEntity.setTargetComponentId(elementInfo.getInfo()
-        .getProperty(ComponentDependencyModelPropertyName.targetcomponent_id.name()));
-    componentDependencyModelEntity.setRelation(elementInfo.getInfo()
-        .getProperty(ComponentDependencyModelPropertyName.relation.name()));
-
-    return componentDependencyModelEntity;
-  }
-
-
-  private ZusammenElement buildComponentDependencyElement(ComponentDependencyModelEntity entity) {
-    ZusammenElement componentDependencyElement = new ZusammenElement();
-
-    if (entity.getId() != null) {
-      componentDependencyElement.setElementId(new Id(entity.getId()));
-    }
+  private ZusammenElement buildComponentDependencyElement(ComponentDependencyModelEntity compDep,
+                                                          Action action) {
+    ZusammenElement componentDependencyElement =
+        buildElement(compDep.getId() == null ? null : new Id(compDep.getId()), action);
 
     Info info = new Info();
-    info.addProperty(ComponentDependencyModelPropertyName.id.name(), entity.getId());
-    info.addProperty(ComponentDependencyModelPropertyName.relation.name(), entity.getRelation());
+    info.addProperty(ElementPropertyName.elementType.name(), ElementType.ComponentDependency);
+    //info.addProperty(ComponentDependencyModelPropertyName.id.name(), entity.getId());
+    info.addProperty(ComponentDependencyModelPropertyName.relation.name(), compDep.getRelation());
     info.addProperty(ComponentDependencyModelPropertyName.sourcecomponent_id.name(),
-        entity.getSourceComponentId());
+        compDep.getSourceComponentId());
     info.addProperty(ComponentDependencyModelPropertyName.targetcomponent_id.name(),
-        entity.getTargetComponentId());
+        compDep.getTargetComponentId());
 
     componentDependencyElement.setInfo(info);
 
     return componentDependencyElement;
   }
-
-  private void addComponentDependencyData(ComponentDependencyModelEntity componentDependency,
-                                          ElementInfo componentDependencyElement) {
-    componentDependency.setId(componentDependencyElement.getInfo()
-        .getProperty(ComponentDependencyModelPropertyName.id.name()));
-    componentDependency.setRelation(componentDependencyElement.getInfo()
-        .getProperty(ComponentDependencyModelPropertyName.id.name()));
-    componentDependency.setSourceComponentId(componentDependencyElement.getInfo()
-        .getProperty(ComponentDependencyModelPropertyName.sourcecomponent_id.name()));
-    componentDependency.setTargetComponentId(componentDependencyElement.getInfo()
-        .getProperty(ComponentDependencyModelPropertyName.targetcomponent_id.name()));
-  }
-
 
   private enum ComponentDependencyModelPropertyName {
     id,
@@ -197,5 +169,4 @@ public class ComponentDependencyModelDaoZusammenImpl implements ComponentDepende
     sourcecomponent_id,
     targetcomponent_id,
   }
-
 }

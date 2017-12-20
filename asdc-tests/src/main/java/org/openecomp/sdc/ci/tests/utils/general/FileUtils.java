@@ -39,13 +39,13 @@ import org.slf4j.LoggerFactory;
 import fj.data.Either;
 
 public class FileUtils {
-	static Logger logger = LoggerFactory.getLogger(Utils.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class.getName());
 
 	public static void writeToFile(String filePath, String content) {
 		try {
 			Files.write(Paths.get(filePath), content.getBytes());
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.debug(String.format("Failed to write to file '%s'", filePath), e);
 		}
 	}
 
@@ -76,7 +76,7 @@ public class FileUtils {
 		File file = new File(testResourcesPath);
 		File[] listFiles = file.listFiles();
 		if (listFiles != null) {
-			List<String> listFileName = new ArrayList<String>();
+			List<String> listFileName = new ArrayList<>();
 			for (File newFile : listFiles) {
 				if (newFile.isFile()) {
 					listFileName.add(newFile.getPath());
@@ -100,7 +100,7 @@ public class FileUtils {
 
 	public static String loadPayloadFileFromListUsingPosition(List<String> listFileName, String pattern,
 			Boolean isBase64, int positionInList) throws IOException {
-		List<String> newList = new ArrayList<String>(Arrays.asList(listFileName.get(positionInList)));
+		List<String> newList = new ArrayList<>(Arrays.asList(listFileName.get(positionInList)));
 		return loadPayloadFile(newList, pattern, isBase64);
 	}
 
@@ -109,7 +109,7 @@ public class FileUtils {
 		String fileName;
 		String payload = null;
 		fileName = FileUtils.getFilePathFromListByPattern(listFileName, pattern);
-		logger.debug("fileName: {}",fileName);
+		LOGGER.debug("fileName: {}",fileName);
 
 		if (fileName != null) {
 			payload = Decoder.readFileToString(fileName);

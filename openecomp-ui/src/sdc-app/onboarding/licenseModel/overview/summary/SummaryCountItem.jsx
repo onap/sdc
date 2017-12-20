@@ -24,7 +24,8 @@ function  SummaryCountItem ({name, counter, onAdd, onNavigate, isReadOnlyMode}) 
 				<span className='item-name' onClick={onNavigate}>{name}</span>
 				<span className='item-count' onClick={onNavigate} data-test-id={'vlm-summary-vendor-counter-' + name.toLowerCase().replace(/\s/g,'-')}>({counter})</span>
 			</div>
-			<SVGIcon name='plusCircle' disabled={isReadOnlyMode} color='secondary' onClick={onAdd} data-test-id={'vlm-summary-vendor-add-btn-' + name.toLowerCase().replace(/\s/g,'-')}/>
+			<SVGIcon name='plusCircle' disabled={isReadOnlyMode} className={isReadOnlyMode ? 'disabled' : ''}
+				color='secondary' onClick={onAdd} data-test-id={'vlm-summary-vendor-add-btn-' + name.toLowerCase().replace(/\s/g,'-')}/>
 		</div>
 	);
 }

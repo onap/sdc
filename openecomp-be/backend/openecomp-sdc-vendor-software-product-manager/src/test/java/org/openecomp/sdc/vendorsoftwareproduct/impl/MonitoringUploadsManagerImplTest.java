@@ -28,10 +28,9 @@ import static org.mockito.Mockito.verify;
 
 public class MonitoringUploadsManagerImplTest {
 
-  private static final String USER1 = "ComponentsUploadTestUser";
   private static final String COMPONENT_ID = "COMPONENT_ID";
   private static final String VSP_ID = "vspId";
-  private static final Version VERSION = new Version(0, 1);
+  private static final Version VERSION = new Version("version_id");
   private static final String TRAP_FILE_NAME = "MMSC.zip";
   private static final String POLL_FILE_NAME = "MNS OAM FW.zip";
   private static final String VES_FILE_NAME = "vesTest-yml_only.zip";
@@ -54,22 +53,19 @@ public class MonitoringUploadsManagerImplTest {
   @Test(expectedExceptions = CoreException.class)
   public void testUploadEmptyZip() {
     processFile(ZIP_DIR + EMPTY_ZIP_FILE_NAME, inputStream ->
-      monitoringUploadsManager.upload(inputStream, EMPTY_ZIP_FILE_NAME, VSP_ID, VERSION, COMPONENT_ID,
-          MonitoringUploadType.SNMP_TRAP, USER1));
+        monitoringUploadsManager
+            .upload(inputStream, EMPTY_ZIP_FILE_NAME, VSP_ID, VERSION, COMPONENT_ID,
+                MonitoringUploadType.SNMP_TRAP));
   }
 
-  @Test
+  @Test(expectedExceptions = CoreException.class, expectedExceptionsMessageRegExp =
+      "Monitoring file uploaded for vendor software product with Id vspId and version version_id " +
+          "is invalid: Invalid zip file")
   public void testUploadInvalidZip() {
-
-    try {
-      processFile("/notZipFile", inputStream ->
+    processFile("/notZipFile", inputStream ->
         monitoringUploadsManager
             .upload(inputStream, NOT_ZIP_FILE_NAME, VSP_ID, VERSION, COMPONENT_ID,
-                    MonitoringUploadType.VES_EVENTS, USER1));
-      Assert.fail();
-    } catch (Exception exception) {
-      Assert.assertEquals(exception.getMessage(), "Invalid zip file");
-    }
+                MonitoringUploadType.VES_EVENTS));
   }
 
   @Test
@@ -78,7 +74,7 @@ public class MonitoringUploadsManagerImplTest {
     try {
       processFile(ZIP_DIR + ZIP_WITH_FOLDERS_FILE_NAME, inputStream -> monitoringUploadsManager
           .upload(inputStream, ZIP_WITH_FOLDERS_FILE_NAME, VSP_ID, VERSION, COMPONENT_ID,
-              MonitoringUploadType.SNMP_TRAP, USER1));
+              MonitoringUploadType.SNMP_TRAP));
       Assert.fail();
     } catch (Exception exception) {
       Assert.assertEquals(exception.getMessage(), "Zip file should not contain folders");
@@ -91,7 +87,7 @@ public class MonitoringUploadsManagerImplTest {
     try {
       processFile(ZIP_DIR + INVALID_VES_FILE_NAME, inputStream -> monitoringUploadsManager
           .upload(inputStream, INVALID_VES_FILE_NAME, VSP_ID, VERSION, COMPONENT_ID,
-              MonitoringUploadType.VES_EVENTS, USER1));
+              MonitoringUploadType.VES_EVENTS));
       Assert.fail();
     } catch (Exception exception) {
       Assert.assertEquals(exception.getMessage(),
@@ -122,18 +118,18 @@ public class MonitoringUploadsManagerImplTest {
         .when(componentArtifactDaoMock).list(anyObject());
 
     MonitoringUploadStatus monitoringUploadStatus =
-        monitoringUploadsManager.listFilenames(VSP_ID, VERSION, COMPONENT_ID, USER1);
+        monitoringUploadsManager.listFilenames(VSP_ID, VERSION, COMPONENT_ID);
 
     Assert.assertEquals(monitoringUploadStatus.getSnmpTrap(), TRAP_FILE_NAME);
     Assert.assertEquals(monitoringUploadStatus.getSnmpPoll(), POLL_FILE_NAME);
     Assert.assertEquals(monitoringUploadStatus.getVesEvent(), VES_FILE_NAME);
   }
 
-  @Test (expectedExceptions = CoreException.class)
+  @Test(expectedExceptions = CoreException.class)
   public void testDeleteComponentMibWhenNone() {
     doReturn(Optional.empty()).when(componentArtifactDaoMock).getByType(any());
     monitoringUploadsManager
-        .delete(VSP_ID, VERSION, COMPONENT_ID, MonitoringUploadType.SNMP_POLL, USER1);
+        .delete(VSP_ID, VERSION, COMPONENT_ID, MonitoringUploadType.SNMP_POLL);
 
     verify(componentArtifactDaoMock, never()).delete(anyObject());
   }
@@ -146,7 +142,7 @@ public class MonitoringUploadsManagerImplTest {
             (componentArtifactDaoMock).getByType(anyObject());
 
     monitoringUploadsManager
-        .delete(VSP_ID, VERSION, COMPONENT_ID, MonitoringUploadType.SNMP_POLL, USER1);
+        .delete(VSP_ID, VERSION, COMPONENT_ID, MonitoringUploadType.SNMP_POLL);
 
     verify(componentArtifactDaoMock).delete(anyObject());
   }

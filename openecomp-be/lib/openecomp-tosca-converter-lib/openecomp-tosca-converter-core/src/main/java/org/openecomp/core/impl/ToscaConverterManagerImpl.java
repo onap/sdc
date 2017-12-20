@@ -5,6 +5,8 @@ import org.openecomp.core.converter.api.ToscaConverterManager;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
 import java.lang.reflect.Constructor;
@@ -14,8 +16,10 @@ import java.util.Map;
 
 public class ToscaConverterManagerImpl implements ToscaConverterManager {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(ToscaConverterManagerImpl.class.getName());
   private static List<ToscaConverter> toscaConverters;
   private static final String toscaConverterFileName = "ToscaConverters.json";
+  private static final String TOSCA_CONVERTER_IMPL_FORMAT_ERROR = "Failed to construct TOSCA converter for '%s' implementation.";
 
   static {
     toscaConverters = getConvertersList();
@@ -40,7 +44,8 @@ public class ToscaConverterManagerImpl implements ToscaConverterManager {
         Class<?> clazz = Class.forName(implClassName);
         Constructor<?> constructor = clazz.getConstructor();
         toscaConvertersList.add((ToscaConverter) constructor.newInstance());
-      }catch (Exception e){
+      }catch (Exception ex){
+        LOGGER.debug(String.format(TOSCA_CONVERTER_IMPL_FORMAT_ERROR, implClassName), ex);
         continue;
       }
     }

@@ -1,7 +1,5 @@
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
-import static java.util.Objects.nonNull;
-
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -35,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+
+import static java.util.Objects.nonNull;
 
 public class NovaServerNamingConventionGuideLineValidator implements ResourceValidator {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();

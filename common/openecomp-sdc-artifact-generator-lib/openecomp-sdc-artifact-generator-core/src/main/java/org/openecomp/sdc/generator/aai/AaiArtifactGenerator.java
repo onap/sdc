@@ -560,7 +560,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
         return tosca;
       } catch (Exception exception) {
         throw new IllegalArgumentException(
-            String.format(GeneratorConstants.GENERATOR_AAI_ERROR_INVALID_TOSCA, input.getName()));
+            String.format(GeneratorConstants.GENERATOR_AAI_ERROR_INVALID_TOSCA, input.getName()), exception);
       }
     } else {
       throw new SecurityException(GeneratorConstants.GENERATOR_AAI_ERROR_CHECKSUM_MISMATCH);

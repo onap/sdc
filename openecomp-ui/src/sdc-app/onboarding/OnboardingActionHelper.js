@@ -13,6 +13,9 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+import UsersActionHelper from './users/UsersActionHelper.js';
+import VersionsPageActionHelper from './versionsPage/VersionsPageActionHelper.js';
+import PermissionsActionHelper from './permissions/PermissionsActionHelper.js';
 import LicenseModelActionHelper from './licenseModel/LicenseModelActionHelper.js';
 import LicenseAgreementActionHelper from './licenseModel/licenseAgreement/LicenseAgreementActionHelper.js';
 import FeatureGroupsActionHelper from './licenseModel/featureGroups/FeatureGroupsActionHelper.js';
@@ -28,13 +31,15 @@ import SoftwareProductComponentsNetworkActionHelper from './softwareProduct/comp
 import SoftwareProductDependenciesActionHelper from './softwareProduct/dependencies/SoftwareProductDependenciesActionHelper.js';
 import ComputeFlavorActionHelper from './softwareProduct/components/compute/ComputeFlavorActionHelper.js';
 import OnboardActionHelper from './onboard/OnboardActionHelper.js';
+import MergeEditorActionHelper from 'sdc-app/common/merge/MergeEditorActionHelper.js';
+// import {SyncStates} from 'sdc-app/common/merge/MergeEditorConstants.js';
 import SoftwareProductComponentsMonitoringAction from './softwareProduct/components/monitoring/SoftwareProductComponentsMonitoringActionHelper.js';
 import {actionTypes, enums} from './OnboardingConstants.js';
-import SoftwareProductComponentsImageActionHelper from './softwareProduct/components/images/SoftwareProductComponentsImageActionHelper.js';
-import {navigationItems as SoftwareProductNavigationItems, actionTypes as SoftwareProductActionTypes, onboardingOriginTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
+import {actionTypes as SoftwareProductActionTypes, onboardingOriginTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 import ActivityLogActionHelper from 'sdc-app/common/activity-log/ActivityLogActionHelper.js';
+import ItemsHelper from 'sdc-app/common/helpers/ItemsHelper.js';
+import SoftwareProductComponentsImageActionHelper from './softwareProduct/components/images/SoftwareProductComponentsImageActionHelper.js';
 import licenseModelOverviewActionHelper from 'sdc-app/onboarding/licenseModel/overview/licenseModelOverviewActionHelper.js';
-import store from 'sdc-app/AppStore.js';
 import {tabsMapping as attachmentsTabsMapping} from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsConstants.js';
 import SoftwareProductAttachmentsActionHelper from 'sdc-app/onboarding/softwareProduct/attachments/SoftwareProductAttachmentsActionHelper.js';
 
@@ -49,21 +54,25 @@ function setCurrentScreen(dispatch, screen, props = {}) {
 	});
 }
 
-function  getCurrentLicenseModelVersion(licenseModelId) {
-	return store.getState().licenseModelList.find(({id}) => id === licenseModelId).version;
+export function updateCurrentScreenProps(dispatch, props = {}) {
+	dispatch({
+		type: actionTypes.UPDATE_CURRENT_SCREEN_PROPS,
+		props
+	});
 }
 
-function getCurrentSoftwareProductVersion(softwareProductId) {
-	return store.getState().softwareProductList.find(({id}) => id === softwareProductId).version;
-}
+const OnboardingActionHelper = {
 
-export default {
-
-	navigateToOnboardingCatalog(dispatch) {
+	loadItemsLists(dispatch) {
 		LicenseModelActionHelper.fetchLicenseModels(dispatch);
 		LicenseModelActionHelper.fetchFinalizedLicenseModels(dispatch);
 		SoftwareProductActionHelper.fetchSoftwareProductList(dispatch);
 		SoftwareProductActionHelper.fetchFinalizedSoftwareProductList(dispatch);
+	},
+
+	navigateToOnboardingCatalog(dispatch) {
+		UsersActionHelper.fetchUsersList(dispatch);
+		this.loadItemsLists(dispatch);
 		OnboardActionHelper.resetOnboardStore(dispatch);
 		setCurrentScreen(dispatch, enums.SCREEN.ONBOARDING_CATALOG);
 	},
@@ -79,6 +88,7 @@ export default {
 			}
 			return SoftwareProductActionHelper.updateSoftwareProduct(dispatch, {
 				softwareProduct: dataToSave.softwareProduct,
+				version,
 				qdata: dataToSave.qdata
 			});
 		}
@@ -86,25 +96,19 @@ export default {
 	},
 
 	navigateToLicenseModelOverview(dispatch, {licenseModelId, version}) {
-		if (!version) {
-			version = getCurrentLicenseModelVersion(licenseModelId);
-		}
 
 		/**
 		 * TODO change to specific rest
 		 */
 
 		LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version}).then(() => {
-			LicenseModelActionHelper.fetchLicenseModelItems(dispatch, {licenseModelId, version}).then(() =>{
+			LicenseModelActionHelper.fetchLicenseModelItems(dispatch, {licenseModelId, version}).then(() => {
 				setCurrentScreen(dispatch, enums.SCREEN.LICENSE_MODEL_OVERVIEW, {licenseModelId, version});
 			});
 			licenseModelOverviewActionHelper.selectVLMListView(dispatch, {buttonTab: null});
 		});
 	},
 	navigateToLicenseAgreements(dispatch, {licenseModelId, version}) {
-		if(!version) {
-			version = getCurrentLicenseModelVersion(licenseModelId);
-		}
 		LicenseAgreementActionHelper.fetchLicenseAgreementList(dispatch, {licenseModelId, version});
 		LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version}).then(() => {
 			setCurrentScreen(dispatch, enums.SCREEN.LICENSE_AGREEMENTS, {licenseModelId, version});
@@ -112,70 +116,45 @@ export default {
 	},
 
 	navigateToFeatureGroups(dispatch, {licenseModelId, version}) {
-		if(!version) {
-			version = getCurrentLicenseModelVersion(licenseModelId);
-		}
 		FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {licenseModelId, version});
 		setCurrentScreen(dispatch, enums.SCREEN.FEATURE_GROUPS, {licenseModelId, version});
 	},
 
 	navigateToEntitlementPools(dispatch, {licenseModelId, version}) {
-		if(!version) {
-			version = getCurrentLicenseModelVersion(licenseModelId);
-		}
 		EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId, version});
 		setCurrentScreen(dispatch, enums.SCREEN.ENTITLEMENT_POOLS, {licenseModelId, version});
 	},
 
 	navigateToLicenseKeyGroups(dispatch, {licenseModelId, version}) {
-		if(!version) {
-			version = getCurrentLicenseModelVersion(licenseModelId);
-		}
 		LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version});
 		setCurrentScreen(dispatch, enums.SCREEN.LICENSE_KEY_GROUPS, {licenseModelId, version});
 	},
 
 	navigateToLicenseModelActivityLog(dispatch, {licenseModelId, version}){
-		if(!version) {
-			version = getCurrentLicenseModelVersion(licenseModelId);
-		}
 		ActivityLogActionHelper.fetchActivityLog(dispatch, {itemId: licenseModelId, versionId: version.id});
 		setCurrentScreen(dispatch, enums.SCREEN.ACTIVITY_LOG, {licenseModelId, version});
 	},
 
-	navigateToSoftwareProductLandingPage(dispatch, {softwareProductId, licenseModelId, version, licensingVersion}) {
-
-		if (!version) {
-			version = getCurrentSoftwareProductVersion(softwareProductId);
-		}
-
+	navigateToSoftwareProductLandingPage(dispatch, {softwareProductId, version}) {
 		SoftwareProductComponentsActionHelper.clearComponentsStore(dispatch);
 		SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {softwareProductId, version}).then(response => {
-			if(!licensingVersion) {
-				licensingVersion = response[0].licensingVersion;
-				if (!licensingVersion) {
-					licensingVersion = {id: '1.0', label: '1.0'};
-				}
-			}
-			if (!licenseModelId) {
-				licenseModelId = response[0].vendorId;
-			}
-
-			const newVersion = response[0].version ? response[0].version : version;
-
+			let {vendorId: licenseModelId, licensingVersion} = response[0];
 			SoftwareProductActionHelper.loadSoftwareProductDetailsData(dispatch, {licenseModelId, licensingVersion});
-
-			SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version: newVersion});
+			SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version: version});
 			if(response[0].onboardingOrigin === onboardingOriginTypes.ZIP) {
-				SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version: newVersion});
+				SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version: version});
 			}
-			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {softwareProductId, licenseModelId, version: newVersion});
+			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {softwareProductId, licenseModelId, version});
 		});
 	},
 
 	navigateToSoftwareProductDetails(dispatch, {softwareProductId, version}) {
-		SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {softwareProductId, version});
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_DETAILS, {softwareProductId, version});
+		SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {softwareProductId, version}).then(response => {
+			let {vendorId: licenseModelId, licensingVersion} = response[0];
+			SoftwareProductActionHelper.loadLicensingVersionsList(dispatch, {licenseModelId});
+			SoftwareProductActionHelper.loadSoftwareProductDetailsData(dispatch, {licenseModelId, licensingVersion});
+			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_DETAILS, {softwareProductId, version});
+		});
 	},
 
 	navigateToSoftwareProductAttachmentsSetupTab(dispatch, {softwareProductId, version}) {
@@ -183,7 +162,6 @@ export default {
 		SoftwareProductAttachmentsActionHelper.setActiveTab(dispatch, {activeTab: attachmentsTabsMapping.SETUP});
 		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_ATTACHMENTS, {softwareProductId, version});
 	},
-
 	navigateToSoftwareProductAttachmentsValidationTab(dispatch, {softwareProductId, version}) {
 		SoftwareProductActionHelper.processAndValidateHeatCandidate(dispatch, {softwareProductId, version}).then(() => {
 			SoftwareProductAttachmentsActionHelper.setActiveTab(dispatch, {activeTab: attachmentsTabsMapping.VALIDATION});
@@ -206,8 +184,15 @@ export default {
 	},
 
 	navigateToSoftwareProductDependencies(dispatch, {softwareProductId, version}) {
-		SoftwareProductDependenciesActionHelper.fetchDependencies(dispatch, {softwareProductId, version});
-		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES, {softwareProductId, version});
+		SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version}).then(result => {
+			if(result.listCount >= 2) {
+				SoftwareProductDependenciesActionHelper.fetchDependencies(dispatch, {softwareProductId, version});
+				setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_DEPENDENCIES, {softwareProductId, version});
+			}
+			else {
+				this.navigateToSoftwareProductLandingPage(dispatch, {softwareProductId, version});
+			}
+		});
 	},
 
 	navigateToSoftwareProductComponents(dispatch, {softwareProductId, version}) {
@@ -268,8 +253,8 @@ export default {
 		dispatch({
 			type: SoftwareProductActionTypes.TOGGLE_NAVIGATION_ITEM,
 			mapOfExpandedIds: {
-				[SoftwareProductNavigationItems.COMPONENTS]: true,
-				[SoftwareProductNavigationItems.COMPONENTS + '|' + componentId]: true
+				[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS]: true,
+				[enums.SCREEN.SOFTWARE_PRODUCT_COMPONENTS + '|' + componentId]: true
 			}
 		});
 	},
@@ -288,11 +273,44 @@ export default {
 		setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_COMPONENT_IMAGES, {softwareProductId, version, componentId});
 	},
 
+	navigateToVersionsPage(dispatch, {itemType, itemId, itemName, additionalProps, users}) {
+		PermissionsActionHelper.fetchItemUsers(dispatch, {itemId, allUsers: users});
+		VersionsPageActionHelper.selectNone(dispatch);
+		VersionsPageActionHelper.fetchVersions(dispatch, {itemType, itemId}).then(() => {
+			setCurrentScreen(dispatch, enums.SCREEN.VERSIONS_PAGE, {itemType, itemId, itemName, additionalProps});
+		});
+	},
+
+	checkMergeStatus(dispatch, {itemId, versionId, version}) {
+		return ItemsHelper.fetchVersion({itemId, versionId}).then(response => {
+			let state = response && response.state || {};
+			let {synchronizationState} = state;
+			// let inMerge = synchronizationState === SyncStates.MERGE;
+			MergeEditorActionHelper.fetchConflicts(dispatch, {itemId, version}).then(data => {
+				dispatch({
+					type: actionTypes.CHECK_MERGE_STATUS,
+					synchronizationState,
+					conflictInfoList: data.conflictInfoList
+				});
+			});
+		});
+	},
+
+	forceBreadCrumbsUpdate(dispatch) {
+		dispatch({
+			type: actionTypes.SET_CURRENT_SCREEN,
+			currentScreen: {
+				forceBreadCrumbsUpdate: true
+			}
+		});
+	},
+
 	updateCurrentScreenVersion(dispatch, version) {
 		dispatch({
 			type: actionTypes.SET_CURRENT_SCREEN_VERSION,
 			version
 		});
 	}
-
 };
+
+export default OnboardingActionHelper;
