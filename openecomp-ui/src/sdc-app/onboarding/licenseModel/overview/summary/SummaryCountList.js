@@ -16,9 +16,9 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
+import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
+import {enums, screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
 
-import OnboardingActionHelper from '../../../OnboardingActionHelper.js';
 import EntitlementPoolsActionHelper from '../../entitlementPools/EntitlementPoolsActionHelper.js';
 import LicenseAgreementActionHelper from '../../licenseAgreement/LicenseAgreementActionHelper.js';
 import LicenseKeyGroupsActionHelper from '../../licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
@@ -27,27 +27,32 @@ import FeatureGroupsActionHelper from '../../featureGroups/FeatureGroupsActionHe
 import {overviewItems} from '../LicenseModelOverviewConstants.js';
 import SummaryCountItem from './SummaryCountItem.jsx';
 
-export const mapStateToProps = ({licenseModel: {licenseModelEditor, licenseAgreement: {licenseAgreementList},
-	featureGroup: {featureGroupsList}, entitlementPool: {entitlementPoolsList}, licenseKeyGroup: {licenseKeyGroupsList}}}) => {
+export const mapStateToProps = ({
+	licenseModel: {
+		licenseModelEditor,
+		licenseAgreement: {licenseAgreementList},
+		featureGroup: {featureGroupsList},
+		entitlementPool: {entitlementPoolsList},
+		licenseKeyGroup: {licenseKeyGroupsList}
+	}
+}) => {
 
 	let {vendorName, description, id, version} = licenseModelEditor.data;
-
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(licenseModelEditor.data);
-
 	let counts = [
 		{name: overviewItems.LICENSE_AGREEMENTS, count: licenseAgreementList.length},
 		{name: overviewItems.FEATURE_GROUPS, count: featureGroupsList.length},
 		{name: overviewItems.ENTITLEMENT_POOLS, count: entitlementPoolsList.length},
 		{name: overviewItems.LICENSE_KEY_GROUPS, count: licenseKeyGroupsList.length},
 	];
+
 	return {
 		vendorName,
 		licenseModelId: id,
 		description,
 		counts,
-		isReadOnlyMode,
 		version
 	};
+
 };
 
 const mapActionsToProps = (dispatch) => {
@@ -71,22 +76,27 @@ const mapActionsToProps = (dispatch) => {
 			}
 		},
 		onNavigateClick: ({name, licenseModelId, version}) => {
+			let screenToNavigate;
 			switch (name) {
 				case overviewItems.ENTITLEMENT_POOLS:
-					OnboardingActionHelper.navigateToEntitlementPools(dispatch, {licenseModelId, version});
+					screenToNavigate = enums.SCREEN.ENTITLEMENT_POOLS;
 					break;
 				case overviewItems.FEATURE_GROUPS:
-					OnboardingActionHelper.navigateToFeatureGroups(dispatch, {licenseModelId, version});
+					screenToNavigate = enums.SCREEN.FEATURE_GROUPS;
 					break;
 				case overviewItems.LICENSE_AGREEMENTS:
-					OnboardingActionHelper.navigateToLicenseAgreements(dispatch, {licenseModelId, version});
+					screenToNavigate = enums.SCREEN.LICENSE_AGREEMENTS;
 					break;
 				case overviewItems.LICENSE_KEY_GROUPS:
-					OnboardingActionHelper.navigateToLicenseKeyGroups(dispatch, {licenseModelId, version});
+					screenToNavigate = enums.SCREEN.LICENSE_KEY_GROUPS;
 					break;
 				default:
 					break;
 			}
+			ScreensHelper.loadScreen(dispatch, {
+				screen: screenToNavigate, screenType: screenTypes.LICENSE_MODEL,
+				props: {licenseModelId, version}
+			});
 		}
 	};
 };

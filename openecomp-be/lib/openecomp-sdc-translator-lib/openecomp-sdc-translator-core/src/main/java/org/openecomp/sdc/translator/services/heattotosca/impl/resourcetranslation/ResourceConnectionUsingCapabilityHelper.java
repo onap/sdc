@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
@@ -32,7 +31,6 @@ import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslatedHeatResource;
-import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ConsolidationData;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFactory;

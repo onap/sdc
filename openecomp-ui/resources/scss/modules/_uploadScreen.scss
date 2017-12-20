@@ -5,20 +5,6 @@
       text-align: center;
       margin-bottom: 50px;
     }
-    .upload-screen-upload-block {
-      text-align: center;
-      padding: 50px;
-      border: 2px dashed lightgray;
-    }
-    .upload-screen-drop-zone {
-      &.active-dragging {
-        border: 3px dashed $dark-blue;
-        border-radius: 20px;
-        .draggable-wrapper {
-          opacity: 0.5;
-        }
-      }
-    }
   }
 
   .attachments-screen {

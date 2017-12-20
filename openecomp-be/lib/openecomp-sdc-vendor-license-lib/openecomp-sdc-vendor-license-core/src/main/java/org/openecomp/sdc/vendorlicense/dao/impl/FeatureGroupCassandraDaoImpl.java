@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.vendorlicense.dao.impl;
 
-import static org.openecomp.core.utilities.CommonMethods.toSingleElementSet;
-
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.mapping.Mapper;
@@ -46,6 +44,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.openecomp.core.utilities.CommonMethods.toSingleElementSet;
 
 public class FeatureGroupCassandraDaoImpl extends CassandraBaseDao<FeatureGroupEntity>
     implements FeatureGroupDao {

@@ -20,6 +20,16 @@
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc.core</groupId>
+            <artifactId>openecomp-session-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-versioning-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-facade-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -42,6 +52,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amdocs.zusammen</groupId>
+            <artifactId>zusammen-datatypes</artifactId>
+            <version>${zusammen.version}</version>
         </dependency>
     </dependencies>
 

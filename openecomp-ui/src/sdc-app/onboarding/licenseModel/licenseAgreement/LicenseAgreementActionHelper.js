@@ -17,7 +17,7 @@ import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import {actionTypes as licenseAgreementActionTypes} from './LicenseAgreementConstants.js';
 import FeatureGroupsActionHelper from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupsActionHelper.js';
-import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
+import ItemsHelper from 'sdc-app/common/helpers/ItemsHelper.js';
 
 function baseUrl(licenseModelId, version) {
 	const restPrefix = Configuration.get('restPrefix');
@@ -27,6 +27,10 @@ function baseUrl(licenseModelId, version) {
 
 function fetchLicenseAgreementList(licenseModelId, version) {
 	return RestAPIUtil.fetch(`${baseUrl(licenseModelId, version)}`);
+}
+
+function fetchLicenseAgreement(licenseModelId, licenseAgreementId, version) {
+	return RestAPIUtil.fetch(`${baseUrl(licenseModelId, version)}/${licenseAgreementId}`);
 }
 
 function postLicenseAgreement(licenseModelId, licenseAgreement, version) {
@@ -65,6 +69,10 @@ export default {
 		}));
 	},
 
+	fetchLicenseAgreement(dispatch, {licenseModelId, licenseAgreementId, version}) {
+		return fetchLicenseAgreement(licenseModelId, licenseAgreementId, version);
+	},
+
 	openLicenseAgreementEditor(dispatch, {licenseModelId, licenseAgreement, version}) {
 		FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {licenseModelId, version});
 		dispatch({
@@ -84,12 +92,14 @@ export default {
 		if (previousLicenseAgreement) {
 			return putLicenseAgreement(licenseModelId, previousLicenseAgreement, licenseAgreement, version).then(() => {
 				this.fetchLicenseAgreementList(dispatch, {licenseModelId, version});
+				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 		else {
 			return postLicenseAgreement(licenseModelId, licenseAgreement, version).then(() => {
 				this.fetchLicenseAgreementList(dispatch, {licenseModelId, version});
 				FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {licenseModelId, version});
+				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 	},
@@ -100,6 +110,7 @@ export default {
 				type: licenseAgreementActionTypes.DELETE_LICENSE_AGREEMENT,
 				licenseAgreementId
 			});
+			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	},
 
@@ -107,12 +118,6 @@ export default {
 		dispatch({
 			type: licenseAgreementActionTypes.licenseAgreementEditor.SELECT_TAB,
 			tab
-		});
-	},
-
-	switchVersion(dispatch, {licenseModelId, version}) {
-		LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version}).then(() => {
-			this.fetchLicenseAgreementList(dispatch, {licenseModelId, version});
 		});
 	}
 };

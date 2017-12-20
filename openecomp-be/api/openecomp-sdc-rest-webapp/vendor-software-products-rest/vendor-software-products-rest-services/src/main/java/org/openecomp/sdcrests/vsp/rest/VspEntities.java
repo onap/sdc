@@ -20,27 +20,6 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
-import org.openecomp.sdc.versioning.VersioningManager;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
-import org.openecomp.sdc.versioning.VersioningUtil;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionInfo;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-
 public interface VspEntities {
-  VersioningManager versioningManager = VersioningManagerFactory.getInstance().createInterface();
 
-  default Version resolveVspVersion(String vspId, String version, String user,
-                                    VersionableEntityAction action) {
-    return VersioningUtil
-        .resolveVersion(Version.valueOf(version), getVersionInfo(vspId, action, user), user);
-  }
-
-  default VersionInfo getVersionInfo(String vendorSoftwareProductId, VersionableEntityAction action,
-                                     String user) {
-    return versioningManager.getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
-        vendorSoftwareProductId, user, action);
-  }
 }

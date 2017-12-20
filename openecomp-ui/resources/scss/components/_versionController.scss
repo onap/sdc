@@ -1,102 +1,272 @@
 .version-controller-bar {
-  display: flex;
-  min-height: 57px;
-  border-bottom: 1px solid $tlv-light-gray;
-  background-color: transparent;
-  .vc-container {
-    display: flex;
-    flex: 1;
-    align-self: center;
-    background-color: transparent;
-    justify-content: space-between;
-    padding-left: 16px;
-    padding-right: 40px;
-    .version-status-container {
-      display: flex;
-      height: 30px;
-      .version-selector {
-        border: none;
-        margin-top: 7px;
-        padding-right: 10px;
-        margin-right: 15px;
-        margin-left: 10px;
-        @extend .body-1;
-      }
-      .version-section {
-        .form-group {
-          margin-right: 20px;
-          .input-options {
-            border: none;
-            .input-options-select {
-              padding-top: 4px;
-            }
-          }
-        }
-      }
-      .vc-status {
-        display: flex;
-        padding-left: 20px;
-        border-left: $light-gray thin solid;
-        .status-text {
-          align-self: center;
-          margin-top: 2px;
-          @extend .heading-5;
-          color: $dark-gray;
-        }
-      }
-    }
-    .save-submit-cancel-container {
-      display: flex;
-      height: 30px;
-      .action-buttons {
-        display: flex;
-        padding: 0 13px;
-        .version-control-buttons {
-          display: flex;
-        }
-        .action-buttons-svg {
-          padding-top: 5px;
-          margin-right: 20px;
-          padding-bottom: 5px;
+	display: flex;
+	min-height: 70px;
+	border-bottom: 1px solid $tlv-light-gray;
+	background-color: transparent;
 
+	.vc-container {
+		display: flex;
+		flex: 1;
+		align-self: center;
+		background-color: transparent;
+		justify-content: space-between;
+		align-items: center;
+		padding-left: 16px;
+		padding-right: 40px;
 
-          .svg-icon {
-            fill: $dark-gray;
-            &:hover {
-              fill: $black;
-            }
-            &.__versionControllerLockClosed {
-              margin-top: -3px;
-            }
-            &.__versionControllerLockOpen {
-              margin-top: -6px;
-            }
-            &.__versionControllerSubmit {
-              fill: $blue;
-              &:hover {
-                fill: $dark-blue;
-              }
-              &.disabled {
-                fill: $dark-gray;
-              }
-            }
-          }
-          }
+		.vc-separator {
+			border-left: 1px solid $tlv-light-gray;
+			height: 37px;
+			margin-left: 5px;
+			margin-right: 5px;
+		}
 
+		.version-status-container {
+			display: flex;
+			height: 30px;
 
+			.version-selector-more-versions {
+				color: $blue;
+				cursor: pointer;
+			}
 
+			.version-selector {
+				margin-top: 0px;
+				padding-right: 10px;
+				margin-right: 15px;
+				margin-left: 10px;
+				border-color: $light-gray;
+				border-radius: 2px;
+				width: 243px;
+				height: 30px;
+				@extend .body-1;
+			}
 
-      }
-      .vc-nav-item-close {
-        display: flex;
-        padding-left: 18px;
-        padding-top: 3px;
-        align-self: center;
-        @extend .body-1;
-        color: $gray;
-        cursor: pointer;
-        border-left: $gray thin solid;
-      }
-    }
-  }
+			.version-section {
+				.form-group {
+					margin-right: 20px;
+
+					.input-options {
+						border: none;
+
+						.input-options-select {
+							padding-top: 4px;
+						}
+					}
+				}
+			}
+
+			.vc-status {
+				display: flex;
+				padding-left: 20px;
+				border-left: $light-gray thin solid;
+
+				.status-text {
+					align-self: center;
+					margin-top: 2px;
+					@extend .heading-5;
+					color: $dark-gray;
+				}
+			}
+		}
+
+		.save-submit-cancel-container {
+			display: flex;
+			align-items: center;
+			height: 100%;
+
+			.action-buttons, .collaborator-action-buttons, .vc-save-section, .vc-submit-section {
+				display: flex;
+				align-items: center;
+				height: 100%;
+
+				.vc-submit-button {
+					border: 1px solid $dark-gray;
+					width: 94px;
+					height: 30px;
+					border-radius: 2px;
+					padding-top: 5px;
+					padding-left: 10px;
+					margin-left: 10px;
+					margin-right: 10px;
+
+					&:hover:not(.disabled) {
+						cursor: pointer;
+						background-color: $tlv-light-gray;
+					}
+
+					&.disabled {
+						border-color: $light-gray;
+					}
+
+					.vc-v-submit {
+						width: 11px;
+						height: 8px;
+						margin-right: 10px;
+						position: relative;
+						top: -1px;
+					}
+				}
+
+				.version-control-buttons {
+					display: flex;
+				}
+
+				.action-button-wrapper {
+					display: flex;
+					align-items: center;
+					height: 70px;
+
+					&:hover:not(.disabled) {
+						background-color: $tlv-light-gray;
+					}
+
+					&:active:not(.disabled) {
+						background-color: $light-gray;
+					}
+
+					.action-buttons-svg {
+						padding-left: 10px;
+						padding-right: 10px;
+
+						.svg-icon {
+							fill: $text-black;
+							height: 20px;
+
+							&, &.__version-controller-save { width: 20px; }
+							&.__version-controller-permissions { width: 32px; }
+							&.__version-controller-undo, &.__version-controller-revert { width: 20px; }
+							&.__version-controller-sync, &.__version-controller-commit { width: 28px; }
+						}
+					}
+
+					.version-controller-permissions {
+						width: 32px;
+						height: 20px;
+						fill: $dark-gray;
+					}
+				}
+
+				.action-button-label {
+					display: block;
+					font-size: $icon-font-size;
+					font-family: $icon-font-family;
+					height: 1em;
+					margin-top: 5px;
+					margin-bottom: 0;
+				}
+
+				.onboarding-overlay {
+					margin-top: -6px;
+					.permissions-overlay {
+						width: 237px;
+
+						.permissions-overlay-header {
+							text-align: left;
+							color: $blue;
+							padding-bottom: 15px;
+							padding-top: 15px;
+							border-bottom: 1px solid $light-gray;
+							.permissions-overlay-header-title {
+								margin-left: 20px;
+							}
+						}
+						.permissions-overlay-content {
+							max-height: 290px;
+							overflow-y: auto;
+							padding-left: 10px;
+							padding-right: 10px;
+							.contributor {
+								&:last-child {
+									border-bottom: none;
+								}
+								border-bottom: 1px solid $tlv-light-gray;
+								.contributor-content {
+									padding-top: 12px;
+									padding-bottom: 10px;
+									margin-left: 10px;
+									display: flex;
+									.contributor-icon-circle {
+										&.selected {
+											border: 1px solid $blue;
+										}
+
+										border-radius: 65px;
+										padding: 2px;
+										width: 32px;
+										height: 32px;
+										margin-top: 4px;
+										.contributer-icon {
+											width: 26px;
+											border-radius: 50px;
+											height: 26px;
+											margin-top: 0px;
+											.__user {
+												height: 18px;
+												width: 16px;
+												stroke: $blue;
+												fill: transparent;
+												margin-left: 5px;
+												margin-top: 3px;
+											}
+											&.selected {
+												border: 1px solid $blue;
+												background-color: $blue;
+												.__user {
+													stroke: $white;
+													margin-left: 4px;
+												}
+											}
+										}
+									}
+
+									.contributer-info {
+										padding-left: 11px;
+										.contributer-name {
+											@extend .body-2-semibold;
+											text-transform: uppercase;
+											color: $dark-gray;
+										}
+										.contributer-role {
+											@extend .body-3;
+											color: $gray;
+											display: flex;
+											text-transform: lowercase;
+											p:first-letter {
+												text-transform: uppercase;
+											}
+											justify-content: space-between;
+										}
+									}
+								}
+							}
+						}
+						.permissions-overlay-footer {
+							.manage-permissions-btn {
+								@extend .body-2-semibold;
+								margin-top: 20px;
+								padding-top: 10px;
+								padding-bottom: 10px;
+								color: $blue;
+								text-align: center;
+								cursor: pointer;
+								background-color: $tlv-gray;
+							}
+						}
+
+					}
+				}
+			}
+		}
+		.vc-nav-item-close {
+			display: flex;
+			padding-left: 18px;
+			padding-top: 3px;
+			align-self: center;
+			@extend .body-1;
+			color: $gray;
+			cursor: pointer;
+			border-left: $gray thin solid;
+		}
+	}
 }

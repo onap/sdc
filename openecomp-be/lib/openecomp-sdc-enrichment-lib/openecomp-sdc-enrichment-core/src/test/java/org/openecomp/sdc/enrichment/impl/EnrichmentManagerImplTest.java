@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.enrichment.impl;
 
-import static org.junit.Assert.assertEquals;
-
 import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.logging.api.Logger;
@@ -49,6 +47,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class EnrichmentManagerImplTest {

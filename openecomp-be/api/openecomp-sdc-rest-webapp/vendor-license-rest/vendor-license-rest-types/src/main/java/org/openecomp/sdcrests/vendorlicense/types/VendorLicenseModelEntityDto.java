@@ -21,19 +21,10 @@
 package org.openecomp.sdcrests.vendorlicense.types;
 
 import io.swagger.annotations.ApiModel;
-import org.openecomp.sdc.versioning.dao.types.VersionStatus;
-import org.openecomp.sdcrests.common.types.VersionDto;
-
-import java.util.List;
 
 @ApiModel(value = "VendorLicenseModelEntity")
 public class VendorLicenseModelEntityDto extends VendorLicenseModelRequestDto {
   private String id;
-  private VersionDto version;
-  private VersionStatus status;
-  private String lockingUser;
-  private List<VersionDto> viewableVersions;
-  private List<VersionDto> finalVersions;
 
   public String getId() {
     return id;
@@ -41,45 +32,5 @@ public class VendorLicenseModelEntityDto extends VendorLicenseModelRequestDto {
 
   public void setId(String id) {
     this.id = id;
-  }
-
-  public VersionDto getVersion() {
-    return version;
-  }
-
-  public void setVersion(VersionDto version) {
-    this.version = version;
-  }
-
-  public VersionStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(VersionStatus status) {
-    this.status = status;
-  }
-
-  public String getLockingUser() {
-    return lockingUser;
-  }
-
-  public void setLockingUser(String lockingUser) {
-    this.lockingUser = lockingUser;
-  }
-
-  public List<VersionDto> getViewableVersions() {
-    return viewableVersions;
-  }
-
-  public void setViewableVersions(List<VersionDto> viewableVersions) {
-    this.viewableVersions = viewableVersions;
-  }
-
-  public List<VersionDto> getFinalVersions() {
-    return finalVersions;
-  }
-
-  public void setFinalVersions(List<VersionDto> finalVersions) {
-    this.finalVersions = finalVersions;
   }
 }

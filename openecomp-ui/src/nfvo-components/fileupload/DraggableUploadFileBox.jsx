@@ -34,11 +34,10 @@ class DraggableUploadFileBox extends Component {
 	render() {
 		let {className, onClick, dataTestId, isReadOnlyMode} = this.props;
 		return (
-			<div
-				className={`${className}${isReadOnlyMode ? ' disabled' : ''}`}>
-				<div className={`${'drag-text'}${isReadOnlyMode ? ' disabled' : ''}`}>{i18n('Drag & drop for upload')}</div>
+			<div className={`file-upload-box ${className} ${isReadOnlyMode ? 'disabled' : ''}`}>
+				<div className={`drag-text ${isReadOnlyMode ? 'disabled' : ''}`}>{i18n('Drag & drop for upload')}</div>
 				<div className='or-text'>{i18n('or')}</div>
-				<Button type='button' data-test-id={dataTestId} btnType='outline' onClick={onClick} disabled={isReadOnlyMode === true}>{i18n('Select File')}</Button>
+				<Button type='button' data-test-id={dataTestId} btnType='outline' onClick={onClick} disabled={isReadOnlyMode}>{i18n('Select File')}</Button>
 			</div>
 		);
 	}

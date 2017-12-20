@@ -16,18 +16,17 @@
 import {connect} from 'react-redux';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import TabulatedEditor from 'src/nfvo-components/editor/TabulatedEditor.jsx';
-import ActivityLogActionHelper from 'sdc-app/common/activity-log/ActivityLogActionHelper.js';
-import {enums} from 'sdc-app/onboarding/OnboardingConstants.js';
-import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
+import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
+import {enums, screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
 
-import {navigationItems} from './LicenseModelConstants.js';
+import PermissionsActionHelper from './../permissions/PermissionsActionHelper.js';
+import RevisionsActionHelper from './../revisions/RevisionsActionHelper.js';
+
 import LicenseModelActionHelper from './LicenseModelActionHelper.js';
-import LicenseAgreementActionHelper from './licenseAgreement/LicenseAgreementActionHelper.js';
-import FeatureGroupsActionHelper from './featureGroups/FeatureGroupsActionHelper.js';
-import EntitlementPoolsActionHelper from './entitlementPools/EntitlementPoolsActionHelper.js';
-import LicenseKeyGroupsActionHelper from './licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
+import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
+import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
+import {CommitModalType} from 'nfvo-components/panel/versionController/components/CommitCommentModal.jsx';
 
 
 const buildNavigationBarProps = (licenseModel, screen) => {
@@ -39,131 +38,135 @@ const buildNavigationBarProps = (licenseModel, screen) => {
 		name: vendorName,
 		items: [
 			{
-				id: navigationItems.LICENSE_MODEL_OVERVIEW,
+				id: enums.SCREEN.LICENSE_MODEL_OVERVIEW,
 				name: i18n('Overview'),
 				meta
 			},
 			{
-				id: navigationItems.LICENSE_AGREEMENTS,
+				id: enums.SCREEN.LICENSE_AGREEMENTS,
 				name: i18n('License Agreements'),
 				meta
 			},
 			{
-				id: navigationItems.FEATURE_GROUPS,
+				id: enums.SCREEN.FEATURE_GROUPS,
 				name: i18n('Feature Groups'),
 				meta
 			},
 			{
-				id: navigationItems.ENTITLEMENT_POOLS,
+				id: enums.SCREEN.ENTITLEMENT_POOLS,
 				name: i18n('Entitlement Pools'),
 				meta
 			},
 			{
-				id: navigationItems.LICENSE_KEY_GROUPS,
+				id: enums.SCREEN.LICENSE_KEY_GROUPS,
 				name: i18n('License Key Groups'),
 				meta
 			},
 			{
-				id: navigationItems.ACTIVITY_LOG,
+				id: enums.SCREEN.ACTIVITY_LOG,
 				name: i18n('Activity Log'),
 				meta
 			}
 		]
 	}];
 
-	const activeItemId = ({
-		[enums.SCREEN.LICENSE_MODEL_OVERVIEW]: navigationItems.LICENSE_MODEL_OVERVIEW,
-		[enums.SCREEN.LICENSE_AGREEMENTS]: navigationItems.LICENSE_AGREEMENTS,
-		[enums.SCREEN.FEATURE_GROUPS]: navigationItems.FEATURE_GROUPS,
-		[enums.SCREEN.ENTITLEMENT_POOLS]: navigationItems.ENTITLEMENT_POOLS,
-		[enums.SCREEN.LICENSE_KEY_GROUPS]: navigationItems.LICENSE_KEY_GROUPS,
-		[enums.SCREEN.ACTIVITY_LOG]: navigationItems.ACTIVITY_LOG
-	})[screen];
-
 	return {
-		activeItemId, groups
+		activeItemId: screen, groups
 	};
 };
 
 
-const buildVersionControllerProps = (licenseModel) => {
-	let {version, viewableVersions, status: currentStatus, lockingUser} = licenseModel;
-	let {status, isCheckedOut} = VersionControllerUtils.getCheckOutStatusKindByUserID(currentStatus, lockingUser);
-
+const buildVersionControllerProps = ({
+	licenseModelEditor = {data: {}},
+	versions,
+	currentVersion,
+	userInfo,
+	usersList,
+	permissions,
+	itemPermission,
+	isReadOnlyMode
+}) => {
+	const {isValidityData = true} = licenseModelEditor;
 	return {
-		version,
-		viewableVersions,
-		status,
-		isCheckedOut
+		version: currentVersion,
+		viewableVersions: versions,
+		isFormDataValid: isValidityData,
+		permissions,
+		userInfo,
+		usersList,
+		itemName: licenseModelEditor.data.vendorName,
+		itemPermission,
+		isReadOnlyMode
 	};
 };
 
 
-const mapStateToProps = ({licenseModel: {licenseModelEditor}}, {currentScreen: {screen}}) => {
+const mapStateToProps = ({
+	users: {userInfo, usersList},
+	licenseModel: {licenseModelEditor},
+	versionsPage: {permissions, versionsList: {versions, itemName}}
+}, {
+	currentScreen: {screen, itemPermission, props: {isReadOnlyMode, version: currentVersion}}
+}) => {
 	return {
-		versionControllerProps: buildVersionControllerProps(licenseModelEditor.data),
+		versionControllerProps: buildVersionControllerProps({
+			licenseModelEditor,
+			versions,
+			currentVersion,
+			userInfo,
+			permissions,
+			usersList,
+			itemPermission,
+			isReadOnlyMode
+		}),
 		navigationBarProps: buildNavigationBarProps(licenseModelEditor.data, screen)
 	};
 };
 
 
-const mapActionsToProps = (dispatch, {currentScreen: {screen, props: {licenseModelId}}}) => {
+const mapActionsToProps = (dispatch, {currentScreen: {screen, props: {licenseModelId, version}}}) => {
 
 	return {
-		onVersionControllerAction: (action, version) =>
-			LicenseModelActionHelper.performVCAction(dispatch, {licenseModelId, action, version}).then((newVersion) => {
-				switch(screen) {
-					case enums.SCREEN.LICENSE_MODEL_OVERVIEW:
-						/**
-						 * TODO change to specific rest
-						 */
-						LicenseAgreementActionHelper.fetchLicenseAgreementList(dispatch, {licenseModelId, version: newVersion});
-						break;
-					case enums.SCREEN.LICENSE_AGREEMENTS:
-						LicenseAgreementActionHelper.fetchLicenseAgreementList(dispatch, {licenseModelId, version: newVersion});
-						break;
-					case enums.SCREEN.FEATURE_GROUPS:
-						FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {licenseModelId, version: newVersion});
-						break;
-					case enums.SCREEN.ENTITLEMENT_POOLS:
-						EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId, version: newVersion});
-						break;
-					case enums.SCREEN.LICENSE_KEY_GROUPS:
-						LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version: newVersion});
-						break;
-					case enums.SCREEN.ACTIVITY_LOG:
-						ActivityLogActionHelper.fetchActivityLog(dispatch, {itemId: licenseModelId, versionId: newVersion.id});
-						break;
-				}
+		onVersionControllerAction: (action, version, comment) =>
+			LicenseModelActionHelper.performVCAction(dispatch, {licenseModelId, action, version, comment}).then(updatedVersion => {
+				ScreensHelper.loadScreen(dispatch, {screen, screenType: screenTypes.LICENSE_MODEL, props: {licenseModelId, version: updatedVersion}});
 			}),
-		onVersionSwitching: version => {
-			LicenseModelActionHelper.switchVersion(dispatch, {licenseModelId, version});
-			if(screen === enums.SCREEN.ACTIVITY_LOG) {
-				ActivityLogActionHelper.fetchActivityLog(dispatch, {itemId: licenseModelId, versionId: version.id});
+
+		onOpenCommentCommitModal: ({onCommit, title}) => dispatch({
+			type: modalActionTypes.GLOBAL_MODAL_SHOW,
+			data: {
+				modalComponentName: modalContentMapper.COMMIT_COMMENT,
+				modalComponentProps: {
+					onCommit,
+					type: CommitModalType.COMMIT
+				},
+				title
 			}
+		}),
+
+		onVersionSwitching: version => {
+			ScreensHelper.loadScreen(dispatch, {screen, screenType: screenTypes.LICENSE_MODEL, props: {licenseModelId, version}});
 		},
 
-		onNavigate: ({id, meta: {version}}) => {
-			switch(id) {
-				case navigationItems.LICENSE_MODEL_OVERVIEW:
-					OnboardingActionHelper.navigateToLicenseModelOverview(dispatch, {licenseModelId, version});
-					break;
-				case navigationItems.LICENSE_AGREEMENTS:
-					OnboardingActionHelper.navigateToLicenseAgreements(dispatch, {licenseModelId, version});
-					break;
-				case navigationItems.FEATURE_GROUPS:
-					OnboardingActionHelper.navigateToFeatureGroups(dispatch, {licenseModelId, version});
-					break;
-				case navigationItems.ENTITLEMENT_POOLS:
-					OnboardingActionHelper.navigateToEntitlementPools(dispatch, {licenseModelId, version});
-					break;
-				case navigationItems.LICENSE_KEY_GROUPS:
-					OnboardingActionHelper.navigateToLicenseKeyGroups(dispatch, {licenseModelId, version});
-					break;
-				case navigationItems.ACTIVITY_LOG:
-					OnboardingActionHelper.navigateToLicenseModelActivityLog(dispatch, {licenseModelId, version});
-					break;
-			}
+		onManagePermissions() {
+			PermissionsActionHelper.openPermissonsManager(dispatch, {itemId: licenseModelId, askForRights: false});
+		},
+
+		onMoreVersionsClick: ({itemName, users}) => {
+			ScreensHelper.loadScreen(dispatch, {screen: enums.SCREEN.VERSIONS_PAGE, screenType: screenTypes.LICENSE_MODEL,
+				props: {licenseModelId, licenseModel: {name: itemName}, usersList: users}});
+		},
+
+		onOpenPermissions: ({users}) => {
+			return PermissionsActionHelper.fetchItemUsers(dispatch, {itemId: licenseModelId, allUsers: users});
+		},
+
+		onOpenRevisionsModal: () => {
+			return RevisionsActionHelper.openRevisionsView(dispatch, {itemId: licenseModelId, version: version, itemType: screenTypes.LICENSE_MODEL});
+		},
+
+		onNavigate: ({id}) => {
+			ScreensHelper.loadScreen(dispatch, {screen: id, screenType: screenTypes.LICENSE_MODEL, props: {licenseModelId, version}});
 		}
 	};
 };

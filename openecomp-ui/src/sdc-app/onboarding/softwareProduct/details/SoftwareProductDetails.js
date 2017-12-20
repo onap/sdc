@@ -15,19 +15,24 @@
  */
 import {connect} from 'react-redux';
 
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
 import SoftwareProductDetailsView from './SoftwareProductDetailsView.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import {PRODUCT_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 
 
-export const mapStateToProps = ({finalizedLicenseModelList, softwareProduct, licenseModel: {licenseAgreement, featureGroup}}) => {
-	let {softwareProductEditor: {data: currentSoftwareProduct, genericFieldInfo}, softwareProductCategories, softwareProductQuestionnaire} = softwareProduct;
+export const mapStateToProps = ({
+	finalizedLicenseModelList,
+	softwareProduct,
+	licenseModel: {licenseAgreement, featureGroup}
+}) => {
+
+	let {softwareProductEditor: {data: currentSoftwareProduct, licensingVersionsList = [], genericFieldInfo}, softwareProductCategories, softwareProductQuestionnaire} = softwareProduct;
 	let {licensingData = {}, licensingVersion} = currentSoftwareProduct;
 	let licenseAgreementList = [], filteredFeatureGroupsList = [];
-	licenseAgreementList = licenseAgreement.licenseAgreementList;
-	if(licensingVersion && licensingVersion !== '' && licensingData && licensingData.licenseAgreement) {
+	licenseAgreementList = licensingVersion ?
+		licenseAgreement.licenseAgreementList : [];
+	if(licensingVersion && licensingData && licensingData.licenseAgreement) {
 		let selectedLicenseAgreement = licenseAgreementList.find(la => la.id === licensingData.licenseAgreement);
 		if (selectedLicenseAgreement) {
 			let featureGroupsList = featureGroup.featureGroupsList.filter(({referencingLicenseAgreements}) => referencingLicenseAgreements.includes(selectedLicenseAgreement.id));
@@ -37,7 +42,6 @@ export const mapStateToProps = ({finalizedLicenseModelList, softwareProduct, lic
 		}
 	}
 	let {qdata, qgenericFieldInfo : qGenericFieldInfo, dataMap} = softwareProductQuestionnaire;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
 
 	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 
@@ -45,24 +49,25 @@ export const mapStateToProps = ({finalizedLicenseModelList, softwareProduct, lic
 		currentSoftwareProduct,
 		softwareProductCategories,
 		licenseAgreementList,
+		licensingVersionsList,
 		featureGroupsList: filteredFeatureGroupsList,
 		finalizedLicenseModelList,
 		qdata,
-		isReadOnlyMode,
 		isFormValid,
 		genericFieldInfo,
 		qGenericFieldInfo,
 		dataMap
 	};
+
 };
 
-export const mapActionsToProps = (dispatch) => {
+export const mapActionsToProps = (dispatch, {version}) => {
 	return {
 		onDataChanged: (deltaData, formName) => ValidationHelper.dataChanged(dispatch, {deltaData, formName}),
 		onVendorParamChanged: (deltaData, formName) => SoftwareProductActionHelper.softwareProductEditorVendorChanged(dispatch, {deltaData, formName}),
 		onQDataChanged: (deltaData) => ValidationHelper.qDataChanged(dispatch, {deltaData, qName: PRODUCT_QUESTIONNAIRE}),
 		onValidityChanged: isValidityData => SoftwareProductActionHelper.setIsValidityData(dispatch, {isValidityData}),
-		onSubmit: (softwareProduct, qdata) =>{ return SoftwareProductActionHelper.updateSoftwareProduct(dispatch, {softwareProduct, qdata});}
+		onSubmit: (softwareProduct, qdata) => SoftwareProductActionHelper.updateSoftwareProduct(dispatch, {softwareProduct, qdata, version})
 	};
 };
 

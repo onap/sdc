@@ -20,57 +20,6 @@
 
 package org.openecomp.sdc.action;
 
-import static org.openecomp.sdc.action.ActionConstants.FILTER_TYPE_NAME;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_ALREADY_EXISTS;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_ALREADY_EXISTS_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_DEL_LOCKED_OTHER_USER_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_UPDATE_NAME_INVALID;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_UPDATE_READ_ONLY_MSG;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_DELETE_ON_LOCKED_ENTITY_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_EDIT_ON_ENTITY_LOCKED_BY_OTHER_USER;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_NOT_EXIST;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_NOT_EXIST_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_UNIQUE_VALUE_ERROR;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY_UNIQUE_VALUE_MSG;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_NOT_LOCKED_CODE;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_NOT_LOCKED_MSG;
-import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UPDATE_ON_UNLOCKED_ENTITY;
-
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
-import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.action.dao.ActionDao;
-import org.openecomp.sdc.action.dao.ActionDaoFactory;
-import org.openecomp.sdc.action.dao.types.ActionEntity;
-import org.openecomp.sdc.action.errors.ActionErrorConstants;
-import org.openecomp.sdc.action.errors.ActionException;
-import org.openecomp.sdc.action.impl.ActionManagerImpl;
-import org.openecomp.sdc.action.types.Action;
-import org.openecomp.sdc.action.types.ActionArtifact;
-import org.openecomp.sdc.action.types.ActionArtifactProtection;
-import org.openecomp.sdc.action.types.ActionStatus;
-import org.openecomp.sdc.action.types.OpenEcompComponent;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-
 @SuppressWarnings("Duplicates")
 public class ActionTest {
 

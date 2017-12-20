@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
@@ -32,9 +32,9 @@ import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaRelationshipType;
+import org.openecomp.sdc.tosca.datatypes.ToscaTopologyTemplateElements;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
-import org.openecomp.sdc.tosca.datatypes.ToscaTopologyTemplateElements;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;

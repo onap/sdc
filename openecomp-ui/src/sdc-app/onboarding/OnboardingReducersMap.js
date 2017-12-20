@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {currentScreenReducer} from './OnboardingReducers.js';
+import currentScreenReducer from './OnboardingReducers.js';
 import licenseModelListReducer from './licenseModel/LicenseModelListReducer.js';
 import finalizedLicenseModelListReducer from './licenseModel/FinalizedLicenseModelListReducer.js';
 import licenseModelReducer from './licenseModel/LicenseModelReducer.js';
@@ -21,14 +21,22 @@ import softwareProductReducer from './softwareProduct/SoftwareProductReducer.js'
 import softwareProductListReducer from './softwareProduct/SoftwareProductListReducer.js';
 import finalizedSoftwareProductReducer from './softwareProduct/FinalizedSoftwareProductReducer.js';
 import onboardReducer from './onboard/OnboardReducer.js';
+import versionsPageReducer from './versionsPage/VersionsPageReducer.js';
+import usersReducer from './users/UsersReducers.js';
+import mergeEditorReducer from 'sdc-app/common/merge/MergeEditorReducer.js';
+import revisionsReducer from './revisions/RevisionsReducer.js';
 
 export default {
 	currentScreen: currentScreenReducer,
+	licenseModel: licenseModelReducer,
 	licenseModelList: licenseModelListReducer,
 	finalizedLicenseModelList: finalizedLicenseModelListReducer,
 	finalizedSoftwareProductList: finalizedSoftwareProductReducer,
-	licenseModel: licenseModelReducer,
+	mergeEditor: mergeEditorReducer,
+	onboard: onboardReducer,
 	softwareProduct: softwareProductReducer,
 	softwareProductList: softwareProductListReducer,
-	onboard: onboardReducer
+	users: usersReducer,
+	versionsPage: versionsPageReducer,
+	revisions: revisionsReducer
 };

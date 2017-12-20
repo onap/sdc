@@ -17,7 +17,8 @@ import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
 	OPEN: null,
-	RESET_DATA: null
+	RESET_DATA: null,
+	SOFTWARE_PRODUCT_CREATED: null
 });
 
 export const SP_CREATION_FORM_NAME = 'SPCREATIONFORM';

@@ -13,12 +13,12 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import React, {Component, PropTypes} from 'react';
-import Tabs from 'react-bootstrap/lib/Tabs.js';
-import Tab from 'react-bootstrap/lib/Tab.js';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
+import accept from 'attr-accept';
+import {SVGIcon, Tab, Tabs} from 'sdc-ui/lib/react';
 import {tabsMapping} from './SoftwareProductAttachmentsConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 import HeatValidation from './validation/HeatValidation.js';
 import {onboardingOriginTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 
@@ -27,7 +27,7 @@ class HeatScreenView extends Component {
 	static propTypes = {
 		isValidationAvailable: PropTypes.bool,
 		goToOverview: PropTypes.bool,
-		setActiveTab: PropTypes.function
+		setActiveTab: PropTypes.func
 	};
 
 	render() {
@@ -64,7 +64,7 @@ class HeatScreenView extends Component {
 						labelPosition='right'
 						color='secondary'
 						disabled={isReadOnlyMode}
-						onClick={evt => {this.refs.hiddenImportFileInput.click(evt);}}
+						onClick={isReadOnlyMode ? undefined : evt => this.refs.hiddenImportFileInput.click(evt)}
 						data-test-id='upload-heat'/>
 					<input
 						ref='hiddenImportFileInput'
@@ -73,8 +73,12 @@ class HeatScreenView extends Component {
 						accept='.zip, .csar'
 						onChange={evt => this.handleImport(evt)}/>
 				</div>
-				<Tabs id='attachments-tabs' activeKey={activeTab} onSelect={key => this.handleTabPress(key)}>
-					<Tab eventKey={tabsMapping.SETUP} title='Setup' disabled={onboardingOrigin === onboardingOriginTypes.CSAR}>
+			<Tabs
+				className='attachments-tabs'
+				type='header'
+				activeTab={activeTab}
+				onTabClick={key => this.handleTabPress(key)}>
+					<Tab tabId={tabsMapping.SETUP} title='Setup' disabled={onboardingOrigin === onboardingOriginTypes.CSAR}>
 						<HeatSetupComponent
 							heatDataExist={heatDataExist}
 							changeAttachmentsTab={tab => setActiveTab({activeTab: tab})}
@@ -83,7 +87,7 @@ class HeatScreenView extends Component {
 							isReadOnlyMode={isReadOnlyMode}
 							version={version}/>
 					</Tab>
-					<Tab eventKey={tabsMapping.VALIDATION} title='Validation' disabled={!isValidationAvailable}>
+					<Tab tabId={tabsMapping.VALIDATION} title='Validation' disabled={!isValidationAvailable}>
 						<HeatValidation {...other}/>
 					</Tab>
 				</Tabs>
@@ -107,9 +111,14 @@ class HeatScreenView extends Component {
 
 	handleImport(evt) {
 		evt.preventDefault();
+		let file = this.refs.hiddenImportFileInput.files[0];
+		if(! (file && file.size && accept(file, ['.zip', '.csar'])) ) {
+			this.props.onInvalidFileUpload();
+			return;
+		}
 		let {version} = this.props;
 		let formData = new FormData();
-		formData.append('upload', this.refs.hiddenImportFileInput.files[0]);
+		formData.append('upload', file);
 		this.refs.hiddenImportFileInput.value = '';
 		this.props.onUpload(formData, version);
 	}

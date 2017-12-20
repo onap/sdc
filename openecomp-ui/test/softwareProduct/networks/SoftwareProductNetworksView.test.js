@@ -57,9 +57,8 @@ describe('SoftwareProductNetworks Mapper and View Classes', () => {
 		const networksList = VSPNetworkFactory.buildList(2);
 
 		const versionControllerData = VSPComponentsVersionControllerFactory.build();
-
 		var renderer = TestUtils.createRenderer();
-		renderer.render(<SoftwareProductNetworksView networksList={networksList} versionControllerData={versionControllerData} currentSoftwareProduct={currentSoftwareProduct}/>);
+		renderer.render(<SoftwareProductNetworksView isReadOnlyMode={true} networksList={networksList} versionControllerData={versionControllerData} currentSoftwareProduct={currentSoftwareProduct}/>);
 		var renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();
 

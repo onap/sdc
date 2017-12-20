@@ -20,6 +20,10 @@
 
 package org.openecomp.sdc.action.errors;
 
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+
 import static org.openecomp.sdc.action.ActionConstants.WWW_AUTHENTICATE_HEADER_PARAM;
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_ALREADY_EXISTS_CODE;
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ARTIFACT_CHECKSUM_ERROR_CODE;
@@ -59,10 +63,6 @@ import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UPDATE
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UPDATE_NOT_ALLOWED_CODE_NAME;
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UPDATE_NOT_ALLOWED_FOR_NAME;
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_UPDATE_ON_UNLOCKED_ENTITY;
-
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
 
 /**
  * Mapper class to map Action Library exceptions to corresponding HTTP Response objects.

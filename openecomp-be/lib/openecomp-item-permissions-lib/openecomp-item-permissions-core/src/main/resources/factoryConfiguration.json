@@ -1,0 +1,4 @@
+{
+  "org.openecomp.sdc.itempermissions.dao.ItemPermissionsDaoFactory": "org.openecomp.sdc.itempermissions.dao.impl.ItemPermissionsDaoFactoryImpl",
+"org.openecomp.sdc.itempermissions.PermissionsServicesFactory" : "org.openecomp.sdc.itempermissions.dao.impl.PrmissionsServicesFactoryImpl"
+}

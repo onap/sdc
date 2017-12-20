@@ -1,3 +1,8 @@
 {
-  "org.openecomp.core.zusammen.plugin.dao.ElementRepositoryFactory": "org.openecomp.core.zusammen.plugin.dao.impl.CassandraElementRepositoryFactory"
+  "org.openecomp.core.zusammen.plugin.dao.VersionDaoFactory": "org.openecomp.core.zusammen.plugin.dao.impl.cassandra.VersionDaoFactoryImpl",
+  "org.openecomp.core.zusammen.plugin.dao.ElementRepositoryFactory": "org.openecomp.core.zusammen.plugin.dao.impl.cassandra.ElementRepositoryFactoryImpl",
+  "org.openecomp.core.zusammen.plugin.dao.VersionSynchronizationStateRepositoryFactory": "org.openecomp.core.zusammen.plugin.dao.impl.cassandra.VersionSynchronizationStateRepositoryFactoryImpl",
+  "org.openecomp.core.zusammen.plugin.dao.ElementSynchronizationStateRepositoryFactory": "org.openecomp.core.zusammen.plugin.dao.impl.cassandra.ElementSynchronizationStateRepositoryFactoryImpl",
+  "org.openecomp.core.zusammen.plugin.dao.VersionStageRepositoryFactory": "org.openecomp.core.zusammen.plugin.dao.impl.cassandra.VersionStageRepositoryFactoryImpl",
+  "org.openecomp.core.zusammen.plugin.dao.ElementStageRepositoryFactory": "org.openecomp.core.zusammen.plugin.dao.impl.cassandra.ElementStageRepositoryFactoryImpl"
 }

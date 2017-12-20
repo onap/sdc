@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 import {TabsForm as Form} from 'nfvo-components/input/validation/Form.jsx';
@@ -34,21 +34,21 @@ const dualBoxFilterTitle = {
 	right: i18n('Selected Feature Groups')
 };
 
-const LicenseAgreementPropType = React.PropTypes.shape({
-	id: React.PropTypes.string,
-	name: React.PropTypes.string,
-	description: React.PropTypes.string,
-	requirementsAndConstrains: React.PropTypes.string,
-	licenseTerm: React.PropTypes.object,
-	featureGroupsIds: React.PropTypes.arrayOf(React.PropTypes.string),
-	version: React.PropTypes.object
+const LicenseAgreementPropType = PropTypes.shape({
+	id: PropTypes.string,
+	name: PropTypes.string,
+	description: PropTypes.string,
+	requirementsAndConstrains: PropTypes.string,
+	licenseTerm: PropTypes.object,
+	featureGroupsIds: PropTypes.arrayOf(PropTypes.string),
+	version: PropTypes.object
 });
 
 
 const GeneralTabContent = ({data, genericFieldInfo, onDataChanged, validateName}) => {
 	let {name, description, requirementsAndConstrains, licenseTerm} = data;
 	return (
-		<GridSection>
+		<GridSection hasLastColSet>
 			<GridItem colSpan={2}>
 				<Input
 					isValid={genericFieldInfo.name.isValid}
@@ -86,7 +86,7 @@ const GeneralTabContent = ({data, genericFieldInfo, onDataChanged, validateName}
 					isValid={genericFieldInfo.licenseTerm.isValid}
 					errorText={genericFieldInfo.licenseTerm.errorText} />
 			</GridItem>
-			<GridItem colSpan={2} stretch>
+			<GridItem colSpan={2} stretch lastColInRow>
 				<Input
 					isValid={genericFieldInfo.description.isValid}
 					errorText={genericFieldInfo.description.errorText}
@@ -107,17 +107,17 @@ class LicenseAgreementEditorView extends React.Component {
 	static propTypes = {
 		data: LicenseAgreementPropType,
 		previousData: LicenseAgreementPropType,
-		LANames: React.PropTypes.object,
-		isReadOnlyMode: React.PropTypes.bool,
-		onDataChanged: React.PropTypes.func.isRequired,
-		onSubmit: React.PropTypes.func.isRequired,
-		onCancel: React.PropTypes.func.isRequired,
+		LANames: PropTypes.object,
+		isReadOnlyMode: PropTypes.bool,
+		onDataChanged: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired,
 
-		selectedTab: React.PropTypes.number,
-		onTabSelect: React.PropTypes.func,
+		selectedTab: PropTypes.number,
+		onTabSelect: PropTypes.func,
 
-		selectedFeatureGroupsButtonTab: React.PropTypes.number,
-		onFeatureGroupsButtonTabSelect: React.PropTypes.func,
+		selectedFeatureGroupsButtonTab: PropTypes.number,
+		onFeatureGroupsButtonTabSelect: PropTypes.func,
 		featureGroupsList: DualListboxView.propTypes.availableList
 	};
 
@@ -151,7 +151,7 @@ class LicenseAgreementEditorView extends React.Component {
 							data-test-id='general-tab'
 							title={i18n('General')}>
 								<fieldset disabled={isReadOnlyMode}>
-									<GeneralTabContent data={data} genericFieldInfo={genericFieldInfo} onDataChanged={onDataChanged}
+									<GeneralTabContent data={data} genericFieldInfo={genericFieldInfo} onDataChanged={onDataChanged} validateLTChoice={(value)=>this.validateLTChoice(value)}
 										   validateName={(value)=>this.validateName(value)}/>
 								</fieldset>
 						</Tab>
@@ -181,6 +181,12 @@ class LicenseAgreementEditorView extends React.Component {
 		this.props.onSubmit({licenseAgreement, previousLicenseAgreement});
 	}
 
+	validateLTChoice(value) {
+		if (!value.choice) {
+			return {isValid: false, errorText: i18n('Field is required')};
+		}
+		return {isValid: true, errorText: ''};
+	}
 
 	validateName(value) {
 		const {data: {id}, LANames} = this.props;

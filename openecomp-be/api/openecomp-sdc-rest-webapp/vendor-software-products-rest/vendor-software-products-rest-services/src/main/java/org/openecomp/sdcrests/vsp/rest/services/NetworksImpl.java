@@ -29,7 +29,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
+import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityValidationDataDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NetworkDto;
@@ -61,8 +61,7 @@ public class NetworksImpl implements Networks {
   public Response list(String vspId, String versionId, String user) {
     MdcUtil.initMdc(LoggerServiceName.List_Network.toString());
     Collection<NetworkEntity> networks =
-        networkManager.listNetworks(vspId,
-            resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), user);
+        networkManager.listNetworks(vspId, new Version(versionId));
 
     MapNetworkEntityToNetworkDto mapper = new MapNetworkEntityToNetworkDto();
     GenericCollectionWrapper<NetworkDto> results = new GenericCollectionWrapper<>();
@@ -79,8 +78,8 @@ public class NetworksImpl implements Networks {
     NetworkEntity network =
         new MapNetworkRequestDtoToNetworkEntity().applyMapping(request, NetworkEntity.class);
     network.setVspId(vspId);
-    network.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
-    NetworkEntity createdNetwork = networkManager.createNetwork(network, user);
+    network.setVersion(new Version(versionId));
+    NetworkEntity createdNetwork = networkManager.createNetwork(network);
     return Response
         .ok(createdNetwork != null ? new StringWrapperResponse(createdNetwork.getId()) : null)
         .build();
@@ -91,8 +90,8 @@ public class NetworksImpl implements Networks {
     MdcUtil.initMdc(LoggerServiceName.Get_Network.toString());
     CompositionEntityResponse<Network> response =
         networkManager.getNetwork(vspId,
-            resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), networkId,
-            user);
+            new Version(versionId), networkId
+        );
 
     CompositionEntityResponseDto<NetworkDto> responseDto = new CompositionEntityResponseDto<>();
     new MapCompositionEntityResponseToDto<>(new MapNetworkToNetworkDto(), NetworkDto.class)
@@ -104,22 +103,23 @@ public class NetworksImpl implements Networks {
   public Response delete(String vspId, String versionId, String networkId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Delete_Network.toString());
     networkManager
-        .deleteNetwork(vspId, resolveVspVersion(vspId, null, user, VersionableEntityAction.Write),
-            networkId, user);
+        .deleteNetwork(vspId, new Version(versionId),
+            networkId);
     return Response.ok().build();
   }
 
   @Override
-  public Response update(NetworkRequestDto request, String vspId, String versionId, String networkId, String user) {
+  public Response update(NetworkRequestDto request, String vspId, String versionId,
+                         String networkId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Update_Network.toString());
     NetworkEntity networkEntity =
         new MapNetworkRequestDtoToNetworkEntity().applyMapping(request, NetworkEntity.class);
     networkEntity.setVspId(vspId);
-    networkEntity.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
+    networkEntity.setVersion(new Version(versionId));
     networkEntity.setId(networkId);
 
     CompositionEntityValidationData validationData =
-        networkManager.updateNetwork(networkEntity, user);
+        networkManager.updateNetwork(networkEntity);
     return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors())
         ? Response.status(Response.Status.EXPECTATION_FAILED).entity(
         new MapCompositionEntityValidationDataToDto()

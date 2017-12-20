@@ -1,14 +1,14 @@
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
+import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.common.errors.ErrorCode;
+
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.ADD_COMPUTE_NOT_ALLOWED_IN_HEAT_ONBOARDING;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.ADD_IMAGE_NOT_ALLOWED_IN_HEAT_ONBOARDING;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.ADD_NIC_NOT_ALLOWED_IN_HEAT_ONBOARDING;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.DELETE_DEPLOYMENT_FLAVOR_NOT_ALLOWED_IN_HEAT_ONBOARDING;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.DELETE_IMAGE_NOT_ALLOWED;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.EDIT_DEPLOYMENT_FLAVOR_NOT_ALLOWED_IN_HEAT_ONBOARDING;
-
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 
 public class NotSupportedHeatOnboardMethodErrorBuilder {
   private static final String ADD_NIC_NOT_ALLOWED_IN_HEAT_ONBOARDING_MSG =

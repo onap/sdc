@@ -23,6 +23,7 @@ $message-info-icon-size: 16px;
   .list-editor-view-list {
 	border: 1px solid $light-gray;
 	border-bottom: none;
+	overflow-y: hidden;
   }
   .activity-list-item {
 	display: flex;

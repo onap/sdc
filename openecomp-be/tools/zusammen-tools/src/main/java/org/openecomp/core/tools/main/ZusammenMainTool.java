@@ -3,9 +3,9 @@ package org.openecomp.core.tools.main;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.UserInfo;
 import org.openecomp.core.tools.Commands.HealAll;
-import org.openecomp.core.tools.Commands.ImportCommand;
-import org.openecomp.core.tools.Commands.ExportDataCommand;
-import org.openecomp.core.tools.Commands.ResetOldVersion;
+import org.openecomp.core.tools.Commands.SetHealingFlag;
+import org.openecomp.core.tools.exportinfo.ExportDataCommand;
+import org.openecomp.core.tools.importinfo.ImportDataCommand;
 import org.openecomp.core.tools.util.ToolsUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -39,13 +39,13 @@ public class ZusammenMainTool {
 
     switch (COMMANDS.valueOf(command)){
       case RESET_OLD_VERSION:
-        ResetOldVersion.reset(context,ToolsUtil.getParam("v",args),ToolsUtil.getParam("n",args));
+        SetHealingFlag.populateHealingTable(ToolsUtil.getParam("v",args));
         break;
       case EXPORT:
         ExportDataCommand.exportData(context,ToolsUtil.getParam("i",args));
         break;
       case IMPORT:
-        ImportCommand.importData(context, ToolsUtil.getParam("f",args),ToolsUtil.getParam("i",args));
+        ImportDataCommand.execute(context, ToolsUtil.getParam("f",args));
         break;
       case HEAL_ALL:
         HealAll.healAll(ToolsUtil.getParam("t",args));

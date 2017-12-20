@@ -7,7 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.openecomp.core.converter.datatypes.Constants.*;
+import static org.openecomp.core.converter.datatypes.Constants.definitionVersion;
+import static org.openecomp.core.converter.datatypes.Constants.inputs;
+import static org.openecomp.core.converter.datatypes.Constants.metadata;
+import static org.openecomp.core.converter.datatypes.Constants.nodeTemplates;
+import static org.openecomp.core.converter.datatypes.Constants.nodeTypes;
+import static org.openecomp.core.converter.datatypes.Constants.outputs;
+import static org.openecomp.core.converter.datatypes.Constants.substitutionMappings;
+import static org.openecomp.core.converter.datatypes.Constants.topologyTemplate;
 
 public class ServiceTemplateReaderServiceImpl implements ServiceTemplateReaderService {
 

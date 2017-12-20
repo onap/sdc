@@ -20,6 +20,7 @@ import SoftwareProductDeploymentEditorView from 'sdc-app/onboarding/softwareProd
 import { VSPComponentsFactory } from 'test-utils/factories/softwareProduct/SoftwareProductComponentsFactories.js';
 import { VSPEditorFactoryWithLicensingData } from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';
 import { FeatureGroupStoreFactory } from 'test-utils/factories/licenseModel/FeatureGroupFactories.js';
+import CurrentScreenFactory from 'test-utils/factories/common/CurrentScreenFactory.js';
 
 describe('Software Product Deployment Editor Module Tests', function () {
 
@@ -32,8 +33,10 @@ describe('Software Product Deployment Editor Module Tests', function () {
 		const currentSoftwareProduct = VSPEditorFactoryWithLicensingData.build();
 		const componentsList = VSPComponentsFactory.buildList(1);
 		const featureGroupsList = FeatureGroupStoreFactory.buildList(2);
+		const currentScreen = CurrentScreenFactory.build();
 
 		var state = {
+			currentScreen,
 			softwareProduct: {
 				softwareProductEditor: {
 					data: currentSoftwareProduct

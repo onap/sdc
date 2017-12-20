@@ -76,5 +76,19 @@ export default {
 
 	resetQueue() {
 		initQueue();
+	},
+
+	checkEmptyQueue() {
+		let isEmpty = true;
+		let message = 'Check following calls: ';
+		for (let operationType in queue) {
+			if (queue[operationType].length > 0) {
+				isEmpty = false;
+				message += operationType;
+			}
+		}
+		if (!isEmpty) {
+			throw new Error('Queue is not empty, ' + message);
+		}
 	}
 };

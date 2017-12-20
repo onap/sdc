@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
@@ -22,7 +23,7 @@ import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
 const Protocols = ({protocols, qgenericFieldInfo, dataMap, onQDataChanged}) => {
 	return (
-		<GridSection title={i18n('Protocols')}>
+		<GridSection title={i18n('Protocols')} hasLastColSet>
 				<GridItem colSpan={2}>
 					<InputOptions
 						data-test-id='nic-protocols'
@@ -39,7 +40,7 @@ const Protocols = ({protocols, qgenericFieldInfo, dataMap, onQDataChanged}) => {
 						clearable={false}
 						values={qgenericFieldInfo['protocols/protocols'].enum}/>
 				</GridItem>
-				<GridItem colSpan={2}>
+				<GridItem colSpan={2} lastColInRow>
 					<Input
 						data-test-id='nic-protocolWithHighestTrafficProfile'
 						label={i18n('Protocol with Highest Traffic Profile')}
@@ -65,10 +66,10 @@ const Protocols = ({protocols, qgenericFieldInfo, dataMap, onQDataChanged}) => {
 };
 
 Protocols.PropTypes = {
-	protocols: React.PropTypes.array,
-	onQDataChanged:  React.PropTypes.function,
-	dataMap: React.PropTypes.object,
-	qgenericFieldInfo: React.PropTypes.object
+	protocols: PropTypes.array,
+	onQDataChanged:  PropTypes.function,
+	dataMap: PropTypes.object,
+	qgenericFieldInfo: PropTypes.object
 };
 
 export default Protocols;

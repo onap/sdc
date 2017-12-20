@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Modal from 'nfvo-components/modal/Modal.jsx';
@@ -25,15 +26,15 @@ import {extractUnits} from './EntitlementPoolsConstants';
 
 class EntitlementPoolsListEditorView extends React.Component {
 	static propTypes = {
-		vendorName: React.PropTypes.string,
-		licenseModelId: React.PropTypes.string.isRequired,
-		entitlementPoolsList: React.PropTypes.array,
-		isReadOnlyMode: React.PropTypes.bool.isRequired,
-		isDisplayModal: React.PropTypes.bool,
-		isModalInEditMode: React.PropTypes.bool,
-		onAddEntitlementPoolClick: React.PropTypes.func,
-		onEditEntitlementPoolClick: React.PropTypes.func,
-		onDeleteEntitlementPool: React.PropTypes.func,
+		vendorName: PropTypes.string,
+		licenseModelId: PropTypes.string.isRequired,
+		entitlementPoolsList: PropTypes.array,
+		isReadOnlyMode: PropTypes.bool.isRequired,
+		isDisplayModal: PropTypes.bool,
+		isModalInEditMode: PropTypes.bool,
+		onAddEntitlementPoolClick: PropTypes.func,
+		onEditEntitlementPoolClick: PropTypes.func,
+		onDeleteEntitlementPool: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -50,7 +51,7 @@ class EntitlementPoolsListEditorView extends React.Component {
 		const {localFilter} = this.state;
 
 		return (
-			<div className='entitlement-pools-list-editor'>
+			<div className='license-model-list-editor entitlement-pools-list-editor'>
 				<ListEditorView
 					title={i18n('Entitlement Pools')}
 					plusButtonTitle={i18n('Add Entitlement Pool')}
@@ -125,7 +126,7 @@ export default EntitlementPoolsListEditorView;
 
 export function generateConfirmationMsg(entitlementPoolToDelete) {
 	let poolName = entitlementPoolToDelete ? entitlementPoolToDelete.name : '';
-	let msg = i18n(`Are you sure you want to delete "${poolName}"?`);
+	let msg = i18n('Are you sure you want to delete "{poolName}"?', {poolName: poolName});
 	let subMsg = entitlementPoolToDelete
 	&& entitlementPoolToDelete.referencingFeatureGroups
 	&& entitlementPoolToDelete.referencingFeatureGroups.length > 0 ?

@@ -33,6 +33,7 @@ public class SdcCommon {
   public static final String PARENT = "parent";
 
   public static final String VSP_ID = "vspId";
+  public static final String VLM_ID = "vlmId";
   public static final String VERSION = "version";
   public static final String USER = "user";
 }

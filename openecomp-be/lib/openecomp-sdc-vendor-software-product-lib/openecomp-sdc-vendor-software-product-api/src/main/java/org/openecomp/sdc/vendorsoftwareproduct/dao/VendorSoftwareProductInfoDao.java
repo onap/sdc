@@ -28,15 +28,9 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 public interface VendorSoftwareProductInfoDao extends VersionableDao, BaseDao<VspDetails> {
 
-  void updateOldVersionIndication(VspDetails vspDetails);
-
   void updateQuestionnaireData(String vspId, Version version, String questionnaireData);
 
-  String getQuestionnaireData(String vspId, Version version);
-
   VspQuestionnaireEntity getQuestionnaire(String vspId, Version version);
-
-  void deleteAll(String vspId, Version version);
 
   boolean isManual(String vspId, Version version);
 }

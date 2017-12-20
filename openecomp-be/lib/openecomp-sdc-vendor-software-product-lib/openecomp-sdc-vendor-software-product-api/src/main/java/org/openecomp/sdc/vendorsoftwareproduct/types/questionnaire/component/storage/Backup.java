@@ -27,7 +27,7 @@ public class Backup {
     private String backupType;
     private String backupSolution;
     private String backupNIC;
-    private int backupStorageSize;
+    private Number backupStorageSize;
 
     public String getBackupType() {
         return backupType;
@@ -53,11 +53,11 @@ public class Backup {
         this.backupNIC = backupNIC;
     }
 
-    public int getBackupStorageSize() {
+    public Number getBackupStorageSize() {
         return backupStorageSize;
     }
 
-    public void setBackupStorageSize(int backupStorageSize) {
+    public void setBackupStorageSize(Number backupStorageSize) {
         this.backupStorageSize = backupStorageSize;
     }
 }

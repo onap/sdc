@@ -15,14 +15,18 @@
  */
 import {connect} from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
-import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
 import LandingPageView from './SoftwareProductLandingPageView.jsx';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 import {onboardingMethod} from '../SoftwareProductConstants.js';
+import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
+import {enums, screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
 
-export const mapStateToProps = ({softwareProduct, licenseModel: {licenseAgreement}}) => {
+
+export const mapStateToProps = ({
+	softwareProduct,
+	licenseModel: {licenseAgreement},
+}) => {
 	let {softwareProductEditor: {data:currentSoftwareProduct = {}}, softwareProductComponents, softwareProductCategories = []} = softwareProduct;
 	let {licensingData = {}} = currentSoftwareProduct;
 	let {licenseAgreementList} = licenseAgreement;
@@ -44,7 +48,6 @@ export const mapStateToProps = ({softwareProduct, licenseModel: {licenseAgreemen
 	}
 	fullCategoryDisplayName = `${subCategoryName} (${categoryName})`;
 
-	const isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
 
 	return {
 		currentSoftwareProduct: {
@@ -52,7 +55,6 @@ export const mapStateToProps = ({softwareProduct, licenseModel: {licenseAgreemen
 			licenseAgreementName,
 			fullCategoryDisplayName
 		},
-		isReadOnlyMode,
 		componentsList,
 		isManual: currentSoftwareProduct.onboardingMethod === onboardingMethod.MANUAL
 	};
@@ -60,11 +62,12 @@ export const mapStateToProps = ({softwareProduct, licenseModel: {licenseAgreemen
 
 const mapActionsToProps = (dispatch, {version}) => {
 	return {
-		onDetailsSelect: ({id: softwareProductId, vendorId: licenseModelId, version}) => OnboardingActionHelper.navigateToSoftwareProductDetails(dispatch, {
-			softwareProductId,
-			licenseModelId,
-			version
-		}),
+		onDetailsSelect: ({id: softwareProductId}) =>
+			ScreensHelper.loadScreen(dispatch, {
+				screen: enums.SCREEN.SOFTWARE_PRODUCT_DETAILS, screenType: screenTypes.SOFTWARE_PRODUCT,
+				props: {softwareProductId, version}
+			}),
+
 		onUpload: (softwareProductId, formData) =>
 			SoftwareProductActionHelper.uploadFile(dispatch, {
 				softwareProductId,
@@ -100,9 +103,10 @@ const mapActionsToProps = (dispatch, {version}) => {
 				msg: i18n('no zip or csar file was uploaded or expected file doesn\'t exist')
 			}
 		}),
-		onComponentSelect: ({id: softwareProductId, componentId}) => {
-			OnboardingActionHelper.navigateToSoftwareProductComponentGeneralAndUpdateLeftPanel(dispatch, {softwareProductId, componentId, version });
-		},
+		onComponentSelect: ({id: softwareProductId, componentId}) => ScreensHelper.loadScreen(dispatch, {
+			screen: screenTypes.SOFTWARE_PRODUCT_COMPONENT_DEFAULT_GENERAL, screenType: screenTypes.SOFTWARE_PRODUCT,
+			props: {softwareProductId, version, componentId}
+		}),
 		/** for the next version */
 		onAddComponent: () => SoftwareProductActionHelper.addComponent(dispatch)
 	};

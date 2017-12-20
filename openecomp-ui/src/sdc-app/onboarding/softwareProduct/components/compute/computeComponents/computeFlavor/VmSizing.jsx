@@ -20,7 +20,7 @@ import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 const VmSizing = ({qgenericFieldInfo, dataMap, onQDataChanged}) => {
 	return(
-		<GridSection title={i18n('VM Sizing')}>
+		<GridSection title={i18n('VM Sizing')} hasLastColSet>
 			<GridItem>
 				<Input
 					data-test-id='numOfCPUs'
@@ -51,7 +51,7 @@ const VmSizing = ({qgenericFieldInfo, dataMap, onQDataChanged}) => {
 					errorText={qgenericFieldInfo['vmSizing/persistentStorageVolumeSize'].errorText}
 					value={dataMap['vmSizing/persistentStorageVolumeSize']} />
 			</GridItem>
-			<GridItem>
+			<GridItem lastColInRow>
 				<Input
 					data-test-id='ioOperationsPerSec'
 					type='number'

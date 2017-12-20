@@ -14,13 +14,11 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Modal from 'nfvo-components/modal/Modal.jsx';
-
-import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
-import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
-
 import SoftwareProductProcessesEditor from './SoftwareProductComponentProcessesEditor.js';
+import SoftwareProductProcessListView from 'sdc-app/onboarding/softwareProduct/processes/SoftwareProductProcessListView.jsx';
 
 class SoftwareProductProcessesView extends React.Component {
 
@@ -29,15 +27,15 @@ class SoftwareProductProcessesView extends React.Component {
 	};
 
 	static propTypes = {
-		onAddProcess: React.PropTypes.func,
-		onEditProcessClick: React.PropTypes.func,
-		onDeleteProcessClick: React.PropTypes.func,
-		isDisplayModal: React.PropTypes.bool,
-		isModalInEditMode: React.PropTypes.bool,
-		onStorageSelect: React.PropTypes.func,
-		componentId: React.PropTypes.string,
-		softwareProductId: React.PropTypes.string,
-		currentSoftwareProduct: React.PropTypes.object
+		onAddProcess: PropTypes.func,
+		onEditProcess: PropTypes.func,
+		onDeleteProcess: PropTypes.func,
+		isDisplayModal: PropTypes.bool,
+		isModalInEditMode: PropTypes.bool,
+		onStorageSelect: PropTypes.func,
+		componentId: PropTypes.string,
+		softwareProductId: PropTypes.string,
+		currentSoftwareProduct: PropTypes.object
 	};
 
 	render() {
@@ -46,7 +44,7 @@ class SoftwareProductProcessesView extends React.Component {
 				<div className='software-product-view'>
 					<div className='software-product-landing-view-right-side vsp-components-processes-page flex-column'>
 						{this.renderEditor()}
-						{this.renderProcessList()}
+						<SoftwareProductProcessListView addButtonTitle={i18n('Add Component Process Details')} {...this.props}/>
 					</div>
 				</div>
 			</div>
@@ -54,7 +52,7 @@ class SoftwareProductProcessesView extends React.Component {
 	}
 
 	renderEditor() {
-		let {softwareProductId, currentSoftwareProduct: {version}, componentId, isReadOnlyMode, isDisplayModal, isModalInEditMode} = this.props;
+		let {softwareProductId, version, componentId, isReadOnlyMode, isDisplayModal, isModalInEditMode} = this.props;
 		return (
 			<Modal show={isDisplayModal} bsSize='large' animation={true} className='onborading-modal'>
 				<Modal.Header>
@@ -72,66 +70,6 @@ class SoftwareProductProcessesView extends React.Component {
 		);
 	}
 
-	renderProcessList() {
-		const {localFilter} = this.state;
-		let {onAddProcess, isReadOnlyMode} = this.props;
-		return (
-			<div className='processes-list'>
-				<ListEditorView
-					plusButtonTitle={i18n('Add Component Process Details')}
-					filterValue={localFilter}
-					placeholder={i18n('Filter Process')}
-					onAdd={onAddProcess}
-					isReadOnlyMode={isReadOnlyMode}
-					title={i18n('Process Details')}
-					onFilter={value => this.setState({localFilter: value})}>
-					{this.filterList().map(processes => this.renderProcessListItem(processes, isReadOnlyMode))}
-				</ListEditorView>
-			</div>
-		);
-	}
-
-	renderProcessListItem(process, isReadOnlyMode) {
-		let {id, name, description, artifactName = ''} = process;
-		let {currentSoftwareProduct: {version}, onEditProcessClick, onDeleteProcessClick} =  this.props;
-		return (
-			<ListEditorItemView
-				key={id}
-				className='list-editor-item-view'
-				isReadOnlyMode={isReadOnlyMode}
-				onSelect={() => onEditProcessClick(process)}
-				onDelete={() => onDeleteProcessClick(process, version)}>
-
-				<div className='list-editor-item-view-field'>
-					<div className='title'>{i18n('Name')}</div>
-					<div className='name'>{name}</div>
-				</div>
-				<div className='list-editor-item-view-field'>
-					<div className='title'>{i18n('Artifact name')}</div>
-					<div className='artifact-name'>{artifactName}</div>
-				</div>
-				<div className='list-editor-item-view-field'>
-					<div className='title'>{i18n('Notes')}</div>
-					<div className='description'>{description}</div>
-				</div>
-			</ListEditorItemView>
-		);
-	}
-
-
-	filterList() {
-		let {processesList} = this.props;
-		let {localFilter} = this.state;
-		if (localFilter.trim()) {
-			const filter = new RegExp(escape(localFilter), 'i');
-			return processesList.filter(({name = '', description = ''}) => {
-				return escape(name).match(filter) || escape(description).match(filter);
-			});
-		}
-		else {
-			return processesList;
-		}
-	}
 }
 
 export default SoftwareProductProcessesView;

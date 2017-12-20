@@ -21,9 +21,6 @@
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 public enum VendorSoftwareProductAction {
-  Checkout,
-  Undo_Checkout,
-  Checkin,
   Submit,
   Create_Package;
 }

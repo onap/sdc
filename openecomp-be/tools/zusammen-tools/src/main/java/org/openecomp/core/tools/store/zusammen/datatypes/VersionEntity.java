@@ -1,6 +1,8 @@
 package org.openecomp.core.tools.store.zusammen.datatypes;
 
-import com.datastax.driver.mapping.annotations.*;
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
 
 import java.util.Date;
 

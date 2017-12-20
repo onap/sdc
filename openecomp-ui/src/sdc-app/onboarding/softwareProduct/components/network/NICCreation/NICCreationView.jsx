@@ -14,26 +14,27 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
-const NICPropType = React.PropTypes.shape({
-	id: React.PropTypes.string,
-	name: React.PropTypes.string,
-	description: React.PropTypes.string,
-	networkId: React.PropTypes.string
+const NICPropType = PropTypes.shape({
+	id: PropTypes.string,
+	name: PropTypes.string,
+	description: PropTypes.string,
+	networkId: PropTypes.string
 });
 
 class NICCreationView extends React.Component {
 
 	static propTypes = {
 		data: NICPropType,
-		onDataChanged: React.PropTypes.func.isRequired,
-		onSubmit: React.PropTypes.func.isRequired,
-		onCancel: React.PropTypes.func.isRequired
+		onDataChanged: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired
 	};
 
 	render() {
@@ -51,8 +52,8 @@ class NICCreationView extends React.Component {
 				isValid={isFormValid}
 				onValidateForm={() => onValidateForm()}
 				formReady={formReady} >
-				<GridSection>
-					<GridItem colSpan={4}>
+				<GridSection hasLastColSet>
+					<GridItem colSpan={4} lastColInRow>
 						<Input
 							value={name}
 							label={i18n('Name')}
@@ -74,7 +75,7 @@ class NICCreationView extends React.Component {
 							className='field-section'/>
 					</GridItem>
 				</GridSection>
-				<GridSection title={i18n('Network')}>
+				<GridSection title={i18n('Network')} hasLastColSet>
 					<GridItem colSpan={2}>
 						<div className='form-group'>
 							<label className='control-label'>{i18n('Network Type')}</label>
@@ -96,7 +97,7 @@ class NICCreationView extends React.Component {
 							</div>
 						</div>
 					</GridItem>
-					<GridItem colSpan={2}>
+					<GridItem colSpan={2} lastColInRow>
 						<Input
 							value={networkDescription}
 							label={i18n('Network Description')}
@@ -115,8 +116,8 @@ class NICCreationView extends React.Component {
 
 
 	submit() {
-		const {data: nic, softwareProductId, componentId, currentSoftwareProduct} = this.props;
-		this.props.onSubmit({nic, softwareProductId, componentId, version: currentSoftwareProduct.version});
+		const {data: nic, componentId} = this.props;
+		this.props.onSubmit({nic, componentId});
 	}
 }
 

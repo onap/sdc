@@ -16,15 +16,21 @@
 import {connect} from 'react-redux';
 import ComputeFlavorEditorView from './ComputeFlavorEditorView.jsx';
 import {COMPUTE_FLAVOR_FORM} from './ComputeFlavorConstants.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import ComputeFlavorActionHelper from 'sdc-app/onboarding/softwareProduct/components/compute/ComputeFlavorActionHelper.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import {COMPONENTS_COMPUTE_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
 import {onboardingMethod} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 
-export const mapStateToProps = ({softwareProduct: {softwareProductEditor, softwareProductComponents: {computeFlavor: {computeEditor = {}}}}}) => {
+export const mapStateToProps = ({
+	softwareProduct: {
+		softwareProductEditor,
+		softwareProductComponents: {computeFlavor: {computeEditor = {}}}
+	},
+	currentScreen: {
+		props: {isReadOnlyMode}
+	}
+}) => {
 	const {data: currentSoftwareProduct = {}} = softwareProductEditor;
-	const isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
 	let {data , qdata, qgenericFieldInfo, dataMap, genericFieldInfo, formReady} = computeEditor;
 	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 

@@ -5,15 +5,16 @@
   justify-content: flex-end;
   background-color: $tlv-light-gray;
   margin-bottom: 2px;
+  padding-left: 60px;
+  padding-right: 40px;
   @include box-shadow(0px 1px 3px 0 rgba(0, 0, 0, 0.2));
   .expandable-input-top {
-	margin-right: 60px;
+	margin-right: 20px;
 	margin-left: auto;
   }
   .onboard-header-tabs {
 	display: flex;
 	flex-direction: row;
-	margin-left: 60px;
 	.onboard-header-tab {
 	  @extend .body-1-semibold;
 	  margin-right: 40px;

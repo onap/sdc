@@ -22,12 +22,10 @@ package org.openecomp.sdc.vendorsoftwareproduct.services.impl.composition;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
@@ -43,6 +41,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -90,8 +89,6 @@ public class CompositionEntityDataManagerImplTest {
       "}";
 
   private Map<CompositionEntityId, Collection<String>> errorsById;
-  @Mock
-  private VendorSoftwareProductDao vendorSoftwareProductDaoMock;
   @InjectMocks
   @Spy
   private CompositionEntityDataManagerImpl compositionEntityDataManager;
@@ -248,7 +245,7 @@ public class CompositionEntityDataManagerImplTest {
 
     Map<CompositionEntityId, Collection<String>> errorsById =
         compositionEntityDataManager.validateEntitiesQuestionnaire();
-    Assert.assertEquals(errorsById.size(), 0);
+    Assert.assertEquals(errorsById.size(), 1);
   }
 
   @Test(dependsOnMethods = "testNicAndComponentValidQuestionnaire")
@@ -259,9 +256,9 @@ public class CompositionEntityDataManagerImplTest {
 
     Map<CompositionEntityId, Collection<String>> errorsById =
         compositionEntityDataManager.validateEntitiesQuestionnaire();
-    Assert.assertEquals(errorsById.size(), 1);
+    Assert.assertEquals(errorsById.size(), 2);
 
-    CompositionEntityId component = errorsById.keySet().iterator().next();
+    CompositionEntityId component = new ArrayList<>(errorsById.keySet()).get(1);
     List<String> errors = (List<String>) errorsById.get(component);
     Assert.assertEquals(errors.size(), 1);
     Assert.assertEquals(errors.get(0),

@@ -24,7 +24,11 @@ export const catalogItemTypeClasses = {
 	LICENSE_MODEL: 'license-model-type',
 	SOFTWARE_PRODUCT: 'software-product-type',
 	VENDOR: 'vendor-type'
+};
 
+export const catalogItemStatuses = {
+	DRAFT: 'Draft',
+	CERTIFIED: 'Certified'
 };
 
 export const modalMapper = {

@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.versioning.errors;
 
-import static org.openecomp.sdc.versioning.errors.VersioningErrorCodes.EDIT_ON_UNLOCKED_ENTITY;
-
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
+
+import static org.openecomp.sdc.versioning.errors.VersioningErrorCodes.EDIT_ON_UNLOCKED_ENTITY;
 
 /**
  * The type Edit on unlocked entity error builder.

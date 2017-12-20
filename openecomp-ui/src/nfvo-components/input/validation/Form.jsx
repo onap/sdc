@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import ValidationButtons from './ValidationButtons.jsx';
 
 class Form extends React.Component {
@@ -31,18 +32,18 @@ class Form extends React.Component {
 	};
 
 	static propTypes = {
-		isValid : React.PropTypes.bool,
-		formReady : React.PropTypes.bool,
-		isReadOnlyMode : React.PropTypes.bool,
-		hasButtons : React.PropTypes.bool,
-		onSubmit : React.PropTypes.func,
-		onReset : React.PropTypes.func,
-		labledButtons: React.PropTypes.bool,
-		submitButtonText: React.PropTypes.string,
-		cancelButtonText: React.PropTypes.string,
-		onValidChange : React.PropTypes.func,
-		onValidityChanged: React.PropTypes.func,
-		onValidateForm: React.PropTypes.func
+		isValid : PropTypes.bool,
+		formReady : PropTypes.bool,
+		isReadOnlyMode : PropTypes.bool,
+		hasButtons : PropTypes.bool,
+		onSubmit : PropTypes.func,
+		onReset : PropTypes.func,
+		labledButtons: PropTypes.bool,
+		submitButtonText: PropTypes.string,
+		cancelButtonText: PropTypes.string,
+		onValidChange : PropTypes.func,
+		onValidityChanged: PropTypes.func,
+		onValidateForm: PropTypes.func
 	};
 
 	constructor(props) {
@@ -124,13 +125,21 @@ class Form extends React.Component {
 export class TabsForm extends Form {
 	render() {
 		// eslint-disable-next-line no-unused-vars
-		let {isValid, formReady, onValidateForm, isReadOnlyMode, hasButtons, onSubmit, labledButtons, onValidChange, onValidityChanged, onDataChanged, children, ...formProps} = this.props;
+		let {submitButtonText, cancelButtonText, isValid, formReady, onValidateForm, isReadOnlyMode, hasButtons, onSubmit, labledButtons, onValidChange, onValidityChanged, onDataChanged, children,
+			...formProps} = this.props;
 		return (
 			<form {...formProps} ref={(form) => this.form = form} onSubmit={event => this.handleFormValidation(event)}>
 				<div className='validation-form-content'>
 						{children}
 				</div>
-				{hasButtons && <ValidationButtons labledButtons={labledButtons} ref={(buttons) => this.buttons = buttons} isReadOnlyMode={isReadOnlyMode}/>}
+				{hasButtons &&
+					<ValidationButtons
+						labledButtons={labledButtons}
+						submitButtonText={submitButtonText}
+						cancelButtonText={cancelButtonText}
+						ref={buttons => this.buttons = buttons}
+						isReadOnlyMode={isReadOnlyMode}/>
+				}
 			</form>
 		);
 	}

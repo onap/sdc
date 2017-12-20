@@ -18,13 +18,10 @@ import SoftwareProductDeploymentView from './SoftwareProductDeploymentView.jsx';
 import SoftwareProductDeploymentActionHelper from './SoftwareProductDeploymentActionHelper.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 
 export function mapStateToProps({softwareProduct}) {
-	let {softwareProductEditor: {data: currentSoftwareProduct = {}},softwareProductComponents: {componentsList}, softwareProductDeployment: {deploymentFlavors}} = softwareProduct;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
+	let {softwareProductComponents: {componentsList}, softwareProductDeployment: {deploymentFlavors}} = softwareProduct;
 	return {
-		isReadOnlyMode,
 		deploymentFlavors,
 		componentsList
 	};
@@ -37,7 +34,7 @@ function mapActionToProps(dispatch, {softwareProductId, version}) {
 		onDeleteDeployment: ({id, model}) => dispatch({
 			type: modalActionTypes.GLOBAL_MODAL_WARNING,
 			data:{
-				msg: i18n(`Are you sure you want to delete "${model}"?`),
+				msg: i18n('Are you sure you want to delete "{model}"?', {model: model}),
 				onConfirmed: () => SoftwareProductDeploymentActionHelper.deleteDeploymentFlavor(dispatch, {softwareProductId, deploymentFlavorId: id, version})
 			}
 		}),

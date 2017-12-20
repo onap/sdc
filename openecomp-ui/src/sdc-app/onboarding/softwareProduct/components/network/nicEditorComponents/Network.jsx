@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
@@ -23,51 +24,53 @@ import { networkTypes } from '../SoftwareProductComponentsNetworkConstants.js';
 const Network = ({networkValues, networkType, networkDescription, onDataChanged, isReadOnlyMode}) => {
 	const isExternal = networkType === networkTypes.EXTERNAL;
 	return (
-		<GridSection title={i18n('Network')}>
-				<GridItem>
-					<Input
-						label={i18n('Internal')}
-						disabled
-						checked={!isExternal}
-						data-test-id='nic-internal'
-						className='network-radio disabled'
-						type='radio'/>
-				</GridItem>
-				<GridItem>
-					<Input
-						label={i18n('External')}
-						disabled
-						checked={isExternal}
-						data-test-id='nic-external'
-						className='network-radio disabled'
-						type='radio'/>
-				</GridItem>
-				<GridItem colSpan={2}>
-				{isExternal ?
+		<GridSection title={i18n('Network')} hasLastColSet>
+			<GridItem>
+				<Input
+					label={i18n('Internal')}
+					disabled
+					checked={!isExternal}
+					data-test-id='nic-internal'
+					className='network-radio disabled'
+					type='radio' />
+			</GridItem>
+			<GridItem>
+				<Input
+					label={i18n('External')}
+					disabled
+					checked={isExternal}
+					data-test-id='nic-external'
+					className='network-radio disabled'
+					type='radio' />
+			</GridItem>
+			<GridItem colSpan={2} lastColInRow>
+			{
+				isExternal ?
 					<Input
 						label={i18n('Network Description')}
 						value={networkDescription}
 						data-test-id='nic-network-description'
 						onChange={networkDescription => onDataChanged({networkDescription})}
 						disabled={isReadOnlyMode}
-						type='text'/>
-						:
+						type='text' />
+				:
 					<Input
 						label={i18n('Network')}
 						data-test-id='nic-network'
 						type='select'
 						className='input-options-select'
 						groupClassName='bootstrap-input-options'
-						disabled={true} >
-							{networkValues.map(val => <option key={val.enum} value={val.enum}>{val.title}</option>)}
-					</Input>}
-				</GridItem>
+						disabled={true}>
+						{networkValues.map(val => <option key={val.enum} value={val.enum}>{val.title}</option>)}
+					</Input>
+			}
+			</GridItem>
 		</GridSection>
 	);
 };
 
 Network.PropTypes = {
-	networkValues: React.PropTypes.array
+	networkValues: PropTypes.array
 };
 
 export default  Network;

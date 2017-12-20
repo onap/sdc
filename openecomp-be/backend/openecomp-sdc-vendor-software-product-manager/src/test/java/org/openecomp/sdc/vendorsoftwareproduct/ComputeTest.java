@@ -1,33 +1,5 @@
 package org.openecomp.sdc.vendorsoftwareproduct;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.ADD_COMPUTE_NOT_ALLOWED_IN_HEAT_ONBOARDING;
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.DUPLICATE_COMPUTE_NAME_NOT_ALLOWED;
-
-import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.impl.VendorSoftwareProductManagerImpl;
-import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.ListComputeResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentComputeAssociation;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComputeData;
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 public class ComputeTest {
 
   /*private static final String USER1 = "componentsTestUser1";

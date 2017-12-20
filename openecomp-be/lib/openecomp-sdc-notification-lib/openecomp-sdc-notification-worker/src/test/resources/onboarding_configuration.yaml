@@ -1,0 +1,5 @@
+notifications:
+    pollingIntervalMsec: 3000
+    selectionSize: 5
+    beHost: localhost
+    beHttpPort: 8080

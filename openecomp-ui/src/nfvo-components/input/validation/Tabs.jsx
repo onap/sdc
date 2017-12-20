@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import {default as SDCTabs} from 'sdc-ui/lib/react/Tabs.js';
 import Overlay from 'react-bootstrap/lib/Overlay.js';
@@ -25,7 +26,7 @@ export default
 class Tabs extends React.Component {
 
 	static propTypes = {
-		children: React.PropTypes.node
+		children: PropTypes.node
 	};
 
 	cloneTab(element) {

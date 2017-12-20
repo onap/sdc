@@ -1,6 +1,7 @@
 {
   "port": 9000,
   "proxyCatalogTarget": null,
+  "proxyWebsocketTarget": null,
   "proxyTarget": null,
   "bundles": {
     "bundle": ["sdc-app/sdc.app.jsx"],

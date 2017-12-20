@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Form from 'nfvo-components/input/validation/Form.jsx';
@@ -24,9 +25,9 @@ import {imageCustomValidations} from './ImageValidations.js';
 
 class SoftwareProductComponentsImageEditorView extends React.Component {
 	static propTypes = {
-		onDataChanged: React.PropTypes.func.isRequired,
-		onSubmit: React.PropTypes.func.isRequired,
-		onCancel: React.PropTypes.func.isRequired
+		onDataChanged: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired
 	};
 
 	render() {

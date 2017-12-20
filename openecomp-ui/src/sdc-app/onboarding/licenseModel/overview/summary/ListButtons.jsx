@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import {selectedButton} from '../LicenseModelOverviewConstants.js';
 import Tabs from 'sdc-ui/lib/react/Tabs.js';
 import Tab from 'sdc-ui/lib/react/Tab.js';
@@ -43,8 +44,8 @@ function ListButtons ({onTabSelect, selectedTab, hasOrphans, hasLicensing}) {
 }
 
 ListButtons.propTypes = {
-	onTabSelect: React.PropTypes.func,
-	selectedInUse: React.PropTypes.bool
+	onTabSelect: PropTypes.func,
+	selectedInUse: PropTypes.bool
 };
 
 export default ListButtons;

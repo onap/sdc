@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
@@ -26,10 +27,10 @@ export default class SoftwareProductDeployment extends React.Component {
 	};
 
 	static propTypes = {
-		onAddDeployment: React.PropTypes.func.isRequired,
-		onDeleteDeployment: React.PropTypes.func.isRequired,
-		onEditDeployment: React.PropTypes.func.isRequired,
-		isReadOnlyMode: React.PropTypes.bool.isRequired
+		onAddDeployment: PropTypes.func.isRequired,
+		onDeleteDeployment: PropTypes.func.isRequired,
+		onEditDeployment: PropTypes.func.isRequired,
+		isReadOnlyMode: PropTypes.bool.isRequired
 	};
 
 	render() {

@@ -22,14 +22,14 @@ package org.openecomp.sdc.vendorsoftwareproduct;
 
 public final class VendorSoftwareProductConstants {
   public static final String VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE = "VendorSoftwareProduct";
-  public static final String GENERAL_COMPONENT_ID = "General";
   public static final String VSP_PACKAGE_ZIP = "VSPPackage.zip";
   public static final String CSAR = "CSAR";
   public static final String UPLOAD_RAW_DATA = "UPLOAD_RAW_DATA";
   public static final String INFORMATION_ARTIFACT_NAME = "VSP_%s_Information.txt";
-    public static final String UNSUPPORTED_OPERATION_ERROR =
-            "An error has occurred: Unsupported operation for 1707 release.";
+  public static final String UNSUPPORTED_OPERATION_ERROR =
+      "An error has occurred: Unsupported operation for 1707 release.";
   public static final String NAME_PATTERN = "^[a-zA-Z0-9_]*$";
+  public static final String VALIDATION_VSP_NAME = "validationOnlyVspName";
 
   public final class UniqueValues {
     public static final String VENDOR_SOFTWARE_PRODUCT_NAME = "Vendor Software Product name";

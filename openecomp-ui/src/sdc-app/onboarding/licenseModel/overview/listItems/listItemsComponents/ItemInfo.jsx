@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function ItemInfo({name, description, children}) {
 	return (
@@ -28,11 +29,11 @@ function ItemInfo({name, description, children}) {
 }
 
 ItemInfo.propTypes = {
-	name: React.PropTypes.string,
-	description: React.PropTypes.string,
-	children: React.PropTypes.oneOfType([
-		React.PropTypes.arrayOf(React.PropTypes.node),
-		React.PropTypes.node
+	name: PropTypes.string,
+	description: PropTypes.string,
+	children: PropTypes.oneOfType([
+		PropTypes.arrayOf(PropTypes.node),
+		PropTypes.node
 	])
 };
 

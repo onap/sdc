@@ -23,7 +23,6 @@ package org.openecomp.sdc.translator.services.heattotosca.impl.nameextractor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
-import org.openecomp.sdc.translator.services.heattotosca.impl.nameextractor.NameExtractorContrailComputeImpl;
 
 import java.util.HashMap;
 import java.util.Map;

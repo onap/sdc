@@ -3,7 +3,11 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.*;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.DUPLICATE_IMAGE_NAME_NOT_ALLOWED;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.DUPLICATE_IMAGE_VERSION_NOT_ALLOWED;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.IMAGE_NAME_FORMAT_NOT_ALLOWED;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.UPDATE_IMAGE_NOT_ALLOWED;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.VFC_IMAGE_INVALID_FORMAT;
 
 /**
  * The Image error builder.

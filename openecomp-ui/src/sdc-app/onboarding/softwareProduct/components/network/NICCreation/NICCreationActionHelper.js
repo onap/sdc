@@ -20,7 +20,7 @@ import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
 
 export default {
 
-	open(dispatch, {softwareProductId, componentId, modalClassName}) {
+	open(dispatch, {softwareProductId, componentId, modalClassName, version}) {
 		dispatch({
 			type: actionTypes.NICCreation.OPEN
 		});
@@ -31,7 +31,7 @@ export default {
 				modalComponentName: modalContentMapper.NIC_CREATION,
 				title: i18n('Create NEW NIC'),
 				modalClassName,
-				modalComponentProps: {softwareProductId, componentId}
+				modalComponentProps: {softwareProductId, componentId, version}
 			}
 		});
 	},

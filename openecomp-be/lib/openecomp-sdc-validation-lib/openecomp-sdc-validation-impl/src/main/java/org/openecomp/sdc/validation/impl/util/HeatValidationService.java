@@ -17,13 +17,15 @@
 package org.openecomp.sdc.validation.impl.util;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.heat.datatypes.model.*;
-import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.DefinedHeatParameterTypes;
+import org.openecomp.sdc.heat.datatypes.model.Environment;
+import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
+import org.openecomp.sdc.heat.datatypes.model.Parameter;
+import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
@@ -32,10 +34,18 @@ import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.validation.impl.validators.HeatValidator;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 
 public class HeatValidationService {

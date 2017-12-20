@@ -57,22 +57,22 @@ public class CandidateEntityBuilder {
 
   public OrchestrationTemplateCandidateData buildCandidateEntityFromZip(
       VspDetails vspDetails, byte[] uploadedFileData, FileContentHandler contentMap,
-      Map<String, List<ErrorMessage>> uploadErrors, String user) throws Exception {
+      Map<String, List<ErrorMessage>> uploadErrors) throws Exception {
     //mdcDataDebugMessage.debugEntryMessage("VSP Id", vspDetails.getId());
 
     try (InputStream zipFileManifest = contentMap.getFileContent(SdcCommon.MANIFEST_NAME)) {
       HeatFileAnalyzer heatFileAnalyzer = new HeatFileAnalyzerRowDataImpl();
       AnalyzedZipHeatFiles analyzedZipHeatFiles =
-              heatFileAnalyzer.analyzeFilesNotEligibleForModulesFromFileAnalyzer(contentMap.getFiles());
+          heatFileAnalyzer.analyzeFilesNotEligibleForModulesFromFileAnalyzer(contentMap.getFiles());
       HeatStructureTree tree = getHeatStructureTree(vspDetails, contentMap, analyzedZipHeatFiles);
 
       CandidateDataEntityTo candidateDataEntityTo =
-              new CandidateDataEntityTo(vspDetails.getId(), user, uploadedFileData, tree, contentMap,
-                      vspDetails.getVersion());
+          new CandidateDataEntityTo(vspDetails.getId(), vspDetails.getVersion(), uploadedFileData,
+              tree, contentMap);
       candidateDataEntityTo.setErrors(uploadErrors);
       OrchestrationTemplateCandidateData candidateDataEntity =
-              candidateService.createCandidateDataEntity(candidateDataEntityTo, zipFileManifest,
-                      analyzedZipHeatFiles);
+          candidateService.createCandidateDataEntity(candidateDataEntityTo, zipFileManifest,
+              analyzedZipHeatFiles);
 
       MDC_DATA_DEBUG_MESSAGE.debugExitMessage("VSP Id", vspDetails.getId());
       return candidateDataEntity;
@@ -81,7 +81,8 @@ public class CandidateEntityBuilder {
 
   private HeatStructureTree getHeatStructureTree(VspDetails vspDetails,
                                                  FileContentHandler contentMap,
-                                                 AnalyzedZipHeatFiles analyzedZipHeatFiles) throws IOException {
+                                                 AnalyzedZipHeatFiles analyzedZipHeatFiles)
+      throws IOException {
     addManifestToFileContentMapIfNotExist(vspDetails, contentMap, analyzedZipHeatFiles);
     HeatTreeManager heatTreeManager = HeatTreeManagerUtil.initHeatTreeManager(contentMap);
     heatTreeManager.createTree();
@@ -90,21 +91,22 @@ public class CandidateEntityBuilder {
 
   private void addManifestToFileContentMapIfNotExist(VspDetails vspDetails,
                                                      FileContentHandler fileContentHandler,
-                                                     AnalyzedZipHeatFiles analyzedZipHeatFiles) throws IOException {
+                                                     AnalyzedZipHeatFiles analyzedZipHeatFiles)
+      throws IOException {
     MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("VSP Id", vspDetails.getId());
 
     try (InputStream manifest = fileContentHandler.getFileContent(SdcCommon.MANIFEST_NAME)) {
 
       if (Objects.isNull(manifest)) {
         Optional<ManifestContent> manifestContentOptional =
-                candidateService.createManifest(vspDetails, fileContentHandler, analyzedZipHeatFiles);
+            candidateService.createManifest(vspDetails, fileContentHandler, analyzedZipHeatFiles);
         if (!manifestContentOptional.isPresent()) {
           throw new RuntimeException(Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage());
         }
         ManifestContent manifestContent = manifestContentOptional.get();
         fileContentHandler.addFile(
-                SdcCommon.MANIFEST_NAME,
-                String.valueOf(JsonUtil.sbObject2Json(manifestContent)).getBytes());
+            SdcCommon.MANIFEST_NAME,
+            String.valueOf(JsonUtil.sbObject2Json(manifestContent)).getBytes());
       }
     } finally {
       MDC_DATA_DEBUG_MESSAGE.debugExitMessage("VSP Id", vspDetails.getId());

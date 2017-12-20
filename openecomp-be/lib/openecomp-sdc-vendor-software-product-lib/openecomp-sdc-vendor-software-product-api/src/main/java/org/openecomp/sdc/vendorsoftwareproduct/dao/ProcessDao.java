@@ -12,6 +12,11 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 public interface ProcessDao extends VersionableDao, BaseDao<ProcessEntity> {
   void deleteAll(ProcessEntity entity);
 
-
   void deleteVspAll(String vspId, Version version);
+
+  ProcessEntity getArtifact(ProcessEntity entity);
+
+  void uploadArtifact(ProcessEntity entity);
+
+  void deleteArtifact(ProcessEntity entity);
 }

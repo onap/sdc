@@ -26,13 +26,10 @@ export const VSPComponentsMonitoringRestFactory = new Factory()
 	.option('createPoll', false)
 	.option('createVes', false)
 
-	.attr(trap, ['createTrap'], (createTrap) => {return (createTrap) ? randomstring.generate() : undefined})
-	.attr(poll, ['createPoll'], (createPoll) => {return (createPoll) ? randomstring.generate() : undefined})
-	.attr(ves, ['createVes'], (createVes) => {return (createVes) ? randomstring.generate() : undefined});
+	.attr(trap, ['createTrap'], (createTrap) => createTrap ? randomstring.generate() : undefined)
+	.attr(poll, ['createPoll'], (createPoll) => createPoll ? randomstring.generate() : undefined)
+	.attr(ves, ['createVes'], (createVes) => createVes ? randomstring.generate() : undefined);
 
 
 export const VSPComponentsMonitoringViewFactory = new Factory()
 	.extend(VSPComponentsMonitoringRestFactory);
-//	.after(monitoring => {
-
-//	});

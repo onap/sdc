@@ -30,12 +30,10 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.validation.util.MessageContainerUtil;
-import org.openecomp.sdc.activityLog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.OrchestrationTemplateCandidateManagerImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactData;
 import org.openecomp.sdc.vendorsoftwareproduct.questionnaire.QuestionnaireDataService;
@@ -54,15 +52,10 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Matchers.eq;
-
 public class QuestionnaireDataServiceTest {
   public static final Version VERSION = new Version(0, 1);
   private QuestionnaireDataService questionnaireDataService;// = new QuestionnaireDataServiceImpl();
 
-  @Mock
-  private VendorSoftwareProductDao vendorSoftwareProductDaoMock;
   @Mock
   private CandidateService candidateServiceMock;
   @Mock
@@ -73,8 +66,6 @@ public class QuestionnaireDataServiceTest {
   private ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDaoMock;
   @Mock
   private CompositionEntityDataManager compositionEntityDataManagerMock;
-  @Mock
-  private ActivityLogManager activityLogManagerMock;
 
   @Captor
   private ArgumentCaptor<ActivityLogEntity> activityLogEntityArg;
@@ -82,7 +73,7 @@ public class QuestionnaireDataServiceTest {
   @InjectMocks
   private OrchestrationTemplateCandidateManagerImpl candidateManager;
 
-  private final UploadFileTest uploadFileTest = new UploadFileTest();
+  private UploadFileTest uploadFileTest = new UploadFileTest();
 
   private static String vspId;
   private static Version vspActiveVersion;
@@ -110,31 +101,27 @@ public class QuestionnaireDataServiceTest {
 
   // TODO: 3/15/2017 fix and enable   //@Test
   public void testQuestionnaireDataAfterIllegalUpload() throws IOException {
-
     try (InputStream zipInputStream = uploadFileTest.getZipInputStream("/missingYml")) {
-      UploadFileResponse uploadFileResponse = candidateManager
-              .upload(vspId, VERSION, zipInputStream, USER1, "zip", "missingYml");
+      UploadFileResponse uploadFileResponse =
+              candidateManager.upload(vspId, VERSION, zipInputStream, "zip", "missingYml");
     }
-
     InformationArtifactData informationArtifactData = questionnaireDataService
         .generateQuestionnaireDataForInformationArtifact(vspId, vspActiveVersion);
 
   }
 
   private InformationArtifactData uploadFileAndValidateInformationArtifactData(String filePath,
-                                                                               int listSizeToCheck) throws IOException {
+                                                                               int listSizeToCheck)
+            throws IOException {
 
     try (InputStream zipInputStream = uploadFileTest.getZipInputStream(filePath)) {
-      UploadFileResponse uploadFileResponse = candidateManager
-              .upload(vspId, VERSION,
-                      zipInputStream, USER1, "zip", "file");
-
-      candidateManager.process(vspId, VERSION, USER1);
+      UploadFileResponse uploadFileResponse =
+              candidateManager.upload(vspId, VERSION, zipInputStream, "zip", "file");
+      candidateManager.process(vspId, VERSION);
 
       Assert.assertTrue(MapUtils.isEmpty(
               MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, uploadFileResponse.getErrors())));
     }
-
     InformationArtifactData informationArtifactData = questionnaireDataService
         .generateQuestionnaireDataForInformationArtifact(vspId, vspActiveVersion);
     Assert.assertNotNull(informationArtifactData);
@@ -142,11 +129,6 @@ public class QuestionnaireDataServiceTest {
     List<ComponentQuestionnaire> componentQuestionnaireList =
         informationArtifactData.getComponentQuestionnaires();
     Assert.assertEquals(componentQuestionnaireList.size(), listSizeToCheck);
-
-    verify(activityLogManagerMock).addActionLog(activityLogEntityArg.capture(),eq(USER1));
-    ActivityLogEntity activityLogEntity = activityLogEntityArg.getValue();
-    Assert.assertEquals(activityLogEntity.getVersionId(), String.valueOf(VERSION.getMajor()+1));
-    Assert.assertTrue(activityLogEntity.isSuccess());
 
     return informationArtifactData;
   }

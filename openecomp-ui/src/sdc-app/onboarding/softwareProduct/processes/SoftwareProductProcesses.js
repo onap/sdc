@@ -16,33 +16,30 @@
 import {connect} from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 
 import SoftwareProductProcessesActionHelper from './SoftwareProductProcessesActionHelper.js';
 import SoftwareProductProcessesView from './SoftwareProductProcessesView.jsx';
 
 export const mapStateToProps = ({softwareProduct}) => {
 	let {softwareProductEditor: {data: currentSoftwareProduct = {}}, softwareProductProcesses: {processesList, processesEditor}} = softwareProduct;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
 	let {data} = processesEditor;
 
 	return {
 		currentSoftwareProduct,
 		processesList,
 		isDisplayEditor: Boolean(data),
-		isModalInEditMode: Boolean(data && data.id),
-		isReadOnlyMode
+		isModalInEditMode: Boolean(data && data.id)
 	};
 };
 
-const mapActionsToProps = (dispatch, {softwareProductId}) => {
+const mapActionsToProps = (dispatch, {softwareProductId, version}) => {
 	return {
 		onAddProcess: () => SoftwareProductProcessesActionHelper.openEditor(dispatch),
 		onEditProcess: (process) => SoftwareProductProcessesActionHelper.openEditor(dispatch, process),
-		onDeleteProcess: (process, version) => dispatch({
+		onDeleteProcess: (process) => dispatch({
 			type: modalActionTypes.GLOBAL_MODAL_WARNING,
 			data:{
-				msg: i18n(`Are you sure you want to delete "${process.name}"?`),
+				msg: i18n('Are you sure you want to delete "{name}"?', {name: process.name}),
 				confirmationButtonText: i18n('Delete'),
 				title: i18n('Delete'),
 				onConfirmed: ()=> SoftwareProductProcessesActionHelper.deleteProcess(dispatch,

@@ -21,15 +21,17 @@
 package org.openecomp.sdc.healing.impl;
 
 import org.openecomp.sdc.healing.api.HealingManager;
+import org.openecomp.sdc.healing.dao.impl.HealingDaoImpl;
 import org.openecomp.sdc.healing.factory.HealingManagerFactory;
+import org.openecomp.sdc.versioning.VersioningManagerFactory;
 
 /**
  * Created by Talio on 11/29/2016.
  */
 public class HealingManagerFactoryImpl extends HealingManagerFactory {
-
     @Override
     public HealingManager createInterface() {
-        return new HealingManagerImpl();
+        return new HealingManagerImpl(
+            VersioningManagerFactory.getInstance().createInterface(), new HealingDaoImpl());
     }
 }

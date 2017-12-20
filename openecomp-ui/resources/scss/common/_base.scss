@@ -11,10 +11,14 @@ body {
   @extend %noselect;
 }
 
+$scrollbar-width: 8px;
+$scrollbar-height: 8px;
+/* firefox */
+$ff-scrollbar-width: 17px;
 /* scrollbar styling for Google Chrome | Safari | Opera */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: $scrollbar-width;
+  height: $scrollbar-height;
 }
 
 ::-webkit-scrollbar-track {

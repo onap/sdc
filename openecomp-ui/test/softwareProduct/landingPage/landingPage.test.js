@@ -19,6 +19,9 @@
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 
+import {Provider} from 'react-redux';
+import {storeCreator} from 'sdc-app/AppStore.js';
+
 import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';
 import {CategoryWithSubFactory}  from 'test-utils/factories/softwareProduct/VSPCategoriesFactory.js';
 import {LicenseAgreementStoreFactory}  from 'test-utils/factories/licenseModel/LicenseAgreementFactories.js';
@@ -27,9 +30,7 @@ import {default as SoftwareProductQSchemaFactory}  from 'test-utils/factories/so
 import {default as VspQdataFactory}  from 'test-utils/factories/softwareProduct/VspQdataFactory.js';
 import {VSPComponentsFactory}  from 'test-utils/factories/softwareProduct/SoftwareProductComponentsFactories.js';
 import {FinalizedLicenseModelFactory} from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
-
-import { Provider } from 'react-redux';
-import {storeCreator} from 'sdc-app/AppStore.js';
+import CurrentScreenFactory from 'test-utils/factories/common/CurrentScreenFactory.js';
 
 import {mapStateToProps} from 'sdc-app/onboarding/softwareProduct/landingPage/SoftwareProductLandingPage.js';
 import SoftwareProductLandingPageView from 'sdc-app/onboarding/softwareProduct/landingPage/SoftwareProductLandingPageView.jsx';
@@ -37,28 +38,28 @@ import SoftwareProductLandingPageView from 'sdc-app/onboarding/softwareProduct/l
 
 describe('Software Product Landing Page: ', function () {
 
-	let currentSoftwareProduct = {}, softwareProductCategories = [],
+	let currentSoftwareProduct = {}, softwareProductCategories = [], currentScreen = {},
 		finalizedLicenseModelList, licenseAgreementList, featureGroupsList, qschema, qdata = {};
 	const dummyFunc = () => {};
+
 	beforeAll(function() {
 		finalizedLicenseModelList = FinalizedLicenseModelFactory.buildList(2);
-		currentSoftwareProduct = VSPEditorFactory.build({id:'RTRTG454545', vendorId: finalizedLicenseModelList[0].id, vendorName: finalizedLicenseModelList[0].name});
+		currentSoftwareProduct = VSPEditorFactory.build({id:'RTRTG454545', vendorId: finalizedLicenseModelList[0].id, vendorName: finalizedLicenseModelList[0].name, onBoardingMethod: 'HEAT'});
 		softwareProductCategories = CategoryWithSubFactory.buildList(2,{},{quantity: 1});
 		licenseAgreementList = LicenseAgreementStoreFactory.buildList(2);
 		featureGroupsList = FeatureGroupStoreFactory.buildList(2,{referencingLicenseAgreements:[licenseAgreementList[0].id]});
+		currentScreen = CurrentScreenFactory.build();
 		qdata = VspQdataFactory.build();
 		qschema = SoftwareProductQSchemaFactory.build(qdata);
-
 	});
-
-
 
 	it('should mapper exist', () => {
 		expect(mapStateToProps).toBeTruthy();
 	});
 
 	it('should mapper return vsp basic data', () => {
-		const obj = {
+		const state = {
+			currentScreen,
 			softwareProduct: {
 				softwareProductEditor: {
 					data: currentSoftwareProduct
@@ -70,6 +71,9 @@ describe('Software Product Landing Page: ', function () {
 				},
 				softwareProductComponents: {
 					componentsList:[]
+				},
+				softwareProductAttachments: {
+					heatSetup: {}
 				}
 			},
 			finalizedLicenseModelList,
@@ -83,23 +87,25 @@ describe('Software Product Landing Page: ', function () {
 			}
 		};
 
-		const result = mapStateToProps(obj);
+		const result = mapStateToProps(state);
 		expect(result.currentSoftwareProduct).toBeTruthy();
-		expect(result.isReadOnlyMode).toEqual(true);
 
 	});
 
 	it('vsp landing basic view', () => {
 
 		const params = {
+			...currentScreen.props,
 			currentSoftwareProduct,
-			isReadOnlyMode: false,
 			componentsList: VSPComponentsFactory.buildList(2)
 		};
 
 		const store = storeCreator();
-		let vspLandingView = TestUtils.renderIntoDocument(<Provider store={store}><SoftwareProductLandingPageView
-			{...params}/></Provider>);
+		let vspLandingView = TestUtils.renderIntoDocument(
+			<Provider store={store}>
+				<SoftwareProductLandingPageView {...params}/>
+			</Provider>
+		);
 		expect(vspLandingView).toBeTruthy();
 	});
 
@@ -107,13 +113,16 @@ describe('Software Product Landing Page: ', function () {
 
 		const params = {
 			currentSoftwareProduct,
-			isReadOnlyMode: false,
+			...currentScreen.props,
 			componentsList: VSPComponentsFactory.buildList(2)
 		};
 
 		const store = storeCreator();
-		let vspLandingView = TestUtils.renderIntoDocument(<Provider store={store}><SoftwareProductLandingPageView
-			{...params}/></Provider>);
+		let vspLandingView = TestUtils.renderIntoDocument(
+			<Provider store={store}>
+				<SoftwareProductLandingPageView {...params}/>
+			</Provider>
+		);
 		let vspLandingViewWrapper = TestUtils.findRenderedComponentWithType(
 			vspLandingView,
 			SoftwareProductLandingPageView
@@ -127,8 +136,8 @@ describe('Software Product Landing Page: ', function () {
 	it('vsp landing handleImportSubmit test ', () => {
 
 		const params = {
+			...currentScreen.props,
 			currentSoftwareProduct,
-			isReadOnlyMode: false,
 			componentsList: VSPComponentsFactory.buildList(2),
 			onUploadConfirmation:  dummyFunc,
 			onUpload: dummyFunc,
@@ -144,7 +153,12 @@ describe('Software Product Landing Page: ', function () {
 
 		const store = storeCreator();
 
-		let vspLandingView = TestUtils.renderIntoDocument(<Provider store={store}><SoftwareProductLandingPageView {...params}/></Provider>);
+		let vspLandingView = TestUtils.renderIntoDocument(
+			<Provider store={store}>
+				<SoftwareProductLandingPageView {...params}/>
+			</Provider>
+		);
+
 		let vspLandingViewWrapper = TestUtils.findRenderedComponentWithType(
 			vspLandingView,
 			SoftwareProductLandingPageView
@@ -166,7 +180,7 @@ describe('Software Product Landing Page: ', function () {
 
 		const params = {
 			currentSoftwareProduct,
-			isReadOnlyMode: false,
+			...currentScreen.props,
 			componentsList: VSPComponentsFactory.buildList(2),
 			onUploadConfirmation:  dummyFunc,
 			onUpload: dummyFunc,
@@ -175,8 +189,11 @@ describe('Software Product Landing Page: ', function () {
 
 		const store = storeCreator();
 
-		let vspLandingView = TestUtils.renderIntoDocument(<Provider store={store}><SoftwareProductLandingPageView
-			{...params}/></Provider>);
+		let vspLandingView = TestUtils.renderIntoDocument(
+			<Provider store={store}>
+				<SoftwareProductLandingPageView {...params}/>
+			</Provider>
+		);
 
 		let vspLandingViewWrapper = TestUtils.findRenderedComponentWithType(
 			vspLandingView,

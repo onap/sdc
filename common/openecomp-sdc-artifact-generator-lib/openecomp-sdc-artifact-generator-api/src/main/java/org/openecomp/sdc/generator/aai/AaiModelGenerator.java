@@ -30,15 +30,12 @@ import static org.openecomp.sdc.generator.data.GeneratorConstants.PARTNER_NAME;
 
 import org.openecomp.sdc.generator.aai.model.Resource;
 import org.openecomp.sdc.generator.aai.model.Service;
-import org.openecomp.sdc.generator.aai.model.Widget;
 import org.openecomp.sdc.generator.logging.CategoryLogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
 
 public interface AaiModelGenerator {
 
@@ -58,8 +55,7 @@ public interface AaiModelGenerator {
       MDC.put(ERROR_CODE, GENERATOR_ERROR_CODE);
       MDC.put(ERROR_DESCRIPTION, GENERATOR_ERROR_SERVICE_INSTANTIATION_FAILED);
       StringWriter sw = new StringWriter();
-      exception.printStackTrace(new PrintWriter(sw));
-      log.error(sw.toString());
+      log.error(sw.toString(), exception);
     }
     return null;
   }

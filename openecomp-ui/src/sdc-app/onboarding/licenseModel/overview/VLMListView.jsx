@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {Collapse} from 'react-bootstrap';
 import LicenseAgreement from './listItems/LicenseAgreement.jsx';
 import EntitlementPool from './listItems/EntitlementPool.jsx';
@@ -24,8 +25,8 @@ import {overviewEditorHeaders} from './LicenseModelOverviewConstants.js';
 class VLMListView extends Component {
 
 	static propTypes = {
-		licensingDataList: React.PropTypes.array,
-		showInUse: React.PropTypes.bool
+		licensingDataList: PropTypes.array,
+		showInUse: PropTypes.bool
 	};
 
 	state = {

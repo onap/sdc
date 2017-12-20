@@ -16,7 +16,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManager;
 import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.MonitoringUploadStatus;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.MonitoringUploadStatusDto;
 import org.openecomp.sdcrests.vsp.rest.ComponentMonitoringUploads;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapMonitoringUploadStatusToDto;
@@ -54,13 +53,13 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
     logger.audit(AuditMessages.AUDIT_MSG + String.format(AuditMessages
         .UPLOAD_MONITORING_FILE, type, vspId, componentId));
 
-    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
-    componentManager.validateComponentExistence(vspId, version, componentId, user);
+    Version version = new Version(versionId);
+    componentManager.validateComponentExistence(vspId, version, componentId);
 
     MonitoringUploadType monitoringUploadType = getMonitoringUploadType(vspId, componentId, type);
     monitoringUploadsManager.upload(attachment.getObject(InputStream.class),
         attachment.getContentDisposition().getParameter("filename"), vspId, version, componentId,
-        monitoringUploadType, user);
+        monitoringUploadType);
 
     mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId + "," + componentId);
     return Response.ok().build();
@@ -88,10 +87,9 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
 
     MonitoringUploadType monitoringUploadType = getMonitoringUploadType(vspId, componentId, type);
 
-    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
-    componentManager.validateComponentExistence(vspId, version, componentId, user);
-    monitoringUploadsManager
-        .delete(vspId, version, componentId, monitoringUploadType, user);
+    Version version = new Version(versionId);
+    componentManager.validateComponentExistence(vspId, version, componentId);
+    monitoringUploadsManager.delete(vspId, version, componentId, monitoringUploadType);
 
     mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId + "," + componentId);
     return Response.ok().build();
@@ -102,16 +100,15 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
                        String user) {
     MdcUtil.initMdc(LoggerServiceName.List_Monitoring_Artifacts.toString());
 
-    Version version = resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read);
-    componentManager.validateComponentExistence(vspId, version, componentId, user);
+    Version version = new Version(versionId);
+    componentManager.validateComponentExistence(vspId, version, componentId);
 
-    MonitoringUploadStatus response = monitoringUploadsManager
-        .listFilenames(vspId, version, componentId, user);
+    MonitoringUploadStatus response =
+        monitoringUploadsManager.listFilenames(vspId, version, componentId);
 
     MonitoringUploadStatusDto returnEntity =
         new MapMonitoringUploadStatusToDto()
             .applyMapping(response, MonitoringUploadStatusDto.class);
     return Response.status(Response.Status.OK).entity(returnEntity).build();
-
   }
 }

@@ -46,11 +46,6 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>activity-log-rest-types</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
 

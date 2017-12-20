@@ -6,8 +6,6 @@ import org.openecomp.sdc.generator.core.services.ManualVspToscaGenerationService
 import org.openecomp.sdc.generator.datatypes.tosca.DeploymentFlavorModel;
 import org.openecomp.sdc.generator.datatypes.tosca.MultiFlavorVfcImage;
 import org.openecomp.sdc.generator.datatypes.tosca.VspModelInfo;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
@@ -29,18 +27,15 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
   private ManualVspDataCollectionService
       manualVspDataCollectionService = new ManualVspDataCollectionService();
 
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
-
   @Override
-  public VspModelInfo gatherVspInformation(String vspId, Version version, String user) {
+  public VspModelInfo gatherVspInformation(String vspId, Version version) {
     mdcDataDebugMessage.debugEntryMessage(null, null);
     VspModelInfo vspModelInfo = new VspModelInfo();
     //Get Release Vendor Name
     Optional<String> releaseVendor;
     try {
-      releaseVendor = manualVspDataCollectionService.getReleaseVendor(vspId, version, user);
+      releaseVendor = manualVspDataCollectionService.getReleaseVendor(vspId, version);
     } catch (Exception ex) {
-      log.debug("", ex);
       releaseVendor = Optional.empty();
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
           LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
@@ -52,9 +47,8 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
     //Get Allowed Deployment flavors information
     Map<String, DeploymentFlavorModel> allowedFlavors;
     try {
-      allowedFlavors = manualVspDataCollectionService.getAllowedFlavors(vspId, version, user);
+      allowedFlavors = manualVspDataCollectionService.getAllowedFlavors(vspId, version);
     } catch (Exception ex) {
-      log.debug("", ex);
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
           LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), "Unable to collect allowed flavors : "
@@ -69,9 +63,8 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
     Map<String, List<MultiFlavorVfcImage>> vspComponentImages;
     try {
       vspComponentImages =
-          manualVspDataCollectionService.getVspComponentImages(vspId, version, user);
+          manualVspDataCollectionService.getVspComponentImages(vspId, version);
     } catch (Exception ex) {
-      log.debug("", ex);
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
           LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), "Unable to collect vsp component images : "
@@ -85,9 +78,8 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
     //Get VFC component information
     Map<String, String> vspComponents;
     try {
-      vspComponents = manualVspDataCollectionService.getVspComponents(vspId, version, user);
+      vspComponents = manualVspDataCollectionService.getVspComponents(vspId, version);
     } catch (Exception ex) {
-      log.debug("", ex);
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
           LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), "Unable to collect vsp components : "
@@ -101,9 +93,8 @@ public class ManualVspToscaManagerImpl implements ManualVspToscaManager {
     //Get VSP component nic information
     Map<String, List<Nic>> vspComponentNics;
     try {
-      vspComponentNics = manualVspDataCollectionService.getVspComponentNics(vspId, version, user);
+      vspComponentNics = manualVspDataCollectionService.getVspComponentNics(vspId, version);
     } catch (Exception ex) {
-      log.debug("", ex);
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
           LoggerTragetServiceName.COLLECT_MANUAL_VSP_TOSCA_DATA, ErrorLevel.INFO.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), "Unable to collect vsp component nics : "

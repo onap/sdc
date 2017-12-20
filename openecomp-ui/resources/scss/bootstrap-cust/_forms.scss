@@ -1,6 +1,7 @@
 .form-group {
   .control-label {
     @extend .body-2-semibold;
+    font-weight: normal;
   }
   &.required {
     label:before {
@@ -28,6 +29,15 @@ label {
   margin-bottom: 8px;
 }
 
+.sdc-radio {
+  label {
+    font-weight: normal;
+    margin-bottom: 0;
+  }
+  input[type="radio"] {
+    margin: 0;
+  }
+}
 select.form-control {
   display: block;
   width: 215px;
@@ -37,7 +47,7 @@ select[multiple] {
   background: none;
 }
 
-input[type="radio"], input[type="checkbox"] {
+input[type="checkbox"] {
   margin: 0;
 
   &:before {
@@ -77,14 +87,6 @@ input[type="radio"], input[type="checkbox"] {
   border-radius: 2px;
 }
 
-input[type=radio]:checked:before {
-  content: "\2022";
-  color: $blue;
-  font-size: 30px;
-  text-align: center;
-  line-height: 11px;
-  font-family: $radio-font-family;
-}
 
 input[type=checkbox]:checked:before {
   font-family: $icon-font-family;

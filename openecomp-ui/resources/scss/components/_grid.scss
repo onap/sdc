@@ -1,66 +1,71 @@
-$gridItemSpace: 15%;
-
 .grid-section {
-		&:not(:last-of-type) {
-			padding-bottom: 30px;
-		}
-		.grid-items {
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-		}
+  $gridItemSpace: 15%;
 
-		%grid-col-base {
-			flex-shrink: 0;
-			display: flex;
-		}
-
-		.grid-item {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-		}
-
-		.grid-item-stretch {
-			@extend .grid-item;
-			& *:last-child {
-				flex: 1;
-				display: flex;
-				flex-direction: column;
-			}
-		}
-
-		.grid-col-1 {
-			@extend %grid-col-base;
-			flex-basis: 25%;
-      &:after {
-        flex-basis: $gridItemSpace;
+  @mixin gridCol($numOfCols, $flexBasis) {
+    .#{grid-col- + $numOfCols} {
+      @extend %grid-col-base;
+      flex-basis:  $flexBasis;
+      &:not(.last-col-in-row):after {
+        flex-basis: $gridItemSpace / $numOfCols;
         content: ' ';
       }
-		}
+    }
+  }
 
-		.grid-col-2 {
-			@extend %grid-col-base;
-			flex-basis: 50%;
-      &:after {
-        flex-basis: $gridItemSpace / 2;
-        content: ' ';
+  @mixin gridColWithLastColumn($numOfCols, $flexBasis, $flexBasisLast) {
+    .#{grid-col- + $numOfCols} {
+      @extend %grid-col-base;
+      &:not(.last-col-in-row) {
+        flex-basis:  $flexBasis;
+        margin-right: 5%;
       }
-		}
-		.grid-col-3 {
-			@extend %grid-col-base;
-			flex-basis: 75%;
-      &:after {
-        flex-basis: $gridItemSpace / 3;
-        content: ' ';
+      &.last-col-in-row {
+        flex-basis:  $flexBasisLast;
       }
-		}
-		.grid-col-4 {
-			@extend %grid-col-base;
-			flex-basis: 100%;
-      &:after {
-        flex-basis: $gridItemSpace / 4;
-        content: ' ';
-      }
-		}
+    }
+  }
+
+  &:not(:last-of-type) {
+    padding-bottom: 30px;
+  }
+
+  .grid-items {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  %grid-col-base {
+    flex-shrink: 0;
+    display: flex;
+  }
+
+  .grid-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .grid-item-stretch {
+    @extend .grid-item;
+    & *:last-child {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &.has-last-col-set {
+    @include gridColWithLastColumn(1, 21%, 22%);
+    @include gridColWithLastColumn(2, 47%, 48%);
+    @include gridColWithLastColumn(3, 73%, 74%);
+    @include gridColWithLastColumn(4, 100%, 100%);
+  }
+
+  &:not(.has-last-col-set) {
+    @include gridCol(1, 25%);
+    @include gridCol(2, 50%);
+    @include gridCol(3, 75%);
+    @include gridCol(4, 100%);
+  }
 }

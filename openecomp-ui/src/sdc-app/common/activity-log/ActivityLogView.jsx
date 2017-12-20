@@ -67,9 +67,9 @@ export function ActivityListItem({activity, isHeader, isDes, onSort}) {
 	return (
 		<li className={`activity-list-item ${isHeader ? 'header' : ''}`} data-test-id='activity-list-item'>
 			<div className='table-cell activity-date' data-test-id='activity-date'><ActivityLogSortableCellHeader isHeader={isHeader} data={timestamp} isDes={isDes} onSort={onSort}/></div>
-			<div className='table-cell activity-action' data-test-id='activity-action'>{type}</div>
-			<div className='table-cell activity-comment' title={comment} data-test-id='activity-comment'><span>{comment}</span></div>
-			<div className='table-cell activity-username' data-test-id='activity-username'>{user}</div>
+			<div className='table-cell activity-action' data-test-id='activity-action'>{i18n(type)}</div>
+			<div className='table-cell activity-comment' title={isHeader ? '' : comment} data-test-id='activity-comment'><span>{i18n(comment)}</span></div>
+			<div className='table-cell activity-username' data-test-id='activity-username'>{isHeader ? i18n(activity.user) : `${i18n(user.name)} (${user.id})`}</div>
 			<div className='table-cell activity-status' data-test-id='activity-status'><ActivityLogStatus isHeader={isHeader} status={status}/></div>
 		</li>
 	);
@@ -91,10 +91,10 @@ class ActivityLogView extends Component {
 					filterValue={this.state.localFilter}
 					onFilter={filter => this.setState({localFilter: filter})}>
 					<ActivityListItem
-						isHeader={true}
 						activity={{timestamp: 'Date', type: 'Action', comment: 'Comment', user: 'Username', status: 'Status'}}
 						isDes={this.state.sortDescending}
-						onSort={() => this.setState({sortDescending: !this.state.sortDescending})}/>
+						onSort={() => this.setState({sortDescending: !this.state.sortDescending})}
+						isHeader/>
 					{this.sortActivities(this.filterActivities(), this.state.sortDescending).map(activity => <ActivityListItem key={activity.id} activity={activity}/>)}
 				</ListEditorView>
 			</div>
@@ -106,7 +106,8 @@ class ActivityLogView extends Component {
 		let {localFilter} = this.state;
 		if (localFilter.trim()) {
 			const filter = new RegExp(escape(localFilter), 'i');
-			return activities.filter(({user = '', comment = '', type = ''}) => escape(user).match(filter) || escape(comment).match(filter) || escape(type).match(filter));
+			return activities.filter(({user = {id: '', name: ''}, comment = '', type = ''}) =>
+			escape(user.id).match(filter) || escape(user.name).match(filter) || escape(comment).match(filter) || escape(type).match(filter));
 		}
 		else {
 			return activities;

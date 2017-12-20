@@ -1,39 +1,5 @@
 package org.openecomp.sdc.vendorlicense;
 
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
-import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao;
-import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao;
-import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
-import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDao;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
-import org.openecomp.sdc.vendorlicense.facade.impl.VendorLicenseFacadeImpl;
-import org.openecomp.sdc.versioning.VersioningManager;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionInfo;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doReturn;
-import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_FG_MISSING_EP;
-import static org.openecomp.sdc.vendorlicense.errors.UncompletedVendorLicenseModelErrorType.SUBMIT_UNCOMPLETED_VLM_MSG_LA_MISSING_FG;
-
 /**
  * This test just verifies Feature Group Get and List APIs.
  */

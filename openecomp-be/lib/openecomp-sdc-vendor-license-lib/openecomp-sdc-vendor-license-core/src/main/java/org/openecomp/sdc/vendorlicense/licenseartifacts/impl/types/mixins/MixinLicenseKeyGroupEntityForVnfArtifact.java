@@ -34,7 +34,7 @@ import java.util.Collection;
 import java.util.Set;
 
 public abstract class MixinLicenseKeyGroupEntityForVnfArtifact {
-  @JsonIgnore
+  @JsonProperty(value = "license-key-group-invariant-uuid")
   abstract String getId();
 
   @JsonProperty(value = "manufacturer-reference-number")
@@ -46,7 +46,7 @@ public abstract class MixinLicenseKeyGroupEntityForVnfArtifact {
   @JsonIgnore
   abstract String getVersion();
 
-  @JsonIgnore
+  @JsonProperty(value = "version")
   abstract String getVersionForArtifact();
 
   @JsonIgnore
@@ -87,11 +87,17 @@ public abstract class MixinLicenseKeyGroupEntityForVnfArtifact {
   @JsonIgnore
   abstract Collection<LimitEntity> getLimits();
 
-  @JsonProperty(value = "start-date")
+  @JsonIgnore
   abstract String getStartDate();
 
-  @JsonProperty(value = "expiry-date")
+  @JsonIgnore
   abstract String getExpiryDate();
+
+  @JsonProperty(value = "start-date")
+  abstract String getIsoFormatStartDate();
+
+  @JsonProperty(value = "expiry-date")
+  abstract String getIsoFormatExpiryDate();
 
   @JsonIgnore
   abstract String getThresholdUnits();

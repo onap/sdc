@@ -1,0 +1,9 @@
+{
+  "org.openecomp.sdc.notification.factories.LastNotificationDaoFactory": "org.openecomp.sdc.notification.factories.impl.LastNotificationDaoFactoryImpl",
+  "org.openecomp.sdc.notification.factories.NotificationsDaoFactory": "org.openecomp.sdc.notification.factories.impl.NotificationsDaoFactoryImpl",
+  "org.openecomp.sdc.notification.factories.NotificationsServiceFactory": "org.openecomp.sdc.notification.factories.impl.NotificationsServiceFactoryImpl",
+  "org.openecomp.sdc.notification.factories.SubscribersDaoFactory": "org.openecomp.sdc.notification.factories.impl.SubscribersDaoFactoryImpl",
+  "org.openecomp.sdc.notification.factories.PropagationServiceFactory": "org.openecomp.sdc.notification.factories.impl.PropagationServiceFactoryImpl",
+  "org.openecomp.sdc.notification.factories.SubscriptionServiceFactory": "org.openecomp.sdc.notification.factories.impl.SubscriptionServiceFactoryImpl",
+  "org.openecomp.sdc.notification.factories.NotificationPropagationManagerFactory": "org.openecomp.sdc.notification.factories.impl.NotificationPropagationManagerFactoryImpl"
+}

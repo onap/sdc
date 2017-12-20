@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import Tabs from 'nfvo-components/input/validation/Tabs.jsx';
 import Tab from 'sdc-ui/lib/react/Tab.js';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
@@ -26,20 +27,20 @@ import Validator from 'nfvo-utils/Validator.js';
 
 import {state as FeatureGroupStateConstants, FG_EDITOR_FORM} from './FeatureGroupsConstants.js';
 
-const FeatureGroupsPropType = React.PropTypes.shape({
-	id: React.PropTypes.string,
-	name: React.PropTypes.string,
-	description: React.PropTypes.string,
-	partNumber: React.PropTypes.string,
-	manufacturerReferenceNumber: React.PropTypes.string,
-	entitlementPoolsIds: React.PropTypes.arrayOf(React.PropTypes.string),
-	licenseKeyGroupsIds: React.PropTypes.arrayOf(React.PropTypes.string)
+const FeatureGroupsPropType = PropTypes.shape({
+	id: PropTypes.string,
+	name: PropTypes.string,
+	description: PropTypes.string,
+	partNumber: PropTypes.string,
+	manufacturerReferenceNumber: PropTypes.string,
+	entitlementPoolsIds: PropTypes.arrayOf(PropTypes.string),
+	licenseKeyGroupsIds: PropTypes.arrayOf(PropTypes.string)
 });
 
 const GeneralTab = ({data = {}, onDataChanged, genericFieldInfo, validateName}) => {
 	let {name, description, partNumber, manufacturerReferenceNumber} = data;
 	return (
-			<GridSection>
+			<GridSection hasLastColSet>
 				<GridItem colSpan={2}>
 					<Input
 						groupClassName='field-section'
@@ -53,7 +54,7 @@ const GeneralTab = ({data = {}, onDataChanged, genericFieldInfo, validateName}) 
 						isValid={genericFieldInfo.name.isValid}
 						errorText={genericFieldInfo.name.errorText} />
 				</GridItem>
-				<GridItem colSpan={2}>
+				<GridItem colSpan={2} lastColInRow>
 					<Input
 						groupClassName='field-section'
 						className='description-field'
@@ -78,7 +79,7 @@ const GeneralTab = ({data = {}, onDataChanged, genericFieldInfo, validateName}) 
 						isValid={genericFieldInfo.partNumber.isValid}
 						errorText={genericFieldInfo.partNumber.errorText} />
 				</GridItem>
-				<GridItem colSpan={2}>
+				<GridItem colSpan={2} lastColInRow>
 					<Input
 						groupClassName='field-section'
 						onChange={manufacturerReferenceNumber => onDataChanged({manufacturerReferenceNumber}, FG_EDITOR_FORM)}
@@ -142,14 +143,14 @@ class FeatureGroupEditorView extends React.Component {
 	static propTypes = {
 		data: FeatureGroupsPropType,
 		previousData: FeatureGroupsPropType,
-		isReadOnlyMode: React.PropTypes.bool,
-		FGNames: React.PropTypes.object,
+		isReadOnlyMode: PropTypes.bool,
+		FGNames: PropTypes.object,
 
-		onSubmit: React.PropTypes.func,
-		onCancel: React.PropTypes.func,
+		onSubmit: PropTypes.func,
+		onCancel: PropTypes.func,
 
-		selectedTab: React.PropTypes.number,
-		onTabSelect: React.PropTypes.func,
+		selectedTab: PropTypes.number,
+		onTabSelect: PropTypes.func,
 
 		entitlementPoolsList: DualListboxView.propTypes.availableList,
 		licenseKeyGroupsList: DualListboxView.propTypes.availableList

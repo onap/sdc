@@ -60,7 +60,7 @@ class SubmitErrorResponse extends Component {
 		return (
 			<ErrorBlock errorType={i18n('VSP Errors')}>
 				<div>
-					{errors.length && errors.map(error=>{return (<ErrorMessage error={error.message}/>);})}
+					{errors.length && errors.map((error, i) => {return (<ErrorMessage key={i} error={error.message}/>);})}
 				</div>
 			</ErrorBlock>
 		);
@@ -71,7 +71,7 @@ class SubmitErrorResponse extends Component {
 		return (
 			<ErrorBlock errorType={i18n('Components Errors')}>
 				<div>
-					{errors.validationData.length && errors.validationData.map(item =>{ return (<ComponentError item={item}/>);})}
+					{errors.validationData.length && errors.validationData.map((item, i) =>{ return (<ComponentError key={i} item={item}/>);})}
 				</div>
 			</ErrorBlock>
 		);
@@ -90,11 +90,10 @@ class SubmitErrorResponse extends Component {
 
 
 const ComponentError = ({item}) => {
-	let i = 0;
 	return (
 		<div>
 			<div className='component-name-header'>{item.entityName}</div>
-			{item.errors.map(error => {return(<ErrorMessage key={i++} error={error}/>);})}
+			{item.errors.map((error, i) => {return(<ErrorMessage key={i} error={error}/>);})}
 		</div>
 	);
 };
@@ -110,7 +109,7 @@ const UploadErrorList = ({items}) => {
 
 	let errors = [];
 	for (let item of generator) {errors.push(
-		<div>
+		<div key={item.header}>
 			<div className='component-name-header'>{item.header}</div>
 			{item.list.map((error, i) => <ErrorMessage key={i} warning={error.level === 'WARNING'} error={error.message}/> )}
 		</div>

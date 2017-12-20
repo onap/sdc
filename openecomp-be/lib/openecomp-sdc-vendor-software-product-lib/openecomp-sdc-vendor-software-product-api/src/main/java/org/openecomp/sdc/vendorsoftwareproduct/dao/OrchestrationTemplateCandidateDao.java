@@ -31,7 +31,9 @@ public interface OrchestrationTemplateCandidateDao extends VersionableDao {
 
   OrchestrationTemplateCandidateData get(String vspId, Version version);
 
-  void update(String vspId, OrchestrationTemplateCandidateData candidateData);
+  OrchestrationTemplateCandidateData getInfo(String vspId, Version version);
+
+  void update(String vspId, Version version, OrchestrationTemplateCandidateData candidateData);
 
   void updateStructure(String vspId, Version version, FilesDataStructure fileDataStructure);
 

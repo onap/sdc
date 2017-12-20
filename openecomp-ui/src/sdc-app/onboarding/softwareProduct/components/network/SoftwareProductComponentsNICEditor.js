@@ -16,19 +16,17 @@
 import {connect} from 'react-redux';
 import SoftwareProductComponentsNetworkActionHelper from './SoftwareProductComponentsNetworkActionHelper.js';
 import SoftwareProductComponentsNICEditorView from './SoftwareProductComponentsNICEditorView.jsx';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import {forms} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
 import {NIC_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNetworkConstants.js';
 import {onboardingMethod as onboardingMethodTypes} from '../../SoftwareProductConstants.js';
 
-export const mapStateToProps = ({softwareProduct}) => {
+export const mapStateToProps = ({softwareProduct, currentScreen}) => {
 
 	let {softwareProductEditor: {data:currentSoftwareProduct = {},  isValidityData = true}, softwareProductComponents} = softwareProduct;
-
 	let {network: {nicEditor = {}}} = softwareProductComponents;
 	let {data, qdata, genericFieldInfo, qgenericFieldInfo, dataMap, formReady} = nicEditor;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
+	let {props: {isReadOnlyMode}} = currentScreen;
 	let {onboardingMethod} = currentSoftwareProduct;
 	let protocols = [];
 	if(qdata && qdata.protocols && qdata.protocols.protocols && qdata.protocols.protocols.length){
@@ -55,11 +53,11 @@ export const mapStateToProps = ({softwareProduct}) => {
 
 };
 
-const mapActionsToProps = (dispatch, {softwareProductId, componentId}) => {
+const mapActionsToProps = (dispatch, {softwareProductId, componentId, version}) => {
 	return {
 		onDataChanged: (deltaData) => ValidationHelper.dataChanged(dispatch, {deltaData,
 			formName: forms.NIC_EDIT_FORM}),
-		onSubmit: ({data, qdata, version}) => SoftwareProductComponentsNetworkActionHelper.saveNICDataAndQuestionnaire(dispatch, {softwareProductId, version, componentId, data, qdata}),
+		onSubmit: ({data, qdata}) => SoftwareProductComponentsNetworkActionHelper.saveNICDataAndQuestionnaire(dispatch, {softwareProductId, version, componentId, data, qdata}),
 		onCancel: () => SoftwareProductComponentsNetworkActionHelper.closeNICEditor(dispatch),
 		onValidateForm: () => ValidationHelper.validateForm(dispatch, forms.NIC_EDIT_FORM),
 		onQDataChanged: (deltaData) => ValidationHelper.qDataChanged(dispatch, {deltaData,

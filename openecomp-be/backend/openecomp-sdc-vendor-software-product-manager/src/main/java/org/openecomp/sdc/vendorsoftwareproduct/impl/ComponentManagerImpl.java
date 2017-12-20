@@ -67,10 +67,10 @@ public class ComponentManagerImpl implements ComponentManager {
   private NicManager nicManager;
   private VendorSoftwareProductInfoDao vspInfoDao;
 
-  public ComponentManagerImpl(
-      ComponentDao componentDao,
-      CompositionEntityDataManager compositionEntityDataManager,
-      NicManager nicManager, VendorSoftwareProductInfoDao vspInfoDao) {
+  public ComponentManagerImpl(ComponentDao componentDao,
+                              CompositionEntityDataManager compositionEntityDataManager,
+                              NicManager nicManager,
+                              VendorSoftwareProductInfoDao vspInfoDao) {
     this.componentDao = componentDao;
     this.compositionEntityDataManager = compositionEntityDataManager;
     this.nicManager = nicManager;
@@ -78,14 +78,14 @@ public class ComponentManagerImpl implements ComponentManager {
   }
 
   @Override
-  public Collection<ComponentEntity> listComponents(String vspId, Version version, String user) {
+  public Collection<ComponentEntity> listComponents(String vspId, Version version) {
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
     return componentDao.list(new ComponentEntity(vspId, version, null));
   }
 
   @Override
-  public void deleteComponents(String vspId, Version version, String user) {
+  public void deleteComponents(String vspId, Version version) {
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
     if (!vspInfoDao.isManual(vspId, version)) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
@@ -95,12 +95,11 @@ public class ComponentManagerImpl implements ComponentManager {
           new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
     }
 
-    //componentDao.updateVspLatestModificationTime(vspId, version);
     mdcDataDebugMessage.debugExitMessage("VSP id", vspId);
   }
 
   /*@Override
-  public ComponentEntity createComponent(ComponentEntity component, String user) {
+  public ComponentEntity createComponent(ComponentEntity component) {
     mdcDataDebugMessage.debugEntryMessage("VSP id", component.getId());
 
     if (!isManual(component.getVspId(), component.getVersion())) {
@@ -112,24 +111,18 @@ public class ComponentManagerImpl implements ComponentManager {
               .build());
 
     }
-    //componentDao.updateVspLatestModificationTime(component.getVspId(), component.getVersion());
     mdcDataDebugMessage.debugExitMessage("VSP id", component.getId());
     return null;
   }*/
 
   @Override
-  public ComponentEntity createComponent(ComponentEntity component, String user) {
+  public ComponentEntity createComponent(ComponentEntity component) {
     mdcDataDebugMessage.debugEntryMessage("VSP id", component.getId());
-    /*Version activeVersion =
-        getVersionInfo(component.getVspId(), VersionableEntityAction.Write, user)
-            .getActiveVersion();
-    component.setVersion(activeVersion);*/
 
     final String VFC_ADD_NOT_ALLOWED_IN_HEAT_ONBOARDING_MSG =
         "VFCs cannot be added for VSPs onboarded with HEAT.";
 
-    ComponentEntity createdComponent = null;
-
+    ComponentEntity createdComponent;
     if (!vspInfoDao.isManual(component.getVspId(), component.getVersion())) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.CREATE_COMPONENT, ErrorLevel.ERROR.name(),
@@ -141,16 +134,12 @@ public class ComponentManagerImpl implements ComponentManager {
     } else {
       validateComponentManual(component);
       updateComponentName(component);
-      createdComponent = createComponent(component);
+      createdComponent = compositionEntityDataManager.createComponent(component);
     }
 
     mdcDataDebugMessage.debugExitMessage("VSP id", component.getId());
 
     return createdComponent;
-  }
-
-  private ComponentEntity createComponent(ComponentEntity component) {
-    return compositionEntityDataManager.createComponent(component);
   }
 
   private void updateComponentName(ComponentEntity component) {
@@ -166,8 +155,8 @@ public class ComponentManagerImpl implements ComponentManager {
     final String VSP_VFC_DUPLICATE_NAME_MSG = "VFC with specified name "
         + "already present in given VSP.";
 
-    Collection<ComponentEntity> vspComponentList = listComponents(component.getVspId()
-        , component.getVersion(), null);
+    Collection<ComponentEntity> vspComponentList =
+        listComponents(component.getVspId(), component.getVersion());
     if (vspComponentList.size() >= 1) //1707 release only supports 1 VFC in VSP (manual creation)
     {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
@@ -202,17 +191,16 @@ public class ComponentManagerImpl implements ComponentManager {
   }
 
   @Override
-  public CompositionEntityValidationData updateComponent(ComponentEntity component, String user) {
+  public CompositionEntityValidationData updateComponent(ComponentEntity component) {
     mdcDataDebugMessage.debugEntryMessage("VSP id, component id", component
         .getVspId(), component.getId());
     ComponentEntity retrieved =
-        getComponent(component.getVspId(), component.getVersion(), component.getId());
+        getValidatedComponent(component.getVspId(), component.getVersion(), component.getId());
 
     boolean isManual = vspInfoDao.isManual(component.getVspId(), component.getVersion());
     if (isManual) {
-      validateComponentUpdateManual(component, retrieved, user);
+      validateComponentUpdateManual(retrieved);
     }
-
 
     ComponentCompositionSchemaInput schemaInput = new ComponentCompositionSchemaInput();
     schemaInput.setManual(isManual);
@@ -232,19 +220,18 @@ public class ComponentManagerImpl implements ComponentManager {
     return validationData;
   }
 
-  private void validateComponentUpdateManual(ComponentEntity component, ComponentEntity
-      retrieved, String user) {
+  private void validateComponentUpdateManual(ComponentEntity component) {
     Collection<ComponentEntity> vspComponentList =
-        listComponents(component.getVspId(), component.getVersion(), user);
+        listComponents(component.getVspId(), component.getVersion());
     //VFC name should be unique within VSP
     //Removing VFC with same ID from list to avoid self compare
-    for(ComponentEntity ce : vspComponentList) {
+    for (ComponentEntity ce : vspComponentList) {
       if (ce.getId().equals(component.getId())) {
         vspComponentList.remove(ce);
         break;
       }
     }
-    if (!isVfcNameUnique(vspComponentList,  component.getComponentCompositionData()
+    if (!isVfcNameUnique(vspComponentList, component.getComponentCompositionData()
         .getDisplayName())) {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.UPDATE_COMPONENT, ErrorLevel.ERROR.name(),
@@ -259,9 +246,9 @@ public class ComponentManagerImpl implements ComponentManager {
   }
 
   public CompositionEntityResponse<ComponentData> getComponent(String vspId, Version version,
-                                                               String componentId, String user) {
+                                                               String componentId) {
     mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
-    ComponentEntity componentEntity = getComponent(vspId, version, componentId);
+    ComponentEntity componentEntity = getValidatedComponent(vspId, version, componentId);
     ComponentData component = componentEntity.getComponentCompositionData();
 
     ComponentCompositionSchemaInput schemaInput = new ComponentCompositionSchemaInput();
@@ -278,7 +265,7 @@ public class ComponentManagerImpl implements ComponentManager {
   }
 
   @Override
-  public void deleteComponent(String vspId, Version version, String componentId, String user) {
+  public void deleteComponent(String vspId, Version version, String componentId) {
     mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
 
     if (!vspInfoDao.isManual(vspId, version)) {
@@ -289,14 +276,12 @@ public class ComponentManagerImpl implements ComponentManager {
           new CompositionEditNotAllowedErrorBuilder(vspId, version).build());
     }
 
-    //componentDao.updateVspLatestModificationTime(vspId, version);
-
     mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
   }
 
   @Override
   public QuestionnaireResponse getQuestionnaire(String vspId, Version version,
-                                                String componentId, String user) {
+                                                String componentId) {
     mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
 
     QuestionnaireResponse questionnaireResponse = new QuestionnaireResponse();
@@ -306,7 +291,7 @@ public class ComponentManagerImpl implements ComponentManager {
             VspDetails.ENTITY_TYPE);
 
     questionnaireResponse.setData(component.getQuestionnaireData());
-    List<String> nicNames = nicManager.listNics(vspId, version, componentId, user).stream()
+    List<String> nicNames = nicManager.listNics(vspId, version, componentId).stream()
         .map(nic -> nic.getNicCompositionData().getName()).collect(Collectors.toList());
     questionnaireResponse.setSchema(getComponentQuestionnaireSchema(
         new ComponentQuestionnaireSchemaInput(nicNames, questionnaireResponse.getData() == null
@@ -319,23 +304,21 @@ public class ComponentManagerImpl implements ComponentManager {
 
   @Override
   public void updateQuestionnaire(String vspId, Version version, String componentId,
-                                  String questionnaireData, String user) {
+                                  String questionnaireData) {
     mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
-    validateComponentExistence(vspId, version, componentId, user);
+    validateComponentExistence(vspId, version, componentId);
 
     componentDao.updateQuestionnaireData(vspId, version, componentId, questionnaireData);
 
-    //componentDao.updateVspLatestModificationTime(vspId, version);
     mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
   }
 
   @Override
-  public void validateComponentExistence(String vspId, Version version, String componentId,
-                                         String user) {
-    getComponent(vspId, version, componentId);
+  public void validateComponentExistence(String vspId, Version version, String componentId) {
+    getValidatedComponent(vspId, version, componentId);
   }
 
-  private ComponentEntity getComponent(String vspId, Version version, String componentId) {
+  private ComponentEntity getValidatedComponent(String vspId, Version version, String componentId) {
     ComponentEntity retrieved = componentDao.get(new ComponentEntity(vspId, version, componentId));
     VersioningUtil
         .validateEntityExistence(retrieved, new ComponentEntity(vspId, version, componentId),
@@ -353,8 +336,4 @@ public class ComponentManagerImpl implements ComponentManager {
         .generate(SchemaTemplateContext.questionnaire, CompositionEntityType.component,
             schemaInput);
   }
-
-  /*private boolean isManual(String vspId, Version version) {
-    return false;
-  }*/
 }

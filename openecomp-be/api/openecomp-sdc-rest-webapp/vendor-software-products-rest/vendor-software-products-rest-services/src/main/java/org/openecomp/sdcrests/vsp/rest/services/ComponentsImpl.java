@@ -31,7 +31,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentCreationDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentRequestDto;
@@ -50,9 +49,9 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
+import java.util.Collection;
 
 @Named
 @Service("components")
@@ -65,8 +64,7 @@ public class ComponentsImpl implements Components {
   public Response list(String vspId, String versionId, String user) {
     MdcUtil.initMdc(LoggerServiceName.List_Components.toString());
     Collection<ComponentEntity> components =
-        componentManager.listComponents(vspId, resolveVspVersion(vspId, versionId, user,
-            VersionableEntityAction.Read), user);
+        componentManager.listComponents(vspId, new Version(versionId));
 
     MapComponentEntityToComponentDto mapper = new MapComponentEntityToComponentDto();
     GenericCollectionWrapper<ComponentDto> results = new GenericCollectionWrapper<>();
@@ -80,8 +78,7 @@ public class ComponentsImpl implements Components {
   @Override
   public Response deleteList(String vspId, String versionId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Delete_List_Components.toString());
-    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
-    componentManager.deleteComponents(vspId, version, user);
+    componentManager.deleteComponents(vspId, new Version(versionId));
     return Response.ok().build();
   }
 
@@ -91,9 +88,9 @@ public class ComponentsImpl implements Components {
     ComponentEntity component =
         new MapComponentRequestDtoToComponentEntity().applyMapping(request, ComponentEntity.class);
     component.setVspId(vspId);
-    component.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
+    component.setVersion(new Version(versionId));
 
-    ComponentEntity createdComponent = componentManager.createComponent(component, user);
+    ComponentEntity createdComponent = componentManager.createComponent(component);
     MapComponentEntityToComponentCreationDto mapping =
         new MapComponentEntityToComponentCreationDto();
     ComponentCreationDto createdComponentDto = mapping.applyMapping(createdComponent,
@@ -106,9 +103,8 @@ public class ComponentsImpl implements Components {
   @Override
   public Response get(String vspId, String versionId, String componentId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Get_Component.toString());
-    CompositionEntityResponse<ComponentData> response = componentManager
-        .getComponent(vspId, resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read),
-            componentId, user);
+    CompositionEntityResponse<ComponentData> response =
+        componentManager.getComponent(vspId, new Version(versionId), componentId);
 
     CompositionEntityResponseDto<ComponentDto> responseDto = new CompositionEntityResponseDto<>();
     new MapCompositionEntityResponseToDto<>(new MapComponentDataToComponentDto(),
@@ -119,23 +115,23 @@ public class ComponentsImpl implements Components {
   @Override
   public Response delete(String vspId, String versionId, String componentId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Delete_Component.toString());
-    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
-    componentManager.deleteComponent(vspId, version, componentId, user);
+    componentManager.deleteComponent(vspId, new Version(versionId), componentId);
     return Response.ok().build();
   }
 
   @Override
-  public Response update(ComponentRequestDto request, String vspId, String versionId, String componentId,
+  public Response update(ComponentRequestDto request, String vspId, String versionId,
+                         String componentId,
                          String user) {
     MdcUtil.initMdc(LoggerServiceName.Update_Component.toString());
     ComponentEntity componentEntity =
         new MapComponentRequestDtoToComponentEntity().applyMapping(request, ComponentEntity.class);
     componentEntity.setVspId(vspId);
-    componentEntity.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
+    componentEntity.setVersion(new Version(versionId));
     componentEntity.setId(componentId);
 
     CompositionEntityValidationData validationData =
-        componentManager.updateComponent(componentEntity, user);
+        componentManager.updateComponent(componentEntity);
     return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors())
         ? Response.status(Response.Status.EXPECTATION_FAILED).entity(
         new MapCompositionEntityValidationDataToDto().applyMapping(validationData,
@@ -143,12 +139,11 @@ public class ComponentsImpl implements Components {
   }
 
   @Override
-  public Response getQuestionnaire(String vspId, String versionId, String componentId, String user) {
+  public Response getQuestionnaire(String vspId, String versionId, String componentId,
+                                   String user) {
     MdcUtil.initMdc(LoggerServiceName.Get_Questionnaire_Component.toString());
-    QuestionnaireResponse questionnaireResponse = componentManager
-        .getQuestionnaire(vspId,
-            resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), componentId,
-            user);
+    QuestionnaireResponse questionnaireResponse =
+        componentManager.getQuestionnaire(vspId, new Version(versionId), componentId);
 
     QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
         .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
@@ -156,11 +151,11 @@ public class ComponentsImpl implements Components {
   }
 
   @Override
-  public Response updateQuestionnaire(String questionnaireData, String vspId, String versionId, String componentId,
-                                      String user) {
+  public Response updateQuestionnaire(String questionnaireData, String vspId, String versionId,
+                                      String componentId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Update_Questionnaire_Component.toString());
-    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
-    componentManager.updateQuestionnaire(vspId, version, componentId, questionnaireData, user);
+    componentManager
+        .updateQuestionnaire(vspId, new Version(versionId), componentId, questionnaireData);
     return Response.ok().build();
   }
 }

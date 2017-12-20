@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
@@ -6,10 +7,10 @@ import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 class CustomInput extends React.Component {
 
 	static propTypes = {
-		placeHolderText: React.PropTypes.string,
-		onChange: React.PropTypes.func,
-		onClick: React.PropTypes.func,
-		value: React.PropTypes.string
+		placeHolderText: PropTypes.string,
+		onChange: PropTypes.func,
+		onClick: PropTypes.func,
+		value: PropTypes.string
 	};
 
 	render() {
@@ -32,16 +33,16 @@ const parseDate = (date, format) => {
 
 class Datepicker extends React.Component {
 	static propTypes = {
-		date: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]),
-		format: React.PropTypes.string,
-		onChange: React.PropTypes.func,
-		selectsStart: React.PropTypes.bool,
-		selectsEnd: React.PropTypes.bool,
-		startDate: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]),
-		endDate: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]),
-		disabled: React.PropTypes.bool,
-		label: React.PropTypes.string,
-		isRequired: React.PropTypes.bool
+		date: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+		format: PropTypes.string,
+		onChange: PropTypes.func,
+		selectsStart: PropTypes.bool,
+		selectsEnd: PropTypes.bool,
+		startDate: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+		endDate: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+		disabled: PropTypes.bool,
+		label: PropTypes.string,
+		isRequired: PropTypes.bool
 	}
 	render() {
 		let {date,  format, onChange, selectsStart = false, startDate = null, endDate = null, selectsEnd = false,

@@ -13,7 +13,8 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
@@ -55,7 +56,7 @@ class GeneralSection extends React.Component {
 		let {genericFieldInfo} = this.props;
 		return (
 			<div>
-			{genericFieldInfo && <GridSection title={i18n('General')}>
+			{genericFieldInfo && <GridSection title={i18n('General')} className='grid-section-general'>
 			<GridItem>
 				<Input
 					data-test-id='vsp-name'
@@ -74,8 +75,8 @@ class GeneralSection extends React.Component {
 					onChange={e => this.onVendorParamChanged(e)}>
 					{sortByStringProperty(
 						this.props.finalizedLicenseModelList,
-						'vendorName'
-					).map(lm => <option key={lm.id} value={lm.id}>{lm.vendorName}</option>)
+						'name'
+					).map(lm => <option key={lm.id} value={lm.id}>{lm.name}</option>)
 					}
 				</Input>
 				<Input
@@ -117,7 +118,7 @@ class LicensesSection extends React.Component {
 	static propTypes = {
 		onVendorParamChanged: PropTypes.func.isRequired,
 		vendorId: PropTypes.string,
-		licensingVersion: PropTypes.object,
+		licensingVersion: PropTypes.string,
 		licensingVersionsList: PropTypes.array,
 		licensingData: PropTypes.shape({
 			licenceAgreement: PropTypes.string,
@@ -132,7 +133,7 @@ class LicensesSection extends React.Component {
 	onVendorParamChanged(e) {
 		const selectedIndex = e.target.selectedIndex;
 		const licensingVersion = e.target.options[selectedIndex].value;
-		this.props.onVendorParamChanged({vendorId: this.props.vendorId, licensingVersion:{id:licensingVersion, label: licensingVersion}}, forms.VENDOR_SOFTWARE_PRODUCT_DETAILS);
+		this.props.onVendorParamChanged({vendorId: this.props.vendorId, licensingVersion}, forms.VENDOR_SOFTWARE_PRODUCT_DETAILS);
 	}
 
 	onLicensingDataChanged(e) {
@@ -148,7 +149,7 @@ class LicensesSection extends React.Component {
 					<Input
 						data-test-id='vsp-licensing-version'
 						onChange={e => this.onVendorParamChanged(e)}
-						value={this.props.licensingVersion ? this.props.licensingVersion.id : ''}
+						value={this.props.licensingVersion || ''}
 						label={i18n('Licensing Version')}
 						type='select'>
 						{this.props.licensingVersionsList.map(version =>
@@ -196,6 +197,7 @@ const AvailabilitySection = (props) => (
 				data-test-id='vsp-use-availability-zone'
 				label={i18n('Use Availability Zones for High Availability')}
 				type='checkbox'
+				checked={props.dataMap['general/availability/useAvailabilityZonesForHighAvailability']}
 				value={props.dataMap['general/availability/useAvailabilityZonesForHighAvailability']}
 				onChange={(aZone) => props.onQDataChanged({'general/availability/useAvailabilityZonesForHighAvailability' : aZone})} />
 		</GridItem>
@@ -274,7 +276,7 @@ class SoftwareProductDetails extends Component {
 			subCategory: PropTypes.string,
 			vendorId: PropTypes.string,
 			vendorName: PropTypes.string,
-			licensingVersion: PropTypes.object,
+			licensingVersion: PropTypes.string,
 			licensingData: PropTypes.shape({
 				licenceAgreement: PropTypes.string,
 				featureGroups: PropTypes.array
@@ -290,10 +292,6 @@ class SoftwareProductDetails extends Component {
 		qdata: PropTypes.object.isRequired,
 		onQDataChanged: PropTypes.func.isRequired,
 		onVendorParamChanged: PropTypes.func.isRequired
-	};
-
-	state = {
-		licensingVersionsList: []
 	};
 
 	prepareDataForGeneralSection(){
@@ -317,12 +315,11 @@ class SoftwareProductDetails extends Component {
 	prepareDataForLicensesSection(){
 		let { featureGroupsList, licenseAgreementList, currentSoftwareProduct } = this.props;
 		let {vendorId, licensingVersion, licensingData = {}} = currentSoftwareProduct;
-		let licensingVersionsList = this.state.licensingVersionsList.length > 0 ? this.state.licensingVersionsList : this.refreshVendorVersionsList(vendorId);
 		return {
 			onVendorParamChanged: args => this.onVendorParamChanged(args),
 			vendorId,
 			licensingVersion,
-			licensingVersionsList,
+			licensingVersionsList: this.buildLicensingVersionsListItems(),
 			licensingData,
 			onFeatureGroupsChanged: args => this.onFeatureGroupsChanged(args),
 			onLicensingDataChanged: args => this.onLicensingDataChanged(args),
@@ -361,10 +358,10 @@ class SoftwareProductDetails extends Component {
 	onVendorParamChanged({vendorId, licensingVersion}) {
 		let {finalizedLicenseModelList, onVendorParamChanged} = this.props;
 		if(!licensingVersion) {
-			const licensingVersionsList = this.refreshVendorVersionsList(vendorId);
-			licensingVersion = licensingVersionsList.length > 0 ? licensingVersionsList[0].enum : '';
+			const licensingVersionsList = this.buildLicensingVersionsListItems();
+			licensingVersion = licensingVersionsList[0].enum;
 		}
-		let vendorName = finalizedLicenseModelList.find(licenseModelItem => licenseModelItem.id === vendorId).vendorName || '';
+		let vendorName = finalizedLicenseModelList.find(licenseModelItem => licenseModelItem.id === vendorId).name || '';
 		let deltaData = {
 			vendorId,
 			vendorName,
@@ -376,25 +373,15 @@ class SoftwareProductDetails extends Component {
 
 	}
 
-	refreshVendorVersionsList(vendorId) {
-		if(!vendorId) {
-			return [];
-		}
+	buildLicensingVersionsListItems() {
+		let {licensingVersionsList} = this.props;
 
-		let {finalVersions} = this.props.finalizedLicenseModelList.find(vendor => vendor.id === vendorId);
-
-		let licensingVersionsList = [{
+		let licensingVersionsListItems = [{
 			enum: '',
 			title: i18n('Select...')
 		}];
-		if(finalVersions) {
-			finalVersions.forEach(version => licensingVersionsList.push({
-				enum: version.id,
-				title: version.label
-			}));
-		}
 
-		return licensingVersionsList;
+		return licensingVersionsListItems.concat(licensingVersionsList.map(version => ({enum: version.id, title: version.name})));
 	}
 
 	onFeatureGroupsChanged({featureGroups}) {

@@ -21,8 +21,8 @@
 package org.openecomp.sdc.validation.impl.validators;
 
 
-import org.openecomp.sdc.validation.Validator;
 import org.openecomp.core.validation.types.MessageContainer;
+import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.util.ValidationTestUtil;
 import org.testng.Assert;
 import org.testng.annotations.Test;

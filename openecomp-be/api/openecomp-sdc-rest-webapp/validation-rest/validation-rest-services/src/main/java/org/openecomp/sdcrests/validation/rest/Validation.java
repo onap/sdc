@@ -24,7 +24,6 @@ import io.swagger.annotations.Api;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.springframework.validation.annotation.Validated;
 
-import java.io.InputStream;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -32,6 +31,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.InputStream;
 
 
 @Path("/v1.0/validation")

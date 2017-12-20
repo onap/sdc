@@ -10,24 +10,22 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.util.Collection;
 
 public interface ImageManager {
-  ImageEntity createImage(ImageEntity imageEntity, String user);
+  ImageEntity createImage(ImageEntity imageEntity);
 
-  CompositionEntityResponse<Image> getImageSchema(String vspId, String user);
+  CompositionEntityResponse<Image> getImageSchema(String vspId);
 
-  Collection<ImageEntity> listImages(String vspId, Version version, String componentId,
-                                     String user);
+  Collection<ImageEntity> listImages(String vspId, Version version, String componentId);
 
   CompositionEntityResponse<Image> getImage(String vspId, Version version, String componentId,
-                                            String imageId, String user);
+                                            String imageId);
 
-  QuestionnaireResponse getImageQuestionnaire(String vspId, Version version, String
-      componentId, String imageId, String user);
+  QuestionnaireResponse getImageQuestionnaire(String vspId, Version version, String componentId,
+                                              String imageId);
 
-  void deleteImage(String vspId, Version version, String componentId, String imageId, String user);
+  void deleteImage(String vspId, Version version, String componentId, String imageId);
 
-  CompositionEntityValidationData updateImage(ImageEntity imageEntity, String user);
+  CompositionEntityValidationData updateImage(ImageEntity imageEntity);
 
   void updateImageQuestionnaire(String vspId, Version version, String componentId, String imageId,
-                                String
-      questionnaireData, String user);
+                                String questionnaireData);
 }

@@ -21,9 +21,6 @@
 package org.openecomp.core.factory.impl;
 
 
-import static org.openecomp.core.utilities.CommonMethods.isEmpty;
-import static org.openecomp.core.utilities.CommonMethods.newInstance;
-
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
@@ -31,6 +28,9 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static org.openecomp.core.utilities.CommonMethods.isEmpty;
+import static org.openecomp.core.utilities.CommonMethods.newInstance;
 
 public abstract class AbstractFactoryBase {
 

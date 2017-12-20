@@ -1,7 +1,6 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
-import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
@@ -10,15 +9,21 @@ import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
-import org.openecomp.core.zusammen.api.ZusammenUtil;
+import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.DeploymentFlavorDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToDeploymentFlavorConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.types.ElementPropertyName;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class DeploymentFlavorDaoZusammenImpl implements DeploymentFlavorDao {
 
@@ -34,52 +39,49 @@ public class DeploymentFlavorDaoZusammenImpl implements DeploymentFlavorDao {
 
   @Override
   public Collection<DeploymentFlavorEntity> list(DeploymentFlavorEntity deploymentFlavor) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(deploymentFlavor.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(deploymentFlavor.getVersion()));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(deploymentFlavor.getVspId(), deploymentFlavor.getVersion().getId());
 
-    return listDeploymentFlavor(zusammenAdaptor, context, elementContext, deploymentFlavor.getVspId(),
+    return listDeploymentFlavor(zusammenAdaptor, context, elementContext,
+        deploymentFlavor.getVspId(),
         deploymentFlavor.getVersion());
   }
 
-  static Collection<DeploymentFlavorEntity> listDeploymentFlavor(ZusammenAdaptor zusammenAdaptor,
-                                                    SessionContext context,
-                                                    ElementContext elementContext,
-                                                    String vspId, Version version) {
+  private static Collection<DeploymentFlavorEntity> listDeploymentFlavor(
+      ZusammenAdaptor zusammenAdaptor,
+      SessionContext context,
+      ElementContext elementContext,
+      String vspId, Version version) {
+    ElementToDeploymentFlavorConvertor convertor = new ElementToDeploymentFlavorConvertor();
     return zusammenAdaptor
-        .listElementsByName(context, elementContext, null, StructureElement.DeploymentFlavors.name())
-        .stream().map(elementInfo -> mapElementInfoToComponent(vspId, version, elementInfo))
+        .listElementsByName(context, elementContext, null,
+            ElementType.DeploymentFlavors.name())
+        .stream().map(elementInfo -> {
+          DeploymentFlavorEntity entity = convertor.convert(
+              elementInfo);
+          entity.setVspId(vspId);
+          entity.setVersion(version);
+          return entity;
+        })
         .collect(Collectors.toList());
   }
 
-  private static DeploymentFlavorEntity mapElementInfoToComponent(String vspId, Version version,
-                                                           ElementInfo elementInfo) {
-    DeploymentFlavorEntity deploymentFlavorEntity =
-        new DeploymentFlavorEntity(vspId, version, elementInfo.getId().getValue());
-    deploymentFlavorEntity.setCompositionData(
-        elementInfo.getInfo().getProperty(ElementPropertyName.compositionData.name()));
-    return deploymentFlavorEntity;
-  }
 
   @Override
   public void create(DeploymentFlavorEntity deploymentFlavor) {
     ZusammenElement deploymentFlavorElement = deploymentFlavorToZusammen(deploymentFlavor,
         Action.CREATE);
     ZusammenElement deploymentFlavorElements =
-        VspZusammenUtil.buildStructuralElement(StructureElement.DeploymentFlavors, null);
+        buildStructuralElement(ElementType.DeploymentFlavors, Action.IGNORE);
     deploymentFlavorElements.getSubElements().add(deploymentFlavorElement);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(deploymentFlavor.getVspId());
-    Optional<Element> savedElement = zusammenAdaptor.saveElement(context,
-        new ElementContext(itemId,
-            VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
+    SessionContext context = createSessionContext();
+    Element savedElement = zusammenAdaptor.saveElement(context,
+        new ElementContext(deploymentFlavor.getVspId(), deploymentFlavor.getVersion().getId()),
         deploymentFlavorElements, "Create deloymentFlavor");
-    savedElement.ifPresent(element ->
-        deploymentFlavor.setId(element.getSubElements().iterator().next().getElementId()
-            .getValue()));
+    deploymentFlavor.setId(savedElement.getSubElements().iterator().next().getElementId()
+        .getValue());
   }
 
   @Override
@@ -87,87 +89,83 @@ public class DeploymentFlavorDaoZusammenImpl implements DeploymentFlavorDao {
     ZusammenElement deploymentFlavorElement = deploymentFlavorToZusammen(deploymentFlavor,
         Action.UPDATE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(deploymentFlavor.getVspId());
+    SessionContext context = createSessionContext();
     zusammenAdaptor.saveElement(context,
-        new ElementContext(itemId,
-            VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
+        new ElementContext(deploymentFlavor.getVspId(), deploymentFlavor.getVersion().getId()),
         deploymentFlavorElement, String.format("Update deloymentFlavor with id %s",
             deploymentFlavor.getId()));
   }
 
   @Override
   public DeploymentFlavorEntity get(DeploymentFlavorEntity deploymentFlavor) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(deploymentFlavor.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(deploymentFlavor.getVersion()));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(deploymentFlavor.getVspId(), deploymentFlavor.getVersion().getId());
 
     Optional<Element> element =
         zusammenAdaptor.getElement(context, elementContext, deploymentFlavor.getId());
 
     if (element.isPresent()) {
+      ElementToDeploymentFlavorConvertor convertor = new ElementToDeploymentFlavorConvertor();
+      DeploymentFlavorEntity entity = convertor.convert(element.get());
       deploymentFlavor.setCompositionData(new String(FileUtils.toByteArray(element.get()
           .getData())));
-      return deploymentFlavor;
+      entity.setVspId(deploymentFlavor.getVspId());
+      entity.setVersion(deploymentFlavor.getVersion());
+      return entity;
     }
     return null;
   }
 
   @Override
   public void delete(DeploymentFlavorEntity deploymentFlavor) {
-    ZusammenElement componentElement = new ZusammenElement();
-    componentElement.setElementId(new Id(deploymentFlavor.getId()));
-    componentElement.setAction(Action.DELETE);
+    ZusammenElement componentElement =
+        buildElement(new Id(deploymentFlavor.getId()), Action.DELETE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(deploymentFlavor.getVspId());
+    SessionContext context = createSessionContext();
     zusammenAdaptor.saveElement(context,
-        new ElementContext(itemId,
-            VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
+        new ElementContext(deploymentFlavor.getVspId(), deploymentFlavor.getVersion().getId()),
         componentElement, String.format("Delete deloymentFlavor with id %s",
             deploymentFlavor.getId()));
   }
 
   @Override
   public void deleteAll(String vspId, Version version) {
-    ZusammenElement deploymentFlavorsElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.DeploymentFlavors, Action.DELETE);
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    zusammenAdaptor.saveElement(context,
-        new ElementContext(itemId,
-            VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
-        deploymentFlavorsElement, "Delete all deploymentFlavors");
-  }
+    Optional<Element> optionalElement = zusammenAdaptor.getElementByName(context,
+        elementContext, null, ElementType.DeploymentFlavors.name());
 
-  private ZusammenElement deploymentFlavorToZusammen(DeploymentFlavorEntity deploymentFlavor,
-                                                     Action action) {
-    ZusammenElement deploymentFlavorElement = buildDeploymentFlavorElement
-        (deploymentFlavor, action);
+    if (optionalElement.isPresent()) {
+      Element deploymentFlavorsElement = optionalElement.get();
+      Collection<Element> deploymentFlavors = deploymentFlavorsElement.getSubElements();
 
-    return deploymentFlavorElement;
+      deploymentFlavors.forEach(deplymentFlavor -> {
+        ZusammenElement deplymentFlavorZusammenElement =
+            buildElement(deplymentFlavor.getElementId(), Action.DELETE);
+        zusammenAdaptor.saveElement(context,
+            elementContext, deplymentFlavorZusammenElement, " Delete Deplyment Flavor with id "
+                + deplymentFlavor.getElementId());
+      });
+    }
   }
 
   /*private ZusammenElement deplymentFlavorQuestionnaireToZusammen(String questionnaireData,
                                                            Action action) {
     ZusammenElement questionnaireElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.Questionnaire, action);
+        VspbuildStructuralElement(ElementType.Questionnaire, action);
     questionnaireElement.setData(new ByteArrayInputStream(questionnaireData.getBytes()));
     return questionnaireElement;
   }*/
 
-  private ZusammenElement buildDeploymentFlavorElement(DeploymentFlavorEntity deploymentFlavor,
-                                                       Action action) {
-    ZusammenElement deploymentFlavorElement = new ZusammenElement();
-    deploymentFlavorElement.setAction(action);
-    if (deploymentFlavor.getId() != null) {
-      deploymentFlavorElement.setElementId(new Id(deploymentFlavor.getId()));
-    }
+  private ZusammenElement deploymentFlavorToZusammen(DeploymentFlavorEntity deploymentFlavor,
+                                                     Action action) {
+    ZusammenElement deploymentFlavorElement =
+        buildElement(deploymentFlavor.getId() == null ? null : new Id(deploymentFlavor.getId()),
+            action);
     Info info = new Info();
-    info.addProperty(ElementPropertyName.type.name(), ElementType.DeploymentFlavor);
+    info.addProperty(ElementPropertyName.elementType.name(), ElementType.DeploymentFlavor);
     info.addProperty(ElementPropertyName.compositionData.name(), deploymentFlavor
         .getCompositionData());
     deploymentFlavorElement.setInfo(info);

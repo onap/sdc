@@ -2,8 +2,6 @@ package org.openecomp.sdc.enrichment.impl.tosca;
 
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

@@ -2,14 +2,22 @@
     .software-product-dependencies-title {
         @extend .heading-1;
         @extend .text-uppercase !optional;
+			position: sticky;
+			top: -30px;
+			z-index: 1;
+			background: $white;
         margin-bottom: 20px;
         color: $blue;
     }
     .select-action-table-controllers {
+			position: sticky;
+			top: 4px;
+			z-index: 1;
+			background: $white;
         justify-content: flex-end;
         cursor: pointer;
         color: $blue;
-        padding-right: 33px;
+			padding-right: 27px;
         margin-bottom: 3px;
         &:hover {
             color: $dark-blue;
@@ -18,8 +26,23 @@
     .select-action-table-view {
         min-width: 770px;
     }
+	.select-action-table-headers {
+		position: sticky;
+		top: 27px;
+		z-index: 1;
     .select-action-table-header {
         @extend .body-1-semibold;
         color: $text-black;
+		}
+	}
+	.select-action-table-row-wrapper {
+		.svg-icon {
+			&.__trashO, &.__plusCircle {
+				fill: $dark-gray;
+				&:hover {
+					fill: $black;
     }
+			}
+		}
+	}
 }

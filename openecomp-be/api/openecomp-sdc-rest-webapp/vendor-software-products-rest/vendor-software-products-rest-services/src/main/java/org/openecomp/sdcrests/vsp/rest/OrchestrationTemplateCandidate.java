@@ -25,7 +25,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
-import org.openecomp.sdc.vendorsoftwareproduct.types.FileDataStructureDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.FileDataStructureDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
 import org.springframework.validation.annotation.Validated;
 
@@ -43,7 +43,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
 import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;

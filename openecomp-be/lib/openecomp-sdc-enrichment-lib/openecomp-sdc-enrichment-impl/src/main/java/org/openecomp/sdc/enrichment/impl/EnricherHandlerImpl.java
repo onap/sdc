@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.enrichment.impl;
 
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.enrichment.impl.external.artifact.ExternalArtifactEnricher;
 import org.openecomp.sdc.enrichment.impl.tosca.ToscaEnricher;
 import org.openecomp.sdc.enrichment.inter.Enricher;
 import org.openecomp.sdc.enrichment.inter.EnricherHandler;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;

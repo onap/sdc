@@ -10,10 +10,10 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessType;
@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterface {
 
-  private VendorSoftwareProductDao vendorSoftwareProductDao;
+  private ComponentDao componentDao;
   //private ProcessArtifactDao processArtifactDao;
   private ProcessDao processDao;
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
@@ -41,10 +41,9 @@ public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterfac
     Version version = enrichmentInfo.getVersion();
 
     Collection<ComponentEntity> components =
-        getVendorSoftwareProductDao().listComponents(vspId, version);
-    components.stream()
-        .forEach(componentEntry -> errors.putAll(enrichComponent(componentEntry,
-            vspId, version)));
+        getComponentDao().list(new ComponentEntity(vspId, version, null));
+    components.forEach(componentEntry -> errors.putAll(enrichComponent(componentEntry,
+        vspId, version)));
 
     return errors;
   }
@@ -79,10 +78,9 @@ public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterfac
           ProcessArtifactEntity artifactEntity = new ProcessArtifactEntity(vspId, version,
                   componentId, entity.getId());*/
 
-    processes.stream()
-        .forEach(entity -> {
-          ProcessEntity artifactEntity = new ProcessEntity(vspId, version,
-              componentId, entity.getId());
+    processes.forEach(entity -> {
+      ProcessEntity artifactEntity = new ProcessEntity(vspId, version,
+          componentId, entity.getId());
 
           ProcessEntity artifactProcessEntity = getProcessDao().get(artifactEntity);
           //ProcessArtifactEntity artifact = getProcessArtifactDao().get(artifactEntity);
@@ -105,7 +103,7 @@ public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterfac
           }
         });
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   void enrichServiceArtifact(ComponentProcessInfo componentProcessInfo,
@@ -113,19 +111,19 @@ public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterfac
                              Map<String, List<ErrorMessage>> errors) {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
 
     processServiceArtifact.setName(componentProcessInfo.getName());
     processServiceArtifact.setContentData(FileUtils.toByteArray(componentProcessInfo.getContent()));
     getEnrichedServiceModelDao().storeExternalArtifact(processServiceArtifact);
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
   }
 
-  private VendorSoftwareProductDao getVendorSoftwareProductDao() {
-    if (vendorSoftwareProductDao == null) {
-      vendorSoftwareProductDao = VendorSoftwareProductDaoFactory.getInstance().createInterface();
+  private ComponentDao getComponentDao() {
+    if (componentDao == null) {
+      componentDao = ComponentDaoFactory.getInstance().createInterface();
     }
-    return vendorSoftwareProductDao;
+    return componentDao;
   }
 
   private ProcessDao getProcessDao() {

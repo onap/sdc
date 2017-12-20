@@ -23,7 +23,7 @@ import GridItem from 'nfvo-components/grid/GridItem.jsx';
 const GuestOs = ({qgenericFieldInfo, dataMap, onQDataChanged}) => {
 	return(
 		<div>
-			<GridSection title={i18n('Guest OS')} >
+			<GridSection title={i18n('Guest OS')} hasLastColSet>
 				<GridItem>
 					<div className='vertical-flex'>
 						<label key='label' className='control-label'>{i18n('OS Bit Size')}</label>
@@ -55,7 +55,7 @@ const GuestOs = ({qgenericFieldInfo, dataMap, onQDataChanged}) => {
 						errorText={qgenericFieldInfo['compute/guestOS/name'].errorText}
 						value={dataMap['compute/guestOS/name']} />
 				</GridItem>
-				<GridItem colSpan={2}>
+				<GridItem colSpan={2} lastColInRow>
 					<Input
 						data-test-id='guestOS-tools'
 						type='textarea'

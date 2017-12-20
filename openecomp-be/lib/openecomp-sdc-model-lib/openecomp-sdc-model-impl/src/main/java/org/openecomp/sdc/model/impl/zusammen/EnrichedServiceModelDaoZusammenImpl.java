@@ -1,7 +1,6 @@
 package org.openecomp.sdc.model.impl.zusammen;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
-import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
@@ -11,9 +10,12 @@ import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.api.ZusammenUtil;
+import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
 
 public class EnrichedServiceModelDaoZusammenImpl extends ServiceModelDaoZusammenImpl implements
     EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> {
@@ -23,28 +25,31 @@ public class EnrichedServiceModelDaoZusammenImpl extends ServiceModelDaoZusammen
 
   public EnrichedServiceModelDaoZusammenImpl(ZusammenAdaptor zusammenAdaptor) {
     super(zusammenAdaptor);
-    this.name = StructureElement.EnrichedServiceModel.name();
+    this.elementType = ElementType.EnrichedServiceModel;
   }
 
   @Override
   public void storeExternalArtifact(ServiceArtifact serviceArtifact) {
-    ZusammenElement artifactElement = buildArtifactElement(serviceArtifact.getName(),
+    ZusammenElement artifact = buildArtifactElement(serviceArtifact.getName(),
         FileUtils.toByteArray(serviceArtifact.getContent()), Action.CREATE);
 
-    ZusammenElement artifactsElement =
-        buildStructuralElement(StructureElement.Artifacts.name(), null);
-    artifactsElement.addSubElement(artifactElement);
+    ZusammenElement artifacts = buildStructuralElement(ElementType.Artifacts, Action.IGNORE);
+    artifacts.addSubElement(artifact);
 
-    ZusammenElement enrichedServiceModelElement = buildStructuralElement(name, null);
-    enrichedServiceModelElement.addSubElement(artifactsElement);
+    ZusammenElement enrichedServiceModel = buildStructuralElement(elementType, Action.IGNORE);
+    enrichedServiceModel.addSubElement(artifacts);
+
+    ZusammenElement vspModel = buildStructuralElement(ElementType.VspModel, Action.IGNORE);
+    vspModel.addSubElement(enrichedServiceModel);
 
     SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(serviceArtifact.getVspId());
-    ElementContext elementContext = new ElementContext(itemId, getFirstVersionId(context, itemId));
+    ElementContext elementContext =
+        new ElementContext(serviceArtifact.getVspId(), serviceArtifact.getVersion().getId());
     zusammenAdaptor
-        .saveElement(context, elementContext, enrichedServiceModelElement, "add service artifact.");
+        .saveElement(context, elementContext, vspModel, "add service external artifact.");
 
-    logger.info("Finished adding artifact to service model for vsp id -> " +
+    logger.info(
+        "Finished adding artifact to enriched service model for VendorSoftwareProduct id -> {}",
         elementContext.getItemId().getValue());
   }
 }

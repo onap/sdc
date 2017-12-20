@@ -22,7 +22,6 @@ package org.openecomp.sdc.vendorsoftwareproduct.services.composition;
 
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.CompositionEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
@@ -64,12 +63,10 @@ public interface CompositionEntityDataManager {
   void saveComponents(String vspId, Version version, CompositionData compositionData,
                       Map<String, String> networkIdByName);
 
-  void saveNicsByComponent(String vspId, Version version,
-                           Map<String, String> networkIdByName, Component component,
-                           String componentId);
+  void saveNicsByComponent(String vspId, Version version, Map<String, String> networkIdByName,
+                           Component component, String componentId);
 
-  Map<String, String> saveNetworks(String vspId, Version version,
-                                   CompositionData compositionData);
+  Map<String, String> saveNetworks(String vspId, Version version, CompositionData compositionData);
 
   NetworkEntity createNetwork(NetworkEntity network);
 
@@ -77,15 +74,14 @@ public interface CompositionEntityDataManager {
 
   NicEntity createNic(NicEntity nic);
 
-  public ComputeEntity createCompute(ComputeEntity compute);
+  DeploymentFlavorEntity createDeploymentFlavor(DeploymentFlavorEntity deploymentFlavor);
 
-  public DeploymentFlavorEntity createDeploymentFlavor(DeploymentFlavorEntity deploymentFlavor);
+  ImageEntity createImage(ImageEntity image);
 
-  public ImageEntity createImage(ImageEntity image);
+  void saveComputesFlavorByComponent(String vspId, Version version, Component component,
+                                     String componentId);
 
-  public void saveComputesFlavorByComponent(String vspId, Version version, Component component, String
-      componentId);
-  public void saveImagesByComponent(String vspId, Version version, Component component, String
-      componentId);
+  void saveImagesByComponent(String vspId, Version version, Component component,
+                             String componentId);
 
 }

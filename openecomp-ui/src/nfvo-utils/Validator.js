@@ -20,8 +20,8 @@ import i18n from 'nfvo-utils/i18n/i18n.js';
 class Validator {
 	static get globalValidationFunctions() {
 		return {
-			required: value => {				
-				return typeof value === 'string' ? value.replace(/\s+/g, '') !== '' : value !== '';				
+			required: value => {
+				return typeof value === 'string' ? value.replace(/\s+/g, '') !== '' : value !== '';
 			},
 			requiredChooseOption: value => value !== '',
 			maxLength: (value, length) => ValidatorJS.isLength(value, {max: length}),
@@ -77,13 +77,13 @@ class Validator {
 				length: value.length,
 				maxLength
 			}),
-			minLength: (value, minLength) => i18n(`Field value should contain at least ${minLength} characters.`),
-			pattern: (value, pattern) => i18n(`Field value should match the pattern: ${pattern}.`),
+			minLength: (value, minLength) => i18n('Field value should contain at least {minLength} characters.', {minLength: minLength}),
+			pattern: (value, pattern) => i18n('Field value should match the pattern: {pattern}.', {pattern: pattern}),
 			numeric: () => i18n('Field value should contain numbers only.'),
-			maximum: (value, maxValue) => i18n(`Field value should be less or equal to: ${maxValue}.`),
-			minimum: (value, minValue) => i18n(`Field value should be at least: ${minValue.toString()}.`),
-			maximumExclusive: (value, maxValue) => i18n(`Field value should be less than: ${maxValue}.`),
-			minimumExclusive: (value, minValue) => i18n(`Field value should be more than: ${minValue.toString()}.`),
+			maximum: (value, maxValue) => i18n('Field value should be less or equal to: {maxValue}.', {maxValue: maxValue}),
+			minimum: (value, minValue) => i18n('Field value should be at least: {minValue}.', {minValue: minValue.toString()}),
+			maximumExclusive: (value, maxValue) => i18n('Field value should be less than: {maxValue}.', {maxValue: maxValue}),
+			minimumExclusive: (value, minValue) => i18n('Field value should be more than: {minValue}.', {minValue: minValue.toString()}),
 			alphanumeric: () => i18n('Field value should contain letters or digits only.'),
 			alphanumericWithSpaces: () => i18n('Field value should contain letters, digits or spaces only.'),
 			validateName: ()=> i18n('Field value should contain English letters, digits , spaces, underscores, dashes and dots only.'),

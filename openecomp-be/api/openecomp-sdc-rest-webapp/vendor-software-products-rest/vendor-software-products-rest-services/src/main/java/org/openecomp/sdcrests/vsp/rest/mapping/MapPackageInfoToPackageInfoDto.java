@@ -33,7 +33,7 @@ public class MapPackageInfoToPackageInfoDto extends MappingBase<PackageInfo, Pac
     target.setVspName(source.getVspName());
     target.setPackageId(source.getVspId());
     target.setDescription(source.getVspDescription());
-    target.setVersion(source.getVersion() == null ? null : source.getVersion().toString());
+    target.setVersion(source.getVersion());
     target.setPackageType(source.getPackageType());
     target.setCategory(source.getCategory());
     target.setSubCategory(source.getSubCategory());

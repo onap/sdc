@@ -45,6 +45,7 @@ public class VendorLicenseModelEntity implements VersionableEntity {
   @Column(name = "vendor_name")
   private String vendorName;
   private String description;
+  private String oldVersion;
   @Column(name = "icon")
   private String iconRef;
 
@@ -110,6 +111,15 @@ public class VendorLicenseModelEntity implements VersionableEntity {
   public void setIconRef(String iconRef) {
     this.iconRef = iconRef;
   }
+
+  public void setOldVersion(String oldVersion) {
+    this.oldVersion = oldVersion;
+  }
+
+  public String getOldVersion() {
+    return oldVersion;
+  }
+
 
   @Override
   public int hashCode() {

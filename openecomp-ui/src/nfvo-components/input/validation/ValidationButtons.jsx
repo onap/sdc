@@ -21,6 +21,7 @@
  * labledButtons - whether or not to use labeled buttons or icons only
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Button from 'sdc-ui/lib/react/Button.js';
 import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
@@ -28,10 +29,10 @@ import SVGIcon from 'sdc-ui/lib/react/SVGIcon.js';
 class ValidationButtons extends React.Component {
 
 	static propTypes = {
-		labledButtons: React.PropTypes.bool.isRequired,
-		isReadOnlyMode: React.PropTypes.bool,
-		submitButtonText: React.PropTypes.string,
-		cancelButtonText: React.PropTypes.string
+		labledButtons: PropTypes.bool.isRequired,
+		isReadOnlyMode: PropTypes.bool,
+		submitButtonText: PropTypes.string,
+		cancelButtonText: PropTypes.string
 	};
 
 	state = {
@@ -45,10 +46,10 @@ class ValidationButtons extends React.Component {
 			<div className='validation-buttons'>
 				{!this.props.isReadOnlyMode ?
 					<div>
-						<Button type='submit' disabled={!this.state.isValid}>{submitBtn}</Button>
-						<Button btnType='outline' type='reset'>{closeBtn}</Button>
+						<Button type='submit' data-test-id='form-submit-button' disabled={!this.state.isValid}>{submitBtn}</Button>
+						<Button btnType='outline' type='reset' data-test-id='form-close-button'>{closeBtn}</Button>
 					</div>
-					: <Button btnType='outline' type='reset'>{i18n('Close')}</Button>
+					: <Button btnType='outline' type='reset' data-test-id='form-close-button'>{i18n('Close')}</Button>
 				}
 			</div>
 		);

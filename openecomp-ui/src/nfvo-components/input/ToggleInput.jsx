@@ -14,15 +14,16 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default
 class ToggleInput extends React.Component {
 
 	static propTypes = {
-		label: React.PropTypes.node,
-		value: React.PropTypes.bool,
-		onChange: React.PropTypes.func,
-		disabled: React.PropTypes.bool
+		label: PropTypes.node,
+		value: PropTypes.bool,
+		onChange: PropTypes.func,
+		disabled: PropTypes.bool
 	}
 
 	static defaultProps = {

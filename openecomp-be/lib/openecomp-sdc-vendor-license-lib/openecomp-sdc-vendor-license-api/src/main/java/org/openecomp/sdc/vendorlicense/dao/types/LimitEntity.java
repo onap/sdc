@@ -47,7 +47,7 @@ public class LimitEntity implements VersionableEntity {
   }
 
   public void setAggregationFunction(
-          AggregationFunction aggregationFunction) {
+      AggregationFunction aggregationFunction) {
     this.aggregationFunction = aggregationFunction;
   }
 
@@ -159,7 +159,7 @@ public class LimitEntity implements VersionableEntity {
   @Override
   public int hashCode() {
     return Objects.hash(vendorLicenseModelId, version, epLkgId, id, name, description, type,
-            metric, unit, time, aggregationFunction, value);
+        metric, unit, time, aggregationFunction, value);
   }
 
   @Override
@@ -172,35 +172,35 @@ public class LimitEntity implements VersionableEntity {
     }
     LimitEntity that = (LimitEntity) obj;
     return Objects.equals(that.unit, unit)
-            && Objects.equals(that.value, value)
-            && Objects.equals(vendorLicenseModelId, that.vendorLicenseModelId)
-            && Objects.equals(epLkgId, that.epLkgId)
-            && Objects.equals(id, that.id)
-            && Objects.equals(name, that.name)
-            && Objects.equals(description, that.description)
-            && Objects.equals(type, that.type)
-            && Objects.equals(metric, that.metric)
-            && Objects.equals(aggregationFunction, that.aggregationFunction);
+        && Objects.equals(that.value, value)
+        && Objects.equals(vendorLicenseModelId, that.vendorLicenseModelId)
+        && Objects.equals(epLkgId, that.epLkgId)
+        && Objects.equals(id, that.id)
+        && Objects.equals(name, that.name)
+        && Objects.equals(description, that.description)
+        && Objects.equals(type, that.type)
+        && Objects.equals(metric, that.metric)
+        && Objects.equals(aggregationFunction, that.aggregationFunction);
 
   }
 
   @Override
   public String toString() {
     return "LimitEntity{"
-            + "vendorLicenseModelId='" + vendorLicenseModelId + '\''
-            + ", version=" + version
-            + ", epLkgId=" + epLkgId
-            + ", id='" + id + '\''
-            + ", name='" + name + '\''
-            + ", description='" + description + '\''
-            + ", type=" + type
-            + ", metric=" + metric
-            + ", value='" + value + '\''
-            + ", unit='" + unit + '\''
-            + ", aggregationFunction=" + aggregationFunction
-            + ", time=" + time
+        + "vendorLicenseModelId='" + vendorLicenseModelId + '\''
+        + ", version=" + version
+        + ", epLkgId=" + epLkgId
+        + ", id='" + id + '\''
+        + ", name='" + name + '\''
+        + ", description='" + description + '\''
+        + ", type=" + type
+        + ", metric=" + metric
+        + ", value='" + value + '\''
+        + ", unit='" + unit + '\''
+        + ", aggregationFunction=" + aggregationFunction
+        + ", time=" + time
 
-            + '}';
+        + '}';
   }
 
 }

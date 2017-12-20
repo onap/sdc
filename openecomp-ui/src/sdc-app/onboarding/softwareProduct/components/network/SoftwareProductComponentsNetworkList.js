@@ -15,7 +15,6 @@
  */
 import {connect} from 'react-redux';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 
 import SoftwareProductComponentsActionHelper from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsActionHelper.js';
 import SoftwareProductComponentsNetworkListView from './SoftwareProductComponentsNetworkListView.jsx';
@@ -31,8 +30,8 @@ export const mapStateToProps = ({softwareProduct}) => {
 
 	let {softwareProductEditor: {data: currentSoftwareProduct = {}, isValidityData = true}, softwareProductComponents} = softwareProduct;
 	let {network: {nicList = []}, componentEditor: {data: componentData, qdata, dataMap, qgenericFieldInfo}} = softwareProductComponents;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentSoftwareProduct);
 	let {version, onboardingMethod} = currentSoftwareProduct;
+	let isManual = onboardingMethod === onboardingMethodTypes.MANUAL;
 
 	return {
 		version,
@@ -42,26 +41,25 @@ export const mapStateToProps = ({softwareProduct}) => {
 		qgenericFieldInfo,
 		isValidityData,
 		nicList,
-		isReadOnlyMode,
-		isManual: onboardingMethod === onboardingMethodTypes.MANUAL
+		isManual
 	};
 
 };
 
-const mapActionsToProps = (dispatch, {softwareProductId, componentId}) => {
+const mapActionsToProps = (dispatch, {softwareProductId, componentId, version}) => {
 	return {
 		onQDataChanged: (deltaData) => ValidationHelper.qDataChanged(dispatch, {deltaData,
 			qName: COMPONENTS_QUESTIONNAIRE}),
-		onAddNic: () => NICCreationActionHelper.open(dispatch, {softwareProductId, componentId, modalClassName: 'network-nic-modal-create'}),
-		onDeleteNic: (nic, version) => dispatch({
+		onAddNic: () => NICCreationActionHelper.open(dispatch, {softwareProductId, componentId, modalClassName: 'network-nic-modal-create', version}),
+		onDeleteNic: (nic) => dispatch({
 			type: GlobalModalActions.GLOBAL_MODAL_WARNING,
 			data:{
-				msg: i18n(`Are you sure you want to delete "${nic.name}"?`),
+				msg: i18n('Are you sure you want to delete "{name}"?', {name: nic.name}),
 				onConfirmed: () => SoftwareProductComponentsNetworkActionHelper.deleteNIC(dispatch, {softwareProductId,
 					componentId, nicId: nic.id, version})
 			}
 		}),
-		onEditNicClick: (nic, version, isReadOnlyMode) => {
+		onEditNicClick: (nic, isReadOnlyMode) => {
 			Promise.all([
 				SoftwareProductComponentsNetworkActionHelper.loadNICData({
 					softwareProductId,
@@ -77,10 +75,10 @@ const mapActionsToProps = (dispatch, {softwareProductId, componentId}) => {
 				})
 			]).then(
 				([{data}]) => SoftwareProductComponentsNetworkActionHelper.openNICEditor(dispatch, {nic, data,
-					isReadOnlyMode, softwareProductId, componentId, modalClassName: 'network-nic-modal-edit'})
+					isReadOnlyMode, softwareProductId, componentId, modalClassName: 'network-nic-modal-edit', version})
 			);
 		},
-		onSubmit: ({qdata, version}) => { return SoftwareProductComponentsActionHelper.updateSoftwareProductComponentQuestionnaire(dispatch,
+		onSubmit: ({qdata}) => { return SoftwareProductComponentsActionHelper.updateSoftwareProductComponentQuestionnaire(dispatch,
 			{softwareProductId, version,
 			vspComponentId: componentId,
 			qdata});

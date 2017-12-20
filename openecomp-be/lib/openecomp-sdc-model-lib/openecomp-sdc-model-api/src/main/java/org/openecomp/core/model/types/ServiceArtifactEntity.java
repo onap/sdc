@@ -16,13 +16,12 @@
 
 package org.openecomp.core.model.types;
 
-import com.google.common.io.ByteStreams;
-
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+import com.google.common.io.ByteStreams;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;

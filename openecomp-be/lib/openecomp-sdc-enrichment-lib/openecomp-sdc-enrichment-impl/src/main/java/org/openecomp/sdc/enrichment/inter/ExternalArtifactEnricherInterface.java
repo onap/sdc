@@ -32,5 +32,5 @@ import java.util.Map;
  * Created by Talio on 11/24/2016.
  */
 public interface ExternalArtifactEnricherInterface {
-    public Map<String, List<ErrorMessage>> enrich(EnrichmentInfo enrichmentInfo) throws IOException;
+  Map<String, List<ErrorMessage>> enrich(EnrichmentInfo enrichmentInfo) throws IOException;
 }

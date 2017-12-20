@@ -20,41 +20,6 @@
 
 package org.openecomp.sdc.vendorlicense;
 
-import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
-import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
-import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyType;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseTerm;
-import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
-import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
-import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
-import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
-import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
-import org.openecomp.sdc.vendorlicense.impl.VendorLicenseManagerImpl;
-import org.openecomp.sdc.vendorlicense.licenseartifacts.VendorLicenseArtifactsService;
-import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.impl.VendorSoftwareProductManagerImpl;
-import org.openecomp.sdc.versioning.VersioningManager;
-import org.openecomp.sdc.versioning.VersioningManagerFactory;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionInfo;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-import org.testng.annotations.BeforeMethod;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE;
-
 /**
  * Created by  Katyr on 29-May-16
  */

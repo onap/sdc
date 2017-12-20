@@ -44,14 +44,12 @@ import org.openecomp.sdc.translator.datatypes.heattotosca.PropertyRegexMatcher;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslatedHeatResource;
-
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.ComputeTemplateConsolidationData;
 import org.openecomp.sdc.translator.services.heattotosca.ConsolidationDataUtil;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.NameExtractor;
 import org.openecomp.sdc.translator.services.heattotosca.ResourceTranslationFactory;
-
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaPropertyConverter;
 
 import java.util.ArrayList;
@@ -398,27 +396,22 @@ public class ResourceTranslationNovaServerImpl extends ResourceTranslationBase {
 
   private void manageNovaServerNetwork(TranslateTo translateTo,
                                        NodeTemplate novaNodeTemplate) {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
 
-
-    String heatFileName = translateTo.getHeatFileName();
-    ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
-    HeatOrchestrationTemplate heatOrchestrationTemplate = translateTo
-        .getHeatOrchestrationTemplate();
     Resource resource = translateTo.getResource();
     String translatedId = translateTo.getTranslatedId();
-    TranslationContext context = translateTo.getContext();
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
 
     if (resource.getProperties() == null) {
       return;
     }
-    List<Map<String, Object>> heatNetworkList =
-        (List<Map<String, Object>>) resource.getProperties().get("networks");
-
-    if (CollectionUtils.isEmpty(heatNetworkList)) {
+    Object networks = resource.getProperties().get("networks");
+    if(Objects.isNull(networks)
+        || !(networks instanceof List)){
       return;
     }
+
+    List<Map<String, Object>> heatNetworkList =
+        (List<Map<String, Object>>) networks;
 
     for (Map<String, Object> heatNetwork : heatNetworkList) {
       getOrTranslatePortTemplate(translateTo, heatNetwork.get(

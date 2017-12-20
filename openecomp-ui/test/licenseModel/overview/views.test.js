@@ -39,7 +39,7 @@ describe('License Model Overview - View: ', function () {
 	it('should render SummaryView', () => {
 		var renderer = TestUtils.createRenderer();
 		renderer.render(
-			<SummaryView />
+			<SummaryView isReadOnly={false} />
 		);
 		let renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();

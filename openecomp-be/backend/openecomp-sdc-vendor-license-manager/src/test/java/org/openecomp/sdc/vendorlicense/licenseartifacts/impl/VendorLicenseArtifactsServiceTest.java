@@ -20,22 +20,8 @@
 
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.vendorlicense.ArtifactTestUtils;
-import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
-import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
-import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 
 public class VendorLicenseArtifactsServiceTest extends ArtifactTestUtils {

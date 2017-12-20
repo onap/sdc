@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function AdditionalDataCol({children}) {
 	return (
@@ -27,9 +28,9 @@ function AdditionalDataCol({children}) {
 }
 
 AdditionalDataCol.propTypes = {
-	children: React.PropTypes.oneOfType([
-		React.PropTypes.arrayOf(React.PropTypes.node),
-		React.PropTypes.node
+	children: PropTypes.oneOfType([
+		PropTypes.arrayOf(PropTypes.node),
+		PropTypes.node
 	])
 };
 
@@ -43,9 +44,9 @@ function AdditionalDataElement({className, name, value}) {
 }
 
 AdditionalDataElement.propTypes = {
-	name: React.PropTypes.string,
-	value: React.PropTypes.string,
-	className: React.PropTypes.string
+	name: PropTypes.string,
+	value: PropTypes.string,
+	className: PropTypes.string
 };
 
 export {AdditionalDataCol, AdditionalDataElement};

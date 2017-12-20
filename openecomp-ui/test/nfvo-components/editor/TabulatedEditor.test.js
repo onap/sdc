@@ -18,13 +18,15 @@
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import TabulatedEditor from 'nfvo-components/editor/TabulatedEditor.jsx';
+import { Provider } from 'react-redux';
+import {storeCreator} from 'sdc-app/AppStore.js';
 
 describe('Tabulated Editor test: ', function () {
-
+	const store = storeCreator();
 	it('basic view test', () => {
 		let renderer = TestUtils.createRenderer();
 		renderer.render(
-			<TabulatedEditor><button>test</button></TabulatedEditor>
+			<Provider store={store}><TabulatedEditor><button>test</button></TabulatedEditor></Provider>
 		);
 		let renderedOutput = renderer.getRenderOutput();
 		expect(renderedOutput).toBeTruthy();
@@ -41,11 +43,12 @@ describe('Tabulated Editor test: ', function () {
 				isCheckedOut: false,
 				version: {id: '0.1', label: '0.1'},
 				viewableVersions: [{id: '0.1', label: '0.1'}],
+				itemPermission: {isCertified: false, isCollaborator: true, isDirty: false},
 				onSubmit: ()=>{},
 				onRevert: ()=>{}
 			}
 		};
-		const view = TestUtils.renderIntoDocument(<TabulatedEditor {...props}><button>test</button></TabulatedEditor>);
+		const view = TestUtils.renderIntoDocument(<Provider store={store}><TabulatedEditor {...props}><button>test</button></TabulatedEditor></Provider>);
 		expect(view).toBeTruthy();
 	});
 

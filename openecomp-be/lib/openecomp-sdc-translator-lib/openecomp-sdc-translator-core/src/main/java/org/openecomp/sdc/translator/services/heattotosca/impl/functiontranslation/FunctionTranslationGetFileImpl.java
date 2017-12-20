@@ -30,8 +30,8 @@ import org.openecomp.sdc.tosca.datatypes.model.Template;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
-import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslation;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslation;
 
 import java.util.ArrayList;
 import java.util.HashMap;

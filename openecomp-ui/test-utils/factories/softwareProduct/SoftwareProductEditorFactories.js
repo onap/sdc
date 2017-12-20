@@ -16,7 +16,6 @@
 import {Factory} from 'rosie';
 import IdMixin from 'test-utils/factories/mixins/IdMixin.js';
 import randomstring from 'randomstring';
-import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
 
 Factory.define('VSPBaseFactory')
 	.attrs(
@@ -30,7 +29,7 @@ Factory.define('VSPBaseFactory')
 		licensingVersion: {id: '1', label: '1'},
 		licensingData: {},
 		icon: 'icon',
-		version: {id: '1',  label: '1'}
+		version: {id: '123'}
 	}
 );
 
@@ -46,7 +45,6 @@ Factory.define('LicensingDataMixin')
 
 export const VSPEditorFactory = new Factory()
 	.extend('VSPBaseFactory')
-	.extend(VersionControllerUtilsFactory)
 	.extend(IdMixin);
 
 export const VSPEditorPostFactory = new Factory()
@@ -54,7 +52,6 @@ export const VSPEditorPostFactory = new Factory()
 
 export const VSPEditorFactoryWithLicensingData = new Factory()
 	.extend('VSPBaseFactory')
-	.extend(VersionControllerUtilsFactory)
 	.extend('LicensingDataMixin')
 	.extend(IdMixin);
 

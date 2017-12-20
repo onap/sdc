@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import OnboardingCatalogView from './onboardingCatalog/OnboardingCatalogView.jsx';
 import WorkspaceView from './workspace/WorkspaceView.jsx';
 import {tabsMapping} from './OnboardConstants.js';
@@ -22,6 +23,7 @@ import classnames from 'classnames';
 import ExpandableInput from 'nfvo-components/input/ExpandableInput.jsx';
 import objectValues from 'lodash/values.js';
 import {catalogItemTypes} from './onboardingCatalog/OnboardingCatalogConstants.js';
+import NotificationsView from 'sdc-app/onboarding/userNotifications/NotificationsView.jsx';
 
 const OnboardHeaderTabs = ({onTabClick, activeTab}) => (
 	<div className='onboard-header-tabs'>
@@ -47,29 +49,30 @@ const OnboardHeader = ({onSearch, activeTab, onTabClick, searchValue}) => (
 			onChange={onSearch}
 			iconType='search'
 			value={searchValue}/>
+		<NotificationsView />
 	</div>
 );
 
 class OnboardView extends React.Component {
 	static propTypes = {
-		licenseModelList: React.PropTypes.array,
-		softwareProductList: React.PropTypes.array,
-		finalizedLicenseModelList: React.PropTypes.array,
-		finalizedSoftwareProductList: React.PropTypes.array,
-		modalToShow: React.PropTypes.oneOf(objectValues(catalogItemTypes)),
-		onSelectLicenseModel: React.PropTypes.func.isRequired,
-		onSelectSoftwareProduct: React.PropTypes.func.isRequired,
-		onAddLicenseModelClick: React.PropTypes.func.isRequired,
-		onAddSoftwareProductClick: React.PropTypes.func.isRequired,
-		closeVspOverlay: React.PropTypes.func.isRequired,
-		onVspOverlayChange: React.PropTypes.func.isRequired,
-		onTabClick: React.PropTypes.func.isRequired,
-		onCatalogTabClick: React.PropTypes.func.isRequired,
-		onSearch: React.PropTypes.func.isRequired,
-		activeTab: React.PropTypes.number.isRequired,
-		catalogActiveTab: React.PropTypes.number.isRequired,
-		searchValue: React.PropTypes.string.isRequired,
-		onMigrate: React.PropTypes.func.isRequired,
+		licenseModelList: PropTypes.array,
+		softwareProductList: PropTypes.array,
+		finalizedLicenseModelList: PropTypes.array,
+		finalizedSoftwareProductList: PropTypes.array,
+		modalToShow: PropTypes.oneOf(objectValues(catalogItemTypes)),
+		onSelectLicenseModel: PropTypes.func.isRequired,
+		onSelectSoftwareProduct: PropTypes.func.isRequired,
+		onAddLicenseModelClick: PropTypes.func.isRequired,
+		onAddSoftwareProductClick: PropTypes.func.isRequired,
+		closeVspOverlay: PropTypes.func.isRequired,
+		onVspOverlayChange: PropTypes.func.isRequired,
+		onTabClick: PropTypes.func.isRequired,
+		onCatalogTabClick: PropTypes.func.isRequired,
+		onSearch: PropTypes.func.isRequired,
+		activeTab: PropTypes.number.isRequired,
+		catalogActiveTab: PropTypes.number.isRequired,
+		searchValue: PropTypes.string.isRequired,
+		onMigrate: PropTypes.func.isRequired,
 	};
 	renderViewByTab(activeTab){
 		switch (activeTab){
@@ -82,9 +85,9 @@ class OnboardView extends React.Component {
 	}
 
 	render() {
-		let {closeVspOverlay, activeTab, onTabClick, onSearch, searchValue} = this.props;
+		let {activeTab, onTabClick, onSearch, searchValue} = this.props;
 		return (
-			<div className='catalog-view' onClick={closeVspOverlay}>
+			<div className='catalog-view'>
 				<OnboardHeader activeTab={activeTab} onTabClick={onTabClick} searchValue={searchValue} onSearch={value => onSearch(value)}/>
 				{this.renderViewByTab(activeTab)}
 			</div>

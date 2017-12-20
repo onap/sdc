@@ -13,19 +13,12 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
-import Configuration from 'sdc-app/config/Configuration.js';
 import ActivityLogConstants from './ActivityLogConstants.js';
-
-
-function baseUrl(itemId, versionId) {
-	const restPrefix = Configuration.get('restPrefix');
-	return `${restPrefix}/v1.0/activity-logs/${itemId}/versions/${versionId}`;
-}
+import ItemHelper from 'sdc-app/common/helpers/ItemsHelper.js';
 
 export default {
 
 	fetchActivityLog(dispatch, {itemId, versionId}){
-		return RestAPIUtil.fetch(baseUrl(itemId, versionId)).then(response => dispatch({type: ActivityLogConstants.ACTIVITY_LOG_UPDATED, response}));
+		return ItemHelper.fetchActivityLog({itemId, versionId}).then(response => dispatch({type: ActivityLogConstants.ACTIVITY_LOG_UPDATED, response}));
 	}
 };

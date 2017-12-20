@@ -33,5 +33,32 @@
             <artifactId>zusammen-state-store-cassandra-plugin</artifactId>
               <version>${zusammen-state-store.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.all.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.amdocs.zusammen</groupId>
+            <artifactId>zusammen-commons-utils</artifactId>
+            <version>${zusammen.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.core</groupId>
+            <artifactId>openecomp-facade-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.core</groupId>
+            <artifactId>openecomp-session-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

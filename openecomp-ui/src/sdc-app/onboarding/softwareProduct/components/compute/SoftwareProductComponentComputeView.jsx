@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import NumberOfVms from './computeComponents/NumberOfVms.jsx';
 import GuestOs from './computeComponents/GuestOs.jsx';
@@ -23,13 +24,13 @@ import Validator from 'nfvo-utils/Validator.js';
 class SoftwareProductComponentComputeView extends React.Component {
 
 	static propTypes = {
-		dataMap: React.PropTypes.object,
-		qgenericFieldInfo: React.PropTypes.object,
-		isReadOnlyMode: React.PropTypes.bool,
-		isManual: React.PropTypes.bool,
-		onQDataChanged: React.PropTypes.func.isRequired,
-		qValidateData: React.PropTypes.func.isRequired,
-		onSubmit: React.PropTypes.func.isRequired
+		dataMap: PropTypes.object,
+		qgenericFieldInfo: PropTypes.object,
+		isReadOnlyMode: PropTypes.bool,
+		isManual: PropTypes.bool,
+		onQDataChanged: PropTypes.func.isRequired,
+		qValidateData: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func.isRequired
 	};
 
 	render() {

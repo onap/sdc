@@ -15,13 +15,17 @@
  */
 import {connect} from 'react-redux';
 
-import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
 import SoftwareProductCreationActionHelper from './SoftwareProductCreationActionHelper.js';
 import SoftwareProductCreationView from './SoftwareProductCreationView.jsx';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import SoftwareProductActionHelper  from '../SoftwareProductActionHelper.js';
+import VersionsPageActionHelper from 'sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js';
+import {itemTypes as versionItemTypes} from 'sdc-app/onboarding/versionsPage/VersionsPageConstants.js';
+import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
+import {enums, screenTypes} from 'sdc-app/onboarding/OnboardingConstants.js';
+import PermissionsActionHelper from 'sdc-app/onboarding/permissions/PermissionsActionHelper.js';
 
-export const mapStateToProps = ({finalizedLicenseModelList, softwareProductList, softwareProduct: {softwareProductCreation, softwareProductCategories} }) => {
+export const mapStateToProps = ({finalizedLicenseModelList, users: {usersList}, softwareProductList, softwareProduct: {softwareProductCreation, softwareProductCategories} }) => {
 	let {genericFieldInfo} = softwareProductCreation;
 	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 
@@ -39,7 +43,8 @@ export const mapStateToProps = ({finalizedLicenseModelList, softwareProductList,
 		isFormValid,
 		formReady: softwareProductCreation.formReady,
 		genericFieldInfo,
-		VSPNames
+		VSPNames,
+		usersList
 	};
 };
 
@@ -47,13 +52,18 @@ export const mapActionsToProps = (dispatch) => {
 	return {
 		onDataChanged: (deltaData, formName, customValidations) => ValidationHelper.dataChanged(dispatch, {deltaData, formName, customValidations}),
 		onCancel: () => SoftwareProductCreationActionHelper.resetData(dispatch),
-		onSubmit: (softwareProduct) => {
+		onSubmit: (softwareProduct, usersList) => {
 			SoftwareProductCreationActionHelper.resetData(dispatch);
 			SoftwareProductCreationActionHelper.createSoftwareProduct(dispatch, {softwareProduct}).then(response => {
-				SoftwareProductActionHelper.fetchSoftwareProductList(dispatch).then(() => {
-					let {vendorId: licenseModelId, licensingVersion} = softwareProduct;
-					OnboardingActionHelper.navigateToSoftwareProductLandingPage(dispatch, {softwareProductId: response.vspId, licenseModelId, licensingVersion});
-				});
+				let {itemId, version} = response;
+				SoftwareProductActionHelper.fetchSoftwareProductList(dispatch).then(() =>
+					PermissionsActionHelper.fetchItemUsers(dispatch, {itemId, allUsers: usersList}).then(() =>
+						VersionsPageActionHelper.fetchVersions(dispatch, {itemType: versionItemTypes.SOFTWARE_PRODUCT, itemId}).then(() =>
+							ScreensHelper.loadScreen(dispatch, {screen: enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, screenType: screenTypes.SOFTWARE_PRODUCT,
+								props: {softwareProductId: itemId, version}})
+						)
+					)
+				);
 			});
 		},
 		onValidateForm: (formName) => ValidationHelper.validateForm(dispatch, formName)

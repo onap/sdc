@@ -16,9 +16,9 @@
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import {actionTypes as entitlementPoolsActionTypes } from './EntitlementPoolsConstants.js';
-import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
 import {actionTypes as limitEditorActions} from 'sdc-app/onboarding/licenseModel/limits/LimitEditorConstants.js';
 import {default as getValue, getStrValue} from 'nfvo-utils/getValue.js';
+import ItemsHelper from 'sdc-app/common/helpers/ItemsHelper.js';
 
 function baseUrl(licenseModelId, version) {
 	const restPrefix = Configuration.get('restPrefix');
@@ -124,6 +124,7 @@ export default {
 				type: entitlementPoolsActionTypes.DELETE_ENTITLEMENT_POOL,
 				entitlementPoolId
 			});
+			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	},
 
@@ -147,6 +148,7 @@ export default {
 					type: entitlementPoolsActionTypes.EDIT_ENTITLEMENT_POOL,
 					entitlementPool
 				});
+				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 		else {
@@ -159,6 +161,7 @@ export default {
 						id: response.value
 					}
 				});
+				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 	},
@@ -176,11 +179,6 @@ export default {
 		});
 	},
 
-	switchVersion(dispatch, {licenseModelId, version}) {
-		LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version}).then(() => {
-			this.fetchEntitlementPoolsList(dispatch, {licenseModelId, version});
-		});
-	},
 
 
 	fetchLimits(dispatch, {licenseModelId, version, entitlementPool}) {
@@ -200,12 +198,14 @@ export default {
 				type: limitEditorActions.CLOSE
 			});
 			this.fetchLimits(dispatch, {licenseModelId, version, entitlementPool});
+			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	},
 
 	deleteLimit(dispatch, {licenseModelId, version, entitlementPool, limit}) {
 		return  deleteLimit(licenseModelId,entitlementPool.id, version, limit.id).then(() => {
 			this.fetchLimits(dispatch, {licenseModelId, version, entitlementPool});
+			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	}
 };

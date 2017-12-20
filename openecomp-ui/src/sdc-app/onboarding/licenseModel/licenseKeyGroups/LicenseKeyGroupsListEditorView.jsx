@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Modal from 'nfvo-components/modal/Modal.jsx';
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
@@ -26,15 +26,15 @@ import {optionsInputValues} from './LicenseKeyGroupsConstants';
 
 class LicenseKeyGroupsListEditorView extends React.Component {
 	static propTypes = {
-		vendorName: React.PropTypes.string,
-		licenseModelId: React.PropTypes.string.isRequired,
-		licenseKeyGroupsList: React.PropTypes.array,
-		isReadOnlyMode: React.PropTypes.bool.isRequired,
-		isDisplayModal: React.PropTypes.bool,
-		isModalInEditMode: React.PropTypes.bool,
-		onAddLicenseKeyGroupClick: React.PropTypes.func,
-		onEditLicenseKeyGroupClick: React.PropTypes.func,
-		onDeleteLicenseKeyGroupClick: React.PropTypes.func
+		vendorName: PropTypes.string,
+		licenseModelId: PropTypes.string.isRequired,
+		licenseKeyGroupsList: PropTypes.array,
+		isReadOnlyMode: PropTypes.bool.isRequired,
+		isDisplayModal: PropTypes.bool,
+		isModalInEditMode: PropTypes.bool,
+		onAddLicenseKeyGroupClick: PropTypes.func,
+		onEditLicenseKeyGroupClick: PropTypes.func,
+		onDeleteLicenseKeyGroupClick: PropTypes.func
 	};
 
 	static defaultProps = {
@@ -51,7 +51,7 @@ class LicenseKeyGroupsListEditorView extends React.Component {
 		const {localFilter} = this.state;
 
 		return (
-			<div className='license-key-groups-list-editor'>
+			<div className='license-model-list-editor license-key-groups-list-editor'>
 				<ListEditorView
 					title={i18n('License Key Groups')}
 					plusButtonTitle={i18n('Add License Key Group')}
@@ -122,26 +122,24 @@ class LicenseKeyGroupsListEditorView extends React.Component {
 	}
 
 	getOperationalScopes(operationalScope) {
-		
-		if(operationalScope.choices && operationalScope.choices.toString() === i18n(optionInputOther.OTHER)) {
+
+		if (operationalScope.choices && operationalScope.choices.toString() === i18n(optionInputOther.OTHER)) {
 			return operationalScope.other;
-		}
-		else if (operationalScope.choices) {
+		} else if (operationalScope.choices) {
 			let allOpScopes = '';
 			for (let opScope of operationalScope.choices) {
 				allOpScopes += allOpScopes === '' ? InputOptions.getTitleByName(optionsInputValues, opScope) : `, ${InputOptions.getTitleByName(optionsInputValues, opScope)}`;
 			}
 			return allOpScopes;
-		} 
-		else {
+		} else {
 			return '';
-		} 
+		}
 	}
 
 	extractValue(item) {
 		if (item === undefined) {
 			return '';
-		} //TODO fix it later
+		} //TODO fix it sooner rather than later
 
 		return item ? item.choice === optionInputOther.OTHER ? item.other : InputOptions.getTitleByName(optionsInputValues, item.choice) : '';
 	}
@@ -151,7 +149,7 @@ export default LicenseKeyGroupsListEditorView;
 
 export function generateConfirmationMsg(licenseKeyGroupToDelete) {
 	let name = licenseKeyGroupToDelete ? licenseKeyGroupToDelete.name : '';
-	let msg = i18n(`Are you sure you want to delete "${name}"?`);
+	let msg = i18n('Are you sure you want to delete "{name}"?', {name: name});
 	let subMsg = licenseKeyGroupToDelete.referencingFeatureGroups
 	&& licenseKeyGroupToDelete.referencingFeatureGroups.length > 0 ?
 		i18n('This license key group is associated with one or more feature groups') :

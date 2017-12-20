@@ -34,7 +34,6 @@ import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +63,7 @@ public class EntitlementPoolsImpl implements EntitlementPools {
 
     MdcUtil.initMdc(LoggerServiceName.List_EP.toString());
     Collection<EntitlementPoolEntity> entitlementPools =
-        vendorLicenseManager.listEntitlementPools(vlmId, Version.valueOf(versionId), user);
+        vendorLicenseManager.listEntitlementPools(vlmId, new Version(versionId));
 
     GenericCollectionWrapper<EntitlementPoolEntityDto> result = new GenericCollectionWrapper<>();
     MapEntitlementPoolEntityToEntitlementPoolEntityDto outputMapper =
@@ -96,9 +95,10 @@ public class EntitlementPoolsImpl implements EntitlementPools {
         new MapEntitlementPoolRequestDtoToEntitlementPoolEntity()
             .applyMapping(request, EntitlementPoolEntity.class);
     entitlementPoolEntity.setVendorLicenseModelId(vlmId);
+    entitlementPoolEntity.setVersion(new Version(versionId));
 
     EntitlementPoolEntity createdEntitlementPool =
-        vendorLicenseManager.createEntitlementPool(entitlementPoolEntity, user);
+        vendorLicenseManager.createEntitlementPool(entitlementPoolEntity);
     StringWrapperResponse result =
         createdEntitlementPool != null ? new StringWrapperResponse(createdEntitlementPool.getId())
             : null;
@@ -127,9 +127,10 @@ public class EntitlementPoolsImpl implements EntitlementPools {
         new MapEntitlementPoolRequestDtoToEntitlementPoolEntity()
             .applyMapping(request, EntitlementPoolEntity.class);
     entitlementPoolEntity.setVendorLicenseModelId(vlmId);
+    entitlementPoolEntity.setVersion(new Version(versionId));
     entitlementPoolEntity.setId(entitlementPoolId);
 
-    vendorLicenseManager.updateEntitlementPool(entitlementPoolEntity, user);
+    vendorLicenseManager.updateEntitlementPool(entitlementPoolEntity);
 
     mdcDataDebugMessage.debugExitMessage("VLM id, EP id", vlmId, entitlementPoolId);
 
@@ -140,12 +141,12 @@ public class EntitlementPoolsImpl implements EntitlementPools {
    * Gets entitlement pool.
    *
    * @param vlmId             the vlm id
-   * @param version           the version
+   * @param versionId           the version id
    * @param entitlementPoolId the entitlement pool id
    * @param user              the user
    * @return the entitlement pool
    */
-  public Response getEntitlementPool(String vlmId, String version, String entitlementPoolId,
+  public Response getEntitlementPool(String vlmId, String versionId, String entitlementPoolId,
                                      String user) {
 
     mdcDataDebugMessage.debugEntryMessage("VLM id, EP id", vlmId, entitlementPoolId);
@@ -153,9 +154,9 @@ public class EntitlementPoolsImpl implements EntitlementPools {
     MdcUtil.initMdc(LoggerServiceName.Get_EP.toString());
     EntitlementPoolEntity epInput = new EntitlementPoolEntity();
     epInput.setVendorLicenseModelId(vlmId);
-    epInput.setVersion(Version.valueOf(version));
+    epInput.setVersion(new Version(versionId));
     epInput.setId(entitlementPoolId);
-    EntitlementPoolEntity entitlementPool = vendorLicenseManager.getEntitlementPool(epInput, user);
+    EntitlementPoolEntity entitlementPool = vendorLicenseManager.getEntitlementPool(epInput);
 
     EntitlementPoolEntityDto entitlementPoolEntityDto = entitlementPool == null ? null :
         new MapEntitlementPoolEntityToEntitlementPoolEntityDto()
@@ -183,7 +184,8 @@ public class EntitlementPoolsImpl implements EntitlementPools {
     EntitlementPoolEntity epInput = new EntitlementPoolEntity();
     epInput.setVendorLicenseModelId(vlmId);
     epInput.setId(entitlementPoolId);
-    vendorLicenseManager.deleteEntitlementPool(epInput, user);
+    epInput.setVersion(new Version(versionId));
+    vendorLicenseManager.deleteEntitlementPool(epInput);
 
     mdcDataDebugMessage.debugExitMessage("VLM id, EP id", vlmId, entitlementPoolId);
 

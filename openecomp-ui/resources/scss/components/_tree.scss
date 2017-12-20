@@ -1,0 +1,56 @@
+
+.tree-view {
+	overflow: hidden;
+
+	&.scrollable {
+		overflow: auto;
+	}
+
+	.node {
+		text-shadow: none;
+		stroke: none;
+
+		.outer-circle {
+			stroke: $blue;
+			stroke-width: 2px;
+			fill: $white;
+		}
+
+		.inner-circle {
+			fill: $blue;
+		}
+
+		text {
+			text-anchor: end;
+			@extend .body-2-semibold;
+			fill: $blue;
+		}
+
+		&.clickable {
+			cursor: pointer;
+		}
+
+		&.selectedNode {
+			.outer-circle {
+				fill: $blue;
+			}
+
+			.inner-circle {
+				fill: $blue;
+			}
+
+			text {
+				fill: $blue;
+			}
+		}
+	}
+
+
+	.link {
+		fill: none;
+		stroke: $dark-gray;
+		stroke-opacity: 0.4;
+		stroke-width: 1.5px;
+	}
+
+}

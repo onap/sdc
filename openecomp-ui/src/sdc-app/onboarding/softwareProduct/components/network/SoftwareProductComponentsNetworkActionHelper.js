@@ -78,7 +78,7 @@ const SoftwareProductComponentNetworkActionHelper = {
 		});
 	},
 
-	openNICEditor(dispatch, {nic = {}, data = {}, softwareProductId, componentId, isReadOnlyMode, modalClassName}) {
+	openNICEditor(dispatch, {nic = {}, data = {}, softwareProductId, componentId, isReadOnlyMode, modalClassName, version}) {
 		dispatch({
 			type: actionTypes.NICEditor.FILL_DATA,
 			nic: {...data, id: nic.id}
@@ -87,7 +87,7 @@ const SoftwareProductComponentNetworkActionHelper = {
 			type: GlobalModalActions.GLOBAL_MODAL_SHOW,
 			data: {
 				modalClassName,
-				modalComponentProps: {softwareProductId, componentId, isReadOnlyMode},
+				modalComponentProps: {softwareProductId, componentId, isReadOnlyMode, version},
 				modalComponentName: modalPagesMapper.NIC_EDITOR,
 				title: i18n('Edit NIC')
 			}

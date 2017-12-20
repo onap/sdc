@@ -1,16 +1,11 @@
 .license-key-groups-list-editor {
   .list-editor-view-list {
-    .list-editor-item-view {
-      min-height: 110px;
-      height: 110px;
-    }
     .list-editor-item-view-field {
 
       .operational-scope, .type {
         color: $orange;
       }
       .operational-scope {
-        margin-bottom: 0px;
         @include ellipsis;
       }
     }

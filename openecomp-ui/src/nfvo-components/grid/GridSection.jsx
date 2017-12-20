@@ -14,11 +14,12 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-const GridSection = ({title, children, className, titleClassName}) => {
+const GridSection = ({title, children, className = '', titleClassName, hasLastColSet = false}) => {
 	return (
-		<div className={classnames('grid-section', className)}>
+		<div className={classnames('grid-section', className, {'has-last-col-set': hasLastColSet})}>
 			{title && <div className={`section-title ${titleClassName || ''}`}>{title}</div>}
 			<div className='grid-items'>
 				{children}
@@ -28,7 +29,9 @@ const GridSection = ({title, children, className, titleClassName}) => {
 };
 
 GridSection.propTypes = {
-	title: React.PropTypes.string,
+	title: PropTypes.string,
+	titleClassName: PropTypes.string,
+	hasLastColSet: PropTypes.bool
 };
 
 export default GridSection;

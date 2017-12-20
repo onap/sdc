@@ -4,17 +4,14 @@ $icon-margin: 30px;
 $arrow-element-width: 30px;
 $list-item-padding: 15px;
 
-@mixin overview-tile-shadow() {
-	@include box-shadow(0.5px 0.8px 4px 0 rgba(24, 24, 25, 0.05));
-}
 
-// @mixin vlm-list-item-inset($color) {
-// 	@include box-shadow(inset 6px 0 0 0 $color);
-// }
 
 $la-color: $dark-blue;
 $fg-color: $blue;
 $lkg-ep-color: $light-blue;
+@mixin overview-tile-shadow() {
+  @include box-shadow(0.5px 0.8px 4px 0 rgba(24, 24, 25, 0.05));
+}
 
 .license-model-overview {
   .overview-top-section {
@@ -185,11 +182,8 @@ $lkg-ep-color: $light-blue;
             width: 100%;
           }
           .svg-icon-wrapper {
-
             .svg-icon {
               &.__plusCircle {
-                width: 20px;
-                height: 20px;
                 margin-top: 3px;
                 margin-left: auto;
                 fill: $dark-gray;
@@ -197,7 +191,8 @@ $lkg-ep-color: $light-blue;
                   fill: $blue;
                 }
               }
-          }
+            }
+
           }
 
           .summary-name-and-count {
@@ -406,7 +401,7 @@ $lkg-ep-color: $light-blue;
           &.vlm-list-item-la {
             margin-top: 10px;
             .la-icon {
-              @include create-circle($circle-icon-size,$la-color,'LA');
+              @include create-circle($circle-icon-size, $la-color);
               color: $white;
 						}
 						.vlm-list-item-title {
@@ -439,7 +434,7 @@ $lkg-ep-color: $light-blue;
 							margin-left: 29px;
 						}
             .fg-icon {
-              @include create-circle($circle-icon-size,$fg-color,'FG');
+              @include create-circle($circle-icon-size, $fg-color);
               color: $white;
 						}
 
@@ -467,7 +462,7 @@ $lkg-ep-color: $light-blue;
             margin-top: 10px;
             cursor: default;
             .ep-icon {
-              @include create-circle($circle-icon-size,$lkg-ep-color,'EP');
+              @include create-circle($circle-icon-size, $lkg-ep-color);
               color: $white;
 						}
 						.vlm-list-item-title {
@@ -490,7 +485,7 @@ $lkg-ep-color: $light-blue;
             margin-left: $list-indentation * 2;
             cursor: default;
             .lkg-icon {
-              @include create-circle($circle-icon-size,$lkg-ep-color,'KG');
+              @include create-circle($circle-icon-size, $lkg-ep-color);
               color: $white;
 						}
 						.vlm-list-item-title {

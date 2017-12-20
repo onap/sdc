@@ -21,7 +21,7 @@ import ComputeEditorView from 'sdc-app/onboarding/softwareProduct/components/com
 import {SoftwareProductFactory} from 'test-utils/factories/softwareProduct/SoftwareProductFactory.js';
 import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';
 import {ComputeFlavorBaseData, ComputeFlavorQData, VSPComponentsComputeDataMapFactory} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsComputeFactory.js';
-
+import CurrentScreenFactory from 'test-utils/factories/common/CurrentScreenFactory.js';
 
 describe('Software Product Component Compute-Editor Mapper and View Classes.', () => {
 
@@ -33,6 +33,7 @@ describe('Software Product Component Compute-Editor Mapper and View Classes.', (
 		const currentSoftwareProduct = VSPEditorFactory.build();
 
 		var obj = {
+			currentScreen: CurrentScreenFactory.build(),
 			softwareProduct: SoftwareProductFactory.build({
 				softwareProductEditor: {
 					data: currentSoftwareProduct
@@ -58,7 +59,7 @@ describe('Software Product Component Compute-Editor Mapper and View Classes.', (
 		expect(results.qgenericFieldInfo).toBeTruthy();
 		expect(results.dataMap).toBeTruthy();
 		expect(results.genericFieldInfo).toBeTruthy();
-		expect(results.isReadOnlyMode).toBeTruthy();
+		expect(results.isReadOnlyMode).toBe(false);
 		expect(results.isFormValid).toBeTruthy();
 		expect(results.formReady).toBeTruthy();
 	});

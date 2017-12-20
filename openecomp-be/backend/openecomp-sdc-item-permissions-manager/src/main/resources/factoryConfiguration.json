@@ -1,0 +1,3 @@
+{
+  "org.openecomp.sdc.itempermissions.ItemPermissionsManagerFactory": "org.openecomp.sdc.itempermissions.dao.impl.ItemPermissionsManagerFactoryImpl"
+}

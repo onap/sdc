@@ -17,14 +17,12 @@ import org.openecomp.sdcrests.vendorlicense.rest.mapping.MapLimitRequestDtoToLim
 import org.openecomp.sdcrests.vendorlicense.types.LimitEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.LimitRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
-import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
+import java.util.Collection;
 
 @Named
 @Service("entitlementPoolLimits")
@@ -32,7 +30,7 @@ import javax.ws.rs.core.Response;
 public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private VendorLicenseManager vendorLicenseManager =
-          VendorLicenseManagerFactory.getInstance().createInterface();
+      VendorLicenseManagerFactory.getInstance().createInterface();
 
   public static final String parent = "EntitlementPool";
 
@@ -45,20 +43,20 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId, "EP id", entitlementPoolId);
 
     MdcUtil.initMdc(LoggerServiceName.Create_LIMIT.toString());
-    vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, Version.valueOf
-            (versionId), entitlementPoolId), user);
+    Version version = new Version(versionId);
+    vendorLicenseManager
+        .getEntitlementPool(new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
 
     LimitEntity limitEntity =
-            new MapLimitRequestDtoToLimitEntity()
-                    .applyMapping(request, LimitEntity.class);
-    limitEntity.setEpLkgId(entitlementPoolId);
+        new MapLimitRequestDtoToLimitEntity().applyMapping(request, LimitEntity.class);
     limitEntity.setVendorLicenseModelId(vlmId);
+    limitEntity.setVersion(version);
+    limitEntity.setEpLkgId(entitlementPoolId);
     limitEntity.setParent(parent);
 
-    LimitEntity createdLimit = vendorLicenseManager.createLimit(limitEntity, user);
+    LimitEntity createdLimit = vendorLicenseManager.createLimit(limitEntity);
     MapLimitEntityToLimitCreationDto mapper = new MapLimitEntityToLimitCreationDto();
-    LimitCreationDto createdLimitDto = mapper.applyMapping(createdLimit, LimitCreationDto
-            .class);
+    LimitCreationDto createdLimitDto = mapper.applyMapping(createdLimit, LimitCreationDto.class);
 
     /*StringWrapperResponse result =
         createdLimit != null ? new StringWrapperResponse(createdLimit.getId())
@@ -67,25 +65,25 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
     mdcDataDebugMessage.debugExitMessage("VLM id", vlmId, "EP id", entitlementPoolId);
 
     //return Response.ok(result).build();
-    return Response.ok(createdLimitDto != null ? createdLimitDto : null)
-            .build();
+    return Response.ok(createdLimitDto != null ? createdLimitDto : null).build();
   }
 
   @Override
   public Response listLimits(String vlmId, String versionId, String entitlementPoolId, String
-          user) {
+      user) {
     mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId, "EP id", entitlementPoolId);
 
     MdcUtil.initMdc(LoggerServiceName.List_EP.toString());
-    vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, Version.valueOf
-            (versionId), entitlementPoolId), user);
+    Version version = new Version(versionId);
+    vendorLicenseManager
+        .getEntitlementPool(new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
 
     Collection<LimitEntity> limits =
-            vendorLicenseManager.listLimits(vlmId, Version.valueOf(versionId), entitlementPoolId, user);
+        vendorLicenseManager.listLimits(vlmId, version, entitlementPoolId);
 
     GenericCollectionWrapper<LimitEntityDto> result = new GenericCollectionWrapper<>();
     MapLimitEntityToLimitDto outputMapper =
-            new MapLimitEntityToLimitDto();
+        new MapLimitEntityToLimitDto();
     for (LimitEntity limit : limits) {
       result.add(outputMapper.applyMapping(limit, LimitEntityDto.class));
     }
@@ -96,28 +94,28 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
   }
 
   @Override
-  public Response getLimit( String vlmId, String versionId, String entitlementPoolId,
-                            String limitId, String user) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, EP id, Limit Id", vlmId, entitlementPoolId,
-            limitId);
+  public Response getLimit(String vlmId, String versionId, String entitlementPoolId,
+                           String limitId, String user) {
+    mdcDataDebugMessage
+        .debugEntryMessage("VLM id, EP id, Limit Id", vlmId, entitlementPoolId, limitId);
 
     MdcUtil.initMdc(LoggerServiceName.Get_LIMIT.toString());
 
-    vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, Version.valueOf
-            (versionId), entitlementPoolId), user);
-    LimitEntity epInput = new LimitEntity();
-    epInput.setVendorLicenseModelId(vlmId);
-    epInput.setVersion(Version.valueOf(versionId));
-    epInput.setEpLkgId(entitlementPoolId);
-    epInput.setId(limitId);
-    LimitEntity limit = vendorLicenseManager.getLimit(epInput, user);
+    Version version = new Version(versionId);
+    vendorLicenseManager
+        .getEntitlementPool(new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
+    LimitEntity limitInput = new LimitEntity();
+    limitInput.setVendorLicenseModelId(vlmId);
+    limitInput.setVersion(version);
+    limitInput.setEpLkgId(entitlementPoolId);
+    limitInput.setId(limitId);
+    LimitEntity limit = vendorLicenseManager.getLimit(limitInput);
 
     LimitEntityDto entitlementPoolEntityDto = limit == null ? null :
-            new MapLimitEntityToLimitDto()
-                    .applyMapping(limit, LimitEntityDto.class);
+        new MapLimitEntityToLimitDto().applyMapping(limit, LimitEntityDto.class);
 
-    mdcDataDebugMessage.debugExitMessage("VLM id, EP id, Limit Id", vlmId, entitlementPoolId,
-            limitId);
+    mdcDataDebugMessage
+        .debugExitMessage("VLM id, EP id, Limit Id", vlmId, entitlementPoolId, limitId);
 
     return Response.ok(entitlementPoolEntityDto).build();
   }
@@ -129,26 +127,27 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
                               String entitlementPoolId,
                               String limitId,
                               String user) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId, "EP id", entitlementPoolId, "limit Id",
-            limitId);
+    mdcDataDebugMessage
+        .debugEntryMessage("VLM id", vlmId, "EP id", entitlementPoolId, "limit Id", limitId);
 
     MdcUtil.initMdc(LoggerServiceName.Update_LIMIT.toString());
 
-    vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, Version.valueOf
-            (versionId), entitlementPoolId), user);
+    Version version = new Version(versionId);
+    vendorLicenseManager
+        .getEntitlementPool(new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
 
     LimitEntity limitEntity =
-            new MapLimitRequestDtoToLimitEntity()
-                    .applyMapping(request, LimitEntity.class);
-    limitEntity.setEpLkgId(entitlementPoolId);
+        new MapLimitRequestDtoToLimitEntity().applyMapping(request, LimitEntity.class);
     limitEntity.setVendorLicenseModelId(vlmId);
+    limitEntity.setVersion(version);
+    limitEntity.setEpLkgId(entitlementPoolId);
     limitEntity.setId(limitId);
     limitEntity.setParent(parent);
 
-    vendorLicenseManager.updateLimit(limitEntity, user);
+    vendorLicenseManager.updateLimit(limitEntity);
 
-    mdcDataDebugMessage.debugExitMessage("VLM id", vlmId, "EP id", entitlementPoolId, "limit Id",
-            limitId);
+    mdcDataDebugMessage
+        .debugExitMessage("VLM id", vlmId, "EP id", entitlementPoolId, "limit Id", limitId);
 
     return Response.ok().build();
   }
@@ -156,29 +155,33 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
   /**
    * Delete entitlement pool.
    *
-   * @param vlmId               the vlm id
-   * @param entitlementPoolId   the entitlement pool id
-   * @param limitId             the limitId
-   * @param user                the user
+   * @param vlmId             the vlm id
+   * @param entitlementPoolId the entitlement pool id
+   * @param limitId           the limitId
+   * @param user              the user
    * @return the response
    */
   public Response deleteLimit(String vlmId, String versionId, String entitlementPoolId,
                               String limitId, String user) {
-    mdcDataDebugMessage.debugEntryMessage("VLM id, Verison Id, EP id, Limit Id", vlmId, versionId, entitlementPoolId, limitId);
-
+    mdcDataDebugMessage.debugEntryMessage("VLM id, Verison Id, EP id, Limit Id", vlmId, versionId,
+        entitlementPoolId, limitId);
     MdcUtil.initMdc(LoggerServiceName.Delete_LIMIT.toString());
-    vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, Version.valueOf
-            (versionId), entitlementPoolId), user);
+
+    Version version = new Version(versionId);
+    vendorLicenseManager.getEntitlementPool(
+        new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
 
     LimitEntity limitInput = new LimitEntity();
     limitInput.setVendorLicenseModelId(vlmId);
+    limitInput.setVersion(version);
     limitInput.setEpLkgId(entitlementPoolId);
     limitInput.setId(limitId);
     limitInput.setParent(parent);
 
-    vendorLicenseManager.deleteLimit(limitInput, user);
+    vendorLicenseManager.deleteLimit(limitInput);
 
-    mdcDataDebugMessage.debugExitMessage("VLM id, Verison Id, EP id, Limit Id", vlmId, versionId, entitlementPoolId, limitId);
+    mdcDataDebugMessage.debugExitMessage("VLM id, Verison Id, EP id, Limit Id", vlmId, versionId,
+        entitlementPoolId, limitId);
 
     return Response.ok().build();
   }

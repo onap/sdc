@@ -22,12 +22,12 @@ package org.openecomp.sdc.enrichment.impl;
 
 import org.openecomp.core.enrichment.api.EnrichmentManager;
 import org.openecomp.core.enrichment.types.EntityInfo;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import org.openecomp.sdc.enrichment.factory.EnricherHandlerFactory;
 import org.openecomp.sdc.enrichment.inter.Enricher;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.versioning.dao.types.Version;
 

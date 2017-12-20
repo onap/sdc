@@ -1,7 +1,5 @@
 package org.openecomp.sdc.generator.core.utils;
 
-import static org.openecomp.sdc.tosca.services.DataModelUtil.addSubstitutionNodeTypeRequirements;
-
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
@@ -28,6 +26,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static org.openecomp.sdc.tosca.services.DataModelUtil.addSubstitutionNodeTypeRequirements;
 
 /**
  * The type Generator utils.

@@ -161,8 +161,14 @@ public enum LoggerServiceName {
 
   CREATE_COMPONENT_DEPENDENCY_MODEL,
   GET_COMPONENT_DEPENDENCY_MODEL,
+  GET_LIST_COMPONENT_DEPENDENCY,
+  CREATE_COMPONENT_DEPENDENCY,
+  UPDATE_COMPONENT_DEPENDENCY,
+  DELETE_COMPONENT_DEPENDENCY,
+  GET_COMPONENT_DEPENDENCY,
 
-  Health_check
+  Health_check,
+  notifications
   ;
 
   public static String getServiceName(LoggerServiceName serviceName) {

@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl;
 
-import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICENSE_MODEL_ARTIFACT_NAME_WITH_PATH;
-import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VNF_ARTIFACT_NAME_WITH_PATH;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
@@ -58,15 +55,14 @@ import static org.openecomp.sdc.vendorlicense.licenseartifacts.impl.util.VendorL
 public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifactsService {
 
   public static final VendorLicenseFacade vendorLicenseFacade =
-          VendorLicenseFacadeFactory.getInstance().createInterface();
+      VendorLicenseFacadeFactory.getInstance().createInterface();
   public static final HealingService healingService =
-          HealingServiceFactory.getInstance().createInterface();
+      HealingServiceFactory.getInstance().createInterface();
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
 
-  private static byte[] createVnfArtifact(String vspId, String vlmId, Version vlmVersion,
-                                          String vendorName,
-                                          List<String> featureGroups, String user) {
+  private static byte[] createVnfArtifact(String vspId, String vlmId, Version vlmVersion, String vendorName,
+                                  List<String> featureGroups) {
 
 
     mdcDataDebugMessage.debugEntryMessage("VLM name", vendorName);
@@ -78,30 +74,31 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
     if (featureGroups != null) {
       for (String featureGroupId : featureGroups) {
         FeatureGroupModel featureGroupModel = vendorLicenseFacade
-                .getFeatureGroupModel(new FeatureGroupEntity(vlmId, vlmVersion, featureGroupId), user);
+            .getFeatureGroupModel(new FeatureGroupEntity(vlmId, vlmVersion, featureGroupId));
         Set<EntitlementPoolEntity> entitlementPoolEntities =
-                featureGroupModel.getEntitlementPools();
+            featureGroupModel.getEntitlementPools();
         for (EntitlementPoolEntity entitlementPoolEntity : entitlementPoolEntities) {
           entitlementPoolEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, vlmVersion,
-                  entitlementPoolEntity.getId(), user));
+              entitlementPoolEntity.getId()));
           entitlementPoolEntity.setManufacturerReferenceNumber(featureGroupModel.
-                  getEntityManufacturerReferenceNumber());
+              getEntityManufacturerReferenceNumber());
         }
+
         Set<LicenseKeyGroupEntity> licenseKeyGroupEntities =
-                featureGroupModel.getLicenseKeyGroups();
+            featureGroupModel.getLicenseKeyGroups();
         for (LicenseKeyGroupEntity licenseKeyGroupEntity : licenseKeyGroupEntities) {
           licenseKeyGroupEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, vlmVersion,
-                  licenseKeyGroupEntity.getId(), user));
+              licenseKeyGroupEntity.getId()));
           licenseKeyGroupEntity.setManufacturerReferenceNumber(featureGroupModel.
-                  getEntityManufacturerReferenceNumber());
+              getEntityManufacturerReferenceNumber());
         }
 
         featureGroupModel.setEntitlementPools(entitlementPoolEntities.stream().map(
-                entitlementPoolEntity -> (EntitlementPoolEntity) healingService
-                        .heal(entitlementPoolEntity, user)).collect(Collectors.toSet()));
+            entitlementPoolEntity -> (EntitlementPoolEntity) healingService
+                .heal(entitlementPoolEntity)).collect(Collectors.toSet()));
         featureGroupModel.setLicenseKeyGroups(licenseKeyGroupEntities.stream().map(
-                licenseKeyGroupEntity -> (LicenseKeyGroupEntity) healingService
-                        .heal(licenseKeyGroupEntity, user)).collect(Collectors.toSet()));
+            licenseKeyGroupEntity -> (LicenseKeyGroupEntity) healingService
+                .heal(licenseKeyGroupEntity)).collect(Collectors.toSet()));
         artifact.getFeatureGroups().add(featureGroupModel);
       }
     }
@@ -110,7 +107,7 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
     return artifact.toXml().getBytes();
   }
 
-  private static byte[] createVendorLicenseArtifact(String vlmId, String vendorName, String user) {
+  private static byte[] createVendorLicenseArtifact(String vlmId, String vendorName) {
 
 
     mdcDataDebugMessage.debugEntryMessage("VLM name", vendorName);
@@ -122,40 +119,37 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
 
     List<Version> finalVersions = getFinalVersionsForVlm(vlmId);
     for (Version finalVersion : finalVersions) {
-      Collection<EntitlementPoolEntity> coll = vendorLicenseFacade.listEntitlementPools(vlmId,
-              finalVersion, user);
-      coll.stream().forEach(entitlementPoolEntity -> {
+      Collection<EntitlementPoolEntity> eps =
+          vendorLicenseFacade.listEntitlementPools(vlmId, finalVersion);
+      eps.forEach(entitlementPoolEntity -> {
         entitlementPoolEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, finalVersion,
-                entitlementPoolEntity.getId(), user));
+            entitlementPoolEntity.getId()));
         Optional<String> manufacturerReferenceNumber = getFeatureGroupManufactureRefNumber
-                (entitlementPoolEntity.getReferencingFeatureGroups(), vlmId, finalVersion, user);
+            (entitlementPoolEntity.getReferencingFeatureGroups(), vlmId, finalVersion);
         manufacturerReferenceNumber
-                .ifPresent(entitlementPoolEntity::setManufacturerReferenceNumber);
+            .ifPresent(entitlementPoolEntity::setManufacturerReferenceNumber);
       });
+      entitlementPoolEntities.addAll(eps);
 
-      entitlementPoolEntities.addAll(coll);
+      Collection<LicenseKeyGroupEntity> lkgs =
+          vendorLicenseFacade.listLicenseKeyGroups(vlmId, finalVersion);
 
-      Collection<LicenseKeyGroupEntity> coll2 = vendorLicenseFacade.listLicenseKeyGroups(vlmId,
-              finalVersion, user);
-
-      coll2.stream().forEach(licenseKeyGroupEntity -> {
+      lkgs.forEach(licenseKeyGroupEntity -> {
         licenseKeyGroupEntity.setLimits(vendorLicenseFacade.listLimits(vlmId, finalVersion,
-                licenseKeyGroupEntity.getId(), user));
+            licenseKeyGroupEntity.getId()));
         Optional<String> manufacturerReferenceNumber = getFeatureGroupManufactureRefNumber
-                (licenseKeyGroupEntity.getReferencingFeatureGroups(), vlmId, finalVersion, user);
+            (licenseKeyGroupEntity.getReferencingFeatureGroups(), vlmId, finalVersion);
         manufacturerReferenceNumber
-                .ifPresent(licenseKeyGroupEntity::setManufacturerReferenceNumber);
+            .ifPresent(licenseKeyGroupEntity::setManufacturerReferenceNumber);
       });
-
-      licenseKeyGroupEntities.addAll(coll2);
+      licenseKeyGroupEntities.addAll(lkgs);
     }
 
+
     entitlementPoolEntities =
-            healEPs(user, filterChangedEntities(prepareForFiltering(entitlementPoolEntities, user,
-                    true)));
+        healEPs(filterChangedEntities(prepareForFiltering(entitlementPoolEntities, true)));
     licenseKeyGroupEntities =
-            healLkgs(user, filterChangedEntities(prepareForFiltering(licenseKeyGroupEntities, user,
-                    false)));
+        healLkgs(filterChangedEntities(prepareForFiltering(licenseKeyGroupEntities, false)));
     vendorLicenseArtifact.setEntitlementPoolEntities(entitlementPoolEntities);
     vendorLicenseArtifact.setLicenseKeyGroupEntities(licenseKeyGroupEntities);
 
@@ -165,21 +159,20 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
 
   private static Optional<String> getFeatureGroupManufactureRefNumber(Set<String> featureGroupIds,
                                                                       String vlmId,
-                                                                      Version finalVersion,
-                                                                      String user) {
+                                                                      Version finalVersion) {
     String manufactureReferenceNumber = null;
     if (CollectionUtils.isNotEmpty(featureGroupIds)) {
       Object[] featureGroupIdsList = featureGroupIds.toArray();
       if (featureGroupIdsList.length > 0) {
         FeatureGroupEntity featureGroup =
-                vendorLicenseFacade.getFeatureGroup(new FeatureGroupEntity(vlmId, finalVersion,
-                        featureGroupIdsList[0].toString()), user);
+            vendorLicenseFacade.getFeatureGroup(new FeatureGroupEntity(vlmId, finalVersion,
+                featureGroupIdsList[0].toString()));
         manufactureReferenceNumber = featureGroup != null ? featureGroup
-                .getManufacturerReferenceNumber() : null;
+            .getManufacturerReferenceNumber() : null;
       }
     }
     return manufactureReferenceNumber != null ? Optional.of(manufactureReferenceNumber) :
-            Optional.empty();
+        Optional.empty();
   }
 
 
@@ -190,22 +183,21 @@ public class VendorLicenseArtifactsServiceImpl implements VendorLicenseArtifacts
    * @param vlmId         vlmId
    * @param vlmVersion    vlmVersion
    * @param featureGroups featureGroups
-   * @param user          user
    * @return FileContentHandler
    */
   public FileContentHandler createLicenseArtifacts(String vspId, String vlmId, Version vlmVersion,
-                                                   List<String> featureGroups, String user) {
+                                                   List<String> featureGroups) {
 
 
     mdcDataDebugMessage.debugEntryMessage("VSP Id", vspId);
 
     FileContentHandler artifacts = new FileContentHandler();
-    String vendorName = getVendorName(vlmId, user);
+    String vendorName = getVendorName(vlmId);
 
     artifacts.addFile(VNF_ARTIFACT_NAME_WITH_PATH,
-            createVnfArtifact(vspId, vlmId, vlmVersion, vendorName, featureGroups, user));
+        createVnfArtifact(vspId, vlmId, vlmVersion, vendorName, featureGroups));
     artifacts.addFile(VENDOR_LICENSE_MODEL_ARTIFACT_NAME_WITH_PATH,
-            createVendorLicenseArtifact(vlmId, vendorName, user));
+        createVendorLicenseArtifact(vlmId, vendorName));
 
     mdcDataDebugMessage.debugExitMessage("VSP Id", vspId);
 

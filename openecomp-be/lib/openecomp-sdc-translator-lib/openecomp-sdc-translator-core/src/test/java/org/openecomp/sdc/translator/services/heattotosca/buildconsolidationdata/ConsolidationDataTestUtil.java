@@ -1,19 +1,5 @@
 package org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata;
 
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.MAIN_SERVICE_TEMPLATE;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_INVALID_DEPENDENCY_CANDIDATE;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_MULTIPLE_COMPUTE;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_IN;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_IN_AND_OUT;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_OUT;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NO_DEPENDENCY;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_MULTIPLE_MULTI_LEVEL_NESTED_RESOURCE;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_MULTIPLE_NESTED_RESOURCE;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_CONNECTION;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_SHARED_PORT;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SECURITY_RULE_PORT_NESTED_CONNECTION;
-import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SINGLE_NESTED_RESOURCE;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Assert;
@@ -50,6 +36,20 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.MAIN_SERVICE_TEMPLATE;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_INVALID_DEPENDENCY_CANDIDATE;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_MULTIPLE_COMPUTE;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_IN;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_IN_AND_OUT;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_OUT;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NO_DEPENDENCY;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_MULTIPLE_MULTI_LEVEL_NESTED_RESOURCE;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_MULTIPLE_NESTED_RESOURCE;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_CONNECTION;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SECURITY_RULE_PORT_MULTI_LEVEL_NESTED_SHARED_PORT;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SECURITY_RULE_PORT_NESTED_CONNECTION;
+import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_SINGLE_NESTED_RESOURCE;
 
 public class ConsolidationDataTestUtil {
 

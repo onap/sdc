@@ -22,7 +22,6 @@ package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslati
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;

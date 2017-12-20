@@ -17,7 +17,8 @@ import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
 	SOFTWARE_PRODUCT_DEPENDENCIES_LIST_UPDATE: null,
-	ADD_SOFTWARE_PRODUCT_DEPENDENCY: null
+	ADD_SOFTWARE_PRODUCT_DEPENDENCY: null,
+	UPDATE_NEW_SOFTWARE_PRODUCT_DEPENDENCY: null
 });
 
 export const relationTypes = {
@@ -27,3 +28,5 @@ export const relationTypes = {
 export const relationTypesOptions = [
     {value: relationTypes.DEPENDS_ON, label: 'Depends On'}
 ];
+
+export const NEW_RULE_TEMP_ID = 'newRuleTempId';

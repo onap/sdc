@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import Input from 'nfvo-components/input/validation/Input.jsx';
@@ -10,35 +11,35 @@ import Validator from 'nfvo-utils/Validator.js';
 import {other as optionInputOther} from 'nfvo-components/input/validation/InputOptions.jsx';
 import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
 
-const LimitPropType = React.PropTypes.shape({
-	id: React.PropTypes.string,
-	name: React.PropTypes.string,
-	description: React.PropTypes.string,
-	metric: React.PropTypes.shape({
-		choice: React.PropTypes.string,
-		other: React.PropTypes.string
+const LimitPropType = PropTypes.shape({
+	id: PropTypes.string,
+	name: PropTypes.string,
+	description: PropTypes.string,
+	metric: PropTypes.shape({
+		choice: PropTypes.string,
+		other: PropTypes.string
 	}),
-	value: React.PropTypes.string,
-	aggregationFunction: React.PropTypes.string,
-	time: React.PropTypes.string,
-	unit: React.PropTypes.shape({
-		choice: React.PropTypes.string,
-		other: React.PropTypes.string
+	value: PropTypes.string,
+	aggregationFunction: PropTypes.string,
+	time: PropTypes.string,
+	unit: PropTypes.shape({
+		choice: PropTypes.string,
+		other: PropTypes.string
 	})
 });
 
 class LimitEditor extends React.Component {
 	static propTypes = {
 		data: LimitPropType,
-		limitsNames: React.PropTypes.object,
-		isReadOnlyMode: React.PropTypes.bool,
-		isFormValid: React.PropTypes.bool,
-		formReady: React.PropTypes.bool,
-		genericFieldInfo: React.PropTypes.object.isRequired,
-		onDataChanged: React.PropTypes.func.isRequired,
-		onSubmit: React.PropTypes.func.isRequired,
-		onValidateForm: React.PropTypes.func.isRequired,
-		onCancel: React.PropTypes.func.isRequired
+		limitsNames: PropTypes.object,
+		isReadOnlyMode: PropTypes.bool,
+		isFormValid: PropTypes.bool,
+		formReady: PropTypes.bool,
+		genericFieldInfo: PropTypes.object.isRequired,
+		onDataChanged: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func.isRequired,
+		onValidateForm: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired
 	};
 
 	componentDidUpdate(prevProps) {
@@ -67,7 +68,7 @@ class LimitEditor extends React.Component {
 					labledButtons={false}
 					isReadOnlyMode={isReadOnlyMode}
 					className='limit-editor-form'>
-					<GridSection className='limit-editor-form-grid-section'>
+					<GridSection className='limit-editor-form-grid-section' hasLastColSet>
 						<GridItem colSpan={2}>
 							<Input
 								onChange={name => onDataChanged({name}, LIMITS_FORM_NAME, {name: () => this.validateName(name)})}
@@ -79,7 +80,7 @@ class LimitEditor extends React.Component {
 								isRequired={true}
 								type='text'/>
 						</GridItem>
-						<GridItem colSpan={2}>
+						<GridItem colSpan={2} lastColInRow>
 							<Input
 								onChange={description => onDataChanged({description}, LIMITS_FORM_NAME)}
 								label={i18n('Description')}
@@ -120,7 +121,7 @@ class LimitEditor extends React.Component {
 								isRequired={true}
 								type='text'/>
 						</GridItem>
-						<GridItem>
+						<GridItem lastColInRow>
 							<InputOptions
 								onInputChange={()=>{}}
 								isMultiSelect={false}

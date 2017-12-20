@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import Form from 'nfvo-components/input/validation/Form.jsx';
@@ -155,14 +156,14 @@ const LogBackupSection = ({dataMap, onQDataChanged, qgenericFieldInfo}) => (
 class SoftwareProductComponentStorageView extends React.Component {
 
 	static propTypes = {
-		componentId: React.PropTypes.string,
-		onQDataChanged: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		isReadOnlyMode: React.PropTypes.bool
+		componentId: PropTypes.string,
+		onQDataChanged: PropTypes.func,
+		onSubmit: PropTypes.func,
+		isReadOnlyMode: PropTypes.bool
 	};
 
 	render() {
-		let {onQDataChanged, dataMap, qGenericFieldInfo, isReadOnlyMode, onSubmit, qdata, version} =  this.props;
+		let {onQDataChanged, dataMap, qGenericFieldInfo, isReadOnlyMode, onSubmit, qdata} =  this.props;
 
 		return(
 			<div className='vsp-component-questionnaire-view'>
@@ -170,7 +171,7 @@ class SoftwareProductComponentStorageView extends React.Component {
 					ref={form => this.form = form }
 					isValid={true}
 					formReady={null}
-					onSubmit={() => onSubmit({qdata, version})}
+					onSubmit={() => onSubmit({qdata})}
 					className='component-questionnaire-validation-form'
 					isReadOnlyMode={isReadOnlyMode}
 					hasButtons={false}>
@@ -183,8 +184,8 @@ class SoftwareProductComponentStorageView extends React.Component {
 	}
 
 	save(){		
-		const {componentData, qdata, onSubmit, version} = this.props;
-		return onSubmit({componentData, qdata, version});		
+		const {qdata, onSubmit} = this.props;
+		return onSubmit({qdata});
 	}
 }
 

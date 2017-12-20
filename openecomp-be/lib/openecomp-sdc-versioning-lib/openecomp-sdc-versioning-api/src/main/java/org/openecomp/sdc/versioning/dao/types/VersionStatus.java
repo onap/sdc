@@ -21,7 +21,7 @@
 package org.openecomp.sdc.versioning.dao.types;
 
 public enum VersionStatus {
-  Available,
-  Locked,
-  Final
+  Draft,
+  Locked, /* todo remove!!*/
+  Certified
 }

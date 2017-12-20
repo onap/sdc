@@ -21,8 +21,8 @@ import GridItem from 'nfvo-components/grid/GridItem.jsx';
 
 const Sizing = ({qgenericFieldInfo, dataMap, onQDataChanged}) => {
 	return(
-		<GridSection title={i18n('Sizing')}>
-			<GridItem colSpan={4}>
+		<GridSection title={i18n('Sizing')} hasLastColSet>
+			<GridItem colSpan={4} lastColInRow>
 				<Input
 					label={i18n('Describe Quality of Service')}
 					type='textarea'

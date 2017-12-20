@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
@@ -23,11 +24,12 @@ import ListEditorItemViewField from 'nfvo-components/listEditor/ListEditorItemVi
 class SoftwareProductNetworksView extends React.Component {
 
 	static propTypes = {
-		networksList: React.PropTypes.arrayOf(React.PropTypes.shape({
-			id: React.PropTypes.string.isRequired,
-			name: React.PropTypes.string.isRequired,
-			dhcp: React.PropTypes.bool.isRequired
-		})).isRequired
+		networksList: PropTypes.arrayOf(PropTypes.shape({
+			id: PropTypes.string.isRequired,
+			name: PropTypes.string.isRequired,
+			dhcp: PropTypes.bool.isRequired
+		})).isRequired,
+		isReadOnlyMode: PropTypes.bool.isRequired
 	};
 
 	state = {
@@ -36,6 +38,7 @@ class SoftwareProductNetworksView extends React.Component {
 
 	render() {
 		const {localFilter} = this.state;
+		const {isReadOnlyMode} = this.props;
 
 		return (
 			<div className='vsp-networks-page'>
@@ -45,19 +48,19 @@ class SoftwareProductNetworksView extends React.Component {
 					placeholder={i18n('Filter Networks')}
 					onFilter={value => this.setState({localFilter: value})}
 					twoColumns>
-					{this.filterList().map(network => this.renderNetworksListItem(network))}
+					{this.filterList().map(network => this.renderNetworksListItem({network, isReadOnlyMode}))}
 				</ListEditorView>
 			</div>
 		);
 	}
 
-	renderNetworksListItem(network) {
+	renderNetworksListItem({network, isReadOnlyMode}) {
 		let {id, name, dhcp} = network;
 		return (
 			<ListEditorItemView
 				key={id}
 				className='list-editor-item-view'
-				isReadOnlyMode={true}>
+				isReadOnlyMode={isReadOnlyMode}>
 
 				<ListEditorItemViewField>
 					<div className='name'>{name}</div>

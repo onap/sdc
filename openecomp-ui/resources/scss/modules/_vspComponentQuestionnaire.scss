@@ -1,6 +1,6 @@
 
 .vsp-component-questionnaire-view {
-  input[type='radio'], input[type='checkbox'] {
+  input[type='checkbox'] {
     &:before {
       border: 1px solid $dark-gray;
       cursor: pointer;
@@ -30,14 +30,13 @@
         .radio-options-content-row {
           display: flex;
           margin-top: -4px;
-          .validation-input-wrapper {
-            width: 240px;
-            margin-right: 7px;
+          .validation-radio-wrapper {
+            margin-right: 20px;
 
             & > .form-group {
               display: flex;
             }
-            .form-group .radio {
+            .form-group .sdc-radio {
               width: auto;
               margin-right: 0;
             }

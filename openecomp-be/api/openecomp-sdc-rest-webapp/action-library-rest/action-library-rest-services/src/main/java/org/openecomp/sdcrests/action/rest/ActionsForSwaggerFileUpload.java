@@ -26,7 +26,6 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.springframework.validation.annotation.Validated;
 
-import java.io.InputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
@@ -38,6 +37,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.InputStream;
 
 
 @Path("/workflow/v1.0/actions")

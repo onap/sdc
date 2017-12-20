@@ -65,8 +65,8 @@ class SoftwareProductComponentsNetworkEditorView extends React.Component {
 	}
 
 	submit() {
-		let {data, qdata, onSubmit, version} = this.props;
-		onSubmit({data, qdata, version});
+		let {data, qdata, onSubmit} = this.props;
+		onSubmit({data, qdata});
 	}
 }
 

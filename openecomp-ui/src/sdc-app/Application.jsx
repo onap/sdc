@@ -14,13 +14,28 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import {Provider} from 'react-redux';
 import GlobalModal from 'nfvo-components/modal/GlobalModal.js';
 import Loader from 'nfvo-components/loader/Loader.jsx';
+import WebSocketUtil from 'nfvo-utils/WebSocketUtil.js';
+import UserNotificationsActionHelper from 'sdc-app/onboarding/userNotifications/UserNotificationsActionHelper.js';
 import store from './AppStore.js';
 
 
 class Application extends React.Component {
+	static propTypes = {
+		openSocket: PropTypes.bool
+	};
+	componentDidMount() {
+		const {openSocket = true} = this.props;
+		if(openSocket) {
+			UserNotificationsActionHelper.notificationsFirstHandling(store.dispatch);
+		}
+	}
+	componentWillUnmount() {
+		WebSocketUtil.close();
+	}
 	render() {
 		return (
 			<Provider store={store}>

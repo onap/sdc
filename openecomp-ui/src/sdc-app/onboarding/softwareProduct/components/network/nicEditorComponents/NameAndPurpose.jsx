@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
@@ -22,7 +23,7 @@ import GridItem from 'nfvo-components/grid/GridItem.jsx';
 const NameAndPurpose = ({onDataChanged, genericFieldInfo, isReadOnlyMode, name, description, isManual}) => {
 
 	return (
-		<GridSection>
+		<GridSection hastLastColSet>
 			<GridItem colSpan={2}>
 				<Input
 					label={i18n('Name')}
@@ -35,24 +36,24 @@ const NameAndPurpose = ({onDataChanged, genericFieldInfo, isReadOnlyMode, name, 
 					errorText={genericFieldInfo['name'].errorText}
 					type='text' />
 			</GridItem>
-			<GridItem colSpan={2}>
+			<GridItem colSpan={2} lastColInRow>
 				<Input
 					label={i18n('Purpose of NIC')}
 					value={description}
 					data-test-id='nic-description'
 					onChange={description => onDataChanged({description})}
 					disabled={isReadOnlyMode}
-					type='textarea'/>
+					type='textarea' />
 			</GridItem>
 		</GridSection>
 	);
 };
 
 NameAndPurpose.PropTypes = {
-	name: React.PropTypes.string,
-	description: React.PropTypes.array,
-	onDataChanged: React.PropTypes.func,
-	isReadOnlyMode: React.PropTypes.bool,
+	name: PropTypes.string,
+	description: PropTypes.array,
+	onDataChanged: PropTypes.func,
+	isReadOnlyMode: PropTypes.bool,
 };
 
 export default NameAndPurpose;

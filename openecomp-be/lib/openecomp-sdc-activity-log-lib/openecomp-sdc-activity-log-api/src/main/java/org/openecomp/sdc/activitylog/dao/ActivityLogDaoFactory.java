@@ -15,8 +15,8 @@
  */
 package org.openecomp.sdc.activitylog.dao;
 
-import org.openecomp.core.factory.api.AbstractFactory;
 import org.openecomp.core.factory.api.AbstractComponentFactory;
+import org.openecomp.core.factory.api.AbstractFactory;
 
 
 public abstract class ActivityLogDaoFactory extends AbstractComponentFactory<ActivityLogDao> {

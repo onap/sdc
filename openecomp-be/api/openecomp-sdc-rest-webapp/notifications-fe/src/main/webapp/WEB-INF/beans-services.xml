@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:websocket="http://www.springframework.org/schema/websocket"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/websocket
+       http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+
+
+    <!-- CXF -->
+    <context:component-scan base-package="org.openecomp.sdcrests"/>
+
+    <!-- Needed for JSR-303 validations. May be removed when moving to JAX-RS 2.0 -->
+    <bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor"/>
+
+    <bean id="jacksonObjectMapper" class="org.codehaus.jackson.map.ObjectMapper">
+        <property name="serializationInclusion" value="NON_NULL"/>
+    </bean>
+
+    <bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider">
+        <property name="mapper" ref="jacksonObjectMapper"/>
+    </bean>
+
+    <!-- WEB-SOCKETS -->
+    <websocket:handlers allowed-origins="*">
+        <websocket:mapping path="/notificationHandler" handler="notificationHandler"/>
+        <websocket:handshake-handler ref="handshakeHandler"/>
+    </websocket:handlers>
+
+    <bean id="newNotificationsReader" class="org.openecomp.sdc.notification.workers.impl.NewNotificationsReaderRestImpl"/>
+
+    <bean id="notificationWorker" class="org.openecomp.sdc.notification.workers.NotificationWorker">
+        <constructor-arg ref="newNotificationsReader"/>
+    </bean>
+
+    <bean id="notificationHandler" class="org.openecomp.sdc.notification.websocket.NotificationWebsocketHandler">
+        <constructor-arg ref="notificationWorker"/>
+    </bean>
+
+    <bean class="org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean">
+        <property name="maxTextMessageBufferSize" value="8192"/>
+        <property name="maxBinaryMessageBufferSize" value="8192"/>
+    </bean>
+
+    <bean id="handshakeHandler" class="org.springframework.web.socket.server.support.DefaultHandshakeHandler">
+        <constructor-arg ref="upgradeStrategy"/>
+    </bean>
+
+    <bean id="upgradeStrategy" class="org.springframework.web.socket.server.jetty.JettyRequestUpgradeStrategy">
+        <constructor-arg ref="serverFactory"/>
+    </bean>
+
+    <bean id="serverFactory" class="org.eclipse.jetty.websocket.server.WebSocketServerFactory">
+        <constructor-arg>
+            <bean class="org.eclipse.jetty.websocket.api.WebSocketPolicy">
+                <constructor-arg value="SERVER"/>
+                <property name="inputBufferSize" value="8092"/>
+                <property name="idleTimeout" value="600000"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+</beans>

@@ -1,0 +1,4 @@
+{
+  "org.openecomp.conflicts.ItemMergeHandlerFactory": "org.openecomp.conflicts.ItemMergeHandlerFactoryImpl",
+  "org.openecomp.conflicts.dao.ConflictsDaoFactory": "org.openecomp.conflicts.dao.impl.zusammen.ConflictsDaoFactoryImpl"
+}

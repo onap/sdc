@@ -47,8 +47,8 @@ import org.openecomp.sdc.tosca.errors.ToscaInvalidSubstituteNodeTemplateErrorBui
 import org.openecomp.sdc.tosca.errors.ToscaMissingSubstitutionMappingForReqCapErrorBuilder;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
-import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
+import org.openecomp.sdc.tosca.services.impl.ToscaAnalyzerServiceImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionDataExtractor;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Component;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;

@@ -5,12 +5,6 @@
   }
 
   .halb-data {
-	.load-balancing-page-title {
-	  @extend .section-title;
-	  &:first-child {
-		padding: 0 0 40px 0;
-	  }
-	}
 	.question {
 	  padding-top: 10px;
 	  &:first-child {

@@ -1,9 +1,8 @@
 package org.openecomp.sdc.validation.impl.validators.namingconvention;
 
-import org.openecomp.sdc.validation.impl.validators.NamingConventionGuideLineValidator;
-
 import org.openecomp.core.validation.types.MessageContainer;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
+import org.openecomp.sdc.validation.impl.validators.NamingConventionGuideLineValidator;
 import org.openecomp.sdc.validation.util.ValidationTestUtil;
 import org.testng.Assert;
 import org.testng.annotations.Test;

@@ -22,7 +22,7 @@ stdin.on('end', function () {
 		console.log('Failure Summary: \n');
 	}
 	report.testResults.forEach((suite) => {
-		if(suite.status == 'failed') {
+		if(suite.status === 'failed') {
 			console.log('Suite: ' + suite.name);
 			suite.assertionResults.forEach((test) => {
 				if (test.status === 'failed') {

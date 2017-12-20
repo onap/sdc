@@ -68,7 +68,7 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
     addArtifactsToManifestFileDataList(filesDataStructure, fileDataList);
     ManifestContent manifestContent = createManifest(vspDetails, fileDataList);
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
     return Optional.of(manifestContent);
   }
 
@@ -76,7 +76,7 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
       FilesDataStructure filesDataStructure, List<FileData> fileDataList) {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
 
     if (CollectionUtils.isNotEmpty(filesDataStructure.getNested())) {
       for (String nested : filesDataStructure.getNested()) {
@@ -84,7 +84,7 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
       }
     }
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   @Override
@@ -168,7 +168,7 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
       FilesDataStructure filesDataStructure, List<FileData> fileDataList) {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
 
     Collection<String> forArtifacts = CollectionUtils
         .union(filesDataStructure.getArtifacts(), filesDataStructure.getUnassigned());
@@ -178,14 +178,14 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
       }
     }
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void addModulesToManifestFileDataList(
       FilesDataStructure filesDataStructure, List<FileData> fileDataList) {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
 
     if (CollectionUtils.isNotEmpty(filesDataStructure.getModules())) {
       for (Module module : filesDataStructure.getModules()) {
@@ -197,7 +197,7 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
       }
     }
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
   }
 
   private void addEnv(Module module, FileData fileData) {

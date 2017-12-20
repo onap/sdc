@@ -28,8 +28,7 @@ import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProdu
 
 public class MonitoringUploadErrorBuilder extends BaseErrorBuilder {
   private static final String UPLOAD_INVALID_DETAILED_MSG =
-      "Monitoring file uploaded for vendor software product with Id %s and version %s is invalid:" +
-          " %s";
+      "Monitoring file uploaded for vendor software product with Id %s and version %s is invalid: %s";
 
 
   /**
@@ -44,7 +43,7 @@ public class MonitoringUploadErrorBuilder extends BaseErrorBuilder {
     getErrorCodeBuilder().withId(MONITORING_UPLOAD_INVALID);
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
     getErrorCodeBuilder().withMessage(String.format(UPLOAD_INVALID_DETAILED_MSG,
-        vendorSoftwareProductId, version == null ? null : version.toString(), error));
+        vendorSoftwareProductId, version == null ? null : version.getId(), error));
   }
 
   /**

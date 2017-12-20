@@ -65,9 +65,7 @@ public interface ArtifactGenerationService {
       MDC.put(ERROR_CATEGORY, CategoryLogLevel.ERROR.name());
       MDC.put(ERROR_CODE, GENERATOR_ERROR_CODE);
       MDC.put(ERROR_DESCRIPTION, GENERATOR_ERROR_SERVICE_INSTANTIATION_FAILED);
-      StringWriter sw = new StringWriter();
-      exception.printStackTrace(new PrintWriter(sw));
-      log.error(sw.toString());
+      log.error(GENERATOR_ERROR_SERVICE_INSTANTIATION_FAILED, exception);
     }
     log.debug(GENERATOR_ERROR_SERVICE_INSTANTIATION_FAILED);
     return null;

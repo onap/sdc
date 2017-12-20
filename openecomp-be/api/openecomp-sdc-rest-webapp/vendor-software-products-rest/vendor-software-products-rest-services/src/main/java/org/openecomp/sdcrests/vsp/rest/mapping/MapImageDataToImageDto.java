@@ -1,6 +1,5 @@
 package org.openecomp.sdcrests.vsp.rest.mapping;
 
-import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ImageData;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ImageDto;

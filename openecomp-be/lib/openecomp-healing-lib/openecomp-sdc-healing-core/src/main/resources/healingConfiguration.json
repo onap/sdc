@@ -1,13 +1,19 @@
 {
-  "FILE_DATA_STRUCTURE_HEALER" : "org.openecomp.sdc.healing.healers.FileDataStructureHealer",
-  "QUESTIONNAIRE_HEALER" : "org.openecomp.sdc.healing.healers.VspQuestionnaireHealer",
-  "COMPOSITION_DATA_HEALER" : "org.openecomp.sdc.healing.healers.CompositionDataHealer",
-  "SUB_ENTITIES_HEALER" : "org.openecomp.sdc.healing.healers.SubEntitiesQuestionnaireHealer",
-  "ONBOARDING_METHOD_HEALER" : "org.openecomp.sdc.healing.healers.VspOnboardingMethodHealer",
-  "NIC_DATA_HEALER" : "org.openecomp.sdc.healing.healers.NicDataHealer",
-  "COMPONENT_QUESTIONNAIRE_HEALER" : "org.openecomp.sdc.healing.healers.ComponentQuestionnaireHealer",
-  "HEAT_TOSCA_TRANSLATION_HEALER" : "org.openecomp.sdc.healing.healers.HeatToToscaTranslationHealer",
-  "VLM_VERSION_HEALER" : "org.openecomp.sdc.healing.healers.VlmVersionHealer",
-  "VALIDATION_STRUCTURE_HEALER" : "org.openecomp.sdc.healing.healers.ValidationStructureHealer",
-  "FORWARDER_CAPABILITY_HEALER" : "org.openecomp.sdc.healing.healers.ForwarderCapabilityHealer"
+    "VendorSoftwareProduct" : {
+      "VSP_OWNER_HEALER" : "org.openecomp.sdc.healing.healers.VspOwnerHealer",
+      "FILE_DATA_STRUCTURE_HEALER" : "org.openecomp.sdc.healing.healers.FileDataStructureHealer",
+      "QUESTIONNAIRE_HEALER" : "org.openecomp.sdc.healing.healers.VspQuestionnaireHealer",
+      "COMPOSITION_DATA_HEALER" : "org.openecomp.sdc.healing.healers.CompositionDataHealer",
+      "SUB_ENTITIES_HEALER" : "org.openecomp.sdc.healing.healers.SubEntitiesQuestionnaireHealer",
+      "ONBOARDING_METHOD_HEALER" : "org.openecomp.sdc.healing.healers.VspOnboardingMethodHealer",
+      "NIC_DATA_HEALER" : "org.openecomp.sdc.healing.healers.NicDataHealer",
+      "COMPONENT_QUESTIONNAIRE_HEALER" : "org.openecomp.sdc.healing.healers.ComponentQuestionnaireHealer",
+      "HEAT_TOSCA_TRANSLATION_HEALER" : "org.openecomp.sdc.healing.healers.HeatToToscaTranslationHealer",
+      "VLM_VERSION_HEALER" : "org.openecomp.sdc.healing.healers.VlmVersionHealer",
+      "VALIDATION_STRUCTURE_HEALER" : "org.openecomp.sdc.healing.healers.ValidationStructureHealer",
+      "FORWARDER_CAPABILITY_HEALER" : "org.openecomp.sdc.healing.healers.ForwarderCapabilityHealer"
+    },
+    "VendorLicenseModel" : {
+      "VLM_OWNER_HEALER" : "org.openecomp.sdc.healing.healers.VlmOwnerHealer"
+    }
 }

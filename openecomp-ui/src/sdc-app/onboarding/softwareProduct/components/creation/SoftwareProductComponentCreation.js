@@ -21,23 +21,22 @@ import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import {forms} from '../SoftwareProductComponentsConstants.js';
 
 export const mapStateToProps = ({softwareProduct}) => {
-	let {softwareProductComponents: {componentEditor: {data, genericFieldInfo, formReady}}, softwareProductEditor: {data: {version}}} = softwareProduct;
+	let {softwareProductComponents: {componentEditor: {data, genericFieldInfo, formReady}}} = softwareProduct;
 	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 	return {
 		data,
 		genericFieldInfo,
 		formReady,
-		isFormValid,
-		version
+		isFormValid
 	};
 };
 
 
-const mapActionsToProps = (dispatch, {softwareProductId}) => {
+const mapActionsToProps = (dispatch, {softwareProductId, version}) => {
 	return {
 		onDataChanged: (deltaData) => ValidationHelper.dataChanged(dispatch, {deltaData, formName: forms.CREATE_FORM}),
 		//onDataChanged: deltaData => SoftwareProductComponentsActionHelper.componentDataChanged(dispatch, {deltaData}),
-		onSubmit: (componentData, version) => {
+		onSubmit: (componentData) => {
 			return SoftwareProductComponentsActionHelper.createSoftwareProductComponent(dispatch,
 			{softwareProductId, componentData, version});
 		},

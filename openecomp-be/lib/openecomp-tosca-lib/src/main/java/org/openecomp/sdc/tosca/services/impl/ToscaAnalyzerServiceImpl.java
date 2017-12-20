@@ -53,8 +53,8 @@ import org.openecomp.sdc.tosca.errors.ToscaNodeTypeNotFoundErrorBuilder;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
-import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
+import org.openecomp.sdc.tosca.services.ToscaUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;

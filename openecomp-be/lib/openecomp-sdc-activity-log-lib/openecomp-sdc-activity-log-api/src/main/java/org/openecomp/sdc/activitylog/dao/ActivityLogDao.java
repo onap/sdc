@@ -18,10 +18,6 @@ package org.openecomp.sdc.activitylog.dao;
 
 import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
-import org.openecomp.sdc.versioning.dao.types.Version;
-
-import java.util.Collection;
 
 public interface ActivityLogDao extends BaseDao<ActivityLogEntity> {
-    Collection<ActivityLogEntity> getActivityLogListForItem(String itemId, String versionId);
 }

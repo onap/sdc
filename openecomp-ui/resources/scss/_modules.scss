@@ -23,4 +23,8 @@
 @import "modules/uploadScreen";
 @import "modules/vspHeatSetup";
 @import "modules/softwareProductDependencies";
+@import "modules/_permissions.scss";
+@import "modules/_revisions.scss";
 @import "modules/softwareProductDeployment";
+@import "modules/versionsPage";
+@import "modules/mergeEditor";

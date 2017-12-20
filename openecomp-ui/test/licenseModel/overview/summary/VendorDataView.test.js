@@ -33,7 +33,6 @@ describe('License Model Overview Summary module test', () => {
 		};
 
 		var props = mapStateToProps(state);
-		expect(props.isReadOnlyMode).toEqual(true);
 		expect(props.description).toEqual(undefined);
 		expect(props.data).toEqual(state.licenseModel.licenseModelEditor.data);
 
@@ -41,7 +40,7 @@ describe('License Model Overview Summary module test', () => {
 
 	it('jsx view test', () => {
 		var data = LicenseModelStoreFactory.build();
-		var view = TestUtils.renderIntoDocument(<VendorDataView isReadOnlyMode={false} description='' data={data} genericFieldInfo={{description: {isValid: true}}}/>);
+		var view = TestUtils.renderIntoDocument(<VendorDataView description='' data={data} genericFieldInfo={{description: {isValid: true}}}/>);
 		expect(view).toBeTruthy();
 	});
 

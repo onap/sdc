@@ -23,6 +23,19 @@
     </listener>
 
     <filter>
+        <filter-name>PermissionsFilter</filter-name>
+        <filter-class>org.openecomp.sdc.itempermissions.servlet.PermissionsFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>PermissionsFilter</filter-name>
+        <url-pattern>/v1.0/vendor-license-models/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>PermissionsFilter</filter-name>
+        <url-pattern>/v1.0/vendor-software-products/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
         <filter-name>cross-origin</filter-name>
         <filter-class>org.eclipse.jetty.servlets.CrossOriginFilter</filter-class>
         <init-param>
@@ -68,6 +81,22 @@
         <filter-name>LoggingServletFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    <filter>
+        <filter-name>SessionContextFilter</filter-name>
+        <filter-class>org.openecomp.server.filters.SessionContextFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SessionContextFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!-- Spring WS Mapping -->
+    <servlet>
+        <servlet-name>spring-mapper</servlet-name>
+        <servlet-class>
+            org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
     <!-- CXF -->
     <servlet>
         <servlet-name>CXFServlet</servlet-name>
@@ -94,7 +123,10 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <!--servlet-name>logger-aspect</servlet-name-->
+        <servlet-name>spring-mapper</servlet-name>
+        <url-pattern>/ws/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>CXFServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>

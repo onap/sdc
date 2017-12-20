@@ -17,27 +17,6 @@
     .list-editor-view-title {
       @extend .heading-3-semibold;
     }
-    .list-editor-view-add-controller {
-      @extend .body-1-semibold;
-      color: $blue;
-      display: table;
-      cursor: pointer;
-      position: relative;
-      padding-top: 0;
-      padding-bottom: 0;
-      margin-left: auto;
-      .list-editor-view-add-title {
-        display: flex;
-      }
-      span {
-        display: table-cell;
-        vertical-align: middle;
-        margin-top:4px;
-        &:nth-child(2) {
-          padding-left: 10px;
-        }
-      }
-    }
   }
 
   .list-editor-view-list-scroller {
@@ -68,9 +47,6 @@
           overflow-wrap: break-word;
           white-space: initial;
 
-          .description {
-            @include multiline-ellipsis(1.3em, 3);
-          }
 
           .number-field {
             align-content: center;
@@ -81,6 +57,9 @@
             &:not(:first-child) {
               line-height: 0.9;
             }
+          }
+          .description {
+            @include multiline-ellipsis(1.3em, 3);
           }
           .text {
             @extend .body-1;
@@ -105,9 +84,8 @@
           }
         }
         .svg-icon {
+          margin-top: 5px;
           transition: fill .3s;
-          height: 18px;
-          width: 18px;
           fill: $white;
         }
       }

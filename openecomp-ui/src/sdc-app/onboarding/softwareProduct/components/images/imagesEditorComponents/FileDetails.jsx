@@ -26,8 +26,8 @@ import Version from './Version.jsx';
 const FileDetails = ({editingMode, fileName, onDataChanged, isManual, dataMap, onQDataChanged, genericFieldInfo, qgenericFieldInfo}) => {
 	let fileNameCols = (editingMode) ? 3 : 4;
 	return(
-		<GridSection>
-			<GridItem colSpan={fileNameCols}>
+		<GridSection hasLastColSset>
+			<GridItem colSpan={fileNameCols} lastColInRow={!editingMode}>
 				<Input
 					disabled={!isManual}
 					onChange={fileName => onDataChanged({fileName}, forms.IMAGE_EDIT_FORM)}

@@ -24,11 +24,15 @@ import {mapStateToProps} from 'sdc-app/common/activity-log/ActivityLog.js';
 import {storeCreator} from 'sdc-app/AppStore.js';
 import mockRest from 'test-utils/MockRest.js';
 import {ActivityLogStoreFactory} from 'test-utils/factories/activity-log/ActivityLogFactories.js';
-import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
+import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
+import {UserFactory} from 'test-utils/factories/users/UsersFactories.js';
+
+import {actionTypes as userActionTypes} from 'sdc-app/onboarding/users/UsersConstants.js';
 
 describe('Activity Log Module Tests', function () {
 	const LICENSE_MODEL_ID = '555';
-	const version = VersionControllerUtilsFactory.build().version;
+	const version = VersionFactory.build();
+	const usersList = UserFactory.buildList(3);
 
 	it('mapStateToProps mapper exists', () => {
 		expect(mapStateToProps).toBeTruthy();
@@ -37,11 +41,15 @@ describe('Activity Log Module Tests', function () {
 	it('Loads Activity Log and renders into jsx', () => {
 		const store = storeCreator();
 		const dispatch = store.dispatch;
-		let ActivityLogList = ActivityLogStoreFactory.buildList(1);
+		dispatch({
+			type: userActionTypes.USERS_LIST_LOADED,
+			usersList
+		});
+		let ActivityLogList = ActivityLogStoreFactory.buildList(1, {user: usersList[0].userId});
 		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.activityLog', ActivityLogList);
 
 		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/activity-logs/${LICENSE_MODEL_ID}/versions/${version.id}`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/items/${LICENSE_MODEL_ID}/versions/${version.id}/activity-logs`);
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
 			return {results: ActivityLogList};
@@ -51,7 +59,9 @@ describe('Activity Log Module Tests', function () {
 			const state = store.getState();
 			expect(state).toEqual(expectedStore);
 			const props = mapStateToProps(state);
-			expect(props.activities).toEqual(ActivityLogList);
+			expect(props.activities).toEqual(ActivityLogList.map(activity =>
+				({...activity, user: {id: activity.user, name: usersList.find(userObject => userObject.userId === activity.user).fullName}})
+			));
 			const wrapper = mount(<ActivityLogView {...props}/>);
 			expect(wrapper).toBeTruthy();
 		});
@@ -65,9 +75,9 @@ describe('Activity Log Module Tests', function () {
 		const firstTimestamp = firstDate.getTime();
 		const secondTimestamp = secondDate.getTime();
 
-		let firstActivity = ActivityLogStoreFactory.build({user: 'first', timestamp: firstTimestamp});
-		let secondActivity = ActivityLogStoreFactory.build({user: 'second', timestamp: secondTimestamp, status: {success: false, message: 'error'}});
-		let props = mapStateToProps({licenseModel: {activityLog: [firstActivity, secondActivity]}});
+		let firstActivity = ActivityLogStoreFactory.build({user: usersList[0].userId, timestamp: firstTimestamp});
+		let secondActivity = ActivityLogStoreFactory.build({user: usersList[1].userId, timestamp: secondTimestamp, status: {success: false, message: 'error'}});
+		let props = mapStateToProps({users: {usersList}, licenseModel: {activityLog: [firstActivity, secondActivity]}});
 		const wrapper = mount(<ActivityLogView {...props}/>);
 		expect(wrapper.find(ActivityListItem).length).toEqual(3); // Includes Header component
 
@@ -82,8 +92,8 @@ describe('Activity Log Module Tests', function () {
 		expect(newFirstInstanceProps.activity.timestamp).toEqual(firstTimestamp);
 
 		const listEditor = wrapper.find(ListEditorView);
-		listEditor.props().onFilter('second');
+		listEditor.props().onFilter(usersList[1].fullName);
 		expect(wrapper.find(ActivityListItem).length).toEqual(2);
-		expect(wrapper.find(ActivityListItem).at(1).props().activity.user).toEqual('second');
+		expect(wrapper.find(ActivityListItem).at(1).props().activity.user.name).toEqual(usersList[1].fullName);
 	});
 });

@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import Modal from 'nfvo-components/modal/Modal.jsx';
@@ -25,7 +26,7 @@ import {actionTypes, typeEnum} from './GlobalModalConstants.js';
 
 
 const typeClass = {
-	'default': 'default',
+	'default': 'primary',
 	error: 'negative',
 	warning: 'warning',
 	success: 'positive'
@@ -47,11 +48,11 @@ const ModalFooter = ({type, onConfirmed, onDeclined, onClose, confirmationButton
 	return (
 		<Modal.Footer>
 			<div className='sdc-modal-footer'>
-				{onConfirmed && <Button color={typeClass[type]} onClick={() => {
+				{onConfirmed && <Button data-test-id='sdc-modal-confirm-button' color={typeClass[type]} onClick={() => {
 					onConfirmed();
 					onClose();
 				}}>{confirmationButtonText}</Button>}
-				<Button {...myPropsForNoConfirmed} color={typeClass[type]} onClick={onDeclined ? () => {
+				<Button {...myPropsForNoConfirmed} data-test-id='sdc-modal-cancel-button' btnType='outline' color={typeClass[type]} onClick={onDeclined ? () => {
 					onDeclined();
 					onClose();} : () => onClose()}>
 					{cancelButtonText}
@@ -85,15 +86,15 @@ export const mapActionToProps = (dispatch) => {
 export class  GlobalModalView extends React.Component {
 
 	static propTypes = {
-		show: React.PropTypes.bool,
-		type: React.PropTypes.oneOf(['default', 'error', 'warning', 'success']),
-		title: React.PropTypes.string,
-		modalComponentProps: React.PropTypes.object,
-		modalComponentName: React.PropTypes.string,
-		onConfirmed: React.PropTypes.func,
-		onDeclined: React.PropTypes.func,
-		confirmationButtonText: React.PropTypes.string,
-		cancelButtonText: React.PropTypes.string
+		show: PropTypes.bool,
+		type: PropTypes.oneOf(['default', 'error', 'warning', 'success']),
+		title: PropTypes.string,
+		modalComponentProps: PropTypes.object,
+		modalComponentName: PropTypes.string,
+		onConfirmed: PropTypes.func,
+		onDeclined: PropTypes.func,
+		confirmationButtonText: PropTypes.string,
+		cancelButtonText: PropTypes.string
 	};
 
 	static defaultProps = {
@@ -115,7 +116,7 @@ export class  GlobalModalView extends React.Component {
 					{ComponentToRender ?
 						<ComponentToRender {...modalComponentProps}/> :
 						msg && typeof msg === 'string' ?
-							<div> {msg.split('\n').map(txt => <span> {txt} <br/> </span>)} </div> :
+							<div> {msg.split('\n').map((txt, i) => <span key={i}> {txt} <br/> </span>)} </div> :
 							msg
 					}
 				</Modal.Body>

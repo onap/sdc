@@ -21,25 +21,31 @@
 package org.openecomp.sdc.versioning.impl;
 
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorCode;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
+import org.openecomp.sdc.versioning.ItemManager;
+import org.openecomp.sdc.versioning.VersionCalculator;
 import org.openecomp.sdc.versioning.VersioningManager;
+import org.openecomp.sdc.versioning.dao.VersionDao;
 import org.openecomp.sdc.versioning.dao.VersionInfoDao;
 import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDao;
 import org.openecomp.sdc.versioning.dao.VersionableEntityDaoFactory;
+import org.openecomp.sdc.versioning.dao.types.Revision;
+import org.openecomp.sdc.versioning.dao.types.SynchronizationState;
 import org.openecomp.sdc.versioning.dao.types.UserCandidateVersion;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.dao.types.VersionHistoryEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionInfoDeletedEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
-import org.openecomp.sdc.versioning.dao.types.VersionType;
-import org.openecomp.sdc.versioning.dao.types.VersionableEntityId;
 import org.openecomp.sdc.versioning.errors.CheckinOnEntityLockedByOtherErrorBuilder;
 import org.openecomp.sdc.versioning.errors.CheckinOnUnlockedEntityErrorBuilder;
 import org.openecomp.sdc.versioning.errors.CheckoutOnLockedEntityErrorBuilder;
@@ -52,6 +58,7 @@ import org.openecomp.sdc.versioning.errors.EntityNotExistErrorBuilder;
 import org.openecomp.sdc.versioning.errors.SubmitLockedEntityNotAllowedErrorBuilder;
 import org.openecomp.sdc.versioning.errors.UndoCheckoutOnEntityLockedByOtherErrorBuilder;
 import org.openecomp.sdc.versioning.errors.UndoCheckoutOnUnlockedEntityErrorBuilder;
+import org.openecomp.sdc.versioning.types.VersionCreationMethod;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
@@ -66,18 +73,27 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class VersioningManagerImpl implements VersioningManager {
-
+  private static final Logger LOGGER = LoggerFactory.getLogger(VersioningManagerImpl.class);
   private static final Version INITIAL_ACTIVE_VERSION = new Version(0, 0);
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static Map<String, Set<VersionableEntityMetadata>> versionableEntities = new HashMap<>();
 
-  private VersionInfoDao versionInfoDao;
-  private VersionInfoDeletedDao versionInfoDeletedDao;
+  private final VersionInfoDao versionInfoDao;
+  private final VersionInfoDeletedDao versionInfoDeletedDao;
+  private VersionDao versionDao;
+  private VersionCalculator versionCalculator;
+  private ItemManager itemManager;
 
   public VersioningManagerImpl(VersionInfoDao versionInfoDao,
-                               VersionInfoDeletedDao versionInfoDeletedDao) {
+                               VersionInfoDeletedDao versionInfoDeletedDao,
+                               VersionDao versionDao,
+                               VersionCalculator versionCalculator,
+                               ItemManager itemManager) {
     this.versionInfoDao = versionInfoDao;
     this.versionInfoDeletedDao = versionInfoDeletedDao;
+    this.versionDao = versionDao;
+    this.versionCalculator = versionCalculator;
+    this.itemManager = itemManager;
   }
 
   private static VersionInfo getVersionInfo(VersionInfoEntity versionInfoEntity, String user,
@@ -146,8 +162,12 @@ public class VersioningManagerImpl implements VersioningManager {
     VersionInfo versionInfo = new VersionInfo();
     versionInfo.setStatus(status);
     activeVersion.setStatus(status);
-    if(latestFinalVersion!= null) latestFinalVersion.setStatus(status);
-    if(viewableVersions != null) viewableVersions.forEach(version->version.setStatus(status));
+    if (latestFinalVersion != null) {
+      latestFinalVersion.setStatus(status);
+    }
+    if (viewableVersions != null) {
+      viewableVersions.forEach(version -> version.setStatus(status));
+    }
     versionInfo.setActiveVersion(activeVersion);
     versionInfo.setLatestFinalVersion(latestFinalVersion);
     versionInfo.setViewableVersions(toSortedList(viewableVersions));
@@ -166,11 +186,9 @@ public class VersioningManagerImpl implements VersioningManager {
 
   private static List<Version> toSortedList(
       Set<Version> versions) { // changing the Set to List in DB will require migration...
-    return versions.stream().sorted((o1, o2) -> {
-      return o1.getMajor() > o2.getMajor() ? 1
-          : o1.getMajor() == o2.getMajor() ? (o1.getMinor() > o2.getMinor() ? 1
-              : o1.getMinor() == o2.getMinor() ? 0 : -1) : -1;
-    }).collect(Collectors.toList());
+    return versions.stream().sorted((o1, o2) -> o1.getMajor() > o2.getMajor() ? 1
+        : o1.getMajor() == o2.getMajor() ? (o1.getMinor() > o2.getMinor() ? 1
+            : o1.getMinor() == o2.getMinor() ? 0 : -1) : -1).collect(Collectors.toList());
   }
 
   private static List<Version> getFinalVersions(Set<Version> versions) {
@@ -263,8 +281,8 @@ public class VersioningManagerImpl implements VersioningManager {
             LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't checkout versionable entity");
         throw new CoreException(new CheckoutOnLockedEntityErrorBuilder(entityType, entityId,
             versionInfoEntity.getCandidate().getUser()).build());
-      case Final:
-      case Available:
+      case Certified:
+      case Draft:
         checkoutVersion = doCheckout(versionInfoEntity, user);
         break;
       default:
@@ -300,8 +318,8 @@ public class VersioningManagerImpl implements VersioningManager {
         }
         activeVersion = undoCheckout(versionInfoEntity);
         break;
-      case Final:
-      case Available:
+      case Certified:
+      case Draft:
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
             LoggerTragetServiceName.UNDO_CHECKOUT_ENTITY, ErrorLevel.ERROR.name(),
             LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
@@ -320,8 +338,9 @@ public class VersioningManagerImpl implements VersioningManager {
     deleteVersionFromEntity(versionInfoEntity.getEntityType(), versionInfoEntity.getEntityId(),
         versionInfoEntity.getCandidate().getVersion(), versionInfoEntity.getActiveVersion());
 
-    versionInfoEntity.setStatus(versionInfoEntity.getActiveVersion().isFinal() ? VersionStatus.Final
-        : VersionStatus.Available);
+    versionInfoEntity
+        .setStatus(versionInfoEntity.getActiveVersion().isFinal() ? VersionStatus.Certified
+            : VersionStatus.Draft);
     versionInfoEntity.setCandidate(null);
     versionInfoDao.update(versionInfoEntity);
     return versionInfoEntity.getActiveVersion();
@@ -341,8 +360,8 @@ public class VersioningManagerImpl implements VersioningManager {
 
     Version checkedInVersion = null;
     switch (versionInfoEntity.getStatus()) {
-      case Available:
-      case Final:
+      case Draft:
+      case Certified:
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
             LoggerTragetServiceName.CHECKIN_ENTITY, ErrorLevel.ERROR.name(),
             LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't checkin versionable entity");
@@ -379,7 +398,7 @@ public class VersioningManagerImpl implements VersioningManager {
 
     Version submitVersion = null;
     switch (versionInfoEntity.getStatus()) {
-      case Final:
+      case Certified:
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
             LoggerTragetServiceName.SUBMIT_ENTITY, ErrorLevel.ERROR.name(),
             LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't submit versionable entity");
@@ -391,7 +410,7 @@ public class VersioningManagerImpl implements VersioningManager {
             LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't submit versionable entity");
         throw new CoreException(new SubmitLockedEntityNotAllowedErrorBuilder(entityType, entityId,
             versionInfoEntity.getCandidate().getUser()).build());
-      case Available:
+      case Draft:
         submitVersion = doSubmit(versionInfoEntity, user, submitDescription);
         break;
       default:
@@ -444,6 +463,143 @@ public class VersioningManagerImpl implements VersioningManager {
     return activeVersions;
   }
 
+  @Override
+  public List<Version> list(String itemId) {
+
+    List<Version> versions = versionDao.list(itemId);
+    Set<String> versionsNames = versions.stream().map(Version::getName).collect(Collectors.toSet());
+    versions.forEach(version -> {
+      version.setAdditionalInfo(new HashMap<>());
+      versionCalculator.injectAdditionalInfo(version, versionsNames);
+    });
+    return versions;
+  }
+
+  @Override
+  public Version get(String itemId, Version version) {
+    return versionDao.get(itemId, version)
+        .map(retrievedVersion -> getUpdateRetrievedVersion(itemId, retrievedVersion))
+        .orElseGet(() -> getSyncedVersion(itemId, version));
+  }
+
+  private Version getUpdateRetrievedVersion(String itemId, Version version) {
+    if (version.getStatus() == VersionStatus.Certified &&
+        (version.getState().getSynchronizationState() == SynchronizationState.OutOfSync ||
+            version.getState().isDirty())) {
+      forceSync(itemId, version);
+      LOGGER.info("Item Id {}, version Id {}: Force sync is done", itemId, version.getId());
+      version = versionDao.get(itemId, version)
+          .orElseThrow(() -> new IllegalStateException(
+              "Get version after a successful force sync must return the version"));
+    }
+    return version;
+  }
+
+  private Version getSyncedVersion(String itemId, Version version) {
+    sync(itemId, version);
+    LOGGER.info("Item Id {}, version Id {}: First time sync is done", itemId, version.getId());
+    return versionDao.get(itemId, version)
+        .orElseThrow(() -> new IllegalStateException(
+            "Get version after a successful sync must return the version"));
+  }
+
+  @Override
+  public Version create(String itemId, Version version, VersionCreationMethod creationMethod) {
+    String baseVersionName = null;
+    if (version.getBaseId() == null) {
+      version.setDescription("Initial version");
+    } else {
+      baseVersionName = get(itemId, new Version(version.getBaseId())).getName();
+    }
+    String versionName = versionCalculator.calculate(baseVersionName, creationMethod);
+    validateVersionName(itemId, versionName);
+    version.setName(versionName);
+
+    versionDao.create(itemId, version);
+    itemManager.updateVersionStatus(itemId, VersionStatus.Draft, null);
+
+    publish(itemId, version, String.format("Initial version: %s ", version.getName()));
+    return version;
+  }
+
+  private void validateVersionName(String itemId, String versionName) {
+    if (versionDao.list(itemId).stream()
+        .anyMatch(version -> versionName.equals(version.getName()))) {
+      String errorDescription = String
+          .format("Item %s: create version failed, a version with the name %s already exist",
+              itemId, versionName);
+
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY,
+          LoggerTragetServiceName.CREATE_VERSION, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), errorDescription);
+
+      throw new CoreException(new ErrorCode.ErrorCodeBuilder()
+          .withCategory(ErrorCategory.APPLICATION)
+          .withId("VERSION_NAME_ALREADY_EXIST")
+          .withMessage(errorDescription)
+          .build());
+    }
+  }
+
+  @Override
+  public void submit(String itemId, Version version, String submitDescription) {
+    version = get(itemId, version);
+
+    validateSubmit(itemId, version);
+
+    version.setStatus(VersionStatus.Certified);
+    versionDao.update(itemId, version);
+
+    publish(itemId, version, submitDescription);
+
+    itemManager.updateVersionStatus(itemId, VersionStatus.Certified, VersionStatus.Draft);
+  }
+
+  private void validateSubmit(String itemId, Version version) {
+    if (version.getStatus() == VersionStatus.Certified) {
+      String errorDescription = String
+          .format("Item %s: submit version failed, version %s is already Certified", itemId,
+              version.getId());
+
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.SUBMIT_ENTITY, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), errorDescription);
+
+      throw new CoreException(new ErrorCode.ErrorCodeBuilder()
+          .withCategory(ErrorCategory.APPLICATION)
+          .withId("VERSION_ALREADY_CERTIFIED")
+          .withMessage(errorDescription)
+          .build());
+    }
+  }
+
+  @Override
+  public void publish(String itemId, Version version, String message) {
+    versionDao.publish(itemId, version, message);
+  }
+
+
+  @Override
+  public void sync(String itemId, Version version) {
+    versionDao.sync(itemId, version);
+  }
+
+  @Override
+  public void forceSync(String itemId, Version version) {
+    versionDao.forceSync(itemId, version);
+  }
+
+  @Override
+  public void revert(String itemId, Version version, String revisionId) {
+    versionDao.revert(itemId, version, revisionId);
+  }
+
+  @Override
+  public List<Revision> listRevisions(String itemId, Version version) {
+    return versionDao.listRevisions(itemId, version);
+
+  }
+
   private void markAsCheckedOut(VersionInfoEntity versionInfoEntity, String checkingOutUser) {
     versionInfoEntity.setStatus(VersionStatus.Locked);
     versionInfoEntity.setCandidate(new UserCandidateVersion(checkingOutUser,
@@ -491,7 +647,7 @@ public class VersioningManagerImpl implements VersioningManager {
     versionInfoEntity.setCandidate(null);
     versionInfoEntity.setActiveVersion(userCandidateVersion.getVersion());
     versionInfoEntity.getViewableVersions().add(versionInfoEntity.getActiveVersion());
-    versionInfoEntity.setStatus(VersionStatus.Available);
+    versionInfoEntity.setStatus(VersionStatus.Draft);
 
     closeVersionOnEntity(versionInfoEntity.getEntityType(), versionInfoEntity.getEntityId(),
         versionInfoEntity.getActiveVersion());
@@ -519,20 +675,10 @@ public class VersioningManagerImpl implements VersioningManager {
     versionInfoEntity.setViewableVersions(viewableVersions);
     versionInfoEntity.setActiveVersion(finalVersion);
     versionInfoEntity.setLatestFinalVersion(finalVersion);
-    versionInfoEntity.setStatus(VersionStatus.Final);
+    versionInfoEntity.setStatus(VersionStatus.Certified);
     versionInfoDao.update(versionInfoEntity);
 
     return finalVersion;
-  }
-
-  private void createVersionHistory(VersionableEntityId entityId, Version version, String user,
-                                    String description, VersionType type) {
-    VersionHistoryEntity versionHistory = new VersionHistoryEntity(entityId);
-    versionHistory.setVersion(version);
-    versionHistory.setUser(user);
-    versionHistory.setDescription(description);
-    versionHistory.setType(type);
-    //versionHistoryDao.create(versionHistory);
   }
 
   private void initVersionOnEntity(String entityType, String entityId, Version baseVersion,

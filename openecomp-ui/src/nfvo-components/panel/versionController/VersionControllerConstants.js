@@ -16,26 +16,9 @@
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionsEnum = keyMirror({
-	CHECK_IN: 'Checkin',
-	CHECK_OUT: 'Checkout',
-	UNDO_CHECK_OUT: 'Undo_Checkout',
+	REVERT: 'Revert',
+	SYNC: 'Sync',
 	SUBMIT: 'Submit',
+	COMMIT: 'Commit',
 	CREATE_PACKAGE: 'Create_Package'
 });
-
-export const statusEnum = keyMirror({
-	CHECK_OUT_STATUS: 'Locked',
-	CHECK_IN_STATUS: 'Available',
-	SUBMIT_STATUS: 'Final',
-	LOCK_STATUS: 'LockedByUser',
-	PREVIOUS_VERSION: 'READ ONLY'
-});
-
-export const statusBarTextMap = keyMirror({
-	'Locked': 'Checked Out',
-	'LockedByUser': 'Locked',
-	'Available': 'Checked In',
-	'Final': 'Submitted',
-	'READ ONLY': 'Locked'
-});
-

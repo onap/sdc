@@ -1,8 +1,5 @@
 package org.openecomp.sdcrests.vendorlicense.rest;
 
-import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -24,8 +21,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-key-groups" +
-    "/{licenseKeyGroupId}/limits")
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
+
+@Path(
+    "/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-key-groups/{licenseKeyGroupId}/limits")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Api(value = "Vendor License Model - License Key Group Limits")
@@ -43,7 +43,7 @@ public interface LicenseKeyGroupLimits {
                            String versionId,
                        @ApiParam(value = "Vendor license model License Key Group Id")
                        @PathParam("licenseKeyGroupId")
-                           String licenseKeyGroupId  ,
+                           String licenseKeyGroupId,
                        @NotNull(message = USER_MISSING_ERROR_MSG)
                        @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
@@ -70,7 +70,7 @@ public interface LicenseKeyGroupLimits {
                            String versionId,
                        @ApiParam(value = "Vendor license model License Key Group Id")
                        @PathParam("licenseKeyGroupId")
-                           String licenseKeyGroupId  ,
+                           String licenseKeyGroupId,
                        @NotNull(message = USER_MISSING_ERROR_MSG)
                        @PathParam("limitId") String limitId,
                        @HeaderParam(USER_ID_HEADER_PARAM) String user);
@@ -88,13 +88,14 @@ public interface LicenseKeyGroupLimits {
           String limitId,
       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
-    @DELETE
-    @Path("/{limitId}")
-    @ApiOperation(value = "Delete vendor license key group limit")
-    Response deleteLimit(
-            @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-            @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
-            @ApiParam(value = "Vendor license model license key group Id") @PathParam("licenseKeyGroupId") String licenseKeyGroupId,
-            @PathParam("limitId") String limitId,
-            @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+  @DELETE
+  @Path("/{limitId}")
+  @ApiOperation(value = "Delete vendor license key group limit")
+  Response deleteLimit(
+      @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+      @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
+      @ApiParam(value = "Vendor license model license key group Id") @PathParam("licenseKeyGroupId")
+          String licenseKeyGroupId,
+      @PathParam("limitId") String limitId,
+      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 }

@@ -26,36 +26,35 @@ import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.MIN_INS
 import static org.openecomp.sdc.enrichment.impl.util.EnrichmentConstants.VFC_NAMING_CODE;
 
 
-
 public class ComponentQuestionnaireData {
 
   ComponentDao componentDao = ComponentDaoFactory.getInstance().createInterface();
-  ComponentDependencyModelDao componentDependencyModelDao = ComponentDependencyModelDaoFactory.getInstance()
-      .createInterface();
+  ComponentDependencyModelDao componentDependencyModelDao =
+      ComponentDependencyModelDaoFactory.getInstance().createInterface();
 
-  private  Map<String,String> sourceToTargetComponent;
+  private Map<String, String> sourceToTargetComponent;
 
-  public Map<String,String> getSourceToTargetComponent() {
+  public Map<String, String> getSourceToTargetComponent() {
     return sourceToTargetComponent;
   }
 
-  public void setSourceToTargetComponent(Map<String,String> sourceToTargetComponent) {
+  public void setSourceToTargetComponent(Map<String, String> sourceToTargetComponent) {
     this.sourceToTargetComponent = sourceToTargetComponent;
   }
 
   public Map<String, Map<String, Object>> getPropertiesfromCompQuestionnaire(String key,
                                                                              Version version) {
-    Map<String, Map<String,Object>> componentProperties =
-        new HashMap<String, Map<String,Object>>();
+    Map<String, Map<String, Object>> componentProperties =
+        new HashMap<String, Map<String, Object>>();
 
     ComponentEntity entity = new ComponentEntity(key, version, null);
     final Collection<ComponentEntity> componentEntities =
         componentDao.listCompositionAndQuestionnaire(key, version);
 
-    Map<String,String> sourceToTarget = new HashMap<String, String>();
+    Map<String, String> sourceToTarget = new HashMap<>();
 
     for (ComponentEntity component : componentEntities) {
-      Map<String, Object> questionnaireParams = new HashMap<String, Object>();
+      Map<String, Object> questionnaireParams = new HashMap<>();
 
       final ComponentQuestionnaire componentQuestionnaire =
           JsonUtil.json2Object(component.getQuestionnaireData(), ComponentQuestionnaire.class);
@@ -77,7 +76,7 @@ public class ComponentQuestionnaireData {
       questionnaireParams.put(EnrichmentConstants.VFC_FUNCTION, vfcDescription);
 
 
-      if (componentQuestionnaire.getHighAvailabilityAndLoadBalancing() != null ) {
+      if (componentQuestionnaire.getHighAvailabilityAndLoadBalancing() != null) {
         String mandatory = componentQuestionnaire.getHighAvailabilityAndLoadBalancing()
             .getIsComponentMandatory();
         questionnaireParams.put(MANDATORY, mandatory);
@@ -91,19 +90,20 @@ public class ComponentQuestionnaireData {
       final Integer maxVms =
           componentQuestionnaire.getCompute() != null ? (componentQuestionnaire.getCompute()
               .getNumOfVMs() != null ? componentQuestionnaire.getCompute().getNumOfVMs()
-              .getMaximum(): null) : null;
+              .getMaximum() : null) : null;
 
       final Integer minVms =
           componentQuestionnaire.getCompute() != null ? (componentQuestionnaire.getCompute()
               .getNumOfVMs() != null ? componentQuestionnaire.getCompute().getNumOfVMs()
-              .getMinimum(): null) : null;
+              .getMinimum() : null) : null;
 
-      questionnaireParams.put(MIN_INSTANCES,minVms != null &&  minVms == 0 ? null : minVms);
-      questionnaireParams.put(MAX_INSTANCES,maxVms != null &&  maxVms == 0 ? null : maxVms);
+      questionnaireParams.put(MIN_INSTANCES, minVms != null && minVms == 0 ? null : minVms);
+      questionnaireParams.put(MAX_INSTANCES, maxVms != null && maxVms == 0 ? null : maxVms);
 
-      if (! questionnaireParams.isEmpty())
+      if (!questionnaireParams.isEmpty()) {
         componentProperties.put(JsonUtil.json2Object(component.getCompositionData(),
             ComponentData.class).getDisplayName(), questionnaireParams);
+      }
     }
 
     setSourceToTargetComponent(sourceToTarget);
@@ -111,12 +111,12 @@ public class ComponentQuestionnaireData {
     return componentProperties;
   }
 
-  public Map<String,List<String>> populateDependencies(String vspId, Version version, Map<String,
-                                                       String> componentNameData) {
+  public Map<String, List<String>> populateDependencies(String vspId, Version version, Map<String,
+      String> componentNameData) {
     Collection<ComponentDependencyModelEntity> componentDependencies =
         componentDependencyModelDao.list(new ComponentDependencyModelEntity(vspId, version, null));
 
-    Map<String,List<String>> sourceToTargetComponent = new HashMap<String, List<String>>();
+    Map<String, List<String>> sourceToTargetComponent = new HashMap<String, List<String>>();
     List<String> targetComponents = null;
     for (ComponentDependencyModelEntity dependency : componentDependencies) {
       String sourceComponentName = componentNameData.get(dependency.getSourceComponentId());

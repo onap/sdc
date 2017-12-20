@@ -20,6 +20,12 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataValidationType;
+
+import java.io.IOException;
+
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_INVALID_DEPENDENCY_CANDIDATE;
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_MULTIPLE_COMPUTE;
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_IN;
@@ -27,12 +33,6 @@ import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidati
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODES_CONNECTED_OUT;
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NODE_TEMPLATE_TRANSLATION_ORDER_INVARIANCE;
 import static org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.TestConstants.TEST_DEPENDS_ON_NO_DEPENDENCY;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.openecomp.sdc.translator.services.heattotosca.buildconsolidationdata.ConsolidationDataValidationType;
-
-import java.io.IOException;
 
 
 public class DependsOnResourceBaseTranslationlTest extends BaseResourceTranslationTest {

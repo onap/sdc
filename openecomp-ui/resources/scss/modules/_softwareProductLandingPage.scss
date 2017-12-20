@@ -18,12 +18,7 @@
 
   .description {
     @extend .body-1;
-    // overflow: hidden;
     padding-right: 20px;
-    // text-overflow: ellipsis;
-    // display: -webkit-box;
-    // -webkit-line-clamp: 2;
-    // -webkit-box-orient: vertical;
 
     .missing-license {
       display: flex;
@@ -56,15 +51,9 @@
     }
   }
   .software-product-landing-view {
-    transition: border .2s;
     padding-bottom: 50px;
 
 
-    .list-editor-view {
-      padding-top: 50px;
-      padding-left: 0;
-      padding-right: 0;
-    }
     .software-product-landing-view-top {
       .details-container {
         @extend .flex-column;
@@ -110,6 +99,10 @@
           &:last-child {
             margin-right: 0;
           }
+          .software-product-landing-view-top-block-col-upl  {
+            height: 215px;
+            width: initial;
+          }
         }
         .col-md-6 {
           padding: 0;
@@ -134,16 +127,19 @@
           }
         }
         .software-product-landing-view-top-block {
+          &.clickable {
           cursor: pointer;
+            &:hover {
+              @extend .box-hover;
+            }
+          }
           border: 1px solid $light-gray;
           padding: 20px 18px 0 18px;
           height: 215px;
           display: flex;
           justify-content: space-between;
           background-color: $white;
-          &:hover {
-            @extend .box-hover;
-          }
+
           .col-md-6 {
             @extend .body-1;
           }
@@ -164,29 +160,11 @@
               color: $light-blue;
             }
           }
-        }
 
         .software-product-landing-view-top-block-col-upl {
           @extend .flex;
-          height: 215px;
-          text-align: center;
-          flex-direction: column;
-          justify-content: center;
-          border: 2px dashed $light-gray;
           margin-bottom: 20px;
-          @extend .body-1;
-          align-items: center;
-          .upload-btn {
-            padding: 15px 55px;
 
-          }
-          .drag-text {
-            color: $blue;
-            @extend .body-1-semibold;
-          }
-          .or-text {
-            margin-top: 10px;
-            margin-bottom: 10px;
           }
         }
       }
@@ -195,6 +173,9 @@
 }
 
 .vsp-details-page {
+  .grid-section-general {
+    padding-bottom: 30px;
+  }
   .vsp-general-tab {
     .validation-form-content {
       margin: 0;

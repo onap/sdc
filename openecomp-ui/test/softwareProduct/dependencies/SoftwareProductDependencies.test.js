@@ -21,34 +21,45 @@ import {
 	SoftwareProductDependenciesResponseFactory,
 	SoftwareProductDependenciesStoreFactory} from 'test-utils/factories/softwareProduct/SoftwareProductDependenciesFactories.js';
 import {VSPComponentsFactory} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsFactories.js';
-import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
+import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 import {storeCreator} from 'sdc-app/AppStore.js';
 import {cloneAndSet} from 'test-utils/Util.js';
 import mockRest from 'test-utils/MockRest.js';
 
 import SoftwareProductComponentsActionHelper from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsActionHelper.js';
+import {relationTypes, NEW_RULE_TEMP_ID}  from 'sdc-app/onboarding/softwareProduct/dependencies/SoftwareProductDependenciesConstants.js';
 import SoftwareProductDependenciesActionHelper from 'sdc-app/onboarding/softwareProduct/dependencies/SoftwareProductDependenciesActionHelper.js';
 import SoftwareProductDependenciesView from 'sdc-app/onboarding/softwareProduct/dependencies/SoftwareProductDependenciesView.jsx';
 import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';
 
+function addNewRowElement(arr, data) {
+	if (data === undefined) {
+		arr.push({id: NEW_RULE_TEMP_ID, targetId: null, sourceId: null, relationType: relationTypes.DEPENDS_ON});
+	} else {
+		arr.push(data);
+	}
+}
+
 describe('Software Product Dependencies Module Tests', function () {
 	const softwareProductId = '555';
-	const version = VersionControllerUtilsFactory.build().version;
+	const version = VersionFactory.build();
+
 
 	it('mapStateToProps mapper exists', () => {
 		expect(mapStateToProps).toBeTruthy();
 	});
-	
+
 	it('Get Software Product Dependencies List', () => {
 		const store = storeCreator();
 		const dispatch = store.dispatch;
 
 		let DependenciesListResponse = SoftwareProductDependenciesResponseFactory.buildList(2);
 		let DependenciesListStore = DependenciesListResponse.map(dependency => SoftwareProductDependenciesStoreFactory.build(dependency));
+		addNewRowElement(DependenciesListStore);
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductDependencies', DependenciesListStore);
 
 		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependency-model`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependencies`);
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
 			return {results: DependenciesListResponse};
@@ -59,91 +70,200 @@ describe('Software Product Dependencies Module Tests', function () {
 			const depndenciesWithGeneratedId = state.softwareProduct.softwareProductDependencies;
 			const currentDependencies = expectedStore.softwareProduct.softwareProductDependencies;
 			let expectedStoreDependencies = currentDependencies.map((dependency, index) => ({...dependency, id: depndenciesWithGeneratedId[index].id}));
-
 			const newExpectedStore = cloneAndSet(expectedStore, 'softwareProduct.softwareProductDependencies', expectedStoreDependencies);
-
 			expect(state).toEqual(newExpectedStore);
 		});
 	});
 
-	it('Update Software Product Dependencies List', () => {
+	/*
+	Test update:
+	- fetch initial item
+	- update existing item
+	- auto fetch again
+	 */
+	it('Update Software Product Dependency', () => {
 		const store = storeCreator();
 		const dispatch = store.dispatch;
 
-		let DependenciesListResponse = SoftwareProductDependenciesResponseFactory.buildList(3);
+		let DependenciesListResponse = SoftwareProductDependenciesResponseFactory.buildList(1);
 		let DependenciesListStore = DependenciesListResponse.map(dependency => SoftwareProductDependenciesStoreFactory.build(dependency));
+		addNewRowElement(DependenciesListStore);
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductDependencies', DependenciesListStore);
 
 		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependency-model`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependencies`);
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
 			return {results: DependenciesListResponse};
 		});
-
 		return SoftwareProductDependenciesActionHelper.fetchDependencies(dispatch, {softwareProductId, version}).then(() => {
-			
+
 			const state = store.getState();
 			const depndenciesWithGeneratedId = state.softwareProduct.softwareProductDependencies;
 			const currentDependencies = expectedStore.softwareProduct.softwareProductDependencies;
 			let expectedStoreDependencies = currentDependencies.map((dependency, index) => ({...dependency, id: depndenciesWithGeneratedId[index].id}));
-			
-			let newDependency = SoftwareProductDependenciesStoreFactory.build();
-			expectedStoreDependencies.push(newDependency);
+			let item = expectedStoreDependencies.find((dep) => dep.id !== NEW_RULE_TEMP_ID);
+			item.targetId = 'testChangeTarget';
+			item.sourceId = 'testChangesource';
+			// removing 'new row' from response
+			expectedStoreDependencies = expectedStoreDependencies.slice(0, expectedStoreDependencies.length - 1);
+			let expDependenciesListStore = expectedStoreDependencies.map(dependency => SoftwareProductDependenciesStoreFactory.build(dependency));
 
+			mockRest.addHandler('put', ({data, options, baseUrl}) => {
+				expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependencies/${item.id}`);
+				expect(data.targetId).toEqual('testChangeTarget');
+				expect(data.sourceId).toEqual('testChangesource');
+				expect(options).toEqual(undefined);
+				return {results: null};
+			});
+			mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+				expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependencies`);
+				expect(data).toEqual(undefined);
+				expect(options).toEqual(undefined);
+				return {results: expDependenciesListStore};
+			});
+
+			addNewRowElement(expectedStoreDependencies);
 			const newExpectedStore = cloneAndSet(expectedStore, 'softwareProduct.softwareProductDependencies', expectedStoreDependencies);
+			return SoftwareProductDependenciesActionHelper.updateDependency(dispatch, {softwareProductId, version, item}).then(() => {
+				const newState = store.getState();
+				expect(newState).toEqual(newExpectedStore);
 
-			SoftwareProductDependenciesActionHelper.updateDependencyList(dispatch, {dependenciesList: expectedStoreDependencies});
-			const newState = store.getState();
-			expect(newState).toEqual(newExpectedStore);
+			});
 		});
 	});
 
-	it('Add And Save Software Product Dependencies List', () => {
+	/*
+	- Fetch item list
+	- Delete item from list
+	- Fetch again
+	 */
+	it('Delete Software Product Dependency', () => {
+		const store = storeCreator();
+		const dispatch = store.dispatch;
+		let DependenciesListResponse = SoftwareProductDependenciesResponseFactory.buildList(1);
+		let DependenciesListStore = DependenciesListResponse.map(dependency => SoftwareProductDependenciesStoreFactory.build(dependency));
+		addNewRowElement(DependenciesListStore);
+		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductDependencies', DependenciesListStore);
+
+		let deleteItem = DependenciesListStore.find((dep) => dep.id !== NEW_RULE_TEMP_ID);
+
+		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependencies`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: DependenciesListResponse};
+		});
+		mockRest.addHandler('destroy', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependencies/${deleteItem.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: null};
+		});
+		return SoftwareProductDependenciesActionHelper.fetchDependencies(dispatch, {softwareProductId, version}).then(() => {
+			const state = store.getState();
+			const depndenciesWithGeneratedId = state.softwareProduct.softwareProductDependencies;
+			const currentDependencies = expectedStore.softwareProduct.softwareProductDependencies;
+			let expectedStoreDependencies = currentDependencies.map((dependency, index) => ({...dependency, id: depndenciesWithGeneratedId[index].id}))
+
+			const newExpectedStore = cloneAndSet(expectedStore, 'softwareProduct.softwareProductDependencies', expectedStoreDependencies);
+			expect(state).toEqual(newExpectedStore);
+
+			expectedStoreDependencies = expectedStoreDependencies.filter((dep) => dep.id !== deleteItem.id);
+			const postDeleteExpectedStore = cloneAndSet(expectedStore, 'softwareProduct.softwareProductDependencies', expectedStoreDependencies);
+
+			mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+				expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependencies`);
+				expect(data).toEqual(undefined);
+				expect(options).toEqual(undefined);
+				return {results: []};
+			});
+
+			return SoftwareProductDependenciesActionHelper.removeDependency(dispatch, {softwareProductId, version, item: deleteItem}).then(() => {
+				const state = store.getState();
+				const depndenciesWithGeneratedId = state.softwareProduct.softwareProductDependencies;
+				const currentDependencies = postDeleteExpectedStore.softwareProduct.softwareProductDependencies;
+				expect(depndenciesWithGeneratedId).toEqual(currentDependencies);
+			});
+		});
+	});
+
+	/*
+	- Create initial list
+	- Update the new row and make sure there is no API call
+	- Submit the new row
+	- Getch data with reset new row and new entity with info from the new item
+	 */
+
+	it('Create Software Product Dependency', () => {
 		const store = storeCreator();
 		const dispatch = store.dispatch;
 
-		let mockServerDependencies = [];
-
-		SoftwareProductDependenciesActionHelper.addDependency(dispatch);
-		let state = store.getState();
-		let dependencies = state.softwareProduct.softwareProductDependencies;
-		expect(dependencies.length).toEqual(1);
-		expect(dependencies[0].sourceId).toEqual(null);
-		expect(dependencies[0].targetId).toEqual(null);
-
-		let newDependencies = SoftwareProductDependenciesStoreFactory.buildList(1);
-		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductDependencies', newDependencies);
-		SoftwareProductDependenciesActionHelper.updateDependencyList(dispatch, {dependenciesList: newDependencies});
-
-		mockRest.addHandler('post', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependency-model`);
-			expect(data).toEqual({componentDependencyModels: newDependencies.map(item => ({sourceId: item.sourceId, targetId: item.targetId, relationType: item.relationType}) )});
-			expect(options).toEqual(undefined);
-			mockServerDependencies = [...data.componentDependencyModels];
-			return {returnCode: 'OK'};
-		});
+		let DependenciesListResponse = SoftwareProductDependenciesResponseFactory.buildList(1);
+		let DependenciesListStore = DependenciesListResponse.map(dependency => SoftwareProductDependenciesStoreFactory.build(dependency));
+		addNewRowElement(DependenciesListStore);
+		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductDependencies', DependenciesListStore);
 
 		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependency-model`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependencies`);
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
-			return {results: mockServerDependencies};
+			return {results: DependenciesListResponse};
 		});
+		return SoftwareProductDependenciesActionHelper.fetchDependencies(dispatch, {softwareProductId, version}).then(() => {
+			// setting properties on the 'new role' should not call an API
+			let addItem = {id: NEW_RULE_TEMP_ID, sourceId: 'sId', targetId : 'tId',relationType: relationTypes.DEPENDS_ON};
+			try {
+				SoftwareProductDependenciesActionHelper.updateDependency(dispatch, {softwareProductId, version, item: addItem}).then(()=> {
+					//go to error that fetch was not defined
+				});
+			} catch (error) {
+				if(error.name === 'TypeError') {
+					// Expected error because we expected there is no promise
+				} else {
+					fail('Error:' + error);
+				}
+			}
 
-		return SoftwareProductDependenciesActionHelper.saveDependencies(dispatch, {softwareProductId, version, dependenciesList: newDependencies}).then(() => {
-			return SoftwareProductDependenciesActionHelper.fetchDependencies(dispatch, {softwareProductId, version});
-		}).then(() => {
 			const state = store.getState();
 			const depndenciesWithGeneratedId = state.softwareProduct.softwareProductDependencies;
 			const currentDependencies = expectedStore.softwareProduct.softwareProductDependencies;
 			let expectedStoreDependencies = currentDependencies.map((dependency, index) => ({...dependency, id: depndenciesWithGeneratedId[index].id}));
+			// creating the new item
+			let item = SoftwareProductDependenciesResponseFactory.buildList(1,
+				{sourceId: 'sId', targetId : 'tId',relationType: relationTypes.DEPENDS_ON})[0];
+			addNewRowElement(expectedStoreDependencies, item);
+			expectedStoreDependencies = expectedStoreDependencies.filter((dep) => dep.id !== NEW_RULE_TEMP_ID);
 
-			const newExpectedStore = cloneAndSet(expectedStore, 'softwareProduct.softwareProductDependencies', expectedStoreDependencies);
+			mockRest.addHandler('post', ({data, options, baseUrl}) => {
+				expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependencies`);
+				expect(data.targetId).toEqual('tId');
+				expect(data.sourceId).toEqual('sId');
+				expect(data.id).toEqual(undefined);
+				expect(options).toEqual(undefined);
+				return {results: item.id};
+			});
+			mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
+				expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependencies`);
+				expect(data).toEqual(undefined);
+				expect(options).toEqual(undefined);
+				return {results: expectedStoreDependencies};
+			});
 
-			expect(state).toEqual(newExpectedStore);
+			let PostCreateItemListStore = expectedStoreDependencies.map(dependency => SoftwareProductDependenciesStoreFactory.build(dependency));
+			addNewRowElement(PostCreateItemListStore);
+			const newExpectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductDependencies', PostCreateItemListStore);
+
+			return SoftwareProductDependenciesActionHelper.createDependency(dispatch, {softwareProductId, version, item: addItem}).then(() => {
+				const newState = store.getState();
+				expect(newState.softwareProduct.softwareProductDependencies.length).toEqual(3);
+				expect(newState).toEqual(newExpectedStore);
+			});
+
 		});
+
 	});
+
 
 	it('Get Software Product Dependencies List with loop, and render to JSX', () => {
 		const store = storeCreator();
@@ -161,10 +281,11 @@ describe('Software Product Dependencies Module Tests', function () {
 		secondDependency.targetId = firstDependecy.sourceId;
 
 		let DependenciesListStore = DependenciesListResponse.map(dependency => SoftwareProductDependenciesStoreFactory.build({...dependency, hasCycle: true}));
+		addNewRowElement(DependenciesListStore);
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductDependencies', DependenciesListStore);
 
 		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependency-model`);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/component-dependencies`);
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
 			return {results: DependenciesListResponse};
@@ -187,9 +308,9 @@ describe('Software Product Dependencies Module Tests', function () {
 			let expectedStoreDependencies = currentDependencies.map((dependency, index) => ({...dependency, id: depndenciesWithGeneratedId[index].id}));
 
 			const newExpectedStore = {
-				...expectedStore, 
+				...expectedStore,
 				softwareProduct: {
-					...expectedStore.softwareProduct, 
+					...expectedStore.softwareProduct,
 					softwareProductDependencies: expectedStoreDependencies,
 					softwareProductEditor: {data: vspEditor},
 					softwareProductComponents: {
@@ -207,4 +328,5 @@ describe('Software Product Dependencies Module Tests', function () {
 			expect(wrapper).toBeTruthy();
 		});
 	});
+
 });

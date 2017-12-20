@@ -66,8 +66,8 @@ describe('SoftwareProductComponetsProcesses Mapper and View Classes', () => {
 				softwareProductId={currentSoftwareProduct.id}
 				componentId={currentSoftwareProductComponent.id}
 				onAddProcess={() => {}}
-				onEditProcessClick={() => {}}
-				onDeleteProcessClick={() => {}}
+				onEditProcess={() => {}}
+				onDeleteProcess={() => {}}
 				isDisplayEditor={false}
 				isReadOnlyMode={false}/>
 			);

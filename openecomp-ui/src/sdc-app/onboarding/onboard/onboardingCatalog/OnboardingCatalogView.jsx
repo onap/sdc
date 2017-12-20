@@ -46,14 +46,16 @@ const CatalogHeader = ({activeTab, onTabPress}) => (
 
 class OnboardingCatalogView extends React.Component {
 	renderViewByTab(activeTab){
-		const {finalizedLicenseModelList: licenseModelList, vspOverlay, finalizedSoftwareProductList: softwareProductList, onSelectLicenseModel, onSelectSoftwareProduct,
+		const {finalizedLicenseModelList: licenseModelList, fullLicenseModelList, users, vspOverlay, finalizedSoftwareProductList: softwareProductList, onSelectLicenseModel, onSelectSoftwareProduct,
 				onAddLicenseModelClick, onAddSoftwareProductClick, onVspOverlayChange, onVendorSelect, selectedVendor, searchValue, onMigrate} = this.props;
+
 		switch (activeTab){
 			case tabsMapping.ALL:
 				return (
 					<DetailsCatalogView
 						VLMList={licenseModelList}
 						VSPList={softwareProductList}
+						users={users}
 						onAddVLM={onAddLicenseModelClick}
 						onAddVSP={onAddSoftwareProductClick}
 						onSelectVLM={onSelectLicenseModel}
@@ -65,7 +67,8 @@ class OnboardingCatalogView extends React.Component {
 			default:
 				return (
 					<VendorCatalogView
-						licenseModelList={licenseModelList}
+						licenseModelList={fullLicenseModelList}
+						users={users}
 						onAddVSP={onAddSoftwareProductClick}
 						onAddVLM={onAddLicenseModelClick}
 						onSelectVSP={onSelectSoftwareProduct}

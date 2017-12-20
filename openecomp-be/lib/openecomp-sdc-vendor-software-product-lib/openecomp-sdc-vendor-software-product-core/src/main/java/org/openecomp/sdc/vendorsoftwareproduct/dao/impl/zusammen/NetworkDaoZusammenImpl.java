@@ -8,18 +8,24 @@ import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
-import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
-import org.openecomp.core.zusammen.api.ZusammenUtil;
+import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToNetworkConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.types.ElementPropertyName;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class NetworkDaoZusammenImpl implements NetworkDao {
 
@@ -36,71 +42,70 @@ public class NetworkDaoZusammenImpl implements NetworkDao {
 
   @Override
   public Collection<NetworkEntity> list(NetworkEntity network) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(network.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(network.getVersion()));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(network.getVspId(), network.getVersion().getId());
 
-    return zusammenAdaptor
-        .listElementsByName(context, elementContext, null, StructureElement.Networks.name())
-        .stream().map(elementInfo ->
-            mapElementInfoToNetwork(network.getVspId(), network.getVersion(), elementInfo))
+    Optional<ElementInfo> vspModel = zusammenAdaptor
+        .getElementInfoByName(context, elementContext, null, ElementType.VspModel.name());
+    if (!vspModel.isPresent()) {
+      return new ArrayList<>();
+    }
+
+    ElementToNetworkConvertor convertor = new ElementToNetworkConvertor();
+    return zusammenAdaptor.listElementsByName(context, elementContext, vspModel.get().getId(),
+        ElementType.Networks.name()).stream()
+        .map(convertor::convert)
+        .map(entity -> {
+          entity.setVspId(network.getVspId());
+          entity.setVersion(network.getVersion());
+          return entity;
+        })
         .collect(Collectors.toList());
-  }
-
-  private NetworkEntity mapElementInfoToNetwork(String vspId, Version version,
-                                                ElementInfo elementInfo) {
-    NetworkEntity networkEntity =
-        new NetworkEntity(vspId, version, elementInfo.getId().getValue());
-    networkEntity.setCompositionData(
-        elementInfo.getInfo().getProperty(ElementPropertyName.compositionData.name()));
-    return networkEntity;
   }
 
   @Override
   public void create(NetworkEntity network) {
     ZusammenElement networkElement = buildNetworkElement(network, Action.CREATE);
-    ZusammenElement networksElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.Networks, null);
+
+    ZusammenElement networksElement = buildStructuralElement(ElementType.Networks, Action.IGNORE);
     networksElement.setSubElements(Collections.singletonList(networkElement));
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(network.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
-    Optional<Element> savedElement =
-        zusammenAdaptor.saveElement(context, elementContext, networksElement, "Create network");
-    savedElement.ifPresent(element ->
-        network.setId(element.getSubElements().iterator().next().getElementId().getValue()));
+    ZusammenElement vspModel = buildStructuralElement(ElementType.VspModel, Action.IGNORE);
+    vspModel.addSubElement(networksElement);
+
+    SessionContext context = createSessionContext();
+    Element savedElement = zusammenAdaptor
+        .saveElement(context, new ElementContext(network.getVspId(), network.getVersion().getId()),
+            vspModel, "Create network");
+    network.setId(savedElement.getSubElements().iterator().next()
+        .getSubElements().iterator().next().getElementId().getValue());
   }
 
   @Override
   public void update(NetworkEntity network) {
     ZusammenElement networkElement = buildNetworkElement(network, Action.UPDATE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(network.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
-    zusammenAdaptor.saveElement(context, elementContext, networkElement,
-        String.format("Update network with id %s", network.getId()));
+    SessionContext context = createSessionContext();
+    zusammenAdaptor
+        .saveElement(context, new ElementContext(network.getVspId(), network.getVersion().getId()),
+            networkElement, String.format("Update network with id %s", network.getId()));
   }
 
   @Override
   public NetworkEntity get(NetworkEntity network) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(network.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(network.getVersion()));
+    SessionContext context = createSessionContext();
 
     Optional<Element> element =
-        zusammenAdaptor.getElement(context, elementContext, network.getId());
+        zusammenAdaptor.getElement(context,
+            new ElementContext(network.getVspId(), network.getVersion().getId()), network.getId());
 
     if (element.isPresent()) {
-      network.setCompositionData(new String(FileUtils.toByteArray(element.get().getData())));
-      return network;
+      ElementToNetworkConvertor convertor = new ElementToNetworkConvertor();
+      NetworkEntity entity = convertor.convert(element.get());
+      entity.setVspId(network.getVspId());
+      entity.setVersion(network.getVersion());
+      return entity;
     } else {
       return null;
     }
@@ -108,39 +113,44 @@ public class NetworkDaoZusammenImpl implements NetworkDao {
 
   @Override
   public void delete(NetworkEntity network) {
-    ZusammenElement networkElement = new ZusammenElement();
-    networkElement.setElementId(new Id(network.getId()));
-    networkElement.setAction(Action.DELETE);
+    ZusammenElement networkElement = buildElement(new Id(network.getId()), Action.DELETE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(network.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
-    zusammenAdaptor.saveElement(context, elementContext,
-        networkElement, String.format("Delete network with id %s", network.getId()));
+    SessionContext context = createSessionContext();
+    zusammenAdaptor
+        .saveElement(context, new ElementContext(network.getVspId(), network.getVersion().getId()),
+            networkElement, String.format("Delete network with id %s", network.getId()));
   }
 
 
   @Override
   public void deleteAll(String vspId, Version version) {
-    ZusammenElement networksElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.Networks, Action.DELETE);
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
-    zusammenAdaptor.saveElement(context, elementContext, networksElement, "Delete all networks");
+    Collection<ElementInfo> vspModelSubs = zusammenAdaptor
+        .listElementsByName(context, elementContext, null, ElementType.VspModel.name());
+
+    Optional<ElementInfo> networksElement = vspModelSubs.stream()
+        .filter(elementInfo -> elementInfo.getInfo() != null
+            && ElementType.Networks.name().equals(elementInfo.getInfo().getName()))
+        .findFirst();
+    if (!networksElement.isPresent()) {
+      return;
+    }
+
+    ZusammenElement networks = buildElement(networksElement.get().getId(), Action.IGNORE);
+    networks.setSubElements(networksElement.get().getSubElements().stream()
+        .map(network -> buildElement(network.getId(), Action.DELETE))
+        .collect(Collectors.toList()));
+
+    zusammenAdaptor.saveElement(context, elementContext, networks, "Delete all networks");
   }
 
   private ZusammenElement buildNetworkElement(NetworkEntity network, Action action) {
-    ZusammenElement networkElement = new ZusammenElement();
-    networkElement.setAction(action);
-    if (network.getId() != null) {
-      networkElement.setElementId(new Id(network.getId()));
-    }
+    ZusammenElement networkElement =
+        buildElement(network.getId() == null ? null : new Id(network.getId()), action);
     Info info = new Info();
-    info.addProperty(ElementPropertyName.type.name(), ElementType.Network);
+    info.addProperty(ElementPropertyName.elementType.name(), ElementType.Network);
     info.addProperty(ElementPropertyName.compositionData.name(), network.getCompositionData());
     networkElement.setInfo(info);
     networkElement.setData(new ByteArrayInputStream(network.getCompositionData().getBytes()));

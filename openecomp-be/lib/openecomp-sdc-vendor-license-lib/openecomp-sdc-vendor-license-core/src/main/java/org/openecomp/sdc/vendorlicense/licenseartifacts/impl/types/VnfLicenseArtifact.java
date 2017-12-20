@@ -38,11 +38,11 @@ import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins.MixinF
 import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins.MixinLicenseKeyGroupEntityForVnfArtifact;
 import org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins.MixinLimitArtifact;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 @JacksonXmlRootElement(localName = "vf-license-model",
     namespace = "http://xmlns.openecomp.org/asdc/license-model/1.0")

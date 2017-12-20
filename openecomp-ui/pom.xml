@@ -40,6 +40,9 @@
                                     <!--<directory>${basedir}/node_modules</directory>-->
                                 <!--</fileset>-->
                                 <fileset>
+                                    <directory>${basedir}/coverage</directory>
+                                </fileset>
+                                <fileset>
                                     <directory>${basedir}/../dox-sequence-diagram-ui/dist
                                     </directory>
                                 </fileset>
@@ -140,6 +143,16 @@
                         <configuration>
                             <arguments>run build -- --version=${project.version}</arguments>
                         </configuration>
+                    </execution>
+                    <execution>
+                        <id>ui test</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run test-build</arguments>
+                        </configuration>
+                        <phase>test</phase>
                     </execution>
                 </executions>
             </plugin>

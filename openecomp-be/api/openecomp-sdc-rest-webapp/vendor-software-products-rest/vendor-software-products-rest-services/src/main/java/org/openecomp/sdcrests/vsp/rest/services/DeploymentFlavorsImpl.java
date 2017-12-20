@@ -10,7 +10,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityValidationDataDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.DeploymentFlavorCreationDto;
@@ -28,15 +27,14 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
+import java.util.Collection;
 
 @Named
 @Service("deploymentFlavors")
 @Scope(value = "prototype")
-public class DeploymentFlavorsImpl implements DeploymentFlavors
-{
+public class DeploymentFlavorsImpl implements DeploymentFlavors {
   private DeploymentFlavorManager deploymentFlavorManager =
       DeploymentFlavorManagerFactory.getInstance().createInterface();
 
@@ -48,29 +46,28 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors
         new MapDeploymentFlavorRequestDtoToDeploymentFlavorEntity()
             .applyMapping(request, DeploymentFlavorEntity.class);
     deploymentFlavorEntity.setVspId(vspId);
-    deploymentFlavorEntity.setVersion(resolveVspVersion(vspId, null, user,
-        VersionableEntityAction.Write));
+    deploymentFlavorEntity.setVersion(new Version(versionId));
     DeploymentFlavorEntity createdDeploymentFlavor =
-        deploymentFlavorManager.createDeploymentFlavor(deploymentFlavorEntity, user);
+        deploymentFlavorManager.createDeploymentFlavor(deploymentFlavorEntity);
     MapDeploymentFlavorEntityToDeploymentFlavorCreationDto mapping =
         new MapDeploymentFlavorEntityToDeploymentFlavorCreationDto();
-    DeploymentFlavorCreationDto deploymentFlavorCreatedDto= mapping.applyMapping
-        (createdDeploymentFlavor,DeploymentFlavorCreationDto.class);
+    DeploymentFlavorCreationDto deploymentFlavorCreatedDto = mapping.applyMapping
+        (createdDeploymentFlavor, DeploymentFlavorCreationDto.class);
     return Response
         .ok(createdDeploymentFlavor != null ? deploymentFlavorCreatedDto : null)
         .build();
   }
 
   @Override
-  public Response list(String vspId,String version,String user) {
+  public Response list(String vspId, String versionId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Get_List_Deployment_flavor.toString());
     Collection<DeploymentFlavorEntity> deploymentFlavors =
-        deploymentFlavorManager.listDeploymentFlavors(vspId, resolveVspVersion(vspId, version, user,
-            VersionableEntityAction.Read), user);
+        deploymentFlavorManager.listDeploymentFlavors(vspId, new Version(versionId));
 
     MapDeploymentFlavorEntityDeploymentFlavorToListResponse mapper = new
         MapDeploymentFlavorEntityDeploymentFlavorToListResponse();
-    GenericCollectionWrapper<DeploymentFlavorListResponseDto> results = new GenericCollectionWrapper<>();
+    GenericCollectionWrapper<DeploymentFlavorListResponseDto> results =
+        new GenericCollectionWrapper<>();
     for (DeploymentFlavorEntity deploymentFlavor : deploymentFlavors) {
       results.add(mapper.applyMapping(deploymentFlavor, DeploymentFlavorListResponseDto.class));
     }
@@ -78,32 +75,32 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors
   }
 
   @Override
-  public Response get(String vspId, String version, String deploymentFlavorId, String user) {
+  public Response get(String vspId, String versionId, String deploymentFlavorId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Get_Deployment_flavor.toString());
     CompositionEntityResponse<DeploymentFlavor> response = deploymentFlavorManager
-        .getDeploymentFlavor(vspId, resolveVspVersion(vspId, version, user,
-            VersionableEntityAction.Read), deploymentFlavorId, user);
+        .getDeploymentFlavor(vspId, new Version(versionId), deploymentFlavorId);
 
     CompositionEntityResponseDto<DeploymentFlavorDto> responseDto = new
         CompositionEntityResponseDto<>();
-    new MapCompositionEntityResponseToDto<>(new MapDeploymentFlavorToDeploymentDto(), DeploymentFlavorDto.class)
+    new MapCompositionEntityResponseToDto<>(new MapDeploymentFlavorToDeploymentDto(),
+        DeploymentFlavorDto.class)
         .doMapping(response, responseDto);
     return Response.ok(responseDto).build();
   }
 
   @Override
-  public Response getSchema(String vspId, String version, String user) {
+  public Response getSchema(String vspId, String versionId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Get_Deployment_flavor.toString());
     CompositionEntityResponse<DeploymentFlavor> response = deploymentFlavorManager
-        .getDeploymentFlavorSchema(vspId, Version.valueOf(version), user);
+        .getDeploymentFlavorSchema(vspId, new Version(versionId));
     return Response.ok(response).build();
   }
 
   @Override
   public Response delete(String vspId, String versionId, String deploymentFlavorId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Delete_Deployment_flavor.toString());
-    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
-    deploymentFlavorManager.deleteDeploymentFlavor(vspId, version, deploymentFlavorId, user);
+    Version version = new Version(versionId);
+    deploymentFlavorManager.deleteDeploymentFlavor(vspId, version, deploymentFlavorId);
     return Response.ok().build();
   }
 
@@ -115,11 +112,11 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors
         new MapDeploymentFlavorRequestDtoToDeploymentFlavorEntity().applyMapping(request,
             DeploymentFlavorEntity.class);
     deploymentFlavorEntity.setVspId(vspId);
-    deploymentFlavorEntity.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
+    deploymentFlavorEntity.setVersion(new Version(versionId));
     deploymentFlavorEntity.setId(deploymentFlavorId);
 
     CompositionEntityValidationData validationData =
-        deploymentFlavorManager.updateDeploymentFlavor(deploymentFlavorEntity, user);
+        deploymentFlavorManager.updateDeploymentFlavor(deploymentFlavorEntity);
     return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors())
         ? Response.status(Response.Status.EXPECTATION_FAILED).entity(
         new MapCompositionEntityValidationDataToDto().applyMapping(validationData,

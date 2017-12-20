@@ -118,7 +118,6 @@ $browserPrefixes: webkit moz o ms;
   max-height: $lineHeight * $lineCount;
   text-align: justify;
   word-break: break-all;
-  white-space: nowrap;
   // margin-right: -1em;
   padding-right: 1em;
   &:before {
@@ -215,7 +214,7 @@ $browserPrefixes: webkit moz o ms;
   }
 }
 
-@mixin create-circle($size, $bgcolor, $content) {
+@mixin create-circle($size, $bgcolor) {
   border-radius: 50%;
   width: $size;
   height: $size;

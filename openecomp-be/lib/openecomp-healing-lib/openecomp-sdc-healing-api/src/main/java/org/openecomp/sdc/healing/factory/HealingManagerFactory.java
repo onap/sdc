@@ -20,9 +20,9 @@
 
 package org.openecomp.sdc.healing.factory;
 
-import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
+import org.openecomp.sdc.healing.api.HealingManager;
 
 /**
  * Created by Talio on 11/29/2016.

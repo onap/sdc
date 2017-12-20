@@ -1,6 +1,10 @@
 {
+  "org.openecomp.sdc.versioning.ItemManagerFactory": "org.openecomp.sdc.versioning.impl.ItemManagerFactoryImpl",
   "org.openecomp.sdc.versioning.VersioningManagerFactory": "org.openecomp.sdc.versioning.impl.VersioningManagerFactoryImpl",
   "org.openecomp.sdc.versioning.dao.VersionableEntityDaoFactory": "org.openecomp.sdc.versioning.dao.impl.VersionableEntityDaoFactoryImpl",
   "org.openecomp.sdc.versioning.dao.VersionInfoDaoFactory": "org.openecomp.sdc.versioning.dao.impl.VersionInfoDaoFactoryImpl",
-  "org.openecomp.sdc.versioning.dao.VersionInfoDeletedDaoFactory": "org.openecomp.sdc.versioning.dao.impl.VersionInfoDeletedDaoFactoryImpl"
+  "org.openecomp.sdc.versioning.dao.VersionInfoDeletedDaoFactory": "org.openecomp.sdc.versioning.dao.impl.VersionInfoDeletedDaoFactoryImpl",
+  "org.openecomp.sdc.versioning.dao.ItemDaoFactory": "org.openecomp.sdc.versioning.dao.impl.ItemDaoFactoryImpl",
+  "org.openecomp.sdc.versioning.dao.VersionDaoFactory": "org.openecomp.sdc.versioning.dao.impl.VersionDaoFactoryImpl",
+  "org.openecomp.sdc.versioning.dao.HealthCheckDaoFactory": "org.openecomp.sdc.model.impl.HealthCheckDaoFactoryImpl"
 }

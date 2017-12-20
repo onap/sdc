@@ -21,7 +21,7 @@ const SoftwareProductListHeader = ({selectedVendor, onBack}) => (
 	<div className='vendor-page-header'>
 		<SVGIcon name='back' onClick={onBack}/>
 		<div className='tab-separator' />
-		<div className='vendor-name'>{selectedVendor.vendorName}</div>
+		<div className='vendor-name'>{selectedVendor.name}</div>
 	</div>
 );
 
@@ -30,9 +30,8 @@ const CatalogList = ({children, onAddVLM, onAddVSP, vendorPageOptions}) => (
 		{vendorPageOptions && <SoftwareProductListHeader onBack={vendorPageOptions.onBack} selectedVendor={vendorPageOptions.selectedVendor}/>}
 		<div className='catalog-items'>
 			<div className='create-catalog-item-wrapper'>
-				{onAddVLM && <CreateItemTile onClick={onAddVLM} dataTestId={'catalog-add-new-lm'} className='vlm-type' title={i18n('CREATE NEW VLM')}/>}
-				{onAddVSP &&
-				<CreateItemTile onClick={onAddVSP} dataTestId={'catalog-add-new-vsp'} className='vsp-type' title={i18n('CREATE NEW VSP')}/>}
+				{onAddVLM && <CreateItemTile onClick={onAddVLM} dataTestId={'catalog-add-new-vlm'} className='vlm-type' title={i18n('CREATE NEW VLM')}/>}
+				{onAddVSP && <CreateItemTile onClick={() => onAddVSP()} dataTestId={'catalog-add-new-vsp'} className='vsp-type' title={i18n('CREATE NEW VSP')}/>}
 			</div>
 			{children}
 		</div>
@@ -42,7 +41,7 @@ const CatalogList = ({children, onAddVLM, onAddVSP, vendorPageOptions}) => (
 const CreateItemTile = ({onClick, dataTestId, title, className = ''}) => {
 	//TODO check for buttons
 	return (
-			<div className={'create-catalog-item tile ' + className} onClick={() => onClick()} data-test-id={dataTestId}>
+			<div className={`create-catalog-item tile ${className}`} onClick={onClick} data-test-id={dataTestId}>
 				<div className='create-item-plus-icon'><SVGIcon name='plus' /></div>
 				<div className='create-item-text'>{title}</div>
 			</div>

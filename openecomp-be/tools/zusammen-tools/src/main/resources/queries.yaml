@@ -1,0 +1,16 @@
+queries:
+  - select * from zusammen_dox.element;
+  - select * from zusammen_dox.element_namespace;
+  - select * from zusammen_dox.item;
+  - select * from zusammen_dox.version;
+  - select * from zusammen_dox.version_elements;
+  - select * from dox.item_permissions;
+  - select * from dox.vsp_merge_hint ;
+item_columns:
+  - item_id
+  - item_id
+  - item_id
+  - item_id
+  - item_id
+  - item_id
+  - item_id

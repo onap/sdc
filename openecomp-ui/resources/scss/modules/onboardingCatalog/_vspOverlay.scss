@@ -54,7 +54,7 @@
 	  &:hover {
 		color: $blue;
 	  }
-	  text-transform: uppercase;
+	  text-transform: none;
 	  @include ellipsis(auto, block);
 	  border-bottom: 1px solid $tlv-light-gray;
 	  cursor: pointer;

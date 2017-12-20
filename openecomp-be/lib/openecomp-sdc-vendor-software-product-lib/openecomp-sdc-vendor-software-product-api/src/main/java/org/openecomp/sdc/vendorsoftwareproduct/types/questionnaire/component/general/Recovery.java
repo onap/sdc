@@ -24,23 +24,23 @@ package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.ge
  * Created by TALIO on 11/22/2016.
  */
 public class Recovery {
-    private int pointObjective;
-    private int timeObjective;
+    private Number pointObjective;
+    private Number timeObjective;
     private String vmProcessFailuresHandling;
 
-    public int getPointObjective() {
+    public Number getPointObjective() {
         return pointObjective;
     }
 
-    public void setPointObjective(int pointObjective) {
+    public void setPointObjective(Number pointObjective) {
         this.pointObjective = pointObjective;
     }
 
-    public int getTimeObjective() {
+    public Number getTimeObjective() {
         return timeObjective;
     }
 
-    public void setTimeObjective(int timeObjective) {
+    public void setTimeObjective(Number timeObjective) {
         this.timeObjective = timeObjective;
     }
 

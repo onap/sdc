@@ -22,27 +22,20 @@ package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 import io.swagger.annotations.ApiModel;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
-import org.openecomp.sdc.versioning.dao.types.VersionStatus;
-import org.openecomp.sdcrests.common.types.VersionDto;
-
-import java.util.List;
 
 /**
  * Created by TALIO on 4/25/2016.
  */
 @ApiModel(value = "VspDetails")
-public class VspDetailsDto extends VspDescriptionDto {
+public class VspDetailsDto extends VspRequestDto {
 
   private String id;
-  private VersionDto version;
-  private List<VersionDto> viewableVersions;
-  private List<VersionDto> finalVersions;
-  private VersionStatus status;
-  private String lockingUser;
+  private String version;
   private ValidationStructureList validationData;
-  private String isOldVersion;
+  private String candidateOnboardingOrigin;
   private String onboardingOrigin;
   private String networkPackageName;
+
   public String getId() {
     return id;
   }
@@ -51,60 +44,28 @@ public class VspDetailsDto extends VspDescriptionDto {
     this.id = id;
   }
 
-  public VersionDto getVersion() {
+  public String getVersion() {
     return version;
   }
 
-  public void setVersion(VersionDto version) {
+  public void setVersion(String version) {
     this.version = version;
-  }
-
-  public List<VersionDto> getViewableVersions() {
-    return viewableVersions;
-  }
-
-  public void setViewableVersions(List<VersionDto> viewableVersions) {
-    this.viewableVersions = viewableVersions;
-  }
-
-  public List<VersionDto> getFinalVersions() {
-    return finalVersions;
-  }
-
-  public void setFinalVersions(List<VersionDto> finalVersions) {
-    this.finalVersions = finalVersions;
-  }
-
-  public VersionStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(VersionStatus status) {
-    this.status = status;
-  }
-
-  public String getLockingUser() {
-    return lockingUser;
-  }
-
-  public void setLockingUser(String lockingUser) {
-    this.lockingUser = lockingUser;
   }
 
   public ValidationStructureList getValidationData() {
     return validationData;
   }
 
-  public String getIsOldVersion() {
-    return isOldVersion;
-  }
-
-  public void setIsOldVersion(String isOldVersion) {
-    this.isOldVersion = isOldVersion;
-  }
-
   public void setValidationData(ValidationStructureList validationData) {
     this.validationData = validationData;
+  }
+
+  public String getCandidateOnboardingOrigin() {
+    return candidateOnboardingOrigin;
+  }
+
+  public void setCandidateOnboardingOrigin(String candidateOnboardingOrigin) {
+    this.candidateOnboardingOrigin = candidateOnboardingOrigin;
   }
 
   public String getOnboardingOrigin() {

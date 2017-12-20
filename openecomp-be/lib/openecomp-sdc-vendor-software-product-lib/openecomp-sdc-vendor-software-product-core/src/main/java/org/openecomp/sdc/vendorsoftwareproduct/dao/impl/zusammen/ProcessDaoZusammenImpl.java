@@ -8,33 +8,34 @@ import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
-import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
-import org.openecomp.core.zusammen.api.ZusammenUtil;
+import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToProcessConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessType;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.types.ElementPropertyName;
 
 import java.io.ByteArrayInputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToProcessConvertor.ARTIFACT_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToProcessConvertor.DESCRIPTION;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToProcessConvertor.NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToProcessConvertor.PROCESS_TYPE;
+
 /**
  * @author Avrahamg.
  * @since March 23, 2017
  */
 public class ProcessDaoZusammenImpl implements ProcessDao {
-
-  private static final String NAME = "name";
-  private static final String ELEMENT_TYPE = "type";
-  private static final String ARTIFACT_NAME = "artifactName";
-  private static final String DESCRIPTION = "description";
-  private static final String PROCESS_TYPE = "processType";
 
   private ZusammenAdaptor zusammenAdaptor;
 
@@ -52,85 +53,59 @@ public class ProcessDaoZusammenImpl implements ProcessDao {
     ZusammenElement processElement = buildProcessElement(processEntity, Action.CREATE);
 
     ZusammenElement processesElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.Processes, null);
+        buildStructuralElement(ElementType.Processes, Action.IGNORE);
     ZusammenElement aggregatedElement = VspZusammenUtil.aggregateElements(processesElement,
         processElement);
     ZusammenElement componentElement;
     if (processEntity.getComponentId() != null) {
-      componentElement = createParentElement(processEntity);
+      componentElement = buildElement(new Id(processEntity.getComponentId()), Action.IGNORE);
       aggregatedElement =
           VspZusammenUtil.aggregateElements(componentElement, aggregatedElement);
     }
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(processEntity.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(processEntity.getVspId(), processEntity.getVersion().getId());
 
-    Optional<Element> savedElement =
+    Element savedElement =
         zusammenAdaptor.saveElement(context, elementContext, aggregatedElement, "Create process");
-    savedElement.ifPresent(element -> {
-      if (processEntity.getComponentId() == null) {
-        processEntity.setId(element.getSubElements().iterator().next()
-            .getElementId().getValue());
-      } else {
-        processEntity.setId(element.getSubElements().iterator().next()
-            .getSubElements().iterator().next().getElementId().getValue());
-      }
-    });
+    processEntity
+        .setId(processEntity.getComponentId() == null
+            ? savedElement.getSubElements().iterator().next().getElementId().getValue()
+            : savedElement.getSubElements().iterator().next().getSubElements()
+                .iterator().next().getElementId().getValue());
   }
 
   @Override
-  public ProcessEntity get(ProcessEntity process) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(process.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(process.getVersion()));
+  public ProcessEntity get(ProcessEntity processEntity) {
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(processEntity.getVspId(), processEntity.getVersion().getId());
 
-    Optional<Element> elementOptional =
-        zusammenAdaptor.getElement(context, elementContext, process.getId());
-
-    if (elementOptional.isPresent()) {
-      Element element = elementOptional.get();
-      process.setName(element.getInfo().getProperty(NAME));
-      process.setArtifactName(element.getInfo().getProperty(ARTIFACT_NAME));
-      process.setDescription(element.getInfo().getProperty(DESCRIPTION));
-      process.setType(element.getInfo().getProperty
-          (PROCESS_TYPE) != null ? ProcessType.valueOf(element.getInfo().getProperty
-          (PROCESS_TYPE)) : null);
-
-      process.setArtifact(ByteBuffer.wrap(FileUtils.toByteArray(element.getData())));
-      return process;
-    } else {
-      return null;
-    }
+    return zusammenAdaptor.getElementInfo(context, elementContext, new Id(processEntity.getId()))
+        .map(elementInfo -> convertToProcessEntity(elementInfo, new ElementToProcessConvertor(),
+            processEntity))
+        .orElse(null);
   }
 
   @Override
   public void update(ProcessEntity processEntity) {
-    ZusammenElement processElement = buildProcessElement(processEntity, Action.UPDATE);
+    ProcessEntity retrieved = getArtifact(processEntity);
+    if (retrieved != null && retrieved.getArtifact() != null) {
+      processEntity.setArtifactName(retrieved.getArtifactName());
+      processEntity.setArtifact(retrieved.getArtifact());
+    }
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(processEntity.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
-
-    Optional<Element> element =
-        zusammenAdaptor.saveElement(context, elementContext, processElement, "Create process");
-    System.out.println(element.get().getElementId());
+    update(processEntity, "Update process");
   }
 
   @Override
   public void delete(ProcessEntity processEntity) {
-    ZusammenElement processElement = new ZusammenElement();
-    processElement.setElementId(new Id(processEntity.getId()));
-    processElement.setAction(Action.DELETE);
+    ZusammenElement processElement = buildElement(new Id(processEntity.getId()), Action.DELETE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(processEntity.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(processEntity.getVspId(), processEntity.getVersion().getId());
 
     zusammenAdaptor.saveElement(context, elementContext, processElement,
         String.format("Delete process with id %s", processEntity.getId()));
@@ -138,69 +113,145 @@ public class ProcessDaoZusammenImpl implements ProcessDao {
 
   @Override
   public void deleteAll(ProcessEntity processEntity) {
-    ZusammenElement aggregatedElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.Processes, Action.DELETE);
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(processEntity.getVspId(), processEntity.getVersion().getId());
+
+    Optional<Element> optionalElement = zusammenAdaptor.getElementByName(context,
+        elementContext, new Id(processEntity.getComponentId()), ElementType.Processes.name());
+
+  /*  ZusammenElement aggregatedElement =
+        buildStructuralElement(ElementType.Processes, Action.DELETE);
 
     if (processEntity.getComponentId() != null) {
       ZusammenElement componentElement = createParentElement(processEntity);
-      aggregatedElement = VspZusammenUtil.aggregateElements(componentElement,
+      aggregatedElement = VspaggregateElements(componentElement,
           aggregatedElement);
     }
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(processEntity.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
-    zusammenAdaptor.saveElement(context, elementContext, aggregatedElement, "Delete All processes");
+    zusammenAdaptor.saveElement(context, elementContext, aggregatedElement, "Delete All
+    processes");*/
+
+    if (optionalElement.isPresent()) {
+      Element processesElement = optionalElement.get();
+      Collection<Element> processes = processesElement.getSubElements();
+
+      processes.forEach(process -> {
+        ZusammenElement processZusammenElement =
+            buildElement(process.getElementId(), Action.DELETE);
+        zusammenAdaptor.saveElement(context, elementContext, processZusammenElement,
+            "Delete Process with id " + process.getElementId());
+      });
+    }
   }
 
   @Override
   public void deleteVspAll(String vspId, Version version) {
-    ProcessEntity processEntity = new ProcessEntity();
+    /* ProcessEntity processEntity = new ProcessEntity();
     processEntity.setVersion(version);
     processEntity.setVspId(vspId);
-    deleteAll(processEntity);
+    deleteAll(processEntity); */
+
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(vspId, version.getId());
+
+    Optional<Element> optionalElement = zusammenAdaptor.getElementByName(context,
+        elementContext, null, ElementType.Processes.name());
+
+    if (optionalElement.isPresent()) {
+      Element processesElement = optionalElement.get();
+      Collection<Element> processes = processesElement.getSubElements();
+
+      processes.forEach(process -> {
+        ZusammenElement processZusammenElement =
+            buildElement(process.getElementId(), Action.DELETE);
+        zusammenAdaptor.saveElement(context, elementContext, processZusammenElement,
+            "Delete Process with id " + process.getElementId());
+      });
+    }
   }
 
   @Override
-  public Collection<ProcessEntity> list(ProcessEntity process) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(process.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(process.getVersion()));
+  public ProcessEntity getArtifact(ProcessEntity processEntity) {
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(processEntity.getVspId(), processEntity.getVersion().getId());
+
+    return zusammenAdaptor.getElement(context, elementContext, processEntity.getId())
+        .map(element -> {
+          ProcessEntity process = new ElementToProcessConvertor().convert(element);
+          process.setVspId(processEntity.getVspId());
+          process.setVersion(processEntity.getVersion());
+          process.setComponentId(processEntity.getComponentId());
+          return process;
+        })
+        .orElse(null);
+  }
+
+  @Override
+  public void uploadArtifact(ProcessEntity processEntity) {
+    ProcessEntity retrieved = get(processEntity);
+    if (retrieved != null) {
+      retrieved.setArtifactName(processEntity.getArtifactName());
+      retrieved.setArtifact(processEntity.getArtifact());
+
+      update(retrieved, "Upload process artifact");
+    }
+  }
+
+  @Override
+  public void deleteArtifact(ProcessEntity processEntity) {
+    ProcessEntity retrieved = get(processEntity);
+    if (retrieved != null) {
+      retrieved.setArtifactName(null);
+      retrieved.setArtifact(null);
+
+      update(retrieved, "Delete process artifact");
+    }
+  }
+
+  @Override
+  public Collection<ProcessEntity> list(ProcessEntity processEntity) {
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(processEntity.getVspId(), processEntity.getVersion().getId());
 
     Optional<ElementInfo> processesOptional =
         zusammenAdaptor.getElementInfoByName(context, elementContext,
-            extractParentElementId(process), StructureElement.Processes.name());
+            extractParentElementId(processEntity), ElementType.Processes.name());
     if (!processesOptional.isPresent()) {
       return new ArrayList<>();
     }
+    ElementToProcessConvertor convertor = new ElementToProcessConvertor();
     return zusammenAdaptor.listElements(context, elementContext, processesOptional.get().getId())
         .stream()
-        .map(elementInfo -> mapElementInfoToProcess(
-            process.getVspId(), process.getVersion(), process.getComponentId(),
-            elementInfo))
+        .map(elementInfo -> convertToProcessEntity(elementInfo, convertor, processEntity))
         .collect(Collectors.toList());
+  }
+
+  private ProcessEntity convertToProcessEntity(ElementInfo elementInfo,
+                                               ElementToProcessConvertor convertor,
+                                               ProcessEntity inputProcess) {
+    ProcessEntity process = convertor.convert(elementInfo);
+    process.setVspId(inputProcess.getVspId());
+    process.setVersion(inputProcess.getVersion());
+    process.setComponentId(inputProcess.getComponentId());
+    return process;
+  }
+
+  private void update(ProcessEntity processEntity, String message) {
+    ZusammenElement processElement = buildProcessElement(processEntity, Action.UPDATE);
+
+    SessionContext context = createSessionContext();
+    ElementContext elementContext =
+        new ElementContext(processEntity.getVspId(), processEntity.getVersion().getId());
+
+    zusammenAdaptor.saveElement(context, elementContext, processElement, message);
   }
 
   private Id extractParentElementId(ProcessEntity processEntity) {
     return processEntity.getComponentId() == null ? null : new Id(processEntity.getComponentId());
-  }
-
-  private ProcessEntity mapElementInfoToProcess(String vspId, Version version,
-                                                String componentId,
-                                                ElementInfo elementInfo) {
-    ProcessEntity processEntity = new ProcessEntity(vspId, version, componentId, elementInfo
-        .getId().getValue());
-    processEntity.setName((String) elementInfo.getInfo().getProperties().get(NAME));
-    processEntity
-        .setArtifactName((String) elementInfo.getInfo().getProperties().get(ARTIFACT_NAME));
-    processEntity.setDescription((String) elementInfo.getInfo().getProperties().get(DESCRIPTION));
-    processEntity.setType( elementInfo.getInfo().getProperties().get(PROCESS_TYPE) != null ?
-            ProcessType.valueOf((String) elementInfo.getInfo().getProperties().get(PROCESS_TYPE)) :
-            null);
-    return processEntity;
   }
 
   private ZusammenElement buildProcessElement(ProcessEntity process, Action action) {
@@ -208,14 +259,12 @@ public class ProcessDaoZusammenImpl implements ProcessDao {
     Info info = new Info();
     info.setName(process.getName());
     info.addProperty(NAME, process.getName());
-    info.addProperty(ELEMENT_TYPE, ElementType.Process);
+    info.addProperty(ElementPropertyName.elementType.name(), ElementType.Process);
     info.addProperty(ARTIFACT_NAME, process.getArtifactName());
     info.addProperty(DESCRIPTION, process.getDescription());
     info.addProperty(PROCESS_TYPE, process.getType() != null ? process.getType().name() : null);
 
-    ZusammenElement processElement = new ZusammenElement();
-    processElement.setElementId(new Id(process.getId()));
-    processElement.setAction(action);
+    ZusammenElement processElement = buildElement(new Id(process.getId()), action);
     processElement.setInfo(info);
     if (Objects.nonNull(process.getArtifact())) {
       processElement.setData(new ByteArrayInputStream(process.getArtifact().array()));
@@ -223,10 +272,4 @@ public class ProcessDaoZusammenImpl implements ProcessDao {
     return processElement;
   }
 
-  private ZusammenElement createParentElement(ProcessEntity entity) {
-    ZusammenElement componentElement = new ZusammenElement();
-    componentElement.setElementId(new Id(entity.getComponentId()));
-    componentElement.setAction(Action.IGNORE);
-    return componentElement;
-  }
 }

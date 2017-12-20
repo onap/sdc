@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import Input from 'nfvo-components/input/validation/InputWrapper.jsx';
 
@@ -55,13 +56,13 @@ const mapActionsToProps = dispatch => {
 class ModuleOptions extends React.Component {
 
 	static propTypes = {
-		onBootstrapped: React.PropTypes.func.isRequired,
-		onLicenseAgreementListEditor: React.PropTypes.func.isRequired,
-		onFeatureGroupsListEditor: React.PropTypes.func.isRequired,
-		onLicenseKeyGroupsListEditor: React.PropTypes.func.isRequired,
-		onEntitlementPoolsListEditor: React.PropTypes.func.isRequired,
-		onOnboardingCatalog: React.PropTypes.func.isRequired,
-		onSoftwareProductDetails: React.PropTypes.func.isRequired,
+		onBootstrapped: PropTypes.func.isRequired,
+		onLicenseAgreementListEditor: PropTypes.func.isRequired,
+		onFeatureGroupsListEditor: PropTypes.func.isRequired,
+		onLicenseKeyGroupsListEditor: PropTypes.func.isRequired,
+		onEntitlementPoolsListEditor: PropTypes.func.isRequired,
+		onOnboardingCatalog: PropTypes.func.isRequired,
+		onSoftwareProductDetails: PropTypes.func.isRequired,
 	};
 
 	state = {

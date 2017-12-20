@@ -20,16 +20,7 @@
 		display: flex;
 	}
 }
-.network-nic-modal-edit, .network-nic-modal-create {
-    .modal-body {
-      padding: 0;
-    }
-	.validation-form-content {
-		padding-left: 50px;
-		padding-right: 50px;
-		padding-top: 20px;
-	}
-}
+
 .network-nic-modal-edit {
     .modal-dialog {
 		width: 900px;

@@ -1,8 +1,5 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.GENERAL_COMPONENT_ID;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.PROCESS_NAME;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.model.dao.ServiceModelDao;
@@ -35,14 +32,16 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadData;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionDataExtractorFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionDataExtractor;
@@ -62,13 +61,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.PROCESS_NAME;
+
 public class OrchestrationUtil {
 
   public static final String ORCHESTRATION_CONFIG_NAMESPACE = "orchestration";
   public static final String ORCHESTRATION_IMPL_KEY = "orchestration_impl";
 
-
-  private VendorSoftwareProductDao vendorSoftwareProductDao;
   private NicDao nicDao;
   private ComponentArtifactDao componentArtifactDao;
   private ProcessDao processDao;
@@ -80,8 +79,7 @@ public class OrchestrationUtil {
   private CompositionDataExtractor compositionDataExtractor;
 
   public OrchestrationUtil() {
-    this (VendorSoftwareProductDaoFactory.getInstance().createInterface(),
-          NicDaoFactory.getInstance().createInterface(),
+    this(NicDaoFactory.getInstance().createInterface(),
         MonitoringUploadDaoFactory.getInstance().createInterface(),
         ProcessDaoFactory.getInstance().createInterface(),
         OrchestrationTemplateDaoFactory.getInstance().createInterface(),
@@ -93,7 +91,6 @@ public class OrchestrationUtil {
   }
 
   public OrchestrationUtil(
-      VendorSoftwareProductDao vendorSoftwareProductDao,
       NicDao nicDao,
       ComponentArtifactDao componentArtifactDao,
       ProcessDao processDao,
@@ -103,7 +100,6 @@ public class OrchestrationUtil {
       ComponentDependencyModelDao componentDependencyModelDao,
       CompositionEntityDataManager compositionEntityDataManager,
       CompositionDataExtractor compositionDataExtractor) {
-    this.vendorSoftwareProductDao = vendorSoftwareProductDao;
     this.nicDao = nicDao;
     this.componentArtifactDao = componentArtifactDao;
     this.processDao = processDao;
@@ -116,8 +112,7 @@ public class OrchestrationUtil {
   }
 
   public static Optional<FileContentHandler> getFileContentMap(OnboardingTypesEnum type,
-                                                               UploadFileResponse
-                                                                   uploadFileResponse,
+                                                               UploadFileResponse uploadFileResponse,
                                                                byte[] uploadedFileData) {
     FileContentHandler contentMap = null;
     try {
@@ -133,95 +128,63 @@ public class OrchestrationUtil {
     return Optional.ofNullable(contentMap);
   }
 
-  public void backupComponentsQuestionnaireBeforeDelete(String vspId, Version activeVersion,
-                                           Map<String, String> componentsQustanniare,
-                                           Map<String, Map<String, String>>
-                                               componentNicsQustanniare,
-                                           Map<String, Collection<ComponentMonitoringUploadEntity>>
-                                               componentMibList,
-                                           Map<String, Collection<ProcessEntity>>
-                                               componentProcesses,
-                                           Map<String, ProcessEntity> processArtifact) {
-    //backup VSP processes
-    backupProcess(vspId, activeVersion, GENERAL_COMPONENT_ID, GENERAL_COMPONENT_ID,
-        componentProcesses, processArtifact);
-    Collection<ComponentEntity> componentsCompositionAndQuestionnaire = vendorSoftwareProductDao
-        .listComponentsCompositionAndQuestionnaire(vspId,
-            activeVersion);
+  public void backupComponentsQuestionnaireBeforeDelete(String vspId, Version version,
+                                                        Map<String, String> componentsQustanniare,
+                                                        Map<String, Map<String, String>>
+                                                            componentNicsQustanniare,
+                                                        Map<String, Collection<ComponentMonitoringUploadEntity>>
+                                                            componentMibList,
+                                                        Map<String, Collection<ProcessEntity>>
+                                                            componentProcesses,
+                                                        Map<String, ProcessEntity> processArtifact) {
+
+    Collection<ComponentEntity> componentsCompositionAndQuestionnaire =
+        componentDao.listCompositionAndQuestionnaire(vspId, version);
     componentsCompositionAndQuestionnaire.forEach(componentEntity ->
-        backupComponentQuestionnaire(vspId, activeVersion, componentEntity, componentsQustanniare,
+        backupComponentQuestionnaire(vspId, version, componentEntity, componentsQustanniare,
             componentNicsQustanniare, componentMibList, componentProcesses, processArtifact));
   }
 
-  private void backupComponentQuestionnaire(String vspId, Version activeVersion,
-                                            ComponentEntity componentEntity,
-                                            Map<String, String> componentsQustanniare,
-                                            Map<String, Map<String, String>>
-                                                componentNicsQustanniare,
-                                            Map<String, Collection<ComponentMonitoringUploadEntity>>
-                                                componentMibList,
-                                            Map<String, Collection<ProcessEntity>>
-                                                componentProcesses,
-                                            Map<String, ProcessEntity> processArtifact) {
+  private void backupComponentQuestionnaire(
+      String vspId, Version version,
+      ComponentEntity componentEntity,
+      Map<String, String> componentsQustanniare,
+      Map<String, Map<String, String>> componentNicsQustanniare,
+      Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList,
+      Map<String, Collection<ProcessEntity>> componentProcesses,
+      Map<String, ProcessEntity> processArtifact) {
     String componentName = componentEntity.getComponentCompositionData().getName();
-    backupMibData(componentsQustanniare, componentMibList, componentName, componentEntity, vspId,
-        activeVersion);
-    backupComponentProcessData(componentNicsQustanniare, vspId, activeVersion, componentName,
-        componentEntity, componentProcesses, processArtifact);
+    componentsQustanniare.put(componentName, componentEntity.getQuestionnaireData());
+    backupMibData(vspId, version, componentEntity, componentName, componentMibList);
+    backupProcess(vspId, version, componentEntity.getId(), componentName, componentProcesses,
+        processArtifact);
+    backupNicsQuestionnaire(vspId, version, componentEntity, componentName,
+        componentNicsQustanniare);
   }
 
-  private void backupMibData(Map<String, String> componentsQustanniare,
-                             Map<String, Collection<ComponentMonitoringUploadEntity>>
-                                 componentMibList,
-                             String componentName, ComponentEntity componentEntity,
-                             String vspId, Version activeVersion) {
-    componentsQustanniare.put(componentName, componentEntity.getQuestionnaireData());
-    //backup mib
+  private void backupMibData(String vspId, Version version, ComponentEntity componentEntity,
+                             String componentName,
+                             Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList) {
     Collection<ComponentMonitoringUploadEntity> componentMib =
         componentArtifactDao.listArtifacts(new
-            ComponentMonitoringUploadEntity(vspId, activeVersion, componentEntity.getId(), null));
+            ComponentMonitoringUploadEntity(vspId, version, componentEntity.getId(),
+            null));
     if (CollectionUtils.isNotEmpty(componentMib)) {
       componentMibList.put(componentName, componentMib);
     }
   }
 
-  private void backupComponentProcessData(Map<String, Map<String, String>> componentNicsQustanniare,
-                                          String vspId, Version activeVersion, String componentName,
-                                          ComponentEntity componentEntity,
-                                          Map<String, Collection<ProcessEntity>> componentProcesses,
-                                          Map<String, ProcessEntity> processArtifact) {
-    Collection<NicEntity>
-        nics = nicDao.list(new NicEntity(vspId, activeVersion, componentEntity.getId(), null));
-    //backup component processes
-    backupProcess(vspId, activeVersion, componentEntity.getId(), componentName,
-        componentProcesses, processArtifact);
-    if (CollectionUtils.isNotEmpty(nics)) {
-      Map<String, String> nicsQustanniare = new HashMap<>();
-      nics.forEach(nicEntity -> {
-        NicEntity nic = nicDao.get(new NicEntity(vspId, activeVersion, componentEntity.getId(),
-            nicEntity.getId()));
-        NicEntity nicQuestionnaire = nicDao.getQuestionnaireData(vspId, activeVersion,
-            componentEntity.getId(), nicEntity.getId());
-
-        nicsQustanniare
-            .put(nicEntity.getNicCompositionData().getName(),
-                nicQuestionnaire.getQuestionnaireData());
-      });
-      componentNicsQustanniare.put(componentName, nicsQustanniare);
-    }
-  }
-
-  private void backupProcess(String vspId, Version activeVersion, String componentId,
-                                    String componentName, Map<String,
+  private void backupProcess(String vspId, Version version, String componentId,
+                             String componentName, Map<String,
       Collection<ProcessEntity>> processes,
-                                    Map<String, ProcessEntity> processArtifact) {
-    Collection<ProcessEntity> processList = vendorSoftwareProductDao.listProcesses(vspId,
-        activeVersion, componentId);
+                             Map<String, ProcessEntity> processArtifact) {
+    Collection<ProcessEntity> processList =
+        processDao.list(new ProcessEntity(vspId, version, componentId, null));
     if (!processList.isEmpty()) {
       processes.put(componentName, processList);
       processList.forEach(process -> {
-        ProcessEntity artifact =
-            processDao.get(new ProcessEntity(vspId, activeVersion, componentId, process.getId()));
+        ProcessEntity artifact = processDao
+            .getArtifact(new ProcessEntity(vspId, version, componentId, process.getId()));
         if (artifact.getArtifact() != null) {
           processArtifact.put(process.getId(), artifact);
         }
@@ -229,29 +192,45 @@ public class OrchestrationUtil {
     }
   }
 
-  public void retainComponentQuestionnaireData(String vspId, Version activeVersion,
-                          Map<String, String> componentsQustanniare,
-                          Map<String, Map<String, String>>
-                              componentNicsQustanniare,
-                          Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList,
-                          Map<String, Collection<ProcessEntity>> processes,
-                          Map<String, ProcessEntity> processArtifact) {
+  private void backupNicsQuestionnaire(String vspId, Version version,
+                                       ComponentEntity componentEntity,
+                                       String componentName,
+                                       Map<String, Map<String, String>> componentNicsQustanniare) {
+    Collection<NicEntity>
+        nics = nicDao.list(new NicEntity(vspId, version, componentEntity.getId(), null));
+    if (CollectionUtils.isNotEmpty(nics)) {
+      Map<String, String> nicsQuestionnaire = new HashMap<>();
+      nics.forEach(nicEntity -> {
+        NicEntity nicQuestionnaire = nicDao.getQuestionnaireData(vspId, version,
+            componentEntity.getId(), nicEntity.getId());
+
+        nicsQuestionnaire.put(nicEntity.getNicCompositionData().getName(),
+            nicQuestionnaire.getQuestionnaireData());
+      });
+      componentNicsQustanniare.put(componentName, nicsQuestionnaire);
+    }
+  }
+
+  public void retainComponentQuestionnaireData(String vspId, Version version,
+                                               Map<String, String> componentsQustanniare,
+                                               Map<String, Map<String, String>>
+                                                   componentNicsQustanniare,
+                                               Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList,
+                                               Map<String, Collection<ProcessEntity>> processes,
+                                               Map<String, ProcessEntity> processArtifact) {
     //VSP processes
-    restoreProcess(vspId, activeVersion, GENERAL_COMPONENT_ID, GENERAL_COMPONENT_ID, processes,
-        processArtifact);
-    Collection<ComponentEntity>
-        components = vendorSoftwareProductDao.listComponents(vspId, activeVersion);
+    restoreProcess(vspId, version, null, null, processes, processArtifact);
+    Collection<ComponentEntity> components =
+        componentDao.list(new ComponentEntity(vspId, version, null));
     components.forEach(componentEntity -> {
       String componentName = componentEntity.getComponentCompositionData().getName();
       if (componentsQustanniare.containsKey(componentName)) {
-        //Restore component questionnaire
-        componentDao.updateQuestionnaireData(vspId, activeVersion,
+        componentDao.updateQuestionnaireData(vspId, version,
             componentEntity.getId(),
             componentsQustanniare.get(componentEntity.getComponentCompositionData()
                 .getName()));
-        //Restore component nic questionnaire
         if (componentNicsQustanniare.containsKey(componentName)) {
-          restoreComponentNicQuestionnaire(vspId, activeVersion, componentName, componentEntity,
+          restoreComponentNicQuestionnaire(vspId, version, componentName, componentEntity,
               componentNicsQustanniare);
         }
         //MIB //todo add for VES_EVENTS
@@ -259,33 +238,30 @@ public class OrchestrationUtil {
           restoreComponentMibData(componentName, componentEntity, componentMibList);
         }
         //VFC processes
-        restoreProcess(vspId, activeVersion, componentEntity.getId(), componentName, processes,
+        restoreProcess(vspId, version, componentEntity.getId(), componentName, processes,
             processArtifact);
       }
     });
   }
 
-  private void restoreComponentNicQuestionnaire(String vspId, Version activeVersion,
+  private void restoreComponentNicQuestionnaire(String vspId, Version version,
                                                 String componentName,
                                                 ComponentEntity componentEntity,
-                                                Map<String, Map<String, String>>
-                                                    componentNicsQustanniare) {
+                                                Map<String, Map<String, String>> componentNicsQustanniare) {
     Map<String, String> nicsQustanniare = componentNicsQustanniare.get(componentName);
     Collection<NicEntity> nics =
-        nicDao.list(new NicEntity(vspId, activeVersion, componentEntity.getId(), null));
+        nicDao.list(new NicEntity(vspId, version, componentEntity.getId(), null));
     nics.forEach(nicEntity -> {
       if (nicsQustanniare.containsKey(nicEntity.getNicCompositionData().getName())) {
-        nicDao.updateQuestionnaireData(vspId, activeVersion,
+        nicDao.updateQuestionnaireData(vspId, version,
             componentEntity.getId(), nicEntity.getId(),
             nicsQustanniare.get(nicEntity.getNicCompositionData().getName()));
       }
     });
   }
 
-  private void restoreComponentMibData(String componentName,
-                                       ComponentEntity componentEntity,
-                                       Map<String, Collection<ComponentMonitoringUploadEntity>>
-                                           componentMibList) {
+  private void restoreComponentMibData(String componentName, ComponentEntity componentEntity,
+                                       Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList) {
     Collection<ComponentMonitoringUploadEntity> mibList = componentMibList.get(componentName);
     mibList.forEach(mib -> {
       mib.setComponentId(componentEntity.getId());
@@ -293,54 +269,58 @@ public class OrchestrationUtil {
     });
   }
 
-  private void restoreProcess(String vspId, Version activeVersion, String componentId,
-                                     String componentName,
-                                     Map<String, Collection<ProcessEntity>> processes,
-                                     Map<String, ProcessEntity> processArtifact) {
+  private void restoreProcess(String vspId, Version version, String componentId,
+                              String componentName,
+                              Map<String, Collection<ProcessEntity>> processes,
+                              Map<String, ProcessEntity> processArtifact) {
     if (processes.containsKey(componentName)) {
       Collection<ProcessEntity> processList = processes.get(componentName);
       processList.forEach(process -> {
-        //Reatin VFC process
-        if (!GENERAL_COMPONENT_ID.equals(componentId)
-            && processArtifact.containsKey(process.getId())) {
+        process.setComponentId(componentId);
+        UniqueValueUtil.createUniqueValue(PROCESS_NAME, vspId, version.getId(), componentId,
+            process.getName());
+        processDao.create(process);
+        if (processArtifact.containsKey(process.getId())) {
           ProcessEntity artifact = processArtifact.get(process.getId());
-          artifact.setComponentId(componentId);
-          UniqueValueUtil.createUniqueValue(PROCESS_NAME, vspId, activeVersion.toString(),
-              componentId, process.getName());
-          vendorSoftwareProductDao.createProcess(artifact);
+          processDao.uploadArtifact(artifact);
         }
       });
     }
   }
 
   public void deleteUploadDataAndContent(String vspId, Version version) {
-    //fixme change this when more tables are zusammenized
-    vendorSoftwareProductDao.deleteUploadData(vspId, version);
+    VendorSoftwareProductInfoDaoFactory.getInstance().createInterface()
+        .delete(new VspDetails(vspId, version));
   }
 
-  public void saveUploadData(String vspId, Version activeVersion,
-                                    InputStream uploadedFileData,
-                                    FileContentHandler fileContentMap, HeatStructureTree tree) {
+  public void saveUploadData(VspDetails vspDetails,
+                             OrchestrationTemplateCandidateData candidateData,
+                             InputStream uploadedFileData,
+                             FileContentHandler fileContentMap, HeatStructureTree tree) {
     Map<String, Object> manifestAsMap =
         fileContentMap.containsFile(SdcCommon.MANIFEST_NAME)
             ? (Map<String, Object>) JsonUtil.json2Object(fileContentMap.getFileContent(
             SdcCommon.MANIFEST_NAME), Map.class)
             : new HashMap<>();
 
-    UploadData uploadData = new UploadData();
+    OrchestrationTemplateEntity uploadData = new OrchestrationTemplateEntity();
+    uploadData.setFileSuffix(candidateData.getFileSuffix());
+    uploadData.setFileName(candidateData.getFileName());
     uploadData.setContentData(ByteBuffer.wrap(FileUtils.toByteArray(uploadedFileData)));
     uploadData.setValidationDataStructure(new ValidationStructureList(tree));
     uploadData.setPackageName(Objects.isNull(manifestAsMap.get("name")) ? null :
         (String) manifestAsMap.get("name"));
     uploadData.setPackageVersion(Objects.isNull(manifestAsMap.get("version")) ? null :
         (String) manifestAsMap.get("version"));
-    orchestrationTemplateDataDao.updateOrchestrationTemplateData(vspId, uploadData);
+    orchestrationTemplateDataDao.update(vspDetails.getId(), vspDetails.getVersion(), uploadData);
+
+    VspMergeDaoFactory.getInstance().createInterface()
+        .updateVspModelId(vspDetails.getId(), vspDetails.getVersion());
   }
 
-  public void saveServiceModel(String vspId,
-                                      Version version,
-                                      ToscaServiceModel serviceModelToExtract,
-                                      ToscaServiceModel serviceModelToStore) {
+  public void saveServiceModel(String vspId, Version version,
+                               ToscaServiceModel serviceModelToExtract,
+                               ToscaServiceModel serviceModelToStore) {
     if (serviceModelToExtract != null) {
       serviceModelDao.storeServiceModel(vspId, version, serviceModelToStore);
       //Extracting the compostion data from the output service model of the first phase of
@@ -358,22 +338,20 @@ public class OrchestrationUtil {
     return heatTreeManager.getTree();
   }
 
-  public void updateVspComponentDependencies(String vspId, Version activeVersion,
-                                                    Map<String, String>
-                                                        vspComponentIdNameInfoBeforeProcess) {
-    Map<String, String> updatedVspComponentNameIdInfo = getVspComponentNameIdInfo(vspId,
-        activeVersion);
+  public void updateVspComponentDependencies(String vspId, Version version,
+                                             Map<String, String> vspComponentIdNameInfoBeforeProcess) {
+    Map<String, String> updatedVspComponentNameIdInfo = getVspComponentNameIdInfo(vspId, version);
     if (MapUtils.isNotEmpty(updatedVspComponentNameIdInfo)) {
       Set<String> updatedVspComponentNames = updatedVspComponentNameIdInfo.keySet();
       Collection<ComponentDependencyModelEntity> componentDependencies =
-          vendorSoftwareProductDao.listComponentDependencies(vspId, activeVersion);
+          componentDependencyModelDao.list(new ComponentDependencyModelEntity(vspId,
+              version, null));
       if (CollectionUtils.isNotEmpty(componentDependencies)) {
         updateComponentDependency(vspComponentIdNameInfoBeforeProcess, componentDependencies,
             updatedVspComponentNames, updatedVspComponentNameIdInfo);
       }
     }
   }
-
 
   private void updateComponentDependency(Map<String, String> vspComponentIdNameInfoBeforeProcess,
                                          Collection<ComponentDependencyModelEntity>
@@ -398,14 +376,14 @@ public class OrchestrationUtil {
     }
   }
 
-  public Map<String, String> getVspComponentIdNameInfo(String vspId, Version activeVersion) {
+  public Map<String, String> getVspComponentIdNameInfo(String vspId, Version version) {
     Collection<ComponentEntity> updatedVspComponents =
-        vendorSoftwareProductDao.listComponents(vspId, activeVersion);
+        componentDao.list(new ComponentEntity(vspId, version, null));
     Map<String, String> vspComponentIdNameMap = new HashMap<>();
     if (CollectionUtils.isNotEmpty(updatedVspComponents)) {
       vspComponentIdNameMap = updatedVspComponents.stream()
           .filter(componentEntity -> componentEntity.getComponentCompositionData() != null)
-          .collect(Collectors.toMap(componentEntity -> componentEntity.getId(),
+          .collect(Collectors.toMap(ComponentEntity::getId,
               componentEntity -> componentEntity.getComponentCompositionData().getName()));
 
     }
@@ -413,15 +391,16 @@ public class OrchestrationUtil {
   }
 
   private Map<String, String> getVspComponentNameIdInfo(String vspId,
-                                                              Version activeVersion) {
+                                                        Version version) {
     Collection<ComponentEntity> updatedVspComponents =
-        vendorSoftwareProductDao.listComponents(vspId, activeVersion);
+        componentDao.list(new ComponentEntity(vspId, version, null));
     Map<String, String> vspComponentNameIdMap = new HashMap<>();
     if (CollectionUtils.isNotEmpty(updatedVspComponents)) {
       vspComponentNameIdMap = updatedVspComponents.stream()
           .filter(componentEntity -> componentEntity.getComponentCompositionData() != null)
-          .collect(Collectors.toMap(componentEntity -> componentEntity
-            .getComponentCompositionData().getName(), componentEntity -> componentEntity.getId()));
+          .collect(Collectors
+              .toMap(componentEntity -> componentEntity.getComponentCompositionData().getName(),
+                  ComponentEntity::getId));
     }
     return vspComponentNameIdMap;
   }

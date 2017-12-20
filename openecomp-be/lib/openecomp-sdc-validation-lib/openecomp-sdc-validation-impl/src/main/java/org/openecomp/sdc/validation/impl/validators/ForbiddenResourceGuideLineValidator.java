@@ -63,7 +63,7 @@ public class ForbiddenResourceGuideLineValidator implements Validator {
   public void validate(GlobalValidationContext globalContext) {
     ManifestContent manifestContent;
     try {
-      manifestContent = ValidationUtil.checkValidationPreCondition(globalContext);
+      manifestContent = ValidationUtil.validateManifest(globalContext);
     } catch (Exception exception) {
       log.debug("",exception);
       return;

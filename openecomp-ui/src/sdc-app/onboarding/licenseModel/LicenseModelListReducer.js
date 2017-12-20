@@ -19,8 +19,6 @@ export default (state = [], action) => {
 	switch (action.type) {
 		case actionTypes.LICENSE_MODELS_LIST_LOADED:
 			return [...action.response.results];
-		case actionTypes.ADD_LICENSE_MODEL:
-			return [...state, action.licenseModel];
 		default:
 			return state;
 	}

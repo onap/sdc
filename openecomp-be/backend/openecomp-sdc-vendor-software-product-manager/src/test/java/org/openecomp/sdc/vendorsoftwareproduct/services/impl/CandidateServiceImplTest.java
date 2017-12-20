@@ -30,7 +30,6 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.ManifestCreator;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule.CandidateServiceImpl;
@@ -57,8 +56,6 @@ import static org.testng.Assert.assertTrue;
 public class CandidateServiceImplTest {
   @Mock
   private ManifestCreator manifestCreatorMock;
-  @Mock
-  private VendorSoftwareProductDao vendorSoftwareProductDaoMock;
   @InjectMocks
   private CandidateServiceImpl candidateService;
 
@@ -95,7 +92,8 @@ public class CandidateServiceImplTest {
     //vspDetails.setOnboardingMethod(VSPCommon.OnboardingMethod.HEAT.name());
     vspDetails.setOnboardingMethod("HEAT");
 
-    FilesDataStructure structure = JsonUtil.json2Object(getExpectedJson(), FilesDataStructure.class);
+    FilesDataStructure structure =
+        JsonUtil.json2Object(getExpectedJson(), FilesDataStructure.class);
 
     Optional<ManifestContent> expectedManifest = getExpectedManifestJson();
     doReturn(expectedManifest)
@@ -191,7 +189,8 @@ public class CandidateServiceImplTest {
     fileData = createFileData("file1.yaml", true, FileData.Type.HEAT, null);
     mockFileData.add(fileData);
     fileData = createFileData("file1_vol.yaml", null, FileData.Type.HEAT_VOL, fileData);
-    fileData = createFileData("file1.env", null, FileData.Type.HEAT_ENV, mockFileData.get(1).getData().get(0));
+    fileData = createFileData("file1.env", null, FileData.Type.HEAT_ENV,
+        mockFileData.get(1).getData().get(0));
     mockFileData.add(createFileData("file2.sh", null, FileData.Type.OTHER, null));
     mockFileData.add(createFileData("file3.yml", null, FileData.Type.OTHER, null));
     mock.setData(mockFileData);
@@ -202,7 +201,7 @@ public class CandidateServiceImplTest {
                                   FileData fileDataToAddTo) {
     FileData fileData = new FileData();
     fileData.setFile(fileName);
-    if(isBase != null) {
+    if (isBase != null) {
       fileData.setBase(isBase);
     }
     fileData.setType(fileType);
@@ -211,11 +210,9 @@ public class CandidateServiceImplTest {
   }
 
   private void addFileDataToList(FileData fileDataToAddTo, FileData fileData) {
-    if(fileDataToAddTo != null)
-    {
+    if (fileDataToAddTo != null) {
       List<FileData> list = fileDataToAddTo.getData();
-      if(CollectionUtils.isEmpty(list))
-      {
+      if (CollectionUtils.isEmpty(list)) {
         list = new ArrayList<>();
       }
       list.add(fileData);

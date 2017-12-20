@@ -21,7 +21,6 @@
 package org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatConstants;
@@ -29,6 +28,7 @@ import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.Template;
+import org.openecomp.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.EntityConsolidationData;
 import org.openecomp.sdc.translator.services.heattotosca.ConfigConstants;

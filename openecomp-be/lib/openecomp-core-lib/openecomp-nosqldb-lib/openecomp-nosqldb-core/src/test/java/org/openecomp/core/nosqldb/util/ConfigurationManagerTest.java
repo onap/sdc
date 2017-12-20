@@ -7,7 +7,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author EVITALIY

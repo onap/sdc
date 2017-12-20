@@ -20,15 +20,13 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
-import org.openecomp.sdc.activityLog.ActivityLogManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManager;
 import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.MonitoringUploadDaoFactory;
 
 public class MonitoringUploadsManagerFactoryImpl extends MonitoringUploadsManagerFactory {
   private static final MonitoringUploadsManager INSTANCE =
-      new MonitoringUploadsManagerImpl(MonitoringUploadDaoFactory.getInstance().createInterface(),
-          ActivityLogManagerFactory.getInstance().createInterface());
+      new MonitoringUploadsManagerImpl(MonitoringUploadDaoFactory.getInstance().createInterface());
 
   @Override
   public MonitoringUploadsManager createInterface() {

@@ -19,10 +19,10 @@ import org.openecomp.sdc.activitylog.dao.ActivityLogDao;
 import org.openecomp.sdc.activitylog.dao.ActivityLogDaoFactory;
 
 public class ActivityLogDaoFactoryImpl extends ActivityLogDaoFactory {
-    private static final ActivityLogDao INSTANCE = new ActivityLogDaoCassandraImpl();
+  private static final ActivityLogDao INSTANCE = new ActivityLogDaoCassandraImpl();
 
-    @Override
-    public ActivityLogDao createInterface() {
-        return INSTANCE;
-    }
+  @Override
+  public ActivityLogDao createInterface() {
+    return INSTANCE;
+  }
 }

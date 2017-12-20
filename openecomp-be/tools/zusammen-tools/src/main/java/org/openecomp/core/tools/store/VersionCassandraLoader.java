@@ -20,6 +20,7 @@
 
 package org.openecomp.core.tools.store;
 
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
@@ -60,6 +61,8 @@ public class VersionCassandraLoader {
         return accessor.getAll();
     }
 
+    public ResultSet listItemVersion() { return accessor.getAllItemVersion();}
+
     @Accessor
     interface VersionAccessor {
 
@@ -74,5 +77,8 @@ public class VersionCassandraLoader {
         @Query("select * from zusammen_dox.version ")
         @QueryParameters(fetchSize = 400)
         Result<VersionEntity> getAll();
+
+        @Query("select space,item_id,version_id from zusammen_dox.version ")
+        ResultSet getAllItemVersion();
     }
 }

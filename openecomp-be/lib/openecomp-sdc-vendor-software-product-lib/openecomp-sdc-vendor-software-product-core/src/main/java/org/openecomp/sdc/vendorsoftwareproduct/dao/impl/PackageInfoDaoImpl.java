@@ -20,10 +20,8 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
 
-import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.UDTMapper;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
@@ -32,9 +30,7 @@ import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
-import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -46,8 +42,6 @@ public class PackageInfoDaoImpl extends CassandraBaseDao<PackageInfo> implements
       noSqlDb.getMappingManager().mapper(PackageInfo.class);
   private static final PackageInfoAccessor accessor =
       noSqlDb.getMappingManager().createAccessor(PackageInfoAccessor.class);
-  private static final UDTMapper<Version> versionMapper =
-      noSqlDb.getMappingManager().udtMapper(Version.class);
 
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
@@ -58,7 +52,7 @@ public class PackageInfoDaoImpl extends CassandraBaseDao<PackageInfo> implements
 
   @Override
   protected Object[] getKeys(PackageInfo entity) {
-    return new Object[]{entity.getVspId(), versionMapper.toUDT(entity.getVersion())};
+    return new Object[]{entity.getVspId(), entity.getVersion()};
   }
 
   @Override
@@ -68,8 +62,7 @@ public class PackageInfoDaoImpl extends CassandraBaseDao<PackageInfo> implements
 
   @Override
   public List<PackageInfo> listByCategory(String category, String subCategory) {
-
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
     Result<PackageInfo> packages = accessor.listInfo();
 
     List<PackageInfo> filteredPackages = new ArrayList<>();
@@ -86,18 +79,8 @@ public class PackageInfoDaoImpl extends CassandraBaseDao<PackageInfo> implements
         filteredPackages.add(packageInfo);
       }
     }
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
     return filteredPackages;
-  }
-
-  @Override
-  public void deleteRowTranslateContent(String vspId, Version version) {
-    accessor.deleteRowTranslateContent(vspId, version);
-  }
-
-  @Override
-  public void updateTranslatedContent(String vspId, Version version, ByteBuffer translateContent){
-    accessor.updateTranslateContent(translateContent, vspId, versionMapper.toUDT(version));
   }
 
   @Accessor
@@ -107,13 +90,5 @@ public class PackageInfoDaoImpl extends CassandraBaseDao<PackageInfo> implements
         "SELECT vsp_id,version,display_name,vsp_name,vsp_description,vendor_name,category"
             + " ,sub_category, vendor_release,package_checksum,package_type FROM package_details")
     Result<PackageInfo> listInfo();
-
-    @Query("DELETE TRANSLATE_CONTENT FROM package_details WHERE vsp_id=? and version=?")
-    Result<PackageInfo> deleteRowTranslateContent(String vspId, Version version);
-
-    @Query("UPDATE package_details set translate_content = ? where vsp_id = ? and version = ?")
-    Result<PackageInfo> updateTranslateContent(ByteBuffer translateContent, String vspId,
-                                               UDTValue version);
-
   }
 }

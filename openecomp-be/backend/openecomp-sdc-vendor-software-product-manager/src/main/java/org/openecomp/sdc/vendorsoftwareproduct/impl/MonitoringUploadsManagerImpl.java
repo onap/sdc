@@ -26,8 +26,6 @@ import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
-import org.openecomp.sdc.activityLog.ActivityLogManager;
-import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.CommonUtil;
@@ -45,7 +43,6 @@ import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentArtifactDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.MonitoringUploadErrorBuilder;
@@ -53,7 +50,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.MonitoringU
 import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.errors.VersionableSubEntityNotFoundErrorBuilder;
-import org.openecomp.sdcrests.activitylog.types.ActivityType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,26 +63,20 @@ import java.util.Optional;
 
 public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
-  private ActivityLogManager activityLogManager;
   private ComponentArtifactDao componentArtifactDao;
-  private VendorSoftwareProductDao vendorSoftwareProductDao;
   private static final Logger logger =
       LoggerFactory.getLogger(VendorSoftwareProductManagerImpl.class);
 
-  private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
-
-  MonitoringUploadsManagerImpl(ComponentArtifactDao componentArtifactDao,
-                               ActivityLogManager activityLogManager) {
+  MonitoringUploadsManagerImpl(ComponentArtifactDao componentArtifactDao) {
     this.componentArtifactDao = componentArtifactDao;
 
-    this.activityLogManager = activityLogManager;
     componentArtifactDao.registerVersioning(
         VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE);
   }
 
   @Override
   public void delete(String vspId, Version version, String componentId,
-                     MonitoringUploadType monitoringUploadType, String user) {
+                     MonitoringUploadType monitoringUploadType) {
     mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
 
     ComponentMonitoringUploadEntity componentMonitoringUploadEntity =
@@ -112,8 +102,7 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
   @Override
   public void upload(InputStream object, String filename, String vspId,
                      Version version, String componentId,
-                     MonitoringUploadType type,
-                     String user) {
+                     MonitoringUploadType type) {
     mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
 
     if (object == null) {
@@ -130,7 +119,7 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
         final FileContentHandler upload =
             validateZip(vspId, version, uploadedFileData, errors);
         if (type.equals(MonitoringUploadType.VES_EVENTS)) {
-          validateVesEventUpload(upload, errors, vspId, version);
+          validateVesEventUpload(upload, errors);
         }
         if (MapUtils.isNotEmpty(errors)) {
           MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
@@ -147,27 +136,18 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
             uploadedFileData);
 
       } catch (Exception exception) {
-        log.debug("", exception);
         MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
             LoggerTragetServiceName.UPLOAD_MONITORING_FILE, ErrorLevel.ERROR.name(),
             LoggerErrorCode.DATA_ERROR.getErrorCode(), "Invalid " + type.toString() + "zip file");
         throw new CoreException(new MonitoringUploadErrorBuilder(exception.getMessage()).build());
       }
     }
-
-    ActivityLogEntity activityLogEntity =
-        new ActivityLogEntity(vspId, String.valueOf(version.getMajor() + 1),
-            ActivityType.UPLOAD_MONITORING_FILE.toString(), user, true, "", "");
-    activityLogManager.addActionLog(activityLogEntity, user);
     logger.audit("Uploaded Monitoring File for component id:" + componentId + " ,vspId:" + vspId);
-
-
     mdcDataDebugMessage.debugExitMessage("VSP id, component id", vspId, componentId);
   }
 
   private void validateVesEventUpload(FileContentHandler upload,
-                                      Map<String, List<ErrorMessage>> errors, String vspId,
-                                      Version version) {
+                                      Map<String, List<ErrorMessage>> errors) {
     if (!CommonUtil.validateAllFilesYml(upload)) {
       ErrorMessage.ErrorMessageUtil.addMessage(SdcCommon.UPLOAD_FILE, errors)
           .add(new ErrorMessage(ErrorLevel.ERROR,
@@ -194,8 +174,7 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
   }
 
   @Override
-  public MonitoringUploadStatus listFilenames(String vspId, Version version, String componentId,
-                                              String user) {
+  public MonitoringUploadStatus listFilenames(String vspId, Version version, String componentId) {
     mdcDataDebugMessage.debugEntryMessage("VSP id, component id", vspId, componentId);
 
     ComponentMonitoringUploadEntity current =
@@ -259,10 +238,10 @@ public class MonitoringUploadsManagerImpl implements MonitoringUploadsManager {
                                          Map<String, List<ErrorMessage>> errors) {
     FileContentHandler contentMap;
     try {
-      contentMap = CommonUtil.validateAndUploadFileContent(OnboardingTypesEnum.ZIP, uploadedFileData);
+      contentMap =
+          CommonUtil.validateAndUploadFileContent(OnboardingTypesEnum.ZIP, uploadedFileData);
       VendorSoftwareProductUtils.validateContentZipData(contentMap, errors);
     } catch (IOException exception) {
-      log.debug("", exception);
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
           LoggerTragetServiceName.VALIDATE_MONITORING_FILE, ErrorLevel.ERROR.name(),
           LoggerErrorCode.DATA_ERROR.getErrorCode(), "Invalid Monitoring zip file");

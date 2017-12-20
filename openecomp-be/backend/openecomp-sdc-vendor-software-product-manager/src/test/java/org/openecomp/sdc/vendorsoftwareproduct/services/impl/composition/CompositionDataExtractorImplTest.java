@@ -27,8 +27,8 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.ToscaExtensionYamlUtil;
+import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Component;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
@@ -110,11 +110,12 @@ public class CompositionDataExtractorImplTest {
       try (InputStream yamlFile = new FileInputStream(file)) {
         ServiceTemplate serviceTemplateFromYaml =
             toscaExtensionYamlUtil.yamlToObject(yamlFile, ServiceTemplate.class);
-        serviceTemplates.put(ToscaUtil.getServiceTemplateFileName(serviceTemplateFromYaml), serviceTemplateFromYaml);
+        serviceTemplates.put(ToscaUtil.getServiceTemplateFileName(serviceTemplateFromYaml),
+            serviceTemplateFromYaml);
         try {
           yamlFile.close();
         } catch (IOException ignore) {
-          log.debug("",ignore);
+          log.debug("", ignore);
         }
       } catch (FileNotFoundException exception) {
         throw exception;

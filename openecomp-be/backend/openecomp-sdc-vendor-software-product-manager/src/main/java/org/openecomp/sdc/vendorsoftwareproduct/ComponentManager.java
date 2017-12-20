@@ -31,24 +31,23 @@ import java.util.Collection;
 
 public interface ComponentManager {
 
-  Collection<ComponentEntity> listComponents(String vspId, Version version, String user);
+  Collection<ComponentEntity> listComponents(String vspId, Version version);
 
-  void deleteComponents(String vspId, Version version, String user);
+  void deleteComponents(String vspId, Version version);
 
-  ComponentEntity createComponent(ComponentEntity componentEntity, String user);
+  ComponentEntity createComponent(ComponentEntity componentEntity);
 
-  CompositionEntityValidationData updateComponent(ComponentEntity componentEntity, String user);
+  CompositionEntityValidationData updateComponent(ComponentEntity componentEntity);
 
   CompositionEntityResponse<ComponentData> getComponent(String vspId, Version version,
-                                                        String componentId, String user);
+                                                        String componentId);
 
-  void deleteComponent(String vspId, Version version, String componentId, String user);
+  void deleteComponent(String vspId, Version version, String componentId);
 
-  QuestionnaireResponse getQuestionnaire(String vspId, Version version, String componentId,
-                                         String user);
+  QuestionnaireResponse getQuestionnaire(String vspId, Version version, String componentId);
 
   void updateQuestionnaire(String vspId, Version version, String componentId,
-                           String questionnaireData, String user);
+                           String questionnaireData);
 
-  void validateComponentExistence(String vspId, Version version, String componentId, String user);
+  void validateComponentExistence(String vspId, Version version, String componentId);
 }

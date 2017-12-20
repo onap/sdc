@@ -1,20 +1,24 @@
 
 .vsp-attachments-view {
   position: relative;
-  #attachments-tabs {
-    .nav-tabs {
+  .attachments-tabs {
+    .sdc-tabs-list {
+      padding-left: 28px;
       background-color: $tlv-gray;
       box-shadow: none;
       border-bottom: 1px solid $light-gray;
-      & > li {
-        & > a {
+      .sdc-tab {
           @extend .heading-2;
-          padding-left: 0;
-          padding-right: 0;
-          margin-right: 40px;
-        };
-        &.active > a {color: $blue;};
+        padding-top: 10px;
+        margin-top: 0;
+        &.sdc-tab-active {
+          color: $blue;
+          font-weight: bold;
+        }
       }
+    }
+    .sdc-tab-content {
+      margin-top: 0;
     }
   }
   .attachments-view-controllers {
@@ -91,6 +95,11 @@
       z-index: 1;
       padding-right: 20px;
       .counter {
+        .svg-icon {
+          &.__exclamationTriangleLine {
+            fill: $orange;
+          }
+        }
         display: flex;
         &:first-child {
           margin-right: 20px;
@@ -215,6 +224,7 @@
         .svg-icon {
           width: 20px;
           height: 20px;
+          fill: $orange;
         }
       }
       .error-item-file-type {

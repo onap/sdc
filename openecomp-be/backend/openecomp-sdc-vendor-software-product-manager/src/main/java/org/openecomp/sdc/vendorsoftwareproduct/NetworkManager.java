@@ -29,14 +29,13 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.util.Collection;
 
 public interface NetworkManager {
-  Collection<NetworkEntity> listNetworks(String vspId, Version version, String user);
+  Collection<NetworkEntity> listNetworks(String vspId, Version version);
 
-  NetworkEntity createNetwork(NetworkEntity network, String user);
+  NetworkEntity createNetwork(NetworkEntity network);
 
-  CompositionEntityValidationData updateNetwork(NetworkEntity networkEntity, String user);
+  CompositionEntityValidationData updateNetwork(NetworkEntity networkEntity);
 
-  CompositionEntityResponse<Network> getNetwork(String vspId, Version version, String networkId,
-                                                String user);
+  CompositionEntityResponse<Network> getNetwork(String vspId, Version version, String networkId);
 
-  void deleteNetwork(String vspId, Version version, String networkId, String user);
+  void deleteNetwork(String vspId, Version version, String networkId);
 }

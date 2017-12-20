@@ -14,6 +14,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import {migrationStatusMapper} from './OnboardingCatalogConstants.js';
 
@@ -43,8 +44,8 @@ const VSPOverlay = ({VSPList, onSelectVSP, onSeeMore, onMigrate}) => (
 );
 
 VSPOverlay.PropTypes = {
-	VSPList: React.PropTypes.array,
-	onSelectVSP: React.PropTypes.func
+	VSPList: PropTypes.array,
+	onSelectVSP: PropTypes.func
 };
 
 export default VSPOverlay;

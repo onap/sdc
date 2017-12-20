@@ -1,3 +1,3 @@
 {
-  "org.openecomp.sdc.activityLog.ActivityLogManagerFactory": "org.openecomp.sdc.activityLog.impl.ActivityLogManagerFactoryImpl"
+  "org.openecomp.sdc.activitylog.ActivityLogManagerFactory": "org.openecomp.sdc.activitylog.impl.ActivityLogManagerFactoryImpl"
 }

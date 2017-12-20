@@ -20,11 +20,11 @@ import {storeCreator} from 'sdc-app/AppStore.js';
 import SoftwareProductComponentsActionHelper from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsActionHelper.js';
 
 import {VSPComponentsFactory, VSPComponentsGeneralFactory} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsFactories.js';
-import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
+import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 
 const softwareProductId = '123';
 const vspComponentId = '321';
-const version = VersionControllerUtilsFactory.build().version;
+const version = VersionFactory.build();
 
 describe('Software Product Components Module Tests', function () {
 	it('Get Software Products Components List', () => {

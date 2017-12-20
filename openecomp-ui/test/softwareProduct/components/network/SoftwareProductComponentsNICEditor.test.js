@@ -23,6 +23,7 @@ import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwarePro
 import {SoftwareProductFactory} from 'test-utils/factories/softwareProduct/SoftwareProductFactory.js';
 import {VSPComponentsNicFactory, VSPComponentsNetworkQDataFactory, VSPComponentsNicFactoryQGenericFieldInfo,
 	VSPComponentsNicFactoryGenericFieldInfo, VSPComponentsNetworkDataMapFactory} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsNetworkFactories.js';
+import CurrentScreenFactory from 'test-utils/factories/common/CurrentScreenFactory.js';
 
 describe('Software Product Component Network NIC Editor and View Classes', () => {
 	it('mapStateToProps mapper exists', () => {
@@ -34,8 +35,8 @@ describe('Software Product Component Network NIC Editor and View Classes', () =>
 
 		const currentSoftwareProduct = VSPEditorFactory.build();
 
-
 		var obj = {
+			currentScreen: CurrentScreenFactory.build(),
 			softwareProduct: SoftwareProductFactory.build({
 				softwareProductEditor: {
 					data: currentSoftwareProduct
@@ -55,12 +56,14 @@ describe('Software Product Component Network NIC Editor and View Classes', () =>
 		};
 
 		var results = mapStateToProps(obj);
+		expect(results.isReadOnlyMode).toBe(false);
 		expect(results.currentSoftwareProduct).toBeTruthy();
 		expect(results.qdata).toBeTruthy();
 		expect(results.dataMap).toBeTruthy();
 		expect(results.genericFieldInfo).toBeTruthy();
 		expect(results.qgenericFieldInfo).toBeTruthy();
 		expect(results.data).toBeTruthy();
+
 	});
 
 

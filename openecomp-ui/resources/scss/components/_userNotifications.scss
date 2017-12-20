@@ -1,0 +1,123 @@
+
+.onboarding-notifications {
+  margin-left: 10px;
+  .notifications-icon {
+    display: flex;
+    @extend .clickable;
+    .notifications-count {
+      color: $white;
+      font-size: 11px;
+      text-align: center;
+      width: 16px;
+      height: 16px;
+      background-color: $orange;
+      border-radius: 50%;
+      position: relative;
+      right: 7px;
+      top: -2px;
+      &.hidden-count {
+        background-color: transparent;
+        color: transparent;
+      }
+    }
+  }
+  .onboarding-overlay {
+    width: 520px;
+    right: 39px;
+    margin-top: 18px;
+    .arrow-up {
+      margin-left: 487px;
+    }
+
+    .user-notifications {
+      .notifications-title {
+        color: $blue;
+        @extend .heading-5-semibold;
+        @extend .text-uppercase !optional;
+        padding: 13px 20px 10px 20px;
+        border-bottom: 1px solid $tlv-light-gray;
+      }
+      .notifications-list {
+        max-height: 600px;
+        overflow-y: auto;
+        .notification {
+          border-bottom: 1px solid $tlv-light-gray;
+          padding: 16px 20px 18px 20px;
+          display: flex;
+          &.unread {
+            background-color: lighten($gray, 38%);
+            .item-name {
+              display: flex;
+              @include base-font-bold;
+            }
+            .unread-circle-icon {
+              width: 8px;
+              height: 8px;
+              border-radius: 50%;
+              background-color: $blue;
+              align-self: center;
+              margin-bottom: 3px;
+              margin-left: 9px;
+            }
+          }
+          .notification-data {
+            width: 366px;
+            margin-right: 30px;
+            color: $dark-gray;
+            .item-name {
+              @extend .body-2-semibold;
+              @extend .text-uppercase !optional;
+              margin-bottom: 6px;
+            }
+            .flex-items {
+              display: flex;
+              margin: 6px 0 11px 0;
+              @extend .body-3;
+              line-height: 20px;
+              @extend .text-uppercase !optional;
+              color: $gray;
+              .separator {
+                border-left: 1px solid $dark-gray;
+                margin: 5px 8px;
+              }
+            }
+            .description {
+              @extend .body-3;
+              margin: 11px 0 8px 0;
+              .more-less {
+                font-size: $icon-font-size;
+                color: $blue;
+              }
+            }
+            .date {
+              font-size: $icon-font-size;
+              @include base-font-regular;
+              color: $gray;
+              margin-top: 8px;
+            }
+          }
+
+          .notification-action .action-button {
+            @extend .clickable;
+            width: 74px;
+            height: 28px;
+            color: $white;
+            background-color: $blue;
+            border-radius: 2px;
+            text-align: center;
+            line-height: 2;
+            margin-top: 4px;
+            &.active {
+              background-color: #0091c7;
+              border: solid 1px #006186;
+            }
+            &:hover {
+              background-color: #1ec2ff;
+              border: solid 1px #0091c8;
+            }
+          }
+        }
+      }
+    }
+  }
+}

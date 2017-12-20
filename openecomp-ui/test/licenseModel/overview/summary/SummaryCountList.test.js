@@ -55,7 +55,6 @@ describe('License Model Overview Summary Count List module test', () => {
 		];
 
 		var result = mapStateToProps(obj);
-		expect(result.isReadOnlyMode).toEqual(true);
 		expect(result.description).toEqual(obj.licenseModel.licenseModelEditor.data.description);
 		expect(result.counts).toEqual(counts);
 	});
@@ -79,7 +78,7 @@ describe('License Model Overview Summary Count List module test', () => {
 			description: {
 				isValid : true
 			}
-		}
+		};
 		var view = TestUtils.renderIntoDocument(<LicenseModelDescriptionEdit data={data} genericFieldInfo={genericFieldInfo} description='desc'/>);
 		expect(view).toBeTruthy();
 	});

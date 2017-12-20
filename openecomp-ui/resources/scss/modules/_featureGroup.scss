@@ -37,48 +37,5 @@
   }
 }
 
-.feature-group-modal {
-  .modal-body {
-    padding: 0;
-  }
-  .feature-group-form {
-    .no-items-msg {
-      margin-top: 55px;
-      color: $dark-gray;
-    }
-		.validation-form-content {
-			padding: 0;
-		}
 
-		.nav.nav-tabs {
-			padding-left: 50px;
-		}
 
-    .tab-content {
-      padding: 50px;
-      .field-section {
-        @extend .body-2-semibold;
-        margin-bottom: 23px;
-        width: 400px;
-        color: $black;
-      }
-      .description-field {
-        height: 170px;
-      }
-      .list-editor-item-view-content {
-        white-space: nowrap;
-        overflow: hidden;
-        > div {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          &:not(:last-of-type) {
-            margin-right: 24px;
-          }
-        }
-      }
-    }
-    .validation-buttons {
-      padding: 20px 50px;
-    }
-  }
-}

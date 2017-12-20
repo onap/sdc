@@ -1,21 +1,5 @@
 package org.openecomp.sdc.generator.core.services;
 
-import static org.openecomp.sdc.generator.util.GeneratorConstants.ALLOWED_FLAVORS_PROPERTY;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.DISK_SIZE;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.DISK_SIZE_PROP_DESC_PREFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.IMAGES_PROPERTY;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.MEM_SIZE;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.MEM_SIZE_PROP_DESC_PREFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.NUM_CPUS;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.NUM_CPUS_PROP_DESC_PREFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_NODE_TEMPLATE_ID_SUFFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_TYPE_EXTERNAL_NODE_TEMPLATE_SUFFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_TYPE_INTERNAL_NODE_TEMPLATE_SUFFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.RELEASE_VENDOR;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.TOSCA_SERVICE_TEMPLATE_FILE_NAME_SUFFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.VNF_CONFIG_NODE_TEMPLATE_ID_SUFFIX;
-import static org.openecomp.sdc.generator.util.GeneratorConstants.VNF_NODE_TEMPLATE_ID_SUFFIX;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.generator.core.utils.GeneratorUtils;
@@ -47,6 +31,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.openecomp.sdc.generator.util.GeneratorConstants.ALLOWED_FLAVORS_PROPERTY;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.DISK_SIZE;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.DISK_SIZE_PROP_DESC_PREFIX;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.IMAGES_PROPERTY;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.MEM_SIZE;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.MEM_SIZE_PROP_DESC_PREFIX;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.NUM_CPUS;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.NUM_CPUS_PROP_DESC_PREFIX;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_NODE_TEMPLATE_ID_SUFFIX;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_TYPE_EXTERNAL_NODE_TEMPLATE_SUFFIX;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.PORT_TYPE_INTERNAL_NODE_TEMPLATE_SUFFIX;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.RELEASE_VENDOR;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.TOSCA_SERVICE_TEMPLATE_FILE_NAME_SUFFIX;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.VNF_CONFIG_NODE_TEMPLATE_ID_SUFFIX;
+import static org.openecomp.sdc.generator.util.GeneratorConstants.VNF_NODE_TEMPLATE_ID_SUFFIX;
 
 /**
  * The type Manual vsp tosca generator.
@@ -329,7 +329,6 @@ public class ManualVspToscaGenerationService {
                                          ToscaServiceModel toscaServiceModel,
                                          String substitutionNodeTypeId,
                                          String componentName) {
-    ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
     ServiceTemplate globalSubstitutionServiceTemplate = fetchGlobalSubstitutionServiceTemplate();
     NodeType substitutionNodeType =
         createGlobalSubstitutionNodeType(substitutionServiceTemplate, componentName);

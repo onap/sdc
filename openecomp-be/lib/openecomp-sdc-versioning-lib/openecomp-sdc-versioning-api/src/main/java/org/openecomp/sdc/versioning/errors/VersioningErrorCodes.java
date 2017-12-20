@@ -40,4 +40,10 @@ public class VersioningErrorCodes {
   public static final String UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER =
       "UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER";
   public static final String UNDO_CHECKOUT_ON_UNLOCKED_ENTITY = "UNDO_CHECKOUT_ON_UNLOCKED_ENTITY";
+  public static final String MANDATORY_FIELD_REVISION_ID_MISSING =
+      "MANDATORY_FIELD_REVISION_ID_MISSING";
+
+
+
+
 }

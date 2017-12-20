@@ -3,21 +3,26 @@ package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.Element;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
-import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.utils.fileutils.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
-import org.openecomp.core.zusammen.api.ZusammenUtil;
+import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadData;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadDataEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Optional;
+
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTemplateDao {
 
@@ -33,79 +38,128 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
   }
 
   @Override
-  public String getValidationData(String vspId, Version version) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(version));
+  public OrchestrationTemplateEntity getInfo(String vspId, Version version) {
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
+
+    Optional<ElementInfo> vspModel = zusammenAdaptor
+        .getElementInfoByName(context, elementContext, null, ElementType.VspModel.name());
+    if (!vspModel.isPresent()) {
+      return null;
+    }
 
     Optional<ElementInfo> elementInfo = zusammenAdaptor
-        .getElementInfoByName(context, elementContext, null,
-            StructureElement.OrchestrationTemplate.name());
-    if (elementInfo.isPresent()) {
-      Optional<Element> element =
-          zusammenAdaptor.getElementByName(context, elementContext, elementInfo.get().getId(),
-              StructureElement.OrchestrationTemplateValidationData.name());
-      if (element.isPresent()) {
-        return new String(FileUtils.toByteArray(element.get().getData()));
+        .getElementInfoByName(context, elementContext, vspModel.get().getId(),
+            ElementType.OrchestrationTemplate.name());
+    if (!elementInfo.isPresent()) {
+      return null;
+    }
+
+    Optional<Element> element =
+        zusammenAdaptor.getElementByName(context, elementContext, elementInfo.get().getId(),
+            ElementType.OrchestrationTemplateValidationData.name());
+
+    OrchestrationTemplateEntity orchestrationTemplate = new OrchestrationTemplateEntity();
+    if (!element.isPresent()) {
+      return orchestrationTemplate;
+    }
+    orchestrationTemplate
+        .setFileSuffix(element.get().getInfo().getProperty(InfoPropertyName.fileSuffix.name()));
+    orchestrationTemplate
+        .setFileName(element.get().getInfo().getProperty(InfoPropertyName.fileName.name()));
+    if (!hasEmptyData(element.get().getData())) {
+      orchestrationTemplate
+          .setValidationData(new String(FileUtils.toByteArray(element.get().getData())));
+    }
+    return orchestrationTemplate;
+  }
+
+  @Override
+  public OrchestrationTemplateEntity get(String vspId, Version version) {
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
+
+    OrchestrationTemplateEntity orchestrationTemplate = new OrchestrationTemplateEntity();
+
+    Optional<ElementInfo> vspModel = zusammenAdaptor
+        .getElementInfoByName(context, elementContext, null, ElementType.VspModel.name());
+    if (!vspModel.isPresent()) {
+      return orchestrationTemplate;
+    }
+
+    Optional<Element> orchestrationTemplateElement = zusammenAdaptor
+        .getElementByName(context, elementContext, vspModel.get().getId(),
+            ElementType.OrchestrationTemplate.name());
+    if (!orchestrationTemplateElement.isPresent()) {
+      return orchestrationTemplate;
+    }
+
+    if (!hasEmptyData(orchestrationTemplateElement.get().getData())) {
+      orchestrationTemplate.setContentData(
+          ByteBuffer.wrap(FileUtils.toByteArray(orchestrationTemplateElement.get().getData())));
+    }
+
+    Optional<Element> validationDataElement =
+        zusammenAdaptor.getElementByName(context, elementContext,
+            orchestrationTemplateElement.get().getElementId(),
+            ElementType.OrchestrationTemplateValidationData.name());
+    if (validationDataElement.isPresent()) {
+      orchestrationTemplate.setFileSuffix(validationDataElement.get().getInfo()
+          .getProperty(InfoPropertyName.fileSuffix.name()));
+      orchestrationTemplate.setFileName(validationDataElement.get().getInfo()
+          .getProperty(InfoPropertyName.fileName.name()));
+      if (!hasEmptyData(validationDataElement.get().getData())) {
+        orchestrationTemplate.setValidationData(
+            new String(FileUtils.toByteArray(validationDataElement.get().getData())));
       }
     }
-
-    return null;
+    return orchestrationTemplate;
   }
 
   @Override
-  public UploadDataEntity getOrchestrationTemplate(String vspId, Version version) {
+  public void update(String vspId, Version version,
+                     OrchestrationTemplateEntity orchestrationTemplate) {
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
 
-    UploadDataEntity uploadData = new UploadDataEntity();
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(version));
+    ZusammenElement validationData =
+        buildStructuralElement(ElementType.OrchestrationTemplateValidationData, Action.UPDATE);
+    validationData
+        .setData(new ByteArrayInputStream(orchestrationTemplate.getValidationData().getBytes()));
+    validationData.getInfo()
+        .addProperty(InfoPropertyName.fileSuffix.name(), orchestrationTemplate.getFileSuffix());
+    validationData.getInfo()
+        .addProperty(InfoPropertyName.fileName.name(), orchestrationTemplate.getFileName());
 
-    Optional<ElementInfo> elementInfo = zusammenAdaptor
-        .getElementInfoByName(context, elementContext, null,
-            StructureElement.OrchestrationTemplate.name());
-    if (elementInfo.isPresent()) {
-      Optional<Element> element =
-          zusammenAdaptor.getElementByName(context, elementContext, elementInfo.get().getId(),
-              StructureElement.OrchestrationTemplateValidationData.name());
-      element.ifPresent(element1 -> uploadData
-          .setValidationData(new String(FileUtils.toByteArray(element1.getData()))));
-      element =
-          zusammenAdaptor.getElementByName(context, elementContext, elementInfo.get().getId(),
-              StructureElement.OrchestrationTemplateContent.name());
-      element.ifPresent(element1 -> uploadData
-          .setContentData(ByteBuffer.wrap(FileUtils.toByteArray(element1.getData()))));
-    }
-    return uploadData;
-  }
-
-  @Override
-  public void updateOrchestrationTemplateData(String vspId, UploadData uploadData) {
     ZusammenElement orchestrationTemplateElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.OrchestrationTemplate, null);
-    ZusammenElement orchestrationTemplateValidationDataElement =
-        VspZusammenUtil
-            .buildStructuralElement(StructureElement.OrchestrationTemplateValidationData, Action.UPDATE);
-    orchestrationTemplateValidationDataElement.setData(new ByteArrayInputStream(uploadData
-        .getValidationData().getBytes()));
-    ZusammenElement orchestrationTemplateContent =
-        VspZusammenUtil.buildStructuralElement(StructureElement.OrchestrationTemplateContent, Action.UPDATE);
-    orchestrationTemplateContent
-        .setData(new ByteArrayInputStream(uploadData.getContentData().array()));
-    orchestrationTemplateElement.addSubElement(orchestrationTemplateValidationDataElement);
-    orchestrationTemplateElement.addSubElement(orchestrationTemplateContent);
+        buildStructuralElement(ElementType.OrchestrationTemplate, Action.UPDATE);
+    orchestrationTemplateElement
+        .setData(new ByteArrayInputStream(orchestrationTemplate.getContentData().array()));
+    orchestrationTemplateElement.addSubElement(validationData);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+    ZusammenElement vspModel = buildStructuralElement(ElementType.VspModel, Action.IGNORE);
+    vspModel.addSubElement(orchestrationTemplateElement);
 
-    zusammenAdaptor.saveElement(context, elementContext, orchestrationTemplateElement, "Update " +
-        "Orchestration Template");
+    zusammenAdaptor.saveElement(context, elementContext, vspModel, "Update Orchestration Template");
   }
 
+  private boolean hasEmptyData(InputStream elementData) {
+    String emptyData = "{}";
+    byte[] byteElementData;
+    try {
+      byteElementData = IOUtils.toByteArray(elementData);
+    } catch (IOException ex) {
+      ex.printStackTrace();
+      return false;
+    }
+    if (Arrays.equals(emptyData.getBytes(), byteElementData)) {
+      return true;
+    }
+    return false;
+  }
+
+  private enum InfoPropertyName {
+    fileSuffix,
+    fileName
+  }
 }

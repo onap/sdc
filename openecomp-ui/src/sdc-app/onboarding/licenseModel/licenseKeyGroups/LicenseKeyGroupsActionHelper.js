@@ -16,9 +16,9 @@
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import {actionTypes as licenseKeyGroupsConstants} from './LicenseKeyGroupsConstants.js';
-import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
 import {actionTypes as limitEditorActions} from 'sdc-app/onboarding/licenseModel/limits/LimitEditorConstants.js';
 import {default as getValue, getStrValue} from 'nfvo-utils/getValue.js';
+import ItemsHelper from 'sdc-app/common/helpers/ItemsHelper.js';
 
 function baseUrl(licenseModelId, version) {
 	const restPrefix = Configuration.get('restPrefix');
@@ -128,6 +128,7 @@ export default {
 					type: licenseKeyGroupsConstants.EDIT_LICENSE_KEY_GROUP,
 					licenseKeyGroup
 				});
+				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 		else {
@@ -140,6 +141,7 @@ export default {
 						id: response.value
 					}
 				});
+				ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 			});
 		}
 
@@ -152,6 +154,7 @@ export default {
 				type: licenseKeyGroupsConstants.DELETE_LICENSE_KEY_GROUP,
 				licenseKeyGroupId
 			});
+			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	},
 
@@ -166,12 +169,6 @@ export default {
 		dispatch({
 			type: licenseKeyGroupsConstants.LICENSE_KEY_GROUPS_DELETE_CONFIRM,
 			licenseKeyGroupToDelete: licenseKeyGroup
-		});
-	},
-
-	switchVersion(dispatch, {licenseModelId, version}) {
-		LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version}).then(() => {
-			this.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version});
 		});
 	},
 
@@ -193,12 +190,14 @@ export default {
 				type: limitEditorActions.CLOSE
 			});
 			this.fetchLimits(dispatch, {licenseModelId, version, licenseKeyGroup});
+			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	},
 
 	deleteLimit(dispatch, {licenseModelId, version, licenseKeyGroup, limit}) {
 		return deleteLimit(licenseModelId,licenseKeyGroup.id, version, limit.id).then(() => {
 			this.fetchLimits(dispatch, {licenseModelId, version, licenseKeyGroup});
+			ItemsHelper.checkItemStatus(dispatch, {itemId: licenseModelId, versionId: version.id});
 		});
 	}
 

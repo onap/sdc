@@ -19,14 +19,14 @@ import {cloneAndSet} from 'test-utils/Util.js';
 import {storeCreator} from 'sdc-app/AppStore.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import ComputeFlavorActionHelper from 'sdc-app/onboarding/softwareProduct/components/compute/ComputeFlavorActionHelper.js';
-import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';
+import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 
 import {ComputeFlavorQData, ComputeFlavorBaseData, ComponentComputeFactory, VSPComponentsComputeDataMapFactory} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsComputeFactory.js';
 
 const softwareProductId = '123';
 const vspComponentId = '111';
 const computeId = '111';
-const version = VSPEditorFactory.build().version;
+const version = VersionFactory.build();
 
 
 describe('Software Product Components Compute Module Tests - Manual mode', function () {
@@ -92,16 +92,6 @@ describe('Software Product Components Compute Module Tests - Manual mode', funct
 		};
 		deepFreeze(softwareProductComponentCompute);
 
-
-		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductComponents.computeFlavor.computeEditor', {
-			data: computeData,
-			qdata,
-			dataMap,
-			qgenericFieldInfo: {},
-			genericFieldInfo: {},
-			formReady: true
-		});
-
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${vspComponentId}/compute-flavors/${computeId}`);
 			expect(data).toEqual(undefined);
@@ -109,15 +99,18 @@ describe('Software Product Components Compute Module Tests - Manual mode', funct
 			return {data: computeData};
 		});
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${vspComponentId}/compute-flavors/${computeId}/questionnaire`);
+			expect(baseUrl).toEqual(
+				`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${vspComponentId}/compute-flavors/${computeId}/questionnaire`
+			);
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
 			return softwareProductComponentCompute;
 		});
 
-		return ComputeFlavorActionHelper.loadComputeData({softwareProductId, componentId: vspComponentId, version, computeId}).then(() => {
-			ComputeFlavorActionHelper.loadComputeQuestionnaire(store.dispatch, {softwareProductId, componentId: vspComponentId, computeId, version}).then(() =>
-				expect(store.getState()).toEqual(expectedStore));
+		return ComputeFlavorActionHelper.loadCompute(store.dispatch, {softwareProductId, componentId: vspComponentId, version, computeId}).then(() => {
+			expect(store.getState().softwareProduct.softwareProductComponents.computeFlavor.computeEditor.data).toEqual(computeData);
+			expect(store.getState().softwareProduct.softwareProductComponents.computeFlavor.computeEditor.qdata).toEqual(qdata);
+			expect(store.getState().softwareProduct.softwareProductComponents.computeFlavor.computeEditor.dataMap).toEqual(dataMap);
 		});
 	});
 
@@ -142,7 +135,9 @@ describe('Software Product Components Compute Module Tests - Manual mode', funct
 		deepFreeze(expectedStore);
 
 		mockRest.addHandler('put', ({options, data, baseUrl}) => {
-			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${vspComponentId}/compute-flavors/${computeId}/questionnaire`);
+			expect(baseUrl).toEqual(
+				`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${vspComponentId}/compute-flavors/${computeId}/questionnaire`
+			);
 			expect(data).toEqual(qdata);
 			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};

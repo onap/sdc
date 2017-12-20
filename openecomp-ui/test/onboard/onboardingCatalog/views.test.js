@@ -20,6 +20,7 @@ import {defaultStoreFactory} from 'test-utils/factories/onboard/OnboardingCatalo
 import {FinalizedLicenseModelFactory} from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
 import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';
 import {mapStateToProps} from 'sdc-app/onboarding/onboard/Onboard.js';
+import {catalogItemTypes} from 'sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogConstants.js';
 import OnboardingCatalogView from 'sdc-app/onboarding/onboard/onboardingCatalog/OnboardingCatalogView.jsx';
 import VendorItem from 'sdc-app/onboarding/onboard/onboardingCatalog/VendorItem.jsx';
 import VSPOverlay from 'sdc-app/onboarding/onboard/onboardingCatalog/VSPOverlay.jsx';
@@ -49,9 +50,9 @@ describe('OnBoarding Catalog test - View: ', function () {
 	it('licenseModelList creating algorithm test', () => {
 
 		const finalizedLicenseModelList = FinalizedLicenseModelFactory.buildList(3);
-		const licenseModelList = [...finalizedLicenseModelList];
-		const finalizedSoftwareProductList = VSPEditorFactory.buildList(4 ,{vendorId: finalizedLicenseModelList[0].id});
-		const softwareProductList = [...finalizedSoftwareProductList];
+		const licenseModelList = FinalizedLicenseModelFactory.buildList(3);
+		const finalizedSoftwareProductList = VSPEditorFactory.buildList(4, {vendorId: finalizedLicenseModelList[0].id});
+		const softwareProductList = VSPEditorFactory.buildList(4, {vendorId: finalizedLicenseModelList[1].id});
 		const data = defaultStoreFactory.build({licenseModelList, finalizedLicenseModelList, softwareProductList, finalizedSoftwareProductList});
 
 		var results = mapStateToProps(data);
@@ -63,7 +64,7 @@ describe('OnBoarding Catalog test - View: ', function () {
 
 		const dummyFunc = () => {};
 		const licenseModelList = FinalizedLicenseModelFactory.buildList(3);
-		const softwareProductList = VSPEditorFactory.buildList(4 ,{vendorId: licenseModelList[0].id});
+		const softwareProductList = VSPEditorFactory.buildList(4, {vendorId: licenseModelList[0].id});
 		const data = defaultStoreFactory.build({licenseModelList, softwareProductList});
 
 		const func = {
@@ -118,7 +119,7 @@ describe('OnBoarding Catalog test - View: ', function () {
 		let params = {
 			catalogItemData: FinalizedLicenseModelFactory.build(),
 			onSelect: () => {},
-			catalogItemTypeClass: ''
+			catalogItemTypeClass: catalogItemTypes.LICENSE_MODEL
 		};
 
 		let CatalogItemDetailsView = TestUtils.renderIntoDocument(<div><CatalogItemDetails {...params}/></div>);

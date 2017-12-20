@@ -8,19 +8,25 @@ import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
-import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
-import org.openecomp.core.zusammen.api.ZusammenUtil;
+import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToComponentConvertor;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToComponentQuestionnnaireConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.types.ElementPropertyName;
 
 import java.io.ByteArrayInputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
+import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
 
 public class ComponentDaoZusammenImpl implements ComponentDao {
 
@@ -36,105 +42,97 @@ public class ComponentDaoZusammenImpl implements ComponentDao {
 
   @Override
   public Collection<ComponentEntity> list(ComponentEntity component) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(component.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(component.getVersion()));
+    SessionContext context = createSessionContext();
 
-    return listComponents(zusammenAdaptor, context, elementContext, component.getVspId(),
-        component.getVersion());
+    return listComponents(zusammenAdaptor, context, component.getVspId(), component.getVersion());
   }
 
   static Collection<ComponentEntity> listComponents(ZusammenAdaptor zusammenAdaptor,
                                                     SessionContext context,
-                                                    ElementContext elementContext,
                                                     String vspId, Version version) {
-    return zusammenAdaptor
-        .listElementsByName(context, elementContext, null, StructureElement.Components.name())
-        .stream().map(elementInfo -> mapElementInfoToComponent(vspId, version, elementInfo))
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
+
+    Optional<ElementInfo> vspModel = zusammenAdaptor
+        .getElementInfoByName(context, elementContext, null, ElementType.VspModel.name());
+    if (!vspModel.isPresent()) {
+      return new ArrayList<>();
+    }
+
+    ElementToComponentConvertor convertor = new ElementToComponentConvertor();
+    return zusammenAdaptor.listElementsByName(context, elementContext, vspModel.get().getId(),
+        ElementType.Components.name()).stream()
+        .map(elementInfo -> {
+          ComponentEntity entity = convertor.convert(elementInfo);
+          entity.setVspId(vspId);
+          entity.setVersion(version);
+          return entity;
+        })
         .collect(Collectors.toList());
   }
 
-  private static ComponentEntity mapElementInfoToComponent(String vspId, Version version,
-                                                           ElementInfo elementInfo) {
-    ComponentEntity componentEntity =
-        new ComponentEntity(vspId, version, elementInfo.getId().getValue());
-    componentEntity.setCompositionData(
-        elementInfo.getInfo().getProperty(ElementPropertyName.compositionData.name()));
-    return componentEntity;
-  }
 
   @Override
   public void create(ComponentEntity component) {
     ZusammenElement componentElement = componentToZusammen(component, Action.CREATE);
+
     ZusammenElement componentsElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.Components, null);
+        buildStructuralElement(ElementType.Components, Action.IGNORE);
     componentsElement.getSubElements().add(componentElement);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(component.getVspId());
-    Optional<Element> savedElement = zusammenAdaptor.saveElement(context,
-        new ElementContext(itemId,
-            VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
-        componentsElement, "Create component");
-    savedElement.ifPresent(element ->
-        component.setId(element.getSubElements().iterator().next().getElementId().getValue()));
+    ZusammenElement vspModel = buildStructuralElement(ElementType.VspModel, Action.IGNORE);
+    vspModel.addSubElement(componentsElement);
+
+    SessionContext context = createSessionContext();
+    Element savedVspModel = zusammenAdaptor.saveElement(context,
+        new ElementContext(component.getVspId(), component.getVersion().getId()),
+        vspModel, "Create component");
+    component.setId(savedVspModel.getSubElements().iterator().next()
+        .getSubElements().iterator().next().getElementId().getValue());
   }
 
   @Override
   public void update(ComponentEntity component) {
     ZusammenElement componentElement = componentToZusammen(component, Action.UPDATE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(component.getVspId());
+    SessionContext context = createSessionContext();
     zusammenAdaptor.saveElement(context,
-        new ElementContext(itemId,
-            VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
+        new ElementContext(component.getVspId(), component.getVersion().getId()),
         componentElement, String.format("Update component with id %s", component.getId()));
   }
 
   @Override
   public ComponentEntity get(ComponentEntity component) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(component.getVspId());
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(component.getVersion()));
+    SessionContext context = createSessionContext();
 
     Optional<Element> element =
-        zusammenAdaptor.getElement(context, elementContext, component.getId());
+        zusammenAdaptor.getElement(context,
+            new ElementContext(component.getVspId(), component.getVersion().getId()),
+            component.getId());
 
     if (element.isPresent()) {
-      component.setCompositionData(new String(FileUtils.toByteArray(element.get().getData())));
-      return component;
+      ComponentEntity entity = new ElementToComponentConvertor().convert(element.get());
+      entity.setVspId(component.getVspId());
+      entity.setVersion(component.getVersion());
+      return entity;
     }
     return null;
   }
 
   @Override
   public void delete(ComponentEntity component) {
-    ZusammenElement componentElement = new ZusammenElement();
-    componentElement.setElementId(new Id(component.getId()));
-    componentElement.setAction(Action.DELETE);
+    ZusammenElement componentElement = buildElement(new Id(component.getId()), Action.DELETE);
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(component.getVspId());
+    SessionContext context = createSessionContext();
     zusammenAdaptor.saveElement(context,
-        new ElementContext(itemId,
-            VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
+        new ElementContext(component.getVspId(), component.getVersion().getId()),
         componentElement, String.format("Delete component with id %s", component.getId()));
   }
 
   @Override
   public ComponentEntity getQuestionnaireData(String vspId, Version version, String componentId) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(version));
+    SessionContext context = createSessionContext();
 
-    return getQuestionnaire(context, elementContext,
+    return getQuestionnaire(context, new ElementContext(vspId, version.getId()),
         new ComponentEntity(vspId, version, componentId));
   }
 
@@ -142,14 +140,12 @@ public class ComponentDaoZusammenImpl implements ComponentDao {
                                            ComponentEntity component) {
     Optional<Element> questionnaireElement = zusammenAdaptor
         .getElementByName(context, elementContext, new Id(component.getId()),
-            StructureElement.Questionnaire.name());
-    return questionnaireElement.map(
-        element -> element.getData() == null
-            ? null
-            : new String(FileUtils.toByteArray(element.getData())))
-        .map(questionnaireData -> {
-          component.setQuestionnaireData(questionnaireData);
-          return component;
+            ElementType.ComponentQuestionnaire.name());
+    return questionnaireElement.map(new ElementToComponentQuestionnnaireConvertor()::convert)
+        .map(entity -> {
+          entity.setVspId(component.getVspId());
+          entity.setVersion(component.getVersion());
+          return entity;
         })
         .orElse(null);
   }
@@ -160,16 +156,11 @@ public class ComponentDaoZusammenImpl implements ComponentDao {
     ZusammenElement questionnaireElement =
         componentQuestionnaireToZusammen(questionnaireData, Action.UPDATE);
 
-    ZusammenElement componentElement = new ZusammenElement();
-    componentElement.setAction(Action.IGNORE);
-    componentElement.setElementId(new Id(componentId));
+    ZusammenElement componentElement = buildElement(new Id(componentId), Action.IGNORE);
     componentElement.setSubElements(Collections.singletonList(questionnaireElement));
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    zusammenAdaptor.saveElement(context,
-        new ElementContext(itemId,
-            VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
+    SessionContext context = createSessionContext();
+    zusammenAdaptor.saveElement(context, new ElementContext(vspId, version.getId()),
         componentElement, "Update component questionnaire");
   }
 
@@ -181,45 +172,57 @@ public class ComponentDaoZusammenImpl implements ComponentDao {
   @Override
   public Collection<ComponentEntity> listCompositionAndQuestionnaire(String vspId,
                                                                      Version version) {
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    ElementContext elementContext = new ElementContext(itemId,
-        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
-        VspZusammenUtil.getVersionTag(version));
+    SessionContext context = createSessionContext();
 
     Collection<ComponentEntity> components =
-        listComponents(zusammenAdaptor, context, elementContext, vspId, version);
+        listComponents(zusammenAdaptor, context, vspId, version);
 
-    components.forEach(component -> getQuestionnaire(context, elementContext, component));
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
+    components.forEach(component -> component.setQuestionnaireData(
+        getQuestionnaire(context, elementContext, component).getQuestionnaireData()));
     return components;
   }
 
   @Override
   public void deleteAll(String vspId, Version version) {
-    ZusammenElement componentsElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.Components, Action.DELETE);
+    SessionContext context = createSessionContext();
+    ElementContext elementContext = new ElementContext(vspId, version.getId());
 
-    SessionContext context = ZusammenUtil.createSessionContext();
-    Id itemId = new Id(vspId);
-    zusammenAdaptor.saveElement(context,
-        new ElementContext(itemId,
-            VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
-        componentsElement, "Delete all components");
+    Collection<ElementInfo> vspModelSubs = zusammenAdaptor
+        .listElementsByName(context, elementContext, null, ElementType.VspModel.name());
+
+    Optional<ElementInfo> componentsElement = vspModelSubs.stream()
+        .filter(elementInfo -> elementInfo.getInfo() != null
+            && ElementType.Components.name().equals(elementInfo.getInfo().getName()))
+        .findFirst();
+    if (!componentsElement.isPresent()) {
+      return;
+    }
+
+    ZusammenElement components = buildElement(componentsElement.get().getId(), Action.IGNORE);
+    components.setSubElements(componentsElement.get().getSubElements().stream()
+        .map(component -> buildElement(component.getId(), Action.DELETE))
+        .collect(Collectors.toList()));
+
+    zusammenAdaptor.saveElement(context, elementContext, components, "Delete all components");
   }
 
   private ZusammenElement componentToZusammen(ComponentEntity component, Action action) {
     ZusammenElement componentElement = buildComponentElement(component, action);
+
     if (action == Action.CREATE) {
-      componentElement
-          .setSubElements(Arrays.asList(
-              componentQuestionnaireToZusammen(component.getQuestionnaireData(), Action.CREATE),
-              VspZusammenUtil.buildStructuralElement(StructureElement.Nics, Action.CREATE),
-              VspZusammenUtil.buildStructuralElement(StructureElement.Processes, Action.CREATE),
-              VspZusammenUtil.buildStructuralElement(StructureElement.Mibs, Action.CREATE),
-              VspZusammenUtil.buildStructuralElement(StructureElement.Computes, Action.CREATE),
-              VspZusammenUtil.buildStructuralElement(StructureElement.Images, Action.CREATE)));
+      ZusammenElement mibs = buildStructuralElement(ElementType.Mibs, Action.CREATE);
+      mibs.addSubElement(buildStructuralElement(ElementType.SNMP_TRAP, Action.CREATE));
+      mibs.addSubElement(buildStructuralElement(ElementType.VES_EVENTS, Action.CREATE));
+      mibs.addSubElement(buildStructuralElement(ElementType.SNMP_POLL, Action.CREATE));
 
-
+      componentElement.addSubElement(mibs);
+      componentElement.addSubElement(
+          componentQuestionnaireToZusammen(component.getQuestionnaireData(), Action.CREATE));
+      componentElement.addSubElement(buildStructuralElement(ElementType.Nics, Action.CREATE));
+      componentElement.addSubElement(buildStructuralElement(ElementType.Processes, Action.CREATE));
+      componentElement.addSubElement(buildStructuralElement(ElementType.Computes, Action.CREATE));
+      componentElement.addSubElement(buildStructuralElement(ElementType.Images, Action.CREATE));
     }
     return componentElement;
   }
@@ -227,22 +230,21 @@ public class ComponentDaoZusammenImpl implements ComponentDao {
   private ZusammenElement componentQuestionnaireToZusammen(String questionnaireData,
                                                            Action action) {
     ZusammenElement questionnaireElement =
-        VspZusammenUtil.buildStructuralElement(StructureElement.Questionnaire, action);
+        buildStructuralElement(ElementType.ComponentQuestionnaire, action);
     questionnaireElement.setData(new ByteArrayInputStream(questionnaireData.getBytes()));
     return questionnaireElement;
   }
 
   private ZusammenElement buildComponentElement(ComponentEntity component, Action action) {
-    ZusammenElement componentElement = new ZusammenElement();
-    componentElement.setAction(action);
-    if (component.getId() != null) {
-      componentElement.setElementId(new Id(component.getId()));
-    }
+    ZusammenElement componentElement =
+        buildElement(component.getId() == null ? null : new Id(component.getId()), action);
     Info info = new Info();
-    info.addProperty(ElementPropertyName.type.name(), ElementType.Component);
+    info.addProperty(ElementPropertyName.elementType.name(), ElementType.Component);
     info.addProperty(ElementPropertyName.compositionData.name(), component.getCompositionData());
     componentElement.setInfo(info);
     componentElement.setData(new ByteArrayInputStream(component.getCompositionData().getBytes()));
     return componentElement;
   }
+
+
 }

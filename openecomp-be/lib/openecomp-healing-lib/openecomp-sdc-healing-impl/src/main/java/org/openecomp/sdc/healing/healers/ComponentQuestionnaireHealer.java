@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.lang3.StringUtils;
-import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.healing.interfaces.Healer;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
@@ -19,7 +18,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
 
 
@@ -57,11 +55,9 @@ public class ComponentQuestionnaireHealer implements Healer {
   }
 
   @Override
-  public Object heal(Map<String, Object> healingParams) throws Exception {
-    mdcDataDebugMessage.debugEntryMessage("VSP ID",
-        (String) healingParams.get(SdcCommon.VSP_ID));
-    String vspId = (String) healingParams.get(SdcCommon.VSP_ID);
-    Version version = (Version) healingParams.get(SdcCommon.VERSION);
+  public Object heal(String vspId, Version version) throws Exception {
+    mdcDataDebugMessage.debugEntryMessage("VSP ID", vspId);
+
     Collection<ComponentEntity> componentEntities =
         componentDao.list(new ComponentEntity(vspId, version, null));
     componentEntities.forEach(componentEntity -> {

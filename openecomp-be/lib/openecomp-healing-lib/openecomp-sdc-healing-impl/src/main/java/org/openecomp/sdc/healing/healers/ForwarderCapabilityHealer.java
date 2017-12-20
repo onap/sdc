@@ -5,7 +5,6 @@ import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.dao.ServiceModelDaoFactory;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.sdc.common.togglz.ToggleableFeature;
-import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.healing.interfaces.Healer;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
@@ -46,10 +45,7 @@ public class ForwarderCapabilityHealer implements Healer {
   }
 
   @Override
-  public Object heal(Map<String, Object> healingParams) throws Exception {
-    String vspId = (String) healingParams.get(SdcCommon.VSP_ID);
-    Version version = (Version) healingParams.get(SdcCommon.VERSION);
-
+  public Object heal(String vspId, Version version) throws Exception {
     if(!ToggleableFeature.FORWARDER_CAPABILITY.isActive()) {
       return Optional.empty();
     }

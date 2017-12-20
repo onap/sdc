@@ -16,25 +16,20 @@
 import {connect} from 'react-redux';
 import SoftwareProductComponentsGeneralView from './SoftwareProductComponentsGeneralView.jsx';
 import SoftwareProductComponentsActionHelper from '../SoftwareProductComponentsActionHelper.js';
-import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
-
 
 import {forms, COMPONENTS_QUESTIONNAIRE} from '../SoftwareProductComponentsConstants.js';
 import {onboardingMethod} from '../../SoftwareProductConstants.js';
 
-
 export const mapStateToProps = ({softwareProduct}) => {
 	let {softwareProductEditor: {data: currentVSP}, softwareProductComponents} = softwareProduct;
 	let {componentEditor: {data: componentData = {} , qdata, qgenericFieldInfo : qGenericFieldInfo, dataMap, genericFieldInfo}} = softwareProductComponents;
-	let isReadOnlyMode = VersionControllerUtils.isReadOnly(currentVSP);
 	let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
 
 	return {
 		componentData,
 		qdata,
-		isReadOnlyMode,
 		isManual: currentVSP.onboardingMethod === onboardingMethod.MANUAL,
 		genericFieldInfo,
 		qGenericFieldInfo,
@@ -42,7 +37,6 @@ export const mapStateToProps = ({softwareProduct}) => {
 		isFormValid
 	};
 };
-
 
 const mapActionsToProps = (dispatch, {softwareProductId, version, componentId}) => {
 	return {

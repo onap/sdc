@@ -163,7 +163,7 @@ public class ArtifactGeneratorUtil {
       String hostname = ip.getHostName();
       MDC.put(BE_FQDN, hostname);
     } catch (UnknownHostException uhe) {
-      log.error("Failed to get server FQDN");
+      log.error("Failed to get server FQDN", uhe);
     }
 
     if (log.isDebugEnabled()) {

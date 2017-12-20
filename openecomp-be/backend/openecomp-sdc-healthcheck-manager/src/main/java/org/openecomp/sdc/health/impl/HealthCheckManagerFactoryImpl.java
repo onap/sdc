@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.health.impl;
 
-import org.openecomp.sdc.health.*;
+import org.openecomp.sdc.health.HealthCheckManager;
+import org.openecomp.sdc.health.HealthCheckManagerFactory;
 
 public class HealthCheckManagerFactoryImpl extends HealthCheckManagerFactory {
     private static final HealthCheckManager INSTANCE ;

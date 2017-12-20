@@ -20,16 +20,24 @@
 
 package org.openecomp.sdc.healing.api;
 
+import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.healing.types.HealCode;
+import org.openecomp.sdc.healing.types.HealerType;
+import org.openecomp.sdc.versioning.dao.types.Version;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
  * Created by Talio on 11/29/2016.
  */
 public interface HealingManager {
-    Object heal(HealCode code, Map<String, Object> healParameters);
 
-    Optional<String> healAll(Map<String, Object> healParameters);
+  /**
+   * @return healed version, if healing was not performed - Optional.empty.
+   */
+  Optional<Version> healItemVersion(String itemId, Version version, ItemType itemType,
+                                    boolean force);
+
+  Object heal(String itemId, Version version, HealerType healerType, HealCode code,
+              ItemType itemType);
 }

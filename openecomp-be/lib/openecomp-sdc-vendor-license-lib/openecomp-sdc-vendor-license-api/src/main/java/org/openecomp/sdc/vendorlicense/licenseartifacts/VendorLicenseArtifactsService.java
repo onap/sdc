@@ -28,5 +28,5 @@ import java.util.List;
 public interface VendorLicenseArtifactsService {
 
   FileContentHandler createLicenseArtifacts(String vspId, String vlmId, Version vlmVersion,
-                                            List<String> featureGroups, String user);
+                                            List<String> featureGroups);
 }

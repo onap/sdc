@@ -15,8 +15,8 @@
  */
 import React from 'react';
 
-const GridItem = ({colSpan = 1, children, stretch = false}) => (
-	<div className={`grid-col-${colSpan}`}>
+const GridItem = ({colSpan = 1, children, lastColInRow = false, stretch = false, className = ''}) => (
+	<div className={`grid-col-${colSpan} ${lastColInRow ? 'last-col-in-row' : ''} ${className}`}>
 		<div className={`grid-item${stretch ? '-stretch' : ''}`}>
 			{children}
 		</div>

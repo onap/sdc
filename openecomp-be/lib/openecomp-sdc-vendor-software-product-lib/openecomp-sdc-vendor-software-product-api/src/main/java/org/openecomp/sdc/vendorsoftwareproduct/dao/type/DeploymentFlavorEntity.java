@@ -1,6 +1,10 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.*;
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.Frozen;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityId;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;

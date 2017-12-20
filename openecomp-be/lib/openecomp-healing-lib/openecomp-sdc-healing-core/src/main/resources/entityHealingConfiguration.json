@@ -1,0 +1,12 @@
+{
+  "vsp": {
+    "structure": {
+      "ownerHealer": "org.openecomp.sdc.healing.healers.OwnerHealer"
+    }
+  },
+  "vlm": {
+    "structure": {
+      "ownerHealer": "org.openecomp.sdc.healing.healers.OwnerHealer"
+    }
+  }
+}

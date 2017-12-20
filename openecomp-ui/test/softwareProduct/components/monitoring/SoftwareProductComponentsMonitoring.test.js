@@ -85,24 +85,18 @@ describe('SoftwareProductComponentsMonitoring Module Tests', function () {
 		expect(renderedOutput).toBeTruthy();
 	});
 
-	it('should change state to dragging', done => {
+	it('should change state to dragging', () => {
 		var view = TestUtils.renderIntoDocument(<SoftwareProductComponentsMonitoringView />);
 		expect(view.state.dragging).toBe(false);
 		view.handleOnDragEnter(false);
-		setTimeout(()=> {
-			expect(view.state.dragging).toBe(true);
-			done();
-		}, 100);
+		expect(view.state.dragging).toBe(true);
 	});
 
-	it('should not change state to dragging', done => {
+	it('should not change state to dragging', () => {
 		var view = TestUtils.renderIntoDocument(<SoftwareProductComponentsMonitoringView />);
 		expect(view.state.dragging).toBe(false);
 		view.handleOnDragEnter(true);
-		setTimeout(()=> {
-			expect(view.state.dragging).toBe(false);
-			done();
-		}, 0);
+		expect(view.state.dragging).toBe(false);
 	});
 
 });

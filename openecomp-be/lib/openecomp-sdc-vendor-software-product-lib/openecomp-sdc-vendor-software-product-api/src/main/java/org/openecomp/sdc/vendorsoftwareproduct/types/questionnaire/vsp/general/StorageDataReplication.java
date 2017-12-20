@@ -25,8 +25,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.vsp.general;
  */
 public class StorageDataReplication {
     private boolean storageReplicationAcrossRegion;
-    private int storageReplicationSize;
-    private int storageReplicationFrequency;
+    private Number storageReplicationSize;
+    private Number storageReplicationFrequency;
     private String storageReplicationSource;
     private String storageReplicationDestination;
 
@@ -38,19 +38,19 @@ public class StorageDataReplication {
         this.storageReplicationDestination = storageReplicationDestination;
     }
 
-    public int getStorageReplicationSize() {
+    public Number getStorageReplicationSize() {
         return storageReplicationSize;
     }
 
-    public void setStorageReplicationSize(int storageReplicationSize) {
+    public void setStorageReplicationSize(Number storageReplicationSize) {
         this.storageReplicationSize = storageReplicationSize;
     }
 
-    public int getStorageReplicationFrequency() {
+    public Number getStorageReplicationFrequency() {
         return storageReplicationFrequency;
     }
 
-    public void setStorageReplicationFrequency(int storageReplicationFrequency) {
+    public void setStorageReplicationFrequency(Number storageReplicationFrequency) {
         this.storageReplicationFrequency = storageReplicationFrequency;
     }
 

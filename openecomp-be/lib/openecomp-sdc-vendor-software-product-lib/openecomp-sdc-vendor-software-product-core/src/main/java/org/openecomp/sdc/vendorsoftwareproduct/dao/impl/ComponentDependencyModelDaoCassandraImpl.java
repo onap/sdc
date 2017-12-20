@@ -52,12 +52,6 @@ public class ComponentDependencyModelDaoCassandraImpl extends CassandraBaseDao
   }
 
   @Override
-  public void deleteAll(String vspId, Version version) {
-    accessor.deleteAll(vspId, versionMapper.toUDT(version));
-  }
-
-
-  @Override
   public void registerVersioning(String versionableEntityType) {
     VersionableEntityMetadata metadata = new VersionableEntityMetadata(
         mapper.getTableMetadata().getName(),

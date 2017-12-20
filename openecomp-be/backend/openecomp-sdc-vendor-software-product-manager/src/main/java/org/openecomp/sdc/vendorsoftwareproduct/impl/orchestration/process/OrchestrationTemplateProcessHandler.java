@@ -6,7 +6,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 
 public interface OrchestrationTemplateProcessHandler {
+
   OrchestrationTemplateActionResponse process(VspDetails vspDetails,
-                                              OrchestrationTemplateCandidateData candidateData,
-                                              String user);
+                                              OrchestrationTemplateCandidateData candidateData);
 }

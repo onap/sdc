@@ -22,7 +22,7 @@ import {imageCustomValidations} from '../ImageValidations.js';
 
 const Version = ({isManual, dataMap, qgenericFieldInfo, onQDataChanged}) => {
 	return(
-		<GridItem colSpan={1}>
+		<GridItem colSpan={1} lastColInRow>
 			<Input
 				disabled={!isManual}
 				data-test-id='image-version'

@@ -40,14 +40,14 @@ import java.util.UUID;
 
 public class SimpleHealingServiceImpl implements HealingService {
   private static final EntitlementPoolDao entitlementPoolDao =
-          EntitlementPoolDaoFactory.getInstance().createInterface();
+      EntitlementPoolDaoFactory.getInstance().createInterface();
   private static final LicenseKeyGroupDao licenseKeyGroupDao =
-          LicenseKeyGroupDaoFactory.getInstance().createInterface();
+      LicenseKeyGroupDaoFactory.getInstance().createInterface();
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
   @Override
-  public VersionableEntity heal(VersionableEntity toHeal, String user) {
-    return handleMissingVersionId(toHeal, user);
+  public VersionableEntity heal(VersionableEntity toHeal) {
+    return handleMissingVersionId(toHeal);
   }
 
   @Override
@@ -59,10 +59,10 @@ public class SimpleHealingServiceImpl implements HealingService {
     }
   }
 
-  private VersionableEntity handleMissingVersionId(VersionableEntity toHeal, String user) {
+  private VersionableEntity handleMissingVersionId(VersionableEntity toHeal) {
 
 
-    mdcDataDebugMessage.debugEntryMessage(null, null);
+    mdcDataDebugMessage.debugEntryMessage(null);
 
     if (toHeal != null && toHeal.getVersionUuId() != null) {
       return toHeal;
@@ -76,13 +76,13 @@ public class SimpleHealingServiceImpl implements HealingService {
       licenseKeyGroupDao.update((LicenseKeyGroupEntity) toHeal);
     } else {
       MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
-              LoggerTragetServiceName.SELF_HEALING, ErrorLevel.ERROR.name(),
-              LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.UNSUPPORTED_OPERATION);
+          LoggerTragetServiceName.SELF_HEALING, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.UNSUPPORTED_OPERATION);
       throw new UnsupportedOperationException(
-              "Unsupported operation for 1610 release/1607->1610 migration.");
+          "Unsupported operation for 1610 release/1607->1610 migration.");
     }
 
-    mdcDataDebugMessage.debugExitMessage(null, null);
+    mdcDataDebugMessage.debugExitMessage(null);
     return toHeal;
   }
 }

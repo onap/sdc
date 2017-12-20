@@ -16,11 +16,12 @@
 import {connect} from 'react-redux';
 import ActivityLogView from './ActivityLogView.jsx';
 
-export const mapStateToProps = ({licenseModel: {activityLog}}) => {
+export const mapStateToProps = ({users: {usersList}, licenseModel: {activityLog}}) => {
 
 	let activities = activityLog;
 	return {
-		activities
+		activities: activities.map(activity => ({...activity, user: {id: activity.user, name: usersList.find(userObject => userObject.userId === activity.user).fullName}})),
+		usersList
 	};
 };
 

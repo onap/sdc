@@ -73,29 +73,14 @@ public class VendorSoftwareProductInfoDaoImpl extends CassandraBaseDao<VspDetail
   }
 
   @Override
-  public void updateOldVersionIndication(VspDetails vspDetails) {
-
-  }
-
-  @Override
   public void updateQuestionnaireData(String vspId, Version version,
                                       String questionnaireData) {
 
   }
 
   @Override
-  public String getQuestionnaireData(String vspId, Version version) {
-    return null;
-  }
-
-  @Override
   public VspQuestionnaireEntity getQuestionnaire(String vspId, Version version) {
     return null;
-  }
-
-  @Override
-  public void deleteAll(String vspId, Version version) {
-
   }
 
   @Override

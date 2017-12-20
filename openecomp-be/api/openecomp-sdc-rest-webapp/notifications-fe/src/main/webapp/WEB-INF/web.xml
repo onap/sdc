@@ -1,0 +1,81 @@
+<web-app
+        xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+        version="3.0">
+
+
+    <!-- Spring -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>WEB-INF/beans-services.xml</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.openecomp.server.listeners.OnboardingAppStartupListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>cross-origin</filter-name>
+        <filter-class>org.eclipse.jetty.servlets.CrossOriginFilter</filter-class>
+        <init-param>
+            <param-name>allowedOrigins</param-name>
+            <param-value>*</param-value>
+        </init-param>
+        <init-param>
+            <param-name>allowedMethods</param-name>
+            <param-value>*</param-value>
+        </init-param>
+        <init-param>
+            <param-name>allowedHeaders</param-name>
+            <param-value>*</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>cross-origin</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!-- Spring WS Mapping -->
+    <servlet>
+        <servlet-name>spring-mapper</servlet-name>
+        <servlet-class>
+            org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <!-- CXF -->
+    <servlet>
+        <servlet-name>CXFServlet</servlet-name>
+        <display-name>CXF Servlet</display-name>
+        <servlet-class>
+            org.apache.cxf.transport.servlet.CXFServlet
+        </servlet-class>
+        <init-param>
+            <param-name>redirects-list</param-name>
+            <param-value>
+                /docs/(\S)+\.json
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>redirect-attributes</param-name>
+            <param-value>
+                javax.servlet.include.request_uri
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>redirect-servlet-name</param-name>
+            <param-value>default</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>spring-mapper</servlet-name>
+        <url-pattern>/ws/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CXFServlet</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+</web-app>

@@ -26,7 +26,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.types.questionnaire.component.co
 public class GuestOS {
     private String name;
     private String tools;
-    private int bitSize;
+    private Number bitSize;
 
     public String getName() {
         return name;
@@ -44,11 +44,11 @@ public class GuestOS {
         this.tools = tools;
     }
 
-    public int getBitSize() {
+    public Number getBitSize() {
         return bitSize;
     }
 
-    public void setBitSize(int bitSize) {
+    public void setBitSize(Number bitSize) {
         this.bitSize = bitSize;
     }
 }

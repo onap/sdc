@@ -61,7 +61,13 @@ export default {
 	},
 
 	createLicenseModel(dispatch, {licenseModel}){
-		return createLicenseModel(licenseModel);
+		return createLicenseModel(licenseModel).then(result => {
+			dispatch({
+				type: actionTypes.LICENSE_MODEL_CREATED,
+				result
+			});
+			return result;
+		});
 	}
 
 };

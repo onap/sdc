@@ -26,17 +26,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.sdc.activityLog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
-import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
 import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao;
-import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao;
-import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDaoFactory;
 import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
 import org.openecomp.sdc.vendorlicense.dao.LimitDao;
 import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDao;
@@ -44,35 +38,23 @@ import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseTerm;
-import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
-import org.openecomp.sdc.vendorlicense.impl.VendorLicenseManagerImpl;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
 import org.openecomp.sdc.versioning.VersioningManager;
-import org.openecomp.sdc.versioning.VersioningUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionInfo;
-import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE;
-import static org.testng.AssertJUnit.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 public class LicenseAgreementTest {
 
@@ -104,8 +86,6 @@ public class LicenseAgreementTest {
   private LicenseKeyGroupDao licenseKeyGroupDaoMcok;
   @Mock
   private LimitDao limitDaoMcok;
-  @Mock
-  private ActivityLogManager activityLogManagerMcok;
 
 
   @Spy
@@ -160,12 +140,12 @@ public class LicenseAgreementTest {
   @Test
   public void listLicenseAgreementsTest() {
 
-    LicenseAgreementEntity la = new LicenseAgreementEntity(vlm1_id,VERSION01,USER1);
-    doReturn(la).when(vendorLicenseManager).createLicenseAgreementForList(vlm1_id,VERSION01, USER1);
+    LicenseAgreementEntity la =
+        new LicenseAgreementEntity(vlm1_id, VERSION01, null); // TODO: 8/13/2017
 
     doReturn(Arrays.asList(
         createLicenseAgreement(vlm1_id, VERSION01, la1_id, "LA1", "LA1 " +
-                "desc","RequirementsAndConstrains2", new ChoiceOrOther<>(LicenseTerm.Unlimited, null),
+                "desc", "RequirementsAndConstrains2", new ChoiceOrOther<>(LicenseTerm.Unlimited, null),
             "fg1"),
         createLicenseAgreement(vlm1_id, VERSION01, la2_id, "LA2", "LA2 desc",
             "RequirementsAndConstrains2", new ChoiceOrOther<>(LicenseTerm.Unlimited, null),
@@ -173,23 +153,23 @@ public class LicenseAgreementTest {
         .when(licenseAgreementDaoMcok).list(la);
 
     Collection<LicenseAgreementEntity> LAs =
-        vendorLicenseManager.listLicenseAgreements(vlm1_id, VERSION01, USER1);
+        vendorLicenseManager.listLicenseAgreements(vlm1_id, VERSION01);
     Assert.assertEquals(LAs.size(), 2);
-    LAs.forEach(licseAgreement-> Assert.assertTrue(licseAgreement.getId().matches(la1_id + "|" + la2_id)));
+    LAs.forEach(
+        licseAgreement -> Assert.assertTrue(licseAgreement.getId().matches(la1_id + "|" + la2_id)));
   }
 
   @Test
   public void testListLicenseAgreementsWhenNone() {
 
-    LicenseAgreementEntity la = new LicenseAgreementEntity(vlm1_id,VERSION01,USER1);
-    doReturn(la).when(vendorLicenseManager).createLicenseAgreementForList(vlm1_id,VERSION01,
-        USER1);
+    LicenseAgreementEntity la =
+        new LicenseAgreementEntity(vlm1_id, VERSION01, null); // TODO: 8/13/2017
 
     doReturn(new ArrayList<LicenseAgreementEntity>())
         .when(licenseAgreementDaoMcok).list(la);
 
     Collection<LicenseAgreementEntity> LAs =
-        vendorLicenseManager.listLicenseAgreements(vlm1_id, VERSION01, USER1);
+        vendorLicenseManager.listLicenseAgreements(vlm1_id, VERSION01);
 
     verify(licenseAgreementDaoMcok).list(la);
     Assert.assertEquals(LAs.size(), 0);
@@ -199,29 +179,19 @@ public class LicenseAgreementTest {
   @Test
   public void testCreateLicenseAgreement() {
 
-    LicenseAgreementEntity licenseAgreementEntity = new LicenseAgreementEntity(vlm1_id,VERSION01,
+    LicenseAgreementEntity licenseAgreementEntity = new LicenseAgreementEntity(vlm1_id, VERSION01,
         la2_id);
 
     doReturn(licenseAgreementEntity).when(vendorLicenseFacadeMcok).createLicenseAgreement
-        (licenseAgreementEntity,USER1);
+        (licenseAgreementEntity);
 
-    vendorLicenseManager.createLicenseAgreement(licenseAgreementEntity,USER1);
+    vendorLicenseManager.createLicenseAgreement(licenseAgreementEntity);
 
-    verify(vendorLicenseFacadeMcok).createLicenseAgreement(licenseAgreementEntity,USER1);
+    verify(vendorLicenseFacadeMcok).createLicenseAgreement(licenseAgreementEntity);
   }
 
   @Test
   public void testUpdateLicenseAgreement() {
-
-    VersionInfo versionInfo = new VersionInfo();
-    versionInfo.setActiveVersion(VERSION01);
-    versionInfo.setLockingUser(USER1);
-    ArrayList<Version> viewable = new ArrayList<Version>();
-    viewable.add(VERSION01);
-    versionInfo.setViewableVersions(viewable);
-
-    doReturn(versionInfo).when(vendorLicenseManager).getVersionInfo(vlm1_id,
-        VersionableEntityAction.Write, USER1);
     LicenseAgreementEntity existingLA = new LicenseAgreementEntity(vlm1_id, VERSION01, la1_id);
 
     existingLA.setFeatureGroupIds(new HashSet<String>());
@@ -236,34 +206,20 @@ public class LicenseAgreementTest {
     FeatureGroupEntity fg2 = new FeatureGroupEntity(vlm1_id, VERSION01, fg2_id);
     doReturn(fg1).when(featureGroupDaoMcok).get(fg1);
     doReturn(fg2).when(featureGroupDaoMcok).get(fg2);
-    doReturn(existingLA).when(vendorLicenseManager).createLicenseAgreementForList(vlm1_id,VERSION01,
-        USER1);
     doNothing().when(vendorLicenseManager).updateUniqueName(anyObject(), anyObject(), anyObject(),
         anyObject(), anyObject());
 
-    vendorLicenseManager.updateLicenseAgreement(existingLA, addedFGs, removedFGs, USER1);
+    vendorLicenseManager.updateLicenseAgreement(existingLA, addedFGs, removedFGs);
 
     verify(licenseAgreementDaoMcok)
         .updateColumnsAndDeltaFeatureGroupIds(existingLA, addedFGs, removedFGs);
-    verify(vendorLicenseManager).addFeatureGroupsToLicenseAgreementRef(addedFGs,existingLA);
-    verify(vendorLicenseManager).removeFeatureGroupsToLicenseAgreementRef(removedFGs,existingLA);
-    verify(vendorLicenseFacadeMcok).updateVlmLastModificationTime(vlm1_id,VERSION01);
+    verify(vendorLicenseManager).addFeatureGroupsToLicenseAgreementRef(addedFGs, existingLA);
+    verify(vendorLicenseManager).removeFeatureGroupsToLicenseAgreementRef(removedFGs, existingLA);
 
   }
 
   @Test
   public void deleteLicenseAgreementsTest() {
-
-    VersionInfo versionInfo = new VersionInfo();
-    versionInfo.setActiveVersion(VERSION01);
-    versionInfo.setLockingUser(USER1);
-    ArrayList<Version> viewable = new ArrayList<Version>();
-    viewable.add(VERSION01);
-    versionInfo.setViewableVersions(viewable);
-
-    doReturn(versionInfo).when(vendorLicenseManager).getVersionInfo(vlm1_id,
-        VersionableEntityAction.Write, USER1);
-
     LicenseAgreementEntity existingLA = new LicenseAgreementEntity(vlm1_id, VERSION01, la1_id);
     existingLA.setName("LA");
     existingLA.setFeatureGroupIds(new HashSet<>());
@@ -271,20 +227,19 @@ public class LicenseAgreementTest {
     doReturn(existingLA).when(licenseAgreementDaoMcok).get(anyObject());
 
     doNothing().when(vendorLicenseManager).deleteUniqueName(VendorLicenseConstants.UniqueValues
-        .LICENSE_AGREEMENT_NAME,vlm1_id,VERSION01.toString(),existingLA.getName());
+        .LICENSE_AGREEMENT_NAME, vlm1_id, VERSION01.toString(), existingLA.getName());
 
-    vendorLicenseManager.deleteLicenseAgreement(vlm1_id, VERSION01, la1_id, USER1);
+    vendorLicenseManager.deleteLicenseAgreement(vlm1_id, VERSION01, la1_id);
 
     verify(licenseAgreementDaoMcok).delete(existingLA);
-    verify(vendorLicenseFacadeMcok).updateVlmLastModificationTime(vlm1_id,VERSION01);
     verify(vendorLicenseManager).removeFeatureGroupsToLicenseAgreementRef(existingLA
-        .getFeatureGroupIds(),existingLA);
+        .getFeatureGroupIds(), existingLA);
   }
 
   @Test
-  public void testGetLicenseAgreement(){
-    vendorLicenseManager.getLicenseAgreementModel(vlm1_id,VERSION01,la1_id,USER1);
-    verify(vendorLicenseFacadeMcok).getLicenseAgreementModel(vlm1_id,VERSION01,la1_id,USER1);
+  public void testGetLicenseAgreement() {
+    vendorLicenseManager.getLicenseAgreementModel(vlm1_id, VERSION01, la1_id);
+    verify(vendorLicenseFacadeMcok).getLicenseAgreementModel(vlm1_id, VERSION01, la1_id);
   }
 
 /*
@@ -300,7 +255,7 @@ public class LicenseAgreementTest {
     featureGroupDao.create(created);
     featureGroupDao.addReferencingLicenseAgreement(created, licenseAgreement.getId());
 
-    vendorLicenseManager.deleteFeatureGroup(created, USER1);
+    vendorLicenseManager.deleteFeatureGroup(created);
     LicenseAgreementEntity afterDeletingFG = licenseAgreementDao.get(licenseAgreement);
     Assert.assertEquals(afterDeletingFG.getFeatureGroupIds().size(), 1);
     Assert.assertTrue(afterDeletingFG.getFeatureGroupIds().contains("fg2"));

@@ -14,27 +14,29 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Validator from 'nfvo-utils/Validator.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import Form from 'nfvo-components/input/validation/Form.jsx';
 import {LICENSE_MODEL_CREATION_FORM_NAME} from './LicenseModelCreationConstants.js';
 
-const LicenseModelPropType = React.PropTypes.shape({
-	id: React.PropTypes.string,
-	vendorName: React.PropTypes.string,
-	description: React.PropTypes.string
+const LicenseModelPropType = PropTypes.shape({
+	id: PropTypes.string,
+	vendorName: PropTypes.string,
+	description: PropTypes.string
 });
 
 class LicenseModelCreationView extends React.Component {
 
 	static propTypes = {
 		data: LicenseModelPropType,
-		VLMNames: React.PropTypes.object,
-		onDataChanged: React.PropTypes.func.isRequired,
-		onSubmit: React.PropTypes.func.isRequired,
-		onValidateForm: React.PropTypes.func.isRequired,
-		onCancel: React.PropTypes.func.isRequired
+		VLMNames: PropTypes.object,
+		usersList: PropTypes.array,
+		onDataChanged: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func.isRequired,
+		onValidateForm: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired
 	};
 
 	render() {
@@ -46,6 +48,7 @@ class LicenseModelCreationView extends React.Component {
 					ref='validationForm'
 					hasButtons={true}
 					onSubmit={ () => this.submit() }
+					submitButtonText={i18n('Create')}
 					onReset={ () => this.props.onCancel() }
 					labledButtons={true}
 					isValid={this.props.isFormValid}
@@ -79,8 +82,8 @@ class LicenseModelCreationView extends React.Component {
 
 
 	submit() {
-		const {data:licenseModel} = this.props;
-		this.props.onSubmit(licenseModel);
+		const {data:licenseModel, usersList} = this.props;
+		this.props.onSubmit(licenseModel, usersList);
 	}
 
 	validateName(value) {
