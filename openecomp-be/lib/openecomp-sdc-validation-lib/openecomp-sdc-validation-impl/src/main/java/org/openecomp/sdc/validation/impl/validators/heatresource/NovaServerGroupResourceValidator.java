@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2016-2017 European Support Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openecomp.sdc.validation.impl.validators.heatresource;
 
 import org.apache.commons.collections4.MapUtils;
@@ -21,15 +37,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Created by TALIO on 2/22/2017.
- */
 public class NovaServerGroupResourceValidator implements ResourceValidator {
-  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final MdcDataDebugMessage MDC_DATA_DEBUG_MESSAGE = new MdcDataDebugMessage();
   private static final ErrorMessageCode ERROR_CODE_HNG1 = new ErrorMessageCode("HNG1");
   private static final ErrorMessageCode ERROR_CODE_HNG2 = new ErrorMessageCode("HNG2");
   private static final ErrorMessageCode ERROR_CODE_HNG3 = new ErrorMessageCode("HNG3");
 
+  @Override
   public void validate(String fileName, Map.Entry<String, Resource> resourceEntry,
                        GlobalValidationContext globalContext, ValidationContext validationContext) {
     validateNovaServerGroupPolicy(fileName, resourceEntry, globalContext);
@@ -42,7 +56,7 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
                                                     Map.Entry<String, Resource> resourceEntry,
                                                     GlobalValidationContext globalContext) {
 
-    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugEntryMessage("file", fileName);
 
     Resource resource = resourceEntry.getValue();
     Object policies =
@@ -70,7 +84,7 @@ public class NovaServerGroupResourceValidator implements ResourceValidator {
       }
     }
 
-    mdcDataDebugMessage.debugExitMessage("file", fileName);
+    MDC_DATA_DEBUG_MESSAGE.debugExitMessage("file", fileName);
   }
 
   private static boolean isGivenPolicyValid(Object policy) {
