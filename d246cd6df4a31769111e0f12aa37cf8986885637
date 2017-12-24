@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ade7c4e3",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/exportinfo/ExportDataCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T13:43:39Z",
+      "side": 1,
+      "message": "Please make this a constant or configurable.",
+      "range": {
+        "startLine": 67,
+        "startChar": 61,
+        "endLine": 67,
+        "endChar": 62
+      },
+      "revId": "d246cd6df4a31769111e0f12aa37cf8986885637",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0de358da",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/exportinfo/ExportDataCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T13:43:39Z",
+      "side": 1,
+      "message": "Please don\u0027t forget spaces after commas.",
+      "range": {
+        "startLine": 69,
+        "startChar": 93,
+        "endLine": 69,
+        "endChar": 94
+      },
+      "revId": "d246cd6df4a31769111e0f12aa37cf8986885637",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6dd1bcfa",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/exportinfo/ExportDataCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T13:43:39Z",
+      "side": 1,
+      "message": "You can use the Executor to do this. Submit all the queries as tasks and wait until all of the submitted tasks have completed.",
+      "revId": "d246cd6df4a31769111e0f12aa37cf8986885637",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cdec90ca",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/exportinfo/ExportDataCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T13:43:39Z",
+      "side": 1,
+      "message": "I think an Executor needs to be shut down. Please check.",
+      "revId": "d246cd6df4a31769111e0f12aa37cf8986885637",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
