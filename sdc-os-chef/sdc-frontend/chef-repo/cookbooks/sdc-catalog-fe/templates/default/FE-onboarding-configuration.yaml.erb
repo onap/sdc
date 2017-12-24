@@ -2,4 +2,8 @@ notifications:
     pollingIntervalMsec: 2000
     selectionSize: 100
     beHost: <%= @catalog_ip %>
-    beHttpPort: <%= @catalog_port %>
+    <% if node[:disableHttp] -%>
+    beHttpPort: <%= node['BE'][:https_port] %> 
+    <% else %>
+    beHttpPort: <%= node['BE'][:http_port] %> 
+    <% end -%>

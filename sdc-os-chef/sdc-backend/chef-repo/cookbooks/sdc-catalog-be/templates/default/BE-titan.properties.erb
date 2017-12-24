@@ -10,16 +10,19 @@ storage.cassandra.ssl.enabled=false
 storage.cassandra.ssl.truststore.location=/var/lib/jetty/config/.truststore
 storage.cassandra.ssl.truststore.password=Aa123456
 
-cache.db-cache = false
-cache.db-cache-clean-wait = 20
-cache.db-cache-time = 180000
-cache.db-cache-size = 0.5
-
 storage.cassandra.read-consistency-level=LOCAL_QUORUM
 storage.cassandra.write-consistency-level=LOCAL_QUORUM
 storage.cassandra.replication-strategy-class=org.apache.cassandra.locator.NetworkTopologyStrategy
 storage.cassandra.replication-strategy-options=<%= @DC_NAME %>,<%= @rep_factor %>
 storage.cassandra.astyanax.local-datacenter=<%= @DC_NAME %>
+
+
+cache.db-cache = false
+cache.db-cache-clean-wait = 20
+cache.db-cache-time = 180000
+cache.db-cache-size = 0.5
+
+cache.tx-cache-size = 1000000
 
 storage.lock.retries=5
 storage.lock.wait-time=500

@@ -11,7 +11,11 @@ beHttpPort: <%= @catalog_port %>
 beContext: /sdc2/rest/v1/catalog/upload/resources
 
 # catalog backend protocol
+<% if node[:disableHttp] -%>
+beProtocol: https
+<% else %>
 beProtocol: http
+<% end -%>
 
 # catalog backend ssl port
 beSslPort: <%= @ssl_port %>
@@ -22,20 +26,31 @@ threadpoolSize: 50
 # request processing timeout (seconds)
 requestTimeout: 10
 
+# Determines the health check read timeout when invoking health check towards the LB (or BE whatever is configured):
 healthCheckSocketTimeoutInMs: 5000
 
 healthCheckIntervalInSeconds: 5
 
 onboarding:
-  protocol: http
-  host: <%= @fe_host_ip %>
-  port: 8181
-  healthCheckUri: "/onboarding/v1.0/healthcheck"
+    host: <%= @fe_host_ip %>
+    <% if node[:disableHttp] -%>
+    protocol: https
+    port: <%= node['FE'][:https_port] %> 
+    <% else %>
+    protocol: http
+    port: <%= node['FE'][:http_port] %> 
+    <% end -%>
+    healthCheckUri: "/onboarding/v1.0/healthcheck"
 
 dcae:
+    host: <%= @fe_host_ip %>
+    <% if node[:disableHttp] -%>
+    protocol: https
+    port: <%= node['FE'][:https_port] %> 
+    <% else %>
     protocol: http
-    host: localhost
-    port: 8181
+    port: <%= node['FE'][:http_port] %> 
+    <% end -%>
     healthCheckUri: "/dcae/healthCheck"
 
 identificationHeaderFields: 
@@ -48,9 +63,6 @@ identificationHeaderFields:
    -
         - &HTTP_CSP_ATTUID HTTP_CSP_ATTUID
         - &csp-attuid csp-attuid
-   -
-        - &HTTP_CSP_WSTYPE HTTP_CSP_WSTYPE
-        - &csp-wstype csp-wstype
 
 optionalHeaderFields:
    -

@@ -8,6 +8,7 @@
    "chef_type": "environment",
 
    "default_attributes": {
+		"disableHttp": false,
         "CS_VIP": "yyy",
         "BE_VIP": "yyy",
         "FE_VIP": "yyy",

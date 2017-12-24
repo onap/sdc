@@ -24,7 +24,7 @@ template "catalog-be-config" do
    group "jetty"
    mode "0755"
    variables({
-      :host_ip      => node['HOST_IP'],
+      :catalog_ip      => node['HOST_IP'],
       :catalog_port => node['BE'][:http_port],
       :ssl_port     => node['BE'][:https_port],
       :cassandra_ip => node['Nodes']['CS'],

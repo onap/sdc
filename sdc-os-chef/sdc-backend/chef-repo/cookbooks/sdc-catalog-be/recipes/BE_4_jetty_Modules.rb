@@ -18,5 +18,5 @@ template "ssl-ini" do
    owner "jetty"
    group "jetty"
    mode "0755"
-   variables :https_port => "#{node['BE'][:https_port]}"
+   variables :BE_https_port => "#{node['BE'][:https_port]}"
 end
