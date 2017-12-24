@@ -1,0 +1,101 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ad8264fe",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HeatValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T11:52:51Z",
+      "side": 1,
+      "message": "Too many nested control statements.",
+      "revId": "b61fb80535adaa4fbf09d949ba0584d3ee10f4bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cd87b00e",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HeatValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T11:52:51Z",
+      "side": 1,
+      "message": "This local variable is unnecessary.",
+      "revId": "b61fb80535adaa4fbf09d949ba0584d3ee10f4bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6d7c5c21",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HeatValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T11:52:51Z",
+      "side": 1,
+      "message": "getAttrValue.get() already returns String.",
+      "range": {
+        "startLine": 342,
+        "startChar": 0,
+        "endLine": 343,
+        "endChar": 53
+      },
+      "revId": "b61fb80535adaa4fbf09d949ba0584d3ee10f4bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_8d79a831",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HeatValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 485,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T11:52:51Z",
+      "side": 1,
+      "message": "This can be replaced with just heatOrchestrationTemplate.getParameters()",
+      "range": {
+        "startLine": 484,
+        "startChar": 0,
+        "endLine": 485,
+        "endChar": 52
+      },
+      "revId": "b61fb80535adaa4fbf09d949ba0584d3ee10f4bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0d8ef82e",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HeatValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 715,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T11:52:51Z",
+      "side": 1,
+      "message": "This method doesn\u0027t seem in use. Please check",
+      "revId": "b61fb80535adaa4fbf09d949ba0584d3ee10f4bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
