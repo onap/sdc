@@ -254,7 +254,9 @@ topology_template:
         subnetpoolid:
           get_input: port_iox_data_0_port_subnetpoolid
         fixed_ips:
-          get_input: port_iox_data_0_port_fixed_ips
+          get_input:
+          - port_iox_data_0_port_fixed_ips
+          - index_value
         name:
           get_input:
           - port_iox_data_0_port_name
@@ -329,7 +331,9 @@ topology_template:
         subnetpoolid:
           get_input: port_iox_oam_0_port_subnetpoolid
         fixed_ips:
-          get_input: port_iox_oam_0_port_fixed_ips
+          get_input:
+          - port_iox_oam_0_port_fixed_ips
+          - index_value
         name:
           get_input:
           - port_iox_oam_0_port_name

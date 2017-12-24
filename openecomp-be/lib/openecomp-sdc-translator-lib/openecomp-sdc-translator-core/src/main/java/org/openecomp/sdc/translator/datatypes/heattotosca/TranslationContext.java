@@ -62,7 +62,7 @@ public class TranslationContext {
   private static Map<String, ImplementationConfiguration> nameExtractorImplMap;
   private static Map<String, ImplementationConfiguration> supportedConsolidationComputeResources;
   private static Map<String, ImplementationConfiguration> supportedConsolidationPortResources;
-  private static List enrichPortResourceProperties;
+  private static List<String> enrichPortResourceProperties;
 
   static {
     Configuration config = ConfigurationManager.lookup();
@@ -90,7 +90,7 @@ public class TranslationContext {
 
   private ManifestFile manifest;
 
-  public static List getEnrichPortResourceProperties() {
+  public static List<String> getEnrichPortResourceProperties() {
     return enrichPortResourceProperties;
   }
 

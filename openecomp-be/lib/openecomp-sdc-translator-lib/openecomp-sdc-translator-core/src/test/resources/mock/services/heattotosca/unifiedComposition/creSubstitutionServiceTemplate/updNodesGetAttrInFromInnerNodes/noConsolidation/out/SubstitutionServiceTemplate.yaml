@@ -212,7 +212,9 @@ topology_template:
         subnetpoolid:
           get_input: port_FSB1_OAM_subnetpoolid
         fixed_ips:
-          get_input: port_FSB1_OAM_fixed_ips
+          get_input:
+          - port_FSB1_OAM_fixed_ips
+          - index_value
         network:
           get_input:
           - port_FSB1_OAM_network

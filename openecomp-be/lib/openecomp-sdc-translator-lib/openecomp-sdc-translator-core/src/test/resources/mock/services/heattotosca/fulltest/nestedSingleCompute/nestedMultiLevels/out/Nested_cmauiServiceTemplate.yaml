@@ -157,7 +157,9 @@ topology_template:
         network_role:
           get_input: port_cmaui_port_5_network_role
         fixed_ips:
-          get_input: port_cmaui_port_5_fixed_ips
+          get_input:
+          - port_cmaui_port_5_fixed_ips
+          - index_value
         subnetpoolid:
           get_input: port_cmaui_port_5_subnetpoolid
         network:
@@ -195,7 +197,9 @@ topology_template:
         network_role:
           get_input: port_cmaui_port_6_network_role
         fixed_ips:
-          get_input: port_cmaui_port_6_fixed_ips
+          get_input:
+          - port_cmaui_port_6_fixed_ips
+          - index_value
         subnetpoolid:
           get_input: port_cmaui_port_6_subnetpoolid
         network:

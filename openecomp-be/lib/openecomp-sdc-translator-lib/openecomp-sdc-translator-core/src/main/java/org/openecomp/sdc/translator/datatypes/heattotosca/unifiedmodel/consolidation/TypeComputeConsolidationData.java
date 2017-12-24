@@ -3,7 +3,6 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolid
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * The type Type compute consolidation data.
@@ -25,7 +24,7 @@ public class TypeComputeConsolidationData {
    *
    * @return the all compute node template ids
    */
-  public Set<String> getAllComputeNodeTemplateIds() {
+  public Collection<String> getAllComputeNodeTemplateIds() {
     return computeTemplateConsolidationData.keySet();
   }
 
