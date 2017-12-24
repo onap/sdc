@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_0d31185a",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T14:37:53Z",
+      "side": 1,
+      "message": "There is a lot of methods that require many parameters with long names. This is very hard to read :(",
+      "revId": "b0d023c760255e4f2cfe1bd7acec3c92eda03151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4def20b1",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 580,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T14:37:53Z",
+      "side": 1,
+      "message": "I think you could have used the means of functional programming here instead of PropertyCheckCondition",
+      "revId": "b0d023c760255e4f2cfe1bd7acec3c92eda03151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ed2b8ce9",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/ConsolidationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 640,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T14:37:53Z",
+      "side": 1,
+      "message": "It looks like the collections are being converted from Set to List back and forth here. Maybe the private methods could be changed to work with either Set or List, or Collection.",
+      "revId": "b0d023c760255e4f2cfe1bd7acec3c92eda03151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ad358447",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/resources/mock/services/heattotosca/fulltest/mixPatterns/connectivityBetweenPatterns/out/MainServiceTemplate.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T14:37:53Z",
+      "side": 1,
+      "message": "This file seems unchanged.",
+      "revId": "b0d023c760255e4f2cfe1bd7acec3c92eda03151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_cd3a5036",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/resources/mock/services/heattotosca/fulltest/mixPatterns/twoAppearancePerPatternWithConnectivities/out/MainServiceTemplate.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T14:37:53Z",
+      "side": 1,
+      "message": "Unchanged file?",
+      "revId": "b0d023c760255e4f2cfe1bd7acec3c92eda03151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6d3f7c26",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/resources/mock/services/heattotosca/fulltest/nestedOtherScenarios/multiLevel/allPatternsDependsOnConnectivity/out/MainServiceTemplate.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 329
+      },
+      "writtenOn": "2017-12-24T14:37:53Z",
+      "side": 1,
+      "message": "This one seems unchanged too. Please avoid submitting unchanged files.",
+      "revId": "b0d023c760255e4f2cfe1bd7acec3c92eda03151",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
