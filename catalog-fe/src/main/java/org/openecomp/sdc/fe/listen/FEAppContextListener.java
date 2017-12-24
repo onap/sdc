@@ -30,6 +30,7 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.listener.AppContextListener;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
+import org.openecomp.sdc.fe.impl.DesignerStatusBL;
 import org.openecomp.sdc.fe.monitoring.FeMonitoringService;
 import org.openecomp.sdc.fe.servlets.HealthCheckService;
 import org.slf4j.Logger;
@@ -48,6 +49,9 @@ public class FEAppContextListener extends AppContextListener implements ServletC
 		log.debug("loading configuration from configDir:{} appName:{}", ExternalConfiguration.getConfigDir(),
 				ExternalConfiguration.getAppName());
 		context.getServletContext().setAttribute(Constants.CONFIGURATION_MANAGER_ATTR, configurationManager);
+		
+		DesignerStatusBL dsbl = new DesignerStatusBL();
+		context.getServletContext().setAttribute(Constants.DESIGNER_BL_COMPONENT, dsbl);
 
 		// Health Check service
 		HealthCheckService hcs = new HealthCheckService(context.getServletContext());

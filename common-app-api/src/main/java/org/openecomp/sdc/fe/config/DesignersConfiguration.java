@@ -1,19 +1,24 @@
 package org.openecomp.sdc.fe.config;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openecomp.sdc.common.api.BasicConfiguration;
 
 public class DesignersConfiguration extends BasicConfiguration { 
 	
-	private List <Designer> designersList;
+	private Map<String,Designer> designersList;
 	
-	public List<Designer> getDesignersList() {
+	public Map<String,Designer> getDesignersList() {
 		return designersList;
 	}
 
-	public void setDesignersList(List<Designer> designersList) {
+	public void setDesignersList(Map<String,Designer> designersList) {
 		this.designersList = designersList;
+	}
+	
+	public DesignersConfiguration() {
+		this.designersList = new HashMap<String, Designer>();
 	}
 
 	public static class Designer { 
@@ -22,7 +27,16 @@ public class DesignersConfiguration extends BasicConfiguration {
 		private String designerHost;		
 		private Integer designerPort;		
 		private String designerPath;
+		private String designerProtocol;
 		
+
+		public String getDesignerProtocol() {
+			return designerProtocol;
+		}
+
+		public void setDesignerProtocol(String designerProtocol) {
+			this.designerProtocol = designerProtocol;
+		}
 
 		public String getDisplayName() {
 			return displayName;

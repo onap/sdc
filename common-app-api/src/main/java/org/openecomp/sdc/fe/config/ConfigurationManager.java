@@ -30,11 +30,14 @@ import org.openecomp.sdc.common.api.FileChangeCallback;
 import org.openecomp.sdc.common.config.EcompErrorConfiguration;
 import org.openecomp.sdc.common.config.IEcompConfigurationManager;
 import org.openecomp.sdc.common.rest.api.RestConfigurationInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigurationManager implements FileChangeCallback, IEcompConfigurationManager {
 
 	ConfigurationSource configurationSource = null;
 	private static ConfigurationManager instance;
+	private static Logger log = LoggerFactory.getLogger(ConfigurationManager.class.getName());
 
 	public ConfigurationManager(ConfigurationSource configurationSource) {
 		super();
@@ -56,6 +59,8 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 
 	private <T extends BasicConfiguration> void loadConfigurationClass(Class<T> clazz) {
 		ConfigurationListener configurationListener = new ConfigurationListener(clazz, this);
+		
+		log.info("created listener for class {}: {}", clazz.getName(), configurationListener);
 
 		T object = configurationSource.getAndWatchConfiguration(clazz, configurationListener);
 
@@ -85,6 +90,13 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 
 		return (EcompErrorConfiguration) configurations.get(getKey(EcompErrorConfiguration.class));
 
+	}
+	
+	public DesignersConfiguration getDesignersConfiguration() {
+		
+		log.info("requested designers configuration and got this:{}", (DesignersConfiguration) configurations.get(getKey(DesignersConfiguration.class)));
+		
+		return (DesignersConfiguration) configurations.get(getKey(DesignersConfiguration.class));
 	}
 
 	public Configuration getConfigurationAndWatch(ConfigurationListener configurationListener) {
