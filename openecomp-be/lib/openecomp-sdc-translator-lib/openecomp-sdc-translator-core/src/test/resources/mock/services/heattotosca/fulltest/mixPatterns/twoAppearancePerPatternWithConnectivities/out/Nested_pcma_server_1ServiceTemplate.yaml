@@ -178,7 +178,9 @@ topology_template:
         subnetpoolid:
           get_input: port_pcm_port_0_subnetpoolid
         fixed_ips:
-          get_input: port_pcm_port_0_fixed_ips
+          get_input:
+          - port_pcm_port_0_fixed_ips
+          - index_value
         network:
           get_input:
           - port_pcm_port_0_network
@@ -212,7 +214,9 @@ topology_template:
         subnetpoolid:
           get_input: port_pcm_port_1_subnetpoolid
         fixed_ips:
-          get_input: port_pcm_port_1_fixed_ips
+          get_input:
+          - port_pcm_port_1_fixed_ips
+          - index_value
         network:
           get_input:
           - port_pcm_port_1_network

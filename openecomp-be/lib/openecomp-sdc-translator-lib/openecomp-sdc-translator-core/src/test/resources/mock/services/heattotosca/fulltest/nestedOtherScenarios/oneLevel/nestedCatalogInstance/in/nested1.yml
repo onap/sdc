@@ -39,7 +39,6 @@ resources:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: packet_internal_network}
-      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
       replacement_policy: AUTO
 
   cmaui_port_2:

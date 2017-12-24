@@ -3,7 +3,6 @@ package org.openecomp.sdc.translator.services.heattotosca;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
@@ -30,14 +29,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class ConsolidationService {
 
-  private MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private UnifiedCompositionService unifiedCompositionService;
 
   public ConsolidationService(UnifiedCompositionService unifiedCompositionService) {
@@ -73,7 +73,7 @@ public class ConsolidationService {
       if (preConditionResult) {
         boolean consolidationRuleCheckResult =
             checkConsolidationRules(serviceTemplate, typeComputeConsolidationData,
-                consolidationData, translationContext);
+                consolidationData);
 
         unifiedCompositionService.createUnifiedComposition(
             serviceTemplate, null, unifiedCompositionDataList,
@@ -90,8 +90,8 @@ public class ConsolidationService {
 
   }
 
-  public static Map<String, String> getConsolidationEntityIdToType(ServiceTemplate serviceTemplate,
-                                                             ConsolidationData consolidationData) {
+  static Map<String, String> getConsolidationEntityIdToType(ServiceTemplate serviceTemplate,
+                                                            ConsolidationData consolidationData) {
     Map<String, String> consolidationEntityIdToType = new HashMap<>();
 
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
@@ -101,11 +101,11 @@ public class ConsolidationService {
     FilePortConsolidationData filePortConsolidationData =
         consolidationData.getPortConsolidationData()
             .getFilePortConsolidationData(serviceTemplateFileName);
-    if(Objects.nonNull(fileComputeConsolidationData)) {
+    if (Objects.nonNull(fileComputeConsolidationData)) {
       for (String computeType : fileComputeConsolidationData.getAllComputeTypes()) {
         TypeComputeConsolidationData typeComputeConsolidationData =
             fileComputeConsolidationData.getTypeComputeConsolidationData(computeType);
-        Set<String> computeNodeTemplateIds =
+        Collection<String> computeNodeTemplateIds =
             typeComputeConsolidationData.getAllComputeNodeTemplateIds();
         for (String computeNodeTemplateId : computeNodeTemplateIds) {
           consolidationEntityIdToType.put(computeNodeTemplateId, computeType);
@@ -113,7 +113,7 @@ public class ConsolidationService {
       }
     }
 
-    if(Objects.nonNull(filePortConsolidationData)) {
+    if (Objects.nonNull(filePortConsolidationData)) {
       Set<String> portNodeTemplateIds = filePortConsolidationData.getAllPortNodeTemplateIds();
       for (String portNodeTemplateId : portNodeTemplateIds) {
         consolidationEntityIdToType
@@ -127,11 +127,10 @@ public class ConsolidationService {
 
   private boolean checkConsolidationRules(ServiceTemplate serviceTemplate,
                                           TypeComputeConsolidationData typeComputeConsolidationData,
-                                          ConsolidationData consolidationData,
-                                          TranslationContext context) {
+                                          ConsolidationData consolidationData) {
     return checkComputeConsolidation(serviceTemplate, typeComputeConsolidationData)
         && checkPortConsolidation(serviceTemplate, typeComputeConsolidationData,
-        consolidationData, context)
+        consolidationData)
         && !checkGetAttrBetweenEntityConsolidationOfTheSameType(serviceTemplate,
         typeComputeConsolidationData, consolidationData);
   }
@@ -140,13 +139,13 @@ public class ConsolidationService {
       ServiceTemplate serviceTemplate,
       TypeComputeConsolidationData typeComputeConsolidationData,
       ConsolidationData consolidationData) {
-    List<ComputeTemplateConsolidationData> computeTemplateConsolidationDataList =
-        new ArrayList(typeComputeConsolidationData.getAllComputeTemplateConsolidationData());
+    Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDataList =
+        typeComputeConsolidationData.getAllComputeTemplateConsolidationData();
 
-    Set<String> computeNodeTemplateIds =
+    Collection<String> computeNodeTemplateIds =
         typeComputeConsolidationData.getAllComputeNodeTemplateIds();
 
-    Map<String, Set<String>> portTypeToIds = UnifiedCompositionUtil
+    Map<String, List<String>> portTypeToIds = UnifiedCompositionUtil
         .collectAllPortsFromEachTypesFromComputes(computeTemplateConsolidationDataList);
 
     return
@@ -156,66 +155,11 @@ public class ConsolidationService {
 
   }
 
-  private boolean checkGetAttrInEntityConsolidationWithPortIsLegal(
-      List entityConsolidationDatas,
-      TypeComputeConsolidationData typeComputeConsolidationData) {
-    Map<String, Set<String>> portTypeToIds =
-        UnifiedCompositionUtil.collectAllPortsFromEachTypesFromComputes(
-            typeComputeConsolidationData.getAllComputeTemplateConsolidationData());
-
-    Set<String> startingPortTypesPointByGetAttr =
-        getPortTypesPointedByGetAttrFromEntity(
-            (EntityConsolidationData) entityConsolidationDatas.get(0), portTypeToIds);
-
-    for (int i = 1; i < entityConsolidationDatas.size(); i++) {
-      Set<String> currentPortTypesPointByGetAttr =
-          getPortTypesPointedByGetAttrFromEntity(
-              (EntityConsolidationData) entityConsolidationDatas.get(i), portTypeToIds);
-      if (!startingPortTypesPointByGetAttr.equals(currentPortTypesPointByGetAttr)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  private Set<String> getPortTypesPointedByGetAttrFromEntity(
-      EntityConsolidationData entity,
-      Map<String, Set<String>> portTypeToIds) {
-    return getPortTypeToIdPointByGetAttrInOrOut(
-        entity.getNodesGetAttrIn(), portTypeToIds, entity).keySet();
-  }
-
-  private boolean checkGetAttrInToPortIsLegal(
-      ServiceTemplate serviceTemplate,
-      TypeComputeConsolidationData typeComputeConsolidationData,
-      ConsolidationData consolidationData) {
-
-    Map<String, Set<String>> portTypeToIds = UnifiedCompositionUtil
-        .collectAllPortsFromEachTypesFromComputes(
-            typeComputeConsolidationData.getAllComputeTemplateConsolidationData());
-
-    for (Set<String> portIdsFromSameType : portTypeToIds.values()) {
-      List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
-          collectAllPortsTemplateConsolidationData(
-              portIdsFromSameType, ToscaUtil.getServiceTemplateFileName(serviceTemplate),
-              consolidationData);
-
-      if (!checkGetAttrInEntityConsolidationWithPortIsLegal(
-          portTemplateConsolidationDataList, typeComputeConsolidationData)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-
   private boolean checkGetAttrOutFromPortLegal(String serviceTemplateName,
-                                               Set<String> computeNodeTemplateIds,
-                                               Map<String, Set<String>> portTypeToIds,
+                                               Collection<String> computeNodeTemplateIds,
+                                               Map<String, List<String>> portTypeToIds,
                                                ConsolidationData consolidationData) {
-    for (Set<String> portIdsFromSameType : portTypeToIds.values()) {
+    for (List<String> portIdsFromSameType : portTypeToIds.values()) {
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
           collectAllPortsTemplateConsolidationData(portIdsFromSameType, serviceTemplateName,
               consolidationData);
@@ -230,18 +174,17 @@ public class ConsolidationService {
     return true;
   }
 
-  private boolean checkGetAttrOutFromEntityToPortIsLegal(List entityConsolidationDataList,
-                                                         Map<String, Set<String>> portTypeToIds) {
+  private boolean checkGetAttrOutFromEntityToPortIsLegal(Collection entities,
+                                                         Map<String, List<String>> portTypeToIds) {
 
     for (String portType : portTypeToIds.keySet()) {
       Set<GetAttrFuncData> startingGetAttrFunc =
           getEntityGetAttrFuncAsSet(portType,
-              (EntityConsolidationData) entityConsolidationDataList.get(0));
-      for (int i = 1; i < entityConsolidationDataList.size(); i++) {
-        Object entity = entityConsolidationDataList.get(i);
+              (EntityConsolidationData) entities.iterator().next());
+      for (Object entity : entities) {
+        EntityConsolidationData currentEntity = (EntityConsolidationData) entity;
         Set<GetAttrFuncData> currentGetAttrFuncData =
-            getEntityGetAttrFuncAsSet(portType,
-                (EntityConsolidationData) entity);
+            getEntityGetAttrFuncAsSet(portType, currentEntity);
         if (!(startingGetAttrFunc.equals(currentGetAttrFuncData))) {
           return false;
         }
@@ -253,7 +196,7 @@ public class ConsolidationService {
 
   private boolean checkGetAttrOutFromPortToComputeIsLegal(
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList,
-      Set<String> computeNodeTemplateIds) {
+      Collection<String> computeNodeTemplateIds) {
     PortTemplateConsolidationData startingPortTemplate =
         portTemplateConsolidationDataList.get(0);
     Map<String, Set<GetAttrFuncData>> startingComputeGetAttrOutFuncData =
@@ -283,11 +226,9 @@ public class ConsolidationService {
       return false;
     }
 
-    if (MapUtils.isEmpty(firstMap) && MapUtils.isEmpty(secondMap)) {
-      return true;
-    }
+    return (MapUtils.isEmpty(firstMap) && MapUtils.isEmpty(secondMap)) ||
+        (new ArrayList<>(firstMap.values()).equals(new ArrayList<>(secondMap.values())));
 
-    return new ArrayList<>(firstMap.values()).equals(new ArrayList<>(secondMap.values()));
   }
 
   private Set<GetAttrFuncData> getEntityGetAttrFuncAsSet(
@@ -313,7 +254,7 @@ public class ConsolidationService {
 
   private Map<String, Set<GetAttrFuncData>> getComputeGetAttrOutFuncData(
       Map<String, List<GetAttrFuncData>> nodesGetAttrOut,
-      Set<String> computeNodeTemplateIds) {
+      Collection<String> computeNodeTemplateIds) {
     Map<String, Set<GetAttrFuncData>> computeGetAttrFuncData = new HashMap<>();
 
     if (MapUtils.isEmpty(nodesGetAttrOut)) {
@@ -330,35 +271,6 @@ public class ConsolidationService {
     return computeGetAttrFuncData;
   }
 
-  private Map<String, List<String>> getPortTypeToIdPointByGetAttrInOrOut(
-      Map<String, List<GetAttrFuncData>> getAttr,
-      Map<String, Set<String>> portTypeToIds,
-      EntityConsolidationData entityConsolidationData) {
-    Map<String, List<String>> portIdToType = new HashMap<>();
-
-    if (MapUtils.isEmpty(getAttr)) {
-      return portIdToType;
-    }
-
-    for (String getAttrId : getAttr.keySet()) {
-      if (isNodeTemplateIdIsInComputeConsolidationData(getAttrId, portTypeToIds)) {
-        String portType = ConsolidationDataUtil.getPortType(getAttrId);
-        portIdToType.putIfAbsent(portType, new ArrayList<>());
-        portIdToType.get(portType).add(getAttrId);
-      }
-    }
-
-    return portIdToType;
-
-  }
-
-
-  private boolean isNodeTemplateIdIsInComputeConsolidationData(
-      String getAttrInId,
-      Map<String, Set<String>> portTypeToIds) {
-    return portTypeToIds.keySet().contains(ConsolidationDataUtil.getPortType(getAttrInId));
-  }
-
   private boolean checkGetAttrBetweenEntityConsolidationOfTheSameType(
       ServiceTemplate serviceTemplate,
       TypeComputeConsolidationData typeComputeConsolidationData,
@@ -372,13 +284,13 @@ public class ConsolidationService {
   private boolean checkGetAttrRelationsBetweenComputesOfSameType(
       TypeComputeConsolidationData typeComputeConsolidationData) {
 
-    Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDatas =
+    Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationEntities =
         typeComputeConsolidationData.getAllComputeTemplateConsolidationData();
-    Set<String> computeNodeTemplateIds =
+    Collection<String> computeNodeTemplateIds =
         typeComputeConsolidationData.getAllComputeNodeTemplateIds();
 
     return checkGetAttrRelationsForEntityConsolidationData(
-        computeTemplateConsolidationDatas, computeNodeTemplateIds);
+        computeTemplateConsolidationEntities, computeNodeTemplateIds);
   }
 
   private boolean checkGetAttrRelationsBetweenPortsOfTheSameType(
@@ -386,16 +298,16 @@ public class ConsolidationService {
       TypeComputeConsolidationData typeComputeConsolidationData,
       ConsolidationData consolidationData) {
 
-    Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDatas =
+    Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationEntities =
         typeComputeConsolidationData.getAllComputeTemplateConsolidationData();
-    Map<String, Set<String>> portTypeToPortIds = UnifiedCompositionUtil
-        .collectAllPortsFromEachTypesFromComputes(computeTemplateConsolidationDatas);
+    Map<String, List<String>> portTypeToPortIds = UnifiedCompositionUtil
+        .collectAllPortsFromEachTypesFromComputes(computeTemplateConsolidationEntities);
 
     FilePortConsolidationData filePortConsolidationData =
         consolidationData.getPortConsolidationData().getFilePortConsolidationData(ToscaUtil
             .getServiceTemplateFileName(serviceTemplate));
 
-    for (Set<String> portsOfTheSameTypeIds : portTypeToPortIds.values()) {
+    for (List<String> portsOfTheSameTypeIds : portTypeToPortIds.values()) {
       List<PortTemplateConsolidationData> portTemplateConsolidationDataOfSameType =
           getAllPortTemplateConsolidationData(portsOfTheSameTypeIds, filePortConsolidationData);
       if (!checkGetAttrRelationsForEntityConsolidationData(portTemplateConsolidationDataOfSameType,
@@ -408,7 +320,7 @@ public class ConsolidationService {
   }
 
   private List<PortTemplateConsolidationData> getAllPortTemplateConsolidationData(
-      Set<String> portsIds,
+      List<String> portsIds,
       FilePortConsolidationData filePortConsolidationData) {
     List<PortTemplateConsolidationData> portTemplateConsolidationDataOfSameType = new ArrayList<>();
 
@@ -425,15 +337,12 @@ public class ConsolidationService {
 
   private boolean checkGetAttrRelationsForEntityConsolidationData(
       Collection entities,
-      Set<String> nodeTemplateIdsOfTheSameType) {
-
-    List<EntityConsolidationData> entityConsolidationDataList =
-        new ArrayList(entities);
-
-    for (EntityConsolidationData entityConsolidationData : entityConsolidationDataList) {
+      Collection<String> nodeTemplateIdsOfTheSameType) {
+    for (Object entity : entities) {
+      EntityConsolidationData currentEntity = (EntityConsolidationData) entity;
       Set<String> getAttrInNodeIds =
-          entityConsolidationData.getNodesGetAttrIn() == null ? new HashSet<>()
-              : entityConsolidationData.getNodesGetAttrIn().keySet();
+          currentEntity.getNodesGetAttrIn() == null ? new HashSet<>()
+              : currentEntity.getNodesGetAttrIn().keySet();
       for (String nodeId : getAttrInNodeIds) {
         if (nodeTemplateIdsOfTheSameType.contains(nodeId)) {
           return true;
@@ -448,31 +357,29 @@ public class ConsolidationService {
   private boolean checkComputeConsolidation(
       ServiceTemplate serviceTemplate,
       TypeComputeConsolidationData typeComputeConsolidationData) {
-    List<String> computeNodeTemplateIds =
-        new ArrayList(typeComputeConsolidationData.getAllComputeNodeTemplateIds());
+    Collection<String> computeNodeTemplateIds =
+        typeComputeConsolidationData.getAllComputeNodeTemplateIds();
     List<String> propertiesWithIdenticalVal = getComputePropertiesWithIdenticalVal();
 
-    return arePropertiesSimilarBetweenComputeNodeTemplates(
-        serviceTemplate, computeNodeTemplateIds, propertiesWithIdenticalVal)
+    return arePropertiesSimilarBetweenComputeNodeTemplates(serviceTemplate, computeNodeTemplateIds,
+        propertiesWithIdenticalVal)
         && checkComputeRelations(
         typeComputeConsolidationData.getAllComputeTemplateConsolidationData());
   }
 
 
   private boolean checkComputeRelations(
-      Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDatas) {
+      Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationEntities) {
 
-    return checkEntityConsolidationDataRelations(computeTemplateConsolidationDatas)
-        && checkComputesRelationsToVolume(computeTemplateConsolidationDatas);
+    return checkEntityConsolidationDataRelations(computeTemplateConsolidationEntities)
+        && checkComputesRelationsToVolume(computeTemplateConsolidationEntities);
   }
 
   private boolean checkEntityConsolidationDataRelations(Collection entities) {
-    List<EntityConsolidationData> entityConsolidationDataList =
-        new ArrayList(entities);
-    EntityConsolidationData startingEntity = entityConsolidationDataList.get(0);
+    EntityConsolidationData startingEntity = (EntityConsolidationData) entities.iterator().next();
 
-    for (int i = 1; i < entityConsolidationDataList.size(); i++) {
-      EntityConsolidationData currentEntity = entityConsolidationDataList.get(i);
+    for (Object entity : entities) {
+      EntityConsolidationData currentEntity = (EntityConsolidationData) entity;
       if (!(checkNodesConnectedInRelations(startingEntity, currentEntity)
           && (checkNodesConnectedOutRelations(startingEntity, currentEntity))
           && (checkGroupIdsRelations(startingEntity, currentEntity)))) {
@@ -510,27 +417,23 @@ public class ConsolidationService {
 
   private boolean checkGroupIdsRelations(EntityConsolidationData startingEntity,
                                          EntityConsolidationData currentEntity) {
-    if (CollectionUtils.isEmpty(startingEntity.getGroupIds())
-        && CollectionUtils.isEmpty(currentEntity.getGroupIds())) {
-      return true;
-    }
+    return CollectionUtils.isEmpty(startingEntity.getGroupIds()) &&
+        CollectionUtils.isEmpty(currentEntity.getGroupIds()) ||
+        startingEntity.getGroupIds().equals(currentEntity.getGroupIds());
 
-    return startingEntity.getGroupIds().equals(currentEntity.getGroupIds());
   }
 
   private boolean checkComputesRelationsToVolume(
-      Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDatas) {
-
-    Set<String> volumeRelationsFromComputes = new HashSet<>();
-    List<ComputeTemplateConsolidationData> computeTemplateConsolidationDataList =
-        new ArrayList(computeTemplateConsolidationDatas);
+      Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationEntities) {
+    Iterator<ComputeTemplateConsolidationData> iterator =
+        computeTemplateConsolidationEntities.iterator();
 
     Map<String, List<RequirementAssignmentData>> startingVolumes =
-        computeTemplateConsolidationDataList.get(0).getVolumes();
+        iterator.next().getVolumes();
 
-    for (int i = 1; i < computeTemplateConsolidationDataList.size(); i++) {
+    for (ComputeTemplateConsolidationData compute : computeTemplateConsolidationEntities) {
       Map<String, List<RequirementAssignmentData>> currentVolumes =
-          computeTemplateConsolidationDataList.get(i).getVolumes();
+          compute.getVolumes();
       if (!compareNodeConnectivity(startingVolumes, currentVolumes)) {
         return false;
       }
@@ -541,28 +444,28 @@ public class ConsolidationService {
 
   private boolean checkPortConsolidation(ServiceTemplate serviceTemplate,
                                          TypeComputeConsolidationData typeComputeConsolidationData,
-                                         ConsolidationData consolidationData,
-                                         TranslationContext context) {
-    return isWantedPortPropertiesUsageIsSimilarInAllPorts(serviceTemplate,
-        typeComputeConsolidationData, context)
+                                         ConsolidationData consolidationData) {
+    return validateWantedPortProperties(serviceTemplate,
+        typeComputeConsolidationData)
         && checkPortRelations(ToscaUtil.getServiceTemplateFileName(serviceTemplate),
         typeComputeConsolidationData, consolidationData);
   }
 
 
-  private boolean isWantedPortPropertiesUsageIsSimilarInAllPorts(ServiceTemplate serviceTemplate,
-                                                                 TypeComputeConsolidationData typeComputeConsolidationData,
-                                                                 TranslationContext context) {
+  private boolean validateWantedPortProperties(ServiceTemplate serviceTemplate,
+                                               TypeComputeConsolidationData typeComputeConsolidationData) {
 
     Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDataCollection =
         typeComputeConsolidationData.getAllComputeTemplateConsolidationData();
-    List<String> propertiesThatNeedHaveUsage = getPortPropertiesWithIdenticalVal(context);
-    Map<String, Set<String>> portTypeToIds = UnifiedCompositionUtil
+    Map<String, List<String>> portTypeToIds = UnifiedCompositionUtil
         .collectAllPortsFromEachTypesFromComputes(computeTemplateConsolidationDataCollection);
+    List<String> propertiesWithIdenticalVal = getPortPropertiesWithIdenticalVal();
+    List<String> propertiesThatNeedToHaveSameUsage =
+        getPortPropertiesThatNeedToHaveSameUsage();
 
-    for (Set<String> portsIds : portTypeToIds.values()) {
-      if (!areAllPortsFromSameTypeHaveIdenticalValForProperties(
-          serviceTemplate, portsIds, propertiesThatNeedHaveUsage)) {
+    for (List<String> portsIds : portTypeToIds.values()) {
+      if (!arePortPropertiesValid(serviceTemplate, propertiesWithIdenticalVal,
+          propertiesThatNeedToHaveSameUsage, portsIds)) {
         return false;
       }
     }
@@ -570,15 +473,36 @@ public class ConsolidationService {
     return true;
   }
 
+  private boolean arePortPropertiesValid(ServiceTemplate serviceTemplate,
+                                         List<String> propertiesWithIdenticalVal,
+                                         List<String> propertiesThatNeedToHaveSameUsage,
+                                         List<String> portsIds) {
+    Map<String, NodeTemplate> nodeTemplates =
+        serviceTemplate.getTopology_template().getNode_templates();
+
+    Predicate<String> similar = property ->
+        isPropertyValueSimilarBetweenNodeTemplates(property,
+            portsIds, nodeTemplates);
+
+    Predicate<String> exists = property ->
+        isPropertyUsageSimilarBetweenAllNodeTemplates(property,
+            portsIds, nodeTemplates);
+
+    return areWantedPortPropertiesValid(
+        propertiesWithIdenticalVal, similar)
+        && areWantedPortPropertiesValid(
+        propertiesThatNeedToHaveSameUsage, exists);
+  }
+
   private boolean checkPortRelations(String serviceTemplateName,
                                      TypeComputeConsolidationData typeComputeConsolidationData,
                                      ConsolidationData consolidationData) {
     Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDataCollection =
         typeComputeConsolidationData.getAllComputeTemplateConsolidationData();
-    Map<String, Set<String>> portTypeToIds = UnifiedCompositionUtil
+    Map<String, List<String>> portTypeToIds = UnifiedCompositionUtil
         .collectAllPortsFromEachTypesFromComputes(computeTemplateConsolidationDataCollection);
 
-    for (Set<String> portIds : portTypeToIds.values()) {
+    for (List<String> portIds : portTypeToIds.values()) {
       List<PortTemplateConsolidationData> portTemplateConsolidationDataList =
           collectAllPortsTemplateConsolidationData(
               portIds, serviceTemplateName, consolidationData);
@@ -592,7 +516,7 @@ public class ConsolidationService {
   }
 
   private List<PortTemplateConsolidationData>
-  collectAllPortsTemplateConsolidationData(Set<String> portIds,
+  collectAllPortsTemplateConsolidationData(List<String> portIds,
                                            String serviceTemplateName,
                                            ConsolidationData consolidationData) {
 
@@ -612,62 +536,23 @@ public class ConsolidationService {
     return portTemplateConsolidationDataList;
   }
 
-  private boolean areAllPortsFromSameTypeHaveIdenticalValForProperties(
-      ServiceTemplate serviceTemplate,
-      Set<String> portNodeTemplateIds,
-      List<String> propertiesThatNeedToHaveUsage) {
-    Map<String, NodeTemplate> nodeTemplates =
-        serviceTemplate.getTopology_template().getNode_templates();
+  private boolean areWantedPortPropertiesValid(List<String> propertiesToCheck,
+                                               Predicate<String> condition) {
 
-    for (String property : propertiesThatNeedToHaveUsage) {
-      if (!areAllPortsHaveIdenticalValForProperties(property, portNodeTemplateIds, nodeTemplates)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  private boolean areAllPortsHaveIdenticalValForProperties(
-      String propertyToCheck,
-      Set<String> portNodeTemplateIds,
-      Map<String, NodeTemplate> nodeTemplates) {
-
-    List<String> portNodeTemplateIdList = new ArrayList(portNodeTemplateIds);
-    NodeTemplate startingPortNodeTemplate = nodeTemplates.get(portNodeTemplateIdList.get(0));
-
-    if (Objects.isNull(startingPortNodeTemplate)) {
-      throw new CoreException(
-          new DuplicateResourceIdsInDifferentFilesErrorBuilder(portNodeTemplateIdList.get(0)).build());
-    }
-
-    for (int i = 1; i < portNodeTemplateIdList.size(); i++) {
-      NodeTemplate portNodeTemplate = nodeTemplates.get(portNodeTemplateIdList.get(i));
-
-      if (Objects.isNull(portNodeTemplate)) {
-        throw new CoreException(
-            new DuplicateResourceIdsInDifferentFilesErrorBuilder(portNodeTemplateIdList.get(i)).build());
-      }
-
-      if (!isPropertySimilarBetweenNodeTemplates(propertyToCheck, portNodeTemplateIdList, nodeTemplates)) {
-        return false;
-      }
-    }
-
-    return true;
+    return propertiesToCheck.stream().allMatch(condition);
   }
 
 
   private boolean arePropertiesSimilarBetweenComputeNodeTemplates(
       ServiceTemplate serviceTemplate,
-      List<String> computeNodeTemplateIds,
+      Collection<String> computeNodeTemplateIds,
       List<String> propertiesThatNeedToBeSimilar) {
 
     Map<String, NodeTemplate> idToNodeTemplate =
         serviceTemplate.getTopology_template().getNode_templates();
 
     for (String property : propertiesThatNeedToBeSimilar) {
-      if (!isPropertySimilarBetweenNodeTemplates(property, computeNodeTemplateIds,
+      if (!isPropertyValueSimilarBetweenNodeTemplates(property, computeNodeTemplateIds,
           idToNodeTemplate)) {
         return false;
       }
@@ -675,43 +560,82 @@ public class ConsolidationService {
     return true;
   }
 
-  private boolean isPropertySimilarBetweenNodeTemplates(
-      String propertyToCheck,
-      List<String> entityNodeTemplateIds,
-      Map<String, NodeTemplate> idToNodeTemplate) {
-
+  private boolean isPropertyUsageSimilarBetweenAllNodeTemplates(String propertyToCheck,
+                                                                List<String> entityNodeTemplateIds,
+                                                                Map<String, NodeTemplate> idToNodeTemplate) {
     NodeTemplate startingNodeTemplate = idToNodeTemplate.get(entityNodeTemplateIds.get(0));
+    if (Objects.isNull(startingNodeTemplate)) {
+      throw new CoreException(
+          new DuplicateResourceIdsInDifferentFilesErrorBuilder(entityNodeTemplateIds.get(0))
+              .build());
+    }
+
     boolean propertyExistCondition =
         isPropertyExistInNodeTemplate(propertyToCheck, startingNodeTemplate);
-
-    Set<Object> propertiesValues = new HashSet<>();
-    propertiesValues
-        .add(startingNodeTemplate.getProperties().get(propertyToCheck));
 
     for (int i = 1; i < entityNodeTemplateIds.size(); i++) {
       NodeTemplate currentNodeTemplate = idToNodeTemplate.get(entityNodeTemplateIds.get(i));
       if (Objects.isNull(currentNodeTemplate)) {
         throw new CoreException(
-            new DuplicateResourceIdsInDifferentFilesErrorBuilder(entityNodeTemplateIds.get(i)).build());
+            new DuplicateResourceIdsInDifferentFilesErrorBuilder(entityNodeTemplateIds.get(i))
+                .build());
       }
-      if(propertyExistCondition != isPropertyExistInNodeTemplate(propertyToCheck, currentNodeTemplate)){
+      if (propertyExistCondition !=
+          isPropertyExistInNodeTemplate(propertyToCheck, currentNodeTemplate)) {
         return false;
       }
-      propertiesValues
-          .add(currentNodeTemplate.getProperties().get(propertyToCheck));
+    }
+
+    return true;
+
+  }
+
+  private boolean isPropertyValueSimilarBetweenNodeTemplates(String propertyToCheck,
+                                                             Collection<String> entityNodeTemplateIds,
+                                                             Map<String, NodeTemplate> idToNodeTemplate) {
+
+    Set<Object> propertiesValues = new HashSet<>();
+    Iterator<String> iterator = entityNodeTemplateIds.iterator();
+
+    handlePropertyValue(propertyToCheck, idToNodeTemplate, propertiesValues, iterator.next());
+
+    while (iterator.hasNext()) {
+      handlePropertyValue(propertyToCheck, idToNodeTemplate, propertiesValues, iterator.next());
     }
 
     return propertiesValues.size() == 1;
   }
 
-  private boolean isPropertyExistInNodeTemplate(String propertyToCheck, NodeTemplate nodeTemplate){
-    return !(nodeTemplate.getProperties() == null || nodeTemplate.getProperties().get(propertyToCheck) == null);
+  private void handlePropertyValue(String propertyToCheck,
+                                   Map<String, NodeTemplate> idToNodeTemplate,
+                                   Set<Object> propertiesValues, String nodeId) {
+    NodeTemplate startingNodeTemplate = idToNodeTemplate.get(nodeId);
+    if (Objects.isNull(startingNodeTemplate)) {
+      throw new CoreException(
+          new DuplicateResourceIdsInDifferentFilesErrorBuilder(nodeId)
+              .build());
+    }
+
+    addPropertyValue(propertyToCheck, startingNodeTemplate, propertiesValues);
   }
 
-  public void substitutionServiceTemplateConsolidation(String substituteNodeTemplateId,
-                                                       ServiceTemplate serviceTemplate,
-                                                       ServiceTemplate substitutionServiceTemplate,
-                                                       TranslationContext translationContext) {
+  private void addPropertyValue(String property,
+                                NodeTemplate nodeTemplate,
+                                Set<Object> propertiesValues) {
+    propertiesValues.add(
+        isPropertyExistInNodeTemplate(property, nodeTemplate) ? nodeTemplate.getProperties()
+            .get(property) : "");
+  }
+
+  private boolean isPropertyExistInNodeTemplate(String propertyToCheck, NodeTemplate nodeTemplate) {
+    return !(nodeTemplate.getProperties() == null ||
+        nodeTemplate.getProperties().get(propertyToCheck) == null);
+  }
+
+  void substitutionServiceTemplateConsolidation(String substituteNodeTemplateId,
+                                                ServiceTemplate serviceTemplate,
+                                                ServiceTemplate substitutionServiceTemplate,
+                                                TranslationContext translationContext) {
 
     ConsolidationData consolidationData = translationContext.getConsolidationData();
 
@@ -748,10 +672,9 @@ public class ConsolidationService {
       ServiceTemplate nestedServiceTemplate,
       FileComputeConsolidationData fileComputeConsolidationData,
       TranslationContext context) {
-    if (Objects.isNull(fileComputeConsolidationData)) {
-      return false;
-    }
-    return isNumberOfComputeTypesLegal(fileComputeConsolidationData)
+
+    return Objects.nonNull(fileComputeConsolidationData)
+        && isNumberOfComputeTypesLegal(fileComputeConsolidationData)
         && isNumberOfComputeConsolidationDataPerTypeLegal(
         fileComputeConsolidationData.getAllTypeComputeConsolidationData().iterator().next())
         && !isThereMoreThanOneNestedLevel(nestedServiceTemplate, context.getConsolidationData());
@@ -779,11 +702,8 @@ public class ConsolidationService {
             : consolidationData.getNestedConsolidationData()
                 .getFileNestedConsolidationData(nestedServiceTemplateName);
 
-    if (Objects.isNull(fileNestedConsolidationData)) {
-      return false;
-    }
-
-    return !CollectionUtils.isEmpty(fileNestedConsolidationData.getAllNestedNodeTemplateIds());
+    return Objects.nonNull(fileNestedConsolidationData)
+        && !CollectionUtils.isEmpty(fileNestedConsolidationData.getAllNestedNodeTemplateIds());
   }
 
 
@@ -864,17 +784,12 @@ public class ConsolidationService {
 
   private boolean isNumberOfPortsEqualsBetweenComputeNodes(
       TypeComputeConsolidationData typeComputeConsolidationData) {
-
-    ArrayList<ComputeTemplateConsolidationData> computeTemplateConsolidationDataList =
-        new ArrayList(typeComputeConsolidationData.getAllComputeTemplateConsolidationData());
     int startingNumberOfPorts =
-        getNumberOfPortsPerCompute(computeTemplateConsolidationDataList.get(0));
+        getNumberOfPortsPerCompute(typeComputeConsolidationData
+            .getAllComputeTemplateConsolidationData().iterator().next());
 
-
-    for (int i = 1; i < computeTemplateConsolidationDataList.size(); i++) {
-      int currNumberOfPorts =
-          getNumberOfPortsPerCompute(computeTemplateConsolidationDataList.get(i));
-      if (currNumberOfPorts != startingNumberOfPorts) {
+    for (ComputeTemplateConsolidationData compute : typeComputeConsolidationData.getAllComputeTemplateConsolidationData()) {
+      if (getNumberOfPortsPerCompute(compute) != startingNumberOfPorts) {
         return false;
       }
     }
@@ -886,8 +801,8 @@ public class ConsolidationService {
   private boolean isNumberOfPortFromEachTypeLegal(
       TypeComputeConsolidationData typeComputeConsolidationData) {
 
-    ArrayList<ComputeTemplateConsolidationData> computeTemplateConsolidationDataList =
-        new ArrayList(typeComputeConsolidationData.getAllComputeTemplateConsolidationData());
+    Collection<ComputeTemplateConsolidationData> computeTemplateConsolidationDataList =
+        typeComputeConsolidationData.getAllComputeTemplateConsolidationData();
 
     for (ComputeTemplateConsolidationData computeTemplate : computeTemplateConsolidationDataList) {
       Map<String, List<String>> currPortsMap = computeTemplate.getPorts();
@@ -906,37 +821,30 @@ public class ConsolidationService {
 
   private boolean isPortTypesEqualsBetweenComputeNodes(
       TypeComputeConsolidationData typeComputeConsolidationData) {
+    Set<String> staringPortIds = getPortsIds(typeComputeConsolidationData.getAllComputeTemplateConsolidationData().iterator().next());
 
-    ArrayList<ComputeTemplateConsolidationData> computeTemplateConsolidationDataList =
-        new ArrayList(typeComputeConsolidationData.getAllComputeTemplateConsolidationData());
-    Set<String> staringPortIds = getPortsIds(computeTemplateConsolidationDataList.get(0));
-
-    for (int i = 1; i < computeTemplateConsolidationDataList.size(); i++) {
-      Set<String> currentPortIds = getPortsIds(computeTemplateConsolidationDataList.get(i));
+    for (ComputeTemplateConsolidationData compute : typeComputeConsolidationData.getAllComputeTemplateConsolidationData()) {
+      Set<String> currentPortIds = getPortsIds(compute);
       if (!currentPortIds.equals(staringPortIds)) {
         return false;
       }
     }
-
     return true;
   }
 
   private int getNumberOfPortsPerCompute(
       ComputeTemplateConsolidationData computeTemplateConsolidationData) {
-    return getPortsIds(computeTemplateConsolidationData) == null ? 0 :
-        getPortsIds(computeTemplateConsolidationData).size();
+    return getPortsIds(computeTemplateConsolidationData).size();
   }
 
   private Set<String> getPortsIds(
       ComputeTemplateConsolidationData computeTemplateConsolidationData) {
-    return computeTemplateConsolidationData.getPorts() == null ? new HashSet<>()
-        : computeTemplateConsolidationData
-            .getPorts().keySet();
+    return MapUtils.isEmpty(computeTemplateConsolidationData.getPorts()) ? new HashSet<>()
+        : computeTemplateConsolidationData.getPorts().keySet();
   }
 
-  public List<String> getPropertiesWithIdenticalVal(UnifiedCompositionEntity entity,
-                                                    TranslationContext context){
-    switch (entity){
+  List<String> getPropertiesWithIdenticalVal(UnifiedCompositionEntity entity) {
+    switch (entity) {
       case Compute:
         return getComputePropertiesWithIdenticalVal();
 
@@ -944,7 +852,7 @@ public class ConsolidationService {
         return getComputePropertiesWithIdenticalVal();
 
       case Port:
-        return getPortPropertiesWithIdenticalVal(context);
+        return getPortPropertiesWithIdenticalVal();
 
       default:
         return new ArrayList<>();
@@ -958,15 +866,26 @@ public class ConsolidationService {
     return propertyWithIdenticalValue;
   }
 
-  private List<String> getPortPropertiesWithIdenticalVal(TranslationContext context) {
-    List<String> propertiesThatNeedToHaveUsage = new ArrayList<>();
-    propertiesThatNeedToHaveUsage.add(ToscaConstants.PORT_FIXED_IPS);
-    propertiesThatNeedToHaveUsage.add(ToscaConstants.PORT_ALLOWED_ADDRESS_PAIRS);
-    propertiesThatNeedToHaveUsage.add(ToscaConstants.MAC_ADDRESS);
+  private List<String> getPortPropertiesWithIdenticalVal() {
+    List<String> propertiesThatNeedToHaveIdenticalVal = new ArrayList<>();
+    propertiesThatNeedToHaveIdenticalVal.add(ToscaConstants.PORT_ALLOWED_ADDRESS_PAIRS);
+    propertiesThatNeedToHaveIdenticalVal.add(ToscaConstants.MAC_ADDRESS);
 
-    propertiesThatNeedToHaveUsage.addAll(context.getEnrichPortResourceProperties());
+    propertiesThatNeedToHaveIdenticalVal
+        .addAll(TranslationContext.getEnrichPortResourceProperties());
 
-    return propertiesThatNeedToHaveUsage;
+    return propertiesThatNeedToHaveIdenticalVal;
+  }
+
+  private List<String> getPortPropertiesThatNeedToHaveSameUsage() {
+    List<String> propertiesThatNeedToHaveSameUsage = new ArrayList<>();
+    propertiesThatNeedToHaveSameUsage.add(ToscaConstants.PORT_FIXED_IPS);
+    propertiesThatNeedToHaveSameUsage.add(ToscaConstants.PORT_ALLOWED_ADDRESS_PAIRS);
+    propertiesThatNeedToHaveSameUsage.add(ToscaConstants.MAC_ADDRESS);
+
+    propertiesThatNeedToHaveSameUsage.addAll(TranslationContext.getEnrichPortResourceProperties());
+
+    return propertiesThatNeedToHaveSameUsage;
   }
 }
 

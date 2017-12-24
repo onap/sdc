@@ -65,6 +65,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -300,7 +301,7 @@ public class BaseResourceTranslationTest {
             .getTypeComputeConsolidationData(computeType);
         Assert.assertNotNull(typeComputeConsolidationData);
 
-        Set<String> computeNodeTemplateIds = typeComputeConsolidationData
+        Collection<String> computeNodeTemplateIds = typeComputeConsolidationData
             .getAllComputeNodeTemplateIds();
         Assert.assertNotNull(computeNodeTemplateIds);
         Assert.assertNotEquals(computeNodeTemplateIds.size(), 0);
