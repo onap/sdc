@@ -65,6 +65,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -106,7 +107,7 @@ public class BaseResourceTranslationTest {
   protected static TestFeatureManager manager;
 
   @BeforeClass
-  public static void enableForwarderFeature(){
+  public static void enableForwarderFeature() {
     manager = new TestFeatureManager(ToggleableFeature.class);
     if (!ToggleableFeature.FORWARDER_CAPABILITY.isActive()) {
       manager.enable(ToggleableFeature.FORWARDER_CAPABILITY);
@@ -261,18 +262,20 @@ public class BaseResourceTranslationTest {
   }
 
   private static void addFilesFromManifestToTranslationContextManifestFilesMap(TranslationContext
-                                                                                   translationContext, List<FileData> fileDataListFromManifest) {
+                                                                                   translationContext,
+                                                                               List<FileData> fileDataListFromManifest) {
     for (FileData fileFromManfiest : fileDataListFromManifest) {
       translationContext.addManifestFile(fileFromManfiest.getFile(), fileFromManfiest.getType());
     }
   }
 
-  public void validateNodeTemplateIdInNestedConsolidationData(){
+  public void validateNodeTemplateIdInNestedConsolidationData() {
     ConsolidationData consolidationData = translationContext.getConsolidationData();
     Map<String, ServiceTemplate> expectedServiceTemplateModels = TestUtils.getServiceTemplates
         (expectedResultMap);
     Assert.assertNotNull(consolidationData);
-    validateNestedConsolidationDataNodeTemplateIds(consolidationData,expectedServiceTemplateModels);
+    validateNestedConsolidationDataNodeTemplateIds(consolidationData,
+        expectedServiceTemplateModels);
   }
 
   public void validateComputeTemplateConsolidationData(ConsolidationDataValidationType
@@ -286,7 +289,7 @@ public class BaseResourceTranslationTest {
     Set<String> serviceTemplateFileNames = consolidationData.getComputeConsolidationData()
         .getAllServiceTemplateFileNames();
     Assert.assertNotNull(serviceTemplateFileNames);
-    for(String serviceTemplateName : serviceTemplateFileNames){
+    for (String serviceTemplateName : serviceTemplateFileNames) {
       Assert.assertTrue(expectedServiceTemplateModels.containsKey(serviceTemplateName));
       ServiceTemplate expectedServiceTemplate = expectedServiceTemplateModels.get
           (serviceTemplateName);
@@ -295,21 +298,21 @@ public class BaseResourceTranslationTest {
       Assert.assertNotNull(fileComputeConsolidationData);
       Set<String> computeTypes = fileComputeConsolidationData.getAllComputeTypes();
       Assert.assertNotNull(computeTypes);
-      for(String computeType : computeTypes) {
+      for (String computeType : computeTypes) {
         TypeComputeConsolidationData typeComputeConsolidationData = fileComputeConsolidationData
             .getTypeComputeConsolidationData(computeType);
         Assert.assertNotNull(typeComputeConsolidationData);
 
-        Set<String> computeNodeTemplateIds = typeComputeConsolidationData
-            .getAllComputeNodeTemplateIds();
+        List<String> computeNodeTemplateIds = new ArrayList<>(typeComputeConsolidationData
+            .getAllComputeNodeTemplateIds());
         Assert.assertNotNull(computeNodeTemplateIds);
         Assert.assertNotEquals(computeNodeTemplateIds.size(), 0);
 
-        for(String computeNodeTemplateId : computeNodeTemplateIds) {
+        for (String computeNodeTemplateId : computeNodeTemplateIds) {
           ComputeTemplateConsolidationData computeTemplateConsolidationData =
               typeComputeConsolidationData.getComputeTemplateConsolidationData
                   (computeNodeTemplateId);
-          switch(validationType){
+          switch (validationType) {
             case VALIDATE_GROUP:
               validateGroupsInConsolidationData(computeNodeTemplateId,
                   computeTemplateConsolidationData, expectedServiceTemplate);
@@ -326,7 +329,8 @@ public class BaseResourceTranslationTest {
             case VALIDATE_CONNECTIVITY:
               validateComputeConnectivityIn(computeTemplateConsolidationData,
                   expectedServiceTemplate);
-              validateComputeConnectivityOut(computeNodeTemplateId,computeTemplateConsolidationData,
+              validateComputeConnectivityOut(computeNodeTemplateId,
+                  computeTemplateConsolidationData,
                   expectedServiceTemplate);
               break;
             case VALIDATE_DEPENDS_ON:
@@ -340,13 +344,13 @@ public class BaseResourceTranslationTest {
     }
   }
 
-  public void validateGetAttribute(String testName){
+  public void validateGetAttribute(String testName) {
     Map<String, ServiceTemplate> expectedServiceTemplateModels = TestUtils.getServiceTemplates
         (expectedResultMap);
-    validateGetAttr(translationContext,expectedServiceTemplateModels,testName);
+    validateGetAttr(translationContext, expectedServiceTemplateModels, testName);
   }
 
-  public void validateNestedTemplateConsolidationData(String testName){
+  public void validateNestedTemplateConsolidationData(String testName) {
     validateNestedConsolidationData(translationContext, testName);
   }
 
@@ -361,7 +365,7 @@ public class BaseResourceTranslationTest {
     Set<String> serviceTemplateFileNames = consolidationData.getPortConsolidationData()
         .getAllServiceTemplateFileNames();
     Assert.assertNotNull(serviceTemplateFileNames);
-    for(String serviceTemplateName : serviceTemplateFileNames){
+    for (String serviceTemplateName : serviceTemplateFileNames) {
       Assert.assertTrue(expectedServiceTemplateModels.containsKey(serviceTemplateName));
       ServiceTemplate expectedServiceTemplate = expectedServiceTemplateModels.get
           (serviceTemplateName);
@@ -373,12 +377,12 @@ public class BaseResourceTranslationTest {
       Assert.assertNotNull(portNodeTemplateIds);
       Assert.assertNotEquals(portNodeTemplateIds.size(), 0);
 
-      for(String portNodeTemplateId : portNodeTemplateIds) {
+      for (String portNodeTemplateId : portNodeTemplateIds) {
         PortTemplateConsolidationData portTemplateConsolidationData =
             filePortConsolidationData.getPortTemplateConsolidationData(portNodeTemplateId);
-        switch(validationType){
+        switch (validationType) {
           case VALIDATE_CONNECTIVITY:
-            validatePortConnectivityIn(portTemplateConsolidationData,expectedServiceTemplate);
+            validatePortConnectivityIn(portTemplateConsolidationData, expectedServiceTemplate);
             validatePortConnectivityOut(portNodeTemplateId, portTemplateConsolidationData,
                 expectedServiceTemplate);
             break;

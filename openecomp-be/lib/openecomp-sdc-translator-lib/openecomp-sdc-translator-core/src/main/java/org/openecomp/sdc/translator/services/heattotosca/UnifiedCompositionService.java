@@ -112,7 +112,7 @@ public class UnifiedCompositionService {
   private ConsolidationService consolidationService = new ConsolidationService();
 
   private static List<EntityConsolidationData> getPortConsolidationDataList(
-      Set<String> portIds,
+      List<String> portIds,
       List<UnifiedCompositionData> unifiedCompositionDataList) {
     List<EntityConsolidationData> portConsolidationDataList = new ArrayList<>();
     for (UnifiedCompositionData unifiedCompositionData : unifiedCompositionDataList) {
@@ -1734,7 +1734,7 @@ public class UnifiedCompositionService {
     Collection<ComputeTemplateConsolidationData> computeConsolidationDataList =
         (Collection) getComputeConsolidationDataList(unifiedCompositionDataList);
 
-    Map<String, Set<String>> portIdsPerPortType = UnifiedCompositionUtil
+    Map<String, List<String>> portIdsPerPortType = UnifiedCompositionUtil
         .collectAllPortsFromEachTypesFromComputes(computeConsolidationDataList);
 
     for (String portType : portIdsPerPortType.keySet()) {

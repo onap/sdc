@@ -441,9 +441,6 @@ resources:
                             - fixed_ips
                             - 0
                             - ip_address
-            fixed_ips:
-                -
-                    ip_address: {get_param: [plt_oam_ips, 0]}
             security_groups:
 #                get_param: plt_security_groups
                 get_param: oam_security_groups
@@ -795,15 +792,10 @@ resources:
                     ip_address:
                         get_attr:
                             - 'network:io:vip:m004:m003'
-#                            - 'network_io_vip_m004_m003'
                             - fixed_ips
                             - 0
                             - ip_address
-            fixed_ips:
-                -
-                    ip_address: {get_param: [iox_oam_ips, 0]}
             security_groups:
-#                get_param: iox_security_groups
                 get_param: oam_security_groups
         metadata:
             os_net: { get_param: oam_net_id }
@@ -1162,9 +1154,6 @@ resources:
                             get_param: vnf_name
             network: { get_param: oam_net_id }
             replacement_policy: AUTO
-            fixed_ips:
-                -
-                    ip_address: {get_param: [app_oam_ips, 0]}
                     
             security_groups:
 #                get_param: app_security_groups
@@ -1481,9 +1470,6 @@ resources:
                             get_param: vnf_name
             network: { get_param: data_net_id }
             replacement_policy: AUTO
-            fixed_ips:
-                -
-                    ip_address: {get_param: [app_data_v6_ips, 2]}
             security_groups:
 #                get_param: app_security_groups
                 get_param: data_security_groups

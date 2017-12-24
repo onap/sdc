@@ -16,7 +16,8 @@
 
     <properties>
         <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
-        <docker.latest.tag>${project.version}-latest</docker.latest.tag>
+        <docker.latest.tag>${project.version}-latest</docker.latest.tag>    
+		<sonar.skip>true</sonar.skip>
     </properties>
 
     <build>
