@@ -631,11 +631,6 @@ topology_template:
         - get_input: oam_net_id
         vm_flavor_name:
           get_input: app_flavor_name
-        port_app_data_0_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - app_data_v6_ips
-            - 2
         vm_image_name:
           get_input: app_image_name
         port_app_oam_0_port_name:
@@ -666,9 +661,9 @@ topology_template:
           vf_module_name:
             get_input: vf_module_name
         port_app_data_0_port_ip_requirements:
-        - ip_version: 6
+        - ip_version: 4
           ip_count_required:
-            is_required: true
+            is_required: false
           floating_ip_count_required:
             is_required: false
         port_app_internal_0_port_allowed_address_pairs:
@@ -834,11 +829,6 @@ topology_template:
             params:
               $vnf_name:
                 get_input: vnf_name
-        port_iox_oam_0_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - iox_oam_ips
-            - 0
         compute_iox_name:
         - get_input:
           - iox_names
@@ -882,7 +872,7 @@ topology_template:
         port_iox_oam_0_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
-            is_required: true
+            is_required: false
           floating_ip_count_required:
             is_required: false
         port_iox_data_0_port_network_role_tag: data
@@ -1097,7 +1087,7 @@ topology_template:
         port_app_oam_0_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
-            is_required: true
+            is_required: false
           floating_ip_count_required:
             is_required: false
         port_app_internal_0_port_network:
@@ -1117,11 +1107,6 @@ topology_template:
             params:
               $vnf_name:
                 get_input: vnf_name
-        port_app_oam_0_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - app_oam_ips
-            - 0
         port_app_data_0_port_replacement_policy:
         - AUTO
         compute_app_name:
@@ -1203,7 +1188,7 @@ topology_template:
         port_plt_oam_0_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
-            is_required: true
+            is_required: false
           floating_ip_count_required:
             is_required: false
         port_plt_data_0_port_mac_requirements:
@@ -1246,11 +1231,6 @@ topology_template:
             is_required: false
           floating_ip_count_required:
             is_required: true
-        port_plt_oam_0_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - plt_oam_ips
-            - 0
         port_plt_oam_0_port_network_role_tag: oam
         port_plt_internal_0_port_name:
         - str_replace:

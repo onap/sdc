@@ -156,7 +156,9 @@ topology_template:
         subnetpoolid:
           get_input: port_1c1_t1_port_subnetpoolid
         fixed_ips:
-          get_input: port_1c1_t1_port_fixed_ips
+          get_input:
+          - port_1c1_t1_port_fixed_ips
+          - index_value
         name:
           get_input:
           - port_1c1_t1_port_name
@@ -217,7 +219,9 @@ topology_template:
         subnetpoolid:
           get_input: port_1c1_t2_port_subnetpoolid
         fixed_ips:
-          get_input: port_1c1_t2_port_fixed_ips
+          get_input:
+          - port_1c1_t2_port_fixed_ips
+          - index_value
         name:
           get_input:
           - port_1c1_t2_port_name

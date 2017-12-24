@@ -377,7 +377,9 @@ topology_template:
         subnetpoolid:
           get_input: port_cif_ims_li_1_port_subnetpoolid
         fixed_ips:
-          get_input: port_cif_ims_li_1_port_fixed_ips
+          get_input:
+          - port_cif_ims_li_1_port_fixed_ips
+          - index_value
         name:
           get_input:
           - port_cif_ims_li_1_port_name
@@ -417,7 +419,9 @@ topology_template:
         subnetpoolid:
           get_input: port_cif_internal_1_port_subnetpoolid
         fixed_ips:
-          get_input: port_cif_internal_1_port_fixed_ips
+          get_input:
+          - port_cif_internal_1_port_fixed_ips
+          - index_value
         name:
           get_input:
           - port_cif_internal_1_port_name
@@ -457,7 +461,9 @@ topology_template:
         subnetpoolid:
           get_input: port_cif_oam_1_port_1_subnetpoolid
         fixed_ips:
-          get_input: port_cif_oam_1_port_1_fixed_ips
+          get_input:
+          - port_cif_oam_1_port_1_fixed_ips
+          - index_value
         name:
           get_input:
           - port_cif_oam_1_port_1_name
@@ -497,7 +503,9 @@ topology_template:
         subnetpoolid:
           get_input: port_cif_ims_core_1_port_subnetpoolid
         fixed_ips:
-          get_input: port_cif_ims_core_1_port_fixed_ips
+          get_input:
+          - port_cif_ims_core_1_port_fixed_ips
+          - index_value
         name:
           get_input:
           - port_cif_ims_core_1_port_name
@@ -537,7 +545,9 @@ topology_template:
         subnetpoolid:
           get_input: port_cif_oam_1_port_3_subnetpoolid
         fixed_ips:
-          get_input: port_cif_oam_1_port_3_fixed_ips
+          get_input:
+          - port_cif_oam_1_port_3_fixed_ips
+          - index_value
         name:
           get_input:
           - port_cif_oam_1_port_3_name

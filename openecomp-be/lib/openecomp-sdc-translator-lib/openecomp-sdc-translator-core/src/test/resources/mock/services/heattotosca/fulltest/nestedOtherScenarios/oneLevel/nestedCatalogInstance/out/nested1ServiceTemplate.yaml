@@ -80,11 +80,6 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_cmaui_port_fixed_ips:
-        - ip_address:
-            get_input:
-            - cmaui_oam_ips
-            - 0
         port_cmaui_port_network:
         - packet_internal_network
         vm_flavor_name:
@@ -105,7 +100,7 @@ topology_template:
         port_cmaui_port_ip_requirements:
         - ip_version: 4
           ip_count_required:
-            is_required: true
+            is_required: false
           floating_ip_count_required:
             is_required: false
         service_template_filter:

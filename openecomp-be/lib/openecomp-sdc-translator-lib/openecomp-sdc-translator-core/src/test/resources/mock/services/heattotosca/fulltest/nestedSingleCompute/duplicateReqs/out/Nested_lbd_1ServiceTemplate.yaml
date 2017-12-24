@@ -235,7 +235,9 @@ topology_template:
         subnetpoolid:
           get_input: port_lbd_ims_core_0_port_subnetpoolid
         fixed_ips:
-          get_input: port_lbd_ims_core_0_port_fixed_ips
+          get_input:
+          - port_lbd_ims_core_0_port_fixed_ips
+          - index_value
         name:
           get_input:
           - port_lbd_ims_core_0_port_name
@@ -275,7 +277,9 @@ topology_template:
         subnetpoolid:
           get_input: port_lbd_dpdk_0_port_subnetpoolid
         fixed_ips:
-          get_input: port_lbd_dpdk_0_port_fixed_ips
+          get_input:
+          - port_lbd_dpdk_0_port_fixed_ips
+          - index_value
         name:
           get_input:
           - port_lbd_dpdk_0_port_name
@@ -311,7 +315,9 @@ topology_template:
         network_role:
           get_input: port_lbd_internal_0_port_network_role
         fixed_ips:
-          get_input: port_lbd_internal_0_port_fixed_ips
+          get_input:
+          - port_lbd_internal_0_port_fixed_ips
+          - index_value
         subnetpoolid:
           get_input: port_lbd_internal_0_port_subnetpoolid
         name:
