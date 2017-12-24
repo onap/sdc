@@ -5,9 +5,8 @@ identificationHeaderFields:
    - HTTP_IV_REMOTE_ADDRESS
    - HTTP_CSP_WSTYPE
 
-
 # catalog backend hostname
-beFqdn: <%= @host_ip %>
+beFqdn: <%= @catalog_ip %>
 
 # catalog backend http port
 beHttpPort: <%= @catalog_port %>
@@ -16,11 +15,15 @@ beHttpPort: <%= @catalog_port %>
 beContext: /sdc/rest/config/get
 
 # catalog backend protocol
+<% if node[:disableHttp] -%>
+beProtocol: https
+<% else %>
 beProtocol: http
+<% end -%>
 
 # catalog backend ssl port
 beSslPort: <%= @ssl_port %>
-version: 1.0
+version: 1.1.0
 released: 2012-11-30
 toscaConformanceLevel: 5.0
 minToscaConformanceLevel: 3.0
@@ -143,10 +146,7 @@ resourceTypes: &allResourceTypes
   - Abstract
   - CVFC
 
-# validForResourceTypes usage
-#     validForResourceTypes:
-#        - VF
-#        - VL
+
 deploymentResourceArtifacts:
 
 
@@ -179,7 +179,7 @@ toscaArtifacts:
 excludeResourceCategory:
   - Generic
 excludeResourceType:
-  - PNF  
+  - PNF
 informationalResourceArtifacts:
   features:
       displayName: Features
@@ -288,9 +288,6 @@ serviceDeploymentArtifacts:
     MODEL_QUERY_SPEC:
         acceptedTypes:
             - xml
-    UCPE_LAYER_2_CONFIGURATION:
-        acceptedTypes:
-            - xml
 
 #AAI Artifacts
     AAI_SERVICE_MODEL:
@@ -301,7 +298,10 @@ serviceDeploymentArtifacts:
             - xml
     AAI_VF_INSTANCE_MODEL:
         acceptedTypes:
-            - xml 
+            - xml
+    UCPE_LAYER_2_CONFIGURATION:
+        acceptedTypes:
+            - xml
     OTHER:
         acceptedTypes:
 
@@ -551,16 +551,29 @@ heatEnvArtifactHeader: ""
 heatEnvArtifactFooter: ""
 
 onboarding:
+    <% if node[:disableHttp] -%>
+    protocol: https
+    host: <%= @catalog_ip %>
+    port: <%= node['BE'][:https_port] %> 
+    <% else %>
     protocol: http
-    host: <%= @host_ip %>
-    port: <%= @catalog_port %>
+    host: <%= @catalog_ip %>
+    port: <%= node['BE'][:http_port] %> 
+    <% end -%>
     downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
     healthCheckUri: "/onboarding-api/v1.0/healthcheck"
 
 dcae:
+    <% if node[:disableHttp] -%>
+    protocol: https
+    host: <%= @catalog_ip %>
+    port: <%= node['BE'][:https_port] %> 
+    <% else %>
     protocol: http
-    host: <%= @host_ip %>
-    port: <%= @catalog_port %>
+    host: <%= @catalog_ip %>
+    port: <%= node['BE'][:http_port] %> 
+    <% end -%>  
+    
     healthCheckUri: "/dcae/healthCheck"
 
 # #GSS IDNS

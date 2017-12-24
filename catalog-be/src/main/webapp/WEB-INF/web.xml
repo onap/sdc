@@ -95,7 +95,7 @@
 		
 		<init-param>
 			<param-name>swagger.api.basepath</param-name>
-			<param-value>/sdc2/rest</param-value>
+			<param-value>:8080/sdc2/rest</param-value>
 		</init-param>
 		
 		<init-param>
@@ -129,7 +129,7 @@
     	<init-param>
 			<param-name>swagger.api.basepath</param-name>
 			<!-- Check if second param can be added -->
-			<param-value>/sdc</param-value>
+			<param-value>:8080/sdc</param-value>
 		</init-param>
 		
 		<init-param>
